@@ -37,6 +37,9 @@ public abstract class AbstractForm {
         if (formType.equals("line")) {
             logger.debug("Loading 'line'");
             return Line.fromXml(e);
+        } else if (formType.equals("arrow")) {
+            logger.debug("Loading 'arrow'");
+            return Arrow.fromXml(e);
         } else if (formType.equals("rectangle")) {
             logger.debug("Loading 'rectangle'");
             return Rectangle.fromXml(e);
@@ -73,8 +76,7 @@ public abstract class AbstractForm {
 
     public abstract java.awt.Rectangle getBounds();
 
-
-     public ArrayList<Village> getContainedVillages() {
+    public ArrayList<Village> getContainedVillages() {
         java.awt.Rectangle bounds = getBounds();
         ArrayList<Village> v = new ArrayList<Village>();
         Village[][] villages = DataHolder.getSingleton().getVillages();

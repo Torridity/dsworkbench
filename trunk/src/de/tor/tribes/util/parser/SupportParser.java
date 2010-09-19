@@ -37,9 +37,9 @@ public class SupportParser {
         while (lineTok.hasMoreElements()) {
             //parse single line for village
             String line = lineTok.nextToken();
-            if (line.indexOf(ParserVariableManager.getSingleton().getProperty("troops.own")) > 0) {
+            //if (line.indexOf(ParserVariableManager.getSingleton().getProperty("troops.own")) > 0) {
+            if (line.indexOf(ParserVariableManager.getSingleton().getProperty("troops.in.village")) > 0) {
                 //might be troop hosting village
-                //tokenize line by tab and space
                 Village before = v;
                 v = extractVillage(line);
                 if (before != null) {
@@ -51,7 +51,8 @@ public class SupportParser {
                 }
 
                 if (v != null) {
-                    Hashtable<UnitHolder, Integer> own = parseUnits(line.substring(line.indexOf(ParserVariableManager.getSingleton().getProperty("troops.own"))).trim());
+                    //Hashtable<UnitHolder, Integer> own = parseUnits(line.substring(line.indexOf(ParserVariableManager.getSingleton().getProperty("troops.own"))).trim());
+                    Hashtable<UnitHolder, Integer> own = parseUnits(line.substring(line.indexOf(ParserVariableManager.getSingleton().getProperty("troops.in.village"))).trim());
                     if (own != null) {
                         //only add valid troop information
                         VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
@@ -118,49 +119,15 @@ public class SupportParser {
     }
 
     private static Village extractVillage(String pLine) {
-      /*  //tokenize line by tab and space
-        StringTokenizer elemTok = new StringTokenizer(pLine, " \t");
-        //try to find village line
-        String nextToken = null;
-        while (elemTok.hasMoreElements()) {
-            String currentToken = null;
-            if (nextToken == null) {
-                currentToken = elemTok.nextToken();
-            } else {
-                currentToken = nextToken;
-            }
-            if (elemTok.hasMoreTokens()) {
-                nextToken = elemTok.nextToken();
-            }
-
-
-            //search village
-            if (currentToken.startsWith("(") && currentToken.endsWith(")")) {
-                //check if we got a village
-                try {
-                    String coord = currentToken.substring(currentToken.lastIndexOf("(") + 1, currentToken.lastIndexOf(")"));
-                    if (ServerSettings.getSingleton().getCoordType() != 2) {
-                        String[] split = coord.trim().split("[(\\:)]");
-                        int[] xy = DSCalculator.hierarchicalToXy(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
-                        String vv = xy[0] + "|" + xy[1] + "|" + xy[2];
-                        return DataHolder.getSingleton().getVillages()[xy[0]][xy[1]];
-                    } else {
-                        String[] split = coord.trim().split("[(\\|)]");
-                        String vv = split[0] + "|" + split[1];
-                        return DataHolder.getSingleton().getVillages()[Integer.parseInt(split[0])][Integer.parseInt(split[1])];
-                    }
-                } catch (Exception e) {
-                }
-            }
+        List<Village> villages = VillageParser.parse(pLine);
+        switch (villages.size()) {
+            case 0:
+                return null;
+            case 2:
+                return villages.get(1);
+            default:
+                return villages.get(0);
         }
-        return null;*/
-
-         List<Village> villages = VillageParser.parse(pLine);
-         switch(villages.size()){
-             case 0: return null;
-             case 2: return villages.get(1);
-             default:return villages.get(0);
-         }
     }
 
     private static Hashtable<UnitHolder, Integer> parseUnits(String pLine) {

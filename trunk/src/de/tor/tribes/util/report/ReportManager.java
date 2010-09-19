@@ -4,8 +4,6 @@
  */
 package de.tor.tribes.util.report;
 
-import com.db4o.Db4oEmbedded;
-import com.db4o.ObjectContainer;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ReportSet;
 import de.tor.tribes.ui.DSWorkbenchReportFrame;

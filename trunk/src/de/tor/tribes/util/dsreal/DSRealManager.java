@@ -17,7 +17,7 @@ import javax.imageio.ImageIO;
 import org.apache.log4j.Logger;
 
 /**
- *
+ * @TODO (DIFF) Switched to new DSReal version
  * @author Charon
  */
 public class DSRealManager {
@@ -84,12 +84,14 @@ public class DSRealManager {
         def_file += id + BASH_DEF_EXT;
         String all_file = "./servers/" + GlobalOptions.getSelectedServer() + "/" + CHART_PATH + "/" + TRIBE_PATH + "/";
         all_file += id + BASH_ALL_EXT;
-        //http://dsreal.de/chart/bash_chart.php?id=9755&world=de26&mode=tribe&art=off
-        //http://dsreal.de/chart/bash_chart.php?id=9755&world=de26&mode=tribe&art=all
-        //http://dsreal.de/chart/bash_chart.php?id=9755&world=de26&mode=tribe&art=def
-        String off_url = "http://dsreal.de/chart/bash_chart.php?id=" + id + "&world=" + GlobalOptions.getSelectedServer() + "&mode=player&art=off";
+        /* String off_url = "http://dsreal.de/chart/bash_chart.php?id=" + id + "&world=" + GlobalOptions.getSelectedServer() + "&mode=player&art=off";
         String def_url = "http://dsreal.de/chart/bash_chart.php?id=" + id + "&world=" + GlobalOptions.getSelectedServer() + "&mode=player&art=def";
         String all_url = "http://dsreal.de/chart/bash_chart.php?id=" + id + "&world=" + GlobalOptions.getSelectedServer() + "&mode=player&art=all";
+         */
+
+        String off_url = "http://dsreal.de/charts/playerBashall.php?id=" + id + "&world=" + GlobalOptions.getSelectedServer();
+        String def_url = "http://dsreal.de/charts/playerBashoff.php?id=" + id + "&world=" + GlobalOptions.getSelectedServer();
+        String all_url = "http://dsreal.de/charts/playerBashdef.php?id=" + id + "&world=" + GlobalOptions.getSelectedServer();
 
         checkFile(off_file, off_url);
         checkFile(def_file, def_url);
@@ -112,9 +114,13 @@ public class DSRealManager {
         //http://dsreal.de/chart/bash_chart.php?id=9755&world=de26&mode=ally&art=off
         //http://dsreal.de/chart/bash_chart.php?id=9755&world=de26&mode=ally&art=all
         //http://dsreal.de/chart/bash_chart.php?id=9755&world=de26&mode=ally&art=def
-        String off_url = "http://dsreal.de/chart/bash_chart.php?id=" + id + "&world=" + GlobalOptions.getSelectedServer() + "&mode=ally&art=off";
+        /*String off_url = "http://dsreal.de/chart/bash_chart.php?id=" + id + "&world=" + GlobalOptions.getSelectedServer() + "&mode=ally&art=off";
         String def_url = "http://dsreal.de/chart/bash_chart.php?id=" + id + "&world=" + GlobalOptions.getSelectedServer() + "&mode=ally&art=def";
         String all_url = "http://dsreal.de/chart/bash_chart.php?id=" + id + "&world=" + GlobalOptions.getSelectedServer() + "&mode=ally&art=all";
+         */
+        String off_url = "http://dsreal.de/charts/allyBashall.php?id=" + id + "&world=" + GlobalOptions.getSelectedServer() + "&mode=ally&art=off";
+        String def_url = "http://dsreal.de/charts/allyBashoff.php?id=" + id + "&world=" + GlobalOptions.getSelectedServer() + "&mode=ally&art=def";
+        String all_url = "http://dsreal.de/charts/allyBashdef.php?id=" + id + "&world=" + GlobalOptions.getSelectedServer() + "&mode=ally&art=all";
 
         checkFile(off_file, off_url);
         checkFile(def_file, def_url);
@@ -128,11 +134,12 @@ public class DSRealManager {
         //./servers/de26/tribe/<id>_points.png;
         String file = "./servers/" + GlobalOptions.getSelectedServer() + "/" + CHART_PATH + "/" + TRIBE_PATH + "/";
         file += id + POINTS_EXT;
-        //http://dsreal.de/chart/chart.php?id=9755&world=de26&mode=tribe
-        String url = "http://dsreal.de/chart/chart.php?id=" + id + "&world=" + GlobalOptions.getSelectedServer() + "&mode=player&art=points";
+        //http://dsreal.de/charts/playerPoints.php?id=3296746&world=de43
+        //   String url = "http://dsreal.de/chart/chart.php?id=" + id + "&world=" + GlobalOptions.getSelectedServer() + "&mode=player&art=points";
+        String url = "http://dsreal.de/charts/playerPoints.php?id=" + id + "&world=" + GlobalOptions.getSelectedServer();
         checkFile(file, url);
         ChartPanel.showPointChart(file, pTribe);
-    //build and show frame
+        //build and show frame
     }
 
     public void getAllyPointsChart(Ally pAlly) {
@@ -141,7 +148,8 @@ public class DSRealManager {
         String file = "./servers/" + GlobalOptions.getSelectedServer() + "/" + CHART_PATH + "/" + ALLY_PATH + "/";
         file += id + POINTS_EXT;
         //http://dsreal.de/chart/chart.php?id=9755&world=de26&mode=ally
-        String url = "http://dsreal.de/chart/chart.php?id=" + id + "&world=" + GlobalOptions.getSelectedServer() + "&mode=ally&art=points";
+        //String url = "http://dsreal.de/chart/chart.php?id=" + id + "&world=" + GlobalOptions.getSelectedServer() + "&mode=ally&art=points";
+        String url = "http://dsreal.de/charts/allyPoints.php?id=" + id + "&world=" + GlobalOptions.getSelectedServer();
         checkFile(file, url);
         //build and show frame
         ChartPanel.showPointChart(file, pAlly);

@@ -169,28 +169,28 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
         jRankTable.setDefaultRenderer(Tribe.class, new TribeCellRenderer());
         jRankTable.setDefaultRenderer(Ally.class, new AllyCellRenderer());
         jRankTable.setDefaultRenderer(String.class, new AlternatingColorCellRenderer());
-   /*     DefaultTableCellRenderer renderer2 = new DefaultTableCellRenderer() {
+        /*     DefaultTableCellRenderer renderer2 = new DefaultTableCellRenderer() {
 
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                if (value instanceof Village) {
-                    c = new VillageCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                } else if (value instanceof Tribe) {
-                    c = new TribeCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                } else if (value instanceof Ally) {
-                    c = new AllyCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                }
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        if (value instanceof Village) {
+        c = new VillageCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        } else if (value instanceof Tribe) {
+        c = new TribeCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        } else if (value instanceof Ally) {
+        c = new AllyCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        }
 
-                if (row % 2 == 0 && !isSelected) {
-                    c.setBackground(Constants.DS_BACK_LIGHT);
-                }
-                // r.setText(r.getText());
-                return c;
-            }
+        if (row % 2 == 0 && !isSelected) {
+        c.setBackground(Constants.DS_BACK_LIGHT);
+        }
+        // r.setText(r.getText());
+        return c;
+        }
         };
         jRankTable.setDefaultRenderer(Object.class, renderer2);
-*/
+         */
         sorter.toggleSortOrder(0);
     }
 
@@ -338,8 +338,8 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
                 Tribe next = DataHolder.getSingleton().getTribes().get(tIDs.nextElement());
                 double p = next.getPoints();
                 if (p > 0) {
-                    double killsPerPointOff = killsPerPointOff = 100 * next.getKillsAtt() / p;
-                    double killsPerPointDef = killsPerPointDef = 100 * next.getKillsDef() / p;
+                    double killsPerPointOff = 100 * next.getKillsAtt() / p;
+                    double killsPerPointDef = 100 * next.getKillsDef() / p;
 
                     int rankOff = next.getRankAtt();
                     int rankDef = next.getRankDef();
@@ -667,29 +667,25 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
         switch (type) {
             case 0: {
                 //tribe
-                String tribeName = (String) jRankTable.getModel().getValueAt(row, 1);
-                Tribe t = DataHolder.getSingleton().getTribeByName(tribeName);
+                Tribe t = (Tribe) jRankTable.getModel().getValueAt(row, 1);
                 DSRealManager.getSingleton().getTribePointsChart(t);
                 break;
             }
             case 1: {
                 //ally
-                String allyName = (String) jRankTable.getModel().getValueAt(row, 1);
-                Ally a = DataHolder.getSingleton().getAllyByName(allyName);
+                Ally a = (Ally) jRankTable.getModel().getValueAt(row, 1);
                 DSRealManager.getSingleton().getAllyPointsChart(a);
                 break;
             }
             case 2: {
                 //bash tribe
-                String tribeName = (String) jRankTable.getModel().getValueAt(row, 2);
-                Tribe t = DataHolder.getSingleton().getTribeByName(tribeName);
+                Tribe t = (Tribe) jRankTable.getModel().getValueAt(row, 2);
                 DSRealManager.getSingleton().getTribeBashChart(t);
                 break;
             }
             case 3: {
                 //bash ally
-                String allyName = (String) jRankTable.getModel().getValueAt(row, 0);
-                Ally a = DataHolder.getSingleton().getAllyByName(allyName);
+                Ally a = (Ally) jRankTable.getModel().getValueAt(row, 0);
                 DSRealManager.getSingleton().getAllyBashChart(a);
                 break;
             }
@@ -707,33 +703,29 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
             return;
         }
         row = jRankTable.convertRowIndexToModel(row);
-        String url = "http://dsreal.de/index.php?tool=akte&mode=";
+        String url = "http://dsreal.de/index.php?screen=file&mode=";
         switch (type) {
             case 0: {
                 //tribe
-                String tribeName = (String) jRankTable.getModel().getValueAt(row, 1);
-                Tribe t = DataHolder.getSingleton().getTribeByName(tribeName);
+                Tribe t = (Tribe) jRankTable.getModel().getValueAt(row, 1);
                 url += "player&id=" + t.getId() + "&world=" + GlobalOptions.getSelectedServer();
                 break;
             }
             case 1: {
                 //ally
-                String allyName = (String) jRankTable.getModel().getValueAt(row, 1);
-                Ally a = DataHolder.getSingleton().getAllyByName(allyName);
+                Ally a = (Ally) jRankTable.getModel().getValueAt(row, 1);
                 url += "ally&id=" + a.getId() + "&world=" + GlobalOptions.getSelectedServer();
                 break;
             }
             case 2: {
                 //bash tribe
-                String tribeName = (String) jRankTable.getModel().getValueAt(row, 2);
-                Tribe t = DataHolder.getSingleton().getTribeByName(tribeName);
+                Tribe t = (Tribe) jRankTable.getModel().getValueAt(row, 2);
                 url += "player&id=" + t.getId() + "&world=" + GlobalOptions.getSelectedServer();
                 break;
             }
             case 3: {
                 //bash ally
-                String allyName = (String) jRankTable.getModel().getValueAt(row, 0);
-                Ally a = DataHolder.getSingleton().getAllyByName(allyName);
+                Ally a = (Ally) jRankTable.getModel().getValueAt(row, 0);
                 url += "ally&id=" + a.getId() + "&world=" + GlobalOptions.getSelectedServer();
                 break;
             }

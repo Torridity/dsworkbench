@@ -209,7 +209,7 @@ public class Skin {
 
         if (pID == ID_ARMY_CAMP) {
             //return army camp
-            return ARMY_CAMP_IMAGE.getScaledInstance((int) (iFieldWidth * .7 / pScaling), (int) (iFieldHeight * .7 / pScaling), BufferedImage.SCALE_DEFAULT);
+            return ARMY_CAMP_IMAGE.getScaledInstance((int) (iFieldWidth  / pScaling), (int) (iFieldHeight  / pScaling), BufferedImage.SCALE_DEFAULT);
         }
         try {
             HashMap<Double, BufferedImage> imageCache = cache.get(pID);

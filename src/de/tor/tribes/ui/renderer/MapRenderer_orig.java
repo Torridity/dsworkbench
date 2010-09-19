@@ -9,12 +9,13 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.AbstractForm;
 import de.tor.tribes.types.Ally;
-import de.tor.tribes.types.ArmyCamp;
+import de.tor.tribes.types.Arrow;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.BarbarianAlly;
 import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Church;
 import de.tor.tribes.types.Conquer;
+import de.tor.tribes.types.Line;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.NoAlly;
 import de.tor.tribes.types.Note;
@@ -34,7 +35,6 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.algo.ChurchRangeCalculator;
-import de.tor.tribes.util.armycamp.ArmyCampManager;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.conquer.ConquerManager;
@@ -55,6 +55,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.MouseInfo;
 import java.awt.Paint;
+import java.awt.PaintContext;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -70,6 +71,10 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.Raster;
+import java.awt.image.VolatileImage;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.Collections;
@@ -97,11 +102,11 @@ import org.apache.log4j.Logger;
  * 4: Misc. Extended Map Decoration: e.g. troop qualification or active village marker
  * 5: Live Layer: Redraw in every drawing cycle e.g. Drag line, tool popup(?), (troop movement?)
  * 6-16: Free assignable
- * @TODO (DIFF) Added arrow form
+ * @TODO (DIFF) Check note symbol drawing (village marks layer must be visible? notes are lazy if village mark layer is below notes layer?
  *
  * @author Charon
  */
-public class MapRenderer extends Thread {
+public class MapRenderer_orig extends Thread {
 
     private static Logger logger = Logger.getLogger("MapRenderer");
     public static final int ALL_LAYERS = 0;
@@ -138,16 +143,16 @@ public class MapRenderer extends Thread {
     private long lRenderedLast = 0;
     private long lCurrentSleepTime = 50;
     private int iCurrentFPS = 0;
-    private float alpha = 1.0f;
-    private Hashtable<Ally, Integer> allyCount = new Hashtable<Ally, Integer>();
-    private Hashtable<Tribe, Integer> tribeCount = new Hashtable<Tribe, Integer>();
+    float alpha = 1.0f;
+    Hashtable<Ally, Integer> allyCount = new Hashtable<Ally, Integer>();
+    Hashtable<Tribe, Integer> tribeCount = new Hashtable<Tribe, Integer>();
     /* private Canvas mCanvas = null;
     BufferStrategy strategy;*/
 
     /*  public MapRenderer(Canvas pCanvas) {
     mCanvas = pCanvas;
      */
-    public MapRenderer() {
+    public MapRenderer_orig() {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
 
         setPriority(Thread.MIN_PRIORITY);
@@ -178,19 +183,12 @@ public class MapRenderer extends Thread {
         }
     }
 
-    /**Set the order all layers are drawn
-     * @param pDrawOrder
-     */
+    /**Set the order all layers are drawn*/
     public void setDrawOrder(List<Integer> pDrawOrder) {
         drawOrder = new LinkedList<Integer>(pDrawOrder);
     }
 
-    /**Create an empty BufferedImage
-     * @param w
-     * @param h
-     * @param trans
-     * @return
-     */
+    /**Create an empty BufferedImage*/
     public BufferedImage getBufferedImage(int w, int h, int trans) {
         GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice device = env.getDefaultScreenDevice();
@@ -239,9 +237,7 @@ public class MapRenderer extends Thread {
         pG2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
     }
 
-    /**Complete redraw on resize or scroll
-     * @param pType
-     */
+    /**Complete redraw on resize or scroll*/
     public synchronized void initiateRedraw(int pType) {
         alpha = 1.0f;
         mapRedrawRequired = true;
@@ -250,7 +246,6 @@ public class MapRenderer extends Thread {
     public synchronized boolean isRedrawScheduled() {
         return mapRedrawRequired;
     }
-    private MapLayerRenderer rend = new MapLayerRenderer();
 
     /**Render loop*/
     @Override
@@ -308,12 +303,13 @@ public class MapRenderer extends Thread {
                         if (viewStartPoint == null) {
                             throw new Exception("View position is 'null', skip redraw");
                         }
+                        long s = System.currentTimeMillis();
                         renderMap();
+                        System.out.println("Dur " + (System.currentTimeMillis() - s));
                         renderTagMarkers();
+
                         mapRedrawRequired = false;
                     }
-
-
 
                     boolean mapDrawn = false;
                     // long s = System.currentTimeMillis();
@@ -407,7 +403,7 @@ public class MapRenderer extends Thread {
                             }
                         }
                     }
-                    rend.prepareRender(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
+
                     //     System.out.println("DT " + (System.currentTimeMillis() - s));
 
                     //draw live layer -> always on top
@@ -475,12 +471,7 @@ public class MapRenderer extends Thread {
         }
     }
 
-    /**Set the drag line externally (done by MapPanel class)
-     * @param pXS
-     * @param pYS
-     * @param pXE
-     * @param pYE 
-     */
+    /**Set the drag line externally (done by MapPanel class)*/
     public void setDragLine(int pXS, int pYS, int pXE, int pYE) {
         if (pXS == -1 && pYS == -1 && pXE == -1 && pYE == -1) {
             mSourceVillage = null;
@@ -498,6 +489,7 @@ public class MapRenderer extends Thread {
         dCenterX = MapPanel.getSingleton().getCurrentPosition().x;
         dCenterY = MapPanel.getSingleton().getCurrentPosition().y;
 
+
         allyCount.clear();
         tribeCount.clear();
         if (DataHolder.getSingleton().getVillages() == null) {
@@ -512,11 +504,11 @@ public class MapRenderer extends Thread {
         iVillagesX = (int) Math.ceil((double) MapPanel.getSingleton().getWidth() / currentFieldWidth);
         iVillagesY = (int) Math.ceil((double) MapPanel.getSingleton().getHeight() / currentFieldHeight);
         //add small buffer
-        /*iVillagesX++;
-        iVillagesY++;*/
+        iVillagesX++;
+        iVillagesY++;
         //village start
-        int xStartVillage = (int) Math.ceil(dCenterX - iVillagesX / 2.0);
-        int yStartVillage = (int) Math.ceil(dCenterY - iVillagesY / 2.0);
+        int xStartVillage = (int) Math.floor(dCenterX - iVillagesX / 2.0);
+        int yStartVillage = (int) Math.floor(dCenterY - iVillagesY / 2.0);
         //double start
         double dXStart = dCenterX - (double) iVillagesX / 2.0;
         double dYStart = dCenterY - (double) iVillagesY / 2.0;
@@ -561,8 +553,6 @@ public class MapRenderer extends Thread {
                                 allyCount.put(a, allyCount.get(a) + 1);
                             }
                         }
-                    } else if (ArmyCampManager.getSingleton().isArmyCamp((short) i, (short) j)) {
-                        mVisibleVillages[x][y] = ArmyCampManager.getSingleton().getArmyCamp((short) i, (short) j);
                     }
                 }
                 y++;
@@ -570,7 +560,6 @@ public class MapRenderer extends Thread {
             x++;
             y = 0;
         }
-
         viewStartPoint = new Point2D.Double(dXStart, dYStart);
         MapPanel.getSingleton().updateVirtualBounds(viewStartPoint);
     }
@@ -587,51 +576,8 @@ public class MapRenderer extends Thread {
         return allyCount;
     }
 
-    private boolean drawVillage(Village pVillage, boolean pShowBarbarian, boolean pMarkedOnly) {
-        boolean drawVillage = true;
-        //check for barbarian
-
-        if (!pShowBarbarian) {
-            if ((pVillage != null) && (pVillage.getTribe().equals(Barbarians.getSingleton()))) {
-                drawVillage = false;
-            }
-        }
-        //check marked only
-
-        if (drawVillage && pMarkedOnly) {
-            if (pVillage != null && currentUserVillage != null) {
-                //valid village
-                if (!pVillage.getTribe().equals(currentUserVillage.getTribe())) {
-                    //check tribe marker
-                    Marker m = MarkerManager.getSingleton().getMarker(pVillage);
-                    if (m == null) {
-                        drawVillage = false;
-                    } else {
-                        drawVillage = true;
-                    }
-                }//village is owned by current user
-            }
-        }
-        List<Tag> villageTags = TagManager.getSingleton().getTags(pVillage);
-        if ((drawVillage) && (villageTags != null) && (!villageTags.isEmpty())) {
-            boolean notShown = true;
-            for (Tag tag : TagManager.getSingleton().getTags(pVillage)) {
-                if (tag.isShowOnMap()) {
-                    //at least one of the tags for the village is visible
-                    notShown = false;
-                    break;
-                }
-            }
-            if (notShown) {
-                drawVillage = false;
-            }
-        }
-        return drawVillage;
-    }
-
     /**Render village graphics and create village rectangles for further rendering*/
     private void renderMap() {
-        long s = System.currentTimeMillis();
         int wb = MapPanel.getSingleton().getWidth();
         int hb = MapPanel.getSingleton().getHeight();
         if (wb == 0 || hb == 0) {
@@ -643,8 +589,9 @@ public class MapRenderer extends Thread {
         BufferedImage layer = null;
         Graphics2D g2d = null;
         long drawTime = 0;
-
+        long s = System.currentTimeMillis();
         //prepare drawing buffer
+
         if (mLayers.get(MAP_LAYER) == null) {
             layer = getBufferedImage(wb, hb, Transparency.BITMASK);
             mLayers.put(MAP_LAYER, layer);
@@ -670,18 +617,14 @@ public class MapRenderer extends Thread {
             }
         }
 
+
         //disable decoration if field size is not equal the decoration texture size
         boolean useDecoration = true;
+
 
         if ((WorldDecorationHolder.getTexture(0, 0, 1).getWidth(null) != GlobalOptions.getSkin().getBasicFieldWidth()) || (WorldDecorationHolder.getTexture(0, 0, 1).getHeight(null) != GlobalOptions.getSkin().getBasicFieldHeight())) {
             //use decoration if skin field size equals the world skin size
             useDecoration = false;
-        }
-        boolean showBarbarian = true;
-        try {
-            showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
-        } catch (Exception e) {
-            showBarbarian = true;
         }
 
         boolean markedOnly = false;
@@ -689,6 +632,13 @@ public class MapRenderer extends Thread {
             markedOnly = Boolean.parseBoolean(GlobalOptions.getProperty("draw.marked.only"));
         } catch (Exception e) {
             markedOnly = false;
+        }
+
+        boolean showBarbarian = true;
+        try {
+            showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
+        } catch (Exception e) {
+            showBarbarian = true;
         }
 
         boolean showSectors = false;
@@ -744,15 +694,47 @@ public class MapRenderer extends Thread {
 
                 Village v = mVisibleVillages[i][j];
                 boolean drawVillage = true;
-                boolean isArmyCamp = false;
-                if (v instanceof ArmyCamp) {
-                    isArmyCamp = true;
-                    drawVillage = true;
-                } else {
-                    drawVillage = drawVillage(v, showBarbarian, markedOnly);
+
+                // <editor-fold defaultstate="collapsed" desc=" Check if village should be drawn ">
+                //check for barbarian
+                if (!showBarbarian) {
+                    if ((v != null) && (v.getTribe().equals(Barbarians.getSingleton()))) {
+                        drawVillage = false;
+                    }
                 }
-                int xp = (int) Math.floor(x + dx);
-                int yp = (int) Math.floor(y + dy);
+
+                if (drawVillage && markedOnly) {
+                    if (v != null && currentUserVillage != null) {
+                        //valid village
+                        if (!v.getTribe().equals(currentUserVillage.getTribe())) {
+                            //check tribe marker
+                            Marker m = MarkerManager.getSingleton().getMarker(v);
+                            if (m == null) {
+                                drawVillage = false;
+                            } else {
+                                drawVillage = true;
+                            }
+                        }//village is owned by current user
+                    }
+                }
+
+                //filter tags
+                List<Tag> villageTags = TagManager.getSingleton().getTags(v);
+                if ((drawVillage) && (villageTags != null) && (!villageTags.isEmpty())) {
+                    boolean notShown = true;
+                    for (Tag tag : TagManager.getSingleton().getTags(v)) {
+                        if (tag.isShowOnMap()) {
+                            //at least one of the tags for the village is visible
+                            notShown = false;
+                            break;
+                        }
+                    }
+                    if (notShown) {
+                        drawVillage = false;
+                    }
+                }
+
+                // </editor-fold>
                 if (v == null) {
                     //no village at current position
                     int worldId = WorldDecorationHolder.ID_GRAS1;
@@ -768,7 +750,8 @@ public class MapRenderer extends Thread {
                     if (p == null) {
                         if (worldId != -1) {
                             Image worldImage = WorldDecorationHolder.getTexture((int) Math.floor(xPos), (int) Math.floor(yPos), currentZoom);
-
+                            int xp = (int) Math.floor(x + dx);
+                            int yp = (int) Math.floor(y + dy);
                             g2d.drawImage(worldImage, xp, yp, null);
                             //check containment using size tolerance
                             if (MapPanel.getSingleton().getBounds().contains(new Rectangle(xp, yp, width + 2, height + 2))) {
@@ -778,6 +761,8 @@ public class MapRenderer extends Thread {
                             //world skin does not fit -> only default underground
                             if (!minimapSkin) {
                                 Image worldImage = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom);
+                                int xp = (int) Math.floor(x + dx);
+                                int yp = (int) Math.floor(y + dy);
                                 g2d.drawImage(worldImage, xp, yp, null);
 
                                 //check containment using size tolerance
@@ -785,6 +770,8 @@ public class MapRenderer extends Thread {
                                     copyRegionsMap.put(worldId, new Point(xp, yp));
                                 }
                             } else {
+                                int xp = (int) Math.floor(x + dx);
+                                int yp = (int) Math.floor(y + dy);
                                 Color cb = g2d.getColor();
                                 g2d.setColor(new Color(35, 125, 0));
                                 g2d.fillRect(xp, yp, width, height);
@@ -797,7 +784,8 @@ public class MapRenderer extends Thread {
                         }
                     } else {
                         s = System.currentTimeMillis();
-                        g2d.copyArea(p.x, p.y, width, height, (int) Math.floor(xp - p.x), (int) Math.floor(yp - p.y));
+                        g2d.copyArea(p.x, p.y, width, height, (int) Math.floor(x + dx - p.x), (int) Math.floor(y + dy - p.y));
+
                         drawTime += (System.currentTimeMillis() - s);
 
                     }
@@ -805,12 +793,10 @@ public class MapRenderer extends Thread {
                     // <editor-fold defaultstate="collapsed" desc=" Select village type ">
                     int type = Skin.ID_V1;
                     v.setVisibleOnMap(drawVillage);
-                    if (drawVillage && !isArmyCamp) {
+                    if (drawVillage) {
                         type = v.getGraphicsType();
                         //store village rectangle
-                        villagePositions.put(v, new Rectangle(xp, yp, width, height));
-                    } else if (drawVillage && isArmyCamp) {
-                        type = Skin.ID_ARMY_CAMP;
+                        villagePositions.put(v, new Rectangle((int) Math.floor(x + dx), (int) Math.floor(y + dy), width, height));
                     } else {
                         type = Skin.ID_DEFAULT_UNDERGROUND;
                         mVisibleVillages[i][j] = null;
@@ -821,10 +807,10 @@ public class MapRenderer extends Thread {
                     Point p = copyRegions.get(type);
 
                     if (p == null) {
+                        int xp = (int) Math.floor(x + dx);
+                        int yp = (int) Math.floor(y + dy);
+
                         if (!minimapSkin) {
-                            if (isArmyCamp) {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom), xp, yp, null);
-                            }
                             g2d.drawImage(GlobalOptions.getSkin().getImage(type, currentZoom), xp, yp, null);
                             //check containment using size tolerance
                             if (MapPanel.getSingleton().getBounds().contains(new Rectangle(xp, yp, width + 2, height + 2))) {
@@ -838,19 +824,15 @@ public class MapRenderer extends Thread {
                             } else {
                                 g2d.setColor(Color.BLACK);
                                 g2d.drawRect(xp, yp, width, height);
-                                if (!isArmyCamp) {
-                                    if (MapPanel.getSingleton().getBounds().contains(new Rectangle(xp, yp, width + 2, height + 2))) {
-                                        copyRegions.put(type, new Point(xp, yp));
-                                    }
-                                } else {
-                                    g2d.fillRect(xp, yp, width, height);
+                                if (MapPanel.getSingleton().getBounds().contains(new Rectangle(xp, yp, width + 2, height + 2))) {
+                                    copyRegions.put(type, new Point(xp, yp));
                                 }
                             }
                             g2d.setColor(cb);
                         }
                     } else {
                         s = System.currentTimeMillis();
-                        g2d.copyArea(p.x, p.y, width, height, (int) Math.floor(xp - p.x), (int) Math.floor(yp - p.y));
+                        g2d.copyArea(p.x, p.y, width, height, (int) Math.floor(x + dx - p.x), (int) Math.floor(y + dy - p.y));
                         drawTime += (System.currentTimeMillis() - s);
                     }
                 }
@@ -1798,8 +1780,40 @@ public class MapRenderer extends Thread {
 
         AbstractForm[] forms = FormManager.getSingleton().getForms().toArray(new AbstractForm[]{});
         for (AbstractForm form : forms) {
-            form.renderForm(g2d);
+            if (form instanceof Line) {
+                Line l = (Line) form;
+                Arrow a = new Arrow();
+                a.setXPos(l.getXPos());
+                a.setYPos(l.getYPos());
+                a.setXPosEnd(l.getXPosEnd());
+                a.setYPosEnd(l.getYPosEnd());
+                a.renderForm(g2d);
+            } else {
+                form.renderForm(g2d);
+            }
         }
+
+        /* GeneralPath p = new GeneralPath();
+        p.moveTo(10, 10);
+        p.lineTo(0, 5);
+
+        p.quadTo(50, 0, 100, 5);
+
+        p.lineTo(95, 0);
+        p.lineTo(110, 10);
+        p.lineTo(95, 20);
+
+        p.lineTo(100, 15);
+
+        p.quadTo(50, 10, 0, 15);
+        p.closePath();
+        AffineTransform t = AffineTransform.getTranslateInstance(100, 100);
+        t.rotate(Math.toRadians(90), p.getBounds2D().getCenterX(), p.getBounds2D().getCenterY());
+        t.scale(2.0, 1.0);
+        p.transform(t);
+        g2d.draw(p);*/
+
+
     }
 
     private void renderChurches(Graphics2D g2d) {
@@ -2381,87 +2395,86 @@ public class MapRenderer extends Thread {
         // System.out.println("D " + (System.currentTimeMillis() - s));
     }
 }
-/*
+
 class RoundGradientPaint implements Paint {
 
-protected Point2D point;
-protected Point2D mRadius;
-protected Color mPointColor, mBackgroundColor;
+    protected Point2D point;
+    protected Point2D mRadius;
+    protected Color mPointColor, mBackgroundColor;
 
-public RoundGradientPaint(double x, double y, Color pointColor,
-Point2D radius, Color backgroundColor) {
-if (radius.distance(0, 0) <= 0) {
-throw new IllegalArgumentException("Radius must be greater than 0.");
-}
-point = new Point2D.Double(x, y);
-mPointColor = pointColor;
-mRadius = radius;
-mBackgroundColor = backgroundColor;
-}
+    public RoundGradientPaint(double x, double y, Color pointColor,
+            Point2D radius, Color backgroundColor) {
+        if (radius.distance(0, 0) <= 0) {
+            throw new IllegalArgumentException("Radius must be greater than 0.");
+        }
+        point = new Point2D.Double(x, y);
+        mPointColor = pointColor;
+        mRadius = radius;
+        mBackgroundColor = backgroundColor;
+    }
 
-@Override
-public PaintContext createContext(ColorModel cm, Rectangle deviceBounds,
-Rectangle2D userBounds, AffineTransform xform, RenderingHints hints) {
-Point2D transformedPoint = xform.transform(point, null);
-Point2D transformedRadius = xform.deltaTransform(mRadius, null);
-return new RoundGradientContext(transformedPoint, mPointColor,
-transformedRadius, mBackgroundColor);
-}
+    @Override
+    public PaintContext createContext(ColorModel cm, Rectangle deviceBounds,
+            Rectangle2D userBounds, AffineTransform xform, RenderingHints hints) {
+        Point2D transformedPoint = xform.transform(point, null);
+        Point2D transformedRadius = xform.deltaTransform(mRadius, null);
+        return new RoundGradientContext(transformedPoint, mPointColor,
+                transformedRadius, mBackgroundColor);
+    }
 
-@Override
-public int getTransparency() {
-int a1 = mPointColor.getAlpha();
-int a2 = mBackgroundColor.getAlpha();
-return (((a1 & a2) == 0xff) ? OPAQUE : TRANSLUCENT);
-}
+    @Override
+    public int getTransparency() {
+        int a1 = mPointColor.getAlpha();
+        int a2 = mBackgroundColor.getAlpha();
+        return (((a1 & a2) == 0xff) ? OPAQUE : TRANSLUCENT);
+    }
 }
 
 class RoundGradientContext implements PaintContext {
 
-protected Point2D mPoint;
-protected Point2D mRadius;
-protected Color color1, color2;
+    protected Point2D mPoint;
+    protected Point2D mRadius;
+    protected Color color1, color2;
 
-public RoundGradientContext(Point2D p, Color c1, Point2D r, Color c2) {
-mPoint = p;
-color1 = c1;
-mRadius = r;
-color2 = c2;
-}
+    public RoundGradientContext(Point2D p, Color c1, Point2D r, Color c2) {
+        mPoint = p;
+        color1 = c1;
+        mRadius = r;
+        color2 = c2;
+    }
 
-@Override
-public void dispose() {
-}
+    @Override
+    public void dispose() {
+    }
 
-@Override
-public ColorModel getColorModel() {
-return ColorModel.getRGBdefault();
-}
+    @Override
+    public ColorModel getColorModel() {
+        return ColorModel.getRGBdefault();
+    }
 
-@Override
-public Raster getRaster(int x, int y, int w, int h) {
-WritableRaster raster = getColorModel().createCompatibleWritableRaster(w, h);
+    @Override
+    public Raster getRaster(int x, int y, int w, int h) {
+        WritableRaster raster = getColorModel().createCompatibleWritableRaster(w, h);
 
-int[] data = new int[w * h * 4];
-for (int j = 0; j < h; j++) {
-for (int i = 0; i < w; i++) {
-double distance = mPoint.distance(x + i, y + j);
-double radius = mRadius.distance(0, 0);
-double ratio = distance / radius;
-if (ratio > 1.0) {
-ratio = 1.0;
-}
+        int[] data = new int[w * h * 4];
+        for (int j = 0; j < h; j++) {
+            for (int i = 0; i < w; i++) {
+                double distance = mPoint.distance(x + i, y + j);
+                double radius = mRadius.distance(0, 0);
+                double ratio = distance / radius;
+                if (ratio > 1.0) {
+                    ratio = 1.0;
+                }
 
-int base = (j * w + i) * 4;
-data[base + 0] = (int) (color1.getRed() + ratio * (color2.getRed() - color1.getRed()));
-data[base + 1] = (int) (color1.getGreen() + ratio * (color2.getGreen() - color1.getGreen()));
-data[base + 2] = (int) (color1.getBlue() + ratio * (color2.getBlue() - color1.getBlue()));
-data[base + 3] = (int) (color1.getAlpha() + ratio * (color2.getAlpha() - color1.getAlpha()));
-}
-}
-raster.setPixels(0, 0, w, h, data);
+                int base = (j * w + i) * 4;
+                data[base + 0] = (int) (color1.getRed() + ratio * (color2.getRed() - color1.getRed()));
+                data[base + 1] = (int) (color1.getGreen() + ratio * (color2.getGreen() - color1.getGreen()));
+                data[base + 2] = (int) (color1.getBlue() + ratio * (color2.getBlue() - color1.getBlue()));
+                data[base + 3] = (int) (color1.getAlpha() + ratio * (color2.getAlpha() - color1.getAlpha()));
+            }
+        }
+        raster.setPixels(0, 0, w, h, data);
 
-return raster;
+        return raster;
+    }
 }
-}
- */

@@ -8,6 +8,7 @@ package de.tor.tribes.ui;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Church;
@@ -47,6 +48,7 @@ import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MapShotListener;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.armycamp.ArmyCampManager;
 import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.stat.StatManager;
 import de.tor.tribes.util.troops.TroopsManager;
@@ -247,9 +249,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         jVillageActionsMenu.show(MapPanel.getSingleton(), e.getX(), e.getY());
                     }
                     return;
-                }/* else {
-                DSWorkbenchMainFrame.getSingleton().switchPanel();
-                }*/
+                }
 
                 int tmpCursor = (spaceDown) ? ImageManager.CURSOR_DEFAULT : iCurrentCursor;
 
@@ -330,6 +330,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                             }
                             break;
                         }
+                        break;
                     }
                     case ImageManager.CURSOR_SUPPORT: {
                         // Village current = getVillageAtMousePos();
@@ -451,6 +452,17 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         }
                         break;
                     }
+                    case ImageManager.CURSOR_ARMY_CAMP: {
+                        Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
+                        short x = (short) Math.floor(pos.x);
+                        short y = (short) Math.floor(pos.y);
+                        Village village = DataHolder.getSingleton().getVillages()[x][y];
+                        int text = WorldDecorationHolder.getTextureId(x, y);
+                        if (village == null && text < 4 && !ArmyCampManager.getSingleton().isArmyCamp(x, y)) {
+                            //add army camp
+                            ArmyCampManager.getSingleton().addArmyCamp(DSWorkbenchMainFrame.getSingleton().getCurrentUser().getAlly(), x, y);
+                        }
+                    }
                 }
 
                 if (e.getClickCount() == 2) {
@@ -520,6 +532,12 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         FormConfigFrame.getSingleton().getCurrentForm().setYPos(pos.y);
                         break;
                     }
+                    case ImageManager.CURSOR_DRAW_ARROW: {
+                        Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
+                        FormConfigFrame.getSingleton().getCurrentForm().setXPos(pos.x);
+                        FormConfigFrame.getSingleton().getCurrentForm().setYPos(pos.y);
+                        break;
+                    }
                     case ImageManager.CURSOR_DRAW_RECT: {
                         Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
                         FormConfigFrame.getSingleton().getCurrentForm().setXPos(pos.x);
@@ -565,7 +583,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 boolean isAttack = false;
                 int tmpCursor = (spaceDown) ? ImageManager.CURSOR_DEFAULT : iCurrentCursor;
 
-                if ((tmpCursor == ImageManager.CURSOR_DRAW_LINE) || (tmpCursor == ImageManager.CURSOR_DRAW_RECT) || (tmpCursor == ImageManager.CURSOR_DRAW_CIRCLE) || (tmpCursor == ImageManager.CURSOR_DRAW_TEXT) || (tmpCursor == ImageManager.CURSOR_DRAW_FREEFORM)) {
+                if ((tmpCursor == ImageManager.CURSOR_DRAW_LINE) || (tmpCursor == ImageManager.CURSOR_DRAW_ARROW) || (tmpCursor == ImageManager.CURSOR_DRAW_RECT) || (tmpCursor == ImageManager.CURSOR_DRAW_CIRCLE) || (tmpCursor == ImageManager.CURSOR_DRAW_TEXT) || (tmpCursor == ImageManager.CURSOR_DRAW_FREEFORM)) {
                     FormConfigFrame.getSingleton().purge();
                 } else {
                     if ((tmpCursor == ImageManager.CURSOR_ATTACK_AXE) || (tmpCursor == ImageManager.CURSOR_ATTACK_SWORD) || (tmpCursor == ImageManager.CURSOR_ATTACK_SPY) || (tmpCursor == ImageManager.CURSOR_ATTACK_LIGHT) || (tmpCursor == ImageManager.CURSOR_ATTACK_HEAVY) || (tmpCursor == ImageManager.CURSOR_ATTACK_RAM) || (tmpCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
@@ -747,6 +765,12 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
                         ((de.tor.tribes.types.Line) FormConfigFrame.getSingleton().getCurrentForm()).setXPosEnd(pos.x);
                         ((de.tor.tribes.types.Line) FormConfigFrame.getSingleton().getCurrentForm()).setYPosEnd(pos.y);
+                        break;
+                    }
+                    case ImageManager.CURSOR_DRAW_ARROW: {
+                        Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
+                        ((de.tor.tribes.types.Arrow) FormConfigFrame.getSingleton().getCurrentForm()).setXPosEnd(pos.x);
+                        ((de.tor.tribes.types.Arrow) FormConfigFrame.getSingleton().getCurrentForm()).setYPosEnd(pos.y);
                         break;
                     }
                     case ImageManager.CURSOR_DRAW_RECT: {
@@ -1824,8 +1848,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     public Point2D.Double mouseToVirtualPos(int pX, int pY) {
         double width = GlobalOptions.getSkin().getCurrentFieldWidth();
         double height = GlobalOptions.getSkin().getCurrentFieldHeight();
-        double x = mVirtualBounds.getX() + ((double) pX / (double) width);
-        double y = mVirtualBounds.getY() + ((double) pY / (double) height);
+        double x = mVirtualBounds.getX() + (pX / width);
+        double y = mVirtualBounds.getY() + (pY / height);
         return new Point2D.Double(x, y);
     }
 

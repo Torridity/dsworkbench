@@ -13,6 +13,7 @@ package de.tor.tribes.ui;
 import de.tor.tribes.types.Circle;
 import de.tor.tribes.types.FreeForm;
 import de.tor.tribes.types.Line;
+import de.tor.tribes.types.Arrow;
 import de.tor.tribes.types.Rectangle;
 import de.tor.tribes.types.Text;
 import de.tor.tribes.util.Constants;
@@ -246,32 +247,52 @@ public class SamplePanel extends javax.swing.JPanel {
                 l.renderPreview(g2d);
                 break;
             }
+            case 5: {
+                //preview arrow
+                Arrow l = new Arrow();
+                l.setDrawColor(mDrawColor);
+                l.setDrawAlpha(fDrawTransparency);
+                l.setTextColor(mTextColor);
+                l.setTextAlpha(fTextTransparency);
+                l.setTextSize(fTextSize);
+                l.setDrawName(drawText);
+                l.setFormName(sText);
+                l.setFilled(bFill);
+                l.setStrokeWidth(fStrokeWidth);
+                l.setXPos(30);
+                l.setYPos(getHeight() / 2);
+                l.setXPosEnd(getWidth() - 30);
+                l.setYPosEnd(getHeight() / 2);
+                l.renderPreview(g2d);
+                break;
+            }
+
         }
 
-    /*
-    g2d.fillRect(0, 0, getWidth(), getHeight());
-    g2d.setColor(mColor);
-    Composite before = g2d.getComposite();
-    Paint p = g2d.getPaint();
-    g2d.setPaint(new TexturePaint(sampleTexture, new Rectangle2D.Double(0, 0, sampleTexture.getWidth(), sampleTexture.getHeight())));
-    g2d.fillRect(getBounds().x, getBounds().y, getBounds().width, getBounds().height);
-    g2d.setPaint(p);
-    Stroke stro = g2d.getStroke();
-    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fTransparency));
-    if (bFill) {
-    g2d.fillRect(getBounds().x + 10, getBounds().y + 10, getBounds().width - 20, getBounds().height - 20);
-    } else {
-    g2d.setStroke(new BasicStroke(fStrokeWidth));
-    g2d.drawRect(getBounds().x + 10, getBounds().y + 10, getBounds().width - 20, getBounds().height - 20);
-    g2d.setStroke(stro);
-    }
-    if (sText.length() > 0) {
-    Font fb = g2d.getFont();
-    g2d.setFont(fb.deriveFont(fStrokeWidth));
-    g2d.drawString(sText, 20, getHeight() - 20);
-    g2d.setFont(fb);
-    }
-    g2d.setComposite(before);*/
+        /*
+        g2d.fillRect(0, 0, getWidth(), getHeight());
+        g2d.setColor(mColor);
+        Composite before = g2d.getComposite();
+        Paint p = g2d.getPaint();
+        g2d.setPaint(new TexturePaint(sampleTexture, new Rectangle2D.Double(0, 0, sampleTexture.getWidth(), sampleTexture.getHeight())));
+        g2d.fillRect(getBounds().x, getBounds().y, getBounds().width, getBounds().height);
+        g2d.setPaint(p);
+        Stroke stro = g2d.getStroke();
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fTransparency));
+        if (bFill) {
+        g2d.fillRect(getBounds().x + 10, getBounds().y + 10, getBounds().width - 20, getBounds().height - 20);
+        } else {
+        g2d.setStroke(new BasicStroke(fStrokeWidth));
+        g2d.drawRect(getBounds().x + 10, getBounds().y + 10, getBounds().width - 20, getBounds().height - 20);
+        g2d.setStroke(stro);
+        }
+        if (sText.length() > 0) {
+        Font fb = g2d.getFont();
+        g2d.setFont(fb.deriveFont(fStrokeWidth));
+        g2d.drawString(sText, 20, getHeight() - 20);
+        g2d.setFont(fb);
+        }
+        g2d.setComposite(before);*/
     }
 
     /** This method is called from within the constructor to

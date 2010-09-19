@@ -79,6 +79,8 @@ public class ImageManager {
     public final static int CURSOR_CHURCH_3 = 26;
     public final static int CURSOR_REMOVE_CHURCH = 27;
     public final static int CURSOR_NOTE = 28;
+    public final static int CURSOR_DRAW_ARROW = 29;
+    public final static int CURSOR_ARMY_CAMP = 30;
     //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Note map icon IDs">
     public static final int ID_NOTE_ICON_0 = 0;
@@ -208,6 +210,8 @@ public class ImageManager {
             loadCursor("graphics/cursors/church3.png", "church3");
             loadCursor("graphics/cursors/no_church.png", "church0");
             loadCursor("graphics/cursors/note.png", "note");
+            loadCursor("graphics/cursors/draw_arrow.png", "draw_arrow");
+            loadCursor("graphics/cursors/army_camp.png", "army_camp");
         } catch (Exception e) {
             logger.error("Failed to load cursor images", e);
             throw new Exception("Failed to load cursors");
@@ -243,25 +247,6 @@ public class ImageManager {
         for (URL u : NOTE_URLS) {
             NOTE_SYMBOLS.add(ImageIO.read(u));
         }
-        /* NOTE_SYMBOLS.add(ImageIO.read(new File("graphics/icons/def_cav.png")));
-        NOTE_SYMBOLS.add(ImageIO.read(new File("graphics/icons/def_archer.png")));
-        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ui/fake.png")));
-        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ally.png")));
-        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/barracks.png")));
-        NOTE_SYMBOLS.add(ImageIO.read(new File("graphics/icons/move_out.png")));
-        NOTE_SYMBOLS.add(ImageIO.read(new File("graphics/icons/move_in.png")));
-        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ui/bullet_ball_blue.png")));
-        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ui/bullet_ball_green.png")));
-        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ui/bullet_ball_yellow.png")));
-        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ui/bullet_ball_red.png")));
-        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ui/bullet_ball_grey.png")));
-        NOTE_SYMBOLS.add(ImageIO.read(new File("graphics/icons/warning.png")));
-        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/die.png")));
-        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/add.gif")));
-        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/remove.gif")));
-        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/checkbox.png")));
-        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ui/eye.png")));
-        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ui/eye_forbidden.png")));*/
     }
 
     public static URL getNoteImageURL(int pNoteId) {

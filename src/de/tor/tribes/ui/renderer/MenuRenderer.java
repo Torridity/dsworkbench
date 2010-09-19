@@ -74,22 +74,24 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
             mIcons.add(ImageIO.read(new File("./graphics/icons/move.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/zoom.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/camera.png")));
-            //19-23 minimap related
+            //19-24 draw related
             mIcons.add(ImageIO.read(new File("./graphics/icons/draw_line.png")));
+            mIcons.add(ImageIO.read(new File("./graphics/icons/draw_arrow.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/draw_freeform.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/draw_rect.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/draw_circle.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/draw_text.png")));
-            //24-27 church
+            //25-28 church
             mIcons.add(ImageIO.read(new File("./graphics/icons/church1.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/church2.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/church3.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/no_church.png")));
-            //28-31 misc
+            //29-32 misc
             mIcons.add(ImageIO.read(new File("./graphics/icons/search.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/settings.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/clock.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/note.png")));
+            mIcons.add(ImageIO.read(new File("./graphics/world/army_camp.png")));
         } catch (Exception e) {
         }
         menuRegions = new Hashtable<Integer, Rectangle>();
@@ -147,16 +149,16 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
         }
         //draw tools
         lastPos = pos;
-        for (; pos < 24; pos++) {
+        for (; pos < 25; pos++) {
             menuRegions.put(pos, new Rectangle(menuLocation.x + space + (pos - lastPos) * iconw + (pos - lastPos) * space, menuLocation.y + space + iconh + space + iconh + space + iconh + space, iconw, iconh));
         }
         //misc tools
         lastPos = pos;
-        for (; pos < 28; pos++) {
+        for (; pos < 29; pos++) {
             menuRegions.put(pos, new Rectangle(menuLocation.x + space + (pos - lastPos) * iconw + (pos - lastPos) * space, menuLocation.y + space + iconh + space + iconh + space + iconh + space + iconh + space, iconw, iconh));
         }
         lastPos = pos;
-        for (; pos < 32; pos++) {
+        for (; pos < 34; pos++) {
             menuRegions.put(pos, new Rectangle(menuLocation.x + space + (pos - lastPos) * iconw + (pos - lastPos) * space, menuLocation.y + space + iconh + space + iconh + space + iconh + space + iconh + space + iconh + space, iconw, iconh));
         }
         Enumeration<Integer> regions = menuRegions.keys();
@@ -169,7 +171,7 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
             if (rect.contains(mouseLocation)) {
                 g2d.setColor(Constants.DS_BACK);
 
-                if (!showChurchTools && (region == 24 || region == 25 || region == 26 || region == 27)) {
+                if (!showChurchTools && (region == 25 || region == 26 || region == 27 || region == 28)) {
                     g2d.fillRect(rect.x, rect.y, rect.width, rect.height);
                 } else {
                     g2d.fill3DRect(rect.x, rect.y, rect.width, rect.height, false);
@@ -178,7 +180,7 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
                 String name = getToolName(region);
                 g2d.drawString(name, menuLocation.x + space, menuLocation.y - 5);
             } else {
-                if (!showChurchTools && (region == 24 || region == 25 || region == 26 || region == 27)) {
+                if (!showChurchTools && (region == 25 || region == 26 || region == 27 || region == 28)) {
                     g2d.setColor(Constants.DS_BACK);
                     g2d.fillRect(rect.x, rect.y, rect.width, rect.height);
                 } else {
@@ -262,51 +264,58 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
                 return "Linie zeichnen";
             }
             case 20: {
-                return "Freihand zeichnen";
+                return "Pfeil zeichnen";
             }
             case 21: {
-                return "Rechteck zeichnen";
+                return "Freihand zeichnen";
             }
             case 22: {
-                return "Kreis zeichnen";
+                return "Rechteck zeichnen";
             }
             case 23: {
-                return "Text zeichnen";
+                return "Kreis zeichnen";
             }
             case 24: {
-                if (!showChurchTools) {
-                    return "(Nicht verfügbar)";
-                }
-                return "Kirche (Stufe 1) erstellen";
+                return "Text zeichnen";
             }
             case 25: {
                 if (!showChurchTools) {
                     return "(Nicht verfügbar)";
                 }
-                return "Kirche (Stufe 2) erstellen";
+                return "Kirche (Stufe 1) erstellen";
             }
             case 26: {
                 if (!showChurchTools) {
                     return "(Nicht verfügbar)";
                 }
-                return "Kirche (Stufe 3) erstellen";
+                return "Kirche (Stufe 2) erstellen";
             }
             case 27: {
                 if (!showChurchTools) {
                     return "(Nicht verfügbar)";
                 }
-                return "Kirche entfernen";
+                return "Kirche (Stufe 3) erstellen";
             }
             case 28: {
-                return "Suche öffnen";
+                if (!showChurchTools) {
+                    return "(Nicht verfügbar)";
+                }
+                return "Kirche entfernen";
             }
             case 29: {
-                return "Einstellungen öffnen";
+                return "Suche öffnen";
             }
             case 30: {
+                return "Einstellungen öffnen";
+            }
+            case 31: {
                 return "Uhr öffnen";
-            }case 31: {
+            }
+            case 32: {
                 return "Notiz erstellen";
+            }
+            case 33: {
+                return "Heereslager erstellen";
             }
         }
         return "";
@@ -405,26 +414,31 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
                                 break;
                             }
                             case 20: {
+                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DRAW_ARROW);
+                                FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.Arrow.class);
+                                break;
+                            }
+                            case 21: {
                                 MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DRAW_FREEFORM);
                                 FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.FreeForm.class);
                                 break;
                             }
-                            case 21: {
+                            case 22: {
                                 MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DRAW_RECT);
                                 FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.Rectangle.class);
                                 break;
                             }
-                            case 22: {
+                            case 23: {
                                 MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DRAW_CIRCLE);
                                 FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.Circle.class);
                                 break;
                             }
-                            case 23: {
+                            case 24: {
                                 MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DRAW_TEXT);
                                 FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.Text.class);
                                 break;
                             }
-                            case 24: {
+                            case 25: {
                                 if (showChurchTools) {
                                     MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_CHURCH_1);
                                 } else {
@@ -432,7 +446,7 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
                                 }
                                 break;
                             }
-                            case 25: {
+                            case 26: {
                                 if (showChurchTools) {
                                     MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_CHURCH_2);
                                 } else {
@@ -440,7 +454,7 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
                                 }
                                 break;
                             }
-                            case 26: {
+                            case 27: {
                                 if (showChurchTools) {
                                     MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_CHURCH_3);
                                 } else {
@@ -448,25 +462,30 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
                                 }
                                 break;
                             }
-                            case 27: {
+                            case 28: {
                                 if (showChurchTools) {
                                     MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_REMOVE_CHURCH);
                                 }
                                 break;
                             }
-                            case 28: {
+                            case 29: {
                                 DSWorkbenchSearchFrame.getSingleton().setVisible(true);
                                 break;
                             }
-                            case 29: {
+                            case 30: {
                                 DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
                                 break;
                             }
-                            case 30: {
+                            case 31: {
                                 ClockFrame.getSingleton().setVisible(true);
                                 break;
-                            }case 31: {
+                            }
+                            case 32: {
                                 MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_NOTE);
+                                break;
+                            }
+                            case 33: {
+                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ARMY_CAMP);
                                 break;
                             }
                         }

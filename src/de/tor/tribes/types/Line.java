@@ -154,6 +154,7 @@ public class Line extends AbstractForm {
 
     private void drawDecoration(Point2D.Double s, Point2D.Double e, Graphics2D g2d) {
         double theta = Math.atan2(e.y - s.y, e.x - s.x);
+
         double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
         double h = Math.sqrt(3) / 2 * 20 / zoom;
         AffineTransform tb = g2d.getTransform();
@@ -178,12 +179,6 @@ public class Line extends AbstractForm {
         }
         g2d.setTransform(tb);
         if (isDrawName()) {
-            /* Point2D.Double center = new Point2D.Double((e.getX() - s.getX()) / 2, (e.getY() - s.getY()) / 2);
-            AffineTransform t = AffineTransform.getRotateInstance(theta, s.x + center.getX(), s.y + center.getY());
-            g2d.setTransform(t);
-            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT);
-            g2d.drawString(getFormName(), (int) Math.rint(s.x + center.getX()), (int) Math.rint(s.y + center.getY()));
-             */
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
             g2d.setColor(getTextColor());
             g2d.drawString(getFormName(), (int) s.x, (int) s.y);

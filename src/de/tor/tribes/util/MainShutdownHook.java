@@ -5,6 +5,7 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.ui.DSWorkbenchArmyCampFrame;
 import de.tor.tribes.ui.DSWorkbenchAttackFrame;
 import de.tor.tribes.ui.DSWorkbenchChurchFrame;
 import de.tor.tribes.ui.DSWorkbenchConquersFrame;
@@ -70,6 +71,7 @@ public class MainShutdownHook extends Thread {
             GlobalOptions.addProperty("search.frame.alwaysOnTop", Boolean.toString(DSWorkbenchSearchFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("selection.frame.alwaysOnTop", Boolean.toString(DSWorkbenchSelectionFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("report.frame.alwaysOnTop", Boolean.toString(DSWorkbenchReportFrame.getSingleton().isAlwaysOnTop()));
+            GlobalOptions.addProperty("army.camp.frame.alwaysOnTop", Boolean.toString(DSWorkbenchArmyCampFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("report.frame.visible", Boolean.toString(DSWorkbenchReportFrame.getSingleton().isVisible()));
             GlobalOptions.addProperty("layer.order", DSWorkbenchMainFrame.getSingleton().getLayerOrder());
             DSWorkbenchMainFrame.getSingleton().storeProperties();

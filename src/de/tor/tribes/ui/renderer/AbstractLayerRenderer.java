@@ -14,8 +14,10 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
 
 /**
  *
@@ -25,6 +27,7 @@ public abstract class AbstractLayerRenderer {
 
     private BufferedImage mLayer = null;
     private Rectangle2D mRenderedBounds = null;
+    private HashMap<Integer, Rectangle> renderedSpriteBounds = null;
 
     /**Create an empty BufferedImage
      * @param w
@@ -37,12 +40,40 @@ public abstract class AbstractLayerRenderer {
         GraphicsDevice device = env.getDefaultScreenDevice();
         GraphicsConfiguration config = device.getDefaultConfiguration();
         BufferedImage buffy = config.createCompatibleImage(w, h, trans);
-        return buffy;
+        return optimizeImage(buffy);
+    }
+
+    /**Optimize an image or create a copy of an image if the image was created by getBufferedImage()*/
+    private BufferedImage optimizeImage(BufferedImage image) {
+        // obtain the current system graphical settings
+        GraphicsConfiguration gfx_config = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+
+        /*
+         * if image is already compatible and optimized for current system
+         * settings, simply return it
+         */
+        if (image.getColorModel().equals(gfx_config.getColorModel())) {
+            return image;
+        }
+
+        // image is not optimized, so create a new image that is
+        BufferedImage new_image = gfx_config.createCompatibleImage(image.getWidth(), image.getHeight(), image.getTransparency());
+
+        // get the graphics context of the new image to draw the old image on
+        Graphics2D g2d = (Graphics2D) new_image.getGraphics();
+
+        // actually draw the image and dispose of context no longer needed
+        g2d.drawImage(image, 0, 0, null);
+        g2d.dispose();
+
+        // return the new optimized image
+        return new_image;
     }
 
     public void prepareRender(Rectangle2D pVirtualBounds, Village[][] pVisibleVillages, Graphics2D pG2d) {
         int xMovement = 0;
         int yMovement = 0;
+
         int wField = GlobalOptions.getSkin().getCurrentFieldWidth();
         int hField = GlobalOptions.getSkin().getCurrentFieldHeight();
         if (mRenderedBounds != null) {
@@ -69,6 +100,7 @@ public abstract class AbstractLayerRenderer {
         double dx = 0 - ((xPos - Math.floor(xPos)) * wField);
         double dy = 0 - ((yPos - Math.floor(yPos)) * hField);
         long s = System.currentTimeMillis();
+        renderedSpriteBounds = new HashMap<Integer, Rectangle>();
         BufferedImage img = renderRows(pVisibleVillages, fieldsY, wField, hField);
         if (fieldsY > 0) {
             pG2d.drawImage(img, (int) Math.floor(dx), (int) Math.floor(dy), null);
@@ -76,7 +108,7 @@ public abstract class AbstractLayerRenderer {
             //pG2d.drawImage(img, (int) Math.floor(dx), (int) Math.floor(dy) + (pVisibleVillages[0].length + fieldsY) * hField, null);
             pG2d.drawImage(img, (int) Math.floor(dx), (int) Math.floor(dy) + (pVisibleVillages[0].length + fieldsY) * hField, null);
         }
-
+        renderedSpriteBounds = new HashMap<Integer, Rectangle>();
         img = renderColumns(pVisibleVillages, fieldsX, wField, hField);
         if (fieldsX > 0) {
             pG2d.drawImage(img, (int) Math.floor(dx), (int) Math.floor(dy), null);
@@ -95,33 +127,68 @@ public abstract class AbstractLayerRenderer {
         Graphics2D g2d = (Graphics2D) newRows.getGraphics();
         double zoom = MapPanel.getSingleton().getMapRenderer().getCurrentZoom();
         //iterate through entire row
+        int cnt = 0;
+        int cp = 0;
         for (int x = 0; x < pVillages.length; x++) {
             //iterate from first row for 'pRows' times
             for (int y = firstRow; y < firstRow + Math.abs(pRows); y++) {
+                cnt++;
                 Village v = pVillages[x][y];
                 int row = y - firstRow;
                 int col = x;
-                Image text = null;
+                Image sprite = null;
+                Rectangle copyRect = null;
+                int textureId = -1;
                 if (v != null) {
                     //village field that has to be rendered
                     if (!GlobalOptions.getSkin().isMinimapSkin()) {
-                        text = GlobalOptions.getSkin().getImage(v.getGraphicsType(), zoom);
+                        textureId = v.getGraphicsType();
+                        copyRect = renderedSpriteBounds.get(textureId);
+                        if (copyRect == null) {
+                            sprite = GlobalOptions.getSkin().getImage(textureId, zoom);
+                        }
                     } else {
                         g2d.setColor(Color.MAGENTA);
-                        g2d.drawRect(col * pFieldWidth, row * pFieldHeight, pFieldWidth - 1, pFieldHeight - 1);
+                        textureId = 0;
+                        copyRect = renderedSpriteBounds.get(textureId);
+                        if (copyRect == null) {
+                            g2d.drawRect(col * pFieldWidth, row * pFieldHeight, pFieldWidth - 1, pFieldHeight - 1);
+                            renderedSpriteBounds.put(textureId, new Rectangle(col * pFieldWidth, row * pFieldHeight, pFieldWidth - 1, pFieldHeight - 1));
+                        }
                     }
                 } else {
                     int globalCol = colToGlobalPosition(col);
                     int globalRow = rowToGlobalPosition(y);
-                    g2d.setColor(Color.YELLOW);
-                    //g2d.drawRect(col * pFieldWidth, row * pFieldHeight, pFieldWidth - 1, pFieldHeight - 1);
-                    // text = WorldDecorationHolder.getTexture(globalCol, globalRow, MapPanel.getSingleton().getMapRenderer().getCurrentZoom());
+                    if (!GlobalOptions.getSkin().isMinimapSkin()) {
+                        textureId = WorldDecorationHolder.getTextureId(globalCol, globalRow) + 100;
+                        copyRect = renderedSpriteBounds.get(textureId + 100);
+                        if (copyRect == null) {
+                            sprite = WorldDecorationHolder.getTexture(globalCol, globalRow, MapPanel.getSingleton().getMapRenderer().getCurrentZoom());
+                        }
+                    } else {
+                        g2d.setColor(Color.MAGENTA);
+                        textureId = 1;
+                        copyRect = renderedSpriteBounds.get(textureId);
+                        if (copyRect == null) {
+                            g2d.fillRect(col * pFieldWidth, row * pFieldHeight, pFieldWidth - 1, pFieldHeight - 1);
+                            renderedSpriteBounds.put(textureId, new Rectangle(col * pFieldWidth, row * pFieldHeight, pFieldWidth - 1, pFieldHeight - 1));
+                        }
+                    }
                 }
-                if (text != null) {
-                    g2d.drawImage(text, col * pFieldWidth, row * pFieldHeight, null);
+
+                if (sprite != null) {
+                    //render sprite
+                    g2d.drawImage(sprite, col * pFieldWidth, row * pFieldHeight, null);
+                    renderedSpriteBounds.put(textureId, new Rectangle(col * pFieldWidth, row * pFieldHeight, pFieldWidth, pFieldHeight));
+                } else if (copyRect != null) {
+                    //copy from copy rect
+                    cp++;
+                    g2d.copyArea(copyRect.x, copyRect.y, copyRect.width, copyRect.height, col * pFieldWidth - copyRect.x, row * pFieldHeight - copyRect.y);
                 }
             }
         }
+        System.out.println("Row: " + cnt);
+        System.out.println("CP : " + cp);
         return newRows;
     }
 
@@ -133,36 +200,68 @@ public abstract class AbstractLayerRenderer {
         Graphics2D g2d = (Graphics2D) newColumns.getGraphics();
         double zoom = MapPanel.getSingleton().getMapRenderer().getCurrentZoom();
         //iterate through entire row
+        int cnt = 0;
+        int cp = 0;
         for (int x = firstCol; x < firstCol + Math.abs(pColumns); x++) {
             for (int y = 0; y < pVillages[0].length; y++) {
+                cnt++;
                 //iterate from first row for 'pRows' times
                 Village v = pVillages[x][y];
                 int row = y;
                 int col = x - firstCol;
-                Image text = null;
+                Image sprite = null;
+                Rectangle copyRect = null;
+                int textureId = -1;
                 if (v != null) {
                     //village field that has to be rendered
                     if (!GlobalOptions.getSkin().isMinimapSkin()) {
-                        text = GlobalOptions.getSkin().getImage(v.getGraphicsType(), zoom);
+                        textureId = v.getGraphicsType();
+                        copyRect = renderedSpriteBounds.get(textureId);
+                        if (copyRect == null) {
+                            sprite = GlobalOptions.getSkin().getImage(textureId, zoom);
+                        }
                     } else {
                         g2d.setColor(Color.MAGENTA);
-                        g2d.drawRect(col * pFieldWidth, row * pFieldHeight, pFieldWidth - 1, pFieldHeight - 1);
+                        textureId = 0;
+                        copyRect = renderedSpriteBounds.get(textureId);
+                        if (copyRect == null) {
+                            g2d.drawRect(col * pFieldWidth, row * pFieldHeight, pFieldWidth - 1, pFieldHeight - 1);
+                            renderedSpriteBounds.put(textureId, new Rectangle(col * pFieldWidth, row * pFieldHeight, pFieldWidth - 1, pFieldHeight - 1));
+                        }
                     }
-
-                    //g2d.setColor(Color.MAGENTA);
-                    //g2d.drawRect(col * pFieldWidth, row * pFieldHeight, pFieldWidth - 1, pFieldHeight - 1);
                 } else {
                     //decoration has to be rendered
-                    g2d.setColor(Color.YELLOW);
                     int globalCol = colToGlobalPosition(x);
                     int globalRow = rowToGlobalPosition(row);
-                    // text = WorldDecorationHolder.getTexture(globalCol, globalRow, zoom);
+                    if (!GlobalOptions.getSkin().isMinimapSkin()) {
+                        textureId = WorldDecorationHolder.getTextureId(globalCol, globalRow);
+                        copyRect = renderedSpriteBounds.get(textureId + 100);
+                        if (copyRect == null) {
+                            sprite = WorldDecorationHolder.getTexture(globalCol, globalRow, zoom);
+                        }
+                    } else {
+                        g2d.setColor(Color.MAGENTA);
+                        textureId = 1;
+                        copyRect = renderedSpriteBounds.get(textureId);
+                        if (copyRect == null) {
+                            g2d.fillRect(col * pFieldWidth, row * pFieldHeight, pFieldWidth - 1, pFieldHeight - 1);
+                            renderedSpriteBounds.put(textureId, new Rectangle(col * pFieldWidth, row * pFieldHeight, pFieldWidth - 1, pFieldHeight - 1));
+                        }
+                    }
                 }
-                if (text != null) {
-                    g2d.drawImage(text, col * pFieldWidth, row * pFieldHeight, null);
+
+                if (sprite != null) {
+                    g2d.drawImage(sprite, col * pFieldWidth, row * pFieldHeight, null);
+                    renderedSpriteBounds.put(textureId, new Rectangle(col * pFieldWidth, row * pFieldHeight, pFieldWidth, pFieldHeight));
+                } else if (copyRect != null) {
+                    //copy from copy rect
+                    cp++;
+                    g2d.copyArea(copyRect.x, copyRect.y, copyRect.width, copyRect.height, col * pFieldWidth - copyRect.x, row * pFieldHeight - copyRect.y);
                 }
             }
         }
+        System.out.println("Col: " + cnt);
+        System.out.println("CP : " + cp);
         return newColumns;
     }
 

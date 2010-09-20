@@ -308,111 +308,113 @@ public class MapRenderer extends Thread {
                         if (viewStartPoint == null) {
                             throw new Exception("View position is 'null', skip redraw");
                         }
-                        renderMap();
-                        renderTagMarkers();
+                        long s = System.currentTimeMillis();
+//                        renderMap();
+                        villagePositions = new HashMap<Village, Rectangle>();
+                        rend.prepareRender(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
+                        System.out.println("   Dur: " + (System.currentTimeMillis() - s));
+                        //renderTagMarkers();
                         mapRedrawRequired = false;
                     }
 
-
-
                     boolean mapDrawn = false;
                     // long s = System.currentTimeMillis();
-                    for (Integer layer : drawOrder) {
-                        if (layer == 0) {
-                            if (mapDrawn) {
-                                //map already drawn, so this is MarkOnTop
-                                Composite gg = g2d.getComposite();
-                                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-                                renderMarkers(false);
-                                g2d.drawImage(mLayers.get(MARKER_LAYER), 0, 0, null);
-                                g2d.setComposite(gg);
-                                //  logger.info(" - MARK " + (System.currentTimeMillis() - s));
-                            } else {
-                                renderMarkers(true);
-                                //  logger.info(" - MARK1 " + (System.currentTimeMillis() - s));
-                                g2d.drawImage(mLayers.get(MARKER_LAYER), 0, 0, null);
-                                //  logger.info(" - MARK " + (System.currentTimeMillis() - s));
-                            }
-                            //System.out.println("DTM " + (System.currentTimeMillis() - s));
-                        } else if (layer == 1) {
-                            //  System.out.println("DRAW MAP");
-                            g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
-                            // System.out.println("DTV " + (System.currentTimeMillis() - s));
-                            //logger.info(" - MAP " + (System.currentTimeMillis() - s));
-                            mapDrawn = true;
-                        } else if (layer == 2) {
-                            if (mapDrawn) {
-                                //only draw layer if map is drawn
-                                //If not, this layer is hidden behind the map
-                                g2d.drawImage(mLayers.get(TAG_MARKER_LAYER), 0, 0, null);
-                            }
-                            //  logger.info(" - TAG " + (System.currentTimeMillis() - s));
-                        } else if (layer == 3) {
-                            //render other layers (active village, troop type)
-                            if (mapDrawn) {
-                                //only draw layer if map is drawn
-                                //If not, this layer is hidden behind the map
-                                renderDecoration(g2d);
-                                // System.out.println("DTD " + (System.currentTimeMillis() - s));
-                            }
-                            //  logger.info(" - DECO " + (System.currentTimeMillis() - s));
-                        } else if (layer == 4) {
-                            //render troop density
-                            if (mapDrawn) {
-                                //only draw layer if map is drawn
-                                //If not, this layer is hidden behind the map
-                                renderTroopDensity(g2d);
-                            }
-                            //  logger.info(" - TROOP " + (System.currentTimeMillis() - s));
-                        } else if (layer == 5) {
-                            if (mapDrawn) {
-                                //only draw layer if map is drawn
-                                //If not, this layer is hidden behind the map
-                                renderNoteMarkers();
-                                g2d.drawImage(mLayers.get(NOTE_LAYER), 0, 0, null);
-                                // System.out.println("DTN " + (System.currentTimeMillis() - s));
-                            }
-                            // logger.info(" - NOTE " + (System.currentTimeMillis() - s));
-                        } else if (layer == 6) {
-                            //attacks layer
-                            if (mapDrawn) {
-                                //only draw layer if map is drawn
-                                //If not, this layer is hidden behind the map
-                                renderAttacks(g2d);
-                            }
-                            //  logger.info(" - ATTS " + (System.currentTimeMillis() - s));
-                        } else if (layer == 7) {
-                            //supports
-                            if (mapDrawn) {
-                                //only draw layer if map is drawn
-                                //If not, this layer is hidden behind the map
-                                renderSupports(g2d);
-                            }
-                            //   logger.info(" - SUPP " + (System.currentTimeMillis() - s));
-                        } else if (layer == 8) {
-                            //forms
-                            if (mapDrawn) {
-                                //only draw layer if map is drawn
-                                //If not, this layer is hidden behind the map
-                                renderForms(g2d);
-                            }
-                            //    logger.info(" - FORM " + (System.currentTimeMillis() - s));
-                        } else if (layer == 9) {
-                            //curches
-                            if (mapDrawn) {
-                                //only draw layer if map is drawn
-                                //If not, this layer is hidden behind the map
-                                renderChurches(g2d);
-                                //    logger.info(" - CHURCH " + (System.currentTimeMillis() - s));
-                            }
-                        }
-                    }
-                   rend.prepareRender(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
+//                    for (Integer layer : drawOrder) {
+//                        if (layer == 0) {
+//                            if (mapDrawn) {
+//                                //map already drawn, so this is MarkOnTop
+//                                Composite gg = g2d.getComposite();
+//                                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+//                                renderMarkers(false);
+//                                g2d.drawImage(mLayers.get(MARKER_LAYER), 0, 0, null);
+//                                g2d.setComposite(gg);
+//                                //  logger.info(" - MARK " + (System.currentTimeMillis() - s));
+//                            } else {
+//                                renderMarkers(true);
+//                                //  logger.info(" - MARK1 " + (System.currentTimeMillis() - s));
+//                                g2d.drawImage(mLayers.get(MARKER_LAYER), 0, 0, null);
+//                                //  logger.info(" - MARK " + (System.currentTimeMillis() - s));
+//                            }
+//                            //System.out.println("DTM " + (System.currentTimeMillis() - s));
+//                        } else if (layer == 1) {
+//                            //  System.out.println("DRAW MAP");
+//                            g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
+//                            // System.out.println("DTV " + (System.currentTimeMillis() - s));
+//                            //logger.info(" - MAP " + (System.currentTimeMillis() - s));
+//                            mapDrawn = true;
+//                        } else if (layer == 2) {
+//                            if (mapDrawn) {
+//                                //only draw layer if map is drawn
+//                                //If not, this layer is hidden behind the map
+//                                g2d.drawImage(mLayers.get(TAG_MARKER_LAYER), 0, 0, null);
+//                            }
+//                            //  logger.info(" - TAG " + (System.currentTimeMillis() - s));
+//                        } else if (layer == 3) {
+//                            //render other layers (active village, troop type)
+//                            if (mapDrawn) {
+//                                //only draw layer if map is drawn
+//                                //If not, this layer is hidden behind the map
+//                                renderDecoration(g2d);
+//                                // System.out.println("DTD " + (System.currentTimeMillis() - s));
+//                            }
+//                            //  logger.info(" - DECO " + (System.currentTimeMillis() - s));
+//                        } else if (layer == 4) {
+//                            //render troop density
+//                            if (mapDrawn) {
+//                                //only draw layer if map is drawn
+//                                //If not, this layer is hidden behind the map
+//                                renderTroopDensity(g2d);
+//                            }
+//                            //  logger.info(" - TROOP " + (System.currentTimeMillis() - s));
+//                        } else if (layer == 5) {
+//                            if (mapDrawn) {
+//                                //only draw layer if map is drawn
+//                                //If not, this layer is hidden behind the map
+//                                renderNoteMarkers();
+//                                g2d.drawImage(mLayers.get(NOTE_LAYER), 0, 0, null);
+//                                // System.out.println("DTN " + (System.currentTimeMillis() - s));
+//                            }
+//                            // logger.info(" - NOTE " + (System.currentTimeMillis() - s));
+//                        } else if (layer == 6) {
+//                            //attacks layer
+//                            if (mapDrawn) {
+//                                //only draw layer if map is drawn
+//                                //If not, this layer is hidden behind the map
+//                                renderAttacks(g2d);
+//                            }
+//                            //  logger.info(" - ATTS " + (System.currentTimeMillis() - s));
+//                        } else if (layer == 7) {
+//                            //supports
+//                            if (mapDrawn) {
+//                                //only draw layer if map is drawn
+//                                //If not, this layer is hidden behind the map
+//                                renderSupports(g2d);
+//                            }
+//                            //   logger.info(" - SUPP " + (System.currentTimeMillis() - s));
+//                        } else if (layer == 8) {
+//                            //forms
+//                            if (mapDrawn) {
+//                                //only draw layer if map is drawn
+//                                //If not, this layer is hidden behind the map
+//                                renderForms(g2d);
+//                            }
+//                            //    logger.info(" - FORM " + (System.currentTimeMillis() - s));
+//                        } else if (layer == 9) {
+//                            //curches
+//                            if (mapDrawn) {
+//                                //only draw layer if map is drawn
+//                                //If not, this layer is hidden behind the map
+//                                renderChurches(g2d);
+//                                //    logger.info(" - CHURCH " + (System.currentTimeMillis() - s));
+//                            }
+//                        }
+//                    }
+
                     //     System.out.println("DT " + (System.currentTimeMillis() - s));
 
                     //draw live layer -> always on top
-                    renderLiveLayer(g2d);
-                    g2d.drawImage(mLayers.get(LIVE_LAYER), 0, 0, null);
+//                    renderLiveLayer(g2d);
+//                    g2d.drawImage(mLayers.get(LIVE_LAYER), 0, 0, null);
 
                     //    logger.info(" - LIVE " + (System.currentTimeMillis() - s));
                     // s = System.currentTimeMillis();
@@ -910,7 +912,7 @@ public class MapRenderer extends Thread {
                 g2d.drawLine(0, (int) Math.floor(ys + dy), wb, (int) Math.floor(ys + dy));
             }
         }
-        System.out.println("DT: " + drawTime);
+        System.out.println("DrawTime: " + drawTime);
         g2d.setStroke(st);
         //</editor-fold>
         g2d.dispose();

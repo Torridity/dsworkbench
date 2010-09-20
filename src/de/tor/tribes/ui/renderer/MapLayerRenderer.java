@@ -13,5 +13,4 @@ import java.awt.image.BufferedImage;
  */
 public class MapLayerRenderer extends AbstractLayerRenderer{
 
-  
 }

@@ -407,7 +407,7 @@ public class MapRenderer extends Thread {
                             }
                         }
                     }
-                    rend.prepareRender(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
+                   rend.prepareRender(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
                     //     System.out.println("DT " + (System.currentTimeMillis() - s));
 
                     //draw live layer -> always on top
@@ -512,11 +512,11 @@ public class MapRenderer extends Thread {
         iVillagesX = (int) Math.ceil((double) MapPanel.getSingleton().getWidth() / currentFieldWidth);
         iVillagesY = (int) Math.ceil((double) MapPanel.getSingleton().getHeight() / currentFieldHeight);
         //add small buffer
-        /*iVillagesX++;
+      /*  iVillagesX++;
         iVillagesY++;*/
         //village start
-        int xStartVillage = (int) Math.ceil(dCenterX - iVillagesX / 2.0);
-        int yStartVillage = (int) Math.ceil(dCenterY - iVillagesY / 2.0);
+        int xStartVillage = (int) Math.floor(dCenterX - iVillagesX / 2.0);
+        int yStartVillage = (int) Math.floor(dCenterY - iVillagesY / 2.0);
         //double start
         double dXStart = dCenterX - (double) iVillagesX / 2.0;
         double dYStart = dCenterY - (double) iVillagesY / 2.0;

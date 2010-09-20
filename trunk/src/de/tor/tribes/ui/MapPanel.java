@@ -82,7 +82,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
-
+* @TODO (DIFF) Transfer off to A*Star now uses own troops instead of all in village
  * @author Charon
  */
 public class MapPanel extends JPanel implements DragGestureListener, // For recognizing the start of drags
@@ -1625,14 +1625,21 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 return;
             }
             Hashtable<String, Double> values = new Hashtable<String, Double>();
-            Hashtable<UnitHolder, Integer> inVillage = holder.getTroopsInVillage();
-            if (inVillage == null) {
+            Hashtable<UnitHolder, Integer> ownTroops = holder.getOwnTroops();
+            if (evt.getSource() == jCurrentToAStarAsAttacker && ownTroops == null) {
                 JOptionPaneHelper.showInformationBox(this, "Keine Truppeninformationen vorhanden", "Information");
                 return;
             }
+            
+            Hashtable<UnitHolder, Integer> inVillage = holder.getTroopsInVillage();
+            if (evt.getSource() == jCurrentToAStarAsDefender && inVillage == null) {
+                JOptionPaneHelper.showInformationBox(this, "Keine Truppeninformationen vorhanden", "Information");
+                return;
+            }
+
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
                 if (evt.getSource() == jCurrentToAStarAsAttacker) {
-                    values.put("att_" + unit.getPlainName(), (double) inVillage.get(unit));
+                    values.put("att_" + unit.getPlainName(), (double) ownTroops.get(unit));
                 }
                 if (evt.getSource() == jCurrentToAStarAsDefender) {
                     values.put("def_" + unit.getPlainName(), (double) inVillage.get(unit));

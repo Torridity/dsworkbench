@@ -4,12 +4,18 @@
  */
 package de.tor.tribes.io;
 
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
@@ -25,6 +31,7 @@ public class WorldDecorationHolder {
     private static Logger logger = Logger.getLogger("WorldDecorationManager");
     private static byte[] decoration = new byte[1000000];
     private static List<BufferedImage> mTextures = null;
+    private static HashMap<Integer, HashMap<Double, BufferedImage>> cache = new HashMap<Integer, HashMap<Double, BufferedImage>>();
     public static int ID_GRAS1 = 0;
     public static int ID_GRAS2 = 1;
     public static int ID_GRAS3 = 2;
@@ -117,12 +124,38 @@ public class WorldDecorationHolder {
         }
     }
 
+    public static BufferedImage getOriginalSprite(int pX, int pY) {
+        if ((pX < 0) || (pY < 0) || (pX > 999) || (pY > 999)) {
+            //return default texture
+            return mTextures.get(0);
+        }
+        int decoId = decoration[pY * 1000 + pX];
+        return mTextures.get(decoId);
+    }
+
     public static Image getTexture(int pX, int pY, double pScale) {
         if ((pX < 0) || (pY < 0) || (pX > 999) || (pY > 999)) {
             //return default texture
             return mTextures.get(0);
         }
-        return mTextures.get(decoration[pY * 1000 + pX]).getScaledInstance((int) Math.rint(mTextures.get(0).getWidth() / pScale), (int) Math.rint(mTextures.get(0).getHeight() / pScale), BufferedImage.SCALE_FAST);
+        int decoId = decoration[pY * 1000 + pX];
+        HashMap<Double, BufferedImage> cacheForId = cache.get(decoId);
+        if (cacheForId == null) {
+            cacheForId = new HashMap<Double, BufferedImage>();
+            cache.put(decoId, cacheForId);
+        }
+        BufferedImage cached = cacheForId.get(pScale);
+        if (cached == null) {
+            Image scaled = mTextures.get(decoId).getScaledInstance((int) Math.rint(mTextures.get(0).getWidth() / pScale), (int) Math.rint(mTextures.get(0).getHeight() / pScale), BufferedImage.SCALE_DEFAULT);
+            GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+            GraphicsConfiguration gc = gd.getDefaultConfiguration();
+            cached = gc.createCompatibleImage(scaled.getWidth(null), scaled.getHeight(null), Transparency.OPAQUE);
+            Graphics2D g = cached.createGraphics();
+            g.drawImage(scaled, 0, 0, null);
+            g.dispose();
+            cacheForId.put(pScale, cached);
+        }
+        return cached;
     }
 
     public static byte getTextureId(int pX, int pY) {

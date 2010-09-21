@@ -8,13 +8,14 @@ import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.util.GlobalOptions;
-import java.awt.Color;
+import de.tor.tribes.util.Skin;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
@@ -69,6 +70,7 @@ public abstract class AbstractLayerRenderer {
         // return the new optimized image
         return new_image;
     }
+    boolean fullyRendered = false;
 
     public void prepareRender(Rectangle2D pVirtualBounds, Village[][] pVisibleVillages, Graphics2D pG2d) {
         int xMovement = 0;
@@ -99,36 +101,64 @@ public abstract class AbstractLayerRenderer {
         double yPos = pVirtualBounds.getY();
         double dx = 0 - ((xPos - Math.floor(xPos)) * wField);
         double dy = 0 - ((yPos - Math.floor(yPos)) * hField);
-        long s = System.currentTimeMillis();
+
         renderedSpriteBounds = new HashMap<Integer, Rectangle>();
+       /* if (!fullyRendered) {
+            BufferedImage img = renderRows(pVisibleVillages, pVisibleVillages[0].length, wField, hField);
+            if (fieldsY > 0) {
+                pG2d.drawImage(img, (int) Math.floor(dx), (int) Math.floor(dy), null);
+            } else {
+                //pG2d.drawImage(img, (int) Math.floor(dx), (int) Math.floor(dy) + (pVisibleVillages[0].length + fieldsY) * hField, null);
+                pG2d.drawImage(img, (int) Math.floor(dx), (int) Math.floor(dy) + (pVisibleVillages[0].length + fieldsY) * hField, null);
+            }
+            return;
+        }*/
+
         BufferedImage img = renderRows(pVisibleVillages, fieldsY, wField, hField);
+        long s = System.currentTimeMillis();
         if (fieldsY > 0) {
             pG2d.drawImage(img, (int) Math.floor(dx), (int) Math.floor(dy), null);
         } else {
             //pG2d.drawImage(img, (int) Math.floor(dx), (int) Math.floor(dy) + (pVisibleVillages[0].length + fieldsY) * hField, null);
             pG2d.drawImage(img, (int) Math.floor(dx), (int) Math.floor(dy) + (pVisibleVillages[0].length + fieldsY) * hField, null);
         }
+        System.out.println("DrawRow: " + (System.currentTimeMillis() - s));
+
         renderedSpriteBounds = new HashMap<Integer, Rectangle>();
         img = renderColumns(pVisibleVillages, fieldsX, wField, hField);
+        s = System.currentTimeMillis();
         if (fieldsX > 0) {
             pG2d.drawImage(img, (int) Math.floor(dx), (int) Math.floor(dy), null);
         } else {
-            //pG2d.drawImage(img, (int) Math.floor(dx), (int) Math.floor(dy) + (pVisibleVillages[0].length + fieldsY) * hField, null);
             pG2d.drawImage(img, (int) Math.floor(dx) + (pVisibleVillages.length + fieldsX) * wField, (int) Math.floor(dy), null);
         }
+        System.out.println("DrawCol: " + (System.currentTimeMillis() - s));
         System.out.println("Dur: " + (System.currentTimeMillis() - s));
     }
 
     private BufferedImage renderRows(Village[][] pVillages, int pRows, int pFieldWidth, int pFieldHeight) {
         //create new buffer for rendering
+        long s = System.currentTimeMillis();
         BufferedImage newRows = createEmptyBuffered(pVillages.length * pFieldWidth, Math.abs(pRows) * pFieldHeight, BufferedImage.BITMASK);
+        System.out.println("Create: " + (System.currentTimeMillis() - s));
         //calculate first row that will be rendered
         int firstRow = (pRows > 0) ? 0 : pVillages[0].length - Math.abs(pRows);
         Graphics2D g2d = (Graphics2D) newRows.getGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         double zoom = MapPanel.getSingleton().getMapRenderer().getCurrentZoom();
         //iterate through entire row
         int cnt = 0;
-        int cp = 0;
+        cp = 0;
+        dp = 0;
+        vs = 0;
+        ds = 0;
+        boolean useDecoration = true;
+
+        if ((WorldDecorationHolder.getTexture(0, 0, 1).getWidth(null) != GlobalOptions.getSkin().getBasicFieldWidth()) || (WorldDecorationHolder.getTexture(0, 0, 1).getHeight(null) != GlobalOptions.getSkin().getBasicFieldHeight())) {
+            //use decoration if skin field size equals the world skin size
+            useDecoration = false;
+        }
+        s = System.currentTimeMillis();
         for (int x = 0; x < pVillages.length; x++) {
             //iterate from first row for 'pRows' times
             for (int y = firstRow; y < firstRow + Math.abs(pRows); y++) {
@@ -136,72 +166,39 @@ public abstract class AbstractLayerRenderer {
                 Village v = pVillages[x][y];
                 int row = y - firstRow;
                 int col = x;
-                Image sprite = null;
-                Rectangle copyRect = null;
-                int textureId = -1;
-                if (v != null) {
-                    //village field that has to be rendered
-                    if (!GlobalOptions.getSkin().isMinimapSkin()) {
-                        textureId = v.getGraphicsType();
-                        copyRect = renderedSpriteBounds.get(textureId);
-                        if (copyRect == null) {
-                            sprite = GlobalOptions.getSkin().getImage(textureId, zoom);
-                        }
-                    } else {
-                        g2d.setColor(Color.MAGENTA);
-                        textureId = 0;
-                        copyRect = renderedSpriteBounds.get(textureId);
-                        if (copyRect == null) {
-                            g2d.drawRect(col * pFieldWidth, row * pFieldHeight, pFieldWidth - 1, pFieldHeight - 1);
-                            renderedSpriteBounds.put(textureId, new Rectangle(col * pFieldWidth, row * pFieldHeight, pFieldWidth - 1, pFieldHeight - 1));
-                        }
-                    }
-                } else {
-                    int globalCol = colToGlobalPosition(col);
-                    int globalRow = rowToGlobalPosition(y);
-                    if (!GlobalOptions.getSkin().isMinimapSkin()) {
-                        textureId = WorldDecorationHolder.getTextureId(globalCol, globalRow) + 100;
-                        copyRect = renderedSpriteBounds.get(textureId + 100);
-                        if (copyRect == null) {
-                            sprite = WorldDecorationHolder.getTexture(globalCol, globalRow, MapPanel.getSingleton().getMapRenderer().getCurrentZoom());
-                        }
-                    } else {
-                        g2d.setColor(Color.MAGENTA);
-                        textureId = 1;
-                        copyRect = renderedSpriteBounds.get(textureId);
-                        if (copyRect == null) {
-                            g2d.fillRect(col * pFieldWidth, row * pFieldHeight, pFieldWidth - 1, pFieldHeight - 1);
-                            renderedSpriteBounds.put(textureId, new Rectangle(col * pFieldWidth, row * pFieldHeight, pFieldWidth - 1, pFieldHeight - 1));
-                        }
-                    }
-                }
-
-                if (sprite != null) {
-                    //render sprite
-                    g2d.drawImage(sprite, col * pFieldWidth, row * pFieldHeight, null);
-                    renderedSpriteBounds.put(textureId, new Rectangle(col * pFieldWidth, row * pFieldHeight, pFieldWidth, pFieldHeight));
-                } else if (copyRect != null) {
-                    //copy from copy rect
-                    cp++;
-                    g2d.copyArea(copyRect.x, copyRect.y, copyRect.width, copyRect.height, col * pFieldWidth - copyRect.x, row * pFieldHeight - copyRect.y);
-                }
+                int globalCol = colToGlobalPosition(col);
+                int globalRow = rowToGlobalPosition(y);
+                renderField(v, row, col, globalRow, globalCol, pFieldWidth, pFieldHeight, zoom, useDecoration, g2d);
             }
         }
-        System.out.println("Row: " + cnt);
-        System.out.println("CP : " + cp);
+        System.out.println("Row: " + cnt + "/" + dp + "/" + cp + "(" + vs + "," + ds + ") [" + renderedSpriteBounds.size() + "]");
+        g2d.dispose();
+        System.out.println("Render: " + (System.currentTimeMillis() - s));
         return newRows;
     }
 
     private BufferedImage renderColumns(Village[][] pVillages, int pColumns, int pFieldWidth, int pFieldHeight) {
         //create new buffer for rendering
+        long s = System.currentTimeMillis();
         BufferedImage newColumns = createEmptyBuffered(Math.abs(pColumns) * pFieldWidth, pVillages[0].length * pFieldHeight, BufferedImage.BITMASK);
+        System.out.println("Create: " + (System.currentTimeMillis() - s));
         //calculate first row that will be rendered
         int firstCol = (pColumns > 0) ? 0 : pVillages.length - Math.abs(pColumns);
         Graphics2D g2d = (Graphics2D) newColumns.getGraphics();
         double zoom = MapPanel.getSingleton().getMapRenderer().getCurrentZoom();
         //iterate through entire row
         int cnt = 0;
-        int cp = 0;
+        cp = 0;
+        dp = 0;
+        vs = 0;
+        ds = 0;
+        boolean useDecoration = true;
+
+        if ((WorldDecorationHolder.getTexture(0, 0, 1).getWidth(null) != GlobalOptions.getSkin().getBasicFieldWidth()) || (WorldDecorationHolder.getTexture(0, 0, 1).getHeight(null) != GlobalOptions.getSkin().getBasicFieldHeight())) {
+            //use decoration if skin field size equals the world skin size
+            useDecoration = false;
+        }
+        s = System.currentTimeMillis();
         for (int x = firstCol; x < firstCol + Math.abs(pColumns); x++) {
             for (int y = 0; y < pVillages[0].length; y++) {
                 cnt++;
@@ -209,60 +206,64 @@ public abstract class AbstractLayerRenderer {
                 Village v = pVillages[x][y];
                 int row = y;
                 int col = x - firstCol;
-                Image sprite = null;
-                Rectangle copyRect = null;
-                int textureId = -1;
-                if (v != null) {
-                    //village field that has to be rendered
-                    if (!GlobalOptions.getSkin().isMinimapSkin()) {
-                        textureId = v.getGraphicsType();
-                        copyRect = renderedSpriteBounds.get(textureId);
-                        if (copyRect == null) {
-                            sprite = GlobalOptions.getSkin().getImage(textureId, zoom);
-                        }
-                    } else {
-                        g2d.setColor(Color.MAGENTA);
-                        textureId = 0;
-                        copyRect = renderedSpriteBounds.get(textureId);
-                        if (copyRect == null) {
-                            g2d.drawRect(col * pFieldWidth, row * pFieldHeight, pFieldWidth - 1, pFieldHeight - 1);
-                            renderedSpriteBounds.put(textureId, new Rectangle(col * pFieldWidth, row * pFieldHeight, pFieldWidth - 1, pFieldHeight - 1));
-                        }
-                    }
-                } else {
-                    //decoration has to be rendered
-                    int globalCol = colToGlobalPosition(x);
-                    int globalRow = rowToGlobalPosition(row);
-                    if (!GlobalOptions.getSkin().isMinimapSkin()) {
-                        textureId = WorldDecorationHolder.getTextureId(globalCol, globalRow);
-                        copyRect = renderedSpriteBounds.get(textureId + 100);
-                        if (copyRect == null) {
-                            sprite = WorldDecorationHolder.getTexture(globalCol, globalRow, zoom);
-                        }
-                    } else {
-                        g2d.setColor(Color.MAGENTA);
-                        textureId = 1;
-                        copyRect = renderedSpriteBounds.get(textureId);
-                        if (copyRect == null) {
-                            g2d.fillRect(col * pFieldWidth, row * pFieldHeight, pFieldWidth - 1, pFieldHeight - 1);
-                            renderedSpriteBounds.put(textureId, new Rectangle(col * pFieldWidth, row * pFieldHeight, pFieldWidth - 1, pFieldHeight - 1));
-                        }
-                    }
-                }
-
-                if (sprite != null) {
-                    g2d.drawImage(sprite, col * pFieldWidth, row * pFieldHeight, null);
-                    renderedSpriteBounds.put(textureId, new Rectangle(col * pFieldWidth, row * pFieldHeight, pFieldWidth, pFieldHeight));
-                } else if (copyRect != null) {
-                    //copy from copy rect
-                    cp++;
-                    g2d.copyArea(copyRect.x, copyRect.y, copyRect.width, copyRect.height, col * pFieldWidth - copyRect.x, row * pFieldHeight - copyRect.y);
-                }
+                int globalCol = colToGlobalPosition(x);
+                int globalRow = rowToGlobalPosition(row);
+                renderField(v, row, col, globalRow, globalCol, pFieldWidth, pFieldHeight, zoom, useDecoration, g2d);
             }
         }
-        System.out.println("Col: " + cnt);
-        System.out.println("CP : " + cp);
+        System.out.println("Col: " + cnt + "/" + dp + "/" + cp + "(" + vs + "," + ds + ") [" + renderedSpriteBounds.size() + "]");
+        g2d.dispose();
+        System.out.println("Render: " + (System.currentTimeMillis() - s));
+
         return newColumns;
+    }
+    int cp = 0;
+    int dp = 0;
+    int vs = 0;
+    int ds = 0;
+
+    private void renderField(Village v, int row, int col, int globalRow, int globalCol, int pFieldWidth, int pFieldHeight, double zoom, boolean useDecoration, Graphics2D g2d) {
+        // Image sprite = null;
+        Rectangle copyRect = null;
+        int textureId = -1;
+        BufferedImage sprite = null;
+        if (v != null) {
+            vs++;
+            //village field that has to be rendered
+            textureId = v.getGraphicsType();
+            copyRect = renderedSpriteBounds.get(textureId);
+            if (copyRect == null) {
+                //sprite = GlobalOptions.getSkin().getImage(textureId, zoom);
+                sprite = GlobalOptions.getSkin().getOriginalSprite(textureId);
+            }
+        } else {
+            ds++;
+            if (useDecoration) {
+                textureId = WorldDecorationHolder.getTextureId(globalCol, globalRow) + 100;
+            } else {
+                textureId = Skin.ID_DEFAULT_UNDERGROUND + 100;
+            }
+
+            copyRect = renderedSpriteBounds.get(textureId);
+            if (copyRect == null) {
+                // sprite = WorldDecorationHolder.getTexture(globalCol, globalRow, MapPanel.getSingleton().getMapRenderer().getCurrentZoom());
+                sprite = WorldDecorationHolder.getOriginalSprite(globalCol, globalRow);
+            }
+        }
+
+        if (sprite != null) {
+            //render sprite
+            dp++;
+            AffineTransform t = AffineTransform.getTranslateInstance(col * pFieldWidth, row * pFieldHeight);
+            t.scale(1 / zoom, 1 / zoom);
+            g2d.drawImage(sprite, t, null);
+            //g2d.drawImage(sprite, col * pFieldWidth, row * pFieldHeight, null);
+            renderedSpriteBounds.put(textureId, new Rectangle(col * pFieldWidth, row * pFieldHeight, pFieldWidth, pFieldHeight));
+        } else if (copyRect != null) {
+            //copy from copy rect
+            cp++;
+            g2d.copyArea(copyRect.x, copyRect.y, copyRect.width, copyRect.height, col * pFieldWidth - copyRect.x, row * pFieldHeight - copyRect.y);
+        }
     }
 
     private int rowToGlobalPosition(int pRow) {

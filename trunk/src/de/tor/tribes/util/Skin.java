@@ -19,6 +19,7 @@ import javax.imageio.ImageIO;
 import org.apache.log4j.Logger;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.MapPanel;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -141,6 +142,19 @@ public class Skin {
         iFieldWidth = 10;
         iFieldHeight = 10;
         mTextures = new HashMap<Integer, BufferedImage>();
+        for (int i = 0; i < 25; i++) {
+            BufferedImage image = new BufferedImage(iFieldWidth, iFieldHeight, BufferedImage.BITMASK);
+            if (i == 0) {
+                image.getGraphics().setColor(new Color(35, 125, 0));
+                image.getGraphics().fillRect(0, 0, 10, 10);
+            } else {
+                image.getGraphics().setColor(Color.MAGENTA);
+                image.getGraphics().fillRect(0, 0, 10, 10);
+                image.getGraphics().setColor(Color.BLACK);
+                image.getGraphics().drawRect(0, 0, 9, 9);
+            }
+            mTextures.put(i, image);
+        }
     }
 
     private void loadSkin(String pSkinID) throws Exception {
@@ -205,11 +219,15 @@ public class Skin {
 
     }
 
+    public BufferedImage getOriginalSprite(int pID) {
+        return mTextures.get(pID);
+    }
+
     public Image getImage(int pID, double pScaling) {
 
         if (pID == ID_ARMY_CAMP) {
             //return army camp
-            return ARMY_CAMP_IMAGE.getScaledInstance((int) (iFieldWidth  / pScaling), (int) (iFieldHeight  / pScaling), BufferedImage.SCALE_DEFAULT);
+            return ARMY_CAMP_IMAGE.getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_DEFAULT);
         }
         try {
             HashMap<Double, BufferedImage> imageCache = cache.get(pID);
@@ -220,7 +238,7 @@ public class Skin {
 
             BufferedImage cached = imageCache.get(pScaling);
             if (cached == null) {
-                Image scaled = mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_DEFAULT);
+                Image scaled = mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_REPLICATE);
 
                 GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
                 GraphicsConfiguration gc = gd.getDefaultConfiguration();

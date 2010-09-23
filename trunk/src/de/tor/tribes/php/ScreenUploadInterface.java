@@ -37,11 +37,10 @@ public class ScreenUploadInterface {
     public static String upload(String pLocalFile) {
         String result = null;
         try {
-            SocketAddress addr = new InetSocketAddress("proxy.fzk.de", 8000);
-            Proxy webProxy = new Proxy(Proxy.Type.HTTP, addr);
+
             URL url = new URL("http://dsworkbench.de/upload_interface.php");
             //URLConnection con = url.openConnection(webProxy);
-           URLConnection con = url.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
+            URLConnection con = url.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
             con.setDoInput(true);
             con.setDoOutput(true);
             con.setDefaultUseCaches(false);
@@ -55,7 +54,7 @@ public class ScreenUploadInterface {
 
             // File To Upload
             File theFile = new File(pLocalFile);
-            if(theFile.length() > 200000){
+            if (theFile.length() > 200000) {
                 return "Die Datei ist zu groß.";
             }
             String extension = theFile.getName().substring(theFile.getName().lastIndexOf("."));

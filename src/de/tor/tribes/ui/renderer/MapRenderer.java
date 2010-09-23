@@ -308,15 +308,18 @@ public class MapRenderer extends Thread {
                         if (viewStartPoint == null) {
                             throw new Exception("View position is 'null', skip redraw");
                         }
-                        long s = System.currentTimeMillis();
-//                        renderMap();
+                        //long s = System.currentTimeMillis();
+                        //  renderMap();
+                        //   g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
                         villagePositions = new HashMap<Village, Rectangle>();
-                        rend.prepareRender(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
-                        System.out.println("   Dur: " + (System.currentTimeMillis() - s));
+                        //   System.out.println("   Dur: " + (System.currentTimeMillis() - s));
+
                         //renderTagMarkers();
                         mapRedrawRequired = false;
                     }
-
+                    long s = System.currentTimeMillis();
+                    rend.prepareRender(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
+                    System.out.println("   Dur: " + (System.currentTimeMillis() - s));
                     boolean mapDrawn = false;
                     // long s = System.currentTimeMillis();
 //                    for (Integer layer : drawOrder) {

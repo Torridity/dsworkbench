@@ -45,7 +45,7 @@ public abstract class AbstractLayerRenderer {
         GraphicsDevice device = env.getDefaultScreenDevice();
         GraphicsConfiguration config = device.getDefaultConfiguration();
         BufferedImage buffy = config.createCompatibleImage(w, h, trans);
-        return buffy;//optimizeImage(buffy);
+        return buffy;
     }
 
     /**Optimize an image or create a copy of an image if the image was created by getBufferedImage()*/
@@ -83,39 +83,27 @@ public abstract class AbstractLayerRenderer {
         if (fullRenderRequired) {
             if (mLayer == null) {
                 mLayer = createEmptyBuffered(pVisibleVillages.length * settings.getFieldWidth(), pVisibleVillages[0].length * settings.getFieldHeight(), BufferedImage.BITMASK);
+                mLayer = optimizeImage(mLayer);
             }
             g2d = (Graphics2D) mLayer.getGraphics();
+            g2d.setColor(Color.MAGENTA);
+            g2d.fillRect(0, 0, mLayer.getWidth(), mLayer.getHeight());
             settings.setRowsToRender(pVisibleVillages[0].length);
         } else {
             //copy existing data to new location
             g2d = (Graphics2D) mLayer.getGraphics();
             performCopy(settings, pVisibleVillages, pVirtualBounds, g2d);
         }
-        // System.out.println("Prep: " + (System.currentTimeMillis() - s));
-
-
-        // g2d.clearRect(0, 0, mLayer.getWidth(), mLayer.getHeight());
-        //System.out.println("Clear: " + (System.currentTimeMillis() - s));
         renderedSpriteBounds = new HashMap<Integer, Rectangle>();
-        // int[][] rendered = new int[pVisibleVillages.length][pVisibleVillages[0].length];
         //Set new bounds
         mRenderedBounds = (Rectangle2D.Double) pVirtualBounds.clone();
 
-        //System.out.println("ReadyForRender: " + (System.currentTimeMillis() - s));
-
         BufferedImage img = renderRows(pVisibleVillages, settings);
-        // System.out.println("Render: " + (System.currentTimeMillis() - s));
         AffineTransform trans = AffineTransform.getTranslateInstance(0, 0);
         if (settings.getRowsToRender() < 0) {
-            //  g2d.drawImage(img, (int) Math.floor(settings.getDeltaX()), (int) Math.floor(settings.getDeltaY()), null);
-            // } else {
-            //pG2d.drawImage(img, (int) Math.floor(dx), (int) Math.floor(dy) + (pVisibleVillages[0].length + fieldsY) * hField, null);
-            //    g2d.drawImage(img, (int) Math.floor(settings.getDeltaX()), (int) Math.floor(settings.getDeltaY()) + (pVisibleVillages[0].length + settings.getRowsToRender()) * settings.getFieldHeight(), null);
             trans.setToTranslation(0, (pVisibleVillages[0].length + settings.getRowsToRender()) * settings.getFieldHeight());
         }
         g2d.drawImage(img, trans, null);
-        //pG2d.drawImage(img, trans, null);
-        //System.out.println("DrawRow: " + (System.currentTimeMillis() - s));
 
         if (fullRenderRequired) {
             //everything was rendered, skip col rendering
@@ -125,20 +113,13 @@ public abstract class AbstractLayerRenderer {
             img = renderColumns(pVisibleVillages, settings);
             trans = AffineTransform.getTranslateInstance(0, 0);
             if (settings.getColumnsToRender() < 0) {
-                //g2d.drawImage(img, (int) Math.floor(settings.getDeltaX()), (int) Math.floor(settings.getDeltaY()), null);
-                //} else {
                 trans.setToTranslation((pVisibleVillages.length + settings.getColumnsToRender()) * settings.getFieldWidth(), 0);
-                //  g2d.drawImage(img, (int) Math.floor(settings.getDeltaX()) + (pVisibleVillages.length + settings.getColumnsToRender()) * settings.getFieldWidth(), (int) Math.floor(settings.getDeltaY()), null);
             }
             g2d.drawImage(img, trans, null);
         }
 
         trans.setToTranslation((int) Math.floor(settings.getDeltaX()), (int) Math.floor(settings.getDeltaY()));
-        //s = System.currentTimeMillis();
         pG2d.drawImage(mLayer, trans, null);
-        // System.out.println("DrawCol: " + (System.currentTimeMillis() - s));
-        // System.out.println("Dur: " + (System.currentTimeMillis() - s));
-        // System.out.println("After: " + mRenderedBounds);
     }
 
     private RenderSettings getRenderSettings(Rectangle2D pVirtualBounds) {
@@ -151,6 +132,7 @@ public abstract class AbstractLayerRenderer {
             xMovement = settings.getFieldWidth() * (mRenderedBounds.getX() - pVirtualBounds.getX());
             yMovement = settings.getFieldHeight() * (mRenderedBounds.getY() - pVirtualBounds.getY());
         }
+
         double deltaX = 0;
         if (xMovement != 0) {
             deltaX = xMovement / (double) settings.getFieldWidth();
@@ -160,12 +142,10 @@ public abstract class AbstractLayerRenderer {
             deltaY = yMovement / (double) settings.getFieldHeight();
         }
 
-        // System.out.println(deltaX + "---" + deltaY);
-
         int fieldsX = (deltaX > 0) ? (int) Math.round(deltaX) : (int) Math.floor(deltaX);
         int fieldsY = (deltaY > 0) ? (int) Math.round(deltaY) : (int) Math.floor(deltaY);
-        fieldsX += (fieldsX > 0) ? 1 : -1;
-        fieldsY += (fieldsY > 0) ? 1 : -1;
+        fieldsX += (fieldsX >= 0) ? 1 : -1;
+        fieldsY += (fieldsY >= 0) ? 1 : -1;
         //System.out.println(fieldsX + "...." + fieldsY);
         settings.setColumnsToRender(fieldsX);
         settings.setRowsToRender(fieldsY);
@@ -310,13 +290,13 @@ public abstract class AbstractLayerRenderer {
             mapPos.y = newMapPos.y;
         }
 
-       /* System.out.println("Deltas : " + pSettings.getDeltaX() + "," + pSettings.getDeltaY());
+        /* System.out.println("Deltas : " + pSettings.getDeltaX() + "," + pSettings.getDeltaY());
         System.out.println("Renders: " + pSettings.getColumnsToRender() + "," + pSettings.getRowsToRender());
         System.out.println("FSize  : " + pSettings.getFieldWidth() + "," + pSettings.getFieldHeight());
         System.out.println("Diff   : " + (pVirtualBounds.getX() - mRenderedBounds.getX()) + "," + (int) Math.floor(pVirtualBounds.getY() - mRenderedBounds.getY()));
         System.out.println("FCopy   : " + fieldsX + ", " + fieldsY);
         System.out.println("---------");
-*/
+         */
 
         pG2D.copyArea(0, 0, mLayer.getWidth(), mLayer.getHeight(), -fieldsX * pSettings.getFieldWidth(), -fieldsY * pSettings.getFieldHeight());
         //g2d.copyArea(0, 0, mLayer.getWidth(), mLayer.getHeight(), copyX, copyY);

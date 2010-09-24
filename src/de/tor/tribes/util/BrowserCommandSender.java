@@ -45,6 +45,7 @@ public class BrowserCommandSender {
             } else {
                 Runtime.getRuntime().exec(new String[]{browser, url});
             }
+
             //System.out.println(url);
         } catch (Throwable t) {
             JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");

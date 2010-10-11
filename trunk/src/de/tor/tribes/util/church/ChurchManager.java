@@ -59,7 +59,7 @@ public class ChurchManager {
                 String.class, Village.class, Integer.class, Color.class
             };
             boolean[] canEdit = new boolean[]{
-                false, false, false, true
+                false, false, false, false
             };
 
             @Override
@@ -136,7 +136,7 @@ public class ChurchManager {
                     churches.add(c);
                 } catch (Exception inner) {
                     //ignored, marker invalid
-                    }
+                }
             }
             logger.debug("Churches imported successfully");
 
@@ -237,47 +237,6 @@ public class ChurchManager {
             Church c = new Church();
             c.setVillageId(pVillage.getId());
             c.setRange(pRange);
-            Tribe t = pVillage.getTribe();
-
-            Marker m = MarkerManager.getSingleton().getMarker(t);
-            if (m == null && t != Barbarians.getSingleton()) {
-                m = MarkerManager.getSingleton().getMarker(t.getAlly());
-            }
-            try {
-                if (t != Barbarians.getSingleton() && t.equals(DSWorkbenchMainFrame.getSingleton().getCurrentUser())) {
-                    //set marker null again if own village
-                    m = null;
-                }
-            } catch (Exception ignore) {
-            }
-
-            if (m != null) {
-                //set range to marker color
-                c.setRangeColor(m.getMarkerColor());
-            } else {
-                if (t != Barbarians.getSingleton()) {
-                    //set range to default enemy color (RED/WHITE)
-                    Color DEFAULT = Color.WHITE;
-                    try {
-                        if (Integer.parseInt(GlobalOptions.getProperty("default.mark")) == 1) {
-                            DEFAULT = Color.RED;
-                        }
-                        try {
-                            Tribe tr = pVillage.getTribe();
-                            if (tr != null && tr.equals(DSWorkbenchMainFrame.getSingleton().getCurrentUser())) {
-                                DEFAULT = Color.YELLOW;
-                            }
-                        } catch (Exception ignore) {
-                        }
-                    } catch (Exception inner) {
-                        DEFAULT = Color.LIGHT_GRAY;
-                    }
-                    c.setRangeColor(DEFAULT);
-                } else {
-                    //set range to barbarian color
-                    c.setRangeColor(Color.LIGHT_GRAY);
-                }
-            }
             churches.add(c);
         }
         fireChurchesChangedEvents();
@@ -330,7 +289,7 @@ public class ChurchManager {
         for (Church c : churchesArray) {
             Integer range = c.getRange();
             Village v = DataHolder.getSingleton().getVillagesById().get(c.getVillageId());
-            Color col = c.getRangeColor();
+            Color col = v.getTribe().getMarkerColor();
             String tribe = (v.getTribe() == Barbarians.getSingleton()) ? "Barbaren" : v.getTribe().getName();
             model.addRow(new Object[]{tribe, v, range, col});
         }

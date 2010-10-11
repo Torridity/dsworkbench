@@ -160,6 +160,7 @@ public class Arrow extends AbstractForm {
         path.transform(trans);
         trans = AffineTransform.getTranslateInstance(s.x, s.y);
         path.transform(trans);
+        
         if (isFilled()) {
             g2d.fill(path);
         } else {
@@ -175,7 +176,6 @@ public class Arrow extends AbstractForm {
 
     public void renderPreview(Graphics2D g2d) {
         Point2D.Double s = new Point2D.Double(getXPos(), getYPos());
-        Point2D.Double e = new Point2D.Double(getXPosEnd(), getYPosEnd());
         //store properties
         Stroke before = g2d.getStroke();
         Composite coBefore = g2d.getComposite();

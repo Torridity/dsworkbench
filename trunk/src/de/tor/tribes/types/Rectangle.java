@@ -19,6 +19,7 @@ import org.jdom.Element;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import java.awt.Font;
 import java.awt.geom.Point2D;
+import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 
 /**
@@ -72,7 +73,6 @@ public class Rectangle extends AbstractForm {
         if (getXPos() < 0 || getYPos() < 0 || xPosEnd < 0 || yPosEnd < 0) {
             return;
         }
-        System.out.println(getContainedVillages());
         Point s = MapPanel.getSingleton().virtualPosToSceenPos(getXPos(), getYPos());
         Point e = MapPanel.getSingleton().virtualPosToSceenPos(getXPosEnd(), getYPosEnd());
         int x = ((s.x < e.x) ? s.x : e.x);
@@ -97,9 +97,10 @@ public class Rectangle extends AbstractForm {
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getDrawAlpha()));
 
         if (isFilled()) {
-            g2d.fillRoundRect(x, y, w, h, rounding, rounding);
+
+            g2d.fill(new RoundRectangle2D.Double(x, y, w, h, rounding, rounding));
         } else {
-            g2d.drawRoundRect(x, y, w, h, rounding, rounding);
+            g2d.draw(new RoundRectangle2D.Double(x, y, w, h, rounding, rounding));
         }
 
         if (isDrawName()) {
@@ -134,9 +135,9 @@ public class Rectangle extends AbstractForm {
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getDrawAlpha()));
 
         if (isFilled()) {
-            g2d.fillRoundRect(x, y, w, h, rounding, rounding);
+            g2d.fill(new RoundRectangle2D.Double(x, y, w, h, rounding, rounding));
         } else {
-            g2d.drawRoundRect(x, y, w, h, rounding, rounding);
+            g2d.draw(new RoundRectangle2D.Double(x, y, w, h, rounding, rounding));
         }
 
         if (isDrawName()) {

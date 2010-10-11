@@ -64,6 +64,7 @@ import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
+import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
@@ -83,6 +84,7 @@ import java.util.List;
 import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JPopupMenu;
 import javax.swing.JToolTip;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
@@ -200,7 +202,7 @@ public class MapRenderer extends Thread {
     }
 
     /**Optimize an image or create a copy of an image if the image was created by getBufferedImage()*/
-    private BufferedImage optimizeImage(BufferedImage image) {
+    public BufferedImage optimizeImage(BufferedImage image) {
         // obtain the current system graphical settings
         GraphicsConfiguration gfx_config = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 
@@ -251,6 +253,10 @@ public class MapRenderer extends Thread {
         return mapRedrawRequired;
     }
     private MapLayerRenderer rend = new MapLayerRenderer();
+    private TroopDensityLayerRenderer rend2 = new TroopDensityLayerRenderer();
+    private ChurchLayerRenderer rend3 = new ChurchLayerRenderer();
+    private FormLayerRenderer rend4 = new FormLayerRenderer();
+    private TagMarkerLayerRenderer rend5 = new TagMarkerLayerRenderer();
 
     /**Render loop*/
     @Override
@@ -265,16 +271,18 @@ public class MapRenderer extends Thread {
             } catch (Exception e) {
                 fps = 10;
             }
-
             try {
                 int w = MapPanel.getSingleton().getWidth();
                 int h = MapPanel.getSingleton().getHeight();
+                //Graphics2D g2d = (Graphics2D) MapPanel.getSingleton().getStrategy().getDrawGraphics();
                 if ((w != 0) && (h != 0)) {
                     Graphics2D g2d = null;
                     if (mBackBuffer == null) {
                         //create main buffer during first iteration
-                        mBackBuffer = getBufferedImage(w, h, Transparency.TRANSLUCENT);
-                        mFrontBuffer = getBufferedImage(w, h, Transparency.TRANSLUCENT);
+                        mBackBuffer = getBufferedImage(w, h, Transparency.OPAQUE);
+                        mBackBuffer.setAccelerationPriority(1);
+                        mFrontBuffer = getBufferedImage(w, h, Transparency.OPAQUE);
+                        mFrontBuffer.setAccelerationPriority(2);
                         g2d = (Graphics2D) mBackBuffer.getGraphics();
                         prepareGraphics(g2d);
                         //set redraw required flag if nothin was drawn yet
@@ -284,8 +292,10 @@ public class MapRenderer extends Thread {
                         //if not re-create main buffer
                         if (mBackBuffer.getWidth(null) != w || mBackBuffer.getHeight(null) != h) {
                             //map panel has resized
-                            mBackBuffer = getBufferedImage(w, h, Transparency.TRANSLUCENT);
-                            mFrontBuffer = getBufferedImage(w, h, Transparency.TRANSLUCENT);
+                            mBackBuffer = getBufferedImage(w, h, Transparency.OPAQUE);
+                            mBackBuffer.setAccelerationPriority(1);
+                            mFrontBuffer = getBufferedImage(w, h, Transparency.OPAQUE);
+                            mFrontBuffer.setAccelerationPriority(1);
                             g2d = (Graphics2D) mBackBuffer.getGraphics();
                             prepareGraphics(g2d);
                             //set redraw required flag if size has changed
@@ -308,116 +318,123 @@ public class MapRenderer extends Thread {
                         if (viewStartPoint == null) {
                             throw new Exception("View position is 'null', skip redraw");
                         }
-                        //long s = System.currentTimeMillis();
-                        //  renderMap();
-                        //   g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
-                        villagePositions = new HashMap<Village, Rectangle>();
-                        //   System.out.println("   Dur: " + (System.currentTimeMillis() - s));
+                        // long s = System.currentTimeMillis();
+                        //renderMap();
+                        // g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
 
-                        //renderTagMarkers();
+                        //  System.out.println("   Dur: " + (System.currentTimeMillis() - s));
+
+                        //  renderTagMarkers();
                         mapRedrawRequired = false;
                     }
-                    long s = System.currentTimeMillis();
-                    rend.prepareRender(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
-                    System.out.println("   Dur: " + (System.currentTimeMillis() - s));
-                    boolean mapDrawn = false;
-                    // long s = System.currentTimeMillis();
-//                    for (Integer layer : drawOrder) {
-//                        if (layer == 0) {
-//                            if (mapDrawn) {
-//                                //map already drawn, so this is MarkOnTop
-//                                Composite gg = g2d.getComposite();
-//                                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-//                                renderMarkers(false);
-//                                g2d.drawImage(mLayers.get(MARKER_LAYER), 0, 0, null);
-//                                g2d.setComposite(gg);
-//                                //  logger.info(" - MARK " + (System.currentTimeMillis() - s));
-//                            } else {
-//                                renderMarkers(true);
-//                                //  logger.info(" - MARK1 " + (System.currentTimeMillis() - s));
-//                                g2d.drawImage(mLayers.get(MARKER_LAYER), 0, 0, null);
-//                                //  logger.info(" - MARK " + (System.currentTimeMillis() - s));
-//                            }
-//                            //System.out.println("DTM " + (System.currentTimeMillis() - s));
-//                        } else if (layer == 1) {
-//                            //  System.out.println("DRAW MAP");
-//                            g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
-//                            // System.out.println("DTV " + (System.currentTimeMillis() - s));
-//                            //logger.info(" - MAP " + (System.currentTimeMillis() - s));
-//                            mapDrawn = true;
-//                        } else if (layer == 2) {
-//                            if (mapDrawn) {
-//                                //only draw layer if map is drawn
-//                                //If not, this layer is hidden behind the map
-//                                g2d.drawImage(mLayers.get(TAG_MARKER_LAYER), 0, 0, null);
-//                            }
-//                            //  logger.info(" - TAG " + (System.currentTimeMillis() - s));
-//                        } else if (layer == 3) {
-//                            //render other layers (active village, troop type)
-//                            if (mapDrawn) {
-//                                //only draw layer if map is drawn
-//                                //If not, this layer is hidden behind the map
-//                                renderDecoration(g2d);
-//                                // System.out.println("DTD " + (System.currentTimeMillis() - s));
-//                            }
-//                            //  logger.info(" - DECO " + (System.currentTimeMillis() - s));
-//                        } else if (layer == 4) {
-//                            //render troop density
-//                            if (mapDrawn) {
-//                                //only draw layer if map is drawn
-//                                //If not, this layer is hidden behind the map
-//                                renderTroopDensity(g2d);
-//                            }
-//                            //  logger.info(" - TROOP " + (System.currentTimeMillis() - s));
-//                        } else if (layer == 5) {
-//                            if (mapDrawn) {
-//                                //only draw layer if map is drawn
-//                                //If not, this layer is hidden behind the map
-//                                renderNoteMarkers();
-//                                g2d.drawImage(mLayers.get(NOTE_LAYER), 0, 0, null);
-//                                // System.out.println("DTN " + (System.currentTimeMillis() - s));
-//                            }
-//                            // logger.info(" - NOTE " + (System.currentTimeMillis() - s));
-//                        } else if (layer == 6) {
-//                            //attacks layer
-//                            if (mapDrawn) {
-//                                //only draw layer if map is drawn
-//                                //If not, this layer is hidden behind the map
-//                                renderAttacks(g2d);
-//                            }
-//                            //  logger.info(" - ATTS " + (System.currentTimeMillis() - s));
-//                        } else if (layer == 7) {
-//                            //supports
-//                            if (mapDrawn) {
-//                                //only draw layer if map is drawn
-//                                //If not, this layer is hidden behind the map
-//                                renderSupports(g2d);
-//                            }
-//                            //   logger.info(" - SUPP " + (System.currentTimeMillis() - s));
-//                        } else if (layer == 8) {
-//                            //forms
-//                            if (mapDrawn) {
-//                                //only draw layer if map is drawn
-//                                //If not, this layer is hidden behind the map
-//                                renderForms(g2d);
-//                            }
-//                            //    logger.info(" - FORM " + (System.currentTimeMillis() - s));
-//                        } else if (layer == 9) {
-//                            //curches
-//                            if (mapDrawn) {
-//                                //only draw layer if map is drawn
-//                                //If not, this layer is hidden behind the map
-//                                renderChurches(g2d);
-//                                //    logger.info(" - CHURCH " + (System.currentTimeMillis() - s));
-//                            }
-//                        }
-//                    }
 
-                    //     System.out.println("DT " + (System.currentTimeMillis() - s));
+                    boolean mapDrawn = false;
+                    long s1 = System.currentTimeMillis();
+                    for (Integer layer : drawOrder) {
+                        if (layer == 0) {
+                            /* if (mapDrawn) {
+                            //map already drawn, so this is MarkOnTop
+                            Composite gg = g2d.getComposite();
+                            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+                            renderMarkers(false);
+                            g2d.drawImage(mLayers.get(MARKER_LAYER), 0, 0, null);
+                            g2d.setComposite(gg);
+                            //  logger.info(" - MARK " + (System.currentTimeMillis() - s));
+                            } else {
+                            renderMarkers(true);
+                            //  logger.info(" - MARK1 " + (System.currentTimeMillis() - s));
+                            g2d.drawImage(mLayers.get(MARKER_LAYER), 0, 0, null);
+                            //  logger.info(" - MARK " + (System.currentTimeMillis() - s));
+                            }*/
+                            //System.out.println("DTM " + (System.currentTimeMillis() - s));
+                        } else if (layer == 1) {
+                            //  System.out.println("DRAW MAP");
+                            //  g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
+                            long s = System.currentTimeMillis();
+                            rend.performRendering(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
+                            System.out.println("Dur1: " + (System.currentTimeMillis() - s));
+                            rend5.performRendering(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
+                            System.out.println("Dur2: " + (System.currentTimeMillis() - s));
+                            // System.out.println("DTV " + (System.currentTimeMillis() - s));
+                            //logger.info(" - MAP " + (System.currentTimeMillis() - s));
+                            mapDrawn = true;
+                        } else if (layer == 2) {
+                            if (mapDrawn) {
+                                //only draw layer if map is drawn
+                                //If not, this layer is hidden behind the map
+                                g2d.drawImage(mLayers.get(TAG_MARKER_LAYER), 0, 0, null);
+                            }
+                            //  logger.info(" - TAG " + (System.currentTimeMillis() - s));
+                        } else if (layer == 3) {
+                            //render other layers (active village, troop type)
+                            if (mapDrawn) {
+                                //only draw layer if map is drawn
+                                //If not, this layer is hidden behind the map
+                                renderDecoration(g2d);
+                                // System.out.println("DTD " + (System.currentTimeMillis() - s));
+                            }
+                            //  logger.info(" - DECO " + (System.currentTimeMillis() - s));
+                        } else if (layer == 4) {
+                            //render troop density
+                            if (mapDrawn) {
+                                //only draw layer if map is drawn
+                                //If not, this layer is hidden behind the map
+                                // renderTroopDensity(g2d);
+                                rend2.performRendering(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
+                            }
+                            //  logger.info(" - TROOP " + (System.currentTimeMillis() - s));
+                        } else if (layer == 5) {
+                            if (mapDrawn) {
+                                //only draw layer if map is drawn
+                                //If not, this layer is hidden behind the map
+                                renderNoteMarkers();
+                                g2d.drawImage(mLayers.get(NOTE_LAYER), 0, 0, null);
+                                // System.out.println("DTN " + (System.currentTimeMillis() - s));
+                            }
+                            // logger.info(" - NOTE " + (System.currentTimeMillis() - s));
+                        } else if (layer == 6) {
+                            //attacks layer
+                            if (mapDrawn) {
+                                //only draw layer if map is drawn
+                                //If not, this layer is hidden behind the map
+                                renderAttacks(g2d);
+                            }
+                            //  logger.info(" - ATTS " + (System.currentTimeMillis() - s));
+                        } else if (layer == 7) {
+                            //supports
+                            if (mapDrawn) {
+                                //only draw layer if map is drawn
+                                //If not, this layer is hidden behind the map
+                                renderSupports(g2d);
+                            }
+                            //   logger.info(" - SUPP " + (System.currentTimeMillis() - s));
+                        } else if (layer == 8) {
+                            //forms
+                            if (mapDrawn) {
+                                //only draw layer if map is drawn
+                                //If not, this layer is hidden behind the map
+                                //renderForms(g2d);
+                                rend4.performRendering(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
+                            }
+                            //    logger.info(" - FORM " + (System.currentTimeMillis() - s));
+                        } else if (layer == 9) {
+                            //curches
+                            if (mapDrawn) {
+                                //only draw layer if map is drawn
+                                //If not, this layer is hidden behind the map
+                                rend3.performRendering(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
+                                //renderChurches(g2d);
+                                //    logger.info(" - CHURCH " + (System.currentTimeMillis() - s));
+
+                            }
+                        }
+                    }
+
+                    // System.out.println("DT " + (System.currentTimeMillis() - s1));
 
                     //draw live layer -> always on top
-//                    renderLiveLayer(g2d);
-//                    g2d.drawImage(mLayers.get(LIVE_LAYER), 0, 0, null);
+                    renderLiveLayer(g2d);
+                    g2d.drawImage(mLayers.get(LIVE_LAYER), 0, 0, null);
 
                     //    logger.info(" - LIVE " + (System.currentTimeMillis() - s));
                     // s = System.currentTimeMillis();
@@ -428,12 +445,18 @@ public class MapRenderer extends Thread {
                     }
                     //render menu
                     MenuRenderer.getSingleton().renderMenu(g2d);
+                    g2d.dispose();
                     //   logger.info(" - MENU " + (System.currentTimeMillis() - s));
                     //notify MapPanel to bring buffer to screen
                     HashMap<Village, Rectangle> pos = (HashMap<Village, Rectangle>) villagePositions.clone();
+                    //  Graphics2D drawGraphics = (Graphics2D) MapPanel.getSingleton().getStrategy().getDrawGraphics();
                     mFrontBuffer = optimizeImage(mBackBuffer);
+                    // drawGraphics.drawImage(mBackBuffer, null, null);
+                    //drawGraphics.dispose();
+
                     MapPanel.getSingleton().updateComplete(pos, mFrontBuffer);
-                    g2d.dispose();
+                    //MapPanel.getSingleton().getBufferStrategy().show();
+                    System.out.println("Repaint");
                     MapPanel.getSingleton().repaint();
                     //       logger.info(" - DONE! " + (System.currentTimeMillis() - s));
 
@@ -457,7 +480,6 @@ public class MapRenderer extends Thread {
                 Thread.sleep(lCurrentSleepTime);
             } catch (InterruptedException ie) {
             }
-
             //FPS steering
             if (lRenderedLast == 0) {
                 iCurrentFPS++;
@@ -502,7 +524,7 @@ public class MapRenderer extends Thread {
     private void calculateVisibleVillages() {
         dCenterX = MapPanel.getSingleton().getCurrentPosition().x;
         dCenterY = MapPanel.getSingleton().getCurrentPosition().y;
-
+        villagePositions = new HashMap<Village, Rectangle>();
         allyCount.clear();
         tribeCount.clear();
         if (DataHolder.getSingleton().getVillages() == null) {
@@ -517,8 +539,8 @@ public class MapRenderer extends Thread {
         iVillagesX = (int) Math.ceil((double) MapPanel.getSingleton().getWidth() / currentFieldWidth);
         iVillagesY = (int) Math.ceil((double) MapPanel.getSingleton().getHeight() / currentFieldHeight);
         //add small buffer
-      /*  iVillagesX++;
-        iVillagesY++;*/
+        iVillagesX++;
+        iVillagesY++;
         //village start
         int xStartVillage = (int) Math.floor(dCenterX - iVillagesX / 2.0);
         int yStartVillage = (int) Math.floor(dCenterY - iVillagesY / 2.0);
@@ -538,7 +560,9 @@ public class MapRenderer extends Thread {
 
         int x = 0;
         int y = 0;
-
+        viewStartPoint = new Point2D.Double(dXStart, dYStart);
+        double dx = 0 - ((viewStartPoint.x - Math.floor(viewStartPoint.x)) * currentFieldWidth);
+        double dy = 0 - ((viewStartPoint.y - Math.floor(viewStartPoint.y)) * currentFieldHeight);
         for (int i = xStartVillage; i < xEndVillage; i++) {
             for (int j = yStartVillage; j < yEndVillage; j++) {
                 int mapW = ServerSettings.getSingleton().getMapDimension().width;
@@ -549,6 +573,9 @@ public class MapRenderer extends Thread {
                 } else {
                     mVisibleVillages[x][y] = DataHolder.getSingleton().getVillages()[i][j];
                     if (mVisibleVillages[x][y] != null) {
+
+                        Point villagePos = new Point((int) Math.floor(dx + x * currentFieldWidth), (int) Math.floor(dy + y * currentFieldHeight));
+                        villagePositions.put(mVisibleVillages[x][y], new Rectangle(villagePos.x, villagePos.y, (int) Math.floor(currentFieldWidth), (int) Math.floor(currentFieldHeight)));
                         Tribe t = mVisibleVillages[x][y].getTribe();
                         if (t != Barbarians.getSingleton()) {
                             if (tribeCount.get(t) == null) {
@@ -566,6 +593,8 @@ public class MapRenderer extends Thread {
                                 allyCount.put(a, allyCount.get(a) + 1);
                             }
                         }
+
+
                     } else if (ArmyCampManager.getSingleton().isArmyCamp((short) i, (short) j)) {
                         mVisibleVillages[x][y] = ArmyCampManager.getSingleton().getArmyCamp((short) i, (short) j);
                     }
@@ -576,7 +605,7 @@ public class MapRenderer extends Thread {
             y = 0;
         }
 
-        viewStartPoint = new Point2D.Double(dXStart, dYStart);
+
         MapPanel.getSingleton().updateVirtualBounds(viewStartPoint);
     }
 
@@ -1080,8 +1109,7 @@ public class MapRenderer extends Thread {
             if (layer.getWidth() != wb || layer.getHeight() != hb + 100) {
                 layer = getBufferedImage(wb, hb + 100, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
                 mLayers.put(NOTE_LAYER, layer);
-                g2d =
-                        layer.createGraphics();
+                g2d = layer.createGraphics();
                 prepareGraphics(g2d);
             } else {
                 g2d = (Graphics2D) layer.getGraphics();
@@ -1090,7 +1118,6 @@ public class MapRenderer extends Thread {
                 g2d.fillRect(0, 0, wb, hb + 100);
                 g2d.setComposite(c);
             }
-
         }
         try {
             int iconWidth = ImageManager.getNoteIcon(0).getWidth();
@@ -1164,8 +1191,7 @@ public class MapRenderer extends Thread {
         if (mLayers.get(MARKER_LAYER) == null) {
             layer = getBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
             mLayers.put(MARKER_LAYER, layer);
-            g2d =
-                    layer.createGraphics();
+            g2d = layer.createGraphics();
             prepareGraphics(g2d);
         } else {
             layer = mLayers.get(MARKER_LAYER);
@@ -1335,7 +1361,6 @@ public class MapRenderer extends Thread {
             //return if nothing to do
             return;
         }
-
         Iterator<Village> villages = villagePositions.keySet().iterator();
 
         while (villages.hasNext()) {
@@ -1346,8 +1371,7 @@ public class MapRenderer extends Thread {
                 if (troopMark != null) {
                     int x = villageRect.x + Math.round(villageRect.width / 2);
                     int y = villageRect.y + Math.round(villageRect.width / 2);
-                    troopMark =
-                            troopMark.getScaledInstance((int) Math.rint(troopMark.getWidth(null) / currentZoom), (int) Math.rint(troopMark.getHeight(null) / currentZoom), BufferedImage.SCALE_FAST);
+                    troopMark = troopMark.getScaledInstance((int) Math.rint(troopMark.getWidth(null) / currentZoom), (int) Math.rint(troopMark.getHeight(null) / currentZoom), BufferedImage.SCALE_FAST);
                     g2d.drawImage(troopMark, x - troopMark.getWidth(null) / 2, y - troopMark.getHeight(null), null);
                 }
 
@@ -1400,7 +1424,6 @@ public class MapRenderer extends Thread {
             if (holder != null) {
                 values.put(v, holder);
             }
-
         }
 
         Enumeration<Village> keys = values.keys();
@@ -1418,7 +1441,6 @@ public class MapRenderer extends Thread {
         Ellipse2D.Double ellipse = new Ellipse2D.Double();
         Color cb = g2d.getColor();
         for (Village v : keyV) {
-            long s = System.currentTimeMillis();
             Rectangle villageRect = villagePositions.get(v);
             VillageTroopsHolder holder = values.get(v);
             double defIn = holder.getDefValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
@@ -1831,6 +1853,7 @@ public class MapRenderer extends Thread {
         }
 
         List<Village> churchVillages = ChurchManager.getSingleton().getChurchVillages();
+        List<GeneralPath> paths = new LinkedList<GeneralPath>();
         for (Village v : churchVillages) {
             boolean drawVillage = true;
 
@@ -1840,7 +1863,6 @@ public class MapRenderer extends Thread {
                 if ((v != null) && (v.getTribe() == Barbarians.getSingleton())) {
                     drawVillage = false;
                 }
-
             }
 
             if (drawVillage && markedOnly) {
@@ -1858,11 +1880,9 @@ public class MapRenderer extends Thread {
                                         //tribe and ally are not marked
                                         drawVillage = false;
                                     }
-
                                 } else {
                                     drawVillage = false;
                                 }
-
                             }
                         }//village is owned by current user
                     }
@@ -1878,15 +1898,11 @@ public class MapRenderer extends Thread {
                         //at least one of the tags for the village is visible
                         notShown = false;
                         break;
-
                     }
-
-
                 }
                 if (notShown) {
                     drawVillage = false;
                 }
-
             }
             // </editor-fold>
 
@@ -1895,9 +1911,7 @@ public class MapRenderer extends Thread {
                 Church c = ChurchManager.getSingleton().getChurch(v);
                 int vx = MapPanel.getSingleton().virtualPosToSceenPos(v.getX(), v.getY()).x;
                 int vy = MapPanel.getSingleton().virtualPosToSceenPos(v.getX(), v.getY()).y;
-                g =
-                        new Rectangle(vx, vy, (int) Math.rint(currentFieldWidth), (int) Math.rint(currentFieldHeight));
-
+                g = new Rectangle(vx, vy, (int) Math.rint(currentFieldWidth), (int) Math.rint(currentFieldHeight));
                 List<Point2D.Double> positions = ChurchRangeCalculator.getChurchRange(v.getX(), v.getY(), c.getRange());
                 GeneralPath p = new GeneralPath();
                 p.moveTo(g.getX(), g.getY() - (c.getRange() - 1) * g.getHeight());
@@ -1908,29 +1922,25 @@ public class MapRenderer extends Thread {
                         //north village
                         p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() - g.getHeight());
                         p.lineTo(p.getCurrentPoint().getX() + g.getWidth(), p.getCurrentPoint().getY());
-                        quad =
-                                1;
+                        quad = 1;
                     } else if (pos.getX() == v.getX() + c.getRange() && pos.getY() == v.getY()) {
                         //east village
                         p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + g.getHeight());
                         p.lineTo(p.getCurrentPoint().getX() + g.getWidth(), p.getCurrentPoint().getY());
                         p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + g.getHeight());
-                        quad =
-                                2;
+                        quad = 2;
                     } else if (pos.getX() == v.getX() && pos.getY() == v.getY() + c.getRange()) {
                         //south village
                         p.lineTo(p.getCurrentPoint().getX() - g.getWidth(), p.getCurrentPoint().getY());
                         p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + g.getHeight());
                         p.lineTo(p.getCurrentPoint().getX() - g.getWidth(), p.getCurrentPoint().getY());
-                        quad =
-                                3;
+                        quad = 3;
                     } else if (pos.getX() == v.getX() - c.getRange() && pos.getY() == v.getY()) {
                         //west village
                         p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() - g.getHeight());
                         p.lineTo(p.getCurrentPoint().getX() - g.getWidth(), p.getCurrentPoint().getY());
                         p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() - g.getHeight());
-                        quad =
-                                4;
+                        quad = 4;
                     } else {
                         //no special point
                         int dx = (int) (pos.getX() - lastPos.getX());
@@ -1949,13 +1959,12 @@ public class MapRenderer extends Thread {
                             p.lineTo(p.getCurrentPoint().getX() + dx * g.getWidth(), p.getCurrentPoint().getY());
                             p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + dy * g.getHeight());
                         }
-
                     }
                     lastPos = pos;
                 }
 
                 p.closePath();
-                Color cb = g2d.getColor();
+                /* Color cb = g2d.getColor();
                 Composite com = g2d.getComposite();
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
                 Color radiusColor = c.getRangeColor();
@@ -1964,11 +1973,34 @@ public class MapRenderer extends Thread {
                 g2d.draw(p);
                 g2d.fill(p);
                 g2d.setComposite(com);
-                g2d.setColor(cb);
+                g2d.setColor(cb);*/
+                paths.add(p);
             }
-//</editor-fold>
 
+//</editor-fold>
         }
+
+        Area a = null;
+        for (GeneralPath p : paths) {
+            if (a == null) {
+                a = new Area(p);
+            } else {
+                a.add(new Area(p));
+            }
+        }
+        if (a == null) {
+            return;
+        }
+        Color cb = g2d.getColor();
+        Composite com = g2d.getComposite();
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
+        Color radiusColor = Color.YELLOW;
+        g2d.setColor(radiusColor);
+        g2d.setStroke(new BasicStroke(10.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g2d.draw(a);
+        g2d.fill(a);
+        g2d.setComposite(com);
+        g2d.setColor(cb);
     }
 
     /**Render e.g. drag line, radar, popup*/
@@ -2344,6 +2376,7 @@ public class MapRenderer extends Thread {
                             tt.setTipText(popupVillage.getExtendedTooltip());
                             PopupFactory popupFactory = PopupFactory.getSharedInstance();
                             infoPopup = popupFactory.getPopup(MapPanel.getSingleton(), tt, MouseInfo.getPointerInfo().getLocation().x + 10, MouseInfo.getPointerInfo().getLocation().y + 10);
+                            // JPopupMenu.setDefaultLightWeightPopupEnabled(false);
                             infoPopup.show();
                         }
 
@@ -2351,8 +2384,7 @@ public class MapRenderer extends Thread {
                 } else {
                     if (infoPopup != null) {
                         infoPopup.hide();
-                        infoPopup =
-                                null;
+                        infoPopup = null;
                     }
 
                     popupVillage = null;
@@ -2361,8 +2393,7 @@ public class MapRenderer extends Thread {
             } catch (Exception e) {
                 if (infoPopup != null) {
                     infoPopup.hide();
-                    infoPopup =
-                            null;
+                    infoPopup = null;
                 }
 
                 popupVillage = null;
@@ -2372,8 +2403,7 @@ public class MapRenderer extends Thread {
             //no popup shown
             if (infoPopup != null) {
                 infoPopup.hide();
-                popupVillage =
-                        null;
+                popupVillage = null;
             }
 
         }

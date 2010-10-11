@@ -47,10 +47,10 @@ public class AttackManagerTableModel extends AbstractDSWorkbenchTableModel {
     public final static int COUNTDOWN_COL = 11;
 
     static {
-        types = new Class[]{Tribe.class, Ally.class, Village.class, Tribe.class, Ally.class, Village.class, UnitHolder.class, Date.class, Date.class, Boolean.class, Integer.class, String.class};
-        colNames = new String[]{"Angreifer", "Stamm (Angreifer)", "Herkunft", "Verteidiger", "Stamm (Verteidiger)", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Einzeichnen", "Typ", "Verbleibend"};
-        internalNames = Arrays.asList(new String[]{"Angreifer", "Stamm (Angreifer)", "Herkunft", "Verteidiger", "Stamm (Verteidiger)", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Einzeichnen", "Typ", "Countdown"});
-        editableColumns = new boolean[]{false, false, true, false, false, true, true, true, true, true, true, false};
+        types = new Class[]{Tribe.class, Ally.class, Village.class, Tribe.class, Ally.class, Village.class, UnitHolder.class, Date.class, Date.class, Boolean.class, Integer.class, String.class, Boolean.class};
+        colNames = new String[]{"Angreifer", "Stamm (Angreifer)", "Herkunft", "Verteidiger", "Stamm (Verteidiger)", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Einzeichnen", "Typ", "Verbleibend", "Übertragen"};
+        internalNames = Arrays.asList(new String[]{"Angreifer", "Stamm (Angreifer)", "Herkunft", "Verteidiger", "Stamm (Verteidiger)", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Einzeichnen", "Typ", "Countdown", "Übertragen"});
+        editableColumns = new boolean[]{false, false, true, false, false, true, true, true, true, true, true, false, true};
     }
     private String sActiveAttackPlan = AttackManager.DEFAULT_PLAN_ID;
     private static AttackManagerTableModel SINGLETON = null;
@@ -172,18 +172,18 @@ public class AttackManagerTableModel extends AbstractDSWorkbenchTableModel {
                     return a.isShowOnMap();
                 case 10:
                     return a.getType();
-                default:
+                case 11: {
                     long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
                     long t = sendTime - System.currentTimeMillis();
                     t = (t <= 0) ? 0 : t;
 
                     if (t != 0) {
                         long h = (int) Math.floor((double) t / (double) (1000 * 60 * 60));
-                        t = t - (h * 1000 * 60 * 60);
+                        t -= (h * 1000 * 60 * 60);
                         long min = (int) Math.floor((double) t / (double) (1000 * 60));
-                        t = t - (min * 1000 * 60);
+                        t -= (min * 1000 * 60);
                         long s = (int) Math.floor((double) t / (double) 1000);
-                        t = t - (s * 1000);
+                        t -= (s * 1000);
                         long ms = t;
                         String res = ((h < 10) ? ("0" + h) : "" + h);
                         res += ":";
@@ -204,6 +204,10 @@ public class AttackManagerTableModel extends AbstractDSWorkbenchTableModel {
                     }
 
                     return "00:00:00.000";
+                }
+                default: {
+                    return a.isTransferredToBrowser();
+                }
             }
         } catch (Exception e) {
             return null;
@@ -287,9 +291,12 @@ public class AttackManagerTableModel extends AbstractDSWorkbenchTableModel {
                     }
                     break;
                 }
-                default: {
+                case 11: {
                     //not editable
                     break;
+                }
+                default: {
+                    a.setTransferredToBrowser((Boolean) pValue);
                 }
             }
         } catch (Exception e) {

@@ -37,8 +37,8 @@ public class SupportParser {
         while (lineTok.hasMoreElements()) {
             //parse single line for village
             String line = lineTok.nextToken();
-            //if (line.indexOf(ParserVariableManager.getSingleton().getProperty("troops.own")) > 0) {
             if (line.indexOf(ParserVariableManager.getSingleton().getProperty("troops.in.village")) > 0) {
+
                 //might be troop hosting village
                 Village before = v;
                 v = extractVillage(line);
@@ -51,8 +51,10 @@ public class SupportParser {
                 }
 
                 if (v != null) {
+
                     //Hashtable<UnitHolder, Integer> own = parseUnits(line.substring(line.indexOf(ParserVariableManager.getSingleton().getProperty("troops.own"))).trim());
                     Hashtable<UnitHolder, Integer> own = parseUnits(line.substring(line.indexOf(ParserVariableManager.getSingleton().getProperty("troops.in.village"))).trim());
+
                     if (own != null) {
                         //only add valid troop information
                         VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);

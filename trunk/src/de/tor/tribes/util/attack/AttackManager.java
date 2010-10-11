@@ -97,7 +97,7 @@ public class AttackManager {
                         if (a != null) {
                             Village source = DataHolder.getSingleton().getVillages()[a.getSource().getX()][a.getSource().getY()];
                             Village target = DataHolder.getSingleton().getVillages()[a.getTarget().getX()][a.getTarget().getY()];
-                            addAttackFast(source, target, a.getUnit(), a.getArriveTime(), a.isShowOnMap(), planKey, a.getType());
+                            addAttackFast(source, target, a.getUnit(), a.getArriveTime(), a.isShowOnMap(), planKey, a.getType(), a.isTransferredToBrowser());
                         }
                     }
                 }
@@ -309,8 +309,7 @@ public class AttackManager {
         fireAttacksChangedEvents(plan);
     }
 
-    /**Add an attack to a plan*/
-    public synchronized void addAttackFast(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, boolean pShowOnMap, String pPlan, Integer pType) {
+    public synchronized void addAttackFast(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, boolean pShowOnMap, String pPlan, Integer pType, boolean pTransferredToBrowser) {
         String plan = pPlan;
         if (plan == null) {
             plan = DEFAULT_PLAN_ID;
@@ -328,6 +327,7 @@ public class AttackManager {
         a.setArriveTime(pArriveTime);
         a.setShowOnMap(pShowOnMap);
         a.setType(pType);
+        a.setTransferredToBrowser(pTransferredToBrowser);
         List<Attack> attackPlan = mAttackPlans.get(plan);
         if (attackPlan == null) {
             attackPlan = new LinkedList<Attack>();
@@ -336,7 +336,11 @@ public class AttackManager {
         } else {
             attackPlan.add(a);
         }
+    }
 
+    /**Add an attack to a plan*/
+    public synchronized void addAttackFast(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, boolean pShowOnMap, String pPlan, Integer pType) {
+        addAttackFast(pSource, pTarget, pUnit, pArriveTime, pShowOnMap, pPlan, pType, false);
     }
 
     public synchronized void addEmptyPlan(String pPlan) {

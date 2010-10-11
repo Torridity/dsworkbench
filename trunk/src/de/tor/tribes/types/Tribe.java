@@ -9,6 +9,10 @@
 package de.tor.tribes.types;
 
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.mark.MarkerManager;
+import java.awt.Color;
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -38,7 +42,7 @@ public class Tribe implements Comparable, Serializable {
     private int rankDef = 0;
 
     public Tribe() {
-        villageList = new LinkedList();
+        villageList = new LinkedList<Village>();
     }
     //$id, $name, $ally, $villages, $points, $rank
 
@@ -68,7 +72,7 @@ public class Tribe implements Comparable, Serializable {
     }
 
     public String toPlainData() {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         b.append(getId());
         b.append(",");
         try {
@@ -180,7 +184,7 @@ public class Tribe implements Comparable, Serializable {
     }
 
     public String getHTMLInfo() {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         NumberFormat nf = NumberFormat.getInstance();
         b.append("<html><b>Spieler:</b> ");
         b.append(getName());
@@ -270,6 +274,36 @@ public class Tribe implements Comparable, Serializable {
 
     public void setRankDeff(int rankDef) {
         this.rankDef = rankDef;
+    }
+
+    public Color getMarkerColor() {
+        Marker m = MarkerManager.getSingleton().getMarker(this);
+        if (m != null) {
+            return m.getMarkerColor();
+        }
+
+        if (this.equals(Barbarians.getSingleton())) {
+            return Color.LIGHT_GRAY;
+        }
+
+        if (this.equals(DSWorkbenchMainFrame.getSingleton().getCurrentUser())) {
+            return Color.YELLOW;
+        }
+        Color DEFAULT = null;
+        try {
+            int mark = Integer.parseInt(GlobalOptions.getProperty("default.mark"));
+            if (mark == 0) {
+                DEFAULT = Constants.DS_DEFAULT_MARKER;
+            } else if (mark == 1) {
+                DEFAULT = Color.RED;
+            } else if (mark == 2) {
+                DEFAULT = Color.WHITE;
+            }
+
+        } catch (Exception e) {
+            DEFAULT = Constants.DS_DEFAULT_MARKER;
+        }
+        return DEFAULT;
     }
 
     @Override

@@ -92,7 +92,6 @@ public class ChurchRangeCalculator {
                 pVillages.add(check);
                 pCurrentStart = check;
                 break;
-
             }
         }
 

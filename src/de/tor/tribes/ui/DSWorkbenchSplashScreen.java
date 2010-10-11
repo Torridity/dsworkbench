@@ -348,6 +348,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
      */
     public static void main(String args[]) {
         Locale.setDefault(Locale.GERMAN);
+     //   System.setProperty("J2D_D3D_RASTERIZER", "tnl");
         //System.setProperty("sun.java2d.d3d", "true");
         //  System.setProperty("sun.java2d.opengl", "true");
 
@@ -355,12 +356,12 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         Toolkit.getDefaultToolkit().getSystemEventQueue().push(
                 new EventQueue() {
 
-            protected void dispatchEvent(AWTEvent event) {
+                    protected void dispatchEvent(AWTEvent event) {
                         if (event instanceof KeyEvent) {
                             KeyEvent keyEvent = (KeyEvent) event;
 
-                            if ((keyEvent.getID() == KeyEvent.KEY_PRESSED) &&
-                                    ((keyEvent).getKeyCode() == KeyEvent.VK_ESCAPE)) {
+                            if ((keyEvent.getID() == KeyEvent.KEY_PRESSED)
+                                    && ((keyEvent).getKeyCode() == KeyEvent.VK_ESCAPE)) {
                                 try {
                                     JFrame source = (JFrame) keyEvent.getSource();
                                     if (source != DSWorkbenchMainFrame.getSingleton()) {

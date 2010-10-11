@@ -560,11 +560,11 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         checkConnectivity();
         if (!updateServerList()) {
             //remote update failed and no local servers found
-            String message = "Serverliste konnte nicht geladen werden.\n" +
-                    "Mögliche Ursachen sind fehlerhafte Netzwerkeinstellungen, keine Verbindung zum Internet\n" +
-                    "oder 'dsworkbench.de' ist nicht verfügbar.\n" +
-                    "Da noch kein Datenabgleich mit dem Server stattgefunden hat\n" +
-                    "korrigiere bitte deine Netzwerkeinstellungen um diesen einmalig durchzuführen.";
+            String message = "Serverliste konnte nicht geladen werden.\n"
+                    + "Mögliche Ursachen sind fehlerhafte Netzwerkeinstellungen, keine Verbindung zum Internet\n"
+                    + "oder 'dsworkbench.de' ist nicht verfügbar.\n"
+                    + "Da noch kein Datenabgleich mit dem Server stattgefunden hat\n"
+                    + "korrigiere bitte deine Netzwerkeinstellungen um diesen einmalig durchzuführen.";
             JOptionPaneHelper.showWarningBox(this, message, "Warnung");
             return false;
         }
@@ -2181,11 +2181,11 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
         if (!updateServerList()) {
             //fully failed --> remote update failed and no local servers found
-            String message = "Serverliste konnte nicht geladen werden.\n" +
-                    "Mögliche Ursachen sind fehlerhafte Netzwerkeinstellungen, keine Verbindung zum Internet\n" +
-                    "oder 'dsworkbench.de' ist nicht verfügbar.\n" +
-                    "Da noch kein Datenabgleich mit dem Server stattgefunden hat " +
-                    "korrigiere bitte deine Netzwerkeinstellungen um diesen einmalig durchzuführen.";
+            String message = "Serverliste konnte nicht geladen werden.\n"
+                    + "Mögliche Ursachen sind fehlerhafte Netzwerkeinstellungen, keine Verbindung zum Internet\n"
+                    + "oder 'dsworkbench.de' ist nicht verfügbar.\n"
+                    + "Da noch kein Datenabgleich mit dem Server stattgefunden hat "
+                    + "korrigiere bitte deine Netzwerkeinstellungen um diesen einmalig durchzuführen.";
             JOptionPaneHelper.showWarningBox(this, message, "Warnung");
         } else {
             String message = null;
@@ -2193,14 +2193,14 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             int type = JOptionPane.ERROR_MESSAGE;
             if (offlineBefore) {
                 //was offline before checking serverlist
-                message = "Die Prüfung der Verbindung zum Internet ist fehlgeschlagen.\n" +
-                        "Da du bereits Serverdaten besitzt werden diese verwendet. Für ein Update\n" +
-                        "prüfe bitte erneut deine Verbindung zum Internet und deine Netzwerkeinstellungen.";
+                message = "Die Prüfung der Verbindung zum Internet ist fehlgeschlagen.\n"
+                        + "Da du bereits Serverdaten besitzt werden diese verwendet. Für ein Update\n"
+                        + "prüfe bitte erneut deine Verbindung zum Internet und deine Netzwerkeinstellungen.";
             } else if (GlobalOptions.isOfflineMode()) {
                 //get offline while checking serverlist
-                message = "Die Prüfung der Verbindung zum Internet war erfolgreich,\n" +
-                        "es konnte dennoch keine aktuelle Serverliste heruntergeladen werden.\n" +
-                        "Bitte versuch es später noch einmal.";
+                message = "Die Prüfung der Verbindung zum Internet war erfolgreich,\n"
+                        + "es konnte dennoch keine aktuelle Serverliste heruntergeladen werden.\n"
+                        + "Bitte versuch es später noch einmal.";
             } else {
                 //success
                 message = "Verbindung erfolgreich hergestellt.";
@@ -2341,8 +2341,8 @@ private void fireCreateAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 
 private void fireLoginIntoAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireLoginIntoAccountEvent
     if (GlobalOptions.isOfflineMode()) {
-        JOptionPaneHelper.showInformationBox(this, "Du befindest dich im Offline Modus.\n" +
-                "Bitte korrigiere deine Netzwerkeinstellungen und versuche es erneut.", "Offline Modus");
+        JOptionPaneHelper.showInformationBox(this, "Du befindest dich im Offline Modus.\n"
+                + "Bitte korrigiere deine Netzwerkeinstellungen und versuche es erneut.", "Offline Modus");
         return;
     }
     String name = jAccountName.getText();
@@ -2451,8 +2451,8 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     // <editor-fold defaultstate="collapsed" desc=" Offline Mode ? ">
 
     if (GlobalOptions.isOfflineMode()) {
-        JOptionPaneHelper.showWarningBox(this, "Du befindest dich im Offline-Modus." +
-                "\nBitte korrigiere deine Netzwerkeinstellungen um den Download durchzuführen.",
+        JOptionPaneHelper.showWarningBox(this, "Du befindest dich im Offline-Modus."
+                + "\nBitte korrigiere deine Netzwerkeinstellungen um den Download durchzuführen.",
                 "Warnung");
         return;
     }
@@ -2464,17 +2464,17 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     String name = GlobalOptions.getProperty("account.name");
     String password = GlobalOptions.getProperty("account.password");
     if (DatabaseInterface.checkUser(name, password) != DatabaseInterface.ID_SUCCESS) {
-        JOptionPaneHelper.showErrorBox(this, "Die Accountvalidierung ist fehlgeschlagen.\n" +
-                "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
+        JOptionPaneHelper.showErrorBox(this, "Die Accountvalidierung ist fehlgeschlagen.\n"
+                + "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
                 "Fehler");
         return;
     } else {
         long serverDataVersion = DatabaseInterface.getServerDataVersion(selectedServer);
         long userDataVersion = DatabaseInterface.getUserDataVersion(name, selectedServer);
         if (serverDataVersion < 0 || userDataVersion < 0) {
-            JOptionPaneHelper.showErrorBox(this, "Fehler bei der Überprüfung der Datenversionen.\n" +
-                    "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.\n" +
-                    "Sollte das Problem weiterhin bestehen, kontaktiere bitte den Entwickler.",
+            JOptionPaneHelper.showErrorBox(this, "Fehler bei der Überprüfung der Datenversionen.\n"
+                    + "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.\n"
+                    + "Sollte das Problem weiterhin bestehen, kontaktiere bitte den Entwickler.",
                     "Fehler");
             return;
         }
@@ -2696,8 +2696,8 @@ private void fireSelectBrowserEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     try {
         chooser = new JFileChooser(dir);
     } catch (Exception e) {
-        JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" +
-                "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+        JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n"
+                + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
         return;
     }
     chooser.setDialogTitle("Browser auswählen...");
@@ -2769,8 +2769,8 @@ private void fireSelectTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     try {
         chooser = new JFileChooser(dir);
     } catch (Exception e) {
-        JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" +
-                "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+        JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n"
+                + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
         return;
     }
     chooser.setDialogTitle("Template auswählen...");
@@ -2842,8 +2842,8 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     // <editor-fold defaultstate="collapsed" desc=" Offline Mode ? ">
 
     if (GlobalOptions.isOfflineMode()) {
-        JOptionPaneHelper.showWarningBox(this, "Du befindest dich im Offline-Modus." +
-                "\nBitte korrigiere deine Netzwerkeinstellungen um den Download durchzuführen.",
+        JOptionPaneHelper.showWarningBox(this, "Du befindest dich im Offline-Modus."
+                + "\nBitte korrigiere deine Netzwerkeinstellungen um den Download durchzuführen.",
                 "Warnung");
         return;
     }
@@ -2855,8 +2855,8 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     String name = GlobalOptions.getProperty("account.name");
     String password = GlobalOptions.getProperty("account.password");
     if (DatabaseInterface.checkUser(name, password) != DatabaseInterface.ID_SUCCESS) {
-        JOptionPaneHelper.showErrorBox(this, "Die Accountvalidierung ist fehlgeschlagen.\n" +
-                "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
+        JOptionPaneHelper.showErrorBox(this, "Die Accountvalidierung ist fehlgeschlagen.\n"
+                + "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
                 "Fehler");
         return;
     }
@@ -3066,8 +3066,8 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
                 logger.info("Account check failed (other error)");
                 String message = "Die Accountvalidierung ist fehlgeschlagen.\n";
                 message += "Bitte kontaktiere den Entwickler, da es sich um einen internen Fehler handelt.\n";
-                message += "Solange die Accountvalidierung nicht erfolgreich war wird es dir nicht möglich sein, Serverdaten zu aktualisieren.\n" +
-                        "Um zu versuchen, das Programm trotzdem zu nutzen, wähle bitte Fortfahren.";
+                message += "Solange die Accountvalidierung nicht erfolgreich war wird es dir nicht möglich sein, Serverdaten zu aktualisieren.\n"
+                        + "Um zu versuchen, das Programm trotzdem zu nutzen, wähle bitte Fortfahren.";
                 if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Warnung", "Fortfahren", "Einstellungen überprüfen") == JOptionPane.YES_OPTION) {
                     return false;
                 }
@@ -3075,10 +3075,10 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         } else {
             logger.warn("DS Workbench is in offline mode. Account checking not possible.");
 
-            if (JOptionPaneHelper.showWarningConfirmBox(this, "Du befindest dich im Offline-Modus.\n" +
-                    "Eine Accountüberprüfung ist daher nicht möglich. Solange dein Account nicht überprüft ist, " +
-                    "stehen dir Online-Funktionen nicht zur Verfügung.\n" +
-                    "Willst du trotzdem fortfahren?", "Warnung", "Fortfahren", "Einstellungen überprüfen") == JOptionPane.YES_OPTION) {
+            if (JOptionPaneHelper.showWarningConfirmBox(this, "Du befindest dich im Offline-Modus.\n"
+                    + "Eine Accountüberprüfung ist daher nicht möglich. Solange dein Account nicht überprüft ist, "
+                    + "stehen dir Online-Funktionen nicht zur Verfügung.\n"
+                    + "Willst du trotzdem fortfahren?", "Warnung", "Fortfahren", "Einstellungen überprüfen") == JOptionPane.YES_OPTION) {
                 //"check settings" pressed
                 return false;
             }
@@ -3299,4 +3299,3 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.ButtonGroup tagMarkerGroup;
     // End of variables declaration//GEN-END:variables
 }
-

@@ -54,6 +54,7 @@ import de.tor.tribes.util.stat.StatManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.AlphaComposite;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -79,13 +80,12 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 /**
  * @TODO (DIFF) Transfer off to A*Star now uses own troops instead of all in village
  * @author Charon
  */
-public class MapPanel extends JPanel implements DragGestureListener, // For recognizing the start of drags
+public class MapPanel extends Canvas implements DragGestureListener, // For recognizing the start of drags
         DragSourceListener, // For processing drag source events
         DropTargetListener // For processing drop target events
 {
@@ -141,15 +141,16 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
     /** Creates new form MapPanel */
     MapPanel() {
+        //super();
         initComponents();
         logger.info("Creating MapPanel");
         mMapPanelListeners = new LinkedList<MapPanelListener>();
         mToolChangeListeners = new LinkedList<ToolChangeListener>();
         mMarkerAddFrame = new MarkerAddFrame();
         setCursor(ImageManager.getCursor(iCurrentCursor));
-        //setIgnoreRepaint(true);
+        setIgnoreRepaint(true);
         //setDoubleBuffered(true);
-
+       
         attackAddFrame = new AttackAddFrame();
         mVirtualBounds = new Rectangle2D.Double(0.0, 0.0, 0.0, 0.0);
         jCopyOwn.setSelected(true);
@@ -583,15 +584,12 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             @Override
             public void mouseReleased(MouseEvent e) {
                 if (e.getButton() != MouseEvent.BUTTON1) {
-                    dragMove = false;
                     return;
                 }
 
                 if (MenuRenderer.getSingleton().isVisible()) {
-                    dragMove = false;
                     return;
                 }
-                dragMove = false;
                 int unit = -1;
                 xDir = 0;
                 yDir = 0;
@@ -724,19 +722,16 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 }
                 int tmpCursor = (spaceDown) ? ImageManager.CURSOR_DEFAULT : iCurrentCursor;
 
+
                 switch (tmpCursor) {
                     case ImageManager.CURSOR_DEFAULT: {
                         if (isOutside) {
-                            dragMove = false;
                             return;
                         }
-
                         Point location = MouseInfo.getPointerInfo().getLocation();
                         if ((mouseDownPoint == null) || (location == null)) {
-                            dragMove = false;
                             break;
                         }
-                        dragMove = true;
                         double dx = location.getX() - mouseDownPoint.getX();
                         double dy = location.getY() - mouseDownPoint.getY();
                         mouseDownPoint = location;
@@ -843,7 +838,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
         //<editor-fold>
     }
-    boolean dragMove = false;
 
     public boolean isAttackCursor() {
         return ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) || (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) || (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) || (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) || (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) || (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) || (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB));
@@ -1315,6 +1309,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 fireResizeEvent(evt);
             }
         });
+        setLayout(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireVillageExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireVillageExportEvent
@@ -1781,11 +1776,10 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
     private void fireResizeEvent(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_fireResizeEvent
         Dimension dim = getSize();
-        mBuffer = mMapRenderer.getBufferedImage(dim.width, dim.height, BufferedImage.OPAQUE);
+        mBuffer = mMapRenderer.optimizeImage(new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB));//mMapRenderer.optimizeImage(mMapRenderer.getBufferedImage(dim.width, dim.height, BufferedImage.OPAQUE));
     }//GEN-LAST:event_fireResizeEvent
 
-    public void paint(Graphics g) {
-
+    public void paintComponent(final Graphics g) {
         /**Draw buffer into panel*/
         try {
             //calculate move direction if mouse is dragged outside the map
@@ -1828,14 +1822,16 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 fireScrollEvents(sx, sy);
             }
             //draw off-screen image of map
-
             final Graphics2D g2d = (Graphics2D) g;
             g2d.drawImage(mBuffer, 0, 0, null);
             g2d.dispose();
-
         } catch (Exception e) {
             logger.error("Failed to paint", e);
         }
+    }
+
+    public void update(Graphics g) {
+        paint(g);
     }
 
     /**Update map to new position -> needs fully update*/
@@ -1953,7 +1949,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
         return null;
     }
-    float trans = 1.0f;
 
     /**Update operation perfomed by the RepaintThread was completed*/
     public void updateComplete(HashMap<Village, Rectangle> pPositions, BufferedImage pBuffer) {

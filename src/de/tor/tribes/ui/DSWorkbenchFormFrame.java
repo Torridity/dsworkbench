@@ -263,11 +263,11 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
         try {
             AbstractForm toEdit = (AbstractForm) jFormsList.getSelectedValue();
             if (toEdit != null) {
-                if ((MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_DRAW_CIRCLE) ||
-                        (MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_DRAW_LINE) ||
-                        (MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_DRAW_RECT) ||
-                        (MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_DRAW_TEXT) ||
-                        (MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_DRAW_FREEFORM)) {
+                if ((MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_DRAW_CIRCLE)
+                        || (MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_DRAW_LINE)
+                        || (MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_DRAW_RECT)
+                        || (MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_DRAW_TEXT)
+                        || (MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_DRAW_FREEFORM)) {
                     MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DEFAULT);
                 }
                 FormConfigFrame.getSingleton().setupAndShowInEditMode(toEdit);

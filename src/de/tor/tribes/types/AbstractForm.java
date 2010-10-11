@@ -99,7 +99,7 @@ public abstract class AbstractForm {
             }
             if (System.currentTimeMillis() - t >= 500) {
                 t = System.currentTimeMillis();
-                g2d.setXORMode(Color.BLACK);
+                g2d.setColor(new Color(255 - pColor.getRed(), 255 - pColor.getGreen(), 255 - pColor.getBlue()));
                 showCount++;
             } else {
                 g2d.setColor(pColor);

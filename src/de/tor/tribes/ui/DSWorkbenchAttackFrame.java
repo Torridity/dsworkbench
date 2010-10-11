@@ -64,6 +64,7 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -1874,30 +1875,19 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 }//GEN-LAST:event_fireRemoveAttackEvent
 
 private void fireSendAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSendAttackEvent
-    int[] selectedRows = jAttackTable.getSelectedRows();
-    if (selectedRows != null && selectedRows.length < 1) {
+    int selectedRow = jAttackTable.getSelectedRow();
+    if (selectedRow < 0) {
         return;
     }
-
-    if (selectedRows.length > 30) {
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Du möchtest mehr als 30 Angriffe in den Browser übertragen.\nDies kann, besonders auf älteren Rechnern, zu Problemen und Abstürzen führen.\nWillst du wirklich fortfahren?", "Information", "Nein", "Ja") == JOptionPane.NO_OPTION) {
-            return;
-        }
-    }
-
-    for (Integer selectedRow : selectedRows) {
-        int row = jAttackTable.convertRowIndexToModel(selectedRow);
-        Attack a = AttackManagerTableModel.getSingleton().getAttackAtRow(row);
-        if (a != null) {
-            Village source = a.getSource();
-            Village target = a.getTarget();
-            int type = a.getType();
-            BrowserCommandSender.sendTroops(source, target, type);
-            try {
-                Thread.sleep(100);
-            } catch (Exception e) {
-            }
-        }
+    int row = jAttackTable.convertRowIndexToModel(selectedRow);
+    Attack a = AttackManagerTableModel.getSingleton().getAttackAtRow(row);
+    if (a != null) {
+        Village source = a.getSource();
+        Village target = a.getTarget();
+        int type = a.getType();
+        BrowserCommandSender.sendTroops(source, target, type);
+        a.setTransferredToBrowser(true);
+        ((DefaultListSelectionModel) jAttackTable.getSelectionModel()).setSelectionInterval(selectedRow + 1, selectedRow + 1);
     }
 }//GEN-LAST:event_fireSendAttackEvent
 
@@ -1927,29 +1917,29 @@ private void fireDrawSelectedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 
 private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyUnformatedToClipboardEvent
 
-  /*  try {
-        int[] rows = jAttackTable.getSelectedRows();
-        if ((rows != null) && (rows.length > 0)) {
-            JSONArray ar = new JSONArray();
-            String plan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
-            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(plan);
+    /*  try {
+    int[] rows = jAttackTable.getSelectedRows();
+    if ((rows != null) && (rows.length > 0)) {
+    JSONArray ar = new JSONArray();
+    String plan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
+    List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(plan);
 
-            for (int i : rows) {
-                int row = jAttackTable.convertRowIndexToModel(i);
-                Attack a = attacks.get(row);
-                JSONObject o = a.toJSON("Torridity", plan);
-                ar.put(o);
-            }
-             System.out.println(ar.toString());
-        }
+    for (int i : rows) {
+    int row = jAttackTable.convertRowIndexToModel(i);
+    Attack a = attacks.get(row);
+    JSONObject o = a.toJSON("Torridity", plan);
+    ar.put(o);
+    }
+    System.out.println(ar.toString());
+    }
 
     } catch (Exception e) {
-        e.printStackTrace();
+    e.printStackTrace();
     }
     if (true) {
-        return;
+    return;
     }
-*/
+     */
 
     try {
         int[] rows = jAttackTable.getSelectedRows();

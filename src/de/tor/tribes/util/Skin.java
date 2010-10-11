@@ -25,6 +25,7 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Transparency;
+import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -133,7 +134,7 @@ public class Skin {
             f.setLocation(pPos);
             f.setVisible(true);
         } catch (Exception e) {
-            JOptionPaneHelper.showInformationBox(DSWorkbenchSettingsDialog.getSingleton(), "Keine Vorschauf verfügbar.", "Informatione");
+            JOptionPaneHelper.showInformationBox(DSWorkbenchSettingsDialog.getSingleton(), "Keine Vorschau verfügbar.", "Informatione");
         }
     }
 
@@ -143,16 +144,16 @@ public class Skin {
         iFieldHeight = 10;
         mTextures = new HashMap<Integer, BufferedImage>();
         for (int i = 0; i < 25; i++) {
-            BufferedImage image = new BufferedImage(iFieldWidth, iFieldHeight, BufferedImage.BITMASK);
+            BufferedImage image = new BufferedImage(iFieldWidth, iFieldHeight, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = (Graphics2D) image.getGraphics();
             if (i == 0) {
-                image.getGraphics().setColor(new Color(35, 125, 0));
-                image.getGraphics().fillRect(0, 0, 10, 10);
+                g2d.setColor(new Color(35, 125, 0));
+                g2d.fill(new Rectangle2D.Double(0, 0, 10, 10));
             } else {
-                image.getGraphics().setColor(Color.MAGENTA);
-                image.getGraphics().fillRect(0, 0, 10, 10);
-                image.getGraphics().setColor(Color.BLACK);
-                image.getGraphics().drawRect(0, 0, 9, 9);
+                g2d.setColor(Color.BLACK);
+                g2d.draw(new Rectangle2D.Double(0, 0, 9, 9));
             }
+            g2d.dispose();
             mTextures.put(i, image);
         }
     }

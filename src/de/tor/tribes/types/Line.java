@@ -88,7 +88,7 @@ public class Line extends AbstractForm {
         g2d.setFont(fBefore.deriveFont((float) getTextSize()));
         g2d.setStroke(getStroke());
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getDrawAlpha()));
-        g2d.drawLine((int) Math.rint(s.getX()), (int) Math.rint(s.getY()), (int) Math.rint(e.getX()), (int) Math.rint(e.getY()));
+        g2d.draw(new Line2D.Double((int) Math.rint(s.getX()), (int) Math.rint(s.getY()), (int) Math.rint(e.getX()), (int) Math.rint(e.getY())));
         drawDecoration(s, e, g2d);
         //reset properties
         g2d.setStroke(before);
@@ -110,7 +110,7 @@ public class Line extends AbstractForm {
         g2d.setStroke(getStroke());
         g2d.setColor(getDrawColor());
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getDrawAlpha()));
-        g2d.drawLine((int) Math.rint(s.getX()), (int) Math.rint(s.getY()), (int) Math.rint(e.getX()), (int) Math.rint(e.getY()));
+        g2d.draw(new Line2D.Double((int) Math.rint(s.getX()), (int) Math.rint(s.getY()), (int) Math.rint(e.getX()), (int) Math.rint(e.getY())));
         double zoom = 1.0;
         double h = Math.sqrt(3) / 2 * 20 / zoom;
 

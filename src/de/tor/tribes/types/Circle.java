@@ -17,6 +17,7 @@ import java.net.URLDecoder;
 import org.jdom.Element;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import java.awt.Font;
+import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
@@ -93,13 +94,13 @@ public class Circle extends AbstractForm {
         g2d.setStroke(getStroke());
         checkShowMode(g2d, getDrawColor());
 
-
         if (isFilled()) {
             g2d.fillOval(x, y, w, h);
         } else {
             g2d.drawOval(x, y, w, h);
         }
-        g2d.setClip(new Ellipse2D.Float(x, y, w, h));
+        //Shape clipBefore = g2d.getClip();
+       // g2d.setClip(new Ellipse2D.Float(x, y, w, h));
         if (isDrawName()) {
             g2d.setColor(getTextColor());
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
@@ -113,6 +114,7 @@ public class Circle extends AbstractForm {
         g2d.setColor(cBefore);
         g2d.setComposite(coBefore);
         g2d.setFont(fBefore);
+       // g2d.setClip(clipBefore);
     }
 
     public void renderPreview(Graphics2D g2d) {

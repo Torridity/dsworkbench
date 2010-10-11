@@ -40,6 +40,7 @@ public class Attack implements Serializable {
     private Date arriveTime = null;
     private boolean showOnMap = false;
     private int type = 0;
+    private boolean transferredToBrowser = false;
 
     public Attack() {
         try {
@@ -59,6 +60,12 @@ public class Attack implements Serializable {
         } catch (Exception e) {
             //no type set
             setType(NO_TYPE);
+        }
+        try {
+            setTransferredToBrowser(Boolean.parseBoolean(JaxenUtils.getNodeValue(pElement, "extensions/transferredToBrowser")));
+        } catch (Exception e) {
+            //not transferred yet
+            setTransferredToBrowser(false);
         }
     }
 
@@ -130,6 +137,7 @@ public class Attack implements Serializable {
         xml += "<extensions>\n";
         xml += "\t<showOnMap>" + isShowOnMap() + "</showOnMap>\n";
         xml += "\t<type>" + getType() + "</type>\n";
+        xml += "\t<transferredToBrowser>" + isTransferredToBrowser() + "</transferredToBrowser>\n";
         xml += "</extensions>\n";
         xml += "</attack>";
         return xml;
@@ -186,5 +194,19 @@ public class Attack implements Serializable {
         result += getUnit() + "\n";
         result += f.format(getArriveTime());
         return result;
+    }
+
+    /**
+     * @return the transferredToBrowser
+     */
+    public boolean isTransferredToBrowser() {
+        return transferredToBrowser;
+    }
+
+    /**
+     * @param transferredToBrowser the transferredToBrowser to set
+     */
+    public void setTransferredToBrowser(boolean transferredToBrowser) {
+        this.transferredToBrowser = transferredToBrowser;
     }
 }

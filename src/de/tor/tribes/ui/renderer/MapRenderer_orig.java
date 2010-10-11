@@ -227,7 +227,7 @@ public class MapRenderer_orig extends Thread {
     /**Prepare any g2d object with same parameters*/
     private void prepareGraphics(Graphics2D pG2d) {
         pG2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-        pG2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        pG2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         // Speed
         pG2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
         pG2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
@@ -749,10 +749,14 @@ public class MapRenderer_orig extends Thread {
 
                     if (p == null) {
                         if (worldId != -1) {
-                            Image worldImage = WorldDecorationHolder.getTexture((int) Math.floor(xPos), (int) Math.floor(yPos), currentZoom);
+                            // Image worldImage = WorldDecorationHolder.getTexture((int) Math.floor(xPos), (int) Math.floor(yPos), currentZoom);
+                            Image worldImage = WorldDecorationHolder.getOriginalSprite((int) Math.floor(xPos), (int) Math.floor(yPos));
                             int xp = (int) Math.floor(x + dx);
                             int yp = (int) Math.floor(y + dy);
-                            g2d.drawImage(worldImage, xp, yp, null);
+                            AffineTransform trans = AffineTransform.getTranslateInstance(xp, yp);
+                            trans.scale(1 / currentZoom, 1 / currentZoom);
+                            //  g2d.drawImage(worldImage, xp, yp, null);
+                            g2d.drawImage(worldImage, trans, null);
                             //check containment using size tolerance
                             if (MapPanel.getSingleton().getBounds().contains(new Rectangle(xp, yp, width + 2, height + 2))) {
                                 copyRegionsMap.put(worldId, new Point(xp, yp));
@@ -760,10 +764,14 @@ public class MapRenderer_orig extends Thread {
                         } else {
                             //world skin does not fit -> only default underground
                             if (!minimapSkin) {
-                                Image worldImage = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom);
+                                //Image worldImage = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom);
+                                Image worldImage = GlobalOptions.getSkin().getOriginalSprite(Skin.ID_DEFAULT_UNDERGROUND);
                                 int xp = (int) Math.floor(x + dx);
                                 int yp = (int) Math.floor(y + dy);
-                                g2d.drawImage(worldImage, xp, yp, null);
+                                AffineTransform trans = AffineTransform.getTranslateInstance(xp, yp);
+                                trans.scale(1 / currentZoom, 1 / currentZoom);
+                                //g2d.drawImage(worldImage, xp, yp, null);
+                                g2d.drawImage(worldImage, trans, null);
 
                                 //check containment using size tolerance
                                 if (MapPanel.getSingleton().getBounds().contains(new Rectangle(xp, yp, width + 2, height + 2))) {
@@ -811,7 +819,11 @@ public class MapRenderer_orig extends Thread {
                         int yp = (int) Math.floor(y + dy);
 
                         if (!minimapSkin) {
-                            g2d.drawImage(GlobalOptions.getSkin().getImage(type, currentZoom), xp, yp, null);
+                            Image villageImage = GlobalOptions.getSkin().getOriginalSprite(type);
+                            AffineTransform trans = AffineTransform.getTranslateInstance(xp, yp);
+                            trans.scale(1 / currentZoom, 1 / currentZoom);
+                            g2d.drawImage(villageImage, trans, null);
+                            // g2d.drawImage(GlobalOptions.getSkin().getImage(type, currentZoom), xp, yp, null);
                             //check containment using size tolerance
                             if (MapPanel.getSingleton().getBounds().contains(new Rectangle(xp, yp, width + 2, height + 2))) {
                                 copyRegions.put(type, new Point(xp, yp));
@@ -895,7 +907,7 @@ public class MapRenderer_orig extends Thread {
         System.out.println("DT: " + drawTime);
         g2d.setStroke(st);
         //</editor-fold>
-        g2d.dispose();
+        //g2d.dispose();
     }
 
     /**Render tag markers*/

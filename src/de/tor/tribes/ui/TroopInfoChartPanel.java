@@ -21,7 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JFrame;
 import de.tor.tribes.ui.models.TroopsManagerTableModel;
-import java.awt.geom.Arc2D;
+import java.awt.geom.Rectangle2D;
 
 /**
  *
@@ -51,7 +51,7 @@ public class TroopInfoChartPanel extends javax.swing.JPanel {
         c.add(Color.BLUE);
         VillageTroopsHolder holder = null;
         g2d.setColor(Constants.DS_ROW_B);
-        g2d.fillRect(0, 0, getBounds().width, getBounds().height);
+        g2d.fill(new Rectangle2D.Double(0, 0, getBounds().width, getBounds().height));
         if (village != null) {
             holder = TroopsManager.getSingleton().getTroopsForVillage(village);
         }
@@ -107,7 +107,6 @@ public class TroopInfoChartPanel extends javax.swing.JPanel {
         f.pack();
         f.setVisible(true);
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }

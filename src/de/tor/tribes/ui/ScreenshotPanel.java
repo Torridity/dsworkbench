@@ -86,7 +86,7 @@ public class ScreenshotPanel extends javax.swing.JPanel {
             //add line spacing of 2px
             //legendH += count * 2;
             g2d.setColor(Constants.DS_BACK);
-            g2d.fillRect(width - legendW - 5, height - legendH - 5, legendW, legendH);
+            g2d.fill(new Rectangle2D.Double(width - legendW - 5, height - legendH - 5, legendW, legendH));
             g2d.setColor(Color.BLACK);
             for (int i = 0; i < count; i++) {
                 g2d.setColor(Color.BLACK);
@@ -105,7 +105,7 @@ public class ScreenshotPanel extends javax.swing.JPanel {
                 Color c = MarkerManager.getSingleton().getMarkers()[i].getMarkerColor();
                 g2d.drawString(value, width - legendW, (height - legendH + 5 + (int) (heightF / 2) + heightF * i));
                 g2d.setColor(c);
-                g2d.fillRect(width - legendW + (legendW - 10 - heightF), height - legendH + i * heightF, heightF, heightF);
+                g2d.fill(new Rectangle2D.Double(width - legendW + (legendW - 10 - heightF), height - legendH + i * heightF, heightF, heightF));
             }
             g2d.dispose();
         }

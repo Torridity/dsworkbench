@@ -4,29 +4,22 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import com.jhlabs.image.GaussianFilter;
 import de.tor.tribes.types.Church;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.MapPanel;
-import de.tor.tribes.ui.TwoD.ShapeStroke;
 import de.tor.tribes.util.algo.ChurchRangeCalculator;
 import de.tor.tribes.util.church.ChurchManager;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
-import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;

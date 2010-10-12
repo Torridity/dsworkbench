@@ -206,12 +206,11 @@ public class Skin {
                 if ((current.getWidth(null) != iFieldWidth) || (current.getHeight(null) != iFieldHeight)) {
                     throw new Exception("Textur " + id + " hat nicht die erwartete Größe " + iFieldWidth + "x" + iFieldHeight);
                 }
-
             }
             //  mCache = new Hashtable<Double, Hashtable<Integer, Image>>();
             //  mCache.put(1.0, mTextures);
             //try loading units, ignore exceptions due to not all skins have all units
-            ARMY_CAMP_IMAGE = ImageIO.read(new File(ARMY_CAMP));
+            // ARMY_CAMP_IMAGE = ImageIO.read(new File(ARMY_CAMP));
         } catch (IOException ioe) {
             throw new Exception("Fehler beim laden des Grafikpaketes");
         } catch (Exception e) {

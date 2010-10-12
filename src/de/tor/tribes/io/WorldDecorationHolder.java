@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.io;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import javax.imageio.ImageIO;
 import org.apache.log4j.Logger;
+import sun.java2d.SunGraphics2D;
 
 /**
  *
@@ -84,67 +86,92 @@ public class WorldDecorationHolder {
     private static void loadTextures() throws Exception {
         mTextures = new LinkedList<BufferedImage>();
         try {
-            mTextures.add(ImageIO.read(new File("graphics/world/gras1.png")));//0
-            mTextures.add(ImageIO.read(new File("graphics/world/gras2.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/gras3.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/gras4.png")));
+            mTextures.add(loadImage(new File("graphics/world/gras1.png")));//0
+            mTextures.add(loadImage(new File("graphics/world/gras2.png")));
+            mTextures.add(loadImage(new File("graphics/world/gras3.png")));
+            mTextures.add(loadImage(new File("graphics/world/gras4.png")));
             //dummy values
-            mTextures.add(ImageIO.read(new File("graphics/world/gras4.png")));//4
-            mTextures.add(ImageIO.read(new File("graphics/world/gras4.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/gras4.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/gras4.png")));
+            mTextures.add(loadImage(new File("graphics/world/gras4.png")));//4
+            mTextures.add(loadImage(new File("graphics/world/gras4.png")));
+            mTextures.add(loadImage(new File("graphics/world/gras4.png")));
+            mTextures.add(loadImage(new File("graphics/world/gras4.png")));
 
-            mTextures.add(ImageIO.read(new File("graphics/world/berg1.png")));//8
-            mTextures.add(ImageIO.read(new File("graphics/world/berg2.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/berg3.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/berg4.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/see.png")));
+            mTextures.add(loadImage(new File("graphics/world/berg1.png")));//8
+            mTextures.add(loadImage(new File("graphics/world/berg2.png")));
+            mTextures.add(loadImage(new File("graphics/world/berg3.png")));
+            mTextures.add(loadImage(new File("graphics/world/berg4.png")));
+            mTextures.add(loadImage(new File("graphics/world/see.png")));
             //dummy values
-            mTextures.add(ImageIO.read(new File("graphics/world/gras4.png")));//13
-            mTextures.add(ImageIO.read(new File("graphics/world/gras4.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/gras4.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/forest0000.png")));//16
-            mTextures.add(ImageIO.read(new File("graphics/world/forest0001.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/forest0010.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/forest0011.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/forest0100.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/forest0101.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/forest0110.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/forest0111.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/forest1000.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/forest1001.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/forest1010.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/forest1011.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/forest1100.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/forest1101.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/forest1110.png")));
-            mTextures.add(ImageIO.read(new File("graphics/world/forest1111.png")));
+            mTextures.add(loadImage(new File("graphics/world/gras4.png")));//13
+            mTextures.add(loadImage(new File("graphics/world/gras4.png")));
+            mTextures.add(loadImage(new File("graphics/world/gras4.png")));
+            mTextures.add(loadImage(new File("graphics/world/forest0000.png")));//16
+            mTextures.add(loadImage(new File("graphics/world/forest0001.png")));
+            mTextures.add(loadImage(new File("graphics/world/forest0010.png")));
+            mTextures.add(loadImage(new File("graphics/world/forest0011.png")));
+            mTextures.add(loadImage(new File("graphics/world/forest0100.png")));
+            mTextures.add(loadImage(new File("graphics/world/forest0101.png")));
+            mTextures.add(loadImage(new File("graphics/world/forest0110.png")));
+            mTextures.add(loadImage(new File("graphics/world/forest0111.png")));
+            mTextures.add(loadImage(new File("graphics/world/forest1000.png")));
+            mTextures.add(loadImage(new File("graphics/world/forest1001.png")));
+            mTextures.add(loadImage(new File("graphics/world/forest1010.png")));
+            mTextures.add(loadImage(new File("graphics/world/forest1011.png")));
+            mTextures.add(loadImage(new File("graphics/world/forest1100.png")));
+            mTextures.add(loadImage(new File("graphics/world/forest1101.png")));
+            mTextures.add(loadImage(new File("graphics/world/forest1110.png")));
+            mTextures.add(loadImage(new File("graphics/world/forest1111.png")));
         } catch (Exception e) {
             throw new Exception("Failed to load world textures", e);
         }
+    }
+
+    public static BufferedImage loadImage(File pFile) throws Exception {
+        BufferedImage im = ImageIO.read(pFile);
+
+        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice device = env.getDefaultScreenDevice();
+        GraphicsConfiguration config = device.getDefaultConfiguration();
+        BufferedImage buffy = config.createCompatibleImage(im.getWidth(), im.getHeight(), im.getTransparency());
+        buffy.getGraphics().drawImage(im, 0, 0, null);
+        return buffy;
     }
 
     public static BufferedImage getOriginalSprite(int pX, int pY) {
         if ((pX < 0) || (pY < 0) || (pX > 999) || (pY > 999)) {
             //return default texture
             return mTextures.get(0);
+
+
         }
         int decoId = decoration[pY * 1000 + pX];
+
+
         return mTextures.get(decoId);
+
+
     }
 
     public static Image getTexture(int pX, int pY, double pScale) {
         if ((pX < 0) || (pY < 0) || (pX > 999) || (pY > 999)) {
             //return default texture
             return mTextures.get(0);
+
+
         }
         int decoId = decoration[pY * 1000 + pX];
         HashMap<Double, BufferedImage> cacheForId = cache.get(decoId);
+
+
         if (cacheForId == null) {
             cacheForId = new HashMap<Double, BufferedImage>();
             cache.put(decoId, cacheForId);
+
+
         }
         BufferedImage cached = cacheForId.get(pScale);
+
+
         if (cached == null) {
             Image scaled = mTextures.get(decoId).getScaledInstance((int) Math.rint(mTextures.get(0).getWidth() / pScale), (int) Math.rint(mTextures.get(0).getHeight() / pScale), BufferedImage.SCALE_DEFAULT);
             GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
@@ -154,14 +181,21 @@ public class WorldDecorationHolder {
             g.drawImage(scaled, 0, 0, null);
             g.dispose();
             cacheForId.put(pScale, cached);
+
+
         }
         return cached;
+
+
     }
 
     public static byte getTextureId(int pX, int pY) {
         if ((pX < 0) || (pY < 0) || (pX > 999) || (pY > 999)) {
             return 0;
+
+
         }
         return decoration[pY * 1000 + pX];
+
     }
 }

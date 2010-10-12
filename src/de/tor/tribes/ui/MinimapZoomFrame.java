@@ -9,9 +9,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.MouseInfo;
-import java.awt.event.MouseAdapter;
-import java.awt.image.BufferStrategy;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
@@ -50,7 +48,7 @@ public class MinimapZoomFrame extends javax.swing.JFrame {
         if (pImage != null) {
             Graphics2D g2d = (Graphics2D) g;
             g2d.setColor(new Color(35, 125, 0));
-            g2d.fillRect(0, 0, getWidth(), getHeight());
+            g2d.fill(new Rectangle2D.Double(0, 0, getWidth(), getHeight()));
             g2d.drawImage(pImage, xp, yp, null);
             /* if (mBorder != null) {
             g2d.drawImage(mBorder, null, 0, 0);

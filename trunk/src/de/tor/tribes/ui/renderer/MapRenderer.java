@@ -362,7 +362,7 @@ public class MapRenderer extends Thread {
                             if (mapDrawn) {
                                 //only draw layer if map is drawn
                                 //If not, this layer is hidden behind the map
-                                g2d.drawImage(mLayers.get(TAG_MARKER_LAYER), 0, 0, null);
+                                //  g2d.drawImage(mLayers.get(TAG_MARKER_LAYER), 0, 0, null);
                             }
                             //  logger.info(" - TAG " + (System.currentTimeMillis() - s));
                         } else if (layer == 3) {
@@ -370,7 +370,7 @@ public class MapRenderer extends Thread {
                             if (mapDrawn) {
                                 //only draw layer if map is drawn
                                 //If not, this layer is hidden behind the map
-                                renderDecoration(g2d);
+                                //  renderDecoration(g2d);
                                 // System.out.println("DTD " + (System.currentTimeMillis() - s));
                             }
                             //  logger.info(" - DECO " + (System.currentTimeMillis() - s));
@@ -387,8 +387,8 @@ public class MapRenderer extends Thread {
                             if (mapDrawn) {
                                 //only draw layer if map is drawn
                                 //If not, this layer is hidden behind the map
-                                renderNoteMarkers();
-                                g2d.drawImage(mLayers.get(NOTE_LAYER), 0, 0, null);
+                                //  renderNoteMarkers();
+                                //  g2d.drawImage(mLayers.get(NOTE_LAYER), 0, 0, null);
                                 // System.out.println("DTN " + (System.currentTimeMillis() - s));
                             }
                             // logger.info(" - NOTE " + (System.currentTimeMillis() - s));
@@ -397,7 +397,7 @@ public class MapRenderer extends Thread {
                             if (mapDrawn) {
                                 //only draw layer if map is drawn
                                 //If not, this layer is hidden behind the map
-                                renderAttacks(g2d);
+                                //  renderAttacks(g2d);
                             }
                             //  logger.info(" - ATTS " + (System.currentTimeMillis() - s));
                         } else if (layer == 7) {
@@ -405,7 +405,7 @@ public class MapRenderer extends Thread {
                             if (mapDrawn) {
                                 //only draw layer if map is drawn
                                 //If not, this layer is hidden behind the map
-                                renderSupports(g2d);
+                                //   renderSupports(g2d);
                             }
                             //   logger.info(" - SUPP " + (System.currentTimeMillis() - s));
                         } else if (layer == 8) {
@@ -433,8 +433,8 @@ public class MapRenderer extends Thread {
                     // System.out.println("DT " + (System.currentTimeMillis() - s1));
 
                     //draw live layer -> always on top
-                    renderLiveLayer(g2d);
-                    g2d.drawImage(mLayers.get(LIVE_LAYER), 0, 0, null);
+                    //   renderLiveLayer(g2d);
+                    //   g2d.drawImage(mLayers.get(LIVE_LAYER), 0, 0, null);
 
                     //    logger.info(" - LIVE " + (System.currentTimeMillis() - s));
                     // s = System.currentTimeMillis();

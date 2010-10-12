@@ -128,7 +128,7 @@ public class SamplePanel extends javax.swing.JPanel {
         Graphics2D g2d = (Graphics2D) result.getGraphics();
         if (!GlobalOptions.getSkin().isMinimapSkin()) {
             g2d.setColor(Color.RED);
-            g2d.fillRect(0, 0, result.getWidth(), result.getHeight());
+            g2d.fill(new Rectangle2D.Double(0, 0, result.getWidth(), result.getHeight()));
             for (int i = Skin.ID_V1; i <= Skin.ID_V6; i++) {
                 Image image = GlobalOptions.getSkin().getImage(i, 1.0f);
                 g2d.drawImage(image, (i - Skin.ID_V1) * image.getWidth(null), 0, this);
@@ -141,7 +141,7 @@ public class SamplePanel extends javax.swing.JPanel {
             return result;
         } else {
             g2d.setColor(Constants.DS_BACK);
-            g2d.fillRect(0, 0, result.getWidth(), result.getHeight());
+            g2d.fill(new Rectangle2D.Double(0, 0, result.getWidth(), result.getHeight()));
             g2d.dispose();
             return result;
         }
@@ -150,12 +150,12 @@ public class SamplePanel extends javax.swing.JPanel {
     public void paint(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.WHITE);
-        g2d.fillRect(0, 0, getWidth(), getHeight());
+        g2d.fill(new Rectangle2D.Double(0, 0, getWidth(), getHeight()));
         g2d.setColor(mDrawColor);
         Paint p = g2d.getPaint();
         BufferedImage sample = createSample();
         g2d.setPaint(new TexturePaint(sample, new Rectangle2D.Double(0, 0, sample.getWidth(), sample.getHeight())));
-        g2d.fillRect(0, 0, getWidth(), getHeight());
+        g2d.fill(new Rectangle2D.Double(0, 0, getWidth(), getHeight()));
         g2d.setPaint(p);
         switch (type) {
             case 0: {

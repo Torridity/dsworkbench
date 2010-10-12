@@ -22,6 +22,7 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Enumeration;
@@ -172,7 +173,7 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
                 g2d.setColor(Constants.DS_BACK);
 
                 if (!showChurchTools && (region == 25 || region == 26 || region == 27 || region == 28)) {
-                    g2d.fillRect(rect.x, rect.y, rect.width, rect.height);
+                    g2d.fill(new Rectangle2D.Double(rect.x, rect.y, rect.width, rect.height));
                 } else {
                     g2d.fill3DRect(rect.x, rect.y, rect.width, rect.height, false);
                 }
@@ -182,7 +183,7 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
             } else {
                 if (!showChurchTools && (region == 25 || region == 26 || region == 27 || region == 28)) {
                     g2d.setColor(Constants.DS_BACK);
-                    g2d.fillRect(rect.x, rect.y, rect.width, rect.height);
+                    g2d.fill(new Rectangle2D.Double(rect.x, rect.y, rect.width, rect.height));
                 } else {
                     g2d.setColor(Constants.DS_BACK_LIGHT);
                     g2d.fill3DRect(rect.x, rect.y, rect.width, rect.height, true);

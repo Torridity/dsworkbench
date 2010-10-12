@@ -84,7 +84,7 @@ public abstract class AbstractBufferedLayerRenderer {
         GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice device = env.getDefaultScreenDevice();
         GraphicsConfiguration config = device.getDefaultConfiguration();
-        VolatileImage buffy = config.createCompatibleVolatileImage(w, h);
+        VolatileImage buffy = config.createCompatibleVolatileImage(w, h, trans);
         return buffy;
     }
 
@@ -106,7 +106,6 @@ public abstract class AbstractBufferedLayerRenderer {
 
         // get the graphics context of the new image to draw the old image on
         Graphics2D g2d = (Graphics2D) new_image.getGraphics();
-
         // actually draw the image and dispose of context no longer needed
         g2d.drawImage(image, 0, 0, null);
         g2d.dispose();

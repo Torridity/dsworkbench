@@ -582,7 +582,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jCheckAccountButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="276" max="32767" attributes="0"/>
+                      <EmptySpace pref="260" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1378,10 +1378,10 @@
                                       </Group>
                                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jProxyPassword" alignment="0" pref="402" max="32767" attributes="2"/>
-                                          <Component id="jProxyUser" alignment="0" pref="402" max="32767" attributes="2"/>
-                                          <Component id="jProxyTypeChooser" alignment="0" pref="402" max="32767" attributes="2"/>
-                                          <Component id="jProxyHost" alignment="0" pref="402" max="32767" attributes="2"/>
+                                          <Component id="jProxyPassword" alignment="0" pref="409" max="32767" attributes="2"/>
+                                          <Component id="jProxyUser" alignment="0" pref="409" max="32767" attributes="2"/>
+                                          <Component id="jProxyTypeChooser" alignment="0" pref="409" max="32767" attributes="2"/>
+                                          <Component id="jProxyHost" alignment="0" pref="409" max="32767" attributes="2"/>
                                           <Component id="jRefeshNetworkButton" alignment="1" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>

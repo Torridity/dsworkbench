@@ -71,6 +71,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.VolatileImage;
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.Collections;
@@ -180,6 +181,10 @@ public class MapRenderer extends Thread {
         }
     }
 
+    public VolatileImage getVol(int w, int h) {
+        return rend.createEmptyVolatile(w, h, VolatileImage.OPAQUE);
+    }
+
     /**Set the order all layers are drawn
      * @param pDrawOrder
      */
@@ -221,7 +226,7 @@ public class MapRenderer extends Thread {
         Graphics2D g2d = (Graphics2D) new_image.getGraphics();
 
         // actually draw the image and dispose of context no longer needed
-        g2d.drawImage(image, 0, 0, null);
+        g2d.drawRenderedImage(image, AffineTransform.getTranslateInstance(0, 0));
         g2d.dispose();
 
         // return the new optimized image
@@ -264,6 +269,7 @@ public class MapRenderer extends Thread {
         logger.debug("Entering render loop");
 
         while (true) {
+            long s1 = System.currentTimeMillis();
             //get global max. fps
             int fps = 10;
             try {
@@ -279,6 +285,7 @@ public class MapRenderer extends Thread {
                     Graphics2D g2d = null;
                     if (mBackBuffer == null) {
                         //create main buffer during first iteration
+                        System.out.println("REc");
                         mBackBuffer = getBufferedImage(w, h, Transparency.OPAQUE);
                         mBackBuffer.setAccelerationPriority(1);
                         mFrontBuffer = getBufferedImage(w, h, Transparency.OPAQUE);
@@ -292,6 +299,7 @@ public class MapRenderer extends Thread {
                         //if not re-create main buffer
                         if (mBackBuffer.getWidth(null) != w || mBackBuffer.getHeight(null) != h) {
                             //map panel has resized
+                            System.out.println("REc");
                             mBackBuffer = getBufferedImage(w, h, Transparency.OPAQUE);
                             mBackBuffer.setAccelerationPriority(1);
                             mFrontBuffer = getBufferedImage(w, h, Transparency.OPAQUE);
@@ -329,7 +337,7 @@ public class MapRenderer extends Thread {
                     }
 
                     boolean mapDrawn = false;
-                    long s1 = System.currentTimeMillis();
+                    System.out.println("Dur :" + (System.currentTimeMillis() - s1));
                     for (Integer layer : drawOrder) {
                         if (layer == 0) {
                             /* if (mapDrawn) {
@@ -352,9 +360,9 @@ public class MapRenderer extends Thread {
                             //  g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
                             long s = System.currentTimeMillis();
                             rend.performRendering(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
-                            System.out.println("Dur1: " + (System.currentTimeMillis() - s));
-                            rend5.performRendering(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
-                            System.out.println("Dur2: " + (System.currentTimeMillis() - s));
+                            // System.out.println("Dur1: " + (System.currentTimeMillis() - s));
+                            //      rend5.performRendering(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
+                            // System.out.println("Dur2: " + (System.currentTimeMillis() - s));
                             // System.out.println("DTV " + (System.currentTimeMillis() - s));
                             //logger.info(" - MAP " + (System.currentTimeMillis() - s));
                             mapDrawn = true;
@@ -380,7 +388,7 @@ public class MapRenderer extends Thread {
                                 //only draw layer if map is drawn
                                 //If not, this layer is hidden behind the map
                                 // renderTroopDensity(g2d);
-                                rend2.performRendering(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
+                                //       rend2.performRendering(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
                             }
                             //  logger.info(" - TROOP " + (System.currentTimeMillis() - s));
                         } else if (layer == 5) {
@@ -414,7 +422,7 @@ public class MapRenderer extends Thread {
                                 //only draw layer if map is drawn
                                 //If not, this layer is hidden behind the map
                                 //renderForms(g2d);
-                                rend4.performRendering(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
+                                //          rend4.performRendering(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
                             }
                             //    logger.info(" - FORM " + (System.currentTimeMillis() - s));
                         } else if (layer == 9) {
@@ -422,14 +430,13 @@ public class MapRenderer extends Thread {
                             if (mapDrawn) {
                                 //only draw layer if map is drawn
                                 //If not, this layer is hidden behind the map
-                                rend3.performRendering(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
+                                //     rend3.performRendering(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
                                 //renderChurches(g2d);
                                 //    logger.info(" - CHURCH " + (System.currentTimeMillis() - s));
-
                             }
                         }
                     }
-
+                    System.out.println("Dur :" + (System.currentTimeMillis() - s1));
                     // System.out.println("DT " + (System.currentTimeMillis() - s1));
 
                     //draw live layer -> always on top
@@ -456,10 +463,9 @@ public class MapRenderer extends Thread {
 
                     MapPanel.getSingleton().updateComplete(pos, mFrontBuffer);
                     //MapPanel.getSingleton().getBufferStrategy().show();
-                    System.out.println("Repaint");
                     MapPanel.getSingleton().repaint();
                     //       logger.info(" - DONE! " + (System.currentTimeMillis() - s));
-
+                    System.out.println("Dur :" + (System.currentTimeMillis() - s1));
                 }
                 if (alpha > 0.0f) {
                     alpha -= .05f;
@@ -476,10 +482,11 @@ public class MapRenderer extends Thread {
                 lRenderedLast = 0;
                 logger.error("Redrawing map failed", t);
             }
-            try {
-                Thread.sleep(lCurrentSleepTime);
+
+            /* try {
+            Thread.sleep(10);
             } catch (InterruptedException ie) {
-            }
+            }*/
             //FPS steering
             if (lRenderedLast == 0) {
                 iCurrentFPS++;
@@ -488,7 +495,7 @@ public class MapRenderer extends Thread {
                 iCurrentFPS++;
                 long dur = System.currentTimeMillis() - lRenderedLast;
                 if (dur >= 1000) {
-
+                    System.out.println(iCurrentFPS);
                     if (iCurrentFPS < fps && lCurrentSleepTime > 40) {
                         lCurrentSleepTime -= 10;
                     } else {
@@ -498,7 +505,7 @@ public class MapRenderer extends Thread {
                     iCurrentFPS = 0;
                 }
             }
-
+            System.out.println("Dur :" + (System.currentTimeMillis() - s1));
         }
     }
 

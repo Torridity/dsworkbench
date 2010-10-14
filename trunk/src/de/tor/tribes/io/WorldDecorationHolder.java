@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import javax.imageio.ImageIO;
 import org.apache.log4j.Logger;
-import sun.java2d.SunGraphics2D;
 
 /**
  *

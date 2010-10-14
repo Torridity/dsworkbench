@@ -59,10 +59,13 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.datatransfer.StringSelection;
+import java.awt.image.BufferStrategy;
 import java.io.FileWriter;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
@@ -109,14 +112,14 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     /** Creates new form MapFrame */
     DSWorkbenchMainFrame() {
         initComponents();
+
         setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
         setAlwaysOnTop(false);
         jExportDialog.pack();
         jAddROIDialog.pack();
-       // jPanel1.setIgnoreRepaint(true);
+        jPanel1.setIgnoreRepaint(true);
         mAbout = new AboutDialog(this, true);
         mAbout.pack();
-
         // <editor-fold defaultstate="collapsed" desc=" Register ShutdownHook ">
 
         Runtime.getRuntime().addShutdownHook(new MainShutdownHook());
@@ -524,6 +527,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         //update online state
         onlineStateChanged();
         restoreProperties();
+
     }
 
     /* boolean map = true;
@@ -789,7 +793,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     public void setVisible(boolean v) {
         logger.info("Setting MainWindow visible");
         boolean t = true;
-
         super.setVisible(v);
         if (v) {
             //only if set to visible
@@ -1380,6 +1383,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.LINE_AXIS));
 
         jMinimapPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2));
+        jMinimapPanel.setDoubleBuffered(false);
         jMinimapPanel.setLayout(new java.awt.BorderLayout());
 
         jScrollPane2.setFocusTraversalPolicyProvider(true);

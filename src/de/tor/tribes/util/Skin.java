@@ -170,30 +170,30 @@ public class Skin {
             mTextures.put(ID_DEFAULT_UNDERGROUND, ImageIO.read(new File(path + "/" + DEFAULT_UNDERGROUND)));
             iFieldWidth = mTextures.get(0).getWidth(null);
             iFieldHeight = mTextures.get(0).getHeight(null);
-            mTextures.put(ID_V1, ImageIO.read(new File(path + "/" + V1_FILE)));
-            mTextures.put(ID_V2, ImageIO.read(new File(path + "/" + V2_FILE)));
-            mTextures.put(ID_V3, ImageIO.read(new File(path + "/" + V3_FILE)));
-            mTextures.put(ID_V4, ImageIO.read(new File(path + "/" + V4_FILE)));
-            mTextures.put(ID_V5, ImageIO.read(new File(path + "/" + V5_FILE)));
-            mTextures.put(ID_V6, ImageIO.read(new File(path + "/" + V6_FILE)));
-            mTextures.put(ID_V1_LEFT, ImageIO.read(new File(path + "/" + V1_LEFT_FILE)));
-            mTextures.put(ID_V2_LEFT, ImageIO.read(new File(path + "/" + V2_LEFT_FILE)));
-            mTextures.put(ID_V3_LEFT, ImageIO.read(new File(path + "/" + V3_LEFT_FILE)));
-            mTextures.put(ID_V4_LEFT, ImageIO.read(new File(path + "/" + V4_LEFT_FILE)));
-            mTextures.put(ID_V5_LEFT, ImageIO.read(new File(path + "/" + V5_LEFT_FILE)));
-            mTextures.put(ID_V6_LEFT, ImageIO.read(new File(path + "/" + V6_LEFT_FILE)));
-            mTextures.put(ID_B1, ImageIO.read(new File(path + "/" + B1_FILE)));
-            mTextures.put(ID_B2, ImageIO.read(new File(path + "/" + B2_FILE)));
-            mTextures.put(ID_B3, ImageIO.read(new File(path + "/" + B3_FILE)));
-            mTextures.put(ID_B4, ImageIO.read(new File(path + "/" + B4_FILE)));
-            mTextures.put(ID_B5, ImageIO.read(new File(path + "/" + B5_FILE)));
-            mTextures.put(ID_B6, ImageIO.read(new File(path + "/" + B6_FILE)));
-            mTextures.put(ID_B1_LEFT, ImageIO.read(new File(path + "/" + B1_LEFT_FILE)));
-            mTextures.put(ID_B2_LEFT, ImageIO.read(new File(path + "/" + B2_LEFT_FILE)));
-            mTextures.put(ID_B3_LEFT, ImageIO.read(new File(path + "/" + B3_LEFT_FILE)));
-            mTextures.put(ID_B4_LEFT, ImageIO.read(new File(path + "/" + B4_LEFT_FILE)));
-            mTextures.put(ID_B5_LEFT, ImageIO.read(new File(path + "/" + B5_LEFT_FILE)));
-            mTextures.put(ID_B6_LEFT, ImageIO.read(new File(path + "/" + B6_LEFT_FILE)));
+            mTextures.put(ID_V1, loadImage(new File(path + "/" + V1_FILE)));
+            mTextures.put(ID_V2, loadImage(new File(path + "/" + V2_FILE)));
+            mTextures.put(ID_V3, loadImage(new File(path + "/" + V3_FILE)));
+            mTextures.put(ID_V4, loadImage(new File(path + "/" + V4_FILE)));
+            mTextures.put(ID_V5, loadImage(new File(path + "/" + V5_FILE)));
+            mTextures.put(ID_V6, loadImage(new File(path + "/" + V6_FILE)));
+            mTextures.put(ID_V1_LEFT, loadImage(new File(path + "/" + V1_LEFT_FILE)));
+            mTextures.put(ID_V2_LEFT, loadImage(new File(path + "/" + V2_LEFT_FILE)));
+            mTextures.put(ID_V3_LEFT, loadImage(new File(path + "/" + V3_LEFT_FILE)));
+            mTextures.put(ID_V4_LEFT, loadImage(new File(path + "/" + V4_LEFT_FILE)));
+            mTextures.put(ID_V5_LEFT, loadImage(new File(path + "/" + V5_LEFT_FILE)));
+            mTextures.put(ID_V6_LEFT, loadImage(new File(path + "/" + V6_LEFT_FILE)));
+            mTextures.put(ID_B1, loadImage(new File(path + "/" + B1_FILE)));
+            mTextures.put(ID_B2, loadImage(new File(path + "/" + B2_FILE)));
+            mTextures.put(ID_B3, loadImage(new File(path + "/" + B3_FILE)));
+            mTextures.put(ID_B4, loadImage(new File(path + "/" + B4_FILE)));
+            mTextures.put(ID_B5, loadImage(new File(path + "/" + B5_FILE)));
+            mTextures.put(ID_B6, loadImage(new File(path + "/" + B6_FILE)));
+            mTextures.put(ID_B1_LEFT, loadImage(new File(path + "/" + B1_LEFT_FILE)));
+            mTextures.put(ID_B2_LEFT, loadImage(new File(path + "/" + B2_LEFT_FILE)));
+            mTextures.put(ID_B3_LEFT, loadImage(new File(path + "/" + B3_LEFT_FILE)));
+            mTextures.put(ID_B4_LEFT, loadImage(new File(path + "/" + B4_LEFT_FILE)));
+            mTextures.put(ID_B5_LEFT, loadImage(new File(path + "/" + B5_LEFT_FILE)));
+            mTextures.put(ID_B6_LEFT, loadImage(new File(path + "/" + B6_LEFT_FILE)));
 
             if (mTextures.size() < TEXTURE_COUNT) {
                 throw new Exception("#Texturen < " + TEXTURE_COUNT);
@@ -217,6 +217,17 @@ public class Skin {
             throw new Exception("Grafikpaket ungültig (" + e.getMessage() + ")");
         }
 
+    }
+
+    public static BufferedImage loadImage(File pFile) throws Exception {
+        BufferedImage im = ImageIO.read(pFile);
+
+        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice device = env.getDefaultScreenDevice();
+        GraphicsConfiguration config = device.getDefaultConfiguration();
+        BufferedImage buffy = config.createCompatibleImage(im.getWidth(), im.getHeight(), im.getTransparency());
+        buffy.getGraphics().drawImage(im, 0, 0, null);
+        return buffy;
     }
 
     public BufferedImage getOriginalSprite(int pID) {

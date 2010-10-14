@@ -1062,11 +1062,11 @@ class MinimapRepaintThread extends Thread {
     public void run() {
         while (true) {
             try {
-                if (!drawn) {
+             /*   if (!drawn) {
                     drawn = redraw();
                 }
 
-                MinimapPanel.getSingleton().updateComplete(mBuffer);
+                MinimapPanel.getSingleton().updateComplete(mBuffer);*/
                 try {
                     Thread.sleep(100);
                 } catch (Exception e) {

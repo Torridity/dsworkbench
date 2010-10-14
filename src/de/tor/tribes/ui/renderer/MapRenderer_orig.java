@@ -425,6 +425,7 @@ public class MapRenderer_orig extends Thread {
                     mFrontBuffer = optimizeImage(mBackBuffer);
                     MapPanel.getSingleton().updateComplete(pos, mFrontBuffer);
                     g2d.dispose();
+                    System.out.println("Repaint_old");
                     MapPanel.getSingleton().repaint();
                     //       logger.info(" - DONE! " + (System.currentTimeMillis() - s));
 

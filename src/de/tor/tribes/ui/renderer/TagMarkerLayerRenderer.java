@@ -82,7 +82,7 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
         g2d.drawRenderedImage(img, trans);
         if (isFullRenderRequired()) {
             //everything was rendered, skip col rendering
-            // setFullRenderRequired(false);
+             setFullRenderRequired(false);
         } else {
             renderedSpriteBounds = new HashMap<Tag, Rectangle>();
 

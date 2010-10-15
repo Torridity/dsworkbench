@@ -33,8 +33,6 @@ import java.awt.dnd.DragSourceEvent;
 import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
-import java.awt.event.ComponentEvent;
-import java.awt.event.HierarchyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -47,6 +45,7 @@ import org.apache.log4j.Logger;
 import de.tor.tribes.ui.renderer.MenuRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MapShotListener;
 import de.tor.tribes.util.ServerSettings;
@@ -58,7 +57,6 @@ import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -70,8 +68,6 @@ import java.awt.dnd.DragSource;
 import java.awt.dnd.DragSourceListener;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetListener;
-import java.awt.event.ComponentListener;
-import java.awt.event.HierarchyListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -82,8 +78,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.StringTokenizer;
-import java.util.Timer;
-import java.util.TimerTask;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -93,8 +87,8 @@ import javax.swing.JPanel;
  * @author Charon
  */
 public class MapPanel extends JPanel implements DragGestureListener, // For recognizing the start of drags
-        DragSourceListener, // For processing drag source events
-        DropTargetListener // For processing drop target events
+                                                DragSourceListener, // For processing drag source events
+                                                DropTargetListener // For processing drop target events
 {
 // <editor-fold defaultstate="collapsed" desc=" Member variables ">
 
@@ -1789,13 +1783,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     }//GEN-LAST:event_fireResizeEvent
     long s = System.currentTimeMillis();
 
-    /*  public void paintComponent(Graphics g) {
-    }*/
     public void paintComponent(Graphics g) {
-        super.paintComponent(g); // paint background
-        setBackground(Color.WHITE);
-        System.out.println("Rend: " + (System.currentTimeMillis() - s));
-        s = System.currentTimeMillis();
+        super.paintComponent(g);
         /**Draw buffer into panel*/
         try {
             //calculate move direction if mouse is dragged outside the map
@@ -1840,10 +1829,10 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             //draw off-screen image of map
 
             final Graphics2D g2d = (Graphics2D) g;
-
-            g2d.drawImage(mBuffer, 0, 0, null);
-            g2d.dispose();
+            ImageUtils.setupGraphics(g2d);
+            g2d.drawRenderedImage(mBuffer, AffineTransform.getTranslateInstance(0, 0));
             Toolkit.getDefaultToolkit().sync();
+            g2d.dispose();
         } catch (Exception e) {
             logger.error("Failed to paint", e);
         }
@@ -1964,21 +1953,19 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
         return null;
     }
-    float trans = 1.0f;
-    boolean updating = false;
 
     /**Update operation perfomed by the RepaintThread was completed*/
     public synchronized void updateComplete(HashMap<Village, Rectangle> pPositions, BufferedImage pBuffer) {
-        updating = true;
-        //public void updateComplete(Hashtable<Village, Rectangle> pPositions, VolatileImage pBuffer) {
-        mBuffer = mMapRenderer.getBufferedImage(pBuffer.getWidth(), pBuffer.getHeight(), BufferedImage.OPAQUE);
-        Graphics2D g2d = mBuffer.createGraphics();
-        g2d.drawRenderedImage(pBuffer, AffineTransform.getTranslateInstance(0, 0));
-        //  mBuffer.getGraphics().clearRect(0, 0, getWidth(), getHeight());
-       /* final Graphics2D g2d = (Graphics2D) mBuffer.getGraphics();
-        g2d.drawRenderedImage(pBuffer, AffineTransform.getTranslateInstance(0, 0));
-        g2d.dispose();*/
-        //mBuffer = pBuffer;
+        Graphics2D g2d = null;
+        if (mBuffer == null) {
+            mBuffer = ImageUtils.createCompatibleBufferedImage(pBuffer.getWidth(), pBuffer.getHeight(), BufferedImage.OPAQUE);
+            g2d = mBuffer.createGraphics();
+        } else {
+            g2d = (Graphics2D) mBuffer.getGraphics();
+        }
+
+        g2d.drawImage(pBuffer, AffineTransform.getTranslateInstance(0, 0), null);
+        g2d.dispose();
         mVillagePositions = pPositions;
         if (bMapSHotPlaned) {
             saveMapShot(mBuffer);
@@ -1988,7 +1975,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             DSWorkbenchFormFrame.getSingleton().updateFormList();
         }
         positionUpdate = false;
-        updating = false;
     }
 
     protected void planMapShot(String pType, File pLocation, MapShotListener pListener) {
@@ -2041,7 +2027,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         for (ToolChangeListener listener : mToolChangeListeners) {
             listener.fireToolChangedEvent(pTool);
         }
-
     }
 
     public synchronized void fireVillageAtMousePosChangedEvents(Village pVillage) {

@@ -9,6 +9,7 @@ import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.AlphaComposite;
@@ -52,9 +53,8 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
         Graphics2D g2d = null;
         if (isFullRenderRequired()) {
             if (mLayer == null) {
-                mLayer = createEmptyBuffered(pVisibleVillages.length * settings.getFieldWidth(), pVisibleVillages[0].length * settings.getFieldHeight(), BufferedImage.BITMASK);
-                mLayer = optimizeImage(mLayer);
-                g2d = (Graphics2D) mLayer.getGraphics();
+                mLayer = ImageUtils.createCompatibleBufferedImage(pVisibleVillages.length * settings.getFieldWidth(), pVisibleVillages[0].length * settings.getFieldHeight(), BufferedImage.BITMASK);
+                g2d = (Graphics2D) mLayer.createGraphics();
             } else {
                 g2d = (Graphics2D) mLayer.getGraphics();
                 Composite c = g2d.getComposite();
@@ -69,7 +69,7 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
             g2d = (Graphics2D) mLayer.getGraphics();
             performCopy(settings, pVirtualBounds, g2d);
         }
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        ImageUtils.setupGraphics(g2d);
         renderedSpriteBounds = new HashMap<Tag, Rectangle>();
         //Set new bounds
         setRenderedBounds((Rectangle2D.Double) pVirtualBounds.clone());
@@ -82,7 +82,7 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
         g2d.drawRenderedImage(img, trans);
         if (isFullRenderRequired()) {
             //everything was rendered, skip col rendering
-             setFullRenderRequired(false);
+            setFullRenderRequired(false);
         } else {
             renderedSpriteBounds = new HashMap<Tag, Rectangle>();
 
@@ -119,11 +119,11 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
 
     private BufferedImage renderMarkerRows(Village[][] pVillages, RenderSettings pSettings) {
         //create new buffer for rendering
-        BufferedImage newRows = createEmptyBuffered(pVillages.length * pSettings.getFieldWidth(), Math.abs(pSettings.getRowsToRender()) * pSettings.getFieldHeight(), BufferedImage.BITMASK);
+        BufferedImage newRows = ImageUtils.createCompatibleBufferedImage(pVillages.length * pSettings.getFieldWidth(), Math.abs(pSettings.getRowsToRender()) * pSettings.getFieldHeight(), BufferedImage.BITMASK);
         //calculate first row that will be rendered
         int firstRow = (pSettings.getRowsToRender() > 0) ? 0 : pVillages[0].length - Math.abs(pSettings.getRowsToRender());
-        Graphics2D g2d = (Graphics2D) newRows.getGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        Graphics2D g2d = (Graphics2D) newRows.createGraphics();
+        ImageUtils.setupGraphics(g2d);
 
         //iterate through entire row
         int cnt = 0;
@@ -144,11 +144,11 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
 
     private BufferedImage renderMarkerColumns(Village[][] pVillages, RenderSettings pSettings) {
         //create new buffer for rendering
-        BufferedImage newColumns = createEmptyBuffered(Math.abs(pSettings.getColumnsToRender()) * pSettings.getFieldWidth(), pVillages[0].length * pSettings.getFieldHeight(), BufferedImage.BITMASK);
+        BufferedImage newColumns = ImageUtils.createCompatibleBufferedImage(Math.abs(pSettings.getColumnsToRender()) * pSettings.getFieldWidth(), pVillages[0].length * pSettings.getFieldHeight(), BufferedImage.BITMASK);
         //calculate first row that will be rendered
         int firstCol = (pSettings.getColumnsToRender() > 0) ? 0 : pVillages.length - Math.abs(pSettings.getColumnsToRender());
-        Graphics2D g2d = (Graphics2D) newColumns.getGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        Graphics2D g2d = (Graphics2D) newColumns.createGraphics();
+        ImageUtils.setupGraphics(g2d);
 
         //iterate through entire row
         int cnt = 0;
@@ -245,9 +245,10 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
     private BufferedImage getMarker(Village pVillage, int pConquerSize, int pTagSize, int row, int col, double zoom, int pFieldWidth, int pFieldHeight) {
         int w = GlobalOptions.getSkin().getBasicFieldWidth();
         int h = GlobalOptions.getSkin().getBasicFieldHeight();
-        BufferedImage image = createEmptyBuffered(w, h, BufferedImage.BITMASK);
+        BufferedImage image = ImageUtils.createCompatibleBufferedImage(w, h, BufferedImage.BITMASK);
         Graphics2D g2d = image.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        ImageUtils.setupGraphics(g2d);
+
 
         Conquer c = ConquerManager.getSingleton().getConquer(pVillage);
         List<Tag> villageTags = TagManager.getSingleton().getTags(pVillage);

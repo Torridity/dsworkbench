@@ -31,6 +31,7 @@ import de.tor.tribes.ui.models.TroopsManagerTableModel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.algo.ChurchRangeCalculator;
@@ -181,69 +182,11 @@ public class MapRenderer extends Thread {
         }
     }
 
-    public VolatileImage getVol(int w, int h) {
-        return rend.createEmptyVolatile(w, h, VolatileImage.OPAQUE);
-    }
-
     /**Set the order all layers are drawn
      * @param pDrawOrder
      */
     public void setDrawOrder(List<Integer> pDrawOrder) {
         drawOrder = new LinkedList<Integer>(pDrawOrder);
-    }
-
-    /**Create an empty BufferedImage
-     * @param w
-     * @param h
-     * @param trans
-     * @return
-     */
-    public BufferedImage getBufferedImage(int w, int h, int trans) {
-        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice device = env.getDefaultScreenDevice();
-        GraphicsConfiguration config = device.getDefaultConfiguration();
-        BufferedImage buffy = config.createCompatibleImage(w, h, trans);
-        return buffy;
-    }
-
-    /**Optimize an image or create a copy of an image if the image was created by getBufferedImage()*/
-    public BufferedImage optimizeImage(BufferedImage image) {
-        // obtain the current system graphical settings
-        GraphicsConfiguration gfx_config = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-
-        /*
-         * if image is already compatible and optimized for current system
-         * settings, simply return it
-         */
-        if (image.getColorModel().equals(gfx_config.getColorModel())) {
-            return image;
-        }
-
-        // image is not optimized, so create a new image that is
-        BufferedImage new_image = gfx_config.createCompatibleImage(image.getWidth(), image.getHeight(), image.getTransparency());
-
-        // get the graphics context of the new image to draw the old image on
-        Graphics2D g2d = (Graphics2D) new_image.getGraphics();
-
-        // actually draw the image and dispose of context no longer needed
-        g2d.drawRenderedImage(image, AffineTransform.getTranslateInstance(0, 0));
-        g2d.dispose();
-
-        // return the new optimized image
-        return new_image;
-    }
-
-    /**Prepare any g2d object with same parameters*/
-    private void prepareGraphics(Graphics2D pG2d) {
-        pG2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-        pG2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        // Speed
-        pG2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
-        pG2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        pG2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
-        pG2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
-        pG2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
-        pG2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
     }
 
     /**Complete redraw on resize or scroll
@@ -286,12 +229,12 @@ public class MapRenderer extends Thread {
                     if (mBackBuffer == null) {
                         //create main buffer during first iteration
                         System.out.println("REc");
-                        mBackBuffer = getBufferedImage(w, h, Transparency.OPAQUE);
+                        mBackBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.OPAQUE);
                         mBackBuffer.setAccelerationPriority(1);
-                        mFrontBuffer = getBufferedImage(w, h, Transparency.OPAQUE);
+                        mFrontBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.OPAQUE);
                         mFrontBuffer.setAccelerationPriority(2);
                         g2d = (Graphics2D) mBackBuffer.getGraphics();
-                        prepareGraphics(g2d);
+                        ImageUtils.setupGraphics(g2d);
                         //set redraw required flag if nothin was drawn yet
                         mapRedrawRequired = true;
                     } else {
@@ -300,12 +243,12 @@ public class MapRenderer extends Thread {
                         if (mBackBuffer.getWidth(null) != w || mBackBuffer.getHeight(null) != h) {
                             //map panel has resized
                             System.out.println("REc");
-                            mBackBuffer = getBufferedImage(w, h, Transparency.OPAQUE);
+                            mBackBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.OPAQUE);
                             mBackBuffer.setAccelerationPriority(1);
-                            mFrontBuffer = getBufferedImage(w, h, Transparency.OPAQUE);
+                            mFrontBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.OPAQUE);
                             mFrontBuffer.setAccelerationPriority(1);
                             g2d = (Graphics2D) mBackBuffer.getGraphics();
-                            prepareGraphics(g2d);
+                            ImageUtils.setupGraphics(g2d);
                             //set redraw required flag if size has changed
                             mapRedrawRequired = true;
                         } else {
@@ -457,7 +400,7 @@ public class MapRenderer extends Thread {
                     //notify MapPanel to bring buffer to screen
                     HashMap<Village, Rectangle> pos = (HashMap<Village, Rectangle>) villagePositions.clone();
                     //  Graphics2D drawGraphics = (Graphics2D) MapPanel.getSingleton().getStrategy().getDrawGraphics();
-                    mFrontBuffer = optimizeImage(mBackBuffer);
+                    mFrontBuffer = ImageUtils.createOptimizedCopy(mBackBuffer);
                     // drawGraphics.drawImage(mBackBuffer, null, null);
                     //drawGraphics.dispose();
 
@@ -482,7 +425,7 @@ public class MapRenderer extends Thread {
                 lRenderedLast = 0;
                 logger.error("Redrawing map failed", t);
             }
-
+            Thread.yield();
             /* try {
             Thread.sleep(10);
             } catch (InterruptedException ie) {
@@ -687,23 +630,23 @@ public class MapRenderer extends Thread {
 
         //prepare drawing buffer
         if (mLayers.get(MAP_LAYER) == null) {
-            layer = getBufferedImage(wb, hb, Transparency.BITMASK);
+            layer = ImageUtils.createCompatibleBufferedImage(wb, hb, Transparency.BITMASK);
             mLayers.put(MAP_LAYER, layer);
             g2d = layer.createGraphics();
-            prepareGraphics(g2d);
+            ImageUtils.setupGraphics(g2d);
         } else {
             //check if image size is still valid
             layer = mLayers.get(MAP_LAYER);
             if (layer.getWidth() != wb || layer.getHeight() != hb) {
                 //mappanel has resized
-                layer = getBufferedImage(wb, hb, Transparency.BITMASK);
+                layer = ImageUtils.createCompatibleBufferedImage(wb, hb, Transparency.BITMASK);
                 mLayers.put(MAP_LAYER, layer);
                 g2d = layer.createGraphics();
-                prepareGraphics(g2d);
+                ImageUtils.setupGraphics(g2d);
             } else {
                 //only clear image
                 g2d = (Graphics2D) layer.getGraphics();
-                prepareGraphics(g2d);
+                ImageUtils.setupGraphics(g2d);
                 Composite c = g2d.getComposite();
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 1.0f));
                 g2d.fillRect(0, 0, wb, hb);
@@ -972,17 +915,17 @@ public class MapRenderer extends Thread {
         Graphics2D g2d = null;
         //prepare drawing buffer
         if (mLayers.get(TAG_MARKER_LAYER) == null) {
-            layer = getBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+            layer = ImageUtils.createCompatibleBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
             mLayers.put(TAG_MARKER_LAYER, layer);
             g2d = layer.createGraphics();
-            prepareGraphics(g2d);
+            ImageUtils.setupGraphics(g2d);
         } else {
             layer = mLayers.get(TAG_MARKER_LAYER);
             if (layer.getWidth() != wb || layer.getHeight() != hb) {
-                layer = getBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+                layer = ImageUtils.createCompatibleBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
                 mLayers.put(TAG_MARKER_LAYER, layer);
                 g2d = layer.createGraphics();
-                prepareGraphics(g2d);
+                ImageUtils.setupGraphics(g2d);
             } else {
                 g2d = (Graphics2D) layer.getGraphics();
                 Composite c = g2d.getComposite();
@@ -1108,16 +1051,16 @@ public class MapRenderer extends Thread {
         Graphics2D g2d = null;
         //prepare drawing buffer
         if (layer == null) {
-            layer = getBufferedImage(wb, hb + 100, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+            layer = ImageUtils.createCompatibleBufferedImage(wb, hb + 100, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
             mLayers.put(NOTE_LAYER, layer);
             g2d = layer.createGraphics();
-            prepareGraphics(g2d);
+            ImageUtils.setupGraphics(g2d);
         } else {
             if (layer.getWidth() != wb || layer.getHeight() != hb + 100) {
-                layer = getBufferedImage(wb, hb + 100, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+                layer = ImageUtils.createCompatibleBufferedImage(wb, hb + 100, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
                 mLayers.put(NOTE_LAYER, layer);
                 g2d = layer.createGraphics();
-                prepareGraphics(g2d);
+                ImageUtils.setupGraphics(g2d);
             } else {
                 g2d = (Graphics2D) layer.getGraphics();
                 Composite c = g2d.getComposite();
@@ -1196,18 +1139,17 @@ public class MapRenderer extends Thread {
         Graphics2D g2d = null;
         //prepare drawing buffer
         if (mLayers.get(MARKER_LAYER) == null) {
-            layer = getBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+            layer = ImageUtils.createCompatibleBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
             mLayers.put(MARKER_LAYER, layer);
             g2d = layer.createGraphics();
-            prepareGraphics(g2d);
+            ImageUtils.setupGraphics(g2d);
         } else {
             layer = mLayers.get(MARKER_LAYER);
             if (layer.getWidth() != wb || layer.getHeight() != hb) {
-                layer = getBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+                layer = ImageUtils.createCompatibleBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
                 mLayers.put(MARKER_LAYER, layer);
-                g2d =
-                        layer.createGraphics();
-                prepareGraphics(g2d);
+                g2d = layer.createGraphics();
+                ImageUtils.setupGraphics(g2d);
             } else {
                 g2d = (Graphics2D) layer.getGraphics();
                 Composite c = g2d.getComposite();
@@ -2023,18 +1965,17 @@ public class MapRenderer extends Thread {
         Graphics2D g2d = null;
         //prepare drawing buffer
         if (mLayers.get(LIVE_LAYER) == null) {
-            layer = getBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+            layer = ImageUtils.createCompatibleBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
             mLayers.put(LIVE_LAYER, layer);
-            g2d =
-                    layer.createGraphics();
-            prepareGraphics(g2d);
+            g2d = layer.createGraphics();
+            ImageUtils.setupGraphics(g2d);
         } else {
             layer = mLayers.get(LIVE_LAYER);
             if (layer.getWidth() != wb || layer.getHeight() != hb) {
-                layer = getBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+                layer = ImageUtils.createCompatibleBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
                 mLayers.put(LIVE_LAYER, layer);
                 g2d = layer.createGraphics();
-                prepareGraphics(g2d);
+                ImageUtils.setupGraphics(g2d);
             } else {
                 g2d = (Graphics2D) layer.getGraphics();
                 Composite c = g2d.getComposite();

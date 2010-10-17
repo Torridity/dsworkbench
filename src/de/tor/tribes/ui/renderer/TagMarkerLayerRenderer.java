@@ -38,6 +38,7 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
     private HashMap<Tag, Rectangle> renderedSpriteBounds = null;
     private Point mapPos = null;
     private BufferedImage mConquerWarning = null;
+    private Rectangle conquerCopyRegion = null;
 
     public TagMarkerLayerRenderer() {
         super();
@@ -54,7 +55,7 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
         if (isFullRenderRequired()) {
             if (mLayer == null) {
                 mLayer = ImageUtils.createCompatibleBufferedImage(pVisibleVillages.length * settings.getFieldWidth(), pVisibleVillages[0].length * settings.getFieldHeight(), BufferedImage.BITMASK);
-                g2d = (Graphics2D) mLayer.createGraphics();
+                g2d = mLayer.createGraphics();
             } else {
                 g2d = (Graphics2D) mLayer.getGraphics();
                 Composite c = g2d.getComposite();
@@ -62,7 +63,6 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
                 g2d.fillRect(0, 0, mLayer.getWidth(), mLayer.getHeight());
                 g2d.setComposite(c);
             }
-
             settings.setRowsToRender(pVisibleVillages[0].length);
         } else {
             //copy existing data to new location
@@ -71,6 +71,7 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
         }
         ImageUtils.setupGraphics(g2d);
         renderedSpriteBounds = new HashMap<Tag, Rectangle>();
+
         //Set new bounds
         setRenderedBounds((Rectangle2D.Double) pVirtualBounds.clone());
 
@@ -93,7 +94,7 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
             }
             g2d.drawRenderedImage(img, trans);
         }
-
+        g2d.dispose();
         trans.setToTranslation((int) Math.floor(settings.getDeltaX()), (int) Math.floor(settings.getDeltaY()));
         pG2d.drawRenderedImage(mLayer, trans);
     }
@@ -122,12 +123,12 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
         BufferedImage newRows = ImageUtils.createCompatibleBufferedImage(pVillages.length * pSettings.getFieldWidth(), Math.abs(pSettings.getRowsToRender()) * pSettings.getFieldHeight(), BufferedImage.BITMASK);
         //calculate first row that will be rendered
         int firstRow = (pSettings.getRowsToRender() > 0) ? 0 : pVillages[0].length - Math.abs(pSettings.getRowsToRender());
-        Graphics2D g2d = (Graphics2D) newRows.createGraphics();
+        Graphics2D g2d = newRows.createGraphics();
         ImageUtils.setupGraphics(g2d);
 
         //iterate through entire row
         int cnt = 0;
-
+        conquerCopyRegion = null;
         for (int x = 0; x < pVillages.length; x++) {
             //iterate from first row for 'pRows' times
             for (int y = firstRow; y < firstRow + Math.abs(pSettings.getRowsToRender()); y++) {
@@ -147,12 +148,12 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
         BufferedImage newColumns = ImageUtils.createCompatibleBufferedImage(Math.abs(pSettings.getColumnsToRender()) * pSettings.getFieldWidth(), pVillages[0].length * pSettings.getFieldHeight(), BufferedImage.BITMASK);
         //calculate first row that will be rendered
         int firstCol = (pSettings.getColumnsToRender() > 0) ? 0 : pVillages.length - Math.abs(pSettings.getColumnsToRender());
-        Graphics2D g2d = (Graphics2D) newColumns.createGraphics();
+        Graphics2D g2d = newColumns.createGraphics();
         ImageUtils.setupGraphics(g2d);
 
         //iterate through entire row
         int cnt = 0;
-
+        conquerCopyRegion = null;
         for (int x = firstCol; x < firstCol + Math.abs(pSettings.getColumnsToRender()); x++) {
             for (int y = 0; y < pVillages[0].length; y++) {
                 cnt++;
@@ -169,15 +170,13 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
     }
 
     private void renderMarkerField(Village v, int row, int col, int pFieldWidth, int pFieldHeight, double zoom, Graphics2D g2d) {
-        BufferedImage sprite = null;
         if (v != null) {
             int tagsize = (int) Math.rint((double) 18 / zoom);
-            int conquerSize = (int) Math.rint((double) 16 / zoom);
             if (tagsize > pFieldHeight || tagsize > pFieldWidth) {
                 return;
             }
-            //sprite = getMarker(v, conquerSize, tagsize, row, col, zoom, pFieldWidth, pFieldHeight);
 
+            //render village tags
             List<Tag> villageTags = TagManager.getSingleton().getTags(v);
             if (villageTags != null && !villageTags.isEmpty()) {
                 int xcnt = 1;
@@ -186,14 +185,17 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
                 for (Tag tag : TagManager.getSingleton().getTags(v)) {
                     // <editor-fold defaultstate="collapsed" desc="Draw tag if active">
                     if (tag.isShowOnMap()) {
+                        boolean isDrawable = false;
                         Rectangle copyRect = renderedSpriteBounds.get(tag);
                         int tagX = col * pFieldWidth + pFieldWidth - xcnt * tagsize;
                         int tagY = row * pFieldHeight + pFieldHeight - ycnt * tagsize;
-                        if (copyRect == null) {
-                            int iconType = tag.getTagIcon();
-                            Color color = tag.getTagColor();
-
-                            if (color != null || iconType != -1) {
+                        int iconType = tag.getTagIcon();
+                        Color color = tag.getTagColor();
+                        if (color != null || iconType != -1) {
+                            isDrawable = true;
+                        }
+                        if (isDrawable) {
+                            if (copyRect == null) {
                                 if (color != null) {
                                     Color before = g2d.getColor();
                                     g2d.setColor(color);
@@ -203,110 +205,46 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
 
                                 if (iconType != -1) {
                                     //drawing
-                                    Image tagImage = ImageManager.getUnitImage(iconType, false).getScaledInstance(tagsize, tagsize, Image.SCALE_FAST);
-                                    g2d.drawImage(tagImage, tagX, tagY, null);
+                                    BufferedImage tagImage = ImageManager.getUnitImage(iconType);//mage(iconType, false).getScaledInstance(tagsize, tagsize, Image.SCALE_FAST);
+                                    AffineTransform trans = AffineTransform.getTranslateInstance(tagX, tagY);
+                                    trans.scale(1.0 / zoom, 1.0 / zoom);
+                                    g2d.drawRenderedImage(tagImage, trans);
                                 }
-                                g2d.dispose();
-                                //AffineTransform t = AffineTransform.getTranslateInstance(col * pFieldWidth, row * pFieldHeight);
-                                //t.scale(1.0 / zoom, 1.0 / zoom);
-                                //g2d.drawImage(tag, t, null);
                                 renderedSpriteBounds.put(tag, new Rectangle(tagX, tagY, tagsize, tagsize));
+                            } else {
+                                g2d.copyArea(copyRect.x, copyRect.y, copyRect.width, copyRect.height, tagX - copyRect.x, tagY - copyRect.y);
                             }
-                        } else {
-                            g2d.copyArea(copyRect.x, copyRect.y, copyRect.width, copyRect.height, tagX - copyRect.x, tagY - copyRect.y);
-                        }
-                        //calculate positioning
-                        cnt++;
-                        xcnt++;
-                        if (cnt == 2) {
-                            //show only 2 icons in the first line to avoid marker overlay
-                            xcnt = 1;
-                            ycnt--;
+                            //calculate positioning
+                            cnt++;
+                            xcnt++;
+                            if (cnt == 2) {
+                                //show only 2 icons in the first line to avoid marker overlay
+                                xcnt = 1;
+                                ycnt--;
 
+                            }
                         }
                     }
                     // </editor-fold>
                 }
             }
 
+            //render conquers
+            int conquerSize = (int) Math.rint((double) 16 / zoom);
+            if (conquerSize > pFieldHeight || conquerSize > pFieldWidth) {
+                return;
+            }
 
-
-        }
-
-        /* //render sprite or copy area if sprite is null
-        if (sprite != null) {
-        //render sprite
-        AffineTransform t = AffineTransform.getTranslateInstance(col * pFieldWidth, row * pFieldHeight);
-        t.scale(1.0 / zoom, 1.0 / zoom);
-        g2d.drawRenderedImage(sprite, t);
-        }*/
-    }
-
-    private BufferedImage getMarker(Village pVillage, int pConquerSize, int pTagSize, int row, int col, double zoom, int pFieldWidth, int pFieldHeight) {
-        int w = GlobalOptions.getSkin().getBasicFieldWidth();
-        int h = GlobalOptions.getSkin().getBasicFieldHeight();
-        BufferedImage image = ImageUtils.createCompatibleBufferedImage(w, h, BufferedImage.BITMASK);
-        Graphics2D g2d = image.createGraphics();
-        ImageUtils.setupGraphics(g2d);
-
-
-        Conquer c = ConquerManager.getSingleton().getConquer(pVillage);
-        List<Tag> villageTags = TagManager.getSingleton().getTags(pVillage);
-        if (villageTags != null && !villageTags.isEmpty()) {
-            int xcnt = 1;
-            int ycnt = 2;
-            int cnt = 0;
-            for (Tag tag : TagManager.getSingleton().getTags(pVillage)) {
-                // <editor-fold defaultstate="collapsed" desc="Draw tag if active">
-                if (tag.isShowOnMap()) {
-                    Rectangle copyRect = renderedSpriteBounds.get(tag);
-                    int tagX = w - xcnt * pTagSize;
-                    int tagY = h - ycnt * pTagSize;
-                    //if (copyRect == null) {
-                    int iconType = tag.getTagIcon();
-                    Color color = tag.getTagColor();
-
-                    if (color != null || iconType != -1) {
-                        if (color != null) {
-                            Color before = g2d.getColor();
-                            g2d.setColor(color);
-                            g2d.fill(new Rectangle2D.Double(tagX, tagY, pTagSize, pTagSize));
-                            g2d.setColor(before);
-                        }
-
-                        if (iconType != -1) {
-                            //drawing
-                            Image tagImage = ImageManager.getUnitImage(iconType, false).getScaledInstance(pTagSize, pTagSize, Image.SCALE_FAST);
-                            g2d.drawImage(tagImage, tagX, tagY, null);
-                        }
-                        g2d.dispose();
-                        AffineTransform t = AffineTransform.getTranslateInstance(col * pFieldWidth, row * pFieldHeight);
-                        t.scale(1.0 / zoom, 1.0 / zoom);
-                        g2d.drawImage(image, t, null);
-                        renderedSpriteBounds.put(tag, new Rectangle(col * pFieldWidth + tagX, row * pFieldHeight + tagY, pFieldWidth, pFieldHeight));
-                    }
-                    /*} else {
-                    g2d.copyArea(copyRect.x, copyRect.y, copyRect.width, copyRect.height, col * pFieldWidth - copyRect.x + tagX, row * pFieldHeight - copyRect.y + tagY);
-                    }*/
-                    //calculate positioning
-                    cnt++;
-                    xcnt++;
-                    if (cnt == 2) {
-                        //show only 2 icons in the first line to avoid marker overlay
-                        xcnt = 1;
-                        ycnt--;
-
-                    }
+            Conquer c = ConquerManager.getSingleton().getConquer(v);
+            if (c != null) {
+                if (conquerCopyRegion != null) {
+                    g2d.copyArea(conquerCopyRegion.x, conquerCopyRegion.y, conquerCopyRegion.width, conquerCopyRegion.height, col * pFieldWidth + pFieldWidth - conquerSize - conquerCopyRegion.x, row * pFieldHeight + pFieldHeight - conquerSize - conquerCopyRegion.y);
+                } else {
+                    g2d.drawImage(mConquerWarning, col * pFieldWidth + pFieldWidth - conquerSize, row * pFieldHeight + pFieldHeight - conquerSize, conquerSize, conquerSize, null);
+                    conquerCopyRegion = new Rectangle(col * pFieldWidth + pFieldWidth - conquerSize, row * pFieldHeight + pFieldHeight - conquerSize, conquerSize, conquerSize);
                 }
-                // </editor-fold>
             }
         }
-
-        /* if (c != null) {
-        //village was recently conquered
-        g2d.drawImage(mConquerWarning, w - pConquerSize, h - pConquerSize, pConquerSize, pConquerSize, null);
-        }*/
-        return image;
     }
 
     public void reset() {

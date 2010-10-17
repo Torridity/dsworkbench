@@ -16,6 +16,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.awt.image.MemoryImageSource;
 import java.io.File;
 import java.net.URL;
 import java.util.LinkedList;
@@ -277,7 +278,8 @@ public class ImageManager {
 
     /**Get the cursor for the provided ID*/
     public static Cursor getCursor(int pID) {
-        if (!cursorSupported) {
+
+      if (!cursorSupported) {
             return Cursor.getDefaultCursor();
         }
         return CURSORS.get(pID);

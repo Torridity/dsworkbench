@@ -27,7 +27,8 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.VolatileImage;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
 import java.util.HashMap;
 
 /**
@@ -43,7 +44,6 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
 
     @Override
     public void performRendering(Rectangle2D pVirtualBounds, Village[][] pVisibleVillages, Graphics2D pG2d) {
-        long s = System.currentTimeMillis();
         RenderSettings settings = getRenderSettings(pVirtualBounds);
         Graphics2D g2d = null;
         if (isFullRenderRequired()) {
@@ -66,8 +66,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         BufferedImage img = renderMarkerRows(pVisibleVillages, settings);
         Graphics2D ig2d = (Graphics2D) img.getGraphics();
         ImageUtils.setupGraphics(ig2d);
-        ig2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        //   ig2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+        //   ig2d.setCompofsite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
         //System.err.println("RENDER0");
         ig2d.drawRenderedImage(renderVillageRows(pVisibleVillages, settings), AffineTransform.getTranslateInstance(0, 0));
         AffineTransform trans = AffineTransform.getTranslateInstance(0, 0);
@@ -95,16 +94,9 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             }
             g2d.drawRenderedImage(img, trans);
         }
-
+        g2d.dispose();
         trans.setToTranslation((int) Math.floor(settings.getDeltaX()), (int) Math.floor(settings.getDeltaY()));
 
-        /** float[] my_kernel = {0.1f, 0.1f, 0.1f,
-        0.1f, 0.2f, 0.1f,
-        0.1f, 0.1f, 0.1f};
-        ConvolveOp op = new ConvolveOp(new Kernel(3, 3, my_kernel));
-        mLayer = op.filter(mLayer, null);
-         */
-        //  System.err.println("RENDER2");
         pG2d.drawRenderedImage(mLayer, trans);
         drawContinents(pVisibleVillages, settings, pG2d);
     }
@@ -128,6 +120,20 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
     }
 
     private void drawContinents(Village[][] pVisibleVillages, RenderSettings pSettings, Graphics2D pG2d) {
+        boolean showSectors = false;
+        try {
+            showSectors = Boolean.parseBoolean(GlobalOptions.getProperty("show.sectors"));
+        } catch (Exception e) {
+            showSectors = false;
+        }
+
+        boolean showContinents = false;
+        try {
+            showContinents = Boolean.parseBoolean(GlobalOptions.getProperty("map.showcontinents"));
+        } catch (Exception e) {
+            showContinents = false;
+        }
+
         //draw continents and sectors
         if (mapPos == null) {
             return;
@@ -142,27 +148,49 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         //draw vertical borders
         for (int i = mapPos.x; i < mapPos.x + pVisibleVillages.length; i++) {
             if (i % 5 == 0) {
+                boolean draw = true;
                 if (i % contSpacing == 0) {
-                    pG2d.setStroke(new BasicStroke(1.0f));
-                    pG2d.setColor(Color.YELLOW);
+                    if (!showSectors) {
+                        draw = false;
+                    } else {
+                        pG2d.setStroke(new BasicStroke(1.0f));
+                        pG2d.setColor(Color.YELLOW);
+                    }
                 } else {
-                    pG2d.setStroke(new BasicStroke(0.5f));
-                    pG2d.setColor(Color.BLACK);
+                    if (!showContinents) {
+                        draw = false;
+                    } else {
+                        pG2d.setStroke(new BasicStroke(0.5f));
+                        pG2d.setColor(Color.BLACK);
+                    }
                 }
-                pG2d.draw(new Line2D.Double((i - mapPos.x) * fieldWidth + (int) Math.floor(pSettings.getDeltaX()), 0, (i - mapPos.x) * fieldWidth + (int) Math.floor(pSettings.getDeltaX()), pVisibleVillages[0].length * fieldHeight));
+                if (draw) {
+                    pG2d.draw(new Line2D.Double((i - mapPos.x) * fieldWidth + (int) Math.floor(pSettings.getDeltaX()), 0, (i - mapPos.x) * fieldWidth + (int) Math.floor(pSettings.getDeltaX()), pVisibleVillages[0].length * fieldHeight));
+                }
             }
         }
         //draw horizontal borders
         for (int i = mapPos.y; i < mapPos.y + pVisibleVillages[0].length; i++) {
             if (i % 5 == 0) {
+                boolean draw = true;
                 if (i % contSpacing == 0) {
-                    pG2d.setStroke(new BasicStroke(1.0f));
-                    pG2d.setColor(Color.YELLOW);
+                    if (!showSectors) {
+                        draw = false;
+                    } else {
+                        pG2d.setStroke(new BasicStroke(1.0f));
+                        pG2d.setColor(Color.YELLOW);
+                    }
                 } else {
-                    pG2d.setStroke(new BasicStroke(0.5f));
-                    pG2d.setColor(Color.BLACK);
+                    if (!showContinents) {
+                        draw = false;
+                    } else {
+                        pG2d.setStroke(new BasicStroke(0.5f));
+                        pG2d.setColor(Color.BLACK);
+                    }
                 }
-                pG2d.draw(new Line2D.Double(0, (i - mapPos.y) * fieldHeight + (int) Math.floor(pSettings.getDeltaY()), pVisibleVillages.length * fieldWidth, (i - mapPos.y) * fieldHeight + (int) Math.floor(pSettings.getDeltaY())));
+                if (draw) {
+                    pG2d.draw(new Line2D.Double(0, (i - mapPos.y) * fieldHeight + (int) Math.floor(pSettings.getDeltaY()), pVisibleVillages.length * fieldWidth, (i - mapPos.y) * fieldHeight + (int) Math.floor(pSettings.getDeltaY())));
+                }
             }
         }
     }

@@ -54,88 +54,6 @@ public class TroopDensityLayerRenderer extends AbstractDirectLayerRenderer {
             }
         }
     }
-    /*
-    private void renderField(Village v, int row, int colu, int pFieldWidth, int pFieldHeight, int pDx, int pDy, double pZoom, Graphics2D g2d) {
-    VillageTroopsHolder holder = null;
-    if (v != null && (holder = TroopsManager.getSingleton().getTroopsForVillage(v)) != null) {
-    int maxDef = 650000;
-    try {
-    maxDef = Integer.parseInt(GlobalOptions.getProperty("max.density.troops"));
-    } catch (Exception e) {
-    maxDef = 650000;
-    }
-
-    double defIn = holder.getDefValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
-    double defOwn = holder.getDefValue(TroopsManagerTableModel.SHOW_OWN_TROOPS);
-    double percOfMax = defIn / maxDef;
-    double percOwn = defOwn / defIn;
-    double percForeign = 1 - percOwn;
-    //limit to 100%
-    percOfMax = (percOfMax > 1) ? 1 : percOfMax;
-
-    //the less the density is the more alpha comes to its full value
-    int alpha2 = (int) Math.rint((1 - percOfMax) * 255);
-    if (alpha2 < 60) {
-    //limit alpha min to 60
-    alpha2 = 60;
-    }
-
-    double half = (double) maxDef / 2.0;
-
-    Color col = null;
-    Color cb = g2d.getColor();
-    if (defIn <= maxDef && defIn > half) {
-    float ratio = (float) (defIn - half) / (float) half;
-    Color c1 = Color.YELLOW;
-    Color c2 = Color.GREEN;
-    int red = (int) (c2.getRed() * ratio + c1.getRed() * (1 - ratio));
-    int green = (int) (c2.getGreen() * ratio + c1.getGreen() * (1 - ratio));
-    int blue = (int) (c2.getBlue() * ratio + c1.getBlue() * (1 - ratio));
-    col = new Color(red, green, blue, alpha2);
-    } else if (defIn <= half) {
-    float ratio = (float) defIn / (float) half;
-    Color c1 = Color.RED;
-    Color c2 = Color.YELLOW;
-    int red = (int) (c2.getRed() * ratio + c1.getRed() * (1 - ratio));
-    int green = (int) (c2.getGreen() * ratio + c1.getGreen() * (1 - ratio));
-    int blue = (int) (c2.getBlue() * ratio + c1.getBlue() * (1 - ratio));
-    col = new Color(red, green, blue, alpha2);
-    } else {
-    col = new Color(0, 255, 0, alpha2);
-    }
-
-    Arc2D.Double arc = new Arc2D.Double();
-    Ellipse2D.Double ellipse = new Ellipse2D.Double();
-    Color c = col;//new Color(0, r, g, alpha2);
-    Color cc = new Color(0, col.getRed(), col.getGreen(), col.getAlpha());//new Color(r, g, 0, alpha2);
-    //calculate circle size
-    int size = (int) Math.rint(percOfMax * 3 * pFieldWidth);
-    if (size < 0.5 * pFieldWidth) {
-    //limit min. size to half a village size
-    size = (int) Math.rint(0.5 * pFieldWidth);
-    }
-
-    if (size > 0) {
-    g2d.setColor(Color.BLACK);
-    int partOwn = (int) Math.rint(360 * percOwn);
-    int partForeign = (int) Math.rint(360 * percForeign);
-    //fill part blue (own) or other color (foreign)
-    g2d.setColor(c);
-    arc.setArc(colu * pFieldWidth - (int) Math.rint((size - pFieldWidth) / 2) + pDx, row * pFieldHeight - (int) Math.rint((size - pFieldHeight) / 2) + pDy, size, size, 0, partOwn, Arc2D.PIE);
-    g2d.fill(arc);
-    g2d.setColor(cc);
-    arc.setArc(colu * pFieldWidth - (int) Math.rint((size - pFieldWidth) / 2) + pDx, row * pFieldHeight - (int) Math.rint((size - pFieldHeight) / 2) + pDy, size, size, partOwn, partForeign, Arc2D.PIE);
-    g2d.fill(arc);
-    //draw border
-    ellipse.setFrame(colu * pFieldWidth - (int) Math.rint((size - pFieldWidth) / 2) + pDx, row * pFieldHeight - (int) Math.rint((size - pFieldHeight) / 2) + pDy, size, size);
-    g2d.setColor(Color.BLACK);
-    g2d.draw(ellipse);
-    g2d.setColor(cb);
-    }
-
-    }
-    }
-     */
 
     private void renderField(Village v, int row, int colu, int pFieldWidth, int pFieldHeight, int pDx, int pDy, double pZoom, Graphics2D g2d) {
         VillageTroopsHolder holder = null;
@@ -181,15 +99,18 @@ public class TroopDensityLayerRenderer extends AbstractDirectLayerRenderer {
             //calculate circle size
             int wOwn = (int) Math.rint(percOfMax * pFieldWidth);
             int wFor = (int) Math.rint(pFieldWidth * defFor);
-            int h = (int) Math.rint(10 / pZoom);
+            int h = (int) Math.rint(pFieldHeight / 5 / pZoom);
+            if (h < 3) {
+                h = 3;
+            }
             g2d.setColor(Color.WHITE);
-            g2d.fill(new Rectangle2D.Double(colu * pFieldWidth + pDx, row * pFieldHeight + pFieldHeight - h + pDy, pFieldWidth, h));
+            g2d.fill(new Rectangle2D.Double(colu * pFieldWidth + 1 + pDx, row * pFieldHeight + pFieldHeight - h + pDy, pFieldWidth - 2, h));
             g2d.setColor(col);
-            g2d.fill(new Rectangle2D.Double(colu * pFieldWidth + pDx, row * pFieldHeight + pFieldHeight - h + pDy, wOwn, h));
+            g2d.fill(new Rectangle2D.Double(colu * pFieldWidth + 1 + pDx, row * pFieldHeight + pFieldHeight - h + pDy, wOwn - 2, h));
             g2d.setColor(Color.BLUE);
-            g2d.fill(new Rectangle2D.Double(colu * pFieldWidth + pDx, row * pFieldHeight + pFieldHeight - h + pDy, wFor, h));
+            g2d.fill(new Rectangle2D.Double(colu * pFieldWidth + 1 + pDx, row * pFieldHeight + pFieldHeight - h + pDy, wFor - 2, h));
             g2d.setColor(Color.BLACK);
-            g2d.fill(new Rectangle2D.Double(colu * pFieldWidth + pDx, row * pFieldHeight + pFieldHeight - h + pDy, pFieldWidth, h));
+            g2d.draw(new Rectangle2D.Double(colu * pFieldWidth + 1 + pDx, row * pFieldHeight + pFieldHeight - h + pDy, pFieldWidth - 2, h));
 
             g2d.setColor(cb);
         }

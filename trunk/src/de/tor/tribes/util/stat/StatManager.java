@@ -457,8 +457,12 @@ public class StatManager {
             a = NoAlly.getSingleton();
         }
 
-        Hashtable<Integer, TribeStatsElement> tribeData = data.get(a.getId());
-        return tribeData.get(pTribe.getId());
+        Hashtable<Integer, TribeStatsElement> allyData = data.get(a.getId());
+        if (allyData == null) {
+            logger.warn("Ally data for ally '" + a.getName() + "' not found");
+            return null;
+        }
+        return allyData.get(pTribe.getId());
     }
 
     public void removeDataBefore(Tribe pTribe, long pTimestamp) {
@@ -503,4 +507,3 @@ public class StatManager {
         elem.removeDataBetween(pStartTimestamp, pEndTimestamp);
     }
 }
-

@@ -93,6 +93,7 @@ public class ImageUtils {
         BufferedImage new_image = createCompatibleBufferedImage(image.getWidth(), image.getHeight(), image.getTransparency());
         // get the graphics context of the new image to draw the old image on
         Graphics2D g2d = new_image.createGraphics();
+        g2d.setClip(0, 0, image.getWidth(), image.getHeight());
         // actually draw the image and dispose of context no longer needed
         g2d.drawRenderedImage(image, AffineTransform.getTranslateInstance(0, 0));
         g2d.dispose();

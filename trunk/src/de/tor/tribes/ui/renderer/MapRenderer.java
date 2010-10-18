@@ -57,7 +57,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
-import java.awt.TexturePaint;
 import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
@@ -85,6 +84,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JToolTip;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
+import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 
 /**Map Renderer which supports "dirty layers" defining which layer has to be redrawn.<BR/>
@@ -266,6 +266,7 @@ public class MapRenderer extends Thread {
                     //get currently selected user village for marking -> one call reduces sync effort
                     currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                     //check if redraw required
+                    long s = System.currentTimeMillis();
                     if (mapRedrawRequired) {
                         //complete redraw is required
                         calculateVisibleVillages();
@@ -281,7 +282,7 @@ public class MapRenderer extends Thread {
                         //  renderTagMarkers();
                         mapRedrawRequired = false;
                     }
-
+                    System.out.println("Calc: " + (System.currentTimeMillis() - s));
                     boolean mapDrawn = false;
                     for (Integer layer : drawOrder) {
                         if (layer == 0) {
@@ -303,7 +304,6 @@ public class MapRenderer extends Thread {
                         } else if (layer == 1) {
                             //  System.out.println("DRAW MAP");
                             //  g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
-                            long s = System.currentTimeMillis();
                             rend.performRendering(MapPanel.getSingleton().getVirtualBounds(), mVisibleVillages, g2d);
                             //logger.info(" - MAP " + (System.currentTimeMillis() - s));
                             mapDrawn = true;
@@ -383,11 +383,11 @@ public class MapRenderer extends Thread {
                         }
                     }
                     // System.out.println("DT " + (System.currentTimeMillis() - s1));
-
+                    System.out.println("Layers: " + (System.currentTimeMillis() - s));
                     //draw live layer -> always on top
                     renderLiveLayer(g2d);
                     g2d.drawImage(mLayers.get(LIVE_LAYER), 0, 0, null);
-
+                    System.out.println("Live: " + (System.currentTimeMillis() - s));
                     //    logger.info(" - LIVE " + (System.currentTimeMillis() - s));
                     // s = System.currentTimeMillis();
                     //render selection
@@ -395,20 +395,37 @@ public class MapRenderer extends Thread {
                     if (selection != null) {
                         selection.renderForm(g2d);
                     }
+                    System.out.println("Selec: " + (System.currentTimeMillis() - s));
                     //render menu
                     MenuRenderer.getSingleton().renderMenu(g2d);
                     g2d.dispose();
+                    System.out.println("Done: " + (System.currentTimeMillis() - s));
                     //   logger.info(" - MENU " + (System.currentTimeMillis() - s));
                     //notify MapPanel to bring buffer to screen
                     HashMap<Village, Rectangle> pos = (HashMap<Village, Rectangle>) villagePositions.clone();
                     //  Graphics2D drawGraphics = (Graphics2D) MapPanel.getSingleton().getStrategy().getDrawGraphics();
-                    mFrontBuffer = ImageUtils.createOptimizedCopy(mBackBuffer);
+                    // mFrontBuffer = ImageUtils.createOptimizedCopy(mBackBuffer);
+                    // System.out.println("Flip: " + (System.currentTimeMillis() - s));
                     // drawGraphics.drawImage(mBackBuffer, null, null);
                     //drawGraphics.dispose();
 
-                    MapPanel.getSingleton().updateComplete(pos, mFrontBuffer);
+                    MapPanel.getSingleton().updateComplete(pos, mBackBuffer);
+                    System.out.println("Updated: " + (System.currentTimeMillis() - s));
                     //MapPanel.getSingleton().getBufferStrategy().show();
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                    @Override
+                    public void run() {
                     MapPanel.getSingleton().repaint();
+                    }
+                    });
+                     //  MapPanel.getSingleton().repaint(20);
+                   /* for (int i = 0; i < w;) {
+                        MapPanel.getSingleton().repaint(10, i, 0, 20, h);
+                        i += 20;
+                    }*/
+
+
                     //       logger.info(" - DONE! " + (System.currentTimeMillis() - s));
                     System.out.println("Dur :" + (System.currentTimeMillis() - s1));
                 }
@@ -1984,8 +2001,9 @@ public class MapRenderer extends Thread {
             if (f != null) {
                 f.renderForm(g2d);
             }
-
         }
+
+        // <editor-fold defaultstate="collapsed" desc="Mark current players villages">
 
         if (Boolean.parseBoolean(GlobalOptions.getProperty("highlight.tribes.villages"))) {
             Tribe mouseTribe = Barbarians.getSingleton();
@@ -2021,13 +2039,13 @@ public class MapRenderer extends Thread {
                         } else {
                             g2d.copyArea(copy.x, copy.y, copy.height, copy.height, r.x - copy.x, r.y - copy.y);
                         }
-
                     }
                 }
             }
             g2d.setPaint(p);
             g2d.setComposite(c);
         }
+// </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc=" Draw Drag line (Foreground)">
         Line2D.Double dragLine = new Line2D.Double(-1, -1, xe, ye);
@@ -2180,7 +2198,6 @@ public class MapRenderer extends Thread {
                             g2d.fillRect(0, rulerPart.y, rulerPart.width, rulerPart.height);
                             g2d.setComposite(com);
                         }
-
                     }
                     if (j == mVisibleVillages[0].length - 1) {
                         //draw horizontal ruler
@@ -2213,7 +2230,6 @@ public class MapRenderer extends Thread {
                             g2d.fillRect(rulerPart.x, 0, rulerPart.width, rulerPart.height);
                             g2d.setComposite(com);
                         }
-
                     }
                 }
             }
@@ -2257,9 +2273,7 @@ public class MapRenderer extends Thread {
                         g2d.setTransform(t);
                         g2d.drawString(coord, 1, dy);
                         g2d.setTransform(f);
-
                     }
-
                 }
             }
             //insert 'stopper'

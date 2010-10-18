@@ -61,11 +61,9 @@ public class GroupParser {
                         //group count found, next token must be groups
 
                         groupsToken = elemTok.nextToken().trim();
-                           System.out.println(" Groups:" + groupsToken);
                     } catch (Exception e) {
                         //group count not found (Google Chrome uses 2 tabs after village)
                         //take next tokes as group count
-                            e.printStackTrace();
                         groupCountToken = elemTok.nextToken().trim();
                         groupsToken = elemTok.nextToken().trim();
                     }
@@ -89,7 +87,7 @@ public class GroupParser {
                         try {
                             groupCount = Integer.parseInt(groupCountToken.trim());
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            groupCount = 0;
                         }
                         if (groupCount > 0) {
                             //group number found

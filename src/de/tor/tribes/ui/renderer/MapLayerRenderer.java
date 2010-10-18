@@ -51,20 +51,24 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 mLayer = ImageUtils.createCompatibleBufferedImage(pVisibleVillages.length * settings.getFieldWidth(), pVisibleVillages[0].length * settings.getFieldHeight(), BufferedImage.OPAQUE);
             }
             g2d = (Graphics2D) mLayer.getGraphics();
+            g2d.setClip(0, 0, mLayer.getWidth(), mLayer.getHeight());
             settings.setRowsToRender(pVisibleVillages[0].length);
         } else {
             //copy existing data to new location
             g2d = (Graphics2D) mLayer.getGraphics();
+            g2d.setClip(0, 0, mLayer.getWidth(), mLayer.getHeight());
             performCopy(settings, pVirtualBounds, g2d);
         }
         ImageUtils.setupGraphics(g2d);
         renderedSpriteBounds = new HashMap<Integer, Rectangle>();
         renderedMarkerBounds = new HashMap<Integer, Rectangle>();
+
         //Set new bounds
         setRenderedBounds((Rectangle2D.Double) pVirtualBounds.clone());
         //BufferedImage img = renderMarkerRows(pVisibleVillages, settings);
         BufferedImage img = renderMarkerRows(pVisibleVillages, settings);
         Graphics2D ig2d = (Graphics2D) img.getGraphics();
+        ig2d.setClip(0, 0, img.getWidth(), img.getHeight());
         ImageUtils.setupGraphics(ig2d);
         //   ig2d.setCompofsite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
         //System.err.println("RENDER0");
@@ -84,9 +88,6 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             img = renderMarkerColumns(pVisibleVillages, settings);
             ig2d = (Graphics2D) img.getGraphics();
             ImageUtils.setupGraphics(ig2d);
-            ig2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-            // ig2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-            //  System.err.println("RENDER1");
             ig2d.drawRenderedImage(renderVillageColumns(pVisibleVillages, settings), AffineTransform.getTranslateInstance(0, 0));
             trans = AffineTransform.getTranslateInstance(0, 0);
             if (settings.getColumnsToRender() < 0) {
@@ -96,7 +97,6 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         }
         g2d.dispose();
         trans.setToTranslation((int) Math.floor(settings.getDeltaX()), (int) Math.floor(settings.getDeltaY()));
-
         pG2d.drawRenderedImage(mLayer, trans);
         drawContinents(pVisibleVillages, settings, pG2d);
     }
@@ -322,14 +322,29 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         g2d.dispose();
         return newColumns;
     }
-//-Dsun.java2d.trace=count
 
+    
     private void renderVillageField(Village v, int row, int col, int globalRow, int globalCol, int pFieldWidth, int pFieldHeight, double zoom, boolean useDecoration, Graphics2D g2d) {
         Rectangle copyRect = null;
         int textureId = -1;
         BufferedImage sprite = null;
+        boolean showBarbarian = true;
+        try {
+            showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
+        } catch (Exception e) {
+            showBarbarian = true;
+        }
 
-        if (v != null) {
+        boolean markedOnly = false;
+        try {
+            markedOnly = Boolean.parseBoolean(GlobalOptions.getProperty("draw.marked.only"));
+        } catch (Exception e) {
+            markedOnly = false;
+        }
+
+        if (v != null
+                && !(v.getTribe().equals(Barbarians.getSingleton()) && !showBarbarian)
+                && !(MarkerManager.getSingleton().getMarker(v) == null && markedOnly)) {
             //village field that has to be rendered
             if (GlobalOptions.getSkin().isMinimapSkin()) {
                 textureId = Skin.ID_V1;
@@ -369,11 +384,26 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         }
     }
 
+
     private void renderMarkerField(Village v, int row, int col, int pFieldWidth, int pFieldHeight, double zoom, boolean useDecoration, Graphics2D g2d) {
         int tribeId = -666;
         BufferedImage sprite = null;
         Rectangle copyRect = null;
-        if (v != null) {
+        boolean showBarbarian = true;
+        try {
+            showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
+        } catch (Exception e) {
+            showBarbarian = true;
+        }
+        boolean markedOnly = false;
+        try {
+            markedOnly = Boolean.parseBoolean(GlobalOptions.getProperty("draw.marked.only"));
+        } catch (Exception e) {
+            markedOnly = false;
+        }
+        if (v != null
+                && !(v.getTribe().equals(Barbarians.getSingleton()) && !showBarbarian)
+                && !(MarkerManager.getSingleton().getMarker(v) == null && markedOnly)) {
             tribeId = v.getTribeID();
             copyRect = renderedMarkerBounds.get(tribeId);
             if (copyRect == null) {

@@ -114,8 +114,10 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
             mapPos.x = newMapPos.x;
             mapPos.y = newMapPos.y;
         }
+      //  Composite comp = pG2D.getComposite();
         pG2D.setComposite(AlphaComposite.Src);
         pG2D.copyArea(0, 0, mLayer.getWidth(), mLayer.getHeight(), -fieldsX * pSettings.getFieldWidth(), -fieldsY * pSettings.getFieldHeight());
+      //  pG2D.setComposite(comp);
     }
 
     private BufferedImage renderMarkerRows(Village[][] pVillages, RenderSettings pSettings) {

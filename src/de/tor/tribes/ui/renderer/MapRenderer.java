@@ -57,6 +57,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.TexturePaint;
 import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
@@ -226,6 +227,7 @@ public class MapRenderer extends Thread {
                     if (mBackBuffer == null) {
                         //create main buffer during first iteration
                         mBackBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.OPAQUE);
+
                         //  mBackBuffer.setAccelerationPriority(0);
                         mFrontBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.OPAQUE);
                         // mFrontBuffer.setAccelerationPriority(1);
@@ -254,7 +256,13 @@ public class MapRenderer extends Thread {
                             g2d.setComposite(c);
                         }
                     }
-
+                    g2d.setClip(0, 0, w, h);
+                    //
+                    //                    BufferedImage back = WorldDecorationHolder.getOriginalSprite(0, 0);
+                    //                    g2d.setPaint(new TexturePaint(back, new Rectangle2D.Double(0, 0, back.getWidth() / currentZoom, back.getHeight() / currentZoom)));
+                    //                    Paint pp = g2d.getPaint();
+                    //                    g2d.fillRect(0, 0, mBackBuffer.getWidth(), mBackBuffer.getHeight());
+                    //                    g2d.setPaint(pp);
                     //get currently selected user village for marking -> one call reduces sync effort
                     currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                     //check if redraw required
@@ -518,6 +526,7 @@ public class MapRenderer extends Thread {
                     if (mVisibleVillages[x][y] != null) {
 
                         Point villagePos = new Point((int) Math.floor(dx + x * currentFieldWidth), (int) Math.floor(dy + y * currentFieldHeight));
+                        //@TODO (2.2) Remove village from visible village map if it was not drawn
                         villagePositions.put(mVisibleVillages[x][y], new Rectangle(villagePos.x, villagePos.y, (int) Math.floor(currentFieldWidth), (int) Math.floor(currentFieldHeight)));
                         Tribe t = mVisibleVillages[x][y].getTribe();
                         if (t != Barbarians.getSingleton()) {

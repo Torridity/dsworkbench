@@ -88,8 +88,8 @@ import javax.swing.JPanel;
  * @author Charon
  */
 public class MapPanel extends JPanel implements DragGestureListener, // For recognizing the start of drags
-        DragSourceListener, // For processing drag source events
-        DropTargetListener // For processing drop target events
+                                                DragSourceListener, // For processing drag source events
+                                                DropTargetListener // For processing drop target events
 {
 // <editor-fold defaultstate="collapsed" desc=" Member variables ">
 
@@ -1803,6 +1803,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             //draw off-screen image of map
 
             final Graphics2D g2d = (Graphics2D) g;
+            System.out.println(g2d.getClipBounds());
             //ImageUtils.setupGraphics(g2d);
             g2d.drawImage(mBuffer, 0, 0, null);
             Toolkit.getDefaultToolkit().sync();
@@ -1939,6 +1940,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             g2d = (Graphics2D) mBuffer.getGraphics();
         }
         mBuffer.setAccelerationPriority(1.0f);
+        g2d.setClip(0, 0, mBuffer.getWidth(), mBuffer.getHeight());
         g2d.drawImage(pBuffer, AffineTransform.getTranslateInstance(0, 0), null);
         /*  g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .8f));
         g2d.setColor(Color.WHITE);

@@ -75,6 +75,7 @@ import java.awt.image.VolatileImage;
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -88,8 +89,8 @@ import javax.swing.JPanel;
  * @author Charon
  */
 public class MapPanel extends JPanel implements DragGestureListener, // For recognizing the start of drags
-                                                DragSourceListener, // For processing drag source events
-                                                DropTargetListener // For processing drop target events
+        DragSourceListener, // For processing drag source events
+        DropTargetListener // For processing drop target events
 {
 // <editor-fold defaultstate="collapsed" desc=" Member variables ">
 
@@ -1757,8 +1758,13 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     }//GEN-LAST:event_fireResizeEvent
     long s = 0;
 
+    @Override
+    public void repaint(long tm, int x, int y, int width, int height) {
+        super.repaint(tm, x, y, width, height);
+    }
+
     public void paintComponent(Graphics g) {
-        //   super.paintComponent(g);
+        // super.paintComponent(g);
         /**Draw buffer into panel*/
         try {
             //calculate move direction if mouse is dragged outside the map
@@ -1803,7 +1809,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             //draw off-screen image of map
 
             final Graphics2D g2d = (Graphics2D) g;
-            System.out.println(g2d.getClipBounds());
             //ImageUtils.setupGraphics(g2d);
             g2d.drawImage(mBuffer, 0, 0, null);
             Toolkit.getDefaultToolkit().sync();
@@ -1946,11 +1951,10 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         g2d.setColor(Color.WHITE);
         g2d.fillRect(0, 0, mBuffer.getWidth(), mBuffer.getHeight());
          */
-        mVillagePositions = (HashMap<Village, Rectangle>) pPositions.clone();
+        mVillagePositions = pPositions;//(HashMap<Village, Rectangle>) pPositions.clone();
         if (bMapSHotPlaned) {
             saveMapShot(mBuffer);
         }
-
         if (positionUpdate) {
             DSWorkbenchFormFrame.getSingleton().updateFormList();
         }

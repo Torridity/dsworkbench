@@ -16,19 +16,16 @@ import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.mark.MarkerManager;
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.ConvolveOp;
-import java.awt.image.Kernel;
 import java.util.HashMap;
 
 /**
@@ -46,6 +43,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
     public void performRendering(Rectangle2D pVirtualBounds, Village[][] pVisibleVillages, Graphics2D pG2d) {
         RenderSettings settings = getRenderSettings(pVirtualBounds);
         Graphics2D g2d = null;
+        long s = System.currentTimeMillis();
         if (isFullRenderRequired()) {
             if (mLayer == null) {
                 mLayer = ImageUtils.createCompatibleBufferedImage(pVisibleVillages.length * settings.getFieldWidth(), pVisibleVillages[0].length * settings.getFieldHeight(), BufferedImage.OPAQUE);
@@ -60,6 +58,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             performCopy(settings, pVirtualBounds, g2d);
         }
         ImageUtils.setupGraphics(g2d);
+        System.out.println("Prep " + (System.currentTimeMillis() - s));
         renderedSpriteBounds = new HashMap<Integer, Rectangle>();
         renderedMarkerBounds = new HashMap<Integer, Rectangle>();
 
@@ -67,18 +66,18 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         setRenderedBounds((Rectangle2D.Double) pVirtualBounds.clone());
         //BufferedImage img = renderMarkerRows(pVisibleVillages, settings);
         BufferedImage img = renderMarkerRows(pVisibleVillages, settings);
+        System.out.println("MarkRDraw " + (System.currentTimeMillis() - s));
         Graphics2D ig2d = (Graphics2D) img.getGraphics();
         ig2d.setClip(0, 0, img.getWidth(), img.getHeight());
         ImageUtils.setupGraphics(ig2d);
-        //   ig2d.setCompofsite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-        //System.err.println("RENDER0");
         ig2d.drawRenderedImage(renderVillageRows(pVisibleVillages, settings), AffineTransform.getTranslateInstance(0, 0));
+        System.out.println("VillRDraw " + (System.currentTimeMillis() - s));
         AffineTransform trans = AffineTransform.getTranslateInstance(0, 0);
         if (settings.getRowsToRender() < 0) {
             trans.setToTranslation(0, (pVisibleVillages[0].length + settings.getRowsToRender()) * settings.getFieldHeight());
         }
         g2d.drawRenderedImage(img, trans);
-
+        System.out.println("AllRDraw " + (System.currentTimeMillis() - s));
         if (isFullRenderRequired()) {
             //everything was rendered, skip col rendering
             setFullRenderRequired(false);
@@ -86,19 +85,25 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             renderedSpriteBounds = new HashMap<Integer, Rectangle>();
             renderedMarkerBounds = new HashMap<Integer, Rectangle>();
             img = renderMarkerColumns(pVisibleVillages, settings);
+            System.out.println("MarkCDraw " + (System.currentTimeMillis() - s));
             ig2d = (Graphics2D) img.getGraphics();
             ImageUtils.setupGraphics(ig2d);
             ig2d.drawRenderedImage(renderVillageColumns(pVisibleVillages, settings), AffineTransform.getTranslateInstance(0, 0));
+            System.out.println("VillCDraw " + (System.currentTimeMillis() - s));
             trans = AffineTransform.getTranslateInstance(0, 0);
             if (settings.getColumnsToRender() < 0) {
                 trans.setToTranslation((pVisibleVillages.length + settings.getColumnsToRender()) * settings.getFieldWidth(), 0);
             }
             g2d.drawRenderedImage(img, trans);
+            System.out.println("AllCDraw " + (System.currentTimeMillis() - s));
         }
         g2d.dispose();
         trans.setToTranslation((int) Math.floor(settings.getDeltaX()), (int) Math.floor(settings.getDeltaY()));
         pG2d.drawRenderedImage(mLayer, trans);
+        System.out.println("AllDraw " + (System.currentTimeMillis() - s));
         drawContinents(pVisibleVillages, settings, pG2d);
+        System.out.println("ContDraw " + (System.currentTimeMillis() - s));
+        System.out.println("-----------");
     }
 
     private void performCopy(RenderSettings pSettings, Rectangle2D pVirtualBounds, Graphics2D pG2D) {
@@ -165,7 +170,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                     }
                 }
                 if (draw) {
-                    pG2d.draw(new Line2D.Double((i - mapPos.x) * fieldWidth + (int) Math.floor(pSettings.getDeltaX()), 0, (i - mapPos.x) * fieldWidth + (int) Math.floor(pSettings.getDeltaX()), pVisibleVillages[0].length * fieldHeight));
+                    pG2d.drawLine((i - mapPos.x) * fieldWidth + (int) Math.floor(pSettings.getDeltaX()), 0, (i - mapPos.x) * fieldWidth + (int) Math.floor(pSettings.getDeltaX()), pVisibleVillages[0].length * fieldHeight);
                 }
             }
         }
@@ -189,7 +194,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                     }
                 }
                 if (draw) {
-                    pG2d.draw(new Line2D.Double(0, (i - mapPos.y) * fieldHeight + (int) Math.floor(pSettings.getDeltaY()), pVisibleVillages.length * fieldWidth, (i - mapPos.y) * fieldHeight + (int) Math.floor(pSettings.getDeltaY())));
+                    pG2d.drawLine(0, (i - mapPos.y) * fieldHeight + (int) Math.floor(pSettings.getDeltaY()), pVisibleVillages.length * fieldWidth, (i - mapPos.y) * fieldHeight + (int) Math.floor(pSettings.getDeltaY()));
                 }
             }
         }
@@ -323,7 +328,6 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         return newColumns;
     }
 
-    
     private void renderVillageField(Village v, int row, int col, int globalRow, int globalCol, int pFieldWidth, int pFieldHeight, double zoom, boolean useDecoration, Graphics2D g2d) {
         Rectangle copyRect = null;
         int textureId = -1;
@@ -383,7 +387,6 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             g2d.copyArea(copyRect.x, copyRect.y, copyRect.width, copyRect.height, col * pFieldWidth - copyRect.x, row * pFieldHeight - copyRect.y);
         }
     }
-
 
     private void renderMarkerField(Village v, int row, int col, int pFieldWidth, int pFieldHeight, double zoom, boolean useDecoration, Graphics2D g2d) {
         int tribeId = -666;
@@ -496,20 +499,17 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             } else if (tribeMarker != null) {
                 //draw tribe marker
                 g2d.setColor(tribeMarker.getMarkerColor());
-                Rectangle2D.Double r = new Rectangle2D.Double(0, 0, w, h);
-                g2d.fill(r);
+                g2d.fillRect(0, 0, w, h);
                 //g2d.fillRect(0, 0, w, h);
             } else if (allyMarker != null) {
                 //draw ally marker
                 g2d.setColor(allyMarker.getMarkerColor());
-                Rectangle2D.Double r = new Rectangle2D.Double(0, 0, w, h);
-                g2d.fill(r);
+                g2d.fillRect(0, 0, w, h);
                 // g2d.fillRect(0, 0, w, h);
             } else {
                 //draw misc marker
                 g2d.setColor(markerColor);
-                Rectangle2D.Double r = new Rectangle2D.Double(0, 0, w, h);
-                g2d.fill(r);
+                g2d.fillRect(0, 0, w, h);
                 //g2d.fillRect(0, 0, w, h);
             }
         } else {
@@ -517,24 +517,20 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 if (DEFAULT != null) {
                     //no mark-on-top mode
                     g2d.setColor(DEFAULT);
-                    Rectangle2D.Double r = new Rectangle2D.Double(0, 0, w, h);
-                    g2d.fill(r);
+                    g2d.fillRect(0, 0, w, h);
                     //  g2d.fillRect(0, 0, w, h);
                 }
             } else {
                 //barbarian marker
                 g2d.setColor(Color.LIGHT_GRAY);
-                Rectangle2D.Double r = new Rectangle2D.Double(0, 0, w, h);
-                g2d.fill(r);
+                g2d.fillRect(0, 0, w, h);
                 //g2d.fillRect(0, 0, w, h);
             }
         }
         g2d.setColor(Color.BLACK);
-        Rectangle2D.Double r = new Rectangle2D.Double(0, 0, w, h);
-        g2d.draw(r);
+        g2d.drawRect(0, 0, w, h);
         // g2d.drawRect(0, 0, w, h);
-        r = new Rectangle2D.Double(1, 1, w - 3, h - 3);
-        g2d.draw(r);
+        g2d.drawRect(1, 1, w - 3, h - 3);
         // g2d.drawRect(1, 1, w - 3, h - 3);
         g2d.dispose();
         return image;

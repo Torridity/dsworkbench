@@ -434,17 +434,17 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                 double posX = ((double) getWidth() / mapWidth * (double) (iX - rVisiblePart.x)) - w / 2;
                 double posY = ((double) getHeight() / mapHeight * (double) (iY - rVisiblePart.y)) - h / 2;
 
-                g2d.draw(new Rectangle2D.Double((int) Math.rint(posX), (int) Math.rint(posY), w, h));
+                g2d.drawRect((int) Math.rint(posX), (int) Math.rint(posY), w, h);
 
                 if (iCurrentCursor == ImageManager.CURSOR_SHOT) {
                     if (rDrag != null) {
                         g2d.setColor(Color.ORANGE);
-                        g2d.draw(new Rectangle2D.Double((int) rDrag.getMinX(), (int) rDrag.getMinY(), (int) (rDrag.getWidth() - rDrag.getX()), (int) (rDrag.getHeight() - rDrag.getY())));
+                        g2d.drawRect((int) rDrag.getMinX(), (int) rDrag.getMinY(), (int) (rDrag.getWidth() - rDrag.getX()), (int) (rDrag.getHeight() - rDrag.getY()));
                     }
                 } else if (iCurrentCursor == ImageManager.CURSOR_ZOOM) {
                     if (rDrag != null) {
                         g2d.setColor(Color.CYAN);
-                        g2d.draw(new Rectangle2D.Double((int) rDrag.getMinX(), (int) rDrag.getMinY(), (int) (rDrag.getWidth() - rDrag.getX()), (int) (rDrag.getWidth() - rDrag.getX())));
+                        g2d.drawRect((int) rDrag.getMinX(), (int) rDrag.getMinY(), (int) (rDrag.getWidth() - rDrag.getX()), (int) (rDrag.getWidth() - rDrag.getX()));
                     }
                 }
             }
@@ -456,39 +456,39 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                 Point menuPos = r.getLocation();
                 menuPos.translate(-2, -2);
                 //draw border
-                g2d.fill(new Rectangle2D.Double(menuPos.x, menuPos.y, 88, 30));
+                g2d.fillRect(menuPos.x, menuPos.y, 88, 30);
                 g2d.setColor(Color.BLACK);
                 //check if mouse is inside minimap button
                 if (getMousePosition() != null && r.contains(getMousePosition())) {
                     g2d.setColor(Color.YELLOW);
-                    g2d.fill(new Rectangle2D.Double(r.x, r.y, r.width, r.height));
+                    g2d.fillRect(r.x, r.y, r.width, r.height);
                     g2d.setColor(Color.BLACK);
                 }
                 g2d.drawImage(minimapIcons.get(ID_MINIMAP), r.x, r.y, null);
-                g2d.draw(new Rectangle2D.Double(r.x, r.y, r.width, r.height));
+                g2d.drawRect(r.x, r.y, r.width, r.height);
 
 
                 r = minimapButtons.get(ID_ALLY_CHART);
                 //check if mouse is inside ally chart button
                 if (getMousePosition() != null && r.contains(getMousePosition())) {
                     g2d.setColor(Color.YELLOW);
-                    g2d.fill(new Rectangle2D.Double(r.x, r.y, r.width, r.height));
+                    g2d.fillRect(r.x, r.y, r.width, r.height);
                     g2d.setColor(Color.BLACK);
                 }
                 g2d.drawImage(minimapIcons.get(ID_ALLY_CHART), r.x, r.y, null);
-                g2d.draw(new Rectangle2D.Double(r.x, r.y, r.width, r.height));
+                g2d.drawRect(r.x, r.y, r.width, r.height);
 
                 r = minimapButtons.get(ID_TRIBE_CHART);
                 //check if mouse is inside tribe chart button
                 if (getMousePosition() != null && r.contains(getMousePosition())) {
                     g2d.setColor(Color.YELLOW);
-                    g2d.fill(new Rectangle2D.Double(r.x, r.y, r.width, r.height));
+                    g2d.fillRect(r.x, r.y, r.width, r.height);
                     g2d.setColor(Color.BLACK);
 
 
                 }
                 g2d.drawImage(minimapIcons.get(ID_TRIBE_CHART), r.x, r.y, null);
-                g2d.draw(new Rectangle2D.Double(r.x, r.y, r.width, r.height));
+                g2d.drawRect(r.x, r.y, r.width, r.height);
             }
             g2d.dispose();
 
@@ -1062,7 +1062,7 @@ class MinimapRepaintThread extends Thread {
     public void run() {
         while (true) {
             try {
-               if (!drawn) {
+                if (!drawn) {
                     drawn = redraw();
                 }
 
@@ -1090,7 +1090,7 @@ class MinimapRepaintThread extends Thread {
 
         Graphics2D g2d = (Graphics2D) mBuffer.getGraphics();
         g2d.setColor(new Color(35, 125, 0));
-        g2d.fill(new Rectangle2D.Double(0, 0, mBuffer.getWidth(null), mBuffer.getHeight(null)));
+        g2d.fillRect(0, 0, mBuffer.getWidth(null), mBuffer.getHeight(null));
 
         boolean markPlayer = false;
         try {
@@ -1174,11 +1174,11 @@ class MinimapRepaintThread extends Thread {
                                 g2d.setColor(new Color(35, 125, 0));
                             }
                         }
-                        g2d.fill(new Rectangle2D.Double((int) Math.round((i - visiblePart.x) * wField), (int) Math.round((j - visiblePart.y) * hField), (int) Math.round(wField), (int) Math.round(hField)));
+                        g2d.fillRect((int) Math.round((i - visiblePart.x) * wField), (int) Math.round((j - visiblePart.y) * hField), (int) Math.round(wField), (int) Math.round(hField));
                     } else {
                         if (showBarbarian) {
                             g2d.setColor(Color.BLACK);
-                            g2d.fill(new Rectangle2D.Double((int) Math.round((i - visiblePart.x) * wField), (int) Math.round((j - visiblePart.y) * hField), (int) Math.round(wField), (int) Math.round(hField)));
+                            g2d.fillRect((int) Math.round((i - visiblePart.x) * wField), (int) Math.round((j - visiblePart.y) * hField), (int) Math.round(wField), (int) Math.round(hField));
                         }
                     }
                 }
@@ -1232,7 +1232,7 @@ class MinimapRepaintThread extends Thread {
                             hk -= 1;
                         }
 
-                        g2d.draw(new Rectangle2D.Double(cx, cy, (int) Math.round(wk * wField), (int) Math.round(hk * hField)));
+                        g2d.drawRect(cx, cy, (int) Math.round(wk * wField), (int) Math.round(hk * hField));
                     }
                 }
                 g2d.setFont(f);

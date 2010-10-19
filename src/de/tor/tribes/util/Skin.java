@@ -145,7 +145,8 @@ public class Skin {
         mTextures = new HashMap<Integer, BufferedImage>();
         for (int i = 0; i < 25; i++) {
             BufferedImage image = new BufferedImage(iFieldWidth, iFieldHeight, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2d = (Graphics2D) image.getGraphics();
+            Graphics2D g2d = (Graphics2D) image.createGraphics();
+            ImageUtils.setupGraphics(g2d);
             if (i == 0) {
                 g2d.setColor(new Color(35, 125, 0));
                 g2d.fill(new Rectangle2D.Double(0, 0, 10, 10));
@@ -221,12 +222,14 @@ public class Skin {
 
     public static BufferedImage loadImage(File pFile) throws Exception {
         BufferedImage im = ImageIO.read(pFile);
-
         GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice device = env.getDefaultScreenDevice();
         GraphicsConfiguration config = device.getDefaultConfiguration();
         BufferedImage buffy = config.createCompatibleImage(im.getWidth(), im.getHeight(), im.getTransparency());
-        buffy.getGraphics().drawImage(im, 0, 0, null);
+        Graphics2D g2d = (Graphics2D) buffy.createGraphics();
+        ImageUtils.setupGraphics(g2d);
+        g2d.drawImage(im, 0, 0, null);
+        g2d.dispose();
         return buffy;
     }
 

@@ -6,9 +6,11 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.util.ImageUtils;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -16,7 +18,6 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import java.awt.image.MemoryImageSource;
 import java.io.File;
 import java.net.URL;
 import java.util.LinkedList;
@@ -254,7 +255,10 @@ public class ImageManager {
         GraphicsDevice device = env.getDefaultScreenDevice();
         GraphicsConfiguration config = device.getDefaultConfiguration();
         BufferedImage buffy = config.createCompatibleImage(im.getWidth(), im.getHeight(), im.getTransparency());
-        buffy.getGraphics().drawImage(im, 0, 0, null);
+        Graphics2D g2d = (Graphics2D) buffy.createGraphics();
+        ImageUtils.setupGraphics(g2d);
+        g2d.drawImage(im, 0, 0, null);
+        g2d.dispose();
         return buffy;
     }
 
@@ -279,7 +283,7 @@ public class ImageManager {
     /**Get the cursor for the provided ID*/
     public static Cursor getCursor(int pID) {
 
-      if (!cursorSupported) {
+        if (!cursorSupported) {
             return Cursor.getDefaultCursor();
         }
         return CURSORS.get(pID);

@@ -383,11 +383,11 @@ public class MapRenderer extends Thread {
                         }
                     }
                     // System.out.println("DT " + (System.currentTimeMillis() - s1));
-                    System.out.println("Layers: " + (System.currentTimeMillis() - s));
+//                    System.out.println("Layers: " + (System.currentTimeMillis() - s));
                     //draw live layer -> always on top
                     renderLiveLayer(g2d);
                     g2d.drawImage(mLayers.get(LIVE_LAYER), 0, 0, null);
-                    System.out.println("Live: " + (System.currentTimeMillis() - s));
+//                    System.out.println("Live: " + (System.currentTimeMillis() - s));
                     //    logger.info(" - LIVE " + (System.currentTimeMillis() - s));
                     // s = System.currentTimeMillis();
                     //render selection
@@ -395,11 +395,11 @@ public class MapRenderer extends Thread {
                     if (selection != null) {
                         selection.renderForm(g2d);
                     }
-                    System.out.println("Selec: " + (System.currentTimeMillis() - s));
+//                    System.out.println("Selec: " + (System.currentTimeMillis() - s));
                     //render menu
                     MenuRenderer.getSingleton().renderMenu(g2d);
                     g2d.dispose();
-                    System.out.println("Done: " + (System.currentTimeMillis() - s));
+//                    System.out.println("Done: " + (System.currentTimeMillis() - s));
                     //   logger.info(" - MENU " + (System.currentTimeMillis() - s));
                     //notify MapPanel to bring buffer to screen
                     HashMap<Village, Rectangle> pos = (HashMap<Village, Rectangle>) villagePositions.clone();
@@ -410,7 +410,7 @@ public class MapRenderer extends Thread {
                     //drawGraphics.dispose();
 
                     MapPanel.getSingleton().updateComplete(pos, mBackBuffer);
-                    System.out.println("Updated: " + (System.currentTimeMillis() - s));
+//                    System.out.println("Updated: " + (System.currentTimeMillis() - s));
                     //MapPanel.getSingleton().getBufferStrategy().show();
                     SwingUtilities.invokeLater(new Runnable() {
 

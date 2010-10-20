@@ -19,11 +19,13 @@ import de.tor.tribes.util.mark.MarkerManager;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
@@ -43,68 +45,99 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
     public void performRendering(Rectangle2D pVirtualBounds, Village[][] pVisibleVillages, Graphics2D pG2d) {
         RenderSettings settings = getRenderSettings(pVirtualBounds);
         Graphics2D g2d = null;
-        long s = System.currentTimeMillis();
-        if (isFullRenderRequired()) {
-            if (mLayer == null) {
-                mLayer = ImageUtils.createCompatibleBufferedImage(pVisibleVillages.length * settings.getFieldWidth(), pVisibleVillages[0].length * settings.getFieldHeight(), BufferedImage.OPAQUE);
-            }
-            g2d = (Graphics2D) mLayer.getGraphics();
-            g2d.setClip(0, 0, mLayer.getWidth(), mLayer.getHeight());
-            settings.setRowsToRender(pVisibleVillages[0].length);
-        } else {
-            //copy existing data to new location
-            g2d = (Graphics2D) mLayer.getGraphics();
-            g2d.setClip(0, 0, mLayer.getWidth(), mLayer.getHeight());
-            performCopy(settings, pVirtualBounds, g2d);
-        }
-        ImageUtils.setupGraphics(g2d);
-        System.out.println("Prep " + (System.currentTimeMillis() - s));
-        renderedSpriteBounds = new HashMap<Integer, Rectangle>();
-        renderedMarkerBounds = new HashMap<Integer, Rectangle>();
 
-        //Set new bounds
-        setRenderedBounds((Rectangle2D.Double) pVirtualBounds.clone());
-        //BufferedImage img = renderMarkerRows(pVisibleVillages, settings);
-        BufferedImage img = renderMarkerRows(pVisibleVillages, settings);
-        System.out.println("MarkRDraw " + (System.currentTimeMillis() - s));
-        Graphics2D ig2d = (Graphics2D) img.getGraphics();
-        ig2d.setClip(0, 0, img.getWidth(), img.getHeight());
-        ImageUtils.setupGraphics(ig2d);
-        ig2d.drawRenderedImage(renderVillageRows(pVisibleVillages, settings), AffineTransform.getTranslateInstance(0, 0));
-        System.out.println("VillRDraw " + (System.currentTimeMillis() - s));
-        AffineTransform trans = AffineTransform.getTranslateInstance(0, 0);
-        if (settings.getRowsToRender() < 0) {
-            trans.setToTranslation(0, (pVisibleVillages[0].length + settings.getRowsToRender()) * settings.getFieldHeight());
-        }
-        g2d.drawRenderedImage(img, trans);
-        System.out.println("AllRDraw " + (System.currentTimeMillis() - s));
-        if (isFullRenderRequired()) {
-            //everything was rendered, skip col rendering
-            setFullRenderRequired(false);
+        if (getRenderedBounds() != null) {
+            Point2D.Double d1 = new Point2D.Double(getRenderedBounds().getX(), getRenderedBounds().getY());
+            Point2D.Double d2 = new Point2D.Double(pVirtualBounds.getX(), pVirtualBounds.getY());
+
+            if (d1.distance(d2) != 0) {
+                moved = true;
+                System.out.println(pVirtualBounds + " - " + getRenderedBounds());
+                System.out.println(d1.distance(d2));
+                System.out.println("MOVED: " + settings.getDeltaX() + "," + settings.getDeltaY());
+            } else {
+                moved = false;
+                // System.out.println("NOT MOVED: " + settings.getDeltaX() + "," + settings.getDeltaY());
+            }
         } else {
+            moved = true;
+        }
+
+        long s = System.currentTimeMillis();
+        AffineTransform trans = AffineTransform.getTranslateInstance(0, 0);
+        if (moved) {
+            if (isFullRenderRequired()) {
+                if (mLayer == null) {
+                    mLayer = ImageUtils.createCompatibleBufferedImage(pVisibleVillages.length * settings.getFieldWidth(), pVisibleVillages[0].length * settings.getFieldHeight(), BufferedImage.OPAQUE);
+                }
+                g2d = (Graphics2D) mLayer.getGraphics();
+                g2d.setClip(0, 0, mLayer.getWidth(), mLayer.getHeight());
+                settings.setRowsToRender(pVisibleVillages[0].length);
+            } else {
+                //copy existing data to new location
+                g2d = (Graphics2D) mLayer.getGraphics();
+                g2d.setClip(0, 0, mLayer.getWidth(), mLayer.getHeight());
+                performCopy(settings, pVirtualBounds, g2d);
+            }
+            ImageUtils.setupGraphics(g2d);
+//        System.out.println("Prep " + (System.currentTimeMillis() - s));
             renderedSpriteBounds = new HashMap<Integer, Rectangle>();
             renderedMarkerBounds = new HashMap<Integer, Rectangle>();
-            img = renderMarkerColumns(pVisibleVillages, settings);
-            System.out.println("MarkCDraw " + (System.currentTimeMillis() - s));
-            ig2d = (Graphics2D) img.getGraphics();
+
+            //Set new bounds
+            setRenderedBounds((Rectangle2D.Double) pVirtualBounds.clone());
+            //BufferedImage img = renderMarkerRows(pVisibleVillages, settings);
+            BufferedImage img = renderMarkerRows(pVisibleVillages, settings);
+//        System.out.println("MarkRDraw " + (System.currentTimeMillis() - s));
+            Graphics2D ig2d = (Graphics2D) img.getGraphics();
+            ig2d.setClip(0, 0, img.getWidth(), img.getHeight());
             ImageUtils.setupGraphics(ig2d);
-            ig2d.drawRenderedImage(renderVillageColumns(pVisibleVillages, settings), AffineTransform.getTranslateInstance(0, 0));
-            System.out.println("VillCDraw " + (System.currentTimeMillis() - s));
-            trans = AffineTransform.getTranslateInstance(0, 0);
-            if (settings.getColumnsToRender() < 0) {
-                trans.setToTranslation((pVisibleVillages.length + settings.getColumnsToRender()) * settings.getFieldWidth(), 0);
+            ig2d.drawRenderedImage(renderVillageRows(pVisibleVillages, settings), AffineTransform.getTranslateInstance(0, 0));
+//        System.out.println("VillRDraw " + (System.currentTimeMillis() - s));
+
+            if (settings.getRowsToRender() < 0) {
+                trans.setToTranslation(0, (pVisibleVillages[0].length + settings.getRowsToRender()) * settings.getFieldHeight());
             }
             g2d.drawRenderedImage(img, trans);
-            System.out.println("AllCDraw " + (System.currentTimeMillis() - s));
+//        System.out.println("AllRDraw " + (System.currentTimeMillis() - s));
+            if (isFullRenderRequired()) {
+                //everything was rendered, skip col rendering
+                setFullRenderRequired(false);
+            } else {
+                renderedSpriteBounds = new HashMap<Integer, Rectangle>();
+                renderedMarkerBounds = new HashMap<Integer, Rectangle>();
+                img = renderMarkerColumns(pVisibleVillages, settings);
+//            System.out.println("MarkCDraw " + (System.currentTimeMillis() - s));
+                ig2d = (Graphics2D) img.getGraphics();
+                ImageUtils.setupGraphics(ig2d);
+                ig2d.drawRenderedImage(renderVillageColumns(pVisibleVillages, settings), AffineTransform.getTranslateInstance(0, 0));
+//            System.out.println("VillCDraw " + (System.currentTimeMillis() - s));
+                trans = AffineTransform.getTranslateInstance(0, 0);
+                if (settings.getColumnsToRender() < 0) {
+                    trans.setToTranslation((pVisibleVillages.length + settings.getColumnsToRender()) * settings.getFieldWidth(), 0);
+                }
+                g2d.drawRenderedImage(img, trans);
+//            System.out.println("AllCDraw " + (System.currentTimeMillis() - s));
+            }
+            g2d.dispose();
         }
-        g2d.dispose();
         trans.setToTranslation((int) Math.floor(settings.getDeltaX()), (int) Math.floor(settings.getDeltaY()));
         pG2d.drawRenderedImage(mLayer, trans);
-        System.out.println("AllDraw " + (System.currentTimeMillis() - s));
+//        System.out.println("AllDraw " + (System.currentTimeMillis() - s));
         drawContinents(pVisibleVillages, settings, pG2d);
-        System.out.println("ContDraw " + (System.currentTimeMillis() - s));
-        System.out.println("-----------");
+
+        if (moved) {
+            Composite com = pG2d.getComposite();
+            pG2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .5f));
+            pG2d.setColor(Constants.DS_BACK_LIGHT);
+            pG2d.fillRect(0, 0, mLayer.getWidth(), mLayer.getHeight());
+            pG2d.setColor(Color.BLACK);
+            pG2d.setComposite(com);
+        }
+//        System.out.println("ContDraw " + (System.currentTimeMillis() - s));
+//        System.out.println("-----------");
     }
+    boolean moved = false;
 
     private void performCopy(RenderSettings pSettings, Rectangle2D pVirtualBounds, Graphics2D pG2D) {
         if (mapPos == null) {
@@ -115,12 +148,8 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
 
         int fieldsX = newMapPos.x - mapPos.x;
         int fieldsY = newMapPos.y - mapPos.y;
-
+        mapPos = (Point) newMapPos.clone();
         //set new map position
-        if (newMapPos.distance(mapPos) != 0.0) {
-            mapPos.x = newMapPos.x;
-            mapPos.y = newMapPos.y;
-        }
         pG2D.copyArea(0, 0, mLayer.getWidth(), mLayer.getHeight(), -fieldsX * pSettings.getFieldWidth(), -fieldsY * pSettings.getFieldHeight());
     }
 

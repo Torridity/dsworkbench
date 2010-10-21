@@ -173,7 +173,7 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
                 g2d.setColor(Constants.DS_BACK);
 
                 if (!showChurchTools && (region == 25 || region == 26 || region == 27 || region == 28)) {
-                    g2d.fill(new Rectangle2D.Double(rect.x, rect.y, rect.width, rect.height));
+                    g2d.fillRect(rect.x, rect.y, rect.width, rect.height);
                 } else {
                     g2d.fill3DRect(rect.x, rect.y, rect.width, rect.height, false);
                 }
@@ -183,7 +183,7 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
             } else {
                 if (!showChurchTools && (region == 25 || region == 26 || region == 27 || region == 28)) {
                     g2d.setColor(Constants.DS_BACK);
-                    g2d.fill(new Rectangle2D.Double(rect.x, rect.y, rect.width, rect.height));
+                    g2d.fillRect(rect.x, rect.y, rect.width, rect.height);
                 } else {
                     g2d.setColor(Constants.DS_BACK_LIGHT);
                     g2d.fill3DRect(rect.x, rect.y, rect.width, rect.height, true);

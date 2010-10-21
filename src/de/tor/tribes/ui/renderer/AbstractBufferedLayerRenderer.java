@@ -8,12 +8,7 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.awt.image.VolatileImage;
 
 /**
  *

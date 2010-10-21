@@ -126,14 +126,14 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
 //        System.out.println("AllDraw " + (System.currentTimeMillis() - s));
         drawContinents(pVisibleVillages, settings, pG2d);
 
-        if (moved) {
+       /* if (moved) {
             Composite com = pG2d.getComposite();
             pG2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .5f));
             pG2d.setColor(Constants.DS_BACK_LIGHT);
             pG2d.fillRect(0, 0, mLayer.getWidth(), mLayer.getHeight());
             pG2d.setColor(Color.BLACK);
             pG2d.setComposite(com);
-        }
+        }*/
 //        System.out.println("ContDraw " + (System.currentTimeMillis() - s));
 //        System.out.println("-----------");
     }

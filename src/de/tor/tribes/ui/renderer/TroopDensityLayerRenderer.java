@@ -104,13 +104,13 @@ public class TroopDensityLayerRenderer extends AbstractDirectLayerRenderer {
                 h = 3;
             }
             g2d.setColor(Color.WHITE);
-            g2d.fill(new Rectangle2D.Double(colu * pFieldWidth + 1 + pDx, row * pFieldHeight + pFieldHeight - h + pDy, pFieldWidth - 2, h));
+            g2d.fillRect(colu * pFieldWidth + 1 + pDx, row * pFieldHeight + pFieldHeight - h + pDy, pFieldWidth - 2, h);
             g2d.setColor(col);
-            g2d.fill(new Rectangle2D.Double(colu * pFieldWidth + 1 + pDx, row * pFieldHeight + pFieldHeight - h + pDy, wOwn - 2, h));
+            g2d.fillRect(colu * pFieldWidth + 1 + pDx, row * pFieldHeight + pFieldHeight - h + pDy, wOwn - 2, h);
             g2d.setColor(Color.BLUE);
-            g2d.fill(new Rectangle2D.Double(colu * pFieldWidth + 1 + pDx, row * pFieldHeight + pFieldHeight - h + pDy, wFor - 2, h));
+            g2d.fillRect(colu * pFieldWidth + 1 + pDx, row * pFieldHeight + pFieldHeight - h + pDy, wFor - 2, h);
             g2d.setColor(Color.BLACK);
-            g2d.draw(new Rectangle2D.Double(colu * pFieldWidth + 1 + pDx, row * pFieldHeight + pFieldHeight - h + pDy, pFieldWidth - 2, h));
+            g2d.drawRect(colu * pFieldWidth + 1 + pDx, row * pFieldHeight + pFieldHeight - h + pDy, pFieldWidth - 2, h);
 
             g2d.setColor(cb);
         }

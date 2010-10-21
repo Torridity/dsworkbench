@@ -10,5 +10,10 @@
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/renderer/AbstractBufferedLayerRenderer.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/ImageUtils.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/Skin.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/io/WorldDecorationHolder.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/renderer/AbstractLayerRenderer.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/MinimapZoomFrame.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/renderer/TroopDensityLayerRenderer.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/TroopInfoChartPanel.java</file>
     </open-files>
 </project-private>

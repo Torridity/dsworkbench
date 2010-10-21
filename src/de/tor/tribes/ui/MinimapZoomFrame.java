@@ -48,7 +48,7 @@ public class MinimapZoomFrame extends javax.swing.JFrame {
         if (pImage != null) {
             Graphics2D g2d = (Graphics2D) g;
             g2d.setColor(new Color(35, 125, 0));
-            g2d.fill(new Rectangle2D.Double(0, 0, getWidth(), getHeight()));
+            g2d.fillRect(0, 0, getWidth(), getHeight());
             g2d.drawImage(pImage, xp, yp, null);
             /* if (mBorder != null) {
             g2d.drawImage(mBorder, null, 0, 0);

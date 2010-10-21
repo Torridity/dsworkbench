@@ -82,8 +82,8 @@ public class SupportLayerRenderer extends AbstractDirectLayerRenderer {
                 } else if (pVisibleVillages.contains(v) && !pVisibleVillages.contains(target)) {
                     pG2D.setColor(Color.GREEN);
                     pG2D.setClip((int) Math.rint(xStart - 50), (int) Math.rint(yStart - 50), 100, 100);
-                    supportLine = new Line2D.Double((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
-                    pG2D.draw(supportLine);
+//                  supportLine = new Line2D.Double((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
+                    pG2D.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
                     pG2D.setClip(null);
                     Line2D.Double top = new Line2D.Double(xStart - 50.0, yStart - 50.0, xStart + 50.0, yStart - 50.0);
                     Line2D.Double right = new Line2D.Double(xStart + 50.0, yStart - 50.0, xStart + 50.0, yStart + 50.0);
@@ -135,8 +135,8 @@ public class SupportLayerRenderer extends AbstractDirectLayerRenderer {
                 } else if (!pVisibleVillages.contains(v) && pVisibleVillages.contains(target)) {
                     pG2D.setColor(Color.RED);
                     pG2D.setClip((int) Math.rint(xEnd - 50), (int) Math.rint(yEnd - 50), 100, 100);
-                    supportLine = new Line2D.Double((int) Math.rint(xEnd), (int) Math.rint(yEnd), (int) Math.rint(xStart), (int) Math.rint(yStart));
-                    pG2D.draw(supportLine);
+//                  supportLine = new Line2D.Double((int) Math.rint(xEnd), (int) Math.rint(yEnd), (int) Math.rint(xStart), (int) Math.rint(yStart));
+                    pG2D.drawLine((int) Math.rint(xEnd), (int) Math.rint(yEnd), (int) Math.rint(xStart), (int) Math.rint(yStart));
                     pG2D.setClip(null);
                     Line2D.Double top = new Line2D.Double(xEnd - 50.0, yEnd - 50.0, xEnd + 50.0, yEnd - 50.0);
                     Line2D.Double right = new Line2D.Double(xEnd + 50.0, yEnd - 50.0, xEnd + 50.0, yEnd + 50.0);
@@ -182,7 +182,7 @@ public class SupportLayerRenderer extends AbstractDirectLayerRenderer {
                     double dist = DSCalculator.calculateDistance(v, target);
                     String d = NumberFormat.getInstance().format(dist);
                     Rectangle2D bb = pG2D.getFontMetrics().getStringBounds(d, pG2D);
-                    pG2D.fill(new Rectangle2D.Double(x + bb.getX(), y + bb.getY(), bb.getWidth(), bb.getHeight()));
+                    pG2D.fillRect((int) Math.floor(x + bb.getX()), (int) Math.floor(y + bb.getY()), (int) Math.floor(bb.getWidth()), (int) Math.floor(bb.getHeight()));
                     pG2D.setColor(Color.BLACK);
                     pG2D.drawString(d, (int) x, (int) y);
                 }

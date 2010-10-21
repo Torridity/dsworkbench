@@ -10,10 +10,6 @@ import de.tor.tribes.util.ImageUtils;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -236,30 +232,16 @@ public class ImageManager {
 
     public static void loadNoteIcons() throws Exception {
         try {
-            NOTE_ICONS.add(loadImage(new File("graphics/icons/pin_blue.png")));//0
-            NOTE_ICONS.add(loadImage(new File("graphics/icons/pin_green.png")));//1
-            NOTE_ICONS.add(loadImage(new File("graphics/icons/pin_grey.png")));//2
-            NOTE_ICONS.add(loadImage(new File("graphics/icons/pin_orange.png")));//3
-            NOTE_ICONS.add(loadImage(new File("graphics/icons/pin_red.png")));//4
-            NOTE_ICONS.add(loadImage(new File("graphics/icons/pin_yellow.png")));//4
+            NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/pin_blue.png")));//0
+            NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/pin_green.png")));//1
+            NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/pin_grey.png")));//2
+            NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/pin_orange.png")));//3
+            NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/pin_red.png")));//4
+            NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/pin_yellow.png")));//4
         } catch (Exception e) {
             logger.error("Failed to load note icons", e);
             throw new Exception("Failed to load note icons");
         }
-    }
-
-    public static BufferedImage loadImage(File pFile) throws Exception {
-        BufferedImage im = ImageIO.read(pFile);
-
-        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice device = env.getDefaultScreenDevice();
-        GraphicsConfiguration config = device.getDefaultConfiguration();
-        BufferedImage buffy = config.createCompatibleImage(im.getWidth(), im.getHeight(), im.getTransparency());
-        Graphics2D g2d = (Graphics2D) buffy.createGraphics();
-        ImageUtils.setupGraphics(g2d);
-        g2d.drawImage(im, 0, 0, null);
-        g2d.dispose();
-        return buffy;
     }
 
     public static void loadNoteSymbols() throws Exception {
@@ -308,19 +290,19 @@ public class ImageManager {
     /**Load the icons of the units used for the animated unit movement on the MapPanel*/
     public static void loadUnitIcons() throws Exception {
         try {
-            UNIT_IMAGES.add(loadImage(new File("graphics/icons/spear.png")));//0
-            UNIT_IMAGES.add(loadImage(new File("graphics/icons/sword.png")));//1
-            UNIT_IMAGES.add(loadImage(new File("graphics/icons/axe.png")));//2
-            UNIT_IMAGES.add(loadImage(new File("graphics/icons/archer.png")));//3
-            UNIT_IMAGES.add(loadImage(new File("graphics/icons/spy.png")));//4
-            UNIT_IMAGES.add(loadImage(new File("graphics/icons/light.png")));//5
-            UNIT_IMAGES.add(loadImage(new File("graphics/icons/marcher.png")));//6
-            UNIT_IMAGES.add(loadImage(new File("graphics/icons/heavy.png")));//7
-            UNIT_IMAGES.add(loadImage(new File("graphics/icons/ram.png")));//8
-            UNIT_IMAGES.add(loadImage(new File("graphics/icons/cata.png")));//9
-            UNIT_IMAGES.add(loadImage(new File("graphics/icons/knight.png")));//10
-            UNIT_IMAGES.add(loadImage(new File("graphics/icons/snob.png")));//11
-            UNIT_IMAGES.add(loadImage(new File("graphics/icons/unknown.png")));//12
+            UNIT_IMAGES.add(ImageUtils.loadImage(new File("graphics/icons/spear.png")));//0
+            UNIT_IMAGES.add(ImageUtils.loadImage(new File("graphics/icons/sword.png")));//1
+            UNIT_IMAGES.add(ImageUtils.loadImage(new File("graphics/icons/axe.png")));//2
+            UNIT_IMAGES.add(ImageUtils.loadImage(new File("graphics/icons/archer.png")));//3
+            UNIT_IMAGES.add(ImageUtils.loadImage(new File("graphics/icons/spy.png")));//4
+            UNIT_IMAGES.add(ImageUtils.loadImage(new File("graphics/icons/light.png")));//5
+            UNIT_IMAGES.add(ImageUtils.loadImage(new File("graphics/icons/marcher.png")));//6
+            UNIT_IMAGES.add(ImageUtils.loadImage(new File("graphics/icons/heavy.png")));//7
+            UNIT_IMAGES.add(ImageUtils.loadImage(new File("graphics/icons/ram.png")));//8
+            UNIT_IMAGES.add(ImageUtils.loadImage(new File("graphics/icons/cata.png")));//9
+            UNIT_IMAGES.add(ImageUtils.loadImage(new File("graphics/icons/knight.png")));//10
+            UNIT_IMAGES.add(ImageUtils.loadImage(new File("graphics/icons/snob.png")));//11
+            UNIT_IMAGES.add(ImageUtils.loadImage(new File("graphics/icons/unknown.png")));//12
             for (BufferedImage i : UNIT_IMAGES) {
                 //add unit icon to note symbol
                 //  NOTE_SYMBOLS.add(i);

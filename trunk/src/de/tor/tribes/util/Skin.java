@@ -144,15 +144,16 @@ public class Skin {
         iFieldHeight = 10;
         mTextures = new HashMap<Integer, BufferedImage>();
         for (int i = 0; i < 25; i++) {
-            BufferedImage image = new BufferedImage(iFieldWidth, iFieldHeight, BufferedImage.TYPE_INT_ARGB);
+            //BufferedImage image = new BufferedImage(iFieldWidth, iFieldHeight, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage image = ImageUtils.createCompatibleBufferedImage(iFieldWidth, iFieldHeight, BufferedImage.BITMASK);
             Graphics2D g2d = (Graphics2D) image.createGraphics();
             ImageUtils.setupGraphics(g2d);
             if (i == 0) {
                 g2d.setColor(new Color(35, 125, 0));
-                g2d.fill(new Rectangle2D.Double(0, 0, 10, 10));
+                g2d.fillRect(0, 0, 10, 10);
             } else {
                 g2d.setColor(Color.BLACK);
-                g2d.draw(new Rectangle2D.Double(0, 0, 9, 9));
+                g2d.drawRect(0, 0, 9, 9);
             }
             g2d.dispose();
             mTextures.put(i, image);
@@ -168,33 +169,33 @@ public class Skin {
         String path = BASE_PATH + "/" + pSkinID;
         mTextures = new HashMap<Integer, BufferedImage>();
         try {
-            mTextures.put(ID_DEFAULT_UNDERGROUND, ImageIO.read(new File(path + "/" + DEFAULT_UNDERGROUND)));
+            mTextures.put(ID_DEFAULT_UNDERGROUND, ImageUtils.loadImage(new File(path + "/" + DEFAULT_UNDERGROUND)));
             iFieldWidth = mTextures.get(0).getWidth(null);
             iFieldHeight = mTextures.get(0).getHeight(null);
-            mTextures.put(ID_V1, loadImage(new File(path + "/" + V1_FILE)));
-            mTextures.put(ID_V2, loadImage(new File(path + "/" + V2_FILE)));
-            mTextures.put(ID_V3, loadImage(new File(path + "/" + V3_FILE)));
-            mTextures.put(ID_V4, loadImage(new File(path + "/" + V4_FILE)));
-            mTextures.put(ID_V5, loadImage(new File(path + "/" + V5_FILE)));
-            mTextures.put(ID_V6, loadImage(new File(path + "/" + V6_FILE)));
-            mTextures.put(ID_V1_LEFT, loadImage(new File(path + "/" + V1_LEFT_FILE)));
-            mTextures.put(ID_V2_LEFT, loadImage(new File(path + "/" + V2_LEFT_FILE)));
-            mTextures.put(ID_V3_LEFT, loadImage(new File(path + "/" + V3_LEFT_FILE)));
-            mTextures.put(ID_V4_LEFT, loadImage(new File(path + "/" + V4_LEFT_FILE)));
-            mTextures.put(ID_V5_LEFT, loadImage(new File(path + "/" + V5_LEFT_FILE)));
-            mTextures.put(ID_V6_LEFT, loadImage(new File(path + "/" + V6_LEFT_FILE)));
-            mTextures.put(ID_B1, loadImage(new File(path + "/" + B1_FILE)));
-            mTextures.put(ID_B2, loadImage(new File(path + "/" + B2_FILE)));
-            mTextures.put(ID_B3, loadImage(new File(path + "/" + B3_FILE)));
-            mTextures.put(ID_B4, loadImage(new File(path + "/" + B4_FILE)));
-            mTextures.put(ID_B5, loadImage(new File(path + "/" + B5_FILE)));
-            mTextures.put(ID_B6, loadImage(new File(path + "/" + B6_FILE)));
-            mTextures.put(ID_B1_LEFT, loadImage(new File(path + "/" + B1_LEFT_FILE)));
-            mTextures.put(ID_B2_LEFT, loadImage(new File(path + "/" + B2_LEFT_FILE)));
-            mTextures.put(ID_B3_LEFT, loadImage(new File(path + "/" + B3_LEFT_FILE)));
-            mTextures.put(ID_B4_LEFT, loadImage(new File(path + "/" + B4_LEFT_FILE)));
-            mTextures.put(ID_B5_LEFT, loadImage(new File(path + "/" + B5_LEFT_FILE)));
-            mTextures.put(ID_B6_LEFT, loadImage(new File(path + "/" + B6_LEFT_FILE)));
+            mTextures.put(ID_V1, ImageUtils.loadImage(new File(path + "/" + V1_FILE)));
+            mTextures.put(ID_V2, ImageUtils.loadImage(new File(path + "/" + V2_FILE)));
+            mTextures.put(ID_V3, ImageUtils.loadImage(new File(path + "/" + V3_FILE)));
+            mTextures.put(ID_V4, ImageUtils.loadImage(new File(path + "/" + V4_FILE)));
+            mTextures.put(ID_V5, ImageUtils.loadImage(new File(path + "/" + V5_FILE)));
+            mTextures.put(ID_V6, ImageUtils.loadImage(new File(path + "/" + V6_FILE)));
+            mTextures.put(ID_V1_LEFT, ImageUtils.loadImage(new File(path + "/" + V1_LEFT_FILE)));
+            mTextures.put(ID_V2_LEFT, ImageUtils.loadImage(new File(path + "/" + V2_LEFT_FILE)));
+            mTextures.put(ID_V3_LEFT, ImageUtils.loadImage(new File(path + "/" + V3_LEFT_FILE)));
+            mTextures.put(ID_V4_LEFT, ImageUtils.loadImage(new File(path + "/" + V4_LEFT_FILE)));
+            mTextures.put(ID_V5_LEFT, ImageUtils.loadImage(new File(path + "/" + V5_LEFT_FILE)));
+            mTextures.put(ID_V6_LEFT, ImageUtils.loadImage(new File(path + "/" + V6_LEFT_FILE)));
+            mTextures.put(ID_B1, ImageUtils.loadImage(new File(path + "/" + B1_FILE)));
+            mTextures.put(ID_B2, ImageUtils.loadImage(new File(path + "/" + B2_FILE)));
+            mTextures.put(ID_B3, ImageUtils.loadImage(new File(path + "/" + B3_FILE)));
+            mTextures.put(ID_B4, ImageUtils.loadImage(new File(path + "/" + B4_FILE)));
+            mTextures.put(ID_B5, ImageUtils.loadImage(new File(path + "/" + B5_FILE)));
+            mTextures.put(ID_B6, ImageUtils.loadImage(new File(path + "/" + B6_FILE)));
+            mTextures.put(ID_B1_LEFT, ImageUtils.loadImage(new File(path + "/" + B1_LEFT_FILE)));
+            mTextures.put(ID_B2_LEFT, ImageUtils.loadImage(new File(path + "/" + B2_LEFT_FILE)));
+            mTextures.put(ID_B3_LEFT, ImageUtils.loadImage(new File(path + "/" + B3_LEFT_FILE)));
+            mTextures.put(ID_B4_LEFT, ImageUtils.loadImage(new File(path + "/" + B4_LEFT_FILE)));
+            mTextures.put(ID_B5_LEFT, ImageUtils.loadImage(new File(path + "/" + B5_LEFT_FILE)));
+            mTextures.put(ID_B6_LEFT, ImageUtils.loadImage(new File(path + "/" + B6_LEFT_FILE)));
 
             if (mTextures.size() < TEXTURE_COUNT) {
                 throw new Exception("#Texturen < " + TEXTURE_COUNT);
@@ -218,19 +219,6 @@ public class Skin {
             throw new Exception("Grafikpaket ungültig (" + e.getMessage() + ")");
         }
 
-    }
-
-    public static BufferedImage loadImage(File pFile) throws Exception {
-        BufferedImage im = ImageIO.read(pFile);
-        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice device = env.getDefaultScreenDevice();
-        GraphicsConfiguration config = device.getDefaultConfiguration();
-        BufferedImage buffy = config.createCompatibleImage(im.getWidth(), im.getHeight(), im.getTransparency());
-        Graphics2D g2d = (Graphics2D) buffy.createGraphics();
-        ImageUtils.setupGraphics(g2d);
-        g2d.drawImage(im, 0, 0, null);
-        g2d.dispose();
-        return buffy;
     }
 
     public BufferedImage getOriginalSprite(int pID) {

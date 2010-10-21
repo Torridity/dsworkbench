@@ -142,7 +142,7 @@ public class AttackLayerRenderer extends AbstractDirectLayerRenderer {
                     }
 
 
-                    pG2D.draw(new Line2D.Double(xStart, yStart, xEnd, yEnd));
+                    pG2D.drawLine((int) Math.floor(xStart), (int) Math.floor(yStart), (int) Math.floor(xEnd), (int) Math.floor(yEnd));
 
                     if (unitIcon != null) {
                         pG2D.drawImage(unitIcon.getImage(), unitXPos, unitYPos, null);

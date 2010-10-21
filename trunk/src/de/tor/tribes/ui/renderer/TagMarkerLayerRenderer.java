@@ -114,10 +114,10 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
             mapPos.x = newMapPos.x;
             mapPos.y = newMapPos.y;
         }
-      //  Composite comp = pG2D.getComposite();
+        //  Composite comp = pG2D.getComposite();
         pG2D.setComposite(AlphaComposite.Src);
         pG2D.copyArea(0, 0, mLayer.getWidth(), mLayer.getHeight(), -fieldsX * pSettings.getFieldWidth(), -fieldsY * pSettings.getFieldHeight());
-      //  pG2D.setComposite(comp);
+        //  pG2D.setComposite(comp);
     }
 
     private BufferedImage renderMarkerRows(Village[][] pVillages, RenderSettings pSettings) {
@@ -201,7 +201,7 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
                                 if (color != null) {
                                     Color before = g2d.getColor();
                                     g2d.setColor(color);
-                                    g2d.fill(new Rectangle2D.Double(tagX, tagY, tagsize, tagsize));
+                                    g2d.fillRect(tagX, tagY, tagsize, tagsize);
                                     g2d.setColor(before);
                                 }
 

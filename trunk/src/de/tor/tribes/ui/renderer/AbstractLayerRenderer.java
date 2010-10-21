@@ -85,9 +85,6 @@ public abstract class AbstractLayerRenderer {
                 mLayer = createEmptyBuffered(pVisibleVillages.length * settings.getFieldWidth(), pVisibleVillages[0].length * settings.getFieldHeight(), BufferedImage.BITMASK);
                 mLayer = optimizeImage(mLayer);
             }
-            g2d = (Graphics2D) mLayer.getGraphics();
-            g2d.setColor(Color.MAGENTA);
-            g2d.fill(new Rectangle2D.Double(0, 0, mLayer.getWidth(), mLayer.getHeight()));
             settings.setRowsToRender(pVisibleVillages[0].length);
         } else {
             //copy existing data to new location

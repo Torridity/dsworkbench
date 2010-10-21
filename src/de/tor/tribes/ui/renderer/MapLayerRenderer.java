@@ -10,6 +10,7 @@ import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
@@ -52,12 +53,8 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
 
             if (d1.distance(d2) != 0) {
                 moved = true;
-                System.out.println(pVirtualBounds + " - " + getRenderedBounds());
-                System.out.println(d1.distance(d2));
-                System.out.println("MOVED: " + settings.getDeltaX() + "," + settings.getDeltaY());
             } else {
                 moved = false;
-                // System.out.println("NOT MOVED: " + settings.getDeltaX() + "," + settings.getDeltaY());
             }
         } else {
             moved = true;
@@ -126,18 +123,24 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
 //        System.out.println("AllDraw " + (System.currentTimeMillis() - s));
         drawContinents(pVisibleVillages, settings, pG2d);
 
-       /* if (moved) {
-            Composite com = pG2d.getComposite();
-            pG2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .5f));
-            pG2d.setColor(Constants.DS_BACK_LIGHT);
-            pG2d.fillRect(0, 0, mLayer.getWidth(), mLayer.getHeight());
-            pG2d.setColor(Color.BLACK);
-            pG2d.setComposite(com);
+
+        /* if (moved) {
+        Composite com = pG2d.getComposite();
+        pG2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .5f));
+        pG2d.setColor(Constants.DS_BACK_LIGHT);
+        pG2d.fillRect(0, 0, mLayer.getWidth(), mLayer.getHeight());
+        pG2d.setColor(Color.BLACK);
+        pG2d.setComposite(com);
         }*/
+
 //        System.out.println("ContDraw " + (System.currentTimeMillis() - s));
 //        System.out.println("-----------");
     }
     boolean moved = false;
+
+    public boolean hasMoved() {
+        return moved;
+    }
 
     private void performCopy(RenderSettings pSettings, Rectangle2D pVirtualBounds, Graphics2D pG2D) {
         if (mapPos == null) {
@@ -237,6 +240,19 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         int firstRow = (pSettings.getRowsToRender() > 0) ? 0 : pVillages[0].length - Math.abs(pSettings.getRowsToRender());
         Graphics2D g2d = (Graphics2D) newRows.getGraphics();
         ImageUtils.setupGraphics(g2d);
+        boolean showBarbarian = true;
+        try {
+            showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
+        } catch (Exception e) {
+            showBarbarian = true;
+        }
+
+        boolean markedOnly = false;
+        try {
+            markedOnly = Boolean.parseBoolean(GlobalOptions.getProperty("draw.marked.only"));
+        } catch (Exception e) {
+            markedOnly = false;
+        }
         //iterate through entire row
         int cnt = 0;
         boolean useDecoration = true;
@@ -255,7 +271,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 int col = x;
                 int globalCol = colToGlobalPosition(col);
                 int globalRow = rowToGlobalPosition(y);
-                renderVillageField(v, row, col, globalRow, globalCol, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, g2d);
+                renderVillageField(v, row, col, globalRow, globalCol, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, showBarbarian, markedOnly, g2d);
             }
         }
         g2d.dispose();
@@ -301,7 +317,19 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         int firstCol = (pSettings.getColumnsToRender() > 0) ? 0 : pVillages.length - Math.abs(pSettings.getColumnsToRender());
         Graphics2D g2d = (Graphics2D) newColumns.getGraphics();
         ImageUtils.setupGraphics(g2d);
+        boolean showBarbarian = true;
+        try {
+            showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
+        } catch (Exception e) {
+            showBarbarian = true;
+        }
 
+        boolean markedOnly = false;
+        try {
+            markedOnly = Boolean.parseBoolean(GlobalOptions.getProperty("draw.marked.only"));
+        } catch (Exception e) {
+            markedOnly = false;
+        }
         //iterate through entire row
         int cnt = 0;
         boolean useDecoration = true;
@@ -319,7 +347,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 int col = x - firstCol;
                 int globalCol = colToGlobalPosition(x);
                 int globalRow = rowToGlobalPosition(row);
-                renderVillageField(v, row, col, globalRow, globalCol, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, g2d);
+                renderVillageField(v, row, col, globalRow, globalCol, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, showBarbarian, markedOnly, g2d);
             }
         }
         g2d.dispose();
@@ -357,23 +385,22 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         return newColumns;
     }
 
-    private void renderVillageField(Village v, int row, int col, int globalRow, int globalCol, int pFieldWidth, int pFieldHeight, double zoom, boolean useDecoration, Graphics2D g2d) {
+    private void renderVillageField(Village v,
+            int row,
+            int col,
+            int globalRow,
+            int globalCol,
+            int pFieldWidth,
+            int pFieldHeight,
+            double zoom,
+            boolean useDecoration,
+            boolean showBarbarian,
+            boolean markedOnly,
+            Graphics2D g2d) {
         Rectangle copyRect = null;
         int textureId = -1;
         BufferedImage sprite = null;
-        boolean showBarbarian = true;
-        try {
-            showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
-        } catch (Exception e) {
-            showBarbarian = true;
-        }
 
-        boolean markedOnly = false;
-        try {
-            markedOnly = Boolean.parseBoolean(GlobalOptions.getProperty("draw.marked.only"));
-        } catch (Exception e) {
-            markedOnly = false;
-        }
 
         if (v != null
                 && !(v.getTribe().equals(Barbarians.getSingleton()) && !showBarbarian)
@@ -409,6 +436,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             t.scale(1 / zoom, 1 / zoom);
             // System.err.println("RENDERX");
             g2d.drawRenderedImage(sprite, t);
+
             //g2d.drawImage(sprite, col * pFieldWidth, row * pFieldHeight, pFieldWidth, pFieldHeight, null, null);//mage(sprite, t, null);
             renderedSpriteBounds.put(textureId, new Rectangle(col * pFieldWidth, row * pFieldHeight, pFieldWidth, pFieldHeight));
         } else if (copyRect != null) {
@@ -452,7 +480,6 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             t.scale(1.0 / zoom, 1.0 / zoom);
             //  System.err.println("RENDER");
             g2d.drawRenderedImage(sprite, t);
-            //g2d.drawRenderedImage(sprite, t);
             renderedMarkerBounds.put(tribeId, new Rectangle(col * pFieldWidth, row * pFieldHeight, pFieldWidth, pFieldHeight));
         } else if (copyRect != null) {
             // System.err.println("COPY");
@@ -506,7 +533,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 }
             }
         }
-        Graphics2D g2d = (Graphics2D) image.getGraphics();
+        Graphics2D g2d = image.createGraphics();
         ImageUtils.setupGraphics(g2d);
         if (markerColor != null || tribeMarker != null || allyMarker != null) {
             if (tribeMarker != null && allyMarker != null) {
@@ -529,17 +556,14 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 //draw tribe marker
                 g2d.setColor(tribeMarker.getMarkerColor());
                 g2d.fillRect(0, 0, w, h);
-                //g2d.fillRect(0, 0, w, h);
             } else if (allyMarker != null) {
                 //draw ally marker
                 g2d.setColor(allyMarker.getMarkerColor());
                 g2d.fillRect(0, 0, w, h);
-                // g2d.fillRect(0, 0, w, h);
             } else {
                 //draw misc marker
                 g2d.setColor(markerColor);
                 g2d.fillRect(0, 0, w, h);
-                //g2d.fillRect(0, 0, w, h);
             }
         } else {
             if (pVillage.getTribe() != Barbarians.getSingleton()) {
@@ -547,20 +571,16 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                     //no mark-on-top mode
                     g2d.setColor(DEFAULT);
                     g2d.fillRect(0, 0, w, h);
-                    //  g2d.fillRect(0, 0, w, h);
                 }
             } else {
                 //barbarian marker
                 g2d.setColor(Color.LIGHT_GRAY);
                 g2d.fillRect(0, 0, w, h);
-                //g2d.fillRect(0, 0, w, h);
             }
         }
         g2d.setColor(Color.BLACK);
         g2d.drawRect(0, 0, w, h);
-        // g2d.drawRect(0, 0, w, h);
         g2d.drawRect(1, 1, w - 3, h - 3);
-        // g2d.drawRect(1, 1, w - 3, h - 3);
         g2d.dispose();
         return image;
     }

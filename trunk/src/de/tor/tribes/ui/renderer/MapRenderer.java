@@ -55,6 +55,7 @@ import java.awt.MouseInfo;
 import java.awt.Paint;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.Toolkit;
@@ -137,7 +138,7 @@ public class MapRenderer extends Thread {
     private long lRenderedLast = 0;
     private long lCurrentSleepTime = 50;
     private int iCurrentFPS = 0;
-    private float alpha = 1.0f;
+    private float alpha = 0.0f;
     private Hashtable<Ally, Integer> allyCount = new Hashtable<Ally, Integer>();
     private Hashtable<Tribe, Integer> tribeCount = new Hashtable<Tribe, Integer>();
     /* private Canvas mCanvas = null;
@@ -188,7 +189,6 @@ public class MapRenderer extends Thread {
      * @param pType
      */
     public synchronized void initiateRedraw(int pType) {
-        alpha = 1.0f;
         mapRedrawRequired = true;
     }
 
@@ -227,9 +227,8 @@ public class MapRenderer extends Thread {
                     if (mBackBuffer == null) {
                         //create main buffer during first iteration
                         mBackBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.OPAQUE);
-
                         //  mBackBuffer.setAccelerationPriority(0);
-                        mFrontBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.OPAQUE);
+                        //  mFrontBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.OPAQUE);
                         // mFrontBuffer.setAccelerationPriority(1);
                         g2d = (Graphics2D) mBackBuffer.getGraphics();
                         ImageUtils.setupGraphics(g2d);
@@ -242,7 +241,7 @@ public class MapRenderer extends Thread {
                             //map panel has resized
                             mBackBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.OPAQUE);
                             //  mBackBuffer.setAccelerationPriority(0);
-                            mFrontBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.OPAQUE);
+                            //  mFrontBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.OPAQUE);
                             // mFrontBuffer.setAccelerationPriority(1);
                             g2d = (Graphics2D) mBackBuffer.getGraphics();
                             ImageUtils.setupGraphics(g2d);
@@ -257,6 +256,7 @@ public class MapRenderer extends Thread {
                         }
                     }
                     g2d.setClip(0, 0, w, h);
+
                     //
                     //                    BufferedImage back = WorldDecorationHolder.getOriginalSprite(0, 0);
                     //                    g2d.setPaint(new TexturePaint(back, new Rectangle2D.Double(0, 0, back.getWidth() / currentZoom, back.getHeight() / currentZoom)));
@@ -282,7 +282,6 @@ public class MapRenderer extends Thread {
                         //  renderTagMarkers();
                         mapRedrawRequired = false;
                     }
-                    System.out.println("Calc: " + (System.currentTimeMillis() - s));
                     boolean mapDrawn = false;
                     for (Integer layer : drawOrder) {
                         if (layer == 0) {
@@ -386,7 +385,7 @@ public class MapRenderer extends Thread {
 //                    System.out.println("Layers: " + (System.currentTimeMillis() - s));
                     //draw live layer -> always on top
                     renderLiveLayer(g2d);
-                    g2d.drawImage(mLayers.get(LIVE_LAYER), 0, 0, null);
+                    // g2d.drawImage(mLayers.get(LIVE_LAYER), 0, 0, null);
 //                    System.out.println("Live: " + (System.currentTimeMillis() - s));
                     //    logger.info(" - LIVE " + (System.currentTimeMillis() - s));
                     // s = System.currentTimeMillis();
@@ -398,54 +397,67 @@ public class MapRenderer extends Thread {
 //                    System.out.println("Selec: " + (System.currentTimeMillis() - s));
                     //render menu
                     MenuRenderer.getSingleton().renderMenu(g2d);
+                    Composite c = g2d.getComposite();
+                    if (MapPanel.getSingleton().requiresAlphaBlending()) {
+                        if (alpha < .4f) {
+                            alpha += .2f;
+                        } else {
+                            alpha = 0.4f;
+                        }
+                    } else {
+                        alpha -= 0.05f;
+                    }
+                    s = System.currentTimeMillis();
+                    if (alpha > 0.0f) {
+                        g2d.setColor(new Color(255, 255, 255, 125));
+                        ImageUtils.setupGraphicsToMin(g2d);
+                        //g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+                        g2d.fillRect(0, 0, w, h);
+                    } else {
+                        alpha = 0.0f;
+                    }
+                    g2d.setComposite(c);
+                    System.out.println("D " + (System.currentTimeMillis() - s));
                     g2d.dispose();
 //                    System.out.println("Done: " + (System.currentTimeMillis() - s));
                     //   logger.info(" - MENU " + (System.currentTimeMillis() - s));
                     //notify MapPanel to bring buffer to screen
-                    HashMap<Village, Rectangle> pos = (HashMap<Village, Rectangle>) villagePositions.clone();
+                    //HashMap<Village, Rectangle> pos = (HashMap<Village, Rectangle>) villagePositions.clone();
                     //  Graphics2D drawGraphics = (Graphics2D) MapPanel.getSingleton().getStrategy().getDrawGraphics();
                     // mFrontBuffer = ImageUtils.createOptimizedCopy(mBackBuffer);
                     // System.out.println("Flip: " + (System.currentTimeMillis() - s));
                     // drawGraphics.drawImage(mBackBuffer, null, null);
                     //drawGraphics.dispose();
 
-                    MapPanel.getSingleton().updateComplete(pos, mBackBuffer);
+
+                    MapPanel.getSingleton().updateComplete(villagePositions, mBackBuffer);
 //                    System.out.println("Updated: " + (System.currentTimeMillis() - s));
                     //MapPanel.getSingleton().getBufferStrategy().show();
-                    SwingUtilities.invokeLater(new Runnable() {
+                   /* SwingUtilities.invokeLater(new Runnable() {
 
                     @Override
                     public void run() {
                     MapPanel.getSingleton().repaint();
+                    Toolkit.getDefaultToolkit().sync();
                     }
-                    });
-                     //  MapPanel.getSingleton().repaint(20);
+                    });*/
+                    //  MapPanel.getSingleton().repaint(20);
                    /* for (int i = 0; i < w;) {
-                        MapPanel.getSingleton().repaint(10, i, 0, 20, h);
-                        i += 20;
+                    MapPanel.getSingleton().repaint(10, i, 0, 20, h);
+                    i += 20;
                     }*/
 
 
                     //       logger.info(" - DONE! " + (System.currentTimeMillis() - s));
-                    System.out.println("Dur :" + (System.currentTimeMillis() - s1));
+                    //     System.out.println("Dur :" + (System.currentTimeMillis() - s1));
                 }
-                if (alpha > 0.0f) {
-                    alpha -= .05f;
-                    if (alpha < 0.0f) {
-                        alpha = 0.0f;
-                    }
-                } else {
-                    alpha = 0.0f;
-                }
-                if (alpha < 0.0f) {
-                    alpha = 0.0f;
-                }
+
             } catch (Throwable t) {
                 lRenderedLast = 0;
                 logger.error("Redrawing map failed", t);
             }
             Thread.yield();
-            /* try {
+            /*  try {
             Thread.sleep(10);
             } catch (InterruptedException ie) {
             }*/
@@ -1960,7 +1972,7 @@ public class MapRenderer extends Thread {
     }
 
     /**Render e.g. drag line, radar, popup*/
-    private void renderLiveLayer(Graphics2D pG2d) {
+    private void renderLiveLayer(Graphics2D g2d) {
         int wb = MapPanel.getSingleton().getWidth();
         int hb = MapPanel.getSingleton().getHeight();
         if (wb == 0 || hb == 0) {
@@ -1968,29 +1980,29 @@ public class MapRenderer extends Thread {
             return;
         }
 
-        BufferedImage layer = null;
-        Graphics2D g2d = null;
+        //  BufferedImage layer = null;
+        //  Graphics2D g2d = null;
         //prepare drawing buffer
-        if (mLayers.get(LIVE_LAYER) == null) {
-            layer = ImageUtils.createCompatibleBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
-            mLayers.put(LIVE_LAYER, layer);
-            g2d = layer.createGraphics();
-            ImageUtils.setupGraphics(g2d);
+      /*  if (mLayers.get(LIVE_LAYER) == null) {
+        layer = ImageUtils.createCompatibleBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+        mLayers.put(LIVE_LAYER, layer);
+        g2d = layer.createGraphics();
+        ImageUtils.setupGraphics(g2d);
         } else {
-            layer = mLayers.get(LIVE_LAYER);
-            if (layer.getWidth() != wb || layer.getHeight() != hb) {
-                layer = ImageUtils.createCompatibleBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
-                mLayers.put(LIVE_LAYER, layer);
-                g2d = layer.createGraphics();
-                ImageUtils.setupGraphics(g2d);
-            } else {
-                g2d = (Graphics2D) layer.getGraphics();
-                Composite c = g2d.getComposite();
-                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 1.0f));
-                g2d.fillRect(0, 0, wb, hb);
-                g2d.setComposite(c);
-            }
+        layer = mLayers.get(LIVE_LAYER);
+        if (layer.getWidth() != wb || layer.getHeight() != hb) {
+        layer = ImageUtils.createCompatibleBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+        mLayers.put(LIVE_LAYER, layer);
+        g2d = layer.createGraphics();
+        ImageUtils.setupGraphics(g2d);
+        } else {
+        g2d = (Graphics2D) layer.getGraphics();
+        Composite c = g2d.getComposite();
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 1.0f));
+        g2d.fillRect(0, 0, wb, hb);
+        g2d.setComposite(c);
         }
+        }*/
         Village mouseVillage = MapPanel.getSingleton().getVillageAtMousePos();
 
         //render temp form
@@ -2150,7 +2162,6 @@ public class MapRenderer extends Thread {
                     g2d.setColor(Color.YELLOW);
                     g2d.fillOval(villageRect.x + villageRect.width - 10, villageRect.y, 10, 10);
                 }
-
             }
             g2d.setColor(cBefore);
         }

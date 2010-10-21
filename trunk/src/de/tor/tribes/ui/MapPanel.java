@@ -56,6 +56,7 @@ import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Cursor;
 import java.awt.FontMetrics;
 import java.awt.Rectangle;
@@ -75,7 +76,6 @@ import java.awt.image.VolatileImage;
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -151,7 +151,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         mMarkerAddFrame = new MarkerAddFrame();
         setCursor(ImageManager.getCursor(iCurrentCursor));
         setIgnoreRepaint(true);
-
+        setDoubleBuffered(false);
         attackAddFrame = new AttackAddFrame();
         mVirtualBounds = new Rectangle2D.Double(0.0, 0.0, 0.0, 0.0);
         jCopyOwn.setSelected(true);
@@ -241,7 +241,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
         // <editor-fold defaultstate="collapsed" desc="MouseListener for cursor events">
 
-        //mCanvas.
         addMouseListener(new MouseListener() {
 
             @Override
@@ -1758,13 +1757,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     }//GEN-LAST:event_fireResizeEvent
     long s = 0;
 
-    @Override
-    public void repaint(long tm, int x, int y, int width, int height) {
-        super.repaint(tm, x, y, width, height);
-    }
-
     public void paintComponent(Graphics g) {
-        // super.paintComponent(g);
         /**Draw buffer into panel*/
         try {
             //calculate move direction if mouse is dragged outside the map
@@ -1807,12 +1800,10 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 fireScrollEvents(sx, sy);
             }
             //draw off-screen image of map
-
-            final Graphics2D g2d = (Graphics2D) g;
-            //ImageUtils.setupGraphics(g2d);
-            g2d.drawImage(mBuffer, 0, 0, null);
+            g.drawImage(mBuffer, 0, 0, null);
             Toolkit.getDefaultToolkit().sync();
-            g2d.dispose();
+            g.dispose();
+            //   fireScrollEvents(-1, 0);
         } catch (Exception e) {
             logger.error("Failed to paint", e);
         }
@@ -1939,19 +1930,18 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     public void updateComplete(final HashMap<Village, Rectangle> pPositions, final BufferedImage pBuffer) {
         Graphics2D g2d = null;
         if (mBuffer == null) {
-            mBuffer = ImageUtils.createCompatibleBufferedImage(pBuffer.getWidth(), pBuffer.getHeight(), VolatileImage.OPAQUE);
+            mBuffer = ImageUtils.createCompatibleBufferedImage(pBuffer.getWidth(), pBuffer.getHeight(), BufferedImage.OPAQUE);
             g2d = mBuffer.createGraphics();
         } else {
             g2d = (Graphics2D) mBuffer.getGraphics();
+            //g2d.clearRect(0, 0, getWidth(), getHeight());
         }
         mBuffer.setAccelerationPriority(1.0f);
         g2d.setClip(0, 0, mBuffer.getWidth(), mBuffer.getHeight());
-        g2d.drawImage(pBuffer, AffineTransform.getTranslateInstance(0, 0), null);
-        /*  g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .8f));
-        g2d.setColor(Color.WHITE);
-        g2d.fillRect(0, 0, mBuffer.getWidth(), mBuffer.getHeight());
-         */
-        mVillagePositions = pPositions;//(HashMap<Village, Rectangle>) pPositions.clone();
+        g2d.drawImage(pBuffer, 0, 0, null);
+        g2d.dispose();
+
+        mVillagePositions = (HashMap<Village, Rectangle>) pPositions.clone();
         if (bMapSHotPlaned) {
             saveMapShot(mBuffer);
         }
@@ -1959,6 +1949,11 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             DSWorkbenchFormFrame.getSingleton().updateFormList();
         }
         positionUpdate = false;
+        repaint();
+    }
+
+    public boolean requiresAlphaBlending() {
+        return (mouseDown && getCurrentCursor() == ImageManager.CURSOR_DEFAULT);
     }
 
     protected void planMapShot(String pType, File pLocation, MapShotListener pListener) {

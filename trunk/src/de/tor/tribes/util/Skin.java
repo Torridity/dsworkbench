@@ -146,14 +146,11 @@ public class Skin {
         for (int i = 0; i < 25; i++) {
             //BufferedImage image = new BufferedImage(iFieldWidth, iFieldHeight, BufferedImage.TYPE_INT_ARGB);
             BufferedImage image = ImageUtils.createCompatibleBufferedImage(iFieldWidth, iFieldHeight, BufferedImage.BITMASK);
-            Graphics2D g2d = (Graphics2D) image.createGraphics();
+            Graphics2D g2d = image.createGraphics();
             ImageUtils.setupGraphics(g2d);
             if (i == 0) {
                 g2d.setColor(new Color(35, 125, 0));
                 g2d.fillRect(0, 0, 10, 10);
-            } else {
-                g2d.setColor(Color.BLACK);
-                g2d.drawRect(0, 0, 9, 9);
             }
             g2d.dispose();
             mTextures.put(i, image);

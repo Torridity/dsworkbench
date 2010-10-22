@@ -58,6 +58,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.TexturePaint;
 import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
@@ -69,6 +70,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageFilter;
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.Collections;
@@ -407,18 +409,33 @@ public class MapRenderer extends Thread {
                     } else {
                         alpha -= 0.05f;
                     }
-                    s = System.currentTimeMillis();
+                    /*   s = System.currentTimeMillis();
                     if (alpha > 0.0f) {
-                        g2d.setColor(new Color(255, 255, 255, 125));
-                        ImageUtils.setupGraphicsToMin(g2d);
-                        //g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-                        g2d.fillRect(0, 0, w, h);
+                    g2d.setColor(new Color(255, 255, 255, 125));
+                    ImageUtils.setupGraphicsToMin(g2d);
+                    //g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+                    g2d.fillRect(0, 0, w, h);
                     } else {
-                        alpha = 0.0f;
+                    alpha = 0.0f;
                     }
+                    //g2d.setPaint(null)
+
                     g2d.setComposite(c);
-                    System.out.println("D " + (System.currentTimeMillis() - s));
+                    System.out.println("D " + (System.currentTimeMillis() - s));*/
+                    s = System.currentTimeMillis();
+                    BufferedImage bi = ImageUtils.createCompatibleBufferedImage(10, 10, BufferedImage.BITMASK);
+
+                    Graphics2D g2 = bi.createGraphics();
+                    g2.setColor(Color.WHITE);
+                    g2.drawLine(0, 0, 10, 10);
+                    g2.drawLine(0, 10, 10, 0);
+                    g2.dispose();
+                    TexturePaint tp = new TexturePaint(bi, new Rectangle2D.Double(0, 0, 10, 10));
+                    g2d.setPaint(tp);
+
+                    g2d.fillRect(0, 0, w, h);
                     g2d.dispose();
+                    System.out.println("D " + (System.currentTimeMillis() - s));
 //                    System.out.println("Done: " + (System.currentTimeMillis() - s));
                     //   logger.info(" - MENU " + (System.currentTimeMillis() - s));
                     //notify MapPanel to bring buffer to screen

@@ -89,8 +89,8 @@ import javax.swing.JPanel;
  * @author Charon
  */
 public class MapPanel extends JPanel implements DragGestureListener, // For recognizing the start of drags
-        DragSourceListener, // For processing drag source events
-        DropTargetListener // For processing drop target events
+                                                DragSourceListener, // For processing drag source events
+                                                DropTargetListener // For processing drop target events
 {
 // <editor-fold defaultstate="collapsed" desc=" Member variables ">
 
@@ -150,8 +150,10 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         mToolChangeListeners = new LinkedList<ToolChangeListener>();
         mMarkerAddFrame = new MarkerAddFrame();
         setCursor(ImageManager.getCursor(iCurrentCursor));
+        setOpaque(true);
         setIgnoreRepaint(true);
         setDoubleBuffered(false);
+
         attackAddFrame = new AttackAddFrame();
         mVirtualBounds = new Rectangle2D.Double(0.0, 0.0, 0.0, 0.0);
         jCopyOwn.setSelected(true);
@@ -1756,6 +1758,14 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         // mBuffer = mMapRenderer.getBufferedImage(dim.width, dim.height, BufferedImage.OPAQUE);
     }//GEN-LAST:event_fireResizeEvent
     long s = 0;
+
+    @Override
+    protected void paintBorder(Graphics g) {
+    }
+
+    @Override
+    protected void paintChildren(Graphics g) {
+    }
 
     public void paintComponent(Graphics g) {
         /**Draw buffer into panel*/

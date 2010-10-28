@@ -31,14 +31,15 @@ import java.util.List;
 public class ChurchLayerRenderer extends AbstractDirectLayerRenderer {
 
     @Override
-    public void performRendering(Rectangle2D pVirtualBounds, Village[][] pVisibleVillages, Graphics2D pG2d) {
-        RenderSettings settings = getRenderSettings(pVirtualBounds);
-
-        settings.setRowsToRender(pVisibleVillages[0].length);
+    public void performRendering(RenderSettings pSettings, Graphics2D pG2d) {
+        if (!pSettings.isLayerVisible()) {
+            return;
+        }
+        // settings.setRowsToRender(pVisibleVillages[0].length);
 
         //Set new bounds
-        setRenderedBounds((Rectangle2D.Double) pVirtualBounds.clone());
-        renderRows(settings, pG2d);
+        //setRenderedBounds((Rectangle2D.Double) pVirtualBounds.clone());
+        renderRows(pSettings, pG2d);
     }
 
     private void renderRows(RenderSettings pSettings, Graphics2D pG2D) {

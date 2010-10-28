@@ -20,6 +20,7 @@ import de.tor.tribes.ui.editors.TagMapMarkerCellEditor;
 import de.tor.tribes.ui.models.TagTableModel;
 import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.BooleanCellRenderer;
+import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.TagMapMarkerRenderer;
 import de.tor.tribes.util.Constants;
@@ -420,7 +421,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
             TagManager.getSingleton().removeTagByName(tag);
         }
         //update map
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
     }//GEN-LAST:event_fireRemoveTagsEvent
 
     private void fireRemoveColorEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveColorEvent
@@ -435,7 +436,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
             TagManager.getSingleton().getTagByName(name).setTagColor(null);
         }
         jTagTable.repaint();
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
     }//GEN-LAST:event_fireRemoveColorEvent
 
     private void fireAddTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddTagEvent
@@ -497,7 +498,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
             }
         }
         updateTaggedVillageList();
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
     }//GEN-LAST:event_fireUntagVillage
 
     private void fireCopyTagsAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyTagsAsBBCodeToClipboardEvent
@@ -549,7 +550,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
                 tag.tagVillage(v.getId());
             }
             updateTaggedVillageList();
-            MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
             if (villages.size() == 1) {
                 JOptionPaneHelper.showInformationBox(this, "Ein Dorf wurden mit dem gewähltem Tag versehen", "Information");
             } else {
@@ -622,7 +623,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
                 }
                 updateTaggedVillageList();
             }
-            MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
         } catch (Exception e) {
             logger.error("Failed to insert dropped villages", e);
         }

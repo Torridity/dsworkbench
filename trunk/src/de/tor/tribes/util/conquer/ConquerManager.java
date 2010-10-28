@@ -12,6 +12,7 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.MapPanel;
+import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.util.FilterableManager;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.troops.TroopsManager;
@@ -166,7 +167,7 @@ public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInte
             }
             updateAcceptance();
             updateFilters();
-            MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
         } else {
             lastUpdate = 0;
             updateFilters();
@@ -433,7 +434,7 @@ public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInte
         for (ConquerManagerListener listener : listeners) {
             listener.fireConquersChangedEvent();
         }
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
     }
 }
 

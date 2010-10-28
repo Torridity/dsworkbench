@@ -302,6 +302,6 @@ public class ChurchManager {
         for (ChurchManagerListener listener : listeners) {
             listener.fireChurchesChangedEvent();
         }
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.MARKER_LAYER);
+       // MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.MARKER_LAYER);
     }
 }

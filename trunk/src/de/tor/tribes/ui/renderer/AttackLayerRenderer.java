@@ -35,13 +35,14 @@ import javax.swing.ImageIcon;
 public class AttackLayerRenderer extends AbstractDirectLayerRenderer {
 
     @Override
-    public void performRendering(Rectangle2D pVirtualBounds, Village[][] pVisibleVillages, Graphics2D pG2d) {
-        RenderSettings settings = getRenderSettings(pVirtualBounds);
-
-        Point2D.Double mapPos = new Point2D.Double(pVirtualBounds.getX(), pVirtualBounds.getY());
+    public void performRendering(RenderSettings pSettings, Graphics2D pG2d) {
+        if (!pSettings.isLayerVisible()) {
+            return;
+        }
+        Point2D.Double mapPos = new Point2D.Double(pSettings.getMapBounds().getX(), pSettings.getMapBounds().getY());
         Stroke s = pG2d.getStroke();
         pG2d.setStroke(new BasicStroke(2.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-        renderAttacks(mapPos, settings, pG2d);
+        renderAttacks(mapPos, pSettings, pG2d);
         pG2d.setStroke(s);
     }
 

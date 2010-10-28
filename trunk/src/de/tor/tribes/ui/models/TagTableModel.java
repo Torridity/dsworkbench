@@ -6,12 +6,11 @@ package de.tor.tribes.ui.models;
 
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.TagMapMarker;
-import de.tor.tribes.ui.DSWorkbenchMarkerFrame;
 import de.tor.tribes.ui.DSWorkbenchTagFrame;
 import de.tor.tribes.ui.MapPanel;
+import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.tag.TagManagerListener;
-import java.io.PushbackReader;
 import java.util.Arrays;
 import java.util.List;
 
@@ -126,7 +125,7 @@ public class TagTableModel extends AbstractDSWorkbenchTableModel {
             }
         }
         //repaint map
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
     }
 
     @Override

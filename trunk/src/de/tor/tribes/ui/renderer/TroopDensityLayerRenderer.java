@@ -23,30 +23,32 @@ import java.awt.geom.Rectangle2D;
 public class TroopDensityLayerRenderer extends AbstractDirectLayerRenderer {
 
     @Override
-    public void performRendering(Rectangle2D pVirtualBounds, Village[][] pVisibleVillages, Graphics2D pG2d) {
-        RenderSettings settings = getRenderSettings(pVirtualBounds);
-
-        settings.setRowsToRender(pVisibleVillages[0].length);
+    public void performRendering(RenderSettings pSettings, Graphics2D pG2d) {
+        //    RenderSettings settings = getRenderSettings(pVirtualBounds);
+        if (!pSettings.isLayerVisible()) {
+            return;
+        }
+        // settings.setRowsToRender(pVisibleVillages[0].length);
 
         //Set new bounds
-        setRenderedBounds((Rectangle2D.Double) pVirtualBounds.clone());
-        renderRows(pVisibleVillages, settings, pG2d);
+        // setRenderedBounds((Rectangle2D.Double) pVirtualBounds.clone());
+        renderRows(pSettings, pG2d);
     }
 
-    private void renderRows(Village[][] pVillages, RenderSettings pSettings, Graphics2D pG2D) {
+    private void renderRows(RenderSettings pSettings, Graphics2D pG2D) {
         //calculate first row that will be rendered
-        int firstRow = (pSettings.getRowsToRender() > 0) ? 0 : pVillages[0].length - Math.abs(pSettings.getRowsToRender());
+        int firstRow = 0;//(pSettings.getRowsToRender() > 0) ? 0 : pVillages[0].length - Math.abs(pSettings.getRowsToRender());
 
         //iterate through entire rows
         int cnt = 0;
         int dx = (int) Math.floor(pSettings.getDeltaX());
         int dy = (int) Math.floor(pSettings.getDeltaY());
         double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-        for (int x = 0; x < pVillages.length; x++) {
+        for (int x = 0; x < pSettings.getVisibleVillages().length; x++) {
             //iterate from first row for 'pRows' times
-            for (int y = firstRow; y < firstRow + Math.abs(pSettings.getRowsToRender()); y++) {
+            for (int y = firstRow; y < pSettings.getVisibleVillages()[0].length; y++) {
                 cnt++;
-                Village v = pVillages[x][y];
+                Village v = pSettings.getVisibleVillages()[x][y];
                 int row = y - firstRow;
                 int col = x;
 

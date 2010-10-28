@@ -27,22 +27,24 @@ import java.util.List;
 public class SupportLayerRenderer extends AbstractDirectLayerRenderer {
 
     @Override
-    public void performRendering(Rectangle2D pVirtualBounds, Village[][] pVisibleVillages, Graphics2D pG2d) {
-        RenderSettings settings = getRenderSettings(pVirtualBounds);
-
-        Point2D.Double mapPos = new Point2D.Double(pVirtualBounds.getX(), pVirtualBounds.getY());
+    public void performRendering(RenderSettings pSettings, Graphics2D pG2d) {
+        // RenderSettings settings = getRenderSettings(pVirtualBounds);
+        if (!pSettings.isLayerVisible()) {
+            return;
+        }
+        Point2D.Double mapPos = new Point2D.Double(pSettings.getMapBounds().getX(), pSettings.getMapBounds().getY());
         Stroke s = pG2d.getStroke();
         Color b = pG2d.getColor();
         List<Village> visibleVillages = new LinkedList<Village>();
-        for (int i = 0; i < pVisibleVillages.length; i++) {
-            for (int j = 0; j < pVisibleVillages[0].length; j++) {
-                if (pVisibleVillages[i][j] != null) {
-                    visibleVillages.add(pVisibleVillages[i][j]);
+        for (int i = 0; i < pSettings.getVisibleVillages().length; i++) {
+            for (int j = 0; j < pSettings.getVisibleVillages()[0].length; j++) {
+                if (pSettings.getVisibleVillages()[i][j] != null) {
+                    visibleVillages.add(pSettings.getVisibleVillages()[i][j]);
                 }
             }
         }
         pG2d.setStroke(new BasicStroke(2.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-        renderSupports(mapPos, visibleVillages, settings, pG2d);
+        renderSupports(mapPos, visibleVillages, pSettings, pG2d);
         pG2d.setStroke(s);
         pG2d.setColor(b);
     }

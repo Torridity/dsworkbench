@@ -26,14 +26,23 @@ public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
 
     private BufferedImage mLayer = null;
     private Point mapPos = null;
+    private boolean shouldReset = true;
 
     @Override
-    public void performRendering(Rectangle2D pVirtualBounds, Village[][] pVisibleVillages, Graphics2D pG2d) {
-        RenderSettings settings = getRenderSettings(pVirtualBounds);
+    public void performRendering(RenderSettings pSettings, Graphics2D pG2d) {
+
+        if (shouldReset) {
+            //setRenderedBounds(null);
+            setFullRenderRequired(true);
+            shouldReset = false;
+        }
+        if (!pSettings.isLayerVisible()) {
+            return;
+        }
         Graphics2D g2d = null;
 
         if (mLayer == null) {
-            mLayer = ImageUtils.createCompatibleBufferedImage(pVisibleVillages.length * settings.getFieldWidth(), pVisibleVillages[0].length * settings.getFieldHeight() + 100, BufferedImage.BITMASK);
+            mLayer = ImageUtils.createCompatibleBufferedImage(pSettings.getVisibleVillages().length * pSettings.getFieldWidth(), pSettings.getVisibleVillages()[0].length * pSettings.getFieldHeight() + 100, BufferedImage.BITMASK);
             g2d = mLayer.createGraphics();
         } else {
             g2d = (Graphics2D) mLayer.getGraphics();
@@ -42,33 +51,33 @@ public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
             g2d.fillRect(0, 0, mLayer.getWidth(), mLayer.getHeight() - 100);
             g2d.setComposite(c);
         }
-        settings.setRowsToRender(pVisibleVillages[0].length);
+        //settings.setRowsToRender(pVisibleVillages[0].length);
 
         ImageUtils.setupGraphics(g2d);
-        setRenderedBounds((Rectangle2D.Double) pVirtualBounds.clone());
+        //setRenderedBounds((Rectangle2D.Double) pVirtualBounds.clone());
 
-        renderNoteRows(pVisibleVillages, pVisibleVillages[0].length * settings.getFieldHeight(), settings, g2d);
+        renderNoteRows(pSettings, pSettings.getVisibleVillages()[0].length * pSettings.getFieldHeight(), g2d);
         g2d.dispose();
         AffineTransform trans = AffineTransform.getTranslateInstance(0, 0);
-        trans.setToTranslation((int) Math.floor(settings.getDeltaX()), (int) Math.floor(settings.getDeltaY()));
+        trans.setToTranslation((int) Math.floor(pSettings.getDeltaX()), (int) Math.floor(pSettings.getDeltaY()));
         pG2d.drawRenderedImage(mLayer, trans);
     }
 
-    private void renderNoteRows(Village[][] pVillages, int pCopyPosition, RenderSettings pSettings, Graphics2D g2d) {
+    private void renderNoteRows(RenderSettings pSettings, int pCopyPosition, Graphics2D g2d) {
         //calculate first row that will be rendered
-        int firstRow = (pSettings.getRowsToRender() > 0) ? 0 : pVillages[0].length - Math.abs(pSettings.getRowsToRender());
+        int firstRow = 0;//(pSettings.getRowsToRender() > 0) ? 0 : pSettings.getVisibleVillages()[0].length - Math.abs(pSettings.getRowsToRender());
         ImageUtils.setupGraphics(g2d);
         for (int i = 0; i < 6; i++) {
             BufferedImage icon = ImageManager.getNoteIcon(i);
-            g2d.drawImage(icon, i * 32, pVillages[0].length * pSettings.getFieldHeight() + 68, null);
+            g2d.drawImage(icon, i * 32, pSettings.getVisibleVillages()[0].length * pSettings.getFieldHeight() + 68, null);
         }
         //iterate through entire row
         int cnt = 0;
-        for (int x = 0; x < pVillages.length; x++) {
+        for (int x = 0; x < pSettings.getVisibleVillages().length; x++) {
             //iterate from first row for 'pRows' times
-            for (int y = firstRow; y < firstRow + Math.abs(pSettings.getRowsToRender()); y++) {
+            for (int y = firstRow; y < pSettings.getVisibleVillages()[0].length; y++) {
                 cnt++;
-                Village v = pVillages[x][y];
+                Village v = pSettings.getVisibleVillages()[x][y];
                 int row = y - firstRow;
                 int col = x;
                 renderNoteField(v, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pCopyPosition, g2d);
@@ -98,7 +107,6 @@ public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
     }
 
     public void reset() {
-        setRenderedBounds(null);
-        setFullRenderRequired(true);
+        shouldReset = true;
     }
 }

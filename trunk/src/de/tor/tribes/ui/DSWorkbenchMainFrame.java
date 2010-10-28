@@ -36,6 +36,7 @@ import org.apache.log4j.Logger;
 import de.tor.tribes.ui.models.ConquersTableModel;
 import de.tor.tribes.ui.models.DistanceTableModel;
 import de.tor.tribes.ui.models.StandardAttackTableModel;
+import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MainShutdownHook;
@@ -56,16 +57,12 @@ import javax.swing.JFileChooser;
 import de.tor.tribes.util.troops.TroopsManager;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.datatransfer.StringSelection;
-import java.awt.image.BufferStrategy;
 import java.io.FileWriter;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
@@ -300,7 +297,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                             fullscreenFrame.remove(MapPanel.getSingleton());
                             jPanel1.add(MapPanel.getSingleton());
                             jPanel1.repaint();//.updateUI();
-                            MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+                            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
                             fullscreenFrame.dispose();
                             fullscreenFrame = null;
                         }
@@ -607,7 +604,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             MapPanel.getSingleton().getAttackAddFrame().buildUnitBox();
             DSWorkbenchMarkerFrame.getSingleton().setupMarkerPanel();
             DSWorkbenchChurchFrame.getSingleton().setupChurchPanel();
-            DSWorkbenchArmyCampFrame.getSingleton().setupArmyCampPanel();
             DSWorkbenchAttackFrame.getSingleton().setupAttackPanel();
             DSWorkbenchTagFrame.getSingleton().setup();
             ConquersTableModel.getSingleton();
@@ -656,7 +652,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             ConquerManager.getSingleton().forceUpdate();
             //relevant for first start
             propagateLayerOrder();
-            MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
             MinimapPanel.getSingleton().redraw(true);
             //call all frames during first execution
             DSWorkbenchAttackFrame.getSingleton();
@@ -666,7 +661,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             DSWorkbenchFormFrame.getSingleton();
             DSWorkbenchMarkerFrame.getSingleton();
             DSWorkbenchChurchFrame.getSingleton();
-            DSWorkbenchArmyCampFrame.getSingleton();
             DSWorkbenchConquersFrame.getSingleton();
             DSWorkbenchNotepad.getSingleton();
             DSWorkbenchTagFrame.getSingleton();
@@ -754,7 +748,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         DSWorkbenchAttackFrame.getSingleton().addFrameListener(this);
         DSWorkbenchMarkerFrame.getSingleton().addFrameListener(this);
         DSWorkbenchChurchFrame.getSingleton().addFrameListener(this);
-        DSWorkbenchArmyCampFrame.getSingleton().addFrameListener(this);
         DSWorkbenchConquersFrame.getSingleton().addFrameListener(this);
         DSWorkbenchNotepad.getSingleton().addFrameListener(this);
         DSWorkbenchTagFrame.getSingleton().addFrameListener(this);
@@ -833,16 +826,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 }
             } catch (Exception e) {
             }
-            try {
-                if (jShowArmyCampFrame.isEnabled()) {
-                    if (Boolean.parseBoolean(GlobalOptions.getProperty("army.camp.frame.visible"))) {
-                        jShowArmyCampFrame.setSelected(true);
-                        logger.info("Restoring army camp frame");
-                        DSWorkbenchArmyCampFrame.getSingleton().setVisible(true);
-                    }
-                }
-            } catch (Exception e) {
-            }
+
             try {
                 if (jShowConquersFrame.isEnabled()) {
                     if (Boolean.parseBoolean(GlobalOptions.getProperty("conquers.frame.visible"))) {
@@ -1072,7 +1056,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jShowTagFrame = new javax.swing.JCheckBoxMenuItem();
         jShowStatsFrame = new javax.swing.JCheckBoxMenuItem();
         jShowReportFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowArmyCampFrame = new javax.swing.JCheckBoxMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jHelpItem = new javax.swing.JMenuItem();
         jAboutItem = new javax.swing.JMenuItem();
@@ -2328,15 +2311,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         });
         jMenu2.add(jShowReportFrame);
 
-        jShowArmyCampFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowArmyCampFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowArmyCampFrame.text")); // NOI18N
-        jShowArmyCampFrame.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireShowArmyCampFrameEvent(evt);
-            }
-        });
-        jMenu2.add(jShowArmyCampFrame);
-
         jMenuBar1.add(jMenu2);
 
         jMenu4.setBackground(new java.awt.Color(225, 213, 190));
@@ -2514,7 +2488,7 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
         int xPos = Integer.parseInt(jCenterX.getText());
         int yPos = Integer.parseInt(jCenterY.getText());
         if (ServerSettings.getSingleton().getCoordType() != 2) {
-            int[] hier = DSCalculator.hierarchicalToXy((int) xPos, (int) yPos, 12);
+            int[] hier = DSCalculator.hierarchicalToXy(xPos, yPos, 12);
             if (hier != null) {
                 xPos = hier[0];
                 yPos = hier[1];
@@ -3281,7 +3255,7 @@ private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
         }
     }
     if (isInitialized()) {
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
     }
 }//GEN-LAST:event_fireGraphicPackChangedEvent
 
@@ -3331,11 +3305,6 @@ private void fireDoDonationEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:ev
     BrowserCommandSender.openPage("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4434173");
 }//GEN-LAST:event_fireDoDonationEvent
 
-private void fireShowArmyCampFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowArmyCampFrameEvent
-    DSWorkbenchArmyCampFrame.getSingleton().setVisible(!DSWorkbenchArmyCampFrame.getSingleton().isVisible());
-    jShowArmyCampFrame.setSelected(DSWorkbenchArmyCampFrame.getSingleton().isVisible());
-}//GEN-LAST:event_fireShowArmyCampFrameEvent
-
     private void propagateLayerOrder() {
         DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
 
@@ -3345,6 +3314,7 @@ private void fireShowArmyCampFrameEvent(java.awt.event.ActionEvent evt) {//GEN-F
             layerOrder.add(Constants.LAYERS.get(value));
         }
         MapPanel.getSingleton().getMapRenderer().setDrawOrder(layerOrder);
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
     }
 
     public String getLayerOrder() {
@@ -3511,10 +3481,7 @@ private void fireShowArmyCampFrameEvent(java.awt.event.ActionEvent evt) {//GEN-F
             jShowStatsFrame.setSelected(DSWorkbenchStatsFrame.getSingleton().isVisible());
         } else if (pSource == DSWorkbenchReportFrame.getSingleton()) {
             jShowReportFrame.setSelected(DSWorkbenchReportFrame.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchArmyCampFrame.getSingleton()) {
-            jShowArmyCampFrame.setSelected(DSWorkbenchArmyCampFrame.getSingleton().isVisible());
         }
-
     }
 
     public void fireGroupParserEvent(Hashtable<String, List<Village>> pParserResult) {
@@ -3706,7 +3673,6 @@ private void fireShowArmyCampFrameEvent(java.awt.event.ActionEvent evt) {//GEN-F
     private javax.swing.JMenuItem jSelectionOverviewItem;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JCheckBoxMenuItem jShowArmyCampFrame;
     private javax.swing.JCheckBoxMenuItem jShowAttackFrame;
     private javax.swing.JCheckBoxMenuItem jShowChurchFrame;
     private javax.swing.JCheckBoxMenuItem jShowConquersFrame;

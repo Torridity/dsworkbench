@@ -13,6 +13,7 @@ package de.tor.tribes.ui;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Note;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
@@ -1083,7 +1084,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
                 }
             }
             showCurrentNote();
-            MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.NOTE_LAYER);
         } catch (Exception e) {
             logger.error("Failed to insert dropped villages", e);
         }

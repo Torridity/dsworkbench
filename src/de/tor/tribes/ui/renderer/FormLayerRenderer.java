@@ -17,7 +17,10 @@ import java.awt.geom.Rectangle2D;
 public class FormLayerRenderer extends AbstractDirectLayerRenderer {
 
     @Override
-    public void performRendering(Rectangle2D pVirtualBounds, Village[][] pVisibleVillages, Graphics2D pG2d) {
+    public void performRendering(RenderSettings pSettings, Graphics2D pG2d) {
+        if (!pSettings.isLayerVisible()) {
+            return;
+        }
         AbstractForm[] forms = FormManager.getSingleton().getForms().toArray(new AbstractForm[]{});
         for (AbstractForm form : forms) {
             form.renderForm(pG2d);

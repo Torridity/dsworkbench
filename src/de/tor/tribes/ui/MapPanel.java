@@ -8,7 +8,6 @@ package de.tor.tribes.ui;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Church;
@@ -49,14 +48,12 @@ import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MapShotListener;
 import de.tor.tribes.util.ServerSettings;
-import de.tor.tribes.util.armycamp.ArmyCampManager;
 import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.stat.StatManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Composite;
 import java.awt.Cursor;
 import java.awt.FontMetrics;
 import java.awt.Rectangle;
@@ -69,10 +66,8 @@ import java.awt.dnd.DragSource;
 import java.awt.dnd.DragSourceListener;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetListener;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.VolatileImage;
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -89,8 +84,8 @@ import javax.swing.JPanel;
  * @author Charon
  */
 public class MapPanel extends JPanel implements DragGestureListener, // For recognizing the start of drags
-                                                DragSourceListener, // For processing drag source events
-                                                DropTargetListener // For processing drop target events
+        DragSourceListener, // For processing drag source events
+        DropTargetListener // For processing drop target events
 {
 // <editor-fold defaultstate="collapsed" desc=" Member variables ">
 
@@ -462,17 +457,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                             }
                         }
                         break;
-                    }
-                    case ImageManager.CURSOR_ARMY_CAMP: {
-                        Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
-                        short x = (short) Math.floor(pos.x);
-                        short y = (short) Math.floor(pos.y);
-                        Village village = DataHolder.getSingleton().getVillages()[x][y];
-                        int text = WorldDecorationHolder.getTextureId(x, y);
-                        if (village == null && text < 4 && !ArmyCampManager.getSingleton().isArmyCamp(x, y)) {
-                            //add army camp
-                            ArmyCampManager.getSingleton().addArmyCamp(DSWorkbenchMainFrame.getSingleton().getCurrentUser().getAlly(), x, y);
-                        }
                     }
                 }
 
@@ -1769,6 +1753,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
     public void paintComponent(Graphics g) {
         /**Draw buffer into panel*/
+       // System.out.println("P " + (System.currentTimeMillis() - s));
+        s = System.currentTimeMillis();
         try {
             //calculate move direction if mouse is dragged outside the map
 
@@ -1829,11 +1815,11 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             mMapRenderer = new MapRenderer();
             mMapRenderer.start();
         }
-        if (getMapRenderer().isRedrawScheduled()) {
+       /* if (getMapRenderer().isRedrawScheduled()) {
             return;
-        }
+        }*/
         positionUpdate = true;
-        getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
+        getMapRenderer().initiateRedraw(MapRenderer.MAP_LAYER);
     }
 
     public void updateVirtualBounds(Point2D.Double pViewStart) {
@@ -1898,8 +1884,10 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
             while (villages.hasNext()) {
                 Village current = villages.next();
-                if (mVillagePositions.get(current).contains(mouse.x, mouse.y)) {
-                    return current;
+                if (current != null && mVillagePositions.get(current).contains(mouse.x, mouse.y)) {
+                    if (current.isVisibleOnMap()) {
+                        return current;
+                    }
                 }
             }
 

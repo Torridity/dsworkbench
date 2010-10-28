@@ -1606,7 +1606,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         }
         JOptionPaneHelper.showInformationBox(this, "Truppen übertragen", "Information");
         TroopsManager.getSingleton().forceUpdate();
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+       // MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
 
     }//GEN-LAST:event_fireMoveTroopsToTroopManagerEvent
 

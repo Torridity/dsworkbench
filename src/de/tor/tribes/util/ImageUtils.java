@@ -21,7 +21,7 @@ import javax.imageio.ImageIO;
  */
 public class ImageUtils {
 
-    public static void setupGraphics(Graphics2D pG2d) {
+  /*  public static void setupGraphics(Graphics2D pG2d) {
         pG2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
         pG2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         // Speed
@@ -31,9 +31,9 @@ public class ImageUtils {
         pG2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
         pG2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
         pG2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-    }
+    }*/
 
-    public static void setupGraphicsToMin(Graphics2D pG2d) {
+    public static void setupGraphics(Graphics2D pG2d) {
         pG2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
         pG2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         // Speed

@@ -1,18 +1,62 @@
 package de.tor.tribes.ui.renderer;
 
+import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.MapPanel;
+import de.tor.tribes.util.GlobalOptions;
+import java.awt.geom.Rectangle2D;
+
 class RenderSettings {
 
     private int columnsToRender = 0;
     private int rowsToRender = 0;
     private int fieldWidth = 0;
     private int fieldHeight = 0;
+    private double movementX = 0.0;
+    private double movementY = 0.0;
     private double deltaX = 0.0;
     private double deltaY = 0.0;
     private double zoom = 1.0;
-    AbstractBufferedLayerRenderer outer;
+    private Rectangle2D mMapBounds = null;
+    private Village[][] mVisibleVillages = null;
+    private boolean layerVisible = false;
 
-    protected RenderSettings(AbstractBufferedLayerRenderer outer) {
-        this.outer = outer;
+    protected RenderSettings(Rectangle2D pCurrentMapBounds) {
+        setZoom(MapPanel.getSingleton().getMapRenderer().getCurrentZoom());
+        setFieldWidth(GlobalOptions.getSkin().getCurrentFieldWidth(getZoom()));
+        setFieldHeight(GlobalOptions.getSkin().getCurrentFieldHeight(getZoom()));
+        setMapBounds(pCurrentMapBounds);
+    }
+
+    public void calculateSettings(Rectangle2D pNewBounds) {
+        if (getMapBounds() != null && pNewBounds != null) {
+            setMovementX(getFieldWidth() * (getMapBounds().getX() - pNewBounds.getX()));
+            setMovementY(getFieldHeight() * (getMapBounds().getY() - pNewBounds.getY()));
+        }
+
+        if (getMovementX() != 0.0) {
+            setDeltaX(getMovementX() / (double) getFieldWidth());
+        }
+        if (getMovementY() != 0.0) {
+            setDeltaY(getMovementY() / (double) getFieldHeight());
+        }
+
+
+        int fieldsX = (getDeltaX() > 0) ? (int) Math.round(getDeltaX()) : (int) Math.floor(getDeltaX());
+        int fieldsY = (getDeltaY() > 0) ? (int) Math.round(getDeltaY()) : (int) Math.floor(getDeltaY());
+        fieldsX += (fieldsX >= 0) ? 1 : -1;
+        fieldsY += (fieldsY >= 0) ? 1 : -1;
+
+        setColumnsToRender(fieldsX);
+        setRowsToRender(fieldsY);
+
+        if (pNewBounds != null) {
+            setDeltaX(0 - ((pNewBounds.getX() - Math.floor(pNewBounds.getX())) * getFieldWidth()));
+            setDeltaY(0 - ((pNewBounds.getY() - Math.floor(pNewBounds.getY())) * getFieldHeight()));
+        } else {
+            setDeltaX(0);
+            setDeltaY(0);
+        }
+        setMapBounds(pNewBounds);
     }
 
     /**
@@ -90,5 +134,75 @@ class RenderSettings {
 
     public void setZoom(double zoom) {
         this.zoom = zoom;
+    }
+
+    /**
+     * @return the mMapBounds
+     */
+    public Rectangle2D getMapBounds() {
+        return mMapBounds;
+    }
+
+    /**
+     * @param mMapBounds the mMapBounds to set
+     */
+    public void setMapBounds(Rectangle2D mMapBounds) {
+        this.mMapBounds = (Rectangle2D) mMapBounds.clone();
+    }
+
+    /**
+     * @return the mVisibleVillages
+     */
+    public Village[][] getVisibleVillages() {
+        return mVisibleVillages;
+    }
+
+    /**
+     * @param mVisibleVillages the mVisibleVillages to set
+     */
+    public void setVisibleVillages(Village[][] mVisibleVillages) {
+        this.mVisibleVillages = mVisibleVillages;
+    }
+
+    /**
+     * @return the movementX
+     */
+    public double getMovementX() {
+        return movementX;
+    }
+
+    /**
+     * @param movementX the movementX to set
+     */
+    public void setMovementX(double movementX) {
+        this.movementX = movementX;
+    }
+
+    /**
+     * @return the movementY
+     */
+    public double getMovementY() {
+        return movementY;
+    }
+
+    /**
+     * @param movementY the movementY to set
+     */
+    public void setMovementY(double movementY) {
+        this.movementY = movementY;
+    }
+
+    /**
+     * @return the layerVisible
+     */
+    public boolean isLayerVisible() {
+        return layerVisible;
+    }
+
+    /**
+     * @param layerVisible the layerVisible to set
+     */
+    public void setLayerVisible(boolean layerVisible) {
+        this.layerVisible = layerVisible;
     }
 }

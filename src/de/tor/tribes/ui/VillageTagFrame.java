@@ -10,6 +10,7 @@ import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
+import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.tag.TagManagerListener;
 import java.util.Arrays;
@@ -290,7 +291,7 @@ private void fireOkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireO
     TagManager.getSingleton().saveTagsToFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
     setVisible(false);
     //init redraw
-    MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+    MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
 }//GEN-LAST:event_fireOkEvent
 
 private void fireCancelEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCancelEvent

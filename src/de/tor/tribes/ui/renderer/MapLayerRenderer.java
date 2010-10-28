@@ -10,7 +10,6 @@ import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
@@ -41,113 +40,138 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
     private HashMap<Integer, Rectangle> renderedSpriteBounds = null;
     private HashMap<Integer, Rectangle> renderedMarkerBounds = null;
     private Point mapPos = null;
+    private boolean bMarkOnTop = false;
+    private boolean shouldReset = true;
+
+    public void setMarkOnTop(boolean pValue) {
+        bMarkOnTop = pValue;
+    }
+
+    public boolean isMarkOnTop() {
+        return bMarkOnTop;
+    }
 
     @Override
-    public void performRendering(Rectangle2D pVirtualBounds, Village[][] pVisibleVillages, Graphics2D pG2d) {
-        RenderSettings settings = getRenderSettings(pVirtualBounds);
-        Graphics2D g2d = null;
-
-        if (getRenderedBounds() != null) {
-            Point2D.Double d1 = new Point2D.Double(getRenderedBounds().getX(), getRenderedBounds().getY());
-            Point2D.Double d2 = new Point2D.Double(pVirtualBounds.getX(), pVirtualBounds.getY());
-
-            if (d1.distance(d2) != 0) {
-                moved = true;
-            } else {
-                moved = false;
-            }
-        } else {
-            moved = true;
+    public void performRendering(RenderSettings pSettings, Graphics2D pG2d) {
+        if (shouldReset) {
+            //  setRenderedBounds(null);
+            setFullRenderRequired(true);
+            shouldReset = false;
         }
+        Graphics2D g2d = null;
+        /* if (getRenderedBounds() != null) {
+        Point2D.Double d1 = new Point2D.Double(getRenderedBounds().getX(), getRenderedBounds().getY());
+        Point2D.Double d2 = new Point2D.Double(pVirtualBounds.getX(), pVirtualBounds.getY());
+
+        if (d1.distance(d2) != 0) {
+        moved = true;
+        } else {
+        moved = false;
+        }
+        } else {
+        moved = true;
+        }*/
 
         long s = System.currentTimeMillis();
         AffineTransform trans = AffineTransform.getTranslateInstance(0, 0);
-        if (moved) {
-            if (isFullRenderRequired()) {
-                if (mLayer == null) {
-                    mLayer = ImageUtils.createCompatibleBufferedImage(pVisibleVillages.length * settings.getFieldWidth(), pVisibleVillages[0].length * settings.getFieldHeight(), BufferedImage.OPAQUE);
-                }
-                g2d = (Graphics2D) mLayer.getGraphics();
-                g2d.setClip(0, 0, mLayer.getWidth(), mLayer.getHeight());
-                settings.setRowsToRender(pVisibleVillages[0].length);
-            } else {
-                //copy existing data to new location
-                g2d = (Graphics2D) mLayer.getGraphics();
-                g2d.setClip(0, 0, mLayer.getWidth(), mLayer.getHeight());
-                performCopy(settings, pVirtualBounds, g2d);
+        if (mapPos == null) {
+            mapPos = new Point((int) Math.floor(pSettings.getMapBounds().getX()), (int) Math.floor(pSettings.getMapBounds().getY()));
+        }
+        //  if (moved) {
+        if (isFullRenderRequired()) {
+            if (mLayer == null) {
+                mLayer = ImageUtils.createCompatibleBufferedImage(pSettings.getVisibleVillages().length * pSettings.getFieldWidth(), pSettings.getVisibleVillages()[0].length * pSettings.getFieldHeight(), BufferedImage.OPAQUE);
             }
-            ImageUtils.setupGraphics(g2d);
+            g2d = (Graphics2D) mLayer.getGraphics();
+            g2d.setClip(0, 0, mLayer.getWidth(), mLayer.getHeight());
+            pSettings.setRowsToRender(pSettings.getVisibleVillages()[0].length);
+            mapPos = new Point((int) Math.floor(pSettings.getMapBounds().getX()), (int) Math.floor(pSettings.getMapBounds().getY()));
+        } else {
+            //copy existing data to new location
+            g2d = (Graphics2D) mLayer.getGraphics();
+            g2d.setClip(0, 0, mLayer.getWidth(), mLayer.getHeight());
+            performCopy(pSettings, g2d);
+        }
+        ImageUtils.setupGraphics(g2d);
+
 //        System.out.println("Prep " + (System.currentTimeMillis() - s));
+        renderedSpriteBounds = new HashMap<Integer, Rectangle>();
+        renderedMarkerBounds = new HashMap<Integer, Rectangle>();
+
+        //Set new bounds
+        //setRenderedBounds((Rectangle2D.Double) pVirtualBounds.clone());
+        BufferedImage img = null;
+        if (isMarkOnTop()) {
+            img = renderVillageRows(pSettings);
+        } else {
+            img = renderMarkerRows(pSettings);
+        }
+        Graphics2D ig2d = (Graphics2D) img.getGraphics();
+        ig2d.setClip(0, 0, img.getWidth(), img.getHeight());
+        ImageUtils.setupGraphics(ig2d);
+        if (isMarkOnTop()) {
+            Composite c = ig2d.getComposite();
+            ig2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .3f));
+            ig2d.drawRenderedImage(renderMarkerRows(pSettings), AffineTransform.getTranslateInstance(0, 0));
+            ig2d.setComposite(c);
+        } else {
+            ig2d.drawRenderedImage(renderVillageRows(pSettings), AffineTransform.getTranslateInstance(0, 0));
+        }
+
+        if (pSettings.getRowsToRender() < 0) {
+            trans.setToTranslation(0, (pSettings.getVisibleVillages()[0].length + pSettings.getRowsToRender()) * pSettings.getFieldHeight());
+        }
+        g2d.drawRenderedImage(img, trans);
+
+        if (isFullRenderRequired()) {
+            //everything was rendered, skip col rendering
+            setFullRenderRequired(false);
+        } else {
             renderedSpriteBounds = new HashMap<Integer, Rectangle>();
             renderedMarkerBounds = new HashMap<Integer, Rectangle>();
-
-            //Set new bounds
-            setRenderedBounds((Rectangle2D.Double) pVirtualBounds.clone());
-            //BufferedImage img = renderMarkerRows(pVisibleVillages, settings);
-            BufferedImage img = renderMarkerRows(pVisibleVillages, settings);
-//        System.out.println("MarkRDraw " + (System.currentTimeMillis() - s));
-            Graphics2D ig2d = (Graphics2D) img.getGraphics();
-            ig2d.setClip(0, 0, img.getWidth(), img.getHeight());
+            if (isMarkOnTop()) {
+                img = renderVillageColumns(pSettings);
+            } else {
+                img = renderMarkerColumns(pSettings);
+            }
+            ig2d = (Graphics2D) img.getGraphics();
             ImageUtils.setupGraphics(ig2d);
-            ig2d.drawRenderedImage(renderVillageRows(pVisibleVillages, settings), AffineTransform.getTranslateInstance(0, 0));
-//        System.out.println("VillRDraw " + (System.currentTimeMillis() - s));
-
-            if (settings.getRowsToRender() < 0) {
-                trans.setToTranslation(0, (pVisibleVillages[0].length + settings.getRowsToRender()) * settings.getFieldHeight());
+            if (isMarkOnTop()) {
+                Composite c = ig2d.getComposite();
+                ig2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .3f));
+                ig2d.drawRenderedImage(renderMarkerColumns(pSettings), AffineTransform.getTranslateInstance(0, 0));
+                ig2d.setComposite(c);
+            } else {
+                ig2d.drawRenderedImage(renderVillageColumns(pSettings), AffineTransform.getTranslateInstance(0, 0));
+            }
+            trans = AffineTransform.getTranslateInstance(0, 0);
+            if (pSettings.getColumnsToRender() < 0) {
+                trans.setToTranslation((pSettings.getVisibleVillages().length + pSettings.getColumnsToRender()) * pSettings.getFieldWidth(), 0);
             }
             g2d.drawRenderedImage(img, trans);
-//        System.out.println("AllRDraw " + (System.currentTimeMillis() - s));
-            if (isFullRenderRequired()) {
-                //everything was rendered, skip col rendering
-                setFullRenderRequired(false);
-            } else {
-                renderedSpriteBounds = new HashMap<Integer, Rectangle>();
-                renderedMarkerBounds = new HashMap<Integer, Rectangle>();
-                img = renderMarkerColumns(pVisibleVillages, settings);
-//            System.out.println("MarkCDraw " + (System.currentTimeMillis() - s));
-                ig2d = (Graphics2D) img.getGraphics();
-                ImageUtils.setupGraphics(ig2d);
-                ig2d.drawRenderedImage(renderVillageColumns(pVisibleVillages, settings), AffineTransform.getTranslateInstance(0, 0));
-//            System.out.println("VillCDraw " + (System.currentTimeMillis() - s));
-                trans = AffineTransform.getTranslateInstance(0, 0);
-                if (settings.getColumnsToRender() < 0) {
-                    trans.setToTranslation((pVisibleVillages.length + settings.getColumnsToRender()) * settings.getFieldWidth(), 0);
-                }
-                g2d.drawRenderedImage(img, trans);
-//            System.out.println("AllCDraw " + (System.currentTimeMillis() - s));
-            }
-            g2d.dispose();
         }
-        trans.setToTranslation((int) Math.floor(settings.getDeltaX()), (int) Math.floor(settings.getDeltaY()));
+        ig2d.dispose();
+        g2d.dispose();
+        //}
+
+        trans.setToTranslation((int) Math.floor(pSettings.getDeltaX()), (int) Math.floor(pSettings.getDeltaY()));
         pG2d.drawRenderedImage(mLayer, trans);
-//        System.out.println("AllDraw " + (System.currentTimeMillis() - s));
-        drawContinents(pVisibleVillages, settings, pG2d);
-
-
-        /* if (moved) {
-        Composite com = pG2d.getComposite();
-        pG2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .5f));
-        pG2d.setColor(Constants.DS_BACK_LIGHT);
-        pG2d.fillRect(0, 0, mLayer.getWidth(), mLayer.getHeight());
-        pG2d.setColor(Color.BLACK);
-        pG2d.setComposite(com);
-        }*/
+        pG2d.setTransform(AffineTransform.getTranslateInstance(0, 0));
+        drawContinents(pSettings, pG2d);
 
 //        System.out.println("ContDraw " + (System.currentTimeMillis() - s));
 //        System.out.println("-----------");
+        pSettings.setLayerVisible(true);
     }
+    
     boolean moved = false;
 
     public boolean hasMoved() {
         return moved;
     }
 
-    private void performCopy(RenderSettings pSettings, Rectangle2D pVirtualBounds, Graphics2D pG2D) {
-        if (mapPos == null) {
-            mapPos = new Point((int) Math.floor(pVirtualBounds.getX()), (int) Math.floor(pVirtualBounds.getY()));
-        }
-
-        Point newMapPos = new Point((int) Math.floor(pVirtualBounds.getX()), (int) Math.floor(pVirtualBounds.getY()));
+    private void performCopy(RenderSettings pSettings, Graphics2D pG2D) {
+        Point newMapPos = new Point((int) Math.floor(pSettings.getMapBounds().getX()), (int) Math.floor(pSettings.getMapBounds().getY()));
 
         int fieldsX = newMapPos.x - mapPos.x;
         int fieldsY = newMapPos.y - mapPos.y;
@@ -156,7 +180,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         pG2D.copyArea(0, 0, mLayer.getWidth(), mLayer.getHeight(), -fieldsX * pSettings.getFieldWidth(), -fieldsY * pSettings.getFieldHeight());
     }
 
-    private void drawContinents(Village[][] pVisibleVillages, RenderSettings pSettings, Graphics2D pG2d) {
+    private void drawContinents(RenderSettings pSettings, Graphics2D pG2d) {
         boolean showSectors = false;
         try {
             showSectors = Boolean.parseBoolean(GlobalOptions.getProperty("show.sectors"));
@@ -179,11 +203,10 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         if (ServerSettings.getSingleton().getCoordType() != 2) {
             contSpacing = 50;
         }
-
-        int fieldHeight = GlobalOptions.getSkin().getCurrentFieldHeight();
-        int fieldWidth = GlobalOptions.getSkin().getCurrentFieldWidth();
+        int fieldHeight = pSettings.getFieldHeight();
+        int fieldWidth = pSettings.getFieldWidth();
         //draw vertical borders
-        for (int i = mapPos.x; i < mapPos.x + pVisibleVillages.length; i++) {
+        for (int i = mapPos.x; i < mapPos.x + pSettings.getVisibleVillages().length + 1; i++) {
             if (i % 5 == 0) {
                 boolean draw = true;
                 if (i % contSpacing == 0) {
@@ -202,12 +225,12 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                     }
                 }
                 if (draw) {
-                    pG2d.drawLine((i - mapPos.x) * fieldWidth + (int) Math.floor(pSettings.getDeltaX()), 0, (i - mapPos.x) * fieldWidth + (int) Math.floor(pSettings.getDeltaX()), pVisibleVillages[0].length * fieldHeight);
+                    pG2d.drawLine((i - mapPos.x) * fieldWidth + (int) Math.floor(pSettings.getDeltaX()), 0, (i - mapPos.x) * fieldWidth + (int) Math.floor(pSettings.getDeltaX()), pSettings.getVisibleVillages()[0].length * (fieldHeight + 1));
                 }
             }
         }
         //draw horizontal borders
-        for (int i = mapPos.y; i < mapPos.y + pVisibleVillages[0].length; i++) {
+        for (int i = mapPos.y; i < mapPos.y + pSettings.getVisibleVillages()[0].length + 1; i++) {
             if (i % 5 == 0) {
                 boolean draw = true;
                 if (i % contSpacing == 0) {
@@ -226,18 +249,18 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                     }
                 }
                 if (draw) {
-                    pG2d.drawLine(0, (i - mapPos.y) * fieldHeight + (int) Math.floor(pSettings.getDeltaY()), pVisibleVillages.length * fieldWidth, (i - mapPos.y) * fieldHeight + (int) Math.floor(pSettings.getDeltaY()));
+                    pG2d.drawLine(0, (i - mapPos.y) * fieldHeight + (int) Math.floor(pSettings.getDeltaY()), (pSettings.getVisibleVillages().length + 1) * fieldWidth, (i - mapPos.y) * fieldHeight + (int) Math.floor(pSettings.getDeltaY()));
                 }
             }
         }
     }
 
-    private BufferedImage renderVillageRows(Village[][] pVillages, RenderSettings pSettings) {
+    private BufferedImage renderVillageRows(RenderSettings pSettings) {
         //create new buffer for rendering
         //BufferedImage newRows = createEmptyBuffered(pVillages.length * pSettings.getFieldWidth(), Math.abs(pSettings.getRowsToRender()) * pSettings.getFieldHeight(), BufferedImage.TRANSLUCENT);
-        BufferedImage newRows = ImageUtils.createCompatibleBufferedImage(pVillages.length * pSettings.getFieldWidth(), Math.abs(pSettings.getRowsToRender()) * pSettings.getFieldHeight(), BufferedImage.BITMASK);
+        BufferedImage newRows = ImageUtils.createCompatibleBufferedImage(pSettings.getVisibleVillages().length * pSettings.getFieldWidth(), Math.abs(pSettings.getRowsToRender()) * pSettings.getFieldHeight(), BufferedImage.BITMASK);
         //calculate first row that will be rendered
-        int firstRow = (pSettings.getRowsToRender() > 0) ? 0 : pVillages[0].length - Math.abs(pSettings.getRowsToRender());
+        int firstRow = (pSettings.getRowsToRender() > 0) ? 0 : pSettings.getVisibleVillages()[0].length - Math.abs(pSettings.getRowsToRender());
         Graphics2D g2d = (Graphics2D) newRows.getGraphics();
         ImageUtils.setupGraphics(g2d);
         boolean showBarbarian = true;
@@ -261,16 +284,15 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             //use decoration if skin field size equals the world skin size
             useDecoration = false;
         }
-
-        for (int x = 0; x < pVillages.length; x++) {
+        for (int x = 0; x < pSettings.getVisibleVillages().length; x++) {
             //iterate from first row for 'pRows' times
             for (int y = firstRow; y < firstRow + Math.abs(pSettings.getRowsToRender()); y++) {
                 cnt++;
-                Village v = pVillages[x][y];
+                Village v = pSettings.getVisibleVillages()[x][y];
                 int row = y - firstRow;
                 int col = x;
-                int globalCol = colToGlobalPosition(col);
-                int globalRow = rowToGlobalPosition(y);
+                int globalCol = colToGlobalPosition(pSettings, col);
+                int globalRow = rowToGlobalPosition(pSettings, y);
                 renderVillageField(v, row, col, globalRow, globalCol, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, showBarbarian, markedOnly, g2d);
             }
         }
@@ -278,12 +300,16 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         return newRows;
     }
 
-    private BufferedImage renderMarkerRows(Village[][] pVillages, RenderSettings pSettings) {
+    private BufferedImage renderMarkerRows(RenderSettings pSettings) {
         //create new buffer for rendering
-        //BufferedImage newRows = createEmptyBuffered(pVillages.length * pSettings.getFieldWidth(), Math.abs(pSettings.getRowsToRender()) * pSettings.getFieldHeight(), BufferedImage.TRANSLUCENT);
-        BufferedImage newRows = ImageUtils.createCompatibleBufferedImage(pVillages.length * pSettings.getFieldWidth(), Math.abs(pSettings.getRowsToRender()) * pSettings.getFieldHeight(), BufferedImage.OPAQUE);
+        BufferedImage newRows = null;
+        if (isMarkOnTop()) {
+            newRows = ImageUtils.createCompatibleBufferedImage(pSettings.getVisibleVillages().length * pSettings.getFieldWidth(), Math.abs(pSettings.getRowsToRender()) * pSettings.getFieldHeight(), BufferedImage.TRANSLUCENT);
+        } else {
+            newRows = ImageUtils.createCompatibleBufferedImage(pSettings.getVisibleVillages().length * pSettings.getFieldWidth(), Math.abs(pSettings.getRowsToRender()) * pSettings.getFieldHeight(), BufferedImage.OPAQUE);
+        }
         //calculate first row that will be rendered
-        int firstRow = (pSettings.getRowsToRender() > 0) ? 0 : pVillages[0].length - Math.abs(pSettings.getRowsToRender());
+        int firstRow = (pSettings.getRowsToRender() > 0) ? 0 : pSettings.getVisibleVillages()[0].length - Math.abs(pSettings.getRowsToRender());
         Graphics2D g2d = (Graphics2D) newRows.getGraphics();
         ImageUtils.setupGraphics(g2d);
         //iterate through entire row
@@ -295,11 +321,11 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             useDecoration = false;
         }
 
-        for (int x = 0; x < pVillages.length; x++) {
+        for (int x = 0; x < pSettings.getVisibleVillages().length; x++) {
             //iterate from first row for 'pRows' times
             for (int y = firstRow; y < firstRow + Math.abs(pSettings.getRowsToRender()); y++) {
                 cnt++;
-                Village v = pVillages[x][y];
+                Village v = pSettings.getVisibleVillages()[x][y];
                 int row = y - firstRow;
                 int col = x;
                 renderMarkerField(v, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, g2d);
@@ -309,12 +335,12 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         return newRows;
     }
 
-    private BufferedImage renderVillageColumns(Village[][] pVillages, RenderSettings pSettings) {
+    private BufferedImage renderVillageColumns(RenderSettings pSettings) {
         //create new buffer for rendering
         //  BufferedImage newColumns = createEmptyBuffered(Math.abs(pSettings.getColumnsToRender()) * pSettings.getFieldWidth(), pVillages[0].length * pSettings.getFieldHeight(), BufferedImage.TRANSLUCENT);
-        BufferedImage newColumns = ImageUtils.createCompatibleBufferedImage(Math.abs(pSettings.getColumnsToRender()) * pSettings.getFieldWidth(), pVillages[0].length * pSettings.getFieldHeight(), BufferedImage.BITMASK);
+        BufferedImage newColumns = ImageUtils.createCompatibleBufferedImage(Math.abs(pSettings.getColumnsToRender()) * pSettings.getFieldWidth(), pSettings.getVisibleVillages()[0].length * pSettings.getFieldHeight(), BufferedImage.BITMASK);
         //calculate first row that will be rendered
-        int firstCol = (pSettings.getColumnsToRender() > 0) ? 0 : pVillages.length - Math.abs(pSettings.getColumnsToRender());
+        int firstCol = (pSettings.getColumnsToRender() > 0) ? 0 : pSettings.getVisibleVillages().length - Math.abs(pSettings.getColumnsToRender());
         Graphics2D g2d = (Graphics2D) newColumns.getGraphics();
         ImageUtils.setupGraphics(g2d);
         boolean showBarbarian = true;
@@ -339,14 +365,14 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             useDecoration = false;
         }
         for (int x = firstCol; x < firstCol + Math.abs(pSettings.getColumnsToRender()); x++) {
-            for (int y = 0; y < pVillages[0].length; y++) {
+            for (int y = 0; y < pSettings.getVisibleVillages()[0].length; y++) {
                 cnt++;
                 //iterate from first row for 'pRows' times
-                Village v = pVillages[x][y];
+                Village v = pSettings.getVisibleVillages()[x][y];
                 int row = y;
                 int col = x - firstCol;
-                int globalCol = colToGlobalPosition(x);
-                int globalRow = rowToGlobalPosition(row);
+                int globalCol = colToGlobalPosition(pSettings, x);
+                int globalRow = rowToGlobalPosition(pSettings, row);
                 renderVillageField(v, row, col, globalRow, globalCol, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, showBarbarian, markedOnly, g2d);
             }
         }
@@ -354,12 +380,17 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         return newColumns;
     }
 
-    private BufferedImage renderMarkerColumns(Village[][] pVillages, RenderSettings pSettings) {
+    private BufferedImage renderMarkerColumns(RenderSettings pSettings) {
         //create new buffer for rendering
-        //BufferedImage newColumns = createEmptyBuffered(Math.abs(pSettings.getColumnsToRender()) * pSettings.getFieldWidth(), pVillages[0].length * pSettings.getFieldHeight(), BufferedImage.TRANSLUCENT);
-        BufferedImage newColumns = ImageUtils.createCompatibleBufferedImage(Math.abs(pSettings.getColumnsToRender()) * pSettings.getFieldWidth(), pVillages[0].length * pSettings.getFieldHeight(), BufferedImage.OPAQUE);
+        BufferedImage newColumns = null;
+        if (isMarkOnTop()) {
+            newColumns = ImageUtils.createCompatibleBufferedImage(Math.abs(pSettings.getColumnsToRender()) * pSettings.getFieldWidth(), pSettings.getVisibleVillages()[0].length * pSettings.getFieldHeight(), BufferedImage.TRANSLUCENT);
+        } else {
+            newColumns = ImageUtils.createCompatibleBufferedImage(Math.abs(pSettings.getColumnsToRender()) * pSettings.getFieldWidth(), pSettings.getVisibleVillages()[0].length * pSettings.getFieldHeight(), BufferedImage.OPAQUE);
+        }
+
         //calculate first row that will be rendered
-        int firstCol = (pSettings.getColumnsToRender() > 0) ? 0 : pVillages.length - Math.abs(pSettings.getColumnsToRender());
+        int firstCol = (pSettings.getColumnsToRender() > 0) ? 0 : pSettings.getVisibleVillages().length - Math.abs(pSettings.getColumnsToRender());
         Graphics2D g2d = (Graphics2D) newColumns.getGraphics();
         ImageUtils.setupGraphics(g2d);
 
@@ -371,11 +402,12 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             //use decoration if skin field size equals the world skin size
             useDecoration = false;
         }
+
         for (int x = firstCol; x < firstCol + Math.abs(pSettings.getColumnsToRender()); x++) {
-            for (int y = 0; y < pVillages[0].length; y++) {
+            for (int y = 0; y < pSettings.getVisibleVillages()[0].length; y++) {
                 cnt++;
                 //iterate from first row for 'pRows' times
-                Village v = pVillages[x][y];
+                Village v = pSettings.getVisibleVillages()[x][y];
                 int row = y;
                 int col = x - firstCol;
                 renderMarkerField(v, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, g2d);
@@ -401,11 +433,11 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         int textureId = -1;
         BufferedImage sprite = null;
 
-
         if (v != null
                 && !(v.getTribe().equals(Barbarians.getSingleton()) && !showBarbarian)
                 && !(MarkerManager.getSingleton().getMarker(v) == null && markedOnly)) {
             //village field that has to be rendered
+            v.setVisibleOnMap(true);
             if (GlobalOptions.getSkin().isMinimapSkin()) {
                 textureId = Skin.ID_V1;
             } else {
@@ -416,6 +448,9 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 sprite = GlobalOptions.getSkin().getOriginalSprite(textureId);
             }
         } else {
+            if (v != null) {
+                v.setVisibleOnMap(false);
+            }
             if (useDecoration) {
                 textureId = WorldDecorationHolder.getTextureId(globalCol, globalRow) + 100;
             } else {
@@ -433,8 +468,12 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         if (sprite != null) {
             //render sprite
             AffineTransform t = AffineTransform.getTranslateInstance(col * pFieldWidth, row * pFieldHeight);
+            //System.out.println("Sc " + (1 / zoom) + " -> " + pFieldWidth);
             t.scale(1 / zoom, 1 / zoom);
-            // System.err.println("RENDERX");
+            if (isMarkOnTop()) {
+                g2d.setColor(Color.BLACK);
+                g2d.fillRect(col * pFieldWidth, row * pFieldHeight, pFieldWidth, pFieldHeight);
+            }
             g2d.drawRenderedImage(sprite, t);
 
             //g2d.drawImage(sprite, col * pFieldWidth, row * pFieldHeight, pFieldWidth, pFieldHeight, null, null);//mage(sprite, t, null);
@@ -464,12 +503,16 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         if (v != null
                 && !(v.getTribe().equals(Barbarians.getSingleton()) && !showBarbarian)
                 && !(MarkerManager.getSingleton().getMarker(v) == null && markedOnly)) {
+            v.setVisibleOnMap(true);
             tribeId = v.getTribeID();
             copyRect = renderedMarkerBounds.get(tribeId);
             if (copyRect == null) {
                 sprite = getMarker(v);
             }
         } else {
+            if (v != null) {
+                v.setVisibleOnMap(false);
+            }
             return;
         }
 
@@ -487,13 +530,13 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         }
     }
 
-    private int rowToGlobalPosition(int pRow) {
-        int yPos = (int) Math.floor(getRenderedBounds().getY());
+    private int rowToGlobalPosition(RenderSettings pSettings, int pRow) {
+        int yPos = (int) Math.floor(pSettings.getMapBounds().getY());
         return yPos + pRow;
     }
 
-    private int colToGlobalPosition(int pCol) {
-        int xPos = (int) Math.floor(getRenderedBounds().getX());
+    private int colToGlobalPosition(RenderSettings pSettings, int pCol) {
+        int xPos = (int) Math.floor(pSettings.getMapBounds().getX());
         return xPos + pCol;
     }
 
@@ -580,13 +623,11 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         }
         g2d.setColor(Color.BLACK);
         g2d.drawRect(0, 0, w, h);
-        g2d.drawRect(1, 1, w - 3, h - 3);
         g2d.dispose();
         return image;
     }
 
     public void reset() {
-        setRenderedBounds(null);
-        setFullRenderRequired(true);
+        shouldReset = true;
     }
 }

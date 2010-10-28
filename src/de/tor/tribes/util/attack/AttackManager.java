@@ -470,10 +470,10 @@ public class AttackManager {
             listener.fireAttacksChangedEvent(plan);
         }
 
-        try {
+      /*  try {
             //if the attacks are read too fast on startup the MapRenderer might be 'null'
             MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ATTACK_LAYER);
         } catch (Exception e) {
-        }
+        }*/
     }
 }

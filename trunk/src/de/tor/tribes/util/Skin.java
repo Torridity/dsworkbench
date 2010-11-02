@@ -143,6 +143,7 @@ public class Skin {
         iFieldWidth = 10;
         iFieldHeight = 10;
         mTextures = new HashMap<Integer, BufferedImage>();
+        cache.clear();
         for (int i = 0; i < 25; i++) {
             //BufferedImage image = new BufferedImage(iFieldWidth, iFieldHeight, BufferedImage.TYPE_INT_ARGB);
             BufferedImage image = ImageUtils.createCompatibleBufferedImage(iFieldWidth, iFieldHeight, BufferedImage.BITMASK);
@@ -165,6 +166,7 @@ public class Skin {
         sSkinID = pSkinID;
         String path = BASE_PATH + "/" + pSkinID;
         mTextures = new HashMap<Integer, BufferedImage>();
+        cache.clear();
         try {
             mTextures.put(ID_DEFAULT_UNDERGROUND, ImageUtils.loadImage(new File(path + "/" + DEFAULT_UNDERGROUND)));
             iFieldWidth = mTextures.get(0).getWidth(null);
@@ -206,28 +208,44 @@ public class Skin {
                     throw new Exception("Textur " + id + " hat nicht die erwartete Größe " + iFieldWidth + "x" + iFieldHeight);
                 }
             }
-            //  mCache = new Hashtable<Double, Hashtable<Integer, Image>>();
-            //  mCache.put(1.0, mTextures);
-            //try loading units, ignore exceptions due to not all skins have all units
-            // ARMY_CAMP_IMAGE = ImageIO.read(new File(ARMY_CAMP));
         } catch (IOException ioe) {
             throw new Exception("Fehler beim laden des Grafikpaketes");
         } catch (Exception e) {
             throw new Exception("Grafikpaket ungültig (" + e.getMessage() + ")");
         }
-
     }
 
     public BufferedImage getOriginalSprite(int pID) {
         return mTextures.get(pID);
     }
 
-    public Image getImage(int pID, double pScaling) {
+    public BufferedImage getCachedImage(int pID, double pScaling) {
+        try {
+            HashMap<Double, BufferedImage> imageCache = cache.get(pID);
+            if (imageCache == null) {
+                imageCache = new HashMap<Double, BufferedImage>();
+                cache.put(pID, imageCache);
+            }
 
-        if (pID == ID_ARMY_CAMP) {
-            //return army camp
-            return ARMY_CAMP_IMAGE.getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_DEFAULT);
+            BufferedImage cached = imageCache.get(pScaling);
+            if (cached == null) {
+                Image scaled = mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_FAST);
+                GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+                GraphicsConfiguration gc = gd.getDefaultConfiguration();
+                cached = gc.createCompatibleImage(scaled.getWidth(null), scaled.getHeight(null), Transparency.BITMASK);
+                Graphics2D g = cached.createGraphics();
+                g.drawImage(scaled, 0, 0, null);
+                g.dispose();
+                imageCache.put(pScaling, cached);
+            }
+
+            return cached;
+        } catch (Exception e) {
+            return null;
         }
+    }
+
+    public Image getImage(int pID, double pScaling) {
         try {
             HashMap<Double, BufferedImage> imageCache = cache.get(pID);
             if (imageCache == null) {
@@ -276,23 +294,5 @@ public class Skin {
 
     public int getBasicFieldHeight() {
         return iFieldHeight;
-    }
-
-    public Point2D.Double getError() {
-        double z = MapPanel.getSingleton().getMapRenderer().getCurrentZoom();//DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-        //get real size of one scaled texture
-        double w = getBasicFieldWidth() / z;
-        double h = getBasicFieldHeight() / z;
-        //get int size of texture
-        /*int ws = getImage(Skin.ID_DEFAULT_UNDERGROUND, z).getWidth(null);
-        int hs = getImage(Skin.ID_DEFAULT_UNDERGROUND, z).getHeight(null);*/
-        double ws = GlobalOptions.getSkin().getCurrentFieldWidth();
-        double hs = GlobalOptions.getSkin().getCurrentFieldHeight();
-        //calculate error in width and height
-        double errorw = w / ws - 1;
-        errorw *= (ws < w) ? - 1 : 1;
-        double errorh = h / hs - 1;
-        errorw *= (hs < h) ? - 1 : 1;
-        return new Point2D.Double(errorw, errorh);
     }
 }

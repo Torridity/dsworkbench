@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
-import javax.imageio.ImageIO;
 import org.apache.log4j.Logger;
 
 /**
@@ -84,6 +83,7 @@ public class WorldDecorationHolder {
 
     private static void loadTextures() throws Exception {
         mTextures = new LinkedList<BufferedImage>();
+        cache.clear();
         try {
             mTextures.add(ImageUtils.loadImage(new File("graphics/world/gras1.png")));//0
             mTextures.add(ImageUtils.loadImage(new File("graphics/world/gras2.png")));
@@ -125,20 +125,46 @@ public class WorldDecorationHolder {
         }
     }
 
-
     public static BufferedImage getOriginalSprite(int pX, int pY) {
         if ((pX < 0) || (pY < 0) || (pX > 999) || (pY > 999)) {
             //return default texture
             return mTextures.get(0);
-
-
         }
         int decoId = decoration[pY * 1000 + pX];
-
-
         return mTextures.get(decoId);
+    }
 
+    public static BufferedImage getCachedImage(int pX, int pY, double pScaling) {
+        int decoId = 0;
+        if ((pX < 0) || (pY < 0) || (pX > 999) || (pY > 999)) {
+            //keep default ID
+        }
+        decoId = decoration[pY * 1000 + pX];
 
+        try {
+            HashMap<Double, BufferedImage> imageCache = cache.get(decoId);
+            if (imageCache == null) {
+                imageCache = new HashMap<Double, BufferedImage>();
+                cache.put(decoId, imageCache);
+            }
+
+            BufferedImage cached = imageCache.get(pScaling);
+            if (cached == null) {
+                int iFieldWidth = mTextures.get(decoId).getWidth();
+                int iFieldHeight = mTextures.get(decoId).getHeight();
+                Image scaled = mTextures.get(decoId).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_FAST);
+                GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+                GraphicsConfiguration gc = gd.getDefaultConfiguration();
+                cached = gc.createCompatibleImage(scaled.getWidth(null), scaled.getHeight(null), Transparency.BITMASK);
+                Graphics2D g = cached.createGraphics();
+                g.drawImage(scaled, 0, 0, null);
+                g.dispose();
+                imageCache.put(pScaling, cached);
+            }
+            return cached;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static Image getTexture(int pX, int pY, double pScale) {

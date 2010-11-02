@@ -257,7 +257,7 @@ public class MapRenderer extends Thread {
                         mBackBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.OPAQUE);
                         mBackBuffer.setAccelerationPriority(1);
                         mFrontBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.TRANSLUCENT);
-                        BufferedImage bi = ImageUtils.createCompatibleBufferedImage(3, 3, BufferedImage.TRANSLUCENT);
+                        BufferedImage bi = ImageUtils.createCompatibleBufferedImage(3, 3, Transparency.TRANSLUCENT);
                         Graphics2D g2 = bi.createGraphics();
                         ImageUtils.setupGraphics(g2);
                         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .5f));
@@ -285,7 +285,7 @@ public class MapRenderer extends Thread {
                             mBackBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.OPAQUE);
                             mBackBuffer.setAccelerationPriority(1);
                             mFrontBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.TRANSLUCENT);
-                            BufferedImage bi = ImageUtils.createCompatibleBufferedImage(3, 3, BufferedImage.TRANSLUCENT);
+                            BufferedImage bi = ImageUtils.createCompatibleBufferedImage(3, 3, Transparency.TRANSLUCENT);
                             Graphics2D g2 = bi.createGraphics();
                             ImageUtils.setupGraphics(g2);
                             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .5f));
@@ -332,13 +332,11 @@ public class MapRenderer extends Thread {
                             rend.setMarkOnTop(mapDrawn);
                             rend.performRendering(settings, g2d);
                         } else if (layer == 1) {
-                            // mapDrawn = true;
+                            //Here the mapDrawn flag is set.
+                            //If this flag is set before layer 0 was drawn, MarkOnTop mode is active.
+                            mapDrawn = true;
                         } else if (layer == 2) {
-                            //  if (mapDrawn) {
-                            //only draw layer if map is drawn
-                            //If not, this layer is hidden behind the map
                             rend5.performRendering(settings, g2d);
-                            //  }
                         } else if (layer == 3) {
                             //render other layers (active village, troop type)
                             // if (mapDrawn) {
@@ -349,47 +347,19 @@ public class MapRenderer extends Thread {
                             //  }
                             //  logger.info(" - DECO " + (System.currentTimeMillis() - s));
                         } else if (layer == 4) {
-                            //render troop density
-                            //  if (mapDrawn) {
-                            //only draw layer if map is drawn
-                            //If not, this layer is hidden behind the map
+                            //render troop density 
                             rend2.performRendering(settings, g2d);
-                            // }
-                            //  logger.info(" - TROOP " + (System.currentTimeMillis() - s));
                         } else if (layer == 5) {
-                            //  if (mapDrawn) {
-                            //only draw layer if map is drawn
-                            //If not, this layer is hidden behind the map
                             rend8.performRendering(settings, g2d);
-                            // }
                         } else if (layer == 6) {
-                            //attacks layer
-                            //if (mapDrawn) {
-                            //only draw layer if map is drawn
-                            //If not, this layer is hidden behind the map
                             rend6.performRendering(settings, g2d);
-                            // }
+
                         } else if (layer == 7) {
-                            //supports
-                            // if (mapDrawn) {
-                            //only draw layer if map is drawn
-                            //If not, this layer is hidden behind the map
                             rend7.performRendering(settings, g2d);
-                            //  }
                         } else if (layer == 8) {
-                            //forms
-                            // if (mapDrawn) {
-                            //only draw layer if map is drawn
-                            //If not, this layer is hidden behind the map
                             rend4.performRendering(settings, g2d);
-                            //  }
                         } else if (layer == 9) {
-                            //curches
-                            // if (mapDrawn) {
-                            //only draw layer if map is drawn
-                            //If not, this layer is hidden behind the map
                             rend3.performRendering(settings, g2d);
-                            //  }
                         }
                     }
                     //draw live layer -> always on top
@@ -402,9 +372,9 @@ public class MapRenderer extends Thread {
                     //render menu
                     MenuRenderer.getSingleton().renderMenu(g2d);
 
-                 /*   if (MapPanel.getSingleton().requiresAlphaBlending()) {
+                    if (MapPanel.getSingleton().requiresAlphaBlending()) {
                         g2d.drawImage(mFrontBuffer, 0, 0, null);
-                    }*/
+                    }
                     g2d.dispose();
 
                     MapPanel.getSingleton().updateComplete(villagePositions, mBackBuffer);
@@ -546,47 +516,6 @@ public class MapRenderer extends Thread {
         MapPanel.getSingleton().updateVirtualBounds(viewStartPoint);
     }
 
-    /* private RenderSettings getRenderSettings(Rectangle2D pVirtualBounds) {
-    RenderSettings settings = new RenderSettings();
-    settings.setZoom(MapPanel.getSingleton().getMapRenderer().getCurrentZoom());
-    settings.setFieldWidth(GlobalOptions.getSkin().getCurrentFieldWidth(settings.getZoom()));
-    settings.setFieldHeight(GlobalOptions.getSkin().getCurrentFieldHeight(settings.getZoom()));
-    double xMovement = 0;
-    double yMovement = 0;
-
-    if (getRenderedBounds() != null) {
-    xMovement = settings.getFieldWidth() * (getRenderedBounds().getX() - pVirtualBounds.getX());
-    yMovement = settings.getFieldHeight() * (getRenderedBounds().getY() - pVirtualBounds.getY());
-    }
-
-    double deltaX = 0;
-    if (xMovement != 0) {
-    deltaX = xMovement / (double) settings.getFieldWidth();
-    }
-    double deltaY = 0;
-    if (yMovement != 0) {
-    deltaY = yMovement / (double) settings.getFieldHeight();
-    }
-
-    int fieldsX = (deltaX > 0) ? (int) Math.round(deltaX) : (int) Math.floor(deltaX);
-    int fieldsY = (deltaY > 0) ? (int) Math.round(deltaY) : (int) Math.floor(deltaY);
-    fieldsX += (fieldsX >= 0) ? 1 : -1;
-    fieldsY += (fieldsY >= 0) ? 1 : -1;
-
-    settings.setColumnsToRender(fieldsX);
-    settings.setRowsToRender(fieldsY);
-    if (getRenderedBounds() != null) {
-    settings.setDeltaX(0 - ((pVirtualBounds.getX() - Math.floor(pVirtualBounds.getX())) * settings.getFieldWidth()));
-    settings.setDeltaY(0 - ((pVirtualBounds.getY() - Math.floor(pVirtualBounds.getY())) * settings.getFieldHeight()));
-    } else {
-    settings.setDeltaX(0);
-    settings.setDeltaY(0);
-    }
-
-
-    return settings;
-    }
-     */
     public double getCurrentZoom() {
         return currentZoom;
     }

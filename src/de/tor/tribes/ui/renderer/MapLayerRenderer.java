@@ -23,11 +23,13 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.VolatileImage;
 import java.util.HashMap;
 
 /**
@@ -80,7 +82,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         //  if (moved) {
         if (isFullRenderRequired()) {
             if (mLayer == null) {
-                mLayer = ImageUtils.createCompatibleBufferedImage(pSettings.getVisibleVillages().length * pSettings.getFieldWidth(), pSettings.getVisibleVillages()[0].length * pSettings.getFieldHeight(), BufferedImage.OPAQUE);
+                mLayer = ImageUtils.createCompatibleBufferedImage(pSettings.getVisibleVillages().length * pSettings.getFieldWidth(), pSettings.getVisibleVillages()[0].length * pSettings.getFieldHeight(), Transparency.OPAQUE);
             }
             g2d = (Graphics2D) mLayer.getGraphics();
             g2d.setClip(0, 0, mLayer.getWidth(), mLayer.getHeight());
@@ -92,14 +94,11 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             g2d.setClip(0, 0, mLayer.getWidth(), mLayer.getHeight());
             performCopy(pSettings, g2d);
         }
-        ImageUtils.setupGraphics(g2d);
+        //ImageUtils.setupGraphics(g2d);
 
-//        System.out.println("Prep " + (System.currentTimeMillis() - s));
         renderedSpriteBounds = new HashMap<Integer, Rectangle>();
         renderedMarkerBounds = new HashMap<Integer, Rectangle>();
 
-        //Set new bounds
-        //setRenderedBounds((Rectangle2D.Double) pVirtualBounds.clone());
         BufferedImage img = null;
         if (isMarkOnTop()) {
             img = renderVillageRows(pSettings);
@@ -122,6 +121,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             trans.setToTranslation(0, (pSettings.getVisibleVillages()[0].length + pSettings.getRowsToRender()) * pSettings.getFieldHeight());
         }
         g2d.drawRenderedImage(img, trans);
+        img.flush();
 
         if (isFullRenderRequired()) {
             //everything was rendered, skip col rendering
@@ -154,16 +154,11 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         g2d.dispose();
         //}
 
-        trans.setToTranslation((int) Math.floor(pSettings.getDeltaX()), (int) Math.floor(pSettings.getDeltaY()));
-        pG2d.drawRenderedImage(mLayer, trans);
-        pG2d.setTransform(AffineTransform.getTranslateInstance(0, 0));
+        pG2d.drawImage(mLayer, (int) Math.floor(pSettings.getDeltaX()), (int) Math.floor(pSettings.getDeltaY()), null);
         drawContinents(pSettings, pG2d);
-
-//        System.out.println("ContDraw " + (System.currentTimeMillis() - s));
-//        System.out.println("-----------");
         pSettings.setLayerVisible(true);
+        img.flush();
     }
-    
     boolean moved = false;
 
     public boolean hasMoved() {
@@ -418,17 +413,17 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
     }
 
     private void renderVillageField(Village v,
-            int row,
-            int col,
-            int globalRow,
-            int globalCol,
-            int pFieldWidth,
-            int pFieldHeight,
-            double zoom,
-            boolean useDecoration,
-            boolean showBarbarian,
-            boolean markedOnly,
-            Graphics2D g2d) {
+                                    int row,
+                                    int col,
+                                    int globalRow,
+                                    int globalCol,
+                                    int pFieldWidth,
+                                    int pFieldHeight,
+                                    double zoom,
+                                    boolean useDecoration,
+                                    boolean showBarbarian,
+                                    boolean markedOnly,
+                                    Graphics2D g2d) {
         Rectangle copyRect = null;
         int textureId = -1;
         BufferedImage sprite = null;
@@ -445,7 +440,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             }
             copyRect = renderedSpriteBounds.get(textureId);
             if (copyRect == null) {
-                sprite = GlobalOptions.getSkin().getOriginalSprite(textureId);
+                sprite = GlobalOptions.getSkin().getCachedImage(textureId, zoom);
             }
         } else {
             if (v != null) {
@@ -454,33 +449,31 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             if (useDecoration) {
                 textureId = WorldDecorationHolder.getTextureId(globalCol, globalRow) + 100;
             } else {
-                textureId = Skin.ID_DEFAULT_UNDERGROUND + 100;
+                textureId = Skin.ID_DEFAULT_UNDERGROUND;
             }
             copyRect = renderedSpriteBounds.get(textureId);
             if (copyRect == null && useDecoration) {
-                sprite = WorldDecorationHolder.getOriginalSprite(globalCol, globalRow);
+                //sprite = WorldDecorationHolder.getOriginalSprite(globalCol, globalRow);
+                sprite = WorldDecorationHolder.getCachedImage(globalCol, globalRow, zoom);
             } else if (copyRect == null && !useDecoration) {
-                sprite = GlobalOptions.getSkin().getOriginalSprite(Skin.ID_DEFAULT_UNDERGROUND);
+                sprite = GlobalOptions.getSkin().getCachedImage(textureId, zoom);
             }
         }
 
         //render sprite or copy area if sprite is null
+        int posX = col * pFieldWidth;
+        int posY = row * pFieldHeight;
         if (sprite != null) {
             //render sprite
-            AffineTransform t = AffineTransform.getTranslateInstance(col * pFieldWidth, row * pFieldHeight);
-            //System.out.println("Sc " + (1 / zoom) + " -> " + pFieldWidth);
-            t.scale(1 / zoom, 1 / zoom);
             if (isMarkOnTop()) {
                 g2d.setColor(Color.BLACK);
-                g2d.fillRect(col * pFieldWidth, row * pFieldHeight, pFieldWidth, pFieldHeight);
+                g2d.fillRect(posX, posY, pFieldWidth, pFieldHeight);
             }
-            g2d.drawRenderedImage(sprite, t);
-
-            //g2d.drawImage(sprite, col * pFieldWidth, row * pFieldHeight, pFieldWidth, pFieldHeight, null, null);//mage(sprite, t, null);
-            renderedSpriteBounds.put(textureId, new Rectangle(col * pFieldWidth, row * pFieldHeight, pFieldWidth, pFieldHeight));
+            g2d.drawImage(sprite, posX, posY, null);
+            renderedSpriteBounds.put(textureId, new Rectangle(posX, posY, pFieldWidth, pFieldHeight));
         } else if (copyRect != null) {
             //copy from copy rect
-            g2d.copyArea(copyRect.x, copyRect.y, copyRect.width, copyRect.height, col * pFieldWidth - copyRect.x, row * pFieldHeight - copyRect.y);
+            g2d.copyArea(copyRect.x, copyRect.y, copyRect.width, copyRect.height, posX - copyRect.x, posY - copyRect.y);
         }
     }
 
@@ -521,11 +514,10 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             //render sprite
             AffineTransform t = AffineTransform.getTranslateInstance(col * pFieldWidth, row * pFieldHeight);
             t.scale(1.0 / zoom, 1.0 / zoom);
-            //  System.err.println("RENDER");
             g2d.drawRenderedImage(sprite, t);
             renderedMarkerBounds.put(tribeId, new Rectangle(col * pFieldWidth, row * pFieldHeight, pFieldWidth, pFieldHeight));
+            sprite.flush();
         } else if (copyRect != null) {
-            // System.err.println("COPY");
             g2d.copyArea(copyRect.x, copyRect.y, copyRect.width, copyRect.height, col * pFieldWidth - copyRect.x, row * pFieldHeight - copyRect.y);
         }
     }
@@ -543,7 +535,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
     private BufferedImage getMarker(Village pVillage) {
         int w = GlobalOptions.getSkin().getBasicFieldWidth();
         int h = GlobalOptions.getSkin().getBasicFieldHeight();
-        BufferedImage image = ImageUtils.createCompatibleBufferedImage(w, h, BufferedImage.OPAQUE);
+        BufferedImage image = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.OPAQUE);
         Color markerColor = null;
         Marker tribeMarker = null;
         Marker allyMarker = null;

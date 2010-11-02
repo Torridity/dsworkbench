@@ -5,7 +5,7 @@ import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.geom.Rectangle2D;
 
-class RenderSettings {
+public class RenderSettings {
 
     private int columnsToRender = 0;
     private int rowsToRender = 0;

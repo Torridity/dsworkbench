@@ -1737,23 +1737,17 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     }//GEN-LAST:event_fireVillagePopupActionEvent
 
     private void fireResizeEvent(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_fireResizeEvent
+        //  mBuffer = null;
+        //  getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
         // Dimension dim = getSize();
         //  mBuffer = mMapRenderer.getVol(dim.width, dim.height);
         // mBuffer = mMapRenderer.getBufferedImage(dim.width, dim.height, BufferedImage.OPAQUE);
     }//GEN-LAST:event_fireResizeEvent
     long s = 0;
 
-    @Override
-    protected void paintBorder(Graphics g) {
-    }
-
-    @Override
-    protected void paintChildren(Graphics g) {
-    }
-
     public void paintComponent(Graphics g) {
         /**Draw buffer into panel*/
-       // System.out.println("P " + (System.currentTimeMillis() - s));
+        // System.out.println("P " + (System.currentTimeMillis() - s));
         s = System.currentTimeMillis();
         try {
             //calculate move direction if mouse is dragged outside the map
@@ -1815,8 +1809,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             mMapRenderer = new MapRenderer();
             mMapRenderer.start();
         }
-       /* if (getMapRenderer().isRedrawScheduled()) {
-            return;
+        /* if (getMapRenderer().isRedrawScheduled()) {
+        return;
         }*/
         positionUpdate = true;
         getMapRenderer().initiateRedraw(MapRenderer.MAP_LAYER);
@@ -1927,7 +1921,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     /**Update operation perfomed by the RepaintThread was completed*/
     public void updateComplete(final HashMap<Village, Rectangle> pPositions, final BufferedImage pBuffer) {
         Graphics2D g2d = null;
-        if (mBuffer == null) {
+        if (mBuffer == null || mBuffer.getWidth() != pBuffer.getWidth() || mBuffer.getHeight() != pBuffer.getHeight()) {
             mBuffer = ImageUtils.createCompatibleBufferedImage(pBuffer.getWidth(), pBuffer.getHeight(), BufferedImage.OPAQUE);
             g2d = mBuffer.createGraphics();
         } else {

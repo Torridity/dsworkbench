@@ -2495,6 +2495,7 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
             }
         }
         MinimapPanel.getSingleton().setSelection(xPos, yPos, (int) Math.rint(w), (int) Math.rint(h));
+        MapPanel.getSingleton().getMapRenderer().fireZoomChangedEvent();
         MapPanel.getSingleton().updateMapPosition(xPos, yPos);
     }
 
@@ -2509,7 +2510,7 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
         int yPos = Integer.parseInt(jCenterY.getText());
 
         if (ServerSettings.getSingleton().getCoordType() != 2) {
-            int[] hier = DSCalculator.hierarchicalToXy((int) xPos, (int) yPos, 12);
+            int[] hier = DSCalculator.hierarchicalToXy(xPos, yPos, 12);
             if (hier != null) {
                 xPos = hier[0];
                 yPos = hier[1];
@@ -2517,6 +2518,7 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
         }
 
         MinimapPanel.getSingleton().setSelection(xPos, yPos, (int) Math.rint(w), (int) Math.rint(h));
+        MapPanel.getSingleton().getMapRenderer().fireZoomChangedEvent();
         MapPanel.getSingleton().updateMapPosition(xPos, yPos);
     }
 

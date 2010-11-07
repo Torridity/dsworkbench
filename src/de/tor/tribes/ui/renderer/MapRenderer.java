@@ -187,9 +187,9 @@ public class MapRenderer extends Thread {
      * @param pType
      */
     public synchronized void initiateRedraw(int pType) {
-        if (mapRedrawRequired) {
-            return;
-        }
+        /* if (mapRedrawRequired) {
+        return;
+        }*/
 
         if (pType == TAG_MARKER_LAYER) {
             rend5.reset();
@@ -216,8 +216,19 @@ public class MapRenderer extends Thread {
         }
         if (pType == MAP_LAYER) {
             //   System.out.println("MAP");
+           /* double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
+            if (zoom != currentZoom) {
+            rend.reset();
+            rend5.reset();
+            }*/
             mapRedrawRequired = true;
         }
+    }
+
+    public void fireZoomChangedEvent() {
+        rend.reset();
+        rend5.reset();
+        initiateRedraw(ALL_LAYERS);
     }
 
     public synchronized boolean isRedrawScheduled() {
@@ -303,6 +314,8 @@ public class MapRenderer extends Thread {
                             g2d = (Graphics2D) mBackBuffer.getGraphics();
                             ImageUtils.setupGraphics(g2d);
                             //set redraw required flag if size has changed
+
+                            initiateRedraw(ALL_LAYERS);
                             mapRedrawRequired = true;
                         } else {
                             //only get graphics
@@ -371,10 +384,10 @@ public class MapRenderer extends Thread {
                     }
                     //render menu
                     MenuRenderer.getSingleton().renderMenu(g2d);
-
+                    /*
                     if (MapPanel.getSingleton().requiresAlphaBlending()) {
-                        g2d.drawImage(mFrontBuffer, 0, 0, null);
-                    }
+                    g2d.drawImage(mFrontBuffer, 0, 0, null);
+                    }*/
                     g2d.dispose();
 
                     MapPanel.getSingleton().updateComplete(villagePositions, mBackBuffer);
@@ -427,6 +440,7 @@ public class MapRenderer extends Thread {
 
     /**Extract the visible villages (only needed on full repaint)*/
     private void calculateVisibleVillages() {
+        currentZoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
         dCenterX = MapPanel.getSingleton().getCurrentPosition().x;
         dCenterY = MapPanel.getSingleton().getCurrentPosition().y;
         villagePositions = new HashMap<Village, Rectangle>();
@@ -437,14 +451,6 @@ public class MapRenderer extends Thread {
             return;
         }
 
-        //get number of drawn villages
-        double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-        if (zoom != currentZoom) {
-            System.out.println("ZOOM reset");
-            rend.reset();
-            rend5.reset();
-        }
-        currentZoom = zoom;
         currentFieldWidth = GlobalOptions.getSkin().getCurrentFieldWidth(currentZoom);
         currentFieldHeight = GlobalOptions.getSkin().getCurrentFieldHeight(currentZoom);
         iVillagesX = (int) Math.ceil((double) MapPanel.getSingleton().getWidth() / currentFieldWidth);
@@ -750,8 +756,6 @@ public class MapRenderer extends Thread {
                         type = v.getGraphicsType();
                         //store village rectangle
                         villagePositions.put(v, new Rectangle(xp, yp, width, height));
-                    } else if (drawVillage && isArmyCamp) {
-                        type = Skin.ID_ARMY_CAMP;
                     } else {
                         type = Skin.ID_DEFAULT_UNDERGROUND;
                         mVisibleVillages[i][j] = null;

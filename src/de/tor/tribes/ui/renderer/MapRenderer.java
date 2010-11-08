@@ -208,7 +208,7 @@ public class MapRenderer extends Thread {
         }
 
         if (pType == ALL_LAYERS) {
-            //  System.out.println("ALL");
+            System.out.println("ALL");
             rend.reset();
             rend5.reset();
             rend8.reset();
@@ -216,19 +216,8 @@ public class MapRenderer extends Thread {
         }
         if (pType == MAP_LAYER) {
             //   System.out.println("MAP");
-           /* double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-            if (zoom != currentZoom) {
-            rend.reset();
-            rend5.reset();
-            }*/
             mapRedrawRequired = true;
         }
-    }
-
-    public void fireZoomChangedEvent() {
-        rend.reset();
-        rend5.reset();
-        initiateRedraw(ALL_LAYERS);
     }
 
     public synchronized boolean isRedrawScheduled() {
@@ -314,7 +303,6 @@ public class MapRenderer extends Thread {
                             g2d = (Graphics2D) mBackBuffer.getGraphics();
                             ImageUtils.setupGraphics(g2d);
                             //set redraw required flag if size has changed
-
                             initiateRedraw(ALL_LAYERS);
                             mapRedrawRequired = true;
                         } else {
@@ -328,10 +316,10 @@ public class MapRenderer extends Thread {
                     //check if redraw required
                     long s = System.currentTimeMillis();
                     RenderSettings settings = new RenderSettings(MapPanel.getSingleton().getVirtualBounds());
+                    currentZoom = settings.getZoom();
                     if (mapRedrawRequired) {
                         //complete redraw is required
                         calculateVisibleVillages();
-
                         if (viewStartPoint == null) {
                             throw new Exception("View position is 'null', skip redraw");
                         }
@@ -440,7 +428,6 @@ public class MapRenderer extends Thread {
 
     /**Extract the visible villages (only needed on full repaint)*/
     private void calculateVisibleVillages() {
-        currentZoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
         dCenterX = MapPanel.getSingleton().getCurrentPosition().x;
         dCenterY = MapPanel.getSingleton().getCurrentPosition().y;
         villagePositions = new HashMap<Village, Rectangle>();
@@ -458,6 +445,7 @@ public class MapRenderer extends Thread {
         //add small buffer
         iVillagesX++;
         iVillagesY++;
+
         //village start
         int xStartVillage = (int) Math.floor(dCenterX - iVillagesX / 2.0);
         int yStartVillage = (int) Math.floor(dCenterY - iVillagesY / 2.0);

@@ -84,8 +84,8 @@ import javax.swing.JPanel;
  * @author Charon
  */
 public class MapPanel extends JPanel implements DragGestureListener, // For recognizing the start of drags
-        DragSourceListener, // For processing drag source events
-        DropTargetListener // For processing drop target events
+                                                DragSourceListener, // For processing drag source events
+                                                DropTargetListener // For processing drop target events
 {
 // <editor-fold defaultstate="collapsed" desc=" Member variables ">
 
@@ -1800,7 +1800,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     }
 
     /**Update map to new position -> needs fully update*/
-    protected synchronized void updateMapPosition(double pX, double pY) {
+    protected synchronized void updateMapPosition(double pX, double pY, boolean pZoomed) {
         dCenterX = pX;
         dCenterY = pY;
 
@@ -1813,7 +1813,16 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         return;
         }*/
         positionUpdate = true;
-        getMapRenderer().initiateRedraw(MapRenderer.MAP_LAYER);
+        if (pZoomed) {
+            getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
+        } else {
+            getMapRenderer().initiateRedraw(MapRenderer.MAP_LAYER);
+        }
+    }
+
+    /**Update map to new position -> needs fully update*/
+    protected synchronized void updateMapPosition(double pX, double pY) {
+        updateMapPosition(pX, pY, false);
     }
 
     public void updateVirtualBounds(Point2D.Double pViewStart) {
@@ -2018,20 +2027,15 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         if (v == null) {
             return;
         }
-        System.out.println("Drag " + v);
         Cursor c = null;
         if (!markedVillages.isEmpty()) {
             c = ImageManager.createVillageDragCursor(markedVillages.size());
             setCursor(c);
-            System.out.println("START");
             dge.startDrag(c, new VillageTransferable(markedVillages), this);
-            System.out.println("RUNN");
         } else {
             c = ImageManager.createVillageDragCursor(1);
             setCursor(c);
-            System.out.println("Start2");
             dge.startDrag(c, new VillageTransferable(v), this);
-            System.out.println("RUNN2");
         }
     }
 
@@ -2077,12 +2081,9 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
     @Override
     public void drop(DropTargetDropEvent dtde) {
-        System.out.println("Drop");
         if (dtde.isDataFlavorSupported(VillageTransferable.villageDataFlavor) || dtde.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-            System.out.println("ACC");
             dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
         } else {
-            System.out.println("REJ");
             dtde.rejectDrop();
             return;
         }
@@ -2092,14 +2093,12 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         setCurrentCursor(getCurrentCursor());
         try {
             v = (List<Village>) t.getTransferData(VillageTransferable.villageDataFlavor);
-            System.out.println("Vill " + v);
             Village target = getVillageAtMousePos();
             if (target == null) {
                 return;
             }
             attackAddFrame.setupAttack(v, target, DataHolder.getSingleton().getUnitID("Ramme"), null);
         } catch (Exception ex) {
-            System.out.println("ERROR!");
             logger.error("Failed to drop villages", ex);
         }
     }

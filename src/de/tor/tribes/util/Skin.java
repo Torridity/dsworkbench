@@ -279,11 +279,11 @@ public class Skin {
     }
 
     public int getCurrentFieldWidth() {
-        return (int) (iFieldWidth / MapPanel.getSingleton().getMapRenderer().getCurrentZoom());//DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+        return (int) (iFieldWidth / MapPanel.getSingleton().getMapRenderer().getCurrentZoom());
     }
 
     public int getCurrentFieldHeight() {
-        return (int) (iFieldHeight / MapPanel.getSingleton().getMapRenderer().getCurrentZoom());//DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+        return (int) (iFieldHeight / MapPanel.getSingleton().getMapRenderer().getCurrentZoom());
     }
 
     public int getBasicFieldWidth() {

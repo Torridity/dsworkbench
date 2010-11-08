@@ -53,14 +53,13 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
     @Override
     public void performRendering(RenderSettings pSettings, Graphics2D pG2d) {
         if (shouldReset) {
-            System.out.println("FULL");
             setFullRenderRequired(true);
-            moved = true;
             shouldReset = false;
+            mapPos = null;
         }
         Graphics2D g2d = null;
 
-        if (mapPos != null && mLayer != null) {
+        if (mapPos != null && mLayer != null && !isFullRenderRequired()) {
             Point newMapPos = new Point((int) Math.floor(pSettings.getMapBounds().getX()), (int) Math.floor(pSettings.getMapBounds().getY()));
             if (mapPos.distance(newMapPos) != 0) {
                 moved = true;
@@ -76,8 +75,10 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         if (mapPos == null) {
             mapPos = new Point((int) Math.floor(pSettings.getMapBounds().getX()), (int) Math.floor(pSettings.getMapBounds().getY()));
         }
-        if (moved) {
+
+        if (moved || isFullRenderRequired()) {
             if (isFullRenderRequired()) {
+                System.out.println("FullRender");
                 if (mLayer == null) {
                     try {
                         mLayer = ImageUtils.createCompatibleBufferedImage(pSettings.getVisibleVillages().length * pSettings.getFieldWidth(), pSettings.getVisibleVillages()[0].length * pSettings.getFieldHeight(), Transparency.OPAQUE);
@@ -87,6 +88,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                     }
                 }
                 g2d = (Graphics2D) mLayer.getGraphics();
+                g2d.clearRect(0, 0, mLayer.getWidth(), mLayer.getHeight());
                 g2d.setClip(0, 0, mLayer.getWidth(), mLayer.getHeight());
                 pSettings.setRowsToRender(pSettings.getVisibleVillages()[0].length);
                 mapPos = new Point((int) Math.floor(pSettings.getMapBounds().getX()), (int) Math.floor(pSettings.getMapBounds().getY()));
@@ -416,17 +418,17 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
     }
 
     private void renderVillageField(Village v,
-            int row,
-            int col,
-            int globalRow,
-            int globalCol,
-            int pFieldWidth,
-            int pFieldHeight,
-            double zoom,
-            boolean useDecoration,
-            boolean showBarbarian,
-            boolean markedOnly,
-            Graphics2D g2d) {
+                                    int row,
+                                    int col,
+                                    int globalRow,
+                                    int globalCol,
+                                    int pFieldWidth,
+                                    int pFieldHeight,
+                                    double zoom,
+                                    boolean useDecoration,
+                                    boolean showBarbarian,
+                                    boolean markedOnly,
+                                    Graphics2D g2d) {
         Rectangle copyRect = null;
         int textureId = -1;
         BufferedImage sprite = null;

@@ -1,6 +1,7 @@
 package de.tor.tribes.ui.renderer;
 
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.geom.Rectangle2D;
@@ -21,9 +22,10 @@ public class RenderSettings {
     private boolean layerVisible = false;
 
     protected RenderSettings(Rectangle2D pCurrentMapBounds) {
-        setZoom(MapPanel.getSingleton().getMapRenderer().getCurrentZoom());
-        setFieldWidth(GlobalOptions.getSkin().getCurrentFieldWidth(getZoom()));
-        setFieldHeight(GlobalOptions.getSkin().getCurrentFieldHeight(getZoom()));
+        double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
+        setZoom(zoom);
+        setFieldWidth(GlobalOptions.getSkin().getCurrentFieldWidth(zoom));
+        setFieldHeight(GlobalOptions.getSkin().getCurrentFieldHeight(zoom));
         setMapBounds(pCurrentMapBounds);
     }
 

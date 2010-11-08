@@ -791,8 +791,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             //only if set to visible
             MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
 
-            double w = (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getCurrentFieldWidth();
-            double h = (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getCurrentFieldHeight();
+            double w = (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getCurrentFieldWidth(dZoomFactor);
+            double h = (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getCurrentFieldHeight(dZoomFactor);
+
             MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
 
             // <editor-fold defaultstate="collapsed" desc=" Check frames and toolbar visibility ">
@@ -2495,8 +2496,7 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
             }
         }
         MinimapPanel.getSingleton().setSelection(xPos, yPos, (int) Math.rint(w), (int) Math.rint(h));
-        MapPanel.getSingleton().getMapRenderer().fireZoomChangedEvent();
-        MapPanel.getSingleton().updateMapPosition(xPos, yPos);
+        MapPanel.getSingleton().updateMapPosition(xPos, yPos, true);
     }
 
     protected synchronized void zoomOut() {
@@ -2518,8 +2518,7 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
         }
 
         MinimapPanel.getSingleton().setSelection(xPos, yPos, (int) Math.rint(w), (int) Math.rint(h));
-        MapPanel.getSingleton().getMapRenderer().fireZoomChangedEvent();
-        MapPanel.getSingleton().updateMapPosition(xPos, yPos);
+        MapPanel.getSingleton().updateMapPosition(xPos, yPos, true);
     }
 
     /**Change active player village*/

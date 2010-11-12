@@ -44,7 +44,6 @@ import org.apache.log4j.Logger;
 import de.tor.tribes.ui.renderer.MenuRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MapShotListener;
 import de.tor.tribes.util.ServerSettings;
@@ -75,9 +74,12 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.StringTokenizer;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 /**
  * @TODO (DIFF) Transfer off to A*Star now uses own troops instead of all in village
@@ -145,10 +147,9 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         mToolChangeListeners = new LinkedList<ToolChangeListener>();
         mMarkerAddFrame = new MarkerAddFrame();
         setCursor(ImageManager.getCursor(iCurrentCursor));
-        setOpaque(true);
+        //setOpaque(true);
         setIgnoreRepaint(true);
-        setDoubleBuffered(false);
-
+        setDoubleBuffered(true);
         attackAddFrame = new AttackAddFrame();
         mVirtualBounds = new Rectangle2D.Double(0.0, 0.0, 0.0, 0.0);
         jCopyOwn.setSelected(true);
@@ -159,13 +160,18 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         // mVillageSelectionListener = DSWorkbenchSelectionFrame.getSingleton();
         markedVillages = new LinkedList<Village>();
         initListeners();
-        /*new Timer("Rep", true).schedule(new TimerTask() {
+        new Timer("Rep", true).schedule(new TimerTask() {
 
-        @Override
-        public void run() {
-        repaint();
-        }
-        }, 0, 10);*/
+            @Override
+            public void run() {
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    public void run() {
+                        repaint();
+                    }
+                });
+            }
+        }, 0, 30);
     }
 
     /* boolean INIT = false;
@@ -1790,9 +1796,11 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 fireScrollEvents(sx, sy);
             }
             //draw off-screen image of map
-            g.drawImage(mBuffer, 0, 0, null);
-            Toolkit.getDefaultToolkit().sync();
-            g.dispose();
+            mMapRenderer.renderAll((Graphics2D) g);
+
+            //g.drawImage(mBuffer, 0, 0, null);
+            //  Toolkit.getDefaultToolkit().sync();
+            // g.dispose();
             //   fireScrollEvents(-1, 0);
         } catch (Exception e) {
             logger.error("Failed to paint", e);
@@ -1929,19 +1937,19 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
     /**Update operation perfomed by the RepaintThread was completed*/
     public void updateComplete(final HashMap<Village, Rectangle> pPositions, final BufferedImage pBuffer) {
-        Graphics2D g2d = null;
+        /*   Graphics2D g2d = null;
         if (mBuffer == null || mBuffer.getWidth() != pBuffer.getWidth() || mBuffer.getHeight() != pBuffer.getHeight()) {
-            mBuffer = ImageUtils.createCompatibleBufferedImage(pBuffer.getWidth(), pBuffer.getHeight(), BufferedImage.OPAQUE);
-            g2d = mBuffer.createGraphics();
+        mBuffer = ImageUtils.createCompatibleBufferedImage(pBuffer.getWidth(), pBuffer.getHeight(), BufferedImage.OPAQUE);
+        g2d = mBuffer.createGraphics();
         } else {
-            g2d = (Graphics2D) mBuffer.getGraphics();
-            //g2d.clearRect(0, 0, getWidth(), getHeight());
+        g2d = (Graphics2D) mBuffer.getGraphics();
+        //g2d.clearRect(0, 0, getWidth(), getHeight());
         }
         mBuffer.setAccelerationPriority(1.0f);
         g2d.setClip(0, 0, mBuffer.getWidth(), mBuffer.getHeight());
         g2d.drawImage(pBuffer, 0, 0, null);
         g2d.dispose();
-
+         */
         mVillagePositions = (HashMap<Village, Rectangle>) pPositions.clone();
         if (bMapSHotPlaned) {
             saveMapShot(mBuffer);
@@ -1950,7 +1958,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             DSWorkbenchFormFrame.getSingleton().updateFormList();
         }
         positionUpdate = false;
-        repaint();
+        //repaint();
     }
 
     public boolean requiresAlphaBlending() {

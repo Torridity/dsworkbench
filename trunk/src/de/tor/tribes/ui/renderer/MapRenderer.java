@@ -232,11 +232,153 @@ public class MapRenderer extends Thread {
     private SupportLayerRenderer rend7 = new SupportLayerRenderer();
     private NoteLayerRenderer rend8 = new NoteLayerRenderer();
 
+    public void renderAll(Graphics2D pG2d) {
+        try {
+            int w = MapPanel.getSingleton().getWidth();
+            int h = MapPanel.getSingleton().getHeight();
+            //Graphics2D g2d = (Graphics2D) MapPanel.getSingleton().getStrategy().getDrawGraphics();
+            if ((w != 0) && (h != 0)) {
+                Graphics2D g2d = null;
+                if (mBackBuffer == null) {
+                    //create main buffer during first iteration
+                    mBackBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.OPAQUE);
+                    mBackBuffer.setAccelerationPriority(1);
+                    mFrontBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.TRANSLUCENT);
+                    BufferedImage bi = ImageUtils.createCompatibleBufferedImage(3, 3, Transparency.TRANSLUCENT);
+                    Graphics2D g2 = bi.createGraphics();
+                    ImageUtils.setupGraphics(g2);
+                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .5f));
+                    g2.setColor(Color.WHITE);
+                    g2.fillRect(0, 0, 3, 3);
+                    g2.setColor(new Color(168, 168, 168));
+                    g2.drawLine(0, 2, 2, 0);
+
+                    g2.dispose();
+                    TexturePaint tp = new TexturePaint(bi, new Rectangle2D.Double(0, 0, 3, 3));
+                    Graphics2D g2d1 = mFrontBuffer.createGraphics();
+                    ImageUtils.setupGraphics(g2d1);
+                    g2d1.setPaint(tp);
+                    g2d1.fillRect(0, 0, w, h);
+                    g2d1.dispose();
+                    g2d = (Graphics2D) mBackBuffer.getGraphics();
+                    ImageUtils.setupGraphics(g2d);
+                    //set redraw required flag if nothin was drawn yet
+                    mapRedrawRequired = true;
+                } else {
+                    //check if image size is still valid
+                    //if not re-create main buffer
+                    if (mBackBuffer.getWidth(null) != w || mBackBuffer.getHeight(null) != h) {
+                        //map panel has resized
+                        mBackBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.OPAQUE);
+                        mBackBuffer.setAccelerationPriority(1);
+                        mFrontBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.TRANSLUCENT);
+                        BufferedImage bi = ImageUtils.createCompatibleBufferedImage(3, 3, Transparency.TRANSLUCENT);
+                        Graphics2D g2 = bi.createGraphics();
+                        ImageUtils.setupGraphics(g2);
+                        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .5f));
+                        g2.setColor(Color.WHITE);
+                        g2.fillRect(0, 0, 3, 3);
+                        g2.setColor(new Color(107, 107, 107));
+                        g2.drawLine(0, 2, 2, 0);
+                        g2.dispose();
+                        TexturePaint tp = new TexturePaint(bi, new Rectangle2D.Double(0, 0, 3, 3));
+                        Graphics2D g2d1 = mFrontBuffer.createGraphics();
+                        ImageUtils.setupGraphics(g2d1);
+                        g2d1.setPaint(tp);
+                        g2d1.fillRect(0, 0, w, h);
+                        g2d1.dispose();
+                        g2d = (Graphics2D) mBackBuffer.getGraphics();
+                        ImageUtils.setupGraphics(g2d);
+                        //set redraw required flag if size has changed
+                        initiateRedraw(ALL_LAYERS);
+                        mapRedrawRequired = true;
+                    } else {
+                        //only get graphics
+                        g2d = (Graphics2D) mBackBuffer.getGraphics();
+                    }
+                }
+                g2d.setClip(0, 0, w, h);
+                //get currently selected user village for marking -> one call reduces sync effort
+                currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
+                //check if redraw required
+                RenderSettings settings = new RenderSettings(MapPanel.getSingleton().getVirtualBounds());
+                currentZoom = settings.getZoom();
+                if (mapRedrawRequired) {
+                    //complete redraw is required
+                    calculateVisibleVillages();
+                    if (viewStartPoint == null) {
+                        throw new Exception("View position is 'null', skip redraw");
+                    }
+                    mapRedrawRequired = false;
+                }
+                settings.setVisibleVillages(mVisibleVillages);
+                settings.calculateSettings(MapPanel.getSingleton().getVirtualBounds());
+                boolean mapDrawn = false;
+                for (Integer layer : drawOrder) {
+                    if (layer == 0) {
+                        rend.setMarkOnTop(mapDrawn);
+                        rend.performRendering(settings, g2d);
+                    } else if (layer == 1) {
+                        //Here the mapDrawn flag is set.
+                        //If this flag is set before layer 0 was drawn, MarkOnTop mode is active.
+                        mapDrawn = true;
+                    } else if (layer == 2) {
+                        rend5.performRendering(settings, g2d);
+                    } else if (layer == 3) {
+                        //render other layers (active village, troop type)
+                        // if (mapDrawn) {
+                        //only draw layer if map is drawn
+                        //If not, this layer is hidden behind the map
+                        //  renderDecoration(g2d);
+                        // System.out.println("DTD " + (System.currentTimeMillis() - s));
+                        //  }
+                        //  logger.info(" - DECO " + (System.currentTimeMillis() - s));
+                    } else if (layer == 4) {
+                        //render troop density
+                        rend2.performRendering(settings, g2d);
+                    } else if (layer == 5) {
+                        rend8.performRendering(settings, g2d);
+                    } else if (layer == 6) {
+                        rend6.performRendering(settings, g2d);
+                    } else if (layer == 7) {
+                        rend7.performRendering(settings, g2d);
+                    } else if (layer == 8) {
+                        rend4.performRendering(settings, g2d);
+                    } else if (layer == 9) {
+                        rend3.performRendering(settings, g2d);
+                    }
+                }
+                //draw live layer -> always on top
+                renderLiveLayer(g2d);
+                //render selection
+                de.tor.tribes.types.Rectangle selection = MapPanel.getSingleton().getSelectionRect();
+                if (selection != null) {
+                    selection.renderForm(g2d);
+                }
+                //render menu
+                MenuRenderer.getSingleton().renderMenu(g2d);
+                /*
+                if (MapPanel.getSingleton().requiresAlphaBlending()) {
+                g2d.drawImage(mFrontBuffer, 0, 0, null);
+                }*/
+                g2d.dispose();
+
+                pG2d.drawImage(mBackBuffer, 0, 0, null);
+                MapPanel.getSingleton().updateComplete(villagePositions, mBackBuffer);
+            }
+        } catch (Throwable t) {
+            lRenderedLast = 0;
+            logger.error("Redrawing map failed", t);
+        }
+    }
+
     /**Render loop*/
     @Override
     public void run() {
         logger.debug("Entering render loop");
-
+        if (true) {
+            return;
+        }
         while (true) {
             long s1 = System.currentTimeMillis();
             //get global max. fps
@@ -354,7 +496,6 @@ public class MapRenderer extends Thread {
                             rend8.performRendering(settings, g2d);
                         } else if (layer == 6) {
                             rend6.performRendering(settings, g2d);
-
                         } else if (layer == 7) {
                             rend7.performRendering(settings, g2d);
                         } else if (layer == 8) {
@@ -385,6 +526,7 @@ public class MapRenderer extends Thread {
                 lRenderedLast = 0;
                 logger.error("Redrawing map failed", t);
             }
+            System.out.println("RenRun: " + (System.currentTimeMillis() - s1));
             yield();
 
             //FPS steering

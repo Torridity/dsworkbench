@@ -3082,17 +3082,17 @@ private void fireSendAttackToReTimeToolEvent(java.awt.event.MouseEvent evt) {//G
         jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jAttackTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
-        AlternatingColorCellRenderer rend = new AlternatingColorCellRenderer();
+        //AlternatingColorCellRenderer rend = new AlternatingColorCellRenderer();
         // jAttackTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
-        jAttackTable.setDefaultRenderer(Village.class, rend);
+        jAttackTable.setDefaultRenderer(Village.class, new AlternatingColorCellRenderer());
         jAttackTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
         // jAttackTable.setDefaultRenderer(Ally.class, new AllyCellRenderer());
         // jAttackTable.setDefaultRenderer(Tribe.class, new TribeCellRenderer());
-        jAttackTable.setDefaultRenderer(Ally.class, rend);
-        jAttackTable.setDefaultRenderer(Tribe.class, rend);
+        jAttackTable.setDefaultRenderer(Ally.class, new AlternatingColorCellRenderer());
+        jAttackTable.setDefaultRenderer(Tribe.class, new AlternatingColorCellRenderer());
         jAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
         //  jAttackTable.setDefaultRenderer(String.class, new AlternatingColorCellRenderer());
-        jAttackTable.setDefaultRenderer(String.class, rend);
+        jAttackTable.setDefaultRenderer(String.class, new AlternatingColorCellRenderer());
         jAttackTable.setDefaultRenderer(Boolean.class, new BooleanCellRenderer());
         DefaultComboBoxModel model = new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{}));
         model.insertElementAt(UnknownUnit.getSingleton(), 0);
@@ -3141,11 +3141,21 @@ private void fireSendAttackToReTimeToolEvent(java.awt.event.MouseEvent evt) {//G
     }
 
     protected void updateCountdown() {
-        //  AttackManagerTableModel.getSingleton().fireTableDataChanged();
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
-                jAttackTable.repaint(100);
+                //repaint();
+                //TODO: Update only relevant cells
+                String plan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
+                List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(plan);
+                int cnt = 0;
+                for (Attack a : attacks) {
+                    if (a.getArriveTime().getTime() > System.currentTimeMillis()) {
+                        AttackManagerTableModel.getSingleton().fireTableCellUpdated(cnt, 11);
+                    }
+                    cnt++;
+                }
+
             }
         });
 

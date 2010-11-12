@@ -19,6 +19,7 @@ import de.tor.tribes.util.attack.AttackManagerListener;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -108,7 +109,6 @@ public class AttackManagerTableModel extends AbstractDSWorkbenchTableModel {
         }
     }
 
-    @Override
     public Object getValueAt(int pRow, int pCol) {
         try {
             List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(getActiveAttackPlan());
@@ -177,33 +177,35 @@ public class AttackManagerTableModel extends AbstractDSWorkbenchTableModel {
                     long t = sendTime - System.currentTimeMillis();
                     t = (t <= 0) ? 0 : t;
 
-                    if (t != 0) {
-                        long h = (int) Math.floor((double) t / (double) (1000 * 60 * 60));
-                        t -= (h * 1000 * 60 * 60);
-                        long min = (int) Math.floor((double) t / (double) (1000 * 60));
-                        t -= (min * 1000 * 60);
-                        long s = (int) Math.floor((double) t / (double) 1000);
-                        t -= (s * 1000);
-                        long ms = t;
-                        String res = ((h < 10) ? ("0" + h) : "" + h);
-                        res += ":";
-                        res += ((min < 10) ? "0" + min : "" + min);
-                        res += ":";
-                        res += ((s < 10) ? "0" + s : "" + s);
-                        res += ".";
-                        if (ms < 100) {
-                            if (ms < 10) {
-                                res += "00" + ms;
-                            } else {
-                                res += "0" + ms;
-                            }
-                        } else {
-                            res += "" + ms;
-                        }
-                        return res;
+                    return DurationFormatUtils.formatDuration(t, "HH:mm:ss.SSS");
+
+                    /*if (t != 0) {
+                    long h = (int) Math.floor((double) t / (double) (1000 * 60 * 60));
+                    t -= (h * 1000 * 60 * 60);
+                    long min = (int) Math.floor((double) t / (double) (1000 * 60));
+                    t -= (min * 1000 * 60);
+                    long s = (int) Math.floor((double) t / (double) 1000);
+                    t -= (s * 1000);
+                    long ms = t;
+                    String res = ((h < 10) ? ("0" + h) : "" + h);
+                    res += ":";
+                    res += ((min < 10) ? "0" + min : "" + min);
+                    res += ":";
+                    res += ((s < 10) ? "0" + s : "" + s);
+                    res += ".";
+                    if (ms < 100) {
+                    if (ms < 10) {
+                    res += "00" + ms;
+                    } else {
+                    res += "0" + ms;
+                    }
+                    } else {
+                    res += "" + ms;
+                    }
+                    return res;
                     }
 
-                    return "00:00:00.000";
+                    return "00:00:00.000";*/
                 }
                 default: {
                     return a.isTransferredToBrowser();

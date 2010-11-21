@@ -12,6 +12,7 @@ import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
@@ -138,7 +139,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                 if (!showControls && iCurrentView == ID_MINIMAP) {
                     Point p = mousePosToMapPosition(e.getX(), e.getY());
                     DSWorkbenchMainFrame.getSingleton().centerPosition(p.x, p.y);
-
+                    MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
                     if (mZoomFrame != null) {
                         if (mZoomFrame.isVisible()) {
                             mZoomFrame.toFront();

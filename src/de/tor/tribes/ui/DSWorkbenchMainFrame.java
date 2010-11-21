@@ -3341,8 +3341,8 @@ private void fireDoDonationEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:ev
 
     /**Check if zoom factor is valid and correct if needed*/
     private void checkZoomRange() {
-        if (dZoomFactor <= 0.1) {
-            dZoomFactor = 0.1;
+        if (dZoomFactor <= 0.4) {
+            dZoomFactor = 0.4;
             jZoomOutButton.setEnabled(false);
         } else if (dZoomFactor >= 2.5) {
             dZoomFactor = 2.5;

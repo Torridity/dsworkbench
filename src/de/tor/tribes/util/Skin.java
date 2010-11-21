@@ -8,6 +8,7 @@
  */
 package de.tor.tribes.util;
 
+import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.ui.SkinPreviewFrame;
 import java.awt.Image;
 import java.awt.Point;
@@ -135,6 +136,10 @@ public class Skin {
         }
     }
 
+    public String getSkinID() {
+        return sSkinID;
+    }
+
     private void loadMinimapSkin() throws Exception {
         sSkinID = MINIMAP_SKIN_ID;
         iFieldWidth = 10;
@@ -204,6 +209,10 @@ public class Skin {
                 if ((current.getWidth(null) != iFieldWidth) || (current.getHeight(null) != iFieldHeight)) {
                     throw new Exception("Textur " + id + " hat nicht die erwartete Größe " + iFieldWidth + "x" + iFieldHeight);
                 }
+            }
+            try {
+                WorldDecorationHolder.loadTextures();
+            } catch (Exception e) {
             }
         } catch (IOException ioe) {
             throw new Exception("Fehler beim laden des Grafikpaketes");

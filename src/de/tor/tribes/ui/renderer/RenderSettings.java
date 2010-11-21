@@ -2,7 +2,6 @@ package de.tor.tribes.ui.renderer;
 
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.geom.Rectangle2D;
 
@@ -31,8 +30,8 @@ public class RenderSettings {
 
     public void calculateSettings(Rectangle2D pNewBounds) {
         if (getMapBounds() != null && pNewBounds != null) {
-            setMovementX(getFieldWidth() * (getMapBounds().getX() - pNewBounds.getX()));
-            setMovementY(getFieldHeight() * (getMapBounds().getY() - pNewBounds.getY()));
+            setMovementX(Math.round((double) getFieldWidth() * (getMapBounds().getX() - pNewBounds.getX())));
+            setMovementY(Math.round((double) getFieldHeight() * (getMapBounds().getY() - pNewBounds.getY())));
         }
 
         if (getMovementX() != 0.0) {
@@ -42,22 +41,45 @@ public class RenderSettings {
             setDeltaY(getMovementY() / (double) getFieldHeight());
         }
 
-
-        int fieldsX = (getDeltaX() > 0) ? (int) Math.round(getDeltaX()) : (int) Math.floor(getDeltaX());
+        /*int fieldsX = (getDeltaX() > 0) ? (int) Math.round(getDeltaX()) : (int) Math.floor(getDeltaX());
         int fieldsY = (getDeltaY() > 0) ? (int) Math.round(getDeltaY()) : (int) Math.floor(getDeltaY());
-        fieldsX += (fieldsX >= 0) ? 1 : -1;
-        fieldsY += (fieldsY >= 0) ? 1 : -1;
+         */
+        int facX = 1;
+        int facY = 1;
+        if (getDeltaX() < 0) {
+            facX = -1;
+            setDeltaX(Math.abs(getDeltaX()));
+        }
+        if (getDeltaY() < 0) {
+            facY = -1;
+            setDeltaY(Math.abs(getDeltaY()));
+        }
+        int fieldsX = (int) Math.round(getDeltaX()) + 1;
+        int fieldsY = (int) Math.round(getDeltaY()) + 1;
+        /*if (fieldsX > 0) {
+        fieldsX += 1;
+        } else if (fieldsX < 0) {
+        fieldsX -= 1;
+        }
+        if (fieldsY > 0) {
+        fieldsY += 1;
+        } else if (fieldsY < 0) {
+        fieldsY -= 1;
+        }*/
+        /*   fieldsX += (fieldsX >= 0) ? 1 : -1;
+        fieldsY += (fieldsY >= 0) ? 1 : -1;*/
 
-        setColumnsToRender(fieldsX);
-        setRowsToRender(fieldsY);
+        setColumnsToRender((fieldsX + 1) * facX);
+        setRowsToRender((fieldsY + 1) * facY);
 
         if (pNewBounds != null) {
-            setDeltaX(0 - ((pNewBounds.getX() - Math.floor(pNewBounds.getX())) * getFieldWidth()));
-            setDeltaY(0 - ((pNewBounds.getY() - Math.floor(pNewBounds.getY())) * getFieldHeight()));
+            setDeltaX(0 - ((pNewBounds.getX() - Math.floor(pNewBounds.getX())) * (double) getFieldWidth()));
+            setDeltaY(0 - ((pNewBounds.getY() - Math.floor(pNewBounds.getY())) * (double) getFieldHeight()));
         } else {
             setDeltaX(0);
             setDeltaY(0);
         }
+
         setMapBounds(pNewBounds);
     }
 

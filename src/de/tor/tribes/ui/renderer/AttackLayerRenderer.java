@@ -57,6 +57,7 @@ public class AttackLayerRenderer extends AbstractDirectLayerRenderer {
             }
             attackColors.put(unit.getName(), unitColor);
         }
+        
         GeneralPath p = new GeneralPath();
         p.moveTo(0, 0);
         p.lineTo(10, 5);

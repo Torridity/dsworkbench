@@ -80,14 +80,15 @@ import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import org.omg.PortableServer.THREAD_POLICY_ID;
 
 /**
  * @TODO (DIFF) Transfer off to A*Star now uses own troops instead of all in village
  * @author Charon
  */
 public class MapPanel extends JPanel implements DragGestureListener, // For recognizing the start of drags
-                                                DragSourceListener, // For processing drag source events
-                                                DropTargetListener // For processing drop target events
+        DragSourceListener, // For processing drag source events
+        DropTargetListener // For processing drop target events
 {
 // <editor-fold defaultstate="collapsed" desc=" Member variables ">
 
@@ -1744,7 +1745,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
     private void fireResizeEvent(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_fireResizeEvent
         //  mBuffer = null;
-        //  getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
+        getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
         // Dimension dim = getSize();
         //  mBuffer = mMapRenderer.getVol(dim.width, dim.height);
         // mBuffer = mMapRenderer.getBufferedImage(dim.width, dim.height, BufferedImage.OPAQUE);

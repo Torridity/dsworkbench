@@ -13,6 +13,7 @@ package de.tor.tribes.ui;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
+import de.tor.tribes.ui.renderer.BooleanCellRenderer;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.TransportCellRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
@@ -38,8 +39,10 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -57,6 +60,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
     private static Logger logger = Logger.getLogger("MerchantDistributor");
     private static DSWorkbenchMerchantDistibutor SINGLETON = null;
     private List<VillageMerchantInfo> merchantInfos = new LinkedList<VillageMerchantInfo>();
+    private int iClickAccount = 0;
 
     public static synchronized DSWorkbenchMerchantDistibutor getSingleton() {
         if (SINGLETON == null) {
@@ -107,6 +111,9 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        jClickAccountLabel = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
+        jCheckBox1 = new javax.swing.JCheckBox();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jMerchantDataTable = new javax.swing.JTable();
@@ -224,11 +231,33 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
 
         jLabel12.setText("<html><b>Durchzuführende Transporte</b></html>");
 
+        jButton1.setBackground(new java.awt.Color(239, 235, 223));
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_browser.png"))); // NOI18N
         jButton1.setToolTipText("Markierte Transporte in den Browser übertragen");
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireTransferTransportsToBrowserEvent(evt);
+            }
+        });
+
+        jClickAccountLabel.setBackground(new java.awt.Color(255, 255, 255));
+        jClickAccountLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/LeftClick.png"))); // NOI18N
+        jClickAccountLabel.setText("Klick-Konto [0]");
+        jClickAccountLabel.setToolTipText("0 Klick(s) aufgeladen");
+        jClickAccountLabel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jClickAccountLabel.setOpaque(true);
+        jClickAccountLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireClickAccountChangedEvent(evt);
+            }
+        });
+
+        jButton2.setBackground(new java.awt.Color(239, 235, 223));
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
+        jButton2.setToolTipText("Markierte Transporte entfernen");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireRemoveTransportsEvent(evt);
             }
         });
 
@@ -240,45 +269,69 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
                     .addComponent(jLabel11, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
                     .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
-                    .addComponent(jButton1))
+                    .addComponent(jClickAccountLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jButton1)
+                            .addComponent(jButton2))))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel12)
+                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
-                .addGap(26, 26, 26)
-                .addComponent(jLabel11)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jClickAccountLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                        .addGap(26, 26, 26))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2)
+                        .addGap(100, 100, 100)))
+                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
+        jCheckBox1.setText("Immer im Vordergrund");
+        jCheckBox1.setOpaque(false);
+        jCheckBox1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireAlwaysOnTopEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jResultFrameLayout = new javax.swing.GroupLayout(jResultFrame.getContentPane());
         jResultFrame.getContentPane().setLayout(jResultFrameLayout);
         jResultFrameLayout.setHorizontalGroup(
             jResultFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jResultFrameLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jResultFrameLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jResultFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jCheckBox1))
                 .addContainerGap())
         );
         jResultFrameLayout.setVerticalGroup(
             jResultFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jResultFrameLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jResultFrameLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jCheckBox1)
                 .addContainerGap())
         );
 
@@ -855,20 +908,88 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
     private void fireTransferTransportsToBrowserEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferTransportsToBrowserEvent
 
 
-        int[] rows = jResultsTable.getSelectedRows();
+        /*   int[] rows = jResultsTable.getSelectedRows();
         if (rows == null || rows.length == 0) {
-            return;
+        return;
         }
         for (int i = 0; i < rows.length; i++) {
-            //int row = jMerchantDataTable.convertRowIndexToModel(rows[i]);
-            Village source = (Village) jResultsTable.getValueAt(rows[i], 0);
-            Village target = (Village) jResultsTable.getValueAt(rows[i], 2);
-            Transport trans = (Transport) jResultsTable.getValueAt(rows[i], 1);
+        //int row = jMerchantDataTable.convertRowIndexToModel(rows[i]);
+        Village source = (Village) jResultsTable.getValueAt(rows[i], 0);
+        Village target = (Village) jResultsTable.getValueAt(rows[i], 2);
+        Transport trans = (Transport) jResultsTable.getValueAt(rows[i], 1);
+
+        BrowserCommandSender.sendRes(source, target, trans);
+        }*/
+        if (iClickAccount == 0) {
+            int row = jResultsTable.getSelectedRow();
+            if (row == -1) {
+                return;
+            }
+            int modelRow = jResultsTable.convertRowIndexToModel(row);
+            Village source = (Village) jResultsTable.getValueAt(row, 0);
+            Village target = (Village) jResultsTable.getValueAt(row, 2);
+            Transport trans = (Transport) jResultsTable.getValueAt(row, 1);
 
             BrowserCommandSender.sendRes(source, target, trans);
+            ((DefaultTableModel) jResultsTable.getModel()).setValueAt(Boolean.TRUE, modelRow, 3);
+            ((DefaultListSelectionModel) jResultsTable.getSelectionModel()).setSelectionInterval(row + 1, row + 1);
+        } else {
+            int[] rows = jResultsTable.getSelectedRows();
+            if (rows == null || rows.length == 0) {
+                return;
+            }
+            for (int i = 0; i < rows.length; i++) {
+                int modelRow = jResultsTable.convertRowIndexToModel(rows[i]);
+                Village source = (Village) jResultsTable.getValueAt(rows[i], 0);
+                Village target = (Village) jResultsTable.getValueAt(rows[i], 2);
+                Transport trans = (Transport) jResultsTable.getValueAt(rows[i], 1);
+
+                BrowserCommandSender.sendRes(source, target, trans);
+                ((DefaultTableModel) jResultsTable.getModel()).setValueAt(Boolean.TRUE, modelRow, 3);
+                iClickAccount--;
+                updateClickAccount();
+                if (iClickAccount == 0) {
+                    break;
+                }
+            }
+        }
+    }//GEN-LAST:event_fireTransferTransportsToBrowserEvent
+
+    private void fireAlwaysOnTopEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireAlwaysOnTopEvent
+        jResultFrame.setAlwaysOnTop(!jResultFrame.isAlwaysOnTop());
+    }//GEN-LAST:event_fireAlwaysOnTopEvent
+
+    private void fireClickAccountChangedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireClickAccountChangedEvent
+        iClickAccount++;
+        updateClickAccount();
+    }//GEN-LAST:event_fireClickAccountChangedEvent
+
+    private void fireRemoveTransportsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveTransportsEvent
+        int[] rows = jResultsTable.getSelectedRows();
+        if (rows.length == 0) {
+            return;
         }
 
-    }//GEN-LAST:event_fireTransferTransportsToBrowserEvent
+        String message = ((rows.length == 1) ? "Transport " : (rows.length + " Transporte ")) + "wirklich löschen?";
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Transporte löschen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        jResultsTable.editingCanceled(new ChangeEvent(this));
+
+        for (int r = rows.length - 1; r >= 0; r--) {
+            jResultsTable.invalidate();
+            int row = jResultsTable.convertRowIndexToModel(rows[r]);
+            ((DefaultTableModel) jResultsTable.getModel()).removeRow(row);
+            jResultsTable.revalidate();
+        }
+        jResultsTable.repaint();//.updateUI();
+    }//GEN-LAST:event_fireRemoveTransportsEvent
+
+    private void updateClickAccount() {
+        jClickAccountLabel.setToolTipText(iClickAccount + " Klick(s) aufgeladen");
+        jClickAccountLabel.setText("Klick-Konto [" + iClickAccount + "]");
+    }
 
     private void rebuildTable(JTable pTable, List<VillageMerchantInfo> pMerchantInfos) {
         DefaultTableModel model = null;
@@ -1011,11 +1132,11 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
         DefaultTableModel model = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Herkunft", "Rohstoff", "Ziel"
+                    "Herkunft", "Rohstoff", "Ziel", "Übertragen"
                 }) {
 
             Class[] types = new Class[]{
-                Village.class, Transport.class, Village.class
+                Village.class, Transport.class, Village.class, Boolean.class
             };
 
             @Override
@@ -1102,12 +1223,12 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
                         if (jIgnoreTransportsButton.isSelected()) {
                             int amount = trans.getSingleTransports().get(0).getAmount() + trans.getSingleTransports().get(1).getAmount() + trans.getSingleTransports().get(2).getAmount();
                             if (amount >= minAmount) {
-                                model.addRow(new Object[]{sourceVillage, trans, targetVillage});
+                                model.addRow(new Object[]{sourceVillage, trans, targetVillage, false});
                             } else {
                                 usedTransports--;
                             }
                         } else {
-                            model.addRow(new Object[]{sourceVillage, trans, targetVillage});
+                            model.addRow(new Object[]{sourceVillage, trans, targetVillage, false});
                         }
                     }
                 }
@@ -1131,6 +1252,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
         sorter.setModel(model);
         jResultsTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jResultsTable.setDefaultRenderer(Transport.class, new TransportCellRenderer());
+        jResultsTable.setDefaultRenderer(Boolean.class, new BooleanCellRenderer());
         SortableTableHeaderRenderer mHeaderRenderer = new SortableTableHeaderRenderer();
         for (int i = 0; i < jResultsTable.getColumnCount(); i++) {
             jResultsTable.getColumn(jResultsTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderer);
@@ -1149,8 +1271,11 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JRadioButton jAdjustingDistribution;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JLabel jClickAccountLabel;
     private javax.swing.JRadioButton jEqualDistribution;
     private javax.swing.JCheckBox jIgnoreTransportsButton;
     private javax.swing.JButton jInsertBothButton;

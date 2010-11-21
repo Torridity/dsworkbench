@@ -8,7 +8,7 @@ import de.tor.tribes.types.Conquer;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.ImageManager;
-import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.tag.TagManager;
@@ -16,12 +16,9 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashMap;
@@ -55,9 +52,18 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
             return;
         }
         if (shouldReset) {
-            //  setRenderedBounds(null);
             setFullRenderRequired(true);
             shouldReset = false;
+            mapPos = null;
+            if (MapPanel.getSingleton().getWidth() > mLayer.getWidth()
+                    || MapPanel.getSingleton().getWidth() < mLayer.getWidth() - 100
+                    || MapPanel.getSingleton().getHeight() > mLayer.getHeight()
+                    || MapPanel.getSingleton().getHeight() < mLayer.getHeight() - 100
+                    || MapPanel.getSingleton().getWidth() < pSettings.getFieldWidth() * pSettings.getVisibleVillages().length
+                    || MapPanel.getSingleton().getHeight() < pSettings.getFieldHeight() * pSettings.getVisibleVillages()[0].length) {
+                mLayer.flush();
+                mLayer = null;
+            }
         }
         Graphics2D g2d = null;
         if (isFullRenderRequired()) {

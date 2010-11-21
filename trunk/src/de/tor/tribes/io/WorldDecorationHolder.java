@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.io;
 
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -57,9 +58,18 @@ public class WorldDecorationHolder {
     public static int ID_FORREST14 = 29;
     public static int ID_FORREST15 = 30;
     public static int ID_FORREST16 = 31;
+    private static boolean valid = false;
 
     public static void initialize() throws FileNotFoundException, Exception {
-        loadWorld();
+        try {
+            loadWorld();
+        } catch (Exception e) {
+            valid = false;
+        }
+    }
+
+    public static boolean isValid() {
+        return valid;
     }
 
     private static void loadWorld() throws FileNotFoundException, Exception {
@@ -81,46 +91,49 @@ public class WorldDecorationHolder {
         loadTextures();
     }
 
-    private static void loadTextures() throws Exception {
+    public static void loadTextures() throws Exception {
         mTextures = new LinkedList<BufferedImage>();
         cache.clear();
         try {
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/gras1.png")));//0
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/gras2.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/gras3.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/gras4.png")));
+            String skinId = GlobalOptions.getSkin().getSkinID();
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/gras1.png")));//0
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/gras2.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/gras3.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/gras4.png")));
             //dummy values
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/gras4.png")));//4
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/gras4.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/gras4.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/gras4.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/gras4.png")));//4
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/gras4.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/gras4.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/gras4.png")));
 
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/berg1.png")));//8
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/berg2.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/berg3.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/berg4.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/see.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/berg1.png")));//8
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/berg2.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/berg3.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/berg4.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/see.png")));
             //dummy values
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/gras4.png")));//13
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/gras4.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/gras4.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/forest0000.png")));//16
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/forest0001.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/forest0010.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/forest0011.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/forest0100.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/forest0101.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/forest0110.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/forest0111.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/forest1000.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/forest1001.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/forest1010.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/forest1011.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/forest1100.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/forest1101.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/forest1110.png")));
-            mTextures.add(ImageUtils.loadImage(new File("graphics/world/forest1111.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/gras4.png")));//13
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/gras4.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/gras4.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/forest0000.png")));//16
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/forest0001.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/forest0010.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/forest0011.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/forest0100.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/forest0101.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/forest0110.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/forest0111.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/forest1000.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/forest1001.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/forest1010.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/forest1011.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/forest1100.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/forest1101.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/forest1110.png")));
+            mTextures.add(ImageUtils.loadImage(new File("graphics/world/" + skinId + "/forest1111.png")));
+            valid = true;
         } catch (Exception e) {
+            valid = false;
             throw new Exception("Failed to load world textures", e);
         }
     }
@@ -138,9 +151,9 @@ public class WorldDecorationHolder {
         int decoId = 0;
         if ((pX < 0) || (pY < 0) || (pX > 999) || (pY > 999)) {
             //keep default ID
+        } else {
+            decoId = decoration[pY * 1000 + pX];
         }
-        decoId = decoration[pY * 1000 + pX];
-
         try {
             HashMap<Double, BufferedImage> imageCache = cache.get(decoId);
             if (imageCache == null) {
@@ -171,8 +184,6 @@ public class WorldDecorationHolder {
         if ((pX < 0) || (pY < 0) || (pX > 999) || (pY > 999)) {
             //return default texture
             return mTextures.get(0);
-
-
         }
         int decoId = decoration[pY * 1000 + pX];
         HashMap<Double, BufferedImage> cacheForId = cache.get(decoId);

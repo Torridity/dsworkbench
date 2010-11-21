@@ -109,6 +109,22 @@ public class AttackManagerTableModel extends AbstractDSWorkbenchTableModel {
         }
     }
 
+    @Override
+    public void fireTableCellUpdated(int row, int column) {
+        try {
+            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(getActiveAttackPlan());
+            Attack a = null;
+            if (attacks.size() > row) {
+                a = attacks.get(row);
+            } else {
+                return;
+            }
+            column = getRealColumnId(column);
+            super.fireTableCellUpdated(row, column);
+        } catch (Exception e) {
+        }
+    }
+
     public Object getValueAt(int pRow, int pCol) {
         try {
             List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(getActiveAttackPlan());
@@ -176,7 +192,6 @@ public class AttackManagerTableModel extends AbstractDSWorkbenchTableModel {
                     long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
                     long t = sendTime - System.currentTimeMillis();
                     t = (t <= 0) ? 0 : t;
-
                     return DurationFormatUtils.formatDuration(t, "HH:mm:ss.SSS");
 
                     /*if (t != 0) {

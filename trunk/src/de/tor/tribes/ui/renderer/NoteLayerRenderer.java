@@ -7,6 +7,7 @@ package de.tor.tribes.ui.renderer;
 import de.tor.tribes.types.Note;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.ImageManager;
+import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.note.NoteManager;
 import java.awt.AlphaComposite;
@@ -14,7 +15,6 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
@@ -35,6 +35,13 @@ public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
             //setRenderedBounds(null);
             setFullRenderRequired(true);
             shouldReset = false;
+            if (MapPanel.getSingleton().getWidth() > mLayer.getWidth()
+                    || MapPanel.getSingleton().getWidth() < mLayer.getWidth() - 100
+                    || MapPanel.getSingleton().getHeight() > mLayer.getHeight()
+                    || MapPanel.getSingleton().getHeight() < mLayer.getHeight() - 100) {
+                mLayer.flush();
+                mLayer = null;
+            }
         }
         if (!pSettings.isLayerVisible()) {
             return;
@@ -42,7 +49,12 @@ public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
         Graphics2D g2d = null;
 
         if (mLayer == null) {
-            mLayer = ImageUtils.createCompatibleBufferedImage(pSettings.getVisibleVillages().length * pSettings.getFieldWidth(), pSettings.getVisibleVillages()[0].length * pSettings.getFieldHeight() + 100, BufferedImage.BITMASK);
+            if (pSettings.getVisibleVillages().length * pSettings.getFieldWidth() > ImageManager.ID_NOTE_ICON_13 * 32) {
+                mLayer = ImageUtils.createCompatibleBufferedImage(pSettings.getVisibleVillages().length * pSettings.getFieldWidth(), pSettings.getVisibleVillages()[0].length * pSettings.getFieldHeight() + 100, BufferedImage.BITMASK);
+            } else {
+                mLayer = ImageUtils.createCompatibleBufferedImage(ImageManager.ID_NOTE_ICON_13 * 32, pSettings.getVisibleVillages()[0].length * pSettings.getFieldHeight() + 100, BufferedImage.BITMASK);
+            }
+
             g2d = mLayer.createGraphics();
         } else {
             g2d = (Graphics2D) mLayer.getGraphics();
@@ -56,7 +68,8 @@ public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
         ImageUtils.setupGraphics(g2d);
         //setRenderedBounds((Rectangle2D.Double) pVirtualBounds.clone());
 
-        renderNoteRows(pSettings, pSettings.getVisibleVillages()[0].length * pSettings.getFieldHeight(), g2d);
+        //  renderNoteRows(pSettings, pSettings.getVisibleVillages()[0].length * pSettings.getFieldHeight() - 100, g2d);
+        renderNoteRows(pSettings, mLayer.getHeight() - 100, g2d);
         g2d.dispose();
         AffineTransform trans = AffineTransform.getTranslateInstance(0, 0);
         trans.setToTranslation((int) Math.floor(pSettings.getDeltaX()), (int) Math.floor(pSettings.getDeltaY()));
@@ -67,9 +80,9 @@ public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
         //calculate first row that will be rendered
         int firstRow = 0;//(pSettings.getRowsToRender() > 0) ? 0 : pSettings.getVisibleVillages()[0].length - Math.abs(pSettings.getRowsToRender());
         ImageUtils.setupGraphics(g2d);
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i <= ImageManager.ID_NOTE_ICON_13; i++) {
             BufferedImage icon = ImageManager.getNoteIcon(i);
-            g2d.drawImage(icon, i * 32, pSettings.getVisibleVillages()[0].length * pSettings.getFieldHeight() + 68, null);
+            g2d.drawImage(icon, i * 32, pCopyPosition + 68, null);
         }
         //iterate through entire row
         int cnt = 0;

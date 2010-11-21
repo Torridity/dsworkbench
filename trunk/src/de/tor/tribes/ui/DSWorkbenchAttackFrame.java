@@ -92,6 +92,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
     private DefaultTableCellRenderer mHeaderRenderer = null;
     private NotifyThread mNotifyThread = null;
     private CountdownThread mCountdownThread = null;
+    private int iClickAccount = 0;
 
     public static synchronized DSWorkbenchAttackFrame getSingleton() {
         if (SINGLETON == null) {
@@ -367,6 +368,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jMoveAttacksButton = new javax.swing.JButton();
         jChangeArrivalButton = new javax.swing.JButton();
         jChangeArrivalButton1 = new javax.swing.JButton();
+        jChangeAttackSentStateButton = new javax.swing.JButton();
         jTaskPaneGroup2 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jMarkAllButton = new javax.swing.JButton();
         jMarkFilteredButton = new javax.swing.JButton();
@@ -384,6 +386,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jDefaultTroopsButton = new javax.swing.JButton();
         jTaskPaneGroup4 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jNotifyButton = new javax.swing.JToggleButton();
+        jClickAccountLabel = new javax.swing.JLabel();
         jAttackFrameAlwaysOnTop = new javax.swing.JCheckBox();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
@@ -1584,6 +1587,17 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         });
         jTaskPaneGroup1.getContentPane().add(jChangeArrivalButton1);
 
+        jChangeAttackSentStateButton.setBackground(new java.awt.Color(239, 235, 223));
+        jChangeAttackSentStateButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_browser_unsent.png"))); // NOI18N
+        jChangeAttackSentStateButton.setText(bundle.getString("DSWorkbenchAttackFrame.jChangeAttackSentStateButton.text")); // NOI18N
+        jChangeAttackSentStateButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jChangeAttackSentStateButton.toolTipText")); // NOI18N
+        jChangeAttackSentStateButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSetAttacksToUnsentEvent(evt);
+            }
+        });
+        jTaskPaneGroup1.getContentPane().add(jChangeAttackSentStateButton);
+
         jTaskPane1.add(jTaskPaneGroup1);
 
         jTaskPaneGroup2.setTitle(bundle.getString("DSWorkbenchAttackFrame.jTaskPaneGroup2.title")); // NOI18N
@@ -1778,6 +1792,18 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
         jScrollPane4.setViewportView(jTaskPane1);
 
+        jClickAccountLabel.setBackground(new java.awt.Color(255, 255, 255));
+        jClickAccountLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/LeftClick.png"))); // NOI18N
+        jClickAccountLabel.setText(bundle.getString("DSWorkbenchAttackFrame.jClickAccountLabel.text")); // NOI18N
+        jClickAccountLabel.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jClickAccountLabel.toolTipText")); // NOI18N
+        jClickAccountLabel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jClickAccountLabel.setOpaque(true);
+        jClickAccountLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireFillClickAccountEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jAttackPanelLayout = new javax.swing.GroupLayout(jAttackPanel);
         jAttackPanel.setLayout(jAttackPanelLayout);
         jAttackPanelLayout.setHorizontalGroup(
@@ -1795,24 +1821,26 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                         .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(172, 172, 172))
+                        .addGap(18, 18, 18)
+                        .addComponent(jClickAccountLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackPanelLayout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 636, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         jAttackPanelLayout.setVerticalGroup(
             jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel9)
-                        .addComponent(jActiveAttackPlan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jActiveAttackPlan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jClickAccountLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 723, Short.MAX_VALUE)
@@ -1875,19 +1903,43 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 }//GEN-LAST:event_fireRemoveAttackEvent
 
 private void fireSendAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSendAttackEvent
-    int selectedRow = jAttackTable.getSelectedRow();
-    if (selectedRow < 0) {
-        return;
-    }
-    int row = jAttackTable.convertRowIndexToModel(selectedRow);
-    Attack a = AttackManagerTableModel.getSingleton().getAttackAtRow(row);
-    if (a != null) {
-        Village source = a.getSource();
-        Village target = a.getTarget();
-        int type = a.getType();
-        BrowserCommandSender.sendTroops(source, target, type);
-        a.setTransferredToBrowser(true);
-        ((DefaultListSelectionModel) jAttackTable.getSelectionModel()).setSelectionInterval(selectedRow + 1, selectedRow + 1);
+    if (iClickAccount == 0) {
+        int selectedRow = jAttackTable.getSelectedRow();
+        if (selectedRow < 0) {
+            return;
+        }
+        int row = jAttackTable.convertRowIndexToModel(selectedRow);
+        Attack a = AttackManagerTableModel.getSingleton().getAttackAtRow(row);
+        if (a != null) {
+            Village source = a.getSource();
+            Village target = a.getTarget();
+            int type = a.getType();
+            BrowserCommandSender.sendTroops(source, target, type);
+            a.setTransferredToBrowser(true);
+            ((DefaultListSelectionModel) jAttackTable.getSelectionModel()).setSelectionInterval(selectedRow + 1, selectedRow + 1);
+        }
+    } else {
+        int[] selectedRows = jAttackTable.getSelectedRows();
+        if (selectedRows == null || selectedRows.length == 0) {
+            return;
+        }
+
+        for (int selectedRow : selectedRows) {
+            int row = jAttackTable.convertRowIndexToModel(selectedRow);
+            Attack a = AttackManagerTableModel.getSingleton().getAttackAtRow(row);
+            if (a != null) {
+                Village source = a.getSource();
+                Village target = a.getTarget();
+                int type = a.getType();
+                BrowserCommandSender.sendTroops(source, target, type);
+                a.setTransferredToBrowser(true);
+                iClickAccount--;
+                updateClickAccount();
+            }
+            if (iClickAccount == 0) {
+                break;
+            }
+        }
     }
 }//GEN-LAST:event_fireSendAttackEvent
 
@@ -3017,6 +3069,33 @@ private void fireSendAttackToReTimeToolEvent(java.awt.event.MouseEvent evt) {//G
 
 }//GEN-LAST:event_fireSendAttackToReTimeToolEvent
 
+private void fireSetAttacksToUnsentEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSetAttacksToUnsentEvent
+
+    int[] selectedRows = jAttackTable.getSelectedRows();
+    if (selectedRows != null && selectedRows.length < 1) {
+        return;
+    }
+
+    String selectedPlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
+    for (Integer selectedRow : selectedRows) {
+        int row = jAttackTable.convertRowIndexToModel(selectedRow);
+        Attack a = AttackManager.getSingleton().getAttackPlan(selectedPlan).get(row);
+        a.setTransferredToBrowser(false);
+    }
+
+    jAttackTable.repaint();
+}//GEN-LAST:event_fireSetAttacksToUnsentEvent
+
+private void fireFillClickAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireFillClickAccountEvent
+    iClickAccount++;
+    updateClickAccount();
+}//GEN-LAST:event_fireFillClickAccountEvent
+
+    private void updateClickAccount() {
+        jClickAccountLabel.setToolTipText(iClickAccount + " Klick(s) aufgeladen");
+        jClickAccountLabel.setText("Klick-Konto [" + iClickAccount + "]");
+    }
+
     public JDialog getStandardAttackDialog() {
         return jStandardAttackDialog;
     }
@@ -3141,24 +3220,8 @@ private void fireSendAttackToReTimeToolEvent(java.awt.event.MouseEvent evt) {//G
     }
 
     protected void updateCountdown() {
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                //repaint();
-                //TODO: Update only relevant cells
-                String plan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
-                List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(plan);
-                int cnt = 0;
-                for (Attack a : attacks) {
-                    if (a.getArriveTime().getTime() > System.currentTimeMillis()) {
-                        AttackManagerTableModel.getSingleton().fireTableCellUpdated(cnt, 11);
-                    }
-                    cnt++;
-                }
-
-            }
-        });
-
+        //AttackManagerTableModel.getSingleton().fireTableDataChanged();
+        jAttackTable.repaint();
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
@@ -3198,8 +3261,10 @@ private void fireSendAttackToReTimeToolEvent(java.awt.event.MouseEvent evt) {//G
     private javax.swing.JButton jCancelCopyButton;
     private javax.swing.JButton jChangeArrivalButton;
     private javax.swing.JButton jChangeArrivalButton1;
+    private javax.swing.JButton jChangeAttackSentStateButton;
     private javax.swing.JDialog jChangeAttackTypeDialog;
     private javax.swing.JButton jCleanupAttacksButton;
+    private javax.swing.JLabel jClickAccountLabel;
     private javax.swing.JButton jCopyAttackButton;
     private javax.swing.JButton jCopyBBCodeToClipboardButton;
     private javax.swing.JButton jCopyButton;
@@ -3433,8 +3498,10 @@ class CountdownThread extends Thread {
             try {
                 if (showCountdown && DSWorkbenchAttackFrame.getSingleton().isVisible() && AttackManagerTableModel.getSingleton().isColVisible(11)) {
                     DSWorkbenchAttackFrame.getSingleton().updateCountdown();
+                    yield();
                     sleep(100);
                 } else {
+                    yield();
                     sleep(1000);
                 }
             } catch (Exception e) {

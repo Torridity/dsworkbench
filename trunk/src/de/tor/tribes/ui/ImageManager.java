@@ -90,6 +90,14 @@ public class ImageManager {
     public static final int ID_NOTE_ICON_3 = 3;
     public static final int ID_NOTE_ICON_4 = 4;
     public static final int ID_NOTE_ICON_5 = 5;
+    public static final int ID_NOTE_ICON_6 = 6;
+    public static final int ID_NOTE_ICON_7 = 7;
+    public static final int ID_NOTE_ICON_8 = 8;
+    public static final int ID_NOTE_ICON_9 = 9;
+    public static final int ID_NOTE_ICON_10 = 10;
+    public static final int ID_NOTE_ICON_11 = 11;
+    public static final int ID_NOTE_ICON_12 = 12;
+    public static final int ID_NOTE_ICON_13 = 13;
     //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Note symbol IDs">
     public final static int NOTE_SYMBOL_NONE = -1;
@@ -237,7 +245,15 @@ public class ImageManager {
             NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/pin_grey.png")));//2
             NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/pin_orange.png")));//3
             NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/pin_red.png")));//4
-            NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/pin_yellow.png")));//4
+            NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/pin_yellow.png")));//5
+            NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/flag_cyan.png")));//6
+            NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/flag_pink.png")));//7
+            NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/flag_white.png")));//8
+            NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/flag_red.png")));//9
+            NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/flag_orange.png")));//10
+            NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/flag_blue.png")));//11
+            NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/flag_yellow.png")));//12
+            NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/flag_green.png")));//13
         } catch (Exception e) {
             logger.error("Failed to load note icons", e);
             throw new Exception("Failed to load note icons");

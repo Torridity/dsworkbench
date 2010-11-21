@@ -208,7 +208,6 @@ public class MapRenderer extends Thread {
         }
 
         if (pType == ALL_LAYERS) {
-            System.out.println("ALL");
             rend.reset();
             rend5.reset();
             rend8.reset();
@@ -357,8 +356,8 @@ public class MapRenderer extends Thread {
                 }
                 //render menu
                 MenuRenderer.getSingleton().renderMenu(g2d);
-                /*
-                if (MapPanel.getSingleton().requiresAlphaBlending()) {
+
+                /*   if (MapPanel.getSingleton().requiresAlphaBlending()) {
                 g2d.drawImage(mFrontBuffer, 0, 0, null);
                 }*/
                 g2d.dispose();
@@ -582,36 +581,62 @@ public class MapRenderer extends Thread {
 
         currentFieldWidth = GlobalOptions.getSkin().getCurrentFieldWidth(currentZoom);
         currentFieldHeight = GlobalOptions.getSkin().getCurrentFieldHeight(currentZoom);
+
+        //ceil
         iVillagesX = (int) Math.ceil((double) MapPanel.getSingleton().getWidth() / currentFieldWidth);
         iVillagesY = (int) Math.ceil((double) MapPanel.getSingleton().getHeight() / currentFieldHeight);
         //add small buffer
-        iVillagesX++;
-        iVillagesY++;
+     /*   iVillagesX++;
+        iVillagesY++;*/
+
+
 
         //village start
+
         int xStartVillage = (int) Math.floor(dCenterX - iVillagesX / 2.0);
         int yStartVillage = (int) Math.floor(dCenterY - iVillagesY / 2.0);
         //double start
+
         double dXStart = dCenterX - (double) iVillagesX / 2.0;
         double dYStart = dCenterY - (double) iVillagesY / 2.0;
 
         //village end
-        int xEndVillage = (int) Math.ceil(dCenterX + (double) iVillagesX / 2.0);
+
+        /*int xEndVillage = (int) Math.ceil(dCenterX + (double) iVillagesX / 2.0);
         int yEndVillage = (int) Math.ceil(dCenterY + (double) iVillagesY / 2.0);
+         */
+        int xEndVillage = (int) Math.floor(dXStart + iVillagesX);
+        int yEndVillage = (int) Math.floor(dYStart + iVillagesY);
+        /*  xEndVillage++;
+        yEndVillage++;*/
+
+        //   System.out.println("Start: " + dXStart + "/" + dYStart);
 
         //correct village count
+        viewStartPoint = new Point2D.Double(dXStart, dYStart);
+
+        //       System.out.println(viewStartPoint);
+        double dx = 0 - ((viewStartPoint.x - Math.floor(viewStartPoint.x)) * currentFieldWidth);
+        double dy = 0 - ((viewStartPoint.y - Math.floor(viewStartPoint.y)) * currentFieldHeight);
+
+        if (dx * currentFieldWidth + iVillagesX * currentFieldWidth < MapPanel.getSingleton().getWidth()) {
+            xEndVillage++;
+        }
+        if (dy * currentFieldHeight + iVillagesY * currentFieldHeight < MapPanel.getSingleton().getHeight()) {
+            yEndVillage++;
+        }
         iVillagesX = xEndVillage - xStartVillage;
         iVillagesY = yEndVillage - yStartVillage;
-
-        mVisibleVillages = new Village[iVillagesX][iVillagesY];
+        /*  System.out.println("Start: " + xStartVillage + "/" + yStartVillage);
+        System.out.println("End: " + xEndVillage + "/" + yEndVillage);
+        System.out.println("XY " + iVillagesX + "/" + iVillagesY);*/
+        mVisibleVillages = new Village[iVillagesX + 1][iVillagesY + 1];
 
         int x = 0;
         int y = 0;
-        viewStartPoint = new Point2D.Double(dXStart, dYStart);
-        double dx = 0 - ((viewStartPoint.x - Math.floor(viewStartPoint.x)) * currentFieldWidth);
-        double dy = 0 - ((viewStartPoint.y - Math.floor(viewStartPoint.y)) * currentFieldHeight);
-        for (int i = xStartVillage; i < xEndVillage; i++) {
-            for (int j = yStartVillage; j < yEndVillage; j++) {
+
+        for (int i = xStartVillage; i <= xEndVillage; i++) {
+            for (int j = yStartVillage; j <= yEndVillage; j++) {
                 int mapW = ServerSettings.getSingleton().getMapDimension().width;
                 int mapH = ServerSettings.getSingleton().getMapDimension().height;
                 if ((i < 0) || (i > mapW - 1) || (j < 0) || (j > mapH - 1)) {

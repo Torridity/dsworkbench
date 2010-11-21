@@ -22,8 +22,11 @@ public class VillageListFormatter {
     public static String format(List<Village> pVillages, String pPattern, boolean pUseBBCode) {
         StringBuffer b = new StringBuffer();
         NumberFormat nf = NumberFormat.getInstance();
+        NumberFormat nf2 = NumberFormat.getInstance();
+        nf2.setMinimumIntegerDigits(3);
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
+        int cnt = 1;
         for (Village v : pVillages) {
 
             Tribe t = v.getTribe();
@@ -38,6 +41,7 @@ public class VillageListFormatter {
             }
 
             String line = pPattern;
+            line = line.replaceAll("%CNT%", nf2.format(cnt));
             if (pUseBBCode) {
                 line = line.replaceAll("%TRIBE%", t.toBBCode());
             } else {
@@ -59,6 +63,7 @@ public class VillageListFormatter {
             line = line.replaceAll("%Y%", nf.format(v.getY()));
             line = line.replaceAll("%POINTS%", nf.format(v.getPoints()));
             b.append(line + "\n");
+            cnt++;
         }
         return b.toString();
     }

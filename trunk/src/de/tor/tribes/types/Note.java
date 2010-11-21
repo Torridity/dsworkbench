@@ -4,9 +4,12 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import org.jdom.Document;
@@ -55,6 +58,29 @@ public class Note {
         result += "</villages>\n";
         result += "</note>\n";
         return result;
+    }
+
+    public String toBBCode() {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("[quote][b]Notiz vom:[/b] ");
+        buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(new Date(getTimestamp())));
+        buffer.append("\n\n");
+        buffer.append("[b]Zugeordnete Dörfer:[/b]\n\n");
+        boolean isNext = false;
+        for (Integer id : villageIds) {
+            if (isNext) {
+                buffer.append(",");
+            }
+            Village v = DataHolder.getSingleton().getVillagesById().get(id);
+            buffer.append(v.toBBCode());
+            isNext = true;
+        }
+        buffer.append("\n\n");
+         buffer.append("[b]Notiztext:[/b]\n\n");
+        buffer.append("[quote]");
+        buffer.append(getNoteText());
+        buffer.append("[/quote][/quote]\n");
+        return buffer.toString();
     }
 
     public long getTimestamp() {

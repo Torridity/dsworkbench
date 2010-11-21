@@ -92,7 +92,6 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
             mIcons.add(ImageIO.read(new File("./graphics/icons/settings.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/clock.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/note.png")));
-            mIcons.add(ImageIO.read(new File("./graphics/world/army_camp.png")));
         } catch (Exception e) {
         }
         menuRegions = new Hashtable<Integer, Rectangle>();
@@ -159,7 +158,7 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
             menuRegions.put(pos, new Rectangle(menuLocation.x + space + (pos - lastPos) * iconw + (pos - lastPos) * space, menuLocation.y + space + iconh + space + iconh + space + iconh + space + iconh + space, iconw, iconh));
         }
         lastPos = pos;
-        for (; pos < 34; pos++) {
+        for (; pos < 33; pos++) {
             menuRegions.put(pos, new Rectangle(menuLocation.x + space + (pos - lastPos) * iconw + (pos - lastPos) * space, menuLocation.y + space + iconh + space + iconh + space + iconh + space + iconh + space + iconh + space, iconw, iconh));
         }
         Enumeration<Integer> regions = menuRegions.keys();
@@ -314,9 +313,6 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
             }
             case 32: {
                 return "Notiz erstellen";
-            }
-            case 33: {
-                return "Heereslager erstellen";
             }
         }
         return "";
@@ -485,11 +481,7 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
                                 MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_NOTE);
                                 break;
                             }
-                            case 33: {
-                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ARMY_CAMP);
-                                break;
                             }
-                        }
                         //hide menu
                         isVisible = false;
                     }

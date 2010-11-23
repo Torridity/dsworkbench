@@ -8,8 +8,6 @@ package de.tor.tribes.ui;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.php.json.JSONArray;
-import de.tor.tribes.php.json.JSONObject;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Barbarians;
@@ -60,6 +58,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
@@ -70,7 +69,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.SwingUtilities;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -117,12 +117,14 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jScrollPane2.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         jScrollPane3.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         jScrollPane6.getViewport().setBackground(Constants.DS_BACK_LIGHT);
-        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
-        jAttackTable.setRowSorter(sorter);
+        jAttackTable.setModel(AttackManagerTableModel.getSingleton());
+        AttackManagerTableModel.getSingleton().resetRowSorter(jAttackTable.getModel());
+        jAttackTable.setRowSorter(AttackManagerTableModel.getSingleton().getRowSorter());
+        //  AttackManagerTableModel.getSingleton().getRowSorter().allRowsChanged();
         jAttackTable.setColumnSelectionAllowed(false);
         jAttackTable.getTableHeader().setReorderingAllowed(false);
-        sorter.setModel(AttackManagerTableModel.getSingleton());
-        jAttackTable.setModel(AttackManagerTableModel.getSingleton());
+
+
         jAttackTable.setRowHeight(20);
         jAttackTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
@@ -2213,13 +2215,13 @@ private void fireSourcePlayerChangedEvent(java.awt.event.ActionEvent evt) {//GEN
             }
             cnt++;
             //create model with player villages in attack plan
-            setTableModel(jSourceVillageTable, villageMarks);
+            setupSelectionFilterTableModel(jSourceVillageTable, villageMarks);
             jSourceVillageTable.revalidate();
             jSourceVillageTable.repaint();//.updateUI();
         }
     } catch (Exception e) {
         //"please select" selected    
-        setTableModel(jSourceVillageTable, new Hashtable<Village, Boolean>());
+        setupSelectionFilterTableModel(jSourceVillageTable, new Hashtable<Village, Boolean>());
     }
 }//GEN-LAST:event_fireSourcePlayerChangedEvent
 
@@ -2254,12 +2256,12 @@ private void fireTargetPlayerChangedEvent(java.awt.event.ActionEvent evt) {//GEN
         }
 
         //create model with player villages in attack plan
-        setTableModel(jTargetVillageTable, villageMarks);
+        setupSelectionFilterTableModel(jTargetVillageTable, villageMarks);
         jTargetVillageTable.revalidate();
         jTargetVillageTable.repaint();//.updateUI();
     } catch (Exception e) {
         //"please select" selected    
-        setTableModel(jTargetVillageTable, new Hashtable<Village, Boolean>());
+        setupSelectionFilterTableModel(jTargetVillageTable, new Hashtable<Village, Boolean>());
     }
 }//GEN-LAST:event_fireTargetPlayerChangedEvent
 
@@ -2303,8 +2305,8 @@ private void fireSelectFilteredEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     jTargetTribeBox.setModel(tModel);
     tModel.setSelectedItem("Bitte wählen");
     //initialize tables and scroll panes
-    setTableModel(jSourceVillageTable, new Hashtable<Village, Boolean>());
-    setTableModel(jTargetVillageTable, new Hashtable<Village, Boolean>());
+    setupSelectionFilterTableModel(jSourceVillageTable, new Hashtable<Village, Boolean>());
+    setupSelectionFilterTableModel(jTargetVillageTable, new Hashtable<Village, Boolean>());
 
     jSelectionFilterDialog.setVisible(true);
 }//GEN-LAST:event_fireSelectFilteredEvent
@@ -2513,7 +2515,6 @@ private void fireRemoveAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         return;
     }
 
-
     if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du den Angriffsplan '" + selection + "' und alle enthaltenen Angriffe\n" + "wirklich löschen?", "Angriffsplan löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
         AttackManagerTableModel.getSingleton().setActiveAttackPlan(AttackManager.DEFAULT_PLAN_ID);
         AttackManager.getSingleton().removePlan(selection);
@@ -2532,11 +2533,12 @@ private void fireActiveAttackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-F
         } catch (Exception e) {
         }
         jAttackTable.getSelectionModel().clearSelection();
-        jAttackTable.setRowSorter(new TableRowSorter(AttackManagerTableModel.getSingleton()));
         AttackManagerTableModel.getSingleton().setActiveAttackPlan((String) jActiveAttackPlan.getSelectedItem());
 
         jAttackTable.repaint();//.updateUI();
         jAttackTable.revalidate();
+        AttackManagerTableModel.getSingleton().resetRowSorter(jAttackTable.getModel());
+        jAttackTable.setRowSorter(AttackManagerTableModel.getSingleton().getRowSorter());
     }
 }//GEN-LAST:event_fireActiveAttackChangedEvent
 
@@ -3100,8 +3102,8 @@ private void fireFillClickAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         return jStandardAttackDialog;
     }
 
-    /**Set table model for filteres selection*/
-    private void setTableModel(JTable pTable, Hashtable<Village, Boolean> pVillages) {
+    /**Set table model for selection filters*/
+    private void setupSelectionFilterTableModel(JTable pTable, Hashtable<Village, Boolean> pVillages) {
         //create default table model
         DefaultTableModel model = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
@@ -3127,8 +3129,8 @@ private void fireFillClickAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             }
         };
 
-//walk villages for row values
-        if (pVillages.size() != 0) {
+        //walk villages for row values
+        if (!pVillages.isEmpty()) {
             Enumeration<Village> villages = pVillages.keys();
             while (villages.hasMoreElements()) {
                 Village v = villages.nextElement();
@@ -3146,7 +3148,7 @@ private void fireFillClickAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             pTable.getColumn(pTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
 
-//set max width
+        //set max width
         pTable.getColumnModel().getColumn(1).setMaxWidth(75);
         //set sorter
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);

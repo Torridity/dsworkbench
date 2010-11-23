@@ -72,9 +72,8 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
 
         jTagTable.setColumnSelectionAllowed(false);
         jTagTable.setModel(TagTableModel.getSingleton());
-        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
-        jTagTable.setRowSorter(sorter);
-
+        TagTableModel.getSingleton().resetRowSorter(jTagTable.getModel());
+        jTagTable.setRowSorter(TagTableModel.getSingleton().getRowSorter());
         AlternatingColorCellRenderer rend = new AlternatingColorCellRenderer();
         jTagTable.setDefaultRenderer(TagMapMarker.class, new TagMapMarkerRenderer());
         jTagTable.setDefaultEditor(TagMapMarker.class, new TagMapMarkerCellEditor());
@@ -145,12 +144,12 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         jTagTable.getTableHeader().setReorderingAllowed(false);
 
         //setup renderer and general view
-        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jTagTable.getModel());
-        jTagTable.setRowSorter(sorter);
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         //update view
         fireRebuildTableEvent();
         jTagTable.revalidate();
+        TagTableModel.getSingleton().resetRowSorter(jTagTable.getModel());
+        jTagTable.setRowSorter(TagTableModel.getSingleton().getRowSorter());
         jTagTable.repaint();
     }
 

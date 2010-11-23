@@ -58,12 +58,12 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             setFullRenderRequired(true);
             shouldReset = false;
             mapPos = null;
-            if (MapPanel.getSingleton().getWidth() > mLayer.getWidth()
+            if (mLayer != null && (MapPanel.getSingleton().getWidth() > mLayer.getWidth()
                     || MapPanel.getSingleton().getWidth() < mLayer.getWidth() - 100
                     || MapPanel.getSingleton().getHeight() > mLayer.getHeight()
                     || MapPanel.getSingleton().getHeight() < mLayer.getHeight() - 100
                     || MapPanel.getSingleton().getWidth() < pSettings.getFieldWidth() * pSettings.getVisibleVillages().length
-                    || MapPanel.getSingleton().getHeight() < pSettings.getFieldHeight() * pSettings.getVisibleVillages()[0].length) {
+                    || MapPanel.getSingleton().getHeight() < pSettings.getFieldHeight() * pSettings.getVisibleVillages()[0].length)) {
                 mLayer.flush();
                 mLayer = null;
             }

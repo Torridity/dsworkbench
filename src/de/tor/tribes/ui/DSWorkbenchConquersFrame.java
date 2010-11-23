@@ -88,8 +88,9 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
         jConquersTable.setColumnSelectionAllowed(false);
         jConquersTable.setModel(ConquersTableModel.getSingleton());
-        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
-        jConquersTable.setRowSorter(sorter);
+
+        ConquersTableModel.getSingleton().resetRowSorter(jConquersTable.getModel());
+        jConquersTable.setRowSorter(ConquersTableModel.getSingleton().getRowSorter());
 
         MouseListener l = new MouseListener() {
 

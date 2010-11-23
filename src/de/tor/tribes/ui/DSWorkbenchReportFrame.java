@@ -101,12 +101,12 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jTaskPaneGroup1.setBackground(Constants.DS_BACK);
         //color scrollpanes of selection dialog
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
-        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
-        jReportTable.setRowSorter(sorter);
-        sorter.setModel(ReportManagerTableModel.getSingleton());
+        jReportTable.setModel(ReportManagerTableModel.getSingleton());
+        ReportManagerTableModel.getSingleton().resetRowSorter(jReportTable.getModel());
+        jReportTable.setRowSorter(ReportManagerTableModel.getSingleton().getRowSorter());
         jReportTable.setColumnSelectionAllowed(false);
         jReportTable.getTableHeader().setReorderingAllowed(false);
-        jReportTable.setModel(ReportManagerTableModel.getSingleton());
+
 
         MouseListener l = new MouseListener() {
 
@@ -1606,7 +1606,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         }
         JOptionPaneHelper.showInformationBox(this, "Truppen übertragen", "Information");
         TroopsManager.getSingleton().forceUpdate();
-       // MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+        // MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
 
     }//GEN-LAST:event_fireMoveTroopsToTroopManagerEvent
 
@@ -1793,7 +1793,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
-        
     }
 
     static class TribeStatResult {

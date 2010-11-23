@@ -30,15 +30,14 @@ public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
 
     @Override
     public void performRendering(RenderSettings pSettings, Graphics2D pG2d) {
-
         if (shouldReset) {
             //setRenderedBounds(null);
             setFullRenderRequired(true);
             shouldReset = false;
-            if (MapPanel.getSingleton().getWidth() > mLayer.getWidth()
+            if (mLayer != null && (MapPanel.getSingleton().getWidth() > mLayer.getWidth()
                     || MapPanel.getSingleton().getWidth() < mLayer.getWidth() - 100
                     || MapPanel.getSingleton().getHeight() > mLayer.getHeight()
-                    || MapPanel.getSingleton().getHeight() < mLayer.getHeight() - 100) {
+                    || MapPanel.getSingleton().getHeight() < mLayer.getHeight() - 100)) {
                 mLayer.flush();
                 mLayer = null;
             }

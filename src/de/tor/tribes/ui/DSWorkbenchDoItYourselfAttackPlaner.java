@@ -162,8 +162,8 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jAttackTable.setModel(DoItYourselfAttackTableModel.getSingleton());
         //setup renderer and general view
         DoItYourselfAttackTableModel.getSingleton().clear();
-        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jAttackTable.getModel());
-        jAttackTable.setRowSorter(sorter);
+        DoItYourselfAttackTableModel.getSingleton().resetRowSorter(jAttackTable.getModel());
+        jAttackTable.setRowSorter(DoItYourselfAttackTableModel.getSingleton().getRowSorter());
 
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         for (int i = 0; i < jAttackTable.getColumnCount(); i++) {

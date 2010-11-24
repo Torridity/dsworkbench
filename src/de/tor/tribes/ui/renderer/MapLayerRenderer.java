@@ -458,17 +458,17 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
     }
 
     private void renderVillageField(Village v,
-            int row,
-            int col,
-            int globalRow,
-            int globalCol,
-            int pFieldWidth,
-            int pFieldHeight,
-            double zoom,
-            boolean useDecoration,
-            boolean showBarbarian,
-            boolean markedOnly,
-            Graphics2D g2d) {
+                                    int row,
+                                    int col,
+                                    int globalRow,
+                                    int globalCol,
+                                    int pFieldWidth,
+                                    int pFieldHeight,
+                                    double zoom,
+                                    boolean useDecoration,
+                                    boolean showBarbarian,
+                                    boolean markedOnly,
+                                    Graphics2D g2d) {
         Rectangle copyRect = null;
         int textureId = -1;
         BufferedImage sprite = null;
@@ -498,7 +498,6 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             }
             copyRect = renderedSpriteBounds.get(textureId);
             if (copyRect == null && useDecoration) {
-                //sprite = WorldDecorationHolder.getOriginalSprite(globalCol, globalRow);
                 sprite = WorldDecorationHolder.getCachedImage(globalCol, globalRow, zoom);
             } else if (copyRect == null && !useDecoration) {
                 sprite = GlobalOptions.getSkin().getCachedImage(textureId, zoom);

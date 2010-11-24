@@ -104,8 +104,16 @@ public class Skin {
     public Skin(String pSkinPath) throws Exception {
         if (pSkinPath == null || !pSkinPath.equals(MINIMAP_SKIN_ID)) {
             loadSkin(pSkinPath);
+            try {
+                WorldDecorationHolder.loadTextures();
+            } catch (Exception e) {
+            }
         } else {
             loadMinimapSkin();
+            try {
+                WorldDecorationHolder.loadTextures();
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -209,10 +217,6 @@ public class Skin {
                 if ((current.getWidth(null) != iFieldWidth) || (current.getHeight(null) != iFieldHeight)) {
                     throw new Exception("Textur " + id + " hat nicht die erwartete Größe " + iFieldWidth + "x" + iFieldHeight);
                 }
-            }
-            try {
-                WorldDecorationHolder.loadTextures();
-            } catch (Exception e) {
             }
         } catch (IOException ioe) {
             throw new Exception("Fehler beim laden des Grafikpaketes");

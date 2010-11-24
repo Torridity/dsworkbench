@@ -201,9 +201,12 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         try {
             //open account selection
             File f = new File("./servers");
+            if (!f.exists() && !f.mkdir()) {
+                JOptionPaneHelper.showErrorBox(self, "Fehler bei der Initialisierung.\nDas Serververzeichnis konnte nicht erstellt werden.", "Fehler");
+                return false;
+            }
             List<String> servers = new LinkedList<String>();
             for (File server : f.listFiles()) {
-                String name = server.getName();
                 servers.add(server.getName());
             }
 
@@ -243,9 +246,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                     jProfileDialog.setVisible(true);
                 }
             }
-
-
-
             if (!DSWorkbenchSettingsDialog.getSingleton().checkSettings()) {
                 logger.info("Reading user settings returned error(s)");
                 DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
@@ -282,25 +282,9 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         }
 
         try {
-            //if (checkForUpdates) {
-            //boolean ret =
-            DataHolder.getSingleton().loadData(checkForUpdates);
-            /*logger.debug("Update finished " + ((ret) ? "successfully" : "with errors"));
-            if (!ret) {
-            logger.info(" - Loading local copy due to update error");
-            ret = DataHolder.getSingleton().loadData(false);
-            logger.debug("Data loaded " + ((ret) ? "successfully" : "with errors"));
-            if (!ret) {
-            throw new Exception("Unable to load local data copy");
+            if (!DataHolder.getSingleton().loadData(checkForUpdates)) {
+                throw new Exception("loadData() returned 'false'. See log for more details.");
             }
-            }
-            } else {
-            boolean ret = DataHolder.getSingleton().loadData(true);
-            logger.debug("Data loaded " + ((ret) ? "successfully" : "with errors"));
-            if (!ret) {
-            throw new Exception("Unable to load local data copy");
-            }*/
-            // }
         } catch (Exception e) {
             logger.error("Failed to load server data", e);
             return false;
@@ -348,7 +332,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
      */
     public static void main(String args[]) {
         Locale.setDefault(Locale.GERMAN);
-     //   System.setProperty("J2D_D3D_RASTERIZER", "tnl");
+        //   System.setProperty("J2D_D3D_RASTERIZER", "tnl");
         //System.setProperty("sun.java2d.d3d", "true");
         //  System.setProperty("sun.java2d.opengl", "true");
 

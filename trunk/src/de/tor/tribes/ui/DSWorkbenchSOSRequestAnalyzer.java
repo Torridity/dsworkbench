@@ -749,14 +749,18 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
                 if (attackSources.contains(attack.getSource())) {
                     //check for possible fake
                     long sendTime = attack.getlArriveTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(attack.getSource(), target, DataHolder.getSingleton().getUnitByPlainName("ram").getSpeed()) * 1000);
+                    System.out.println("Send: " + sendTime);
                     if (sendTime < System.currentTimeMillis()) {
+                        System.out.println("Smaller current -> Fake");
                         attack.setPossibleSnob(false);
                         attack.setPossibleFake(true);
                     } else {
+                        System.out.println("Larger current -> snob");
                         attack.setPossibleSnob(true);
                         attack.setPossibleFake(false);
                     }
                 } else {
+                    System.out.println("unk");
                     //add unknown source
                     attackSources.add(attack.getSource());
                     attack.setPossibleFake(false);

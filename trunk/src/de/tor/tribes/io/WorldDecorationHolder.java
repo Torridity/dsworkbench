@@ -148,6 +148,7 @@ public class WorldDecorationHolder {
     }
 
     public static BufferedImage getCachedImage(int pX, int pY, double pScaling) {
+        System.out.println("GetImage " + "(" + isValid());
         int decoId = 0;
         if ((pX < 0) || (pY < 0) || (pX > 999) || (pY > 999)) {
             //keep default ID

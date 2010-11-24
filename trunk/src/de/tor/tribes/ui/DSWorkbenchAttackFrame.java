@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.RowSorterEvent;
 import javax.swing.table.DefaultTableModel;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
@@ -58,7 +59,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
@@ -70,10 +70,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.RowSorter;
-import javax.swing.SortOrder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.RowSorterListener;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
@@ -117,10 +118,12 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jScrollPane2.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         jScrollPane3.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         jScrollPane6.getViewport().setBackground(Constants.DS_BACK_LIGHT);
+
         jAttackTable.setModel(AttackManagerTableModel.getSingleton());
         AttackManagerTableModel.getSingleton().resetRowSorter(jAttackTable.getModel());
         jAttackTable.setRowSorter(AttackManagerTableModel.getSingleton().getRowSorter());
         //  AttackManagerTableModel.getSingleton().getRowSorter().allRowsChanged();
+
         jAttackTable.setColumnSelectionAllowed(false);
         jAttackTable.getTableHeader().setReorderingAllowed(false);
 
@@ -164,7 +167,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         new ColorUpdateThread().start();
         mNotifyThread.start();
         mCountdownThread = new CountdownThread();
-        mCountdownThread.setDaemon(true);
         mCountdownThread.start();
         jArriveDateField.setDate(Calendar.getInstance().getTime());
 
@@ -3222,8 +3224,21 @@ private void fireFillClickAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     }
 
     protected void updateCountdown() {
-        //AttackManagerTableModel.getSingleton().fireTableDataChanged();
-        jAttackTable.repaint();
+        int xs = 0;
+        int w = 0;
+        for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
+            TableColumn colu = jAttackTable.getColumn(jAttackTable.getColumnName(i));
+            if (!colu.getHeaderValue().equals("Verbleibend")) {
+                xs += colu.getWidth();
+            } else {
+                w = colu.getWidth();
+                break;
+            }
+        }
+        int dh = (int) Math.ceil(jAttackTable.getVisibleRect().getHeight());
+        //only repaint visible countdown col
+        jAttackTable.repaint(xs, 0, w, dh);
+
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
@@ -3488,6 +3503,7 @@ class CountdownThread extends Thread {
     private boolean showCountdown = false;
 
     public CountdownThread() {
+        setDaemon(true);
     }
 
     public void updateSettings() {
@@ -3500,10 +3516,10 @@ class CountdownThread extends Thread {
             try {
                 if (showCountdown && DSWorkbenchAttackFrame.getSingleton().isVisible() && AttackManagerTableModel.getSingleton().isColVisible(11)) {
                     DSWorkbenchAttackFrame.getSingleton().updateCountdown();
-                    yield();
+                    //yield();
                     sleep(100);
                 } else {
-                    yield();
+                    // yield();
                     sleep(1000);
                 }
             } catch (Exception e) {

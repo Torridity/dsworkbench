@@ -87,8 +87,8 @@ import org.omg.PortableServer.THREAD_POLICY_ID;
  * @author Charon
  */
 public class MapPanel extends JPanel implements DragGestureListener, // For recognizing the start of drags
-        DragSourceListener, // For processing drag source events
-        DropTargetListener // For processing drop target events
+                                                DragSourceListener, // For processing drag source events
+                                                DropTargetListener // For processing drop target events
 {
 // <editor-fold defaultstate="collapsed" desc=" Member variables ">
 
@@ -148,7 +148,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         mToolChangeListeners = new LinkedList<ToolChangeListener>();
         mMarkerAddFrame = new MarkerAddFrame();
         setCursor(ImageManager.getCursor(iCurrentCursor));
-        //setOpaque(true);
+        setOpaque(true);
         setIgnoreRepaint(true);
         setDoubleBuffered(true);
         attackAddFrame = new AttackAddFrame();
@@ -1274,6 +1274,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         jVillageActionsMenu.add(jMarkedVillageSubmenu);
 
         setBackground(new java.awt.Color(255, 255, 255));
+        setOpaque(false);
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 fireResizeEvent(evt);
@@ -1752,10 +1753,9 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     }//GEN-LAST:event_fireResizeEvent
     long s = 0;
 
-    public void paintComponent(Graphics g) {
+    public void paint(Graphics g) {
         /**Draw buffer into panel*/
         // System.out.println("P " + (System.currentTimeMillis() - s));
-        s = System.currentTimeMillis();
         try {
             //calculate move direction if mouse is dragged outside the map
 
@@ -1823,9 +1823,9 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         }*/
         positionUpdate = true;
         if (pZoomed) {
-            getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
+            mMapRenderer.initiateRedraw(MapRenderer.ALL_LAYERS);
         } else {
-            getMapRenderer().initiateRedraw(MapRenderer.MAP_LAYER);
+            mMapRenderer.initiateRedraw(MapRenderer.MAP_LAYER);
         }
     }
 

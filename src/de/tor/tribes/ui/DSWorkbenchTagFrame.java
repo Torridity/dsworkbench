@@ -46,8 +46,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
@@ -71,9 +69,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         mHeaderRenderer = new SortableTableHeaderRenderer();
 
         jTagTable.setColumnSelectionAllowed(false);
-        jTagTable.setModel(TagTableModel.getSingleton());
-        TagTableModel.getSingleton().resetRowSorter(jTagTable.getModel());
-        jTagTable.setRowSorter(TagTableModel.getSingleton().getRowSorter());
+        TagTableModel.getSingleton().resetRowSorter(jTagTable);
         AlternatingColorCellRenderer rend = new AlternatingColorCellRenderer();
         jTagTable.setDefaultRenderer(TagMapMarker.class, new TagMapMarkerRenderer());
         jTagTable.setDefaultEditor(TagMapMarker.class, new TagMapMarkerCellEditor());
@@ -148,8 +144,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         //update view
         fireRebuildTableEvent();
         jTagTable.revalidate();
-        TagTableModel.getSingleton().resetRowSorter(jTagTable.getModel());
-        jTagTable.setRowSorter(TagTableModel.getSingleton().getRowSorter());
+        TagTableModel.getSingleton().resetRowSorter(jTagTable);
         jTagTable.repaint();
     }
 

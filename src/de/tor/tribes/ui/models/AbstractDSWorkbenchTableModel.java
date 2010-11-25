@@ -11,9 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JTable;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -26,6 +28,8 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
     private boolean[] visibleColumns = null;
     private JPopupMenu popup = null;
     private TableRowSorter<TableModel> mRowSorter = null;
+    private TableColumnModel mColumnModel = null;
+    private JTable mAssociatedTable = null;
 
     public abstract String getPropertyBaseID();
 
@@ -55,7 +59,10 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
         return mRowSorter;
     }
 
-    public void resetRowSorter(TableModel pModel) {
+    public void resetRowSorter(JTable pTable) {
+        if (mAssociatedTable == null) {
+            mAssociatedTable = pTable;
+        }
         if (mRowSorter != null) {
             //store current state
             List<RowSorter.SortKey> keys = (List<RowSorter.SortKey>) mRowSorter.getSortKeys();
@@ -68,8 +75,13 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
             }
         }
 
+
+
+        pTable.setModel(this);
+
+        //create new row sorter and reset state
         mRowSorter = new TableRowSorter<TableModel>();
-        mRowSorter.setModel(pModel);
+        mRowSorter.setModel(this);
         List<RowSorter.SortKey> sortKeys = new ArrayList<RowSorter.SortKey>();
         String sortKey = GlobalOptions.getProperty(getPropertyBaseID() + ".sort.key");
         if (sortKey != null) {
@@ -84,6 +96,9 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
             }
             mRowSorter.setSortKeys(sortKeys);
         }
+        pTable.setRowSorter(mRowSorter);
+
+
     }
 
     /**Fill the array of visible cols*/
@@ -114,6 +129,25 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
             }
         }
 
+        //restore column widths
+        if (mAssociatedTable != null) {
+            String columnSizes = GlobalOptions.getProperty(getPropertyBaseID() + ".columns.size");
+            System.out.println("Reset sizes " + columnSizes);
+            if (columnSizes != null) {
+                String[] sizeSplit = columnSizes.split(",");
+                for (int i = 0; i < visibleColumns.length; i++) {
+                    if (isColVisible(i)) {
+                        System.out.println(getColumnNames()[i]);
+                        int col = getRealColumnId(i);
+                        int size = Integer.parseInt(sizeSplit[i]);
+                        if (size < 0) {
+                            mAssociatedTable.getColumnModel().getColumn(col).setWidth(size);
+                        }
+                    }
+                }
+            }
+        }
+
         //load row sorter state
         saveModelState();
     }
@@ -127,6 +161,27 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
         }
         colData = colData.substring(0, colData.lastIndexOf(","));
         GlobalOptions.addProperty(getPropertyBaseID() + ".visible.cols", colData);
+        //store column widths
+        if (mAssociatedTable != null) {
+            //store column state because table is initialized
+            String colSizes = "";
+            for (int i = 0; i < visibleColumns.length; i++) {
+                if (isColVisible(i)) {
+                    System.out.println(getColumnNames()[i] + "(" + i + ")");
+                    int col = getRealColumnId(i);
+                    if (col > mAssociatedTable.getColumnCount() - 1) {
+                        colSizes += "-1,";
+                    } else {
+                        colSizes += mAssociatedTable.getColumnModel().getColumn(col).getWidth() + ",";
+                    }
+                } else {
+                    colSizes += "-1,";
+                }
+            }
+            colSizes = colSizes.substring(0, colSizes.lastIndexOf(","));
+            GlobalOptions.addProperty(getPropertyBaseID() + ".columns.size", colSizes);
+            System.out.println("Added cols " + colSizes);
+        }
     }
 
     /**Build the right-click popup to enable/disable columns*/
@@ -142,9 +197,9 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
                     String text = ((JCheckBoxMenuItem) e.getSource()).getText();
                     int idx = getInternalColumnNames().indexOf(text);
                     visibleColumns[idx] = !visibleColumns[idx];
-                    saveModelState();
                     fireTableStructureChanged();
                     doNotifyOnColumnChange();
+                    saveModelState();
                 }
             });
             popup.add(item);

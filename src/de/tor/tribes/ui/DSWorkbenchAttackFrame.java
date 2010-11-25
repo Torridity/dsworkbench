@@ -119,9 +119,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jScrollPane3.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         jScrollPane6.getViewport().setBackground(Constants.DS_BACK_LIGHT);
 
-        jAttackTable.setModel(AttackManagerTableModel.getSingleton());
-        AttackManagerTableModel.getSingleton().resetRowSorter(jAttackTable.getModel());
-        jAttackTable.setRowSorter(AttackManagerTableModel.getSingleton().getRowSorter());
+        AttackManagerTableModel.getSingleton().resetRowSorter(jAttackTable);
         //  AttackManagerTableModel.getSingleton().getRowSorter().allRowsChanged();
 
         jAttackTable.setColumnSelectionAllowed(false);
@@ -2539,8 +2537,7 @@ private void fireActiveAttackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-F
 
         jAttackTable.repaint();//.updateUI();
         jAttackTable.revalidate();
-        AttackManagerTableModel.getSingleton().resetRowSorter(jAttackTable.getModel());
-        jAttackTable.setRowSorter(AttackManagerTableModel.getSingleton().getRowSorter());
+        AttackManagerTableModel.getSingleton().resetRowSorter(jAttackTable);
     }
 }//GEN-LAST:event_fireActiveAttackChangedEvent
 

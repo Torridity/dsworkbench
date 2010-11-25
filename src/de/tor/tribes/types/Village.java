@@ -435,7 +435,7 @@ public class Village implements Comparable, Serializable {
 
     public int getGraphicsType() {
         int graphicsType = Skin.ID_V1;
-   
+
         boolean isLeft = false;
         if (getTribe() == Barbarians.getSingleton()) {
             isLeft = true;

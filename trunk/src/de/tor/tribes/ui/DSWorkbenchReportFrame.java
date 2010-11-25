@@ -101,9 +101,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jTaskPaneGroup1.setBackground(Constants.DS_BACK);
         //color scrollpanes of selection dialog
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
-        jReportTable.setModel(ReportManagerTableModel.getSingleton());
-        ReportManagerTableModel.getSingleton().resetRowSorter(jReportTable.getModel());
-        jReportTable.setRowSorter(ReportManagerTableModel.getSingleton().getRowSorter());
+        ReportManagerTableModel.getSingleton().resetRowSorter(jReportTable);
         jReportTable.setColumnSelectionAllowed(false);
         jReportTable.getTableHeader().setReorderingAllowed(false);
 

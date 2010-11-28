@@ -6,10 +6,7 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.php.json.JSONArray;
-import de.tor.tribes.php.json.JSONException;
 import de.tor.tribes.php.json.JSONObject;
-import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.Serializable;
 import java.util.Date;
@@ -18,13 +15,12 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 /**
  *
  * @author Charon
  */
-public class Attack implements Serializable {
+public class Attack implements Serializable, Comparable<Attack> {
 
     public static final int NO_TYPE = 0;
     public static final int CLEAN_TYPE = 1;
@@ -208,5 +204,15 @@ public class Attack implements Serializable {
      */
     public void setTransferredToBrowser(boolean transferredToBrowser) {
         this.transferredToBrowser = transferredToBrowser;
+    }
+
+    @Override
+    public int compareTo(Attack a) {
+        if (getSource().getId() == a.getSource().getId()
+                && getTarget().getId() == a.getTarget().getId()
+                && getArriveTime().getTime() == a.getArriveTime().getTime()) {
+            return 0;
+        }
+        return -1;
     }
 }

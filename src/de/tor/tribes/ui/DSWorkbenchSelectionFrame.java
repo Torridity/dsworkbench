@@ -817,7 +817,6 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
 
     @Override
     public void dragGestureRecognized(DragGestureEvent dge) {
-
         List<Village> v = getSelectedElements();
         if (v == null) {
             return;

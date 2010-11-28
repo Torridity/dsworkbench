@@ -6,6 +6,7 @@ package de.tor.tribes.util.parser;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
@@ -79,7 +80,7 @@ public class SOSParser {
         } else {
             dateFormat = new SimpleDateFormat(ParserVariableManager.getSingleton().getProperty("sos.date.format.ms"));
         }
-        
+
         for (String line : lines) {
             if (line.indexOf(ParserVariableManager.getSingleton().getProperty("sos.defender")) > -1) {
                 //start new support request
@@ -164,6 +165,23 @@ public class SOSParser {
         System.out.println("Putting final Request");
         requests.put(currentRequest.getDefender(), currentRequest);
         }*/
+        return requests;
+    }
+
+    public static Hashtable<Tribe, SOSRequest> attacksToSOSRequests(List<Attack> pAttacks) {
+        Hashtable<Tribe, SOSRequest> requests = new Hashtable<Tribe, SOSRequest>();
+
+        for (Attack attack : pAttacks) {
+            Tribe defender = attack.getTarget().getTribe();
+            SOSRequest requestForDefender = requests.get(defender);
+            if (requestForDefender == null) {
+                requestForDefender = new SOSRequest(defender);
+                requests.put(defender, requestForDefender);
+            }
+            requestForDefender.addTarget(attack.getTarget());
+            SOSRequest.TargetInformation targetInfo = requestForDefender.getTargetInformation(attack.getTarget());
+            targetInfo.addAttack(attack.getSource(), attack.getArriveTime());
+        }
         return requests;
     }
 

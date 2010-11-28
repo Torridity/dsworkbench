@@ -19,6 +19,7 @@ import java.awt.Polygon;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
 /**
  *
@@ -139,6 +140,11 @@ public class Line extends AbstractForm {
         g2d.setComposite(coBefore);
         g2d.setFont(fBefore);
         g2d.setTransform(tb);
+    }
+
+    @Override
+    public ArrayList<Village> getContainedVillages() {
+        return new ArrayList<Village>();
     }
 
     @Override

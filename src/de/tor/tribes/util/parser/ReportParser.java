@@ -57,7 +57,7 @@ public class ReportParser {
             String line = t.nextToken().trim();
             if (line.startsWith("Gesendet")) {
                 line = line.replaceAll("Gesendet", "").trim();
-                SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm");
+                SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
                 try {
                     Date d = f.parse(line);
                     result.setTimestamp(d.getTime());

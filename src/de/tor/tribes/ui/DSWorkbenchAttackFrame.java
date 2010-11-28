@@ -119,12 +119,13 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jScrollPane3.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         jScrollPane6.getViewport().setBackground(Constants.DS_BACK_LIGHT);
 
-        AttackManagerTableModel.getSingleton().resetRowSorter(jAttackTable);
+
         //  AttackManagerTableModel.getSingleton().getRowSorter().allRowsChanged();
+        AttackManagerTableModel.getSingleton().resetRowSorter(jAttackTable);
 
         jAttackTable.setColumnSelectionAllowed(false);
+        // jAttackTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         jAttackTable.getTableHeader().setReorderingAllowed(false);
-
 
         jAttackTable.setRowHeight(20);
         jAttackTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -154,7 +155,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderer);
         }
         fireAttacksChangedEvent(null);
-
         jAddPlanDialog.pack();
         jCopyToPlanDialog.pack();
         jRenamePlanDialog.pack();
@@ -3207,6 +3207,7 @@ private void fireFillClickAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             }
             jAttackTable.revalidate();
             jAttackTable.repaint();
+            AttackManagerTableModel.getSingleton().loadColumnState();
         } catch (Exception e) {
             logger.error("Failed to update attacks table", e);
         }

@@ -55,7 +55,7 @@ import org.apache.log4j.Logger;
 public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
 
     private static Logger logger = Logger.getLogger("SOSRequestAnalyzer ");
-    public static DSWorkbenchSOSRequestAnalyzer SINGLETON = null;
+    private static DSWorkbenchSOSRequestAnalyzer SINGLETON = null;
     private Hashtable<Tribe, SOSRequest> currentRequests;
 
     public static synchronized DSWorkbenchSOSRequestAnalyzer getSingleton() {
@@ -708,10 +708,28 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
                 }
             }
         }
+
+        boolean doFilter = (JOptionPaneHelper.showQuestionConfirmBox(this, "Soll DS Workbench versuchen, bereits eingelesene Angriffe herauszufiltern?", "Angriffe übertragen", "Nein", "Ja") == JOptionPane.YES_OPTION);
+
+
         int added = 0;
         String activePlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
-        for (Attack a : attacks) {
-            AttackManager.getSingleton().addAttackFast(a.getSource(), a.getTarget(), a.getUnit(), a.getArriveTime(), activePlan);
+        Attack[] planAttacks = AttackManager.getSingleton().getAttackPlan(activePlan).toArray(new Attack[]{});
+
+        for (Attack newAttack : attacks) {
+
+            boolean exists = false;
+            if (doFilter) {
+                for (Attack existingAttack : planAttacks) {
+                    if (newAttack.compareTo(existingAttack) == 0) {
+                        exists = true;
+                        break;
+                    }
+                }
+            }
+            if (!exists) {
+                AttackManager.getSingleton().addAttackFast(newAttack.getSource(), newAttack.getTarget(), newAttack.getUnit(), newAttack.getArriveTime(), activePlan);
+            }
             added++;
         }
         AttackManager.getSingleton().forceUpdate(null);

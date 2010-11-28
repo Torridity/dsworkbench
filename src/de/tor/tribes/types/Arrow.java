@@ -18,6 +18,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import org.jdom.Element;
 
 /**
@@ -70,6 +71,12 @@ public class Arrow extends AbstractForm {
         }
     }
 
+    @Override
+    public ArrayList<Village> getContainedVillages() {
+        return new ArrayList<Village>();
+    }
+
+    @Override
     protected String getFormXml() {
         String xml = "<end x=\"" + getXPosEnd() + "\" y=\"" + getYPosEnd() + "\"/>\n";
         xml += "<filled>" + isFilled() + "</filled>\n";
@@ -84,6 +91,7 @@ public class Arrow extends AbstractForm {
         return "arrow";
     }
 
+    @Override
     public java.awt.Rectangle getBounds() {
         Point2D.Double s = new Point2D.Double(getXPos(), getYPos());
         Point2D.Double e = new Point2D.Double(getXPosEnd(), getYPosEnd());
@@ -160,7 +168,7 @@ public class Arrow extends AbstractForm {
         path.transform(trans);
         trans = AffineTransform.getTranslateInstance(s.x, s.y);
         path.transform(trans);
-        
+
         if (isFilled()) {
             g2d.fill(path);
         } else {

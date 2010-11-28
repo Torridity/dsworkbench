@@ -12,11 +12,20 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.types.AbstractForm;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.dnd.VillageTransferable;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.map.FormManager;
+import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
+import java.awt.dnd.DragSourceDragEvent;
+import java.awt.dnd.DragSourceDropEvent;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -26,10 +35,11 @@ import org.apache.log4j.Logger;
 /**
  * @author Charon
  */
-public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
+public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements DragGestureListener {
 
     private static Logger logger = Logger.getLogger("FormFrame");
     private static DSWorkbenchFormFrame SINGLETON = null;
+    private DragSource dragSource;
 
     public static synchronized DSWorkbenchFormFrame getSingleton() {
         if (SINGLETON == null) {
@@ -48,6 +58,10 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
         } catch (Exception e) {
             //setting not available
         }
+        dragSource = DragSource.getDefaultDragSource();
+        dragSource.createDefaultDragGestureRecognizer(jFormsList, // What component
+                DnDConstants.ACTION_COPY_OR_MOVE, // What drag types?
+                this);// the listener
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.form_view", GlobalOptions.getHelpBroker().getHelpSet());
@@ -308,6 +322,34 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
     private void fireFormFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireFormFrameAlwaysOnTopEvent
         setAlwaysOnTop(!isAlwaysOnTop());
     }//GEN-LAST:event_fireFormFrameAlwaysOnTopEvent
+
+    @Override
+    public void dragGestureRecognized(DragGestureEvent dge) {
+        AbstractForm f = (AbstractForm) jFormsList.getSelectedValue();
+        if (f == null) {
+            return;
+        }
+        ArrayList<Village> v = f.getContainedVillages();
+        Cursor c = null;
+        if (!v.isEmpty()) {
+            c = ImageManager.createVillageDragCursor(v.size());
+            setCursor(c);
+            dge.startDrag(c, new VillageTransferable(v), this);
+        }
+    }
+
+    @Override
+    public void dragEnter(DragSourceDragEvent dsde) {
+    }
+
+    @Override
+    public void dragOver(DragSourceDragEvent dsde) {
+    }
+
+    @Override
+    public void dragDropEnd(DragSourceDropEvent dsde) {
+        setCursor(Cursor.getDefaultCursor());
+    }
 
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {

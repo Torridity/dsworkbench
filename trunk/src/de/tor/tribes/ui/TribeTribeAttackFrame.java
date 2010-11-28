@@ -98,7 +98,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 
 /**
-* @TODO (DIFF) Added strict filtering to troop filter dialog
+ * @TODO (DIFF) Added strict filtering to troop filter dialog
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame implements AlgorithmListener, DropTargetListener, DragGestureListener, DragSourceListener {
@@ -1752,6 +1752,11 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
 
         jInfoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/information.png"))); // NOI18N
         jInfoLabel.setText(bundle.getString("TribeTribeAttackFrame.jInfoLabel.text")); // NOI18N
+        jInfoLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                showAttackInfoEvent(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -2857,6 +2862,60 @@ private void fireReOpenLogPanelEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     mLogFrame.setVisible(true);
     mLogFrame.toFront();
 }//GEN-LAST:event_fireReOpenLogPanelEvent
+
+private void showAttackInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_showAttackInfoEvent
+    DefaultTableModel victimModel = (DefaultTableModel) jVictimTable.getModel();
+    List<Village> victimVillages = new LinkedList<Village>();
+    List<Village> victimVillagesFaked = new LinkedList<Village>();
+    for (int i = 0; i < victimModel.getRowCount(); i++) {
+        if ((Boolean) victimModel.getValueAt(i, 2) == Boolean.TRUE) {
+            victimVillagesFaked.add((Village) victimModel.getValueAt(i, 1));
+        } else {
+            victimVillages.add((Village) victimModel.getValueAt(i, 1));
+        }
+    }
+
+    DefaultTableModel attackModel = (DefaultTableModel) jAttacksTable.getModel();
+    Hashtable<UnitHolder, List<Village>> sources = new Hashtable<UnitHolder, List<Village>>();
+    Hashtable<UnitHolder, List<Village>> fakes = new Hashtable<UnitHolder, List<Village>>();
+    for (int i = 0; i < attackModel.getRowCount(); i++) {
+        Village vSource = (Village) attackModel.getValueAt(i, 0);
+        UnitHolder uSource = (UnitHolder) attackModel.getValueAt(i, 1);
+        boolean fake = (Boolean) attackModel.getValueAt(i, 2);
+        if (!fake) {
+            List<Village> sourcesForUnit = sources.get(uSource);
+            if (sourcesForUnit == null) {
+                sourcesForUnit = new LinkedList<Village>();
+                sourcesForUnit.add(vSource);
+                sources.put(uSource, sourcesForUnit);
+            } else {
+                sourcesForUnit.add(vSource);
+            }
+
+        } else {
+            List<Village> fakesForUnit = fakes.get(uSource);
+            if (fakesForUnit == null) {
+                fakesForUnit = new LinkedList<Village>();
+                fakesForUnit.add(vSource);
+                fakes.put(uSource, fakesForUnit);
+            } else {
+                fakesForUnit.add(vSource);
+            }
+        }
+    }
+
+    DSWorkbenchAttackInfoPanel info = new DSWorkbenchAttackInfoPanel();
+    info.setVillages(sources, victimVillages, fakes, victimVillagesFaked);
+    JFrame f = new JFrame();
+    f.add(info);
+    info.refresh();
+    f.setSize(info.getWidth(), info.getHeight());
+    f.pack();
+    f.setVisible(true);
+
+
+
+}//GEN-LAST:event_showAttackInfoEvent
 
     /**Add selected target villages filteres by points*/
     private void fireAddFilteredTargetVillages() {

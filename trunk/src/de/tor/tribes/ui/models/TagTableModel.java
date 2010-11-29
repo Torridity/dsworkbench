@@ -67,7 +67,7 @@ public class TagTableModel extends AbstractDSWorkbenchTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        columnIndex = getRealColumnId(columnIndex);
+        columnIndex = convertViewColumnToModel(columnIndex);
         switch (columnIndex) {
             case 0: {
                 return TagManager.getSingleton().getTags().get(rowIndex).getName();
@@ -103,7 +103,7 @@ public class TagTableModel extends AbstractDSWorkbenchTableModel {
 
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
-        columnIndex = getRealColumnId(columnIndex);
+        columnIndex = convertViewColumnToModel(columnIndex);
         switch (columnIndex) {
             case 0: {
                 TagManager.getSingleton().getTags().get(rowIndex).setName((String) value);

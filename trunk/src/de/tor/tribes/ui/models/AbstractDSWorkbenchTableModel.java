@@ -221,17 +221,17 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
     @Override
     public String getColumnName(int col) {
         //return colNames[col];
-        return getColumnNames()[getRealColumnId(col)];
+        return getColumnNames()[convertViewColumnToModel(col)];
     }
 
     @Override
     public Class getColumnClass(int columnIndex) {
-        return getColumnClasses()[getRealColumnId(columnIndex)];
+        return getColumnClasses()[convertViewColumnToModel(columnIndex)];
     }
 
     @Override
     public boolean isCellEditable(int row, int col) {
-        col = getRealColumnId(col);
+        col = convertViewColumnToModel(col);
         return getEditableColumns()[col];
     }
 
@@ -246,8 +246,30 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
         return n;
     }
 
-    /**Get the real column number in respect to (in-)visible columns*/
-    protected int getRealColumnId(int col) {
+    /**Translate a view column id to a model column id in respect to (in-)visible columns<BR/>
+     * e.g. Visibility is as follows: |1|1|0|0|0|0|1|<BR/>
+     * If we request the id of col 3 we get value 6 because all columns in between (and col 3 itself) are invisible<BR/>
+     * If we request the id of col 1 we get value 1 because column 1 is visible in the view
+     * If we request the id of col 4 an exception is thrown because the view has only 4 columns
+     */
+    protected int convertViewColumnToModel(int col) {
+        int n = col;    // right number to return
+        int i = 0;
+        do {
+            if (!(visibleColumns[i])) {
+                n++;
+            }
+            i++;
+        } while (i < n);
+        // If we are on an invisible column,
+        // we have to go one step further
+        while (!(visibleColumns[n])) {
+            n++;
+        }
+        return n;
+    }
+
+    protected int convertModelColumnToView(int col) {
         int n = col;    // right number to return
         int i = 0;
         do {

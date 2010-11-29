@@ -713,8 +713,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
 
 
         int added = 0;
-        String activePlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
-        Attack[] planAttacks = AttackManager.getSingleton().getAttackPlan(activePlan).toArray(new Attack[]{});
+        Attack[] planAttacks = AttackManager.getSingleton().getAttackPlan().toArray(new Attack[]{});
 
         for (Attack newAttack : attacks) {
 
@@ -728,13 +727,13 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
                 }
             }
             if (!exists) {
-                AttackManager.getSingleton().addAttackFast(newAttack.getSource(), newAttack.getTarget(), newAttack.getUnit(), newAttack.getArriveTime(), activePlan);
+                AttackManager.getSingleton().addAttackFast(newAttack.getSource(), newAttack.getTarget(), newAttack.getUnit(), newAttack.getArriveTime());
             }
             added++;
         }
-        AttackManager.getSingleton().forceUpdate(null);
+        AttackManager.getSingleton().forceUpdate();
         if (added > 0) {
-            JOptionPaneHelper.showInformationBox(this, added + ((added == 1) ? " Angriff" : " Angriffe") + " in Angriffsplan '" + activePlan + "' eingefügt.", "Information");
+            JOptionPaneHelper.showInformationBox(this, added + ((added == 1) ? " Angriff" : " Angriffe") + " in Angriffsplan '" + AttackManager.getSingleton().getActiveAttackPlan() + "' eingefügt.", "Information");
         }
         // DSWorkbenchAttackFrame.getSingleton().fireAttacksChangedEvent(null);
     }//GEN-LAST:event_fireCopyToAttackViewEvent

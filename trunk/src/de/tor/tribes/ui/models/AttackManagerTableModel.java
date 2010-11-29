@@ -14,17 +14,11 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchAttackFrame;
 import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.AttackManagerListener;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import javax.swing.RowSorter;
-import javax.swing.SortOrder;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.log4j.Logger;
 
@@ -59,7 +53,7 @@ public class AttackManagerTableModel extends AbstractDSWorkbenchTableModel {
         internalNames = Arrays.asList(new String[]{"Angreifer", "Stamm (Angreifer)", "Herkunft", "Verteidiger", "Stamm (Verteidiger)", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Einzeichnen", "Typ", "Countdown", "Übertragen"});
         editableColumns = new boolean[]{false, false, true, false, false, true, true, true, true, true, true, false, true};
     }
-    private String sActiveAttackPlan = AttackManager.DEFAULT_PLAN_ID;
+    //  private String sActiveAttackPlan = AttackManager.DEFAULT_PLAN_ID;
     private static AttackManagerTableModel SINGLETON = null;
 
     public static final AttackManagerTableModel getSingleton() {
@@ -79,26 +73,25 @@ public class AttackManagerTableModel extends AbstractDSWorkbenchTableModel {
         });
     }
 
-    public synchronized void setActiveAttackPlan(String pPlan) {
-        logger.debug("Setting active attack plan to '" + pPlan + "'");
-        sActiveAttackPlan = pPlan;
+    /*  public synchronized void setActiveAttackPlan(String pPlan) {
+    logger.debug("Setting active attack plan to '" + pPlan + "'");
+    sActiveAttackPlan = pPlan;
     }
 
     public synchronized String getActiveAttackPlan() {
-        return sActiveAttackPlan;
-    }
-
+    return sActiveAttackPlan;
+    }*/
     public void addRow(Object[] row) {
-        AttackManager.getSingleton().addAttack((Village) row[0], (Village) row[1], (UnitHolder) row[2], (Date) row[4], sActiveAttackPlan);
+        AttackManager.getSingleton().addAttack((Village) row[0], (Village) row[1], (UnitHolder) row[2], (Date) row[4]);
     }
 
     public void removeRow(int pRow) {
-        AttackManager.getSingleton().removeAttack(sActiveAttackPlan, pRow);
+        AttackManager.getSingleton().removeAttack(pRow);
     }
 
     @Override
     public boolean isCellEditable(int row, int col) {
-        col = getRealColumnId(col);
+        col = convertViewColumnToModel(col);
         if (col == 0 || col == 1 || col == 3 || col == 4 || col == 11) {
             //attacker, defender and countdown are not editable
             return false;
@@ -107,7 +100,7 @@ public class AttackManagerTableModel extends AbstractDSWorkbenchTableModel {
     }
 
     public Attack getAttackAtRow(int pRow) {
-        List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(getActiveAttackPlan());
+        List<Attack> attacks = AttackManager.getSingleton().getAttackPlan();
         if (attacks.size() > pRow) {
             return attacks.get(pRow);
         } else {
@@ -118,14 +111,14 @@ public class AttackManagerTableModel extends AbstractDSWorkbenchTableModel {
     @Override
     public void fireTableCellUpdated(int row, int column) {
         try {
-            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(getActiveAttackPlan());
+            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan();
             Attack a = null;
             if (attacks.size() > row) {
                 a = attacks.get(row);
             } else {
                 return;
             }
-            column = getRealColumnId(column);
+            column = convertViewColumnToModel(column);
             super.fireTableCellUpdated(row, column);
         } catch (Exception e) {
         }
@@ -134,14 +127,14 @@ public class AttackManagerTableModel extends AbstractDSWorkbenchTableModel {
     @Override
     public Object getValueAt(int pRow, int pCol) {
         try {
-            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(getActiveAttackPlan());
+            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan();
             Attack a = null;
             if (attacks.size() > pRow) {
                 a = attacks.get(pRow);
             } else {
                 return null;
             }
-            pCol = getRealColumnId(pCol);
+            pCol = convertViewColumnToModel(pCol);
             switch (pCol) {
                 case 0: {
                     Tribe attacker = a.getSource().getTribe();
@@ -212,22 +205,19 @@ public class AttackManagerTableModel extends AbstractDSWorkbenchTableModel {
 
     @Override
     public int getRowCount() {
-        String activePlan = getActiveAttackPlan();
-        List<Attack> active = AttackManager.getSingleton().getAttackPlan(activePlan);
+        List<Attack> active = AttackManager.getSingleton().getAttackPlan();
         if (active != null) {
             return active.size();
         } else {
-            sActiveAttackPlan = AttackManager.DEFAULT_PLAN_ID;
-            return AttackManager.getSingleton().getAttackPlan(activePlan).size();
+            return AttackManager.getSingleton().getAttackPlan(AttackManager.DEFAULT_PLAN_ID).size();
         }
     }
 
     @Override
     public void setValueAt(Object pValue, int pRow, int pCol) {
         try {
-            String activePlan = getActiveAttackPlan();
-            Attack a = AttackManager.getSingleton().getAttackPlan(activePlan).get(pRow);
-            pCol = getRealColumnId(pCol);
+            Attack a = AttackManager.getSingleton().getAttackPlan().get(pRow);
+            pCol = convertViewColumnToModel(pCol);
             switch (pCol) {
                 case 2: {
                     if (pValue == null) {

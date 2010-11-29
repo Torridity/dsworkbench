@@ -1836,7 +1836,7 @@
                           <Component id="jClickAccountLabel" min="-2" pref="144" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
-                          <Component id="jScrollPane2" pref="636" max="32767" attributes="1"/>
+                          <Component id="jScrollPane2" pref="648" max="32767" attributes="1"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jScrollPane4" min="-2" pref="152" max="-2" attributes="1"/>
                       </Group>

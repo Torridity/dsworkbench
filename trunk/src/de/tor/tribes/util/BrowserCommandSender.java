@@ -7,6 +7,7 @@ package de.tor.tribes.util;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMerchantDistibutor.Transport;
 import de.tor.tribes.util.attack.StandardAttackManager;
@@ -23,7 +24,16 @@ public class BrowserCommandSender {
 
     private static Logger logger = Logger.getLogger("BrowserInterface");
 
-    public static void sendTroops(Village pSource, Village pTarget, int pType) {
+    public static boolean sendAttack(Attack pAttack) {
+        boolean result = false;
+        if (pAttack != null) {
+            result = sendTroops(pAttack.getSource(), pAttack.getTarget(), pAttack.getType());
+            pAttack.setTransferredToBrowser(result);
+        }
+        return result;
+    }
+
+    public static boolean sendTroops(Village pSource, Village pTarget, int pType) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             logger.debug("Transfer troops to browser for village '" + pSource + "' to '" + pTarget + "' with type '" + pType + "'");
@@ -45,12 +55,12 @@ public class BrowserCommandSender {
             } else {
                 Runtime.getRuntime().exec(new String[]{browser, url});
             }
-
-            //System.out.println(url);
         } catch (Throwable t) {
             JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
             logger.error("Failed to open browser window", t);
+            return false;
         }
+        return true;
     }
 
     public static void sendRes(Village pSource, Village pTarget, int pWood, int pClay, int pIron) {
@@ -105,7 +115,7 @@ public class BrowserCommandSender {
         }
     }
 
-    public static void sendTroops(Village pSource, Village pTarget) {
+    public static boolean sendTroops(Village pSource, Village pTarget) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             logger.debug("Transfer troops to browser for ville '" + pSource + "' to '" + pTarget + "'");
@@ -125,7 +135,9 @@ public class BrowserCommandSender {
         } catch (Throwable t) {
             JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
             logger.error("Failed to open browser window", t);
+            return false;
         }
+        return true;
     }
 
     public static void openPage(String pUrl) {

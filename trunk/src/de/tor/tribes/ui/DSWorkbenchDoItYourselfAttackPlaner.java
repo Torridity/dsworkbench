@@ -883,7 +883,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         if (dir == null) {
             dir = ".";
         }
-        String selectedPlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
+        String selectedPlan = AttackManager.getSingleton().getActiveAttackPlan();
         JFileChooser chooser = null;
         try {
             chooser = new JFileChooser(dir);

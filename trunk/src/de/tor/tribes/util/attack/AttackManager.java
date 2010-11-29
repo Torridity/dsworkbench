@@ -38,6 +38,7 @@ public class AttackManager {
     private Hashtable<String, List<Attack>> mAttackPlans = null;
     private List<Attack> doItYourselfAttackPlan = null;
     public static final String DEFAULT_PLAN_ID = "default";
+    private String sActiveAttackPlan = DEFAULT_PLAN_ID;
     private final List<AttackManagerListener> mManagerListeners = new LinkedList<AttackManagerListener>();
 
     public static synchronized AttackManager getSingleton() {
@@ -219,13 +220,22 @@ public class AttackManager {
 
     }
 
+    public synchronized void setActiveAttackPlan(String pPlan) {
+        logger.debug("Setting active attack plan to '" + pPlan + "'");
+        sActiveAttackPlan = pPlan;
+    }
+
+    public synchronized String getActiveAttackPlan() {
+        return sActiveAttackPlan;
+    }
+
     public synchronized void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime) {
         boolean showOnMap = false;
         try {
             showOnMap = Boolean.parseBoolean(GlobalOptions.getProperty("draw.attacks.by.default"));
         } catch (Exception e) {
         }
-        addAttack(pSource, pTarget, pUnit, pArriveTime, showOnMap, null, -1);
+        addAttack(pSource, pTarget, pUnit, pArriveTime, showOnMap, getActiveAttackPlan(), -1);
     }
 
     public synchronized void addAttackFast(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime) {
@@ -234,7 +244,7 @@ public class AttackManager {
             showOnMap = Boolean.parseBoolean(GlobalOptions.getProperty("draw.attacks.by.default"));
         } catch (Exception e) {
         }
-        addAttackFast(pSource, pTarget, pUnit, pArriveTime, showOnMap, null, -1);
+        addAttackFast(pSource, pTarget, pUnit, pArriveTime, showOnMap, getActiveAttackPlan(), -1);
     }
 
     public synchronized void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, String pPlan) {
@@ -257,19 +267,20 @@ public class AttackManager {
 
     /**Add an attack to the default plan*/
     public synchronized void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, boolean pShowOnMap) {
-        addAttack(pSource, pTarget, pUnit, pArriveTime, pShowOnMap, null, -1);
+        addAttack(pSource, pTarget, pUnit, pArriveTime, pShowOnMap, getActiveAttackPlan(), -1);
     }
 
     /**Add an attack to the default plan*/
     public synchronized void addAttackFast(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, boolean pShowOnMap) {
-        addAttackFast(pSource, pTarget, pUnit, pArriveTime, pShowOnMap, null, -1);
+        addAttackFast(pSource, pTarget, pUnit, pArriveTime, pShowOnMap, getActiveAttackPlan(), -1);
     }
 
     /**Add an attack to a plan*/
     public synchronized void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, boolean pShowOnMap, String pPlan, Integer pType) {
         String plan = pPlan;
         if (plan == null) {
-            plan = DEFAULT_PLAN_ID;
+            setActiveAttackPlan(DEFAULT_PLAN_ID);
+            plan = getActiveAttackPlan();
         }
 
         if (pSource == null || pTarget == null || pUnit == null || pArriveTime == null) {
@@ -312,7 +323,8 @@ public class AttackManager {
     public synchronized void addAttackFast(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, boolean pShowOnMap, String pPlan, Integer pType, boolean pTransferredToBrowser) {
         String plan = pPlan;
         if (plan == null) {
-            plan = DEFAULT_PLAN_ID;
+            setActiveAttackPlan(DEFAULT_PLAN_ID);
+            plan = getActiveAttackPlan();
         }
 
         if (pSource == null || pTarget == null || pUnit == null || pArriveTime == null) {
@@ -365,8 +377,8 @@ public class AttackManager {
     /**Remove a complete attack plan*/
     public synchronized void removePlan(String pPlan) {
         String plan = pPlan;
-        if (pPlan == null) {
-            plan = DEFAULT_PLAN_ID;
+        if (pPlan == null || pPlan.equals(DEFAULT_PLAN_ID)) {
+            return;
         }
 
         if (logger.isDebugEnabled()) {
@@ -380,18 +392,26 @@ public class AttackManager {
     public synchronized void renamePlan(String pPlan, String pNewName) {
         List<Attack> attacks = mAttackPlans.remove(pPlan);
         mAttackPlans.put(pNewName, attacks);
-        AttackManagerTableModel.getSingleton().setActiveAttackPlan(pNewName);
+        setActiveAttackPlan(pNewName);
         fireAttacksChangedEvents(pNewName);
+    }
+
+    public synchronized void removeAttacks(List<Attack> pAttacks) {
+        List<Attack> currentPlan = getAttackPlan();
+        for (Attack a : pAttacks) {
+            currentPlan.remove(a);
+        }
+        fireAttacksChangedEvents(getActiveAttackPlan());
     }
 
     /**Remove one attack from the default plan*/
     public synchronized void removeAttack(int pID) {
-        removeAttacks(null, new Integer[]{pID});
+        removeAttacks(getActiveAttackPlan(), new Integer[]{pID});
     }
 
     /**Remove a number of attacks from the default plan*/
     public synchronized void removeAttack(Integer[] pIDs) {
-        removeAttacks(null, pIDs);
+        removeAttacks(getActiveAttackPlan(), pIDs);
     }
 
     /**Remove one attack from any plan*/
@@ -437,10 +457,14 @@ public class AttackManager {
         return doItYourselfAttackPlan;
     }
 
+    public List<Attack> getAttackPlan() {
+        return getAttackPlan(null);
+    }
+
     public List<Attack> getAttackPlan(String pPlan) {
         String plan = pPlan;
         if (plan == null) {
-            plan = DEFAULT_PLAN_ID;
+            plan = getActiveAttackPlan();
         }
 
         return mAttackPlans.get(plan);
@@ -452,6 +476,10 @@ public class AttackManager {
 
     public String[] getPlansAsArray() {
         return mAttackPlans.keySet().toArray(new String[]{});
+    }
+
+    public void forceUpdate() {
+        forceUpdate(getActiveAttackPlan());
     }
 
     public void forceUpdate(String pPlan) {
@@ -470,9 +498,9 @@ public class AttackManager {
             listener.fireAttacksChangedEvent(plan);
         }
 
-      /*  try {
-            //if the attacks are read too fast on startup the MapRenderer might be 'null'
-            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ATTACK_LAYER);
+        /*  try {
+        //if the attacks are read too fast on startup the MapRenderer might be 'null'
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ATTACK_LAYER);
         } catch (Exception e) {
         }*/
     }

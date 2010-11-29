@@ -91,7 +91,7 @@ public class ReportManagerTableModel extends AbstractDSWorkbenchTableModel {
         // ReportSet set = ReportManager.getSingleton().getReportSet(sReportSet);
         try {
             List<FightReport> reports = ReportManager.getSingleton().getFilteredList();
-            columnIndex = getRealColumnId(columnIndex);
+            columnIndex = convertViewColumnToModel(columnIndex);
             switch (columnIndex) {
                 case 0:
                     return reports.get(rowIndex);

@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.RowSorterEvent;
 import javax.swing.table.DefaultTableModel;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
@@ -43,7 +42,9 @@ import de.tor.tribes.ui.renderer.StandardAttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import de.tor.tribes.ui.renderer.UnitTableHeaderRenderer;
+import de.tor.tribes.util.AttackIGMSender;
 import de.tor.tribes.util.AttackToBBCodeFormater;
+import de.tor.tribes.util.AttackToPlainTextFormatter;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.IGMSender;
@@ -60,6 +61,7 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 import javax.swing.DefaultComboBoxModel;
@@ -69,10 +71,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.RowSorter;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.RowSorterListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
@@ -118,7 +118,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jScrollPane2.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         jScrollPane3.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         jScrollPane6.getViewport().setBackground(Constants.DS_BACK_LIGHT);
-
 
         //  AttackManagerTableModel.getSingleton().getRowSorter().allRowsChanged();
         AttackManagerTableModel.getSingleton().resetRowSorter(jAttackTable);
@@ -227,10 +226,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 // </editor-fold>
         jStandardAttackDialog.pack();
         pack();
-    }
-
-    public JPanel getView() {
-        return jAttackPanel;
     }
 
     /** This method is called from within the constructor to
@@ -1826,7 +1821,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                         .addGap(18, 18, 18)
                         .addComponent(jClickAccountLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 636, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -1883,61 +1878,58 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
     }// </editor-fold>//GEN-END:initComponents
 
 private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveAttackEvent
-    int[] rows = jAttackTable.getSelectedRows();
+    List<Attack> selectedAttacks = getSelectedAttacks();
+    /*int[] rows = jAttackTable.getSelectedRows();
     if (rows.length == 0) {
-        return;
+    return;
     }
 
     String message = ((rows.length == 1) ? "Angriff " : (rows.length + " Angriffe ")) + "wirklich löschen?";
     if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Angriffe löschen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
+    return;
+    }
+     */
+
+    String message = ((selectedAttacks.size() == 1) ? "Angriff " : (selectedAttacks.size() + " Angriffe ")) + "wirklich löschen?";
+    if (selectedAttacks.isEmpty() || JOptionPaneHelper.showQuestionConfirmBox(this, message, "Angriffe löschen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
         return;
     }
 
     jAttackTable.editingCanceled(new ChangeEvent(this));
 
-    for (int r = rows.length - 1; r >= 0; r--) {
-        jAttackTable.invalidate();
-        int row = jAttackTable.convertRowIndexToModel(rows[r]);
-        AttackManagerTableModel.getSingleton().removeRow(row);
-        jAttackTable.revalidate();
-    }
-    jAttackTable.repaint();//.updateUI();
+    /*for (int r = rows.length - 1; r >= 0; r--) {
+    jAttackTable.invalidate();
+    int row = jAttackTable.convertRowIndexToModel(rows[r]);
+    AttackManagerTableModel.getSingleton().removeRow(row);
+    jAttackTable.revalidate();
+    }*/
+    AttackManager.getSingleton().removeAttacks(selectedAttacks);
+    jAttackTable.repaint();
 }//GEN-LAST:event_fireRemoveAttackEvent
 
 private void fireSendAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSendAttackEvent
     if (iClickAccount == 0) {
-        int selectedRow = jAttackTable.getSelectedRow();
-        if (selectedRow < 0) {
-            return;
-        }
-        int row = jAttackTable.convertRowIndexToModel(selectedRow);
-        Attack a = AttackManagerTableModel.getSingleton().getAttackAtRow(row);
-        if (a != null) {
-            Village source = a.getSource();
-            Village target = a.getTarget();
-            int type = a.getType();
-            BrowserCommandSender.sendTroops(source, target, type);
-            a.setTransferredToBrowser(true);
-            ((DefaultListSelectionModel) jAttackTable.getSelectionModel()).setSelectionInterval(selectedRow + 1, selectedRow + 1);
-        }
-    } else {
-        int[] selectedRows = jAttackTable.getSelectedRows();
-        if (selectedRows == null || selectedRows.length == 0) {
-            return;
+        Attack a = null;
+        try {
+            a = getSelectedAttacks().get(0);
+        } catch (IndexOutOfBoundsException ioobe) {
+            //no attack selected
+        } catch (NullPointerException npe) {
+            //null was returned for some reason
         }
 
-        for (int selectedRow : selectedRows) {
-            int row = jAttackTable.convertRowIndexToModel(selectedRow);
-            Attack a = AttackManagerTableModel.getSingleton().getAttackAtRow(row);
-            if (a != null) {
-                Village source = a.getSource();
-                Village target = a.getTarget();
-                int type = a.getType();
-                BrowserCommandSender.sendTroops(source, target, type);
-                a.setTransferredToBrowser(true);
-                iClickAccount--;
-                updateClickAccount();
+        BrowserCommandSender.sendAttack(a);
+        //jump to next row
+        int selectedRow = jAttackTable.getSelectedRow();
+        ((DefaultListSelectionModel) jAttackTable.getSelectionModel()).setSelectionInterval(selectedRow + 1, selectedRow + 1);
+    } else {
+        for (Attack a : getSelectedAttacks()) {
+            if (!BrowserCommandSender.sendAttack(a)) {
+                //break if one transfer fails
+                break;
             }
+            iClickAccount--;
+            updateClickAccount();
             if (iClickAccount == 0) {
                 break;
             }
@@ -1957,120 +1949,21 @@ private void fireMarkAllEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 private void fireDrawSelectedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDrawSelectedEvent
     boolean draw = (evt.getSource() == jDrawMarkedButton);
 
-    int[] rows = jAttackTable.getSelectedRows();
-    if ((rows != null) && (rows.length > 0)) {
-        for (int r : rows) {
-            jAttackTable.invalidate();
-            int row = jAttackTable.convertRowIndexToModel(r);
-            AttackManagerTableModel.getSingleton().getAttackAtRow(row).setShowOnMap(draw);
-            jAttackTable.revalidate();
-        }
+    for (Attack a : getSelectedAttacks()) {
+        a.setShowOnMap(draw);
     }
-    jAttackTable.repaint();//.updateUI();
+    jAttackTable.repaint();
 }//GEN-LAST:event_fireDrawSelectedEvent
 
 private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyUnformatedToClipboardEvent
-
-    /*  try {
-    int[] rows = jAttackTable.getSelectedRows();
-    if ((rows != null) && (rows.length > 0)) {
-    JSONArray ar = new JSONArray();
-    String plan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
-    List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(plan);
-
-    for (int i : rows) {
-    int row = jAttackTable.convertRowIndexToModel(i);
-    Attack a = attacks.get(row);
-    JSONObject o = a.toJSON("Torridity", plan);
-    ar.put(o);
-    }
-    System.out.println(ar.toString());
-    }
-
-    } catch (Exception e) {
-    e.printStackTrace();
-    }
-    if (true) {
-    return;
-    }
-     */
-
-    try {
-        int[] rows = jAttackTable.getSelectedRows();
-        if ((rows != null) && (rows.length > 0)) {
-            StringBuffer buffer = new StringBuffer();
-            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(AttackManagerTableModel.getSingleton().getActiveAttackPlan());
-            for (int i : rows) {
-                jAttackTable.invalidate();
-                int row = jAttackTable.convertRowIndexToModel(i);
-                Village sVillage = attacks.get(row).getSource();
-                Village tVillage = attacks.get(row).getTarget();
-                UnitHolder sUnit = attacks.get(row).getUnit();
-                Date aTime = attacks.get(row).getArriveTime();
-                Date sTime = new Date(aTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(sVillage, tVillage, sUnit.getSpeed()) * 1000));
-                int type = attacks.get(row).getType();
-                String sendtime = null;
-                String arrivetime = null;
-                if (ServerSettings.getSingleton().isMillisArrival()) {
-                    sendtime = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(sTime);
-                    arrivetime = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(aTime);
-                } else {
-                    sendtime = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(sTime);
-                    arrivetime = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(aTime);
-                }
-                switch (type) {
-                    case Attack.CLEAN_TYPE: {
-                        buffer.append("(Clean-Off)");
-                        buffer.append("\t");
-                        break;
-                    }
-                    case Attack.FAKE_TYPE: {
-                        buffer.append("(Fake)");
-                        buffer.append("\t");
-                        break;
-                    }
-                    case Attack.SNOB_TYPE: {
-                        buffer.append("(AG)");
-                        buffer.append("\t");
-                        break;
-                    }
-                    case Attack.SUPPORT_TYPE: {
-                        buffer.append("(Unterstützung)");
-                        buffer.append("\t");
-                        break;
-                    }
-                }
-
-                if (sVillage.getTribe() == Barbarians.getSingleton()) {
-                    buffer.append("Barbaren");
-                } else {
-                    buffer.append(sVillage.getTribe());
-                }
-                buffer.append("\t");
-                buffer.append(sVillage);
-                buffer.append("\t");
-                buffer.append(sUnit);
-                buffer.append("\t");
-                if (tVillage.getTribe() == Barbarians.getSingleton()) {
-                    buffer.append("Barbaren");
-                } else {
-                    buffer.append(tVillage.getTribe());
-                }
-                buffer.append("\t");
-                buffer.append(tVillage);
-                buffer.append("\t");
-                buffer.append(sendtime);
-                buffer.append("\t");
-                buffer.append(arrivetime);
-                buffer.append("\n");
-                jAttackTable.revalidate();
-            }
-
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(buffer.toString()), null);
-            String result = "Daten in Zwischenablage kopiert.";
-            JOptionPaneHelper.showInformationBox(this, result, "Information");
-        } else {
+ try {
+        StringBuilder buffer = new StringBuilder();
+        for (Attack a : getSelectedAttacks()) {
+            buffer.append(AttackToPlainTextFormatter.formatAttack(a)).append("\n");
         }
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(buffer.toString()), null);
+        String result = "Daten in Zwischenablage kopiert.";
+        JOptionPaneHelper.showInformationBox(this, result, "Information");
     } catch (Exception e) {
         logger.error("Failed to copy data to clipboard", e);
         String result = "Fehler beim Kopieren in die Zwischenablage.";
@@ -2085,7 +1978,7 @@ private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//
 
         int[] rows = jAttackTable.getSelectedRows();
         if ((rows != null) && (rows.length > 0)) {
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             if (extended) {
                 buffer.append("[u][size=12]Angriffsplan[/size][/u]\n\n");
             } else {
@@ -2093,7 +1986,7 @@ private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//
             }
             String sUrl = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
 
-            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(AttackManagerTableModel.getSingleton().getActiveAttackPlan());
+            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan();
             jAttackTable.invalidate();
             for (int i : rows) {
                 int row = jAttackTable.convertRowIndexToModel(i);
@@ -2105,12 +1998,12 @@ private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//
                 buffer.append("\n[size=8]Erstellt am ");
                 buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
                 buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
-                buffer.append(Constants.VERSION + Constants.VERSION_ADDITION + "[/url][/size]\n");
+                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url][/size]\n");
             } else {
                 buffer.append("\nErstellt am ");
                 buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
                 buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
-                buffer.append(Constants.VERSION + Constants.VERSION_ADDITION + "[/url]\n");
+                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url]\n");
             }
 
             String b = buffer.toString();
@@ -2157,7 +2050,7 @@ private void fireMarkFilterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     //get the line numbers of attacks which should be selected
     List<Integer> selection = new LinkedList<Integer>();
     int cnt = 0;
-    for (Attack a : AttackManager.getSingleton().getAttackPlan(AttackManagerTableModel.getSingleton().getActiveAttackPlan())) {
+    for (Attack a : AttackManager.getSingleton().getAttackPlan()) {
         int row = jAttackTable.convertRowIndexToView(cnt);
         if (source.contains(a.getSource())) {
             if (!selection.contains(new Integer(row))) {
@@ -2196,7 +2089,7 @@ private void fireSourcePlayerChangedEvent(java.awt.event.ActionEvent evt) {//GEN
             //probably a barbarian village was selected. tribe stays 'null'
         }
 
-        List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(AttackManagerTableModel.getSingleton().getActiveAttackPlan());
+        List<Attack> attacks = AttackManager.getSingleton().getAttackPlan();
         Hashtable<Village, Boolean> villageMarks = new Hashtable<Village, Boolean>();
         //check attacks for the selected player
         int cnt = 0;
@@ -2235,7 +2128,7 @@ private void fireTargetPlayerChangedEvent(java.awt.event.ActionEvent evt) {//GEN
             //probably a barbarian village was selected. tribe stays 'null'
         }
 
-        List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(AttackManagerTableModel.getSingleton().getActiveAttackPlan());
+        List<Attack> attacks = AttackManager.getSingleton().getAttackPlan();
         Hashtable<Village, Boolean> villageMarks = new Hashtable<Village, Boolean>();
         //check attacks for the selected player
         int cnt = 0;
@@ -2266,7 +2159,7 @@ private void fireTargetPlayerChangedEvent(java.awt.event.ActionEvent evt) {//GEN
 }//GEN-LAST:event_fireTargetPlayerChangedEvent
 
 private void fireSelectFilteredEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectFilteredEvent
-    List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(AttackManagerTableModel.getSingleton().getActiveAttackPlan());
+    List<Attack> attacks = AttackManager.getSingleton().getAttackPlan();
     List<Object> sourceTribes = new LinkedList<Object>();
     List<Object> targetTribes = new LinkedList<Object>();
     //search attacks for source and target tribes
@@ -2405,7 +2298,7 @@ private void fireCloseTimeChangeDialogEvent(java.awt.event.MouseEvent evt) {//GE
                 Integer day = (Integer) jDayField.getValue();
 
                 //jArriveDateField.getValue()
-                List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(AttackManagerTableModel.getSingleton().getActiveAttackPlan());
+                List<Attack> attacks = AttackManager.getSingleton().getAttackPlan();
                 jAttackTable.invalidate();
                 for (int i : rows) {
                     int row = jAttackTable.convertRowIndexToModel(i);
@@ -2426,7 +2319,7 @@ private void fireCloseTimeChangeDialogEvent(java.awt.event.MouseEvent evt) {//GE
                     int row = jAttackTable.convertRowIndexToModel(i);
                     //later if first index is selected
                     //if later, add diff to arrival, else remove diff from arrival
-                    AttackManager.getSingleton().getAttackPlan(AttackManagerTableModel.getSingleton().getActiveAttackPlan()).get(row).setArriveTime(arrive);
+                    AttackManager.getSingleton().getAttackPlan().get(row).setArriveTime(arrive);
                 }
 
                 jAttackTable.revalidate();
@@ -2436,7 +2329,7 @@ private void fireCloseTimeChangeDialogEvent(java.awt.event.MouseEvent evt) {//GE
                 jAttackTable.invalidate();
                 for (int i : rows) {
                     int row = jAttackTable.convertRowIndexToModel(i);
-                    List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(AttackManagerTableModel.getSingleton().getActiveAttackPlan());
+                    List<Attack> attacks = AttackManager.getSingleton().getAttackPlan();
                     Calendar c = Calendar.getInstance();
                     boolean valid = false;
                     while (!valid) {
@@ -2473,7 +2366,6 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     if ((rows == null) || (rows.length <= 0)) {
         JOptionPaneHelper.showInformationBox(this, "Keine Angriffe markiert", "Information");
         return;
-
     }
     jTimeChangeDialog.setVisible(true);
 }//GEN-LAST:event_fireChangeTimesEvent
@@ -2516,7 +2408,7 @@ private void fireRemoveAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     }
 
     if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du den Angriffsplan '" + selection + "' und alle enthaltenen Angriffe\n" + "wirklich löschen?", "Angriffsplan löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-        AttackManagerTableModel.getSingleton().setActiveAttackPlan(AttackManager.DEFAULT_PLAN_ID);
+        AttackManager.getSingleton().setActiveAttackPlan(AttackManager.DEFAULT_PLAN_ID);
         AttackManager.getSingleton().removePlan(selection);
         buildAttackPlanList();
 
@@ -2533,10 +2425,10 @@ private void fireActiveAttackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-F
         } catch (Exception e) {
         }
         jAttackTable.getSelectionModel().clearSelection();
-        AttackManagerTableModel.getSingleton().setActiveAttackPlan((String) jActiveAttackPlan.getSelectedItem());
+        AttackManager.getSingleton().setActiveAttackPlan((String) jActiveAttackPlan.getSelectedItem());
 
-        jAttackTable.repaint();//.updateUI();
         jAttackTable.revalidate();
+        jAttackTable.repaint();//.updateUI();
         AttackManagerTableModel.getSingleton().resetRowSorter(jAttackTable);
     }
 }//GEN-LAST:event_fireActiveAttackChangedEvent
@@ -2714,7 +2606,7 @@ private void fireWriteToHTMLEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     if (dir == null) {
         dir = ".";
     }
-    String selectedPlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
+    String selectedPlan = AttackManager.getSingleton().getActiveAttackPlan();
     JFileChooser chooser = null;
     try {
         chooser = new JFileChooser(dir);
@@ -2778,8 +2670,7 @@ private void fireWriteToHTMLEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 }//GEN-LAST:event_fireWriteToHTMLEvent
 
 private void fireCleanUpAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCleanUpAttacksEvent
-    String selectedPlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
-    List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(selectedPlan);
+    List<Attack> attacks = AttackManager.getSingleton().getAttackPlan();
     List<Attack> toRemove = new LinkedList<Attack>();
     for (Attack a : attacks) {
         long sendTime = a.getArriveTime().getTime() - ((long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
@@ -2800,10 +2691,10 @@ private void fireCleanUpAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     logger.debug("Cleaning up " + toRemove.size() + " attacks");
 
     for (Attack a : toRemove) {
-        AttackManager.getSingleton().getAttackPlan(selectedPlan).remove(a);
+        AttackManager.getSingleton().getAttackPlan().remove(a);
     }
 
-    AttackManager.getSingleton().forceUpdate(selectedPlan);
+    AttackManager.getSingleton().forceUpdate();
 }//GEN-LAST:event_fireCleanUpAttacksEvent
 
 private void fireSetStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSetStandardAttacksEvent
@@ -2838,12 +2729,10 @@ private void fireWriteAttacksToScriptEvent(java.awt.event.MouseEvent evt) {//GEN
 }//GEN-LAST:event_fireWriteAttacksToScriptEvent
 
 private void fireSendAttacksAsIGMEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSendAttacksAsIGMEvent
-
-    int[] selectedRows = jAttackTable.getSelectedRows();
-    if (selectedRows != null && selectedRows.length < 1) {
+  if (getSelectedAttacks().isEmpty()) {
         return;
     }
-    String selectedPlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
+    String selectedPlan = AttackManager.getSingleton().getActiveAttackPlan();
     jSubject.setText("Deine Angriffe (Plan: " + selectedPlan + ")");
     jSendAttacksIGMDialog.pack();
     jSendAttacksIGMDialog.setVisible(true);
@@ -2853,70 +2742,18 @@ private void fireSendAttacksAsIGMEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
 private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSendIGMsEvent
     if (evt.getSource() == jSendButton) {
         String subject = jSubject.getText();
-        String selectedPlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
-        Hashtable<Tribe, List<Attack>> attacks = new Hashtable<Tribe, List<Attack>>();
-        int[] selectedRows = jAttackTable.getSelectedRows();
-        for (Integer selectedRow : selectedRows) {
-            int row = jAttackTable.convertRowIndexToModel(selectedRow);
-            Attack a = AttackManager.getSingleton().getAttackPlan(selectedPlan).get(row);
-            Tribe sender = a.getSource().getTribe();
-            if (sender != null) {
-                List<Attack> attacksForSender = attacks.get(sender);
-                if (attacksForSender == null) {
-                    attacksForSender = new LinkedList<Attack>();
-                    attacks.put(sender, attacksForSender);
-                }
-                attacksForSender.add(a);
-            }
-        }
-
         String apiKey = jAPIKey.getText().trim();
-        Enumeration<Tribe> tribeKeys = attacks.keys();
-        String sUrl = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
-        String messageStart = "[i](Diese IGM wurde automatisch durch DS Workbench generiert)[/i]\n\n";
-
-        while (tribeKeys.hasMoreElements()) {
-            Tribe t = tribeKeys.nextElement();
-            List<Attack> attacksForTribe = attacks.get(t);
-            String message = messageStart;
-            List<String> messages = new LinkedList<String>();
-            for (Attack a : attacksForTribe) {
-                String line = AttackToBBCodeFormater.formatAttack(a, sUrl, false);
-                if (message.length() + line.length() > 2000) {
-                    messages.add(message);
-                    message = messageStart + line;
-                } else {
-                    message += line;
-                }
-            }
-
-            if (messages.size() > 8) {
-                //9 messages + rest
-                String warning = "An Spieler " + t + " müssten mehr als 10 IGMs verschickt werden.\n";
-                warning += "Sende entweder mehr Angriffe pro IGM oder teile das Versenden auf mehrere Vorgänge auf.";
-                JOptionPaneHelper.showWarningBox(jSendAttacksIGMDialog, warning, "Warnung");
-                return;
-            }
-
-            int cnt = 1;
-            if (messages.size() > 0) {
-                //send multi messages
-                for (String m : messages) {
-                    String sub = subject + " (Teil " + cnt + "/" + (messages.size() + 1) + ")";
-                    if (!IGMSender.sendIGM(t, apiKey, sub, m)) {
-                        JOptionPaneHelper.showErrorBox(jSendAttacksIGMDialog, "Fehler beim Versenden von IGM " + cnt + " an '" + t + "'", "Fehler");
-                        return;
-                    }
-                    cnt++;
-                }
-            }
-            String sub = subject + " (Teil " + cnt + "/" + (messages.size() + 1) + ")";
-            if (!IGMSender.sendIGM(t, apiKey, sub, message)) {
-                JOptionPaneHelper.showErrorBox(jSendAttacksIGMDialog, "Fehler beim Versenden von IGM " + cnt + " an '" + t + "'", "Fehler");
-                return;
-            }
+        AttackIGMSender.SenderResult result = AttackIGMSender.sendAttackNotifications(getSelectedAttacks(), subject, apiKey);
+        switch (result.getCode()) {
+            case AttackIGMSender.ID_ERROR_WHILE_SUBMITTING:
+                JOptionPaneHelper.showErrorBox(jSendAttacksIGMDialog, result.getMessage(), "Fehler");
+                break;
+            case AttackIGMSender.ID_TOO_MANY_IGMS_PER_TRIBE:
+                JOptionPaneHelper.showWarningBox(jSendAttacksIGMDialog, result.getMessage(), "Warnung");
+                break;
+            default:
+                JOptionPaneHelper.showInformationBox(jSendAttacksIGMDialog, result.getMessage(), "Information");
         }
-        JOptionPaneHelper.showInformationBox(jSendAttacksIGMDialog, "IGMs erfolgreich verschickt.", "Information");
     }
     jSendAttacksIGMDialog.setVisible(false);
 }//GEN-LAST:event_fireSendIGMsEvent
@@ -2925,17 +2762,9 @@ private void fireDoExportAsScriptEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     Integer width = 5;
     if (evt.getSource() == jDoScriptExportButton) {
 
-        int[] selectedRows = jAttackTable.getSelectedRows();
-        if (selectedRows != null && selectedRows.length < 1) {
+        List<Attack> attacks = getSelectedAttacks();
+        if (attacks.isEmpty()) {
             return;
-        }
-
-        String selectedPlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
-        List<Attack> attacks = new LinkedList<Attack>();
-        for (Integer selectedRow : selectedRows) {
-            int row = jAttackTable.convertRowIndexToModel(selectedRow);
-            Attack a = AttackManager.getSingleton().getAttackPlan(selectedPlan).get(row);
-            attacks.add(a);
         }
 
         if (AttackScriptWriter.writeAttackScript(attacks, false, width, true, Color.GREEN, Color.RED, jShowAttacksInPopup.isSelected(), jShowAttacksInVillageInfo.isSelected(), jShowAttacksOnConfirmPage.isSelected(), jShowAttacksInPlace.isSelected(), jShowAttackOnMap.isSelected(), jShowAttacksInOverview.isSelected())) {
@@ -2948,7 +2777,7 @@ private void fireDoExportAsScriptEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
                     }
                 }
             } else {
-                JOptionPaneHelper.showInformationBox(this, "Script erfolgreich nach 'attack_info.user.js' geschrieben.\nDenke bitte daran, das Script in deinem Browser einzufügen/zu aktualisieren!", "Information");
+                JOptionPaneHelper.showInformationBox(this, "Script erfolgreich nach 'zz_attack_info.user.js' geschrieben.\nDenke bitte daran, das Script in deinem Browser einzufügen/zu aktualisieren!", "Information");
             }
         } else {
             JOptionPaneHelper.showErrorBox(this, "Fehler beim Schreiben des Scripts.", "Fehler");
@@ -2970,8 +2799,8 @@ private void fireDoExportAsScriptEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
 }//GEN-LAST:event_fireDoExportAsScriptEvent
 
 private void fireChangeAttackTypeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeAttackTypeEvent
-    int[] rows = jAttackTable.getSelectedRows();
-    if ((rows == null) || (rows.length < 1)) {
+    if (getSelectedAttacks().isEmpty()) {
+        //no attacks selected, no type can be changed
         return;
     }
     jChangeAttackTypeDialog.setLocationRelativeTo(this);
@@ -3005,7 +2834,7 @@ private void fireChangeUnitTypeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 
         int[] rows = jAttackTable.getSelectedRows();
         if ((rows != null) || (rows.length > 0)) {
-            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(AttackManagerTableModel.getSingleton().getActiveAttackPlan());
+            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan();
             for (int i : rows) {
                 int row = jAttackTable.convertRowIndexToModel(i);
                 Attack a = attacks.get(row);
@@ -3024,12 +2853,10 @@ private void fireChangeUnitTypeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 }//GEN-LAST:event_fireChangeUnitTypeEvent
 
 private void fireEnableDisableChangeUnitEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireEnableDisableChangeUnitEvent
-
     jUnitBox.setEnabled(jAdeptUnitBox.isSelected());
 }//GEN-LAST:event_fireEnableDisableChangeUnitEvent
 
 private void fireEnableDisableAdeptTypeEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireEnableDisableAdeptTypeEvent
-
     jNoType.setEnabled(jAdeptTypeBox.isSelected());
     jAttackType.setEnabled(jAdeptTypeBox.isSelected());
     jEnobleType.setEnabled(jAdeptTypeBox.isSelected());
@@ -3039,30 +2866,30 @@ private void fireEnableDisableAdeptTypeEvent(javax.swing.event.ChangeEvent evt) 
 }//GEN-LAST:event_fireEnableDisableAdeptTypeEvent
 
 private void fireSendAttackToReTimeToolEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSendAttackToReTimeToolEvent
-    String selectedPlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
-    if (selectedPlan == null) {
+    Attack attack = null;
+    try {
+        attack = getSelectedAttacks().get(0);
+        if (attack == null) {
+            throw new NullPointerException();
+        }
+    } catch (IndexOutOfBoundsException ioobe) {
+        //no attack selected
         return;
-    }
-    int row = jAttackTable.getSelectedRow();
-    if (row == -1) {
-        return;
-    }
-    row = jAttackTable.convertRowIndexToModel(row);
-    Attack a = AttackManager.getSingleton().getAttackPlan(selectedPlan).get(row);
-    if (a == null) {
+    } catch (NullPointerException npe) {
+        //first attack was null for some reason
         return;
     }
 
-    StringBuffer b = new StringBuffer();
-    b.append("Herkunft: " + a.getSource().toString() + "\n");
-    b.append("Ziel: " + a.getTarget().toString() + "\n");
+    StringBuilder b = new StringBuilder();
+    b.append("Herkunft: ").append(attack.getSource().toString()).append("\n");
+    b.append("Ziel: ").append(attack.getTarget().toString()).append("\n");
     SimpleDateFormat f = null;
     if (ServerSettings.getSingleton().isMillisArrival()) {
         f = new SimpleDateFormat("dd.MM.yy HH:mm:ss:SSS");
     } else {
         f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
     }
-    b.append("Ankunft: " + f.format(a.getArriveTime()) + "\n");
+    b.append("Ankunft: ").append(f.format(attack.getArriveTime())).append("\n");
     DSWorkbenchReTimerFrame.getSingleton().setCustomAttack(b.toString());
     if (!DSWorkbenchReTimerFrame.getSingleton().isVisible()) {
         DSWorkbenchReTimerFrame.getSingleton().setVisible(true);
@@ -3071,19 +2898,9 @@ private void fireSendAttackToReTimeToolEvent(java.awt.event.MouseEvent evt) {//G
 }//GEN-LAST:event_fireSendAttackToReTimeToolEvent
 
 private void fireSetAttacksToUnsentEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSetAttacksToUnsentEvent
-
-    int[] selectedRows = jAttackTable.getSelectedRows();
-    if (selectedRows != null && selectedRows.length < 1) {
-        return;
-    }
-
-    String selectedPlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
-    for (Integer selectedRow : selectedRows) {
-        int row = jAttackTable.convertRowIndexToModel(selectedRow);
-        Attack a = AttackManager.getSingleton().getAttackPlan(selectedPlan).get(row);
+    for (Attack a : getSelectedAttacks()) {
         a.setTransferredToBrowser(false);
     }
-
     jAttackTable.repaint();
 }//GEN-LAST:event_fireSetAttacksToUnsentEvent
 
@@ -3091,6 +2908,26 @@ private void fireFillClickAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     iClickAccount++;
     updateClickAccount();
 }//GEN-LAST:event_fireFillClickAccountEvent
+
+    public final List<Attack> getSelectedAttacks() {
+        final List<Attack> selectedAttacks = new LinkedList<Attack>();
+        int[] selectedRows = jAttackTable.getSelectedRows();
+        if (selectedRows != null && selectedRows.length < 1) {
+            return selectedAttacks;
+        }
+        String selectedPlan = AttackManager.getSingleton().getActiveAttackPlan();
+        if (selectedPlan == null) {
+            return selectedAttacks;
+        }
+        for (Integer selectedRow : selectedRows) {
+            int row = jAttackTable.convertRowIndexToModel(selectedRow);
+            Attack a = AttackManager.getSingleton().getAttackPlan(selectedPlan).get(row);
+            if (a != null) {
+                selectedAttacks.add(a);
+            }
+        }
+        return selectedAttacks;
+    }
 
     private void updateClickAccount() {
         jClickAccountLabel.setToolTipText(iClickAccount + " Klick(s) aufgeladen");
@@ -3191,7 +3028,7 @@ private void fireFillClickAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             model.addElement(plans.nextElement());
         }
         jActiveAttackPlan.setModel(model);
-        jActiveAttackPlan.setSelectedItem(AttackManagerTableModel.getSingleton().getActiveAttackPlan());
+        jActiveAttackPlan.setSelectedItem(AttackManager.getSingleton().getActiveAttackPlan());
     }
 
     public String getActiveAttackPlan() {

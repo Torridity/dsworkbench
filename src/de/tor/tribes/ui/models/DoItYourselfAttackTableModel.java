@@ -75,7 +75,7 @@ public class DoItYourselfAttackTableModel extends AbstractDSWorkbenchTableModel 
         } else {
             return null;
         }
-        pCol = getRealColumnId(pCol);
+        pCol = convertViewColumnToModel(pCol);
         switch (pCol) {
             case 0:
                 return a.getType();
@@ -151,7 +151,7 @@ public class DoItYourselfAttackTableModel extends AbstractDSWorkbenchTableModel 
         if (attacks == null || attacks.size() == 0 || attacks.size() < pRow) {
             return;
         }
-        pCol = getRealColumnId(pCol);
+        pCol = convertViewColumnToModel(pCol);
         switch (pCol) {
             case 0: {
                 attacks.get(pRow).setType((Integer) pValue);

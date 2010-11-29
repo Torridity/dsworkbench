@@ -71,7 +71,7 @@ public class ConquersTableModel extends AbstractDSWorkbenchTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         Conquer c = ConquerManager.getSingleton().getConquer(rowIndex);
-        columnIndex = getRealColumnId(columnIndex);
+        columnIndex = convertViewColumnToModel(columnIndex);
         switch (columnIndex) {
             case 0:
                 return DataHolder.getSingleton().getVillagesById().get(c.getVillageID());

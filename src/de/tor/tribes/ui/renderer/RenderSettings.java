@@ -21,8 +21,8 @@ public class RenderSettings {
     private boolean layerVisible = false;
 
     protected RenderSettings(Rectangle2D pCurrentMapBounds) {
-        double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-        setZoom(zoom);
+        double currentZoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
+        setZoom(currentZoom);
         setFieldWidth(GlobalOptions.getSkin().getCurrentFieldWidth(zoom));
         setFieldHeight(GlobalOptions.getSkin().getCurrentFieldHeight(zoom));
         setMapBounds(pCurrentMapBounds);
@@ -56,19 +56,7 @@ public class RenderSettings {
         }
         int fieldsX = (int) Math.round(getDeltaX()) + 1;
         int fieldsY = (int) Math.round(getDeltaY()) + 1;
-        /*if (fieldsX > 0) {
-        fieldsX += 1;
-        } else if (fieldsX < 0) {
-        fieldsX -= 1;
-        }
-        if (fieldsY > 0) {
-        fieldsY += 1;
-        } else if (fieldsY < 0) {
-        fieldsY -= 1;
-        }*/
-        /*   fieldsX += (fieldsX >= 0) ? 1 : -1;
-        fieldsY += (fieldsY >= 0) ? 1 : -1;*/
-
+       
         setColumnsToRender((fieldsX + 1) * facX);
         setRowsToRender((fieldsY + 1) * facY);
 
@@ -90,7 +78,7 @@ public class RenderSettings {
         return fieldWidth;
     }
 
-    public void setFieldWidth(int fieldWidth) {
+    public final void setFieldWidth(int fieldWidth) {
         this.fieldWidth = fieldWidth;
     }
 
@@ -101,7 +89,7 @@ public class RenderSettings {
         return fieldHeight;
     }
 
-    public void setFieldHeight(int fieldHeight) {
+    public final void setFieldHeight(int fieldHeight) {
         this.fieldHeight = fieldHeight;
     }
 
@@ -156,7 +144,7 @@ public class RenderSettings {
         return zoom;
     }
 
-    public void setZoom(double zoom) {
+    public final void setZoom(double zoom) {
         this.zoom = zoom;
     }
 
@@ -170,7 +158,7 @@ public class RenderSettings {
     /**
      * @param mMapBounds the mMapBounds to set
      */
-    public void setMapBounds(Rectangle2D mMapBounds) {
+    public final void setMapBounds(Rectangle2D mMapBounds) {
         this.mMapBounds = (Rectangle2D) mMapBounds.clone();
     }
 

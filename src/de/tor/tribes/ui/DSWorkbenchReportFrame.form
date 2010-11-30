@@ -743,14 +743,15 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="jAddAsDefender" max="32767" attributes="1"/>
                           <Component id="jFilterByTribeBox" alignment="0" min="-2" max="-2" attributes="1"/>
-                          <Component id="jTribeSelectionBox" alignment="0" min="-2" pref="180" max="-2" attributes="1"/>
+                          <Component id="jTribeSelectionBox" alignment="0" pref="180" max="32767" attributes="1"/>
                           <Component id="jTribeSelectionFilter" alignment="0" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                       <Component id="jAddTribeButton" min="-2" pref="26" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jScrollPane4" pref="209" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jRemoveTribeButton" min="-2" pref="26" max="-2" attributes="0"/>
@@ -765,14 +766,16 @@
                       <Component id="jFilterByTribeBox" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jAddTribeButton" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jScrollPane4" alignment="0" pref="110" max="32767" attributes="0"/>
                           <Component id="jRemoveTribeButton" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jTribeSelectionBox" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jTribeSelectionFilter" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="jAddAsDefender" min="-2" max="-2" attributes="0"/>
                           </Group>
+                          <Component id="jAddTribeButton" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -859,6 +862,12 @@
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireTribeFilterChangedEvent"/>
               </Events>
             </Component>
+            <Component class="javax.swing.JCheckBox" name="jAddAsDefender">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Als Verteidiger einf&#xfc;gen"/>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
+            </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel10">
@@ -896,7 +905,7 @@
                               <Component id="jEndDate" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace pref="142" max="32767" attributes="0"/>
+                      <EmptySpace pref="152" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

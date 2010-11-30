@@ -68,19 +68,15 @@ import java.awt.dnd.DropTargetListener;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.StringTokenizer;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import org.omg.PortableServer.THREAD_POLICY_ID;
 
 /**
  * @TODO (DIFF) Transfer off to A*Star now uses own troops instead of all in village
@@ -153,15 +149,9 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         setDoubleBuffered(true);
         attackAddFrame = new AttackAddFrame();
         mVirtualBounds = new Rectangle2D.Double(0.0, 0.0, 0.0, 0.0);
-        jCopyOwn.setSelected(true);
-        jCopyOwnAlly.setSelected(true);
-        jCopyEnemyAlly.setSelected(true);
-        jCopyBarbarian.setSelected(true);
-        jCopyVillagesDialog.pack();
-        // mVillageSelectionListener = DSWorkbenchSelectionFrame.getSingleton();
         markedVillages = new LinkedList<Village>();
         initListeners();
-        new Timer("Rep", true).schedule(new TimerTask() {
+        new Timer("RepaintTimer", true).schedule(new TimerTask() {
 
             @Override
             public void run() {
@@ -175,16 +165,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         }, 0, 30);
     }
 
-    /* boolean INIT = false;
-
-    public BufferStrategy getStrategy() {
-    if (isVisible() && !INIT || mBufferStrategy == null) {
-    INIT = true;
-    createBufferStrategy(2);
-    mBufferStrategy = getBufferStrategy();
-    }
-    return mBufferStrategy;
-    }*/
     public void setSpaceDown(boolean pValue) {
         spaceDown = pValue;
     }
@@ -819,8 +799,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                // fireVillageAtMousePosChangedEvents(getVillageAtMousePos());
-
                 if (isOutside) {
                     mousePos = e.getLocationOnScreen();
                 }
@@ -830,7 +808,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
         });
 
-        //mCanvas.
         addMouseMotionListener(MenuRenderer.getSingleton());
 
         //<editor-fold>
@@ -916,20 +893,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jCopyVillagesDialog = new javax.swing.JDialog();
-        jVillageExportDetails = new javax.swing.JLabel();
-        jExportTribeName = new javax.swing.JCheckBox();
-        jLabel2 = new javax.swing.JLabel();
-        jExportAllyName = new javax.swing.JCheckBox();
-        jExportPoints = new javax.swing.JCheckBox();
-        jExportBBButton = new javax.swing.JButton();
-        jExportPlainButton = new javax.swing.JButton();
-        jCancelExportButton = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
-        jCopyOwn = new javax.swing.JCheckBox();
-        jCopyOwnAlly = new javax.swing.JCheckBox();
-        jCopyEnemyAlly = new javax.swing.JCheckBox();
-        jCopyBarbarian = new javax.swing.JCheckBox();
         jVillageActionsMenu = new javax.swing.JPopupMenu();
         jTribeSubmenu = new javax.swing.JMenu();
         jCopyPlayerVillagesToClipboardItem = new javax.swing.JMenuItem();
@@ -964,120 +927,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         jAllAddToNoteItem = new javax.swing.JMenuItem();
         jSeparator8 = new javax.swing.JSeparator();
         jCenterVillagesIngameItem = new javax.swing.JMenuItem();
-
-        jCopyVillagesDialog.setTitle("Dorfinformationen kopieren");
-        jCopyVillagesDialog.setAlwaysOnTop(true);
-
-        jVillageExportDetails.setText("Es wurden 0 Dörfer zum Kopieren in die Zwischenablage ausgewählt.");
-
-        jExportTribeName.setText("Besitzer");
-        jExportTribeName.setOpaque(false);
-
-        jLabel2.setText("Welche Informationen sollen zusätzlich kopiert werden?");
-
-        jExportAllyName.setText("Stamm");
-        jExportAllyName.setOpaque(false);
-
-        jExportPoints.setText("Punktzahl");
-        jExportPoints.setOpaque(false);
-
-        jExportBBButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboardBB.png"))); // NOI18N
-        jExportBBButton.setToolTipText("Als BB Codes in die Zwischenablage kopieren");
-        jExportBBButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireVillageExportEvent(evt);
-            }
-        });
-
-        jExportPlainButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboard.png"))); // NOI18N
-        jExportPlainButton.setToolTipText("Unformatiert in die Zwischenablage kopieren");
-        jExportPlainButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireVillageExportEvent(evt);
-            }
-        });
-
-        jCancelExportButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
-        jCancelExportButton.setToolTipText("Abbrechen");
-        jCancelExportButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireVillageExportEvent(evt);
-            }
-        });
-
-        jLabel3.setText("Welche Dörfer sollen kopiert werden?");
-
-        jCopyOwn.setText("Eigene");
-        jCopyOwn.setOpaque(false);
-
-        jCopyOwnAlly.setText("Eigener Stamm");
-        jCopyOwnAlly.setOpaque(false);
-
-        jCopyEnemyAlly.setText("Fremde Stämme");
-        jCopyEnemyAlly.setOpaque(false);
-
-        jCopyBarbarian.setText("Barbarendörfer");
-        jCopyBarbarian.setOpaque(false);
-
-        javax.swing.GroupLayout jCopyVillagesDialogLayout = new javax.swing.GroupLayout(jCopyVillagesDialog.getContentPane());
-        jCopyVillagesDialog.getContentPane().setLayout(jCopyVillagesDialogLayout);
-        jCopyVillagesDialogLayout.setHorizontalGroup(
-            jCopyVillagesDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jCopyVillagesDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jCopyVillagesDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jCopyVillagesDialogLayout.createSequentialGroup()
-                        .addComponent(jCopyOwn)
-                        .addGap(18, 18, 18)
-                        .addComponent(jCopyOwnAlly)
-                        .addGap(18, 18, 18)
-                        .addComponent(jCopyEnemyAlly)
-                        .addGap(18, 18, 18)
-                        .addComponent(jCopyBarbarian))
-                    .addComponent(jVillageExportDetails, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
-                    .addGroup(jCopyVillagesDialogLayout.createSequentialGroup()
-                        .addComponent(jExportTribeName)
-                        .addGap(18, 18, 18)
-                        .addComponent(jExportAllyName)
-                        .addGap(18, 18, 18)
-                        .addComponent(jExportPoints))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jCopyVillagesDialogLayout.createSequentialGroup()
-                        .addComponent(jCancelExportButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jExportPlainButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jExportBBButton))
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3))
-                .addContainerGap())
-        );
-        jCopyVillagesDialogLayout.setVerticalGroup(
-            jCopyVillagesDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jCopyVillagesDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jVillageExportDetails)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jCopyVillagesDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jCopyOwn)
-                    .addComponent(jCopyOwnAlly)
-                    .addComponent(jCopyBarbarian)
-                    .addComponent(jCopyEnemyAlly))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jCopyVillagesDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jExportTribeName)
-                    .addComponent(jExportAllyName)
-                    .addComponent(jExportPoints))
-                .addGap(18, 18, Short.MAX_VALUE)
-                .addGroup(jCopyVillagesDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jExportBBButton)
-                    .addComponent(jExportPlainButton)
-                    .addComponent(jCancelExportButton))
-                .addContainerGap())
-        );
 
         jTribeSubmenu.setText("Spieler");
 
@@ -1282,198 +1131,24 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         });
     }// </editor-fold>//GEN-END:initComponents
 
-    private void fireVillageExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireVillageExportEvent
-        try {
-            NumberFormat nf = NumberFormat.getInstance();
-            nf.setMinimumFractionDigits(0);
-            nf.setMaximumFractionDigits(0);
-            Tribe own = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
-            boolean exported = false;
-            if (evt.getSource() == jExportBBButton) {
-                String result = "";
-
-                for (Village v : exportVillageList) {
-                    boolean doExport = false;
-                    if (jCopyBarbarian.isSelected()) {
-                        if (v.getTribe() == Barbarians.getSingleton()) {
-                            //is barbarian
-                            doExport = true;
-                        }
-                    }
-                    if (jCopyOwn.isSelected()) {
-                        if (v.getTribe() != Barbarians.getSingleton() && v.getTribe().equals(own)) {
-                            //no barbarian, village tribe equals own
-                            doExport = true;
-                        }
-                    }
-                    if (jCopyOwnAlly.isSelected()) {
-                        if (v.getTribe() != Barbarians.getSingleton() && own.getAlly() != null && v.getTribe().getAlly() != null && v.getTribe().getAlly().equals(own.getAlly())) {
-                            //no barbarian, own ally not null, village ally not null, village ally equals own
-                            if (!jCopyOwn.isSelected()) {
-                                //if own is not selected don't use own villages!
-                                if (v.getTribe().equals(own)) {
-                                    //ignore own villages
-                                    doExport = false;
-                                } else {
-                                    //do export
-                                    doExport = true;
-
-                                }
-                            } else {
-                                //do export 
-                                doExport = true;
-                            }
-                        }
-                    }
-
-                    if (jCopyEnemyAlly.isSelected()) {
-                        if (v.getTribe() != Barbarians.getSingleton() && v.getTribe().getAlly() == null || !v.getTribe().getAlly().equals(own.getAlly())) {
-                            //no barbarien, no ally or ally not equal own ally
-                            doExport = true;
-                        }
-                    }
-
-                    if (doExport) {
-                        exported = true;
-                        result += v.toBBCode();
-                        if (jExportPoints.isSelected()) {
-                            result += " (" + nf.format(v.getPoints()) + ") ";
-                        } else {
-                            result += "\t";
-                        }
-                        if (jExportTribeName.isSelected() && v.getTribe() != Barbarians.getSingleton()) {
-                            result += v.getTribe().toBBCode() + " ";
-                        } else {
-                            if (jExportTribeName.isSelected()) {
-                                result += "Barbaren ";
-                            } else {
-                                result += "\t";
-                            }
-                        }
-                        if (jExportAllyName.isSelected() && v.getTribe() != Barbarians.getSingleton() && v.getTribe().getAlly() != null) {
-                            result += v.getTribe().getAlly().toBBCode() + "\n";
-                        } else {
-                            if (jExportAllyName.isSelected()) {
-                                result += "(kein Stamm)\n";
-                            } else {
-                                result += "\n";
-                            }
-                        }
-                    }
-                }
-                if (exported) {
-                    StringTokenizer t = new StringTokenizer(result, "[");
-                    int cnt = t.countTokens();
-                    boolean doExport = true;
-                    if (cnt > 500) {
-                        if (JOptionPaneHelper.showQuestionConfirmBox(jCopyVillagesDialog, "Die ausgewählten Dörfer benötigen mehr als 500 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
-                            doExport = false;
-                        }
-                    }
-                    if (doExport) {
-                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
-                        JOptionPaneHelper.showInformationBox(jCopyVillagesDialog, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert");
-                    }
-                } else {
-                    JOptionPaneHelper.showInformationBox(jCopyVillagesDialog, "Mit den gewählten Einstellungen werden keine Dörfer kopiert.", "Information");
-                    return;
-                }
-            } else if (evt.getSource() == jExportPlainButton) {
-                String result = "";
-                for (Village v : exportVillageList) {
-                    boolean doExport = false;
-                    if (jCopyBarbarian.isSelected()) {
-                        if (v.getTribe() == Barbarians.getSingleton()) {
-                            //is barbarian
-                            doExport = true;
-                        }
-                    }
-                    if (jCopyOwn.isSelected()) {
-                        if (v.getTribe() != Barbarians.getSingleton() && v.getTribe().equals(own)) {
-                            //no barbarian, village tribe equals own
-                            doExport = true;
-                        }
-                    }
-                    if (jCopyOwnAlly.isSelected()) {
-                        if (v.getTribe() != Barbarians.getSingleton() && own.getAlly() != null && v.getTribe().getAlly() != null && v.getTribe().getAlly().equals(own.getAlly())) {
-                            //no barbarian, own ally not null, village ally not null, village ally equals own
-                            doExport = true;
-                        }
-                    }
-
-
-                    if (jCopyEnemyAlly.isSelected()) {
-                        if ((v.getTribe() != Barbarians.getSingleton() && v.getTribe().getAlly() == null) || (v.getTribe() != Barbarians.getSingleton() && v.getTribe().getAlly() != null && !v.getTribe().getAlly().equals(own.getAlly()))) {
-                            //no barbarien, no ally or ally not equal own ally
-                            doExport = true;
-                        }
-                    }
-
-                    if (doExport) {
-                        exported = true;
-                        result += v + "\t";
-                        if (jExportPoints.isSelected()) {
-                            result += nf.format(v.getPoints()) + "\t";
-                        } else {
-                            result += "\t";
-                        }
-                        if (jExportTribeName.isSelected() && v.getTribe() != Barbarians.getSingleton()) {
-                            result += v.getTribe() + "\t";
-                        } else {
-                            if (jExportTribeName.isSelected()) {
-                                result += "Barbaren\t";
-                            } else {
-                                result += "\t";
-                            }
-                        }
-                        if (jExportAllyName.isSelected() && v.getTribe() != Barbarians.getSingleton() && v.getTribe().getAlly() != null) {
-                            result += v.getTribe().getAlly() + "\n";
-                        } else {
-                            if (jExportAllyName.isSelected()) {
-                                result += "(kein Stamm)\n";
-                            } else {
-                                result += "\n";
-                            }
-                        }
-                    }
-                }
-                if (exported) {
-                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
-                    JOptionPaneHelper.showInformationBox(jCopyVillagesDialog, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert");
-                } else {
-                    JOptionPaneHelper.showInformationBox(jCopyVillagesDialog, "Mit den gewählten Einstellungen werden keine Dörfer kopiert.", "Information");
-                    return;
-                }
-            }
-        } catch (Exception e) {
-            logger.error("Failed to copy data to clipboard", e);
-            JOptionPaneHelper.showErrorBox(jCopyVillagesDialog, "Fehler beim Kopieren der Daten.", "Fehler");
-        }
-
-        jCopyVillagesDialog.setVisible(false);
-
-    }//GEN-LAST:event_fireVillageExportEvent
-
     private void fireVillagePopupActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireVillagePopupActionEvent
-
         if (evt.getSource() == jCopyPlayerVillagesToClipboardItem) {
             Village v = actionMenuVillage;
             if (v != null) {
-
                 if (v.getTribe() != Barbarians.getSingleton()) {
                     try {
-                        String text = "";
+                        StringBuilder builder = new StringBuilder();
                         Village[] list = v.getTribe().getVillageList();
                         Arrays.sort(list);
                         for (Village current : list) {
                             if (ServerSettings.getSingleton().getCoordType() != 2) {
                                 int[] hier = DSCalculator.xyToHierarchical((int) current.getX(), (int) current.getY());
-                                text += hier[0] + ":" + hier[1] + ":" + hier[2] + "\n";
+                                builder.append(hier[0]).append(":").append(hier[1]).append(":").append(hier[2]).append("\n");
                             } else {
-                                text += current.getX() + "|" + current.getY() + "\n";
+                                builder.append(current.getX()).append("|").append(current.getY()).append("\n");
                             }
                         }
-                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(builder.toString()), null);
                         JOptionPaneHelper.showInformationBox(this, "Dörfer in die Zwischenablage kopiert", "Information");
                     } catch (Exception e) {
                         JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren in die Zwischenablage", "Fehler");
@@ -1485,16 +1160,15 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         } else if (evt.getSource() == jCopyPlayerVillagesAsBBCodeToClipboardItem) {
             Village v = actionMenuVillage;
             if (v != null) {
-
                 if (v.getTribe() != Barbarians.getSingleton()) {
                     try {
-                        String text = "";
+                        StringBuilder builder = new StringBuilder();
                         Village[] list = v.getTribe().getVillageList();
                         Arrays.sort(list);
                         for (Village current : list) {
-                            text += current.toBBCode() + "\n";
+                            builder.append(current.toBBCode()).append("\n");
                         }
-                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(builder.toString()), null);
                         JOptionPaneHelper.showInformationBox(this, "Dörfer in die Zwischenablage kopiert", "Information");
                     } catch (Exception e) {
                         JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren in die Zwischenablage", "Fehler");
@@ -1525,14 +1199,14 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             Village v = actionMenuVillage;
             if (v != null) {
                 try {
-                    String text = "";
+                    StringBuilder builder = new StringBuilder();
                     if (ServerSettings.getSingleton().getCoordType() != 2) {
                         int[] hier = DSCalculator.xyToHierarchical((int) v.getX(), (int) v.getY());
-                        text = hier[0] + ":" + hier[1] + ":" + hier[2];
+                        builder.append(hier[0]).append(":").append(hier[1]).append(":").append(hier[2]);
                     } else {
-                        text = v.getX() + "|" + v.getY();
+                        builder.append(v.getX()).append("|").append(v.getY());
                     }
-                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
+                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(builder.toString()), null);
                     JOptionPaneHelper.showInformationBox(this, "Koordinaten in die Zwischenablage kopiert", "Information");
                 } catch (Exception e) {
                     JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren in die Zwischenablage", "Fehler");
@@ -1543,8 +1217,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             Village v = actionMenuVillage;
             if (v != null) {
                 try {
-                    String text = v.toBBCode();
-                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
+                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(v.toBBCode()), null);
                     JOptionPaneHelper.showInformationBox(this, "BB-Code in die Zwischenablage kopiert", "Information");
                 } catch (Exception e) {
                     JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren in die Zwischenablage", "Fehler");
@@ -1552,10 +1225,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
         } else if (evt.getSource() == jCenterItem) {
             //center current village on map
-            Village v = actionMenuVillage;
-            if (v != null) {
-                DSWorkbenchMainFrame.getSingleton().centerVillage(v);
-            }
+            DSWorkbenchMainFrame.getSingleton().centerVillage(actionMenuVillage);
         } else if (evt.getSource() == jCurrentToAttackPlanerAsSourceItem) {
             Village v = actionMenuVillage;
             if (v != null) {
@@ -1591,14 +1261,12 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 JOptionPaneHelper.showInformationBox(this, "Dorf in Angriffsplaner eingefügt", "Information");
             }
         } else if (evt.getSource() == jCurrentCreateNoteItem) {
-            Village v = actionMenuVillage;
-            if (v != null) {
+            if (actionMenuVillage != null) {
                 DSWorkbenchNotepad.getSingleton().addNoteForVillage(actionMenuVillage);
                 JOptionPaneHelper.showInformationBox(this, "Notiz erstellt", "Information");
             }
         } else if (evt.getSource() == jCurrentAddToNoteItem) {
-            Village v = actionMenuVillage;
-            if (v != null) {
+            if (actionMenuVillage != null) {
                 if (DSWorkbenchNotepad.getSingleton().addVillageToCurrentNote(actionMenuVillage)) {
                     JOptionPaneHelper.showInformationBox(this, "Dorf hinzugefügt", "Information");
                 } else {
@@ -1606,8 +1274,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 }
             }
         } else if (evt.getSource() == jCurrentToAStarAsAttacker || evt.getSource() == jCurrentToAStarAsDefender) {
-            Village v = actionMenuVillage;
-            VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
+            VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(actionMenuVillage);
             if (holder == null) {
                 JOptionPaneHelper.showInformationBox(this, "Keine Truppeninformationen vorhanden", "Information");
                 return;
@@ -1641,11 +1308,9 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             DSWorkbenchSimulatorFrame.getSingleton().insertValuesExternally(values);
         } else if (evt.getSource() == jVillageInfoIngame) {
             //center village ingame
-            Village v = actionMenuVillage;
-            if (v != null) {
-                BrowserCommandSender.centerVillage(v);
+            if (actionMenuVillage != null) {
+                BrowserCommandSender.centerVillage(actionMenuVillage);
             }
-
         } else if (evt.getSource() == jAllCoordToClipboardItem) {
             //copy selected villages coordinates to clipboard
             if (markedVillages.isEmpty()) {
@@ -1653,16 +1318,16 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 return;
             }
             try {
-                String text = "";
+                StringBuilder builder = new StringBuilder();
                 for (Village v : markedVillages) {
                     if (ServerSettings.getSingleton().getCoordType() != 2) {
                         int[] hier = DSCalculator.xyToHierarchical((int) v.getX(), (int) v.getY());
-                        text += hier[0] + ":" + hier[1] + ":" + hier[2] + "\n";
+                        builder.append(hier[0]).append(":").append(hier[1]).append(":").append(hier[2]).append("\n");
                     } else {
-                        text += v.getX() + "|" + v.getY() + "\n";
+                        builder.append(v.getX()).append("|").append(v.getY()).append("\n");
                     }
                 }
-                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(builder.toString()), null);
                 JOptionPaneHelper.showInformationBox(this, "Koordinaten in die Zwischenablage kopiert", "Information");
             } catch (Exception e) {
                 JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren in die Zwischenablage", "Fehler");
@@ -1674,11 +1339,11 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 return;
             }
             try {
-                String text = "";
+                StringBuilder builder = new StringBuilder();
                 for (Village v : markedVillages) {
-                    text += v.toBBCode() + "\n";
+                    builder.append(v.toBBCode()).append("\n");
                 }
-                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(builder.toString()), null);
                 JOptionPaneHelper.showInformationBox(this, "BB-Code in die Zwischenablage kopiert", "Information");
             } catch (Exception e) {
                 JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren in die Zwischenablage", "Fehler");
@@ -1734,8 +1399,10 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
             int cnt = 0;
             for (Village v : markedVillages) {
-                BrowserCommandSender.centerVillage(v);
-                cnt++;
+                if (v != null) {
+                    BrowserCommandSender.centerVillage(v);
+                    cnt++;
+                }
                 if (cnt == 10) {
                     //allow max 10 villages
                     return;
@@ -1745,20 +1412,14 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     }//GEN-LAST:event_fireVillagePopupActionEvent
 
     private void fireResizeEvent(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_fireResizeEvent
-        //  mBuffer = null;
         getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
-        // Dimension dim = getSize();
-        //  mBuffer = mMapRenderer.getVol(dim.width, dim.height);
-        // mBuffer = mMapRenderer.getBufferedImage(dim.width, dim.height, BufferedImage.OPAQUE);
     }//GEN-LAST:event_fireResizeEvent
-    long s = 0;
 
+    @Override
     public void paint(Graphics g) {
         /**Draw buffer into panel*/
-        // System.out.println("P " + (System.currentTimeMillis() - s));
         try {
             //calculate move direction if mouse is dragged outside the map
-
             if ((isOutside) && (mouseDown) && (iCurrentCursor != ImageManager.CURSOR_DEFAULT)) {
                 mousePos = MouseInfo.getPointerInfo().getLocation();
 
@@ -1798,11 +1459,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
             //draw off-screen image of map
             mMapRenderer.renderAll((Graphics2D) g);
-
-            //g.drawImage(mBuffer, 0, 0, null);
-            //  Toolkit.getDefaultToolkit().sync();
-            // g.dispose();
-            //   fireScrollEvents(-1, 0);
         } catch (Exception e) {
             logger.error("Failed to paint", e);
         }
@@ -1927,7 +1583,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 if (mVillagePositions.get(current).contains(pPos)) {
                     return current;
                 }
-
             }
         } catch (Exception e) {
             //failed getting village (probably getting mousepos failed)
@@ -1938,19 +1593,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
     /**Update operation perfomed by the RepaintThread was completed*/
     public void updateComplete(final HashMap<Village, Rectangle> pPositions, final BufferedImage pBuffer) {
-        /*   Graphics2D g2d = null;
-        if (mBuffer == null || mBuffer.getWidth() != pBuffer.getWidth() || mBuffer.getHeight() != pBuffer.getHeight()) {
-        mBuffer = ImageUtils.createCompatibleBufferedImage(pBuffer.getWidth(), pBuffer.getHeight(), BufferedImage.OPAQUE);
-        g2d = mBuffer.createGraphics();
-        } else {
-        g2d = (Graphics2D) mBuffer.getGraphics();
-        //g2d.clearRect(0, 0, getWidth(), getHeight());
-        }
-        mBuffer.setAccelerationPriority(1.0f);
-        g2d.setClip(0, 0, mBuffer.getWidth(), mBuffer.getHeight());
-        g2d.drawImage(pBuffer, 0, 0, null);
-        g2d.dispose();
-         */
         mVillagePositions = (HashMap<Village, Rectangle>) pPositions.clone();
         if (bMapSHotPlaned) {
             saveMapShot(mBuffer);
@@ -1959,7 +1601,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             DSWorkbenchFormFrame.getSingleton().updateFormList();
         }
         positionUpdate = false;
-        //repaint();
     }
 
     public boolean requiresAlphaBlending() {
@@ -2016,9 +1657,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         for (ToolChangeListener listener : mToolChangeListeners) {
             listener.fireToolChangedEvent(pTool);
         }
-    }
-
-    public synchronized void fireVillageAtMousePosChangedEvents(Village pVillage) {
     }
 
     public synchronized void fireScrollEvents(double pX, double pY) {
@@ -2119,16 +1757,10 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     private javax.swing.JMenuItem jAllToAttackPlanerAsSourceItem;
     private javax.swing.JMenuItem jAllToAttackPlanerAsTargetItem;
     private javax.swing.JMenu jAllySubmenu;
-    private javax.swing.JButton jCancelExportButton;
     private javax.swing.JMenuItem jCenterItem;
     private javax.swing.JMenuItem jCenterVillagesIngameItem;
-    private javax.swing.JCheckBox jCopyBarbarian;
-    private javax.swing.JCheckBox jCopyEnemyAlly;
-    private javax.swing.JCheckBox jCopyOwn;
-    private javax.swing.JCheckBox jCopyOwnAlly;
     private javax.swing.JMenuItem jCopyPlayerVillagesAsBBCodeToClipboardItem;
     private javax.swing.JMenuItem jCopyPlayerVillagesToClipboardItem;
-    private javax.swing.JDialog jCopyVillagesDialog;
     private javax.swing.JMenuItem jCurrentAddToNoteItem;
     private javax.swing.JMenuItem jCurrentCoordAsBBToClipboardItem;
     private javax.swing.JMenuItem jCurrentCoordToClipboardItem;
@@ -2138,13 +1770,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     private javax.swing.JMenuItem jCurrentToAttackPlanerAsSourceItem;
     private javax.swing.JMenuItem jCurrentToAttackPlanerAsTargetItem;
     private javax.swing.JMenu jCurrentVillageSubmenu;
-    private javax.swing.JCheckBox jExportAllyName;
-    private javax.swing.JButton jExportBBButton;
-    private javax.swing.JButton jExportPlainButton;
-    private javax.swing.JCheckBox jExportPoints;
-    private javax.swing.JCheckBox jExportTribeName;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JMenu jMarkedVillageSubmenu;
     private javax.swing.JMenuItem jMonitorAllyItem;
     private javax.swing.JMenuItem jMonitorPlayerItem;
@@ -2158,7 +1783,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     private javax.swing.JSeparator jSeparator8;
     private javax.swing.JMenu jTribeSubmenu;
     private javax.swing.JPopupMenu jVillageActionsMenu;
-    private javax.swing.JLabel jVillageExportDetails;
     private javax.swing.JMenuItem jVillageInfoIngame;
     // End of variables declaration//GEN-END:variables
 }

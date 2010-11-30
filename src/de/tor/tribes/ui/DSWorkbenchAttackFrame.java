@@ -10,7 +10,6 @@ import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Attack;
-import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.StandardAttackElement;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.UnknownUnit;
@@ -47,7 +46,6 @@ import de.tor.tribes.util.AttackToBBCodeFormater;
 import de.tor.tribes.util.AttackToPlainTextFormatter;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
 import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.IGMSender;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.js.AttackScriptWriter;
@@ -61,15 +59,14 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionListener;
@@ -223,7 +220,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         GlobalOptions.getHelpBroker().enableHelpKey(jSelectionFilterDialog.getRootPane(), "pages.attack_select_filter", GlobalOptions.getHelpBroker().getHelpSet());
         GlobalOptions.getHelpBroker().enableHelpKey(jTimeChangeDialog.getRootPane(), "pages.change_attack_times", GlobalOptions.getHelpBroker().getHelpSet());
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.attack_view", GlobalOptions.getHelpBroker().getHelpSet());
-// </editor-fold>
+        // </editor-fold>
         jStandardAttackDialog.pack();
         pack();
     }
@@ -404,7 +401,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
         jSourceTribeBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireSourcePlayerChangedEvent(evt);
+                firePlayerFilterSelectionChangedEvent(evt);
             }
         });
 
@@ -488,7 +485,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
         jTargetTribeBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireTargetPlayerChangedEvent(evt);
+                firePlayerFilterSelectionChangedEvent(evt);
             }
         });
 
@@ -1879,16 +1876,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
 private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveAttackEvent
     List<Attack> selectedAttacks = getSelectedAttacks();
-    /*int[] rows = jAttackTable.getSelectedRows();
-    if (rows.length == 0) {
-    return;
-    }
-
-    String message = ((rows.length == 1) ? "Angriff " : (rows.length + " Angriffe ")) + "wirklich löschen?";
-    if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Angriffe löschen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
-    return;
-    }
-     */
 
     String message = ((selectedAttacks.size() == 1) ? "Angriff " : (selectedAttacks.size() + " Angriffe ")) + "wirklich löschen?";
     if (selectedAttacks.isEmpty() || JOptionPaneHelper.showQuestionConfirmBox(this, message, "Angriffe löschen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
@@ -1897,12 +1884,6 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 
     jAttackTable.editingCanceled(new ChangeEvent(this));
 
-    /*for (int r = rows.length - 1; r >= 0; r--) {
-    jAttackTable.invalidate();
-    int row = jAttackTable.convertRowIndexToModel(rows[r]);
-    AttackManagerTableModel.getSingleton().removeRow(row);
-    jAttackTable.revalidate();
-    }*/
     AttackManager.getSingleton().removeAttacks(selectedAttacks);
     jAttackTable.repaint();
 }//GEN-LAST:event_fireRemoveAttackEvent
@@ -2079,84 +2060,58 @@ private void fireCancelFilterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     jSelectionFilterDialog.setVisible(false);
 }//GEN-LAST:event_fireCancelFilterEvent
 
-private void fireSourcePlayerChangedEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireSourcePlayerChangedEvent
+private void firePlayerFilterSelectionChangedEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_firePlayerFilterSelectionChangedEvent
+    JTable tableToModify = null;
+    JComboBox comboBoxToUse = null;
+    boolean useSource = true;
     try {
-        Tribe source = null;
+        if (evt.getSource() == jSourceTribeBox) {
+            tableToModify = jSourceVillageTable;
+            comboBoxToUse = jSourceTribeBox;
+        } else if (evt.getSource() == jTargetTribeBox) {
+            tableToModify = jTargetVillageTable;
+            comboBoxToUse = jTargetTribeBox;
+            useSource = false;
+        }
+
+        Tribe tribe = null;
 
         try {
-            source = (Tribe) jSourceTribeBox.getSelectedItem();
+            tribe = (Tribe) comboBoxToUse.getSelectedItem();
         } catch (Exception inner) {
             //probably a barbarian village was selected. tribe stays 'null'
+            return;
         }
 
         List<Attack> attacks = AttackManager.getSingleton().getAttackPlan();
         Hashtable<Village, Boolean> villageMarks = new Hashtable<Village, Boolean>();
         //check attacks for the selected player
-        int cnt = 0;
+        int row = 0;
 
-        jSourceVillageTable.invalidate();
+        tableToModify.invalidate();
         for (Attack a : attacks) {
-            int row = jAttackTable.convertRowIndexToView(cnt);
-            Village v = a.getSource();
-            if ((v != null) && (v.getTribe() == source)) {
-                if (jAttackTable.getSelectionModel().isSelectedIndex(row)) {
+            int modelRow = jAttackTable.convertRowIndexToView(row);
+            Village v = ((useSource) ? a.getSource() : a.getTarget());
+
+            if ((v != null) && (v.getTribe() == tribe)) {
+                if (jAttackTable.getSelectionModel().isSelectedIndex(modelRow)) {
                     //village is selected in the attack table, so select it here too
                     villageMarks.put(v, Boolean.TRUE);
                 } else {
                     villageMarks.put(v, Boolean.FALSE);
                 }
             }
-            cnt++;
+            row++;
             //create model with player villages in attack plan
-            setupSelectionFilterTableModel(jSourceVillageTable, villageMarks);
-            jSourceVillageTable.revalidate();
-            jSourceVillageTable.repaint();//.updateUI();
+            setupSelectionFilterTableModel(tableToModify, villageMarks);
+            tableToModify.revalidate();
+            tableToModify.repaint();
         }
     } catch (Exception e) {
-        //"please select" selected    
-        setupSelectionFilterTableModel(jSourceVillageTable, new Hashtable<Village, Boolean>());
+        //"please select" selected
+        setupSelectionFilterTableModel(tableToModify, new Hashtable<Village, Boolean>());
     }
-}//GEN-LAST:event_fireSourcePlayerChangedEvent
-
-private void fireTargetPlayerChangedEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireTargetPlayerChangedEvent
-    try {
-        Tribe target = null;
-
-        try {
-            target = (Tribe) jTargetTribeBox.getSelectedItem();
-        } catch (Exception inner) {
-            //probably a barbarian village was selected. tribe stays 'null'
-        }
-
-        List<Attack> attacks = AttackManager.getSingleton().getAttackPlan();
-        Hashtable<Village, Boolean> villageMarks = new Hashtable<Village, Boolean>();
-        //check attacks for the selected player
-        int cnt = 0;
-
-        jTargetVillageTable.invalidate();
-        for (Attack a : attacks) {
-            int row = jAttackTable.convertRowIndexToView(cnt);
-            Village v = a.getTarget();
-            if ((v != null) && (v.getTribe() == target)) {
-                if (jAttackTable.getSelectionModel().isSelectedIndex(row)) {
-                    //village is selected in the attack table, so select it here too
-                    villageMarks.put(v, Boolean.TRUE);
-                } else {
-                    villageMarks.put(v, Boolean.FALSE);
-                }
-            }
-            cnt++;
-        }
-
-        //create model with player villages in attack plan
-        setupSelectionFilterTableModel(jTargetVillageTable, villageMarks);
-        jTargetVillageTable.revalidate();
-        jTargetVillageTable.repaint();//.updateUI();
-    } catch (Exception e) {
-        //"please select" selected    
-        setupSelectionFilterTableModel(jTargetVillageTable, new Hashtable<Village, Boolean>());
-    }
-}//GEN-LAST:event_fireTargetPlayerChangedEvent
+}//GEN-LAST:event_firePlayerFilterSelectionChangedEvent
 
 private void fireSelectFilteredEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectFilteredEvent
     List<Attack> attacks = AttackManager.getSingleton().getAttackPlan();
@@ -2164,27 +2119,14 @@ private void fireSelectFilteredEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     List<Object> targetTribes = new LinkedList<Object>();
     //search attacks for source and target tribes
     for (Attack a : attacks) {
-        Tribe s = a.getSource().getTribe();
-        if (s != Barbarians.getSingleton()) {
-            if (!sourceTribes.contains(s)) {
-                sourceTribes.add(s);
-            }
-        } else {
-            String barb = "Barbaren";
-            if (!sourceTribes.contains(barb)) {
-                sourceTribes.add(barb);
-            }
+        Tribe sourceTribe = a.getSource().getTribe();
+        if (!sourceTribes.contains(sourceTribe)) {
+            sourceTribes.add(sourceTribe);
         }
-        Tribe t = a.getTarget().getTribe();
-        if (t != Barbarians.getSingleton()) {
-            if (!targetTribes.contains(t)) {
-                targetTribes.add(t);
-            }
-        } else {
-            String barb = "Barbaren";
-            if (!targetTribes.contains(barb)) {
-                targetTribes.add(barb);
-            }
+        Tribe targetTribe = a.getTarget().getTribe();
+
+        if (!targetTribes.contains(targetTribe)) {
+            targetTribes.add(targetTribe);
         }
     }
     //build source and target selection and select default value
@@ -2213,148 +2155,119 @@ private void fireFlipMarkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         selected.add(new Integer(row));
     }
 
-    int cnt = jAttackTable.getRowCount();
+    int rowCount = jAttackTable.getRowCount();
     //look for all rows wether the index is selected or not.
     //selected indices are removed from the existing list, unselected are added
-    for (int i = 0; i < cnt; i++) {
-        int row = jAttackTable.convertRowIndexToModel(i);
-        Integer iV = new Integer(row);
-        if (selected.contains(iV)) {
-            selected.remove(iV);
+    for (int row = 0; row < rowCount; row++) {
+        Integer modelRow = jAttackTable.convertRowIndexToModel(row);
+        if (selected.contains(modelRow)) {
+            selected.remove(modelRow);
         } else {
-            selected.add(iV);
+            selected.add(modelRow);
         }
-
     }
 
     //assign the values of the selected list to the table
     jAttackTable.getSelectionModel().setValueIsAdjusting(true);
-    for (int i = 0; i < cnt; i++) {
-        Integer iV = new Integer(i);
-        if (selected.contains(iV)) {
-            jAttackTable.getSelectionModel().addSelectionInterval(i, i);
+    for (int row = 0; row < rowCount; row++) {
+        Integer rowToSelect = new Integer(row);
+        if (selected.contains(rowToSelect)) {
+            jAttackTable.getSelectionModel().addSelectionInterval(row, row);
         } else {
-            jAttackTable.getSelectionModel().removeSelectionInterval(i, i);
+            jAttackTable.getSelectionModel().removeSelectionInterval(row, row);
         }
-
     }
     jAttackTable.getSelectionModel().setValueIsAdjusting(false);
 }//GEN-LAST:event_fireFlipMarkEvent
 
 private void fireSelectNoneAllEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectNoneAllEvent
+    JTable tableToChange = null;
+    boolean select = false;
     if (evt.getSource() == jAllSourceVillageButton) {
-        if (jSourceVillageTable.getRowCount() > 0) {
-            //update source table values that all villages are selected
-            jSourceVillageTable.invalidate();
-            for (int i = 0; i < jSourceVillageTable.getRowCount(); i++) {
-                jSourceVillageTable.getModel().setValueAt(Boolean.TRUE, i, 1);
-            }
-
-            jSourceVillageTable.revalidate();
-            jSourceVillageTable.repaint();//.updateUI();
-        }
-
+        tableToChange = jSourceVillageTable;
+        select = true;
     } else if (evt.getSource() == jNoSourceVillageButton) {
-        //update source table values that all villages are unselected
-        jSourceVillageTable.invalidate();
-        for (int i = 0; i < jSourceVillageTable.getRowCount(); i++) {
-            jSourceVillageTable.getModel().setValueAt(Boolean.FALSE, i, 1);
-        }
-
-        jSourceVillageTable.revalidate();
-        jSourceVillageTable.repaint();//.updateUI();
+        tableToChange = jSourceVillageTable;
+        select = false;
     } else if (evt.getSource() == jAllTargetVillageButton) {
-        //update target table values that all villages are selected
-        if (jTargetVillageTable.getRowCount() > 0) {
-            jTargetVillageTable.invalidate();
-            for (int i = 0; i < jTargetVillageTable.getRowCount(); i++) {
-                jTargetVillageTable.getModel().setValueAt(Boolean.TRUE, i, 1);
-            }
-
-            jTargetVillageTable.revalidate();
-            jTargetVillageTable.repaint();//.updateUI();
-        }
-
+        tableToChange = jTargetVillageTable;
+        select = true;
     } else if (evt.getSource() == jNoTargetVillageButton) {
-        //update target table values that all villages are unselected
-        jTargetVillageTable.invalidate();
-        for (int i = 0; i < jTargetVillageTable.getRowCount(); i++) {
-            jTargetVillageTable.getModel().setValueAt(Boolean.FALSE, i, 1);
-        }
-
-        jTargetVillageTable.revalidate();
-        jTargetVillageTable.repaint();//.updateUI();
+        tableToChange = jTargetVillageTable;
+        select = false;
     }
+
+    tableToChange.invalidate();
+    for (int i = 0; i < tableToChange.getRowCount(); i++) {
+        tableToChange.getModel().setValueAt(select, i, 1);
+    }
+
+    tableToChange.revalidate();
+    tableToChange.repaint();
 }//GEN-LAST:event_fireSelectNoneAllEvent
 
 private void fireCloseTimeChangeDialogEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCloseTimeChangeDialogEvent
     if (evt.getSource() == jOKButton) {
-        int[] rows = jAttackTable.getSelectedRows();
-        if ((rows != null) || (rows.length > 0)) {
-            if (jMoveTimeOption.isSelected()) {
-                Integer sec = (Integer) jSecondsField.getValue();
-                Integer min = (Integer) jMinuteField.getValue();
-                Integer hour = (Integer) jHourField.getValue();
-                Integer day = (Integer) jDayField.getValue();
+        List<Attack> attacksToModify = getSelectedAttacks();
+        if (jMoveTimeOption.isSelected()) {
+            Integer sec = (Integer) jSecondsField.getValue();
+            Integer min = (Integer) jMinuteField.getValue();
+            Integer hour = (Integer) jHourField.getValue();
+            Integer day = (Integer) jDayField.getValue();
 
-                //jArriveDateField.getValue()
-                List<Attack> attacks = AttackManager.getSingleton().getAttackPlan();
-                jAttackTable.invalidate();
-                for (int i : rows) {
-                    int row = jAttackTable.convertRowIndexToModel(i);
-                    long arrive = attacks.get(row).getArriveTime().getTime();
-                    long diff = sec * 1000 + min * 60000 + hour * 3600000 + day * 86400000;
-                    //later if first index is selected
-                    //if later, add diff to arrival, else remove diff from arrival
-                    arrive += diff;
-                    attacks.get(row).setArriveTime(new Date(arrive));
-                }
-
-                jAttackTable.revalidate();
-                jAttackTable.repaint();//.updateUI();
-            } else if (jModifyArrivalOption.isSelected()) {
-                Date arrive = jArriveDateField.getSelectedDate();
-                jAttackTable.invalidate();
-                for (int i : rows) {
-                    int row = jAttackTable.convertRowIndexToModel(i);
-                    //later if first index is selected
-                    //if later, add diff to arrival, else remove diff from arrival
-                    AttackManager.getSingleton().getAttackPlan().get(row).setArriveTime(arrive);
-                }
-
-                jAttackTable.revalidate();
-                jAttackTable.repaint();//.updateUI();
-            } else if (jRandomizeOption.isSelected()) {
-                long rand = (Long) jRandomField.getValue() * 60 * 60 * 1000;
-                jAttackTable.invalidate();
-                for (int i : rows) {
-                    int row = jAttackTable.convertRowIndexToModel(i);
-                    List<Attack> attacks = AttackManager.getSingleton().getAttackPlan();
-                    Calendar c = Calendar.getInstance();
-                    boolean valid = false;
-                    while (!valid) {
-                        //random until valid value was found
-                        long arrive = attacks.get(row).getArriveTime().getTime();
-                        //later if first index is selected
-                        //if later, add diff to arrival, else remove diff from arrival
-                        int sign = (Math.random() > .5) ? 1 : -1;
-                        arrive = (long) (arrive + (sign * Math.random() * rand));
-
-                        c.setTimeInMillis(arrive);
-                        int hours = c.get(Calendar.HOUR_OF_DAY);
-                        if (hours >= 0 && hours < 8 && jNotRandomToNightBonus.isSelected()) {
-                            //only invalid if in night bonus and this is not allowed
-                            valid = false;
-                        } else {
-                            valid = true;
-                        }
-                    }
-
-                    attacks.get(row).setArriveTime(c.getTime());
-                }
-                jAttackTable.revalidate();
-                jAttackTable.repaint();//.updateUI();
+            jAttackTable.invalidate();
+            for (Attack attack : attacksToModify) {
+                // int row = jAttackTable.convertRowIndexToModel(i);
+                long arrive = attack.getArriveTime().getTime();
+                long diff = sec * 1000 + min * 60000 + hour * 3600000 + day * 86400000;
+                //later if first index is selected
+                //if later, add diff to arrival, else remove diff from arrival
+                arrive += diff;
+                attack.setArriveTime(new Date(arrive));
             }
+
+            jAttackTable.revalidate();
+            jAttackTable.repaint();//.updateUI();
+        } else if (jModifyArrivalOption.isSelected()) {
+            Date arrive = jArriveDateField.getSelectedDate();
+            jAttackTable.invalidate();
+            for (Attack attack : attacksToModify) {
+                //later if first index is selected
+                //if later, add diff to arrival, else remove diff from arrival
+                attack.setArriveTime(arrive);
+            }
+
+            jAttackTable.revalidate();
+            jAttackTable.repaint();
+        } else if (jRandomizeOption.isSelected()) {
+            long rand = (Long) jRandomField.getValue() * 60 * 60 * 1000;
+            jAttackTable.invalidate();
+            for (Attack attack : attacksToModify) {
+                // int row = jAttackTable.convertRowIndexToModel(i);
+                Calendar c = Calendar.getInstance();
+                boolean valid = false;
+                while (!valid) {
+                    //random until valid value was found
+                    long arrive = attack.getArriveTime().getTime();
+                    //later if first index is selected
+                    //if later, add diff to arrival, else remove diff from arrival
+                    int sign = (Math.random() > .5) ? 1 : -1;
+                    arrive = (long) (arrive + (sign * Math.random() * rand));
+
+                    c.setTimeInMillis(arrive);
+                    int hours = c.get(Calendar.HOUR_OF_DAY);
+                    if (hours >= 0 && hours < 8 && jNotRandomToNightBonus.isSelected()) {
+                        //only invalid if in night bonus and this is not allowed
+                        valid = false;
+                    } else {
+                        valid = true;
+                    }
+                }
+
+                attack.setArriveTime(c.getTime());
+            }
+            jAttackTable.revalidate();
+            jAttackTable.repaint();
         }
     }
 
@@ -2362,8 +2275,7 @@ private void fireCloseTimeChangeDialogEvent(java.awt.event.MouseEvent evt) {//GE
 }//GEN-LAST:event_fireCloseTimeChangeDialogEvent
 
 private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeTimesEvent
-    int[] rows = jAttackTable.getSelectedRows();
-    if ((rows == null) || (rows.length <= 0)) {
+    if (getSelectedAttacks().isEmpty()) {
         JOptionPaneHelper.showInformationBox(this, "Keine Angriffe markiert", "Information");
         return;
     }
@@ -2388,7 +2300,6 @@ private void fireRenameAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     if (selection.equals(AttackManager.DEFAULT_PLAN_ID)) {
         JOptionPaneHelper.showInformationBox(this, "Der Standardplan kann nicht umbenannt werden.", "Information");
         return;
-
     }
 
     jNewPlanName.setText(selection);
@@ -2494,31 +2405,22 @@ private void fireCancelMoveToPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
 
 private void fireDoMoveToPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDoMoveToPlanEvent
     try {
-        String oldPlan = jCurrentPlanBox.getText();
         String newPlan = (String) jNewPlanBox.getSelectedItem();
 
         if (newPlan == null) {
             JOptionPaneHelper.showInformationBox(jMoveToPlanDialog, "Kein neuer Plan ausgewählt", "Information");
             return;
         }
-        int[] rows = jAttackTable.getSelectedRows();
-        if ((rows != null) && (rows.length > 0)) {
-            List<Attack> sourcePlan = AttackManager.getSingleton().getAttackPlan(oldPlan);
-            List<Attack> tmpPlan = new LinkedList<Attack>();
-            jAttackTable.invalidate();
-            List<Integer> toRemove = new LinkedList<Integer>();
-            for (int i : rows) {
-                int row = jAttackTable.convertRowIndexToModel(i);
-                tmpPlan.add(sourcePlan.get(row));
-                toRemove.add(row);
-            }
 
-            AttackManager.getSingleton().removeAttacks(oldPlan, toRemove.toArray(new Integer[]{}));
-            for (Attack a : tmpPlan) {
-                AttackManager.getSingleton().addAttack(a.getSource(), a.getTarget(), a.getUnit(), a.getArriveTime(), a.isShowOnMap(), newPlan, a.getType());
-            }
-            jAttackTable.revalidate();
+        jAttackTable.invalidate();
+        List<Attack> attacksToMove = getSelectedAttacks();
+        AttackManager.getSingleton().removeAttacks(attacksToMove);
+        for (Attack attack : attacksToMove) {
+            AttackManager.getSingleton().addAttackFast(attack.getSource(), attack.getTarget(), attack.getUnit(), attack.getArriveTime(), attack.isShowOnMap(), newPlan, attack.getType());
         }
+
+        jAttackTable.revalidate();
+        //}
     } catch (Exception e) {
         logger.error("Failed to move attacks", e);
     }
@@ -2539,6 +2441,7 @@ private void fireModifyTimeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:even
     jLabel5.setEnabled(moveMode);
     jLabel6.setEnabled(moveMode);
     jLabel7.setEnabled(moveMode);
+    jSecondsField.setEnabled(moveMode);
     jMinuteField.setEnabled(moveMode);
     jHourField.setEnabled(moveMode);
     jDayField.setEnabled(moveMode);
@@ -2554,8 +2457,7 @@ private void fireModifyTimeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:even
 }//GEN-LAST:event_fireModifyTimeEvent
 
 private void fireCopyAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyAttacksEvent
-    int[] rows = jAttackTable.getSelectedRows();
-    if (rows == null || rows.length == 0) {
+    if (getSelectedAttacks().isEmpty()) {
         JOptionPaneHelper.showInformationBox(this, "Keine Angriffe ausgewählt.", "Kopieren");
         return;
     }
@@ -2574,24 +2476,22 @@ private void fireCopyAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
 private void fireCopyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyEvent
     if (evt.getSource() == jCopyButton) {
-        int[] rows = jAttackTable.getSelectedRows();
-        if (rows == null || rows.length == 0) {
+        List<Attack> selectedAttacks = getSelectedAttacks();
+        if (getSelectedAttacks().isEmpty()) {
             return;
         }
         jAttackTable.editingCanceled(new ChangeEvent(this));
         String newPlan = (String) jCopyTargetBox.getSelectedItem();
         String current = (String) jActiveAttackPlan.getSelectedItem();
         logger.debug("Copying attacks from plan '" + current + "' to '" + newPlan + "'");
-        List<Attack> currentPlan = AttackManager.getSingleton().getAttackPlan(current);
-        for (int r = rows.length - 1; r >= 0; r--) {
-            jAttackTable.invalidate();
-            int row = jAttackTable.convertRowIndexToModel(rows[r]);
-            Attack toCopy = currentPlan.get(row);
-            AttackManager.getSingleton().addAttackFast(toCopy.getSource(), toCopy.getTarget(), toCopy.getUnit(), toCopy.getArriveTime(), toCopy.isShowOnMap(), newPlan, toCopy.getType());
-            jAttackTable.revalidate();
+
+        jAttackTable.invalidate();
+        for (Attack attack : selectedAttacks) {
+            AttackManager.getSingleton().addAttackFast(attack.getSource(), attack.getTarget(), attack.getUnit(), attack.getArriveTime(), attack.isShowOnMap(), newPlan, attack.getType());
         }
+        jAttackTable.revalidate();
         AttackManager.getSingleton().forceUpdate(current);
-        jAttackTable.repaint();//.updateUI();
+        jAttackTable.repaint();
     }
 
     jCopyToPlanDialog.setVisible(false);
@@ -2649,13 +2549,8 @@ private void fireWriteToHTMLEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     return;
                 }
             }
-            int[] rows = jAttackTable.getSelectedRows();
-            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(selectedPlan);
-            List<Attack> toExport = new LinkedList<Attack>();
-            for (int i : rows) {
-                int row = jAttackTable.convertRowIndexToModel(i);
-                toExport.add(attacks.get(row));
-            }
+
+            List<Attack> toExport = getSelectedAttacks();
             AttackPlanHTMLExporter.doExport(target, selectedPlan, toExport);
             //store current directory
             GlobalOptions.addProperty("screen.dir", target.getParent());
@@ -2689,12 +2584,7 @@ private void fireCleanUpAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     }
 
     logger.debug("Cleaning up " + toRemove.size() + " attacks");
-
-    for (Attack a : toRemove) {
-        AttackManager.getSingleton().getAttackPlan().remove(a);
-    }
-
-    AttackManager.getSingleton().forceUpdate();
+    AttackManager.getSingleton().removeAttacks(toRemove);
 }//GEN-LAST:event_fireCleanUpAttacksEvent
 
 private void fireSetStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSetStandardAttacksEvent
@@ -2736,7 +2626,6 @@ private void fireSendAttacksAsIGMEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     jSubject.setText("Deine Angriffe (Plan: " + selectedPlan + ")");
     jSendAttacksIGMDialog.pack();
     jSendAttacksIGMDialog.setVisible(true);
-
 }//GEN-LAST:event_fireSendAttacksAsIGMEvent
 
 private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSendIGMsEvent
@@ -2831,23 +2720,16 @@ private void fireChangeUnitTypeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
             newUnit = (UnitHolder) jUnitBox.getSelectedItem();
         }
 
-
-        int[] rows = jAttackTable.getSelectedRows();
-        if ((rows != null) || (rows.length > 0)) {
-            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan();
-            for (int i : rows) {
-                int row = jAttackTable.convertRowIndexToModel(i);
-                Attack a = attacks.get(row);
-                if (newType != -2) {
-                    a.setType(newType);
-                }
-                if (newUnit != null) {
-                    a.setUnit(newUnit);
-                }
+        for (Attack attack : getSelectedAttacks()) {
+            if (newType != -2) {
+                attack.setType(newType);
             }
-            jAttackTable.revalidate();
-            jAttackTable.repaint();//.updateUI();
+            if (newUnit != null) {
+                attack.setUnit(newUnit);
+            }
         }
+        jAttackTable.revalidate();
+        jAttackTable.repaint();
     }
     jChangeAttackTypeDialog.setVisible(false);
 }//GEN-LAST:event_fireChangeUnitTypeEvent
@@ -2909,6 +2791,9 @@ private void fireFillClickAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     updateClickAccount();
 }//GEN-LAST:event_fireFillClickAccountEvent
 
+    /**Return all selected attacks depending on the current attack plan and sorting order
+     * @return List<Attack> List that contains all selected attacks
+     */
     public final List<Attack> getSelectedAttacks() {
         final List<Attack> selectedAttacks = new LinkedList<Attack>();
         int[] selectedRows = jAttackTable.getSelectedRows();
@@ -2972,7 +2857,6 @@ private void fireFillClickAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
                 Village v = villages.nextElement();
                 model.addRow(new Object[]{v, pVillages.get(v)});
             }
-
         }
 
         //set model and header renders
@@ -3031,12 +2915,8 @@ private void fireFillClickAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         jActiveAttackPlan.setSelectedItem(AttackManager.getSingleton().getActiveAttackPlan());
     }
 
-    public String getActiveAttackPlan() {
-        return (String) jActiveAttackPlan.getSelectedItem();
-    }
-
     @Override
-    public void fireAttacksChangedEvent(String pPlan) {
+    public final void fireAttacksChangedEvent(String pPlan) {
         try {
             jAttackTable.invalidate();
             for (int i = 0; i < jAttackTable.getColumnCount(); i++) {

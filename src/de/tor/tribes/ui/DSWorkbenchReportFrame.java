@@ -32,15 +32,16 @@ import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.report.AttackerFilter;
 import de.tor.tribes.util.report.ColorFilter;
 import de.tor.tribes.util.report.ConqueredFilter;
 import de.tor.tribes.util.report.DateFilter;
+import de.tor.tribes.util.report.DefenderFilter;
 import de.tor.tribes.util.report.ReportFilterInterface;
 import de.tor.tribes.util.report.ReportFormater;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.report.ReportManagerListener;
 import de.tor.tribes.util.report.ReportStatBuilder;
-import de.tor.tribes.util.report.TribeFilter;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.Point;
@@ -65,7 +66,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
@@ -282,6 +282,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jScrollPane4 = new javax.swing.JScrollPane();
         jTribeList = new javax.swing.JList();
         jRemoveTribeButton = new javax.swing.JButton();
+        jAddAsDefender = new javax.swing.JCheckBox();
         jPanel10 = new javax.swing.JPanel();
         jShowHiddenAttackerReports = new javax.swing.JCheckBox();
         jShowRedReports = new javax.swing.JCheckBox();
@@ -770,16 +771,20 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
+        jAddAsDefender.setText("Als Verteidiger einfügen");
+        jAddAsDefender.setOpaque(false);
+
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jFilterByTribeBox, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTribeSelectionBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTribeSelectionFilter, javax.swing.GroupLayout.Alignment.LEADING))
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jAddAsDefender, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jFilterByTribeBox)
+                    .addComponent(jTribeSelectionBox, 0, 180, Short.MAX_VALUE)
+                    .addComponent(jTribeSelectionFilter))
                 .addGap(4, 4, 4)
                 .addComponent(jAddTribeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -795,13 +800,15 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                 .addComponent(jFilterByTribeBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jAddTribeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
                     .addComponent(jRemoveTribeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel8Layout.createSequentialGroup()
                         .addComponent(jTribeSelectionBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTribeSelectionFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jTribeSelectionFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jAddAsDefender))
+                    .addComponent(jAddTribeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -874,7 +881,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                         .addComponent(jLabel9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(142, Short.MAX_VALUE))
+                .addContainerGap(152, Short.MAX_VALUE))
         );
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1184,7 +1191,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             jReportTable.setRowSorter(new TableRowSorter(ReportManagerTableModel.getSingleton()));
             ReportManagerTableModel.getSingleton().setActiveReportSet((String) jReportSetBox.getSelectedItem());
             ReportManager.getSingleton().updateFilters();
-            jReportTable.repaint();//.updateUI();
+            jReportTable.repaint();
             jReportTable.revalidate();
         }
     }//GEN-LAST:event_fireReportSetChangedEvent
@@ -1439,13 +1446,18 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             jTribeSelectionBox.firePopupMenuCanceled();
             Tribe t = (Tribe) jTribeSelectionBox.getSelectedItem();
             if (t != Barbarians.getSingleton()) {
-                if (((DefaultListModel) jTribeList.getModel()).indexOf(t) < 0) {
-                    ((DefaultListModel) jTribeList.getModel()).addElement(t);
+                String appendix = " (Angreifer)";
+                if (jAddAsDefender.isSelected()) {
+                    appendix = " (Verteidiger)";
+                }
+                String value = t.getName() + appendix;
+                if (((DefaultListModel) jTribeList.getModel()).indexOf(value) < 0) {
+                    ((DefaultListModel) jTribeList.getModel()).addElement(value);
                 }
             }
         } else {
             //remove tribe
-            Tribe filter = (Tribe) jTribeList.getSelectedValue();
+            String filter = (String) jTribeList.getSelectedValue();
             if (filter != null) {
                 if (JOptionPaneHelper.showQuestionConfirmBox(jFilterDialog, "Gewählten Spieler entfernen?", "Spieler entfernen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
                     ((DefaultListModel) jTribeList.getModel()).removeElement(filter);
@@ -1469,14 +1481,28 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                     JOptionPaneHelper.showInformationBox(jFilterDialog, "Keine Spieler ausgewählt", "Information");
                     return;
                 }
-                List<Tribe> tribes = new LinkedList<Tribe>();
+                List<Tribe> attackers = new LinkedList<Tribe>();
+                List<Tribe> defenders = new LinkedList<Tribe>();
                 for (int i = 0; i < model.size(); i++) {
-                    tribes.add((Tribe) model.getElementAt(i));
+                    //tribes.add((Tribe) model.getElementAt(i));
+                    String value = (String) model.getElementAt(i);
+                    if (value.indexOf("(Angreifer)") > 0) {
+                        attackers.add(DataHolder.getSingleton().getTribeByName(value.replaceAll("\\(Angreifer\\)", "").trim()));
+                    } else {
+                        defenders.add(DataHolder.getSingleton().getTribeByName(value.replaceAll("\\(Verteidiger\\)", "").trim()));
+                    }
                 }
-                TribeFilter filter = new TribeFilter();
-                filter.setup(tribes);
-                filters.add(filter);
 
+                if (attackers.size() > 0) {
+                    AttackerFilter attackerFilter = new AttackerFilter();
+                    attackerFilter.setup(attackers);
+                    filters.add(attackerFilter);
+                }
+                if (defenders.size() > 0) {
+                    DefenderFilter defenderFilter = new DefenderFilter();
+                    defenderFilter.setup(defenders);
+                    filters.add(defenderFilter);
+                }
             }
             int colorFilter = 0;
             if (jShowHiddenAttackerReports.isSelected()) {
@@ -2169,19 +2195,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             return buildingDestruction;
         }
     }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                new DSWorkbenchReportFrame().setVisible(true);
-            }
-        });
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox jAddAsDefender;
     private javax.swing.JDialog jAddReportSetDialog;
     private javax.swing.JButton jAddTribeButton;
     private javax.swing.JTextArea jAllyStatsArea;

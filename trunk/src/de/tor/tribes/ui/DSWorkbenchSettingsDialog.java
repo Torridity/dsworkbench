@@ -463,6 +463,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
     }
 
     public Proxy getWebProxy() {
+        if (webProxy == null) {
+            return Proxy.NO_PROXY;
+        }
         return webProxy;
     }
 

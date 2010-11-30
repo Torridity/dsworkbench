@@ -51,7 +51,7 @@ public class GlobalOptions {
     /**DataHolder which holds and manages the WorldData*/
     private static WorldDecorationHolder mDecorationHolder = null;
     private static String SELECTED_SERVER = "de26";
-    private static Properties GLOBAL_PROPERTIES = null;
+    private static Properties GLOBAL_PROPERTIES = new Properties();
     //flag for online/offline mode
     private static boolean isOfflineMode = false;
     //used to store last attack time of AttackAddFrame

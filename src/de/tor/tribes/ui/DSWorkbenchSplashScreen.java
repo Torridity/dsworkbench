@@ -292,6 +292,10 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         // </editor-fold>
 
         try {
+            logger.debug("Checking for plugin updates");
+
+            
+
             logger.debug("Initializing application window");
             DSWorkbenchMainFrame.getSingleton().init();
             logger.debug("Initializing search frame");
@@ -332,9 +336,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
      */
     public static void main(String args[]) {
         Locale.setDefault(Locale.GERMAN);
-        //   System.setProperty("J2D_D3D_RASTERIZER", "tnl");
-        //System.setProperty("sun.java2d.d3d", "true");
-        //  System.setProperty("sun.java2d.opengl", "true");
 
         //add global ESC listener
         Toolkit.getDefaultToolkit().getSystemEventQueue().push(
@@ -370,6 +371,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         }
 
         Font f = new Font("SansSerif", Font.PLAIN, 11);
+
         UIManager.put("Label.font", f);
         UIManager.put("TextField.font", f);
         UIManager.put("ComboBox.font", f);
@@ -401,6 +403,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
         //UIManager.put("Panel.background", Constants.DS_BACK);
         UIManager.put("Label.background", Constants.DS_BACK);
+        UIManager.put("Panel.background", Constants.DS_BACK);
         UIManager.put("MenuBar.background", Constants.DS_BACK);
         UIManager.put("ScrollPane.background", Constants.DS_BACK);
         UIManager.put("Button.background", Constants.DS_BACK_LIGHT);

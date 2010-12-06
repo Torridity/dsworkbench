@@ -599,24 +599,6 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
     private void fireAlwaysOnTopChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireAlwaysOnTopChangedEvent
         setAlwaysOnTop(!isAlwaysOnTop());
     }//GEN-LAST:event_fireAlwaysOnTopChangedEvent
-    /*
-    int res = JOptionPaneHelper.showQuestionConfirmBox(this, "Dörfer als Herkunft oder Ziel einfügen?", "Dörfer übertragen", "Ziel", "Herkunft");
-    if (res == JOptionPane.NO_OPTION) {
-    if (!DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isVisible()) {
-    DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setup();
-    DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true);
-    }
-    DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddTargetsEvent(getSelectedElements());
-    } else if (res == JOptionPane.YES_OPTION) {
-    if (!DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isVisible()) {
-    DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setup();
-    DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true);
-    }
-    DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddSourcesEvent(getSelectedElements());
-    } else {
-    //return;
-    }
-     */
 
     private void fireSelectRegionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectRegionEvent
         try {
@@ -714,18 +696,6 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
         addVillages(pVillages);
     }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                new DSWorkbenchSelectionFrame().setVisible(true);
-            }
-        });
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox jAlwaysOnTopBox;
     private javax.swing.JButton jButton1;
@@ -754,45 +724,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
 
     @Override
     public void fireSelectionFinishedEvent(Point pStart, Point pEnd) {
-        /*  try {
-        int xStart = (pStart.x < pEnd.x) ? pStart.x : pEnd.x;
-        int xEnd = (pEnd.x > pStart.x) ? pEnd.x : pStart.x;
-        int yStart = (pStart.y < pEnd.y) ? pStart.y : pEnd.y;
-        int yEnd = (pEnd.y > pStart.y) ? pEnd.y : pStart.y;
-        boolean showBarbarian = true;
-        try {
-        showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
-        } catch (Exception e) {
-        showBarbarian = true;
-        }
-        List<Village> marked = new LinkedList<Village>();
-        for (int x = xStart; x <= xEnd; x++) {
-        for (int y = yStart; y <= yEnd; y++) {
-        Village v = DataHolder.getSingleton().getVillages()[x][y];
-        if ((v != null && v.getTribe() == null) && !showBarbarian) {
-        //dont select barbarians if they are not visible
-        } else {
-        if (v != null) {
-        marked.add(v);
-        }
-        if (v != null && !treeData.contains(v)) {
-        treeData.add(v);
-        }
-        }
-        }
-        }
-        MapPanel.getSingleton().addMarkedVillagesExternally(marked);
-        Collections.sort(treeData, Village.ALLY_TRIBE_VILLAGE_COMPARATOR);
-        buildTree();
-        } catch (Exception e) {
-        //occurs if no rect was opened by selection tool -> ignore
-        }*/
         addVillages(DataHolder.getSingleton().getVillagesInRegion(pStart, pEnd));
-
-        /* for (Village v : ) {
-        treeData.add(v);
-        }
-        buildTree();*/
     }
 
     public void addVillages(List<Village> pVillages) {
@@ -802,7 +734,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         } catch (Exception e) {
             showBarbarian = true;
         }
-        for (Village v : pVillages) {
+        for (Village v : pVillages.toArray(new Village[]{})) {
             if ((v != null && v.getTribe() == Barbarians.getSingleton()) && !showBarbarian) {
                 //dont select barbarians if they are not visible
             } else {
@@ -840,6 +772,5 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
     @Override
     public void dragDropEnd(DragSourceDropEvent dsde) {
         setCursor(Cursor.getDefaultCursor());
-        // MapPanel.getSingleton().setCurrentCursor(MapPanel.getSingleton().getCurrentCursor());
     }
 }

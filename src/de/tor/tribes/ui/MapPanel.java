@@ -126,9 +126,9 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     private Village actionMenuVillage = null;
     DragSource dragSource; // A central DnD object
     boolean dragMode; // Are we dragging or scribbling?
-    // private BufferStrategy mBufferStrategy = null;
-    // </editor-fold>
+    boolean dragMove = false;
 
+    // </editor-fold>
     public static synchronized MapPanel getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new MapPanel();
@@ -261,15 +261,10 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         } else {
                             markedVillages.remove(v);
                         }
-                    } /*else if (!MenuRenderer.getSingleton().isVisible()) {
-                    markedVillages.clear();
-                    }*/
+                    }
+                    DSWorkbenchSelectionFrame.getSingleton().addVillages(markedVillages);
                     return;
-                }/* else if (!shiftDown && v == null && !MenuRenderer.getSingleton().isVisible()) {
-                markedVillages.clear();
-                DSWorkbenchSelectionFrame.getSingleton().clear();
-                }*/
-
+                }
                 if (MenuRenderer.getSingleton().isVisible()) {
                     return;
                 }
@@ -280,11 +275,9 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     isAttack = isAttackCursor();
                 }
 
-
                 switch (tmpCursor) {
                     case ImageManager.CURSOR_DEFAULT: {
                         //center village on click with default cursor
-                        //Village current = getVillageAtMousePos();
                         if (v != null) {
                             Tribe t = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
                             if ((v != null) && (v.getTribe() != Barbarians.getSingleton()) && (t != Barbarians.getSingleton()) && (t.equals(v.getTribe()))) {
@@ -294,7 +287,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         break;
                     }
                     case ImageManager.CURSOR_MARK: {
-                        // Village current = getVillageAtMousePos();
                         if (v != null) {
                             if (v.getTribe() == Barbarians.getSingleton()) {
                                 //empty village
@@ -307,7 +299,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         break;
                     }
                     case ImageManager.CURSOR_TAG: {
-                        //  Village current = getVillageAtMousePos();
                         if (v != null) {
                             if (v.getTribe() == Barbarians.getSingleton()) {
                                 //empty village
@@ -326,7 +317,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         break;
                     }
                     case ImageManager.CURSOR_SUPPORT: {
-                        // Village current = getVillageAtMousePos();
                         if (v != null) {
                             if (v.getTribe() == Barbarians.getSingleton()) {
                                 //empty village
@@ -354,7 +344,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     }
                     case ImageManager.CURSOR_ATTACK_INGAME: {
                         if (e.getClickCount() == 2) {
-                            //   Village v = getVillageAtMousePos();
                             Village u = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                             if ((u != null) && (v != null)) {
                                 if (Desktop.isDesktopSupported()) {
@@ -366,7 +355,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     }
                     case ImageManager.CURSOR_SEND_RES_INGAME: {
                         if (e.getClickCount() == 2) {
-                            //  Village v = getVillageAtMousePos();
                             Village u = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                             if ((u != null) && (v != null)) {
                                 if (Desktop.isDesktopSupported()) {
@@ -405,38 +393,30 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         break;
                     }
                     case ImageManager.CURSOR_CHURCH_1: {
-                        //   Village v = getVillageAtMousePos();
                         if (v != null) {
                             ChurchManager.getSingleton().addChurch(v, Church.RANGE1);
-
                         }
                         break;
                     }
                     case ImageManager.CURSOR_CHURCH_2: {
-                        //  Village v = getVillageAtMousePos();
                         if (v != null) {
                             ChurchManager.getSingleton().addChurch(v, Church.RANGE2);
-
                         }
                         break;
                     }
                     case ImageManager.CURSOR_CHURCH_3: {
-                        //  Village v = getVillageAtMousePos();
                         if (v != null) {
                             ChurchManager.getSingleton().addChurch(v, Church.RANGE3);
-
                         }
                         break;
                     }
                     case ImageManager.CURSOR_REMOVE_CHURCH: {
-                        //  Village v = getVillageAtMousePos();
                         if (v != null) {
                             ChurchManager.getSingleton().removeChurch(v);
                         }
                         break;
                     }
                     case ImageManager.CURSOR_NOTE: {
-                        // Village v = getVillageAtMousePos();
                         if (v != null) {
                             DSWorkbenchNotepad.getSingleton().addNoteForVillage(v);
                             if (!DSWorkbenchNotepad.getSingleton().isVisible()) {
@@ -492,6 +472,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
                         selectionRect.setXPos(pos.x);
                         selectionRect.setYPos(pos.y);
+                        selectionRect.setXPos(pos.x + 1);
+                        selectionRect.setYPos(pos.y + 1);
                         break;
                     }
                     case ImageManager.CURSOR_MEASURE: {
@@ -542,7 +524,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         if (isAttack) {
                             mSourceVillage = getVillageAtMousePos();
                             if (mSourceVillage != null) {
-                                // mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
                                 mMapRenderer.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
                             }
                         }
@@ -590,7 +571,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                             int ye = (int) Math.floor(selectionRect.getYPosEnd());
 
                             //notify selection listener (see DSWorkbenchSelectionFrame)
-
                             DSWorkbenchSelectionFrame.getSingleton().fireSelectionFinishedEvent(new Point(xs, ys), new Point(xe, ye));
                             List<Village> villages = DataHolder.getSingleton().getVillagesInRegion(new Point(xs, ys), new Point(xe, ye));
                             for (Village v : villages) {
@@ -673,13 +653,11 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
         });
 
-        //mCanvas.
         addMouseListener(MenuRenderer.getSingleton());
         //</editor-fold>
 
 
         // <editor-fold defaultstate="collapsed" desc=" MouseMotionListener for dragging operations ">
-        //mCanvas.
         addMouseMotionListener(new MouseMotionListener() {
 
             @Override
@@ -728,7 +706,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         int xe = (int) Math.floor(selectionRect.getXPosEnd());
                         int ye = (int) Math.floor(selectionRect.getYPosEnd());
 
-                        int cnt = countVillages(new Point(xs, ys), new Point(xe, ye));
+                        int cnt = DataHolder.getSingleton().countVisibleVillages(new Point(xs, ys), new Point(xe, ye));
                         String name = "";
                         if (cnt == 1) {
                             name = "1 Dorf";
@@ -747,8 +725,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                             mMapRenderer.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
                         }
                         mTargetVillage = getVillageAtMousePos();
-
-                        //fireDistanceEvents(mSourceVillage, mTargetVillage);
                         break;
                     }
                     case ImageManager.CURSOR_DRAW_LINE: {
@@ -812,7 +788,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
         //<editor-fold>
     }
-    boolean dragMove = false;
 
     public boolean isAttackCursor() {
         return ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) || (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) || (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) || (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) || (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) || (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) || (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB));
@@ -838,28 +813,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
     protected AttackAddFrame getAttackAddFrame() {
         return attackAddFrame;
-    }
-
-    private int countVillages(Point pStart, Point pEnd) {
-        int cnt = 0;
-        //sort coordinates
-        int xStart = (pStart.x < pEnd.x) ? pStart.x : pEnd.x;
-        int xEnd = (pEnd.x > pStart.x) ? pEnd.x : pStart.x;
-        int yStart = (pStart.y < pEnd.y) ? pStart.y : pEnd.y;
-        int yEnd = (pEnd.y > pStart.y) ? pEnd.y : pStart.y;
-        for (int x = xStart; x <= xEnd; x++) {
-            for (int y = yStart; y <= yEnd; y++) {
-                try {
-                    Village v = DataHolder.getSingleton().getVillages()[x][y];
-                    if (v != null && v.isVisibleOnMap()) {
-                        cnt++;
-                    }
-                } catch (Exception e) {
-                    //avoid IndexOutOfBounds if selection is too small
-                }
-            }
-        }
-        return cnt;
     }
 
     /**Returns true as long as the mouse is outside the mappanel*/
@@ -1474,9 +1427,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             mMapRenderer = new MapRenderer();
             mMapRenderer.start();
         }
-        /* if (getMapRenderer().isRedrawScheduled()) {
-        return;
-        }*/
+
         positionUpdate = true;
         if (pZoomed) {
             mMapRenderer.initiateRedraw(MapRenderer.ALL_LAYERS);
@@ -1749,6 +1700,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             logger.error("Failed to drop villages", ex);
         }
     }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem jAllAddToNoteItem;
     private javax.swing.JMenuItem jAllCoordAsBBToClipboardItem;

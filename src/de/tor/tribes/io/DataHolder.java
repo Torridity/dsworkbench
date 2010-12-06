@@ -1237,6 +1237,28 @@ public class DataHolder {
         return mVillages;
     }
 
+    public int countVisibleVillages(Point pStart, Point pEnd) {
+        int cnt = 0;
+        //sort coordinates
+        int xStart = (pStart.x < pEnd.x) ? pStart.x : pEnd.x;
+        int xEnd = (pEnd.x > pStart.x) ? pEnd.x : pStart.x;
+        int yStart = (pStart.y < pEnd.y) ? pStart.y : pEnd.y;
+        int yEnd = (pEnd.y > pStart.y) ? pEnd.y : pStart.y;
+        for (int x = xStart; x <= xEnd; x++) {
+            for (int y = yStart; y <= yEnd; y++) {
+                try {
+                    Village v = DataHolder.getSingleton().getVillages()[x][y];
+                    if (v != null && v.isVisibleOnMap()) {
+                        cnt++;
+                    }
+                } catch (Exception e) {
+                    //avoid IndexOutOfBounds if selection is too small
+                }
+            }
+        }
+        return cnt;
+    }
+
     public List<Village> getVillagesInRegion(Point pStart, Point pEnd) {
         List<Village> marked = new LinkedList<Village>();
         try {

@@ -10,6 +10,7 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.EscapeChars;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.util.Hashtable;
@@ -20,7 +21,7 @@ import java.util.StringTokenizer;
 /**
  * @author Charon
  */
-public class SupportParser {
+public class SupportParser implements SilentParserInterface {
 
     /*
     [001]PICO (77|460) K40 	eigene	936	178	0	0	2	0	0	98	0	0	0	0	Truppen
@@ -30,7 +31,7 @@ public class SupportParser {
     [002]PICO (78|424) K40 	eigene	5549	4381	0	4375	2	0	0	364	0	0	0	0	Truppen
     [004]PICO (70|468) K40 	eigene	404	28	0	1842	2	0	0	0	0	0	0	4	Truppen
      */
-    public static boolean parse(String pTroopsString) {
+    public boolean parse(String pTroopsString) {
         StringTokenizer lineTok = new StringTokenizer(pTroopsString, "\n\r");
         Village v = null;
         boolean retValue = false;
@@ -121,7 +122,7 @@ public class SupportParser {
     }
 
     private static Village extractVillage(String pLine) {
-        List<Village> villages = VillageParser.parse(pLine);
+        List<Village> villages = new VillageParser().parse(pLine);
         switch (villages.size()) {
             case 0:
                 return null;

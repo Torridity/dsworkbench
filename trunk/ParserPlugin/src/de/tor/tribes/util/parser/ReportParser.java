@@ -9,6 +9,7 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.ReportManagerTableModel;
+import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.report.ReportManager;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
@@ -22,11 +23,11 @@ import java.util.StringTokenizer;
  * @TODO (Diff) Fixed report parser for old worlds
  * @author Torridity
  */
-public class ReportParser {
+public class ReportParser implements SilentParserInterface {
 
-    public static boolean parseReport(String pData) {
+    public boolean parse(String pData) {
         try {
-            FightReport r = parse(pData);
+            FightReport r = parseReport(pData);
 
             if (!r.isValid()) {
                 throw new Exception("No valid report data found");
@@ -43,7 +44,7 @@ public class ReportParser {
         return false;
     }
 
-    private static FightReport parse(String pData) {
+    private static FightReport parseReport(String pData) {
         StringTokenizer t = new StringTokenizer(pData, "\n");
         boolean luckPart = false;
         boolean attackerPart = false;
@@ -108,9 +109,9 @@ public class ReportParser {
                 line = line.replaceAll("Dorf:", "").replaceAll("Herkunft:", "").replaceAll("Ziel:", "").trim();
                 // System.out.println("Village " +line);
                 if (attackerPart) {
-                    result.setSourceVillage(VillageParser.parse(line).get(0));
+                    result.setSourceVillage(new VillageParser().parse(line).get(0));
                 } else if (defenderPart) {
-                    result.setTargetVillage(VillageParser.parse(line).get(0));
+                    result.setTargetVillage(new VillageParser().parse(line).get(0));
                 }
             } else if (line.startsWith("Anzahl")) {
                 line = line.replaceAll("Anzahl:", "").trim();
@@ -239,7 +240,7 @@ public class ReportParser {
                     }
                 } else if (troopsOutside) {
                     try {
-                        Village v = VillageParser.parse(line).get(0);
+                        Village v = new VillageParser().parse(line).get(0);
                         if (v == null) {
                             throw new Exception();
                         }
@@ -293,7 +294,7 @@ public class ReportParser {
         }*/ try {
             Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
             String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-            ReportParser.parse(data);
+            new ReportParser().parse(data);
         } catch (Exception e) {
         }
     }

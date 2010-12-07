@@ -9,6 +9,7 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.util.Hashtable;
@@ -18,7 +19,7 @@ import java.util.StringTokenizer;
 /**
  * @author Charon
  */
-public class TroopsParser {
+public class TroopsParser implements SilentParserInterface {
 
     /*
     003 | Spitfire (471|482) K44  
@@ -27,7 +28,7 @@ public class TroopsParser {
     auswärts	0	0	0	0	0	0	0	0	0	0	0	0
     unterwegs	0	0	0	0	0	0	0	0	0	0	0	0	Befehle
      */
-    public static boolean parse(String pTroopsString) {
+    public boolean parse(String pTroopsString) {
         StringTokenizer lineTok = new StringTokenizer(pTroopsString, "\n\r");
         int villageLines = -1;
         boolean retValue = false;
@@ -83,7 +84,7 @@ public class TroopsParser {
                 villageLines--;
             } else {
                 try {
-                    Village current = VillageParser.parse(line).get(0);
+                    Village current = new VillageParser().parse(line).get(0);
                     if (current != null) {
                         v = current;
                         villageLines = 4;
@@ -96,11 +97,11 @@ public class TroopsParser {
             //add troops information
             if (villageLines == 0) {
                 int troopsCount = DataHolder.getSingleton().getUnits().size();
-                if ((v != null) &&
-                        (ownTroops.size() == troopsCount) &&
-                        (troopsInVillage.size() == troopsCount) &&
-                        (troopsOutside.size() == troopsCount) &&
-                        (troopsOnTheWay.size() == troopsCount)) {
+                if ((v != null)
+                        && (ownTroops.size() == troopsCount)
+                        && (troopsInVillage.size() == troopsCount)
+                        && (troopsOutside.size() == troopsCount)
+                        && (troopsOnTheWay.size() == troopsCount)) {
                     //add troops to manager
                     TroopsManager.getSingleton().addTroopsForVillageFast(v, new LinkedList<Integer>());
                     VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);

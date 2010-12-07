@@ -4,15 +4,8 @@
  */
 package de.tor.tribes.util;
 
-import de.tor.tribes.util.parser.ReportParser;
-import de.tor.tribes.util.parser.GroupParser;
-import de.tor.tribes.util.parser.NonPAPlaceParser;
-import de.tor.tribes.util.parser.SOSParser;
-import de.tor.tribes.util.parser.SupportParser;
-import de.tor.tribes.util.parser.TroopsParser;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import org.apache.log4j.Logger;
 
@@ -50,21 +43,21 @@ public class ClipboardWatch extends Thread {
 
                 if ((data.length() > 10) && (data.length() != lastDataLength)) {
                     if (recentlyParsedData == null || !data.equals(recentlyParsedData)) {
-                        if (ReportParser.parseReport(data)) {
+                        if (PluginManager.getSingleton().executeReportParser(data)) {
                             //report parsed, clean clipboard
                             logger.info("Report successfully parsed.");
                             recentlyParsedData = data;
-                        } else if (TroopsParser.parse(data)) {
+                        } else if (PluginManager.getSingleton().executeTroopsParser(data)) {
                             logger.info("Troops successfully parsed.");
                             //at least one village was found, so clean the clipboard
                             recentlyParsedData = data;
-                        } else if (GroupParser.parse(data)) {
+                        } else if (PluginManager.getSingleton().executeGroupParser(data)) {
                             logger.info("Groups successfully parsed.");
                             recentlyParsedData = data;
-                        } else if (SupportParser.parse(data)) {
+                        } else if (PluginManager.getSingleton().executeSupportParser(data)) {
                             logger.info("Support successfully parsed.");
                             recentlyParsedData = data;
-                        } else if (NonPAPlaceParser.parse(data)) {
+                        } else if (PluginManager.getSingleton().executeNonPAPlaceParser(data)) {
                             logger.info("Place info successfully parsed.");
                             recentlyParsedData = data;
                         } else {

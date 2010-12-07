@@ -35,6 +35,7 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
@@ -657,13 +658,14 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
 
     private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddAttackEvent
         String source = jSourceVillage.getText();
-        List<Village> sourceList = VillageParser.parse(source);
+        
+        List<Village> sourceList = PluginManager.getSingleton().executeVillageParser(source);
         if (sourceList.size() == 0) {
             JOptionPaneHelper.showWarningBox(this, "Kein gültiges Herkunftsdorf gewählt.", "Warnung");
             return;
         }
         String target = jTargetVillage.getText();
-        List<Village> targetList = VillageParser.parse(target);
+        List<Village> targetList = PluginManager.getSingleton().executeVillageParser(target);
         if (targetList.size() == 0) {
             JOptionPaneHelper.showWarningBox(this, "Kein gültiges Zieldorf gewählt.", "Warnung");
             return;

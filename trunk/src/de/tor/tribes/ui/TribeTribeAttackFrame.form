@@ -1016,7 +1016,7 @@
               <Group type="103" groupAlignment="1" attributes="0">
                   <Component id="jTabbedPane1" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="jInfoLabel" pref="604" max="32767" attributes="0"/>
+                      <Component id="jInfoLabel" pref="606" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jCalculatingProgressBar" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -1141,7 +1141,7 @@
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Component id="jSetSourceFakeButton" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jScrollPane1" alignment="1" pref="320" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" alignment="1" pref="317" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel1" min="-2" max="-2" attributes="1"/>
@@ -1872,7 +1872,7 @@
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="jPanel6" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="jScrollPane3" pref="765" max="32767" attributes="0"/>
+                              <Component id="jScrollPane3" pref="767" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="jIncrementAttackCountButton" max="32767" attributes="1"/>
@@ -1915,7 +1915,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jResetAttackCountEvent" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jScrollPane3" pref="347" max="32767" attributes="0"/>
+                          <Component id="jScrollPane3" pref="344" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jPanel6" max="32767" attributes="1"/>
@@ -2002,7 +2002,7 @@
                                   </Group>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jScrollPane10" pref="137" max="32767" attributes="1"/>
+                                  <Component id="jScrollPane10" pref="135" max="32767" attributes="1"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Component id="jMarkTargetAsFake" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>

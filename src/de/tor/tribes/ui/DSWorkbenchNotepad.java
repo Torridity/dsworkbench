@@ -33,6 +33,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.text.html.HTMLDocument;
 import org.apache.log4j.Logger;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.VillageListFormatter;
 import de.tor.tribes.util.parser.VillageParser;
 import java.awt.Point;
@@ -906,7 +907,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
         }
          */
 
-        List<Village> villages = VillageParser.parse(text);
+        List<Village> villages = PluginManager.getSingleton().executeVillageParser(text);
         if (villages == null || villages.isEmpty()) {
             JOptionPaneHelper.showInformationBox(this, "Keine Dorfkoordinaten gefunden.", "Information");
             return;
@@ -1059,7 +1060,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
     private void fireVillagesFromClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireVillagesFromClipboardEvent
         try {
             Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-            List<Village> villages = VillageParser.parse((String) t.getTransferData(DataFlavor.stringFlavor));
+            List<Village> villages = PluginManager.getSingleton().executeVillageParser((String) t.getTransferData(DataFlavor.stringFlavor));
             if (villages == null || villages.isEmpty()) {
                 JOptionPaneHelper.showInformationBox(this, "Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.", "Information");
                 return;

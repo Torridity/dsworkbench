@@ -26,6 +26,7 @@ import de.tor.tribes.ui.renderer.TagMapMarkerRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.TagToBBCodeFormater;
 import de.tor.tribes.util.parser.VillageParser;
 import de.tor.tribes.util.tag.TagManager;
@@ -527,7 +528,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
     private void fireTagVillagesFromClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTagVillagesFromClipboardEvent
         try {
             Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-            List<Village> villages = VillageParser.parse((String) t.getTransferData(DataFlavor.stringFlavor));
+            List<Village> villages = PluginManager.getSingleton().executeVillageParser((String) t.getTransferData(DataFlavor.stringFlavor));
             if (villages.isEmpty()) {
                 JOptionPaneHelper.showInformationBox(this, "Keine Dorfdaten in der Zwischenablage gefunden", "Information");
                 return;

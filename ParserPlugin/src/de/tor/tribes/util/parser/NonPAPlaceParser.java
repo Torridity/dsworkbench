@@ -9,6 +9,7 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.Toolkit;
@@ -23,9 +24,9 @@ import java.util.StringTokenizer;
 /**
  * @author Charon
  */
-public class NonPAPlaceParser {
+public class NonPAPlaceParser implements SilentParserInterface {
 
-    public static boolean parse(String pTroopsString) {
+    public boolean parse(String pTroopsString) {
         StringTokenizer lineTok = new StringTokenizer(pTroopsString, "\n\r");
         //boolean haveVillage = false;
         Village v = null;
@@ -39,7 +40,7 @@ public class NonPAPlaceParser {
             if (v == null) {
                 //try to get current village
                 try {
-                    v = VillageParser.parse(currentLine).get(0);
+                    v = new VillageParser().parse(currentLine).get(0);
                 } catch (Exception e) {
                     v = null;
                 }
@@ -123,9 +124,9 @@ public class NonPAPlaceParser {
 
         if (v != null) {
             int troopsCount = DataHolder.getSingleton().getUnits().size();
-            if ((v != null) &&
-                    (ownTroops.size() == troopsCount) &&
-                    (troopsInVillage.size() == troopsCount)) {
+            if ((v != null)
+                    && (ownTroops.size() == troopsCount)
+                    && (troopsInVillage.size() == troopsCount)) {
 
                 VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
                 if (holder == null) {
@@ -282,7 +283,7 @@ public class NonPAPlaceParser {
              */
 
             String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-            NonPAPlaceParser.parse(data);
+            new NonPAPlaceParser().parse(data);
         } catch (Exception e) {
             e.printStackTrace();
         }

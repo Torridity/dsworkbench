@@ -16,7 +16,6 @@ import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.models.AttackManagerTableModel;
 import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
@@ -24,10 +23,10 @@ import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.parser.ParserVariableManager;
-import de.tor.tribes.util.parser.SOSParser;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -406,7 +405,15 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireSosTextChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireSosTextChangedEvent
-        currentRequests = SOSParser.parse(jSosTextField.getText());
+        List<SOSRequest> requests = PluginManager.getSingleton().executeSOSParserParser(jSosTextField.getText());
+        if (requests != null && !requests.isEmpty()) {
+            for (SOSRequest request : requests) {
+                currentRequests.put(request.getDefender(), request);
+            }
+        } else {
+            currentRequests = new Hashtable<Tribe, SOSRequest>();
+        }
+
         if (currentRequests == null || currentRequests.isEmpty()) {
             jStatusLabel.setText("Keine gültigen SOS Anfrage(n) gefunden");
             jStatusLabel.setBackground(Color.RED);

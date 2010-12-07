@@ -7,6 +7,7 @@ package de.tor.tribes.util.parser;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.GenericParserInterface;
 import de.tor.tribes.util.ServerSettings;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,9 +16,9 @@ import java.util.StringTokenizer;
 /**
  * @author Charon
  */
-public class VillageParser {
+public class VillageParser implements GenericParserInterface<Village> {
 
-    public static List<Village> parse(String pVillagesString) {
+    public List<Village> parse(String pVillagesString) {
         List<Village> villages = new LinkedList<Village>();
         if (pVillagesString == null) {
             return villages;

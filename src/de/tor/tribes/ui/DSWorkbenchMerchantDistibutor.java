@@ -12,6 +12,7 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.types.VillageMerchantInfo;
 import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.BooleanCellRenderer;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
@@ -22,12 +23,11 @@ import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.algo.MerchantDestination;
 import de.tor.tribes.util.algo.MerchantDistributor;
 import de.tor.tribes.util.algo.MerchantSource;
 import de.tor.tribes.util.algo.Order;
-import de.tor.tribes.util.parser.MerchantParser;
-import de.tor.tribes.util.parser.MerchantParser.VillageMerchantInfo;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
@@ -685,7 +685,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
         try {
             Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
             String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-            List<VillageMerchantInfo> infos = MerchantParser.parse(data);
+            List<VillageMerchantInfo> infos = PluginManager.getSingleton().executeMerchantParser(data);
             if (infos.isEmpty()) {
                 JOptionPaneHelper.showInformationBox(this, "Keine Einträge gefunden", "Information");
                 return;

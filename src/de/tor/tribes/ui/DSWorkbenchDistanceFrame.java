@@ -17,6 +17,7 @@ import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.dist.DistanceManager;
 import de.tor.tribes.util.parser.VillageParser;
 import java.awt.Point;
@@ -288,7 +289,8 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
     private void fireCopyVillagesFromClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyVillagesFromClipboardEvent
         try {
             Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-            List<Village> villages = VillageParser.parse((String) t.getTransferData(DataFlavor.stringFlavor));
+            
+            List<Village> villages = PluginManager.getSingleton().executeVillageParser((String) t.getTransferData(DataFlavor.stringFlavor));//VillageParser.parse((String) t.getTransferData(DataFlavor.stringFlavor));
             if (villages == null || villages.isEmpty()) {
                 JOptionPaneHelper.showInformationBox(this, "Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.", "Information");
                 return;

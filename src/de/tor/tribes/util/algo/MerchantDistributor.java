@@ -4,9 +4,8 @@
  */
 package de.tor.tribes.util.algo;
 
-import de.tor.tribes.util.parser.MerchantParser.VillageMerchantInfo;
+import de.tor.tribes.types.VillageMerchantInfo;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;

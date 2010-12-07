@@ -4,8 +4,8 @@
  */
 package de.tor.tribes.ui.renderer;
 
+import de.tor.tribes.types.VillageMerchantInfo;
 import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.parser.MerchantParser.VillageMerchantInfo;
 import java.awt.Component;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;

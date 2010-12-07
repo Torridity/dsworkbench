@@ -24,6 +24,7 @@ import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.parser.ParserVariableManager;
@@ -953,7 +954,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireComandDataChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireComandDataChangedEvent
-        List<Village> villages = VillageParser.parse(jComandArea.getText());
+        List<Village> villages = PluginManager.getSingleton().executeVillageParser(jComandArea.getText());
         if (villages == null || villages.isEmpty() || villages.size() < 2) {
             jParserInfo.setBackground(Color.YELLOW);
             jParserInfo.setText("Keine Dörfer gefunden.\n" + "Möglicherweise handelt es sich nicht um einen gültigen Angriffsbefehl.");
@@ -1100,8 +1101,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         }
         try {
             Date arrive = f.parse(jArriveField.getText());
-            Village source = VillageParser.parse(jSourceVillage.getText()).get(0);
-            Village target = VillageParser.parse(jTargetVillage.getText()).get(0);
+            Village source = PluginManager.getSingleton().executeVillageParser(jSourceVillage.getText()).get(0);
+            Village target = PluginManager.getSingleton().executeVillageParser(jTargetVillage.getText()).get(0);
             // double dist = DSCalculator.calculateDistance(source, target);
             double dur = DSCalculator.calculateMoveTimeInSeconds(source, target, unit.getSpeed()) * 1000.0;
             long send = arrive.getTime() - (long) dur;
@@ -1197,7 +1198,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
 
         Village target = null;
         try {
-            target = VillageParser.parse(jSourceVillage.getText()).get(0);
+            target = PluginManager.getSingleton().executeVillageParser(jSourceVillage.getText()).get(0);
         } catch (Exception e) {
             //no target set
             return;

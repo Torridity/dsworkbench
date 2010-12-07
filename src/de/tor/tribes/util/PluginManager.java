@@ -4,7 +4,9 @@
  */
 package de.tor.tribes.util;
 
-import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
+import de.tor.tribes.types.SOSRequest;
+import de.tor.tribes.types.Village;
+import de.tor.tribes.types.VillageMerchantInfo;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -61,6 +63,7 @@ public class PluginManager {
         }
 
         PLUGIN_DIR.mkdir();
+        initializeClassloader();
     }
 
     private void initializeClassloader() {
@@ -75,6 +78,8 @@ public class PluginManager {
                 logger.error("Failed to create URL for file '" + f.getPath() + "'");
             }
         }
+
+        //create the new classloader
         mClassloader = new URLClassLoader(urls.toArray(new URL[]{}), ClassLoader.getSystemClassLoader());
         if (urlCount == fileCount) {
             logger.info("Created classloader for " + urlCount + " plugins");
@@ -83,7 +88,97 @@ public class PluginManager {
         }
     }
 
-    
+    /**Execute the village parser plugin
+     * @param pData The text that contains village coordinates
+     * @return List<Village> Parsed village list
+     */
+    public List<Village> executeVillageParser(String pData) {
+        try {
+            Object parser = loadParser("de.tor.tribes.util.parser.VillageParser");
+            return ((GenericParserInterface<Village>) parser).parse(pData);
+        } catch (Exception e) {
+            logger.error("Failed to execute merchant parser", e);
+        }
+        return new LinkedList<Village>();
+    }
+
+    /**Execute the merchant parser plugin
+     * @param pData The text that contains merchant infos
+     * @return List<VillageMerchantInfo> Parsed list of merchant infos
+     */
+    public List<VillageMerchantInfo> executeMerchantParser(String pData) {
+        try {
+            Object parser = loadParser("de.tor.tribes.util.parser.MerchantParser");
+            return ((GenericParserInterface<VillageMerchantInfo>) parser).parse(pData);
+        } catch (Exception e) {
+            logger.error("Failed to execute merchant parser", e);
+        }
+        return new LinkedList<VillageMerchantInfo>();
+    }
+
+    public boolean executeSupportParser(String pData) {
+        try {
+            Object parser = loadParser("de.tor.tribes.util.parser.SupportParser");
+            return ((SilentParserInterface) parser).parse(pData);
+        } catch (Exception e) {
+            logger.error("Failed to execute support parser", e);
+        }
+        return false;
+    }
+
+    public boolean executeGroupParser(String pData) {
+        try {
+            Object parser = loadParser("de.tor.tribes.util.parser.GroupParser");
+            return ((SilentParserInterface) parser).parse(pData);
+        } catch (Exception e) {
+            logger.error("Failed to execute group parser", e);
+        }
+        return false;
+    }
+
+    public boolean executeNonPAPlaceParser(String pData) {
+        try {
+            Object parser = loadParser("de.tor.tribes.util.parser.NonPAPlaceParser");
+            return ((SilentParserInterface) parser).parse(pData);
+        } catch (Exception e) {
+            logger.error("Failed to execute place parser", e);
+        }
+        return false;
+    }
+
+    public boolean executeReportParser(String pData) {
+        try {
+            Object parser = loadParser("de.tor.tribes.util.parser.ReportParser");
+            return ((SilentParserInterface) parser).parse(pData);
+        } catch (Exception e) {
+            logger.error("Failed to execute report parser", e);
+        }
+        return false;
+    }
+
+    public List<SOSRequest> executeSOSParserParser(String pData) {
+        try {
+            Object parser = loadParser("de.tor.tribes.util.parser.SOSParser");
+            return ((GenericParserInterface<SOSRequest>) parser).parse(pData);
+        } catch (Exception e) {
+            logger.error("Failed to execute sos request parser", e);
+        }
+        return new LinkedList<SOSRequest>();
+    }
+
+    public boolean executeTroopsParser(String pData) {
+        try {
+            Object parser = loadParser("de.tor.tribes.util.parser.TroopsParser");
+            return ((SilentParserInterface) parser).parse(pData);
+        } catch (Exception e) {
+            logger.error("Failed to execute troops parser", e);
+        }
+        return false;
+    }
+
+    private Object loadParser(String pClazz) throws Exception {
+        return mClassloader.loadClass(pClazz).newInstance();
+    }
 
     /**Write the plugin properties to disk*/
     private void storePropertyFile() throws Exception {
@@ -108,6 +203,7 @@ public class PluginManager {
         downloadVersionUpdates(props);
         //initialized
         INITIALIZED = true;
+        initializeClassloader();
     }
 
     /**Update all plugins
@@ -146,7 +242,6 @@ public class PluginManager {
         } catch (Exception e) {
             logger.error("Failed to write file 'plugin.version'");
         }
-
         return true;
     }
 

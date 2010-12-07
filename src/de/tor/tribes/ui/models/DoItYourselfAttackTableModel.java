@@ -9,6 +9,7 @@ import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchDoItYourselfAttackPlaner;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.parser.VillageParser;
 import java.util.Arrays;
@@ -164,7 +165,7 @@ public class DoItYourselfAttackTableModel extends AbstractDSWorkbenchTableModel 
             case 2: {
                 try {
                     String v = (String) pValue;
-                    List<Village> parsed = VillageParser.parse(v);
+                    List<Village> parsed = PluginManager.getSingleton().executeVillageParser(v);
                     Village vil = parsed.get(0);
                     if (vil != null) {
                         attacks.get(pRow).setSource(vil);
@@ -177,7 +178,7 @@ public class DoItYourselfAttackTableModel extends AbstractDSWorkbenchTableModel 
             case 3: {
                 try {
                     String v = (String) pValue;
-                    List<Village> parsed = VillageParser.parse(v);
+                    List<Village> parsed = PluginManager.getSingleton().executeVillageParser(v);
                     Village vil = parsed.get(0);
                     if (vil != null) {
                         attacks.get(pRow).setTarget(vil);

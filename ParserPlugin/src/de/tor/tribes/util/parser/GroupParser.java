@@ -9,6 +9,7 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.SilentParserInterface;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -22,7 +23,7 @@ import org.apache.log4j.Logger;
  *
  * @author Jejkal
  */
-public class GroupParser {
+public class GroupParser implements SilentParserInterface {
 
     private static Logger logger = Logger.getLogger("GroupParser");
     /*
@@ -35,7 +36,7 @@ public class GroupParser {
     Aberdeen - Eastside (497|469) K44  	2	Off; Truppenbau	» bearbeiten
      */
 
-    public static boolean parse(String pGroupsString) {
+    public boolean parse(String pGroupsString) {
         StringTokenizer lineTok = new StringTokenizer(pGroupsString, "\n\r");
 
         Hashtable<String, List<Village>> groups = new Hashtable<String, List<Village>>();
@@ -44,7 +45,6 @@ public class GroupParser {
             String line = lineTok.nextToken();
             //german and suisse
             if (line.trim().endsWith(ParserVariableManager.getSingleton().getProperty("groups.edit"))) {
-                System.out.println(line);
                 try {
                     //tokenize line by tab
                     StringTokenizer elemTok = new StringTokenizer(line.trim(), "\t");
@@ -129,6 +129,6 @@ public class GroupParser {
         Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         //String data = "(09) Sunset Beach (459|468) K44  	2	Fertig; Off	» bearbeiten";
         String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-        GroupParser.parse(data);
+        new GroupParser().parse(data);
     }
 }

@@ -4,26 +4,31 @@
  */
 package de.tor.tribes.util.parser;
 
+import com.sun.jmx.snmp.Enumerated;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.util.GenericParserInterface;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.SilentParserInterface;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  *
  * @author Torridity
  */
-public class SOSParser {
+public class SOSParser implements GenericParserInterface<SOSRequest> {
     /*
     [b]Verteidiger[/b]
     Name: [player]Rattenfutter[/player]
@@ -65,7 +70,17 @@ public class SOSParser {
     Ankunftszeit: 17.04.10 18:44:00:931
      */
 
-    public static Hashtable<Tribe, SOSRequest> parse(String pData) {
+    public List<SOSRequest> parse(String pData) {
+        Hashtable<Tribe, SOSRequest> parsedData = parseRequests(pData);
+        Enumeration<Tribe> keys = parsedData.keys();
+        List<SOSRequest> requests = new LinkedList<SOSRequest>();
+        while (keys.hasMoreElements()) {
+            requests.add(parsedData.get(keys.nextElement()));
+        }
+        return requests;
+    }
+
+    private Hashtable<Tribe, SOSRequest> parseRequests(String pData) {
         String[] lines = pData.split("\n");
         Hashtable<Tribe, SOSRequest> requests = new Hashtable<Tribe, SOSRequest>();
         SOSRequest currentRequest = null;
@@ -106,7 +121,7 @@ public class SOSParser {
                 waitForTarget = true;
                 //  System.out.println("Wait for target");
             } else if (line.indexOf(ParserVariableManager.getSingleton().getProperty("sos.source")) > -1) {
-                List<Village> sourceVillage = VillageParser.parse(line);
+                List<Village> sourceVillage = new VillageParser().parse(line);
                 if (sourceVillage.size() > 0) {
                     //set target
                     source = sourceVillage.get(0);
@@ -133,7 +148,7 @@ public class SOSParser {
                 waitForTroops = true;
             } else {
                 if (waitForTarget) {
-                    List<Village> targetVillage = VillageParser.parse(line);
+                    List<Village> targetVillage = new VillageParser().parse(line);
                     if (targetVillage.size() > 0) {
                         //set target
                         target = targetVillage.get(0);
@@ -189,7 +204,7 @@ public class SOSParser {
         try {
             Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
             String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-            SOSParser.parse(data);
+            new SOSParser().parse(data);
         } catch (Exception e) {
         }
     }

@@ -176,15 +176,18 @@ public class NotifierFrame extends javax.swing.JDialog {
                 int height = 0;
                 boolean inv = false;
                 int y = getLocation().y;
+                int max = 100;
                 while (true) {
                     try {
                         height += (inv) ? - 10 : 10;
                         setBounds(getLocation().x, y - height, getWidth(), height);
-                        if (height >= 100) {
+
+                        if (height >= max) {
                             maxed = true;
                             jScrollPane1.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
                             jScrollPane1.getViewport().setViewPosition(new Point(0, 0));
                             repaint();
+
                             int dur = 1;
                             try {
                                 dur = Integer.parseInt(GlobalOptions.getProperty("notify.duration"));
@@ -273,7 +276,7 @@ public class NotifierFrame extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
                 .addContainerGap())
         );
 

@@ -43,7 +43,6 @@ import de.tor.tribes.util.algo.BruteForce;
 import de.tor.tribes.util.algo.Iterix;
 import de.tor.tribes.util.algo.TimeFrame;
 import de.tor.tribes.util.attack.AttackManager;
-import de.tor.tribes.util.parser.VillageParser;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
@@ -2402,8 +2401,8 @@ private void fireGetSourceVillagesFromClipboardEvent(java.awt.event.MouseEvent e
         if (villages == null || villages.isEmpty()) {
             JOptionPaneHelper.showInformationBox(this, "Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.", "Information");
             return;
-
         } else {
+            NotifierFrame.doNotification("DS Workbench hat " + villages.size() + ((villages.size() == 1) ? " Dorf " : " Dörfer ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);
             UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
             for (Village v : villages) {
                 ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource, jMarkAsFakeBox.isSelected()});
@@ -2428,6 +2427,7 @@ private void fireGetTargetVillagesFromClipboardEvent(java.awt.event.MouseEvent e
             return;
 
         } else {
+            NotifierFrame.doNotification("DS Workbench hat " + villages.size() + ((villages.size() == 1) ? " Dorf " : " Dörfer ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);
             for (Village v : villages) {
                 Tribe victim = v.getTribe();
                 if (victim != null) {

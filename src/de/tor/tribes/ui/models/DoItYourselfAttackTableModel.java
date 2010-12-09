@@ -11,7 +11,6 @@ import de.tor.tribes.ui.DSWorkbenchDoItYourselfAttackPlaner;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.attack.AttackManager;
-import de.tor.tribes.util.parser.VillageParser;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;

@@ -4,7 +4,6 @@
  */
 package de.tor.tribes.util.parser;
 
-import com.sun.jmx.snmp.Enumerated;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
@@ -13,7 +12,6 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.GenericParserInterface;
 import de.tor.tribes.util.ServerSettings;
-import de.tor.tribes.util.SilentParserInterface;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -155,9 +153,7 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
                         currentRequest.addTarget(target);
                         // System.out.println("Got target " + target);
                         waitForTarget = false;
-                    }/*else{
-                    System.out.println("NO TARGET in line " + line);
-                    }*/
+                    }
                 } else if (waitForTroops) {
                     //System.out.println("WAIT TROOPS " + line);
                     try {
@@ -176,10 +172,6 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
             }
         }
 
-        /*  if (currentRequest != null) {
-        System.out.println("Putting final Request");
-        requests.put(currentRequest.getDefender(), currentRequest);
-        }*/
         return requests;
     }
 

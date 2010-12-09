@@ -7,6 +7,7 @@ package de.tor.tribes.util.parser;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.NotifierFrame;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.SilentParserInterface;
@@ -32,6 +33,7 @@ public class TroopsParser implements SilentParserInterface {
         StringTokenizer lineTok = new StringTokenizer(pTroopsString, "\n\r");
         int villageLines = -1;
         boolean retValue = false;
+        int foundTroops = 0;
         //boolean haveVillage = false;
         Village v = null;
         // List<Integer> troops = new LinkedList<Integer>();
@@ -115,6 +117,7 @@ public class TroopsParser implements SilentParserInterface {
                     troopsOutside.clear();
                     troopsOnTheWay.clear();
                     v = null;
+                    foundTroops++;
                     //found at least one village, so retValue is true    
                     retValue = true;
                 } else {
@@ -127,6 +130,7 @@ public class TroopsParser implements SilentParserInterface {
             }
         }
         if (retValue) {
+            NotifierFrame.doNotification("DS Workbench hat Truppeninformationen zu " + foundTroops + ((foundTroops == 1) ? " Dorf " : " Dörfern ") + " in die Truppenübersicht eingetragen.", NotifierFrame.NOTIFY_INFO);
             TroopsManager.getSingleton().forceUpdate();
         }
         return retValue;

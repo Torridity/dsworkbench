@@ -35,7 +35,6 @@ import org.apache.log4j.Logger;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.VillageListFormatter;
-import de.tor.tribes.util.parser.VillageParser;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -914,7 +913,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
 
         }
 
-
+        NotifierFrame.doNotification("DS Workbench hat " + villages.size() + ((villages.size() == 1) ? " Dorf " : " Dörfer ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);
         boolean added = false;
         if (currentNote != null) {
             //add village to note
@@ -1064,8 +1063,9 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
             if (villages == null || villages.isEmpty()) {
                 JOptionPaneHelper.showInformationBox(this, "Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.", "Information");
                 return;
-
             } else {
+                NotifierFrame.doNotification("DS Workbench hat " + villages.size() + ((villages.size() == 1) ? " Dorf " : " Dörfer ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);
+
                 for (Village v : villages) {
                     currentNote.addVillage(v);
                 }

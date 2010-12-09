@@ -8,6 +8,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.NotifierFrame;
 import de.tor.tribes.ui.models.ReportManagerTableModel;
 import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.report.ReportManager;
@@ -34,8 +35,8 @@ public class ReportParser implements SilentParserInterface {
             }
 
             String activeSet = ReportManagerTableModel.getSingleton().getActiveReportSet();
-
             ReportManager.getSingleton().getReportSet(activeSet).addReport(r);
+            NotifierFrame.doNotification("DS Workbench hat einen Kampfbericht erfolgreich eingelesen.", NotifierFrame.NOTIFY_INFO);
             ReportManager.getSingleton().forceUpdate(activeSet);
             return true;
         } catch (Exception e) {

@@ -26,7 +26,6 @@ import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
-import de.tor.tribes.util.parser.ParserVariableManager;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -407,6 +406,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
     private void fireSosTextChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireSosTextChangedEvent
         List<SOSRequest> requests = PluginManager.getSingleton().executeSOSParserParser(jSosTextField.getText());
         if (requests != null && !requests.isEmpty()) {
+            NotifierFrame.doNotification("DS Workbench hat " + requests.size() + ((requests.size() == 1) ? " SOS-Anfrage " : " SOS-Anfragen ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);
             for (SOSRequest request : requests) {
                 currentRequests.put(request.getDefender(), request);
             }
@@ -634,15 +634,15 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
             haveArrive = true;
             StringBuffer b = new StringBuffer();
 
-            b.append(ParserVariableManager.getSingleton().getProperty("sos.source") + " " + source.toString() + "\n");
+            b.append(PluginManager.getSingleton().getVariableValue("sos.source") + " " + source.toString() + "\n");
             b.append("Ziel: " + target.toString() + "\n");
             SimpleDateFormat f = null;
             if (!ServerSettings.getSingleton().isMillisArrival()) {
-                f = new SimpleDateFormat(ParserVariableManager.getSingleton().getProperty("sos.date.format"));
+                f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format"));
             } else {
-                f = new SimpleDateFormat(ParserVariableManager.getSingleton().getProperty("sos.date.format.ms"));
+                f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format.ms"));
             }
-            b.append(ParserVariableManager.getSingleton().getProperty("attack.arrive.time") + " " + f.format(arrive) + "\n");
+            b.append(PluginManager.getSingleton().getVariableValue("attack.arrive.time") + " " + f.format(arrive) + "\n");
             DSWorkbenchReTimerFrame.getSingleton().setCustomAttack(b.toString());
             if (!DSWorkbenchReTimerFrame.getSingleton().isVisible()) {
                 DSWorkbenchReTimerFrame.getSingleton().setVisible(true);

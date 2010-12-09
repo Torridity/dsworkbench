@@ -3487,48 +3487,52 @@ private void fireDoDonationEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:ev
 
     public void fireGroupParserEvent(Hashtable<String, List<Village>> pParserResult) {
         String[] groups = pParserResult.keySet().toArray(new String[]{});
-        String message = "DS Workbench hat in deiner Zwischenablage Informationen zu den folgenden Gruppen gefunden:\n";
+        NotifierFrame.doNotification("DS Workbench hat " + groups.length + ((groups.length == 1) ? " Dorfgruppe " : " Dorfgruppen ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);
+
+        /* String message = "DS Workbench hat in deiner Zwischenablage Informationen zu den folgenden Gruppen gefunden:\n";
         for (String s : groups) {
-            int size = pParserResult.get(s).size();
-            if (size == 0) {
-                message += "* keine Dörfer)\n";
-            } else if (size == 1) {
-                message += "* " + s + " (" + pParserResult.get(s).size() + " Dorf)\n";
-            } else {
-                message += "* " + s + " (" + pParserResult.get(s).size() + " Dörfer)\n";
-            }
+        int size = pParserResult.get(s).size();
+        if (size == 0) {
+        message += "* keine Dörfer)\n";
+        } else if (size == 1) {
+        message += "* " + s + " (" + pParserResult.get(s).size() + " Dorf)\n";
+        } else {
+        message += "* " + s + " (" + pParserResult.get(s).size() + " Dörfer)\n";
+        }
 
         }
+
 
         message += "Willst du diese Informationen in DS Workbench übernehmen oder sie verwerfen und aus der Zwischenablage entfernen?";
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Gruppeninformationen gefunden", "Verwerfen", "Übernehmen") == JOptionPane.YES_OPTION) {
-            //remove all tags
-            for (String group : groups) {
-                List<Village> villagesForGroup = pParserResult.get(group);
-                if (villagesForGroup != null) {
-                    for (Village v : villagesForGroup) {
-                        TagManager.getSingleton().removeTags(v);
-                    }
-
+         */
+        // if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Gruppeninformationen gefunden", "Verwerfen", "Übernehmen") == JOptionPane.YES_OPTION) {
+        //remove all tags
+        for (String group : groups) {
+            List<Village> villagesForGroup = pParserResult.get(group);
+            if (villagesForGroup != null) {
+                for (Village v : villagesForGroup) {
+                    TagManager.getSingleton().removeTags(v);
                 }
-            }
 
-            for (String group : groups) {
-                //add new groups
-                TagManager.getSingleton().addTag(group);
-                //get (added) group
-                Tag t = TagManager.getSingleton().getTagByName(group);
-                //add villages to group
-                List<Village> villagesForGroup = pParserResult.get(group);
-                if (villagesForGroup != null) {
-                    //set new tags
-                    for (Village v : villagesForGroup) {
-                        t.tagVillage(v.getId());
-                    }
-
-                }
             }
         }
+
+        for (String group : groups) {
+            //add new groups
+            TagManager.getSingleton().addTag(group);
+            //get (added) group
+            Tag t = TagManager.getSingleton().getTagByName(group);
+            //add villages to group
+            List<Village> villagesForGroup = pParserResult.get(group);
+            if (villagesForGroup != null) {
+                //set new tags
+                for (Village v : villagesForGroup) {
+                    t.tagVillage(v.getId());
+                }
+
+            }
+        }
+        //}
     }
 
     @Override

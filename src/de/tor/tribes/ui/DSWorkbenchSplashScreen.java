@@ -294,7 +294,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
         try {
             logger.debug("Checking for plugin updates");
-
             PluginManager.getSingleton().checkForUpdates();
 
             logger.debug("Initializing application window");

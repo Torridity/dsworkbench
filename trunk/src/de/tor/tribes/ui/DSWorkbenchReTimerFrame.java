@@ -27,8 +27,6 @@ import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
-import de.tor.tribes.util.parser.ParserVariableManager;
-import de.tor.tribes.util.parser.VillageParser;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.tag.TagManagerListener;
 import de.tor.tribes.util.troops.TroopsManager;
@@ -963,7 +961,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
 
         Village source = villages.get(0);
         Village target = villages.get(1);
-        if (jComandArea.getText().indexOf(ParserVariableManager.getSingleton().getProperty("sos.arrive.time")) > -1) {
+        if (jComandArea.getText().indexOf(PluginManager.getSingleton().getVariableValue("sos.arrive.time")) > -1) {
             //change village order for SOS requests
             source = villages.get(1);
             target = villages.get(0);
@@ -974,9 +972,9 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         Date arriveDate = null;
         SimpleDateFormat f = null;
         if (!ServerSettings.getSingleton().isMillisArrival()) {
-            f = new SimpleDateFormat(ParserVariableManager.getSingleton().getProperty("sos.date.format"));
+            f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format"));
         } else {
-            f = new SimpleDateFormat(ParserVariableManager.getSingleton().getProperty("sos.date.format.ms"));
+            f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format.ms"));
         }
 
         try {
@@ -986,10 +984,10 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
 
             if (selection == null) {
                 String arriveLine = null;
-                if (text.indexOf(ParserVariableManager.getSingleton().getProperty("attack.arrive.time")) > -1) {
-                    arriveLine = text.substring(text.indexOf(ParserVariableManager.getSingleton().getProperty("attack.arrive.time")));
+                if (text.indexOf(PluginManager.getSingleton().getVariableValue("attack.arrive.time")) > -1) {
+                    arriveLine = text.substring(text.indexOf(PluginManager.getSingleton().getVariableValue("attack.arrive.time")));
                 } else {
-                    arriveLine = text.substring(text.indexOf(ParserVariableManager.getSingleton().getProperty("sos.arrive.time")));
+                    arriveLine = text.substring(text.indexOf(PluginManager.getSingleton().getVariableValue("sos.arrive.time")));
                 }
               
                 /*
@@ -1095,9 +1093,9 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         SimpleDateFormat f = null;
 
         if (!ServerSettings.getSingleton().isMillisArrival()) {
-            f = new SimpleDateFormat(ParserVariableManager.getSingleton().getProperty("sos.date.format"));
+            f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format"));
         } else {
-            f = new SimpleDateFormat(ParserVariableManager.getSingleton().getProperty("sos.date.format.ms"));
+            f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format.ms"));
         }
         try {
             Date arrive = f.parse(jArriveField.getText());

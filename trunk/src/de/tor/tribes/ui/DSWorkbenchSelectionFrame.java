@@ -32,7 +32,6 @@ import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.VillageListFormatter;
 import de.tor.tribes.util.VillageSelectionListener;
 import de.tor.tribes.util.html.SelectionHTMLExporter;
-import de.tor.tribes.util.parser.VillageParser;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.Cursor;
 import java.awt.Point;

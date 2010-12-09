@@ -731,20 +731,6 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
             int newInfos = infos.size();
             Collections.addAll(merchantInfos, infos.toArray(new VillageMerchantInfo[]{}));
 
-            /* if (!infos.isEmpty()) {
-            if (evt.getSource() == jInsertBothButton) {
-            Collections.addAll(merchantInfos, infos.toArray(new VillageMerchantInfo[]{}));
-            } else if (evt.getSource() == jInsertSendButton) {
-            for (VillageMerchantInfo info : infos) {
-            info.setDirection(VillageMerchantInfo.Direction.OUTGOING);
-            }
-            Collections.addAll(merchantInfos, infos.toArray(new VillageMerchantInfo[]{}));
-            } else if (evt.getSource() == jInsertReceiveButton) {
-            for (VillageMerchantInfo info : infos) {
-            info.setDirection(VillageMerchantInfo.Direction.INCOMING);
-            }
-            Collections.addAll(merchantInfos, infos.toArray(new VillageMerchantInfo[]{}));
-            }*/
             rebuildTable(jMerchantDataTable, merchantInfos);
             String message = "";
             if (newInfos == 0 && changesToBoth == 0 && dirChanges == 0) {
@@ -754,8 +740,10 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
                 message += " * " + newInfos + ((newInfos == 1) ? " neuer Eintrag\n" : " neue Einträge\n");
                 message += " * " + changesToBoth + " Wechsel zu 'Lieferant+Empfänger'\n";
                 message += " * " + dirChanges + " Wechsel der Handelsrichtung\n";
+
             }
-            JOptionPaneHelper.showInformationBox(this, message, "Information");
+            //JOptionPaneHelper.showInformationBox(this, message, "Information");
+            NotifierFrame.doNotification("DS Workbench hat " + infos.size() + " Handelspartner in der Zwischenablage gefunden.\n" + message, NotifierFrame.NOTIFY_INFO);
             // }
 
         } catch (Exception e) {

@@ -34,6 +34,7 @@ public class PluginManager {
     private final File PLUGIN_DIR = new File("./plugins");
     private boolean INITIALIZED = false;
     private URLClassLoader mClassloader = null;
+    private Object mVariableManager = null;
 
     public static synchronized PluginManager getSingleton() {
         if (SINGLETON == null) {
@@ -174,6 +175,23 @@ public class PluginManager {
             logger.error("Failed to execute troops parser", e);
         }
         return false;
+    }
+
+    public String getVariableValue(String pName) {
+        if (mVariableManager == null) {
+            try {
+                Class managerClass = mClassloader.loadClass("de.tor.tribes.util.parser.ParserVariableManager");
+                mVariableManager = managerClass.getClass().getMethod("getSingleton").invoke(null);
+            } catch (Exception e) {
+                logger.error("Failed to load parser variable manager", e);
+            }
+        }
+        try {
+            return (String) mVariableManager.getClass().getMethod("getProperty", String.class).invoke(mVariableManager, pName);
+        } catch (Exception e) {
+            logger.error("Failed to execute method getProperty() on parser variable manager", e);
+            return "";
+        }
     }
 
     private Object loadParser(String pClazz) throws Exception {

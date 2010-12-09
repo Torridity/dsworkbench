@@ -25,7 +25,7 @@ public class ParserVariableManager {
         return SINGLETON;
     }
 
-    public ParserVariableManager() {
+    ParserVariableManager() {
         variableMappings = new Properties();
         try {
             variableMappings.load(new FileInputStream("./templates/parser.properties"));

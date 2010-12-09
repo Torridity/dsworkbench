@@ -28,7 +28,6 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.TagToBBCodeFormater;
-import de.tor.tribes.util.parser.VillageParser;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.Point;
 import java.awt.Rectangle;

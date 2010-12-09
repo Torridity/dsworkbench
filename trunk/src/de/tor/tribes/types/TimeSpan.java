@@ -8,6 +8,7 @@ import de.tor.tribes.io.DataHolder;
 import java.awt.Point;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import sun.security.acl.OwnerImpl;
 
 /**
  *
@@ -22,6 +23,7 @@ public class TimeSpan {
     public TimeSpan(Point pSpan) {
         span = pSpan;
         validFor = null;
+        atDate = null;
     }
 
     public TimeSpan(Date pAtDate, Point pSpan) {
@@ -55,6 +57,36 @@ public class TimeSpan {
 
     public Tribe isValidFor() {
         return validFor;
+    }
+
+    public boolean intersects(TimeSpan pSpan) {
+        Tribe thisTribe = isValidFor();
+        Tribe theOtherTribe = pSpan.isValidFor();
+
+        if (thisTribe != null && theOtherTribe != null && !thisTribe.equals(theOtherTribe)) {
+            //both spans are for different tribes, so they can't intersect by definition
+            return false;
+        }
+
+        Date thisDay = getAtDate();
+        Date theOtherDay = pSpan.getAtDate();
+
+        if (thisDay == null && theOtherDay == null) {
+            //both spans are for all days, so we only have to check the span itself
+        }
+        if (thisDay != null && theOtherDay == null) {
+            //the day for this span is not null, but intersections can only happen on this single day.
+            //so we assume this day also for the other span.
+        }
+        if (thisDay == null && theOtherDay != null) {
+            //the day for the other span is not null, but intersections can only happen on this single day.
+            //so we assume the other day also for this span.
+        } else {
+            //here we arrive if both days are not null. If the days are not the same, no intersection will be possible.
+            //if both days are the same simply check as in case 1
+        }
+
+        return true;
     }
 
     public static TimeSpan fromPropertyString(String pString) {

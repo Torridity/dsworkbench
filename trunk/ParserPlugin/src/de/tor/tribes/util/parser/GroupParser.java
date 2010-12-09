@@ -7,6 +7,7 @@ package de.tor.tribes.util.parser;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.NotifierFrame;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.SilentParserInterface;
@@ -114,6 +115,7 @@ public class GroupParser implements SilentParserInterface {
                 }
             }
         }
+
         if (groups.size() != 0) {
             DSWorkbenchMainFrame.getSingleton().fireGroupParserEvent(groups);
             return true;

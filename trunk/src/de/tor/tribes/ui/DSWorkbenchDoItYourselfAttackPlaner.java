@@ -654,15 +654,15 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
 
     private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddAttackEvent
         String source = jSourceVillage.getText();
-        
+
         List<Village> sourceList = PluginManager.getSingleton().executeVillageParser(source);
-        if (sourceList.size() == 0) {
+        if (sourceList.isEmpty()) {
             JOptionPaneHelper.showWarningBox(this, "Kein gültiges Herkunftsdorf gewählt.", "Warnung");
             return;
         }
         String target = jTargetVillage.getText();
         List<Village> targetList = PluginManager.getSingleton().executeVillageParser(target);
-        if (targetList.size() == 0) {
+        if (targetList.isEmpty()) {
             JOptionPaneHelper.showWarningBox(this, "Kein gültiges Zieldorf gewählt.", "Warnung");
             return;
         }
@@ -745,7 +745,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         if (evt.getSource() == jUnformattedExport) {
             //unformatted export
             try {
-                StringBuffer buffer = new StringBuffer();
+                StringBuilder buffer = new StringBuilder();
                 List<Attack> attacks = AttackManager.getSingleton().getDoItYourselfAttacks();
                 for (int i : rows) {
                     jAttackTable.invalidate();
@@ -827,7 +827,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         } else {
             try {
                 boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
-                StringBuffer buffer = new StringBuffer();
+                StringBuilder buffer = new StringBuilder();
                 if (extended) {
                     buffer.append("[u][size=12]Angriffsplan[/size][/u]\n\n");
                 } else {
@@ -847,12 +847,12 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                     buffer.append("\n[size=8]Erstellt am ");
                     buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
                     buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
-                    buffer.append(Constants.VERSION + Constants.VERSION_ADDITION + "[/url][/size]\n");
+                    buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url][/size]\n");
                 } else {
                     buffer.append("\nErstellt am ");
                     buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
                     buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
-                    buffer.append(Constants.VERSION + Constants.VERSION_ADDITION + "[/url]\n");
+                    buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url]\n");
                 }
 
                 String b = buffer.toString();
@@ -1032,7 +1032,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jAttackTable.repaint();
     }//GEN-LAST:event_fireAdeptEvent
 
-    public void fireRebuildTableEvent() {
+    public final void fireRebuildTableEvent() {
         try {
             jAttackTable.invalidate();
             for (int i = 0; i < jAttackTable.getColumnCount(); i++) {

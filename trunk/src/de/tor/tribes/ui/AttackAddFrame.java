@@ -13,6 +13,7 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -69,12 +70,40 @@ public class AttackAddFrame extends javax.swing.JFrame {
         });
     }
 
+    private boolean validateDistance() {
+        if (isMultiAttack) {
+            for (Village source : mSources) {
+                if (getSelectedUnit().getPlainName().equals("snob")) {
+                    if (DSCalculator.calculateDistance(source, mTarget) > ServerSettings.getSingleton().getSnobRange()) {
+                        //return false if distance is larger than max snob dist
+                        return false;
+                    }
+                }
+            }
+        } else {
+            if (getSelectedUnit().getPlainName().equals("snob")) {
+                if (DSCalculator.calculateDistance(mSource, mTarget) > ServerSettings.getSingleton().getSnobRange()) {
+                    //return false if distance is larger than max snob dist
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     /**Check if the currently selected unit can arrive at the target village at the selected time.
      * Returns result depending on the time mode (arrive or send) 
      */
     private boolean validateTime() {
+
         if (isMultiAttack) {
             for (Village source : mSources) {
+                if (getSelectedUnit().getPlainName().equals("snob")) {
+                    if (DSCalculator.calculateDistance(source, mTarget) > ServerSettings.getSingleton().getSnobRange()) {
+                        //return false if distance is larger than max snob dist
+                        return false;
+                    }
+                }
                 long sendMillis = ((Date) jTimeSpinner.getValue()).getTime();
                 //check time depending selected unit
                 double speed = ((UnitHolder) jUnitBox.getSelectedItem()).getSpeed();
@@ -86,6 +115,12 @@ public class AttackAddFrame extends javax.swing.JFrame {
             }
             return true;
         } else {
+            if (getSelectedUnit().getPlainName().equals("snob")) {
+                if (DSCalculator.calculateDistance(mSource, mTarget) > ServerSettings.getSingleton().getSnobRange()) {
+                    //return false if distance is larger than max snob dist
+                    return false;
+                }
+            }
             long sendMillis = ((Date) jTimeSpinner.getValue()).getTime();
             //check time depending selected unit
             double speed = ((UnitHolder) jUnitBox.getSelectedItem()).getSpeed();
@@ -480,6 +515,12 @@ private void fireCancelAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 }//GEN-LAST:event_fireCancelAddAttackEvent
 
 private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddAttackEvent
+    if (!validateDistance()) {
+        jDistance.setForeground(Color.RED);
+    } else {
+        jDistance.setForeground(Color.BLACK);
+    }
+
     if (!validateTime()) {
         ((DateEditor) jTimeSpinner.getEditor()).getTextField().setForeground(Color.RED);
         return;

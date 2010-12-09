@@ -177,6 +177,27 @@ public class BrowserCommandSender {
         return true;
     }
 
+    public static void openPlaceTroopsView(Village pSource) {
+        try {
+            String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+            String url = baseURL + "/game.php?village=";
+            int uvID = GlobalOptions.getUVID();
+            if (uvID >= 0) {
+                url = baseURL + "/game.php?t=" + uvID + "&village=";
+            }
+            url += pSource.getId() + "&screen=place&mode=units";
+            String browser = GlobalOptions.getProperty("default.browser");
+            if (browser == null || browser.length() < 1) {
+                Desktop.getDesktop().browse(new URI(url));
+            } else {
+                Runtime.getRuntime().exec(new String[]{browser, url});
+            }
+        } catch (Throwable t) {
+            JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
+            logger.error("Failed to open browser window", t);
+        }
+    }
+
     public static void centerVillage(Village pSource) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());

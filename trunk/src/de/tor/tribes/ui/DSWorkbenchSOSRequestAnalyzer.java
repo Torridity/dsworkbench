@@ -406,7 +406,6 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
     private void fireSosTextChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireSosTextChangedEvent
         List<SOSRequest> requests = PluginManager.getSingleton().executeSOSParserParser(jSosTextField.getText());
         if (requests != null && !requests.isEmpty()) {
-            NotifierFrame.doNotification("DS Workbench hat " + requests.size() + ((requests.size() == 1) ? " SOS-Anfrage " : " SOS-Anfragen ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);
             for (SOSRequest request : requests) {
                 currentRequests.put(request.getDefender(), request);
             }

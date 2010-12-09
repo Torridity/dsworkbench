@@ -225,9 +225,9 @@ public class TimeFrame {
             }
 
             if (firstTerm != -1 && randomTerm != -1) {
-                Date d = new Date(firstTerm + (long) Math.round(Math.random() * (double) randomTerm));
+                Date d = new Date(firstTerm + Math.round(Math.random() * (double) randomTerm));
                 while (usedDates.contains(d.getTime())) {
-                    d = new Date(firstTerm + (long) Math.round(Math.random() * (double) randomTerm));
+                    d = new Date(firstTerm + Math.round(Math.random() * (double) randomTerm));
                 }
                 return d;
             }
@@ -274,9 +274,9 @@ public class TimeFrame {
                     cal.set(Calendar.SECOND, 0);
                     cal.set(Calendar.MILLISECOND, 0);
                     for (Calendar day : days) {
-                        if (day.get(Calendar.DAY_OF_MONTH) == cal.get(Calendar.DAY_OF_MONTH) &&
-                                day.get(Calendar.MONTH) == cal.get(Calendar.MONTH) &&
-                                day.get(Calendar.YEAR) == cal.get(Calendar.YEAR)) {
+                        if (day.get(Calendar.DAY_OF_MONTH) == cal.get(Calendar.DAY_OF_MONTH)
+                                && day.get(Calendar.MONTH) == cal.get(Calendar.MONTH)
+                                && day.get(Calendar.YEAR) == cal.get(Calendar.YEAR)) {
                             //valid day
                             Calendar c = Calendar.getInstance();
                             c.setTime(day.getTime());

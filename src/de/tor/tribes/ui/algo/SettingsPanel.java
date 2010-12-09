@@ -620,10 +620,8 @@ public class SettingsPanel extends javax.swing.JPanel {
             //start == end
             JOptionPaneHelper.showWarningBox(this, "Der angegebene Zeitrahmen ist ungültig", "Warnung");
             return;
-
         }
 
-        Line2D.Double newFrame = new Line2D.Double((double) min, 0, (double) max - 0.1, 0);
         //check if timeframe exists or intersects with other existing frame
         int intersection = -1;
         Tribe t = null;
@@ -632,39 +630,24 @@ public class SettingsPanel extends javax.swing.JPanel {
         } catch (Exception e) {
         }
 
+        TimeSpan newSpan = null;
+        if (jEveryDayValid.isSelected()) {
+            newSpan = new TimeSpan(new Point(min, max), t);
+        } else {
+            newSpan = new TimeSpan(jValidAtDay.getSelectedDate(), new Point(min, max), t);
+        }
+
         DefaultListModel model = (DefaultListModel) jSendTimeFramesList.getModel();
         for (int i = 0; i < model.getSize(); i++) {
-            TimeSpan frame = (TimeSpan) model.getElementAt(i);
-            if (jEveryDayValid.isSelected()) {
-                //check for every day option
-                Point span = frame.getSpan();
-                Line2D.Double currentFrame = new Line2D.Double(span.x + 0.1, 0, span.y - 0.1, 0);
-                if (currentFrame.intersectsLine(newFrame) && t == frame.isValidFor()) {
-                    intersection = i + 1;
-                    break;
-                }
-            } else {
-                if (frame.getAtDate() != null && frame.getAtDate().getTime() == jValidAtDay.getSelectedDate().getTime()) {
-                    //check if date is the same
-                    Point span = frame.getSpan();
-                    Line2D.Double currentFrame = new Line2D.Double(span.x + 0.1, 0, span.y - 0.1, 0);
-                    if (currentFrame.intersectsLine(newFrame) && t == frame.isValidFor()) {
-                        intersection = i + 1;
-                        break;
-                    }
-                }
+            TimeSpan existingSpan = (TimeSpan) model.getElementAt(i);
+            if (newSpan.intersects(existingSpan)) {
+                intersection = i + 1;
+                break;
             }
         }
 
         if (intersection == -1) {
-            // model.addElement(min + " Uhr - " + max + " Uhr");
-            TimeSpan span = null;
-            if (jEveryDayValid.isSelected()) {
-                span = new TimeSpan(new Point(min, max), t);
-            } else {
-                span = new TimeSpan(jValidAtDay.getSelectedDate(), new Point(min, max), t);
-            }
-            model.addElement(span);
+            model.addElement(newSpan);
         } else {
             JOptionPaneHelper.showWarningBox(this, "Das gewählte Zeitfenster überschneidet sich mit dem " + intersection + ". Eintrag.\n"
                     + "Bitte wähle die Zeitfenster so, dass es zu keinen Überschneidungen kommt.", "Überschneidung");
@@ -687,7 +670,6 @@ public class SettingsPanel extends javax.swing.JPanel {
             for (Object o : selection) {
                 model.removeElement(o);
             }
-
         }
     }//GEN-LAST:event_fireRemoveTimeFrameEvent
 
@@ -739,7 +721,5 @@ public class SettingsPanel extends javax.swing.JPanel {
         f.add(new SettingsPanel());
         f.pack();
         f.setVisible(true);
-
-
     }
 }

@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import de.tor.tribes.types.Fake;
 import de.tor.tribes.types.Off;
+import de.tor.tribes.util.ServerSettings;
 import java.util.Collections;
 import org.apache.log4j.Logger;
 
@@ -63,6 +64,12 @@ public class BruteForce extends AbstractAttackAlgorithm {
                     for (Village v : pTargets) {
                         int maxAttacksPerVillage = pMaxAttacksTable.get(v);
                         double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
+                        if (unit.getPlainName().equals("snob")) {
+                            if (DSCalculator.calculateDistance(source, v) > ServerSettings.getSingleton().getSnobRange()) {
+                                //set move time to "infinite" if distance is too large
+                                time = Double.MAX_VALUE;
+                            }
+                        }
                         Date sendTime = new Date(arrive - (long) time * 1000);
                         if (pTimeFrame.isVariableArriveTime()) {
                             //calculate possible arrive time and store it in sendTime
@@ -99,7 +106,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                 //there are already attacks on this village
                                 if (currentAttacks < maxAttacksPerVillage) {
                                     //more attacks on this village are allowed
-                                   
+
                                     boolean added = false;
                                     //max number of attacks neither for villages nor for player reached
                                     List<Village> attsPerUnit = attacksForVillage.get(unit);
@@ -188,6 +195,12 @@ public class BruteForce extends AbstractAttackAlgorithm {
                         int maxAttacksPerVillage = pMaxAttacksTable.get(v);
                         if (!attacks.containsKey(v)) {
                             double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
+                            if (unit.getPlainName().equals("snob")) {
+                                if (DSCalculator.calculateDistance(source, v) > ServerSettings.getSingleton().getSnobRange()) {
+                                    //set move time to "infinite" if distance is too large
+                                    time = Double.MAX_VALUE;
+                                }
+                            }
                             Date sendTime = new Date(arrive - (long) time * 1000);
                             if (pTimeFrame.isVariableArriveTime()) {
                                 //calculate possible arrive time and store it in sendTime
@@ -222,7 +235,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                     //there are already attacks on this village
                                     if (attacksForVillage.keySet().size() < maxAttacksPerVillage) {
                                         //more attacks on this village are allowed
-                                        
+
                                         //max number of attacks neither for villages nor for player reached
                                         if (!attacksForVillage.containsKey(source)) {
                                             attacksForVillage.put(source, unit);

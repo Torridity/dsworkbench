@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.1" encoding="UTF-8" ?>
 
 <Form version="1.6" maxVersion="1.6" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
@@ -186,16 +186,17 @@
                               <Component id="jRelationType" alignment="0" max="32767" attributes="1"/>
                           </Group>
                       </Group>
-                      <Component id="jScrollPane1" pref="731" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="733" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="8" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                      <Component id="jButton6" max="32767" attributes="1"/>
                       <Component id="jButton2" alignment="0" max="32767" attributes="1"/>
                       <Component id="jButton1" max="32767" attributes="1"/>
                       <Component id="jButton5" pref="59" max="32767" attributes="1"/>
                       <Component id="jButton3" alignment="1" max="32767" attributes="1"/>
                   </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -212,6 +213,8 @@
                           <Component id="jButton5" min="-2" pref="35" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jButton3" min="-2" pref="35" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="jButton6" min="-2" pref="35" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jScrollPane1" pref="286" max="32767" attributes="0"/>
@@ -512,7 +515,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane3" alignment="1" pref="138" max="32767" attributes="0"/>
+                  <Component id="jScrollPane3" alignment="1" pref="140" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -549,6 +552,20 @@
             </Container>
           </SubComponents>
         </Container>
+        <Component class="javax.swing.JButton" name="jButton6">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="df" green="eb" red="ef" type="rgb"/>
+            </Property>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/res/ui/place.png"/>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Truppen&#xfc;bersicht des Versammlungsplatzes im Spiel &#xf6;ffnen"/>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireOpenPlaceInGameEvent"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
   </SubComponents>

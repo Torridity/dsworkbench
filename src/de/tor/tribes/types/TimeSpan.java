@@ -7,8 +7,10 @@ package de.tor.tribes.types;
 import de.tor.tribes.io.DataHolder;
 import java.awt.Point;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
-import sun.security.acl.OwnerImpl;
+import org.apache.commons.lang.math.IntRange;
+import org.apache.commons.lang.time.DateUtils;
 
 /**
  *
@@ -71,22 +73,23 @@ public class TimeSpan {
         Date thisDay = getAtDate();
         Date theOtherDay = pSpan.getAtDate();
 
-        if (thisDay == null && theOtherDay == null) {
-            //both spans are for all days, so we only have to check the span itself
-        }
-        if (thisDay != null && theOtherDay == null) {
-            //the day for this span is not null, but intersections can only happen on this single day.
-            //so we assume this day also for the other span.
-        }
-        if (thisDay == null && theOtherDay != null) {
-            //the day for the other span is not null, but intersections can only happen on this single day.
-            //so we assume the other day also for this span.
+        if (thisDay != null && theOtherDay != null) {
+            if (DateUtils.isSameDay(thisDay, theOtherDay)) {
+                //we are at the same day, so intersection is possible
+                IntRange thisRange = new IntRange(getSpan().x, getSpan().y);
+                IntRange theOtherRange = new IntRange(pSpan.getSpan().x, pSpan.getSpan().y);
+                return thisRange.overlapsRange(theOtherRange) && thisRange.getMinimumInteger() != theOtherRange.getMaximumInteger() && thisRange.getMaximumInteger() != theOtherRange.getMinimumInteger();
+            } else {
+                //this day and the other day are differnt, so no intersection can happen
+                return false;
+            }
         } else {
-            //here we arrive if both days are not null. If the days are not the same, no intersection will be possible.
-            //if both days are the same simply check as in case 1
+            //there was no day specified, intersection is possible
+            IntRange thisRange = new IntRange(getSpan().x, getSpan().y);
+            IntRange theOtherRange = new IntRange(pSpan.getSpan().x, pSpan.getSpan().y);
+            //   thisRange.
+            return thisRange.overlapsRange(theOtherRange) && thisRange.getMinimumInteger() != theOtherRange.getMaximumInteger() && thisRange.getMaximumInteger() != theOtherRange.getMinimumInteger();
         }
-
-        return true;
     }
 
     public static TimeSpan fromPropertyString(String pString) {
@@ -133,7 +136,6 @@ public class TimeSpan {
             }
         } else {
             res = "*," + span.x + "," + span.y + ",";
-            //res = "Täglich, von " + span.x + " Uhr bis " + span.y + " Uhr";
             if (validFor != null) {
                 res += validFor;
             } else {
@@ -164,5 +166,13 @@ public class TimeSpan {
         }
 
         return result;
+    }
+
+    public static void main(String[] args) {
+        TimeSpan span1 = new TimeSpan(DateUtils.addDays(Calendar.getInstance().getTime(), 1), new Point(4, 12));
+
+        TimeSpan span2 = new TimeSpan(DateUtils.addDays(Calendar.getInstance().getTime(), 1), new Point(3, 5));
+        System.out.println(span1.intersects(span2));
+
     }
 }

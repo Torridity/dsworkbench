@@ -142,7 +142,6 @@ public abstract class AbstractAttackAlgorithm extends Thread {
         } catch (Exception e) {
             //an error occured
             logger.error("An error occured during calculation", e);
-            e.printStackTrace();
             results = new LinkedList<AbstractTroopMovement>();
         }
         mListener.fireCalculationFinishedEvent(this);

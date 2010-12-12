@@ -21,6 +21,7 @@ import de.tor.tribes.ui.dnd.VillageTransferable;
 import de.tor.tribes.ui.editors.AttackTypeCellEditor;
 import de.tor.tribes.ui.editors.FakeCellEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
+import de.tor.tribes.ui.models.TroopsManagerTableModel;
 import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
@@ -99,6 +100,7 @@ import java.util.Iterator;
 
 /**
  * @TODO (DIFF) Added strict filtering to troop filter dialog
+ * @TODO (DIFF) Added troops check before adding source villages
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame implements AlgorithmListener, DropTargetListener, DragGestureListener, DragSourceListener {
@@ -1798,12 +1800,14 @@ private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
         return;
     }
     UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
+    List<Village> villagesToAdd = new LinkedList<Village>();
     for (Object value : values) {
-        Village vSource = (Village) value;
+        /*Village vSource = (Village) value;
         ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{vSource, uSource, jMarkAsFakeBox.isSelected()});
-        mSettingsPanel.addTribe(vSource.getTribe());
+        mSettingsPanel.addTribe(vSource.getTribe());*/
+        villagesToAdd.add((Village) value);
     }
-
+    addSourceVillages(villagesToAdd, uSource, jMarkAsFakeBox.isSelected());
     updateInfo();
 }//GEN-LAST:event_fireAddAttackEvent
 
@@ -2142,18 +2146,20 @@ private void fireUnformattedAttacksToClipboardEvent(java.awt.event.MouseEvent ev
 private void fireAddAllPlayerVillages(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddAllPlayerVillages
     //add all source villages to source list
     UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
-    jAttacksTable.invalidate();
+    // jAttacksTable.invalidate();
     try {
         int size = jSourceVillageList.getModel().getSize();
+        List<Village> villagesToAdd = new LinkedList<Village>();
         for (int i = 0; i < size; i++) {
-            ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{jSourceVillageList.getModel().getElementAt(i), uSource, jMarkAsFakeBox.isSelected()});
-            mSettingsPanel.addTribe(((Village) jSourceVillageList.getModel().getElementAt(i)).getTribe());
+            /*((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{jSourceVillageList.getModel().getElementAt(i), uSource, jMarkAsFakeBox.isSelected()});
+            mSettingsPanel.addTribe(((Village) jSourceVillageList.getModel().getElementAt(i)).getTribe());*/
+            villagesToAdd.add((Village) jSourceVillageList.getModel().getElementAt(i));
         }
-
+        addSourceVillages(villagesToAdd, uSource, jMarkAsFakeBox.isSelected());
     } catch (Exception e) {
         logger.error("Failed to add current group as source", e);
     }
-    jAttacksTable.revalidate();
+    // jAttacksTable.revalidate();
     updateInfo();
 }//GEN-LAST:event_fireAddAllPlayerVillages
 
@@ -2396,7 +2402,7 @@ private void fireUpdateSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
 private void fireGetSourceVillagesFromClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireGetSourceVillagesFromClipboardEvent
     try {
-        Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         List<Village> villages = PluginManager.getSingleton().executeVillageParser((String) t.getTransferData(DataFlavor.stringFlavor));
         if (villages == null || villages.isEmpty()) {
             JOptionPaneHelper.showInformationBox(this, "Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.", "Information");
@@ -2404,11 +2410,11 @@ private void fireGetSourceVillagesFromClipboardEvent(java.awt.event.MouseEvent e
         } else {
             NotifierFrame.doNotification("DS Workbench hat " + villages.size() + ((villages.size() == 1) ? " Dorf " : " Dörfer ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);
             UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
-            for (Village v : villages) {
-                ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource, jMarkAsFakeBox.isSelected()});
-                mSettingsPanel.addTribe(v.getTribe());
-            }
-
+            /*for (Village v : villages) {
+            ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource, jMarkAsFakeBox.isSelected()});
+            mSettingsPanel.addTribe(v.getTribe());
+            }*/
+            addSourceVillages(villages, uSource, jMarkAsFakeBox.isSelected());
             String message = (villages.size() == 1) ? "1 Dorf " : villages.size() + " Dörfer ";
             JOptionPaneHelper.showInformationBox(this, message + " übertragen.", "Information");
         }
@@ -2917,6 +2923,39 @@ private void showAttackInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
 
 
 }//GEN-LAST:event_showAttackInfoEvent
+
+    private void addSourceVillages(List<Village> pSourceVillages, UnitHolder pUnit, boolean pAsFake) {
+        List<Village> villagesWithSmallTroopCount = new LinkedList<Village>();
+        for (Village pSource : pSourceVillages) {
+            VillageTroopsHolder troopsForVillage = TroopsManager.getSingleton().getTroopsForVillage(pSource);
+            if (troopsForVillage != null) {
+                int ownTroopsInVillage = troopsForVillage.getTroopPopCount(TroopsManagerTableModel.SHOW_OWN_TROOPS);
+                if (ownTroopsInVillage < 20000) {
+                    if (!villagesWithSmallTroopCount.contains(pSource)) {
+                        villagesWithSmallTroopCount.add(pSource);
+                    }
+                }
+            }
+        }
+        boolean ignoreSmallTroopCountVillages = false;
+        if (!villagesWithSmallTroopCount.isEmpty()) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("Laut internen Truppeninformationen ");
+            builder.append((villagesWithSmallTroopCount.size() == 1) ? "enthält " : "enthalten ");
+            builder.append(Integer.toString(villagesWithSmallTroopCount.size()));
+            builder.append((villagesWithSmallTroopCount.size() == 1) ? "Dorf " : "Dörfer ");
+            builder.append("weniger als 20.000 verfügbare Einheiten.\n");
+            builder.append((villagesWithSmallTroopCount.size() == 1) ? "Soll dieses Dorf ignoriert werden?" : "Sollen diese Dörfer ignoriert werden?");
+            ignoreSmallTroopCountVillages = (JOptionPaneHelper.showQuestionConfirmBox(this, builder.toString(), "Information", "Nein", "Ja") == JOptionPane.YES_OPTION);
+        }
+
+        for (Village pSource : pSourceVillages) {
+            if (!(ignoreSmallTroopCountVillages && villagesWithSmallTroopCount.contains(pSource))) {
+                ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{pSource, pUnit, pAsFake});
+                mSettingsPanel.addTribe(pSource.getTribe());
+            }
+        }
+    }
 
     /**Add selected target villages filteres by points*/
     private void fireAddFilteredTargetVillages() {

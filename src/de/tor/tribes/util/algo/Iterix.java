@@ -265,7 +265,7 @@ public class Iterix extends AbstractAttackAlgorithm {
             for (int j = 0; j < mappings[0].length; j++) {
                 Village target = pTargets.get(j);
                 if (!movements.isEmpty()) {
-                    Off movement = (Off) movements.get(target);
+                    Off movement = movements.get(target);
                     if (movement != null && mappings[i][j] != 0) {
                         int remainingCount = pMaxAttacksTable.get(target) - movement.getOffCount();
                         //  System.out.println("Remain for " + target + ": " + remainingCount);
@@ -381,7 +381,7 @@ public class Iterix extends AbstractAttackAlgorithm {
                         tMappings[i][j] = 0;
                     }
                 } else {
-                    long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
+                    long send = pTimeFrame.getEnd() - Math.round(runtime);
                     if (pTimeFrame.inside(new Date(send), null)) {
                         tMappings[i][j] = pMaxAttacksTable.get(pTargets.get(j));
                         cnt++;
@@ -761,5 +761,3 @@ public class Iterix extends AbstractAttackAlgorithm {
         }
     }
 }
-
-

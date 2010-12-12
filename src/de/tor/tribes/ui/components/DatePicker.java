@@ -17,7 +17,7 @@ import javax.swing.plaf.basic.BasicArrowButton;
 import org.netbeans.lib.awtextra.AbsoluteConstraints;
 import org.netbeans.lib.awtextra.AbsoluteLayout;
 
-public final class DatePicker extends JPanel {
+public class DatePicker extends JPanel {
 
     private static final Font smallFont = new Font("Dialog", 0, 10);
     private static final Font largeFont = new Font("Dialog", 0, 12);
@@ -421,6 +421,12 @@ public final class DatePicker extends JPanel {
         dateformat.format(date, stringbuffer, fieldposition);
         dateformat.format(date, stringbuffer1, fieldposition1);
         return stringbuffer.toString().substring(fieldposition.getBeginIndex(), fieldposition.getEndIndex()) + " " + stringbuffer1.toString().substring(fieldposition1.getBeginIndex(), fieldposition1.getEndIndex());
+    }
+
+    public static void main(String[] args) {
+        JFrame f = new JFrame();
+        f.add(new DatePicker());
+        f.setVisible(true);
     }
 }
 

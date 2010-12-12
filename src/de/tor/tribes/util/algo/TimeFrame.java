@@ -138,12 +138,6 @@ public class TimeFrame {
     }
 
     public Date getRandomArriveTime(long pRuntime, Tribe pTribe, List<Long> usedDates) {
-        Calendar cs = Calendar.getInstance();
-        cs.setTimeInMillis(start);
-        cs.set(Calendar.HOUR_OF_DAY, 0);
-        cs.set(Calendar.MINUTE, 0);
-        cs.set(Calendar.SECOND, 0);
-        cs.set(Calendar.MILLISECOND, 0);
         List<Long> l = timespansToTimeframes(pTribe);
         //SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
         Calendar arriveStart = Calendar.getInstance();

@@ -63,7 +63,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         return SINGLETON;
     }
 
-    public void setup() {
+    public void resetView() {
         currentRequests = null;
         updateView();
     }

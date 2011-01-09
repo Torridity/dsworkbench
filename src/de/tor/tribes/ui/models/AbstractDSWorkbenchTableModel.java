@@ -7,6 +7,8 @@ package de.tor.tribes.ui.models;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JCheckBoxMenuItem;
@@ -15,6 +17,7 @@ import javax.swing.JTable;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -30,6 +33,7 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
     private TableRowSorter<TableModel> mRowSorter = null;
     private TableColumnModel mColumnModel = null;
     private JTable mAssociatedTable = null;
+    private PropertyChangeListener mColumnListener = null;
 
     public abstract String getPropertyBaseID();
 
@@ -45,6 +49,16 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
 
     public AbstractDSWorkbenchTableModel() {
         checkStaticImplementation();
+        mColumnListener = new PropertyChangeListener() {
+
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                String prop = evt.getPropertyName();
+                if (prop != null && prop.equals("preferredWidth")) {
+                    saveColumnState();
+                }
+            }
+        };
         loadVisibilityState();
         loadColumnState();
         buildPopup();
@@ -64,18 +78,20 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
         if (mAssociatedTable == null) {
             mAssociatedTable = pTable;
         }
+
         if (mRowSorter != null) {
             //store current state
             List<RowSorter.SortKey> keys = (List<RowSorter.SortKey>) mRowSorter.getSortKeys();
             if (!keys.isEmpty()) {
+
                 int col = keys.get(0).getColumn();
+                col = convertViewColumnToModel(col);
                 if (isColVisible(col)) {
                     String sortValue = col + "," + ((keys.get(0).getSortOrder() == SortOrder.ASCENDING) ? "0" : "1");
                     GlobalOptions.addProperty(getPropertyBaseID() + ".sort.key", sortValue);
                 }
             }
         }
-
         pTable.setModel(this);
 
         //create new row sorter and reset state
@@ -86,7 +102,9 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
         if (sortKey != null) {
             String[] keySplit = sortKey.split(",");
             int col = Integer.parseInt(keySplit[0]);
+
             if (isColVisible(col)) {
+                col = convertModelColumnToView(col);
                 if (Integer.parseInt(keySplit[1]) == 0) {
                     sortKeys.add(new RowSorter.SortKey(col, SortOrder.ASCENDING));
                 } else {
@@ -138,9 +156,18 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
                     if (isColVisible(i)) {
                         int size = Integer.parseInt(sizeSplit[i]);
                         if (size > 0) {
-                            mAssociatedTable.getColumnModel().getColumn(col).setWidth(size);
+                            // mAssociatedTable.getColumnModel().getColumn(col).setWidth(size);
                             mAssociatedTable.getColumnModel().getColumn(col).setPreferredWidth(size);
+                            mAssociatedTable.getColumnModel().getColumn(col).addPropertyChangeListener(mColumnListener);
                         }
+                        col++;
+                    }
+                }
+            } else {
+                int col = 0;
+                for (int i = 0; i < visibleColumns.length; i++) {
+                    if (isColVisible(i)) {
+                        mAssociatedTable.getColumnModel().getColumn(col).addPropertyChangeListener(mColumnListener);
                         col++;
                     }
                 }
@@ -190,7 +217,6 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
                 @Override
                 public void itemStateChanged(ItemEvent e) {
                     saveColumnState();
-
                     String text = ((JCheckBoxMenuItem) e.getSource()).getText();
                     int idx = getInternalColumnNames().indexOf(text);
                     visibleColumns[idx] = !visibleColumns[idx];
@@ -270,19 +296,23 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
     }
 
     protected int convertModelColumnToView(int col) {
-        int n = col;    // right number to return
-        int i = 0;
-        do {
-            if (!(visibleColumns[i])) {
-                n++;
+        int realCol = col;
+        for (int i = 0; i < col; i++) {
+            if (!visibleColumns[i]) {
+                realCol--;
             }
-            i++;
-        } while (i < n);
-        // If we are on an invisible column,
-        // we have to go one step further
-        while (!(visibleColumns[n])) {
-            n++;
         }
-        return n;
+        return realCol;
     }
+
+    /* public static void main(String[] args) {
+    boolean[] cols = new boolean[]{true, false, false, false, false, true, false, false};
+    int realCol = 5;
+    for (int i = 0; i < 5; i++) {
+    if (!cols[i]) {
+    realCol--;
+    }
+    }
+    System.out.println("Real " + realCol);
+    }*/
 }

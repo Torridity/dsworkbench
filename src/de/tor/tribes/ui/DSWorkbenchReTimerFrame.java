@@ -97,7 +97,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     Ankunft in:	0:08:41
     » abbrechen
      */
-    public void setup() {
+    public void resetView() {
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             model.addElement(unit);
@@ -1533,6 +1533,6 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
 
     @Override
     public void fireTagsChangedEvent() {
-        setup();
+        resetView();
     }
 }

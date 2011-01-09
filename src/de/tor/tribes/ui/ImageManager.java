@@ -6,6 +6,7 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.ImpossibleSnobUnit;
 import de.tor.tribes.util.ImageUtils;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -60,6 +61,7 @@ public class ImageManager {
     public final static int ICON_KNIGHT = 10;
     public final static int ICON_SNOB = 11;
     public final static int ICON_UNKNOWN = 12;
+    public final static int ICON_IMPOSSIBLE_SNOB = 13;
     //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Minimap cursor IDs">
     public final static int CURSOR_MOVE = 13;
@@ -117,21 +119,36 @@ public class ImageManager {
     public final static int NOTE_SYMBOL_DEF_ARCH = 13;
     public final static int NOTE_SYMBOL_FAKE = 14;
     public final static int NOTE_SYMBOL_ALLY = 15;
-    public final static int NOTE_SYMBOL_ATTACK = 16;
-    public final static int NOTE_SYMBOL_OUT = 17;
-    public final static int NOTE_SYMBOL_IN = 18;
-    public final static int NOTE_SYMBOL_BALL_BLUE = 19;
-    public final static int NOTE_SYMBOL_BALL_GREEN = 20;
-    public final static int NOTE_SYMBOL_BALL_YELLOW = 21;
-    public final static int NOTE_SYMBOL_BALL_RED = 22;
-    public final static int NOTE_SYMBOL_BALL_GREY = 23;
-    public final static int NOTE_SYMBOL_WARN = 24;
-    public final static int NOTE_SYMBOL_DIE = 25;
-    public final static int NOTE_SYMBOL_ADD = 26;
-    public final static int NOTE_SYMBOL_REMOVE = 27;
-    public final static int NOTE_SYMBOL_CHECK = 28;
-    public final static int NOTE_SYMBOL_EYE = 29;
-    public final static int NOTE_SYMBOL_NO_EYE = 30;
+    public final static int NOTE_SYMBOL_OUT = 16;
+    public final static int NOTE_SYMBOL_IN = 17;
+    public final static int NOTE_SYMBOL_BALL_BLUE = 18;
+    public final static int NOTE_SYMBOL_BALL_GREEN = 19;
+    public final static int NOTE_SYMBOL_BALL_YELLOW = 20;
+    public final static int NOTE_SYMBOL_BALL_RED = 21;
+    public final static int NOTE_SYMBOL_BALL_GREY = 22;
+    public final static int NOTE_SYMBOL_WARN = 23;
+    public final static int NOTE_SYMBOL_DIE = 24;
+    public final static int NOTE_SYMBOL_ADD = 25;
+    public final static int NOTE_SYMBOL_REMOVE = 26;
+    public final static int NOTE_SYMBOL_CHECK = 27;
+    public final static int NOTE_SYMBOL_EYE = 28;
+    public final static int NOTE_SYMBOL_NO_EYE = 29;
+    public final static int NOTE_SYMBOL_MAIN = 30;
+    public final static int NOTE_SYMBOL_BARRACkS = 31;
+    public final static int NOTE_SYMBOL_STABLE = 32;
+    public final static int NOTE_SYMBOL_GARAGE = 33;
+    public final static int NOTE_SYMBOL_CHURCH = 34;
+    public final static int NOTE_SYMBOL_AH = 35;
+    public final static int NOTE_SYMBOL_SMITHY = 36;
+    public final static int NOTE_SYMBOL_PLACE = 37;
+    public final static int NOTE_SYMBOL_STATUE = 38;
+    public final static int NOTE_SYMBOL_MARKET = 39;
+    public final static int NOTE_SYMBOL_WOOD = 40;
+    public final static int NOTE_SYMBOL_STONE = 41;
+    public final static int NOTE_SYMBOL_IRON = 42;
+    public final static int NOTE_SYMBOL_FARM = 43;
+    public final static int NOTE_SYMBOL_STORAGE = 44;
+    public final static int NOTE_SYMBOL_WALL = 45;
 
     static {
         try {
@@ -152,7 +169,6 @@ public class ImageManager {
                         new File("graphics/icons/def_archer.png").toURI().toURL(),
                         ImageManager.class.getResource("/res/ui/fake.png"),
                         ImageManager.class.getResource("/res/ally.png"),
-                        ImageManager.class.getResource("/res/barracks.png"),
                         new File("graphics/icons/move_out.png").toURI().toURL(),
                         new File("graphics/icons/move_in.png").toURI().toURL(),
                         ImageManager.class.getResource("/res/ui/bullet_ball_blue.png"),
@@ -166,7 +182,23 @@ public class ImageManager {
                         ImageManager.class.getResource("/res/remove.gif"),
                         ImageManager.class.getResource("/res/checkbox.png"),
                         ImageManager.class.getResource("/res/ui/eye.png"),
-                        ImageManager.class.getResource("/res/ui/eye_forbidden.png")};
+                        ImageManager.class.getResource("/res/ui/eye_forbidden.png"),
+                        new File("graphics/icons/main.png").toURI().toURL(),
+                        new File("graphics/icons/barracks.png").toURI().toURL(),
+                        new File("graphics/icons/stable.png").toURI().toURL(),
+                        new File("graphics/icons/garage.png").toURI().toURL(),
+                        new File("graphics/icons/church.png").toURI().toURL(),
+                        new File("graphics/icons/ah.png").toURI().toURL(),
+                        new File("graphics/icons/smith.png").toURI().toURL(),
+                        new File("graphics/icons/place.png").toURI().toURL(),
+                        new File("graphics/icons/statue.png").toURI().toURL(),
+                        new File("graphics/icons/market.png").toURI().toURL(),
+                        new File("graphics/icons/wood.png").toURI().toURL(),
+                        new File("graphics/icons/stone.png").toURI().toURL(),
+                        new File("graphics/icons/iron.png").toURI().toURL(),
+                        new File("graphics/icons/farm.png").toURI().toURL(),
+                        new File("graphics/icons/storage.png").toURI().toURL(),
+                        new File("graphics/icons/wall.png").toURI().toURL()};
         } catch (Exception e) {
             NOTE_URLS = null;
         }
@@ -270,6 +302,17 @@ public class ImageManager {
         return NOTE_URLS[pNoteId];
     }
 
+    public static URL getNoteImageURLOnServer(int pNoteId) {
+        URL noteUrl = NOTE_URLS[pNoteId];
+        String name = new File(noteUrl.getFile()).getName();
+        try {
+            return new URL("http://www.dsworkbench.de/DSWorkbench/icons/" + name);
+        } catch (Exception e) {
+            logger.error("Failed to create URL on server for note icon '" + name + "'");
+            return noteUrl;
+        }
+    }
+
     public static BufferedImage getNoteIcon(int v) {
         return NOTE_ICONS.get(v);
     }
@@ -319,6 +362,7 @@ public class ImageManager {
             UNIT_IMAGES.add(ImageUtils.loadImage(new File("graphics/icons/knight.png")));//10
             UNIT_IMAGES.add(ImageUtils.loadImage(new File("graphics/icons/snob.png")));//11
             UNIT_IMAGES.add(ImageUtils.loadImage(new File("graphics/icons/unknown.png")));//12
+            UNIT_IMAGES.add(ImageUtils.loadImage(new File("graphics/icons/impossible_snob.png")));//12
             for (BufferedImage i : UNIT_IMAGES) {
                 //add unit icon to note symbol
                 //  NOTE_SYMBOLS.add(i);
@@ -453,12 +497,14 @@ public class ImageManager {
             return UNIT_ICONS.get(ICON_RAM);
         } else if (pUnit.getPlainName().equals("catapult")) {
             return UNIT_ICONS.get(ICON_CATA);
-        } else if (pUnit.getPlainName().equals("snob")) {
+        } else if (pUnit.getPlainName().equals("snob") && !pUnit.equals(ImpossibleSnobUnit.getSingleton())) {
             return UNIT_ICONS.get(ICON_SNOB);
         } else if (pUnit.getPlainName().equals("knight")) {
             return UNIT_ICONS.get(ICON_KNIGHT);
-        } else {
+        } else if (pUnit.getPlainName().equals("unknown")) {
             return UNIT_ICONS.get(ICON_UNKNOWN);
+        } else {
+            return UNIT_ICONS.get(ICON_IMPOSSIBLE_SNOB);
         }
     }
 
@@ -503,5 +549,11 @@ public class ImageManager {
             return UNIT_IMAGES.get(ICON_UNKNOWN);
         }
 
+    }
+
+    public static void main(String[] args) throws Exception {
+        URL u = new File("graphics/icons/spear.png").toURI().toURL();
+        u = ImageManager.class.getResource("/res/ui/fake.png");
+        System.out.println(new File(u.getFile()).getName());
     }
 }

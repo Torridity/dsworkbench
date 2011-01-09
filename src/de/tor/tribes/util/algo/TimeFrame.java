@@ -4,373 +4,475 @@
  */
 package de.tor.tribes.util.algo;
 
+import de.tor.tribes.types.AnyTribe;
 import de.tor.tribes.types.TimeSpan;
 import de.tor.tribes.types.Tribe;
-import java.awt.Point;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.commons.lang.math.IntRange;
+import org.apache.commons.lang.math.LongRange;
+import org.apache.commons.lang.time.DateUtils;
 
 /**
- * @author Jejkal
+ *
+ * @author Torridity
  */
 public class TimeFrame {
 
-    private long start = 0;
-    private long end = 0;
-    private List<TimeSpan> timeSpans = null;
-    private boolean variableArriveTime = false;
-    private int variableArriveStartHour = -1;
-    private int variableArriveEndHour = -1;
+    private long startNotBefore = 0;
+    private long startNotAfter = 0;
+    private long arriveNotBefore = 0;
+    private long arriveNotAfter = 0;
+    private List<TimeSpan> sendTimeSpans = null;
+    private List<TimeSpan> arriveTimeSpans = null;
 
-    public TimeFrame(Date pStart, Date pEnd, int pMinHour, int pMaxHour) {
-        start = pStart.getTime();
-        end = pEnd.getTime();
-        timeSpans = new LinkedList<TimeSpan>();
+    public TimeFrame(Date pStartNotBefore, Date pArriveNotBefore, Date pStartNotAfter, Date pArriveNotAfter, List<TimeSpan> pSendTimeSpans, List<TimeSpan> pArriveTimeSpans) {
+        startNotBefore = pStartNotBefore.getTime();
+        startNotAfter = pStartNotAfter.getTime();
+        arriveNotBefore = pArriveNotBefore.getTime();
+        arriveNotAfter = pArriveNotAfter.getTime();
+        sendTimeSpans = new LinkedList<TimeSpan>();
+        arriveTimeSpans = new LinkedList<TimeSpan>();
+        if (pSendTimeSpans != null) {
+            Collections.copy(sendTimeSpans, pSendTimeSpans);
+        }
+        if (pArriveTimeSpans != null) {
+            Collections.copy(arriveTimeSpans, pArriveTimeSpans);
+        }
     }
 
-    public TimeFrame(Date pStart, Date pEnd) {
-        start = pStart.getTime();
-        end = pEnd.getTime();
-        timeSpans = new LinkedList<TimeSpan>();
+    public TimeFrame(Date pStartNotBefore, Date pArriveNotBefore, Date pStartNotAfter, Date pArriveNotAfter) {
+        this(pStartNotBefore, pStartNotAfter, pArriveNotBefore, pArriveNotAfter, null, null);
     }
 
-    public void setStart(long pTime) {
-        start = pTime;
+    public void setStartNotBefore(Date pStartNotBefore) {
+        startNotBefore = pStartNotBefore.getTime();
     }
 
-    public void setEnd(long pTime) {
-        end = pTime;
+    public void setArriveNotBefore(Date pArriveNotBefore) {
+        arriveNotBefore = pArriveNotBefore.getTime();
     }
 
-    public void setArriveSpan(int pStartHour, int pEndHour) {
-        variableArriveStartHour = pStartHour;
-        variableArriveEndHour = pEndHour;
+    public boolean addStartTimeSpan(TimeSpan pSpan) {
+        for (TimeSpan span : sendTimeSpans) {
+            if (span.intersects(pSpan)) {
+                return false;
+            }
+        }
+        sendTimeSpans.add(pSpan);
+        return true;
     }
 
-    public void setUseVariableArriveTime(boolean pValue) {
-        variableArriveTime = pValue;
+    public boolean addArriveTimeSpan(TimeSpan pSpan) {
+        for (TimeSpan span : arriveTimeSpans) {
+            if (span.intersects(pSpan)) {
+                return false;
+            }
+        }
+        arriveTimeSpans.add(pSpan);
+        return true;
     }
 
-    public boolean isVariableArriveTime() {
-        return variableArriveTime;
+    public LongRange getStartRange() {
+        return new LongRange(startNotBefore, startNotAfter);
     }
 
-    public void addTimeSpan(TimeSpan pSpan) {
-        timeSpans.add(pSpan);
+    public LongRange getArriveRange() {
+        return new LongRange(arriveNotBefore, arriveNotAfter);
     }
 
-    public boolean inside(Date pDate, Tribe pTribe) {
-        long t = pDate.getTime();
-        Calendar c = Calendar.getInstance();
-        c.setTime(pDate);
-        int hour = c.get(Calendar.HOUR_OF_DAY);
-        int minute = c.get(Calendar.MINUTE);
-        int second = c.get(Calendar.SECOND);
-        int day = c.get(Calendar.DAY_OF_MONTH);
-        int month = c.get(Calendar.MONTH);
-        int year = c.get(Calendar.YEAR);
-        boolean inFrame = false;
-        if ((t > start) && (t < end)) {
-            for (TimeSpan span : timeSpans) {
-                // System.out.println("Check frame for " + pTribe);
-                if (span.isValidFor() == null || span.isValidFor() == pTribe) {
-                    //System.out.println("Tribe " + span.isValidFor() + " affected by " + span);
-                    Date d = span.getAtDate();
-                    if (d != null) {
-                        //check day
-                        Calendar c2 = Calendar.getInstance();
-                        c2.setTime(d);
-                        if (c2.get(Calendar.DAY_OF_MONTH) == day && c2.get(Calendar.MONTH) == month && c2.get(Calendar.YEAR) == year) {
-                            //date is the same, so check span
-                            Point p = span.getSpan();
-                            inFrame = ((hour >= p.x) && ((hour <= p.y) && (minute <= 59) && (second <= 59)));
-                            if (inFrame) {
-                                break;
-                            }
-                        }
-                    } else {
-                        //"every day" span, so only check time
-                        Point p = span.getSpan();
-                        inFrame = ((hour >= p.x) && ((hour <= p.y) && (minute <= 59) && (second <= 59)));
-                        if (inFrame) {
-                            break;
+    /**Check if a movement with the provided runtime is possible for this AttackFitter
+     * @param pRuntime Runtime to check
+     * @param pTribe Tribe for which the runtime is valid
+     * @return boolean TRUE=Runtime might be fitted if not all send times are already used
+     */
+    public boolean isMovementPossible(long pRuntime, Tribe pTribe) {
+        List<LongRange> startRanges = startTimespansToRanges(pTribe);
+        List<LongRange> arriveRanges = arriveTimespansToRanges(pTribe);
+
+        for (LongRange currentStartRange : startRanges) {
+            LongRange arriveRangeForStartRange = new LongRange(currentStartRange.getMinimumLong() + pRuntime, currentStartRange.getMaximumLong() + pRuntime);
+            for (LongRange currentArriveRange : arriveRanges) {
+                if (currentArriveRange.overlapsRange(arriveRangeForStartRange)) {
+                    //movement with 'pRuntime' starting in 'currentStartRange' will arrive withing 'currentArriveRange'
+                    return true;
+                }
+            }
+        }
+
+        //no overlapping range was found
+        return false;
+    }
+
+    /**Returns an arrive date that fits into this AttackFitter and is based on the provided runtime
+     * @param pRuntime Runtime to fit into
+     * @param pTribe Tribe for which the arrive date should be valid
+     * @param pUsedSendTimes Already used send times (possible times are checked in steps of 10 seconds)
+     * @return Date Fitted arrive time
+     */
+    public Date getFittedArriveTime(long pRuntime, Tribe pTribe, List<Long> pUsedSendTimes) {
+        List<LongRange> startRanges = startTimespansToRanges(pTribe);
+        List<LongRange> arriveRanges = arriveTimespansToRanges(pTribe);
+
+        for (LongRange currentStartRange : startRanges) {
+            LongRange arriveRangeForStartRange = new LongRange(currentStartRange.getMinimumLong() + pRuntime, currentStartRange.getMaximumLong() + pRuntime);
+            for (LongRange currentArriveRange : arriveRanges) {
+                if (currentArriveRange.overlapsRange(arriveRangeForStartRange)) {
+                    //movement possible for these 'currentStartRange' and 'currentArriveRange' so fit runtime into
+                    //           |-----------|
+                    //   |--------------|
+                    long minArrive = currentArriveRange.getMinimumLong();
+                    long minArriveForStartRange = arriveRangeForStartRange.getMinimumLong();
+                    long checkStart = 0;
+                    if (minArrive < minArriveForStartRange) {
+
+                        //|----------- (Arrive)
+                        //   |-------------- (ArriveForStart)
+                        //check everything beginning with 'minArriveForStartRange'
+                        checkStart = minArriveForStartRange;
+                    } else if (minArriveForStartRange <= minArrive) {
+
+                        //     |----------- (Arrive)
+                        //|-------------- (ArriveForStart)
+                        //check everything beginning with 'minArrive'
+                        checkStart = minArrive;
+                    }
+                    long maxArrive = currentArriveRange.getMaximumLong();
+                    long maxArriveForStartRange = arriveRangeForStartRange.getMaximumLong();
+                    long checkEnd = 0;
+                    if (maxArrive < maxArriveForStartRange) {
+                        //-----------| (Arrive)
+                        //---------------| (ArriveForStart)
+                        //check everything until 'maxArrive'
+                        checkEnd = maxArrive;
+                    } else if (maxArriveForStartRange <= maxArrive) {
+                        //-------------| (Arrive)
+                        //---------| (ArriveForStart)
+                        //check everything until 'maxArriveForStartRange'
+                        checkEnd = maxArriveForStartRange;
+                    }
+
+                    for (long arriveTime = checkStart; arriveTime <= checkEnd; arriveTime += 10000) {
+                        if (!pUsedSendTimes.contains(arriveTime - pRuntime)) {
+                            pUsedSendTimes.add(arriveTime - pRuntime);
+                            return new Date(arriveTime);
                         }
                     }
                 }
             }
         }
-        return inFrame;
-    }
-
-    public Date fitInto(long pRuntime, int pArriveStartHour, int pArriveEndHour, Tribe pTribe, List<Long> usedDates) {
-        Date arrive = new Date(end);
-        Calendar c = Calendar.getInstance();
-        c.setTime(arrive);
-        c.set(Calendar.HOUR_OF_DAY, pArriveStartHour);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        Date minDate = c.getTime();
-        c = Calendar.getInstance();
-        c.setTime(arrive);
-        c.set(Calendar.HOUR_OF_DAY, pArriveEndHour - 1);
-        c.set(Calendar.MINUTE, 59);
-        c.set(Calendar.SECOND, 59);
-        Date maxDate = c.getTime();
-        long pEnd = end;
-        for (long l = minDate.getTime(); l <= maxDate.getTime(); l += 60000) {
-            end = l;
-            Date current = new Date(l - pRuntime);
-            if (inside(current, pTribe)) {
-                if (usedDates.contains(current.getTime())) {
-                    l += 10000;
-                } else {
-                    end = pEnd;
-                    return current;
-                }
-            }
-        }
-        end = pEnd;
         return null;
     }
 
-    public Date getRandomArriveTime(long pRuntime, Tribe pTribe, List<Long> usedDates) {
-        List<Long> l = timespansToTimeframes(pTribe);
-        //SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
-        Calendar arriveStart = Calendar.getInstance();
-        arriveStart.setTimeInMillis(end);
-        arriveStart.set(Calendar.HOUR_OF_DAY, variableArriveStartHour);
-        arriveStart.set(Calendar.MINUTE, 0);
-        arriveStart.set(Calendar.SECOND, 0);
-        arriveStart.set(Calendar.MILLISECOND, 0);
-        Calendar arriveEnd = Calendar.getInstance();
-        arriveEnd.setTimeInMillis(end);
-        arriveEnd.set(Calendar.HOUR_OF_DAY, variableArriveEndHour - 1);
-        arriveEnd.set(Calendar.MINUTE, 59);
-        arriveEnd.set(Calendar.SECOND, 59);
-        arriveEnd.set(Calendar.MILLISECOND, 999);
-        boolean first = true;
+    public List<LongRange> startTimespansToRanges(Tribe pTribe) {
+        List<LongRange> ranges = new LinkedList<LongRange>();
+        Date startDate = DateUtils.truncate(new Date(startNotBefore), Calendar.DAY_OF_MONTH);
 
-        while (!l.isEmpty()) {
-            long s = l.remove(0);
-            if (first) {
-                //use start time in first iteration
-                if (s < start) {
-                    s = start;
-                    first = false;
+        for (TimeSpan span : sendTimeSpans) {
+            Date onlyAtDay = span.getAtDate();
+            Date thisDate = new Date(startDate.getTime());
+            //check if span is valid for provided tribe
+            if (pTribe == null || pTribe.equals(AnyTribe.getSingleton()) || span.isValidForTribe(pTribe)) {
+                //go through all days from start to end
+                while (thisDate.getTime() < startNotAfter) {
+                    if (onlyAtDay == null || DateUtils.isSameDay(thisDate, onlyAtDay)) {
+                        //span is valid for every day or this day equals the only valid day
+                        Date spanStartDate = DateUtils.setHours(thisDate, span.getSpan().getMinimumInteger());
+                        Date spanEndDate = DateUtils.setHours(thisDate, span.getSpan().getMaximumInteger() - 1);
+                        spanEndDate = DateUtils.setMinutes(spanEndDate, 59);
+                        spanEndDate = DateUtils.setSeconds(spanEndDate, 59);
+                        //check span location relative to start frame
+                        if (spanStartDate.getTime() >= startNotBefore && spanEndDate.getTime() > startNotBefore
+                                && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() <= startNotAfter) {
+                            //|----------| (startNotBefore - startNotAfter)
+                            //  |----| (SpanStart - SpanEnd)
+                            ranges.add(new LongRange(spanStartDate.getTime(), spanEndDate.getTime()));
+                        } else if (spanStartDate.getTime() < startNotBefore && spanEndDate.getTime() > startNotBefore
+                                && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() <= startNotAfter) {
+                            //  |----------| (startNotBefore - startNotAfter)
+                            //|----| (SpanStart - SpanEnd)
+                            //set span start to 'startNotBefore'
+                            ranges.add(new LongRange(startNotBefore, spanEndDate.getTime()));
+                        } else if (spanStartDate.getTime() <= startNotBefore && spanEndDate.getTime() > startNotBefore
+                                && spanStartDate.getTime() > startNotAfter && spanEndDate.getTime() >= startNotAfter) {
+                            //  |----------| (startNotBefore - startNotAfter)
+                            //|--------------| (SpanStart - SpanEnd)
+                            //set span start to 'startNotBefore'
+                            ranges.add(new LongRange(startNotBefore, startNotAfter));
+                        } else if (spanStartDate.getTime() >= startNotBefore && spanEndDate.getTime() > startNotBefore
+                                && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() >= startNotAfter) {
+                            //|----------| (startNotBefore - startNotAfter)
+                            //    |---------| (SpanStart - SpanEnd)
+                            //set span start to 'startNotBefore'
+                            ranges.add(new LongRange(spanStartDate.getTime(), startNotAfter));
+                        }
+                    }
+                    //increment current date by one day
+                    thisDate = DateUtils.addDays(thisDate, 1);
                 }
             }
-            long e = l.remove(0);
-            //System.out.println("Start: " + f.format(new Date(s)));
-            //System.out.println("End: " + f.format(new Date(e)));
-            Calendar calStart = Calendar.getInstance();
-            calStart.setTimeInMillis(s + pRuntime);
-            Calendar calEnd = Calendar.getInstance();
-            calEnd.setTimeInMillis(e + pRuntime);
-            //System.out.println("CalStart: " + f.format(calStart.getTime()));
-            //System.out.println("CalEnd: " + f.format(calEnd.getTime()));
 
-            boolean startFits = (calStart.get(Calendar.HOUR_OF_DAY) >= arriveStart.getTimeInMillis() && calStart.get(Calendar.HOUR_OF_DAY) < arriveEnd.getTimeInMillis());
-            boolean endFits = (calEnd.get(Calendar.HOUR_OF_DAY) >= arriveStart.getTimeInMillis() && calEnd.get(Calendar.HOUR_OF_DAY) < arriveEnd.getTimeInMillis());
-            long firstTerm = -1;
-            long randomTerm = -1;
+        }
+        Collections.sort(ranges, new Comparator<LongRange>() {
 
-            if (startFits && endFits) {
-                //return new Date(s + (long) Math.round(Math.random() * (double) (e - s)));
-                firstTerm = s;
-                randomTerm = e - s;
-            } else if (startFits) {
-                long diff = arriveEnd.getTimeInMillis() - calStart.getTimeInMillis();
-                // return new Date(s + (long) Math.round(Math.random() * (double) (diff)));
-                firstTerm = s;
-                randomTerm = diff;
-            } else if (endFits) {
-                long diff = arriveEnd.getTimeInMillis() - calEnd.getTimeInMillis();
-                //return new Date(e + (long) Math.round(Math.random() * (double) (diff)));
-                firstTerm = e;
-                randomTerm = diff;
-            } else {
-                long startPoss = -1;
-                long endPoss = -1;
-                for (long i = s; i < e; i += 60000) {
-                    if (i + pRuntime >= arriveStart.getTimeInMillis() && i + pRuntime < arriveEnd.getTimeInMillis()) {
-                        if (startPoss == -1) {
-                            startPoss = i;
+            @Override
+            public int compare(LongRange o1, LongRange o2) {
+                return new Long(o1.getMinimumLong()).compareTo(new Long(o2.getMinimumLong()));
+            }
+        });
+        return ranges;
+    }
+
+    public HashMap<LongRange, TimeSpan> startTimespansToRangesMap(Tribe pTribe) {
+        HashMap<LongRange, TimeSpan> rangesMap = new HashMap<LongRange, TimeSpan>();
+        Date startDate = DateUtils.truncate(new Date(startNotBefore), Calendar.DAY_OF_MONTH);
+
+        for (TimeSpan span : sendTimeSpans) {
+            Date onlyAtDay = span.getAtDate();
+            Date thisDate = new Date(startDate.getTime());
+            //check if span is valid for provided tribe
+            if (pTribe == null || pTribe.equals(AnyTribe.getSingleton()) || span.isValidForTribe(pTribe)) {
+                //go through all days from start to end
+
+                while (thisDate.getTime() < startNotAfter) {
+                    if (onlyAtDay == null || DateUtils.isSameDay(thisDate, onlyAtDay)) {
+                        //span is valid for every day or this day equals the only valid day
+                        Date spanStartDate = DateUtils.setHours(thisDate, span.getSpan().getMinimumInteger());
+                        Date spanEndDate = DateUtils.setHours(thisDate, span.getSpan().getMaximumInteger() - 1);
+                        spanEndDate = DateUtils.setMinutes(spanEndDate, 59);
+                        spanEndDate = DateUtils.setSeconds(spanEndDate, 59);
+                        //check span location relative to start frame
+                        if (spanStartDate.getTime() >= startNotBefore && spanEndDate.getTime() > startNotBefore
+                                && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() <= startNotAfter) {
+                            //|----------| (startNotBefore - startNotAfter)
+                            //  |----| (SpanStart - SpanEnd)
+                            rangesMap.put(new LongRange(spanStartDate.getTime(), spanEndDate.getTime()), span);
+                        } else if (spanStartDate.getTime() < startNotBefore && spanEndDate.getTime() > startNotBefore
+                                && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() <= startNotAfter) {
+                            //  |----------| (startNotBefore - startNotAfter)
+                            //|----| (SpanStart - SpanEnd)
+                            //set span start to 'startNotBefore'
+                            rangesMap.put(new LongRange(startNotBefore, spanEndDate.getTime()), span);
+                        } else if (spanStartDate.getTime() <= startNotBefore && spanEndDate.getTime() > startNotBefore
+                                && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() >= startNotAfter) {
+                            //  |----------| (startNotBefore - startNotAfter)
+                            //|--------------| (SpanStart - SpanEnd)
+                            //set span start to 'startNotBefore'
+                            rangesMap.put(new LongRange(startNotBefore, startNotAfter), span);
+                        } else if (spanStartDate.getTime() >= startNotBefore && spanEndDate.getTime() > startNotBefore
+                                && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() >= startNotAfter) {
+                            //|----------| (startNotBefore - startNotAfter)
+                            //    |---------| (SpanStart - SpanEnd)
+                            //set span start to 'startNotBefore'
+                            rangesMap.put(new LongRange(spanStartDate.getTime(), startNotAfter), span);
+                        }
+                    }
+                    //increment current date by one day
+                    thisDate = DateUtils.addDays(thisDate, 1);
+                }
+            }
+        }
+
+        return rangesMap;
+    }
+
+    public List<LongRange> arriveTimespansToRanges(Tribe pTribe) {
+        List<LongRange> ranges = new LinkedList<LongRange>();
+        Date arriveDate = DateUtils.truncate(new Date(arriveNotBefore), Calendar.DAY_OF_MONTH);
+
+        for (TimeSpan span : arriveTimeSpans) {
+            Date thisDate = new Date(arriveDate.getTime());
+            //check if span is valid for provided tribe
+            if (pTribe == null || pTribe.equals(AnyTribe.getSingleton()) || span.isValidForTribe(pTribe)) {
+                //go through all days from start to end
+                while (thisDate.getTime() < arriveNotAfter) {
+                    Date onlyValidAtDay = span.getAtDate();
+                    //check if span is valid on every day or if we check the span's day of validity
+                    //(if we do so, the span should not be valid for an exact date because then we don't have a timespan)
+                    if (span.isValidAtEveryDay() || (DateUtils.isSameDay(thisDate, onlyValidAtDay) && !span.isValidAtExactTime())) {
+                        //span is valid for every day or this day equals the only valid day
+                        Date spanStartDate = DateUtils.setHours(thisDate, span.getSpan().getMinimumInteger());
+                        //set end date to last second in end hour
+                        Date spanEndDate = DateUtils.setHours(thisDate, span.getSpan().getMaximumInteger() - 1);
+                        spanEndDate = DateUtils.setMinutes(spanEndDate, 59);
+                        spanEndDate = DateUtils.setSeconds(spanEndDate, 59);
+
+
+                        if (spanStartDate.getTime() >= arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
+                                && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() <= arriveNotAfter) {
+                            //|----------| (arriveNotBefore - arriveNotAfter)
+                            //  |----| (SpanStart - SpanEnd)
+                            ranges.add(new LongRange(spanStartDate.getTime(), spanEndDate.getTime()));
+                        } else if (spanStartDate.getTime() < arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
+                                && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() <= arriveNotAfter) {
+                            //  |----------| (arriveNotBefore - arriveNotAfter)
+                            //|----| (SpanStart - SpanEnd)
+                            ranges.add(new LongRange(arriveNotBefore, spanEndDate.getTime()));
+                        } else if (spanStartDate.getTime() < arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
+                                && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() > arriveNotAfter) {
+                            //  |----------| (arriveNotBefore - arriveNotAfter)
+                            //|--------------| (SpanStart - SpanEnd)
+                            ranges.add(new LongRange(arriveNotBefore, arriveNotAfter));
+                        } else if (spanStartDate.getTime() >= arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
+                                && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() > arriveNotAfter) {
+                            //|----------| (arriveNotBefore - arriveNotAfter)
+                            //    |---------| (SpanStart - SpanEnd)
+                            ranges.add(new LongRange(spanStartDate.getTime(), arriveNotAfter));
                         } else {
-                            endPoss = i;
+                            //ignore span because it is located completely outside
                         }
-                    } else {
-                        if (startPoss != -1) {
-                            //end reached, not longer valid
+                    } else if (span.isValidAtExactTime()) {
+                        //time span is only valid at a specific date, so check if this date is located withing arriveStart and arriveEnd
+                        if (span.getAtDate().getTime() >= arriveNotBefore && span.getAtDate().getTime() <= arriveNotAfter) {
+                            //add specific date range
+                            ranges.add(new LongRange(span.getAtDate().getTime(), span.getAtDate().getTime()));
+                            //for exact arrival we do not increment further
                             break;
                         }
                     }
+                    //increment current date by one day
+                    thisDate = DateUtils.addDays(thisDate, 1);
                 }
-                if (startPoss != -1 && endPoss != -1) {
-                    //valid start and end  found
-                    long diff = endPoss - startPoss;
-                    //return new Date(startPoss + (long) Math.round(Math.random() * (double) (diff)) + pRuntime);
-                    firstTerm = startPoss + pRuntime;
-                    randomTerm = diff;
-                }
-            }
-
-            if (firstTerm != -1 && randomTerm != -1) {
-                Date d = new Date(firstTerm + Math.round(Math.random() * (double) randomTerm));
-                while (usedDates.contains(d.getTime())) {
-                    d = new Date(firstTerm + Math.round(Math.random() * (double) randomTerm));
-                }
-                return d;
             }
         }
-        return null;
+        Collections.sort(ranges, new Comparator<LongRange>() {
+
+            @Override
+            public int compare(LongRange o1, LongRange o2) {
+                return new Long(o1.getMinimumLong()).compareTo(new Long(o2.getMinimumLong()));
+            }
+        });
+        return ranges;
     }
 
-    private List<Long> timespansToTimeframes(Tribe pTribe) {
-        Calendar cs = Calendar.getInstance();
-        cs.setTimeInMillis(start);
-        // int hour = cs.get(Calendar.HOUR_OF_DAY);
-        List<Calendar> days = new LinkedList<Calendar>();
-        cs.set(Calendar.HOUR_OF_DAY, 0);
-        cs.set(Calendar.MINUTE, 0);
-        cs.set(Calendar.SECOND, 0);
-        cs.set(Calendar.MILLISECOND, 0);
-        Calendar ce = Calendar.getInstance();
-        ce.setTimeInMillis(end);
-        ce.set(Calendar.HOUR_OF_DAY, 0);
-        ce.set(Calendar.MINUTE, 0);
-        ce.set(Calendar.SECOND, 0);
-        ce.set(Calendar.MILLISECOND, 0);
-        days.add(cs);
-        long ONE_DAY = 1000 * 60 * 60 * 24;
-        long startMillis = cs.getTimeInMillis();
-        while (startMillis < ce.getTimeInMillis()) {
-            //increment by one day and add to day list
-            Calendar c = Calendar.getInstance();
-            startMillis += ONE_DAY;
-            c.setTimeInMillis(startMillis);
-            days.add(c);
-        }
+    public HashMap<LongRange, TimeSpan> arriveTimespansToRangesMap(Tribe pTribe) {
+        HashMap<LongRange, TimeSpan> rangesMap = new HashMap<LongRange, TimeSpan>();
+        Date arriveDate = DateUtils.truncate(new Date(arriveNotBefore), Calendar.DAY_OF_MONTH);
 
-        Collections.sort(days);
-        List<Long> startEndTimes = new LinkedList<Long>();
-        for (TimeSpan span : timeSpans) {
-            if (span.isValidFor() == null || span.isValidFor().equals(pTribe)) {
-                Date d = span.getAtDate();
-                if (d != null) {
-                    Calendar cal = Calendar.getInstance();
-                    cal.setTime(d);
-                    cal.set(Calendar.HOUR_OF_DAY, 0);
-                    cal.set(Calendar.MINUTE, 0);
-                    cal.set(Calendar.SECOND, 0);
-                    cal.set(Calendar.MILLISECOND, 0);
-                    for (Calendar day : days) {
-                        if (day.get(Calendar.DAY_OF_MONTH) == cal.get(Calendar.DAY_OF_MONTH)
-                                && day.get(Calendar.MONTH) == cal.get(Calendar.MONTH)
-                                && day.get(Calendar.YEAR) == cal.get(Calendar.YEAR)) {
-                            //valid day
-                            Calendar c = Calendar.getInstance();
-                            c.setTime(day.getTime());
-                            c.set(Calendar.HOUR_OF_DAY, span.getSpan().x);
-                            startEndTimes.add(c.getTimeInMillis());
-                            c.set(Calendar.HOUR_OF_DAY, span.getSpan().y);
-                            c.set(Calendar.MINUTE, 59);
-                            c.set(Calendar.SECOND, 59);
-                            startEndTimes.add(c.getTimeInMillis());
+        for (TimeSpan span : arriveTimeSpans) {
+            Date thisDate = new Date(arriveDate.getTime());
+            //check if span is valid for provided tribe
+            if (pTribe == null || pTribe.equals(AnyTribe.getSingleton()) || span.isValidForTribe(pTribe)) {
+                //go through all days from start to end
+                while (thisDate.getTime() < arriveNotAfter) {
+                    Date onlyValidAtDay = span.getAtDate();
+                    //check if span is valid on every day or if we check the span's day of validity
+                    //(if we do so, the span should not be valid for an exact date because then we don't have a timespan)
+                    System.out.println(span);
+                    if (span.isValidAtEveryDay() || (DateUtils.isSameDay(thisDate, onlyValidAtDay) && !span.isValidAtExactTime())) {
+                        //span is valid for every day or this day equals the only valid day
+                        Date spanStartDate = DateUtils.setHours(thisDate, span.getSpan().getMinimumInteger());
+                        //set end date to last second in end hour
+                        Date spanEndDate = DateUtils.setHours(thisDate, span.getSpan().getMaximumInteger() - 1);
+                        spanEndDate = DateUtils.setMinutes(spanEndDate, 59);
+                        spanEndDate = DateUtils.setSeconds(spanEndDate, 59);
+                        if (spanStartDate.getTime() >= arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
+                                && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() <= arriveNotAfter) {
+                            //|----------| (arriveNotBefore - arriveNotAfter)
+                            //  |----| (SpanStart - SpanEnd)
+                            rangesMap.put(new LongRange(spanStartDate.getTime(), spanEndDate.getTime()), span);
+                        } else if (spanStartDate.getTime() < arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
+                                && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() <= arriveNotAfter) {
+                            //  |----------| (arriveNotBefore - arriveNotAfter)
+                            //|----| (SpanStart - SpanEnd)
+                            rangesMap.put(new LongRange(arriveNotBefore, spanEndDate.getTime()), span);
+                        } else if (spanStartDate.getTime() < arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
+                                && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() > arriveNotAfter) {
+                            //  |----------| (arriveNotBefore - arriveNotAfter)
+                            //|--------------| (SpanStart - SpanEnd)
+                            rangesMap.put(new LongRange(arriveNotBefore, arriveNotAfter), span);
+                        } else if (spanStartDate.getTime() >= arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
+                                && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() > arriveNotAfter) {
+                            //|----------| (arriveNotBefore - arriveNotAfter)
+                            //    |---------| (SpanStart - SpanEnd)
+                            rangesMap.put(new LongRange(spanStartDate.getTime(), arriveNotAfter), span);
+                        } else {
+                            //ignore span because it is located completely outside
+                        }
+                    } else if (span.isValidAtExactTime()) {
+                        //time span is only valid at a specific date, so check if this date is located withing arriveStart and arriveEnd
+                        if (span.getAtDate().getTime() >= arriveNotBefore && span.getAtDate().getTime() <= arriveNotAfter) {
+                            //add specific date range
+                            rangesMap.put(new LongRange(span.getAtDate().getTime(), span.getAtDate().getTime()), span);
+                            //for exact arrival we do not increment further
+                            break;
                         }
                     }
-                } else {
-                    for (Calendar day : days) {
-                        //valid day
-                        Calendar c = Calendar.getInstance();
-                        c.setTime(day.getTime());
-                        c.set(Calendar.HOUR_OF_DAY, span.getSpan().x);
-                        startEndTimes.add(c.getTimeInMillis());
-                        c.set(Calendar.HOUR_OF_DAY, span.getSpan().y);
-                        c.set(Calendar.MINUTE, 59);
-                        c.set(Calendar.SECOND, 59);
-                        startEndTimes.add(c.getTimeInMillis());
-                    }
+                    //increment current date by one day
+                    thisDate = DateUtils.addDays(thisDate, 1);
                 }
             }
         }
-        Collections.sort(startEndTimes);
-        return startEndTimes;
+
+        return rangesMap;
     }
 
-    public Date getArriveDate(long runtime) {
-        Calendar sendCal = Calendar.getInstance();
-        long TOLERANCE = 0 * 60 * 60 * 1000;
-        long TWENTY_MINUTES = 20 * 60 * 1000;
-        for (long l = start; l < end; l += TWENTY_MINUTES) {
-            long sendTime = l;
-            long arriveTime = sendTime + runtime;
-            sendCal.setTimeInMillis(sendTime);
-            int sendHour = sendCal.get(Calendar.HOUR_OF_DAY);
-            int sendMinute = sendCal.get(Calendar.MINUTE);
-            int sendSecond = sendCal.get(Calendar.SECOND);
-            int day = sendCal.get(Calendar.DAY_OF_MONTH);
-            int month = sendCal.get(Calendar.MONTH);
-            int year = sendCal.get(Calendar.YEAR);
+    public static void main(String[] args) throws Exception {
+        /* long pRuntime = DateUtils.MILLIS_PER_DAY + 2 * DateUtils.MILLIS_PER_HOUR + 30 * DateUtils.MILLIS_PER_MINUTE + 10 * DateUtils.MILLIS_PER_SECOND + 100;
+        long runtimeDays = pRuntime / DateUtils.MILLIS_PER_DAY;
+        pRuntime -= (runtimeDays * DateUtils.MILLIS_PER_DAY);
+        long runtimeHours = pRuntime / DateUtils.MILLIS_PER_HOUR;
+        pRuntime -= (runtimeHours * DateUtils.MILLIS_PER_HOUR);
+        long runtimeMinutes = pRuntime / DateUtils.MILLIS_PER_MINUTE;
+        pRuntime -= (runtimeMinutes * DateUtils.MILLIS_PER_MINUTE);
+        long runtimeSeconds = pRuntime / DateUtils.MILLIS_PER_SECOND;
+        long runtimeMillis = pRuntime - (runtimeSeconds * DateUtils.MILLIS_PER_SECOND);
+        Date startDate = new Date(System.currentTimeMillis());
+        startDate = DateUtils.truncate(startDate, Calendar.DAY_OF_MONTH);
 
-            Calendar arriveCal = Calendar.getInstance();
-            arriveCal.setTimeInMillis(arriveTime);
-            int arriveHour = arriveCal.get(Calendar.HOUR_OF_DAY);
-            boolean inFrame = false;
-            if (arriveHour >= 0 && arriveHour < 8) {
-                //only possible in night bonus
-            } else if (Math.abs(arriveTime - end) > TOLERANCE) {
-                //too far away
-            } else {
+        SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+        System.out.println(f.format(startDate));*/
+        // System.out.println(runtimeDays + " " + runtimeHours + " " + runtimeMinutes + " " + runtimeSeconds + " " + runtimeMillis);
+        SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
 
+        /* end = DateUtils.setHours(end, 0);
+        end = DateUtils.setMinutes(end, 0);
+        end = DateUtils.setSeconds(end, 0);
+        end = DateUtils.setMilliseconds(end, 0);*/
 
-                /*  for (Point p : mFrames) {
-                //check time frame parts
-                inFrame = ((sendHour >= p.x) && ((sendHour <= p.y) && (sendMinute <= 59) && (sendSecond <= 59)));
-                if (inFrame) {
-                arriveCal.setTimeInMillis(arriveTime);
-                return arriveCal.getTime();
-                }
-                }*/
+        TimeFrame frame = new TimeFrame(f.parse("28.12.2010 13:00:00"),
+                f.parse("29.12.2010 15:00:00"),
+                f.parse("29.12.2010 15:00:00"),
+                f.parse("30.12.2010 15:30:00"));
+        frame.addStartTimeSpan(new TimeSpan(new IntRange(0, 24)));
+        frame.addStartTimeSpan(new TimeSpan(f.parse("29.12.2010 00:00:00"), new IntRange(11, 12)));
 
-                for (TimeSpan span : timeSpans) {
-                    Date d = span.getAtDate();
-                    if (d != null) {
-                        //check day
-                        Calendar c2 = Calendar.getInstance();
-                        c2.setTime(d);
-                        if (c2.get(Calendar.DAY_OF_MONTH) == day && c2.get(Calendar.MONTH) == month && c2.get(Calendar.YEAR) == year) {
-                            //date is the same, so check span
-                            Point p = span.getSpan();
-                            inFrame = ((sendHour >= p.x) && ((sendHour <= p.y) && (sendMinute <= 59) && (sendMinute <= 59)));
-                            if (inFrame) {
-                                arriveCal.setTimeInMillis(arriveTime);
-                                return arriveCal.getTime();
-                            }
-                        }
-                    } else {
-                        //"every day" span, so only check time
-                        Point p = span.getSpan();
-                        inFrame = ((sendHour >= p.x) && ((sendHour <= p.y) && (sendMinute <= 59) && (sendMinute <= 59)));
-                        if (inFrame) {
-                            arriveCal.setTimeInMillis(arriveTime);
-                            return arriveCal.getTime();
-                        }
-                    }
-                }
-            }
+        // frame.addStartTimeSpan(new TimeSpan(f.parse("30.12.2010 13:41:14")));
+        System.out.println("Start: " + f.format(frame.startNotBefore) + " - " + f.format(frame.startNotAfter));
+        System.out.println("End: " + f.format(frame.arriveNotBefore) + " - " + f.format(frame.arriveNotAfter));
+        List<LongRange> spans = frame.startTimespansToRanges(null);
+        System.out.println("Start:");
+        for (LongRange range : spans) {
+            System.out.println(f.format(new Date(range.getMinimumLong())) + " - " + f.format(new Date(range.getMaximumLong())));
         }
-        return null;
-    }
+        System.out.println("Arrive:");
+        spans = frame.arriveTimespansToRanges(null);
 
-    public long getStart() {
-        return start;
-    }
+        for (LongRange range : spans) {
+            System.out.println(f.format(new Date(range.getMinimumLong())) + " - " + f.format(new Date(range.getMaximumLong())));
+        }
+        long pRuntime = DateUtils.MILLIS_PER_DAY;
+        System.out.println("Possible: " + frame.isMovementPossible(pRuntime, null));
+        List<Long> sendDates = new LinkedList<Long>();
+        /* for (int i = 0; i < 10; i++) {
 
-    public long getEnd() {
-        return end;
+        long time = pRuntime + (long) Math.round(10 * Math.random()) * 1000l;
+        System.out.println("Possible: " + frame.isMovementPossible(time, null));
+        System.out.println("Runtime: " + time);
+        Date d = frame.getFittedArriveTime(time, null, sendDates);
+        if (d != null) {
+        System.out.println("Arrive: " + f.format(d));
+        System.out.println("Send: " + f.format(new Date(d.getTime() - time)));
+        } else {
+        System.out.println("NO ARRIVE");
+        }
+        System.out.println("-------------");
+        }*/
     }
 }

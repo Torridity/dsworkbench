@@ -42,6 +42,7 @@ import java.awt.Component;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.ItemEvent;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -728,7 +729,7 @@ private void fireOpenPlaceInGameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         }
     }
 
-    protected void setupTroopsPanel() {
+    public void resetView() {
         jTroopsTable.invalidate();
         jTroopsTable.setModel(new DefaultTableModel());
         jTroopsTable.revalidate();
@@ -865,8 +866,40 @@ private void fireOpenPlaceInGameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         } catch (Exception e) {
             logger.error("Failed to update troops table", e);
         }
-
     }
+
+    // <editor-fold defaultstate="collapsed" desc="Gesture handling">
+    @Override
+    public void fireExportAsBBGestureEvent() {
+        fireCopyTroopInformationToClipboardEvent(null);
+    }
+
+    @Override
+    public void fireNextPageGestureEvent() {
+        int current = jTroopsViewTypeBox.getSelectedIndex();
+        int size = jTroopsViewTypeBox.getModel().getSize();
+        if (current + 1 > size - 1) {
+            current = 0;
+        } else {
+            current += 1;
+        }
+        jTroopsViewTypeBox.setSelectedIndex(current);
+        fireChangeViewTypeEvent(new ItemEvent(jTroopsViewTypeBox, 0, null, ItemEvent.SELECTED));
+    }
+
+    @Override
+    public void firePreviousPageGestureEvent() {
+        int current = jTroopsViewTypeBox.getSelectedIndex();
+        int size = jTroopsViewTypeBox.getModel().getSize();
+        if (current - 1 < 0) {
+            current = size - 1;
+        } else {
+            current -= 1;
+        }
+        jTroopsViewTypeBox.setSelectedIndex(current);
+        fireChangeViewTypeEvent(new ItemEvent(jTroopsViewTypeBox, 0, null, ItemEvent.SELECTED));
+    }
+// </editor-fold>
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jAddButton;
     private javax.swing.JDialog jAddTroopsDialog;

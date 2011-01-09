@@ -68,6 +68,10 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Dr
 // </editor-fold>
     }
 
+    public void resetView(){
+        
+    }
+
     public void updateFormList() {
         AbstractForm[] forms = null;
         jFormsList.invalidate();

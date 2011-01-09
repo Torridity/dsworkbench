@@ -70,6 +70,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
 
         jTagTable.setColumnSelectionAllowed(false);
         TagTableModel.getSingleton().resetRowSorter(jTagTable);
+        TagTableModel.getSingleton().loadColumnState();
         AlternatingColorCellRenderer rend = new AlternatingColorCellRenderer();
         jTagTable.setDefaultRenderer(TagMapMarker.class, new TagMapMarkerRenderer());
         jTagTable.setDefaultEditor(TagMapMarker.class, new TagMapMarkerCellEditor());
@@ -130,13 +131,9 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         return SINGLETON;
     }
 
-    public void setup() {
+    public void resetView() {
         //load tags on server change
         jTagTable.invalidate();
-        jTagTable.setModel(new DefaultTableModel());
-        jTagTable.revalidate();
-
-        jTagTable.setModel(TagTableModel.getSingleton());
         jTagTable.getTableHeader().setReorderingAllowed(false);
 
         //setup renderer and general view
@@ -145,6 +142,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         fireRebuildTableEvent();
         jTagTable.revalidate();
         TagTableModel.getSingleton().resetRowSorter(jTagTable);
+        TagTableModel.getSingleton().loadColumnState();
         jTagTable.repaint();
     }
 
@@ -590,6 +588,8 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         } catch (Exception e) {
             logger.error("Failed to update tag table", e);
         }
+        TagTableModel.getSingleton().resetRowSorter(jTagTable);
+        TagTableModel.getSingleton().loadColumnState();
     }
 
     @Override
@@ -623,6 +623,13 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         }
     }
 
+    // <editor-fold defaultstate="collapsed" desc="Gesture handling">
+    @Override
+    public void fireExportAsBBGestureEvent() {
+        fireCopyTagsAsBBCodeToClipboardEvent(null);
+    }
+
+    // </editor-fold>
     /**
      * @param args the command line arguments
      */

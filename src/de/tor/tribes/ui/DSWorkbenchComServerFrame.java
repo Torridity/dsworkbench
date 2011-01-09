@@ -39,6 +39,9 @@ public class DSWorkbenchComServerFrame extends AbstractDSWorkbenchFrame implemen
         jBanFrame.getContentPane().setBackground(Constants.DS_BACK);
     }
 
+    public void resetView() {
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

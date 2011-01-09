@@ -101,10 +101,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jTaskPaneGroup1.setBackground(Constants.DS_BACK);
         //color scrollpanes of selection dialog
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
-        ReportManagerTableModel.getSingleton().resetRowSorter(jReportTable);
         jReportTable.setColumnSelectionAllowed(false);
         jReportTable.getTableHeader().setReorderingAllowed(false);
-
 
         MouseListener l = new MouseListener() {
 
@@ -180,7 +178,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         pack();
     }
 
-    public void setup() {
+    public void resetView() {
         ReportManager.getSingleton().addReportManagerListener(this);
         jReportTable.setDefaultRenderer(Date.class, new DateCellRenderer("dd.MM.yy HH:mm"));
         jReportTable.setDefaultRenderer(FightReport.class, new FightReportCellRenderer());
@@ -1188,11 +1186,12 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             } catch (Exception e) {
             }
             jReportTable.getSelectionModel().clearSelection();
-            jReportTable.setRowSorter(new TableRowSorter(ReportManagerTableModel.getSingleton()));
             ReportManagerTableModel.getSingleton().setActiveReportSet((String) jReportSetBox.getSelectedItem());
             ReportManager.getSingleton().updateFilters();
-            jReportTable.repaint();
             jReportTable.revalidate();
+            ReportManagerTableModel.getSingleton().resetRowSorter(jReportTable);
+            ReportManagerTableModel.getSingleton().loadColumnState();
+            jReportTable.repaint();
         }
     }//GEN-LAST:event_fireReportSetChangedEvent
 
@@ -2195,6 +2194,44 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             return buildingDestruction;
         }
     }
+
+    // <editor-fold defaultstate="collapsed" desc="Gesture Handling">
+    @Override
+    public void fireExportAsBBGestureEvent() {
+        fireCopyReportsAsBBCodesToClipboardEvent(null);
+    }
+
+    @Override
+    public void fireNextPageGestureEvent() {
+        int current = jReportSetBox.getSelectedIndex();
+        int size = jReportSetBox.getModel().getSize();
+        if (current + 1 > size - 1) {
+            current = 0;
+        } else {
+            current += 1;
+        }
+        jReportSetBox.setSelectedIndex(current);
+        fireReportSetChangedEvent(new ItemEvent(jReportSetBox, 0, null, ItemEvent.SELECTED));
+    }
+
+    @Override
+    public void firePreviousPageGestureEvent() {
+        int current = jReportSetBox.getSelectedIndex();
+        int size = jReportSetBox.getModel().getSize();
+        if (current - 1 < 0) {
+            current = size - 1;
+        } else {
+            current -= 1;
+        }
+        jReportSetBox.setSelectedIndex(current);
+        fireReportSetChangedEvent(new ItemEvent(jReportSetBox, 0, null, ItemEvent.SELECTED));
+    }
+
+    @Override
+    public void fireRenameGestureEvent() {
+        fireRenameReportSetEvent(null);
+    }
+// </editor-fold>
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox jAddAsDefender;
     private javax.swing.JDialog jAddReportSetDialog;
@@ -2296,5 +2333,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             logger.error("Failed to update attacks table", e);
         }
         buildReportSetList();
+        ReportManagerTableModel.getSingleton().resetRowSorter(jReportTable);
+        ReportManagerTableModel.getSingleton().loadColumnState();
     }
 }

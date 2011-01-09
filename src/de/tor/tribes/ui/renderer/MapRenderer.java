@@ -15,6 +15,7 @@ import de.tor.tribes.types.BarbarianAlly;
 import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Church;
 import de.tor.tribes.types.Conquer;
+import de.tor.tribes.types.FreeForm;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.NoAlly;
 import de.tor.tribes.types.Note;
@@ -209,6 +210,7 @@ public class MapRenderer extends Thread {
 
         if (pType == ALL_LAYERS) {
             rend.reset();
+            rend2.reset();
             rend5.reset();
             rend8.reset();
             mapRedrawRequired = true;
@@ -356,7 +358,6 @@ public class MapRenderer extends Thread {
                 }
                 //render menu
                 MenuRenderer.getSingleton().renderMenu(g2d);
-
                 /*   if (MapPanel.getSingleton().requiresAlphaBlending()) {
                 g2d.drawImage(mFrontBuffer, 0, 0, null);
                 }*/
@@ -2055,6 +2056,7 @@ public class MapRenderer extends Thread {
         g2d.setComposite(com);
         g2d.setColor(cb);
     }
+    private Hashtable<Village, AnimatedVillageInfoRenderer> animators = new Hashtable<Village, AnimatedVillageInfoRenderer>();
 
     /**Render e.g. drag line, radar, popup*/
     private void renderLiveLayer(Graphics2D g2d) {
@@ -2076,7 +2078,6 @@ public class MapRenderer extends Thread {
                 f.renderForm(g2d);
             }
         }
-
         // <editor-fold defaultstate="collapsed" desc="Mark current players villages">
 
         if (Boolean.parseBoolean(GlobalOptions.getProperty("highlight.tribes.villages"))) {
@@ -2120,7 +2121,6 @@ public class MapRenderer extends Thread {
             g2d.setComposite(c);
         }
 // </editor-fold>
-
         // <editor-fold defaultstate="collapsed" desc=" Draw Drag line (Foreground)">
         Line2D.Double dragLine = new Line2D.Double(-1, -1, xe, ye);
         if (mSourceVillage != null) {
@@ -2156,7 +2156,6 @@ public class MapRenderer extends Thread {
 
         }
         //</editor-fold>
-
         // <editor-fold defaultstate="collapsed" desc=" Draw radar information ">
         Village radarVillage = MapPanel.getSingleton().getRadarVillage();
         List<Village> radarVillages = new LinkedList<Village>();
@@ -2213,6 +2212,27 @@ public class MapRenderer extends Thread {
         }
 // </editor-fold>
 
+        //draw additional info
+        if (mouseVillage != null) {
+            Rectangle rect = villagePositions.get(mouseVillage);
+            AnimatedVillageInfoRenderer animator = animators.get(mouseVillage);
+            if (animator == null) {
+                animator = new AnimatedVillageInfoRenderer(mouseVillage);
+                animators.put(mouseVillage, animator);
+            }
+            animator.update(mouseVillage, rect, g2d);
+        }
+        Enumeration<Village> animatorKeys = animators.keys();
+        while (animatorKeys.hasMoreElements()) {
+            Village keyVillage = animatorKeys.nextElement();
+            AnimatedVillageInfoRenderer animator = animators.get(keyVillage);
+            if (animator.isFinished()) {
+                animators.remove(keyVillage);
+            } else {
+                animator.update(mouseVillage, villagePositions.get(animator.getVillage()), g2d);
+            }
+        }
+
         List<Village> marked = MapPanel.getSingleton().getMarkedVillages();
         if (!marked.isEmpty()) {
             Iterator<Village> villages = villagePositions.keySet().iterator();
@@ -2227,7 +2247,6 @@ public class MapRenderer extends Thread {
             }
             g2d.setColor(cBefore);
         }
-
         if (Boolean.parseBoolean(GlobalOptions.getProperty("show.ruler"))) {
             //ruler drawing
             Hashtable<Color, Rectangle> vertRulerParts = new Hashtable<Color, Rectangle>();
@@ -2380,7 +2399,6 @@ public class MapRenderer extends Thread {
                             // JPopupMenu.setDefaultLightWeightPopupEnabled(false);
                             infoPopup.show();
                         }
-
                     }
                 } else {
                     if (infoPopup != null) {
@@ -2407,7 +2425,6 @@ public class MapRenderer extends Thread {
                 popupVillage = null;
             }
         }
-
     }
 }
 /*

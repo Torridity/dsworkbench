@@ -8,6 +8,7 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.dnd.VillageTransferable;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSWorkbenchFrameListener;
+import de.tor.tribes.util.DSWorkbenchGesturedFrame;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -32,8 +33,37 @@ import javax.swing.JFrame;
  *
  * @author Charon
  */
-public abstract class AbstractDSWorkbenchFrame extends JFrame implements DropTargetListener, DragGestureListener, DragSourceListener {
+public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame implements DropTargetListener, DragGestureListener, DragSourceListener {
 
+    @Override
+    public void fireCloseGestureEvent() {
+        setVisible(false);
+    }
+
+    @Override
+    public void fireExportAsBBGestureEvent() {
+    }
+
+    @Override
+    public void fireNextPageGestureEvent() {
+    }
+
+    @Override
+    public void firePlainExportGestureEvent() {
+    }
+
+    @Override
+    public void firePreviousPageGestureEvent() {
+    }
+
+    @Override
+    public void fireRenameGestureEvent() {
+    }
+
+    @Override
+    public void fireToBackgroundGestureEvent() {
+        toBack();
+    }
     private List<DSWorkbenchFrameListener> mFrameListeners = null;
     private DragSource dragSource;
 
@@ -45,6 +75,8 @@ public abstract class AbstractDSWorkbenchFrame extends JFrame implements DropTar
         DropTarget dropTarget = new DropTarget(this, this);
         this.setDropTarget(dropTarget);
     }
+
+    public abstract void resetView();
 
     public synchronized void addFrameListener(DSWorkbenchFrameListener pListener) {
         if (pListener == null) {
@@ -133,5 +165,8 @@ public abstract class AbstractDSWorkbenchFrame extends JFrame implements DropTar
 
     @Override
     public void dragDropEnd(DragSourceDropEvent dsde) {
+    }
+
+    public void processGesture(String pGestureString) {
     }
 }

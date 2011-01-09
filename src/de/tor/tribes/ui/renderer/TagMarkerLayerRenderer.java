@@ -55,14 +55,16 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
             setFullRenderRequired(true);
             shouldReset = false;
             mapPos = null;
-            if (MapPanel.getSingleton().getWidth() > mLayer.getWidth()
-                    || MapPanel.getSingleton().getWidth() < mLayer.getWidth() - 100
-                    || MapPanel.getSingleton().getHeight() > mLayer.getHeight()
-                    || MapPanel.getSingleton().getHeight() < mLayer.getHeight() - 100
-                    || MapPanel.getSingleton().getWidth() < pSettings.getFieldWidth() * pSettings.getVisibleVillages().length
-                    || MapPanel.getSingleton().getHeight() < pSettings.getFieldHeight() * pSettings.getVisibleVillages()[0].length) {
-                mLayer.flush();
-                mLayer = null;
+            if (mLayer != null) {
+                if (MapPanel.getSingleton().getWidth() > mLayer.getWidth()
+                        || MapPanel.getSingleton().getWidth() < mLayer.getWidth() - 100
+                        || MapPanel.getSingleton().getHeight() > mLayer.getHeight()
+                        || MapPanel.getSingleton().getHeight() < mLayer.getHeight() - 100
+                        || MapPanel.getSingleton().getWidth() < pSettings.getFieldWidth() * pSettings.getVisibleVillages().length
+                        || MapPanel.getSingleton().getHeight() < pSettings.getFieldHeight() * pSettings.getVisibleVillages()[0].length) {
+                    mLayer.flush();
+                    mLayer = null;
+                }
             }
         }
         Graphics2D g2d = null;
@@ -87,8 +89,6 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
         renderedSpriteBounds = new HashMap<Tag, Rectangle>();
 
         //Set new bounds
-        // setRenderedBounds((Rectangle2D.Double) pVirtualBounds.clone());
-
         BufferedImage img = renderMarkerRows(pSettings);
         AffineTransform trans = AffineTransform.getTranslateInstance(0, 0);
         if (pSettings.getRowsToRender() < 0) {

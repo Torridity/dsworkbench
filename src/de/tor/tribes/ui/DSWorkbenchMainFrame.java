@@ -5,11 +5,14 @@
  */
 package de.tor.tribes.ui;
 
+import com.smardec.mousegestures.MouseGestures;
+import com.smardec.mousegestures.MouseGesturesListener;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.php.ScreenUploadInterface;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.TroopsManagerTableModel;
 import de.tor.tribes.util.BrowserCommandSender;
@@ -33,7 +36,6 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
-import de.tor.tribes.ui.models.ConquersTableModel;
 import de.tor.tribes.ui.models.DistanceTableModel;
 import de.tor.tribes.ui.models.StandardAttackTableModel;
 import de.tor.tribes.ui.renderer.MapRenderer;
@@ -41,6 +43,7 @@ import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MainShutdownHook;
 import de.tor.tribes.util.MapShotListener;
+import de.tor.tribes.util.MouseGestureHandler;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.conquer.ConquerManager;
@@ -59,6 +62,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.MouseEvent;
 import java.io.FileWriter;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -98,6 +102,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     private ImageIcon uvModeOn = null;
     private ImageIcon uvModeOff = null;
     private boolean putOnline = false;
+    private MouseGestures mMouseGestures = new MouseGestures();
 
     public static synchronized DSWorkbenchMainFrame getSingleton() {
         if (SINGLETON == null) {
@@ -415,8 +420,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
         // <editor-fold defaultstate="collapsed" desc=" Restore last map position ">
         try {
-            String x = GlobalOptions.getProperty("last.x");
-            String y = GlobalOptions.getProperty("last.y");
+            String x = GlobalOptions.getSelectedProfile().getProperty("last.x");
+            String y = GlobalOptions.getSelectedProfile().getProperty("last.y");
             dCenterX = Double.parseDouble(x);
             dCenterY = Double.parseDouble(y);
             jCenterX.setText(x);
@@ -521,10 +526,16 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         // <editor-fold defaultstate="collapsed" desc=" Init A*Star HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(DSWorkbenchSimulatorFrame.getSingleton().getRootPane(), "pages.astar", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
+
+        // <editor-fold defaultstate="collapsed" desc="Init mouse gesture listener">
+        mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
+        mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
+        mMouseGestures.start();
+// </editor-fold>
+
         //update online state
         onlineStateChanged();
         restoreProperties();
-
     }
 
     /* boolean map = true;
@@ -548,7 +559,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         GlobalOptions.addProperty("information.group.expanded", Boolean.toString(jInformationGroup.isExpanded()));
         GlobalOptions.addProperty("map.group.expanded", Boolean.toString(jMapGroup.isExpanded()));
         GlobalOptions.addProperty("roi.group.expanded", Boolean.toString(jROIGroup.isExpanded()));
-        GlobalOptions.addProperty("uv.group.expanded", Boolean.toString(jUVGroup.isExpanded()));
     }
 
     public void restoreProperties() {
@@ -563,13 +573,11 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             jInformationGroup.setExpanded(Boolean.parseBoolean(GlobalOptions.getProperty("information.group.expanded")));
             jMapGroup.setExpanded(Boolean.parseBoolean(GlobalOptions.getProperty("map.group.expanded")));
             jROIGroup.setExpanded(Boolean.parseBoolean(GlobalOptions.getProperty("roi.group.expanded")));
-            jUVGroup.setExpanded(Boolean.parseBoolean(GlobalOptions.getProperty("uv.group.expanded")));
         } catch (Exception e) {
             jNavigationGroup.setExpanded(false);
             jInformationGroup.setExpanded(false);
             jMapGroup.setExpanded(true);
             jROIGroup.setExpanded(false);
-            jUVGroup.setExpanded(false);
         }
     }
 
@@ -581,13 +589,16 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     public void serverSettingsChangedEvent() {
         try {
             logger.info("Updating server settings");
-            String playerName = GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer());
-            String playerID = playerName + "@" + GlobalOptions.getSelectedServer();
+// <editor-fold defaultstate="collapsed" desc="Reset user profile specific contents">
+
+            UserProfile profile = GlobalOptions.getSelectedProfile();
+            String playerID = profile.toString();
             logger.info(" - using playerID " + playerID);
+            profile.restoreProperties();
             jCurrentPlayer.setText(playerID);
             try {
                 DefaultComboBoxModel model = new DefaultComboBoxModel();
-                Tribe t = DataHolder.getSingleton().getTribeByName(playerName);
+                Tribe t = DataHolder.getSingleton().getTribeByName(profile.getTribeName());
                 Village[] villages = t.getVillageList();
                 Arrays.sort(villages, Village.CASE_INSENSITIVE_ORDER);
                 for (Village v : villages) {
@@ -597,40 +608,41 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             } catch (Exception e) {
                 jCurrentPlayerVillages.setModel(new DefaultComboBoxModel(new Object[]{"-keine Dörfer-"}));
             }
+// </editor-fold>
 
-            //update views
+            //update maps
             MapPanel.getSingleton().resetServerDependendSettings();
             MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
             MapPanel.getSingleton().getAttackAddFrame().buildUnitBox();
-            DSWorkbenchMarkerFrame.getSingleton().setupMarkerPanel();
-            DSWorkbenchChurchFrame.getSingleton().setupChurchPanel();
-            DSWorkbenchAttackFrame.getSingleton().setupAttackPanel();
-            DSWorkbenchTagFrame.getSingleton().setup();
-            ConquersTableModel.getSingleton();
-            DSWorkbenchConquersFrame.getSingleton().setupConquersPanel();
+
+            //setup views
+            DSWorkbenchMarkerFrame.getSingleton().resetView();
+            DSWorkbenchChurchFrame.getSingleton().resetView();
+            DSWorkbenchAttackFrame.getSingleton().resetView();
+            DSWorkbenchTagFrame.getSingleton().resetView();
+            //ConquersTableModel.getSingleton();
+            DSWorkbenchConquersFrame.getSingleton().resetView();
             //update troops table and troops view
             TroopsManagerTableModel.getSingleton().setup();
             StandardAttackTableModel.getSingleton().setup();
-            DSWorkbenchTroopsFrame.getSingleton().setupTroopsPanel();
+            DSWorkbenchTroopsFrame.getSingleton().resetView();
             DistanceManager.getSingleton().clear();
             StatManager.getSingleton().setup();
             DistanceTableModel.getSingleton().fireTableStructureChanged();
-            DSWorkbenchDistanceFrame.getSingleton().setup();
-            DSWorkbenchStatsFrame.getSingleton().setup();
-            DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setupAttackPlaner();
-            DSWorkbenchReTimerFrame.getSingleton().setup();
-            DSWorkbenchReportFrame.getSingleton().setup();
-            DSWorkbenchSOSRequestAnalyzer.getSingleton().setup();
-            DSWorkbenchMerchantDistibutor.getSingleton().setup();
+            DSWorkbenchDistanceFrame.getSingleton().resetView();
+            DSWorkbenchStatsFrame.getSingleton().resetView();
+            DSWorkbenchDoItYourselfAttackPlaner.getSingleton().resetView();
+            DSWorkbenchReTimerFrame.getSingleton().resetView();
+            DSWorkbenchReportFrame.getSingleton().resetView();
+            DSWorkbenchSOSRequestAnalyzer.getSingleton().resetView();
+            DSWorkbenchMerchantDistibutor.getSingleton().resetView();
             //update attack planner
             if (mTribeTribeAttackFrame != null) {
                 mTribeTribeAttackFrame.setup();
             }
 
             DSWorkbenchSettingsDialog.getSingleton().setupAttackColorTable();
-            DSWorkbenchRankFrame.getSingleton().setup();
-            DSWorkbenchRankFrame.getSingleton().updateAllyList();
-            DSWorkbenchRankFrame.getSingleton().updateRankTable();
+            DSWorkbenchRankFrame.getSingleton().resetView();
 
             if (ServerSettings.getSingleton().getCoordType() != 2) {
                 jLabel1.setText("K");
@@ -644,8 +656,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             jShowChurchFrame.setEnabled(ServerSettings.getSingleton().isChurch());
             jROIBox.setModel(new DefaultComboBoxModel(ROIManager.getSingleton().getROIs()));
 
-            DSWorkbenchSelectionFrame.getSingleton().clear();
-            DSWorkbenchNotepad.getSingleton().setup();
+            DSWorkbenchSelectionFrame.getSingleton().resetView();
+            DSWorkbenchNotepad.getSingleton().resetView();
             if (DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
                 DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
             }
@@ -654,27 +666,27 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             propagateLayerOrder();
             MinimapPanel.getSingleton().redraw(true);
             //call all frames during first execution
-            DSWorkbenchAttackFrame.getSingleton();
-            DSWorkbenchNotepad.getSingleton();
-            DSWorkbenchTroopsFrame.getSingleton();
-            DSWorkbenchRankFrame.getSingleton();
+            // DSWorkbenchAttackFrame.getSingleton();
+            //DSWorkbenchNotepad.getSingleton();
+            //DSWorkbenchTroopsFrame.getSingleton();
+            //DSWorkbenchRankFrame.getSingleton();
             DSWorkbenchFormFrame.getSingleton();
-            DSWorkbenchMarkerFrame.getSingleton();
-            DSWorkbenchChurchFrame.getSingleton();
-            DSWorkbenchConquersFrame.getSingleton();
-            DSWorkbenchNotepad.getSingleton();
-            DSWorkbenchTagFrame.getSingleton();
+            //DSWorkbenchMarkerFrame.getSingleton();
+            // DSWorkbenchChurchFrame.getSingleton();
+            //DSWorkbenchConquersFrame.getSingleton();
+            // DSWorkbenchNotepad.getSingleton();
+            //  DSWorkbenchTagFrame.getSingleton();
             FormConfigFrame.getSingleton();
             DSWorkbenchSearchFrame.getSingleton();
-            DSWorkbenchSelectionFrame.getSingleton();
-            DSWorkbenchStatsFrame.getSingleton();
-            DSWorkbenchReTimerFrame.getSingleton();
-            DSWorkbenchDoItYourselfAttackPlaner.getSingleton();
-            DSWorkbenchReportFrame.getSingleton();
+            // DSWorkbenchSelectionFrame.getSingleton();
+            // DSWorkbenchStatsFrame.getSingleton();
+            // DSWorkbenchReTimerFrame.getSingleton();
+            // DSWorkbenchDoItYourselfAttackPlaner.getSingleton();
+            // DSWorkbenchReportFrame.getSingleton();
             logger.info("Server settings updated");
-            String path = "./servers/" + GlobalOptions.getSelectedServer() + "/serverdata.bin";
+
             if (!DSWorkbenchSettingsDialog.getSingleton().isVisible()) {
-                long dataVersion = new File(path).lastModified();
+                long dataVersion = DataHolder.getSingleton().getDataAge();
                 long oneDayAgo = System.currentTimeMillis() - 1000 * 60 * 60 * 24;
                 if (dataVersion < oneDayAgo) {
                     JOptionPaneHelper.showWarningBox(this, "Deine Weltdaten sind älter als 24 Stunden.\n" + "Es wird empfohlen, sie sobald wie möglich zu aktualisieren.", "Warnung");
@@ -683,17 +695,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         } catch (Exception e) {
             logger.error("Error while refreshing server settings", e);
         }
-
-
-
-        /*  while (TroopsManager.getSingleton().getEntryCount() < 1000) {
-        int vid = (int) Math.rint(1000000 * Math.random());
-        Village v = DataHolder.getSingleton().getVillagesById().get(vid);
-        if (v != null) {
-        TroopsManager.getSingleton().addTroopsForVillage(v, new LinkedList<Integer>());
-        }
-        }*/
-
     }
 
     /**Update UI depending on online state*/
@@ -706,7 +707,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         }
     }
 
-    /**Get current zoom factor*/
+    /**Get current zoom factor
+     * @return
+     */
     public synchronized double getZoomFactor() {
         return dZoomFactor;
     }
@@ -722,14 +725,11 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
         logger.info(" * Setting up views");
         setupFrames();
-        //setup toolbox
-
         fireToolChangedEvent(ImageManager.CURSOR_DEFAULT);
         logger.info(" * Setting up attack planner");
         //setup frames
         mTribeTribeAttackFrame = new TribeTribeAttackFrame();
         mTribeTribeAttackFrame.pack();
-
 
         logger.info("Initialization finished");
         initialized = true;
@@ -751,19 +751,18 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         DSWorkbenchConquersFrame.getSingleton().addFrameListener(this);
         DSWorkbenchNotepad.getSingleton().addFrameListener(this);
         DSWorkbenchTagFrame.getSingleton().addFrameListener(this);
-        TroopsManagerTableModel.getSingleton().setup();
+        //  TroopsManagerTableModel.getSingleton().setup();
         DSWorkbenchTroopsFrame.getSingleton().addFrameListener(this);
         DSWorkbenchRankFrame.getSingleton().addFrameListener(this);
         DSWorkbenchFormFrame.getSingleton().addFrameListener(this);
         DSWorkbenchStatsFrame.getSingleton().addFrameListener(this);
         DSWorkbenchReportFrame.getSingleton().addFrameListener(this);
-
     }
 
     /**Setup main map and mini map*/
     private void setupMaps() {
         try {
-            dZoomFactor = Double.parseDouble(GlobalOptions.getProperty("zoom.factor"));
+            dZoomFactor = Double.parseDouble(GlobalOptions.getSelectedProfile().getProperty("zoom.factor"));
             checkZoomRange();
         } catch (Exception e) {
             dZoomFactor = 1.0;
@@ -780,6 +779,11 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         /*MinimapPanel.getSingleton().setMinimumSize(jMinimapPanel.getMinimumSize());
         MapPanel.getSingleton().setMinimumSize(jPanel1.getMinimumSize());*/
         jMinimapPanel.add(MinimapPanel.getSingleton());
+    }
+
+    public void setZoom(double pZoom) {
+        dZoomFactor = pZoom;
+        checkZoomRange();
     }
 
     @Override
@@ -1020,11 +1024,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jROIBox = new javax.swing.JComboBox();
         jRemoveROIButton = new javax.swing.JButton();
         jAddROIButton = new javax.swing.JButton();
-        jUVGroup = new com.l2fprod.common.swing.JTaskPaneGroup();
-        jPanel4 = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
-        jUVIDField = new javax.swing.JTextField();
-        jUVModeButton = new javax.swing.JToggleButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -1704,13 +1703,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jInformationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
-                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 218, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 155, Short.MAX_VALUE)
                     .addGroup(jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                         .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1997,61 +1996,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jROIGroup.getContentPane().add(jPanel3);
 
         jTaskPane1.add(jROIGroup);
-
-        jUVGroup.setExpanded(false);
-        jUVGroup.setTitle(bundle.getString("DSWorkbenchMainFrame.jUVGroup.title")); // NOI18N
-        com.l2fprod.common.swing.PercentLayout percentLayout3 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout3.setOrientation(1);
-        jUVGroup.getContentPane().setLayout(percentLayout3);
-
-        jPanel4.setBackground(new java.awt.Color(239, 235, 223));
-
-        jLabel4.setText(bundle.getString("DSWorkbenchMainFrame.jLabel4.text")); // NOI18N
-
-        jUVIDField.setText(bundle.getString("DSWorkbenchMainFrame.jUVIDField.text")); // NOI18N
-
-        jUVModeButton.setBackground(new java.awt.Color(239, 235, 223));
-        jUVModeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/uv_off.png"))); // NOI18N
-        jUVModeButton.setText(bundle.getString("DSWorkbenchMainFrame.jUVModeButton.text")); // NOI18N
-        jUVModeButton.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jUVModeButton.toolTipText")); // NOI18N
-        jUVModeButton.setMaximumSize(new java.awt.Dimension(35, 35));
-        jUVModeButton.setMinimumSize(new java.awt.Dimension(35, 35));
-        jUVModeButton.setPreferredSize(new java.awt.Dimension(35, 35));
-        jUVModeButton.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireChangeUVModeEvent(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jUVIDField))
-                    .addComponent(jUVModeButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jUVIDField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jUVModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jUVGroup.getContentPane().add(jPanel4);
-
-        jTaskPane1.add(jUVGroup);
 
         jScrollPane2.setViewportView(jTaskPane1);
 
@@ -2397,7 +2341,7 @@ private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
     double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
     MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
-    MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
+    MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY, true);
 }//GEN-LAST:event_fireRefreshMapEvent
 
     /**Update map movement*/
@@ -3054,28 +2998,6 @@ private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
     jExportDialog.setVisible(true);
 }//GEN-LAST:event_fireOpenExportDialogEvent
 
-private void fireChangeUVModeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeUVModeEvent
-    if (jUVModeButton.isSelected()) {
-        //set UV mode
-        jUVModeButton.setIcon(uvModeOn);
-        try {
-            int id = Integer.parseInt(jUVIDField.getText());
-            if (id < 0) {
-                throw new Exception();
-            }
-
-            GlobalOptions.setUVMode(id);
-        } catch (Exception e) {
-            jUVModeButton.setSelected(false);
-            GlobalOptions.unsetUVMode();
-        }
-
-    } else {
-        jUVModeButton.setIcon(uvModeOff);
-        GlobalOptions.unsetUVMode();
-    }
-}//GEN-LAST:event_fireChangeUVModeEvent
-
 private void fireShowChurchFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowChurchFrameEvent
     if (jShowChurchFrame.isEnabled()) {
         DSWorkbenchChurchFrame.getSingleton().setVisible(!DSWorkbenchChurchFrame.getSingleton().isVisible());
@@ -3147,8 +3069,7 @@ private void fireROISelectedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:eve
     if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
         try {
             String item = (String) jROIBox.getSelectedItem();
-            item =
-                    item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")"));
+            item = item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")"));
             String[] pos = item.trim().split("\\|");
             jCenterX.setText(pos[0]);
             jCenterY.setText(pos[1]);
@@ -3160,9 +3081,11 @@ private void fireROISelectedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:eve
 
 private void fireDSWorkbenchClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireDSWorkbenchClosingEvent
     logger.debug("Shutting down DSWorkbench");
-    GlobalOptions.addProperty("zoom.factor", Double.toString(getZoomFactor()));
-    GlobalOptions.addProperty("last.x", getCurrentPosition()[0]);
-    GlobalOptions.addProperty("last.y", getCurrentPosition()[1]);
+    try {
+        GlobalOptions.getSelectedProfile().updateProperties();
+        GlobalOptions.getSelectedProfile().storeProfileData();
+    } catch (Exception e) {
+    }
     System.exit(0);
 
 }//GEN-LAST:event_fireDSWorkbenchClosingEvent
@@ -3397,7 +3320,7 @@ private void fireDoDonationEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:ev
 
     public void centerPosition(int xPos, int yPos) {
         if (ServerSettings.getSingleton().getCoordType() != 2) {
-            int[] hier = DSCalculator.xyToHierarchical((int) xPos, (int) yPos);
+            int[] hier = DSCalculator.xyToHierarchical(xPos, yPos);
             if (hier != null) {
                 jCenterX.setText(Integer.toString(hier[0]));
                 jCenterY.setText(Integer.toString(hier[1]));
@@ -3619,7 +3542,6 @@ private void fireDoDonationEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:ev
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -3658,7 +3580,6 @@ private void fireDoDonationEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:ev
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JComboBox jROIBox;
     private com.l2fprod.common.swing.JTaskPaneGroup jROIGroup;
     private javax.swing.JComboBox jROIPosition;
@@ -3694,9 +3615,6 @@ private void fireDoDonationEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:ev
     private javax.swing.JMenuItem jStartAStarItem;
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;
     private javax.swing.JMenuItem jTribeTribeAttackItem;
-    private com.l2fprod.common.swing.JTaskPaneGroup jUVGroup;
-    private javax.swing.JTextField jUVIDField;
-    private javax.swing.JToggleButton jUVModeButton;
     private javax.swing.JMenuItem jUnitOverviewItem;
     private javax.swing.JButton jZoomInButton;
     private javax.swing.JButton jZoomOutButton;

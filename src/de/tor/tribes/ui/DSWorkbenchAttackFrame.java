@@ -77,6 +77,7 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 // -Dsun.java2d.d3d=true -Dsun.java2d.translaccel=true -Dsun.java2d.ddforcevram=true
+// <editor-fold defaultstate="collapsed" desc=" NOTIFY THREAD ">
 /**
  * @TODO (DIFF) Confirm message for removing expired attacks
  * @TODO (DIFF) Removed limit for attacks to browser feature
@@ -1937,11 +1938,16 @@ private void fireDrawSelectedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 }//GEN-LAST:event_fireDrawSelectedEvent
 
 private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyUnformatedToClipboardEvent
- try {
+    try {
+        List<Attack> attacks = getSelectedAttacks();
+        if (attacks.isEmpty()) {
+            return;
+        }
         StringBuilder buffer = new StringBuilder();
         for (Attack a : getSelectedAttacks()) {
             buffer.append(AttackToPlainTextFormatter.formatAttack(a)).append("\n");
         }
+
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(buffer.toString()), null);
         String result = "Daten in Zwischenablage kopiert.";
         JOptionPaneHelper.showInformationBox(this, result, "Information");
@@ -1953,53 +1959,50 @@ private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {
 }//GEN-LAST:event_fireCopyUnformatedToClipboardEvent
 
 private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyAsBBCodeToClipboardEvent
-
     try {
+        List<Attack> attacks = getSelectedAttacks();
+        if (attacks.isEmpty()) {
+            return;
+        }
         boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
 
-        int[] rows = jAttackTable.getSelectedRows();
-        if ((rows != null) && (rows.length > 0)) {
-            StringBuilder buffer = new StringBuilder();
-            if (extended) {
-                buffer.append("[u][size=12]Angriffsplan[/size][/u]\n\n");
-            } else {
-                buffer.append("[u]Angriffsplan[/u]\n\n");
-            }
-            String sUrl = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
-
-            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan();
-            jAttackTable.invalidate();
-            for (int i : rows) {
-                int row = jAttackTable.convertRowIndexToModel(i);
-                buffer.append(AttackToBBCodeFormater.formatAttack(attacks.get(row), sUrl, extended));
-            }
-
-            jAttackTable.revalidate();
-            if (extended) {
-                buffer.append("\n[size=8]Erstellt am ");
-                buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
-                buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
-                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url][/size]\n");
-            } else {
-                buffer.append("\nErstellt am ");
-                buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
-                buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
-                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url]\n");
-            }
-
-            String b = buffer.toString();
-            StringTokenizer t = new StringTokenizer(b, "[");
-            int cnt = t.countTokens();
-            if (cnt > 500) {
-                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
-                    return;
-                }
-            }
-
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
-            String result = "Daten in Zwischenablage kopiert.";
-            JOptionPaneHelper.showInformationBox(this, result, "Information");
+        StringBuilder buffer = new StringBuilder();
+        if (extended) {
+            buffer.append("[u][size=12]Angriffsplan[/size][/u]\n\n");
+        } else {
+            buffer.append("[u]Angriffsplan[/u]\n\n");
         }
+        String sUrl = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+
+        for (Attack attack : attacks) {
+            buffer.append(AttackToBBCodeFormater.formatAttack(attack, sUrl, extended));
+        }
+
+        if (extended) {
+            buffer.append("\n[size=8]Erstellt am ");
+            buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+            buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+            buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url][/size]\n");
+        } else {
+            buffer.append("\nErstellt am ");
+            buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+            buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+            buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url]\n");
+        }
+
+        String b = buffer.toString();
+        StringTokenizer t = new StringTokenizer(b, "[");
+        int cnt = t.countTokens();
+        if (cnt > 500) {
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                return;
+            }
+        }
+
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
+        String result = "Daten in Zwischenablage kopiert.";
+        JOptionPaneHelper.showInformationBox(this, result, "Information");
+
     } catch (Exception e) {
         logger.error("Failed to copy data to clipboard", e);
         String result = "Fehler beim Kopieren in die Zwischenablage.";
@@ -2619,7 +2622,7 @@ private void fireWriteAttacksToScriptEvent(java.awt.event.MouseEvent evt) {//GEN
 }//GEN-LAST:event_fireWriteAttacksToScriptEvent
 
 private void fireSendAttacksAsIGMEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSendAttacksAsIGMEvent
-  if (getSelectedAttacks().isEmpty()) {
+    if (getSelectedAttacks().isEmpty()) {
         return;
     }
     String selectedPlan = AttackManager.getSingleton().getActiveAttackPlan();
@@ -2875,7 +2878,7 @@ private void fireFillClickAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         pTable.setRowSorter(sorter);
     }
 
-    protected void setupAttackPanel() {
+    public void resetView() {
         AttackManager.getSingleton().addAttackManagerListener(this);
         //setup renderer and general view
         jAttackTable.setDefaultRenderer(Date.class, new ColoredDateCellRenderer());
@@ -2883,16 +2886,12 @@ private void fireFillClickAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jAttackTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
-        //AlternatingColorCellRenderer rend = new AlternatingColorCellRenderer();
-        // jAttackTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jAttackTable.setDefaultRenderer(Village.class, new AlternatingColorCellRenderer());
         jAttackTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
-        // jAttackTable.setDefaultRenderer(Ally.class, new AllyCellRenderer());
-        // jAttackTable.setDefaultRenderer(Tribe.class, new TribeCellRenderer());
+
         jAttackTable.setDefaultRenderer(Ally.class, new AlternatingColorCellRenderer());
         jAttackTable.setDefaultRenderer(Tribe.class, new AlternatingColorCellRenderer());
         jAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
-        //  jAttackTable.setDefaultRenderer(String.class, new AlternatingColorCellRenderer());
         jAttackTable.setDefaultRenderer(String.class, new AlternatingColorCellRenderer());
         jAttackTable.setDefaultRenderer(Boolean.class, new BooleanCellRenderer());
         DefaultComboBoxModel model = new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{}));
@@ -2901,7 +2900,7 @@ private void fireFillClickAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         jUnitBox.setRenderer(new UnitListCellRenderer());
         AttackManager.getSingleton().forceUpdate(null);
         buildAttackPlanList();
-        jActiveAttackPlan.setSelectedItem(AttackManager.DEFAULT_PLAN_ID);
+        jActiveAttackPlan.setSelectedItem(AttackManager.getSingleton().getActiveAttackPlan());
         jAttackTable.setRowHeight(24);
     }
 
@@ -2924,6 +2923,7 @@ private void fireFillClickAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             }
             jAttackTable.revalidate();
             jAttackTable.repaint();
+            AttackManagerTableModel.getSingleton().resetRowSorter(jAttackTable);
             AttackManagerTableModel.getSingleton().loadColumnState();
         } catch (Exception e) {
             logger.error("Failed to update attacks table", e);
@@ -2955,6 +2955,49 @@ private void fireFillClickAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         jAttackTable.repaint(xs, 0, w, dh);
 
     }
+
+    // <editor-fold defaultstate="collapsed" desc="Gesture Handling">
+    @Override
+    public void fireExportAsBBGestureEvent() {
+        fireCopyAsBBCodeToClipboardEvent(null);
+    }
+
+    @Override
+    public void firePlainExportGestureEvent() {
+        fireCopyUnformatedToClipboardEvent(null);
+    }
+
+    @Override
+    public void fireNextPageGestureEvent() {
+        int current = jActiveAttackPlan.getSelectedIndex();
+        int size = jActiveAttackPlan.getModel().getSize();
+        if (current + 1 > size - 1) {
+            current = 0;
+        } else {
+            current += 1;
+        }
+        jActiveAttackPlan.setSelectedIndex(current);
+        fireActiveAttackChangedEvent(new ItemEvent(jActiveAttackPlan, 0, null, ItemEvent.SELECTED));
+    }
+
+    @Override
+    public void firePreviousPageGestureEvent() {
+        int current = jActiveAttackPlan.getSelectedIndex();
+        int size = jActiveAttackPlan.getModel().getSize();
+        if (current - 1 < 0) {
+            current = size - 1;
+        } else {
+            current -= 1;
+        }
+        jActiveAttackPlan.setSelectedIndex(current);
+        fireActiveAttackChangedEvent(new ItemEvent(jActiveAttackPlan, 0, null, ItemEvent.SELECTED));
+    }
+
+    @Override
+    public void fireRenameGestureEvent() {
+        fireRenameAttackPlanEvent(null);
+    }
+// </editor-fold>
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
@@ -3107,7 +3150,6 @@ private void fireFillClickAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     // End of variables declaration//GEN-END:variables
 }
 
-// <editor-fold defaultstate="collapsed" desc=" NOTIFY THREAD ">
 class NotifyThread extends Thread {
 
     private static Logger logger = Logger.getLogger("AttackNotificationHelper");

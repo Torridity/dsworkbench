@@ -253,7 +253,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         DSWorkbenchMainFrame.getSingleton().centerVillage(v);
     }//GEN-LAST:event_fireCenterChurchVillageEvent
 
-    protected void setupChurchPanel() {
+    public void resetView() {
         jChurchTable.invalidate();
         jChurchTable.setModel(ChurchManager.getSingleton().getTableModel());
         ChurchManager.getSingleton().addChurchManagerListener(this);

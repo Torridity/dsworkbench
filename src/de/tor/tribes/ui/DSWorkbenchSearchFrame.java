@@ -66,7 +66,7 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
         mSearchThread.start();
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.search_tool", GlobalOptions.getHelpBroker().getHelpSet());
-    // </editor-fold>
+        // </editor-fold>
     }
 
     /** This method is called from within the constructor to
@@ -412,7 +412,6 @@ private void fireSendResEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 private void fireSearchFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireSearchFrameAlwaysOnTopEvent
     setAlwaysOnTop(!isAlwaysOnTop());
 }//GEN-LAST:event_fireSearchFrameAlwaysOnTopEvent
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jAlliesLabel;
@@ -503,14 +502,14 @@ class SearchThread extends Thread {
                     Enumeration<Integer> tribes = DataHolder.getSingleton().getTribes().keys();
                     while (tribes.hasMoreElements()) {
                         Tribe t = DataHolder.getSingleton().getTribes().get(tribes.nextElement());
-                        if (t.getName().toLowerCase().startsWith(sSearchTerm.toLowerCase())) {
+                        if (t.getName().toLowerCase().indexOf(sSearchTerm.toLowerCase()) > -1) {
                             if (!tribeList.contains(t)) {
                                 tribeList.add(t);
                             }
                         }
                         Ally a = t.getAlly();
                         if (a != null) {
-                            if ((a.getName().toLowerCase().startsWith(sSearchTerm.toLowerCase())) || (a.getTag().toLowerCase().startsWith(sSearchTerm.toLowerCase()))) {
+                            if ((a.getName().toLowerCase().indexOf(sSearchTerm.toLowerCase()) > -1) || (a.getTag().toLowerCase().indexOf(sSearchTerm.toLowerCase())) > -1) {
                                 if (!allyList.contains(a)) {
                                     allyList.add(a);
                                 }

@@ -103,7 +103,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         //</editor-fold>
     }
 
-    public void clear() {
+    public void resetView() {
         treeData.clear();
         buildTree();
     }

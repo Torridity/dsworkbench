@@ -54,7 +54,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
                     currentRun++;
                     updateStatus(maxRuns - currentRun, maxRuns);
                     //time when the attacks should arrive
-                    long arrive = pTimeFrame.getEnd();
+                    // long arrive = pTimeFrame.getEnd();
                     Village vTarget = null;
 
                     //distribute targets randomly
@@ -70,21 +70,22 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                 time = Double.MAX_VALUE;
                             }
                         }
-                        Date sendTime = new Date(arrive - (long) time * 1000);
+                        /* Date sendTime = new Date(arrive - (long) time * 1000);
                         if (pTimeFrame.isVariableArriveTime()) {
-                            //calculate possible arrive time and store it in sendTime
-                            sendTime = pTimeFrame.getRandomArriveTime(Math.round(time * 1000.0), source.getTribe(), new LinkedList<Long>());
-                            if (sendTime == null) {
-                                //no arrive time found, set send time to 1.1.1970
-                                sendTime = new Date(0);
-                            } else {
-                                //arrive time found, set correct send time
-                                sendTime = new Date(sendTime.getTime() - (long) time * 1000);
-                            }
+                        //calculate possible arrive time and store it in sendTime
+                        sendTime = pTimeFrame.getRandomArriveTime(Math.round(time * 1000.0), source.getTribe(), new LinkedList<Long>());
+                        if (sendTime == null) {
+                        //no arrive time found, set send time to 1.1.1970
+                        sendTime = new Date(0);
+                        } else {
+                        //arrive time found, set correct send time
+                        sendTime = new Date(sendTime.getTime() - (long) time * 1000);
                         }
-
+                        }*/
+                        long runtime = (long) time * 1000;
                         //check if attack is somehow possible
-                        if (pTimeFrame.inside(sendTime, source.getTribe())) {
+                        //if (pTimeFrame.inside(sendTime, source.getTribe())) {
+                        if (pTimeFrame.isMovementPossible(runtime, source.getTribe())) {
                             //only calculate if time is in time frame
                             //get list of source villages for current target
                             Hashtable<UnitHolder, List<Village>> attacksForVillage = attacks.get(v);
@@ -184,7 +185,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
                     currentRun++;
                     updateStatus(maxRuns - currentRun, maxRuns);
                     //time when the attacks should arrive
-                    long arrive = pTimeFrame.getEnd();
+                    //  long arrive = pTimeFrame.getEnd();
                     //max. number of attacks per target village
 
                     Village vTarget = null;
@@ -201,20 +202,22 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                     time = Double.MAX_VALUE;
                                 }
                             }
-                            Date sendTime = new Date(arrive - (long) time * 1000);
+                            /*Date sendTime = new Date(arrive - (long) time * 1000);
                             if (pTimeFrame.isVariableArriveTime()) {
-                                //calculate possible arrive time and store it in sendTime
-                                sendTime = pTimeFrame.getRandomArriveTime(Math.round(time * 1000.0), source.getTribe(), new LinkedList<Long>());
-                                if (sendTime == null) {
-                                    //no arrive time found, set send time to 1.1.1970
-                                    sendTime = new Date(0);
-                                } else {
-                                    //arrive time found, set correct send time
-                                    sendTime = new Date(sendTime.getTime() - (long) time * 1000);
-                                }
+                            //calculate possible arrive time and store it in sendTime
+                            sendTime = pTimeFrame.getRandomArriveTime(Math.round(time * 1000.0), source.getTribe(), new LinkedList<Long>());
+                            if (sendTime == null) {
+                            //no arrive time found, set send time to 1.1.1970
+                            sendTime = new Date(0);
+                            } else {
+                            //arrive time found, set correct send time
+                            sendTime = new Date(sendTime.getTime() - (long) time * 1000);
                             }
+                            }*/
+                            long runtime = (long) time * 1000;
                             //check if attack is somehow possible
-                            if (pTimeFrame.inside(sendTime, source.getTribe())) {
+                            //if (pTimeFrame.inside(sendTime, source.getTribe())) {
+                            if (pTimeFrame.isMovementPossible(runtime, source.getTribe())) {
                                 //only calculate if time is in time frame
                                 //get list of source villages for current target
                                 Hashtable<Village, UnitHolder> attacksForVillage = fakes.get(v);

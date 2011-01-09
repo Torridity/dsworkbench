@@ -14,6 +14,7 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchAttackFrame;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.AttackManagerListener;
 import java.util.Arrays;
@@ -56,7 +57,7 @@ public class AttackManagerTableModel extends AbstractDSWorkbenchTableModel {
     //  private String sActiveAttackPlan = AttackManager.DEFAULT_PLAN_ID;
     private static AttackManagerTableModel SINGLETON = null;
 
-    public static final AttackManagerTableModel getSingleton() {
+    public static synchronized AttackManagerTableModel getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new AttackManagerTableModel();
         }

@@ -78,7 +78,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
         updateRankTable();
     }
 
-    public void setup() {
+    public void resetView() {
         if (ServerSettings.getSingleton().getCoordType() != 2) {
             jDSRealButton.setEnabled(false);
             jChartsButton.setEnabled(false);
@@ -86,6 +86,8 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
             jDSRealButton.setEnabled(true);
             jChartsButton.setEnabled(true);
         }
+        updateAllyList();
+        updateRankTable();
     }
 
     public void updateRankTable() {

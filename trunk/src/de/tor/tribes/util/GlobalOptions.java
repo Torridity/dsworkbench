@@ -10,6 +10,7 @@ package de.tor.tribes.util;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.WorldDecorationHolder;
+import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.StandardAttackManager;
@@ -50,7 +51,7 @@ public class GlobalOptions {
     private static Skin mSkin;
     /**DataHolder which holds and manages the WorldData*/
     private static WorldDecorationHolder mDecorationHolder = null;
-    private static String SELECTED_SERVER = "de26";
+    private static String SELECTED_SERVER = null;
     private static Properties GLOBAL_PROPERTIES = new Properties();
     //flag for online/offline mode
     private static boolean isOfflineMode = false;
@@ -59,8 +60,8 @@ public class GlobalOptions {
     private static HelpBroker mainHelpBroker = null;
     private static CSH.DisplayHelpFromSource csh = null;
     private static final String mainHelpSetName = "DS Workbench Dokumentation.hs";
-    private static int iUVID = -1;
     private static boolean internalDataDamaged = false;
+    private static UserProfile mSelectedProfile = null;
 
     /**Init all managed objects
      * @param pDownloadData TRUE=download the WorldData from the tribes server
@@ -98,7 +99,7 @@ public class GlobalOptions {
         internalDataDamaged = pValue;
     }
 
-    public static boolean isInternatDataDamaged() {
+    public static boolean isInternalDataDamaged() {
         return internalDataDamaged;
     }
 
@@ -110,18 +111,6 @@ public class GlobalOptions {
     /**Set the network status*/
     public static void setOfflineMode(boolean pValue) {
         isOfflineMode = pValue;
-    }
-
-    public static void setUVMode(int pUVID) {
-        iUVID = pUVID;
-    }
-
-    public static void unsetUVMode() {
-        iUVID = -1;
-    }
-
-    public static int getUVID() {
-        return iUVID;
     }
 
     /**Get the list of available skins*/
@@ -175,6 +164,14 @@ public class GlobalOptions {
         return csh;
     }
 
+    public static UserProfile getSelectedProfile() {
+        return mSelectedProfile;
+    }
+
+    public static void setSelectedProfile(UserProfile pProfile) {
+        mSelectedProfile = pProfile;
+    }
+
     /**Load the global properties*/
     private static void loadProperties() throws Exception {
         GLOBAL_PROPERTIES = new Properties();
@@ -225,30 +222,29 @@ public class GlobalOptions {
 
     /**Load user data (attacks, markers...)*/
     public static void loadUserData() {
-        if (getSelectedServer() != null) {
-
+        if (getSelectedServer() != null && getSelectedProfile() != null) {
             logger.debug("Loading markers");
-            MarkerManager.getSingleton().loadMarkersFromFile(DataHolder.getSingleton().getDataDirectory() + "/markers.xml");
+            MarkerManager.getSingleton().loadMarkersFromFile(getSelectedProfile().getProfileDirectory() + "/markers.xml");
             logger.debug("Loading attacks");
-            AttackManager.getSingleton().loadTroopMovementsFromDisk(DataHolder.getSingleton().getDataDirectory() + "/attacks.xml");
+            AttackManager.getSingleton().loadTroopMovementsFromDisk(getSelectedProfile().getProfileDirectory() + "/attacks.xml");
             logger.debug("Loading tags");
-            TagManager.getSingleton().loadTagsFromFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
+            TagManager.getSingleton().loadTagsFromFile(getSelectedProfile().getProfileDirectory() + "/tags.xml");
             logger.debug("Loading troops");
-            TroopsManager.getSingleton().loadTroopsFromFile(DataHolder.getSingleton().getDataDirectory() + "/troops.xml");
+            TroopsManager.getSingleton().loadTroopsFromFile(getSelectedProfile().getProfileDirectory() + "/troops.xml");
             logger.debug("Loading forms");
-            FormManager.getSingleton().loadFormsFromFile(DataHolder.getSingleton().getDataDirectory() + "/forms.xml");
+            FormManager.getSingleton().loadFormsFromFile(getSelectedProfile().getProfileDirectory() + "/forms.xml");
             logger.debug("Loading churches");
-            ChurchManager.getSingleton().loadChurchesFromFile(DataHolder.getSingleton().getDataDirectory() + "/churches.xml");
+            ChurchManager.getSingleton().loadChurchesFromFile(getSelectedProfile().getProfileDirectory() + "/churches.xml");
             logger.debug("Loading rois");
-            ROIManager.getSingleton().loadROIsFromFile(DataHolder.getSingleton().getDataDirectory() + "/rois.xml");
+            ROIManager.getSingleton().loadROIsFromFile(getSelectedProfile().getProfileDirectory() + "/rois.xml");
             logger.debug("Loading conquers");
-            ConquerManager.getSingleton().loadConquersFromFile(DataHolder.getSingleton().getDataDirectory() + "/conquers.xml");
+            ConquerManager.getSingleton().loadConquersFromFile(getSelectedProfile().getProfileDirectory() + "/conquers.xml");
             logger.debug("Loading notes");
-            NoteManager.getSingleton().loadNotesFromFile(DataHolder.getSingleton().getDataDirectory() + "/notes.xml");
+            NoteManager.getSingleton().loadNotesFromFile(getSelectedProfile().getProfileDirectory() + "/notes.xml");
             logger.debug("Loading standard attacks");
-            StandardAttackManager.getSingleton().loadStandardAttacksFromDisk(DataHolder.getSingleton().getDataDirectory() + "/stdAttacks.xml");
+            StandardAttackManager.getSingleton().loadStandardAttacksFromDisk(getSelectedProfile().getProfileDirectory() + "/stdAttacks.xml");
             logger.debug("Loading reports");
-            ReportManager.getSingleton().loadReportsFromFile(DataHolder.getSingleton().getDataDirectory() + "/reports.xml");
+            ReportManager.getSingleton().loadReportsFromFile(getSelectedProfile().getProfileDirectory() + "/reports.xml");
             logger.debug("Removing temporary data");
             DataHolder.getSingleton().removeTempData();
         }
@@ -256,34 +252,34 @@ public class GlobalOptions {
 
     /**Load user data (attacks, markers...)*/
     public static void saveUserData() {
-        if (getSelectedServer() != null && !isInternatDataDamaged()) {
+        if (getSelectedServer() != null && getSelectedProfile() != null && !isInternalDataDamaged()) {
             logger.debug("Saving markers");
-            MarkerManager.getSingleton().saveMarkersToFile(DataHolder.getSingleton().getDataDirectory() + "/markers.xml");
+            MarkerManager.getSingleton().saveMarkersToFile(getSelectedProfile().getProfileDirectory() + "/markers.xml");
             logger.debug("Saving attacks");
-            AttackManager.getSingleton().saveTroopMovementsToDisk(DataHolder.getSingleton().getDataDirectory() + "/attacks.xml");
+            AttackManager.getSingleton().saveTroopMovementsToDisk(getSelectedProfile().getProfileDirectory() + "/attacks.xml");
             logger.debug("Saving tags");
-            TagManager.getSingleton().saveTagsToFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
+            TagManager.getSingleton().saveTagsToFile(getSelectedProfile().getProfileDirectory() + "/tags.xml");
             logger.debug("Saving troops");
-            TroopsManager.getSingleton().saveTroopsToFile(DataHolder.getSingleton().getDataDirectory() + "/troops.xml");
+            TroopsManager.getSingleton().saveTroopsToFile(getSelectedProfile().getProfileDirectory() + "/troops.xml");
             logger.debug("Saving forms");
-            FormManager.getSingleton().saveFormsToFile(DataHolder.getSingleton().getDataDirectory() + "/forms.xml");
+            FormManager.getSingleton().saveFormsToFile(getSelectedProfile().getProfileDirectory() + "/forms.xml");
             logger.debug("Saving churches");
-            ChurchManager.getSingleton().saveChurchesToFile(DataHolder.getSingleton().getDataDirectory() + "/churches.xml");
+            ChurchManager.getSingleton().saveChurchesToFile(getSelectedProfile().getProfileDirectory() + "/churches.xml");
             logger.debug("Saving rois");
-            ROIManager.getSingleton().saveROIsToFile(DataHolder.getSingleton().getDataDirectory() + "/rois.xml");
+            ROIManager.getSingleton().saveROIsToFile(getSelectedProfile().getProfileDirectory() + "/rois.xml");
             logger.debug("Saving conquers");
-            ConquerManager.getSingleton().saveConquersToFile(DataHolder.getSingleton().getDataDirectory() + "/conquers.xml");
+            ConquerManager.getSingleton().saveConquersToFile(getSelectedProfile().getProfileDirectory() + "/conquers.xml");
             logger.debug("Saving notes");
-            NoteManager.getSingleton().saveNotesToFile(DataHolder.getSingleton().getDataDirectory() + "/notes.xml");
+            NoteManager.getSingleton().saveNotesToFile(getSelectedProfile().getProfileDirectory() + "/notes.xml");
             logger.debug("Saving standard attacks");
-            StandardAttackManager.getSingleton().saveStandardAttacksToDisk(DataHolder.getSingleton().getDataDirectory() + "/stdAttacks.xml");
+            StandardAttackManager.getSingleton().saveStandardAttacksToDisk(getSelectedProfile().getProfileDirectory() + "/stdAttacks.xml");
             logger.debug("Saving stats");
             StatManager.getSingleton().storeStats();
             logger.debug("Saving resports");
-            ReportManager.getSingleton().saveReportsToFile(DataHolder.getSingleton().getDataDirectory() + "/reports.xml");
+            ReportManager.getSingleton().saveReportsToFile(getSelectedProfile().getProfileDirectory() + "/reports.xml");
             logger.debug("User data saved");
         } else {
-            if (isInternatDataDamaged()) {
+            if (isInternalDataDamaged()) {
                 logger.warn("Internal data marked as 'damaged'. Skipped saving user data");
             }
         }

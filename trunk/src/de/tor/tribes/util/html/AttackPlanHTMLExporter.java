@@ -328,7 +328,7 @@ public class AttackPlanHTMLExporter {
             b = b.replaceAll(SEND_TIME, f.format(new Date(send)));
             //replace place link
             String placeURL = baseURL + "game.php?village=";
-            int uvID = GlobalOptions.getUVID();
+            int uvID = GlobalOptions.getSelectedProfile().getUVId();
             if (uvID >= 0) {
                 placeURL = baseURL + "game.php?t=" + uvID + "&village=";
             }

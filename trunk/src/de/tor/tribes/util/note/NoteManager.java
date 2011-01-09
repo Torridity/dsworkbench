@@ -157,11 +157,11 @@ public class NoteManager {
                 }
             }
             logger.debug("Notes imported successfully");
-            DSWorkbenchNotepad.getSingleton().setup();
+            DSWorkbenchNotepad.getSingleton().resetView();
             return true;
         } catch (Exception e) {
             logger.error("Failed to import notes", e);
-            DSWorkbenchNotepad.getSingleton().setup();
+            DSWorkbenchNotepad.getSingleton().resetView();
             return false;
         }
     }

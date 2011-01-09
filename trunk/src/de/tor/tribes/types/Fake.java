@@ -24,7 +24,7 @@ public class Fake extends AbstractTroopMovement {
     }
 
     @Override
-    public List<Attack> getAttacks(TimeFrame pTimeFrame) {
+    public List<Attack> getAttacks(TimeFrame pTimeFrame, List<Long> pUsedSendTimes) {
         List<Attack> result = new LinkedList<Attack>();
         Enumeration<UnitHolder> unitKeys = getOffs().keys();
         Village target = getTarget();
@@ -36,15 +36,23 @@ public class Fake extends AbstractTroopMovement {
                 Attack a = new Attack();
                 a.setTarget(target);
                 a.setSource(offSource);
-                if (!pTimeFrame.isVariableArriveTime()) {
-                    a.setArriveTime(new Date(pTimeFrame.getEnd()));
-                } else {
-                    long runtime = Math.round(DSCalculator.calculateMoveTimeInSeconds(offSource, target, unit.getSpeed()) * 1000);
-                    a.setArriveTime(pTimeFrame.getRandomArriveTime(runtime, offSource.getTribe(), new LinkedList<Long>()));
+                long runtime = Math.round(DSCalculator.calculateMoveTimeInSeconds(offSource, target, unit.getSpeed()) * 1000);
+                Date fittedTime = pTimeFrame.getFittedArriveTime(runtime, offSource.getTribe(), pUsedSendTimes);
+                if (fittedTime != null) {
+                    a.setArriveTime(fittedTime);
+                    a.setUnit(unit);
+                    a.setType(type);
+                    result.add(a);
                 }
-                a.setUnit(unit);
-                a.setType(type);
-                result.add(a);
+
+
+                /*  if (!pTimeFrame.isVariableArriveTime()) {
+                a.setArriveTime(new Date(pTimeFrame.getEnd()));
+                } else {
+                long runtime = Math.round(DSCalculator.calculateMoveTimeInSeconds(offSource, target, unit.getSpeed()) * 1000);
+                a.setArriveTime(pTimeFrame.getRandomArriveTime(runtime, offSource.getTribe(), new LinkedList<Long>()));
+                }*/
+
             }
         }
 
@@ -67,17 +75,5 @@ public class Fake extends AbstractTroopMovement {
         last = startTime;
         }*/
         return result;
-    }
-
-    public String toString() {
-        String res = "Target: " + getTarget() + "\n";
-        res += "Sources:\n";
-        List<Attack> attacks = getAttacks(new TimeFrame(Calendar.getInstance().getTime(), Calendar.getInstance().getTime()));
-        for (Attack a : attacks) {
-            res += " - " + a.getSource() + "\n";
-        }
-        return res;
-
-
     }
 }

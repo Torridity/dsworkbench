@@ -221,11 +221,15 @@ public class AttackManager {
     }
 
     public synchronized void setActiveAttackPlan(String pPlan) {
-        logger.debug("Setting active attack plan to '" + pPlan + "'");
-        sActiveAttackPlan = pPlan;
+        if (getAttackPlan(pPlan) != null) {
+            sActiveAttackPlan = pPlan;
+        }
     }
 
     public synchronized String getActiveAttackPlan() {
+        if (sActiveAttackPlan == null) {
+            return DEFAULT_PLAN_ID;
+        }
         return sActiveAttackPlan;
     }
 

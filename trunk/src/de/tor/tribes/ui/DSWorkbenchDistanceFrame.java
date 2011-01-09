@@ -62,14 +62,14 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
         // </editor-fold>
     }
 
-    public void setup() {
+    public void resetView() {
         jDistanceTable.invalidate();
         jDistanceTable.setColumnSelectionAllowed(true);
         jDistanceTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(DistanceTableModel.getSingleton());
         jDistanceTable.setRowSorter(sorter);
         headerRenderer = new SortableTableHeaderRenderer();
-       
+
         int w0 = 100;
         try {
             for (Village v : DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillageList()) {
@@ -93,11 +93,8 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
                     column.setWidth(w);
                     column.setPreferredWidth(w);
                 } catch (Exception e) {
-                    e.printStackTrace();
                 }
-                // column.setPreferredWidth(w);
             }
-            // renderers.add(headerRenderer);
         }
 
         jDistanceTable.setModel(DistanceTableModel.getSingleton());
@@ -288,7 +285,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
     private void fireCopyVillagesFromClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyVillagesFromClipboardEvent
         try {
             Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-            
+
             List<Village> villages = PluginManager.getSingleton().executeVillageParser((String) t.getTransferData(DataFlavor.stringFlavor));//VillageParser.parse((String) t.getTransferData(DataFlavor.stringFlavor));
             if (villages == null || villages.isEmpty()) {
                 JOptionPaneHelper.showInformationBox(this, "Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.", "Information");
@@ -300,7 +297,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
                 }
                 DistanceTableModel.getSingleton().fireTableStructureChanged();
                 jDistanceTable.revalidate();
-                setup();
+                resetView();
             }
         } catch (Exception e) {
             logger.error("Failed to parse villages from clipboard", e);
@@ -321,7 +318,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
         DistanceManager.getSingleton().removeVillages(correctedCols);
         DistanceTableModel.getSingleton().fireTableStructureChanged();
         jDistanceTable.revalidate();
-        setup();
+        resetView();
     }//GEN-LAST:event_fireRemoveColumnEvent
 
     private void fireUpdateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUpdateEvent
@@ -358,7 +355,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
             }
             DistanceTableModel.getSingleton().fireTableStructureChanged();
             jDistanceTable.revalidate();
-            setup();
+            resetView();
         } catch (Exception e) {
             logger.error("Failed to received dropped villages", e);
         }

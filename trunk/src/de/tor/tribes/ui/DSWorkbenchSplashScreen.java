@@ -10,9 +10,13 @@ import de.tor.tribes.util.GlobalOptions;
 import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.php.DatabaseInterface;
+import de.tor.tribes.types.UserProfile;
+import de.tor.tribes.ui.renderer.ProfileTreeNodeRenderer;
+import de.tor.tribes.ui.tree.NodeCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PluginManager;
+import de.tor.tribes.util.ProfileManager;
 import java.awt.AWTEvent;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -27,9 +31,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import org.apache.log4j.Level;
 import org.apache.log4j.RollingFileAppender;
-import javax.swing.*;
 
 /**
  * @TODO (DIFF) "Close everything by ESC" added
@@ -59,7 +66,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         jProfileDialog.pack();
         jProfileDialog.setLocationRelativeTo(this);
         jProfileDialog.getContentPane().setBackground(Constants.DS_BACK);
-        jPanel1.setBackground(Constants.DS_BACK_LIGHT);
         t = new SplashRepaintThread(this);
         t.setDaemon(true);
         t.start();
@@ -75,10 +81,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     private void initComponents() {
 
         jProfileDialog = new javax.swing.JDialog();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jAccountsList = new javax.swing.JList();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTree1 = new javax.swing.JTree();
         jButton1 = new javax.swing.JButton();
         jStatusOutput = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
@@ -88,44 +92,15 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         jProfileDialog.setModal(true);
         jProfileDialog.setUndecorated(true);
 
-        jLabel2.setText("Verfügbare Profile");
-
-        jAccountsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(jAccountsList);
+        jScrollPane2.setViewportView(jTree1);
 
         jButton1.setBackground(new java.awt.Color(239, 235, 223));
-        jButton1.setText("Auswählen");
+        jButton1.setText("Profil auswählen");
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireSelectAccountEvent(evt);
             }
         });
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE))
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
-                .addContainerGap())
-        );
 
         javax.swing.GroupLayout jProfileDialogLayout = new javax.swing.GroupLayout(jProfileDialog.getContentPane());
         jProfileDialog.getContentPane().setLayout(jProfileDialogLayout);
@@ -133,15 +108,19 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             jProfileDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jProfileDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jProfileDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
         jProfileDialogLayout.setVerticalGroup(
             jProfileDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jProfileDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jButton1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -174,25 +153,37 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireSelectAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectAccountEvent
-
-        String value = (String) jAccountsList.getSelectedValue();
-        if (value == null) {
+        Object[] path = jTree1.getSelectionPath().getPath();
+        UserProfile profile = null;
+        try {
+            profile = (UserProfile) ((DefaultMutableTreeNode) path[2]).getUserObject();
+        } catch (Exception e) {
+        }
+        if (profile == null) {
             JOptionPaneHelper.showWarningBox(jProfileDialog, "Bitte eine Profil auswählen.", "Bitte wählen");
             return;
         } else {
-            String server = value.substring(0, value.indexOf("(")).trim();
+            String server = profile.getServerId();
             GlobalOptions.setSelectedServer(server);
+            GlobalOptions.setSelectedProfile(profile);
             GlobalOptions.addProperty("default.server", server);
+            GlobalOptions.addProperty("selected.profile", Long.toString(profile.getProfileId()));
             jProfileDialog.setVisible(false);
         }
     }//GEN-LAST:event_fireSelectAccountEvent
 
     protected boolean hideSplash() {
         try {
+            File f = new File("./servers");
+            if (!f.exists() && !f.mkdir()) {
+                JOptionPaneHelper.showErrorBox(self, "Fehler bei der Initialisierung.\nDas Serververzeichnis konnte nicht erstellt werden.", "Fehler");
+                return false;
+            }
             //load properties, cursors, skins, world decoration
             GlobalOptions.initialize();
             DataHolder.getSingleton().addDataHolderListener(this);
             DataHolder.getSingleton().addDataHolderListener(DSWorkbenchSettingsDialog.getSingleton());
+            ProfileManager.getSingleton().loadProfiles();
         } catch (Exception e) {
             logger.error("Failed to initialize global options", e);
             JOptionPaneHelper.showErrorBox(self, "Fehler bei der Initialisierung.\nMöglicherweise ist deine DS Workbench Installation defekt.", "Fehler");
@@ -200,18 +191,21 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         }
 
         try {
-            //open account selection
-            File f = new File("./servers");
-            if (!f.exists() && !f.mkdir()) {
-                JOptionPaneHelper.showErrorBox(self, "Fehler bei der Initialisierung.\nDas Serververzeichnis konnte nicht erstellt werden.", "Fehler");
-                return false;
-            }
-            List<String> servers = new LinkedList<String>();
-            for (File server : f.listFiles()) {
-                servers.add(server.getName());
-            }
-
-            if (servers.size() > 1) {
+            //open profile selection
+            if (ProfileManager.getSingleton().getProfiles().length == 1) {
+                //only one single profile was found, use it
+                UserProfile profile = ProfileManager.getSingleton().getProfiles()[0];
+                String server = profile.getServerId();
+                GlobalOptions.setSelectedServer(server);
+                GlobalOptions.setSelectedProfile(profile);
+                GlobalOptions.addProperty("default.server", server);
+                GlobalOptions.addProperty("selected.profile", Long.toString(profile.getProfileId()));
+            } else {
+                File f = new File("./servers");
+                List<String> servers = new LinkedList<String>();
+                for (File server : f.listFiles()) {
+                    servers.add(server.getName());
+                }
                 //sort server names
                 Collections.sort(servers, new Comparator<String>() {
 
@@ -225,28 +219,39 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                         return o1.compareTo(o2);
                     }
                 });
-                List<String> profiles = new LinkedList<String>();
+                List<Object> path = new LinkedList<Object>();
+                DefaultMutableTreeNode root = new DefaultMutableTreeNode("Profile");
+                long selectedProfile = -1;
+                try {
+                    selectedProfile = Long.parseLong(GlobalOptions.getProperty("selected.profile"));
+                } catch (Exception e) {
+                }
+                path.add(root);
                 for (String server : servers) {
-                    String player = GlobalOptions.getProperty("player." + server);
-                    if (player != null) {
-                        profiles.add(server + " (" + player + ")");
+                    DefaultMutableTreeNode serverNode = new DefaultMutableTreeNode(server);
+                    boolean profileAdded = false;
+                    for (UserProfile profile : ProfileManager.getSingleton().getProfiles(server)) {
+                        DefaultMutableTreeNode profileNode = new DefaultMutableTreeNode(profile);
+                        if (profile.getProfileId() == selectedProfile) {
+                            path.add(serverNode);
+                            path.add(profileNode);
+                        }
+                        serverNode.add(profileNode);
+                        profileAdded = true;
+                    }
+                    if (profileAdded) {
+                        root.add(serverNode);
                     }
                 }
 
-                if (profiles.size() > 1) {
-                    //only proceed if number of valid profiles larger 1
-                    DefaultListModel accounts = new DefaultListModel();
-                    for (String profile : profiles) {
-                        accounts.addElement(profile);
-                    }
-
-                    jAccountsList.setModel(accounts);
-
-                    String currentServer = GlobalOptions.getSelectedServer() + " (" + GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()) + ")";
-                    jAccountsList.setSelectedValue(currentServer, true);
-                    jProfileDialog.setVisible(true);
-                }
+                jTree1.setModel(new DefaultTreeModel(root));
+                jTree1.setSelectionPath(new TreePath(path.toArray()));
+                jTree1.scrollPathToVisible(new TreePath(path.toArray()));
+                jTree1.setCellRenderer(new ProfileTreeNodeRenderer());
+                jProfileDialog.setVisible(true);
             }
+
+            //check settings
             if (!DSWorkbenchSettingsDialog.getSingleton().checkSettings()) {
                 logger.info("Reading user settings returned error(s)");
                 DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
@@ -298,8 +303,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
             logger.debug("Initializing application window");
             DSWorkbenchMainFrame.getSingleton().init();
-            logger.debug("Initializing search frame");
-            DSWorkbenchSearchFrame.getSingleton();
+           /* logger.debug("Initializing search frame");
+            DSWorkbenchSearchFrame.getSingleton();*/
 
             logger.info("Showing application window");
             DSWorkbenchMainFrame.getSingleton().setVisible(true);
@@ -466,14 +471,12 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JList jAccountsList;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JDialog jProfileDialog;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel jStatusOutput;
+    private javax.swing.JTree jTree1;
     // End of variables declaration//GEN-END:variables
 
     @Override

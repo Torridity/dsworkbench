@@ -95,7 +95,7 @@ public class AttackToBBCodeFormater {
         //replace place var
         String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer()) + "/";
         String placeURL = baseURL + "game.php?village=";
-        int uvID = GlobalOptions.getUVID();
+        int uvID = GlobalOptions.getSelectedProfile().getUVId();
         if (uvID >= 0) {
             placeURL = baseURL + "game.php?t=" + uvID + "&village=";
         }
@@ -103,6 +103,7 @@ public class AttackToBBCodeFormater {
 
         String placeLink = "[url=\"" + placeURL + "\"]Versammlungsplatz[/url]";
         template = template.replaceAll("%PLACE%", placeLink);
+        template = template.replaceAll("%PLACE_URL%", placeURL);
         template += "\n";
         return template;
     }
@@ -169,7 +170,7 @@ public class AttackToBBCodeFormater {
         //replace place var
         String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer()) + "/";
         String placeURL = baseURL + "game.php?village=";
-        int uvID = GlobalOptions.getUVID();
+        int uvID = GlobalOptions.getSelectedProfile().getUVId();
         if (uvID >= 0) {
             placeURL = baseURL + "game.php?t=" + uvID + "&village=";
         }

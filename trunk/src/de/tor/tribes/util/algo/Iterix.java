@@ -67,11 +67,11 @@ public class Iterix extends AbstractAttackAlgorithm {
         List<AbstractTroopMovement> movementList = new LinkedList<AbstractTroopMovement>();
         if (!ramAndCataSources.isEmpty()) {
             //off sources are available
-            if (!pTimeFrame.isVariableArriveTime()) {
-                logText(" - Entferne Herkunftsdörfer, die keins der Ziel erreichen können");
-                //remove non-working sources if we use a fixed arrive time
-                removeImpossibleSources(ramAndCataSources, pTargets, pTimeFrame);
-            }
+            //   if (!pTimeFrame.isVariableArriveTime()) {
+            logText(" - Entferne Herkunftsdörfer, die keins der Ziel erreichen können");
+            //remove non-working sources if we use a fixed arrive time
+            removeImpossibleSources(ramAndCataSources, pTargets, pTimeFrame);
+            //   }
             if (ramAndCataSources.isEmpty()) {
                 logError("Keine Dörfer übrig, Berechnung wird abgebrochen.");
                 return new LinkedList<AbstractTroopMovement>();
@@ -255,10 +255,10 @@ public class Iterix extends AbstractAttackAlgorithm {
             logText("Keine gültigen Fakes gefunden. Berechnung abgeschlossen.");
             return movementList;
         }
-        if (!pTimeFrame.isVariableArriveTime()) {
-            //remove non-working sources if we use a fixed arrive time
-            removeImpossibleSources(ramAndCataFakes, pTargets, pTimeFrame);
-        }
+        //      if (!pTimeFrame.isVariableArriveTime()) {
+        //remove non-working sources if we use a fixed arrive time
+        removeImpossibleSources(ramAndCataFakes, pTargets, pTimeFrame);
+        //    }
         sourceAmounts = resolveDuplicates(ramAndCataFakes);
         mappings = buildMappings(ramAndCataFakes, pTargets, pTimeFrame, pMaxAttacksTable);
         for (int i = 0; i < mappings.length; i++) {
@@ -339,8 +339,10 @@ public class Iterix extends AbstractAttackAlgorithm {
             for (Village t : pTargets) {
                 // double dist = DSCalculator.calculateDistance(s, t);
                 double runtime = DSCalculator.calculateMoveTimeInSeconds(s, t, ram.getSpeed());
-                long send = pTimeFrame.getEnd() - (long) runtime * 1000;
-                if (pTimeFrame.inside(new Date(send), s.getTribe())) {
+                // long send = pTimeFrame.getEnd() - (long) runtime * 1000;
+                //if (pTimeFrame.inside(new Date(send), s.getTribe())) {
+                long lRuntime = (long) runtime * 1000;
+                if (pTimeFrame.isMovementPossible(lRuntime, s.getTribe())) {
                     fail = false;
                     break;
                 }
@@ -370,25 +372,33 @@ public class Iterix extends AbstractAttackAlgorithm {
                     break;
                 }
                 double dist = DSCalculator.calculateDistance(pSources.get(i), pTargets.get(j));
-                double runtime = dist * ram.getSpeed() * 60000;
-                if (pTimeFrame.isVariableArriveTime()) {
-                    Date arriveTime = pTimeFrame.getRandomArriveTime(Math.round(runtime), pSources.get(i).getTribe(), usedDates);
-                    if (arriveTime != null) {
-                        tMappings[i][j] = pMaxAttacksTable.get(pTargets.get(j));
-                        usedDates.add(arriveTime.getTime());
-                        cnt++;
-                    } else {
-                        tMappings[i][j] = 0;
-                    }
+                long runtime = Math.round(dist * ram.getSpeed() * 60000);
+
+                if (pTimeFrame.isMovementPossible(runtime, pSources.get(i).getTribe())) {
+                    tMappings[i][j] = pMaxAttacksTable.get(pTargets.get(j));
+                    cnt++;
                 } else {
-                    long send = pTimeFrame.getEnd() - Math.round(runtime);
-                    if (pTimeFrame.inside(new Date(send), null)) {
-                        tMappings[i][j] = pMaxAttacksTable.get(pTargets.get(j));
-                        cnt++;
-                    } else {
-                        tMappings[i][j] = 0;
-                    }
+                    tMappings[i][j] = 0;
                 }
+
+                /*if (pTimeFrame.isVariableArriveTime()) {
+                Date arriveTime = pTimeFrame.getRandomArriveTime(Math.round(runtime), pSources.get(i).getTribe(), usedDates);
+                if (arriveTime != null) {
+                tMappings[i][j] = pMaxAttacksTable.get(pTargets.get(j));
+                usedDates.add(arriveTime.getTime());
+                cnt++;
+                } else {
+                tMappings[i][j] = 0;
+                }
+                } else {
+                long send = pTimeFrame.getEnd() - Math.round(runtime);
+                if (pTimeFrame.inside(new Date(send), null)) {
+                tMappings[i][j] = pMaxAttacksTable.get(pTargets.get(j));
+                cnt++;
+                } else {
+                tMappings[i][j] = 0;
+                }
+                }*/
             }
         }
 

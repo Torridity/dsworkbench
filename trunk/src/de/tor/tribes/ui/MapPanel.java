@@ -5,12 +5,15 @@
  */
 package de.tor.tribes.ui;
 
+import com.smardec.mousegestures.MouseGestures;
+import com.smardec.mousegestures.MouseGesturesListener;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Church;
+import de.tor.tribes.types.FreeForm;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.dnd.VillageTransferable;
@@ -65,6 +68,7 @@ import java.awt.dnd.DragSource;
 import java.awt.dnd.DragSourceListener;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetListener;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -83,8 +87,8 @@ import javax.swing.SwingUtilities;
  * @author Charon
  */
 public class MapPanel extends JPanel implements DragGestureListener, // For recognizing the start of drags
-                                                DragSourceListener, // For processing drag source events
-                                                DropTargetListener // For processing drop target events
+        DragSourceListener, // For processing drag source events
+        DropTargetListener // For processing drop target events
 {
 // <editor-fold defaultstate="collapsed" desc=" Member variables ">
 
@@ -127,8 +131,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     DragSource dragSource; // A central DnD object
     boolean dragMode; // Are we dragging or scribbling?
     boolean dragMove = false;
-
     // </editor-fold>
+
     public static synchronized MapPanel getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new MapPanel();
@@ -150,6 +154,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         attackAddFrame = new AttackAddFrame();
         mVirtualBounds = new Rectangle2D.Double(0.0, 0.0, 0.0, 0.0);
         markedVillages = new LinkedList<Village>();
+
         initListeners();
         new Timer("RepaintTimer", true).schedule(new TimerTask() {
 
@@ -250,7 +255,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 if (!shiftDown && !MenuRenderer.getSingleton().isVisible()) {
                     //left click, no shift and no opened menu clears selected villages
                     markedVillages.clear();
-                    DSWorkbenchSelectionFrame.getSingleton().clear();
+                    DSWorkbenchSelectionFrame.getSingleton().resetView();
                 }
 
                 if (tmpCursor == ImageManager.CURSOR_SELECTION) {
@@ -459,7 +464,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     case ImageManager.CURSOR_SELECTION: {
                         if (!shiftDown) {
                             markedVillages.clear();
-                            DSWorkbenchSelectionFrame.getSingleton().clear();
+                            DSWorkbenchSelectionFrame.getSingleton().resetView();
                         }
                         selectionRect = new de.tor.tribes.types.Rectangle();
                         selectionRect.setDrawColor(Color.YELLOW);
@@ -665,7 +670,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 if (MenuRenderer.getSingleton().isVisible()) {
                     return;
                 }
-                // fireVillageAtMousePosChangedEvents(getVillageAtMousePos());
+
                 boolean isAttack = false;
                 if (!spaceDown) {
                     isAttack = isAttackCursor();
@@ -856,6 +861,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         jCurrentVillageSubmenu = new javax.swing.JMenu();
         jCurrentCoordToClipboardItem = new javax.swing.JMenuItem();
         jVillageInfoIngame = new javax.swing.JMenuItem();
+        jVillagePlaceIngame = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JSeparator();
         jCurrentAddToNoteItem = new javax.swing.JMenuItem();
         jCurrentCreateNoteItem = new javax.swing.JMenuItem();
@@ -940,6 +946,14 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
         });
         jCurrentVillageSubmenu.add(jVillageInfoIngame);
+
+        jVillagePlaceIngame.setText("Truppenübersicht im Spiel öffnen");
+        jVillagePlaceIngame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jCurrentVillageSubmenu.add(jVillagePlaceIngame);
         jCurrentVillageSubmenu.add(jSeparator4);
 
         jCurrentAddToNoteItem.setText("Der gewählten Notiz hinzufügen");
@@ -1134,7 +1148,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             Village v = actionMenuVillage;
             if (v != null && v.getTribe() != Barbarians.getSingleton()) {
                 StatManager.getSingleton().monitorTribe(v.getTribe());
-                DSWorkbenchStatsFrame.getSingleton().setup();
+                DSWorkbenchStatsFrame.getSingleton().resetView();
             }
         } else if (evt.getSource() == jMonitorAllyItem) {
             Village v = actionMenuVillage;
@@ -1145,7 +1159,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 } else {
                     StatManager.getSingleton().monitorAlly(a);
                 }
-                DSWorkbenchStatsFrame.getSingleton().setup();
+                DSWorkbenchStatsFrame.getSingleton().resetView();
             }
         } else if (evt.getSource() == jCurrentCoordToClipboardItem) {
             //copy current village coordinates to clipboard
@@ -1263,6 +1277,11 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             //center village ingame
             if (actionMenuVillage != null) {
                 BrowserCommandSender.centerVillage(actionMenuVillage);
+            }
+        } else if (evt.getSource() == jVillagePlaceIngame) {
+            //open place ingame
+            if (actionMenuVillage != null) {
+                BrowserCommandSender.openPlaceTroopsView(actionMenuVillage);
             }
         } else if (evt.getSource() == jAllCoordToClipboardItem) {
             //copy selected villages coordinates to clipboard
@@ -1621,6 +1640,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         if (getCurrentCursor() != ImageManager.CURSOR_DEFAULT) {
             return;
         }
+
         Village v = getVillageAtMousePos();
         if (v == null) {
             return;
@@ -1700,7 +1720,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             logger.error("Failed to drop villages", ex);
         }
     }
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem jAllAddToNoteItem;
     private javax.swing.JMenuItem jAllCoordAsBBToClipboardItem;
@@ -1736,5 +1755,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     private javax.swing.JMenu jTribeSubmenu;
     private javax.swing.JPopupMenu jVillageActionsMenu;
     private javax.swing.JMenuItem jVillageInfoIngame;
+    private javax.swing.JMenuItem jVillagePlaceIngame;
     // End of variables declaration//GEN-END:variables
 }

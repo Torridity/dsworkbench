@@ -71,7 +71,7 @@ public class AttackTypeCellRenderer extends JLabel implements TableCellRenderer 
         setHorizontalAlignment(SwingConstants.CENTER);
         setOpaque(true);
         Integer type = (Integer) value;
-        if (type == 0) {
+        if ( type == null || type == 0) {
             //no icon!?
             setText("-");
             setIcon(null);

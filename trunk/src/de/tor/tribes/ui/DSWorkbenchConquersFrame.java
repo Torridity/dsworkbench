@@ -88,7 +88,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
         jConquersTable.setColumnSelectionAllowed(false);
         ConquersTableModel.getSingleton().resetRowSorter(jConquersTable);
-
+        ConquersTableModel.getSingleton().loadColumnState();
         MouseListener l = new MouseListener() {
 
             @Override
@@ -804,21 +804,10 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         }
     }//GEN-LAST:event_fireCenterVillagesIngameEvent
 
-    protected void setupConquersPanel() {
+    public void resetView() {
         jConquersTable.invalidate();
-        jConquersTable.setModel(new DefaultTableModel());
-        jConquersTable.revalidate();
-
-        jConquersTable.setModel(ConquersTableModel.getSingleton());
         ConquerManager.getSingleton().addConquerManagerListener(this);
         jConquersTable.getTableHeader().setReorderingAllowed(false);
-        /* jConquersTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
-        jConquersTable.setDefaultRenderer(Tribe.class, new TribeCellRenderer());
-        jConquersTable.setDefaultRenderer(Ally.class, new AllyCellRenderer());*/
-
-        //setup renderer and general view
-        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jConquersTable.getModel());
-        jConquersTable.setRowSorter(sorter);
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         //update view
         for (int i = 0; i < jConquersTable.getColumnCount(); i++) {
@@ -828,6 +817,8 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         jConquersTable.revalidate();
         setupFilterDialog();
         ConquerManager.getSingleton().updateFilters();
+        ConquersTableModel.getSingleton().resetRowSorter(jConquersTable);
+        ConquersTableModel.getSingleton().loadColumnState();
         ConquerManager.getSingleton().conquersUpdatedExternally();
     }
 
@@ -950,7 +941,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
     @Override
     public void fireConquersChangedEvent() {
         jConquersTable.invalidate();
-        jConquersTable.setModel(ConquersTableModel.getSingleton());
+        //  jConquersTable.setModel(ConquersTableModel.getSingleton());
         jConquersTable.getTableHeader().setReorderingAllowed(false);
 
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
@@ -1030,15 +1021,6 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
             TableColumn c = jConquersTable.getColumnModel().getColumn(i);
             c.setHeaderRenderer(mHeaderRenderer);
         }
-        //setup row sorter
-        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
-        jConquersTable.setRowSorter(sorter);
-        sorter.setModel(ConquersTableModel.getSingleton());
-        /* sorter.setComparator(0, Village.CASE_INSENSITIVE_ORDER);
-        sorter.setComparator(3, Tribe.CASE_INSENSITIVE_ORDER);
-        sorter.setComparator(4, Ally.CASE_INSENSITIVE_ORDER);
-        sorter.setComparator(5, Tribe.CASE_INSENSITIVE_ORDER);
-        sorter.setComparator(6, Ally.CASE_INSENSITIVE_ORDER);*/
         jConquersTable.revalidate();
         jConquersTable.repaint();
         Calendar c = Calendar.getInstance();
@@ -1054,6 +1036,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
         jGreyConquersLabel.setText("<html><b>Grau-Adelungen:</b> " + conquerStats[0] + " von " + conquers + " (" + percGrey + "%)" + "</html>");
         jFriendlyConquersLabel.setText("<html><b>Aufadelungen:</b> " + conquerStats[1] + " von " + conquers + " (" + percFriendly + "%)" + "</html>");
-
+        ConquersTableModel.getSingleton().resetRowSorter(jConquersTable);
+        ConquersTableModel.getSingleton().loadColumnState();
     }
 }

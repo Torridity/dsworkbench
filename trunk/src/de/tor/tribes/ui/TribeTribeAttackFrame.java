@@ -2943,7 +2943,7 @@ private void showAttackInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
             builder.append("Laut internen Truppeninformationen ");
             builder.append((villagesWithSmallTroopCount.size() == 1) ? "enthält " : "enthalten ");
             builder.append(Integer.toString(villagesWithSmallTroopCount.size()));
-            builder.append((villagesWithSmallTroopCount.size() == 1) ? "Dorf " : "Dörfer ");
+            builder.append((villagesWithSmallTroopCount.size() == 1) ? " Dorf " : " Dörfer ");
             builder.append("weniger als 20.000 verfügbare Einheiten.\n");
             builder.append((villagesWithSmallTroopCount.size() == 1) ? "Soll dieses Dorf ignoriert werden?" : "Sollen diese Dörfer ignoriert werden?");
             ignoreSmallTroopCountVillages = (JOptionPaneHelper.showQuestionConfirmBox(this, builder.toString(), "Information", "Nein", "Ja") == JOptionPane.YES_OPTION);
@@ -3706,9 +3706,10 @@ private void showAttackInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
         List<Village> targets = new LinkedList<Village>();
 
         logger.debug("Transferring calculated attacks and its targets to separate lists");
+        List<Long> usedSendTimes = new LinkedList<Long>();
         for (AbstractTroopMovement movement : pParent.getResults()) {
             List<Attack> atts = null;
-            atts = movement.getAttacks(pParent.getTimeFrame());
+            atts = movement.getAttacks(pParent.getTimeFrame(), usedSendTimes);
             for (Attack attack : atts) {
                 attackList.add(attack);
                 if (!targets.contains(attack.getTarget())) {

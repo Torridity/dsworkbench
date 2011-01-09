@@ -15,11 +15,12 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
+import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -79,6 +80,13 @@ public class ChurchLayerRenderer extends AbstractDirectLayerRenderer {
             pChurchAreas.put(t, a);
         }
         a.add(new Area(p));
+        try {
+            Shape s = (Shape) a;
+            Polygon po = (Polygon) s;
+            System.out.println("Poly!!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private GeneralPath calculateChurchPath(Church c, Village v, int pFieldWidth, int pFieldHeight) {

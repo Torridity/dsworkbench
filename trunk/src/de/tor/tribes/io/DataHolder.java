@@ -21,16 +21,15 @@ import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Point;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -38,7 +37,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -101,6 +99,13 @@ public class DataHolder {
         return DATA_VALID;
     }
 
+    public long getDataAge() {
+        File villageFile = new File(getDataDirectory() + "/" + "village.txt.gz");
+        File tribeFile = new File(getDataDirectory() + "/" + "tribe.txt.gz");
+        File allyFile = new File(getDataDirectory() + "/" + "ally.txt.gz");
+        return Math.max(allyFile.lastModified(), Math.min(villageFile.lastModified(), tribeFile.lastModified()));
+    }
+
     public synchronized void addDataHolderListener(DataHolderListener pListener) {
         if (pListener == null) {
             return;
@@ -123,16 +128,34 @@ public class DataHolder {
         return currentBonusType;
     }
 
-    /**Check if all needed files are located in the data directory of the selected server*/
-    private boolean isDataAvailable() {
-        File data = new File(getDataDirectory() + "/" + "serverdata.bin");
-        File units = new File(getDataDirectory() + "/" + "units.xml");
-        File buildings = new File(getDataDirectory() + "/" + "buildings.xml");
-        File settings = new File(getDataDirectory() + "/" + "settings.xml");
+    public boolean isDataAvailable(String pServerId) {
+        String dataDir = Constants.SERVER_DIR + "/" + pServerId;
+        if (pServerId == null) {
+            dataDir = getDataDirectory();
+        }
+        File villageFile = new File(dataDir + "/" + "village.txt.gz");
+        File tribeFile = new File(dataDir + "/" + "tribe.txt.gz");
+        File allyFile = new File(dataDir + "/" + "ally.txt.gz");
+        File units = new File(dataDir + "/" + "units.xml");
+        File buildings = new File(dataDir + "/" + "buildings.xml");
+        File settings = new File(dataDir + "/" + "settings.xml");
 
-        return (data.exists() && units.exists() && buildings.exists() && settings.exists());
+        return (villageFile.exists() && tribeFile.exists() && allyFile.exists() && units.exists() && buildings.exists() && settings.exists());
     }
 
+    public boolean isDataAvailable() {
+        return isDataAvailable(null);
+    }
+
+    /**Check if all needed files are located in the data directory of the selected server*/
+    /* private boolean isDataAvailable() {
+    File data = new File(getDataDirectory() + "/" + "serverdata.bin");
+    File units = new File(getDataDirectory() + "/" + "units.xml");
+    File buildings = new File(getDataDirectory() + "/" + "buildings.xml");
+    File settings = new File(getDataDirectory() + "/" + "settings.xml");
+
+    return (data.exists() && units.exists() && buildings.exists() && settings.exists());
+    }*/
     /**Check if server is supported or not. Currently only 1000x1000 servers are allowed
      */
     public boolean serverSupported() {
@@ -206,6 +229,7 @@ public class DataHolder {
     /**Update the data, optionally by downloading*/
     public boolean loadData(boolean pReload) {
         loading = true;
+
         try {
             String serverID = GlobalOptions.getSelectedServer();
             logger.info("Calling 'loadData()' for server " + serverID);
@@ -318,13 +342,11 @@ public class DataHolder {
                     }
                 }
                 r.close();
-
                 //do post processing
                 fireDataHolderEvents("Kombiniere Daten...");
                 mergeData();
                 fireDataHolderEvents("Lese Servereinstellungen...");
                 parseUnits();
-                parseBuildings();
                 fireDataHolderEvents("Daten erfolgreich gelesen");
                 if (!isDataAvailable() || recreateLocal) {
                     fireDataHolderEvents("Erstelle lokale Kopie");
@@ -469,13 +491,12 @@ public class DataHolder {
                     }
                 }
                 r.close();
-
                 //do post processing
                 fireDataHolderEvents("Kombiniere Daten...");
                 mergeData();
+
                 fireDataHolderEvents("Lese Servereinstellungen...");
                 parseUnits();
-                parseBuildings();
                 fireDataHolderEvents("Daten erfolgreich gelesen");
                 if (!isDataAvailable() || recreateLocal) {
                     fireDataHolderEvents("Erstelle lokale Kopie");
@@ -512,110 +533,102 @@ public class DataHolder {
 
     private boolean createLocalDataCopy(String pServerDir) {
         try {
-            BufferedWriter bout = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(pServerDir + "/serverdata.bin"))));
-            logger.info("Writing villages to " + pServerDir + "/serverdata.bin");
-            bout.write("<villages>\n");
-            for (int i = 0; i < 1000; i++) {
-                for (int j = 0; j < 1000; j++) {
-                    Village v = mVillages[i][j];
-                    if (v != null) {
-                        bout.write(v.toPlainData() + "\n");
-                    }
-                }
-            }
-
-            logger.info("Writing tribes");
-            bout.write("<tribes>\n");
-            Enumeration<Integer> e = mTribes.keys();
-            while (e.hasMoreElements()) {
-                Tribe t = mTribes.get(e.nextElement());
-                bout.write(t.toPlainData() + "\n");
-            }
-
-            logger.info("Writing allies");
-            bout.write("<allies>\n");
-            e = mAllies.keys();
-            while (e.hasMoreElements()) {
-                Ally a = mAllies.get(e.nextElement());
-                bout.write(a.toPlainData() + "\n");
-            }
-            bout.flush();
-            bout.close();
+            copyFile(new File("./village.tmp"), new File(pServerDir + "/village.txt.gz"));
+            copyFile(new File("./tribe.tmp"), new File(pServerDir + "/tribe.txt.gz"));
+            copyFile(new File("./ally.tmp"), new File(pServerDir + "/ally.txt.gz"));
+            return true;
         } catch (Exception e) {
-            logger.error("Failed to store local data", e);
+            logger.error("Failed to create local data copy", e);
             return false;
         }
-        logger.debug("Local data successfully written");
-        return true;
+
     }
 
     public boolean readLocalDataCopy(String pServerDir) {
         try {
-            BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(pServerDir + "/serverdata.bin"))));
+            BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(pServerDir + "/village.txt.gz"))));
             String line = "";
-            int step = 0;
-            int ac = 0;
-            int vc = 0;
-            int tc = 0;
-            initialize();
             while ((line = r.readLine()) != null) {
-                if (line.equals("<villages>")) {
-                    logger.info("Reading villages");
-                    step = 1;
-                } else if (line.equals("<tribes>")) {
-                    logger.info("Reading tribes");
-                    step = 2;
-                } else if (line.equals("<allies>")) {
-                    logger.info("Reading allies");
-                    step = 3;
+                line = line.replaceAll(",,", ", ,");
+                Village v = Village.parseFromPlainData(line);
+                try {
+                    mVillages[v.getX()][v.getY()] = v;
+                } catch (Exception e) {
+                    //ignore invalid village
                 }
-
-                switch (step) {
-                    case 1: {
-                        Village v = Village.parseFromPlainData(line);
-                        if (v != null) {
-                            mVillages[v.getX()][v.getY()] = v;
-                            vc++;
-                        }
-                        break;
-                    }
-                    case 2: {
-                        Tribe t = Tribe.parseFromPlainData(line);
-                        if (t != null) {
-                            mTribes.put(t.getId(), t);
-                            tc++;
-                        }
-                        break;
-                    }
-                    case 3: {
-                        Ally a = Ally.parseFromPlainData(line);
-                        if (a != null) {
-                            mAllies.put(a.getId(), a);
-                            ac++;
-                        }
-                        break;
-                    }
-                    default: {
-                        //sth. else!?
-                    }
-                }
-
             }
-
-            if (vc == 0 || ac == 0 || tc == 0) {
-                //data obviously invalid
-                logger.error("#villages | #allies | #tribes is 0");
-                return false;
-            }
-            logger.info("Read " + vc + " villages");
-            logger.info("Read " + ac + " allies");
-            logger.info("Read " + tc + " tribes");
             r.close();
+
+            getTribesForServer(GlobalOptions.getSelectedServer(), mTribes);
+            getAlliesForServer(pServerDir, mAllies);
         } catch (Exception e) {
-            logger.error("Failed loading local data", e);
+            logger.error("Failed to read local data copy", e);
             return false;
         }
         return true;
+    }
+
+    public Hashtable<Integer, Tribe> getTribesForServer(String pServer) {
+        return getTribesForServer(pServer, null);
+    }
+
+    public Hashtable<Integer, Tribe> getTribesForServer(String pServer, Hashtable<Integer, Tribe> pTribes) {
+        try {
+            String dataDir = Constants.SERVER_DIR + "/" + pServer;
+            BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(dataDir + "/tribe.txt.gz"))));
+            if (pTribes == null) {
+                pTribes = new Hashtable<Integer, Tribe>();
+            }
+            String line = "";
+            try {
+                while ((line = r.readLine()) != null) {
+                    line = line.replaceAll(",,", ", ,");
+                    Tribe t = Tribe.parseFromPlainData(line);
+                    try {
+                        pTribes.put(t.getId(), t);
+                    } catch (Exception e) {
+                        //ignore invalid tribe
+                    }
+                }
+            } catch (Throwable t) {
+            }
+            r.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("Failed to read tribes for server '" + pServer + "'");
+        }
+        return pTribes;
+    }
+
+    public Hashtable<Integer, Ally> getAlliesForServer(String pServer) {
+        return getAlliesForServer(pServer, null);
+    }
+
+    public Hashtable<Integer, Ally> getAlliesForServer(String pServer, Hashtable<Integer, Ally> pAllies) {
+        try {
+            String dataDir = Constants.SERVER_DIR + "/" + GlobalOptions.getSelectedServer();
+            BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(dataDir + "/ally.txt.gz"))));
+            if (pAllies == null) {
+                pAllies = new Hashtable<Integer, Ally>();
+            }
+            String line = "";
+            try {
+                while ((line = r.readLine()) != null) {
+                    line = line.replaceAll(",,", ", ,");
+                    Ally a = Ally.parseFromPlainData(line);
+                    try {
+                        pAllies.put(a.getId(), a);
+                    } catch (Exception e) {
+                        //ignore invalid tribe
+                    }
+                }
+            } catch (Throwable t) {
+            }
+            r.close();
+        } catch (Exception e) {
+            logger.error("Failed to read allies for server '" + pServer + "'");
+        }
+        return pAllies;
     }
 
     /**Download all needed data files (villages, tribes, allies, kills, settings)*/
@@ -1170,26 +1183,6 @@ public class DataHolder {
             logger.error("Failed to load units", outer);
             fireDataHolderEvents("Laden der Einheiten fehlgeschlagen");
         }
-    }
-
-    /**Parse the list of buildings*/
-    public void parseBuildings() {
-        /* String buildingsFile = getDataDirectory();
-        buildingsFile += "/buildings.xml";
-        try {
-        Document d = JaxenUtils.getDocument(new File(buildingsFile));
-        d = JaxenUtils.getDocument(new File(buildingsFile));
-        List<Element> l = JaxenUtils.getNodes(d, "/config/*");
-        for (Element e : l) {
-        try {
-        mBuildings.add(new BuildingHolder(e));
-        } catch (Exception inner) {
-        }
-        }
-        } catch (Exception outer) {
-        logger.error("Failed to load buildings", outer);
-        fireDataHolderEvents("Laden der Gebäude fehlgeschlagen");
-        }*/
     }
 
     public void copyFile(File pSource, File pDestination) {

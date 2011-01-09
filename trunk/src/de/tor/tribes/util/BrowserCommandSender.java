@@ -33,12 +33,12 @@ public class BrowserCommandSender {
         return result;
     }
 
-    public static boolean sendTroops(Village pSource, Village pTarget, int pType) {
+    private static boolean sendTroops(Village pSource, Village pTarget, int pType) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             logger.debug("Transfer troops to browser for village '" + pSource + "' to '" + pTarget + "' with type '" + pType + "'");
             String url = baseURL + "/game.php?village=";
-            int uvID = GlobalOptions.getUVID();
+            int uvID = GlobalOptions.getSelectedProfile().getUVId();
             if (uvID >= 0) {
                 url = baseURL + "/game.php?t=" + uvID + "&village=";
             }
@@ -53,7 +53,13 @@ public class BrowserCommandSender {
             if (browser == null || browser.length() < 1) {
                 Desktop.getDesktop().browse(new URI(url));
             } else {
-                Runtime.getRuntime().exec(new String[]{browser, url});
+                Process p = Runtime.getRuntime().exec(new String[]{browser, url});
+                p.waitFor();
+            }
+
+            try {
+                Thread.sleep(10);
+            } catch (Exception ignored) {
             }
         } catch (Throwable t) {
             JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
@@ -63,38 +69,12 @@ public class BrowserCommandSender {
         return true;
     }
 
-    public static void sendRes(Village pSource, Village pTarget, int pWood, int pClay, int pIron) {
-        try {
-            String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
-            logger.debug("Transfer resources to browser for village '" + pSource + "' to '" + pTarget);
-            String url = baseURL + "/game.php?village=";
-            int uvID = GlobalOptions.getUVID();
-            if (uvID >= 0) {
-                url = baseURL + "/game.php?t=" + uvID + "&village=";
-            }
-            url += pSource.getId() + "&screen=market&mode=send&target=" + pTarget.getId();
-            url += "&type=1";
-            url += "&wood=" + pWood;
-            url += "&clay=" + pClay;
-            url += "&iron=" + pIron;
-            String browser = GlobalOptions.getProperty("default.browser");
-            if (browser == null || browser.length() < 1) {
-                Desktop.getDesktop().browse(new URI(url));
-            } else {
-                Runtime.getRuntime().exec(new String[]{browser, url});
-            }
-        } catch (Throwable t) {
-            JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
-            logger.error("Failed to open browser window", t);
-        }
-    }
-
     public static void sendRes(Village pSource, Village pTarget, Transport pTrans) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             logger.debug("Transfer resources to browser for village '" + pSource + "' to '" + pTarget);
             String url = baseURL + "/game.php?village=";
-            int uvID = GlobalOptions.getUVID();
+            int uvID = GlobalOptions.getSelectedProfile().getUVId();
             if (uvID >= 0) {
                 url = baseURL + "/game.php?t=" + uvID + "&village=";
             }
@@ -107,7 +87,12 @@ public class BrowserCommandSender {
             if (browser == null || browser.length() < 1) {
                 Desktop.getDesktop().browse(new URI(url));
             } else {
-                Runtime.getRuntime().exec(new String[]{browser, url});
+                Process p = Runtime.getRuntime().exec(new String[]{browser, url});
+                p.waitFor();
+            }
+            try {
+                Thread.sleep(10);
+            } catch (Exception ignored) {
             }
         } catch (Throwable t) {
             JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
@@ -120,7 +105,7 @@ public class BrowserCommandSender {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             logger.debug("Transfer troops to browser for ville '" + pSource + "' to '" + pTarget + "'");
             String url = baseURL + "/game.php?village=";
-            int uvID = GlobalOptions.getUVID();
+            int uvID = GlobalOptions.getSelectedProfile().getUVId();
             if (uvID >= 0) {
                 url = baseURL + "/game.php?t=" + uvID + "&village=";
             }
@@ -130,7 +115,13 @@ public class BrowserCommandSender {
             if (browser == null || browser.length() < 1) {
                 Desktop.getDesktop().browse(new URI(url));
             } else {
-                Runtime.getRuntime().exec(new String[]{browser, url});
+                Process p = Runtime.getRuntime().exec(new String[]{browser, url});
+                p.waitFor();
+            }
+
+            try {
+                Thread.sleep(10);
+            } catch (Exception ignored) {
             }
         } catch (Throwable t) {
             JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
@@ -150,10 +141,15 @@ public class BrowserCommandSender {
             }
         } else {
             try {
-                Runtime.getRuntime().exec(new String[]{browser, pUrl});
+                Process p = Runtime.getRuntime().exec(new String[]{browser, pUrl});
+                p.waitFor();
             } catch (Throwable t) {
                 logger.error("Failed opening URL " + pUrl);
             }
+        }
+        try {
+            Thread.sleep(10);
+        } catch (Exception ignored) {
         }
     }
 
@@ -168,11 +164,16 @@ public class BrowserCommandSender {
             }
         } else {
             try {
-                Runtime.getRuntime().exec(new String[]{browser, pUrl});
+                Process p = Runtime.getRuntime().exec(new String[]{browser, pUrl});
+                p.waitFor();
             } catch (Throwable t) {
                 logger.error("Failed opening URL " + pUrl);
                 return false;
             }
+        }
+        try {
+            Thread.sleep(10);
+        } catch (Exception ignored) {
         }
         return true;
     }
@@ -181,7 +182,7 @@ public class BrowserCommandSender {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             String url = baseURL + "/game.php?village=";
-            int uvID = GlobalOptions.getUVID();
+            int uvID = GlobalOptions.getSelectedProfile().getUVId();
             if (uvID >= 0) {
                 url = baseURL + "/game.php?t=" + uvID + "&village=";
             }
@@ -190,7 +191,12 @@ public class BrowserCommandSender {
             if (browser == null || browser.length() < 1) {
                 Desktop.getDesktop().browse(new URI(url));
             } else {
-                Runtime.getRuntime().exec(new String[]{browser, url});
+                Process p = Runtime.getRuntime().exec(new String[]{browser, url});
+                p.waitFor();
+            }
+            try {
+                Thread.sleep(10);
+            } catch (Exception ignored) {
             }
         } catch (Throwable t) {
             JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
@@ -202,7 +208,7 @@ public class BrowserCommandSender {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             String url = baseURL + "/game.php?village=";
-            int uvID = GlobalOptions.getUVID();
+            int uvID = GlobalOptions.getSelectedProfile().getUVId();
             if (uvID >= 0) {
                 url = baseURL + "/game.php?t=" + uvID + "&village=";
             }
@@ -211,7 +217,12 @@ public class BrowserCommandSender {
             if (browser == null || browser.length() < 1) {
                 Desktop.getDesktop().browse(new URI(url));
             } else {
-                Runtime.getRuntime().exec(new String[]{browser, url});
+                Process p = Runtime.getRuntime().exec(new String[]{browser, url});
+                p.waitFor();
+            }
+            try {
+                Thread.sleep(10);
+            } catch (Exception ignored) {
             }
         } catch (Throwable t) {
             JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
@@ -223,7 +234,7 @@ public class BrowserCommandSender {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             String url = baseURL + "/game.php?village=";
-            int uvID = GlobalOptions.getUVID();
+            int uvID = GlobalOptions.getSelectedProfile().getUVId();
             if (uvID >= 0) {
                 url = baseURL + "/game.php?t=" + uvID + "&village=";
             }
@@ -232,7 +243,13 @@ public class BrowserCommandSender {
             if (browser == null || browser.length() < 1) {
                 Desktop.getDesktop().browse(new URI(url));
             } else {
-                Runtime.getRuntime().exec(new String[]{browser, url});
+                Process p = Runtime.getRuntime().exec(new String[]{browser, url});
+                p.waitFor();
+            }
+
+            try {
+                Thread.sleep(10);
+            } catch (Exception ignored) {
             }
         } catch (Throwable t) {
             JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
@@ -244,7 +261,7 @@ public class BrowserCommandSender {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             String url = baseURL + "/game.php?village=";
-            int uvID = GlobalOptions.getUVID();
+            int uvID = GlobalOptions.getSelectedProfile().getUVId();
             if (uvID >= 0) {
                 url = baseURL + "/game.php?t=" + uvID + "&village=";
             }
@@ -253,7 +270,13 @@ public class BrowserCommandSender {
             if (browser == null || browser.length() < 1) {
                 Desktop.getDesktop().browse(new URI(url));
             } else {
-                Runtime.getRuntime().exec(new String[]{browser, url});
+                Process p = Runtime.getRuntime().exec(new String[]{browser, url});
+                p.waitFor();
+            }
+
+            try {
+                Thread.sleep(10);
+            } catch (Exception ignored) {
             }
         } catch (Throwable t) {
             JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");

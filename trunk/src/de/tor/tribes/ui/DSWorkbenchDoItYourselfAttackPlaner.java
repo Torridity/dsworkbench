@@ -154,11 +154,12 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         return SINGLETON;
     }
 
-    protected void setupAttackPlaner() {
+    public void resetView() {
         jAttackTable.invalidate();
         //setup renderer and general view
         DoItYourselfAttackTableModel.getSingleton().clear();
         DoItYourselfAttackTableModel.getSingleton().resetRowSorter(jAttackTable);
+        DoItYourselfAttackTableModel.getSingleton().loadColumnState();
 
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
@@ -1043,6 +1044,8 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         } catch (Exception e) {
             logger.error("Failed to update attacks table", e);
         }
+        DoItYourselfAttackTableModel.getSingleton().resetRowSorter(jAttackTable);
+        DoItYourselfAttackTableModel.getSingleton().loadColumnState();
     }
 
     @Override

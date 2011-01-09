@@ -69,7 +69,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         adapter.addGhostDropListener(this);*/
 
         mHeaderRenderer = new SortableTableHeaderRenderer();
-       
+
         jMarkerTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -105,9 +105,10 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         return SINGLETON;
     }
 
-    public JPanel getView(){
+    public JPanel getView() {
         return jMarkerPanel;
     }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -517,7 +518,7 @@ private void fireCloseAddRenameDialogEvent(java.awt.event.MouseEvent evt) {//GEN
     }
 
     /**Setup marker panel*/
-    protected void setupMarkerPanel() {
+    public void resetView() {
         jMarkerTable.invalidate();
         jMarkerTable.setModel(MarkerTableModel.getSingleton());
         MarkerManager.getSingleton().addMarkerManagerListener(this);
@@ -558,8 +559,8 @@ private void fireCloseAddRenameDialogEvent(java.awt.event.MouseEvent evt) {//GEN
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         jMarkerSetList.setModel(new DefaultComboBoxModel(MarkerManager.getSingleton().getMarkerSets()));
         //update view
-        MarkerManager.getSingleton().markerUpdatedExternally();
         jMarkerTable.revalidate();
+        MarkerManager.getSingleton().markerUpdatedExternally();
         jMarkerTable.repaint();//.updateUI();
     }
 
@@ -584,6 +585,39 @@ private void fireCloseAddRenameDialogEvent(java.awt.event.MouseEvent evt) {//GEN
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
+
+    // <editor-fold defaultstate="collapsed" desc="Gesture handling">
+    @Override
+    public void fireNextPageGestureEvent() {
+        int current = jMarkerSetList.getSelectedIndex();
+        int size = jMarkerSetList.getModel().getSize();
+        if (current + 1 > size - 1) {
+            current = 0;
+        } else {
+            current += 1;
+        }
+        jMarkerSetList.setSelectedIndex(current);
+        fireActiveMarkerSetChangedEvent(new ItemEvent(jMarkerSetList, 0, null, ItemEvent.SELECTED));
+    }
+
+    @Override
+    public void firePreviousPageGestureEvent() {
+        int current = jMarkerSetList.getSelectedIndex();
+        int size = jMarkerSetList.getModel().getSize();
+        if (current - 1 < 0) {
+            current = size - 1;
+        } else {
+            current -= 1;
+        }
+        jMarkerSetList.setSelectedIndex(current);
+        fireActiveMarkerSetChangedEvent(new ItemEvent(jMarkerSetList, 0, null, ItemEvent.SELECTED));
+    }
+
+    @Override
+    public void fireRenameGestureEvent() {
+        fireRenameSetEvent(null);
+    }
+// </editor-fold>
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDialog jAddRenameDialog;
     private javax.swing.JButton jButton1;
@@ -605,6 +639,5 @@ private void fireCloseAddRenameDialogEvent(java.awt.event.MouseEvent evt) {//GEN
 
     @Override
     public void ghostDropped(GhostDropEvent e) {
-
     }
 }

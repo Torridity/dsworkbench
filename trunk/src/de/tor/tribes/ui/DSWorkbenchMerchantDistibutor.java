@@ -78,7 +78,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
         // </editor-fold>
     }
 
-    public void setup() {
+    public void resetView() {
         merchantInfos.clear();
 
         rebuildTable(jMerchantDataTable, new LinkedList<VillageMerchantInfo>());

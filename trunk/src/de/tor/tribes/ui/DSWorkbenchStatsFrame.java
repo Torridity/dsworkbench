@@ -125,7 +125,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         pack();
     }
 
-    public void setup() {
+    public void resetView() {
         Ally[] allies = StatManager.getSingleton().getMonitoredAllies();
         Arrays.sort(allies);
         DefaultListModel model = new DefaultListModel();
@@ -923,7 +923,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         } else {
             return;
         }
-        setup();
+        resetView();
     }//GEN-LAST:event_fireRemoveMonitoredElementEvent
 
     private void fireUpdateChartEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireUpdateChartEvent

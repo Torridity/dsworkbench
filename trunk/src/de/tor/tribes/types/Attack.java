@@ -7,6 +7,7 @@ package de.tor.tribes.types;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.php.json.JSONObject;
+import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.Serializable;
 import java.util.Date;
@@ -90,11 +91,28 @@ public class Attack implements Serializable, Comparable<Attack> {
     }
 
     public UnitHolder getUnit() {
+        if (unit != null && unit.getPlainName().equals("snob")) {
+            if (canUseSnob()) {
+                return unit;
+            } else {
+                return ImpossibleSnobUnit.getSingleton();
+            }
+        }
         return unit;
     }
 
     public void setUnit(UnitHolder unit) {
         this.unit = unit;
+    }
+
+    private boolean canUseSnob() {
+        if (getSource() == null || getTarget() == null) {
+            return true;
+        }
+        if (DSCalculator.calculateDistance(getSource(), getTarget()) < ServerSettings.getSingleton().getSnobRange()) {
+            return true;
+        }
+        return false;
     }
 
     public Date getArriveTime() {

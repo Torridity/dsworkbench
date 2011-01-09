@@ -42,11 +42,11 @@ public class DSWorkbenchSupportCoordinator extends AbstractDSWorkbenchFrame {
     /** Creates new form DSWorkbenchSupportCoordinator */
     DSWorkbenchSupportCoordinator() {
         initComponents();
-        setup();
+        resetView();
         pack();
     }
 
-    public void setup() {
+    public void resetView() {
         jSourceList.setModel(new DefaultListModel());
         jTargetList.setModel(new DefaultListModel());
         SelectionTreeRootNode root = new SelectionTreeRootNode("Unterstützungen");

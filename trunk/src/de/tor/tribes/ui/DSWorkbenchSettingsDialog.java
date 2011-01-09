@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.php.DatabaseInterface;
+import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.util.ServerChangeListener;
 import de.tor.tribes.types.Village;
@@ -36,6 +37,7 @@ import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.util.AttackToBBCodeFormater;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
 import java.awt.Component;
 import java.awt.event.ActionListener;
@@ -358,14 +360,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             jDefaultMarkBox.setSelectedIndex(0);
         }
 
-        //village troop type
-        try {
-            if (Boolean.parseBoolean(GlobalOptions.getProperty("paint.troops.type"))) {
-                jTroopsTypeBox.setSelected(true);
-            }
-        } catch (Exception e) {
-        }
-
         //data update check on startup
         try {
             String value = GlobalOptions.getProperty("check.updates.on.startup");
@@ -602,11 +596,15 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         String serverUser = GlobalOptions.getProperty("player." + defaultServer);
         if (serverUser == null) {
             logger.warn("Default user for server '" + defaultServer + "' is not set");
-            String selection = (String) jTribeNames.getSelectedItem();
+            UserProfile selection = null;
+            try {
+                selection = (UserProfile) jProfileBox.getSelectedItem();
+            } catch (Exception e) {
+            }
             //check if selection is valid
-            if ((selection != null) && (!selection.equals("Bitte wählen")) && (selection.length() > 1)) {
+            if (selection != null) {
                 //set default user for server
-                GlobalOptions.addProperty("player." + defaultServer, selection);
+                GlobalOptions.addProperty("player." + defaultServer, Long.toString(selection.getProfileId()));
             } else {
                 //no default user selected
                 return false;
@@ -666,30 +664,32 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jScrollPane3 = new javax.swing.JScrollPane();
         jEditorPane1 = new javax.swing.JEditorPane();
         jPlayerServerSettings = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        jPanel9 = new javax.swing.JPanel();
         jServerList = new javax.swing.JComboBox();
-        jLabel2 = new javax.swing.JLabel();
-        jTribeNames = new javax.swing.JComboBox();
         jSelectServerButton = new javax.swing.JButton();
+        jDownloadDataButton = new javax.swing.JButton();
+        jDownloadLiveDataButton = new javax.swing.JButton();
+        jCheckForUpdatesBox = new javax.swing.JCheckBox();
+        jPanel10 = new javax.swing.JPanel();
+        jProfileBox = new javax.swing.JComboBox();
+        jNewProfileButton = new javax.swing.JButton();
+        jModifyProfileButton = new javax.swing.JButton();
+        jDeleteProfileButton = new javax.swing.JButton();
+        jPanel11 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jStatusArea = new javax.swing.JTextArea();
-        jDownloadDataButton = new javax.swing.JButton();
-        jCheckForUpdatesBox = new javax.swing.JCheckBox();
-        jDownloadLiveDataButton = new javax.swing.JButton();
         jMapSettings = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jShowContinents = new javax.swing.JCheckBox();
         jShowSectorsBox = new javax.swing.JCheckBox();
         jMarkOwnVillagesOnMinimapBox = new javax.swing.JCheckBox();
         jMarkActiveVillageBox = new javax.swing.JCheckBox();
-        jTroopsTypeBox = new javax.swing.JCheckBox();
         jShowBarbarianBox = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
         jShowContinentsLabel = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jAttackMovementLabel2 = new javax.swing.JLabel();
         jAttackMovementLabel1 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jDefaultMarkBox = new javax.swing.JComboBox();
@@ -1072,7 +1072,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jEditorPane1.setContentType("text/html");
         jEditorPane1.setEditable(false);
         jEditorPane1.setText("<html><head></head><body><h3 style=\"margin-top: 0; color: #FF0000\">Achtung!</h3>Der für<i> DS Workbench</i> benötigte Account hängt in <b>keiner Weise</b> mit dem Spielaccount für <i>Die Stämme</i> zusammen!<BR/>Es wird <u>dringend empfohlen</u>, für <i>DS Workbench</i> einen <u>anderen Benutzernamen und/oder Passwort</u> als im Spiel zu verwenden, um Rückschlüsse zwischen den Accounts zu verhindern.<BR/><BR/>Im Zusammenhang mit <i>DS Workbench</i> werden <b>niemals</b> die Accountdaten deines <i>Die Stämme</i> Accounts benötigt!</body></html>");
-        jEditorPane1.setOpaque(false);
         jScrollPane3.setViewportView(jEditorPane1);
 
         javax.swing.GroupLayout jLoginPanelLayout = new javax.swing.GroupLayout(jLoginPanel);
@@ -1082,7 +1081,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jLoginPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 734, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
                     .addGroup(jLoginPanelLayout.createSequentialGroup()
                         .addGroup(jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jAccountNameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1110,23 +1109,21 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jAccountPasswordLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCheckAccountButton)
-                .addContainerGap(260, Short.MAX_VALUE))
+                .addContainerGap(215, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab("Login", new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
 
         jPlayerServerSettings.setBackground(new java.awt.Color(239, 235, 223));
 
-        jLabel1.setText("Server");
+        jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder("Server"));
+        jPanel9.setOpaque(false);
 
+        jServerList.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "de12" }));
         jServerList.setToolTipText("Gewählter Server");
 
-        jLabel2.setText("Spieler");
-
-        jTribeNames.setToolTipText("Eigener In-Game Name");
-
         jSelectServerButton.setBackground(new java.awt.Color(239, 235, 223));
-        jSelectServerButton.setText("Server auswählen");
+        jSelectServerButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/select_server.png"))); // NOI18N
         jSelectServerButton.setToolTipText("Daten des markierten Servers von der Festplatte laden");
         jSelectServerButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -1134,17 +1131,21 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         });
 
-        jStatusArea.setColumns(20);
-        jStatusArea.setEditable(false);
-        jStatusArea.setRows(5);
-        jScrollPane1.setViewportView(jStatusArea);
-
         jDownloadDataButton.setBackground(new java.awt.Color(239, 235, 223));
-        jDownloadDataButton.setText("Daten aktualisieren");
+        jDownloadDataButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/download_dswb.png"))); // NOI18N
         jDownloadDataButton.setToolTipText("Daten des markierten Servers aktualisieren");
         jDownloadDataButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireDownloadDataEvent(evt);
+            }
+        });
+
+        jDownloadLiveDataButton.setBackground(new java.awt.Color(239, 235, 223));
+        jDownloadLiveDataButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/download_tw.png"))); // NOI18N
+        jDownloadLiveDataButton.setToolTipText("Daten des markierten Servers direkt von den DS Servern laden");
+        jDownloadLiveDataButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireDownloadLiveDataEvent(evt);
             }
         });
 
@@ -1157,62 +1158,144 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         });
 
-        jDownloadLiveDataButton.setBackground(new java.awt.Color(239, 235, 223));
-        jDownloadLiveDataButton.setText("Daten von www.die-stämme.de");
-        jDownloadLiveDataButton.setToolTipText("Daten des markierten Servers direkt von den DS Servern laden");
-        jDownloadLiveDataButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jCheckForUpdatesBox, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jServerList, 0, 221, Short.MAX_VALUE)
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(jSelectServerButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jDownloadDataButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jDownloadLiveDataButton)))
+                .addContainerGap())
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jServerList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jDownloadLiveDataButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jSelectServerButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jDownloadDataButton))
+                .addGap(18, 18, 18)
+                .addComponent(jCheckForUpdatesBox)
+                .addContainerGap(9, Short.MAX_VALUE))
+        );
+
+        jPanel10.setBorder(javax.swing.BorderFactory.createTitledBorder("Profil"));
+        jPanel10.setOpaque(false);
+
+        jNewProfileButton.setBackground(new java.awt.Color(239, 235, 223));
+        jNewProfileButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/id_card_new.png"))); // NOI18N
+        jNewProfileButton.setToolTipText("Neues Profil erstellen");
+        jNewProfileButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireDownloadLiveDataEvent(evt);
+                fireProfileActionEvent(evt);
             }
         });
+
+        jModifyProfileButton.setBackground(new java.awt.Color(239, 235, 223));
+        jModifyProfileButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/id_card_edit.png"))); // NOI18N
+        jModifyProfileButton.setToolTipText("Gewähltes Profil bearbeiten");
+        jModifyProfileButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireProfileActionEvent(evt);
+            }
+        });
+
+        jDeleteProfileButton.setBackground(new java.awt.Color(239, 235, 223));
+        jDeleteProfileButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/id_card_delete.png"))); // NOI18N
+        jDeleteProfileButton.setToolTipText("Gewähltes Profil löschen");
+        jDeleteProfileButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireProfileActionEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
+        jPanel10.setLayout(jPanel10Layout);
+        jPanel10Layout.setHorizontalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel10Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jProfileBox, 0, 217, Short.MAX_VALUE)
+                    .addGroup(jPanel10Layout.createSequentialGroup()
+                        .addComponent(jNewProfileButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jModifyProfileButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jDeleteProfileButton)))
+                .addContainerGap())
+        );
+        jPanel10Layout.setVerticalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel10Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jProfileBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jNewProfileButton)
+                    .addComponent(jModifyProfileButton)
+                    .addComponent(jDeleteProfileButton))
+                .addContainerGap(50, Short.MAX_VALUE))
+        );
+
+        jPanel11.setBorder(javax.swing.BorderFactory.createTitledBorder("Informationen"));
+        jPanel11.setOpaque(false);
+
+        jStatusArea.setColumns(20);
+        jStatusArea.setEditable(false);
+        jStatusArea.setRows(5);
+        jScrollPane1.setViewportView(jStatusArea);
+
+        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
+        jPanel11.setLayout(jPanel11Layout);
+        jPanel11Layout.setHorizontalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel11Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel11Layout.setVerticalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel11Layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout jPlayerServerSettingsLayout = new javax.swing.GroupLayout(jPlayerServerSettings);
         jPlayerServerSettings.setLayout(jPlayerServerSettingsLayout);
         jPlayerServerSettingsLayout.setHorizontalGroup(
             jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPlayerServerSettingsLayout.createSequentialGroup()
-                .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPlayerServerSettingsLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jCheckForUpdatesBox)
-                            .addGroup(jPlayerServerSettingsLayout.createSequentialGroup()
-                                .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1)
-                                    .addComponent(jLabel2))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jTribeNames, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jServerList, 0, 262, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jDownloadDataButton, javax.swing.GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE)
-                                    .addComponent(jSelectServerButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE)))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 734, Short.MAX_VALUE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPlayerServerSettingsLayout.createSequentialGroup()
-                        .addGap(318, 318, 318)
-                        .addComponent(jDownloadLiveDataButton, javax.swing.GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE)))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPlayerServerSettingsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel11, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPlayerServerSettingsLayout.createSequentialGroup()
+                        .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                        .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPlayerServerSettingsLayout.setVerticalGroup(
             jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPlayerServerSettingsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jServerList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSelectServerButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jTribeNames, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jDownloadDataButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jDownloadLiveDataButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jCheckForUpdatesBox)
+                .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -1259,15 +1342,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         });
         jPanel1.add(jMarkActiveVillageBox);
 
-        jTroopsTypeBox.setToolTipText("Anzeige der Eignung von Dörfern abhängig von den darin vorhandenen Truppen");
-        jTroopsTypeBox.setOpaque(false);
-        jTroopsTypeBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireShowTroopsTypeEvent(evt);
-            }
-        });
-        jPanel1.add(jTroopsTypeBox);
-
         jShowBarbarianBox.setToolTipText("Anzeige von Barbarendörfern auf der Karte");
         jShowBarbarianBox.setOpaque(false);
         jShowBarbarianBox.addActionListener(new java.awt.event.ActionListener() {
@@ -1303,12 +1377,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jAttackMovementLabel1.setMinimumSize(new java.awt.Dimension(150, 21));
         jAttackMovementLabel1.setPreferredSize(new java.awt.Dimension(150, 21));
         jPanel2.add(jAttackMovementLabel1);
-
-        jLabel8.setText("Truppeneignung anzeigen");
-        jLabel8.setMaximumSize(new java.awt.Dimension(150, 21));
-        jLabel8.setMinimumSize(new java.awt.Dimension(150, 21));
-        jLabel8.setPreferredSize(new java.awt.Dimension(150, 21));
-        jPanel2.add(jLabel8);
 
         jLabel17.setText("Barbarendörfer anzeigen");
         jLabel17.setMaximumSize(new java.awt.Dimension(150, 21));
@@ -1386,25 +1454,25 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap()
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
-                    .addComponent(jLabel23))
+                    .addComponent(jLabel23)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(36, 36, 36)
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jFPSSlider, 0, 0, Short.MAX_VALUE)
                     .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jDefaultMarkBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(363, 363, 363))
+                        .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jDefaultMarkBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGap(365, 365, 365))
         );
         jMapSettingsLayout.setVerticalGroup(
             jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jMapSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
@@ -1417,7 +1485,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel23, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jFPSSlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(120, 120, 120))
+                .addGap(123, 123, 123))
         );
 
         jSettingsTabbedPane.addTab("Karten", new javax.swing.ImageIcon(getClass().getResource("/res/ui/map.gif")), jMapSettings); // NOI18N
@@ -1493,7 +1561,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jShowLiveCountdown, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
                     .addComponent(jDrawAttacksByDefaultBox, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
                     .addComponent(jShowAttackMovementBox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE))
-                .addContainerGap(224, Short.MAX_VALUE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
         jAttackSettingsLayout.setVerticalGroup(
             jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1626,7 +1694,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jBrowserPath, javax.swing.GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE)
+                        .addComponent(jBrowserPath, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jUseStandardBrowser))
@@ -1653,7 +1721,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap()
                 .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jNetworkSettingsLayout.createSequentialGroup()
-                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 734, Short.MAX_VALUE)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(jNetworkSettingsLayout.createSequentialGroup()
                         .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1667,10 +1735,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                                     .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGap(20, 20, 20)
                                 .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jProxyPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
-                                    .addComponent(jProxyUser, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
-                                    .addComponent(jProxyTypeChooser, 0, 409, Short.MAX_VALUE)
-                                    .addComponent(jProxyHost, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
+                                    .addComponent(jProxyPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
+                                    .addComponent(jProxyUser, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
+                                    .addComponent(jProxyTypeChooser, 0, 205, Short.MAX_VALUE)
+                                    .addComponent(jProxyHost, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
                                     .addComponent(jRefeshNetworkButton, javax.swing.GroupLayout.Alignment.TRAILING))
                                 .addGap(18, 18, 18)
                                 .addComponent(jProxyPortLabel)
@@ -1707,7 +1775,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addComponent(jRefeshNetworkButton)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(138, Short.MAX_VALUE))
+                .addContainerGap(141, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab("Netzwerk", new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
@@ -1818,9 +1886,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jLabel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jFooterPath, javax.swing.GroupLayout.DEFAULT_SIZE, 570, Short.MAX_VALUE)
-                    .addComponent(jBlockPath, javax.swing.GroupLayout.DEFAULT_SIZE, 570, Short.MAX_VALUE)
-                    .addComponent(jHeaderPath, javax.swing.GroupLayout.DEFAULT_SIZE, 570, Short.MAX_VALUE))
+                    .addComponent(jFooterPath, javax.swing.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
+                    .addComponent(jBlockPath, javax.swing.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
+                    .addComponent(jHeaderPath, javax.swing.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSelectBlockButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1886,7 +1954,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap()
                 .addComponent(jLabel20)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 444, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel8Layout.setVerticalGroup(
@@ -1917,7 +1985,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(222, 222, 222))
+                .addGap(225, 225, 225))
         );
 
         jSettingsTabbedPane.addTab("Templates", new javax.swing.ImageIcon(getClass().getResource("/res/ui/component.png")), jTemplateSettings); // NOI18N
@@ -2022,7 +2090,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                                 .addComponent(jVillageSortTypeChooser, 0, 109, Short.MAX_VALUE)
                                 .addComponent(jInformOnUpdates, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(325, Short.MAX_VALUE))
+                .addContainerGap(121, Short.MAX_VALUE))
         );
         jMiscSettingsLayout.setVerticalGroup(
             jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2099,33 +2167,31 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jCreateAccountButton)
+                        .addComponent(jCreateAccountButton, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jChangePasswordButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 319, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 105, Short.MAX_VALUE)
                         .addComponent(jCancelButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jOKButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addComponent(jSettingsTabbedPane)))
+                        .addComponent(jOKButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
+                .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jCreateAccountButton)
+                    .addComponent(jChangePasswordButton)
                     .addComponent(jCancelButton)
-                    .addComponent(jOKButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jChangePasswordButton))
+                    .addComponent(jOKButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -2250,7 +2316,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jCancelButton.setEnabled(false);
         jChangePasswordButton.setEnabled(false);
         jDownloadLiveDataButton.setEnabled(false);
-        jTribeNames.setModel(new DefaultComboBoxModel());
+        jProfileBox.setModel(new DefaultComboBoxModel(new Object[]{"Lade..."}));
         jStatusArea.setText("");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
@@ -2291,10 +2357,28 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         }
 
         /**Validate player settings*/
-        String selection = (String) jTribeNames.getSelectedItem();
-        if ((selection != null) && (!selection.equals("Bitte wählen"))) {
-            logger.debug("Setting default player for server '" + GlobalOptions.getSelectedServer() + "' to " + jTribeNames.getSelectedItem());
-            GlobalOptions.addProperty("player." + GlobalOptions.getSelectedServer(), selection);
+        UserProfile selectedProfile = null;
+        try {
+            selectedProfile = (UserProfile) jProfileBox.getSelectedItem();
+        } catch (Exception e) {
+        }
+        if (selectedProfile != null) {
+            logger.debug("Setting default profile for server '" + GlobalOptions.getSelectedServer() + "' to " + selectedProfile.getTribeName());
+
+            UserProfile formerProfile = GlobalOptions.getSelectedProfile();
+            if (formerProfile.getProfileId() != selectedProfile.getProfileId()) {
+                logger.info("Writing user data for former profile");
+                GlobalOptions.saveUserData();
+                GlobalOptions.addProperty("selected.profile", Long.toString(selectedProfile.getProfileId()));
+                formerProfile.updateProperties();
+                formerProfile.storeProfileData();
+                GlobalOptions.setSelectedProfile(selectedProfile);
+                logger.info("Loading user data for selected profile");
+                GlobalOptions.loadUserData();
+            } else {
+                GlobalOptions.addProperty("selected.profile", Long.toString(selectedProfile.getProfileId()));
+                GlobalOptions.setSelectedProfile(selectedProfile);
+            }
         }
 
         /**Update attack vector colors*/
@@ -2505,13 +2589,11 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     jCancelButton.setEnabled(false);
     jChangePasswordButton.setEnabled(false);
     jDownloadLiveDataButton.setEnabled(false);
-    jTribeNames.setModel(new DefaultComboBoxModel());
+    jProfileBox.setModel(new DefaultComboBoxModel(new Object[]{"Lade..."}));
     jStatusArea.setText("");
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
     //clear tribes model due to data is cleared at reload
-    jTribeNames.setModel(new DefaultComboBoxModel());
-
     Thread t = new Thread(new Runnable() {
 
         @Override
@@ -2563,10 +2645,6 @@ private void fireStandardMarkChangedEvent(java.awt.event.ItemEvent evt) {//GEN-F
         GlobalOptions.addProperty("default.mark", Integer.toString(idx));
     }
 }//GEN-LAST:event_fireStandardMarkChangedEvent
-
-private void fireShowTroopsTypeEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowTroopsTypeEvent
-    GlobalOptions.addProperty("paint.troops.type", Boolean.toString(jTroopsTypeBox.isSelected()));
-}//GEN-LAST:event_fireShowTroopsTypeEvent
 
 private void fireDrawAttacksByDefaultChangedEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireDrawAttacksByDefaultChangedEvent
     GlobalOptions.addProperty("draw.attacks.by.default", Boolean.toString(jDrawAttacksByDefaultBox.isSelected()));
@@ -2878,12 +2956,9 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     jCancelButton.setEnabled(false);
     jChangePasswordButton.setEnabled(false);
     jDownloadLiveDataButton.setEnabled(false);
-    jTribeNames.setModel(new DefaultComboBoxModel());
+    jProfileBox.setModel(new DefaultComboBoxModel(new Object[]{"Lade..."}));
     jStatusArea.setText("");
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
-    //clear tribes model due to data is cleared at reload
-    jTribeNames.setModel(new DefaultComboBoxModel());
 
     Thread t = new Thread(new Runnable() {
 
@@ -2893,14 +2968,6 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
                 logger.debug("Start downloading data from tribal wars servers");
                 boolean ret = DataHolder.getSingleton().loadLiveData();
                 logger.debug("Update finished " + ((ret) ? "successfully" : "with errors"));
-                /* if (!ret) {
-                logger.info(" - Loading local copy due to update error");
-                ret = DataHolder.getSingleton().loadData(false);
-                logger.debug("Data loaded " + ((ret) ? "successfully" : "with errors"));
-                if (!ret) {
-                throw new Exception("Unable to load local data copy");
-                }
-                }*/
             } catch (Exception e) {
                 logger.error("Failed to load data", e);
             }
@@ -2911,6 +2978,32 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     t.setDaemon(true);
     t.start();
 }//GEN-LAST:event_fireDownloadLiveDataEvent
+
+private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireProfileActionEvent
+
+    if (evt.getSource() == jNewProfileButton) {
+        DSWorkbenchProfileDialog.getSingleton().setLocationRelativeTo(this);
+        DSWorkbenchProfileDialog.getSingleton().setModal(true);
+        DSWorkbenchProfileDialog.getSingleton().setAlwaysOnTop(true);
+        DSWorkbenchProfileDialog.getSingleton().showAddProfileDialog();
+    } else if (evt.getSource() == jModifyProfileButton) {
+        DSWorkbenchProfileDialog.getSingleton().setLocationRelativeTo(this);
+        DSWorkbenchProfileDialog.getSingleton().setModal(true);
+        DSWorkbenchProfileDialog.getSingleton().setAlwaysOnTop(true);
+        UserProfile profile = (UserProfile) jProfileBox.getSelectedItem();
+        if (profile == null) {
+            return;
+        }
+        DSWorkbenchProfileDialog.getSingleton().showModifyDialog(profile);
+
+    } else if (evt.getSource() == jDeleteProfileButton) {
+        UserProfile profile = (UserProfile) jProfileBox.getSelectedItem();
+        if (JOptionPaneHelper.showWarningConfirmBox(this, "Mit dem Profil werden alle Angriffe, Markierungen usw. gelöscht.\nSoll das Profil " + profile + " wirklich gelöscht werden?", "Warnung", "Nein", "Ja") == JOptionPane.OK_OPTION) {
+            profile.delete();
+        }
+    }
+    updateProfileList();
+}//GEN-LAST:event_fireProfileActionEvent
 
     // </editor-fold>
     /**Update the server list*/
@@ -2936,8 +3029,8 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
 
         if (servers.length < 1) {
             logger.error("Failed to get server list and no locally stored server found");
-            jServerList.setModel(new DefaultComboBoxModel());
-            jTribeNames.setModel(new DefaultComboBoxModel());
+            jServerList.setModel(new DefaultComboBoxModel(new Object[]{"Keine Server gefunden"}));
+            jProfileBox.setModel(new DefaultComboBoxModel(new Object[]{"Keine Profile gefunden"}));
             return false;
         }
 
@@ -2960,16 +3053,7 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         if (GlobalOptions.getProperty("default.server") != null) {
             if (model.getIndexOf(GlobalOptions.getProperty("default.server")) != -1) {
                 jServerList.setSelectedItem(GlobalOptions.getProperty("default.server"));
-                model = new DefaultComboBoxModel();
-                if (GlobalOptions.getProperty("player." + GlobalOptions.getProperty("default.server")) != null) {
-                    model.addElement(GlobalOptions.getProperty("player." + GlobalOptions.getProperty("default.server")));
-                    jTribeNames.setModel(model);
-                    jTribeNames.setSelectedIndex(0);
-                } else {
-                    model.addElement("Bitte wählen");
-                    jTribeNames.setModel(model);
-                    jTribeNames.setSelectedIndex(0);
-                }
+                updateProfileList();
             } else {
                 jServerList.setSelectedIndex(0);
             }
@@ -2977,6 +3061,33 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             jServerList.setSelectedIndex(0);
         }
         return true;
+    }
+
+    private void updateProfileList() {
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        UserProfile[] profiles = ProfileManager.getSingleton().getProfiles(GlobalOptions.getProperty("default.server"));
+        if (profiles != null && profiles.length > 0) {
+            model = new DefaultComboBoxModel(profiles);
+        } else {
+            model = new DefaultComboBoxModel(new Object[]{"Kein Profil vorhanden"});
+        }
+
+        long profileId = -1;
+        try {
+            profileId = Long.parseLong(GlobalOptions.getProperty("player." + GlobalOptions.getProperty("default.server")));
+        } catch (Exception e) {
+        }
+        jProfileBox.setModel(model);
+        if (profileId != -1) {
+            //model.addElement(GlobalOptions.getProperty("player." + GlobalOptions.getProperty("default.server")));
+
+            for (UserProfile profile : profiles) {
+                if (profile.getProfileId() == profileId) {
+                    jProfileBox.setSelectedItem(profile);
+                    break;
+                }
+            }
+        }
     }
 
     /**Check the connectivity to dsworkbench.de*/
@@ -3111,22 +3222,30 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
                 Tribe[] ta = tribes.toArray(new Tribe[]{});
                 Arrays.sort(ta, Tribe.CASE_INSENSITIVE_ORDER);
                 DefaultComboBoxModel model = new DefaultComboBoxModel();
+                UserProfile[] profiles = ProfileManager.getSingleton().getProfiles(GlobalOptions.getSelectedServer());
+                if (profiles != null && profiles.length > 0) {
+                    model = new DefaultComboBoxModel(profiles);
 
-                for (Tribe tribe : ta) {
-                    model.addElement(tribe.toString());
-                }
-                jTribeNames.setModel(model);
-
-                if (GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()) != null) {
-                    if (model.getIndexOf(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer())) != -1) {
-                        jTribeNames.setSelectedItem(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()));
+                    jProfileBox.setModel(model);
+                    long profileId = -1;
+                    try {
+                        profileId = Long.parseLong(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()));
+                    } catch (Exception e) {
+                    }
+                    if (profileId != -1) {
+                        for (UserProfile profile : profiles) {
+                            if (profile.getProfileId() == profileId) {
+                                jProfileBox.setSelectedItem(profile);
+                                break;
+                            }
+                        }
                     } else {
-                        jTribeNames.setSelectedIndex(0);
-                        GlobalOptions.addProperty("player." + GlobalOptions.getSelectedServer(), (String) jTribeNames.getSelectedItem());
+                        jProfileBox.setSelectedIndex(0);
+                        GlobalOptions.addProperty("player." + GlobalOptions.getSelectedServer(), Long.toString(profiles[0].getProfileId()));
                     }
                 } else {
-                    jTribeNames.setSelectedIndex(0);
-                    GlobalOptions.addProperty("player." + GlobalOptions.getSelectedServer(), (String) jTribeNames.getSelectedItem());
+                    model = new DefaultComboBoxModel(new Object[]{"Kein Profil vorhanden"});
+                    jProfileBox.setModel(model);
                 }
                 if (DSWorkbenchMainFrame.getSingleton().isInitialized()) {
                     DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
@@ -3134,7 +3253,6 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             } catch (Exception e) {
                 logger.error("Failed to setup tribe list", e);
             }
-
             logger.info("Loading user data");
             GlobalOptions.loadUserData();
         }
@@ -3184,6 +3302,7 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JDialog jCreateAccountDialog;
     private javax.swing.JComboBox jDefaultMarkBox;
     private javax.swing.JButton jDeffStrengthOKButton;
+    private javax.swing.JButton jDeleteProfileButton;
     private javax.swing.JRadioButton jDirectConnectOption;
     private javax.swing.JButton jDownloadDataButton;
     private javax.swing.JButton jDownloadLiveDataButton;
@@ -3194,7 +3313,6 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JTextField jHeaderPath;
     private javax.swing.JTextField jHeavyAmount;
     private javax.swing.JCheckBox jInformOnUpdates;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -3205,7 +3323,6 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
@@ -3224,7 +3341,6 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jLoginPanel;
     private javax.swing.JPanel jMapSettings;
@@ -3233,13 +3349,17 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JTextField jMaxFarmSpace;
     private javax.swing.JTextField jMaxTroopDensity;
     private javax.swing.JPanel jMiscSettings;
+    private javax.swing.JButton jModifyProfileButton;
     private javax.swing.JPanel jNetworkSettings;
     private javax.swing.JPasswordField jNewPassword;
     private javax.swing.JPasswordField jNewPassword2;
+    private javax.swing.JButton jNewProfileButton;
     private javax.swing.JComboBox jNotifyDurationBox;
     private javax.swing.JButton jOKButton;
     private javax.swing.JPasswordField jOldPassword;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
+    private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -3247,8 +3367,10 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JTextField jPasswordChangeAccount;
     private javax.swing.JPanel jPlayerServerSettings;
+    private javax.swing.JComboBox jProfileBox;
     private javax.swing.JLabel jProxyAdressLabel;
     private javax.swing.JRadioButton jProxyConnectOption;
     private javax.swing.JTextField jProxyHost;
@@ -3293,9 +3415,7 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JTextArea jStatusArea;
     private javax.swing.JTextField jSwordAmount;
     private javax.swing.JPanel jTemplateSettings;
-    private javax.swing.JComboBox jTribeNames;
     private javax.swing.JDialog jTroopDensitySelectionDialog;
-    private javax.swing.JCheckBox jTroopsTypeBox;
     private javax.swing.JCheckBox jUseStandardBrowser;
     private javax.swing.JComboBox jVillageSortTypeChooser;
     private javax.swing.ButtonGroup tagMarkerGroup;

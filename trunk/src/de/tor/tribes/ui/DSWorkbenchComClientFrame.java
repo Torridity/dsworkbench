@@ -308,6 +308,8 @@ public class DSWorkbenchComClientFrame extends AbstractDSWorkbenchFrame implemen
             }).start();
         }
     }//GEN-LAST:event_fireRandomInputEvent
+    public void resetView() {
+    }
 
     /**
      * @param args the command line arguments

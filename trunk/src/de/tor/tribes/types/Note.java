@@ -5,6 +5,7 @@
 package de.tor.tribes.types;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -69,25 +70,32 @@ public class Note {
         boolean isNext = false;
         for (Integer id : villageIds) {
             if (isNext) {
-                buffer.append(",");
+                buffer.append(", ");
             }
             Village v = DataHolder.getSingleton().getVillagesById().get(id);
             buffer.append(v.toBBCode());
             isNext = true;
         }
         buffer.append("\n\n");
-         buffer.append("[b]Notiztext:[/b]\n\n");
-        buffer.append("[quote]");
+        if (getNoteSymbol() != -1) {
+            buffer.append("[b]Notizsymbol:[/b] [img]").append(ImageManager.getNoteImageURLOnServer(getNoteSymbol())).append("[/img]\n\n");
+        }
+        buffer.append("[b]Notiztext:[/b]\n\n");
         buffer.append(getNoteText());
-        buffer.append("[/quote][/quote]\n");
+        buffer.append("[/quote]\n");
         return buffer.toString();
+    }
+
+    @Override
+    public String toString() {
+        return getNoteText();
     }
 
     public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(long pValue) {
+    public final void setTimestamp(long pValue) {
         timestamp = pValue;
     }
 
@@ -104,8 +112,8 @@ public class Note {
     }
 
     public String getNoteText() {
-        if (sNoteText == null) {
-            return "";
+        if (sNoteText == null || sNoteText.length() < 1) {
+            return "-Leere Notiz-";
         } else {
             return sNoteText;
         }

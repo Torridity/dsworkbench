@@ -717,6 +717,11 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     /**Called at startup*/
     protected void init() {
         logger.info("Starting initialization");
+        logger.info(" * Setting up attack planner");
+        //setup frames
+        mTribeTribeAttackFrame = new TribeTribeAttackFrame();
+        mTribeTribeAttackFrame.pack();
+        logger.info(" * Updating server settings");
         //setup everything
         serverSettingsChangedEvent();
 
@@ -726,10 +731,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         logger.info(" * Setting up views");
         setupFrames();
         fireToolChangedEvent(ImageManager.CURSOR_DEFAULT);
-        logger.info(" * Setting up attack planner");
-        //setup frames
-        mTribeTribeAttackFrame = new TribeTribeAttackFrame();
-        mTribeTribeAttackFrame.pack();
+
 
         logger.info("Initialization finished");
         initialized = true;
@@ -762,7 +764,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     /**Setup main map and mini map*/
     private void setupMaps() {
         try {
-            dZoomFactor = Double.parseDouble(GlobalOptions.getSelectedProfile().getProperty("zoom.factor"));
+            dZoomFactor = Double.parseDouble(GlobalOptions.getSelectedProfile().getProperty("zoom"));
             checkZoomRange();
         } catch (Exception e) {
             dZoomFactor = 1.0;
@@ -2505,7 +2507,7 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
     } else if (evt.getSource() == jClockItem) {
         ClockFrame.getSingleton().setVisible(true);
     } else if (evt.getSource() == jTribeTribeAttackItem) {
-        mTribeTribeAttackFrame.setup();
+        // mTribeTribeAttackFrame.setup();
         mTribeTribeAttackFrame.setVisible(true);
     } else if (evt.getSource() == jUnitOverviewItem) {
         UnitOrderBuilder.showUnitOrder(null, null);

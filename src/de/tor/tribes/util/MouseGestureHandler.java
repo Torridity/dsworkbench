@@ -8,12 +8,14 @@ import com.smardec.mousegestures.MouseGesturesListener;
 import de.tor.tribes.ui.DSWorkbenchAttackFrame;
 import de.tor.tribes.ui.DSWorkbenchConquersFrame;
 import de.tor.tribes.ui.DSWorkbenchFormFrame;
+import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.DSWorkbenchMarkerFrame;
 import de.tor.tribes.ui.DSWorkbenchNotepad;
 import de.tor.tribes.ui.DSWorkbenchReportFrame;
 import de.tor.tribes.ui.DSWorkbenchStatsFrame;
 import de.tor.tribes.ui.DSWorkbenchTagFrame;
 import de.tor.tribes.ui.DSWorkbenchTroopsFrame;
+import de.tor.tribes.ui.TribeTribeAttackFrame;
 import java.awt.MouseInfo;
 import javax.swing.SwingUtilities;
 
@@ -25,7 +27,7 @@ public class MouseGestureHandler implements MouseGesturesListener {
 
     @Override
     public void processGesture(String string) {
-        System.out.println("Gesture: " + string);
+        // System.out.println("Gesture: " + string);
         if (DSWorkbenchAttackFrame.getSingleton().isActive()) {
             DSWorkbenchAttackFrame.getSingleton().handleGesture(string);
         } else if (DSWorkbenchNotepad.getSingleton().isActive()) {
@@ -44,6 +46,8 @@ public class MouseGestureHandler implements MouseGesturesListener {
             DSWorkbenchStatsFrame.getSingleton().handleGesture(string);
         } else if (DSWorkbenchReportFrame.getSingleton().isActive()) {
             DSWorkbenchReportFrame.getSingleton().handleGesture(string);
+        } else if (DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isActive()) {
+            DSWorkbenchMainFrame.getSingleton().getAttackPlaner().handleGesture(string);
         }
     }
 

@@ -34,6 +34,7 @@ import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.AttackToBBCodeFormater;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.DSWorkbenchGesturedFrame;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PluginManager;
@@ -101,10 +102,52 @@ import java.util.Iterator;
 /**
  * @TODO (DIFF) Added strict filtering to troop filter dialog
  * @TODO (DIFF) Added troops check before adding source villages
+ * @TODO Call setup on group update by TagManager
  * @author Jejkal
  */
-public class TribeTribeAttackFrame extends javax.swing.JFrame implements AlgorithmListener, DropTargetListener, DragGestureListener, DragSourceListener {
+public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements AlgorithmListener, DropTargetListener, DragGestureListener, DragSourceListener {
 
+    @Override
+    public void fireCloseGestureEvent() {
+        setVisible(false);
+    }
+
+    @Override
+    public void fireExportAsBBGestureEvent() {
+    }
+
+    @Override
+    public void firePlainExportGestureEvent() {
+    }
+
+    @Override
+    public void fireRenameGestureEvent() {
+    }
+
+    @Override
+    public void fireToBackgroundGestureEvent() {
+        toBack();
+    }
+
+    @Override
+    public void fireNextPageGestureEvent() {
+        int idx = jTabbedPane1.getSelectedIndex();
+        idx += 1;
+        if (idx > jTabbedPane1.getTabCount() - 1) {
+            idx = 0;
+        }
+        jTabbedPane1.setSelectedIndex(idx);
+    }
+
+    @Override
+    public void firePreviousPageGestureEvent() {
+        int idx = jTabbedPane1.getSelectedIndex();
+        idx -= 1;
+        if (idx < 0) {
+            idx = jTabbedPane1.getTabCount() - 1;
+        }
+        jTabbedPane1.setSelectedIndex(idx);
+    }
     private static Logger logger = Logger.getLogger("AttackPlanner");
     private SettingsPanel mSettingsPanel = null;
     //private MiscSettingsPanel mMiscPanel = null;

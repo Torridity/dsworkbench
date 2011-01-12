@@ -13,8 +13,8 @@ import java.util.List;
  */
 public abstract class FilterableManager<C, I extends Filter> {
 
-    private List<C> filteredList = null;
-    private List<I> filters = null;
+    private List<C> filteredList = new LinkedList<C>();
+    private List<I> filters = new LinkedList<I>();
 
     public int getFilteredElementCount() {
         return filteredList.size();

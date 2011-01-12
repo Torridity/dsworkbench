@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.php.DatabaseInterface;
+import de.tor.tribes.types.DummyUserProfile;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.util.ServerChangeListener;
@@ -2366,6 +2367,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             logger.debug("Setting default profile for server '" + GlobalOptions.getSelectedServer() + "' to " + selectedProfile.getTribeName());
 
             UserProfile formerProfile = GlobalOptions.getSelectedProfile();
+
             if (formerProfile.getProfileId() != selectedProfile.getProfileId()) {
                 logger.info("Writing user data for former profile");
                 GlobalOptions.saveUserData();
@@ -2379,6 +2381,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 GlobalOptions.addProperty("selected.profile", Long.toString(selectedProfile.getProfileId()));
                 GlobalOptions.setSelectedProfile(selectedProfile);
             }
+        } else if (GlobalOptions.getSelectedProfile().equals(DummyUserProfile.getSingleton())) {
+            JOptionPaneHelper.showWarningBox(this, "Du musst ein Profil auswählen um fortzufahren", "Warnung");
+            return;
         }
 
         /**Update attack vector colors*/
@@ -3243,9 +3248,11 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                         jProfileBox.setSelectedIndex(0);
                         GlobalOptions.addProperty("player." + GlobalOptions.getSelectedServer(), Long.toString(profiles[0].getProfileId()));
                     }
+                    GlobalOptions.setSelectedProfile(profiles[0]);
                 } else {
                     model = new DefaultComboBoxModel(new Object[]{"Kein Profil vorhanden"});
                     jProfileBox.setModel(model);
+                    GlobalOptions.setSelectedProfile(DummyUserProfile.getSingleton());
                 }
                 if (DSWorkbenchMainFrame.getSingleton().isInitialized()) {
                     DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();

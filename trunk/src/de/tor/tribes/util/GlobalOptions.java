@@ -10,6 +10,7 @@ package de.tor.tribes.util;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.WorldDecorationHolder;
+import de.tor.tribes.types.DummyUserProfile;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.attack.AttackManager;
@@ -222,7 +223,9 @@ public class GlobalOptions {
 
     /**Load user data (attacks, markers...)*/
     public static void loadUserData() {
-        if (getSelectedServer() != null && getSelectedProfile() != null) {
+        if (getSelectedServer() != null
+                && getSelectedProfile() != null
+                && !getSelectedProfile().equals(DummyUserProfile.getSingleton())) {
             logger.debug("Loading markers");
             MarkerManager.getSingleton().loadMarkersFromFile(getSelectedProfile().getProfileDirectory() + "/markers.xml");
             logger.debug("Loading attacks");
@@ -252,7 +255,10 @@ public class GlobalOptions {
 
     /**Load user data (attacks, markers...)*/
     public static void saveUserData() {
-        if (getSelectedServer() != null && getSelectedProfile() != null && !isInternalDataDamaged()) {
+        if (getSelectedServer() != null
+                && getSelectedProfile() != null
+                && !getSelectedProfile().equals(DummyUserProfile.getSingleton())
+                && !isInternalDataDamaged()) {
             logger.debug("Saving markers");
             MarkerManager.getSingleton().saveMarkersToFile(getSelectedProfile().getProfileDirectory() + "/markers.xml");
             logger.debug("Saving attacks");

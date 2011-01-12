@@ -180,7 +180,6 @@ public class FreeForm extends AbstractForm {
         }
         Rectangle2D r2d = p.getBounds2D();
         return new java.awt.Rectangle((int) r2d.getX(), (int) r2d.getY(), (int) r2d.getWidth(), (int) r2d.getHeight());
-
     }
 
     /**For reading from XML only*/

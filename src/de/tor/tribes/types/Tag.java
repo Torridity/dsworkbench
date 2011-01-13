@@ -31,11 +31,14 @@ public class Tag implements Comparable<Tag> {
     public static final Comparator<Tag> CASE_INSENSITIVE_ORDER = new CaseInsensitiveTagComparator();
     private String sName = null;
     private List<Integer> mVillageIDs = new LinkedList<Integer>();
-    //private Color tagColor = null;
     //-1 means no icon
-    private TagMapMarker mapMarker = null;//; int tagIcon = -1;
+    private TagMapMarker mapMarker = null;
     private boolean showOnMap = true;
 
+    /**Factor a tag from its DOM representation 
+     * @param pElement DOM element received while reading the user tags
+     * @return Tag Tag instance parsed from pElement
+     */
     public static Tag fromXml(Element pElement) throws Exception {
         String name = URLDecoder.decode(pElement.getChild("name").getTextTrim(), "UTF-8");
         boolean showOnMap = Boolean.parseBoolean(pElement.getAttributeValue("shownOnMap"));
@@ -63,46 +66,80 @@ public class Tag implements Comparable<Tag> {
         return t;
     }
 
+    /**Default constructor*/
     public Tag(String pName, boolean pShowOnMap) {
         setName(pName);
         setShowOnMap(pShowOnMap);
-        mapMarker = new TagMapMarker();
+        setMapMarker(new TagMapMarker());
     }
 
+    /**Get the tag name
+     * @return String Name of this tag
+     */
     public String getName() {
         return sName;
     }
 
-    public void setName(String pName) {
+    /**Set the tag name
+     * @param pName Name of this tag
+     */
+    public final void setName(String pName) {
         this.sName = pName;
     }
 
+    /**Get the map marker of this tag
+     * @return TagMapMarker Map marker of this tag
+     */
     public TagMapMarker getMapMarker() {
         return mapMarker;
     }
 
+    /**Tag the village with the ID 'pVillageID' by this tag
+     * @param pVillageID ID of the village to tag
+     */
     public void tagVillage(Integer pVillageID) {
         if (!mVillageIDs.contains(pVillageID)) {
             mVillageIDs.add(pVillageID);
         }
     }
 
+    /**Remove this tag from the village with the ID 'pVillageID'
+     *@param pVillageID ID of the village to untag
+     */
     public void untagVillage(Integer pVillageID) {
         mVillageIDs.remove(pVillageID);
     }
 
+    /**Get the list of IDs of villages tagged by this tag
+     * @return List<Integer> List of tagged villages IDs
+     */
     public List<Integer> getVillageIDs() {
         return mVillageIDs;
     }
 
+    /**Check whether this tag tags the village with the ID 'pVillageID' or not
+     * @param pVillageID ID of the village to check
+     * @return boolean TRUE=Tag tags the village
+     */
     public boolean tagsVillage(int pVillageID) {
         return mVillageIDs.contains(pVillageID);
     }
 
-    public void setShowOnMap(boolean pValue) {
+    /**Remove all tagged villages*/
+    public void clearTaggedVillages() {
+        mVillageIDs.clear();
+    }
+
+    /**Set whether to render villages tagged by this tag or not
+     * @param pValue TRUE=render villages tagged by this tag
+     */
+    public final void setShowOnMap(boolean pValue) {
         showOnMap = pValue;
     }
 
+    /**Check whether villages tagged by this tag are rendered or not
+     * @return boolean TRUE=tagges villages are rendered
+     */
     public boolean isShowOnMap() {
         return showOnMap;
     }
@@ -112,6 +149,9 @@ public class Tag implements Comparable<Tag> {
         return getName();
     }
 
+    /**Convert this tag into its XML representation
+     * @return String String that contains the XML representation
+     */
     public String toXml() throws Exception {
         try {
             String ret = "<tag shownOnMap=\"" + isShowOnMap() + "\">\n";
@@ -141,32 +181,39 @@ public class Tag implements Comparable<Tag> {
         }
     }
 
-    /**
-     * @return the tagColor
+    /**Get the color of the associated TagMapMarker
+     * @return Color the TagMapMarker's color
      */
     public Color getTagColor() {
-        return mapMarker.getTagColor();
+        return getMapMarker().getTagColor();
     }
 
-    /**
-     * @param tagColor the tagColor to set
+    /**Set the color of the associated TagMapMarker
+     * @param tagColor the TagMapMarker's color
      */
     public void setTagColor(Color tagColor) {
-        mapMarker.setTagColor(tagColor);
+        getMapMarker().setTagColor(tagColor);
     }
 
-    /**
+    /**Get the icon's ID of the associated TagMapMarker
      * @return the tagIcon
      */
     public int getTagIcon() {
-        return mapMarker.getTagIcon();
+        return getMapMarker().getTagIcon();
     }
 
-    /**
+    /**Set the icon's ID of the associated TagMapMarker
      * @param tagIcon the tagIcon to set
      */
     public void setTagIcon(int tagIcon) {
-        mapMarker.setTagIcon(tagIcon);
+        getMapMarker().setTagIcon(tagIcon);
+    }
+
+    /**Set the associated TagMapMarker
+     * @param mapMarker the mapMarker to set
+     */
+    public final void setMapMarker(TagMapMarker mapMarker) {
+        this.mapMarker = mapMarker;
     }
 
     private static class CaseInsensitiveTagComparator implements Comparator<Tag>, java.io.Serializable {

@@ -155,6 +155,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements A
     private AlgorithmLogPanel logPanel = null;
     private DragSource dragSource;
     private JFrame mLogFrame = null;
+    private TroopSplitDialog mTroopSplitDialog = null;
 
     /** Creates new form TribeTribeAttackFrame */
     public TribeTribeAttackFrame() {
@@ -165,6 +166,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements A
         mLogFrame.setLayout(new BorderLayout());
         mLogFrame.add(logPanel);
         mLogFrame.pack();
+        mTroopSplitDialog = new TroopSplitDialog(this, true);
         mSettingsPanel = new SettingsPanel();
         // mMiscPanel = new MiscSettingsPanel();
         jTabbedPane1.addTab("Einstellungen", new ImageIcon(this.getClass().getResource("/res/settings.png")), mSettingsPanel);
@@ -488,6 +490,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements A
         jSetSourceNoFakeButton = new javax.swing.JButton();
         jButton15 = new javax.swing.JButton();
         jFilterSourceButton = new javax.swing.JButton();
+        jSetSourceFakeButton1 = new javax.swing.JButton();
         jTargetPanel = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jTargetAllyLabel = new javax.swing.JLabel();
@@ -1295,7 +1298,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements A
                         .addComponent(jSourceVillageLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addComponent(jSourceGroupRelation, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jTroopsList, javax.swing.GroupLayout.Alignment.LEADING, 0, 175, Short.MAX_VALUE)))
@@ -1311,7 +1314,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements A
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel21)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE))
+                        .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(jPlayerSourcesOnlyBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -1443,6 +1446,19 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements A
             }
         });
 
+        jSetSourceFakeButton1.setBackground(new java.awt.Color(239, 235, 223));
+        jSetSourceFakeButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/branch.png"))); // NOI18N
+        jSetSourceFakeButton1.setText(bundle.getString("TribeTribeAttackFrame.jSetSourceFakeButton1.text")); // NOI18N
+        jSetSourceFakeButton1.setToolTipText(bundle.getString("TribeTribeAttackFrame.jSetSourceFakeButton1.toolTipText")); // NOI18N
+        jSetSourceFakeButton1.setMaximumSize(new java.awt.Dimension(59, 33));
+        jSetSourceFakeButton1.setMinimumSize(new java.awt.Dimension(59, 33));
+        jSetSourceFakeButton1.setPreferredSize(new java.awt.Dimension(59, 33));
+        jSetSourceFakeButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSplitSourceVillagesEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jSourcePanelLayout = new javax.swing.GroupLayout(jSourcePanel);
         jSourcePanel.setLayout(jSourcePanelLayout);
         jSourcePanelLayout.setHorizontalGroup(
@@ -1450,18 +1466,20 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements A
             .addGroup(jSourcePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
+                    .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, 832, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jSourcePanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 765, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 767, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jButton14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jFilterSourceButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jButton11)
-                            .addComponent(jSetSourceNoFakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jSetSourceFakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jButton14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jFilterSourceButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jButton11)
+                                .addComponent(jSetSourceNoFakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jSetSourceFakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jSetSourceFakeButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jSourcePanelLayout.createSequentialGroup()
                         .addComponent(jButton15)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -1486,8 +1504,10 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements A
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSetSourceNoFakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jSetSourceFakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE))
+                        .addComponent(jSetSourceFakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jSetSourceFakeButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1566,8 +1586,8 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements A
                     .addComponent(jLabel11))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTargetTribeFilter, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 168, Short.MAX_VALUE))
+                    .addComponent(jTargetTribeFilter, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 169, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1580,10 +1600,10 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements A
                 .addComponent(jLabel24)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane10, javax.swing.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
-                    .addComponent(jMarkTargetAsFake, javax.swing.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
+                    .addComponent(jScrollPane10, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
+                    .addComponent(jMarkTargetAsFake, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
+                        .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jMaxAttacksPerVillage, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -1593,15 +1613,15 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements A
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
-                    .addComponent(jScrollPane8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                    .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
+                    .addComponent(jScrollPane8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
                     .addComponent(jLabel24)
                     .addComponent(jLabel23)
                     .addComponent(jLabel1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jTargetAllyLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE))
+                            .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel11)
@@ -1739,7 +1759,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements A
                 .addGroup(jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jTargetPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 765, Short.MAX_VALUE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 769, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jIncrementAttackCountButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1775,7 +1795,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements A
                         .addComponent(jDecrementAttackCountButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jResetAttackCountEvent))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1812,7 +1832,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements A
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 604, Short.MAX_VALUE)
+                        .addComponent(jInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jCalculatingProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -2967,6 +2987,21 @@ private void showAttackInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
 
 }//GEN-LAST:event_showAttackInfoEvent
 
+private void fireSplitSourceVillagesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSplitSourceVillagesEvent
+
+    int sources = jAttacksTable.getRowCount();
+    List<Village> sourceVillages = new LinkedList<Village>();
+    for (int i = 0; i < sources; i++) {
+        Village sourceVillage = (Village) jAttacksTable.getValueAt(i, 0);
+        if (!sourceVillages.contains(sourceVillage)) {
+            sourceVillages.add(sourceVillage);
+        }
+    }
+
+    mTroopSplitDialog.setupAndShow(sourceVillages);
+
+}//GEN-LAST:event_fireSplitSourceVillagesEvent
+
     private void addSourceVillages(List<Village> pSourceVillages, UnitHolder pUnit, boolean pAsFake) {
         List<Village> villagesWithSmallTroopCount = new LinkedList<Village>();
         for (Village pSource : pSourceVillages) {
@@ -3054,7 +3089,7 @@ private void showAttackInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
         List<Village> sourceVillages = new LinkedList<Village>();
         for (int i = 0; i < sources; i++) {
             Village sourceVillage = (Village) jAttacksTable.getValueAt(i, 0);
-            if (sourceVillages.contains(sourceVillage)) {
+            if (!sourceVillages.contains(sourceVillage)) {
                 sourceVillages.add(sourceVillage);
             }
             if ((Boolean) jAttacksTable.getValueAt(i, 2)) {
@@ -4003,6 +4038,7 @@ private void showAttackInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     private javax.swing.JButton jSelectionEndButton;
     private javax.swing.JTextField jSelectionStart;
     private javax.swing.JButton jSetSourceFakeButton;
+    private javax.swing.JButton jSetSourceFakeButton1;
     private javax.swing.JButton jSetSourceNoFakeButton;
     private javax.swing.JButton jSetTargetFakeButton;
     private javax.swing.JButton jSetTargetNoFakeButton;

@@ -189,10 +189,10 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                         BufferedImage i = MinimapRepaintThread.getSingleton().getBuffer();
                         int mapWidth = (int) ServerSettings.getSingleton().getMapDimension().getWidth();
                         int mapHeight = (int) ServerSettings.getSingleton().getMapDimension().getHeight();
-                        int x = (int) Math.rint((double) mapWidth / (double) getWidth() * (double) rDrag.getX());
-                        int y = (int) Math.rint((double) mapHeight / (double) getHeight() * (double) rDrag.getY());
-                        int w = (int) Math.rint((double) mapWidth / (double) getWidth() * (double) (rDrag.getWidth() - rDrag.getX()));
-                        int h = (int) Math.rint((double) mapHeight / (double) getHeight() * (double) (rDrag.getHeight() - rDrag.getY()));
+                        int x = (int) Math.rint((double) mapWidth / (double) getWidth() * rDrag.getX());
+                        int y = (int) Math.rint((double) mapHeight / (double) getHeight() * rDrag.getY());
+                        int w = (int) Math.rint((double) mapWidth / (double) getWidth() * (rDrag.getWidth() - rDrag.getX()));
+                        int h = (int) Math.rint((double) mapHeight / (double) getHeight() * (rDrag.getHeight() - rDrag.getY()));
                         BufferedImage sub = i.getSubimage(x, y, w, h);
                         mScreenshotPanel.setBuffer(sub);
                         jPanel1.setSize(mScreenshotPanel.getSize());
@@ -210,9 +210,9 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                     if (!zoomed) {
                         int mapWidth = (int) ServerSettings.getSingleton().getMapDimension().getWidth();
                         int mapHeight = (int) ServerSettings.getSingleton().getMapDimension().getHeight();
-                        int x = (int) Math.rint((double) mapWidth / (double) getWidth() * (double) rDrag.getX());
-                        int y = (int) Math.rint((double) mapHeight / (double) getHeight() * (double) rDrag.getY());
-                        int w = (int) Math.rint((double) mapWidth / (double) getWidth() * (double) (rDrag.getWidth() - rDrag.getX()));
+                        int x = (int) Math.rint((double) mapWidth / (double) getWidth() * rDrag.getX());
+                        int y = (int) Math.rint((double) mapHeight / (double) getHeight() * rDrag.getY());
+                        int w = (int) Math.rint((double) mapWidth / (double) getWidth() * (rDrag.getWidth() - rDrag.getX()));
 
                         if (w >= 10) {
                             rVisiblePart = new Rectangle(x, y, w, w);

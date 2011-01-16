@@ -10,7 +10,7 @@ import java.awt.datatransfer.Transferable;
 import org.apache.log4j.Logger;
 
 /**
- *
+ *@TODO Make clipboard check frequency optional
  * @author Charon
  */
 public class ClipboardWatch extends Thread {

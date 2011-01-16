@@ -2213,7 +2213,7 @@ public class MapRenderer extends Thread {
 // </editor-fold>
 
         //draw additional info
-        if (mouseVillage != null) {
+        if (mouseVillage != null && Boolean.parseBoolean(GlobalOptions.getProperty("show.mouseover.info"))) {
             Rectangle rect = villagePositions.get(mouseVillage);
             AnimatedVillageInfoRenderer animator = animators.get(mouseVillage);
             if (animator == null) {

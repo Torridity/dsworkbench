@@ -186,7 +186,7 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
     }
 
     private void renderMarkerField(Village v, int row, int col, int pFieldWidth, int pFieldHeight, double zoom, Graphics2D g2d) {
-        if (v != null) {
+        if (v != null && v.isVisibleOnMap()) {
             int tagsize = (int) Math.rint((double) 18 / zoom);
             if (tagsize > pFieldHeight || tagsize > pFieldWidth) {
                 return;

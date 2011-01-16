@@ -48,7 +48,7 @@ public class PercentCellRenderer extends DefaultTableCellRenderer {
                 g2d.setColor(Color.GREEN);
             }
             t = format.format(v * 100) + "%";
-            int w = (int) Math.round(getWidth() * v);
+            int w = Math.round(getWidth() * v);
             g2d.fill3DRect(0, 0, w, getHeight(), true);
             g2d.setColor(Color.BLACK);
             Rectangle2D bounds = g2d.getFontMetrics().getStringBounds(t, g);

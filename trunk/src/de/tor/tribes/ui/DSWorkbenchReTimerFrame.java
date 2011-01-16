@@ -1104,7 +1104,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             // double dist = DSCalculator.calculateDistance(source, target);
             double dur = DSCalculator.calculateMoveTimeInSeconds(source, target, unit.getSpeed()) * 1000.0;
             long send = arrive.getTime() - (long) dur;
-            double ret = (double) arrive.getTime() + (double) dur;
+            double ret = (double) arrive.getTime() + dur;
             ret /= 1000;
             ret = Math.round(ret + .5);
             ret *= 1000;

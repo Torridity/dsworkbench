@@ -9,27 +9,18 @@
  */
 package de.tor.tribes.ui.algo;
 
-import de.tor.tribes.db.DatabaseServerEntry;
-import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.types.TimeSpan;
 import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.algo.TimeFrame;
-import java.awt.Point;
-import java.awt.geom.Line2D;
-import java.text.DecimalFormat;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import org.apache.commons.lang.math.IntRange;
 import org.apache.log4j.Logger;
 
 /**
@@ -54,65 +45,92 @@ public class SettingsPanel extends javax.swing.JPanel {
     }
 
     public void storeProperties() {
-        /*    String server = GlobalOptions.getSelectedServer();
-        GlobalOptions.addProperty(server + ".attack.frame.start.date", Long.toString(jSendTime.getSelectedDate().getTime()));
-        GlobalOptions.addProperty(server + ".attack.frame.arrive.date", Long.toString(jArriveTime.getSelectedDate().getTime()));
-        GlobalOptions.addProperty(server + ".attack.frame.arrive.frame.min", Double.toString(jArriveTimeFrame.getMinimumColoredValue()));
-        GlobalOptions.addProperty(server + ".attack.frame.arrive.frame.max", Double.toString(jArriveTimeFrame.getMaximumColoredValue()));
-        GlobalOptions.addProperty(server + ".attack.frame.var.arrive.time", Boolean.toString(jVariableArriveTimeBox.isSelected()));
-        GlobalOptions.addProperty(server + ".attack.frame.algo.type", Integer.toString(jAlgoBox.getSelectedIndex()));
-        GlobalOptions.addProperty(server + ".attack.frame.fake.off.targets", Boolean.toString(jFakeOffTargetsBox.isSelected()));
-        DefaultListModel model = (DefaultListModel) jSendTimeFramesList.getModel();
-        String spanProp = "";
-        for (int i = 0; i < model.getSize(); i++) {
-        spanProp += ((TimeSpan) model.getElementAt(i)).toPropertyString() + ";";
+        UserProfile profile = GlobalOptions.getSelectedProfile();
+        jSendTimeSettingsPanel.getMinTime();
+        jSendTimeSettingsPanel.getMaxTime();
+        jSendTimeSettingsPanel.getTimeSpans();
+
+        jArriveTimeSettingsPanel.getMinTime();
+        jArriveTimeSettingsPanel.getMaxTime();
+        jArriveTimeSettingsPanel.getTimeSpans();
+
+        profile.addProperty("attack.frame.min.start", Long.toString(jSendTimeSettingsPanel.getMinTime().getTime()));
+        if (jSendTimeSettingsPanel.getMaxTime() != null) {
+            profile.addProperty("attack.frame.max.start", Long.toString(jSendTimeSettingsPanel.getMaxTime().getTime()));
+        } else {
+            profile.addProperty("attack.frame.max.start", Long.toString(jSendTimeSettingsPanel.getMinTime().getTime()));
         }
-        GlobalOptions.addProperty(server + ".attack.frame.time.spans", spanProp);*/
+        profile.addProperty("attack.frame.max.start.enabled", Boolean.toString(jSendTimeSettingsPanel.isMaxTimeEnabled()));
+
+        String spanProp = "";
+        for (TimeSpan span : jSendTimeSettingsPanel.getTimeSpans()) {
+            spanProp += span.toPropertyString() + ";";
+        }
+        profile.addProperty("attack.frame.start.spans", spanProp);
+        profile.addProperty("attack.frame.min.arrive", Long.toString(jArriveTimeSettingsPanel.getMinTime().getTime()));
+        profile.addProperty("attack.frame.max.arrive", Long.toString(jArriveTimeSettingsPanel.getMaxTime().getTime()));
+
+        spanProp = "";
+        for (TimeSpan span : jSendTimeSettingsPanel.getTimeSpans()) {
+            spanProp += span.toPropertyString() + ";";
+        }
+        profile.addProperty("attack.frame.arrive.spans", spanProp);
+        profile.addProperty("attack.frame.algo.type", Integer.toString(jAlgoBox.getSelectedIndex()));
+        profile.addProperty("attack.frame.fake.off.targets", Boolean.toString(jFakeOffTargetsBox.isSelected()));
     }
 
     public void restoreProperties() {
-        /* try {
-        String server = GlobalOptions.getSelectedServer();
-        long start = Long.parseLong(GlobalOptions.getProperty(server + ".attack.frame.start.date"));
-        if (start < System.currentTimeMillis()) {
-        //set start to 5 min in future if start is in past
-        start = System.currentTimeMillis() + 1000 * 60 * 5;
-        }
-        jSendTime.setDate(new Date(start));
-
-
-        long arrive = Long.parseLong(GlobalOptions.getProperty(server + ".attack.frame.arrive.date"));
-        if (arrive < System.currentTimeMillis()) {
-        //set start to 1 hour in future if arrive is in past
-        arrive = System.currentTimeMillis() + 1000 * 60 * 60;
-        }
-        jArriveTime.setDate(new Date(arrive));
-
-        jArriveTimeFrame.setMinimumColoredValue(Double.parseDouble(GlobalOptions.getProperty(server + ".attack.frame.arrive.frame.min")));
-        jArriveTimeFrame.setMaximumColoredValue(Double.parseDouble(GlobalOptions.getProperty(server + ".attack.frame.arrive.frame.max")));
-        jAlgoBox.setSelectedIndex(Integer.parseInt(GlobalOptions.getProperty(server + ".attack.frame.algo.type")));
-        jVariableArriveTimeBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty(server + ".attack.frame.var.arrive.time")));
-        jFakeOffTargetsBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty(server + ".attack.frame.fake.off.targets")));
-        String spanProp = GlobalOptions.getProperty(server + ".attack.frame.time.spans");
-        String[] spans = spanProp.split(";");
-        DefaultListModel model = (DefaultListModel) jSendTimeFramesList.getModel();
-        for (String span : spans) {
         try {
-        TimeSpan s = TimeSpan.fromPropertyString(span);
-        if (s != null) {
-        model.addElement(s);
-        }
-        } catch (Exception invalid) {
-        }
-        }
+            UserProfile profile = GlobalOptions.getSelectedProfile();
+            long minStart = Long.parseLong(profile.getProperty("attack.frame.min.start"));
+            long maxStart = Long.parseLong(profile.getProperty("attack.frame.max.start"));
+            long minArrive = Long.parseLong(profile.getProperty("attack.frame.min.arrive"));
+            long maxArrive = Long.parseLong(profile.getProperty("attack.frame.max.arrive"));
+            jSendTimeSettingsPanel.setMinTime(new Date(minStart));
+            jSendTimeSettingsPanel.setMaxTime(new Date(maxStart));
+            jArriveTimeSettingsPanel.setMinTime(new Date(minArrive));
+            jArriveTimeSettingsPanel.setMaxTime(new Date(maxArrive));
+            jSendTimeSettingsPanel.setMaxTimeEnabled(Boolean.parseBoolean(profile.getProperty("attack.frame.max.start.enabled")));
+            jAlgoBox.setSelectedIndex(Integer.parseInt(profile.getProperty("attack.frame.algo.type")));
+            jFakeOffTargetsBox.setSelected(Boolean.parseBoolean(profile.getProperty("attack.frame.fake.off.targets")));
 
+            // <editor-fold defaultstate="collapsed" desc="Restore time spans">
+            //restore send spans
+            String spanProp = profile.getProperty("attack.frame.start.spans");
+            String[] spans = spanProp.split(";");
+
+            List<TimeSpan> spanList = new LinkedList<TimeSpan>();
+            for (String span : spans) {
+                try {
+                    TimeSpan s = TimeSpan.fromPropertyString(span);
+                    if (s != null) {
+                        spanList.add(s);
+                    }
+                } catch (Exception invalid) {
+                }
+            }
+
+            jSendTimeSettingsPanel.setTimeSpans(spanList);
+            //restore arrive spans
+            spanProp = profile.getProperty("attack.frame.arrive.spans");
+            spans = spanProp.split(";");
+
+            spanList = new LinkedList<TimeSpan>();
+            for (String span : spans) {
+                try {
+                    TimeSpan s = TimeSpan.fromPropertyString(span);
+                    if (s != null) {
+                        spanList.add(s);
+                    }
+                } catch (Exception invalid) {
+                }
+            }
+
+            jArriveTimeSettingsPanel.setTimeSpans(spanList);
+            // </editor-fold>
         } catch (Exception e) {
+            e.printStackTrace();
         }
-        if (jVariableArriveTimeBox.isSelected()) {
-        jArriveTime.setTimeEnabled(false);
-        } else {
-        jArriveTime.setTimeEnabled(true);
-        }*/
     }
 
     /**Add tribe to timeframe list*/

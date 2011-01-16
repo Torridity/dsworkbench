@@ -11,6 +11,7 @@ package de.tor.tribes.io;
 import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Barbarians;
+import de.tor.tribes.types.InvalidTribe;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.Village;
@@ -29,7 +30,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -1171,7 +1171,7 @@ public class DataHolder {
         try {
             Document d = JaxenUtils.getDocument(new File(unitFile));
             d = JaxenUtils.getDocument(new File(unitFile));
-            List<Element> l = JaxenUtils.getNodes(d, "/config/*");
+            List<Element> l = (List<Element>)JaxenUtils.getNodes(d, "/config/*");
             for (Element e : l) {
                 try {
                     mUnits.add(new UnitHolder(e));
@@ -1339,11 +1339,10 @@ public class DataHolder {
                     if (t.getName().equals(pName)) {
                         return t;
                     }
-
                 }
             }
         }
-        return null;
+        return InvalidTribe.getSingleton();
     }
 
     /**Get all units*/

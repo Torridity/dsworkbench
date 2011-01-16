@@ -7,6 +7,7 @@ package de.tor.tribes.ui.renderer;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.ui.ImageManager;
+import de.tor.tribes.ui.TroopSplitDialog.TroopSplit;
 import de.tor.tribes.util.Constants;
 import java.awt.Color;
 import java.awt.Component;
@@ -18,32 +19,36 @@ import javax.swing.SwingConstants;
 
 /**
  *
- * @author Jejkal
+ * @author Torridity
  */
-public class TroopAmountListCellRenderer extends JLabel implements ListCellRenderer {
+public class TroopSplitListCellRenderer extends JLabel implements ListCellRenderer {
 
     @Override
     public Component getListCellRendererComponent(JList list, Object pValue, int pIndex, boolean pSelected, boolean pHasFocus) {
         try {
             setOpaque(true);
 
-            String value = (String) pValue;
+            TroopSplit value = (TroopSplit) pValue;
 
-            String[] amountAndName = value.split(" ");
-            int amount = Integer.parseInt(amountAndName[0]);
-            String name = amountAndName[1].trim();
-            UnitHolder unit = DataHolder.getSingleton().getUnitByPlainName(name);
-            ImageIcon icon = ImageManager.getUnitIcon(unit);
-            setIcon(icon);
-            setHorizontalTextPosition(SwingConstants.LEFT);
-            setHorizontalAlignment(SwingConstants.CENTER);
-            setText(amountAndName[0]);
-            setOpaque(true);
+            StringBuilder builder = new StringBuilder();
+            builder.append(value.getVillage());
+            builder.append(" [");
+            int splitCount = value.getSplitCount();
+            builder.append(splitCount);
+            builder.append((splitCount == 1) ? " Split" : " Splits");
+            builder.append("]");
+            setText(builder.toString());
             if (pSelected) {
                 setForeground(list.getSelectionForeground());
                 super.setBackground(list.getSelectionBackground());
             } else {
-                setForeground(Color.BLACK);
+                if (splitCount == 0) {
+                    setForeground(Color.RED);
+                } else if (splitCount == 1) {
+                    setForeground(Color.ORANGE.darker());
+                } else {
+                    setForeground(Color.GREEN.darker());
+                }
                 if (pIndex % 2 == 0) {
                     setBackground(Constants.DS_ROW_B);
                 } else {

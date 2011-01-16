@@ -23,7 +23,6 @@ public class TestFrame extends javax.swing.JFrame {
     public TestFrame() {
         initComponents();
 
-        jDesktopPane1.putClientProperty("JDesktopPane.dragMode", "faster");
 
         /*  GroupableTableModel model = new GroupableTableModel();
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
@@ -153,8 +152,7 @@ public class TestFrame extends javax.swing.JFrame {
         jCheckBoxMenuItem2 = new javax.swing.JCheckBoxMenuItem();
         jCheckBoxMenuItem3 = new javax.swing.JCheckBoxMenuItem();
         jCheckBoxMenuItem4 = new javax.swing.JCheckBoxMenuItem();
-        jDesktopPane1 = new javax.swing.JDesktopPane();
-        jInternalFrame1 = new javax.swing.JInternalFrame();
+        jTextField1 = new javax.swing.JTextField();
 
         jCheckBoxMenuItem1.setSelected(true);
         jCheckBoxMenuItem1.setText("jCheckBoxMenuItem1");
@@ -192,39 +190,40 @@ public class TestFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jDesktopPane1.setDoubleBuffered(true);
-
-        jInternalFrame1.setVisible(true);
-
-        javax.swing.GroupLayout jInternalFrame1Layout = new javax.swing.GroupLayout(jInternalFrame1.getContentPane());
-        jInternalFrame1.getContentPane().setLayout(jInternalFrame1Layout);
-        jInternalFrame1Layout.setHorizontalGroup(
-            jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 324, Short.MAX_VALUE)
-        );
-        jInternalFrame1Layout.setVerticalGroup(
-            jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 294, Short.MAX_VALUE)
-        );
-
-        jInternalFrame1.setBounds(50, 40, 330, 320);
-        jDesktopPane1.add(jInternalFrame1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jTextField1.setText("jTextField1");
+        jTextField1.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                update(evt);
+            }
+        });
+        jTextField1.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+                posChange(evt);
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+            }
+        });
+        jTextField1.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                propChange(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 732, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(188, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(267, Short.MAX_VALUE))
         );
 
         pack();
@@ -232,6 +231,18 @@ public class TestFrame extends javax.swing.JFrame {
 
     private void fireChange(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChange
     }//GEN-LAST:event_fireChange
+
+    private void update(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_update
+        System.out.println("Update " + jTextField1.getText());
+    }//GEN-LAST:event_update
+
+    private void posChange(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_posChange
+        System.out.println("Pos");
+    }//GEN-LAST:event_posChange
+
+    private void propChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_propChange
+        System.out.println("Prop " + evt.getPropertyName());
+    }//GEN-LAST:event_propChange
 
     public static void main(String args[]) {
 
@@ -255,84 +266,9 @@ public class TestFrame extends javax.swing.JFrame {
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem2;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem3;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem4;
-    private javax.swing.JDesktopPane jDesktopPane1;
-    private javax.swing.JInternalFrame jInternalFrame1;
     private javax.swing.JPopupMenu jPopupMenu1;
+    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }
 
-class MyTableModel extends AbstractTableModel {
 
-    /** Vector of Object[], this are the datas of the table */
-    Vector datas = new Vector();
-    /** Indicates which columns are visible */
-    boolean[] columnsVisible = new boolean[4];
-    /** Column names */
-    String[] columnsName = {
-        "0", "1", "2", "3"
-    };
-
-    /** Constructor */
-    public MyTableModel() {
-        columnsVisible[0] = true;
-        columnsVisible[1] = false;
-        columnsVisible[2] = true;
-        columnsVisible[3] = false;
-    }
-
-    public void changeVis(boolean[] newVis) {
-        columnsVisible[0] = newVis[0];
-        columnsVisible[1] = newVis[1];
-        columnsVisible[2] = newVis[2];
-        columnsVisible[3] = newVis[3];
-        for (boolean b : columnsVisible) {
-            System.out.println(b);
-        }
-        System.out.println("---");
-    }
-
-    /**
-     * This functiun converts a column number in the table
-     * to the right number of the datas.
-     */
-    protected int getNumber(int col) {
-        int n = col;    // right number to return
-        int i = 0;
-        do {
-            if (!(columnsVisible[i])) {
-                n++;
-            }
-            i++;
-        } while (i < n);
-        // If we are on an invisible column,
-        // we have to go one step further
-        while (!(columnsVisible[n])) {
-            n++;
-        }
-        return n;
-    }
-
-    // *** TABLE MODEL METHODS ***
-    public int getColumnCount() {
-        int n = 0;
-        for (int i = 0; i < 4; i++) {
-            if (columnsVisible[i]) {
-                n++;
-            }
-        }
-        return n;
-    }
-
-    public int getRowCount() {
-        return datas.size();
-    }
-
-    public Object getValueAt(int row, int col) {
-        Object[] array = (Object[]) (datas.elementAt(row));
-        return array[getNumber(col)];
-    }
-
-    public String getColumnName(int col) {
-        return columnsName[getNumber(col)];
-    }
-}

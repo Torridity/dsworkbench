@@ -1096,10 +1096,10 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel20" alignment="0" pref="832" max="32767" attributes="2"/>
+                          <Component id="jLabel20" alignment="0" pref="834" max="32767" attributes="2"/>
                           <Component id="jPanel1" alignment="0" max="32767" attributes="1"/>
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="jScrollPane1" pref="767" max="32767" attributes="1"/>
+                              <Component id="jScrollPane1" pref="769" max="32767" attributes="1"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
@@ -1146,7 +1146,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jSetSourceFakeButton1" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jScrollPane1" alignment="1" pref="317" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" alignment="1" pref="320" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel1" min="-2" max="-2" attributes="1"/>
@@ -1258,7 +1258,7 @@
                                   <Component id="jSourceVillageLabel1" min="-2" max="-2" attributes="1"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jScrollPane4" pref="220" max="32767" attributes="1"/>
+                                      <Component id="jScrollPane4" pref="221" max="32767" attributes="1"/>
                                       <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
                                           <Component id="jSourceGroupRelation" alignment="0" max="32767" attributes="1"/>
                                           <Component id="jTroopsList" alignment="0" pref="175" max="32767" attributes="1"/>
@@ -1280,7 +1280,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="jLabel21" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="jScrollPane6" pref="338" max="32767" attributes="0"/>
+                                  <Component id="jScrollPane6" pref="339" max="32767" attributes="0"/>
                               </Group>
                               <Group type="103" alignment="1" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="jPlayerSourcesOnlyBox" alignment="0" max="32767" attributes="1"/>
@@ -1862,15 +1862,6 @@
                 <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="TribeTribeAttackFrame.jSetSourceFakeButton1.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
-                <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[59, 33]"/>
-                </Property>
-                <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[59, 33]"/>
-                </Property>
-                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[59, 33]"/>
-                </Property>
               </Properties>
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireSplitSourceVillagesEvent"/>
@@ -1948,7 +1939,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jResetAttackCountEvent" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jScrollPane3" pref="342" max="32767" attributes="0"/>
+                          <Component id="jScrollPane3" pref="343" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jPanel6" max="32767" attributes="1"/>
@@ -1986,8 +1977,8 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jTargetTribeFilter" alignment="0" pref="169" max="32767" attributes="1"/>
-                              <Component id="jScrollPane7" alignment="0" pref="169" max="32767" attributes="1"/>
+                              <Component id="jTargetTribeFilter" alignment="0" pref="170" max="32767" attributes="1"/>
+                              <Component id="jScrollPane7" alignment="0" pref="170" max="32767" attributes="1"/>
                           </Group>
                           <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
@@ -2001,10 +1992,10 @@
                           <Component id="jLabel24" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jScrollPane10" pref="224" max="32767" attributes="0"/>
-                              <Component id="jMarkTargetAsFake" pref="224" max="32767" attributes="0"/>
+                              <Component id="jScrollPane10" pref="225" max="32767" attributes="0"/>
+                              <Component id="jMarkTargetAsFake" pref="225" max="32767" attributes="0"/>
                               <Group type="102" alignment="1" attributes="0">
-                                  <Component id="jLabel7" pref="132" max="32767" attributes="0"/>
+                                  <Component id="jLabel7" pref="133" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="jMaxAttacksPerVillage" min="-2" pref="88" max="-2" attributes="0"/>
                               </Group>
@@ -2018,15 +2009,15 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jScrollPane9" alignment="0" pref="194" max="32767" attributes="1"/>
-                              <Component id="jScrollPane8" alignment="1" pref="194" max="32767" attributes="1"/>
+                              <Component id="jScrollPane9" alignment="0" pref="196" max="32767" attributes="1"/>
+                              <Component id="jScrollPane8" alignment="1" pref="196" max="32767" attributes="1"/>
                               <Component id="jLabel24" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel23" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Group type="102" alignment="1" attributes="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="jTargetAllyLabel" min="-2" pref="19" max="-2" attributes="0"/>
-                                      <Component id="jScrollPane7" pref="168" max="32767" attributes="1"/>
+                                      <Component id="jScrollPane7" pref="170" max="32767" attributes="1"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="3" attributes="0">
@@ -2035,7 +2026,7 @@
                                   </Group>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jScrollPane10" pref="137" max="32767" attributes="1"/>
+                                  <Component id="jScrollPane10" pref="141" max="32767" attributes="1"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Component id="jMarkTargetAsFake" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>

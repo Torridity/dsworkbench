@@ -58,7 +58,7 @@ public class BrowserCommandSender {
             }
 
             try {
-                Thread.sleep(10);
+                Thread.sleep(100);
             } catch (Exception ignored) {
             }
         } catch (Throwable t) {
@@ -91,7 +91,7 @@ public class BrowserCommandSender {
                 p.waitFor();
             }
             try {
-                Thread.sleep(10);
+                Thread.sleep(100);
             } catch (Exception ignored) {
             }
         } catch (Throwable t) {
@@ -120,7 +120,7 @@ public class BrowserCommandSender {
             }
 
             try {
-                Thread.sleep(10);
+                Thread.sleep(100);
             } catch (Exception ignored) {
             }
         } catch (Throwable t) {
@@ -148,7 +148,7 @@ public class BrowserCommandSender {
             }
         }
         try {
-            Thread.sleep(10);
+            Thread.sleep(100);
         } catch (Exception ignored) {
         }
     }
@@ -172,7 +172,7 @@ public class BrowserCommandSender {
             }
         }
         try {
-            Thread.sleep(10);
+            Thread.sleep(100);
         } catch (Exception ignored) {
         }
         return true;
@@ -195,7 +195,7 @@ public class BrowserCommandSender {
                 p.waitFor();
             }
             try {
-                Thread.sleep(10);
+                Thread.sleep(100);
             } catch (Exception ignored) {
             }
         } catch (Throwable t) {
@@ -221,7 +221,7 @@ public class BrowserCommandSender {
                 p.waitFor();
             }
             try {
-                Thread.sleep(10);
+                Thread.sleep(100);
             } catch (Exception ignored) {
             }
         } catch (Throwable t) {
@@ -248,7 +248,7 @@ public class BrowserCommandSender {
             }
 
             try {
-                Thread.sleep(10);
+                Thread.sleep(100);
             } catch (Exception ignored) {
             }
         } catch (Throwable t) {
@@ -275,7 +275,7 @@ public class BrowserCommandSender {
             }
 
             try {
-                Thread.sleep(10);
+                Thread.sleep(100);
             } catch (Exception ignored) {
             }
         } catch (Throwable t) {

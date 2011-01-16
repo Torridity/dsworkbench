@@ -170,8 +170,20 @@ public class TimeSettingsPanel extends javax.swing.JPanel {
         return timeSpans;
     }
 
+    public void setTimeSpans(List<TimeSpan> pSpans) {
+        DefaultListModel model = new DefaultListModel();
+        for (TimeSpan span : pSpans) {
+            model.addElement(span);
+        }
+        jSendTimeFramesList.setModel(model);
+    }
+
     public Date getMinTime() {
         return jMinTime.getSelectedDate();
+    }
+
+    public void setMinTime(Date pDate) {
+        jMinTime.setDate(pDate);
     }
 
     public Date getMaxTime() {
@@ -180,6 +192,18 @@ public class TimeSettingsPanel extends javax.swing.JPanel {
         } else {
             return null;
         }
+    }
+
+    public void setMaxTime(Date pDate) {
+        jMaxTime.setDate(pDate);
+    }
+
+    public boolean isMaxTimeEnabled() {
+        return jMaxTime.isEnabled();
+    }
+
+    public void setMaxTimeEnabled(boolean pValue) {
+        jMaxTime.setEnabled(pValue);
     }
 
     /** This method is called from within the constructor to

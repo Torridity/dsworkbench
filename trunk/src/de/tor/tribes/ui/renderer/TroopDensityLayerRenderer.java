@@ -12,6 +12,8 @@ import de.tor.tribes.ui.models.TroopsManagerTableModel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
+import de.tor.tribes.util.mark.MarkerManager;
+import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.AlphaComposite;
@@ -36,6 +38,11 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
     @Override
     public void performRendering(RenderSettings pSettings, Graphics2D pG2d) {
         if (!pSettings.isLayerVisible()) {
+            return;
+        }
+        if (pSettings.getFieldHeight() < 15) {
+            //skip drawing and schedule reset for next valid draw
+            shouldReset = true;
             return;
         }
         if (shouldReset) {
@@ -146,13 +153,13 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
     }
 
     private BufferedImage renderTroopRows(RenderSettings pSettings) {
-//calculate first row that will be rendered
+        //calculate first row that will be rendered
         BufferedImage newRows = ImageUtils.createCompatibleBufferedImage(pSettings.getVisibleVillages().length * pSettings.getFieldWidth(), Math.abs(pSettings.getRowsToRender()) * pSettings.getFieldHeight(), BufferedImage.BITMASK);
-//calculate first row that will be rendered
+        //calculate first row that will be rendered
         int firstRow = (pSettings.getRowsToRender() > 0) ? 0 : pSettings.getVisibleVillages()[0].length - Math.abs(pSettings.getRowsToRender());
         Graphics2D g2d = newRows.createGraphics();
         ImageUtils.setupGraphics(g2d);
-//iterate through entire rows
+        //iterate through entire rows
         int cnt = 0;
         int dx = 0;//(int) Math.floor(pSettings.getDeltaX());
         int dy = 0;//(int) Math.floor(pSettings.getDeltaY());
@@ -161,7 +168,7 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
         int lastVillageCol = 0;
         Village currentMouseVillage = MapPanel.getSingleton().getVillageAtMousePos();
         for (int x = 0; x < pSettings.getVisibleVillages().length; x++) {
-//iterate from first row for 'pRows' times
+            //iterate from first row for 'pRows' times
             for (int y = firstRow; y < firstRow + Math.abs(pSettings.getRowsToRender()); y++) {
                 cnt++;
                 Village v = pSettings.getVisibleVillages()[x][y];
@@ -182,7 +189,7 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
 
     private void renderField(Village v, int row, int colu, int pFieldWidth, int pFieldHeight, int pDx, int pDy, double pZoom, Graphics2D g2d) {
         VillageTroopsHolder holder = null;
-        if (v != null && (holder = TroopsManager.getSingleton().getTroopsForVillage(v)) != null) {
+        if (v != null && v.isVisibleOnMap() && (holder = TroopsManager.getSingleton().getTroopsForVillage(v)) != null) {
             int maxDef = 650000;
             try {
                 maxDef = Integer.parseInt(GlobalOptions.getProperty("max.density.troops"));
@@ -218,40 +225,23 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
             } else {
                 col = new Color(0, 255, 0);
             }
-            //start drawing
 
-            TroopAnimator animator = animators.get(v);
-            if (animator != null) {
-                //update existing animator for village
-                if (animator.isFinished()) {
-                    animators.remove(animator.getVillage());
-                } else {
-                    animator.update(row, colu, pFieldWidth, pFieldHeight, pDx, pDy, g2d);
-                }
-            } else {
-                Village current = MapPanel.getSingleton().getVillageAtMousePos();
-                if (current != null && current.equals(v)) {
-                    animator = new TroopAnimator(v);
-                    animators.put(v, animator);
-                    animator.update(row, colu, pFieldWidth, pFieldHeight, pDx, pDy, g2d);
-                } else {
-                    int wOfMax = (int) Math.rint(percOfMax * pFieldWidth);
-                    int wFromOthers = (int) Math.rint(percFromOthers * wOfMax);
-                    int h = (int) Math.rint(pFieldHeight / 5 / pZoom);
-                    //set h to at least 3
-                    h = Math.max(h, 3);
-                    //draw default bar view
-                    g2d.setColor(Color.WHITE);
-                    g2d.fillRect(colu * pFieldWidth + 1 + pDx, row * pFieldHeight + pFieldHeight - h + pDy, pFieldWidth - 2, h);
-                    g2d.setColor(col);
-                    g2d.fillRect(colu * pFieldWidth + 1 + pDx, row * pFieldHeight + pFieldHeight - h + pDy, wOfMax - 2, h);
-                    g2d.setColor(Color.BLUE);
-                    g2d.fillRect(colu * pFieldWidth + 1 + pDx, row * pFieldHeight + pFieldHeight - h + pDy, wFromOthers - 2, h);
-                    g2d.setColor(Color.BLACK);
-                    g2d.drawRect(colu * pFieldWidth + 1 + pDx, row * pFieldHeight + pFieldHeight - h + pDy, pFieldWidth - 2, h);
-                }
-                g2d.setColor(cb);
-            }
+            //start drawing
+            int wOfMax = (int) Math.rint(percOfMax * pFieldWidth);
+            int wFromOthers = (int) Math.rint(percFromOthers * wOfMax);
+            int h = (int) Math.rint(pFieldHeight / 5 / pZoom);
+            //set h to at least 3
+            h = Math.max(h, 3);
+            //draw default bar view
+            g2d.setColor(Color.WHITE);
+            g2d.fillRect(colu * pFieldWidth + 1 + pDx, row * pFieldHeight + pFieldHeight - h + pDy, pFieldWidth - 2, h);
+            g2d.setColor(col);
+            g2d.fillRect(colu * pFieldWidth + 1 + pDx, row * pFieldHeight + pFieldHeight - h + pDy, wOfMax - 2, h);
+            g2d.setColor(Color.BLUE);
+            g2d.fillRect(colu * pFieldWidth + 1 + pDx, row * pFieldHeight + pFieldHeight - h + pDy, wFromOthers - 2, h);
+            g2d.setColor(Color.BLACK);
+            g2d.drawRect(colu * pFieldWidth + 1 + pDx, row * pFieldHeight + pFieldHeight - h + pDy, pFieldWidth - 2, h);
+            g2d.setColor(cb);
         }
     }
 

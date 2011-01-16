@@ -683,7 +683,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
 
     private void fireReadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireReadDataEvent
         try {
-            Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+            Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
             String data = (String) t.getTransferData(DataFlavor.stringFlavor);
             List<VillageMerchantInfo> infos = PluginManager.getSingleton().executeMerchantParser(data);
             if (infos.isEmpty()) {

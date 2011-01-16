@@ -21,7 +21,7 @@ import java.util.StringTokenizer;
  *
  * @author Charon
  */
-public class Ally implements Comparable, Serializable {
+public class Ally implements Comparable<Ally>, Serializable {
 
     private int id = 0;
     private String name = null;
@@ -176,7 +176,7 @@ public class Ally implements Comparable, Serializable {
     }
 
     public String getHTMLInfo() {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
 
         NumberFormat nf = NumberFormat.getInstance();
         b.append("<html><b>Stamm (Tag):</b> ");
@@ -222,7 +222,7 @@ public class Ally implements Comparable, Serializable {
     }
 
     @Override
-    public int compareTo(Object o) {
+    public int compareTo(Ally o) {
         return toString().compareTo(o.toString());
     }
     public static final Comparator<Ally> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();

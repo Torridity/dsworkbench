@@ -310,7 +310,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Dr
 
     private void fireShowFormEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowFormEvent
         try {
-            Object[] toShow = (Object[]) jFormsList.getSelectedValues();
+            Object[] toShow = jFormsList.getSelectedValues();
             if (toShow != null) {
                 for (Object o : toShow) {
                     try {

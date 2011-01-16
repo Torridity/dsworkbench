@@ -56,7 +56,7 @@ public class AllyAllyAttackFrame extends javax.swing.JFrame {
 
         try {
             Enumeration<Integer> allyKeys = DataHolder.getSingleton().getAllies().keys();
-            List<Ally> allies = new LinkedList();
+            List<Ally> allies = new LinkedList<Ally>();
             while (allyKeys.hasMoreElements()) {
                 allies.add(DataHolder.getSingleton().getAllies().get(allyKeys.nextElement()));
             }

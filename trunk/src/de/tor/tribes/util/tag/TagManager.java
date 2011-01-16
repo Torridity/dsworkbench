@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.util.tag;
 
+import de.tor.tribes.types.LinkedTag;
 import de.tor.tribes.types.Tag;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -275,6 +276,16 @@ public class TagManager {
         addTag(null, pTag);
     }
 
+    /**Add a tag to a village*/
+    public synchronized void addLinkedTag(LinkedTag pLinkedTag) {
+        if (pLinkedTag == null) {
+            return;
+        }
+        mTags.add(pLinkedTag);
+        Collections.sort(mTags);
+        fireTagsChangedEvents();
+    }
+
     /**Remove a tag from a village*/
     public synchronized void removeTag(Village pVillage, String pTag) {
 
@@ -305,6 +316,25 @@ public class TagManager {
     public synchronized void removeTag(Tag pTag) {
         mTags.remove(pTag);
         fireTagsChangedEvents();
+    }
+
+    public synchronized boolean shouldVillageBeRendered(Village pVillage) {
+        Tag[] villageTags = getTags(pVillage).toArray(new Tag[]{});
+        boolean drawVillage = true;
+        if ((villageTags != null) && (villageTags.length != 0)) {
+            boolean notShown = true;
+            for (Tag tag : villageTags) {
+                if (tag.isShowOnMap()) {
+                    //at least one of the tags for the village is visible
+                    notShown = false;
+                    break;
+                }
+            }
+            if (notShown) {
+                drawVillage = false;
+            }
+        }
+        return drawVillage;
     }
 
     /**Notify attack manager listeners about changes*/

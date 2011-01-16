@@ -10,14 +10,13 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.util.algo.ChurchRangeCalculator;
 import de.tor.tribes.util.church.ChurchManager;
+import de.tor.tribes.util.tag.TagManager;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
 import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
@@ -47,8 +46,11 @@ public class ChurchLayerRenderer extends AbstractDirectLayerRenderer {
         //iterate through entire rows
         HashMap<Tribe, Area> churchAreas = new HashMap<Tribe, Area>();
         List<Village> churchVillages = ChurchManager.getSingleton().getChurchVillages();
+
         for (Village v : churchVillages) {
-            processField(v, pSettings.getFieldWidth(), pSettings.getFieldHeight(), churchAreas);
+            if (v != null && v.isVisibleOnMap()) {
+                processField(v, pSettings.getFieldWidth(), pSettings.getFieldHeight(), churchAreas);
+            }
         }
 
         Iterator<Tribe> areas = churchAreas.keySet().iterator();
@@ -80,13 +82,6 @@ public class ChurchLayerRenderer extends AbstractDirectLayerRenderer {
             pChurchAreas.put(t, a);
         }
         a.add(new Area(p));
-        try {
-            Shape s = (Shape) a;
-            Polygon po = (Polygon) s;
-            System.out.println("Poly!!");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private GeneralPath calculateChurchPath(Church c, Village v, int pFieldWidth, int pFieldHeight) {

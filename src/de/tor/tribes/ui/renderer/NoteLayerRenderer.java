@@ -113,7 +113,7 @@ public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
     }
 
     private void renderNoteField(Village v, int row, int col, int pFieldWidth, int pFieldHeight, int pCopyPosition, Graphics2D g2d) {
-        if (v != null) {
+        if (v != null && v.isVisibleOnMap()) {
             List<Note> notes = NoteManager.getSingleton().getNotesForVillage(v);
             int half = notes.size() / 2;
             int dx = -half * 2;

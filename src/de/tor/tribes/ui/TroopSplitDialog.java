@@ -13,7 +13,9 @@ package de.tor.tribes.ui;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.TroopAmountListCellRenderer;
+import de.tor.tribes.ui.renderer.TroopSplitListCellRenderer;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.troops.TroopsManager;
@@ -47,10 +49,11 @@ public class TroopSplitDialog extends javax.swing.JDialog {
     private void initialize() {
         DefaultComboBoxModel unitSelectionModel = new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{}));
         jUnitSelectionBox.setModel(unitSelectionModel);
-        jAmountField.setText("700");
+        jAmountField.setText("0");
         jTroopsPerSplitList.setModel(new DefaultListModel());
         jUnitSelectionBox.setRenderer(new UnitListCellRenderer());
         jTroopsPerSplitList.setCellRenderer(new TroopAmountListCellRenderer());
+        jSplitsList.setCellRenderer(new TroopSplitListCellRenderer());
         mSplitAmounts.clear();
         isInitialized = true;
     }
@@ -68,6 +71,10 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         setVisible(true);
     }
 
+    public TroopSplit[] getSplits() {
+        return mSplits.toArray(new TroopSplit[]{});
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -79,7 +86,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
 
         jPanel1 = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        jAcceptButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jSplitsList = new javax.swing.JList();
         jUnitSelectionBox = new javax.swing.JComboBox();
@@ -93,7 +100,6 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         jToleranceSlider = new javax.swing.JSlider();
         jLabel3 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Truppen aufsplitten");
         setAlwaysOnTop(true);
         setModal(true);
@@ -101,8 +107,18 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         jPanel1.setBackground(new java.awt.Color(239, 235, 223));
 
         jButton2.setText("Abbrechen");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSubmitEvent(evt);
+            }
+        });
 
-        jButton1.setText("Übernehmen");
+        jAcceptButton.setText("Übernehmen");
+        jAcceptButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSubmitEvent(evt);
+            }
+        });
 
         jScrollPane1.setViewportView(jSplitsList);
 
@@ -144,11 +160,17 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         jLabel2.setText("ZulässigeAbweichung");
 
         jToleranceSlider.setMajorTickSpacing(10);
+        jToleranceSlider.setMaximum(50);
         jToleranceSlider.setMinorTickSpacing(1);
         jToleranceSlider.setPaintLabels(true);
         jToleranceSlider.setPaintTicks(true);
         jToleranceSlider.setValue(10);
         jToleranceSlider.setOpaque(false);
+        jToleranceSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireToleranceChangedEvent(evt);
+            }
+        });
 
         jLabel3.setText("%");
 
@@ -162,7 +184,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1))
+                        .addComponent(jAcceptButton))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 382, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -208,12 +230,12 @@ public class TroopSplitDialog extends javax.swing.JDialog {
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)
                     .addComponent(jToleranceSlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(36, 36, 36)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
+                    .addComponent(jAcceptButton)
                     .addComponent(jButton2))
                 .addContainerGap())
         );
@@ -264,7 +286,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_fireAddSplitAmountEvent
 
     private void fireRemoveSplitAmountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveSplitAmountEvent
-         UnitHolder unit = null;
+        UnitHolder unit = null;
         try {
             unit = (UnitHolder) jUnitSelectionBox.getSelectedItem();
             if (unit == null) {
@@ -279,6 +301,19 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         updateAmountsList();
     }//GEN-LAST:event_fireRemoveSplitAmountEvent
 
+    private void fireSubmitEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSubmitEvent
+        if (evt.getSource() != jAcceptButton) {
+            mSplits.clear();
+        }
+
+        setVisible(false);
+    }//GEN-LAST:event_fireSubmitEvent
+
+    private void fireToleranceChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireToleranceChangedEvent
+        updateSplitsList();
+    }//GEN-LAST:event_fireToleranceChangedEvent
+
+    /**Update the list of split amounts*/
     private void updateAmountsList() {
         DefaultListModel model = new DefaultListModel();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
@@ -291,6 +326,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         updateSplitsList();
     }
 
+    /**Update all splits and the split list itself*/
     private void updateSplitsList() {
         DefaultListModel model = new DefaultListModel();
         for (TroopSplit split : mSplits) {
@@ -300,27 +336,72 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         jSplitsList.setModel(model);
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
+    /**Internal class for data holding*/
+    public static class TroopSplit {
 
-            public void run() {
-                TroopSplitDialog dialog = new TroopSplitDialog(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+        private Village mVillage = null;
+        private int iSplitCount = 1;
 
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
+        public TroopSplit(Village pVillage) {
+            mVillage = pVillage;
+        }
+
+        public void update(Hashtable<UnitHolder, Integer> pSplitValues, int pTolerance) {
+            if (pSplitValues.isEmpty()) {
+                iSplitCount = 1;
+                return;
             }
-        });
+            Enumeration<UnitHolder> unitKeys = pSplitValues.keys();
+            int maxSplitCount = -1;
+            while (unitKeys.hasMoreElements()) {
+                UnitHolder unitKey = unitKeys.nextElement();
+                Integer splitAmount = pSplitValues.get(unitKey);
+                VillageTroopsHolder troopsHolder = TroopsManager.getSingleton().getTroopsForVillage(mVillage);
+                if (troopsHolder == null) {
+                    //do nothing if troops info is not available
+                    iSplitCount = -1;
+                    return;
+                }
+
+                Hashtable<UnitHolder, Integer> ownTroopsInVillage = troopsHolder.getOwnTroops();
+                if (ownTroopsInVillage == null) {
+                    //do nothing if there are no own troops in the village
+                    iSplitCount = 0;
+                    return;
+                }
+
+                int amountInVillage = ownTroopsInVillage.get(unitKey);
+                int split = amountInVillage / splitAmount;
+                int currentSplitCount = split;
+                int rest = amountInVillage - split * splitAmount;
+                if (100.0 * (double) rest / (double) splitAmount >= 100.0 - (double) pTolerance) {
+                    currentSplitCount++;
+                }
+                if (maxSplitCount == -1 || (currentSplitCount < maxSplitCount)) {
+                    maxSplitCount = currentSplitCount;
+                }
+            }
+            iSplitCount = maxSplitCount;
+        }
+
+        public Village getVillage() {
+            return mVillage;
+        }
+
+        public int getSplitCount() {
+            return iSplitCount;
+        }
+
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append(mVillage.toString()).append(" (").append(iSplitCount).append("x)");
+            return builder.toString();
+        }
     }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jAcceptButton;
     private javax.swing.JTextField jAmountField;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -335,63 +416,4 @@ public class TroopSplitDialog extends javax.swing.JDialog {
     private javax.swing.JList jTroopsPerSplitList;
     private javax.swing.JComboBox jUnitSelectionBox;
     // End of variables declaration//GEN-END:variables
-}
-
-class TroopSplit {
-
-    private Village mVillage = null;
-    private int iSplitCount = 1;
-
-    public TroopSplit(Village pVillage) {
-        mVillage = pVillage;
-    }
-
-    public void update(Hashtable<UnitHolder, Integer> pSplitValues, int pTolerance) {
-        Enumeration<UnitHolder> unitKeys = pSplitValues.keys();
-        int maxSplitCount = -1;
-        while (unitKeys.hasMoreElements()) {
-            UnitHolder unitKey = unitKeys.nextElement();
-            Integer splitAmount = pSplitValues.get(unitKey);
-            VillageTroopsHolder troopsHolder = TroopsManager.getSingleton().getTroopsForVillage(mVillage);
-            if (troopsHolder == null) {
-                //do nothing if troops info is not available
-                iSplitCount = -1;
-                return;
-            }
-
-            Hashtable<UnitHolder, Integer> ownTroopsInVillage = troopsHolder.getOwnTroops();
-            if (ownTroopsInVillage == null) {
-                //do nothing if there are no own troops in the village
-                iSplitCount = 0;
-                return;
-            }
-
-            int amountInVillage = ownTroopsInVillage.get(unitKey);
-
-            int split = amountInVillage / splitAmount;
-            int currentSplitCount = split;
-            int rest = amountInVillage - split * splitAmount;
-            if (100.0 * (double) rest / (double) splitAmount > (double) pTolerance) {
-                currentSplitCount++;
-            }
-            if (maxSplitCount == -1 || (currentSplitCount < maxSplitCount)) {
-                maxSplitCount = currentSplitCount;
-            }
-        }
-        iSplitCount = maxSplitCount;
-    }
-
-    public Village getVillage() {
-        return mVillage;
-    }
-
-    public int getSplitCount() {
-        return iSplitCount;
-    }
-
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(mVillage.toString()).append(" (").append(iSplitCount).append("x)");
-        return builder.toString();
-    }
 }

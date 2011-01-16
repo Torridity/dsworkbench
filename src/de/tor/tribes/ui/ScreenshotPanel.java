@@ -103,7 +103,7 @@ public class ScreenshotPanel extends javax.swing.JPanel {
                 }
 
                 Color c = MarkerManager.getSingleton().getMarkers()[i].getMarkerColor();
-                g2d.drawString(value, width - legendW, (height - legendH + 5 + (int) (heightF / 2) + heightF * i));
+                g2d.drawString(value, width - legendW, (height - legendH + 5 + (heightF / 2) + heightF * i));
                 g2d.setColor(c);
                 g2d.fillRect(width - legendW + (legendW - 10 - heightF), height - legendH + i * heightF, heightF, heightF);
             }

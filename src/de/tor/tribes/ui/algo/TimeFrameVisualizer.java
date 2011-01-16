@@ -11,9 +11,7 @@
 package de.tor.tribes.ui.algo;
 
 import de.tor.tribes.types.AnyTribe;
-import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.TimeSpan;
-import de.tor.tribes.types.Tribe;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.algo.TimeFrame;
 import java.awt.AlphaComposite;

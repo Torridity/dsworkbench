@@ -28,7 +28,7 @@ import java.util.StringTokenizer;
  *
  * @author Charon
  */
-public class Village implements Comparable, Serializable {
+public class Village implements Comparable<Village>, Serializable {
 
     public static final Comparator<Village> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
     public static final Comparator<Village> ALLY_TRIBE_VILLAGE_COMPARATOR = new AllyTribeVillageComparator();
@@ -386,7 +386,7 @@ public class Village implements Comparable, Serializable {
     }
 
     @Override
-    public int compareTo(Object o) {
+    public int compareTo(Village o) {
         if (o == null) {
             return -1;
         }
@@ -396,7 +396,7 @@ public class Village implements Comparable, Serializable {
             return toString().toLowerCase().compareTo(o.toString().toLowerCase());
         } else {
             try {
-                Village v = (Village) o;
+                Village v = o;
 
                 if (getX() < v.getX()) {
                     return -1;

@@ -217,7 +217,7 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
                 try {
                     String v = GlobalOptions.getProperty("radar.size");
                     int m = Integer.parseInt(v);
-                    int h = (int) m / 60;
+                    int h = m / 60;
                     int min = m - h * 60;
                     return "Laufzeitradar (" + h + "h " + min + "min)";
                 } catch (Exception e) {

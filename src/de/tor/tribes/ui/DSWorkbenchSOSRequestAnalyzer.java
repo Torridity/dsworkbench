@@ -663,7 +663,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
     private void fireCopyToAttackViewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyToAttackViewEvent
 
         Tribe defender = (Tribe) jDefenderList.getSelectedValue();
-        Object[] aTargets = (Object[]) jTargetList.getSelectedValues();
+        Object[] aTargets = jTargetList.getSelectedValues();
         int[] rows = jAttacksTable.getSelectedRows();
 
         List<Village> sources = new LinkedList<Village>();

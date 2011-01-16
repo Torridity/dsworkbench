@@ -364,7 +364,6 @@ public class TimeFrame {
                     Date onlyValidAtDay = span.getAtDate();
                     //check if span is valid on every day or if we check the span's day of validity
                     //(if we do so, the span should not be valid for an exact date because then we don't have a timespan)
-                    System.out.println(span);
                     if (span.isValidAtEveryDay() || (DateUtils.isSameDay(thisDate, onlyValidAtDay) && !span.isValidAtExactTime())) {
                         //span is valid for every day or this day equals the only valid day
                         Date spanStartDate = DateUtils.setHours(thisDate, span.getSpan().getMinimumInteger());

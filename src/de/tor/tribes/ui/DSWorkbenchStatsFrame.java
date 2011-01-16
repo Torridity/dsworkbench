@@ -1117,13 +1117,13 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         if (evt.getSource() == jWeeklyStats) {
             //remove one week from end date
             long oneWeek = 1000l * 60l * 60l * 24l * 7l;
-            Date end = (Date) jEndDate.getSelectedDate();
+            Date end = jEndDate.getSelectedDate();
             long start = end.getTime() - oneWeek;
             jStartDate.setDate(new Date(start));
         } else {
             //remove one month from end date
             long oneMonth = 1000l * 60l * 60l * 24l * 31l;
-            Date end = (Date) jEndDate.getSelectedDate();
+            Date end = jEndDate.getSelectedDate();
             long start = end.getTime() - oneMonth;
             jEndDate.setDate(new Date(start));
         }

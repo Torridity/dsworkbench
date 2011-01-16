@@ -15,6 +15,7 @@ import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.TroopSplitDialog.TroopSplit;
 import de.tor.tribes.ui.algo.AlgorithmLogPanel;
 import de.tor.tribes.ui.algo.SettingsPanel;
 import de.tor.tribes.ui.dnd.VillageTransferable;
@@ -65,6 +66,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 import de.tor.tribes.util.tag.TagManager;
+import de.tor.tribes.util.tag.TagManagerListener;
 import de.tor.tribes.util.troops.TroopsManager;
 import java.awt.Color;
 import java.util.StringTokenizer;
@@ -102,52 +104,15 @@ import java.util.Iterator;
 /**
  * @TODO (DIFF) Added strict filtering to troop filter dialog
  * @TODO (DIFF) Added troops check before adding source villages
- * @TODO Call setup on group update by TagManager
  * @author Jejkal
  */
-public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements AlgorithmListener, DropTargetListener, DragGestureListener, DragSourceListener {
+public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
+        AlgorithmListener,
+        DropTargetListener,
+        DragGestureListener,
+        DragSourceListener,
+        TagManagerListener {
 
-    @Override
-    public void fireCloseGestureEvent() {
-        setVisible(false);
-    }
-
-    @Override
-    public void fireExportAsBBGestureEvent() {
-    }
-
-    @Override
-    public void firePlainExportGestureEvent() {
-    }
-
-    @Override
-    public void fireRenameGestureEvent() {
-    }
-
-    @Override
-    public void fireToBackgroundGestureEvent() {
-        toBack();
-    }
-
-    @Override
-    public void fireNextPageGestureEvent() {
-        int idx = jTabbedPane1.getSelectedIndex();
-        idx += 1;
-        if (idx > jTabbedPane1.getTabCount() - 1) {
-            idx = 0;
-        }
-        jTabbedPane1.setSelectedIndex(idx);
-    }
-
-    @Override
-    public void firePreviousPageGestureEvent() {
-        int idx = jTabbedPane1.getSelectedIndex();
-        idx -= 1;
-        if (idx < 0) {
-            idx = jTabbedPane1.getTabCount() - 1;
-        }
-        jTabbedPane1.setSelectedIndex(idx);
-    }
     private static Logger logger = Logger.getLogger("AttackPlanner");
     private SettingsPanel mSettingsPanel = null;
     //private MiscSettingsPanel mMiscPanel = null;
@@ -160,6 +125,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements A
     /** Creates new form TribeTribeAttackFrame */
     public TribeTribeAttackFrame() {
         initComponents();
+        TagManager.getSingleton().addTagManagerListener(this);
         logPanel = new AlgorithmLogPanel();
         mLogFrame = new JFrame("Informationen zur Berechnung");
         mLogFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -222,7 +188,6 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements A
     protected void setup() {
 
         // <editor-fold defaultstate="collapsed" desc=" Attack table setup ">
-
         DefaultTableModel attackModel = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
@@ -266,6 +231,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements A
 
         // </editor-fold>        
 
+        fireTagsChangedEvent();
         DefaultTableCellRenderer headerRenderer = new SortableTableHeaderRenderer();
 
         for (int i = 0; i < jAttacksTable.getColumnCount(); i++) {
@@ -329,43 +295,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements A
 
             // </editor-fold>
 
-            // <editor-fold defaultstate="collapsed" desc=" Build user village list ">
-            Tag[] tags = TagManager.getSingleton().getTags().toArray(new Tag[]{});
-            DefaultListModel tagModel = new DefaultListModel();
-            tagModel.addElement("Keinen Tag");
-            for (Tag t : tags) {
-                tagModel.addElement(t);
-            }
-            jVillageGroupList.setModel(tagModel);
-
-            jVillageGroupList.addListSelectionListener(new ListSelectionListener() {
-
-                @Override
-                public void valueChanged(ListSelectionEvent e) {
-                    fireFilterSourceVillagesByGroupEvent();
-                }
-            });
-
-            jSourceContinentList.addListSelectionListener(new ListSelectionListener() {
-
-                @Override
-                public void valueChanged(ListSelectionEvent e) {
-                    fireFilterSourceContinentEvent();
-                }
-            });
-
-            if (TagManager.getSingleton().getTags().isEmpty()) {
-                jVillageGroupList.setEnabled(false);
-            } else {
-                jVillageGroupList.setEnabled(true);
-            }
-            //select all groups and initialize lists
-            jVillageGroupList.getSelectionModel().setSelectionInterval(0, (tags.length > 0) ? tags.length : tags.length);
-            // </editor-fold>
-
             mSettingsPanel.reset();
-            /* jAttacksTable.setDefaultRenderer(Date.class, new DateCellRenderer());
-            jAttacksTable.setDefaultEditor(Date.class, new DateSpinEditor());*/
             jAttacksTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
             jAttacksTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
             jAttacksTable.setDefaultEditor(Boolean.class, new FakeCellEditor());
@@ -2489,7 +2419,7 @@ private void fireGetSourceVillagesFromClipboardEvent(java.awt.event.MouseEvent e
 
 private void fireGetTargetVillagesFromClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireGetTargetVillagesFromClipboardEvent
     try {
-        Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         List<Village> villages = PluginManager.getSingleton().executeVillageParser((String) t.getTransferData(DataFlavor.stringFlavor));
         if (villages == null || villages.isEmpty()) {
             JOptionPaneHelper.showInformationBox(this, "Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.", "Information");
@@ -2722,7 +2652,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
     if (text.length() > 0) {
         text = text.toLowerCase();
         Enumeration<Integer> allyKeys = DataHolder.getSingleton().getAllies().keys();
-        List<Ally> allies = new LinkedList();
+        List<Ally> allies = new LinkedList<Ally>();
         while (allyKeys.hasMoreElements()) {
             Ally a = DataHolder.getSingleton().getAllies().get(allyKeys.nextElement());
             if (a.getName() != null && a.getTag() != null) {
@@ -2750,7 +2680,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
         });
     } else {
         Enumeration<Integer> allyKeys = DataHolder.getSingleton().getAllies().keys();
-        List<Ally> allies = new LinkedList();
+        List<Ally> allies = new LinkedList<Ally>();
         while (allyKeys.hasMoreElements()) {
             allies.add(DataHolder.getSingleton().getAllies().get(allyKeys.nextElement()));
         }
@@ -2991,15 +2921,48 @@ private void fireSplitSourceVillagesEvent(java.awt.event.MouseEvent evt) {//GEN-
 
     int sources = jAttacksTable.getRowCount();
     List<Village> sourceVillages = new LinkedList<Village>();
+    Hashtable<Village, UnitHolder> attTable = new Hashtable<Village, UnitHolder>();
+    Hashtable<Village, UnitHolder> fakeTable = new Hashtable<Village, UnitHolder>();
     for (int i = 0; i < sources; i++) {
         Village sourceVillage = (Village) jAttacksTable.getValueAt(i, 0);
         if (!sourceVillages.contains(sourceVillage)) {
             sourceVillages.add(sourceVillage);
+            boolean fake = (Boolean) jAttacksTable.getValueAt(i, 2);
+            UnitHolder unit = (UnitHolder) jAttacksTable.getValueAt(i, 1);
+            if (fake) {
+                fakeTable.put(sourceVillage, unit);
+            } else {
+                attTable.put(sourceVillage, unit);
+            }
         }
     }
 
     mTroopSplitDialog.setupAndShow(sourceVillages);
 
+    TroopSplit[] splits = mTroopSplitDialog.getSplits();
+    if (splits.length == 0) {
+        //canceled
+        return;
+    }
+
+    DefaultTableModel model = (DefaultTableModel) jAttacksTable.getModel();
+    jAttacksTable.invalidate();
+    for (int i = sources - 1; i >= 0; i--) {
+        model.removeRow(i);
+    }
+    jAttacksTable.revalidate();
+
+    for (TroopSplit split : splits) {
+        for (int i = 0; i < split.getSplitCount(); i++) {
+            boolean isFake = false;
+            UnitHolder unit = attTable.get(split.getVillage());
+            if (unit == null) {
+                unit = fakeTable.get(split.getVillage());
+                isFake = true;
+            }
+            model.addRow(new Object[]{split.getVillage(), unit, isFake});
+        }
+    }
 }//GEN-LAST:event_fireSplitSourceVillagesEvent
 
     private void addSourceVillages(List<Village> pSourceVillages, UnitHolder pUnit, boolean pAsFake) {
@@ -3041,7 +3004,6 @@ private void fireSplitSourceVillagesEvent(java.awt.event.MouseEvent evt) {//GEN-
         if (target == null) {
             return;
         }
-
         jVictimTable.invalidate();
         int size = jTargetVillageList.getModel().getSize();
         List<Village> validTargets = new LinkedList<Village>();
@@ -3318,13 +3280,13 @@ private void fireSplitSourceVillagesEvent(java.awt.event.MouseEvent evt) {//GEN-
                 new String[]{
                     "Spieler", "Dorf"}) {
 
-            Class[] types = new Class[]{
+            private Class[] cTypes = new Class[]{
                 Tribe.class, Village.class
             };
 
             @Override
             public Class getColumnClass(int columnIndex) {
-                return types[columnIndex];
+                return cTypes[columnIndex];
             }
         };
 
@@ -3411,7 +3373,7 @@ private void fireSplitSourceVillagesEvent(java.awt.event.MouseEvent evt) {//GEN-
                     back = Color.GREEN;
                 } else {
                     float posv = 100.0f * (float) diff / (float) max;
-                    posv = (int) ((int) posv / 10) * 10;
+                    posv = ((int) posv / 10) * 10;
                     posv /= 100;
                     Color LAST_SEGMENT = new Color(255, 100, 0);
                     int red = (int) Math.rint((float) LAST_SEGMENT.getRed() * (1.0f - posv) + (float) Color.YELLOW.getRed() * posv);
@@ -3532,7 +3494,7 @@ private void fireSplitSourceVillagesEvent(java.awt.event.MouseEvent evt) {//GEN-
 
     /**Get source villages filteres by selected groups*/
     private List<Village> getGroupFilteredSourceVillages() {
-        Object[] values = (Object[]) jVillageGroupList.getSelectedValues();
+        Object[] values = jVillageGroupList.getSelectedValues();
         List<Village> villageList = new LinkedList<Village>();
 
         if (jVillageGroupList.isEnabled()) {
@@ -3568,7 +3530,7 @@ private void fireSplitSourceVillagesEvent(java.awt.event.MouseEvent evt) {//GEN-
                 }
                 if (useNoTag) {
                     //use villages of current user which are not tagged
-                    Village[] villages = DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillageList();
+                    Village[] villages = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
                     for (Village v : villages) {
                         List<Tag> vtags = TagManager.getSingleton().getTags(v);
                         if (vtags == null || vtags.isEmpty() && !villageList.contains(v)) {
@@ -3588,7 +3550,7 @@ private void fireSplitSourceVillagesEvent(java.awt.event.MouseEvent evt) {//GEN-
                     //-> if one tag is selected for AND relation, ignore non-tagged due to logical error
                     if (useNoTag) {
                         //use villages of current user which are not tagged
-                        Village[] villages = DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillageList();
+                        Village[] villages = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
                         for (Village v : villages) {
                             List<Tag> vtags = TagManager.getSingleton().getTags(v);
                             if (vtags == null || vtags.isEmpty() && !villageList.contains(v)) {
@@ -3859,6 +3821,42 @@ private void fireSplitSourceVillagesEvent(java.awt.event.MouseEvent evt) {//GEN-
     }
 
     @Override
+    public void fireTagsChangedEvent() {
+        Tag[] tags = TagManager.getSingleton().getTags().toArray(new Tag[]{});
+        DefaultListModel tagModel = new DefaultListModel();
+        tagModel.addElement("Keinen Tag");
+        for (Tag t : tags) {
+            tagModel.addElement(t);
+        }
+        jVillageGroupList.setModel(tagModel);
+
+        jVillageGroupList.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                fireFilterSourceVillagesByGroupEvent();
+            }
+        });
+
+        jSourceContinentList.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                fireFilterSourceContinentEvent();
+            }
+        });
+
+        if (TagManager.getSingleton().getTags().isEmpty()) {
+            jVillageGroupList.setEnabled(false);
+        } else {
+            jVillageGroupList.setEnabled(true);
+        }
+        //select all groups and initialize lists
+        jVillageGroupList.getSelectionModel().setSelectionInterval(0, (tags.length > 0) ? tags.length : tags.length);
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="Drag&Drop handling">
+    @Override
     public void dragEnter(DropTargetDragEvent dtde) {
         if (dtde.isDataFlavorSupported(VillageTransferable.villageDataFlavor) || dtde.isDataFlavorSupported(DataFlavor.stringFlavor)) {
             dtde.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
@@ -3923,19 +3921,51 @@ private void fireSplitSourceVillagesEvent(java.awt.event.MouseEvent evt) {//GEN-
     @Override
     public void dragDropEnd(DragSourceDropEvent dsde) {
     }
+// </editor-fold>
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                new TribeTribeAttackFrame().setVisible(true);
-            }
-        });
+    // <editor-fold defaultstate="collapsed" desc="Mouse gesture handling">
+    @Override
+    public void fireCloseGestureEvent() {
+        setVisible(false);
     }
+
+    @Override
+    public void fireExportAsBBGestureEvent() {
+    }
+
+    @Override
+    public void firePlainExportGestureEvent() {
+    }
+
+    @Override
+    public void fireRenameGestureEvent() {
+    }
+
+    @Override
+    public void fireToBackgroundGestureEvent() {
+        toBack();
+    }
+
+    @Override
+    public void fireNextPageGestureEvent() {
+        int idx = jTabbedPane1.getSelectedIndex();
+        idx += 1;
+        if (idx > jTabbedPane1.getTabCount() - 1) {
+            idx = 0;
+        }
+        jTabbedPane1.setSelectedIndex(idx);
+    }
+
+    @Override
+    public void firePreviousPageGestureEvent() {
+        int idx = jTabbedPane1.getSelectedIndex();
+        idx -= 1;
+        if (idx < 0) {
+            idx = jTabbedPane1.getTabCount() - 1;
+        }
+        jTabbedPane1.setSelectedIndex(idx);
+    }
+// </editor-fold>
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup attackTypeGroup;
     private javax.swing.JButton jAddToAttacksButton;

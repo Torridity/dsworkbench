@@ -26,7 +26,7 @@ import java.util.StringTokenizer;
  *
  * @author Charon
  */
-public class Tribe implements Comparable, Serializable {
+public class Tribe implements Comparable<Tribe>, Serializable {
 
     private int id = 0;
     private String name = null;
@@ -307,11 +307,8 @@ public class Tribe implements Comparable, Serializable {
     }
 
     @Override
-    public int compareTo(Object o) {
-        if (o instanceof Tribe) {
-            return getName().compareTo(((Tribe) o).getName());
-        }
-        return -1;
+    public int compareTo(Tribe o) {
+        return getName().compareTo(o.getName());
     }
     public static final Comparator<Tribe> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
 

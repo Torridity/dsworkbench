@@ -189,9 +189,10 @@ public class DoItYourselfAttackTableModel extends AbstractDSWorkbenchTableModel 
             }
             case 5: {
                 attacks.get(pRow).setArriveTime((Date) pValue);
+                break;
             }
-            default: {
-            }
+            default:
+                break;
         }
     }
 

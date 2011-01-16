@@ -1000,7 +1000,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Drag
 
     private void fireVillagesFromClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireVillagesFromClipboardEvent
         try {
-            Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+            Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
             List<Village> villages = PluginManager.getSingleton().executeVillageParser((String) t.getTransferData(DataFlavor.stringFlavor));
             if (villages == null || villages.isEmpty()) {
                 JOptionPaneHelper.showInformationBox(this, "Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.", "Information");

@@ -57,7 +57,7 @@ public class AttackLayerRenderer extends AbstractDirectLayerRenderer {
             }
             attackColors.put(unit.getName(), unitColor);
         }
-        
+
         GeneralPath p = new GeneralPath();
         p.moveTo(0, 0);
         p.lineTo(10, 5);
@@ -82,6 +82,19 @@ public class AttackLayerRenderer extends AbstractDirectLayerRenderer {
                 },
                 20.0f);
         Enumeration<String> keys = AttackManager.getSingleton().getPlans();
+        boolean showBarbarian = true;
+        try {
+            showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
+        } catch (Exception e) {
+            showBarbarian = true;
+        }
+
+        boolean markedOnly = false;
+        try {
+            markedOnly = Boolean.parseBoolean(GlobalOptions.getProperty("draw.marked.only"));
+        } catch (Exception e) {
+            markedOnly = false;
+        }
         while (keys.hasMoreElements()) {
             String plan = keys.nextElement();
             Attack[] attacks = AttackManager.getSingleton().getAttackPlan(plan).toArray(new Attack[]{});

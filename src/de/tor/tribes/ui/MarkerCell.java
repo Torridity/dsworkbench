@@ -15,7 +15,7 @@ import javax.swing.ImageIcon;
  *
  * @author  Charon
  */
-public class MarkerCell extends javax.swing.JPanel implements Comparable {
+public class MarkerCell extends javax.swing.JPanel implements Comparable<MarkerCell> {
 
     private static ImageIcon PLAYER_ICON = null;
     private static ImageIcon ALLY_ICON = null;
@@ -134,9 +134,9 @@ public class MarkerCell extends javax.swing.JPanel implements Comparable {
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public int compareTo(Object o) {
+    public int compareTo(MarkerCell o) {
         try {
-            MarkerCell c = (MarkerCell) o;
+            MarkerCell c = o;
             String v1 = "";
             if (c.getType() == Marker.ALLY_MARKER_TYPE) {
                 v1 = c.getAlly().getName();

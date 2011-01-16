@@ -30,6 +30,7 @@ import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.types.DummyUserProfile;
+import de.tor.tribes.types.InvalidTribe;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.util.ServerChangeListener;
@@ -2186,7 +2187,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
+                .addComponent(jSettingsTabbedPane)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jCreateAccountButton)
@@ -2364,8 +2365,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         } catch (Exception e) {
         }
         if (selectedProfile != null) {
-            logger.debug("Setting default profile for server '" + GlobalOptions.getSelectedServer() + "' to " + selectedProfile.getTribeName());
+            if(selectedProfile.getTribe().equals(InvalidTribe.getSingleton())){
+                JOptionPaneHelper.showWarningBox(this, "Der Spieler des gewählten Profils existiert nicht mehr.\nBitte ein anderes Profil wählen. ", "Warnung");
+                return;
+            }
 
+            logger.debug("Setting default profile for server '" + GlobalOptions.getSelectedServer() + "' to " + selectedProfile.getTribeName());
             UserProfile formerProfile = GlobalOptions.getSelectedProfile();
 
             if (formerProfile.getProfileId() != selectedProfile.getProfileId()) {
@@ -2421,6 +2426,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
         DSWorkbenchAttackFrame.getSingleton().getCountdownThread().updateSettings();
         MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
+        MinimapPanel.getSingleton().redraw();
     }//GEN-LAST:event_fireOkEvent
 
 private void fireCreateAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateAccountEvent

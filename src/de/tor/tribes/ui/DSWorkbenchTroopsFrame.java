@@ -549,7 +549,7 @@ private void fireAddTroopsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
     DefaultComboBoxModel model = new DefaultComboBoxModel();
     boolean empty = true;
     try {
-        String playerID = GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer());
+        String playerID = GlobalOptions.getSelectedProfile().getTribeName();
         Tribe t = DataHolder.getSingleton().getTribeByName(playerID);
         Village[] villages = t.getVillageList();
         Arrays.sort(villages, Village.CASE_INSENSITIVE_ORDER);
@@ -561,10 +561,11 @@ private void fireAddTroopsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
         }
     } catch (Exception e) {
         logger.error("Failed to update tribe villages model", e);
-        model = new DefaultComboBoxModel(new String[]{"keine Dörfer"});
+        model = new DefaultComboBoxModel(new String[]{"Keine Dörfer gefunden"});
     }
     if (empty) {
-        model = new DefaultComboBoxModel(new String[]{"Alle vorhanden"});
+        JOptionPaneHelper.showInformationBox(this, "Es sind bereits Truppeninformationen zu allen deinen Dörfern vorhanden.", "Information");
+        return;
     }
     jVillageBox.setModel(model);
     jAddTroopsDialog.setLocationRelativeTo(this);

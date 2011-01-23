@@ -62,7 +62,6 @@ public class TagManager {
 
         File tagFile = new File(pFile);
         if (tagFile.exists()) {
-
             if (logger.isDebugEnabled()) {
                 logger.debug("Loading tags from '" + pFile + "'");
             }
@@ -82,6 +81,12 @@ public class TagManager {
                     logger.warn(cnt + " errors while loading tags");
                 }
                 Collections.sort(mTags);
+                //update linked tags
+                for (Tag t : mTags) {
+                    if (t instanceof LinkedTag) {
+                        ((LinkedTag) t).updateVillageList();
+                    }
+                }
             } catch (Exception e) {
                 logger.error("Failed to load tags", e);
             }

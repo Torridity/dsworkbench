@@ -14,6 +14,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 
 /**
  * @author Charon
@@ -23,16 +25,16 @@ public class TestClass {
     public static void main(String[] args) throws Exception {
 
 
-        //Runtime.getRuntime().exec(new String[]{"C:/Programme/Internet Explorer/iexplore.exe", "http://www.heise.de"});
+       // create a script engine manager
+        ScriptEngineManager factory = new ScriptEngineManager();
+        // create a JavaScript engine
+        ScriptEngine engine = factory.getEngineByName("JavaScript");
+        // evaluate JavaScript code from String
+        
+        engine.eval("var b = eval(\"(false&&false)\")");
+        Boolean b =(Boolean) engine.get("b");
 
-        File dest = new File("C:/Users/Torridity/die stämme/dsworkbench/./servers/de25/settings.xml");
-        System.out.println(new File("settings_tmp.xml").exists());
-        System.out.println(dest.getCanonicalPath());
-        if (new File("settings_tmp.xml").renameTo(dest)) {
-            System.out.println("SUCCESS");
-        } else {
-            System.out.println("FAIL");
-        }
+        System.out.println(b);
 
         if (true) {
             return;

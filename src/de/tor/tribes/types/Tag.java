@@ -29,6 +29,7 @@ public class Tag implements Comparable<Tag> {
      * 
      */
     public static final Comparator<Tag> CASE_INSENSITIVE_ORDER = new CaseInsensitiveTagComparator();
+    public static final Comparator<Tag> SIZE_ORDER = new SizeComparator();
     private String sName = null;
     private List<Integer> mVillageIDs = new LinkedList<Integer>();
     //-1 means no icon
@@ -240,6 +241,17 @@ public class Tag implements Comparable<Tag> {
                 }
             }
             return n1 - n2;
+        }
+    }
+
+    private static class SizeComparator implements Comparator<Tag>, java.io.Serializable {
+        // use serialVersionUID from JDK 1.2.2 for interoperability
+
+        private static final long serialVersionUID = 8575799808933029326L;
+
+        @Override
+        public int compare(Tag s1, Tag s2) {
+            return new Integer(s2.getName().length()).compareTo(new Integer(s1.getName().length()));
         }
     }
 

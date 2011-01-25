@@ -7,10 +7,9 @@ package de.tor.tribes.ui.models;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.editors.LinkGroupColorCellEditor;
-import de.tor.tribes.util.Constants;
+import de.tor.tribes.ui.editors.MultiBooleanTableCellEditor;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.tag.TagManager;
-import java.awt.Color;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -53,7 +52,7 @@ public class TagLinkMatrixModel extends AbstractTableModel {
                 if (j == 0) {
                     values[i][j] = TagManager.getSingleton().getTags().get(i);
                 } else {
-                    values[i][j] = Constants.DS_BACK_LIGHT;
+                    values[i][j] = 0;
                 }
             }
         }
@@ -69,7 +68,7 @@ public class TagLinkMatrixModel extends AbstractTableModel {
         if (columnIndex == 0) {
             return Tag.class;
         }
-        return Color.class;
+        return Integer.class;
     }
 
     @Override
@@ -94,7 +93,25 @@ public class TagLinkMatrixModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object pValue, int rowIndex, int columnIndex) {
-        values[rowIndex][columnIndex] = pValue;
+        if (columnIndex == 0) {
+            values[rowIndex][columnIndex] = pValue;
+
+        } else {
+            int newValue = (Integer) pValue;
+            if (newValue != 0) {
+                int oldValue = (Integer) getValueAt(rowIndex, columnIndex);
+
+                int setValue = newValue | oldValue;
+                for (int i = 1; i < columnNames.length; i++) {
+                    oldValue = (Integer) getValueAt(rowIndex, i);
+                    if (MultiBooleanTableCellEditor.isOptionSet(oldValue, setValue)) {
+                        //don't set
+                        return;
+                    }
+                }
+            }
+            values[rowIndex][columnIndex] = pValue;
+        }
     }
 
     public String getEquation() {
@@ -109,9 +126,9 @@ public class TagLinkMatrixModel extends AbstractTableModel {
 
             for (int j = 1; j < columnNames.length; j++) {
                 String relation = "";
-                if (values[i][j] == LinkGroupColorCellEditor.COLOR1) {
+                if (MultiBooleanTableCellEditor.isOptionSet((Integer) values[i][j], MultiBooleanTableCellEditor.VALUE1)) {
                     if (group1.length() > 0) {
-                        group1.append(" ODER ");
+                        group1.append(" UND ");
                     }
                     if (j == 1) {
                         relation += t.getName();
@@ -119,9 +136,11 @@ public class TagLinkMatrixModel extends AbstractTableModel {
                         relation += "(" + t.getName() + " UND " + columnNames[j] + ")";
                     }
                     group1.append(relation);
-                } else if (values[i][j] == LinkGroupColorCellEditor.COLOR2) {
+                }
+                relation = "";
+                if (MultiBooleanTableCellEditor.isOptionSet((Integer) values[i][j], MultiBooleanTableCellEditor.VALUE2)) {
                     if (group2.length() > 0) {
-                        group2.append(" ODER ");
+                        group2.append(" UND ");
                     }
                     if (j == 1) {
                         relation += t.getName();
@@ -129,9 +148,11 @@ public class TagLinkMatrixModel extends AbstractTableModel {
                         relation += "(" + t.getName() + " UND " + columnNames[j] + ")";
                     }
                     group2.append(relation);
-                } else if (values[i][j] == LinkGroupColorCellEditor.COLOR3) {
+                }
+                relation = "";
+                if (MultiBooleanTableCellEditor.isOptionSet((Integer) values[i][j], MultiBooleanTableCellEditor.VALUE3)) {
                     if (group3.length() > 0) {
-                        group3.append(" ODER ");
+                        group3.append(" UND ");
                     }
                     if (j == 1) {
                         relation += t.getName();
@@ -139,7 +160,9 @@ public class TagLinkMatrixModel extends AbstractTableModel {
                         relation += "(" + t.getName() + " UND " + columnNames[j] + ")";
                     }
                     group3.append(relation);
-                } else if (values[i][j] == LinkGroupColorCellEditor.COLOR4) {
+                }
+                relation = "";
+                if (MultiBooleanTableCellEditor.isOptionSet((Integer) values[i][j], MultiBooleanTableCellEditor.VALUE4)) {
                     if (group4.length() > 0) {
                         group4.append(" ODER ");
                     }

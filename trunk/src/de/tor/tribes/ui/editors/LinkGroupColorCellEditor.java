@@ -27,7 +27,7 @@ import javax.swing.JTable;
  */
 public class LinkGroupColorCellEditor extends DefaultCellEditor {
 
-    private JComboBox comboComponent = null;
+    private MultiBooleanTableCellEditor cellEditor = null;
     public static final Color COLOR1 = Color.RED;
     public static final Color COLOR2 = Color.GREEN;
     public static final Color COLOR3 = Color.BLUE;
@@ -36,43 +36,10 @@ public class LinkGroupColorCellEditor extends DefaultCellEditor {
     public LinkGroupColorCellEditor() {
         super(new JComboBox());
         setClickCountToStart(2);
-        DefaultComboBoxModel model = new DefaultComboBoxModel();
-        comboComponent = new javax.swing.JComboBox() {
+        cellEditor = new MultiBooleanTableCellEditor();
+        cellEditor.setBorder(BorderFactory.createEmptyBorder());
 
-            @Override
-            public void processMouseEvent(MouseEvent e) {
-                Component focusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
-
-                if (isDisplayable() && focusOwner == this && !isPopupVisible()) {
-                    showPopup();
-                }
-            }
-
-            @Override
-            public void processFocusEvent(FocusEvent fe) {
-            }
-        };
-
-        model.addElement(Constants.DS_BACK_LIGHT);
-        model.addElement(COLOR1);
-        model.addElement(COLOR2);
-        model.addElement(COLOR3);
-        model.addElement(COLOR4);
-        comboComponent.setBorder(BorderFactory.createEmptyBorder());
-        comboComponent.setModel(model);
-
-        comboComponent.addItemListener(new ItemListener() {
-
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    stopCellEditing();
-                }
-            }
-        });
-
-        comboComponent.setRenderer(new ColorListCellRenderer());
-        comboComponent.addKeyListener(new KeyListener() {
+        cellEditor.addKeyListener(new KeyListener() {
 
             @Override
             public void keyTyped(KeyEvent e) {
@@ -95,12 +62,12 @@ public class LinkGroupColorCellEditor extends DefaultCellEditor {
 
     @Override
     public Object getCellEditorValue() {
-        return comboComponent.getSelectedItem();
+        return cellEditor.getSelection();
     }
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        comboComponent.setSelectedItem(value);
-        return comboComponent;
+        cellEditor.setSelection((Integer) value);
+        return cellEditor;
     }
 }

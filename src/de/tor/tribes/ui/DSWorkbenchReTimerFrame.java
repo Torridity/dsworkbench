@@ -981,7 +981,6 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             String text = jComandArea.getText();
             String selection = jComandArea.getSelectedText();
             String arrive = null;
-
             if (selection == null) {
                 String arriveLine = null;
                 if (text.indexOf(PluginManager.getSingleton().getVariableValue("attack.arrive.time")) > -1) {
@@ -991,16 +990,16 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 }
               
                 /*
-                Befehl
-                Herkunft	Spieler:	Rattenfutter
-                Dorf:	#2.3# (440|899) K84
-                Ziel	Spieler:	Rattenfutter
-                Dorf:	Zweitermond (436|892) K84
-                Dauer:	4:01:52
-                Ankunft:	15.07.10 23:49:34:507
-                Ankunft in:	4:01:50
-                » abbrechen
-                » Versammlungsplatz
+              Befehl
+Herkunft	Spieler:	Rattenfutter
+Dorf:	015 R.I.P. Frankfurt Lions 01 (382|891) K83
+Ziel	Spieler:	Rattenfutter
+Dorf:	Metropolis L06 (384|891) K83
+Dauer:	1:00:00
+Ankunft:	01.02.11 22:54:00:670
+Ankunft in:	0:59:57
+» abbrechen
+» Versammlungsplatz
                  */
                 StringTokenizer tokenizer = new StringTokenizer(arriveLine, " \t");
                 tokenizer.nextToken();

@@ -49,17 +49,9 @@ public class LinkTagsDialog extends javax.swing.JDialog {
         tags.add(new Tag("Off_R", true));
         tags.add(new Tag("Deff_A", true));
         tags.add(new Tag("Deff_R", true));
-        jRelationBox.setSelectedIndex(0);
     }
 
     public LinkedTag setupAndShow() {
-        DefaultComboBoxModel tagModel = new DefaultComboBoxModel();
-        for (Tag t : TagManager.getSingleton().getTags()) {
-            // for (Tag t : tags) {
-            tagModel.addElement(t);
-        }
-        jTagBox.setModel(tagModel);
-
         jTable1.setModel(new TagLinkMatrixModel());
         jTable1.setDefaultRenderer(Integer.class, new MultiColorCellRenderer());
         jTable1.setDefaultRenderer(Tag.class, new AlternatingColorCellRenderer());
@@ -73,10 +65,9 @@ public class LinkTagsDialog extends javax.swing.JDialog {
 
         if (bCreateLinkedTag) {
             LinkedTag t = new LinkedTag(jTagName.getText(), true);
-            String equation = jEquationField.getText();
+            String equation = ((TagLinkMatrixModel) jTable1.getModel()).getEquation();
             equation = equation.replaceAll("UND", "&&");
             equation = equation.replaceAll("ODER", "||");
-            equation = equation.replaceAll("NICHT", "!");
             t.setEquation(equation);
             t.updateVillageList();
             return t;
@@ -98,14 +89,6 @@ public class LinkTagsDialog extends javax.swing.JDialog {
         jButton2 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jTagName = new javax.swing.JTextField();
-        jPanel2 = new javax.swing.JPanel();
-        jBracketOpenBox = new javax.swing.JComboBox();
-        jNotBox = new javax.swing.JComboBox();
-        jTagBox = new javax.swing.JComboBox();
-        jBracketCloseBox = new javax.swing.JComboBox();
-        jRelationBox = new javax.swing.JComboBox();
-        jButton1 = new javax.swing.JButton();
-        jEquationField = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
 
@@ -135,77 +118,6 @@ public class LinkTagsDialog extends javax.swing.JDialog {
         jTagName.setMinimumSize(new java.awt.Dimension(100, 20));
         jTagName.setPreferredSize(new java.awt.Dimension(100, 20));
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Verknüpfung"));
-        jPanel2.setOpaque(false);
-
-        jBracketOpenBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "(", " " }));
-        jBracketOpenBox.setSelectedIndex(1);
-        jBracketOpenBox.setMinimumSize(new java.awt.Dimension(40, 22));
-        jBracketOpenBox.setPreferredSize(new java.awt.Dimension(40, 22));
-
-        jNotBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Nicht", " " }));
-        jNotBox.setSelectedIndex(1);
-
-        jTagBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jBracketCloseBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { ")", " " }));
-        jBracketCloseBox.setSelectedIndex(1);
-        jBracketCloseBox.setMinimumSize(new java.awt.Dimension(40, 22));
-        jBracketCloseBox.setPreferredSize(new java.awt.Dimension(40, 22));
-
-        jRelationBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "UND", "ODER", " " }));
-
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
-        jButton1.setMaximumSize(new java.awt.Dimension(22, 22));
-        jButton1.setMinimumSize(new java.awt.Dimension(22, 22));
-        jButton1.setPreferredSize(new java.awt.Dimension(22, 22));
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireInsertRelationEvent(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jEquationField, javax.swing.GroupLayout.DEFAULT_SIZE, 596, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jBracketOpenBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jNotBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTagBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jBracketCloseBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRelationBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(30, 30, 30)))
-                .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jBracketOpenBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTagBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jNotBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jBracketCloseBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRelationBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jEquationField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -226,16 +138,15 @@ public class LinkTagsDialog extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jTagName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 628, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jDoCreateButton))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 628, Short.MAX_VALUE))
+                        .addComponent(jDoCreateButton)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -246,10 +157,8 @@ public class LinkTagsDialog extends javax.swing.JDialog {
                     .addComponent(jLabel1)
                     .addComponent(jTagName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jDoCreateButton)
                     .addComponent(jButton2))
@@ -283,35 +192,36 @@ public class LinkTagsDialog extends javax.swing.JDialog {
                 JOptionPaneHelper.showWarningBox(this, "Du musst einen Namen für den neuen Tag angeben.", "Warnung");
                 return;
             }
-            if (jTagName.getText().equals("NICHT") || jTagName.getText().equals("ODER") || jTagName.getText().equals("UND")) {
-                JOptionPaneHelper.showWarningBox(this, "Folgende Begriffe sind als Tag Namen gesperrt: UND, ODER, NICHT\nGib bitte einen anderen Namen an.", "Warnung");
+            if (jTagName.getText().equals("ODER") || jTagName.getText().equals("UND")) {
+                JOptionPaneHelper.showWarningBox(this, "Folgende Begriffe sind als Tag Namen gesperrt: UND, ODER\nGib bitte einen anderen Namen an.", "Warnung");
                 return;
             }
 
-            String equation = jEquationField.getText();
+            String equation = ((TagLinkMatrixModel) jTable1.getModel()).getEquation();
             Tag[] pTags = TagManager.getSingleton().getTags().toArray(new Tag[]{});
-            //Tag[] pTags = tags.toArray(new Tag[]{});
             Arrays.sort(pTags, Tag.SIZE_ORDER);
 
             for (Tag t : pTags) {
                 //for (Tag t : pTags) {
-                if (t.getName().equals("NICHT") || t.getName().equals("ODER") || t.getName().equals("UND")) {
-                    JOptionPaneHelper.showWarningBox(this, "Folgende Begriffe sind als Tag Namen gesperrt: UND, ODER, NICHT\nDaher ist eine Verknüpfung nicht möglich.", "Warnung");
-                    return;
-                }
                 equation = equation.replaceAll(Pattern.quote(t.getName()), "true");
+            }
+
+            for (int i = 0; i < 99; i++) {
+                equation = equation.replaceAll(Pattern.quote("K" + ((i < 10) ? "0" : "") + i), "true");
             }
 
             equation = equation.replaceAll("UND", "&&");
             equation = equation.replaceAll("ODER", "||");
-            equation = equation.replaceAll("NICHT", "!");
             ScriptEngineManager factory = new ScriptEngineManager();
             // create a JavaScript engine
             ScriptEngine engine = factory.getEngineByName("JavaScript");
             // evaluate JavaScript code from String
             try {
+                System.out.println("Eval " + equation);
                 engine.eval("var b = eval(\"" + equation + "\")");
             } catch (Exception e) {
+
+                e.printStackTrace();
                 JOptionPaneHelper.showWarningBox(this, "Die angegebene Verknüpfung scheint fehlerhaft zu sein.\nBitte überprüfe sie noch einmal.", "Warnung");
                 return;
             }
@@ -320,33 +230,6 @@ public class LinkTagsDialog extends javax.swing.JDialog {
         }
         dispose();
     }//GEN-LAST:event_fireAcceptEvent
-
-    private void fireInsertRelationEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireInsertRelationEvent
-        StringBuilder newPart = new StringBuilder();
-        if (jBracketOpenBox.getSelectedIndex() == 0) {
-            newPart.append(" ( ");
-        }
-
-        if (jNotBox.getSelectedIndex() == 0) {
-            newPart.append(" NICHT ");
-        }
-        Tag t = (Tag) jTagBox.getSelectedItem();
-        newPart.append(t.getName());
-        if (jBracketCloseBox.getSelectedIndex() == 0) {
-            newPart.append(" ) ");
-        }
-        switch (jRelationBox.getSelectedIndex()) {
-            case 0:
-                newPart.append(" UND ");
-                break;
-            case 1:
-                newPart.append(" ODER ");
-                break;
-        }
-        jEquationField.setText(jEquationField.getText() + newPart.toString());
-
-
-    }//GEN-LAST:event_fireInsertRelationEvent
 
     /**
      * @param args the command line arguments
@@ -367,20 +250,12 @@ public class LinkTagsDialog extends javax.swing.JDialog {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox jBracketCloseBox;
-    private javax.swing.JComboBox jBracketOpenBox;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jDoCreateButton;
-    private javax.swing.JTextField jEquationField;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JComboBox jNotBox;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JComboBox jRelationBox;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JComboBox jTagBox;
     private javax.swing.JTextField jTagName;
     // End of variables declaration//GEN-END:variables
 }

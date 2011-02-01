@@ -54,7 +54,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
 
     private static Logger logger = Logger.getLogger("SOSRequestAnalyzer ");
     private static DSWorkbenchSOSRequestAnalyzer SINGLETON = null;
-    private Hashtable<Tribe, SOSRequest> currentRequests;
+    private Hashtable<Tribe, SOSRequest> currentRequests = new Hashtable<Tribe, SOSRequest>();
 
     public static synchronized DSWorkbenchSOSRequestAnalyzer getSingleton() {
         if (SINGLETON == null) {
@@ -64,7 +64,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
     }
 
     public void resetView() {
-        currentRequests = null;
+        currentRequests = new Hashtable<Tribe, SOSRequest>();
         updateView();
     }
 

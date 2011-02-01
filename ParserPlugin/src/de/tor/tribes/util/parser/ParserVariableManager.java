@@ -6,6 +6,7 @@ package de.tor.tribes.util.parser;
 
 import de.tor.tribes.util.GlobalOptions;
 import java.io.FileInputStream;
+import java.lang.reflect.Method;
 import java.util.Properties;
 
 /**
@@ -73,7 +74,10 @@ public class ParserVariableManager {
         return property;
     }
 
-    public static void main(String[] args) {
-        System.out.println(ParserVariableManager.getSingleton().getProperty("troops.place.from.village"));
+    public static void main(String[] args) throws Exception{
+        //System.out.println(ParserVariableManager.getSingleton().getProperty("troops.place.from.village"));
+       
+        System.out.println(ParserVariableManager.class.getMethod("getSingleton").invoke(null));
+      
     }
 }

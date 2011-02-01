@@ -104,6 +104,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     private ImageIcon uvModeOff = null;
     private boolean putOnline = false;
     private MouseGestures mMouseGestures = new MouseGestures();
+    private boolean bWatchClipboard = true;
 
     public static synchronized DSWorkbenchMainFrame getSingleton() {
         if (SINGLETON == null) {
@@ -117,7 +118,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         initComponents();
 
         setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
-        setAlwaysOnTop(false);
         jExportDialog.pack();
         jAddROIDialog.pack();
         jPanel1.setIgnoreRepaint(true);
@@ -402,6 +402,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
         try {
             jOnlineLabel.setIcon(new ImageIcon("./graphics/icons/online.png"));
+            jEnableClipboardWatchButton.setIcon(new ImageIcon("./graphics/icons/watch_clipboard.png"));
             jCenterIngameButton.setIcon(new ImageIcon("./graphics/icons/center.png"));
             jRefreshButton.setIcon(new ImageIcon("./graphics/icons/refresh.png"));
             jCenterCoordinateIngame.setIcon(new ImageIcon("./graphics/icons/center.png"));
@@ -1023,6 +1024,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jOnlineLabel = new javax.swing.JLabel();
         jCurrentToolLabel = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        jEnableClipboardWatchButton = new javax.swing.JButton();
         jMapGroup = new com.l2fprod.common.swing.JTaskPaneGroup();
         jPanel2 = new javax.swing.JPanel();
         jShowMapPopup = new javax.swing.JCheckBox();
@@ -1138,7 +1140,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         );
 
         jExportDialog.setTitle(bundle.getString("DSWorkbenchMainFrame.jExportDialog.title")); // NOI18N
-        jExportDialog.setAlwaysOnTop(true);
 
         jScrollPane1.setOpaque(false);
 
@@ -1724,6 +1725,17 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
 
+        jEnableClipboardWatchButton.setBackground(new java.awt.Color(239, 235, 223));
+        jEnableClipboardWatchButton.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jEnableClipboardWatchButton.toolTipText")); // NOI18N
+        jEnableClipboardWatchButton.setMaximumSize(new java.awt.Dimension(30, 30));
+        jEnableClipboardWatchButton.setMinimumSize(new java.awt.Dimension(30, 30));
+        jEnableClipboardWatchButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jEnableClipboardWatchButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeClipboardWatchEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jInformationPanelLayout = new javax.swing.GroupLayout(jInformationPanel);
         jInformationPanel.setLayout(jInformationPanelLayout);
         jInformationPanelLayout.setHorizontalGroup(
@@ -1731,16 +1743,18 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jInformationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 155, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 170, Short.MAX_VALUE)
                     .addGroup(jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
-                        .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(4, 4, 4)
+                        .addComponent(jEnableClipboardWatchButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jInformationPanelLayout.setVerticalGroup(
@@ -1752,10 +1766,11 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jEnableClipboardWatchButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1890,16 +1905,16 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jShowMouseOverInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jShowMouseOverInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jShowRuler, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jShowRuler, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
                         .addGap(6, 6, 6))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel12)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jGraphicPacks, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jHighlightTribeVillages, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jShowMapPopup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jGraphicPacks, 0, 108, Short.MAX_VALUE))
+                    .addComponent(jHighlightTribeVillages, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
+                    .addComponent(jShowMapPopup, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
@@ -1913,7 +1928,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel10)
                         .addGap(14, 14, 14)
-                        .addComponent(jScrollPane3))
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addComponent(jLayerUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -2939,6 +2954,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
         }
 
     }
+    jExportDialog.setAlwaysOnTop(false);
     jExportDialog.setVisible(false);
 }//GEN-LAST:event_fireExportEvent
 
@@ -3032,7 +3048,7 @@ private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
     }
     jReportSetExportTable.revalidate();
     jReportSetExportTable.repaint();//.updateUI();
-
+    jExportDialog.setAlwaysOnTop(true);
     jExportDialog.setVisible(true);
 }//GEN-LAST:event_fireOpenExportDialogEvent
 
@@ -3285,6 +3301,20 @@ private void fireShowMouseOverInfoEvent(javax.swing.event.ChangeEvent evt) {//GE
     GlobalOptions.addProperty("show.mouseover.info", Boolean.toString(jShowMouseOverInfo.isSelected()));
 }//GEN-LAST:event_fireShowMouseOverInfoEvent
 
+private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeClipboardWatchEvent
+    if (bWatchClipboard) {
+        jEnableClipboardWatchButton.setIcon(new ImageIcon("./graphics/icons/not_watch_clipboard.png"));
+        bWatchClipboard = false;
+    } else {
+        jEnableClipboardWatchButton.setIcon(new ImageIcon("./graphics/icons/watch_clipboard.png"));
+        bWatchClipboard = true;
+    }
+}//GEN-LAST:event_fireChangeClipboardWatchEvent
+
+    public boolean isWatchClipboard() {
+        return bWatchClipboard;
+    }
+
     private void propagateLayerOrder() {
         DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
 
@@ -3479,7 +3509,7 @@ private void fireShowMouseOverInfoEvent(javax.swing.event.ChangeEvent evt) {//GE
 
         for (String group : groups) {
             //add new groups
-            TagManager.getSingleton().addTag(group);
+            TagManager.getSingleton().addTagFast(group);
             //get (added) group
             Tag t = TagManager.getSingleton().getTagByName(group);
             //add villages to group
@@ -3489,9 +3519,9 @@ private void fireShowMouseOverInfoEvent(javax.swing.event.ChangeEvent evt) {//GE
                 for (Village v : villagesForGroup) {
                     t.tagVillage(v.getId());
                 }
-
             }
         }
+        TagManager.getSingleton().forceUpdate();
 
     }
 
@@ -3559,6 +3589,7 @@ private void fireShowMouseOverInfoEvent(javax.swing.event.ChangeEvent evt) {//GE
     private javax.swing.JMenuItem jDistanceItem;
     private javax.swing.JMenuItem jDoItYourselfAttackPlanerItem;
     private javax.swing.JMenuItem jDonateButton;
+    private javax.swing.JButton jEnableClipboardWatchButton;
     private javax.swing.JButton jExportButton;
     private javax.swing.JDialog jExportDialog;
     private javax.swing.JCheckBox jExportForms;

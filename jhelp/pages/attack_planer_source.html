@@ -23,7 +23,7 @@
         <td colspan="2">&nbsp;</td>
       </tr>
    	  <tr>
-        <td colspan="2"><img src="../images/screens/attack_planer_source.gif" width="771" height="616"></td>
+        <td colspan="2"><img src="../images/screens/attack_planer_source.gif" width="889" height="659"></td>
       </tr>
 	  <tr>
         <td colspan="2">&nbsp;</td>
@@ -37,7 +37,7 @@
             Um aus allen D&ouml;rfern der momentan Auswahl anzugreifen, klickt man auf den Button <em>Alle</em>, wodurch alle D&ouml;rfer mit derselben <em>Truppenauswahl</em> in die Tabelle der Herkunftsd&ouml;rfer eingef&uuml;gt werden. Die Auswahl der <em>Herkunft</em> und der  <em>Einheit</em> kann man anschlie&szlig;end auch direkt in der Tabelle korrigieren.<br>
             Eine weitere M&ouml;glichkeit D&ouml;rfer hinzuzuf&uuml;gen ist sie direkt <em>auf der Karte zu markieren</em>. Hierf&uuml;r klickt man den Button <em>Auf der Karte markieren</em>, woraufhin der <em>Angriffsplaner</em> in den Hintergrund und das Hauptfenster mit aktiviertem <a href="map_tools.html#selection_tool"><em>Auswahlwerkzeug</em></a> in den Vordergrund r&uuml;ckt. Nun kann man die D&ouml;rfer aus denen man angreifen m&ouml;chte direkt mit gedr&uuml;ckter, linker Maustaste auf der Hauptkarte markieren. L&auml;sst man die Maustaste los, werden die gew&auml;hlten D&ouml;rfer in der <a href="selection_tool.html"><em>Auswahl&uuml;bersicht</em></a> eingetragen. Nun kann man entweder weitere D&ouml;rfer ausw&auml;hlen, oder aber einzelne gew&auml;hlte Elemente der <em>Auswahl&uuml;bersicht</em> in die Liste der Herkunftsd&ouml;rfer &uuml;bertragen. Daf&uuml;r w&auml;hlt man  entsprechende Baumknoten in der Auswahl&uuml;bersicht und klickt auf den zweiten Button auf der rechten Seite.<br>
             <br>
-            Weiterhin k&ouml;nnen D&ouml;rfer direkt von der Karte per <em><a href="main_window_dnd.html">Drag&amp;Drop</a></em> in die Tabelle &uuml;bernommen werden. <br>
+            Weiterhin k&ouml;nnen ausgew&auml;hlte D&ouml;rfer direkt von der Karte per <em><a href="main_window_dnd.html">Drag&amp;Drop</a></em> in die Tabelle &uuml;bernommen werden<br>
             <br>
             Die letzte M&ouml;glichkeit D&ouml;rfer hinzuzuf&uuml;gen besteht im <em>Suchen in der Zwischenablage</em>. Klickt man auf den entsprechenden Button wird <em>DS Workbench</em> in der Zwischenablage nach Dorfkoordinaten suchen und diese in die Tabelle einf&uuml;gen. Dabei spielt es keine Rolle, wem das Dorf bei den gefundenen Koordinaten geh&ouml;rt! <br>
             Weiterhin kann jedes Dorf <em>mehrfach</em> in die Angriffstabelle eingef&uuml;gt werden, etwa um <em>AG-Angriffe</em> einzutragen oder um <em>Fakes</em> aus einem Dorf auf verschiedene D&ouml;rfer des Gegeners zu realisieren.<br>
@@ -67,14 +67,45 @@
         <td colspan="2">&nbsp;</td>
       </tr>
 	   <tr>
-        <td colspan="2"><img src="../images/screens/troop_filter.gif" width="270" height="425"></td>
+        <td colspan="2"><img src="../images/screens/troop_filter.gif" width="265" height="443"></td>
       </tr>
 	   <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
 	   <tr>
-        <td colspan="2"><p>Hier kann man detailiert bestimmen, welche Truppenst&auml;rken man bei der Planung der Angriffe ber&uuml;cksichtigen m&ouml;chte. Daf&uuml;r kann man f&uuml;r jede Einheit eine Mindest- und eine Maximalanzahl einstellen. L&auml;sst man die Maximalanzahl weg werden von der Einheit mindestens die angegebene Anzahl ben&ouml;tigt, l&auml;sst man dagegen die Mindestanzahl weg werden nur D&ouml;rfer mit maximal der Anzahl der entsprechenden Einheit erlaubt. &Uuml;ber einen Klick auf den Button <em>Anwenden</em> werden die eingetragenen Filter auf die Liste der Herkunftsd&ouml;rfer angewendet. Voraussetzung ist es, dass die Truppeninformationen korrekt <em><a href="import_ingame.html">importiert</a></em> wurden. D&ouml;rfer zu denen keine Truppeninformationen vorliegen werden ebenfalls aus der Herkunftsliste gel&ouml;scht!</p>
-          <p>Die anderen beiden Buttons auf der rechten Seite dienen dazu, die Angriffe aus den markierten Herkunftsd&ouml;rfern entweder als Fake zu kennzeichnen oder die Fake-Kennzeichnung zu entfernen. </p></td>
+        <td colspan="2"><p>Hier kann man detailiert bestimmen, welche Truppenst&auml;rken man bei der Planung der Angriffe ber&uuml;cksichtigen m&ouml;chte. Daf&uuml;r kann man f&uuml;r jede Einheit eine Mindest- und eine Maximalanzahl einstellen. L&auml;sst man die Maximalanzahl weg werden von der Einheit mindestens die angegebene Anzahl ben&ouml;tigt, l&auml;sst man dagegen die Mindestanzahl weg werden nur D&ouml;rfer mit maximal der Anzahl der entsprechenden Einheit erlaubt. <br>
+          Weiterhin gibt es die M&ouml;glichkeit, eine <em>Strenge Filterung</em> durchzuf&uuml;hren, die standardm&auml;&szlig;ig aktiviert ist. Hierbei m&uuml;ssen alle angegebenen Bedingungen f&uuml;r ein Dorf zutreffen, damit es akzeptiert wird. Ist die <em>Strenge Filterung</em> deaktiviert reicht es aus, wenn mindestens eine Bedingunge erf&uuml;llt ist. &Uuml;ber einen Klick auf den Button <em>Anwenden</em> werden die eingetragenen Filter auf die Liste der Herkunftsd&ouml;rfer angewendet. Voraussetzung ist es, dass die Truppeninformationen korrekt <em><a href="import_ingame.html">importiert</a></em> wurden. D&ouml;rfer zu denen keine Truppeninformationen vorliegen werden ebenfalls aus der Herkunftsliste gel&ouml;scht!</p>
+          <p>Die anderen beiden Buttons auf der rechten Seite dienen dazu, die Angriffe aus den markierten Herkunftsd&ouml;rfern entweder als Fake zu kennzeichnen oder die Fake-Kennzeichnung zu entfernen. Der letzte Button kann verwendet werden, um die Herkunftsd&ouml;rfer nach bestimmten Truppenzahlen aufzusplitten, worauf im folgenden Abschnitt separat eingegangen wird.<br>
+            Im unteren Bereich des Angriffsplaners findet ihr abschlie&szlig;end noch ein Icon mit wei&szlig;em Ausrufezeichen auf blauem Untergrund. Dahinter werden Informationen zu den aktuell eingetragenen Herkunft- und Zield&ouml;rfern dargestellt. Sobald mehr Ziele bzw. Angriffe auf Ziele gew&auml;hlt sind als ihr Herkunftsd&ouml;rfer zur Verf&uuml;gung stellt, wird die Anzahl der Angriffe auf die Ziele rot gef&auml;rbt, da unm&ouml;glich alle geplanten Ziele mit der angegebenen Anzahl von Angriffen belegt werden k&ouml;nnen.          </p>
+        </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2"><h3 style="color:#953333">D&ouml;rfer splitten </h3></td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2"><img src="../images/screens/source_split.gif" width="437" height="481"></td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2">Da der Angriffsplaner theoretisch nicht nur f&uuml;r Angriffe, sondern auch f&uuml;r die Planung von Verteidungen benutzt werden kann, geh&ouml;rt die M&ouml;glichkeit Truppen zu splitten fast schon automatisch dazu. Hintergrund des Ganzen ist der einfach Fall, dass ihr jemanden unterst&uuml;tzen wollt, ihr aber nicht unbedingt die komplette Deff eines Dorfen zu einem Ziel schicken wollt, da bei massiven Verlusten in diesem einen Dorf eure Deff lange Zeit nachgebaut werden muss. Eine m&ouml;gliche L&ouml;sung um Bauzeiten gering zu halten ist es, Deff aus vielen D&ouml;rfern aber in kleinen Portionen zu schicken, wo das Truppen splitten interessant wird.<br>
+          Hier habt ihr die M&ouml;glichkeit, die einzelnen, kleinen Truppenmengen anzugeben, etwa wie im oberen Beispiel 500 Speer-, Schwert- und Bogeneinheiten. Nun wird mit Hilfe der vorhandenen Truppeninformationen f&uuml;r alle Herkunftsd&ouml;rfer gepr&uuml;ft, wieviele Truppen im Dorf verf&uuml;gbar sind und wieviele dieser kleinen Portionen aus dem jeweiligen Dorf abgeschickt werden k&ouml;nnen, was in der Liste im oberen Bereich dargestellt wird. Weiterhin habt ihr die M&ouml;glichkeit, eine Toleranz anzugeben die normalerweise bei 10% liegt, also im Beispiel +/- 50 Speer-, Schwert- und Bogeneinheiten. <br>
+          Klickt ihr nun auf <em>&Uuml;bernehmen</em>, so werden die einzelnen D&ouml;rfer genau so oft in die Herkunftstabelle des Angriffsplaners eingetragen wie sie nach der angegebenen Truppenmenge unterteilt werden k&ouml;nnen, also w&uuml;rde das erste Dorf in der oberen Liste sechs mal eingetragen werden.<br>
+          Bei der abschlie&szlig;enden Berechnung der Truppenbewegungen wird nun versucht, jedes Dorf so oft zu verwenden wie es in der Herkunftstabelle auftaucht, ohne jedoch dabei ein Herkunftsdorf mehrmals f&uuml;r ein Ziel zu verwenden. Das hat den positiven Nebeneffekt, dass eure Deff optimal verteilt wird und massive Verluste an einer Front nur minimale Gesamtverluste bedeuten, da eure Deff ja weitr&auml;umig verteilt ist. <br>
+          Nat&uuml;rlich kann dieses Feature auch f&uuml;r das Splitten von Offs verwendet werden, eurer Phantasie sind dort keine Grenzen gesetzt.</td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr valign="middle">
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/information.png" width="24" height="24"></div></td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE">Wenn ihr mit dem Truppen splitten arbeitet solltet ihr beim sp&auml;teren &Uuml;bertragen der Angriffe per <a href="attack_view.html"><em>Angriffs&uuml;bersicht</em></a> in den Browser unbedingt darauf achten, dass die dort verwendeten Eintr&auml;ge der <a href="standard_attacks.html"><em>Standardangriffe</em></a> der Anzahl eurer angegebenen Split-Menge entspricht, da euch sonst unter Umst&auml;nden recht schnell die Truppen beim &Uuml;bertragen in den Browser ausgehen und ein Verteidigungsplan schnell mal scheitert.</td>
       </tr>
     </table></td>
 </td>

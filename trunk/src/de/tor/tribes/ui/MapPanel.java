@@ -5,15 +5,12 @@
  */
 package de.tor.tribes.ui;
 
-import com.smardec.mousegestures.MouseGestures;
-import com.smardec.mousegestures.MouseGesturesListener;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Church;
-import de.tor.tribes.types.FreeForm;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.dnd.VillageTransferable;
@@ -68,7 +65,6 @@ import java.awt.dnd.DragSource;
 import java.awt.dnd.DragSourceListener;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetListener;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;

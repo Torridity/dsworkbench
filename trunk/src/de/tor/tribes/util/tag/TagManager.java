@@ -81,12 +81,6 @@ public class TagManager {
                     logger.warn(cnt + " errors while loading tags");
                 }
                 Collections.sort(mTags);
-                //update linked tags
-                for (Tag t : mTags) {
-                    if (t instanceof LinkedTag) {
-                        ((LinkedTag) t).updateVillageList();
-                    }
-                }
             } catch (Exception e) {
                 logger.error("Failed to load tags", e);
             }
@@ -96,6 +90,15 @@ public class TagManager {
             }
         }
         fireTagsChangedEvents();
+    }
+
+    public void updateLinkedTags() {
+        //update linked tags
+        for (Tag t : mTags) {
+            if (t instanceof LinkedTag) {
+                ((LinkedTag) t).updateVillageList();
+            }
+        }
     }
 
     public boolean importTags(File pFile, String pExtension) {
@@ -175,7 +178,7 @@ public class TagManager {
         try {
             logger.debug("Writing tags to '" + pFile + "'");
 
-            StringBuffer b = new StringBuffer();
+            StringBuilder b = new StringBuilder();
             b.append("<tags>\n");
             for (Tag t : mTags) {
                 b.append(t.toXml());
@@ -237,7 +240,7 @@ public class TagManager {
     }
 
     /**Add a tag to a village*/
-    public synchronized void addTag(Village pVillage, String pTag) {
+    public synchronized void addTag(Village pVillage, String pTag, boolean pUpdate) {
         if (pTag == null) {
             return;
         }
@@ -273,12 +276,22 @@ public class TagManager {
             Collections.sort(mTags);
         }
 
-        fireTagsChangedEvents();
+        if (pUpdate) {
+            fireTagsChangedEvents();
+        }
+    }
+
+    public synchronized void addTag(Village pVillage, String pTag) {
+        addTag(pVillage, pTag, true);
     }
 
     /**Add a tag without villages*/
     public synchronized void addTag(String pTag) {
-        addTag(null, pTag);
+        addTag(null, pTag, true);
+    }
+
+    public synchronized void addTagFast(String pTag) {
+        addTag(null, pTag, false);
     }
 
     /**Add a tag to a village*/
@@ -293,7 +306,6 @@ public class TagManager {
 
     /**Remove a tag from a village*/
     public synchronized void removeTag(Village pVillage, String pTag) {
-
         if (pTag == null) {
             return;
         }
@@ -302,6 +314,7 @@ public class TagManager {
         }
         for (Tag t : mTags) {
             if (t.getName().equals(pTag)) {
+
                 t.untagVillage(pVillage.getId());
             }
         }
@@ -342,8 +355,13 @@ public class TagManager {
         return drawVillage;
     }
 
+    public void forceUpdate() {
+        fireTagsChangedEvents();
+    }
+
     /**Notify attack manager listeners about changes*/
     private void fireTagsChangedEvents() {
+        updateLinkedTags();
         TagManagerListener[] listeners = mManagerListeners.toArray(new TagManagerListener[]{});
         for (TagManagerListener listener : listeners) {
             listener.fireTagsChangedEvent();

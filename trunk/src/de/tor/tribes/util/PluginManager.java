@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
@@ -181,7 +182,7 @@ public class PluginManager {
         if (mVariableManager == null) {
             try {
                 Class managerClass = mClassloader.loadClass("de.tor.tribes.util.parser.ParserVariableManager");
-                mVariableManager = managerClass.getClass().getMethod("getSingleton").invoke(null);
+                 mVariableManager = managerClass.getMethod("getSingleton").invoke(null);
             } catch (Exception e) {
                 logger.error("Failed to load parser variable manager", e);
             }

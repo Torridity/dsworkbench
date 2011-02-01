@@ -140,6 +140,8 @@ public class MapRenderer extends Thread {
     private float alpha = 0.0f;
     private Hashtable<Ally, Integer> allyCount = new Hashtable<Ally, Integer>();
     private Hashtable<Tribe, Integer> tribeCount = new Hashtable<Tribe, Integer>();
+    private Hashtable<Village, AnimatedVillageInfoRenderer> animators = new Hashtable<Village, AnimatedVillageInfoRenderer>();
+
     /* private Canvas mCanvas = null;
     BufferStrategy strategy;*/
 
@@ -2056,7 +2058,6 @@ public class MapRenderer extends Thread {
         g2d.setComposite(com);
         g2d.setColor(cb);
     }
-    private Hashtable<Village, AnimatedVillageInfoRenderer> animators = new Hashtable<Village, AnimatedVillageInfoRenderer>();
 
     /**Render e.g. drag line, radar, popup*/
     private void renderLiveLayer(Graphics2D g2d) {

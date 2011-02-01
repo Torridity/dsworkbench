@@ -41,6 +41,12 @@ public class Tag implements Comparable<Tag> {
      * @return Tag Tag instance parsed from pElement
      */
     public static Tag fromXml(Element pElement) throws Exception {
+        try {
+            if (pElement.getChild("equation") != null) {
+                return LinkedTag.fromXml(pElement);
+            }
+        } catch (Exception e) {
+        }
         String name = URLDecoder.decode(pElement.getChild("name").getTextTrim(), "UTF-8");
         boolean showOnMap = Boolean.parseBoolean(pElement.getAttributeValue("shownOnMap"));
         Tag t = new Tag(name, showOnMap);

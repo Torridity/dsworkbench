@@ -4,9 +4,9 @@
  */
 package de.tor.tribes.ui.models;
 
+import de.tor.tribes.types.LinkedTag;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.editors.LinkGroupColorCellEditor;
 import de.tor.tribes.ui.editors.MultiBooleanTableCellEditor;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.tag.TagManager;
@@ -46,11 +46,20 @@ public class TagLinkMatrixModel extends AbstractTableModel {
         }
 
         columnNames = sColumns.toArray(new String[]{});
-        values = new Object[TagManager.getSingleton().getTags().size()][columnNames.length];
-        for (int i = 0; i < TagManager.getSingleton().getTags().size(); i++) {
+        //show only non LinkedTags
+        List<Tag> usableTags = new LinkedList<Tag>();
+        for (Tag t : TagManager.getSingleton().getTags()) {
+            if (!(t instanceof LinkedTag)) {
+                usableTags.add(t);
+            }
+        }
+
+
+        values = new Object[usableTags.size()][columnNames.length];
+        for (int i = 0; i < usableTags.size(); i++) {
             for (int j = 0; j < columnNames.length; j++) {
                 if (j == 0) {
-                    values[i][j] = TagManager.getSingleton().getTags().get(i);
+                    values[i][j] = usableTags.get(i);
                 } else {
                     values[i][j] = 0;
                 }

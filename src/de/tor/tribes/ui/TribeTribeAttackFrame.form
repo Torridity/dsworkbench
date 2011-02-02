@@ -28,7 +28,7 @@
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="jCloseResultsButton" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="jScrollPane2" alignment="0" pref="606" max="32767" attributes="1"/>
+                      <Component id="jScrollPane2" alignment="0" pref="616" max="32767" attributes="1"/>
                       <Component id="jPanel2" alignment="0" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -67,9 +67,9 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="jLabel5" alignment="0" pref="196" max="32767" attributes="0"/>
-                          <Component id="jLabel6" alignment="0" pref="196" max="32767" attributes="0"/>
-                          <Component id="jTargetsBar" alignment="1" pref="196" max="32767" attributes="0"/>
+                          <Component id="jLabel5" alignment="0" pref="201" max="32767" attributes="0"/>
+                          <Component id="jLabel6" alignment="0" pref="201" max="32767" attributes="0"/>
+                          <Component id="jTargetsBar" alignment="1" pref="201" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -79,8 +79,8 @@
                       </Group>
                       <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel9" pref="204" max="32767" attributes="0"/>
-                          <Component id="jFullOffsBar" alignment="0" pref="204" max="32767" attributes="1"/>
+                          <Component id="jLabel9" pref="209" max="32767" attributes="0"/>
+                          <Component id="jFullOffsBar" alignment="0" pref="209" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>

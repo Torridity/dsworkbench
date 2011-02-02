@@ -235,7 +235,11 @@ public class TimeSpan {
         }
         Tribe t = null;
         try {
-            t = DataHolder.getSingleton().getTribeByName(elems[3]);
+            if (elems[3].equals("*")) {
+                t = null;
+            } else {
+                t = DataHolder.getSingleton().getTribeByName(elems[3]);
+            }
         } catch (Exception e) {
         }
 

@@ -39,7 +39,7 @@ public class ParserVariableManager {
     private void loadDefaultProperties() {
         DEFAULT.put("de.troops.own", "eigene");
         DEFAULT.put("de.troops.in.village", "im Dorf");
-        DEFAULT.put("de.troops.outside", "außerhalb");
+        DEFAULT.put("de.troops.outside", "auswärts");
         DEFAULT.put("de.troops.on.the.way", "unterwegs");
         DEFAULT.put("de.troops.place.from.village", "Aus diesem Dorf");
         DEFAULT.put("de.troops.place.overall", "Insgesamt");
@@ -61,6 +61,9 @@ public class ParserVariableManager {
 
     public String getProperty(String pProperty) {
         String serverID = GlobalOptions.getSelectedServer();
+        if (serverID == null) {
+            serverID = "de43";
+        }
         String countryID = serverID.replaceAll("[0-9]", "");
         String property = null;
         if (variableMappings == null) {
@@ -74,10 +77,10 @@ public class ParserVariableManager {
         return property;
     }
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
         //System.out.println(ParserVariableManager.getSingleton().getProperty("troops.place.from.village"));
-       
+
         System.out.println(ParserVariableManager.class.getMethod("getSingleton").invoke(null));
-      
+
     }
 }

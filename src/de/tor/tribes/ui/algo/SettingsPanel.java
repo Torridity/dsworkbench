@@ -32,280 +32,288 @@ public class SettingsPanel extends javax.swing.JPanel {
 
     /** Creates new form TimePanel */
     public SettingsPanel() {
-        initComponents();
-        setBackground(Constants.DS_BACK_LIGHT);
-        reset();
+	initComponents();
+	setBackground(Constants.DS_BACK_LIGHT);
+	reset();
     }
 
     public void reset() {
-        jSendTimeSettingsPanel.reset();
-        jArriveTimeSettingsPanel.reset();
-        timeFrameVisualizer1.setScrollPane(jScrollPane1);
-        restoreProperties();
+	jSendTimeSettingsPanel.reset();
+	jArriveTimeSettingsPanel.reset();
+	timeFrameVisualizer1.setScrollPane(jScrollPane1);
+	restoreProperties();
     }
 
     public void storeProperties() {
-        UserProfile profile = GlobalOptions.getSelectedProfile();
-        jSendTimeSettingsPanel.getMinTime();
-        jSendTimeSettingsPanel.getMaxTime();
-        jSendTimeSettingsPanel.getTimeSpans();
+	UserProfile profile = GlobalOptions.getSelectedProfile();
+	jSendTimeSettingsPanel.getMinTime();
+	jSendTimeSettingsPanel.getMaxTime();
+	jSendTimeSettingsPanel.getTimeSpans();
 
-        jArriveTimeSettingsPanel.getMinTime();
-        jArriveTimeSettingsPanel.getMaxTime();
-        jArriveTimeSettingsPanel.getTimeSpans();
+	jArriveTimeSettingsPanel.getMinTime();
+	jArriveTimeSettingsPanel.getMaxTime();
+	jArriveTimeSettingsPanel.getTimeSpans();
 
-        profile.addProperty("attack.frame.min.start", Long.toString(jSendTimeSettingsPanel.getMinTime().getTime()));
-        if (jSendTimeSettingsPanel.getMaxTime() != null) {
-            profile.addProperty("attack.frame.max.start", Long.toString(jSendTimeSettingsPanel.getMaxTime().getTime()));
-        } else {
-            profile.addProperty("attack.frame.max.start", Long.toString(jSendTimeSettingsPanel.getMinTime().getTime()));
-        }
-        profile.addProperty("attack.frame.max.start.enabled", Boolean.toString(jSendTimeSettingsPanel.isMaxTimeEnabled()));
+	profile.addProperty("attack.frame.min.start", Long.toString(jSendTimeSettingsPanel.getMinTime().getTime()));
+	if ( jSendTimeSettingsPanel.getMaxTime() != null ) {
+	    profile.addProperty("attack.frame.max.start", Long.toString(jSendTimeSettingsPanel.getMaxTime().getTime()));
+	} else {
+	    profile.addProperty("attack.frame.max.start", Long.toString(jSendTimeSettingsPanel.getMinTime().getTime()));
+	}
+	profile.addProperty("attack.frame.max.start.enabled", Boolean.toString(jSendTimeSettingsPanel.isMaxTimeEnabled()));
 
-        String spanProp = "";
-        for (TimeSpan span : jSendTimeSettingsPanel.getTimeSpans()) {
-            spanProp += span.toPropertyString() + ";";
-        }
-        profile.addProperty("attack.frame.start.spans", spanProp);
-        profile.addProperty("attack.frame.min.arrive", Long.toString(jArriveTimeSettingsPanel.getMinTime().getTime()));
-        profile.addProperty("attack.frame.max.arrive", Long.toString(jArriveTimeSettingsPanel.getMaxTime().getTime()));
+	String spanProp = "";
+	for ( TimeSpan span : jSendTimeSettingsPanel.getTimeSpans() ) {
+	    spanProp += span.toPropertyString() + ";";
+	}
+	profile.addProperty("attack.frame.start.spans", spanProp);
+	profile.addProperty("attack.frame.min.arrive", Long.toString(jArriveTimeSettingsPanel.getMinTime().getTime()));
+	profile.addProperty("attack.frame.max.arrive", Long.toString(jArriveTimeSettingsPanel.getMaxTime().getTime()));
 
-        spanProp = "";
-        for (TimeSpan span : jSendTimeSettingsPanel.getTimeSpans()) {
-            spanProp += span.toPropertyString() + ";";
-        }
-        profile.addProperty("attack.frame.arrive.spans", spanProp);
-        profile.addProperty("attack.frame.algo.type", Integer.toString(jAlgoBox.getSelectedIndex()));
-        profile.addProperty("attack.frame.fake.off.targets", Boolean.toString(jFakeOffTargetsBox.isSelected()));
+	spanProp = "";
+	for ( TimeSpan span : jSendTimeSettingsPanel.getTimeSpans() ) {
+	    spanProp += span.toPropertyString() + ";";
+	}
+	profile.addProperty("attack.frame.arrive.spans", spanProp);
+	profile.addProperty("attack.frame.algo.type", Integer.toString(jAlgoBox.getSelectedIndex()));
+	profile.addProperty("attack.frame.fake.off.targets", Boolean.toString(jFakeOffTargetsBox.isSelected()));
     }
 
     public void restoreProperties() {
-        try {
-            UserProfile profile = GlobalOptions.getSelectedProfile();
-            long minStart = Long.parseLong(profile.getProperty("attack.frame.min.start"));
-            long maxStart = Long.parseLong(profile.getProperty("attack.frame.max.start"));
-            long minArrive = Long.parseLong(profile.getProperty("attack.frame.min.arrive"));
-            long maxArrive = Long.parseLong(profile.getProperty("attack.frame.max.arrive"));
-            jSendTimeSettingsPanel.setMinTime(new Date(minStart));
-            jSendTimeSettingsPanel.setMaxTime(new Date(maxStart));
-            jArriveTimeSettingsPanel.setMinTime(new Date(minArrive));
-            jArriveTimeSettingsPanel.setMaxTime(new Date(maxArrive));
-            jSendTimeSettingsPanel.setMaxTimeEnabled(Boolean.parseBoolean(profile.getProperty("attack.frame.max.start.enabled")));
-            jAlgoBox.setSelectedIndex(Integer.parseInt(profile.getProperty("attack.frame.algo.type")));
-            jFakeOffTargetsBox.setSelected(Boolean.parseBoolean(profile.getProperty("attack.frame.fake.off.targets")));
+	try {
+	    UserProfile profile = GlobalOptions.getSelectedProfile();
+	    String val = profile.getProperty("attack.frame.min.start");
+	    long minStart = (val != null) ? Long.parseLong(val) : 0;
+	    val = profile.getProperty("attack.frame.max.start");
+	    long maxStart = (val != null) ? Long.parseLong(val) : 0;
+	    val = profile.getProperty("attack.frame.min.arrive");
+	    long minArrive = (val != null) ? Long.parseLong(val) : 0;
+	    val = profile.getProperty("attack.frame.max.arrive");
+	    long maxArrive = (val != null) ? Long.parseLong(val) : 0;
+	    jSendTimeSettingsPanel.setMinTime(new Date(minStart));
+	    jSendTimeSettingsPanel.setMaxTime(new Date(maxStart));
+	    jArriveTimeSettingsPanel.setMinTime(new Date(minArrive));
+	    jArriveTimeSettingsPanel.setMaxTime(new Date(maxArrive));
+	    jSendTimeSettingsPanel.setMaxTimeEnabled(Boolean.parseBoolean(profile.getProperty("attack.frame.max.start.enabled")));
+	    val = profile.getProperty("attack.frame.algo.type");
+	    jAlgoBox.setSelectedIndex((val != null) ? Integer.parseInt(val) : 0);
+	    jFakeOffTargetsBox.setSelected(Boolean.parseBoolean(profile.getProperty("attack.frame.fake.off.targets")));
 
-            // <editor-fold defaultstate="collapsed" desc="Restore time spans">
-            //restore send spans
-            String spanProp = profile.getProperty("attack.frame.start.spans");
-            String[] spans = spanProp.split(";");
+	    // <editor-fold defaultstate="collapsed" desc="Restore time spans">
+	    //restore send spans
+	    String spanProp = profile.getProperty("attack.frame.start.spans");
+	    if ( spanProp == null ) {
+		spanProp = "";
+	    }
+	    String[] spans = spanProp.split(";");
 
-            List<TimeSpan> spanList = new LinkedList<TimeSpan>();
-            for (String span : spans) {
-                try {
-                    TimeSpan s = TimeSpan.fromPropertyString(span);
-                    if (s != null) {
-                        spanList.add(s);
-                    }
-                } catch (Exception invalid) {
-                }
-            }
+	    List<TimeSpan> spanList = new LinkedList<TimeSpan>();
+	    for ( String span : spans ) {
+		try {
+		    TimeSpan s = TimeSpan.fromPropertyString(span);
+		    if ( s != null ) {
+			spanList.add(s);
+		    }
+		} catch ( Exception invalid ) {
+		}
+	    }
 
-            jSendTimeSettingsPanel.setTimeSpans(spanList);
-            //restore arrive spans
-            spanProp = profile.getProperty("attack.frame.arrive.spans");
-            spans = spanProp.split(";");
+	    jSendTimeSettingsPanel.setTimeSpans(spanList);
+	    //restore arrive spans
+	    spanProp = profile.getProperty("attack.frame.arrive.spans");
+	    spans = spanProp.split(";");
 
-            spanList = new LinkedList<TimeSpan>();
-            for (String span : spans) {
-                try {
-                    TimeSpan s = TimeSpan.fromPropertyString(span);
-                    if (s != null) {
-                        spanList.add(s);
-                    }
-                } catch (Exception invalid) {
-                }
-            }
+	    spanList = new LinkedList<TimeSpan>();
+	    for ( String span : spans ) {
+		try {
+		    TimeSpan s = TimeSpan.fromPropertyString(span);
+		    if ( s != null ) {
+			spanList.add(s);
+		    }
+		} catch ( Exception invalid ) {
+		}
+	    }
 
-            jArriveTimeSettingsPanel.setTimeSpans(spanList);
-            // </editor-fold>
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+	    jArriveTimeSettingsPanel.setTimeSpans(spanList);
+	    // </editor-fold>
+	} catch ( Exception e ) {
+	    logger.error("Failed to restore attack planer settings", e);
+	}
     }
 
     /**Add tribe to timeframe list*/
-    public void addTribe(Tribe t) {
-        /* DefaultComboBoxModel model = (DefaultComboBoxModel) jTribeTimeFrameBox.getModel();
-        List<Tribe> tribes = new LinkedList<Tribe>();
-        for (int i = 0; i < model.getSize(); i++) {
-        try {
-        tribes.add((Tribe) model.getElementAt(i));
-        } catch (Exception e) {
-        }
-        }
-        if (!tribes.contains(t)) {
-        tribes.add(t);
-        Collections.sort(tribes);
-        model = new DefaultComboBoxModel();
-        model.addElement("Alle");
-        for (Tribe tribe : tribes) {
-        model.addElement(tribe);
-        }
-        jTribeTimeFrameBox.setModel(model);
-        }*/
-        jSendTimeSettingsPanel.addTribe(t);
+    public void addTribe( Tribe t ) {
+	/* DefaultComboBoxModel model = (DefaultComboBoxModel) jTribeTimeFrameBox.getModel();
+	List<Tribe> tribes = new LinkedList<Tribe>();
+	for (int i = 0; i < model.getSize(); i++) {
+	try {
+	tribes.add((Tribe) model.getElementAt(i));
+	} catch (Exception e) {
+	}
+	}
+	if (!tribes.contains(t)) {
+	tribes.add(t);
+	Collections.sort(tribes);
+	model = new DefaultComboBoxModel();
+	model.addElement("Alle");
+	for (Tribe tribe : tribes) {
+	model.addElement(tribe);
+	}
+	jTribeTimeFrameBox.setModel(model);
+	}*/
+	jSendTimeSettingsPanel.addTribe(t);
     }
 
     /**Remove tribe from  timeframe list (not used yet)*/
-    public void removeTribe(Tribe pTribe) {
-        /* DefaultComboBoxModel model = (DefaultComboBoxModel) jTribeTimeFrameBox.getModel();
-        List<Tribe> tribes = new LinkedList<Tribe>();
-        for (int i = 0; i < model.getSize(); i++) {
-        try {
-        tribes.add((Tribe) model.getElementAt(i));
-        } catch (Exception e) {
-        }
-        }
-        tribes.remove(pTribe);
-        Collections.sort(tribes);
-        model = new DefaultComboBoxModel();
-        model.addElement("Alle");
-        for (Tribe tribe : tribes) {
-        model.addElement(tribe);
-        }
-        jTribeTimeFrameBox.setModel(model);*/
-        jSendTimeSettingsPanel.removeTribe(pTribe);
+    public void removeTribe( Tribe pTribe ) {
+	/* DefaultComboBoxModel model = (DefaultComboBoxModel) jTribeTimeFrameBox.getModel();
+	List<Tribe> tribes = new LinkedList<Tribe>();
+	for (int i = 0; i < model.getSize(); i++) {
+	try {
+	tribes.add((Tribe) model.getElementAt(i));
+	} catch (Exception e) {
+	}
+	}
+	tribes.remove(pTribe);
+	Collections.sort(tribes);
+	model = new DefaultComboBoxModel();
+	model.addElement("Alle");
+	for (Tribe tribe : tribes) {
+	model.addElement(tribe);
+	}
+	jTribeTimeFrameBox.setModel(model);*/
+	jSendTimeSettingsPanel.removeTribe(pTribe);
     }
 
     /**Return selected send time frames
      */
     public TimeFrame getTimeFrame() {
-        /*  TimeFrame result = new TimeFrame(jSendTime.getSelectedDate(), jArriveTime.getSelectedDate());
-        //add time frames
-        DefaultListModel model = (DefaultListModel) jSendTimeFramesList.getModel();
-        for (int i = 0; i < model.getSize(); i++) {
-        TimeSpan span = (TimeSpan) model.getElementAt(i);
+	/*  TimeFrame result = new TimeFrame(jSendTime.getSelectedDate(), jArriveTime.getSelectedDate());
+	//add time frames
+	DefaultListModel model = (DefaultListModel) jSendTimeFramesList.getModel();
+	for (int i = 0; i < model.getSize(); i++) {
+	TimeSpan span = (TimeSpan) model.getElementAt(i);
 
-        IntRange s = new IntRange(span.getSpan().getMinimumInteger(), span.getSpan().getMaximumInteger() - 1);
-        System.out.println(s);
-        TimeSpan tmp = new TimeSpan(span.getAtDate(), s, span.isValidFor());
-        result.addTimeSpan(tmp);
-        }
-        if (jVariableArriveTimeBox.isSelected()) {
-        result.setUseVariableArriveTime(true);
-        result.setArriveSpan((int) Math.rint(jArriveTimeFrame.getMinimumColoredValue()), (int) Math.rint(jArriveTimeFrame.getMaximumColoredValue()));
-        }
-        System.out.println(jSendTimeSettingsPanel.getTimeSpans());
-        System.out.println(jArriveTimeSettingsPanel.getTimeSpans());
+	IntRange s = new IntRange(span.getSpan().getMinimumInteger(), span.getSpan().getMaximumInteger() - 1);
+	System.out.println(s);
+	TimeSpan tmp = new TimeSpan(span.getAtDate(), s, span.isValidFor());
+	result.addTimeSpan(tmp);
+	}
+	if (jVariableArriveTimeBox.isSelected()) {
+	result.setUseVariableArriveTime(true);
+	result.setArriveSpan((int) Math.rint(jArriveTimeFrame.getMinimumColoredValue()), (int) Math.rint(jArriveTimeFrame.getMaximumColoredValue()));
+	}
+	System.out.println(jSendTimeSettingsPanel.getTimeSpans());
+	System.out.println(jArriveTimeSettingsPanel.getTimeSpans());
 
-        Date minTime = jSendTimeSettingsPanel.getMinMaxTime();
-        Date maxTime = jArriveTimeSettingsPanel.getMinMaxTime();
-         */
+	Date minTime = jSendTimeSettingsPanel.getMinMaxTime();
+	Date maxTime = jArriveTimeSettingsPanel.getMinMaxTime();
+	 */
 
-        Date sendMaxTime = jSendTimeSettingsPanel.getMaxTime();
-        if (sendMaxTime == null) {
-            sendMaxTime = jArriveTimeSettingsPanel.getMaxTime();
-        }
-        TimeFrame result = new TimeFrame(jSendTimeSettingsPanel.getMinTime(), sendMaxTime, jArriveTimeSettingsPanel.getMinTime(), jArriveTimeSettingsPanel.getMaxTime());
-        for (TimeSpan span : jSendTimeSettingsPanel.getTimeSpans()) {
-            result.addStartTimeSpan(span);
-        }
-        for (TimeSpan span : jArriveTimeSettingsPanel.getTimeSpans()) {
-            result.addArriveTimeSpan(span);
-        }
+	Date sendMaxTime = jSendTimeSettingsPanel.getMaxTime();
+	if ( sendMaxTime == null ) {
+	    sendMaxTime = jArriveTimeSettingsPanel.getMaxTime();
+	}
+	TimeFrame result = new TimeFrame(jSendTimeSettingsPanel.getMinTime(), sendMaxTime, jArriveTimeSettingsPanel.getMinTime(), jArriveTimeSettingsPanel.getMaxTime());
+	for ( TimeSpan span : jSendTimeSettingsPanel.getTimeSpans() ) {
+	    result.addStartTimeSpan(span);
+	}
+	for ( TimeSpan span : jArriveTimeSettingsPanel.getTimeSpans() ) {
+	    result.addArriveTimeSpan(span);
+	}
 
-        return result;
+	return result;
     }
 
     public boolean validatePanel() {
-        try {
-            //no time frame specified
-            boolean result = true;
-            // <editor-fold defaultstate="collapsed" desc="Check if there are timeframes provided">
+	try {
+	    //no time frame specified
+	    boolean result = true;
+	    // <editor-fold defaultstate="collapsed" desc="Check if there are timeframes provided">
 
-            if (jSendTimeSettingsPanel.getTimeSpans().isEmpty()) {
-                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Es muss mindestens ein Abschickzeitfenster angegebene werden.\n"
-                        + "Soll der Standardzeitrahmen (8 - 24 Uhr) verwendet werden?", "Fehlendes Zeitfenster", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-                    jSendTimeSettingsPanel.addDefaultTimeFrame();
-                } else {
-                    result = false;
-                }
-            }
-            if (jArriveTimeSettingsPanel.getTimeSpans().isEmpty()) {
-                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Es muss mindestens ein Ankunftszeitfenster angegebene werden.\n"
-                        + "Soll der Standardzeitrahmen (8 - 24 Uhr) verwendet werden?", "Fehlendes Zeitfenster", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-                    jArriveTimeSettingsPanel.addDefaultTimeFrame();
-                } else {
-                    result = false;
-                }
-            }
-            // </editor-fold>
+	    if ( jSendTimeSettingsPanel.getTimeSpans().isEmpty() ) {
+		if ( JOptionPaneHelper.showQuestionConfirmBox(this, "Es muss mindestens ein Abschickzeitfenster angegebene werden.\n"
+								    + "Soll der Standardzeitrahmen (8 - 24 Uhr) verwendet werden?", "Fehlendes Zeitfenster", "Nein", "Ja") == JOptionPane.YES_OPTION ) {
+		    jSendTimeSettingsPanel.addDefaultTimeFrame();
+		} else {
+		    result = false;
+		}
+	    }
+	    if ( jArriveTimeSettingsPanel.getTimeSpans().isEmpty() ) {
+		if ( JOptionPaneHelper.showQuestionConfirmBox(this, "Es muss mindestens ein Ankunftszeitfenster angegebene werden.\n"
+								    + "Soll der Standardzeitrahmen (8 - 24 Uhr) verwendet werden?", "Fehlendes Zeitfenster", "Nein", "Ja") == JOptionPane.YES_OPTION ) {
+		    jArriveTimeSettingsPanel.addDefaultTimeFrame();
+		} else {
+		    result = false;
+		}
+	    }
+	    // </editor-fold>
 
-            // <editor-fold defaultstate="collapsed" desc="Check min/max times">
-            //check send case
-            Date minSendTime = jSendTimeSettingsPanel.getMinTime();
-            Date maxSendTime = jSendTimeSettingsPanel.getMaxTime();
-            if (maxSendTime == null) {
-                maxSendTime = jArriveTimeSettingsPanel.getMaxTime();
-            }
-            if (minSendTime.getTime() > maxSendTime.getTime()) {
-                logger.warn("Earliest start time bigger than latest start time (" + minSendTime.getTime() + ">" + maxSendTime.getTime() + ")");
-                JOptionPaneHelper.showWarningBox(this, "Die früheste Startzeit größer als die späteste Startzeit, daher ist es unmöglich Angriffe zu bestimmen.", "Startzeiten fehlerhaft");
-                result = false;
-            }
-            if (maxSendTime.getTime() < System.currentTimeMillis()) {
-                logger.warn("Latest start time in past (" + maxSendTime.getTime() + ")");
-                JOptionPaneHelper.showWarningBox(this, "Die späteste Startzeit liegt in der Vergangenheit, daher ist es unmöglich Angriffe zu bestimmen.", "Startzeit in Vergangenheit");
-                result = false;
-            }
+	    // <editor-fold defaultstate="collapsed" desc="Check min/max times">
+	    //check send case
+	    Date minSendTime = jSendTimeSettingsPanel.getMinTime();
+	    Date maxSendTime = jSendTimeSettingsPanel.getMaxTime();
+	    if ( maxSendTime == null ) {
+		maxSendTime = jArriveTimeSettingsPanel.getMaxTime();
+	    }
+	    if ( minSendTime.getTime() > maxSendTime.getTime() ) {
+		logger.warn("Earliest start time bigger than latest start time (" + minSendTime.getTime() + ">" + maxSendTime.getTime() + ")");
+		JOptionPaneHelper.showWarningBox(this, "Die früheste Startzeit größer als die späteste Startzeit, daher ist es unmöglich Angriffe zu bestimmen.", "Startzeiten fehlerhaft");
+		result = false;
+	    }
+	    if ( maxSendTime.getTime() < System.currentTimeMillis() ) {
+		logger.warn("Latest start time in past (" + maxSendTime.getTime() + ")");
+		JOptionPaneHelper.showWarningBox(this, "Die späteste Startzeit liegt in der Vergangenheit, daher ist es unmöglich Angriffe zu bestimmen.", "Startzeit in Vergangenheit");
+		result = false;
+	    }
 
-            //check arrive case
-            Date minArriveTime = jArriveTimeSettingsPanel.getMinTime();
-            Date maxArriveTime = jArriveTimeSettingsPanel.getMaxTime();
-            if (minArriveTime.getTime() > maxArriveTime.getTime()) {
-                logger.warn("Earliest arrive time bigger than latest arrivetime (" + minArriveTime.getTime() + ">" + maxArriveTime.getTime() + ")");
-                JOptionPaneHelper.showWarningBox(this, "Die früheste Ankunftszeit größer als die späteste Ankunftszeit, daher ist es unmöglich Angriffe zu bestimmen.", "Startzeiten fehlerhaft");
-                result = false;
-            }
-            if (maxArriveTime.getTime() < System.currentTimeMillis()) {
-                logger.warn("Latest arrive time in past (" + maxArriveTime.getTime() + ")");
-                //check if start is after arrive
-                JOptionPaneHelper.showWarningBox(this, "Die späteste Ankunftszeit liegt in der Vergangenheit, daher ist es unmöglich Angriffe zu bestimmen.", "Ankunftszeit in Vergangenheit");
-                result = false;
-            }
+	    //check arrive case
+	    Date minArriveTime = jArriveTimeSettingsPanel.getMinTime();
+	    Date maxArriveTime = jArriveTimeSettingsPanel.getMaxTime();
+	    if ( minArriveTime.getTime() > maxArriveTime.getTime() ) {
+		logger.warn("Earliest arrive time bigger than latest arrivetime (" + minArriveTime.getTime() + ">" + maxArriveTime.getTime() + ")");
+		JOptionPaneHelper.showWarningBox(this, "Die früheste Ankunftszeit größer als die späteste Ankunftszeit, daher ist es unmöglich Angriffe zu bestimmen.", "Startzeiten fehlerhaft");
+		result = false;
+	    }
+	    if ( maxArriveTime.getTime() < System.currentTimeMillis() ) {
+		logger.warn("Latest arrive time in past (" + maxArriveTime.getTime() + ")");
+		//check if start is after arrive
+		JOptionPaneHelper.showWarningBox(this, "Die späteste Ankunftszeit liegt in der Vergangenheit, daher ist es unmöglich Angriffe zu bestimmen.", "Ankunftszeit in Vergangenheit");
+		result = false;
+	    }
 
 // </editor-fold>
 
-            // <editor-fold defaultstate="collapsed" desc="Night bonus check">
-            boolean mightBeInNightBonus = false;
-            for (TimeSpan span : jArriveTimeSettingsPanel.getTimeSpans()) {
-                if (span.intersectsWithNightBonus()) {
-                    mightBeInNightBonus = true;
-                    break;
-                }
-            }
-            if (mightBeInNightBonus) {
-                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Mindestens eine der angegebenen Ankunftszeitfenster kann unter Umständen im Nachbonus liegen.\n"
-                        + "Willst du die Zeitfenster entsprechend korrigieren?", "Nachtbonus", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-                    //correction requested
-                    result = false;
-                }
-            }
-            // </editor-fold>
-            return result;
-        } catch (Exception e) {
-            logger.error("Failed to validate settings panel", e);
-            return false;
-        }
+	    // <editor-fold defaultstate="collapsed" desc="Night bonus check">
+	    boolean mightBeInNightBonus = false;
+	    for ( TimeSpan span : jArriveTimeSettingsPanel.getTimeSpans() ) {
+		if ( span.intersectsWithNightBonus() ) {
+		    mightBeInNightBonus = true;
+		    break;
+		}
+	    }
+	    if ( mightBeInNightBonus ) {
+		if ( JOptionPaneHelper.showQuestionConfirmBox(this, "Mindestens eine der angegebenen Ankunftszeitfenster kann unter Umständen im Nachbonus liegen.\n"
+								    + "Willst du die Zeitfenster entsprechend korrigieren?", "Nachtbonus", "Nein", "Ja") == JOptionPane.YES_OPTION ) {
+		    //correction requested
+		    result = false;
+		}
+	    }
+	    // </editor-fold>
+	    return result;
+	} catch ( Exception e ) {
+	    logger.error("Failed to validate settings panel", e);
+	    return false;
+	}
     }
 
     /**Return whether to use BruteForce or Iterix as algorithm*/
     public boolean useBruteForce() {
-        return (jAlgoBox.getSelectedIndex() == 0);
+	return (jAlgoBox.getSelectedIndex() == 0);
     }
 
     public boolean fakeOffTargets() {
-        return jFakeOffTargetsBox.isSelected();
+	return jFakeOffTargetsBox.isSelected();
     }
 
     /** This method is called from within the constructor to
@@ -482,10 +490,11 @@ public class SettingsPanel extends javax.swing.JPanel {
     private de.tor.tribes.ui.algo.TimeFrameVisualizer timeFrameVisualizer1;
     // End of variables declaration//GEN-END:variables
 
-    public static void main(String[] args) {
-        JFrame f = new JFrame();
-        f.add(new SettingsPanel());
-        f.pack();
-        f.setVisible(true);
+    public static void main( String[] args ) {
+	JFrame f = new JFrame();
+	f.add(new SettingsPanel());
+	f.pack();
+	f.setVisible(true);
     }
+
 }

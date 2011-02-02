@@ -7,5 +7,12 @@
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/types/LinkedTag.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/DSWorkbenchSelectionFrame.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/TribeTribeAttackFrame.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/TroopSplitDialog.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/renderer/TroopAmountListCellRenderer.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/renderer/UnitListCellRenderer.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/troops/VillageTroopsHolder.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/LinkTagsDialog.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/models/TagLinkMatrixModel.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/editors/LinkGroupTableCellEditor.java</file>
     </open-files>
 </project-private>

@@ -34,6 +34,8 @@ public class Off extends AbstractTroopMovement {
                 type = Attack.SNOB_TYPE;
             } else if (unit.getPlainName().equals("ram") || (unit.getPlainName().equals("catapult"))) {
                 type = Attack.CLEAN_TYPE;
+            } else if (unit.getPlainName().equals("spear") || (unit.getPlainName().equals("sword")) || (unit.getPlainName().equals("archer")) || (unit.getPlainName().equals("heavy"))) {
+                type = Attack.SUPPORT_TYPE;
             }
 
             List<Village> sources = getOffs().get(unit);

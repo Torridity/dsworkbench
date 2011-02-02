@@ -1255,11 +1255,11 @@ Ankunft in:	0:59:57
             }
             int[] rows = jResultTable.getSelectedRows();
             for (int row : rows) {
-                row = jResultTable.convertRowIndexToModel(row);
-                Village source = (Village) jResultTable.getValueAt(row, 0);
-                UnitHolder unit = (UnitHolder) jResultTable.getValueAt(row, 1);
-                Village target = (Village) jResultTable.getValueAt(row, 2);
-                Date sendTime = (Date) jResultTable.getValueAt(row, 3);
+                int realRow = row;//jResultTable.convertRowIndexToModel(row);
+                Village source = (Village) jResultTable.getValueAt(realRow, 0);
+                UnitHolder unit = (UnitHolder) jResultTable.getValueAt(realRow, 1);
+                Village target = (Village) jResultTable.getValueAt(realRow, 2);
+                Date sendTime = (Date) jResultTable.getValueAt(realRow, 3);
                 double dist = DSCalculator.calculateDistance(source, target);
                 long runtime = Math.round(dist * unit.getSpeed() * 60000);
                 AttackManager.getSingleton().addAttack(source, target, unit, new Date(sendTime.getTime() + runtime), false, planName, Attack.NO_TYPE);

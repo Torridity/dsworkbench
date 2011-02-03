@@ -25,7 +25,7 @@ import org.apache.log4j.Logger;
  *
  * @author Jejkal
  */
-public class GroupParser implements SilentParserInterface {
+public class GroupParser70 implements SilentParserInterface {
 
     private static Logger logger = Logger.getLogger("GroupParser");
     /*
@@ -53,43 +53,35 @@ public class GroupParser implements SilentParserInterface {
 
 		    String villageToken = elemTok.nextToken().trim();
 		    String groupCountToken = elemTok.nextToken().trim();
-
 		    String groupsToken = null;
 		    try {
 			//test group count
 			if ( Integer.parseInt(groupCountToken) > 20 ) {
-			    //second token is no valid group amount...
 			    throw new Exception("Too large group count (Hybrix distance script?)");
 			}
 
 			//group count found, next token must be groups
-			//skip version 7.0 village points token
-			elemTok.nextToken();
 			groupsToken = elemTok.nextToken().trim();
 		    } catch ( Exception e ) {
 			//group count not found (Google Chrome uses 2 tabs after village)
 			//take next tokes as group count
 			groupCountToken = elemTok.nextToken().trim();
-			//skip village points token
-			elemTok.nextToken();
 			groupsToken = elemTok.nextToken().trim();
 		    }
 
-		    Village v = new VillageParser().parse(villageToken).get(0);
-		    /* try {
-		    String coord = villageToken.substring(villageToken.lastIndexOf("(") + 1, villageToken.lastIndexOf(")"));
-		    if ( ServerSettings.getSingleton().getCoordType() != 2 ) {
-		    String[] split = coord.trim().split("[(\\:)]");
-		    int[] xy = DSCalculator.hierarchicalToXy(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
-		    v = DataHolder.getSingleton().getVillages()[xy[0]][xy[1]];
-		    } else {
-		    String[] split = coord.trim().split("[(\\|)]");
-		    v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[0])][Integer.parseInt(split[1])];
-		    }
+		    Village v = null;
+		    try {
+			String coord = villageToken.substring(villageToken.lastIndexOf("(") + 1, villageToken.lastIndexOf(")"));
+			if ( ServerSettings.getSingleton().getCoordType() != 2 ) {
+			    String[] split = coord.trim().split("[(\\:)]");
+			    int[] xy = DSCalculator.hierarchicalToXy(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+			    v = DataHolder.getSingleton().getVillages()[xy[0]][xy[1]];
+			} else {
+			    String[] split = coord.trim().split("[(\\|)]");
+			    v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[0])][Integer.parseInt(split[1])];
+			}
 		    } catch ( Exception e ) {
 		    }
-
-		     */
 		    if ( v != null ) {
 			//valid line found
 			int groupCount = 0;
@@ -123,7 +115,7 @@ public class GroupParser implements SilentParserInterface {
 		}
 	    }
 	}
-	if ( !groups.isEmpty() ) {
+	if ( groups.size() != 0 ) {
 	    DSWorkbenchMainFrame.getSingleton().fireGroupParserEvent(groups);
 	    return true;
 	}
@@ -231,7 +223,7 @@ public class GroupParser implements SilentParserInterface {
 	//String data = "(09) Sunset Beach (459|468) K44  	2	Fertig; Off	» bearbeiten";
 	String data = (String) t.getTransferData(DataFlavor.stringFlavor);
 
-	new GroupParser().parse(data);
+	new GroupParser70().parse(data);
     }
 
 }

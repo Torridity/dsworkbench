@@ -959,7 +959,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
         }
 
         String message = ((rows.length == 1) ? "Transport " : (rows.length + " Transporte ")) + "wirklich löschen?";
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Transporte löschen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
+        if (JOptionPaneHelper.showQuestionConfirmBox(jResultFrame, message, "Transporte löschen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
             return;
         }
 

@@ -988,19 +988,15 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel23" min="-2" max="-2" attributes="0"/>
                           <Component id="jPanel2" min="-2" pref="152" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jFPSSlider" min="0" pref="0" max="32767" attributes="1"/>
-                          <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="jPanel1" alignment="0" max="32767" attributes="1"/>
-                              <Component id="jPanel5" alignment="0" max="32767" attributes="1"/>
-                              <Component id="jDefaultMarkBox" alignment="0" max="32767" attributes="1"/>
-                          </Group>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="jPanel1" alignment="0" max="32767" attributes="1"/>
+                          <Component id="jPanel5" alignment="0" max="32767" attributes="1"/>
+                          <Component id="jDefaultMarkBox" alignment="0" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace min="-2" pref="365" max="-2" attributes="0"/>
+                      <EmptySpace pref="159" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1022,12 +1018,7 @@
                           <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                           <Component id="jPanel5" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jLabel23" max="32767" attributes="1"/>
-                          <Component id="jFPSSlider" alignment="0" max="32767" attributes="1"/>
-                      </Group>
-                      <EmptySpace min="-2" pref="123" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="187" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1266,24 +1257,6 @@
                 </Container>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JSlider" name="jFPSSlider">
-              <Properties>
-                <Property name="majorTickSpacing" type="int" value="1"/>
-                <Property name="maximum" type="int" value="15"/>
-                <Property name="minimum" type="int" value="5"/>
-                <Property name="minorTickSpacing" type="int" value="1"/>
-                <Property name="paintLabels" type="boolean" value="true"/>
-                <Property name="paintTicks" type="boolean" value="true"/>
-                <Property name="snapToTicks" type="boolean" value="true"/>
-                <Property name="value" type="int" value="10"/>
-                <Property name="opaque" type="boolean" value="false"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="jLabel23">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Frames pro Sekunde"/>
-              </Properties>
-            </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jAttackSettings">

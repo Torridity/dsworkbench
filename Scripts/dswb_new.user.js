@@ -72,16 +72,10 @@ insertUnit(field, parseInt(args[units[i]]));
 
 function doInsertResourcesAction(){
  //insert valid value
-if(window.navigator.userAgent.indexOf("Firefox") > -1){
     document.getElementsByName('wood')[0].value=args['wood'];
 		document.getElementsByName('stone')[0].value=args['clay'];
 		document.getElementsByName('iron')[0].value=args['iron'];
-}else{
-		insertNumber(document.forms[0].wood, args['wood']);
-		insertNumber(document.forms[0].stone, args['clay']);
-		insertNumber(document.forms[0].iron, args['iron']);
 }
-      }
 
 
 function addLoadEvent(func) {

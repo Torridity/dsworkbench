@@ -5,7 +5,6 @@
 <title>DS Workbench Dokumentation</title>
 <style type="text/css">
 <!--
-.style2 {font-size: 12px}
 .style5 {
 	background-color:#FF0000;
 	font-weight: bold;
@@ -62,7 +61,8 @@
       </tr>
 	        <tr>
         <td colspan="2">In diesem Bereich findet man zum einen Informationen &uuml;ber den aktuell gew&auml;hlten Spieler und Server und das momentan aktive Spielerdorf, zum anderern findet man Informationen &uuml;ber den Onlinestatus und das momentan gew&auml;hlte Werkzeug.<br>
-          Weiterhin sind in dieser Aufgabengruppe Funktionen zum Zentrieren des momentan gew&auml;hlten Spielerdorfes im Spiel enthalten oder zum Erstellen eines Fotos der Hauptkarte. F&uuml;r diese Fotos kann man weiterhin entscheiden, ob sie auf der lokalen Festplatte gespeichert oder Online gestellt werden sollen. Stellt man sie Online, so wird die aktuelle Kartenansicht auf den <em>DS Workbench</em> Server hochgeladen und ist &uuml;ber eine eindeutige ID im Browser aufrufbar.</td>
+          Weiterhin sind in dieser Aufgabengruppe Funktionen zum Zentrieren des momentan gew&auml;hlten Spielerdorfes im Spiel enthalten oder zum Erstellen eines Fotos der Hauptkarte. F&uuml;r diese Fotos kann man weiterhin entscheiden, ob sie auf der lokalen Festplatte gespeichert oder Online gestellt werden sollen. Stellt man sie Online, so wird die aktuelle Kartenansicht auf den <em>DS Workbench</em> Server hochgeladen und ist &uuml;ber eine eindeutige ID im Browser aufrufbar.<br>
+          Als letztes k&ouml;nnt ihr an dieser Stelle den <a href="import_ingame.html"><em>Import von Spielinformationen</em></a> aus der Zwischenablage an- und ausschalten. Dies kann sinnvoll sein um die Belastung des Rechners durch die permanente Suche in der Zwischenablage zu reduzieren oder Konflikte mit anderen Programmen die ebenfalls auf die Zwischenablage zugreifen zu vermeiden. </td>
       </tr>
 	  <tr>
         <td colspan="2">&nbsp;</td>
@@ -83,13 +83,29 @@
 	        <tr>
         <td colspan="2">Die darin enthaltenen Funktionen dienen der Modifikation der Kartendarstellung. Hier kann man das verwendete Grafikpaket direkt ausw&auml;hlen oder das Kartenpopup, welches erscheint wenn man mit der Maus &uuml;ber ein Dorf auf der Karte f&auml;hrt, (de-)aktivieren.
           <br>
-          Die Option <em>Spielerd&ouml;rfer hervorheben</em> bewirkt, dass wenn man auf der Hauptkarte mit der Maus &uuml;ber das Dorf eines Spielers f&auml;hrt, alle D&ouml;rfer dieses Spielers im sichtbaren Kartenausschnitt markiert werden. Dadurch kann man schnell R&uuml;ckschl&uuml;sse &uuml;ber die Verbreitung des Spielers ziehen.<br>
+          Weiterhin k&ouml;nnt ihr &uuml;ber das Feld <em>MouseOver Infos anzeigen</em> entscheiden, ob ihr erweiterte Anzeigen zu dem Dorf erhalten wollt, &uuml;ber dem ihr euch gerade mit der Maus befindet. Diese Informationen schauen wiefolgt aus: 
+          </td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2"><img src="../images/screens/mouse_over_info.gif" width="283" height="189"></td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	    <tr>
+        <td colspan="2">Ihr sehr zum einen Notizsymbole, die normalerweise der Reihe nach oberhalb des Dorfes gezeichnet sind, um das Dorf kreisen. Dies erleichtert bei der Verwendung vieler Notizen die Erkennbarkeit einzelner Symbole. Das Diagramm in der Mitte zeigt den Kampfwert der Truppen im Dorf. Rot steht dabei f&uuml;r den Kampfwert in der Offensive, Gr&uuml;n f&uuml;r die Defensive, Gelb stellt die Defensive gegen Kavallerie dar und Orange die Defensivkraft gegen Bogeneinheiten. Da es sich im Diagramm um prozentuale Anteile handelt und daher auch bei sehr kleinen Truppenzahlen 100% gef&uuml;llt werden, ist neben dem Diagramm noch eine Legende eingeblendet, welche die tats&auml;chliche Kampfkraft in den einzelnen Kategorien widerspiegelt. </td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr>
+        <td colspan="2">Unterhalb der Einstellung f&uuml;r die <em>MouseOver Infos</em> findet ihr die Option <em>Spielerd&ouml;rfer hervorheben</em> welche bewirkt, dass wenn man auf der Hauptkarte mit der Maus &uuml;ber das Dorf eines Spielers f&auml;hrt, alle D&ouml;rfer dieses Spielers im sichtbaren Kartenausschnitt markiert werden. Dadurch kann man schnell R&uuml;ckschl&uuml;sse &uuml;ber die Verbreitung des Spielers ziehen.<br>
           Die Option <em>Lineal anzeigen</em> de-/aktiviert das Koordinatenlineal am linken und oberen Kartenrand, welches erlaubt, schnell die Koordinaten eines Dorfes zu bestimmen, da die Koordinaten des Dorfes unter dem Mauszeiger in x- und y-Richtung hervorgehoben werden.<br> 
           Weiterhin enth&auml;lt diese Aufgabengruppe die Einstellung des Laufzeitradars, das &uuml;ber das <a href="map_tools.html#radar"><em>entsprechende Werkzeug</em></a> auf ein Dorf gesetzt werden kann, um D&ouml;rfer in der Reichweite des angegebenen Radius zu finden. <br>
           Zuletzt bietet dieser Bereich die M&ouml;glichkeit, die Reihenfolge der gezeichneten Ebenen zu bestimmen:</td>
-      </tr>
-	  <tr>
-        <td colspan="2">&nbsp;</td>
       </tr>
 	   <tr>
         <td colspan="2"><img src="../images/screens/layers.gif" width="213" height="162"></td>
@@ -114,31 +130,6 @@
         <td colspan="2">An dieser Stellen k&ouml;nnen sogenannte <em>Regions of Interest </em>(ROIs) erstellt und verwaltet werden. Eine ROI ist genaugenommen eine Koordinate auf der Karte, die von besonderem Interesse ist. <em>(</em><a href="rois.html"><em>mehr...</em></a><em>)</em> </td>
       </tr>
 	   <tr>
-        <td colspan="2">&nbsp;</td>
-      </tr>
-	   <tr>
-        <td colspan="2"><h3 style="color:#953333">UV Einstellungen</h3></td>
-      </tr>
-	   <tr>
-        <td colspan="2">&nbsp;</td>
-      </tr>
-
-	   <tr>
-        <td colspan="2">Die UV-Einstellungen dienen dazu, InGame Aktionen mit dem UV-Account durchf&uuml;hren zu k&ouml;nnen. Im Gegensatz zum Spieleraccount unterscheiden sich die URLs eines UV-Accounts wenn sie im Browser aufgerufen werden um einen <em>zus&auml;tzlichen Wert <strong>t</strong></em>, wie er im folgenden gezeigt ist: </td>
-      </tr>
-	  <tr>
-        <td colspan="2">&nbsp;</td>
-      </tr>
-	  	   <tr>
-        <td colspan="2"><div align="center" class="style2">http://de0.die-staemme.de/game.php?<strong>t=743256</strong>&village=269739&screen=place</div></td>
-      </tr>
-<tr>
-        <td colspan="2">&nbsp;</td>
-      </tr>
-	    <tr>
-        <td colspan="2">Dies ist die UV-ID die man in das entsprechende Feld im <em>DS Workbench</em> Hauptfenster eintragen muss, um auf den Versammlungs- und den Marktplatz des UV-Accounts zuzugreifen. Den <em>DS Workbench</em> UV-Modus aktiviert man &uuml;ber den <em>neben dem Eingabefeld befindlichen Button</em>. Ist der Button nicht aktiviert, wie im Screenshot oben zu sehen, werden InGame Aktionen auf den eigenen Account angewendet. </td>
-      </tr>
-	  <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
     </table></td>

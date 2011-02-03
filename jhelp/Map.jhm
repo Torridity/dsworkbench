@@ -24,9 +24,9 @@
 
 <mapID target="pages.main_window_basics_layers" url="pages/main_window_basics.html#layers"/>
 
-<mapID target="pages.map_tools_distance_tool" url="pages/map_tools.html#distance_tool"/>
-
 <mapID target="pages.bb_export" url="pages/bb_export.html"/>
+
+<mapID target="pages.map_tools_distance_tool" url="pages/map_tools.html#distance_tool"/>
 
 <mapID target="pages.attack_planer_settings_not_assigned" url="pages/attack_planer_settings.html#not_assigned"/>
 
@@ -67,8 +67,6 @@
 <mapID target="pages.attacks_as_igm" url="pages/attacks_as_igm.html"/>
 
 <mapID target="pages.attack_planer_target" url="pages/attack_planer_target.html"/>
-
-<mapID target="pages.attack_planer_bruteforce" url="pages/attack_planer_bruteforce.html"/>
 
 <mapID target="pages.attack_view_attack_alert" url="pages/attack_view.html#attack_alert"/>
 
@@ -144,8 +142,6 @@
 
 <mapID target="pages.minimap_basics" url="pages/minimap_basics.html"/>
 
-<mapID target="pages.attack_planer_blitzkrieg" url="pages/attack_planer_blitzkrieg.html"/>
-
 <mapID target="pages.retime_tool" url="pages/retime_tool.html"/>
 
 <mapID target="pages.stats_view" url="pages/stats_view.html"/>
@@ -154,9 +150,9 @@
 
 <mapID target="pages.basics" url="pages/basics.html"/>
 
-<mapID target="pages.map_tools" url="pages/map_tools.html"/>
-
 <mapID target="pages.attack_settings" url="pages/attack_settings.html"/>
+
+<mapID target="pages.map_tools" url="pages/map_tools.html"/>
 
 <mapID target="pages.selection_tool" url="pages/selection_tool.html"/>
 
@@ -169,8 +165,6 @@
 <mapID target="pages.attack_planer" url="pages/attack_planer.html"/>
 
 <mapID target="pages.map_tools_ingame_troops" url="pages/map_tools.html#ingame_troops"/>
-
-<mapID target="pages.data_handling" url="pages/data_handling.html"/>
 
 <mapID target="pages.tag_view" url="pages/tag_view.html"/>
 

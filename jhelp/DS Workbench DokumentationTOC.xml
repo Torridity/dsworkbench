@@ -32,8 +32,6 @@
 
    <tocitem text="Drag&amp;Drop auf der Hauptkarte " target="pages.main_window_dnd" image="images.tictac_grey"/>
 
-   <tocitem text="Datenhaltung " target="pages.data_handling" image="images.tictac_grey"/>
-
    <tocitem text="Export / Import von Benutzerdaten " target="pages.export_import" image="images.tictac_grey"/>
 
    <tocitem text="Export in die Zwischenablage " target="pages.bb_export" image="images.tictac_grey"/>

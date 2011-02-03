@@ -11,7 +11,6 @@ import java.awt.datatransfer.Transferable;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO Make clipboard check frequency optional
  * @author Charon
  */
 public class ClipboardWatch extends Thread {
@@ -40,7 +39,7 @@ public class ClipboardWatch extends Thread {
         while (true) {
             if (DSWorkbenchMainFrame.getSingleton().isWatchClipboard()) {
                 try {
-                    Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+                    Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
                     String data = (String) t.getTransferData(DataFlavor.stringFlavor);
 
                     if ((data.length() > 10) && (data.length() != lastDataLength)) {

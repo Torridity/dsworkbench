@@ -7,10 +7,12 @@ package de.tor.tribes.ui.renderer;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchTroopsFrame;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.Intersection;
 import de.tor.tribes.util.troops.TroopsManager;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -85,113 +87,166 @@ public class SupportLayerRenderer extends AbstractDirectLayerRenderer {
                         pG2D.drawOval((int) xEnd - 2, (int) yEnd - 2, 4, 4);
                     } else if (pVisibleVillages.contains(v) && !pVisibleVillages.contains(target)) {
                         pG2D.setColor(Color.GREEN);
+                        //draw clipped support line
                         pG2D.setClip((int) Math.rint(xStart - 50), (int) Math.rint(yStart - 50), 100, 100);
-//                  supportLine = new Line2D.Double((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
                         pG2D.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
                         pG2D.setClip(null);
+                        //get bounding rectangle sides
                         Line2D.Double top = new Line2D.Double(xStart - 50.0, yStart - 50.0, xStart + 50.0, yStart - 50.0);
                         Line2D.Double right = new Line2D.Double(xStart + 50.0, yStart - 50.0, xStart + 50.0, yStart + 50.0);
                         Line2D.Double bottom = new Line2D.Double(xStart - 50.0, yStart + 50.0, xStart + 50.0, yStart + 50.0);
                         Line2D.Double left = new Line2D.Double(xStart - 50.0, yStart - 50.0, xStart - 50.0, yStart + 50.0);
-                        double x1 = xStart;
-                        double x2 = xEnd;
-                        double y1 = yStart;
-                        double y2 = yEnd;
 
-                        double x3 = xStart + 50.0;
-                        double x4 = xStart + 50.0;
-                        double y3 = yStart - 50.0;
-                        double y4 = yStart + 50.0;
-
-                        if (supportLine.intersectsLine(top)) {
-                            x3 = top.x1;
-                            x4 = top.x2;
-                            y3 = top.y1;
-                            y4 = top.y2;
-                        } else if (supportLine.intersectsLine(right)) {
-                            x3 = right.x1;
-                            x4 = right.x2;
-                            y3 = right.y1;
-                            y4 = right.y2;
-                        } else if (supportLine.intersectsLine(bottom)) {
-                            x3 = bottom.x1;
-                            x4 = bottom.x2;
-                            y3 = bottom.y1;
-                            y4 = bottom.y2;
-                        } else {
-                            x3 = left.x1;
-                            x4 = left.x2;
-                            y3 = left.y1;
-                            y4 = left.y2;
+                        //get intersection point
+                        Point2D inter = new Point.Double();
+                        try {
+                            inter = Intersection.getIntersection(new Line2D.Double(xStart, yStart, xEnd, yEnd), top);
+                            if (inter == null) {
+                                throw new Exception();
+                            }
+                        } catch (Exception e1) {
+                            try {
+                                inter = Intersection.getIntersection(new Line2D.Double(xStart, yStart, xEnd, yEnd), right);
+                                if (inter == null) {
+                                    throw new Exception();
+                                }
+                            } catch (Exception e2) {
+                                try {
+                                    inter = Intersection.getIntersection(new Line2D.Double(xStart, yStart, xEnd, yEnd), bottom);
+                                    if (inter == null) {
+                                        throw new Exception();
+                                    }
+                                } catch (Exception e3) {
+                                    try {
+                                        inter = Intersection.getIntersection(new Line2D.Double(xStart, yStart, xEnd, yEnd), left);
+                                        if (inter == null) {
+                                            throw new Exception();
+                                        }
+                                    } catch (Exception e4) {
+                                    }
+                                }
+                            }
                         }
-
-                        double u0 = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1));
-                        //double u1 = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1));
-                        double x = x1 + u0 * (x2 - x1);
-                        double y = y1 + u0 * (y2 - y1);
-
-                        double dist = DSCalculator.calculateDistance(v, target);
-                        String d = NumberFormat.getInstance().format(dist);
-                        Rectangle2D bb = pG2D.getFontMetrics().getStringBounds(d, pG2D);
-                        pG2D.fillRect((int) (x + bb.getX()), (int) (y + bb.getY()), (int) bb.getWidth(), (int) bb.getHeight());
-                        pG2D.setColor(Color.BLACK);
-                        pG2D.drawString(d, (int) x, (int) y);
+                        //draw distance label
+                        if (inter != null) {
+                            double dist = DSCalculator.calculateDistance(v, target);
+                            String d = NumberFormat.getInstance().format(dist);
+                            Rectangle2D bb = pG2D.getFontMetrics().getStringBounds(d, pG2D);
+                            pG2D.fillRect((int) (inter.getX() + bb.getX()), (int) (inter.getY() + bb.getY()), (int) bb.getWidth(), (int) bb.getHeight());
+                            pG2D.setColor(Color.BLACK);
+                            pG2D.drawString(d, (int) inter.getX(), (int) inter.getY());
+                        }
                     } else if (!pVisibleVillages.contains(v) && pVisibleVillages.contains(target)) {
                         pG2D.setColor(Color.RED);
+                        //draw clipped support line
                         pG2D.setClip((int) Math.rint(xEnd - 50), (int) Math.rint(yEnd - 50), 100, 100);
-//                  supportLine = new Line2D.Double((int) Math.rint(xEnd), (int) Math.rint(yEnd), (int) Math.rint(xStart), (int) Math.rint(yStart));
                         pG2D.drawLine((int) Math.rint(xEnd), (int) Math.rint(yEnd), (int) Math.rint(xStart), (int) Math.rint(yStart));
                         pG2D.setClip(null);
+                        //get bounding rectangle sides
                         Line2D.Double top = new Line2D.Double(xEnd - 50.0, yEnd - 50.0, xEnd + 50.0, yEnd - 50.0);
                         Line2D.Double right = new Line2D.Double(xEnd + 50.0, yEnd - 50.0, xEnd + 50.0, yEnd + 50.0);
                         Line2D.Double bottom = new Line2D.Double(xEnd - 50.0, yEnd + 50.0, xEnd + 50.0, yEnd + 50.0);
                         Line2D.Double left = new Line2D.Double(xEnd - 50.0, yEnd - 50.0, xEnd - 50.0, yEnd + 50.0);
-                        double x1 = xEnd;
-                        double x2 = xStart;
-                        double y1 = yEnd;
-                        double y2 = yStart;
 
-                        double x3 = xStart + 50.0;
-                        double x4 = xStart + 50.0;
-                        double y3 = yStart - 50.0;
-                        double y4 = yStart + 50.0;
-
-                        if (supportLine.intersectsLine(top)) {
-                            x3 = top.x1;
-                            x4 = top.x2;
-                            y3 = top.y1;
-                            y4 = top.y2;
-                        } else if (supportLine.intersectsLine(right)) {
-                            x3 = right.x1;
-                            x4 = right.x2;
-                            y3 = right.y1;
-                            y4 = right.y2;
-                        } else if (supportLine.intersectsLine(bottom)) {
-                            x3 = bottom.x1;
-                            x4 = bottom.x2;
-                            y3 = bottom.y1;
-                            y4 = bottom.y2;
-                        } else {
-                            x3 = left.x1;
-                            x4 = left.x2;
-                            y3 = left.y1;
-                            y4 = left.y2;
+                        //get intersection point
+                        Point2D inter = new Point.Double();
+                        try {
+                            inter = Intersection.getIntersection(new Line2D.Double(xEnd, yEnd, xStart, yStart), top);
+                            if (inter == null) {
+                                throw new Exception();
+                            }
+                        } catch (Exception e1) {
+                            try {
+                                inter = Intersection.getIntersection(new Line2D.Double(xEnd, yEnd, xStart, yStart), right);
+                                if (inter == null) {
+                                    throw new Exception();
+                                }
+                            } catch (Exception e2) {
+                                try {
+                                    inter = Intersection.getIntersection(new Line2D.Double(xEnd, yEnd, xStart, yStart), bottom);
+                                    if (inter == null) {
+                                        throw new Exception();
+                                    }
+                                } catch (Exception e3) {
+                                    try {
+                                        inter = Intersection.getIntersection(new Line2D.Double(xEnd, yEnd, xStart, yStart), left);
+                                        if (inter == null) {
+                                            throw new Exception();
+                                        }
+                                    } catch (Exception e4) {
+                                    }
+                                }
+                            }
                         }
 
-                        double u0 = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1));
-                        //double u1 = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1));
-                        double x = x1 + u0 * (x2 - x1);
-                        double y = y1 + u0 * (y2 - y1);
-
-                        double dist = DSCalculator.calculateDistance(v, target);
-                        String d = NumberFormat.getInstance().format(dist);
-                        Rectangle2D bb = pG2D.getFontMetrics().getStringBounds(d, pG2D);
-                        pG2D.fillRect((int) Math.floor(x + bb.getX()), (int) Math.floor(y + bb.getY()), (int) Math.floor(bb.getWidth()), (int) Math.floor(bb.getHeight()));
-                        pG2D.setColor(Color.BLACK);
-                        pG2D.drawString(d, (int) x, (int) y);
+                        //draw distance label
+                        if (inter != null) {
+                            double dist = DSCalculator.calculateDistance(v, target);
+                            String d = NumberFormat.getInstance().format(dist);
+                            Rectangle2D bb = pG2D.getFontMetrics().getStringBounds(d, pG2D);
+                            pG2D.fillRect((int) Math.floor(inter.getX() + bb.getX()), (int) Math.floor(inter.getY() + bb.getY()), (int) Math.floor(bb.getWidth()), (int) Math.floor(bb.getHeight()));
+                            pG2D.setColor(Color.BLACK);
+                            pG2D.drawString(d, (int) inter.getX(), (int) inter.getY());
+                        }
                     }
                 }
             }
         }
+    }
+
+    private boolean Intersects(Point2D.Double line1Point1, Point2D.Double line1Point2, Point2D.Double line2Point1, Point2D.Double line2Point2, Point2D.Double intersection) { // Based on the 2d line intersection method from "comp.graphics.algorithmsFrequently Asked Questions"
+
+        /*
+        (Ay-Cy)(Dx-Cx)-(Ax-Cx)(Dy-Cy)
+        r = -----------------------------  (eqn 1)
+        (Bx-Ax)(Dy-Cy)-(By-Ay)(Dx-Cx)
+         */
+
+        double q = (line1Point1.x - line2Point1.y) * (line2Point2.x - line2Point1.x) - (line1Point1.x - line2Point1.x) * (line2Point2.y - line2Point1.x);
+        double d = (line1Point2.x - line1Point1.x) * (line2Point2.y - line2Point1.y) - (line1Point2.y - line1Point1.y) * (line2Point2.y - line2Point1.x);
+
+        if (d == 0) // parallel lines so no intersection anywhere in space (incurved space, maybe, but not here in Euclidian space.)
+        {
+            return false;
+        }
+
+        double r = q / d;
+
+        /*
+        (Ay-Cy)(Bx-Ax)-(Ax-Cx)(By-Ay)
+        s = -----------------------------  (eqn 2)
+        (Bx-Ax)(Dy-Cy)-(By-Ay)(Dx-Cx)
+         */
+
+        q = (line1Point1.y - line2Point1.y) * (line1Point2.x - line1Point1.x) - (line1Point1.x - line2Point1.x) * (line1Point2.y - line1Point1.y);
+        double s = q / d;
+
+        /*
+        If r>1, P is located on extension of AB
+        If r<0, P is located on extension of BA
+        If s>1, P is located on extension of CD
+        If s<0, P is located on extension of DC
+
+        The above basically checks if the intersection is located at an
+        extrapolated
+        point outside of the line segments. To ensure the intersection is
+        only within
+        the line segments then the above must all be false, ie r between 0
+        and 1
+        and s between 0 and 1.
+         */
+
+        if (r < 0 || r > 1 || s < 0 || s > 1) {
+            return false;
+        }
+
+        /*
+        Px=Ax+r(Bx-Ax)
+        Py=Ay+r(By-Ay)
+         */
+
+        intersection.x = line1Point1.x + (int) (0.5f + r * (line1Point2.x - line1Point1.x));
+        intersection.y = line1Point1.y + (int) (0.5f + r * (line1Point2.y - line1Point1.y));
+        return true;
     }
 }

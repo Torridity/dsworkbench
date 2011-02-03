@@ -650,7 +650,6 @@ public class MapRenderer extends Thread {
                     if (mVisibleVillages[x][y] != null) {
 
                         Point villagePos = new Point((int) Math.floor(dx + x * currentFieldWidth), (int) Math.floor(dy + y * currentFieldHeight));
-                        //@TODO (2.2) Remove village from visible village map if it was not drawn
                         villagePositions.put(mVisibleVillages[x][y], new Rectangle(villagePos.x, villagePos.y, (int) Math.floor(currentFieldWidth), (int) Math.floor(currentFieldHeight)));
                         Tribe t = mVisibleVillages[x][y].getTribe();
                         if (t != Barbarians.getSingleton()) {

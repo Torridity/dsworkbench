@@ -193,7 +193,9 @@ public class TroopsParser implements SilentParserInterface {
     }
 
     public static void main(String[] args) {
-        /*
+  
+
+	/*
         Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         try {
         String s = " 003 | Spitfire (471|482) K44\n" +

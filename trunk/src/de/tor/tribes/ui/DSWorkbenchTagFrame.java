@@ -421,12 +421,13 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
 
         List<String> toRemove = new LinkedList<String>();
         for (int row : rows) {
-            row = jTagTable.convertRowIndexToModel(row);
-            toRemove.add((String) TagTableModel.getSingleton().getOriginalValueAt(row, 0));
+            int realRow = jTagTable.convertRowIndexToModel(row);
+            toRemove.add((String) TagTableModel.getSingleton().getOriginalValueAt(realRow, 0));
         }
         for (String tag : toRemove) {
-            TagManager.getSingleton().removeTagByName(tag);
+            TagManager.getSingleton().removeTagFastByName(tag);
         }
+        TagManager.getSingleton().forceUpdate();
         //update map
         MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
     }//GEN-LAST:event_fireRemoveTagsEvent

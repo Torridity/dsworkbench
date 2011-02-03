@@ -20,9 +20,6 @@ color: #00FF00;
 .style4 {color: #FF9933;
 	background-color:#000000;
 	font-weight: bold;}
-.style6 {color: #666666;
-	background-color:#000000;
-	font-weight: bold;}
 -->
 </style>
 </head>
@@ -45,7 +42,7 @@ color: #00FF00;
         <td colspan="2">&nbsp;</td>
       </tr>
       <tr>
-        <td colspan="2"><img src="../images/screens/attack_view.gif" width="846" height="497"></td>
+        <td colspan="2"><img src="../images/screens/attack_view.gif" width="1084" height="514"></td>
       </tr>
       <tr>
         <td colspan="2">&nbsp;</td>
@@ -175,7 +172,9 @@ color: #00FF00;
       </tr>
 	    <tr>
         <td width="10%"><div align="center"><img src="../images/att_browser.png" width="25" height="25"></div></td>
-        <td>F&uuml;r den gew&auml;hlten Angriff wird der Versammlungsplatz des Herkunftsdorfes im Standardbrowser des Systems ge&ouml;ffnet und die Koordinaten des Zieldorfes werden dort direkt eingetragen. Die Bedingungen f&uuml;r diese Option sind bei den dem Werkzeug f&uuml;r <a href="map_tools.html#ingame_troops"><em>In-Game Truppenbewegungen</em></a> in in der Kategorie <em><a href="map_tools.html">Kartenwerkzeuge</a></em> erw&auml;hnt.</td>
+        <td>F&uuml;r den gew&auml;hlten Angriff wird der Versammlungsplatz des Herkunftsdorfes im Standardbrowser des Systems ge&ouml;ffnet und die Koordinaten des Zieldorfes werden dort direkt eingetragen. Habt ihr das <a href="dswb_script.html"><em>DS Workbench Userscript</em></a> in eurem Browser installiert werden zus&auml;tzlich die Truppen, wie ihr sie f&uuml;r die <a href="standard_attacks.html"><em>Standardangriffe</em></a> definiert habt, automatisch eingetragen. <br>
+          Angriffe k&ouml;nnen auf zwei verschiedene Arten &uuml;bertragen werden. Zum einen k&ouml;nnt ihr sie einzeln &uuml;bertragen indem ihr einen Angriff aufw&auml;hlt und auf den Button mit dem nebenstehenden Symbol klickt. Ein neuer Browser-Tab wird ge&ouml;ffnet und die Koordinaten und Truppen (wenn das Userscript installiert ist) werden eingetragen. Weiterhin wird der Angriff in der Spalte &quot;<em>&Uuml;bertragen</em>&quot; abgehakt und die Auswahl springt zum n&auml;chsten Angriff in der Tabelle. Dabei wird empfohlen, dass das Feld &quot;<em>Immer im Vordergrund halten</em>&quot; in der rechten unteren Ecke der Angriffs&uuml;bersicht gew&auml;hlt ist, damit das Browserfenster selbst im Hintergrund bleibt. <br>
+          Ist euch das zu m&uuml;hsam habt ihr die M&ouml;glichkeit per Linksklick auf den Button mit der Bezeichnung &quot;Klick-Konto&quot;, welchen ihr in der rechten oberen Ecke der Angriffs&uuml;bersicht findet, Klicks zu speichern und die f&uuml;r das gleichzeitige &Uuml;bertragen mehrerer Angriffe zu verwenden. Habt ihr eine ausreichende Anzahl Klicks gesammelt k&ouml;nnt ihr mehrere Angriffe markieren und den &quot;<em>&Uuml;bertragen</em>&quot;-Button bet&auml;tigen, woraufhin soviele Angriffe &uuml;bertragen werden wie ihr Klicks gesammelt habt oder soviele Klicks abgezogen werden wie ihr Angriffe &uuml;bertragen habt. Sind beispielsweise 20 Klicks gespeichert und &uuml;bertragt ihr 10 Angriffe, so wird das Klick-Konto auf 10 reduziert und es &ouml;ffnen sich in eurem Browser 10 neue Tabs mit eingetragenen Angriffen. </td>
       </tr>
 	  	   <tr>
         <td colspan="2"><HR/></td>
@@ -189,7 +188,7 @@ color: #00FF00;
       </tr>
 	   <tr>
         <td width="10%"><div align="center"><img src="../images/standard_attacks.png"></div></td>
-        <td>Festlegung der Truppen die bei der &Uuml;bertragung des Angriffs in den Browser f&uuml;r die einzelnen Angriffstype verwendet werden. F&uuml;r die Auswahl wird ein <a href="standard_attacks.html"><em>separater Dialog</em></a> ge&ouml;ffnet, in dem die Truppenanteile festgelegt werden k&ouml;nnen. </td>
+        <td>Festlegung der Truppen (<em>Standardangriffe</em>) die bei der &Uuml;bertragung des Angriffs in den Browser f&uuml;r die einzelnen Angriffstype verwendet werden. F&uuml;r die Auswahl wird ein <a href="standard_attacks.html"><em>separater Dialog</em></a> ge&ouml;ffnet, in dem die Truppenanteile festgelegt werden k&ouml;nnen. </td>
       </tr>
 	     <tr>
         <td colspan="2"><HR/></td>
@@ -211,7 +210,7 @@ color: #00FF00;
         <td colspan="2">&nbsp;</td>
       </tr>
 	   <tr>
-        <td colspan="2">Zur besseren &Uuml;bersicht werden die Abschickzeitpunkt farbig markiert, sofern sie 10 Minuten und weniger in der Zukunft liegen. Angriffe die in den n&auml;chsten 10 Minuten abgeschickt werden m&uuml;ssen sind <span class="style1">Gr&uuml;n</span> gekennzeichnet. Sind es weniger als 5 Minuten bis zum Abschickzeitpunkt f&auml;rbt sich der Angriff <span class="style2">Gelb</span>. Betr&auml;gt die verbleibende Zeit weniger als 3 Minuten wird der Angriff <span class="style4">Orange</span> gef&auml;rbt, bei weniger als einer Minute <span class="style3">Rot</span>. Die Farben werden alle 10 Sekunden aktualisiert. Bei  <span class="style6">Dunkelgrau</span> markierten Angriffen ist die notwendige Abschickzeit &uuml;berschritten. </td>
+        <td colspan="2">Zur besseren &Uuml;bersicht werden die Abschickzeitpunkt farbig markiert, sofern sie 10 Minuten und weniger in der Zukunft liegen. Angriffe die in den n&auml;chsten 10 Minuten abgeschickt werden m&uuml;ssen sind <span class="style1">Gr&uuml;n</span> gekennzeichnet. Sind es weniger als 5 Minuten bis zum Abschickzeitpunkt f&auml;rbt sich der Angriff <span class="style2">Gelb</span>. Betr&auml;gt die verbleibende Zeit weniger als 3 Minuten wird der Angriff <span class="style4">Orange</span> gef&auml;rbt, bei weniger als einer Minute <span class="style3">Rot</span>. Die Farben werden alle 10 Sekunden aktualisiert. Ist die notwendige Abschickzeit &uuml;berschritten, ist der Eintrag in der Spalte Abschickzeit durchgestrichen. Ist der Angriff planm&auml;&szlig;ig angekommen wird der Eintrag des Ankunftzeitpunktes ebenfalls durchgestrichen. </td>
       </tr>
 	   <tr>
         <td colspan="2">&nbsp;</td>

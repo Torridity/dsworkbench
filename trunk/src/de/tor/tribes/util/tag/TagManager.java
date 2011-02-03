@@ -239,6 +239,19 @@ public class TagManager {
         fireTagsChangedEvents();
     }
 
+    public void removeTagFastByName(String pName) {
+        Tag toRemove = null;
+        for (Tag t : mTags) {
+            if (t.getName().equals(pName)) {
+                toRemove = t;
+                break;
+            }
+        }
+        if (toRemove != null) {
+            removeTag(toRemove);
+        }
+    }
+
     /**Add a tag to a village*/
     public synchronized void addTag(Village pVillage, String pTag, boolean pUpdate) {
         if (pTag == null) {
@@ -314,7 +327,6 @@ public class TagManager {
         }
         for (Tag t : mTags) {
             if (t.getName().equals(pTag)) {
-
                 t.untagVillage(pVillage.getId());
             }
         }

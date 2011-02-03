@@ -262,19 +262,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         } catch (Exception e) {
         }
 
-        //attack movement
-        try {
-            int fps = Integer.parseInt(GlobalOptions.getProperty("max.fps"));
-            if (fps >= 5 && fps < 15) {
-                jFPSSlider.setValue(fps);
-            } else {
-                throw new Exception("Invalid FPS value");
-            }
-        } catch (Exception e) {
-            jFPSSlider.setValue(10);
-            GlobalOptions.addProperty("max.fps", Integer.toString(10));
-        }
-
         //draw attacks by default
         try {
             if (Boolean.parseBoolean(GlobalOptions.getProperty("draw.attacks.by.default"))) {
@@ -704,8 +691,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jPanel3 = new javax.swing.JPanel();
         jLabel22 = new javax.swing.JLabel();
         jMaxFarmSpace = new javax.swing.JTextField();
-        jFPSSlider = new javax.swing.JSlider();
-        jLabel23 = new javax.swing.JLabel();
         jAttackSettings = new javax.swing.JPanel();
         jAttackMovementLabel = new javax.swing.JLabel();
         jShowAttackMovementBox = new javax.swing.JCheckBox();
@@ -1436,18 +1421,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
         jPanel5.add(jPanel3);
 
-        jFPSSlider.setMajorTickSpacing(1);
-        jFPSSlider.setMaximum(15);
-        jFPSSlider.setMinimum(5);
-        jFPSSlider.setMinorTickSpacing(1);
-        jFPSSlider.setPaintLabels(true);
-        jFPSSlider.setPaintTicks(true);
-        jFPSSlider.setSnapToTicks(true);
-        jFPSSlider.setValue(10);
-        jFPSSlider.setOpaque(false);
-
-        jLabel23.setText("Frames pro Sekunde");
-
         javax.swing.GroupLayout jMapSettingsLayout = new javax.swing.GroupLayout(jMapSettings);
         jMapSettings.setLayout(jMapSettingsLayout);
         jMapSettingsLayout.setHorizontalGroup(
@@ -1457,16 +1430,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
                     .addComponent(jLabel3)
-                    .addComponent(jLabel23)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(36, 36, 36)
-                .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jFPSSlider, 0, 0, Short.MAX_VALUE)
-                    .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jDefaultMarkBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(365, 365, 365))
+                .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jDefaultMarkBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(159, Short.MAX_VALUE))
         );
         jMapSettingsLayout.setVerticalGroup(
             jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1483,11 +1453,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel23, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jFPSSlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(123, 123, 123))
+                .addGap(187, 187, 187))
         );
 
         jSettingsTabbedPane.addTab("Karten", new javax.swing.ImageIcon(getClass().getResource("/res/ui/map.gif")), jMapSettings); // NOI18N
@@ -2417,7 +2383,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         GlobalOptions.addProperty("max.farm.space", jMaxFarmSpace.getText());
         GlobalOptions.addProperty("attack.bbexport.template", jAttackBBExportTemplate.getText());
         GlobalOptions.addProperty("show.live.countdown", Boolean.toString(jShowLiveCountdown.isSelected()));
-        GlobalOptions.addProperty("max.fps", Integer.toString(jFPSSlider.getValue()));
         GlobalOptions.saveProperties();
         if (!checkSettings()) {
             return;
@@ -3321,7 +3286,6 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JButton jDownloadLiveDataButton;
     private javax.swing.JCheckBox jDrawAttacksByDefaultBox;
     private javax.swing.JEditorPane jEditorPane1;
-    private javax.swing.JSlider jFPSSlider;
     private javax.swing.JTextField jFooterPath;
     private javax.swing.JTextField jHeaderPath;
     private javax.swing.JTextField jHeavyAmount;
@@ -3339,7 +3303,6 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
-    private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel36;

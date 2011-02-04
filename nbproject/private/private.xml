@@ -14,5 +14,15 @@
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/LinkTagsDialog.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/models/TagLinkMatrixModel.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/editors/LinkGroupTableCellEditor.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/ClipboardWatch.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/PluginManager.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/algo/SettingsPanel.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/types/FightReport.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/DSWorkbenchMainFrame.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/DSWorkbenchNotepad.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/note/NoteManager.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/types/UserProfile.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/DSWorkbenchSettingsDialog.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/renderer/MultiColorLabel.java</file>
     </open-files>
 </project-private>

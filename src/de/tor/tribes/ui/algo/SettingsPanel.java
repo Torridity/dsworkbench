@@ -121,6 +121,9 @@ public class SettingsPanel extends javax.swing.JPanel {
 	    jSendTimeSettingsPanel.setTimeSpans(spanList);
 	    //restore arrive spans
 	    spanProp = profile.getProperty("attack.frame.arrive.spans");
+	    if ( spanProp == null ) {
+		spanProp = "";
+	    }
 	    spans = spanProp.split(";");
 
 	    spanList = new LinkedList<TimeSpan>();

@@ -72,207 +72,207 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Drag
     private DragSource dragSource;
 
     public static synchronized DSWorkbenchNotepad getSingleton() {
-        if (SINGLETON == null) {
-            SINGLETON = new DSWorkbenchNotepad();
-        }
-        return SINGLETON;
+	if ( SINGLETON == null ) {
+	    SINGLETON = new DSWorkbenchNotepad();
+	}
+	return SINGLETON;
     }
 
     /** Creates new form DSWorkbenchNotepad */
     DSWorkbenchNotepad() {
-        initComponents();
-        /*  jBoldButton.setAction(boldAction);
-        jBoldButton.setText("");
-        jBoldButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_bold.png")));
-        jItalicButton.setAction(italicAction);
-        jItalicButton.setText("");
-        jItalicButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_italics.png")));
-        jUnderlineButton.setAction(underlineAction);
-        jUnderlineButton.setText("");
-        jUnderlineButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_underlined.png")));
-        jSize10Button.setAction(new StyledEditorKit.FontSizeAction("10", 10));
-        jSize12Button.setAction(new StyledEditorKit.FontSizeAction("12", 12));
-        jSize14Button.setAction(new StyledEditorKit.FontSizeAction("14", 14));
-        jSize18Button.setAction(new StyledEditorKit.FontSizeAction("18", 18));
-        jSize20Button.setAction(new StyledEditorKit.FontSizeAction("20", 20));
-        jSize28Button.setAction(new StyledEditorKit.FontSizeAction("28", 28));
-        jRedColorButton.setAction(new StyledEditorKit.ForegroundAction("Red", Color.RED));
-        jRedColorButton.setText("");
-        jGreenColorButton.setAction(new StyledEditorKit.ForegroundAction("Green", Color.GREEN));
-        jGreenColorButton.setText("");
-        jBlueColorButton.setAction(new StyledEditorKit.ForegroundAction("Blue", Color.BLUE));
-        jBlueColorButton.setText("");
-        jBlackColorButton.setAction(new StyledEditorKit.ForegroundAction("Black", Color.BLACK));
-        jBlackColorButton.setText("");
-        jCyanColorButton.setAction(new StyledEditorKit.ForegroundAction("Cyan", Color.CYAN));
-        jCyanColorButton.setText("");
-        jOrangeColorButton.setAction(new StyledEditorKit.ForegroundAction("Orange", new Color(255, 102, 0)));
-        jOrangeColorButton.setText("");
-        jPinkColorButton.setAction(new StyledEditorKit.ForegroundAction("Pink", new Color(255, 0, 204)));
-        jPinkColorButton.setText("");
-        jVioletColorButton.setAction(new StyledEditorKit.ForegroundAction("Violet", new Color(152, 153, 255)));
-        jVioletColorButton.setText("");
-        jLeftButton.setAction(new StyledEditorKit.AlignmentAction("<", StyleConstants.ALIGN_LEFT));
-        jLeftButton.setText("");
-        jLeftButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_align_left.png")));
-        jCenterButton.setAction(new StyledEditorKit.AlignmentAction("|", StyleConstants.ALIGN_CENTER));
-        jCenterButton.setText("");
-        jCenterButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_align_center.png")));
-        jRightButton.setAction(new StyledEditorKit.AlignmentAction(">", StyleConstants.ALIGN_RIGHT));
-        jRightButton.setText("");
-        jRightButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_align_right.png")));
-         */
-        dragSource = DragSource.getDefaultDragSource();
-        dragSource.createDefaultDragGestureRecognizer(jNotesList, // What component
-                DnDConstants.ACTION_COPY_OR_MOVE, // What drag types?
-                this);// the listener
+	initComponents();
+	/*  jBoldButton.setAction(boldAction);
+	jBoldButton.setText("");
+	jBoldButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_bold.png")));
+	jItalicButton.setAction(italicAction);
+	jItalicButton.setText("");
+	jItalicButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_italics.png")));
+	jUnderlineButton.setAction(underlineAction);
+	jUnderlineButton.setText("");
+	jUnderlineButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_underlined.png")));
+	jSize10Button.setAction(new StyledEditorKit.FontSizeAction("10", 10));
+	jSize12Button.setAction(new StyledEditorKit.FontSizeAction("12", 12));
+	jSize14Button.setAction(new StyledEditorKit.FontSizeAction("14", 14));
+	jSize18Button.setAction(new StyledEditorKit.FontSizeAction("18", 18));
+	jSize20Button.setAction(new StyledEditorKit.FontSizeAction("20", 20));
+	jSize28Button.setAction(new StyledEditorKit.FontSizeAction("28", 28));
+	jRedColorButton.setAction(new StyledEditorKit.ForegroundAction("Red", Color.RED));
+	jRedColorButton.setText("");
+	jGreenColorButton.setAction(new StyledEditorKit.ForegroundAction("Green", Color.GREEN));
+	jGreenColorButton.setText("");
+	jBlueColorButton.setAction(new StyledEditorKit.ForegroundAction("Blue", Color.BLUE));
+	jBlueColorButton.setText("");
+	jBlackColorButton.setAction(new StyledEditorKit.ForegroundAction("Black", Color.BLACK));
+	jBlackColorButton.setText("");
+	jCyanColorButton.setAction(new StyledEditorKit.ForegroundAction("Cyan", Color.CYAN));
+	jCyanColorButton.setText("");
+	jOrangeColorButton.setAction(new StyledEditorKit.ForegroundAction("Orange", new Color(255, 102, 0)));
+	jOrangeColorButton.setText("");
+	jPinkColorButton.setAction(new StyledEditorKit.ForegroundAction("Pink", new Color(255, 0, 204)));
+	jPinkColorButton.setText("");
+	jVioletColorButton.setAction(new StyledEditorKit.ForegroundAction("Violet", new Color(152, 153, 255)));
+	jVioletColorButton.setText("");
+	jLeftButton.setAction(new StyledEditorKit.AlignmentAction("<", StyleConstants.ALIGN_LEFT));
+	jLeftButton.setText("");
+	jLeftButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_align_left.png")));
+	jCenterButton.setAction(new StyledEditorKit.AlignmentAction("|", StyleConstants.ALIGN_CENTER));
+	jCenterButton.setText("");
+	jCenterButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_align_center.png")));
+	jRightButton.setAction(new StyledEditorKit.AlignmentAction(">", StyleConstants.ALIGN_RIGHT));
+	jRightButton.setText("");
+	jRightButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_align_right.png")));
+	 */
+	dragSource = DragSource.getDefaultDragSource();
+	dragSource.createDefaultDragGestureRecognizer(jNotesList, // What component
+						      DnDConstants.ACTION_COPY_OR_MOVE, // What drag types?
+						      this);// the listener
 
-        try {
-            jAlwaysOnTopBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("notepad.frame.alwaysOnTop")));
-            setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
-        } catch (Exception e) {
-            //setting not available
-        }
+	try {
+	    jAlwaysOnTopBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("notepad.frame.alwaysOnTop")));
+	    setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
+	} catch ( Exception e ) {
+	    //setting not available
+	}
 
-        //setup map marker box
-        for (int i = 0; i <= ImageManager.ID_NOTE_ICON_13; i++) {
-            jIconBox.addItem(i);
-        }
+	//setup map marker box
+	for ( int i = 0; i <= ImageManager.ID_NOTE_ICON_13; i++ ) {
+	    jIconBox.addItem(i);
+	}
 
-        ListCellRenderer r = new ListCellRenderer() {
+	ListCellRenderer r = new ListCellRenderer() {
 
-            @Override
-            public Component getListCellRendererComponent(
-                    JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                Component c = new DefaultListCellRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                try {
-                    JLabel label = ((JLabel) c);
-                    label.setText("");
-                    BufferedImage symbol = ImageManager.getNoteIcon((Integer) value);
-                    label.setIcon(new ImageIcon(symbol.getScaledInstance(18, 18, BufferedImage.SCALE_FAST)));
-                } catch (Exception e) {
-                }
-                return c;
-            }
-        };
-        jIconBox.setRenderer(r);
+	    @Override
+	    public Component getListCellRendererComponent(
+		    JList list, Object value, int index, boolean isSelected, boolean cellHasFocus ) {
+		Component c = new DefaultListCellRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+		try {
+		    JLabel label = ((JLabel) c);
+		    label.setText("");
+		    BufferedImage symbol = ImageManager.getNoteIcon((Integer) value);
+		    label.setIcon(new ImageIcon(symbol.getScaledInstance(18, 18, BufferedImage.SCALE_FAST)));
+		} catch ( Exception e ) {
+		}
+		return c;
+	    }
 
-        //setup note symbol box
-        for (int i = -1; i <= ImageManager.NOTE_SYMBOL_WALL; i++) {
-            jNoteSymbolBox.addItem(i);
-        }
+	};
+	jIconBox.setRenderer(r);
 
-        jNoteSymbolBox.setRenderer(new ListCellRenderer() {
+	//setup note symbol box
+	for ( int i = -1; i <= ImageManager.NOTE_SYMBOL_WALL; i++ ) {
+	    jNoteSymbolBox.addItem(i);
+	}
 
-            @Override
-            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                Component c = new DefaultListCellRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                try {
-                    JLabel label = ((JLabel) c);
-                    label.setHorizontalAlignment(SwingConstants.CENTER);
-                    label.setText("");
-                    int val = (Integer) value;
-                    if (val != -1) {
-                        BufferedImage symbol = ImageManager.getNoteSymbol(val);
-                        label.setIcon(new ImageIcon(symbol.getScaledInstance(18, 18, BufferedImage.SCALE_FAST)));
-                    } else {
-                        //no symbol
-                        label.setIcon(null);
-                        label.setText("-");
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return c;
-            }
-        });
+	jNoteSymbolBox.setRenderer(new ListCellRenderer() {
+
+	    @Override
+	    public Component getListCellRendererComponent( JList list, Object value, int index, boolean isSelected, boolean cellHasFocus ) {
+		Component c = new DefaultListCellRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+		try {
+		    JLabel label = ((JLabel) c);
+		    label.setHorizontalAlignment(SwingConstants.CENTER);
+		    label.setText("");
+		    int val = (Integer) value;
+		    if ( val != -1 ) {
+			BufferedImage symbol = ImageManager.getNoteSymbol(val);
+			label.setIcon(new ImageIcon(symbol.getScaledInstance(18, 18, BufferedImage.SCALE_FAST)));
+		    } else {
+			//no symbol
+			label.setIcon(null);
+			label.setText("-");
+		    }
+		} catch ( Exception e ) {
+		}
+		return c;
+	    }
+
+	});
 
 
-        //<editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.notes_view", GlobalOptions.getHelpBroker().getHelpSet());
-        //</editor-fold>
+	//<editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+	GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.notes_view", GlobalOptions.getHelpBroker().getHelpSet());
+	//</editor-fold>
 
     }
 
     public void resetView() {
-        currentNote = NoteManager.getSingleton().getFirstNote();
-        refreshNoteList();
+	refreshNoteList();
     }
 
     private void refreshNoteList() {
-        DefaultListModel noteListModel = new DefaultListModel();
-        for (Note note : NoteManager.getSingleton().getNotes()) {
-            noteListModel.addElement(note);
-        }
-        jNotesList.setModel(noteListModel);
-        jNotesList.setCellRenderer(new NoteListCellRenderer());
-        showCurrentNote();
+	DefaultListModel noteListModel = new DefaultListModel();
+	for ( Note note : NoteManager.getSingleton().getNotes() ) {
+	    noteListModel.addElement(note);
+	}
+	jNotesList.setModel(noteListModel);
+	jNotesList.setCellRenderer(new NoteListCellRenderer());
+	setCurrentNote(NoteManager.getSingleton().getFirstNote());
     }
 
-    public void setCurrentNote(Note pNote) {
-        currentNote = pNote;
-        showCurrentNote();
+    public void setCurrentNote( Note pNote ) {
+	currentNote = pNote;
+	showCurrentNote();
     }
 
-    public void setVillageFieldExternally(Village pVillage) {
-        if (pVillage == null) {
-            return;
-        }
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-            int[] coord = DSCalculator.xyToHierarchical(pVillage.getX(), pVillage.getY());
-            jAddVillageField.setText(coord[0] + ":" + coord[1] + ":" + coord[2]);
-        } else {
-            jAddVillageField.setText("(" + pVillage.getX() + "|" + pVillage.getY() + ")");
-        }
+    public void setVillageFieldExternally( Village pVillage ) {
+	if ( pVillage == null ) {
+	    return;
+	}
+	if ( ServerSettings.getSingleton().getCoordType() != 2 ) {
+	    int[] coord = DSCalculator.xyToHierarchical(pVillage.getX(), pVillage.getY());
+	    jAddVillageField.setText(coord[0] + ":" + coord[1] + ":" + coord[2]);
+	} else {
+	    jAddVillageField.setText("(" + pVillage.getX() + "|" + pVillage.getY() + ")");
+	}
     }
 
-    public void setSearchTermByVillageExternally(Village pVillage) {
-        if (pVillage == null) {
-            return;
-        }
-        jSearchField.setText(pVillage.toString());
+    public void setSearchTermByVillageExternally( Village pVillage ) {
+	if ( pVillage == null ) {
+	    return;
+	}
+	jSearchField.setText(pVillage.toString());
     }
 
-    public void addNoteForVillage(Village pVillage) {
-        Note n = new Note();
-        n.addVillage(pVillage);
-        n.setNoteText("(kein Text)");
-        n.setMapMarker(0);
-        NoteManager.getSingleton().addNote(n);
-        currentNote = n;
-        refreshNoteList();
+    public void addNoteForVillage( Village pVillage ) {
+	Note n = new Note();
+	n.addVillage(pVillage);
+	n.setNoteText("(kein Text)");
+	n.setMapMarker(0);
+	NoteManager.getSingleton().addNote(n);
+	currentNote = n;
+	refreshNoteList();
     }
 
-    public void addNoteForVillages(List<Village> pVillages) {
-        Note n = new Note();
-        for (Village v : pVillages) {
-            n.addVillage(v);
-        }
-        n.setNoteText("(kein Text)");
-        n.setMapMarker(0);
-        NoteManager.getSingleton().addNote(n);
-        currentNote = n;
-        refreshNoteList();
+    public void addNoteForVillages( List<Village> pVillages ) {
+	Note n = new Note();
+	for ( Village v : pVillages ) {
+	    n.addVillage(v);
+	}
+	n.setNoteText("(kein Text)");
+	n.setMapMarker(0);
+	NoteManager.getSingleton().addNote(n);
+	currentNote = n;
+	refreshNoteList();
     }
 
-    public boolean addVillageToCurrentNote(Village pVillage) {
-        if (currentNote != null) {
-            currentNote.addVillage(pVillage);
-            showCurrentNote();
-            return true;
-        }
-        return false;
+    public boolean addVillageToCurrentNote( Village pVillage ) {
+	if ( currentNote != null ) {
+	    currentNote.addVillage(pVillage);
+	    showCurrentNote();
+	    return true;
+	}
+	return false;
     }
 
-    public boolean addVillagesToCurrentNote(List<Village> pVillages) {
-        if (currentNote != null) {
-            for (Village v : pVillages) {
-                currentNote.addVillage(v);
-            }
-            showCurrentNote();
-            return true;
-        }
-        return false;
+    public boolean addVillagesToCurrentNote( List<Village> pVillages ) {
+	if ( currentNote != null ) {
+	    for ( Village v : pVillages ) {
+		currentNote.addVillage(v);
+	    }
+	    showCurrentNote();
+	    return true;
+	}
+	return false;
     }
 
     /** This method is called from within the constructor to
@@ -870,103 +870,103 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Drag
 
     private void fireAddVillageEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddVillageEvent
         String text = jAddVillageField.getText();
-        List<Village> villages = PluginManager.getSingleton().executeVillageParser(text);
-        if (villages == null || villages.isEmpty()) {
-            JOptionPaneHelper.showInformationBox(this, "Keine Dorfkoordinaten gefunden.", "Information");
-            return;
+	List<Village> villages = PluginManager.getSingleton().executeVillageParser(text);
+	if ( villages == null || villages.isEmpty() ) {
+	    JOptionPaneHelper.showInformationBox(this, "Keine Dorfkoordinaten gefunden.", "Information");
+	    return;
 
-        }
+	}
 
-        NotifierFrame.doNotification("DS Workbench hat " + villages.size() + ((villages.size() == 1) ? " Dorf " : " Dörfer ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);
-        boolean added = false;
-        if (currentNote != null) {
-            //add village to note
-            for (Village v : villages) {
-                if (currentNote != null) {
-                    added = (currentNote.addVillage(v)) ? true : added;
-                }
+	NotifierFrame.doNotification("DS Workbench hat " + villages.size() + ((villages.size() == 1) ? " Dorf " : " Dörfer ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);
+	boolean added = false;
+	if ( currentNote != null ) {
+	    //add village to note
+	    for ( Village v : villages ) {
+		if ( currentNote != null ) {
+		    added = (currentNote.addVillage(v)) ? true : added;
+		}
 
-            }
-        } else {
-            JOptionPaneHelper.showWarningBox(this, "Es ist keine Notiz ausgewählt.", "Fehler");
-        }
+	    }
+	} else {
+	    JOptionPaneHelper.showWarningBox(this, "Es ist keine Notiz ausgewählt.", "Fehler");
+	}
 
-        if (added) {
-            showCurrentNote();
-        } else {
-            JOptionPaneHelper.showInformationBox(this, "Die Notiz ist diesem Dorf/diesen Dörfern bereits zugeordnet.", "Information");
-        }
+	if ( added ) {
+	    showCurrentNote();
+	} else {
+	    JOptionPaneHelper.showInformationBox(this, "Die Notiz ist diesem Dorf/diesen Dörfern bereits zugeordnet.", "Information");
+	}
     }//GEN-LAST:event_fireAddVillageEvent
 
     private void fireNewNoteEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireNewNoteEvent
         Note n = new Note();
-        NoteManager.getSingleton().addNote(n);
-        currentNote = n;
-        refreshNoteList();
+	NoteManager.getSingleton().addNote(n);
+	currentNote = n;
+	refreshNoteList();
     }//GEN-LAST:event_fireNewNoteEvent
 
     private void fireFindNoteEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireFindNoteEvent
-        if (NoteManager.getSingleton().getNotes().size() <= 0) {
-            JOptionPaneHelper.showWarningBox(this, "Keine Notizen vorhanden.", "Fehler");
-            return;
-        }
+        if ( NoteManager.getSingleton().getNotes().size() <= 0 ) {
+	    JOptionPaneHelper.showWarningBox(this, "Keine Notizen vorhanden.", "Fehler");
+	    return;
+	}
 
-        String text = jSearchField.getText();
-        if (text.length() <= 0) {
-            return;
-        }
+	String text = jSearchField.getText();
+	if ( text.length() <= 0 ) {
+	    return;
+	}
 
-        Note n = NoteManager.getSingleton().findNote(currentNote, text);
-        if (n != null) {
-            currentNote = n;
-            showCurrentNote();
+	Note n = NoteManager.getSingleton().findNote(currentNote, text);
+	if ( n != null ) {
+	    currentNote = n;
+	    showCurrentNote();
 
-        } else {
-            JOptionPaneHelper.showInformationBox(this, "Die Suche nach '" + text + "' lieferte keine Ergebnisse.", "Information");
-        }
+	} else {
+	    JOptionPaneHelper.showInformationBox(this, "Die Suche nach '" + text + "' lieferte keine Ergebnisse.", "Information");
+	}
 
     }//GEN-LAST:event_fireFindNoteEvent
 
     private void fireDeleteNoteEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDeleteNoteEvent
         Object[] selection = jNotesList.getSelectedValues();
-        if (selection == null || selection.length == 0) {
-            return;
-        }
+	if ( selection == null || selection.length == 0 ) {
+	    return;
+	}
 
-        String message = ((selection.length == 1) ? "Gewählte Notiz " : selection.length + " Notizen ") + "wirklich löschen?";
+	String message = ((selection.length == 1) ? "Gewählte Notiz " : selection.length + " Notizen ") + "wirklich löschen?";
 
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-            for (Object selectedObject : selection) {
-                Note selectedNote = (Note) selectedObject;
-                NoteManager.getSingleton().removeNote(selectedNote);
-            }
-            refreshNoteList();
-            currentNote = NoteManager.getSingleton().getFirstNote();
-        }
+	if ( JOptionPaneHelper.showQuestionConfirmBox(this, message, "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION ) {
+	    for ( Object selectedObject : selection ) {
+		Note selectedNote = (Note) selectedObject;
+		NoteManager.getSingleton().removeNote(selectedNote);
+	    }
+	    refreshNoteList();
+	    currentNote = NoteManager.getSingleton().getFirstNote();
+	}
     }//GEN-LAST:event_fireDeleteNoteEvent
 
     private void fireRemoveVillageEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveVillageEvent
         Object[] values = jVillageList.getSelectedValues();
-        if (values == null || values.length == 0) {
-            return;
-        }
+	if ( values == null || values.length == 0 ) {
+	    return;
+	}
 
-        String message = values.length + ((values.length > 1) ? " Dörfer " : " Dorf ") + "entfernen?";
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Dörfer entfernen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-            for (Object o : values) {
-                currentNote.removeVillage((Village) o);
-            }
-            showCurrentNote();
-        }
+	String message = values.length + ((values.length > 1) ? " Dörfer " : " Dorf ") + "entfernen?";
+	if ( JOptionPaneHelper.showQuestionConfirmBox(this, message, "Dörfer entfernen", "Nein", "Ja") == JOptionPane.YES_OPTION ) {
+	    for ( Object o : values ) {
+		currentNote.removeVillage((Village) o);
+	    }
+	    showCurrentNote();
+	}
 
     }//GEN-LAST:event_fireRemoveVillageEvent
 
     private void fireMapMarkerChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireMapMarkerChangedEvent
-        if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
-            if (currentNote != null) {
-                currentNote.setMapMarker((Integer) jIconBox.getSelectedItem());
-            }
-        }
+        if ( evt.getStateChange() == java.awt.event.ItemEvent.SELECTED ) {
+	    if ( currentNote != null ) {
+		currentNote.setMapMarker((Integer) jIconBox.getSelectedItem());
+	    }
+	}
     }//GEN-LAST:event_fireMapMarkerChangedEvent
 
     private void fireAlwaysOnTopChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireAlwaysOnTopChangedEvent
@@ -974,333 +974,333 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Drag
     }//GEN-LAST:event_fireAlwaysOnTopChangedEvent
 
     private void fireNoteSymbolChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireNoteSymbolChangedEvent
-        if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
-            if (currentNote != null) {
-                currentNote.setNoteSymbol((Integer) jNoteSymbolBox.getSelectedItem());
-            }
-        }
+        if ( evt.getStateChange() == java.awt.event.ItemEvent.SELECTED ) {
+	    if ( currentNote != null ) {
+		currentNote.setNoteSymbol((Integer) jNoteSymbolBox.getSelectedItem());
+	    }
+	}
     }//GEN-LAST:event_fireNoteSymbolChangedEvent
 
     private void fireCenterVillageEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterVillageEvent
         try {
-            Village selection = (Village) jVillageList.getSelectedValue();
-            if (selection != null) {
-                DSWorkbenchMainFrame.getSingleton().centerVillage(selection);
-            }
+	    Village selection = (Village) jVillageList.getSelectedValue();
+	    if ( selection != null ) {
+		DSWorkbenchMainFrame.getSingleton().centerVillage(selection);
+	    }
 
-        } catch (Exception e) {
-            logger.error("Failed to center village", e);
-        }
+	} catch ( Exception e ) {
+	    logger.error("Failed to center village", e);
+	}
     }//GEN-LAST:event_fireCenterVillageEvent
 
     private void fireNoteTextUpdateEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireNoteTextUpdateEvent
-        if (currentNote != null) {
-            currentNote.setNoteText(jNotePane.getText());
-        }
+        if ( currentNote != null ) {
+	    currentNote.setNoteText(jNotePane.getText());
+	}
     }//GEN-LAST:event_fireNoteTextUpdateEvent
 
     private void fireVillagesFromClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireVillagesFromClipboardEvent
         try {
-            Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-            List<Village> villages = PluginManager.getSingleton().executeVillageParser((String) t.getTransferData(DataFlavor.stringFlavor));
-            if (villages == null || villages.isEmpty()) {
-                JOptionPaneHelper.showInformationBox(this, "Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.", "Information");
-                return;
-            } else {
-                NotifierFrame.doNotification("DS Workbench hat " + villages.size() + ((villages.size() == 1) ? " Dorf " : " Dörfer ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);
+	    Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+	    List<Village> villages = PluginManager.getSingleton().executeVillageParser((String) t.getTransferData(DataFlavor.stringFlavor));
+	    if ( villages == null || villages.isEmpty() ) {
+		JOptionPaneHelper.showInformationBox(this, "Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.", "Information");
+		return;
+	    } else {
+		NotifierFrame.doNotification("DS Workbench hat " + villages.size() + ((villages.size() == 1) ? " Dorf " : " Dörfer ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);
 
-                for (Village v : villages) {
-                    currentNote.addVillage(v);
-                }
+		for ( Village v : villages ) {
+		    currentNote.addVillage(v);
+		}
 
-                setCurrentNote(currentNote);
-            }
+		setCurrentNote(currentNote);
+	    }
 
-        } catch (Exception e) {
-            logger.error("Failed to parse source villages from clipboard", e);
-            JOptionPaneHelper.showErrorBox(this, "Fehler beim Lesen der Zwischenablage.", "Fehler");
-        }
+	} catch ( Exception e ) {
+	    logger.error("Failed to parse source villages from clipboard", e);
+	    JOptionPaneHelper.showErrorBox(this, "Fehler beim Lesen der Zwischenablage.", "Fehler");
+	}
     }//GEN-LAST:event_fireVillagesFromClipboardEvent
 
     private void fireVillagesToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireVillagesToClipboardEvent
-        if (jVillageList.getModel().getSize() == 0) {
-            return;
-        }
-        List<Village> selection = new LinkedList<Village>();
-        for (int i = 0; i < jVillageList.getModel().getSize(); i++) {
-            selection.add((Village) jVillageList.getModel().getElementAt(i));
-        }
-        try {
-            String result = VillageListFormatter.format(selection, "%VILLAGE%", true);
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result.toString()), null);
-            JOptionPaneHelper.showInformationBox(this, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert");
-        } catch (Exception e) {
-            logger.error("Failed to copy data to clipboard", e);
-            JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren der Daten.", "Fehler");
-        }
+        if ( jVillageList.getModel().getSize() == 0 ) {
+	    return;
+	}
+	List<Village> selection = new LinkedList<Village>();
+	for ( int i = 0; i < jVillageList.getModel().getSize(); i++ ) {
+	    selection.add((Village) jVillageList.getModel().getElementAt(i));
+	}
+	try {
+	    String result = VillageListFormatter.format(selection, "%VILLAGE%", true);
+	    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result.toString()), null);
+	    JOptionPaneHelper.showInformationBox(this, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert");
+	} catch ( Exception e ) {
+	    logger.error("Failed to copy data to clipboard", e);
+	    JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren der Daten.", "Fehler");
+	}
     }//GEN-LAST:event_fireVillagesToClipboardEvent
 
     private void fireNotesToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireNotesToClipboardEvent
         Object[] selection = jNotesList.getSelectedValues();
-        if (selection == null || selection.length == 0) {
-            return;
-        }
-        StringBuilder builder = new StringBuilder();
-        for (Object selectedObject : selection) {
-            Note selectedNote = (Note) selectedObject;
-            builder.append(selectedNote.toBBCode()).append("\n");
-        }
-        String b = builder.toString();
-        StringTokenizer t = new StringTokenizer(b, "[");
-        int cnt = t.countTokens();
-        if (cnt > 500) {
-            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Notizen benötigen mehr als 500 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
-                return;
-            }
-        }
-        try {
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(builder.toString()), null);
-            JOptionPaneHelper.showInformationBox(this, "Notizen in die Zwischenablage kopiert.", "Daten kopiert");
-        } catch (Exception e) {
-            logger.error("Failed to copy data to clipboard", e);
-            JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren der Daten.", "Fehler");
-        }
+	if ( selection == null || selection.length == 0 ) {
+	    return;
+	}
+	StringBuilder builder = new StringBuilder();
+	for ( Object selectedObject : selection ) {
+	    Note selectedNote = (Note) selectedObject;
+	    builder.append(selectedNote.toBBCode()).append("\n");
+	}
+	String b = builder.toString();
+	StringTokenizer t = new StringTokenizer(b, "[");
+	int cnt = t.countTokens();
+	if ( cnt > 500 ) {
+	    if ( JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Notizen benötigen mehr als 500 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION ) {
+		return;
+	    }
+	}
+	try {
+	    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(builder.toString()), null);
+	    JOptionPaneHelper.showInformationBox(this, "Notizen in die Zwischenablage kopiert.", "Daten kopiert");
+	} catch ( Exception e ) {
+	    logger.error("Failed to copy data to clipboard", e);
+	    JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren der Daten.", "Fehler");
+	}
     }//GEN-LAST:event_fireNotesToClipboardEvent
 
     private void fireSelectedNoteChangedEvent(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_fireSelectedNoteChangedEvent
         Note note = (Note) jNotesList.getSelectedValue();
-        if (note == null) {
-            return;
-        }
-        if (!evt.getValueIsAdjusting()) {
-            currentNote = note;
-            showCurrentNote();
-        }
+	if ( note == null ) {
+	    return;
+	}
+	if ( !evt.getValueIsAdjusting() ) {
+	    currentNote = note;
+	    showCurrentNote();
+	}
     }//GEN-LAST:event_fireSelectedNoteChangedEvent
 
     private void fireCopyNoteEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyNoteEvent
-        if (currentNote == null) {
-            return;
-        }
-        Note n = new Note();
-        n.setNoteText(currentNote.getNoteText());
-        n.setMapMarker(currentNote.getMapMarker());
-        n.setNoteSymbol(currentNote.getNoteSymbol());
-        List<Integer> villageIds = new LinkedList<Integer>();
+        if ( currentNote == null ) {
+	    return;
+	}
+	Note n = new Note();
+	n.setNoteText(currentNote.getNoteText());
+	n.setMapMarker(currentNote.getMapMarker());
+	n.setNoteSymbol(currentNote.getNoteSymbol());
+	List<Integer> villageIds = new LinkedList<Integer>();
 
-        for (Integer villageId : currentNote.getVillageIds()) {
-            villageIds.add(villageId);
-        }
-        n.setVillageIds(villageIds);
-        NoteManager.getSingleton().addNote(n);
-        currentNote = n;
-        refreshNoteList();
+	for ( Integer villageId : currentNote.getVillageIds() ) {
+	    villageIds.add(villageId);
+	}
+	n.setVillageIds(villageIds);
+	NoteManager.getSingleton().addNote(n);
+	currentNote = n;
+	refreshNoteList();
 
     }//GEN-LAST:event_fireCopyNoteEvent
 
     private void fireNotesToClipboardByVillageEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireNotesToClipboardByVillageEvent
 
-        Object[] selection = jNotesList.getSelectedValues();
-        if (selection == null || selection.length == 0) {
-            return;
-        }
+	Object[] selection = jNotesList.getSelectedValues();
+	if ( selection == null || selection.length == 0 ) {
+	    return;
+	}
 
-        Hashtable<Village, List<Note>> noteMap = new Hashtable<Village, List<Note>>();
+	Hashtable<Village, List<Note>> noteMap = new Hashtable<Village, List<Note>>();
 
-        for (Object selectedObject : selection) {
-            Note selectedNote = (Note) selectedObject;
-            for (Integer villageId : selectedNote.getVillageIds()) {
-                Village noteVillage = DataHolder.getSingleton().getVillagesById().get(villageId);
-                List<Note> notesForVillage = noteMap.get(noteVillage);
-                if (notesForVillage == null) {
-                    notesForVillage = new LinkedList<Note>();
-                    noteMap.put(noteVillage, notesForVillage);
-                }
-                notesForVillage.add(selectedNote);
-            }
-        }
+	for ( Object selectedObject : selection ) {
+	    Note selectedNote = (Note) selectedObject;
+	    for ( Integer villageId : selectedNote.getVillageIds() ) {
+		Village noteVillage = DataHolder.getSingleton().getVillagesById().get(villageId);
+		List<Note> notesForVillage = noteMap.get(noteVillage);
+		if ( notesForVillage == null ) {
+		    notesForVillage = new LinkedList<Note>();
+		    noteMap.put(noteVillage, notesForVillage);
+		}
+		notesForVillage.add(selectedNote);
+	    }
+	}
 
-        StringBuilder builder = new StringBuilder();
-        Village[] villageKeys = noteMap.keySet().toArray(new Village[]{});
-        Arrays.sort(villageKeys);
-        for (Village noteVillage : villageKeys) {
-            List<Note> notesForVillage = noteMap.get(noteVillage);
-            builder.append(noteVillage.toBBCode()).append(": ");
-            boolean isNext = false;
-            for (Note note : notesForVillage) {
-                if (isNext) {
-                    builder.append(", ");
-                }
-                builder.append(note.getNoteText());
-                if (note.getNoteSymbol() != -1) {
-                    builder.append(" [img]").append(ImageManager.getNoteImageURLOnServer(note.getNoteSymbol())).append("[/img]");
-                }
-                isNext = true;
-            }
-            builder.append("\n");
-        }
+	StringBuilder builder = new StringBuilder();
+	Village[] villageKeys = noteMap.keySet().toArray(new Village[]{});
+	Arrays.sort(villageKeys);
+	for ( Village noteVillage : villageKeys ) {
+	    List<Note> notesForVillage = noteMap.get(noteVillage);
+	    builder.append(noteVillage.toBBCode()).append(": ");
+	    boolean isNext = false;
+	    for ( Note note : notesForVillage ) {
+		if ( isNext ) {
+		    builder.append(", ");
+		}
+		builder.append(note.getNoteText());
+		if ( note.getNoteSymbol() != -1 ) {
+		    builder.append(" [img]").append(ImageManager.getNoteImageURLOnServer(note.getNoteSymbol())).append("[/img]");
+		}
+		isNext = true;
+	    }
+	    builder.append("\n");
+	}
 
-        String b = builder.toString();
-        StringTokenizer t = new StringTokenizer(b, "[");
-        int cnt = t.countTokens();
-        if (cnt > 500) {
-            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Notizen benötigen mehr als 500 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
-                return;
-            }
-        }
-        try {
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(builder.toString()), null);
-            JOptionPaneHelper.showInformationBox(this, "Notizen in die Zwischenablage kopiert.", "Daten kopiert");
-        } catch (Exception e) {
-            logger.error("Failed to copy data to clipboard", e);
-            JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren der Daten.", "Fehler");
-        }
+	String b = builder.toString();
+	StringTokenizer t = new StringTokenizer(b, "[");
+	int cnt = t.countTokens();
+	if ( cnt > 500 ) {
+	    if ( JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Notizen benötigen mehr als 500 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION ) {
+		return;
+	    }
+	}
+	try {
+	    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(builder.toString()), null);
+	    JOptionPaneHelper.showInformationBox(this, "Notizen in die Zwischenablage kopiert.", "Daten kopiert");
+	} catch ( Exception e ) {
+	    logger.error("Failed to copy data to clipboard", e);
+	    JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren der Daten.", "Fehler");
+	}
 
 
 
     }//GEN-LAST:event_fireNotesToClipboardByVillageEvent
 
     private void showCurrentNote() {
-        if (currentNote == null) {
-            jVillageList.setModel(new DefaultListModel());
-            jNotePane.setDocument(new HTMLDocument());
-        } else {
-            DefaultListModel model = new DefaultListModel();
-            for (Integer id : currentNote.getVillageIds()) {
-                Village v = DataHolder.getSingleton().getVillagesById().get(id);
-                model.addElement(v);
-            }
+	if ( currentNote == null ) {
+	    jVillageList.setModel(new DefaultListModel());
+	    jNotePane.setDocument(new HTMLDocument());
+	} else {
+	    DefaultListModel model = new DefaultListModel();
+	    for ( Integer id : currentNote.getVillageIds() ) {
+		Village v = DataHolder.getSingleton().getVillagesById().get(id);
+		model.addElement(v);
+	    }
 
-            jVillageList.setModel(model);
-            jNotePane.setText(currentNote.getNoteText());
-            jLastModified.setText(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(new Date(currentNote.getTimestamp())));
-            jIconBox.setSelectedItem(currentNote.getMapMarker());
-            jNoteSymbolBox.setSelectedItem(currentNote.getNoteSymbol());
-            jNotesList.setSelectedValue(currentNote, true);
-        }
+	    jVillageList.setModel(model);
+	    jNotePane.setText(currentNote.getNoteText());
+	    jLastModified.setText(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(new Date(currentNote.getTimestamp())));
+	    jIconBox.setSelectedItem(currentNote.getMapMarker());
+	    jNoteSymbolBox.setSelectedItem(currentNote.getNoteSymbol());
+	    jNotesList.setSelectedValue(currentNote, true);
+	}
 
-        List<Note> n = NoteManager.getSingleton().getNotes();
-        setTitle("Notizblock - Notiz " + (n.indexOf(currentNote) + 1) + " von " + n.size());
+	List<Note> n = NoteManager.getSingleton().getNotes();
+	setTitle("Notizblock - Notiz " + (n.indexOf(currentNote) + 1) + " von " + n.size());
     }
 
     @Override
-    public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
-        if (currentNote == null) {
-            return;
-        }
-        try {
-            Rectangle bounds = jVillageList.getBounds();
-            Point locationWithinNotepad = jVillageList.getLocationOnScreen();
-            Point notepadLocation = this.getLocationOnScreen();
-            locationWithinNotepad.translate(-notepadLocation.x, -notepadLocation.y);
-            bounds.setLocation(locationWithinNotepad);
-            if (bounds.contains(pDropLocation)) {
-                for (Village v : pVillages) {
-                    currentNote.addVillage(v);
-                }
-            }
-            showCurrentNote();
-            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.NOTE_LAYER);
-        } catch (Exception e) {
-            logger.error("Failed to insert dropped villages", e);
-        }
+    public void fireVillagesDraggedEvent( List<Village> pVillages, Point pDropLocation ) {
+	if ( currentNote == null ) {
+	    return;
+	}
+	try {
+	    Rectangle bounds = jVillageList.getBounds();
+	    Point locationWithinNotepad = jVillageList.getLocationOnScreen();
+	    Point notepadLocation = this.getLocationOnScreen();
+	    locationWithinNotepad.translate(-notepadLocation.x, -notepadLocation.y);
+	    bounds.setLocation(locationWithinNotepad);
+	    if ( bounds.contains(pDropLocation) ) {
+		for ( Village v : pVillages ) {
+		    currentNote.addVillage(v);
+		}
+	    }
+	    showCurrentNote();
+	    MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.NOTE_LAYER);
+	} catch ( Exception e ) {
+	    logger.error("Failed to insert dropped villages", e);
+	}
     }
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* java.awt.EventQueue.invokeLater(new Runnable() {
+    public static void main( String args[] ) {
+	/* java.awt.EventQueue.invokeLater(new Runnable() {
 
-        public void run() {
-        new DSWorkbenchNotepad().setVisible(true);
-        }
-        });*/
+	public void run() {
+	new DSWorkbenchNotepad().setVisible(true);
+	}
+	});*/
 
-        //String text = "|41:375:12| in memoria Frozen	177|492";
-        //System.out.println(text.trim().matches(".*\\(*[0-9]{1,3}\\|[0-9]{1,3}\\)*"));
+	//String text = "|41:375:12| in memoria Frozen	177|492";
+	//System.out.println(text.trim().matches(".*\\(*[0-9]{1,3}\\|[0-9]{1,3}\\)*"));
 
-        String test = "test;test;test;";
-        System.out.println(test.split(";").length);
+	String test = "test;test;test;";
+	System.out.println(test.split(";").length);
 
-        //System.out.println(text.matches("\\([0-9]{1,3}\\|[0-9]{1,3}\\)"));
-        //System.out.println(text.matches("[0-9]{1,3}\\:[0-9]{1,3}:[0-9]{1,3}"));
+	//System.out.println(text.matches("\\([0-9]{1,3}\\|[0-9]{1,3}\\)"));
+	//System.out.println(text.matches("[0-9]{1,3}\\:[0-9]{1,3}:[0-9]{1,3}"));
        /* String[] t = text.split("[0-9]{1,3}");
-        System.out.println(t.length);
-        System.out.println(t[t.length - 3]);
-        System.out.println(t[t.length - 2]);
-        System.out.println(t[t.length - 1]);
+	System.out.println(t.length);
+	System.out.println(t[t.length - 3]);
+	System.out.println(t[t.length - 2]);
+	System.out.println(t[t.length - 1]);
 
-        System.out.println(text.trim().matches(".+[0-9]{1,3}\\:[0-9]{1,3}:[0-9]{1,3}"));*/
+	System.out.println(text.trim().matches(".+[0-9]{1,3}\\:[0-9]{1,3}:[0-9]{1,3}"));*/
     }
 
     @Override
-    public void dragGestureRecognized(DragGestureEvent dge) {
-        Note selectedNote = (Note) jNotesList.getSelectedValue();
+    public void dragGestureRecognized( DragGestureEvent dge ) {
+	Note selectedNote = (Note) jNotesList.getSelectedValue();
 
-        List<Village> villageList = new LinkedList<Village>();
-        for (Integer villageId : selectedNote.getVillageIds()) {
-            Village v = DataHolder.getSingleton().getVillagesById().get(villageId);
-            if (!villageList.contains(v)) {
-                villageList.add(v);
-            }
-        }
-        if (villageList.isEmpty()) {
-            return;
-        }
-        Cursor c = ImageManager.createVillageDragCursor(villageList.size());
-        setCursor(c);
-        dge.startDrag(c, new VillageTransferable(villageList), this);
+	List<Village> villageList = new LinkedList<Village>();
+	for ( Integer villageId : selectedNote.getVillageIds() ) {
+	    Village v = DataHolder.getSingleton().getVillagesById().get(villageId);
+	    if ( !villageList.contains(v) ) {
+		villageList.add(v);
+	    }
+	}
+	if ( villageList.isEmpty() ) {
+	    return;
+	}
+	Cursor c = ImageManager.createVillageDragCursor(villageList.size());
+	setCursor(c);
+	dge.startDrag(c, new VillageTransferable(villageList), this);
     }
 
     @Override
-    public void dragEnter(DragSourceDragEvent dsde) {
+    public void dragEnter( DragSourceDragEvent dsde ) {
     }
 
     @Override
-    public void dragOver(DragSourceDragEvent dsde) {
+    public void dragOver( DragSourceDragEvent dsde ) {
     }
 
     @Override
-    public void dragDropEnd(DragSourceDropEvent dsde) {
-        setCursor(Cursor.getDefaultCursor());
+    public void dragDropEnd( DragSourceDropEvent dsde ) {
+	setCursor(Cursor.getDefaultCursor());
     }
 
     // <editor-fold defaultstate="collapsed" desc="Gesture handling">
     @Override
     public void fireExportAsBBGestureEvent() {
-        fireNotesToClipboardEvent(null);
+	fireNotesToClipboardEvent(null);
     }
 
     @Override
     public void fireNextPageGestureEvent() {
-        int current = jNotesList.getSelectedIndex();
-        int size = jNotesList.getModel().getSize();
-        if (current + 1 > size - 1) {
-            current = 0;
-        } else {
-            current += 1;
-        }
-        jNotesList.setSelectedIndex(current);
-        fireSelectedNoteChangedEvent(new ListSelectionEvent(jNotesList, 0, 0, false));
+	int current = jNotesList.getSelectedIndex();
+	int size = jNotesList.getModel().getSize();
+	if ( current + 1 > size - 1 ) {
+	    current = 0;
+	} else {
+	    current += 1;
+	}
+	jNotesList.setSelectedIndex(current);
+	fireSelectedNoteChangedEvent(new ListSelectionEvent(jNotesList, 0, 0, false));
     }
 
     @Override
     public void firePlainExportGestureEvent() {
-        fireNotesToClipboardByVillageEvent(null);
+	fireNotesToClipboardByVillageEvent(null);
     }
 
     @Override
     public void firePreviousPageGestureEvent() {
-        int current = jNotesList.getSelectedIndex();
-        int size = jNotesList.getModel().getSize();
-        if (current - 1 < 0) {
-            current = size - 1;
-        } else {
-            current -= 1;
-        }
-        jNotesList.setSelectedIndex(current);
-        fireSelectedNoteChangedEvent(new ListSelectionEvent(jNotesList, 0, 0, false));
+	int current = jNotesList.getSelectedIndex();
+	int size = jNotesList.getModel().getSize();
+	if ( current - 1 < 0 ) {
+	    current = size - 1;
+	} else {
+	    current -= 1;
+	}
+	jNotesList.setSelectedIndex(current);
+	fireSelectedNoteChangedEvent(new ListSelectionEvent(jNotesList, 0, 0, false));
     }
 // </editor-fold>
     // Variables declaration - do not modify//GEN-BEGIN:variables

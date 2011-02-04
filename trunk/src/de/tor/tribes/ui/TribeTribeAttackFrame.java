@@ -12,8 +12,10 @@ import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Barbarians;
+import de.tor.tribes.types.DummyUserProfile;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.TroopSplitDialog.TroopSplit;
 import de.tor.tribes.ui.algo.AlgorithmLogPanel;
@@ -3598,7 +3600,11 @@ private void fireSplitSourceVillagesEvent(java.awt.event.MouseEvent evt) {//GEN-
             }
         } else {
             //no tags available, take current users villages
-            Village[] villages = DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillageList();
+            UserProfile profile = GlobalOptions.getSelectedProfile();
+	    if(profile == null){
+		profile = DummyUserProfile.getSingleton();
+	    }
+	    Village[] villages = profile.getTribe().getVillageList();
             villageList.addAll(Arrays.asList(villages));
 
         }

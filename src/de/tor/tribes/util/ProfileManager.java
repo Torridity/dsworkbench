@@ -84,7 +84,12 @@ public class ProfileManager {
                 //server dir
                 File profilesDir = new File(f.getPath() + "/profiles/");
                 if (profilesDir.exists()) {
-                    for (File profileDir : profilesDir.listFiles()) {
+                    File[] profiles = profilesDir.listFiles();
+                    if (profiles != null && profiles.length != 0) {
+                        logger.debug("Got " + profiles.length + "profile directories");
+                    }
+                    for (File profileDir : profiles) {
+                        logger.debug("Got profile directory '" + profileDir.getPath() + "'");
                         if (profileDir.isDirectory()) {
                             //profile directory
                             String profileId = profileDir.getName();
@@ -93,6 +98,7 @@ public class ProfileManager {
                             try {
                                 UserProfile profile = UserProfile.loadProfile(serverName, Long.parseLong(profileId));
                                 if (profile != null) {
+                                    logger.info("Adding loaded profile #" + profileId);
                                     mProfiles.add(profile);
                                 }
                             } catch (Exception e) {
@@ -111,7 +117,7 @@ public class ProfileManager {
                         String player = prop.getProperty("player." + server);
 
                         logger.debug(" - found player '" + player + "' for server '" + server + "'");
-                        UserProfile newProfile = UserProfile.create(server, player);
+                        UserProfile newProfile = UserProfile.createFast(server, player);
 
                         if (newProfile != null) {
                             mProfiles.add(newProfile);

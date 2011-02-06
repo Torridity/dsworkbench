@@ -24,6 +24,8 @@
   <tocitem text="Grundlagen " target="pages.basics" image="images.tictac_orange">
    <tocitem text="Navigation auf der Karte " target="pages.map_navigation" image="images.tictac_grey"/>
 
+   <tocitem text="Mausgesten " target="pages.mouse_gestures" image="images.tictac_grey"/>
+
    <tocitem text="Erweiterte Kartenfunktionen " target="pages.extended_map_functions" image="images.tictac_grey"/>
 
    <tocitem text="Minimap " target="pages.minimap_basics" image="images.tictac_grey"/>

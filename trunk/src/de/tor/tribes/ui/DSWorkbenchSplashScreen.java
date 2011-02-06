@@ -192,7 +192,9 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
         try {
             //open profile selection
-            if (ProfileManager.getSingleton().getProfiles().length == 1) {
+            if (ProfileManager.getSingleton().getProfiles().length == 0) {
+                //no profile found...this is handles by the settings validation
+            } else if (ProfileManager.getSingleton().getProfiles().length == 1) {
                 //only one single profile was found, use it
                 UserProfile profile = ProfileManager.getSingleton().getProfiles()[0];
                 String server = profile.getServerId();
@@ -303,7 +305,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
             logger.debug("Initializing application window");
             DSWorkbenchMainFrame.getSingleton().init();
-           /* logger.debug("Initializing search frame");
+            /* logger.debug("Initializing search frame");
             DSWorkbenchSearchFrame.getSingleton();*/
 
             logger.info("Showing application window");

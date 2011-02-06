@@ -80,6 +80,8 @@
 
 <mapID target="pages.map_tools_radar" url="pages/map_tools.html#radar"/>
 
+<mapID target="pages.mouse_gestures" url="pages/mouse_gestures.html"/>
+
 <mapID target="pages.views" url="pages/views.html"/>
 
 <mapID target="pages.export_import" url="pages/export_import.html"/>

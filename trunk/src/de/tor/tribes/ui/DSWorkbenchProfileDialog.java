@@ -227,7 +227,7 @@ public class DSWorkbenchProfileDialog extends javax.swing.JDialog {
                         return;
                     }
                 }
-                if (UserProfile.create(server, tribe.getName(), uvId) == null) {
+                if (UserProfile.create(server, tribe.getName(), uvId, true) == null) {
                     JOptionPaneHelper.showErrorBox(this, "Fehler bei der Profilerstellung.", "Fehler");
                     return;
                 }

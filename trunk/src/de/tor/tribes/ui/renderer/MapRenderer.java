@@ -2096,24 +2096,16 @@ public class MapRenderer extends Thread {
 
             Paint p = g2d.getPaint();
             if (mouseTribe != null) {
-                Rectangle copy = null;
+                //Rectangle copy = null;
                 Iterator<Village> keys = villagePositions.keySet().iterator();
                 while (keys.hasNext()) {
                     Village v = keys.next();
                     if ((v.getTribe() == null && mouseTribe.equals(Barbarians.getSingleton())) || (v.getTribe() != null && mouseTribe.equals(v.getTribe()))) {
                         Rectangle r = villagePositions.get(v);
-                        if (copy == null) {
-                            Ellipse2D ellipse = new Ellipse2D.Float(r.x, r.y, r.height, r.height);
-                            g2d.setPaint(new RoundGradientPaint(r.getCenterX(), r.getCenterY(), Color.yellow, new Point2D.Double(0, r.height / 2), new Color(0, 0, 0, 0)));
-                            g2d.fill(ellipse);
-                            copy = new Rectangle(r.x, r.y, r.height, r.height);
-                            if (!MapPanel.getSingleton().getBounds().contains(copy)) {
-                                copy = null;
-                            }
-
-                        } else {
-                            g2d.copyArea(copy.x, copy.y, copy.height, copy.height, r.x - copy.x, r.y - copy.y);
-                        }
+                        // if (copy == null) {
+                        Ellipse2D ellipse = new Ellipse2D.Float(r.x, r.y, r.height, r.height);
+                        g2d.setPaint(new RoundGradientPaint(r.getCenterX(), r.getCenterY(), Color.yellow, new Point2D.Double(0, r.height / 2), new Color(0, 0, 0, 0)));
+                        g2d.fill(ellipse);
                     }
                 }
             }
@@ -2189,7 +2181,7 @@ public class MapRenderer extends Thread {
                     double yi = Math.sin(Math.toRadians(270 + cnt * 10)) * diam / 2;
                     c.setXPos(xp);
                     c.setYPos(yp);
-                    c.setFilled(true);
+                    c.setFilled(false);
                     c.setXPosEnd(xp + diam);
                     c.setYPosEnd(yp + diam);
                     Color co = Color.RED;

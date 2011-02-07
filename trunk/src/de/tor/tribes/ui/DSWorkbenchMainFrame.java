@@ -86,10 +86,10 @@ import javax.swing.table.DefaultTableModel;
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
-        MapPanelListener,
-        ToolChangeListener,
-        DSWorkbenchFrameListener,
-        MapShotListener {
+	MapPanelListener,
+	ToolChangeListener,
+	DSWorkbenchFrameListener,
+	MapShotListener {
 
     private static Logger logger = Logger.getLogger("MainApp");
     private double dCenterX = 500.0;
@@ -100,458 +100,456 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     private static DSWorkbenchMainFrame SINGLETON = null;
     private boolean initialized = false;
     private JFrame fullscreenFrame = null;
-    private ImageIcon uvModeOn = null;
-    private ImageIcon uvModeOff = null;
     private boolean putOnline = false;
     private MouseGestures mMouseGestures = new MouseGestures();
     private boolean bWatchClipboard = true;
 
     public static synchronized DSWorkbenchMainFrame getSingleton() {
-        if (SINGLETON == null) {
-            SINGLETON = new DSWorkbenchMainFrame();
-        }
-        return SINGLETON;
+	if ( SINGLETON == null ) {
+	    SINGLETON = new DSWorkbenchMainFrame();
+	}
+	return SINGLETON;
     }
 
     /** Creates new form MapFrame */
     DSWorkbenchMainFrame() {
-        initComponents();
+	initComponents();
+	setAlwaysOnTop(false);
+	setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
+	jExportDialog.pack();
+	jAddROIDialog.pack();
+	jPanel1.setIgnoreRepaint(true);
+	mAbout = new AboutDialog(this, true);
+	mAbout.pack();
+	// <editor-fold defaultstate="collapsed" desc=" Register ShutdownHook ">
 
-        setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
-        jExportDialog.pack();
-        jAddROIDialog.pack();
-        jPanel1.setIgnoreRepaint(true);
-        mAbout = new AboutDialog(this, true);
-        mAbout.pack();
-        // <editor-fold defaultstate="collapsed" desc=" Register ShutdownHook ">
+	Runtime.getRuntime().addShutdownHook(new MainShutdownHook());
 
-        Runtime.getRuntime().addShutdownHook(new MainShutdownHook());
+	// </editor-fold>
 
-        // </editor-fold>
+	// <editor-fold defaultstate="collapsed" desc=" General UI setup ">
+	Vector<String> v = new Vector<String>(Constants.LAYER_COUNT);
+	for ( int i = 0; i < Constants.LAYER_COUNT; i++ ) {
+	    v.add("");
+	}
 
-        // <editor-fold defaultstate="collapsed" desc=" General UI setup ">
-        Vector<String> v = new Vector<String>(Constants.LAYER_COUNT);
-        for (int i = 0; i < Constants.LAYER_COUNT; i++) {
-            v.add("");
-        }
+	String layerOrder = GlobalOptions.getProperty("layer.order");
+	if ( layerOrder == null ) {
+	    Enumeration<String> values = Constants.LAYERS.keys();
+	    while ( values.hasMoreElements() ) {
+		String layer = values.nextElement();
+		v.set(Constants.LAYERS.get(layer), layer);
+	    }
+	} else {
+	    //try to use stored layers
+	    String[] layers = layerOrder.split(";");
+	    if ( layers.length == Constants.LAYER_COUNT ) {
+		//layer sizes are equal, so set layers in stored order
+		int cnt = 0;
+		for ( String layer : layers ) {
+		    v.set(cnt, layer);
+		    cnt++;
+		}
+	    } else {
+		//layer number has changed since value was stored, so rebuild
+		Enumeration<String> values = Constants.LAYERS.keys();
+		while ( values.hasMoreElements() ) {
+		    String layer = values.nextElement();
+		    v.set(Constants.LAYERS.get(layer), layer);
+		}
+	    }
+	}
 
-        String layerOrder = GlobalOptions.getProperty("layer.order");
-        if (layerOrder == null) {
-            Enumeration<String> values = Constants.LAYERS.keys();
-            while (values.hasMoreElements()) {
-                String layer = values.nextElement();
-                v.set(Constants.LAYERS.get(layer), layer);
-            }
-        } else {
-            //try to use stored layers
-            String[] layers = layerOrder.split(";");
-            if (layers.length == Constants.LAYER_COUNT) {
-                //layer sizes are equal, so set layers in stored order
-                int cnt = 0;
-                for (String layer : layers) {
-                    v.set(cnt, layer);
-                    cnt++;
-                }
-            } else {
-                //layer number has changed since value was stored, so rebuild
-                Enumeration<String> values = Constants.LAYERS.keys();
-                while (values.hasMoreElements()) {
-                    String layer = values.nextElement();
-                    v.set(Constants.LAYERS.get(layer), layer);
-                }
-            }
-        }
+	DefaultListModel model = new DefaultListModel();
+	for ( String s : v ) {
+	    model.addElement(s);
+	}
 
-        DefaultListModel model = new DefaultListModel();
-        for (String s : v) {
-            model.addElement(s);
-        }
+	jLayerList.setModel(model);
 
-        jLayerList.setModel(model);
+	jLayerList.setCellRenderer(new ListCellRenderer() {
 
-        jLayerList.setCellRenderer(new ListCellRenderer() {
+	    @Override
+	    public Component getListCellRendererComponent( JList list, Object value, int index, boolean isSelected, boolean cellHasFocus ) {
+		Component c = new DefaultListCellRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+		try {
+		    JLabel label = ((JLabel) c);
+		    if ( value.equals("Dörfer") ) {
+			//map layer is red
+			if ( !isSelected ) {
+			    label.setBackground(Color.RED);
+			}
+		    } else if ( value.equals("Markierungen") ) {
+			//marker layer is not influenced by map layer
+			//so it gets a special color
+			if ( !isSelected ) {
+			    label.setBackground(Color.LIGHT_GRAY);
+			}
+		    } else {
+			//layers which are "behind" map are disabled
+			int villageIndex = ((DefaultListModel) list.getModel()).indexOf("Dörfer");
+			if ( index < villageIndex && !isSelected ) {
+			    label.setForeground(Color.LIGHT_GRAY);
+			}
+		    }
+		} catch ( Exception e ) {
+		}
+		return c;
+	    }
 
-            @Override
-            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                Component c = new DefaultListCellRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                try {
-                    JLabel label = ((JLabel) c);
-                    if (value.equals("Dörfer")) {
-                        //map layer is red
-                        if (!isSelected) {
-                            label.setBackground(Color.RED);
-                        }
-                    } else if (value.equals("Markierungen")) {
-                        //marker layer is not influenced by map layer
-                        //so it gets a special color
-                        if (!isSelected) {
-                            label.setBackground(Color.LIGHT_GRAY);
-                        }
-                    } else {
-                        //layers which are "behind" map are disabled
-                        int villageIndex = ((DefaultListModel) list.getModel()).indexOf("Dörfer");
-                        if (index < villageIndex && !isSelected) {
-                            label.setForeground(Color.LIGHT_GRAY);
-                        }
-                    }
-                } catch (Exception e) {
-                }
-                return c;
-            }
-        });
+	});
 
-        getContentPane().setBackground(Constants.DS_BACK);
-        pack();
+	getContentPane().setBackground(Constants.DS_BACK);
+	pack();
 
-        // </editor-fold>        
+	// </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc=" Add global KeyListener ">
-        jMenuBar1.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, 0), "none");
-        Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
+	// <editor-fold defaultstate="collapsed" desc=" Add global KeyListener ">
+	jMenuBar1.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, 0), "none");
+	Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
 
-            @Override
-            public void eventDispatched(AWTEvent event) {
-                if (((KeyEvent) event).getID() == KeyEvent.KEY_PRESSED) {
-                    KeyEvent e = (KeyEvent) event;
-                    if (DSWorkbenchMainFrame.getSingleton().isActive() || fullscreenFrame != null) {
-                        //move shortcuts
-                        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                            scroll(0.0, 2.0);
-                        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
-                            scroll(0.0, -2.0);
-                        } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                            scroll(-2.0, 0.0);
-                        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                            scroll(2.0, 0.0);
-                        } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown()) {
-                            //shot minimap tool shortcut
-                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_AXE);
-                        } else if ((e.getKeyCode() == KeyEvent.VK_2) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown()) {
-                            //attack axe tool shortcut
-                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_RAM);
-                        } else if ((e.getKeyCode() == KeyEvent.VK_3) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown()) {
-                            //attack ram tool shortcut
-                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SNOB);
-                        } else if ((e.getKeyCode() == KeyEvent.VK_4) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown()) {
-                            //attack snob tool shortcut
-                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SPY);
-                        } else if ((e.getKeyCode() == KeyEvent.VK_5) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown()) {
-                            //attack sword tool shortcut
-                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_LIGHT);
-                        } else if ((e.getKeyCode() == KeyEvent.VK_6) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown()) {
-                            //attack light tool shortcut
-                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_HEAVY);
-                        } else if ((e.getKeyCode() == KeyEvent.VK_7) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown()) {
-                            //attack heavy tool shortcut
-                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SWORD);
-                        } else if ((e.getKeyCode() == KeyEvent.VK_S) && e.isControlDown() && !e.isAltDown()) {
-                            //search frame shortcut
-                            DSWorkbenchSearchFrame.getSingleton().setVisible(!DSWorkbenchSearchFrame.getSingleton().isVisible());
-                        }
-                    }
+	    @Override
+	    public void eventDispatched( AWTEvent event ) {
+		if ( ((KeyEvent) event).getID() == KeyEvent.KEY_PRESSED ) {
+		    KeyEvent e = (KeyEvent) event;
+		    if ( DSWorkbenchMainFrame.getSingleton().isActive() || fullscreenFrame != null ) {
+			//move shortcuts
+			if ( e.getKeyCode() == KeyEvent.VK_DOWN ) {
+			    scroll(0.0, 2.0);
+			} else if ( e.getKeyCode() == KeyEvent.VK_UP ) {
+			    scroll(0.0, -2.0);
+			} else if ( e.getKeyCode() == KeyEvent.VK_LEFT ) {
+			    scroll(-2.0, 0.0);
+			} else if ( e.getKeyCode() == KeyEvent.VK_RIGHT ) {
+			    scroll(2.0, 0.0);
+			} else if ( (e.getKeyCode() == KeyEvent.VK_1) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown() ) {
+			    //shot minimap tool shortcut
+			    MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_AXE);
+			} else if ( (e.getKeyCode() == KeyEvent.VK_2) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown() ) {
+			    //attack axe tool shortcut
+			    MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_RAM);
+			} else if ( (e.getKeyCode() == KeyEvent.VK_3) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown() ) {
+			    //attack ram tool shortcut
+			    MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SNOB);
+			} else if ( (e.getKeyCode() == KeyEvent.VK_4) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown() ) {
+			    //attack snob tool shortcut
+			    MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SPY);
+			} else if ( (e.getKeyCode() == KeyEvent.VK_5) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown() ) {
+			    //attack sword tool shortcut
+			    MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_LIGHT);
+			} else if ( (e.getKeyCode() == KeyEvent.VK_6) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown() ) {
+			    //attack light tool shortcut
+			    MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_HEAVY);
+			} else if ( (e.getKeyCode() == KeyEvent.VK_7) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown() ) {
+			    //attack heavy tool shortcut
+			    MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SWORD);
+			} else if ( (e.getKeyCode() == KeyEvent.VK_S) && e.isControlDown() && !e.isAltDown() ) {
+			    //search frame shortcut
+			    DSWorkbenchSearchFrame.getSingleton().setVisible(!DSWorkbenchSearchFrame.getSingleton().isVisible());
+			}
+		    }
 
-                    //misc shortcuts
-                    if ((e.getKeyCode() == KeyEvent.VK_0) && e.isAltDown()) {
-                        //no tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DEFAULT);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        //measure tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MEASURE);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_2) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        //mark tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MARK);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_3) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        //tag tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_TAG);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_4) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        //attack ingame tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SUPPORT);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_5) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        //attack ingame tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SELECTION);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_6) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        //attack ingame tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_RADAR);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_7) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        //attack ingame tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_INGAME);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_8) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        //res ingame tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SEND_RES_INGAME);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown()) {
-                        //move minimap tool shortcut
-                        MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MOVE);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_2) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown()) {
-                        //zoom minimap tool shortcut
-                        MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ZOOM);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_3) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown()) {
-                        //shot minimap tool shortcut
-                        MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SHOT);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_T) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown()) {
-                        //search time shortcut
-                        ClockFrame.getSingleton().setVisible(!ClockFrame.getSingleton().isVisible());
-                    } else if ((e.getKeyCode() == KeyEvent.VK_F) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown()) {
-                        if (fullscreenFrame == null) {
-                            jPanel1.remove(MapPanel.getSingleton());
-                            fullscreenFrame = new JFrame();
-                            fullscreenFrame.add(MapPanel.getSingleton());
-                            Dimension fullscreen = Toolkit.getDefaultToolkit().getScreenSize();
-                            fullscreenFrame.setSize(fullscreen);
-                            fullscreenFrame.setUndecorated(true);
-                            fullscreenFrame.setVisible(true);
-                        } else {
-                            fullscreenFrame.remove(MapPanel.getSingleton());
-                            jPanel1.add(MapPanel.getSingleton());
-                            jPanel1.repaint();//.updateUI();
-                            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
-                            fullscreenFrame.dispose();
-                            fullscreenFrame = null;
-                        }
+		    //misc shortcuts
+		    if ( (e.getKeyCode() == KeyEvent.VK_0) && e.isAltDown() ) {
+			//no tool shortcut
+			MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DEFAULT);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_1) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown() ) {
+			//measure tool shortcut
+			MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MEASURE);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_2) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown() ) {
+			//mark tool shortcut
+			MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MARK);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_3) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown() ) {
+			//tag tool shortcut
+			MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_TAG);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_4) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown() ) {
+			//attack ingame tool shortcut
+			MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SUPPORT);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_5) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown() ) {
+			//attack ingame tool shortcut
+			MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SELECTION);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_6) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown() ) {
+			//attack ingame tool shortcut
+			MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_RADAR);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_7) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown() ) {
+			//attack ingame tool shortcut
+			MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_INGAME);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_8) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown() ) {
+			//res ingame tool shortcut
+			MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SEND_RES_INGAME);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_1) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown() ) {
+			//move minimap tool shortcut
+			MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MOVE);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_2) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown() ) {
+			//zoom minimap tool shortcut
+			MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ZOOM);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_3) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown() ) {
+			//shot minimap tool shortcut
+			MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SHOT);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_T) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown() ) {
+			//search time shortcut
+			ClockFrame.getSingleton().setVisible(!ClockFrame.getSingleton().isVisible());
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_F) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown() ) {
+			if ( fullscreenFrame == null ) {
+			    jPanel1.remove(MapPanel.getSingleton());
+			    fullscreenFrame = new JFrame();
+			    fullscreenFrame.add(MapPanel.getSingleton());
+			    Dimension fullscreen = Toolkit.getDefaultToolkit().getScreenSize();
+			    fullscreenFrame.setSize(fullscreen);
+			    fullscreenFrame.setUndecorated(true);
+			    fullscreenFrame.setVisible(true);
+			} else {
+			    fullscreenFrame.remove(MapPanel.getSingleton());
+			    jPanel1.add(MapPanel.getSingleton());
+			    jPanel1.repaint();//.updateUI();
+			    MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
+			    fullscreenFrame.dispose();
+			    fullscreenFrame = null;
+			}
 
-                        if (ServerSettings.getSingleton().getCoordType() != 2) {
-                            int[] hier = DSCalculator.hierarchicalToXy(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()), 12);
-                            if (hier != null) {
-                                MapPanel.getSingleton().updateMapPosition(hier[0], hier[1]);
-                            }
-                        } else {
-                            MapPanel.getSingleton().updateMapPosition(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()));
-                        }
-                    } else if ((e.getKeyCode() == KeyEvent.VK_F) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        DSWorkbenchMarkerFrame.getSingleton().firePublicDrawMarkedOnlyChangedEvent();
-                    } else if ((e.getKeyCode() == KeyEvent.VK_S) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        fireCreateMapShotEvent(null);
-                    } else if (e.getKeyCode() == KeyEvent.VK_F2) {
-                        DSWorkbenchAttackFrame.getSingleton().setVisible(!DSWorkbenchAttackFrame.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F3) {
-                        DSWorkbenchMarkerFrame.getSingleton().setVisible(!DSWorkbenchMarkerFrame.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F4) {
-                        DSWorkbenchTroopsFrame.getSingleton().setVisible(!DSWorkbenchTroopsFrame.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F5) {
-                        DSWorkbenchRankFrame.getSingleton().setVisible(!DSWorkbenchRankFrame.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F6) {
-                        DSWorkbenchFormFrame.getSingleton().setVisible(!DSWorkbenchFormFrame.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F7) {
-                        if (jShowChurchFrame.isEnabled()) {
-                            DSWorkbenchChurchFrame.getSingleton().setVisible(!DSWorkbenchChurchFrame.getSingleton().isVisible());
-                        }
-                    } else if (e.getKeyCode() == KeyEvent.VK_F8) {
-                        DSWorkbenchConquersFrame.getSingleton().setVisible(!DSWorkbenchConquersFrame.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F9) {
-                        DSWorkbenchNotepad.getSingleton().setVisible(!DSWorkbenchNotepad.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F10) {
-                        DSWorkbenchTagFrame.getSingleton().setVisible(!DSWorkbenchTagFrame.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F11) {
-                        DSWorkbenchStatsFrame.getSingleton().setVisible(!DSWorkbenchStatsFrame.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F12) {
-                        DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
-                        //ROI 1
-                        centerROI(0);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_2) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
-                        //ROI 2
-                        centerROI(1);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_3) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
-                        //ROI 3
-                        centerROI(2);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_4) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
-                        //ROI 4
-                        centerROI(3);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_5) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
-                        //ROI 5
-                        centerROI(4);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_6) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
-                        //ROI 6
-                        centerROI(5);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_7) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
-                        //ROI 7
-                        centerROI(6);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_8) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
-                        //ROI 8
-                        centerROI(7);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_9) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
-                        //ROI 9
-                        centerROI(8);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_0) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
-                        //ROI 10
-                        centerROI(9);
-                    } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                        MapPanel.getSingleton().requestFocusInWindow();
-                        MapPanel.getSingleton().setSpaceDown(true);
-                    } else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-                        MapPanel.getSingleton().requestFocusInWindow();
-                        MapPanel.getSingleton().setShiftDown(true);
-                    }
-                } else if (((KeyEvent) event).getID() == KeyEvent.KEY_RELEASED) {
-                    KeyEvent e = (KeyEvent) event;
-                    if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                        MapPanel.getSingleton().setSpaceDown(false);
-                    } else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-                        MapPanel.getSingleton().setShiftDown(false);
-                    }
-                }
-            }
-        },
-                AWTEvent.KEY_EVENT_MASK);
-        // </editor-fold>
+			if ( ServerSettings.getSingleton().getCoordType() != 2 ) {
+			    int[] hier = DSCalculator.hierarchicalToXy(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()), 12);
+			    if ( hier != null ) {
+				MapPanel.getSingleton().updateMapPosition(hier[0], hier[1]);
+			    }
+			} else {
+			    MapPanel.getSingleton().updateMapPosition(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()));
+			}
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_F) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown() ) {
+			DSWorkbenchMarkerFrame.getSingleton().firePublicDrawMarkedOnlyChangedEvent();
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_S) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown() ) {
+			fireCreateMapShotEvent(null);
+		    } else if ( e.getKeyCode() == KeyEvent.VK_F2 ) {
+			DSWorkbenchAttackFrame.getSingleton().setVisible(!DSWorkbenchAttackFrame.getSingleton().isVisible());
+		    } else if ( e.getKeyCode() == KeyEvent.VK_F3 ) {
+			DSWorkbenchMarkerFrame.getSingleton().setVisible(!DSWorkbenchMarkerFrame.getSingleton().isVisible());
+		    } else if ( e.getKeyCode() == KeyEvent.VK_F4 ) {
+			DSWorkbenchTroopsFrame.getSingleton().setVisible(!DSWorkbenchTroopsFrame.getSingleton().isVisible());
+		    } else if ( e.getKeyCode() == KeyEvent.VK_F5 ) {
+			DSWorkbenchRankFrame.getSingleton().setVisible(!DSWorkbenchRankFrame.getSingleton().isVisible());
+		    } else if ( e.getKeyCode() == KeyEvent.VK_F6 ) {
+			DSWorkbenchFormFrame.getSingleton().setVisible(!DSWorkbenchFormFrame.getSingleton().isVisible());
+		    } else if ( e.getKeyCode() == KeyEvent.VK_F7 ) {
+			if ( jShowChurchFrame.isEnabled() ) {
+			    DSWorkbenchChurchFrame.getSingleton().setVisible(!DSWorkbenchChurchFrame.getSingleton().isVisible());
+			}
+		    } else if ( e.getKeyCode() == KeyEvent.VK_F8 ) {
+			DSWorkbenchConquersFrame.getSingleton().setVisible(!DSWorkbenchConquersFrame.getSingleton().isVisible());
+		    } else if ( e.getKeyCode() == KeyEvent.VK_F9 ) {
+			DSWorkbenchNotepad.getSingleton().setVisible(!DSWorkbenchNotepad.getSingleton().isVisible());
+		    } else if ( e.getKeyCode() == KeyEvent.VK_F10 ) {
+			DSWorkbenchTagFrame.getSingleton().setVisible(!DSWorkbenchTagFrame.getSingleton().isVisible());
+		    } else if ( e.getKeyCode() == KeyEvent.VK_F11 ) {
+			DSWorkbenchStatsFrame.getSingleton().setVisible(!DSWorkbenchStatsFrame.getSingleton().isVisible());
+		    } else if ( e.getKeyCode() == KeyEvent.VK_F12 ) {
+			DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_1) && e.isControlDown() && e.isAltDown() && !e.isShiftDown() ) {
+			//ROI 1
+			centerROI(0);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_2) && e.isControlDown() && e.isAltDown() && !e.isShiftDown() ) {
+			//ROI 2
+			centerROI(1);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_3) && e.isControlDown() && e.isAltDown() && !e.isShiftDown() ) {
+			//ROI 3
+			centerROI(2);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_4) && e.isControlDown() && e.isAltDown() && !e.isShiftDown() ) {
+			//ROI 4
+			centerROI(3);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_5) && e.isControlDown() && e.isAltDown() && !e.isShiftDown() ) {
+			//ROI 5
+			centerROI(4);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_6) && e.isControlDown() && e.isAltDown() && !e.isShiftDown() ) {
+			//ROI 6
+			centerROI(5);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_7) && e.isControlDown() && e.isAltDown() && !e.isShiftDown() ) {
+			//ROI 7
+			centerROI(6);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_8) && e.isControlDown() && e.isAltDown() && !e.isShiftDown() ) {
+			//ROI 8
+			centerROI(7);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_9) && e.isControlDown() && e.isAltDown() && !e.isShiftDown() ) {
+			//ROI 9
+			centerROI(8);
+		    } else if ( (e.getKeyCode() == KeyEvent.VK_0) && e.isControlDown() && e.isAltDown() && !e.isShiftDown() ) {
+			//ROI 10
+			centerROI(9);
+		    } else if ( e.getKeyCode() == KeyEvent.VK_SPACE ) {
+			MapPanel.getSingleton().requestFocusInWindow();
+			MapPanel.getSingleton().setSpaceDown(true);
+		    } else if ( e.getKeyCode() == KeyEvent.VK_SHIFT ) {
+			MapPanel.getSingleton().requestFocusInWindow();
+			MapPanel.getSingleton().setShiftDown(true);
+		    }
+		} else if ( ((KeyEvent) event).getID() == KeyEvent.KEY_RELEASED ) {
+		    KeyEvent e = (KeyEvent) event;
+		    if ( e.getKeyCode() == KeyEvent.VK_SPACE ) {
+			MapPanel.getSingleton().setSpaceDown(false);
+		    } else if ( e.getKeyCode() == KeyEvent.VK_SHIFT ) {
+			MapPanel.getSingleton().setShiftDown(false);
+		    }
+		}
+	    }
 
-        // <editor-fold defaultstate="collapsed" desc=" Load UI Icons ">
+	},
+							AWTEvent.KEY_EVENT_MASK);
+	// </editor-fold>
+
+	// <editor-fold defaultstate="collapsed" desc=" Load UI Icons ">
 
 
 
 
 
-        try {
-            jOnlineLabel.setIcon(new ImageIcon("./graphics/icons/online.png"));
-            jEnableClipboardWatchButton.setIcon(new ImageIcon("./graphics/icons/watch_clipboard.png"));
-            jCenterIngameButton.setIcon(new ImageIcon("./graphics/icons/center.png"));
-            jRefreshButton.setIcon(new ImageIcon("./graphics/icons/refresh.png"));
-            jCenterCoordinateIngame.setIcon(new ImageIcon("./graphics/icons/center.png"));
-            uvModeOn = new ImageIcon(getClass().getResource("/res/ui/uv.png"));
-            uvModeOff = new ImageIcon(getClass().getResource("/res/ui/uv_off.png"));
-        } catch (Exception e) {
-            logger.error("Failed to load status icon(s)", e);
-        }
+	try {
+	    jOnlineLabel.setIcon(new ImageIcon("./graphics/icons/online.png"));
+	    jEnableClipboardWatchButton.setIcon(new ImageIcon("./graphics/icons/watch_clipboard.png"));
+	    jCenterIngameButton.setIcon(new ImageIcon("./graphics/icons/center.png"));
+	    jRefreshButton.setIcon(new ImageIcon("./graphics/icons/refresh.png"));
+	    jCenterCoordinateIngame.setIcon(new ImageIcon("./graphics/icons/center.png"));
+	} catch ( Exception e ) {
+	    logger.error("Failed to load status icon(s)", e);
+	}
 // </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc=" Check for desktop support ">
-        if (!Desktop.isDesktopSupported()) {
-            jCenterIngameButton.setEnabled(false);
-            jCenterCoordinateIngame.setEnabled(false);
-        }
+	// <editor-fold defaultstate="collapsed" desc=" Check for desktop support ">
+	if ( !Desktop.isDesktopSupported() ) {
+	    jCenterIngameButton.setEnabled(false);
+	    jCenterCoordinateIngame.setEnabled(false);
+	}
 // </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc=" Restore last map position ">
-        try {
-            String x = GlobalOptions.getSelectedProfile().getProperty("last.x");
-            String y = GlobalOptions.getSelectedProfile().getProperty("last.y");
-            dCenterX = Double.parseDouble(x);
-            dCenterY = Double.parseDouble(y);
-            jCenterX.setText(x);
-            jCenterY.setText(y);
-        } catch (Exception e) {
-            if (ServerSettings.getSingleton().getCoordType() != 2) {
-                dCenterX = 250.0;
-                dCenterY = 250.0;
-                int[] hier = DSCalculator.xyToHierarchical(250, 250);
-                jCenterX.setText(Integer.toString(hier[0]));
-                jCenterY.setText(Integer.toString(hier[1]));
-            } else {
-                dCenterX = 500.0;
-                dCenterY = 500.0;
-                jCenterX.setText("500");
-                jCenterY.setText("500");
-            }
-        }
+	// <editor-fold defaultstate="collapsed" desc=" Restore last map position ">
+	try {
+	    String x = GlobalOptions.getSelectedProfile().getProperty("last.x");
+	    String y = GlobalOptions.getSelectedProfile().getProperty("last.y");
+	    dCenterX = Double.parseDouble(x);
+	    dCenterY = Double.parseDouble(y);
+	    jCenterX.setText(x);
+	    jCenterY.setText(y);
+	} catch ( Exception e ) {
+	    if ( ServerSettings.getSingleton().getCoordType() != 2 ) {
+		dCenterX = 250.0;
+		dCenterY = 250.0;
+		int[] hier = DSCalculator.xyToHierarchical(250, 250);
+		jCenterX.setText(Integer.toString(hier[0]));
+		jCenterY.setText(Integer.toString(hier[1]));
+	    } else {
+		dCenterX = 500.0;
+		dCenterY = 500.0;
+		jCenterX.setText("500");
+		jCenterY.setText("500");
+	    }
+	}
 
 // </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc=" Restore other settings ">
-        try {
-            String val = GlobalOptions.getProperty("show.map.popup");
-            if (val == null) {
-                jShowMapPopup.setSelected(true);
-                GlobalOptions.addProperty("show.map.popup", Boolean.toString(true));
-            } else {
-                jShowMapPopup.setSelected(Boolean.parseBoolean(val));
-            }
-        } catch (Exception e) {
-            jShowMapPopup.setSelected(true);
-            GlobalOptions.addProperty("show.map.popup", Boolean.toString(true));
+	// <editor-fold defaultstate="collapsed" desc=" Restore other settings ">
+	try {
+	    String val = GlobalOptions.getProperty("show.map.popup");
+	    if ( val == null ) {
+		jShowMapPopup.setSelected(true);
+		GlobalOptions.addProperty("show.map.popup", Boolean.toString(true));
+	    } else {
+		jShowMapPopup.setSelected(Boolean.parseBoolean(val));
+	    }
+	} catch ( Exception e ) {
+	    jShowMapPopup.setSelected(true);
+	    GlobalOptions.addProperty("show.map.popup", Boolean.toString(true));
 
-        }
-        try {
-            String val = GlobalOptions.getProperty("show.mouseover.info");
-            if (val == null) {
-                jShowMouseOverInfo.setSelected(true);
-                GlobalOptions.addProperty("show.mouseover.info", Boolean.toString(true));
-            } else {
-                jShowMouseOverInfo.setSelected(Boolean.parseBoolean(val));
-            }
-        } catch (Exception e) {
-            jShowMouseOverInfo.setSelected(true);
-            GlobalOptions.addProperty("show.mouseover.info", Boolean.toString(true));
+	}
+	try {
+	    String val = GlobalOptions.getProperty("show.mouseover.info");
+	    if ( val == null ) {
+		jShowMouseOverInfo.setSelected(true);
+		GlobalOptions.addProperty("show.mouseover.info", Boolean.toString(true));
+	    } else {
+		jShowMouseOverInfo.setSelected(Boolean.parseBoolean(val));
+	    }
+	} catch ( Exception e ) {
+	    jShowMouseOverInfo.setSelected(true);
+	    GlobalOptions.addProperty("show.mouseover.info", Boolean.toString(true));
 
-        }
-        try {
-            String val = GlobalOptions.getProperty("highlight.tribes.villages");
-            if (val == null) {
-                jHighlightTribeVillages.setSelected(true);
-                GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(true));
-            } else {
-                jHighlightTribeVillages.setSelected(Boolean.parseBoolean(val));
-            }
-        } catch (Exception e) {
-            jHighlightTribeVillages.setSelected(true);
-            GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(true));
-        }
-        try {
-            String val = GlobalOptions.getProperty("show.ruler");
-            if (val == null) {
-                jShowRuler.setSelected(true);
-                GlobalOptions.addProperty("show.ruler", Boolean.toString(true));
-            } else {
-                jShowRuler.setSelected(Boolean.parseBoolean(val));
-            }
-        } catch (Exception e) {
-            jShowRuler.setSelected(true);
-            GlobalOptions.addProperty("show.ruler", Boolean.toString(true));
-        }
+	}
+	try {
+	    String val = GlobalOptions.getProperty("highlight.tribes.villages");
+	    if ( val == null ) {
+		jHighlightTribeVillages.setSelected(true);
+		GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(true));
+	    } else {
+		jHighlightTribeVillages.setSelected(Boolean.parseBoolean(val));
+	    }
+	} catch ( Exception e ) {
+	    jHighlightTribeVillages.setSelected(true);
+	    GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(true));
+	}
+	try {
+	    String val = GlobalOptions.getProperty("show.ruler");
+	    if ( val == null ) {
+		jShowRuler.setSelected(true);
+		GlobalOptions.addProperty("show.ruler", Boolean.toString(true));
+	    } else {
+		jShowRuler.setSelected(Boolean.parseBoolean(val));
+	    }
+	} catch ( Exception e ) {
+	    jShowRuler.setSelected(true);
+	    GlobalOptions.addProperty("show.ruler", Boolean.toString(true));
+	}
 
-        try {
-            String val = GlobalOptions.getProperty("radar.size");
-            int hour = 1;
-            int min = 0;
-            if (val != null) {
-                int r = Integer.parseInt(val);
-                hour = r / 60;
-                min = r - hour * 60;
-            } else {
-                throw new Exception();
-            }
-            jHourField.setText(Integer.toString(hour));
-            jMinuteField.setText(Integer.toString(min));
-        } catch (Exception e) {
-            jHourField.setText("1");
-            jMinuteField.setText("0");
-            GlobalOptions.addProperty("radar.size", "60");
-        }
+	try {
+	    String val = GlobalOptions.getProperty("radar.size");
+	    int hour = 1;
+	    int min = 0;
+	    if ( val != null ) {
+		int r = Integer.parseInt(val);
+		hour = r / 60;
+		min = r - hour * 60;
+	    } else {
+		throw new Exception();
+	    }
+	    jHourField.setText(Integer.toString(hour));
+	    jMinuteField.setText(Integer.toString(min));
+	} catch ( Exception e ) {
+	    jHourField.setText("1");
+	    jMinuteField.setText("0");
+	    GlobalOptions.addProperty("radar.size", "60");
+	}
 
-        // </editor-fold>
+	// </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc="Skin Setup">
-        DefaultComboBoxModel gpModel = new DefaultComboBoxModel(GlobalOptions.getAvailableSkins());
-        jGraphicPacks.setModel(gpModel);
-        String skin = GlobalOptions.getProperty("default.skin");
-        if (skin != null) {
-            if (gpModel.getIndexOf(skin) != -1) {
-                jGraphicPacks.setSelectedItem(skin);
-            } else {
-                jGraphicPacks.setSelectedItem("default");
-            }
-        } else {
-            jGraphicPacks.setSelectedItem("default");
-        }
-        //</editor-fold>
+	// <editor-fold defaultstate="collapsed" desc="Skin Setup">
+	DefaultComboBoxModel gpModel = new DefaultComboBoxModel(GlobalOptions.getAvailableSkins());
+	jGraphicPacks.setModel(gpModel);
+	String skin = GlobalOptions.getProperty("default.skin");
+	if ( skin != null ) {
+	    if ( gpModel.getIndexOf(skin) != -1 ) {
+		jGraphicPacks.setSelectedItem(skin);
+	    } else {
+		jGraphicPacks.setSelectedItem("default");
+	    }
+	} else {
+	    jGraphicPacks.setSelectedItem("default");
+	}
+	//</editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "index", GlobalOptions.getHelpBroker().getHelpSet());
-        jHelpItem.addActionListener(GlobalOptions.getHelpDisplay());
+	// <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+	GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "index", GlobalOptions.getHelpBroker().getHelpSet());
+	jHelpItem.addActionListener(GlobalOptions.getHelpDisplay());
 
-        // </editor-fold>
+	// </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc=" Init A*Star HelpSystem ">
-        GlobalOptions.getHelpBroker().enableHelpKey(DSWorkbenchSimulatorFrame.getSingleton().getRootPane(), "pages.astar", GlobalOptions.getHelpBroker().getHelpSet());
-        // </editor-fold>
+	// <editor-fold defaultstate="collapsed" desc=" Init A*Star HelpSystem ">
+	GlobalOptions.getHelpBroker().enableHelpKey(DSWorkbenchSimulatorFrame.getSingleton().getRootPane(), "pages.astar", GlobalOptions.getHelpBroker().getHelpSet());
+	// </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc="Init mouse gesture listener">
-        mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
-        mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
-        mMouseGestures.start();
+	// <editor-fold defaultstate="collapsed" desc="Init mouse gesture listener">
+	mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
+	mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
+	mMouseGestures.start();
 // </editor-fold>
 
-        //update online state
-        onlineStateChanged();
-        restoreProperties();
+	//update online state
+	onlineStateChanged();
+	restoreProperties();
     }
 
     /* boolean map = true;
@@ -569,392 +567,392 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     jPanel1.repaint();
     }*/
     public void storeProperties() {
-        GlobalOptions.addProperty("main.size.width", Integer.toString(getWidth()));
-        GlobalOptions.addProperty("main.size.height", Integer.toString(getHeight()));
-        GlobalOptions.addProperty("navigation.group.expanded", Boolean.toString(jNavigationGroup.isExpanded()));
-        GlobalOptions.addProperty("information.group.expanded", Boolean.toString(jInformationGroup.isExpanded()));
-        GlobalOptions.addProperty("map.group.expanded", Boolean.toString(jMapGroup.isExpanded()));
-        GlobalOptions.addProperty("roi.group.expanded", Boolean.toString(jROIGroup.isExpanded()));
+	GlobalOptions.addProperty("main.size.width", Integer.toString(getWidth()));
+	GlobalOptions.addProperty("main.size.height", Integer.toString(getHeight()));
+	GlobalOptions.addProperty("navigation.group.expanded", Boolean.toString(jNavigationGroup.isExpanded()));
+	GlobalOptions.addProperty("information.group.expanded", Boolean.toString(jInformationGroup.isExpanded()));
+	GlobalOptions.addProperty("map.group.expanded", Boolean.toString(jMapGroup.isExpanded()));
+	GlobalOptions.addProperty("roi.group.expanded", Boolean.toString(jROIGroup.isExpanded()));
     }
 
     public void restoreProperties() {
-        try {
-            int width = Integer.parseInt(GlobalOptions.getProperty("main.size.width"));
-            int height = Integer.parseInt(GlobalOptions.getProperty("main.size.height"));
-            setSize(width, height);
-        } catch (Exception e) {
-        }
-        try {
-            jNavigationGroup.setExpanded(Boolean.parseBoolean(GlobalOptions.getProperty("navigation.group.expanded")));
-            jInformationGroup.setExpanded(Boolean.parseBoolean(GlobalOptions.getProperty("information.group.expanded")));
-            jMapGroup.setExpanded(Boolean.parseBoolean(GlobalOptions.getProperty("map.group.expanded")));
-            jROIGroup.setExpanded(Boolean.parseBoolean(GlobalOptions.getProperty("roi.group.expanded")));
-        } catch (Exception e) {
-            jNavigationGroup.setExpanded(false);
-            jInformationGroup.setExpanded(false);
-            jMapGroup.setExpanded(true);
-            jROIGroup.setExpanded(false);
-        }
+	try {
+	    int width = Integer.parseInt(GlobalOptions.getProperty("main.size.width"));
+	    int height = Integer.parseInt(GlobalOptions.getProperty("main.size.height"));
+	    setSize(width, height);
+	} catch ( Exception e ) {
+	}
+	try {
+	    jNavigationGroup.setExpanded(Boolean.parseBoolean(GlobalOptions.getProperty("navigation.group.expanded")));
+	    jInformationGroup.setExpanded(Boolean.parseBoolean(GlobalOptions.getProperty("information.group.expanded")));
+	    jMapGroup.setExpanded(Boolean.parseBoolean(GlobalOptions.getProperty("map.group.expanded")));
+	    jROIGroup.setExpanded(Boolean.parseBoolean(GlobalOptions.getProperty("roi.group.expanded")));
+	} catch ( Exception e ) {
+	    jNavigationGroup.setExpanded(false);
+	    jInformationGroup.setExpanded(false);
+	    jMapGroup.setExpanded(true);
+	    jROIGroup.setExpanded(false);
+	}
     }
 
     public String[] getCurrentPosition() {
-        return new String[]{jCenterX.getText(), jCenterY.getText()};
+	return new String[]{jCenterX.getText(), jCenterY.getText()};
     }
 
     /**Update on server change*/
     public void serverSettingsChangedEvent() {
-        try {
-            logger.info("Updating server settings");
-            // <editor-fold defaultstate="collapsed" desc="Reset user profile specific contents">
+	try {
+	    logger.info("Updating server settings");
+	    // <editor-fold defaultstate="collapsed" desc="Reset user profile specific contents">
 
-            UserProfile profile = GlobalOptions.getSelectedProfile();
-            String playerID = profile.toString();
-            logger.info(" - using playerID " + playerID);
-            profile.restoreProperties();
-            jCurrentPlayer.setText(playerID);
-            try {
-                DefaultComboBoxModel model = new DefaultComboBoxModel();
-                Tribe t = DataHolder.getSingleton().getTribeByName(profile.getTribeName());
-                Village[] villages = t.getVillageList();
-                Arrays.sort(villages, Village.CASE_INSENSITIVE_ORDER);
-                for (Village v : villages) {
-                    model.addElement(v);
-                }
-                jCurrentPlayerVillages.setModel(model);
-            } catch (Exception e) {
-                jCurrentPlayerVillages.setModel(new DefaultComboBoxModel(new Object[]{"-keine Dörfer-"}));
-            }
+	    UserProfile profile = GlobalOptions.getSelectedProfile();
+	    String playerID = profile.toString();
+	    logger.info(" - using playerID " + playerID);
+	    profile.restoreProperties();
+	    jCurrentPlayer.setText(playerID);
+	    try {
+		DefaultComboBoxModel model = new DefaultComboBoxModel();
+		Tribe t = DataHolder.getSingleton().getTribeByName(profile.getTribeName());
+		Village[] villages = t.getVillageList();
+		Arrays.sort(villages, Village.CASE_INSENSITIVE_ORDER);
+		for ( Village v : villages ) {
+		    model.addElement(v);
+		}
+		jCurrentPlayerVillages.setModel(model);
+	    } catch ( Exception e ) {
+		jCurrentPlayerVillages.setModel(new DefaultComboBoxModel(new Object[]{"-keine Dörfer-"}));
+	    }
 // </editor-fold>
 
-            //update maps
-            MapPanel.getSingleton().resetServerDependendSettings();
-            MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
-            MapPanel.getSingleton().getAttackAddFrame().buildUnitBox();
+	    //update maps
+	    MapPanel.getSingleton().resetServerDependendSettings();
+	    MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
+	    MapPanel.getSingleton().getAttackAddFrame().buildUnitBox();
 
-            //setup views
-            DSWorkbenchMarkerFrame.getSingleton().resetView();
-            DSWorkbenchChurchFrame.getSingleton().resetView();
-            DSWorkbenchAttackFrame.getSingleton().resetView();
-            DSWorkbenchTagFrame.getSingleton().resetView();
-            //ConquersTableModel.getSingleton();
-            DSWorkbenchConquersFrame.getSingleton().resetView();
-            //update troops table and troops view
-            TroopsManagerTableModel.getSingleton().setup();
-            StandardAttackTableModel.getSingleton().setup();
-            DSWorkbenchTroopsFrame.getSingleton().resetView();
-            DistanceManager.getSingleton().clear();
-            StatManager.getSingleton().setup();
-            DistanceTableModel.getSingleton().fireTableStructureChanged();
-            DSWorkbenchDistanceFrame.getSingleton().resetView();
-            DSWorkbenchStatsFrame.getSingleton().resetView();
-            DSWorkbenchDoItYourselfAttackPlaner.getSingleton().resetView();
-            DSWorkbenchReTimerFrame.getSingleton().resetView();
-            DSWorkbenchReportFrame.getSingleton().resetView();
-            DSWorkbenchSOSRequestAnalyzer.getSingleton().resetView();
-            DSWorkbenchMerchantDistibutor.getSingleton().resetView();
-            //update attack planner
-            if (mTribeTribeAttackFrame != null) {
-                mTribeTribeAttackFrame.setup();
-            }
+	    //setup views
+	    DSWorkbenchMarkerFrame.getSingleton().resetView();
+	    DSWorkbenchChurchFrame.getSingleton().resetView();
+	    DSWorkbenchAttackFrame.getSingleton().resetView();
+	    DSWorkbenchTagFrame.getSingleton().resetView();
+	    //ConquersTableModel.getSingleton();
+	    DSWorkbenchConquersFrame.getSingleton().resetView();
+	    //update troops table and troops view
+	    TroopsManagerTableModel.getSingleton().setup();
+	    StandardAttackTableModel.getSingleton().setup();
+	    DSWorkbenchTroopsFrame.getSingleton().resetView();
+	    DistanceManager.getSingleton().clear();
+	    StatManager.getSingleton().setup();
+	    DistanceTableModel.getSingleton().fireTableStructureChanged();
+	    DSWorkbenchDistanceFrame.getSingleton().resetView();
+	    DSWorkbenchStatsFrame.getSingleton().resetView();
+	    DSWorkbenchDoItYourselfAttackPlaner.getSingleton().resetView();
+	    DSWorkbenchReTimerFrame.getSingleton().resetView();
+	    DSWorkbenchReportFrame.getSingleton().resetView();
+	    DSWorkbenchSOSRequestAnalyzer.getSingleton().resetView();
+	    DSWorkbenchMerchantDistibutor.getSingleton().resetView();
+	    //update attack planner
+	    if ( mTribeTribeAttackFrame != null ) {
+		mTribeTribeAttackFrame.setup();
+	    }
 
-            DSWorkbenchSettingsDialog.getSingleton().setupAttackColorTable();
-            DSWorkbenchRankFrame.getSingleton().resetView();
+	    DSWorkbenchSettingsDialog.getSingleton().setupAttackColorTable();
+	    DSWorkbenchRankFrame.getSingleton().resetView();
 
-            if (ServerSettings.getSingleton().getCoordType() != 2) {
-                jLabel1.setText("K");
-                jLabel2.setText("S");
-            } else {
-                jLabel1.setText("X");
-                jLabel2.setText("Y");
-                DSRealManager.getSingleton().checkFilesystem();
-            }
+	    if ( ServerSettings.getSingleton().getCoordType() != 2 ) {
+		jLabel1.setText("K");
+		jLabel2.setText("S");
+	    } else {
+		jLabel1.setText("X");
+		jLabel2.setText("Y");
+		DSRealManager.getSingleton().checkFilesystem();
+	    }
 
-            jShowChurchFrame.setEnabled(ServerSettings.getSingleton().isChurch());
-            jROIBox.setModel(new DefaultComboBoxModel(ROIManager.getSingleton().getROIs()));
+	    jShowChurchFrame.setEnabled(ServerSettings.getSingleton().isChurch());
+	    jROIBox.setModel(new DefaultComboBoxModel(ROIManager.getSingleton().getROIs()));
 
-            DSWorkbenchSelectionFrame.getSingleton().resetView();
-            DSWorkbenchNotepad.getSingleton().resetView();
-            if (DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
-                DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
-            }
-            ConquerManager.getSingleton().forceUpdate();
-            //relevant for first start
-            propagateLayerOrder();
-            MinimapPanel.getSingleton().redraw(true);
-            //call all frames during first execution
-            // DSWorkbenchAttackFrame.getSingleton();
-            //DSWorkbenchNotepad.getSingleton();
-            //DSWorkbenchTroopsFrame.getSingleton();
-            //DSWorkbenchRankFrame.getSingleton();
-            DSWorkbenchFormFrame.getSingleton();
-            //DSWorkbenchMarkerFrame.getSingleton();
-            // DSWorkbenchChurchFrame.getSingleton();
-            //DSWorkbenchConquersFrame.getSingleton();
-            // DSWorkbenchNotepad.getSingleton();
-            //  DSWorkbenchTagFrame.getSingleton();
-            FormConfigFrame.getSingleton();
-            DSWorkbenchSearchFrame.getSingleton();
-            // DSWorkbenchSelectionFrame.getSingleton();
-            // DSWorkbenchStatsFrame.getSingleton();
-            // DSWorkbenchReTimerFrame.getSingleton();
-            // DSWorkbenchDoItYourselfAttackPlaner.getSingleton();
-            // DSWorkbenchReportFrame.getSingleton();
-            logger.info("Server settings updated");
+	    DSWorkbenchSelectionFrame.getSingleton().resetView();
+	    DSWorkbenchNotepad.getSingleton().resetView();
+	    if ( DSWorkbenchSimulatorFrame.getSingleton().isVisible() ) {
+		DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
+	    }
+	    ConquerManager.getSingleton().forceUpdate();
+	    //relevant for first start
+	    propagateLayerOrder();
+	    MinimapPanel.getSingleton().redraw(true);
+	    //call all frames during first execution
+	    // DSWorkbenchAttackFrame.getSingleton();
+	    //DSWorkbenchNotepad.getSingleton();
+	    //DSWorkbenchTroopsFrame.getSingleton();
+	    //DSWorkbenchRankFrame.getSingleton();
+	    DSWorkbenchFormFrame.getSingleton();
+	    //DSWorkbenchMarkerFrame.getSingleton();
+	    // DSWorkbenchChurchFrame.getSingleton();
+	    //DSWorkbenchConquersFrame.getSingleton();
+	    // DSWorkbenchNotepad.getSingleton();
+	    //  DSWorkbenchTagFrame.getSingleton();
+	    FormConfigFrame.getSingleton();
+	    DSWorkbenchSearchFrame.getSingleton();
+	    // DSWorkbenchSelectionFrame.getSingleton();
+	    // DSWorkbenchStatsFrame.getSingleton();
+	    // DSWorkbenchReTimerFrame.getSingleton();
+	    // DSWorkbenchDoItYourselfAttackPlaner.getSingleton();
+	    // DSWorkbenchReportFrame.getSingleton();
+	    logger.info("Server settings updated");
 
-            /* if (!DSWorkbenchSettingsDialog.getSingleton().isVisible()) {
-            long dataVersion = DataHolder.getSingleton().getDataAge();
-            long oneDayAgo = System.currentTimeMillis() - 1000 * 60 * 60 * 24;
-            if (dataVersion < oneDayAgo) {
-            JOptionPaneHelper.showWarningBox(this, "Deine Weltdaten sind älter als 24 Stunden.\n" + "Es wird empfohlen, sie sobald wie möglich zu aktualisieren.", "Warnung");
-            }
-            }*/
-            if (isVisible() && !DSWorkbenchSettingsDialog.getSingleton().isVisible()) {
-                showReminder();
-            }
-        } catch (Exception e) {
-            logger.error("Error while refreshing server settings", e);
-        }
+	    /* if (!DSWorkbenchSettingsDialog.getSingleton().isVisible()) {
+	    long dataVersion = DataHolder.getSingleton().getDataAge();
+	    long oneDayAgo = System.currentTimeMillis() - 1000 * 60 * 60 * 24;
+	    if (dataVersion < oneDayAgo) {
+	    JOptionPaneHelper.showWarningBox(this, "Deine Weltdaten sind älter als 24 Stunden.\n" + "Es wird empfohlen, sie sobald wie möglich zu aktualisieren.", "Warnung");
+	    }
+	    }*/
+	    if ( isVisible() && !DSWorkbenchSettingsDialog.getSingleton().isVisible() ) {
+		showReminder();
+	    }
+	} catch ( Exception e ) {
+	    logger.error("Error while refreshing server settings", e);
+	}
     }
 
     /**Update UI depending on online state*/
     public void onlineStateChanged() {
-        jOnlineLabel.setEnabled(!GlobalOptions.isOfflineMode());
-        if (GlobalOptions.isOfflineMode()) {
-            jOnlineLabel.setToolTipText("Offline");
-        } else {
-            jOnlineLabel.setToolTipText("Online");
-        }
+	jOnlineLabel.setEnabled(!GlobalOptions.isOfflineMode());
+	if ( GlobalOptions.isOfflineMode() ) {
+	    jOnlineLabel.setToolTipText("Offline");
+	} else {
+	    jOnlineLabel.setToolTipText("Online");
+	}
     }
 
     /**Get current zoom factor
      * @return
      */
     public synchronized double getZoomFactor() {
-        return dZoomFactor;
+	return dZoomFactor;
     }
 
     /**Called at startup*/
     protected void init() {
-        logger.info("Starting initialization");
-        logger.info(" * Setting up attack planner");
-        //setup frames
-        mTribeTribeAttackFrame = new TribeTribeAttackFrame();
-        mTribeTribeAttackFrame.pack();
-        logger.info(" * Updating server settings");
-        //setup everything
-        serverSettingsChangedEvent();
+	logger.info("Starting initialization");
+	logger.info(" * Setting up attack planner");
+	//setup frames
+	mTribeTribeAttackFrame = new TribeTribeAttackFrame();
+	mTribeTribeAttackFrame.pack();
+	logger.info(" * Updating server settings");
+	//setup everything
+	serverSettingsChangedEvent();
 
-        logger.info(" * Setting up maps");
-        setupMaps();
+	logger.info(" * Setting up maps");
+	setupMaps();
 
-        logger.info(" * Setting up views");
-        setupFrames();
-        fireToolChangedEvent(ImageManager.CURSOR_DEFAULT);
-        logger.info("Initialization finished");
-        initialized = true;
+	logger.info(" * Setting up views");
+	setupFrames();
+	fireToolChangedEvent(ImageManager.CURSOR_DEFAULT);
+	logger.info("Initialization finished");
+	initialized = true;
     }
 
     protected boolean isInitialized() {
-        return initialized;
+	return initialized;
     }
 
     public TribeTribeAttackFrame getAttackPlaner() {
-        return mTribeTribeAttackFrame;
+	return mTribeTribeAttackFrame;
     }
 
     /**Setup of all frames*/
     private void setupFrames() {
-        DSWorkbenchAttackFrame.getSingleton().addFrameListener(this);
-        DSWorkbenchMarkerFrame.getSingleton().addFrameListener(this);
-        DSWorkbenchChurchFrame.getSingleton().addFrameListener(this);
-        DSWorkbenchConquersFrame.getSingleton().addFrameListener(this);
-        DSWorkbenchNotepad.getSingleton().addFrameListener(this);
-        DSWorkbenchTagFrame.getSingleton().addFrameListener(this);
-        //  TroopsManagerTableModel.getSingleton().setup();
-        DSWorkbenchTroopsFrame.getSingleton().addFrameListener(this);
-        DSWorkbenchRankFrame.getSingleton().addFrameListener(this);
-        DSWorkbenchFormFrame.getSingleton().addFrameListener(this);
-        DSWorkbenchStatsFrame.getSingleton().addFrameListener(this);
-        DSWorkbenchReportFrame.getSingleton().addFrameListener(this);
+	DSWorkbenchAttackFrame.getSingleton().addFrameListener(this);
+	DSWorkbenchMarkerFrame.getSingleton().addFrameListener(this);
+	DSWorkbenchChurchFrame.getSingleton().addFrameListener(this);
+	DSWorkbenchConquersFrame.getSingleton().addFrameListener(this);
+	DSWorkbenchNotepad.getSingleton().addFrameListener(this);
+	DSWorkbenchTagFrame.getSingleton().addFrameListener(this);
+	//  TroopsManagerTableModel.getSingleton().setup();
+	DSWorkbenchTroopsFrame.getSingleton().addFrameListener(this);
+	DSWorkbenchRankFrame.getSingleton().addFrameListener(this);
+	DSWorkbenchFormFrame.getSingleton().addFrameListener(this);
+	DSWorkbenchStatsFrame.getSingleton().addFrameListener(this);
+	DSWorkbenchReportFrame.getSingleton().addFrameListener(this);
     }
 
     /**Setup main map and mini map*/
     private void setupMaps() {
-        try {
-            dZoomFactor = Double.parseDouble(GlobalOptions.getSelectedProfile().getProperty("zoom"));
-            checkZoomRange();
-        } catch (Exception e) {
-            dZoomFactor = 1.0;
-        }
-        //build the map panel
-        logger.info("Adding MapListener");
-        MapPanel.getSingleton().addMapPanelListener(this);
-        MapPanel.getSingleton().addToolChangeListener(this);
-        MinimapPanel.getSingleton().addToolChangeListener(this);
-        logger.info("Adding MapPanel");
-        jPanel1.add(MapPanel.getSingleton());
-        //build the minimap
-        logger.info("Adding MinimapPanel");
-        /*MinimapPanel.getSingleton().setMinimumSize(jMinimapPanel.getMinimumSize());
-        MapPanel.getSingleton().setMinimumSize(jPanel1.getMinimumSize());*/
-        jMinimapPanel.add(MinimapPanel.getSingleton());
+	try {
+	    dZoomFactor = Double.parseDouble(GlobalOptions.getSelectedProfile().getProperty("zoom"));
+	    checkZoomRange();
+	} catch ( Exception e ) {
+	    dZoomFactor = 1.0;
+	}
+	//build the map panel
+	logger.info("Adding MapListener");
+	MapPanel.getSingleton().addMapPanelListener(this);
+	MapPanel.getSingleton().addToolChangeListener(this);
+	MinimapPanel.getSingleton().addToolChangeListener(this);
+	logger.info("Adding MapPanel");
+	jPanel1.add(MapPanel.getSingleton());
+	//build the minimap
+	logger.info("Adding MinimapPanel");
+	/*MinimapPanel.getSingleton().setMinimumSize(jMinimapPanel.getMinimumSize());
+	MapPanel.getSingleton().setMinimumSize(jPanel1.getMinimumSize());*/
+	jMinimapPanel.add(MinimapPanel.getSingleton());
     }
 
-    public void setZoom(double pZoom) {
-        dZoomFactor = pZoom;
-        checkZoomRange();
+    public void setZoom( double pZoom ) {
+	dZoomFactor = pZoom;
+	checkZoomRange();
     }
 
     @Override
-    public void setVisible(boolean v) {
-        logger.info("Setting MainWindow visible");
-        boolean t = true;
-        super.setVisible(v);
-        if (v) {
-            //only if set to visible
-            MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
+    public void setVisible( boolean v ) {
+	logger.info("Setting MainWindow visible");
+	boolean t = true;
+	super.setVisible(v);
+	if ( v ) {
+	    //only if set to visible
+	    MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
 
-            double w = (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getCurrentFieldWidth(dZoomFactor);
-            double h = (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getCurrentFieldHeight(dZoomFactor);
+	    double w = (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getCurrentFieldWidth(dZoomFactor);
+	    double h = (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getCurrentFieldHeight(dZoomFactor);
 
-            MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
+	    MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
 
-            // <editor-fold defaultstate="collapsed" desc=" Check frames and toolbar visibility ">
+	    // <editor-fold defaultstate="collapsed" desc=" Check frames and toolbar visibility ">
 
-            try {
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("attack.frame.visible"))) {
-                    jShowAttackFrame.setSelected(true);
-                    logger.info("Restoring attack frame");
-                    DSWorkbenchAttackFrame.getSingleton().setVisible(true);
-                }
-            } catch (Exception e) {
-            }
+	    try {
+		if ( Boolean.parseBoolean(GlobalOptions.getProperty("attack.frame.visible")) ) {
+		    jShowAttackFrame.setSelected(true);
+		    logger.info("Restoring attack frame");
+		    DSWorkbenchAttackFrame.getSingleton().setVisible(true);
+		}
+	    } catch ( Exception e ) {
+	    }
 
-            try {
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("marker.frame.visible"))) {
-                    jShowMarkerFrame.setSelected(true);
-                    logger.info("Restoring marker frame");
-                    DSWorkbenchMarkerFrame.getSingleton().setVisible(true);
-                }
+	    try {
+		if ( Boolean.parseBoolean(GlobalOptions.getProperty("marker.frame.visible")) ) {
+		    jShowMarkerFrame.setSelected(true);
+		    logger.info("Restoring marker frame");
+		    DSWorkbenchMarkerFrame.getSingleton().setVisible(true);
+		}
 
-            } catch (Exception e) {
-            }
+	    } catch ( Exception e ) {
+	    }
 
-            try {
-                if (jShowChurchFrame.isEnabled()) {
-                    if (Boolean.parseBoolean(GlobalOptions.getProperty("church.frame.visible"))) {
-                        jShowChurchFrame.setSelected(true);
-                        logger.info("Restoring church frame");
-                        DSWorkbenchChurchFrame.getSingleton().setVisible(true);
-                    }
-                }
-            } catch (Exception e) {
-            }
+	    try {
+		if ( jShowChurchFrame.isEnabled() ) {
+		    if ( Boolean.parseBoolean(GlobalOptions.getProperty("church.frame.visible")) ) {
+			jShowChurchFrame.setSelected(true);
+			logger.info("Restoring church frame");
+			DSWorkbenchChurchFrame.getSingleton().setVisible(true);
+		    }
+		}
+	    } catch ( Exception e ) {
+	    }
 
-            try {
-                if (jShowConquersFrame.isEnabled()) {
-                    if (Boolean.parseBoolean(GlobalOptions.getProperty("conquers.frame.visible"))) {
-                        jShowConquersFrame.setSelected(true);
-                        logger.info("Restoring conquers frame");
-                        DSWorkbenchConquersFrame.getSingleton().setVisible(true);
-                    }
-                }
-            } catch (Exception e) {
-            }
+	    try {
+		if ( jShowConquersFrame.isEnabled() ) {
+		    if ( Boolean.parseBoolean(GlobalOptions.getProperty("conquers.frame.visible")) ) {
+			jShowConquersFrame.setSelected(true);
+			logger.info("Restoring conquers frame");
+			DSWorkbenchConquersFrame.getSingleton().setVisible(true);
+		    }
+		}
+	    } catch ( Exception e ) {
+	    }
 
-            try {
-                if (jShowNotepadFrame.isEnabled()) {
-                    if (Boolean.parseBoolean(GlobalOptions.getProperty("notepad.frame.visible"))) {
-                        jShowNotepadFrame.setSelected(true);
-                        logger.info("Restoring notepad frame");
-                        DSWorkbenchNotepad.getSingleton().setVisible(true);
-                    }
-                }
-            } catch (Exception e) {
-            }
+	    try {
+		if ( jShowNotepadFrame.isEnabled() ) {
+		    if ( Boolean.parseBoolean(GlobalOptions.getProperty("notepad.frame.visible")) ) {
+			jShowNotepadFrame.setSelected(true);
+			logger.info("Restoring notepad frame");
+			DSWorkbenchNotepad.getSingleton().setVisible(true);
+		    }
+		}
+	    } catch ( Exception e ) {
+	    }
 
-            try {
-                if (jShowTagFrame.isEnabled()) {
-                    if (Boolean.parseBoolean(GlobalOptions.getProperty("tag.frame.visible"))) {
-                        jShowTagFrame.setSelected(true);
-                        logger.info("Restoring tag frame");
-                        DSWorkbenchTagFrame.getSingleton().setVisible(true);
-                    }
-                }
-            } catch (Exception e) {
-            }
+	    try {
+		if ( jShowTagFrame.isEnabled() ) {
+		    if ( Boolean.parseBoolean(GlobalOptions.getProperty("tag.frame.visible")) ) {
+			jShowTagFrame.setSelected(true);
+			logger.info("Restoring tag frame");
+			DSWorkbenchTagFrame.getSingleton().setVisible(true);
+		    }
+		}
+	    } catch ( Exception e ) {
+	    }
 
-            try {
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("troops.frame.visible"))) {
-                    jShowTroopsFrame.setSelected(true);
-                    logger.info("Restoring troops frame");
-                    DSWorkbenchTroopsFrame.getSingleton().setVisible(true);
-                }
-            } catch (Exception e) {
-            }
+	    try {
+		if ( Boolean.parseBoolean(GlobalOptions.getProperty("troops.frame.visible")) ) {
+		    jShowTroopsFrame.setSelected(true);
+		    logger.info("Restoring troops frame");
+		    DSWorkbenchTroopsFrame.getSingleton().setVisible(true);
+		}
+	    } catch ( Exception e ) {
+	    }
 
-            try {
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("rank.frame.visible"))) {
-                    jShowRankFrame.setSelected(true);
-                    logger.info("Restoring rank frame");
-                    DSWorkbenchRankFrame.getSingleton().setVisible(true);
-                }
+	    try {
+		if ( Boolean.parseBoolean(GlobalOptions.getProperty("rank.frame.visible")) ) {
+		    jShowRankFrame.setSelected(true);
+		    logger.info("Restoring rank frame");
+		    DSWorkbenchRankFrame.getSingleton().setVisible(true);
+		}
 
-            } catch (Exception e) {
-            }
+	    } catch ( Exception e ) {
+	    }
 
-            try {
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("form.frame.visible"))) {
-                    jShowFormsFrame.setSelected(true);
-                    logger.info("Restoring form frame");
-                    DSWorkbenchFormFrame.getSingleton().setVisible(true);
-                }
+	    try {
+		if ( Boolean.parseBoolean(GlobalOptions.getProperty("form.frame.visible")) ) {
+		    jShowFormsFrame.setSelected(true);
+		    logger.info("Restoring form frame");
+		    DSWorkbenchFormFrame.getSingleton().setVisible(true);
+		}
 
-            } catch (Exception e) {
-            }
+	    } catch ( Exception e ) {
+	    }
 
-            try {
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("search.frame.visible"))) {
-                    logger.info("Restoring search frame");
-                    DSWorkbenchSearchFrame.getSingleton().setVisible(true);
-                }
+	    try {
+		if ( Boolean.parseBoolean(GlobalOptions.getProperty("search.frame.visible")) ) {
+		    logger.info("Restoring search frame");
+		    DSWorkbenchSearchFrame.getSingleton().setVisible(true);
+		}
 
-            } catch (Exception e) {
-            }
+	    } catch ( Exception e ) {
+	    }
 
-            try {
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("stats.frame.visible"))) {
-                    jShowStatsFrame.setSelected(true);
-                    logger.info("Restoring stats frame");
-                    DSWorkbenchStatsFrame.getSingleton().setVisible(true);
-                }
-            } catch (Exception e) {
-            }
+	    try {
+		if ( Boolean.parseBoolean(GlobalOptions.getProperty("stats.frame.visible")) ) {
+		    jShowStatsFrame.setSelected(true);
+		    logger.info("Restoring stats frame");
+		    DSWorkbenchStatsFrame.getSingleton().setVisible(true);
+		}
+	    } catch ( Exception e ) {
+	    }
 
-            try {
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("report.frame.visible"))) {
-                    jShowReportFrame.setSelected(true);
-                    logger.info("Restoring report frame");
-                    DSWorkbenchReportFrame.getSingleton().setVisible(true);
-                }
-            } catch (Exception e) {
-            }
-            // </editor-fold>
+	    try {
+		if ( Boolean.parseBoolean(GlobalOptions.getProperty("report.frame.visible")) ) {
+		    jShowReportFrame.setSelected(true);
+		    logger.info("Restoring report frame");
+		    DSWorkbenchReportFrame.getSingleton().setVisible(true);
+		}
+	    } catch ( Exception e ) {
+	    }
+	    // </editor-fold>
 
-            //start ClipboardWatch
-            ClipboardWatch.getSingleton();
-            //draw map the first time
-            fireRefreshMapEvent(null);
-            showReminder();
-        }
+	    //start ClipboardWatch
+	    ClipboardWatch.getSingleton();
+	    //draw map the first time
+	    fireRefreshMapEvent(null);
+	    showReminder();
+	}
     }
 
     private void showReminder() {
-        StartupReminder reminder = new StartupReminder(this, true);
-        reminder.setLocationRelativeTo(this);
-        TagManager.getSingleton().addTagManagerListener(reminder);
-        TroopsManager.getSingleton().addTroopsManagerListener(reminder);
-        reminder.setVisible(true);
+	StartupReminder reminder = new StartupReminder(this, true);
+	reminder.setLocationRelativeTo(this);
+	TagManager.getSingleton().addTagManagerListener(reminder);
+	TroopsManager.getSingleton().addTroopsManagerListener(reminder);
+	reminder.setVisible(true);
     }
 
     /** This method is called from within the constructor to
@@ -2372,24 +2370,24 @@ private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     double cx = dCenterX;
     double cy = dCenterY;
     try {
-        cx = Integer.parseInt(jCenterX.getText());
-        cy = Integer.parseInt(jCenterY.getText());
-    } catch (Exception e) {
-        cx = dCenterX;
-        cy = dCenterY;
-        jCenterX.setText(Integer.toString((int) cx));
-        jCenterY.setText(Integer.toString((int) cy));
+	cx = Integer.parseInt(jCenterX.getText());
+	cy = Integer.parseInt(jCenterY.getText());
+    } catch ( Exception e ) {
+	cx = dCenterX;
+	cy = dCenterY;
+	jCenterX.setText(Integer.toString((int) cx));
+	jCenterY.setText(Integer.toString((int) cy));
     }
 
-    if (ServerSettings.getSingleton().getCoordType() != 2) {
-        int[] hier = DSCalculator.hierarchicalToXy((int) cx, (int) cy, 12);
-        if (hier != null) {
-            dCenterX = hier[0];
-            dCenterY = hier[1];
-        }
+    if ( ServerSettings.getSingleton().getCoordType() != 2 ) {
+	int[] hier = DSCalculator.hierarchicalToXy((int) cx, (int) cy, 12);
+	if ( hier != null ) {
+	    dCenterX = hier[0];
+	    dCenterY = hier[1];
+	}
     } else {
-        dCenterX = cx;
-        dCenterY = cy;
+	dCenterX = cx;
+	dCenterY = cy;
     }
     double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
     double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
@@ -2402,49 +2400,49 @@ private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     double cx = dCenterX;
     double cy = dCenterY;
     try {
-        cx = Integer.parseInt(jCenterX.getText());
-        cy = Integer.parseInt(jCenterY.getText());
-    } catch (Exception e) {
-        cx = dCenterX;
-        cy = dCenterY;
+	cx = Integer.parseInt(jCenterX.getText());
+	cy = Integer.parseInt(jCenterY.getText());
+    } catch ( Exception e ) {
+	cx = dCenterX;
+	cy = dCenterY;
     }
 
-    if (ServerSettings.getSingleton().getCoordType() != 2) {
-        int[] hier = DSCalculator.hierarchicalToXy((int) cx, (int) cy, 12);
-        if (hier != null) {
-            cx = hier[0];
-            cy = hier[1];
-        }
+    if ( ServerSettings.getSingleton().getCoordType() != 2 ) {
+	int[] hier = DSCalculator.hierarchicalToXy((int) cx, (int) cy, 12);
+	if ( hier != null ) {
+	    cx = hier[0];
+	    cy = hier[1];
+	}
     }
 
-    if (evt.getSource() == jMoveN) {
-        cy -= (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-    } else if (evt.getSource() == jMoveNE) {
-        cx += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
-        cy -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-    } else if (evt.getSource() == jMoveE) {
-        cx += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-    } else if (evt.getSource() == jMoveSE) {
-        cx += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
-        cy += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-    } else if (evt.getSource() == jMoveS) {
-        cy += (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-    } else if (evt.getSource() == jMoveSW) {
-        cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
-        cy += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-    } else if (evt.getSource() == jMoveW) {
-        cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-    } else if (evt.getSource() == jMoveNW) {
-        cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
-        cy -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+    if ( evt.getSource() == jMoveN ) {
+	cy -= (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+    } else if ( evt.getSource() == jMoveNE ) {
+	cx += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+	cy -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+    } else if ( evt.getSource() == jMoveE ) {
+	cx += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+    } else if ( evt.getSource() == jMoveSE ) {
+	cx += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+	cy += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+    } else if ( evt.getSource() == jMoveS ) {
+	cy += (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+    } else if ( evt.getSource() == jMoveSW ) {
+	cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+	cy += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+    } else if ( evt.getSource() == jMoveW ) {
+	cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+    } else if ( evt.getSource() == jMoveNW ) {
+	cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+	cy -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
     }
 
-    if (ServerSettings.getSingleton().getCoordType() != 2) {
-        int[] hier = DSCalculator.xyToHierarchical((int) cx, (int) cy);
-        if (hier != null) {
-            cx = hier[0];
-            cy = hier[1];
-        }
+    if ( ServerSettings.getSingleton().getCoordType() != 2 ) {
+	int[] hier = DSCalculator.xyToHierarchical((int) cx, (int) cy);
+	if ( hier != null ) {
+	    cx = hier[0];
+	    cy = hier[1];
+	}
     }
 
     jCenterX.setText(Integer.toString((int) Math.floor(cx)));
@@ -2460,62 +2458,62 @@ private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     /**React on resize events*/
 private void fireFrameResizedEvent(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_fireFrameResizedEvent
     try {
-        MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
-    } catch (Exception e) {
-        logger.error("Failed to resize map for (" + dCenterX + ", " + dCenterY + ")", e);
+	MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
+    } catch ( Exception e ) {
+	logger.error("Failed to resize map for (" + dCenterX + ", " + dCenterY + ")", e);
     }
 }//GEN-LAST:event_fireFrameResizedEvent
 
     /**Zoom main map*/
 private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireZoomEvent
-    if (evt.getSource() == jZoomInButton) {
-        zoomIn();
+    if ( evt.getSource() == jZoomInButton ) {
+	zoomIn();
     } else {
-        zoomOut();
+	zoomOut();
     }
 }//GEN-LAST:event_fireZoomEvent
 
     protected synchronized void zoomIn() {
-        dZoomFactor += 1.0 / 10.0;
-        checkZoomRange();
+	dZoomFactor += 1.0 / 10.0;
+	checkZoomRange();
 
-        dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
-        //System.out.println("Main: " + dZoomFactor);
-        double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
-        double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-        int xPos = Integer.parseInt(jCenterX.getText());
-        int yPos = Integer.parseInt(jCenterY.getText());
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-            int[] hier = DSCalculator.hierarchicalToXy(xPos, yPos, 12);
-            if (hier != null) {
-                xPos = hier[0];
-                yPos = hier[1];
-            }
-        }
-        MinimapPanel.getSingleton().setSelection(xPos, yPos, (int) Math.rint(w), (int) Math.rint(h));
-        MapPanel.getSingleton().updateMapPosition(xPos, yPos, true);
+	dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
+	//System.out.println("Main: " + dZoomFactor);
+	double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+	double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+	int xPos = Integer.parseInt(jCenterX.getText());
+	int yPos = Integer.parseInt(jCenterY.getText());
+	if ( ServerSettings.getSingleton().getCoordType() != 2 ) {
+	    int[] hier = DSCalculator.hierarchicalToXy(xPos, yPos, 12);
+	    if ( hier != null ) {
+		xPos = hier[0];
+		yPos = hier[1];
+	    }
+	}
+	MinimapPanel.getSingleton().setSelection(xPos, yPos, (int) Math.rint(w), (int) Math.rint(h));
+	MapPanel.getSingleton().updateMapPosition(xPos, yPos, true);
     }
 
     protected synchronized void zoomOut() {
-        dZoomFactor -= 1.0 / 10.0;
-        checkZoomRange();
+	dZoomFactor -= 1.0 / 10.0;
+	checkZoomRange();
 
-        dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
-        double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
-        double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-        int xPos = Integer.parseInt(jCenterX.getText());
-        int yPos = Integer.parseInt(jCenterY.getText());
+	dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
+	double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+	double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+	int xPos = Integer.parseInt(jCenterX.getText());
+	int yPos = Integer.parseInt(jCenterY.getText());
 
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-            int[] hier = DSCalculator.hierarchicalToXy(xPos, yPos, 12);
-            if (hier != null) {
-                xPos = hier[0];
-                yPos = hier[1];
-            }
-        }
+	if ( ServerSettings.getSingleton().getCoordType() != 2 ) {
+	    int[] hier = DSCalculator.hierarchicalToXy(xPos, yPos, 12);
+	    if ( hier != null ) {
+		xPos = hier[0];
+		yPos = hier[1];
+	    }
+	}
 
-        MinimapPanel.getSingleton().setSelection(xPos, yPos, (int) Math.rint(w), (int) Math.rint(h));
-        MapPanel.getSingleton().updateMapPosition(xPos, yPos, true);
+	MinimapPanel.getSingleton().setSelection(xPos, yPos, (int) Math.rint(w), (int) Math.rint(h));
+	MapPanel.getSingleton().updateMapPosition(xPos, yPos, true);
     }
 
     /**Change active player village*/
@@ -2533,50 +2531,50 @@ private void fireExitEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fi
     /**Show the toolbar*/
     /**Center village Ingame*/
 private void fireCenterVillageIngameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterVillageIngameEvent
-    if (!jCenterIngameButton.isEnabled()) {
-        return;
+    if ( !jCenterIngameButton.isEnabled() ) {
+	return;
     }
 
     Village v = (Village) jCurrentPlayerVillages.getSelectedItem();
-    if (v != null) {
-        BrowserCommandSender.centerVillage(v);
+    if ( v != null ) {
+	BrowserCommandSender.centerVillage(v);
     }
 }//GEN-LAST:event_fireCenterVillageIngameEvent
 
     /**Center pos Ingame*/
 private void fireCenterCurrentPosInGameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterCurrentPosInGameEvent
-    if (!jCenterCoordinateIngame.isEnabled()) {
-        return;
+    if ( !jCenterCoordinateIngame.isEnabled() ) {
+	return;
     }
     BrowserCommandSender.centerCoordinate(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()));
 }//GEN-LAST:event_fireCenterCurrentPosInGameEvent
 
     /**Do tool action*/
 private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireToolsActionEvent
-    if (evt.getSource() == jSearchItem) {
-        DSWorkbenchSearchFrame.getSingleton().setVisible(true);
-    } else if (evt.getSource() == jClockItem) {
-        ClockFrame.getSingleton().setVisible(true);
-    } else if (evt.getSource() == jTribeTribeAttackItem) {
-        // mTribeTribeAttackFrame.setup();
-        mTribeTribeAttackFrame.setVisible(true);
-    } else if (evt.getSource() == jUnitOverviewItem) {
-        UnitOrderBuilder.showUnitOrder(null, null);
-    } else if (evt.getSource() == jSelectionOverviewItem) {
-        DSWorkbenchSelectionFrame.getSingleton().setVisible(true);
-    } else if (evt.getSource() == jStartAStarItem) {
-        DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
-        DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
-    } else if (evt.getSource() == jDistanceItem) {
-        DSWorkbenchDistanceFrame.getSingleton().setVisible(true);
-    } else if (evt.getSource() == jDoItYourselfAttackPlanerItem) {
-        DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setVisible(true);
-    } else if (evt.getSource() == jReTimeToolEvent) {
-        DSWorkbenchReTimerFrame.getSingleton().setVisible(true);
-    } else if (evt.getSource() == jSOSAnalyzerItem) {
-        DSWorkbenchSOSRequestAnalyzer.getSingleton().setVisible(true);
-    } else if (evt.getSource() == jMerchantDistributorItem) {
-        DSWorkbenchMerchantDistibutor.getSingleton().setVisible(true);
+    if ( evt.getSource() == jSearchItem ) {
+	DSWorkbenchSearchFrame.getSingleton().setVisible(true);
+    } else if ( evt.getSource() == jClockItem ) {
+	ClockFrame.getSingleton().setVisible(true);
+    } else if ( evt.getSource() == jTribeTribeAttackItem ) {
+	// mTribeTribeAttackFrame.setup();
+	mTribeTribeAttackFrame.setVisible(true);
+    } else if ( evt.getSource() == jUnitOverviewItem ) {
+	UnitOrderBuilder.showUnitOrder(null, null);
+    } else if ( evt.getSource() == jSelectionOverviewItem ) {
+	DSWorkbenchSelectionFrame.getSingleton().setVisible(true);
+    } else if ( evt.getSource() == jStartAStarItem ) {
+	DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+	DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
+    } else if ( evt.getSource() == jDistanceItem ) {
+	DSWorkbenchDistanceFrame.getSingleton().setVisible(true);
+    } else if ( evt.getSource() == jDoItYourselfAttackPlanerItem ) {
+	DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setVisible(true);
+    } else if ( evt.getSource() == jReTimeToolEvent ) {
+	DSWorkbenchReTimerFrame.getSingleton().setVisible(true);
+    } else if ( evt.getSource() == jSOSAnalyzerItem ) {
+	DSWorkbenchSOSRequestAnalyzer.getSingleton().setVisible(true);
+    } else if ( evt.getSource() == jMerchantDistributorItem ) {
+	DSWorkbenchMerchantDistibutor.getSingleton().setVisible(true);
     }
 }//GEN-LAST:event_fireToolsActionEvent
 
@@ -2600,8 +2598,8 @@ private void fireShowTroopsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
 }//GEN-LAST:event_fireShowTroopsFrameEvent
 
 private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_fireCurrentPlayerVillagePopupEvent
-    if (jCurrentPlayerVillages.getSelectedIndex() < 0) {
-        return;
+    if ( jCurrentPlayerVillages.getSelectedIndex() < 0 ) {
+	return;
     }
     centerVillage((Village) jCurrentPlayerVillages.getSelectedItem());
     DSWorkbenchConquersFrame.getSingleton().repaint();
@@ -2623,90 +2621,92 @@ private void fireShowMapPopupChangedEvent(javax.swing.event.ChangeEvent evt) {//
 
 private void fireCreateMapShotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateMapShotEvent
     Component parent = fullscreenFrame;
-    if (parent == null) {
-        parent = this;
+    if ( parent == null ) {
+	parent = this;
     }
 
-    if (JOptionPaneHelper.showQuestionConfirmBox(parent, "Willst du die Karte online stellen oder auf deinem Rechner speichern?", "Speichern", "Nur speichern", "Online stellen") == JOptionPane.YES_OPTION) {
-        putOnline = true;
-        MapPanel.getSingleton().planMapShot("png", new File("tmp.png"), this);
+    if ( JOptionPaneHelper.showQuestionConfirmBox(parent, "Willst du die Karte online stellen oder auf deinem Rechner speichern?", "Speichern", "Nur speichern", "Online stellen") == JOptionPane.YES_OPTION ) {
+	putOnline = true;
+	MapPanel.getSingleton().planMapShot("png", new File("tmp.png"), this);
     } else {
-        putOnline = false;
-        String dir = GlobalOptions.getProperty("screen.dir");
-        if (dir == null) {
-            dir = ".";
-        }
-        JFileChooser chooser = null;
-        try {
-            chooser = new JFileChooser(dir);
-        } catch (Exception e) {
-            JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
-            return;
-        }
-        chooser.setDialogTitle("Speichern unter...");
-        chooser.setSelectedFile(new File("map"));
-        chooser.addChoosableFileFilter(new javax.swing.filechooser.FileFilter() {
+	putOnline = false;
+	String dir = GlobalOptions.getProperty("screen.dir");
+	if ( dir == null ) {
+	    dir = ".";
+	}
+	JFileChooser chooser = null;
+	try {
+	    chooser = new JFileChooser(dir);
+	} catch ( Exception e ) {
+	    JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+	    return;
+	}
+	chooser.setDialogTitle("Speichern unter...");
+	chooser.setSelectedFile(new File("map"));
+	chooser.addChoosableFileFilter(new javax.swing.filechooser.FileFilter() {
 
-            @Override
-            public boolean accept(File f) {
-                if ((f != null) && (f.isDirectory() || f.getName().endsWith(".png"))) {
-                    return true;
-                }
-                return false;
-            }
+	    @Override
+	    public boolean accept( File f ) {
+		if ( (f != null) && (f.isDirectory() || f.getName().endsWith(".png")) ) {
+		    return true;
+		}
+		return false;
+	    }
 
-            @Override
-            public String getDescription() {
-                return "PNG Image (*.png)";
-            }
-        });
+	    @Override
+	    public String getDescription() {
+		return "PNG Image (*.png)";
+	    }
 
-        chooser.addChoosableFileFilter(new javax.swing.filechooser.FileFilter() {
+	});
 
-            @Override
-            public boolean accept(File f) {
-                if ((f != null) && (f.isDirectory() || f.getName().endsWith(".jpeg"))) {
-                    return true;
-                }
-                return false;
-            }
+	chooser.addChoosableFileFilter(new javax.swing.filechooser.FileFilter() {
 
-            @Override
-            public String getDescription() {
-                return "JPEG Image (*.jpeg)";
-            }
-        });
-        String type = null;
-        int ret = chooser.showSaveDialog(jMapShotDialog);
-        if (ret == JFileChooser.APPROVE_OPTION) {
-            try {
-                File f = chooser.getSelectedFile();
-                javax.swing.filechooser.FileFilter filter = chooser.getFileFilter();
-                if (filter.getDescription().indexOf("jpeg") > 0) {
-                    type = "jpeg";
-                } else if (filter.getDescription().indexOf("png") > 0) {
-                    type = "png";
-                } else {
-                    type = "png";
-                }
-                String file = f.getCanonicalPath();
-                if (!file.endsWith(type)) {
-                    file += "." + type;
-                }
-                File target = new File(file);
-                if (target.exists()) {
-                    //ask if overwrite
+	    @Override
+	    public boolean accept( File f ) {
+		if ( (f != null) && (f.isDirectory() || f.getName().endsWith(".jpeg")) ) {
+		    return true;
+		}
+		return false;
+	    }
 
-                    if (JOptionPaneHelper.showQuestionConfirmBox(jMapShotDialog, "Existierende Datei überschreiben?", "Überschreiben", "Nein", "Ja") != JOptionPane.YES_OPTION) {
-                        return;
-                    }
-                }
-                MapPanel.getSingleton().planMapShot(type, target, this);
-                GlobalOptions.addProperty("screen.dir", target.getParent());
-            } catch (Exception e) {
-                logger.error("Failed to write map shot", e);
-            }
-        }
+	    @Override
+	    public String getDescription() {
+		return "JPEG Image (*.jpeg)";
+	    }
+
+	});
+	String type = null;
+	int ret = chooser.showSaveDialog(jMapShotDialog);
+	if ( ret == JFileChooser.APPROVE_OPTION ) {
+	    try {
+		File f = chooser.getSelectedFile();
+		javax.swing.filechooser.FileFilter filter = chooser.getFileFilter();
+		if ( filter.getDescription().indexOf("jpeg") > 0 ) {
+		    type = "jpeg";
+		} else if ( filter.getDescription().indexOf("png") > 0 ) {
+		    type = "png";
+		} else {
+		    type = "png";
+		}
+		String file = f.getCanonicalPath();
+		if ( !file.endsWith(type) ) {
+		    file += "." + type;
+		}
+		File target = new File(file);
+		if ( target.exists() ) {
+		    //ask if overwrite
+
+		    if ( JOptionPaneHelper.showQuestionConfirmBox(jMapShotDialog, "Existierende Datei überschreiben?", "Überschreiben", "Nein", "Ja") != JOptionPane.YES_OPTION ) {
+			return;
+		    }
+		}
+		MapPanel.getSingleton().planMapShot(type, target, this);
+		GlobalOptions.addProperty("screen.dir", target.getParent());
+	    } catch ( Exception e ) {
+		logger.error("Failed to write map shot", e);
+	    }
+	}
     }
 
     jMapShotDialog.setVisible(false);
@@ -2718,240 +2718,242 @@ private void fireCancelMapShotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 
 private void fireShowImportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowImportDialogEvent
     String dir = GlobalOptions.getProperty("screen.dir");
-    if (dir == null) {
-        dir = ".";
+    if ( dir == null ) {
+	dir = ".";
     }
     JFileChooser chooser = null;
     try {
-        chooser = new JFileChooser(dir);
-    } catch (Exception e) {
-        JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
-        return;
+	chooser = new JFileChooser(dir);
+    } catch ( Exception e ) {
+	JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+	return;
     }
     chooser.setDialogTitle("Datei auswählen");
 
     chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
 
-        @Override
-        public boolean accept(File f) {
-            if ((f != null) && (f.isDirectory() || f.getName().endsWith(".xml"))) {
-                return true;
-            }
+	@Override
+	public boolean accept( File f ) {
+	    if ( (f != null) && (f.isDirectory() || f.getName().endsWith(".xml")) ) {
+		return true;
+	    }
 
-            return false;
-        }
+	    return false;
+	}
 
-        @Override
-        public String getDescription() {
-            return "*.xml";
-        }
+	@Override
+	public String getDescription() {
+	    return "*.xml";
+	}
+
     });
     int ret = chooser.showOpenDialog(this);
-    if (ret == JFileChooser.APPROVE_OPTION) {
-        try {
-            File f = chooser.getSelectedFile();
-            String file = f.getCanonicalPath();
-            if (!file.endsWith(".xml")) {
-                file += ".xml";
-            }
+    if ( ret == JFileChooser.APPROVE_OPTION ) {
+	try {
+	    File f = chooser.getSelectedFile();
+	    String file = f.getCanonicalPath();
+	    if ( !file.endsWith(".xml") ) {
+		file += ".xml";
+	    }
 
-            File target = new File(file);
+	    File target = new File(file);
 
-            String extension = JOptionPane.showInputDialog(this, "Welche Kennzeichnung sollen importierte Angriffspläne und Tags erhalten?\n" + "Lass das Eingabefeld leer oder drücke 'Abbrechen', um sie unverändert zu importieren.", "Kennzeichnung festlegen", JOptionPane.INFORMATION_MESSAGE);
-            if (extension != null && extension.length() > 0) {
-                logger.debug("Using import extension '" + extension + "'");
-            } else {
-                logger.debug("Using no import extension");
-                extension = "";
-            }
+	    String extension = JOptionPane.showInputDialog(this, "Welche Kennzeichnung sollen importierte Angriffspläne und Tags erhalten?\n" + "Lass das Eingabefeld leer oder drücke 'Abbrechen', um sie unverändert zu importieren.", "Kennzeichnung festlegen", JOptionPane.INFORMATION_MESSAGE);
+	    if ( extension != null && extension.length() > 0 ) {
+		logger.debug("Using import extension '" + extension + "'");
+	    } else {
+		logger.debug("Using no import extension");
+		extension = "";
+	    }
 
-            if (target.exists()) {
-                //do import
-                boolean attackImported = AttackManager.getSingleton().importAttacks(target, extension);
-                boolean markersImported = MarkerManager.getSingleton().importMarkers(target, extension);
-                boolean reportsImported = ReportManager.getSingleton().importReports(target, extension);
-                boolean tagImported = TagManager.getSingleton().importTags(target, extension);
-                boolean troopsImported = TroopsManager.getSingleton().importTroops(target);
-                boolean formsImported = FormManager.getSingleton().importForms(target, extension);
-                boolean notesImported = NoteManager.getSingleton().importNotes(target);
+	    if ( target.exists() ) {
+		//do import
+		boolean attackImported = AttackManager.getSingleton().importAttacks(target, extension);
+		boolean markersImported = MarkerManager.getSingleton().importMarkers(target, extension);
+		boolean reportsImported = ReportManager.getSingleton().importReports(target, extension);
+		boolean tagImported = TagManager.getSingleton().importTags(target, extension);
+		boolean troopsImported = TroopsManager.getSingleton().importTroops(target);
+		boolean formsImported = FormManager.getSingleton().importForms(target, extension);
+		boolean notesImported = NoteManager.getSingleton().importNotes(target);
 
-                String message = "Import beendet.\n";
-                if (!attackImported) {
-                    message += "  * Fehler beim Import der Angriffe\n";
-                }
+		String message = "Import beendet.\n";
+		if ( !attackImported ) {
+		    message += "  * Fehler beim Import der Angriffe\n";
+		}
 
-                if (!markersImported) {
-                    message += "  * Fehler beim Import der Markierungen\n";
-                }
-                if (!reportsImported) {
-                    message += "  * Fehler beim Import der Berichte\n";
-                }
-                if (!tagImported) {
-                    message += "  * Fehler beim Import der Tags\n";
-                }
+		if ( !markersImported ) {
+		    message += "  * Fehler beim Import der Markierungen\n";
+		}
+		if ( !reportsImported ) {
+		    message += "  * Fehler beim Import der Berichte\n";
+		}
+		if ( !tagImported ) {
+		    message += "  * Fehler beim Import der Tags\n";
+		}
 
-                if (!troopsImported) {
-                    message += "  * Fehler beim Import der Truppen\n";
-                }
+		if ( !troopsImported ) {
+		    message += "  * Fehler beim Import der Truppen\n";
+		}
 
-                if (!formsImported) {
-                    message += "  * Fehler beim Import der Formen\n";
-                }
-                if (!notesImported) {
-                    message += "  * Fehler beim Import der Notizen\n";
-                }
-                JOptionPaneHelper.showInformationBox(this, message, "Import");
-            }
+		if ( !formsImported ) {
+		    message += "  * Fehler beim Import der Formen\n";
+		}
+		if ( !notesImported ) {
+		    message += "  * Fehler beim Import der Notizen\n";
+		}
+		JOptionPaneHelper.showInformationBox(this, message, "Import");
+	    }
 
-            GlobalOptions.addProperty("screen.dir", target.getParent());
-        } catch (Exception e) {
-            logger.error("Failed to import data", e);
-            JOptionPaneHelper.showErrorBox(this, "Import fehlgeschlagen.", "Import");
-        }
+	    GlobalOptions.addProperty("screen.dir", target.getParent());
+	} catch ( Exception e ) {
+	    logger.error("Failed to import data", e);
+	    JOptionPaneHelper.showErrorBox(this, "Import fehlgeschlagen.", "Import");
+	}
 
     }
 }//GEN-LAST:event_fireShowImportDialogEvent
 
 private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireExportEvent
-    if (evt.getSource() == jExportButton) {
-        //do export
-        logger.debug("Building export data");
+    if ( evt.getSource() == jExportButton ) {
+	//do export
+	logger.debug("Building export data");
 
-        List<String> plansToExport = new LinkedList<String>();
-        for (int i = 0; i < jAttackExportTable.getRowCount(); i++) {
-            String plan = (String) jAttackExportTable.getValueAt(i, 0);
-            Boolean export = (Boolean) jAttackExportTable.getValueAt(i, 1);
-            if (export) {
-                logger.debug("Selecting attack plan '" + plan + "' to export list");
-                plansToExport.add(plan);
-            }
+	List<String> plansToExport = new LinkedList<String>();
+	for ( int i = 0; i < jAttackExportTable.getRowCount(); i++ ) {
+	    String plan = (String) jAttackExportTable.getValueAt(i, 0);
+	    Boolean export = (Boolean) jAttackExportTable.getValueAt(i, 1);
+	    if ( export ) {
+		logger.debug("Selecting attack plan '" + plan + "' to export list");
+		plansToExport.add(plan);
+	    }
 
-        }
+	}
 
-        List<String> setsToExport = new LinkedList<String>();
-        for (int i = 0; i < jMarkerSetExportTable.getRowCount(); i++) {
-            String set = (String) jMarkerSetExportTable.getValueAt(i, 0);
-            Boolean export = (Boolean) jMarkerSetExportTable.getValueAt(i, 1);
-            if (export) {
-                logger.debug("Selecting marker set '" + set + "' to export list");
-                setsToExport.add(set);
-            }
+	List<String> setsToExport = new LinkedList<String>();
+	for ( int i = 0; i < jMarkerSetExportTable.getRowCount(); i++ ) {
+	    String set = (String) jMarkerSetExportTable.getValueAt(i, 0);
+	    Boolean export = (Boolean) jMarkerSetExportTable.getValueAt(i, 1);
+	    if ( export ) {
+		logger.debug("Selecting marker set '" + set + "' to export list");
+		setsToExport.add(set);
+	    }
 
-        }
-        List<String> reportsToExport = new LinkedList<String>();
-        for (int i = 0; i < jReportSetExportTable.getRowCount(); i++) {
-            String set = (String) jReportSetExportTable.getValueAt(i, 0);
-            Boolean export = (Boolean) jReportSetExportTable.getValueAt(i, 1);
-            if (export) {
-                logger.debug("Selecting report set '" + set + "' to export list");
-                reportsToExport.add(set);
-            }
-        }
-        boolean needExport = false;
-        needExport = !plansToExport.isEmpty();
-        needExport |= !setsToExport.isEmpty();
-        needExport |= !reportsToExport.isEmpty();
-        needExport |= jExportTags.isSelected();
-        needExport |= jExportTroops.isSelected();
-        needExport |= jExportForms.isSelected();
-        needExport |= jExportNotes.isSelected();
+	}
+	List<String> reportsToExport = new LinkedList<String>();
+	for ( int i = 0; i < jReportSetExportTable.getRowCount(); i++ ) {
+	    String set = (String) jReportSetExportTable.getValueAt(i, 0);
+	    Boolean export = (Boolean) jReportSetExportTable.getValueAt(i, 1);
+	    if ( export ) {
+		logger.debug("Selecting report set '" + set + "' to export list");
+		reportsToExport.add(set);
+	    }
+	}
+	boolean needExport = false;
+	needExport = !plansToExport.isEmpty();
+	needExport |= !setsToExport.isEmpty();
+	needExport |= !reportsToExport.isEmpty();
+	needExport |= jExportTags.isSelected();
+	needExport |= jExportTroops.isSelected();
+	needExport |= jExportForms.isSelected();
+	needExport |= jExportNotes.isSelected();
 
-        if (!needExport) {
-            JOptionPaneHelper.showWarningBox(jExportDialog, "Keine Daten für den Export gewählt", "Export");
-            return;
+	if ( !needExport ) {
+	    JOptionPaneHelper.showWarningBox(jExportDialog, "Keine Daten für den Export gewählt", "Export");
+	    return;
 
-        }
-        String dir = GlobalOptions.getProperty("screen.dir");
-        if (dir == null) {
-            dir = ".";
-        }
+	}
+	String dir = GlobalOptions.getProperty("screen.dir");
+	if ( dir == null ) {
+	    dir = ".";
+	}
 
-        JFileChooser chooser = null;
-        try {
-            chooser = new JFileChooser(dir);
-        } catch (Exception e) {
-            JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
-            return;
-        }
-        chooser.setDialogTitle("Datei auswählen");
-        chooser.setSelectedFile(new File("export.xml"));
-        chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+	JFileChooser chooser = null;
+	try {
+	    chooser = new JFileChooser(dir);
+	} catch ( Exception e ) {
+	    JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+	    return;
+	}
+	chooser.setDialogTitle("Datei auswählen");
+	chooser.setSelectedFile(new File("export.xml"));
+	chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
 
-            @Override
-            public boolean accept(File f) {
-                if ((f != null) && (f.isDirectory() || f.getName().endsWith(".xml"))) {
-                    return true;
-                }
+	    @Override
+	    public boolean accept( File f ) {
+		if ( (f != null) && (f.isDirectory() || f.getName().endsWith(".xml")) ) {
+		    return true;
+		}
 
-                return false;
-            }
+		return false;
+	    }
 
-            @Override
-            public String getDescription() {
-                return "*.xml";
-            }
-        });
-        int ret = chooser.showSaveDialog(jExportDialog);
-        if (ret == JFileChooser.APPROVE_OPTION) {
-            try {
-                File f = chooser.getSelectedFile();
-                String file = f.getCanonicalPath();
-                if (!file.endsWith(".xml")) {
-                    file += ".xml";
-                }
+	    @Override
+	    public String getDescription() {
+		return "*.xml";
+	    }
 
-                File target = new File(file);
-                if (target.exists()) {
-                    if (JOptionPaneHelper.showQuestionConfirmBox(jExportDialog, "Bestehende Datei überschreiben?", "Export", "Nein", "Ja") == JOptionPane.NO_OPTION) {
-                        return;
-                    }
+	});
+	int ret = chooser.showSaveDialog(jExportDialog);
+	if ( ret == JFileChooser.APPROVE_OPTION ) {
+	    try {
+		File f = chooser.getSelectedFile();
+		String file = f.getCanonicalPath();
+		if ( !file.endsWith(".xml") ) {
+		    file += ".xml";
+		}
 
-                }
+		File target = new File(file);
+		if ( target.exists() ) {
+		    if ( JOptionPaneHelper.showQuestionConfirmBox(jExportDialog, "Bestehende Datei überschreiben?", "Export", "Nein", "Ja") == JOptionPane.NO_OPTION ) {
+			return;
+		    }
 
-                String exportString = "<export>\n";
-                if (!plansToExport.isEmpty()) {
-                    exportString += AttackManager.getSingleton().getExportData(plansToExport);
-                }
-                if (!setsToExport.isEmpty()) {
-                    exportString += MarkerManager.getSingleton().getExportData(setsToExport.toArray(new String[]{}));
-                }
-                if (!reportsToExport.isEmpty()) {
-                    exportString += ReportManager.getSingleton().getExportData(reportsToExport.toArray(new String[]{}));
-                }
-                if (jExportTags.isSelected()) {
-                    exportString += TagManager.getSingleton().getExportData();
-                }
+		}
 
-                if (jExportTroops.isSelected()) {
-                    exportString += TroopsManager.getSingleton().getExportData();
-                }
+		String exportString = "<export>\n";
+		if ( !plansToExport.isEmpty() ) {
+		    exportString += AttackManager.getSingleton().getExportData(plansToExport);
+		}
+		if ( !setsToExport.isEmpty() ) {
+		    exportString += MarkerManager.getSingleton().getExportData(setsToExport.toArray(new String[]{}));
+		}
+		if ( !reportsToExport.isEmpty() ) {
+		    exportString += ReportManager.getSingleton().getExportData(reportsToExport.toArray(new String[]{}));
+		}
+		if ( jExportTags.isSelected() ) {
+		    exportString += TagManager.getSingleton().getExportData();
+		}
 
-                if (jExportForms.isSelected()) {
-                    exportString += FormManager.getSingleton().getExportData();
-                }
+		if ( jExportTroops.isSelected() ) {
+		    exportString += TroopsManager.getSingleton().getExportData();
+		}
 
-                if (jExportNotes.isSelected()) {
-                    exportString += NoteManager.getSingleton().getExportData();
-                }
+		if ( jExportForms.isSelected() ) {
+		    exportString += FormManager.getSingleton().getExportData();
+		}
 
-                exportString += "</export>";
-                logger.debug("Writing data to disk");
-                FileWriter w = new FileWriter(target);
-                w.write(exportString);
-                logger.debug("Finalizing writer");
-                w.flush();
-                w.close();
-                logger.debug("Export finished successfully");
-                JOptionPaneHelper.showInformationBox(jExportDialog, "Export erfolgreich beendet.", "Export");
-            } catch (Exception e) {
-                logger.error("Failed to export data", e);
-                JOptionPaneHelper.showErrorBox(this, "Export fehlgeschlagen.", "Export");
-            }
+		if ( jExportNotes.isSelected() ) {
+		    exportString += NoteManager.getSingleton().getExportData();
+		}
 
-        } else {
-            //cancel pressed
-            return;
-        }
+		exportString += "</export>";
+		logger.debug("Writing data to disk");
+		FileWriter w = new FileWriter(target);
+		w.write(exportString);
+		logger.debug("Finalizing writer");
+		w.flush();
+		w.close();
+		logger.debug("Export finished successfully");
+		JOptionPaneHelper.showInformationBox(jExportDialog, "Export erfolgreich beendet.", "Export");
+	    } catch ( Exception e ) {
+		logger.error("Failed to export data", e);
+		JOptionPaneHelper.showErrorBox(this, "Export fehlgeschlagen.", "Export");
+	    }
+
+	} else {
+	    //cancel pressed
+	    return;
+	}
 
     }
     jExportDialog.setAlwaysOnTop(false);
@@ -2962,30 +2964,31 @@ private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
     //build attack plan table
     Enumeration<String> plans = AttackManager.getSingleton().getPlans();
     jAttackExportTable.invalidate();
-    for (int i = 0; i < jAttackExportTable.getColumnCount(); i++) {
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+    for ( int i = 0; i < jAttackExportTable.getColumnCount(); i++ ) {
+	DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                c.setBackground(Constants.DS_BACK);
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                r.setText("<html><b>" + r.getText() + "</b></html>");
-                return c;
-            }
-        };
-        jAttackExportTable.getColumn(jAttackExportTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+	    @Override
+	    public Component getTableCellRendererComponent( JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column ) {
+		Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+		c.setBackground(Constants.DS_BACK);
+		DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+		r.setText("<html><b>" + r.getText() + "</b></html>");
+		return c;
+	    }
+
+	};
+	jAttackExportTable.getColumn(jAttackExportTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
     }
 
     DefaultTableModel model = (DefaultTableModel) jAttackExportTable.getModel();
     int rows = model.getRowCount();
-    for (int i = 0; i < rows; i++) {
-        model.removeRow(0);
+    for ( int i = 0; i < rows; i++ ) {
+	model.removeRow(0);
     }
 
-    while (plans.hasMoreElements()) {
-        String next = plans.nextElement();
-        model.addRow(new Object[]{next, Boolean.FALSE});
+    while ( plans.hasMoreElements() ) {
+	String next = plans.nextElement();
+	model.addRow(new Object[]{next, Boolean.FALSE});
     }
 
     jAttackExportTable.revalidate();
@@ -2993,58 +2996,60 @@ private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
     //build marker set table
     String[] sets = MarkerManager.getSingleton().getMarkerSets();
     jMarkerSetExportTable.invalidate();
-    for (int i = 0; i < jMarkerSetExportTable.getColumnCount(); i++) {
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+    for ( int i = 0; i < jMarkerSetExportTable.getColumnCount(); i++ ) {
+	DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                c.setBackground(Constants.DS_BACK);
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                r.setText("<html><b>" + r.getText() + "</b></html>");
-                return c;
-            }
-        };
-        jMarkerSetExportTable.getColumn(jMarkerSetExportTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+	    @Override
+	    public Component getTableCellRendererComponent( JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column ) {
+		Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+		c.setBackground(Constants.DS_BACK);
+		DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+		r.setText("<html><b>" + r.getText() + "</b></html>");
+		return c;
+	    }
+
+	};
+	jMarkerSetExportTable.getColumn(jMarkerSetExportTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
     }
 
     model = (DefaultTableModel) jMarkerSetExportTable.getModel();
     rows = model.getRowCount();
-    for (int i = 0; i < rows; i++) {
-        model.removeRow(0);
+    for ( int i = 0; i < rows; i++ ) {
+	model.removeRow(0);
     }
 
-    for (String set : sets) {
-        model.addRow(new Object[]{set, Boolean.FALSE});
+    for ( String set : sets ) {
+	model.addRow(new Object[]{set, Boolean.FALSE});
     }
     jMarkerSetExportTable.revalidate();
     jMarkerSetExportTable.repaint();//.updateUI();
     //build report set table
     Enumeration<String> reportSets = ReportManager.getSingleton().getReportSets();
     jMarkerSetExportTable.invalidate();
-    for (int i = 0; i < jReportSetExportTable.getColumnCount(); i++) {
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+    for ( int i = 0; i < jReportSetExportTable.getColumnCount(); i++ ) {
+	DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                c.setBackground(Constants.DS_BACK);
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                r.setText("<html><b>" + r.getText() + "</b></html>");
-                return c;
-            }
-        };
-        jReportSetExportTable.getColumn(jReportSetExportTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+	    @Override
+	    public Component getTableCellRendererComponent( JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column ) {
+		Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+		c.setBackground(Constants.DS_BACK);
+		DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+		r.setText("<html><b>" + r.getText() + "</b></html>");
+		return c;
+	    }
+
+	};
+	jReportSetExportTable.getColumn(jReportSetExportTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
     }
 
     model = (DefaultTableModel) jReportSetExportTable.getModel();
     rows = model.getRowCount();
-    for (int i = 0; i < rows; i++) {
-        model.removeRow(0);
+    for ( int i = 0; i < rows; i++ ) {
+	model.removeRow(0);
     }
 
-    while (reportSets.hasMoreElements()) {
-        model.addRow(new Object[]{reportSets.nextElement(), Boolean.FALSE});
+    while ( reportSets.hasMoreElements() ) {
+	model.addRow(new Object[]{reportSets.nextElement(), Boolean.FALSE});
     }
     jReportSetExportTable.revalidate();
     jReportSetExportTable.repaint();//.updateUI();
@@ -3053,66 +3058,66 @@ private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
 }//GEN-LAST:event_fireOpenExportDialogEvent
 
 private void fireShowChurchFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowChurchFrameEvent
-    if (jShowChurchFrame.isEnabled()) {
-        DSWorkbenchChurchFrame.getSingleton().setVisible(!DSWorkbenchChurchFrame.getSingleton().isVisible());
-        jShowChurchFrame.setSelected(DSWorkbenchChurchFrame.getSingleton().isVisible());
+    if ( jShowChurchFrame.isEnabled() ) {
+	DSWorkbenchChurchFrame.getSingleton().setVisible(!DSWorkbenchChurchFrame.getSingleton().isVisible());
+	jShowChurchFrame.setSelected(DSWorkbenchChurchFrame.getSingleton().isVisible());
     }
 }//GEN-LAST:event_fireShowChurchFrameEvent
 
 private void fireChangeROIEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeROIEvent
-    if (evt.getSource() == jAddROIButton) {
-        try {
-            int x = Integer.parseInt(jCenterX.getText());
-            int y = Integer.parseInt(jCenterY.getText());
-            jROIRegion.setText("(" + x + "|" + y + ")");
-            jROIPosition.setSelectedIndex(jROIPosition.getItemCount() - 1);
-        } catch (Exception e) {
-            logger.error("Failed to initialize ROI dialog", e);
-            return;
+    if ( evt.getSource() == jAddROIButton ) {
+	try {
+	    int x = Integer.parseInt(jCenterX.getText());
+	    int y = Integer.parseInt(jCenterY.getText());
+	    jROIRegion.setText("(" + x + "|" + y + ")");
+	    jROIPosition.setSelectedIndex(jROIPosition.getItemCount() - 1);
+	} catch ( Exception e ) {
+	    logger.error("Failed to initialize ROI dialog", e);
+	    return;
 
-        }
+	}
 
-        jAddROIDialog.setLocationRelativeTo(this);
-        jAddROIDialog.setVisible(true);
+	jAddROIDialog.setLocationRelativeTo(this);
+	jAddROIDialog.setVisible(true);
     } else {
-        try {
-            String item = (String) jROIBox.getSelectedItem();
-            logger.debug("Removing ROI '" + item + "'");
-            ROIManager.getSingleton().removeROI(item);
-            jROIBox.removeItem(item);
-        } catch (Exception e) {
-        }
+	try {
+	    String item = (String) jROIBox.getSelectedItem();
+	    logger.debug("Removing ROI '" + item + "'");
+	    ROIManager.getSingleton().removeROI(item);
+	    jROIBox.removeItem(item);
+	} catch ( Exception e ) {
+	}
     }
 }//GEN-LAST:event_fireChangeROIEvent
 
 private void fireAddROIDoneEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddROIDoneEvent
 
-    if (evt.getSource() == jAddNewROIButton) {
-        try {
-            int x = Integer.parseInt(jCenterX.getText());
-            int y = Integer.parseInt(jCenterY.getText());
-            String value = jROITextField.getText() + " (" + x + "|" + y + ")";
-            int pos = Integer.MAX_VALUE;
-            try {
-                pos = Integer.parseInt((String) jROIPosition.getSelectedItem());
-                pos -=
-                        1;
-            } catch (Exception ee) {
-                //end pos selected
-                pos = Integer.MAX_VALUE;
-            }
+    if ( evt.getSource() == jAddNewROIButton ) {
+	try {
+	    int x = Integer.parseInt(jCenterX.getText());
+	    int y = Integer.parseInt(jCenterY.getText());
+	    String value = jROITextField.getText() + " (" + x + "|" + y + ")";
+	    int pos = Integer.MAX_VALUE;
+	    try {
+		pos = Integer.parseInt((String) jROIPosition.getSelectedItem());
+		pos -=
+		1;
+	    } catch ( Exception ee ) {
+		//end pos selected
+		pos = Integer.MAX_VALUE;
+	    }
 
-            if (ROIManager.getSingleton().containsROI(value)) {
-                JOptionPaneHelper.showWarningBox(this, "ROI '" + value + "' existiert bereits.", "ROI vorhanden");
-                return;
+	    if ( ROIManager.getSingleton().containsROI(value) ) {
+		JOptionPaneHelper.showWarningBox(this, "ROI '" + value + "' existiert bereits.", "ROI vorhanden");
+		return;
 
-            }
+	    }
 
-            ROIManager.getSingleton().addROI(pos, value);
-            jROIBox.setModel(new DefaultComboBoxModel(ROIManager.getSingleton().getROIs()));
-        } catch (Exception e) {
-            logger.error("Failed to add ROI", e);
-        }
+	    ROIManager.getSingleton().addROI(pos, value);
+	    jROIBox.setModel(new DefaultComboBoxModel(ROIManager.getSingleton().getROIs()));
+	} catch ( Exception e ) {
+	    logger.error("Failed to add ROI", e);
+	}
 
     }
     jAddROIDialog.setVisible(false);
@@ -3120,25 +3125,25 @@ private void fireAddROIDoneEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
 }//GEN-LAST:event_fireAddROIDoneEvent
 
 private void fireROISelectedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireROISelectedEvent
-    if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
-        try {
-            String item = (String) jROIBox.getSelectedItem();
-            item = item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")"));
-            String[] pos = item.trim().split("\\|");
-            jCenterX.setText(pos[0]);
-            jCenterY.setText(pos[1]);
-            fireRefreshMapEvent(null);
-        } catch (Exception e) {
-        }
+    if ( evt.getStateChange() == java.awt.event.ItemEvent.SELECTED ) {
+	try {
+	    String item = (String) jROIBox.getSelectedItem();
+	    item = item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")"));
+	    String[] pos = item.trim().split("\\|");
+	    jCenterX.setText(pos[0]);
+	    jCenterY.setText(pos[1]);
+	    fireRefreshMapEvent(null);
+	} catch ( Exception e ) {
+	}
     }
 }//GEN-LAST:event_fireROISelectedEvent
 
 private void fireDSWorkbenchClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireDSWorkbenchClosingEvent
     logger.debug("Shutting down DSWorkbench");
     try {
-        GlobalOptions.getSelectedProfile().updateProperties();
-        GlobalOptions.getSelectedProfile().storeProfileData();
-    } catch (Exception e) {
+	GlobalOptions.getSelectedProfile().updateProperties();
+	GlobalOptions.getSelectedProfile().storeProfileData();
+    } catch ( Exception e ) {
     }
     System.exit(0);
 
@@ -3149,98 +3154,98 @@ private void firePanelMin(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fire
 }//GEN-LAST:event_firePanelMin
 
 private void fireShowConquersFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowConquersFrameEvent
-    if (jShowConquersFrame.isEnabled()) {
-        DSWorkbenchConquersFrame.getSingleton().setVisible(!DSWorkbenchConquersFrame.getSingleton().isVisible());
-        jShowConquersFrame.setSelected(DSWorkbenchConquersFrame.getSingleton().isVisible());
+    if ( jShowConquersFrame.isEnabled() ) {
+	DSWorkbenchConquersFrame.getSingleton().setVisible(!DSWorkbenchConquersFrame.getSingleton().isVisible());
+	jShowConquersFrame.setSelected(DSWorkbenchConquersFrame.getSingleton().isVisible());
     }
 }//GEN-LAST:event_fireShowConquersFrameEvent
 
 private void fireShowNotepadEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowNotepadEvent
-    if (jShowNotepadFrame.isEnabled()) {
-        DSWorkbenchNotepad.getSingleton().setVisible(!DSWorkbenchNotepad.getSingleton().isVisible());
-        jShowNotepadFrame.setSelected(DSWorkbenchNotepad.getSingleton().isVisible());
+    if ( jShowNotepadFrame.isEnabled() ) {
+	DSWorkbenchNotepad.getSingleton().setVisible(!DSWorkbenchNotepad.getSingleton().isVisible());
+	jShowNotepadFrame.setSelected(DSWorkbenchNotepad.getSingleton().isVisible());
     }
 }//GEN-LAST:event_fireShowNotepadEvent
 
 private void fireChangeDrawOrderEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeDrawOrderEvent
     try {
-        int idx = jLayerList.getSelectedIndex();
-        DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
-        if (evt.getSource() == jLayerUpButton) {
-            if (idx == 0) {
-                //already on first position
-                return;
-            }
-            jLayerList.invalidate();
-            String elem = (String) model.remove(idx);
-            jLayerList.revalidate();
-            idx -= 1;
-            jLayerList.invalidate();
-            model.add(idx, elem);
-            jLayerList.setSelectedIndex(idx);
-            try {
-                //scroll element to be visible
-                Rectangle g = jLayerList.getCellBounds(idx, idx);
-                jLayerList.scrollRectToVisible(g);
-            } catch (Exception e) {
-            }
-            jLayerList.revalidate();
-        } else {
-            if (idx == model.getSize() - 1) {
-                //already on last position
-                return;
-            }
+	int idx = jLayerList.getSelectedIndex();
+	DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
+	if ( evt.getSource() == jLayerUpButton ) {
+	    if ( idx == 0 ) {
+		//already on first position
+		return;
+	    }
+	    jLayerList.invalidate();
+	    String elem = (String) model.remove(idx);
+	    jLayerList.revalidate();
+	    idx -= 1;
+	    jLayerList.invalidate();
+	    model.add(idx, elem);
+	    jLayerList.setSelectedIndex(idx);
+	    try {
+		//scroll element to be visible
+		Rectangle g = jLayerList.getCellBounds(idx, idx);
+		jLayerList.scrollRectToVisible(g);
+	    } catch ( Exception e ) {
+	    }
+	    jLayerList.revalidate();
+	} else {
+	    if ( idx == model.getSize() - 1 ) {
+		//already on last position
+		return;
+	    }
 
-            jLayerList.invalidate();
-            String elem = (String) model.remove(idx);
-            idx += 1;
-            model.add(idx, elem);
-            jLayerList.setSelectedIndex(idx);
-            try {
-                //scroll element to be visible
-                Rectangle g = jLayerList.getCellBounds(idx, idx);
-                jLayerList.scrollRectToVisible(g);
-            } catch (Exception e) {
-            }
-            jLayerList.revalidate();
-        }
-        jLayerList.updateUI();
-        propagateLayerOrder();
-    } catch (Exception outer) {
+	    jLayerList.invalidate();
+	    String elem = (String) model.remove(idx);
+	    idx += 1;
+	    model.add(idx, elem);
+	    jLayerList.setSelectedIndex(idx);
+	    try {
+		//scroll element to be visible
+		Rectangle g = jLayerList.getCellBounds(idx, idx);
+		jLayerList.scrollRectToVisible(g);
+	    } catch ( Exception e ) {
+	    }
+	    jLayerList.revalidate();
+	}
+	jLayerList.updateUI();
+	propagateLayerOrder();
+    } catch ( Exception outer ) {
     }
 }//GEN-LAST:event_fireChangeDrawOrderEvent
 
 private void fireShowTagFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowTagFrameEvent
-    if (jShowTagFrame.isEnabled()) {
-        DSWorkbenchTagFrame.getSingleton().setVisible(!DSWorkbenchTagFrame.getSingleton().isVisible());
-        jShowTagFrame.setSelected(DSWorkbenchTagFrame.getSingleton().isVisible());
+    if ( jShowTagFrame.isEnabled() ) {
+	DSWorkbenchTagFrame.getSingleton().setVisible(!DSWorkbenchTagFrame.getSingleton().isVisible());
+	jShowTagFrame.setSelected(DSWorkbenchTagFrame.getSingleton().isVisible());
     }
 }//GEN-LAST:event_fireShowTagFrameEvent
 
 private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireGraphicPackChangedEvent
     GlobalOptions.addProperty("default.skin", (String) jGraphicPacks.getSelectedItem());
     try {
-        GlobalOptions.loadSkin();
-    } catch (Exception e) {
-        logger.error("Failed to load skin '" + jGraphicPacks.getSelectedItem() + "'", e);
-        JOptionPaneHelper.showErrorBox(this, "Fehler beim laden des Grafikpaketes.", "Fehler");
-        //load default
-        GlobalOptions.addProperty("default.skin", "default");
-        try {
-            GlobalOptions.loadSkin();
-        } catch (Exception ie) {
-            logger.error("Failed to load default skin", ie);
-        }
+	GlobalOptions.loadSkin();
+    } catch ( Exception e ) {
+	logger.error("Failed to load skin '" + jGraphicPacks.getSelectedItem() + "'", e);
+	JOptionPaneHelper.showErrorBox(this, "Fehler beim laden des Grafikpaketes.", "Fehler");
+	//load default
+	GlobalOptions.addProperty("default.skin", "default");
+	try {
+	    GlobalOptions.loadSkin();
+	} catch ( Exception ie ) {
+	    logger.error("Failed to load default skin", ie);
+	}
     }
-    if (isInitialized()) {
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
+    if ( isInitialized() ) {
+	MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
     }
 }//GEN-LAST:event_fireGraphicPackChangedEvent
 
 private void fireShowStatsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowStatsFrameEvent
-    if (jShowStatsFrame.isEnabled()) {
-        DSWorkbenchStatsFrame.getSingleton().setVisible(!DSWorkbenchStatsFrame.getSingleton().isVisible());
-        jShowStatsFrame.setSelected(DSWorkbenchStatsFrame.getSingleton().isVisible());
+    if ( jShowStatsFrame.isEnabled() ) {
+	DSWorkbenchStatsFrame.getSingleton().setVisible(!DSWorkbenchStatsFrame.getSingleton().isVisible());
+	jShowStatsFrame.setSelected(DSWorkbenchStatsFrame.getSingleton().isVisible());
     }
 }//GEN-LAST:event_fireShowStatsFrameEvent
 
@@ -3261,17 +3266,17 @@ private void fireShowRulerChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
 private void fireRadarValueChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireRadarValueChangedEvent
     int hours = 1;
     try {
-        hours = Integer.parseInt(jHourField.getText());
-    } catch (Exception e) {
-        //failed to read hours
-        return;
+	hours = Integer.parseInt(jHourField.getText());
+    } catch ( Exception e ) {
+	//failed to read hours
+	return;
     }
     int minutes = 0;
     try {
-        minutes = Integer.parseInt(jMinuteField.getText());
-    } catch (Exception e) {
-        //failed to read minutes
-        return;
+	minutes = Integer.parseInt(jMinuteField.getText());
+    } catch ( Exception e ) {
+	//failed to read minutes
+	return;
     }
 
     GlobalOptions.addProperty("radar.size", Integer.toString(hours * 60 + minutes));
@@ -3283,17 +3288,17 @@ private void fireDoDonationEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:ev
 
 private void fireCheckForVillagePositionEvent(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fireCheckForVillagePositionEvent
     List<Village> parsed = PluginManager.getSingleton().executeVillageParser(jCenterX.getText());
-    if (!parsed.isEmpty()) {
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-            int[] hier = DSCalculator.xyToHierarchical((int) parsed.get(0).getX(), (int) parsed.get(0).getY());
-            if (hier != null) {
-                jCenterY.setText(Integer.toString(hier[1]));
-                jCenterX.setText(Integer.toString(hier[0]));
-            }
-        } else {
-            jCenterY.setText(Short.toString(parsed.get(0).getY()));
-            jCenterX.setText(Short.toString(parsed.get(0).getX()));
-        }
+    if ( !parsed.isEmpty() ) {
+	if ( ServerSettings.getSingleton().getCoordType() != 2 ) {
+	    int[] hier = DSCalculator.xyToHierarchical((int) parsed.get(0).getX(), (int) parsed.get(0).getY());
+	    if ( hier != null ) {
+		jCenterY.setText(Integer.toString(hier[1]));
+		jCenterX.setText(Integer.toString(hier[0]));
+	    }
+	} else {
+	    jCenterY.setText(Short.toString(parsed.get(0).getY()));
+	    jCenterX.setText(Short.toString(parsed.get(0).getX()));
+	}
     }
 }//GEN-LAST:event_fireCheckForVillagePositionEvent
 
@@ -3302,267 +3307,267 @@ private void fireShowMouseOverInfoEvent(javax.swing.event.ChangeEvent evt) {//GE
 }//GEN-LAST:event_fireShowMouseOverInfoEvent
 
 private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeClipboardWatchEvent
-    if (bWatchClipboard) {
-        jEnableClipboardWatchButton.setIcon(new ImageIcon("./graphics/icons/not_watch_clipboard.png"));
-        bWatchClipboard = false;
+    if ( bWatchClipboard ) {
+	jEnableClipboardWatchButton.setIcon(new ImageIcon("./graphics/icons/not_watch_clipboard.png"));
+	bWatchClipboard = false;
     } else {
-        jEnableClipboardWatchButton.setIcon(new ImageIcon("./graphics/icons/watch_clipboard.png"));
-        bWatchClipboard = true;
+	jEnableClipboardWatchButton.setIcon(new ImageIcon("./graphics/icons/watch_clipboard.png"));
+	bWatchClipboard = true;
     }
 }//GEN-LAST:event_fireChangeClipboardWatchEvent
 
     public boolean isWatchClipboard() {
-        return bWatchClipboard;
+	return bWatchClipboard;
     }
 
     private void propagateLayerOrder() {
-        DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
+	DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
 
-        List<Integer> layerOrder = new LinkedList<Integer>();
-        for (int i = 0; i < model.size(); i++) {
-            String value = (String) model.get(i);
-            layerOrder.add(Constants.LAYERS.get(value));
-        }
-        MapPanel.getSingleton().getMapRenderer().setDrawOrder(layerOrder);
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
+	List<Integer> layerOrder = new LinkedList<Integer>();
+	for ( int i = 0; i < model.size(); i++ ) {
+	    String value = (String) model.get(i);
+	    layerOrder.add(Constants.LAYERS.get(value));
+	}
+	MapPanel.getSingleton().getMapRenderer().setDrawOrder(layerOrder);
+	MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
     }
 
     public String getLayerOrder() {
-        DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
-        String res = "";
-        for (int i = 0; i < model.size(); i++) {
-            res += (String) model.get(i) + ";";
-        }
-        return res;
+	DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
+	String res = "";
+	for ( int i = 0; i < model.size(); i++ ) {
+	    res += (String) model.get(i) + ";";
+	}
+	return res;
     }
 
-    private void centerROI(int pId) {
-        try {
-            String item = (String) jROIBox.getItemAt(pId);
-            item = item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")"));
-            String[] pos = item.trim().split("\\|");
-            jCenterX.setText(pos[0]);
-            jCenterY.setText(pos[1]);
-            fireRefreshMapEvent(null);
-        } catch (Exception e) {
-        }
+    private void centerROI( int pId ) {
+	try {
+	    String item = (String) jROIBox.getItemAt(pId);
+	    item = item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")"));
+	    String[] pos = item.trim().split("\\|");
+	    jCenterX.setText(pos[0]);
+	    jCenterY.setText(pos[1]);
+	    fireRefreshMapEvent(null);
+	} catch ( Exception e ) {
+	}
     }
 
     /**Check if zoom factor is valid and correct if needed*/
     private void checkZoomRange() {
-        if (dZoomFactor <= 0.4) {
-            dZoomFactor = 0.4;
-            jZoomOutButton.setEnabled(false);
-        } else if (dZoomFactor >= 2.5) {
-            dZoomFactor = 2.5;
-            jZoomInButton.setEnabled(false);
-        } else {
-            jZoomInButton.setEnabled(true);
-            jZoomOutButton.setEnabled(true);
-        }
+	if ( dZoomFactor <= 0.4 ) {
+	    dZoomFactor = 0.4;
+	    jZoomOutButton.setEnabled(false);
+	} else if ( dZoomFactor >= 2.5 ) {
+	    dZoomFactor = 2.5;
+	    jZoomInButton.setEnabled(false);
+	} else {
+	    jZoomInButton.setEnabled(true);
+	    jZoomOutButton.setEnabled(true);
+	}
     }
 
     /**Scroll the map*/
-    public void scroll(double pXDir, double pYDir) {
-        dCenterX += pXDir;
-        dCenterY += pYDir;
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-            int[] hier = DSCalculator.xyToHierarchical((int) dCenterX, (int) dCenterY);
-            if (hier != null) {
-                jCenterX.setText(Integer.toString(hier[0]));
-                jCenterY.setText(Integer.toString(hier[1]));
-            }
-        } else {
-            jCenterX.setText(Integer.toString((int) Math.floor(dCenterX)));
-            jCenterY.setText(Integer.toString((int) Math.floor(dCenterY)));
-        }
+    public void scroll( double pXDir, double pYDir ) {
+	dCenterX += pXDir;
+	dCenterY += pYDir;
+	if ( ServerSettings.getSingleton().getCoordType() != 2 ) {
+	    int[] hier = DSCalculator.xyToHierarchical((int) dCenterX, (int) dCenterY);
+	    if ( hier != null ) {
+		jCenterX.setText(Integer.toString(hier[0]));
+		jCenterY.setText(Integer.toString(hier[1]));
+	    }
+	} else {
+	    jCenterX.setText(Integer.toString((int) Math.floor(dCenterX)));
+	    jCenterY.setText(Integer.toString((int) Math.floor(dCenterY)));
+	}
 
-        double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
-        double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-        MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
-        MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
+	double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+	double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+	MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
+	MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
     }
 
     /**Center a village*/
-    public void centerVillage(Village pVillage) {
-        if (pVillage == null) {
-            return;
-        }
+    public void centerVillage( Village pVillage ) {
+	if ( pVillage == null ) {
+	    return;
+	}
 
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-            int[] hier = DSCalculator.xyToHierarchical((int) pVillage.getX(), (int) pVillage.getY());
-            if (hier != null) {
-                jCenterX.setText(Integer.toString(hier[0]));
-                jCenterY.setText(Integer.toString(hier[1]));
-            }
+	if ( ServerSettings.getSingleton().getCoordType() != 2 ) {
+	    int[] hier = DSCalculator.xyToHierarchical((int) pVillage.getX(), (int) pVillage.getY());
+	    if ( hier != null ) {
+		jCenterX.setText(Integer.toString(hier[0]));
+		jCenterY.setText(Integer.toString(hier[1]));
+	    }
 
-        } else {
-            jCenterX.setText(Integer.toString(pVillage.getX()));
-            jCenterY.setText(Integer.toString(pVillage.getY()));
-        }
+	} else {
+	    jCenterX.setText(Integer.toString(pVillage.getX()));
+	    jCenterY.setText(Integer.toString(pVillage.getY()));
+	}
 
-        fireRefreshMapEvent(null);
+	fireRefreshMapEvent(null);
     }
 
-    public void centerPosition(int xPos, int yPos) {
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-            int[] hier = DSCalculator.xyToHierarchical(xPos, yPos);
-            if (hier != null) {
-                jCenterX.setText(Integer.toString(hier[0]));
-                jCenterY.setText(Integer.toString(hier[1]));
-            }
+    public void centerPosition( int xPos, int yPos ) {
+	if ( ServerSettings.getSingleton().getCoordType() != 2 ) {
+	    int[] hier = DSCalculator.xyToHierarchical(xPos, yPos);
+	    if ( hier != null ) {
+		jCenterX.setText(Integer.toString(hier[0]));
+		jCenterY.setText(Integer.toString(hier[1]));
+	    }
 
-        } else {
-            jCenterX.setText(Integer.toString(xPos));
-            jCenterY.setText(Integer.toString(yPos));
-        }
+	} else {
+	    jCenterX.setText(Integer.toString(xPos));
+	    jCenterY.setText(Integer.toString(yPos));
+	}
 
-        fireRefreshMapEvent(null);
+	fireRefreshMapEvent(null);
     }
 
     /**Get active user village*/
     public Village getCurrentUserVillage() {
-        try {
-            if (jCurrentPlayerVillages.getSelectedIndex() < 0) {
-                if (jCurrentPlayerVillages.getItemCount() > 0) {
-                    jCurrentPlayerVillages.setSelectedIndex(0);
-                } else {
-                    //don't try to get village, list is still empty
-                    return null;
-                }
+	try {
+	    if ( jCurrentPlayerVillages.getSelectedIndex() < 0 ) {
+		if ( jCurrentPlayerVillages.getItemCount() > 0 ) {
+		    jCurrentPlayerVillages.setSelectedIndex(0);
+		} else {
+		    //don't try to get village, list is still empty
+		    return null;
+		}
 
-            }
-            return (Village) jCurrentPlayerVillages.getSelectedItem();
-        } catch (ClassCastException cce) {
-            //if no player was selected yet
-            return null;
-        } catch (Exception e) {
-            logger.warn("Could not get current user village.", e);
-            return null;
-        }
+	    }
+	    return (Village) jCurrentPlayerVillages.getSelectedItem();
+	} catch ( ClassCastException cce ) {
+	    //if no player was selected yet
+	    return null;
+	} catch ( Exception e ) {
+	    logger.warn("Could not get current user village.", e);
+	    return null;
+	}
 
     }
 
-    public void setCurrentUserVillage(Village pVillage) {
-        jCurrentPlayerVillages.setSelectedItem(pVillage);
+    public void setCurrentUserVillage( Village pVillage ) {
+	jCurrentPlayerVillages.setSelectedItem(pVillage);
     }
 
     public Tribe getCurrentUser() {
-        try {
-            Village v = (Village) jCurrentPlayerVillages.getItemAt(0);
-            return v.getTribe();
-        } catch (Exception e) {
-        }
-        return null;
+	try {
+	    Village v = (Village) jCurrentPlayerVillages.getItemAt(0);
+	    return v.getTribe();
+	} catch ( Exception e ) {
+	}
+	return null;
     }
 
 // <editor-fold defaultstate="collapsed" desc=" Listener EventHandlers ">
     @Override
-    public void fireToolChangedEvent(int pTool) {
-        jCurrentToolLabel.setIcon(ImageManager.getCursorImage(pTool));
+    public void fireToolChangedEvent( int pTool ) {
+	jCurrentToolLabel.setIcon(ImageManager.getCursorImage(pTool));
     }
 
     @Override
-    public void fireScrollEvent(double pX, double pY) {
-        scroll(pX, pY);
+    public void fireScrollEvent( double pX, double pY ) {
+	scroll(pX, pY);
     }
 
     @Override
-    public void fireVisibilityChangedEvent(JFrame pSource, boolean v) {
-        if (pSource == DSWorkbenchAttackFrame.getSingleton()) {
-            jShowAttackFrame.setSelected(DSWorkbenchAttackFrame.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchMarkerFrame.getSingleton()) {
-            jShowMarkerFrame.setSelected(DSWorkbenchMarkerFrame.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchTroopsFrame.getSingleton()) {
-            jShowTroopsFrame.setSelected(DSWorkbenchTroopsFrame.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchRankFrame.getSingleton()) {
-            jShowRankFrame.setSelected(DSWorkbenchRankFrame.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchFormFrame.getSingleton()) {
-            jShowFormsFrame.setSelected(DSWorkbenchFormFrame.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchChurchFrame.getSingleton()) {
-            jShowChurchFrame.setSelected(DSWorkbenchChurchFrame.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchConquersFrame.getSingleton()) {
-            jShowConquersFrame.setSelected(DSWorkbenchConquersFrame.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchNotepad.getSingleton()) {
-            jShowNotepadFrame.setSelected(DSWorkbenchNotepad.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchTagFrame.getSingleton()) {
-            jShowTagFrame.setSelected(DSWorkbenchTagFrame.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchStatsFrame.getSingleton()) {
-            jShowStatsFrame.setSelected(DSWorkbenchStatsFrame.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchReportFrame.getSingleton()) {
-            jShowReportFrame.setSelected(DSWorkbenchReportFrame.getSingleton().isVisible());
-        }
+    public void fireVisibilityChangedEvent( JFrame pSource, boolean v ) {
+	if ( pSource == DSWorkbenchAttackFrame.getSingleton() ) {
+	    jShowAttackFrame.setSelected(DSWorkbenchAttackFrame.getSingleton().isVisible());
+	} else if ( pSource == DSWorkbenchMarkerFrame.getSingleton() ) {
+	    jShowMarkerFrame.setSelected(DSWorkbenchMarkerFrame.getSingleton().isVisible());
+	} else if ( pSource == DSWorkbenchTroopsFrame.getSingleton() ) {
+	    jShowTroopsFrame.setSelected(DSWorkbenchTroopsFrame.getSingleton().isVisible());
+	} else if ( pSource == DSWorkbenchRankFrame.getSingleton() ) {
+	    jShowRankFrame.setSelected(DSWorkbenchRankFrame.getSingleton().isVisible());
+	} else if ( pSource == DSWorkbenchFormFrame.getSingleton() ) {
+	    jShowFormsFrame.setSelected(DSWorkbenchFormFrame.getSingleton().isVisible());
+	} else if ( pSource == DSWorkbenchChurchFrame.getSingleton() ) {
+	    jShowChurchFrame.setSelected(DSWorkbenchChurchFrame.getSingleton().isVisible());
+	} else if ( pSource == DSWorkbenchConquersFrame.getSingleton() ) {
+	    jShowConquersFrame.setSelected(DSWorkbenchConquersFrame.getSingleton().isVisible());
+	} else if ( pSource == DSWorkbenchNotepad.getSingleton() ) {
+	    jShowNotepadFrame.setSelected(DSWorkbenchNotepad.getSingleton().isVisible());
+	} else if ( pSource == DSWorkbenchTagFrame.getSingleton() ) {
+	    jShowTagFrame.setSelected(DSWorkbenchTagFrame.getSingleton().isVisible());
+	} else if ( pSource == DSWorkbenchStatsFrame.getSingleton() ) {
+	    jShowStatsFrame.setSelected(DSWorkbenchStatsFrame.getSingleton().isVisible());
+	} else if ( pSource == DSWorkbenchReportFrame.getSingleton() ) {
+	    jShowReportFrame.setSelected(DSWorkbenchReportFrame.getSingleton().isVisible());
+	}
     }
 
-    public void fireGroupParserEvent(Hashtable<String, List<Village>> pParserResult) {
-        String[] groups = pParserResult.keySet().toArray(new String[]{});
-        NotifierFrame.doNotification("DS Workbench hat " + groups.length + ((groups.length == 1) ? " Dorfgruppe " : " Dorfgruppen ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);
-        //remove all tags
-        for (String group : groups) {
-            List<Village> villagesForGroup = pParserResult.get(group);
-            if (villagesForGroup != null) {
-                for (Village v : villagesForGroup) {
-                    TagManager.getSingleton().removeTags(v);
-                }
-            }
-        }
+    public void fireGroupParserEvent( Hashtable<String, List<Village>> pParserResult ) {
+	String[] groups = pParserResult.keySet().toArray(new String[]{});
+	NotifierFrame.doNotification("DS Workbench hat " + groups.length + ((groups.length == 1) ? " Dorfgruppe " : " Dorfgruppen ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);
+	//remove all tags
+	for ( String group : groups ) {
+	    List<Village> villagesForGroup = pParserResult.get(group);
+	    if ( villagesForGroup != null ) {
+		for ( Village v : villagesForGroup ) {
+		    TagManager.getSingleton().removeTags(v);
+		}
+	    }
+	}
 
-        for (String group : groups) {
-            //add new groups
-            TagManager.getSingleton().addTagFast(group);
-            //get (added) group
-            Tag t = TagManager.getSingleton().getTagByName(group);
-            //add villages to group
-            List<Village> villagesForGroup = pParserResult.get(group);
-            if (villagesForGroup != null) {
-                //set new tags
-                for (Village v : villagesForGroup) {
-                    t.tagVillage(v.getId());
-                }
-            }
-        }
-        TagManager.getSingleton().forceUpdate();
+	for ( String group : groups ) {
+	    //add new groups
+	    TagManager.getSingleton().addTagFast(group);
+	    //get (added) group
+	    Tag t = TagManager.getSingleton().getTagByName(group);
+	    //add villages to group
+	    List<Village> villagesForGroup = pParserResult.get(group);
+	    if ( villagesForGroup != null ) {
+		//set new tags
+		for ( Village v : villagesForGroup ) {
+		    t.tagVillage(v.getId());
+		}
+	    }
+	}
+	TagManager.getSingleton().forceUpdate();
 
     }
 
     @Override
     public void fireMapShotDoneEvent() {
-        Component parent = fullscreenFrame;
-        if (parent == null) {
-            parent = this;
-        }
+	Component parent = fullscreenFrame;
+	if ( parent == null ) {
+	    parent = this;
+	}
 
-        if (!putOnline) {
-            JOptionPaneHelper.showInformationBox(parent, "Kartengrafik erfolgreich gespeichert.", "Information");
-        } else {
-            String result = ScreenUploadInterface.upload("tmp.png");
-            if (result != null) {
-                if (result.indexOf("view.php") > 0) {
-                    try {
-                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
-                        JOptionPaneHelper.showInformationBox(parent, "Kartengrafik erfolgreich Online gestellt.\n" + "Der Zugriffslink (" + result + ")\n" + "wurde in die Zwischenablage kopiert.", "Information");
-                        BrowserCommandSender.openPage(result);
-                    } catch (Exception e) {
-                        JOptionPaneHelper.showWarningBox(parent, "Fehler beim Kopieren des Links in die Zwischenablage.\n" + "Der Zugriffslink lautet: " + result, "Link nicht kopiert werden");
-                    }
+	if ( !putOnline ) {
+	    JOptionPaneHelper.showInformationBox(parent, "Kartengrafik erfolgreich gespeichert.", "Information");
+	} else {
+	    String result = ScreenUploadInterface.upload("tmp.png");
+	    if ( result != null ) {
+		if ( result.indexOf("view.php") > 0 ) {
+		    try {
+			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
+			JOptionPaneHelper.showInformationBox(parent, "Kartengrafik erfolgreich Online gestellt.\n" + "Der Zugriffslink (" + result + ")\n" + "wurde in die Zwischenablage kopiert.", "Information");
+			BrowserCommandSender.openPage(result);
+		    } catch ( Exception e ) {
+			JOptionPaneHelper.showWarningBox(parent, "Fehler beim Kopieren des Links in die Zwischenablage.\n" + "Der Zugriffslink lautet: " + result, "Link nicht kopiert werden");
+		    }
 
-                } else {
-                    JOptionPaneHelper.showErrorBox(parent, "Kartengrafik konnte nicht Online gestellt werden.\n" + "Fehler: " + result, "Fehler");
-                }
+		} else {
+		    JOptionPaneHelper.showErrorBox(parent, "Kartengrafik konnte nicht Online gestellt werden.\n" + "Fehler: " + result, "Fehler");
+		}
 
-            }
-        }
-        putOnline = false;
+	    }
+	}
+	putOnline = false;
     }
 
     @Override
     public void fireMapShotFailedEvent() {
-        Component parent = fullscreenFrame;
-        if (parent == null) {
-            parent = this;
-        }
+	Component parent = fullscreenFrame;
+	if ( parent == null ) {
+	    parent = this;
+	}
 
-        JOptionPaneHelper.showErrorBox(parent, "Fehler beim Speichern der Kartengrafik.", "Fehler");
+	JOptionPaneHelper.showErrorBox(parent, "Fehler beim Speichern der Kartengrafik.", "Fehler");
     }
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Generated Variables">

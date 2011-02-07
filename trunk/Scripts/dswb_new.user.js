@@ -61,11 +61,11 @@ function doInsertUnitsAction(){
 	    //if field is valid and arguments contain value for field
 	    if(field != null && args[units[i]] != null){
 	       //insert valid value
-if(window.navigator.userAgent.indexOf("Firefox") > -1){
+//if(window.navigator.userAgent.indexOf("Firefox") > -1){
 	field.value=args[units[i]];
-}else{
+/*}else{
 insertUnit(field, parseInt(args[units[i]]));
-}
+}*/
       }
    }
 }

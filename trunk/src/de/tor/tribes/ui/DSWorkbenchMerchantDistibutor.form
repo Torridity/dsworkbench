@@ -59,7 +59,7 @@
                           <Component id="jLabel12" alignment="0" pref="496" max="32767" attributes="0"/>
                           <Component id="jClickAccountLabel" alignment="0" min="-2" pref="144" max="-2" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="jScrollPane2" pref="431" max="32767" attributes="0"/>
+                              <Component id="jScrollPane2" pref="433" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Component id="jButton1" min="-2" max="-2" attributes="0"/>

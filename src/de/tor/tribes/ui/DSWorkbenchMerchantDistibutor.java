@@ -895,19 +895,6 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
 
     private void fireTransferTransportsToBrowserEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferTransportsToBrowserEvent
 
-
-        /*   int[] rows = jResultsTable.getSelectedRows();
-        if (rows == null || rows.length == 0) {
-        return;
-        }
-        for (int i = 0; i < rows.length; i++) {
-        //int row = jMerchantDataTable.convertRowIndexToModel(rows[i]);
-        Village source = (Village) jResultsTable.getValueAt(rows[i], 0);
-        Village target = (Village) jResultsTable.getValueAt(rows[i], 2);
-        Transport trans = (Transport) jResultsTable.getValueAt(rows[i], 1);
-
-        BrowserCommandSender.sendRes(source, target, trans);
-        }*/
         if (iClickAccount == 0) {
             int row = jResultsTable.getSelectedRow();
             if (row == -1) {
@@ -927,7 +914,8 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
                 return;
             }
             for (int i = 0; i < rows.length; i++) {
-                int modelRow = jResultsTable.convertRowIndexToModel(rows[i]);
+                jResultsTable.getSelectionModel().removeSelectionInterval(rows[i],rows[i]);
+		int modelRow = jResultsTable.convertRowIndexToModel(rows[i]);
                 Village source = (Village) jResultsTable.getValueAt(rows[i], 0);
                 Village target = (Village) jResultsTable.getValueAt(rows[i], 2);
                 Transport trans = (Transport) jResultsTable.getValueAt(rows[i], 1);

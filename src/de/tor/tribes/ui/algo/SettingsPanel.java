@@ -71,7 +71,7 @@ public class SettingsPanel extends javax.swing.JPanel {
         profile.addProperty("attack.frame.max.arrive", Long.toString(jArriveTimeSettingsPanel.getMaxTime().getTime()));
 
         spanProp = "";
-        for (TimeSpan span : jSendTimeSettingsPanel.getTimeSpans()) {
+        for (TimeSpan span : jArriveTimeSettingsPanel.getTimeSpans()) {
             spanProp += span.toPropertyString() + ";";
         }
         profile.addProperty("attack.frame.arrive.spans", spanProp);

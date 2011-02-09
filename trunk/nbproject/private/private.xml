@@ -24,5 +24,13 @@
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/types/UserProfile.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/DSWorkbenchSettingsDialog.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/renderer/MultiColorLabel.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/DSWorkbenchMerchantDistibutor.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/ImageManager.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/io/UnitHolder.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/MapPanel.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/renderer/MapRenderer.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/types/Village.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/html/VillageHTMLTooltipGenerator.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/io/DataHolder.java</file>
     </open-files>
 </project-private>

@@ -1355,15 +1355,16 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jShowAttacksInPopup" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jShowAttacksInVillageInfo" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jShowAttacksOnConfirmPage" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jShowAttacksInPlace" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jShowAttackOnMap" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jShowAttacksInOverview" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="jShowAttacksInOverview" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="72" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace pref="123" max="32767" attributes="0"/>
               </Group>
@@ -1379,16 +1380,12 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Component id="jShowAttacksInPopup" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="jShowAttacksInVillageInfo" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jShowAttacksOnConfirmPage" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jShowAttacksInPlace" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="jShowAttackOnMap" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jShowAttacksInOverview" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -1396,21 +1393,12 @@
                       <Component id="jDoScriptExportButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jButton14" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JCheckBox" name="jShowAttacksInPopup">
-          <Properties>
-            <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jShowAttacksInPopup.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
-            <Property name="opaque" type="boolean" value="false"/>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JCheckBox" name="jShowAttacksInVillageInfo">
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
@@ -1434,15 +1422,6 @@
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jShowAttacksInPlace.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
-            <Property name="opaque" type="boolean" value="false"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JCheckBox" name="jShowAttackOnMap">
-          <Properties>
-            <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jShowAttackOnMap.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
             </Property>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>

@@ -252,26 +252,10 @@ if(typeof unsafeWindow != 'undefined'){
 				var villageID = getVillageID(formNode);
 			  var attacksForVillage = getAttacksForVillage(villageID);
 			  formNode.appendChild(generateTable(columns, villageID, attacksForVillage, true));
-			}else if(isMapScreen() && showAttacksOnMap == 1){
-				modifyMap();
 			}else if(isVillageInfoScreen() && showAttacksInVillageInfo == 1){
-				var tables = document.getElementsByTagName("table");
-				var mainTable = null;
-				var infoTable = null;
-				for(var i = 0;i<tables.length;i++){
-					var clazz = tables[i].getAttribute('class');
-					if(clazz == 'main'){
-						//found main table
-						mainTable = tables[i];
-					}else if(clazz == 'vis'){
-						//found info table
-						infoTable = tables[i];
-					}
-					if(mainTable != null && infoTable != null){
-						break;
-					}
-				}
-				
+			  var mainTable = $x('//table[@class="main"]')[0];
+				var infoTable = $x('//table[@class="main"]/tbody/tr/td[@id="content_value"]/table')[0];
+							
 				//add attack content
 				var Links = mainTable.getElementsByTagName('a');
 				var villageID = -1;
@@ -494,8 +478,10 @@ if(typeof unsafeWindow != 'undefined'){
 						countdownSpanNode.setAttribute('class', 'timer');
 						countdownSpanNode.appendChild(document.createTextNode('Warte...'));
 						expiredNode.setAttribute('style', 'display:none');
-					  var startTimeFromNow = win.getTime(document.getElementById("serverTime")) + getRemainingTime(pAttack.expired);
+						var serverTime = win.getTime(win.$("#serverTime"));
+					  var startTimeFromNow = serverTime + getRemainingTime(pAttack.expired);
 					  win.addTimer(countdownSpanNode, startTimeFromNow, false);
+					  win.startTimer();
 						pTableRow.appendChild(tableCell);
 						pTableRow.appendChild(expiredNode);
 						return;
@@ -546,222 +532,6 @@ if(typeof unsafeWindow != 'undefined'){
 		}
 		pTableRow.appendChild(tableCell);
 	}
-
-	/**Modify the main map by adding attack indicators and adding the attacks table to the map popup
-	*/	
-	var modifyMap = function(){
-		var fields = $x('//div[@id="mapOld" or @id="mapNew"]/table[@class="map"]/tbody/tr/td/a');
-		var cells = $x('//div[@id="mapOld" or @id="mapNew"]/table[@class="map"]/tbody/tr/td');
-		visibleFields = fields;
-		var map = document.getElementById('map');
-		var canvas;
-		if(drawAttacks == 1){
-			if(document.getElementById('map_canvas') == null){
-				//no political map available, insert new canvas
-				
-				var div = document.createElement('div');
-				div.setAttribute('style','position:absolute;z-index:1');
-			 	canvas= document.createElement('canvas');
-			 	canvas.setAttribute('id', 'map_canvas1');
-			 	canvas.setAttribute('width',map.style.width);
-			 	canvas.setAttribute('height',map.style.height);
-			 	canvas.setAttribute('style','position:absolute');
-			 	div.appendChild(canvas);
-			 	map.appendChild(div);		 	
-			}else{
-				//political map is active, draw on it
-				canvas = document.getElementById('map_canvas')
-			}
-		}
-		var fieldWidth;
-		var fieldHeight;
-		var bounds;
-		var firstRun = 0;
-		//iterate over all map fields
- 		for(var i = 0; i < fields.length; i++) {
-			var villageID = getVillageIDOnMap(fields[i]);
-			var attacksForVillage = getAttacksForVillage(villageID);
-			
-			var overallIncs = 0;
-			var overallAtts = 0;
-			var expiredIncs = 0;
-			var expiredAtts = 0;
-			var serverTime = getRealServerTime(document.getElementById('serverTime'));
-
-			var show = 0;
-			for(var j=0;j<attacksForVillage.length;j++){
-				if(attacksForVillage[j].source == villageID){
-					show = 1;
-					overallAtts++;
-					if(attacksForVillage[j].expired < serverTime){
-						expiredAtts++;
-					}
-					}else if(attacksForVillage[j].target == villageID){
-						show = 1;
-						overallIncs++;
-						if(attacksForVillage[j].expired < serverTime){
-							expiredIncs++;
-						}
-					}
-			}
-			if(firstRun == 0){
-				fieldWidth = fields[i].offsetWidth;
-				fieldHeight = fields[i].offsetHeight;
-				var xmin = win.mapX;
-				var ymin = win.mapY;
-				var xmax = xmin + map.style.width / fieldWidth;
-				var ymax = ymin + map.style.height / fieldHeight;					
-				bounds = new Rectangle(xmin, ymin, xmax, ymax);
-				firstRun = 1;
-			}
-			if(overallAtts > 0 || overallIncs > 0){
-				var mapIcon = document.createElement('span');
-				if(overallAtts > overallIncs){
-					mapIcon.innerHTML = expiredAtts + '/' + overallAtts;
-					mapIcon.setAttribute('style', 'background-color:#F0E6C8;color:#000000;font-size:80%;position: absolute; border: 2px solid #00FF00; z-index: 10;');
-				}else{
-					mapIcon.innerHTML = expiredIncs + '/' + overallIncs;
-					mapIcon.setAttribute('style', 'background-color:#F0E6C8;color:#000000;font-size:80%;position: absolute; border: 2px solid #FF0000; z-index: 10;');
-				}
-				mapIcon.setAttribute('id', villageID);
-				mapIcon.addEventListener("mouseover", showInfo, false);
-				mapIcon.addEventListener("mouseout", removeInfo, false);
-				mapIcon.style.left = (mapIcon.offsetLeft + 35) + 'px';
-				mapIcon.style.top = (mapIcon.offsetTop + 20) + 'px';
-				var villageNode = fields[i].firstChild;
-				fields[i].insertBefore(mapIcon, villageNode);
-			}
-		}	
-
-		//drawAttacksOnCanvas(canvas, bounds, fieldWidth, fieldHeight);
-	}
-
-
-
-	/*function drawAttacksOnCanvas(canvas, bounds, fieldWidth, fieldHeight){
-	if(drawAttacks != 1){
-		return;
-	}
-	var ctx = canvas.getContext("2d");
-	ctx.save();
-	ctx.lineWidth = attackLineWidth;
-	ctx.lineCap = 'round';
-	
-	var styleBefore = ctx.strokeStyle;
-	var alphaBefore = ctx.globalAlpha;
-		
-	var shownAttacks = 0;
-	
-	var drawnVectors = new Array();
-	
-	for(var i=0;i<attacks.length;i++){
-		var attack = attacks[i];
-		var attackVector = new Line(attack.xs, attack.ys, attack.xt,attack.yt);
-		if(bounds.intersectsLine(attackVector) == true && drawnVectors.indexOf(attackVector) >= 0){
-			shownAttacks++;
-			drawnVectors.push(attackVector);
-			var drawPosXS = (attackVector.x1 - bounds.x1) * fieldWidth + fieldWidth / 2 + (attackVector.x1 - bounds.x1);
-			var drawPosYS = (attackVector.y1 - bounds.y1) * fieldHeight + fieldHeight / 2;
-			var drawPosXT = (attackVector.x2 - bounds.x1) * fieldWidth + fieldWidth / 2 + (attackVector.x2 - bounds.x1);
-			var drawPosYT = (attackVector.y2 - bounds.y1) * fieldHeight + fieldHeight / 2;
-									
-			var deepth = Math.floor(shownAttacks / 5);
-			var cg = ctx.createLinearGradient(drawPosXS,drawPosYS,drawPosXT,drawPosYT);
-			cg.addColorStop(0, gradientStartColor);
-			cg.addColorStop(1, gradientEndColor);
-			ctx.strokeStyle = cg;
-			ctx.globalAlpha = 1 - deepth * 0.3;
-			
-			ctx.beginPath();		
-			ctx.moveTo(drawPosXS, drawPosYS);
-			if(straightLine == 1){
-				ctx.lineTo(drawPosXT, drawPosYT);
-			}else{
-				var mx = (drawPosXT + drawPosXS) / 2;
-				var my = (drawPosYT + drawPosYS) / 2;
-				var dy = drawPosYS - drawPosYT;
-				ctx.quadraticCurveTo(mx, my + dy, drawPosXT, drawPosYT);
-			}
-			ctx.stroke();
-			ctx.closePath();
-		}
-	}
-	ctx.strokeStyle = styleBefore;
-	ctx.globalAlpha = alphaBefore;
-	ctx.restore();
-}*/
-
-  /**Append attack information to map popup
-  *MouseEvent evt: MouseEvent caught by the mouseover listener
-  */
-	function showInfo( evt ) {
-		//check if the attack information was already added
-		if(attacksInPopup == null && showAttacksInMapPopup == 1){
-			var villageID = evt.target.getAttribute('id');
-		  //no valid element
-			if(villageID == null){
-				return;
-			}
-			//build attack table and add to popup	
-			var attacks = getAttacksForVillage(villageID);
-			var columns = new Array(
-								{
-								'id':DIRECTION_ID,
-								'width':30,
-								'style':'font-size:90%;background-color:#F0E6C8;white-space: nowrap'
-								},
-								{
-								'id':TYPE_ID,
-								'width':30,
-								'style':'font-size:90%;background-color:#F0E6C8;white-space: nowrap'
-								},
-								{
-								'id':SOURCE_TARGET_ID,
-								'width':250,
-								'style':'font-size:90%;background-color:#F0E6C8;white-space: nowrap'
-								},
-								{
-								'id':START_ID,
-								'width':170,
-								'style':'font-size:90%;background-color:#F0E6C8;white-space: nowrap'
-								},
-								{
-								'id':COUNTDOWN_ID,
-								'width':170,
-								'style':'font-size:90%;background-color:#F0E6C8;white-space: nowrap'
-								},
-								{
-								'id':ARRIVE_ID,
-								'width':170,
-								'style':'font-size:90%;background-color:#F0E6C8;white-space: nowrap'
-								});
-	
-			var body = document.getElementById('info_content').getElementsByTagName('TBODY')[0];
-			attacksInPopup = document.createElement('tr');
-			var td = document.createElement('td');
-			td.setAttribute('colspan', '2');
-			var span = document.createElement('span');
-			var h = document.createElement('h5');
-			h.innerHTML = '<u>Geplante Angriffe</u>';
-			span.appendChild(h);
-			span.appendChild(generateTable(columns, villageID, attacks, true));
-			td.appendChild(span);
-			attacksInPopup.appendChild(td);
-			body.appendChild(attacksInPopup);
-		}
-	}
-
-  /**Append attack information from map popup. This function is executed when the mouse leaves the attack information field
-  */
-	var removeInfo = function(){
-		try{
-			var body = document.getElementById('info_content').getElementsByTagName('TBODY')[0];
-			body.removeChild(attacksInPopup);
-		}catch(err){}	
-		//reset variable to allow to add new attack information to popup	
-		attacksInPopup = null;
-	}
-
 
 	/**Modify an overview table by adding leading attack indicators to each village row
 	*/	
@@ -847,13 +617,6 @@ if(typeof unsafeWindow != 'undefined'){
    var serverTime = getRealServerTime(document.getElementById('serverTime'));
    return pSendTime - serverTime;
 	}
-
-	/**Check if we are on the map page
- 	*Boolean return: TRUE if we are on the map
- 	*/
- 	var isMapScreen = function(){
-		return (location.href != null && location.href.indexOf('screen=map') > -1);
-	}
  
  /**Check if we are on the place's command page
  	*Boolean return: TRUE if we are on the place's command page
@@ -887,19 +650,6 @@ if(typeof unsafeWindow != 'undefined'){
  	var isVillageInfoScreen = function(){
 		return (location.href != null && location.href.indexOf('screen=info_village') > -1);
 	}
-
-	/**Get the ID of a village on the map
-	**HTMLObject node: Map field
-	*/
-	var getVillageIDOnMap = function(node){
-		var villageURL = node.getAttribute('href');
-		var idStart = villageURL.indexOf('id=') + 'id='.length;
-		var nextAnd = villageURL.indexOf('&', idStart);
-		if(nextAnd > -1){
-			return villageURL.substring(idStart, nextAnd);
-		}
-		return villageURL.substring(idStart);
-	};
 	
 	/**Get the ID of the current village from a form node (place and attack confirm page)
 	**HTMLObject formNode: Form element which contains the villageID
@@ -944,29 +694,6 @@ if(typeof unsafeWindow != 'undefined'){
 	}
 	
 	modifyDocument();
-	
-	// Check for map scrolling
-		var scrolltds = $x('//table[@class="map_container"]/tbody/tr/td[@onclick]');
-		
-		for(var i = 0; i < scrolltds.length; i++) {
-			scrolltds[i].addEventListener('click', function(){
-				window.setTimeout(function(){
-					var newmap = document.getElementById('mapNew');
-					var oldmap = document.getElementById('mapOld');
-					if((newmap.style.left == '0px' && newmap.style.top == '0px') || (oldmap.style.left == '0px' && oldmap.style.top == '0px')) {
-						// srolled, update map information
-						modifyDocument();
-					} else {
-						try{
-							var parent= document.getElementById('map_canvas1').parentNode;
-							parent.removeChild(document.getElementById('map_canvas1'));
-						}catch(ex){}
-						// scrolling not finished yet
-						window.setTimeout(arguments.callee, 200);
-					}
-				}, 300);
-			}, true);
-		}
 
 	/**For debugging purposes*/
 	var getValues = function(obj){

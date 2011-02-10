@@ -49,8 +49,7 @@ if(type == 0){
 }
 } 
 
-function doInsertUnitsAction(){
-                             
+function doInsertUnitsAction(){      
  //all available units
    units = new Array("spear", "sword", "axe", "archer", "spy","light", "marcher", "heavy", "ram", "catapult", "knight", "snob");
    //go through all units
@@ -58,31 +57,21 @@ function doInsertUnitsAction(){
    for (var i = 0; i < units.length; ++i){
 	    //get field for unit	    
 	    field = document.getElementsByName(units[i])[0];
-	   
+   
 	    //if field is valid and arguments contain value for field
 	    if(field != null && args[units[i]] != null){
-	       //insert valid value
-if(window.navigator.userAgent.indexOf("Firefox") > -1){
-         unsafeWindow.insertUnit(field, parseInt(args[units[i]]));
-}else{
-insertUnit(field, parseInt(args[units[i]]));
-}
+	       //insert value
+				field.value=args[units[i]];
       }
    }
 }
 
 function doInsertResourcesAction(){
  //insert valid value
-if(window.navigator.userAgent.indexOf("Firefox") > -1){
-    unsafeWindow.insertNumber(document.getElementsByName('wood')[0],args['wood']);
-		unsafeWindow.insertNumber(document.getElementsByName('stone')[0], args['clay']);
-		unsafeWindow.insertNumber(document.getElementsByName('iron')[0], args['iron']);
-}else{
-		insertNumber(document.forms[0].wood, args['wood']);
-		insertNumber(document.forms[0].stone, args['clay']);
-		insertNumber(document.forms[0].iron, args['iron']);
+    document.getElementsByName('wood')[0].value=args['wood'];
+		document.getElementsByName('stone')[0].value=args['clay'];
+		document.getElementsByName('iron')[0].value=args['iron'];
 }
-      }
 
 
 function addLoadEvent(func) {
@@ -105,12 +94,3 @@ oldonload = window.onload
     }
   }
 }
-
-/**helper function**/
-
-/*function insertUnit(input, count) {
-	if(input.value != count)
-		input.value=count;
-	else
-		input.value='';
-}*/

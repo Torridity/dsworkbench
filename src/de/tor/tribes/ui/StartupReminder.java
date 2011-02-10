@@ -11,6 +11,7 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.tag.TagManagerListener;
 import de.tor.tribes.util.troops.TroopsManager;
@@ -27,49 +28,50 @@ public class StartupReminder extends javax.swing.JDialog implements TroopsManage
 
     @Override
     public void fireTroopsChangedEvent() {
-        jTroopsImportedLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_green.png")));
-        bTroopsOk = true;
-        if (bGroupsOk) {
-            setVisible(false);
-        }
+	jTroopsImportedLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_green.png")));
+	bTroopsOk = true;
+	if ( bGroupsOk ) {
+	    setVisible(false);
+	}
     }
 
     @Override
     public void fireTagsChangedEvent() {
-        jGroupsImportedLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_green.png")));
-        bGroupsOk = true;
-        if (bTroopsOk) {
-            setVisible(false);
-        }
+	jGroupsImportedLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_green.png")));
+	bGroupsOk = true;
+	if ( bTroopsOk ) {
+	    setVisible(false);
+	}
     }
 
     /** Creates new form StartupReminder */
-    public StartupReminder(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
-        initComponents();
-        long dataVersion = DataHolder.getSingleton().getDataAge();
-        long oneDayAgo = System.currentTimeMillis() - 1000 * 60 * 60 * 24;
-        if (dataVersion < oneDayAgo) {
-            jFreshWorldDataLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_yellow.png")));
-        } else {
-            jFreshWorldDataLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_green.png")));
-        }
+    public StartupReminder( java.awt.Frame parent, boolean modal ) {
+	super(parent, modal);
+	initComponents();
+	long dataVersion = DataHolder.getSingleton().getDataAge();
+	long oneDayAgo = System.currentTimeMillis() - 1000 * 60 * 60 * 24;
+	if ( dataVersion < oneDayAgo ) {
+	    jFreshWorldDataLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_yellow.png")));
+	} else {
+	    jFreshWorldDataLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_green.png")));
+	}
     }
 
     @Override
     public void dispose() {
-        TagManager.getSingleton().removeTagManagerListener(this);
-        TroopsManager.getSingleton().removeTroopsManagerListener(this);
-        super.dispose();
+	TagManager.getSingleton().removeTagManagerListener(this);
+	TroopsManager.getSingleton().removeTroopsManagerListener(this);
+	super.dispose();
     }
 
     @Override
-    public void setVisible(boolean b) {
-        super.setVisible(b);
-        if (!b) {
-            TagManager.getSingleton().removeTagManagerListener(this);
-            TroopsManager.getSingleton().removeTroopsManagerListener(this);
-        }
+    public void setVisible( boolean b ) {
+	super.setVisible(b);
+	if ( !b ) {
+	    scheduleReminder();
+	    TagManager.getSingleton().removeTagManagerListener(this);
+	    TroopsManager.getSingleton().removeTroopsManagerListener(this);
+	}
     }
 
     /** This method is called from within the constructor to
@@ -86,11 +88,18 @@ public class StartupReminder extends javax.swing.JDialog implements TroopsManage
         jGroupsImportedLabel = new javax.swing.JLabel();
         jFreshWorldDataLabel = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        jRemindWhenBox = new javax.swing.JComboBox();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Erinnerung");
         setAlwaysOnTop(true);
         setModal(true);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                fireClosingEvent(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -112,24 +121,40 @@ public class StartupReminder extends javax.swing.JDialog implements TroopsManage
         jFreshWorldDataLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         jFreshWorldDataLabel.setIconTextGap(20);
 
-        jButton1.setText("Ignorieren");
+        jButton1.setText("Schließen");
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireIgnoreEvent(evt);
             }
         });
 
+        jRemindWhenBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Nie", "Immer", "In einer Stunde", "Morgen", " " }));
+        jRemindWhenBox.setSelectedIndex(1);
+
+        jLabel1.setText("Erneut erinnern:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jFreshWorldDataLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jGroupsImportedLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
-                    .addComponent(jTroopsImportedLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jFreshWorldDataLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
+                            .addComponent(jGroupsImportedLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
+                            .addComponent(jTroopsImportedLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(80, 80, 80)
+                                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(jRemindWhenBox, 0, 145, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -142,6 +167,10 @@ public class StartupReminder extends javax.swing.JDialog implements TroopsManage
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jTroopsImportedLabel)
                 .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jRemindWhenBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -167,32 +196,68 @@ public class StartupReminder extends javax.swing.JDialog implements TroopsManage
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireIgnoreEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireIgnoreEvent
-        setVisible(false);
+	setVisible(false);
     }//GEN-LAST:event_fireIgnoreEvent
+
+    private void fireClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireClosingEvent
+	scheduleReminder();
+    }//GEN-LAST:event_fireClosingEvent
+
+    private void scheduleReminder() {
+	int idx = jRemindWhenBox.getSelectedIndex();
+	long remindNotBefore = 0;
+	switch ( idx ) {
+	    case 0: {
+		//never
+		remindNotBefore = Long.MAX_VALUE;
+		break;
+	    }
+	    case 1: {
+		//always
+		remindNotBefore = 0;
+		break;
+	    }
+	    case 2: {
+		//in one hour
+		remindNotBefore = System.currentTimeMillis() + 1000 * 60 * 60;
+		break;
+	    }
+	    case 3: {
+		//tomorrow
+		remindNotBefore = System.currentTimeMillis() + 1000 * 60 * 60 * 24;
+		break;
+	    }
+	}
+	GlobalOptions.addProperty("startup.reminder.not.before", Long.toString(remindNotBefore));
+    }
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
+    public static void main( String args[] ) {
+	java.awt.EventQueue.invokeLater(new Runnable() {
 
-            public void run() {
-                StartupReminder dialog = new StartupReminder(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+	    public void run() {
+		StartupReminder dialog = new StartupReminder(new javax.swing.JFrame(), true);
+		dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
+		    public void windowClosing( java.awt.event.WindowEvent e ) {
+			System.exit(0);
+		    }
+
+		});
+		dialog.setVisible(true);
+	    }
+
+	});
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jFreshWorldDataLabel;
     private javax.swing.JLabel jGroupsImportedLabel;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JComboBox jRemindWhenBox;
     private javax.swing.JLabel jTroopsImportedLabel;
     // End of variables declaration//GEN-END:variables
 }

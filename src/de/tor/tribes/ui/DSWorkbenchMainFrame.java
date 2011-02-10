@@ -114,7 +114,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     /** Creates new form MapFrame */
     DSWorkbenchMainFrame() {
 	initComponents();
-	setAlwaysOnTop(false);
+	//setAlwaysOnTop(false);
 	setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
 	jExportDialog.pack();
 	jAddROIDialog.pack();
@@ -552,20 +552,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 	restoreProperties();
     }
 
-    /* boolean map = true;
-
-    public void switchPanel() {
-    if (map) {
-    jPanel1.remove(MapPanel.getSingleton());
-    jPanel1.add(jCustomPanel);
-    map = false;
-    } else {
-    jPanel1.remove(jCustomPanel);
-    jPanel1.add(MapPanel.getSingleton());
-    map = true;
-    }
-    jPanel1.repaint();
-    }*/
     public void storeProperties() {
 	GlobalOptions.addProperty("main.size.width", Integer.toString(getWidth()));
 	GlobalOptions.addProperty("main.size.height", Integer.toString(getHeight()));
@@ -948,11 +934,19 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     }
 
     private void showReminder() {
-	StartupReminder reminder = new StartupReminder(this, true);
-	reminder.setLocationRelativeTo(this);
-	TagManager.getSingleton().addTagManagerListener(reminder);
-	TroopsManager.getSingleton().addTroopsManagerListener(reminder);
-	reminder.setVisible(true);
+	long showNotBefore = 0;
+	try {
+	    showNotBefore = Long.parseLong(GlobalOptions.getProperty("startup.reminder.not.before"));
+	} catch ( Exception e ) {
+	    showNotBefore = 0;
+	}
+	if ( System.currentTimeMillis() > showNotBefore ) {
+	    StartupReminder reminder = new StartupReminder(this, true);
+	    reminder.setLocationRelativeTo(this);
+	    TagManager.getSingleton().addTagManagerListener(reminder);
+	    TroopsManager.getSingleton().addTroopsManagerListener(reminder);
+	    reminder.setVisible(true);
+	}
     }
 
     /** This method is called from within the constructor to

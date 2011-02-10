@@ -12,7 +12,6 @@ import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.ui.renderer.ProfileTreeNodeRenderer;
-import de.tor.tribes.ui.tree.NodeCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PluginManager;
@@ -50,25 +49,25 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     private static DSWorkbenchSplashScreen SINGLETON = null;
 
     public static synchronized DSWorkbenchSplashScreen getSingleton() {
-        if (SINGLETON == null) {
-            SINGLETON = new DSWorkbenchSplashScreen();
-        }
-        return SINGLETON;
+	if ( SINGLETON == null ) {
+	    SINGLETON = new DSWorkbenchSplashScreen();
+	}
+	return SINGLETON;
     }
 
     /** Creates new form DSWorkbenchSplashScreen */
     DSWorkbenchSplashScreen() {
-        initComponents();
-        jLabel1.setIcon(new ImageIcon("./graphics/splash.gif"));
-        setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
-        new Timer("StartupTimer", true).schedule(new HideSplashTask(this), 1000);
-        jProfileDialog.getContentPane().setBackground(Constants.DS_BACK_LIGHT);
-        jProfileDialog.pack();
-        jProfileDialog.setLocationRelativeTo(this);
-        jProfileDialog.getContentPane().setBackground(Constants.DS_BACK);
-        t = new SplashRepaintThread(this);
-        t.setDaemon(true);
-        t.start();
+	initComponents();
+	jLabel1.setIcon(new ImageIcon("./graphics/splash.gif"));
+	setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
+	new Timer("StartupTimer", true).schedule(new HideSplashTask(this), 1000);
+	jProfileDialog.getContentPane().setBackground(Constants.DS_BACK_LIGHT);
+	jProfileDialog.pack();
+	jProfileDialog.setLocationRelativeTo(this);
+	jProfileDialog.getContentPane().setBackground(Constants.DS_BACK);
+	t = new SplashRepaintThread(this);
+	t.setDaemon(true);
+	t.start();
     }
 
     /** This method is called from within the constructor to
@@ -154,323 +153,327 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
     private void fireSelectAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectAccountEvent
         Object[] path = jTree1.getSelectionPath().getPath();
-        UserProfile profile = null;
-        try {
-            profile = (UserProfile) ((DefaultMutableTreeNode) path[2]).getUserObject();
-        } catch (Exception e) {
-        }
-        if (profile == null) {
-            JOptionPaneHelper.showWarningBox(jProfileDialog, "Bitte eine Profil auswählen.", "Bitte wählen");
-            return;
-        } else {
-            String server = profile.getServerId();
-            GlobalOptions.setSelectedServer(server);
-            GlobalOptions.setSelectedProfile(profile);
-            GlobalOptions.addProperty("default.server", server);
-            GlobalOptions.addProperty("selected.profile", Long.toString(profile.getProfileId()));
-            jProfileDialog.setVisible(false);
-        }
+	UserProfile profile = null;
+	try {
+	    profile = (UserProfile) ((DefaultMutableTreeNode) path[2]).getUserObject();
+	} catch ( Exception e ) {
+	}
+	if ( profile == null ) {
+	    JOptionPaneHelper.showWarningBox(jProfileDialog, "Bitte eine Profil auswählen.", "Bitte wählen");
+	    return;
+	} else {
+	    String server = profile.getServerId();
+	    GlobalOptions.setSelectedServer(server);
+	    GlobalOptions.setSelectedProfile(profile);
+	    GlobalOptions.addProperty("default.server", server);
+	    GlobalOptions.addProperty("selected.profile", Long.toString(profile.getProfileId()));
+	    GlobalOptions.addProperty("player." + server, Long.toString(profile.getProfileId()));
+	    jProfileDialog.setVisible(false);
+	}
     }//GEN-LAST:event_fireSelectAccountEvent
 
     protected boolean hideSplash() {
-        try {
-            File f = new File("./servers");
-            if (!f.exists() && !f.mkdir()) {
-                JOptionPaneHelper.showErrorBox(self, "Fehler bei der Initialisierung.\nDas Serververzeichnis konnte nicht erstellt werden.", "Fehler");
-                return false;
-            }
-            //load properties, cursors, skins, world decoration
-            GlobalOptions.initialize();
-            DataHolder.getSingleton().addDataHolderListener(this);
-            DataHolder.getSingleton().addDataHolderListener(DSWorkbenchSettingsDialog.getSingleton());
-            ProfileManager.getSingleton().loadProfiles();
-        } catch (Exception e) {
-            logger.error("Failed to initialize global options", e);
-            JOptionPaneHelper.showErrorBox(self, "Fehler bei der Initialisierung.\nMöglicherweise ist deine DS Workbench Installation defekt.", "Fehler");
-            return false;
-        }
+	try {
+	    File f = new File("./servers");
+	    if ( !f.exists() && !f.mkdir() ) {
+		JOptionPaneHelper.showErrorBox(self, "Fehler bei der Initialisierung.\nDas Serververzeichnis konnte nicht erstellt werden.", "Fehler");
+		return false;
+	    }
+	    //load properties, cursors, skins, world decoration
+	    GlobalOptions.initialize();
+	    DataHolder.getSingleton().addDataHolderListener(this);
+	    DataHolder.getSingleton().addDataHolderListener(DSWorkbenchSettingsDialog.getSingleton());
+	    ProfileManager.getSingleton().loadProfiles();
+	} catch ( Exception e ) {
+	    logger.error("Failed to initialize global options", e);
+	    JOptionPaneHelper.showErrorBox(self, "Fehler bei der Initialisierung.\nMöglicherweise ist deine DS Workbench Installation defekt.", "Fehler");
+	    return false;
+	}
 
-        try {
-            //open profile selection
-            if (ProfileManager.getSingleton().getProfiles().length == 0) {
-                //no profile found...this is handles by the settings validation
-            } else if (ProfileManager.getSingleton().getProfiles().length == 1) {
-                //only one single profile was found, use it
-                UserProfile profile = ProfileManager.getSingleton().getProfiles()[0];
-                String server = profile.getServerId();
-                GlobalOptions.setSelectedServer(server);
-                GlobalOptions.setSelectedProfile(profile);
-                GlobalOptions.addProperty("default.server", server);
-                GlobalOptions.addProperty("selected.profile", Long.toString(profile.getProfileId()));
-            } else {
-                File f = new File("./servers");
-                List<String> servers = new LinkedList<String>();
-                for (File server : f.listFiles()) {
-                    servers.add(server.getName());
-                }
-                //sort server names
-                Collections.sort(servers, new Comparator<String>() {
+	try {
+	    //open profile selection
+	    if ( ProfileManager.getSingleton().getProfiles().length == 0 ) {
+		//no profile found...this is handles by the settings validation
+	    } else if ( ProfileManager.getSingleton().getProfiles().length == 1 ) {
+		//only one single profile was found, use it
+		UserProfile profile = ProfileManager.getSingleton().getProfiles()[0];
+		String server = profile.getServerId();
+		GlobalOptions.setSelectedServer(server);
+		GlobalOptions.setSelectedProfile(profile);
+		GlobalOptions.addProperty("default.server", server);
+		GlobalOptions.addProperty("selected.profile", Long.toString(profile.getProfileId()));
+	    } else {
+		File f = new File("./servers");
+		List<String> servers = new LinkedList<String>();
+		for ( File server : f.listFiles() ) {
+		    servers.add(server.getName());
+		}
+		//sort server names
+		Collections.sort(servers, new Comparator<String>() {
 
-                    @Override
-                    public int compare(String o1, String o2) {
-                        if (o1.length() < o2.length()) {
-                            return -1;
-                        } else if (o1.length() > o2.length()) {
-                            return 1;
-                        }
-                        return o1.compareTo(o2);
-                    }
-                });
-                List<Object> path = new LinkedList<Object>();
-                DefaultMutableTreeNode root = new DefaultMutableTreeNode("Profile");
-                long selectedProfile = -1;
-                try {
-                    selectedProfile = Long.parseLong(GlobalOptions.getProperty("selected.profile"));
-                } catch (Exception e) {
-                }
-                path.add(root);
-                for (String server : servers) {
-                    DefaultMutableTreeNode serverNode = new DefaultMutableTreeNode(server);
-                    boolean profileAdded = false;
-                    for (UserProfile profile : ProfileManager.getSingleton().getProfiles(server)) {
-                        DefaultMutableTreeNode profileNode = new DefaultMutableTreeNode(profile);
-                        if (profile.getProfileId() == selectedProfile) {
-                            path.add(serverNode);
-                            path.add(profileNode);
-                        }
-                        serverNode.add(profileNode);
-                        profileAdded = true;
-                    }
-                    if (profileAdded) {
-                        root.add(serverNode);
-                    }
-                }
+		    @Override
+		    public int compare( String o1, String o2 ) {
+			if ( o1.length() < o2.length() ) {
+			    return -1;
+			} else if ( o1.length() > o2.length() ) {
+			    return 1;
+			}
+			return o1.compareTo(o2);
+		    }
 
-                jTree1.setModel(new DefaultTreeModel(root));
-                jTree1.setSelectionPath(new TreePath(path.toArray()));
-                jTree1.scrollPathToVisible(new TreePath(path.toArray()));
-                jTree1.setCellRenderer(new ProfileTreeNodeRenderer());
-                jProfileDialog.setVisible(true);
-            }
+		});
+		List<Object> path = new LinkedList<Object>();
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode("Profile");
+		long selectedProfile = -1;
+		try {
+		    selectedProfile = Long.parseLong(GlobalOptions.getProperty("selected.profile"));
+		} catch ( Exception e ) {
+		}
+		path.add(root);
+		for ( String server : servers ) {
+		    DefaultMutableTreeNode serverNode = new DefaultMutableTreeNode(server);
+		    boolean profileAdded = false;
+		    for ( UserProfile profile : ProfileManager.getSingleton().getProfiles(server) ) {
+			DefaultMutableTreeNode profileNode = new DefaultMutableTreeNode(profile);
+			if ( profile.getProfileId() == selectedProfile ) {
+			    path.add(serverNode);
+			    path.add(profileNode);
+			}
+			serverNode.add(profileNode);
+			profileAdded = true;
+		    }
+		    if ( profileAdded ) {
+			root.add(serverNode);
+		    }
+		}
 
-            //check settings
-            if (!DSWorkbenchSettingsDialog.getSingleton().checkSettings()) {
-                logger.info("Reading user settings returned error(s)");
-                DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
-            }
-        } catch (Exception e) {
-            logger.warn("Failed to open profile manager", e);
-        }
+		jTree1.setModel(new DefaultTreeModel(root));
+		jTree1.setSelectionPath(new TreePath(path.toArray()));
+		jTree1.scrollPathToVisible(new TreePath(path.toArray()));
+		jTree1.setCellRenderer(new ProfileTreeNodeRenderer());
+		jProfileDialog.setVisible(true);
+	    }
 
-        // <editor-fold defaultstate="collapsed" desc=" Check for data updates ">
-        boolean checkForUpdates = false;
-        try {
-            checkForUpdates = Boolean.parseBoolean(GlobalOptions.getProperty("check.updates.on.startup"));
-        } catch (Exception e) {
-            checkForUpdates = false;
-        }
-        if (checkForUpdates && !GlobalOptions.isOfflineMode()) {
-            String selectedServer = GlobalOptions.getProperty("default.server");
-            String name = GlobalOptions.getProperty("account.name");
-            String password = GlobalOptions.getProperty("account.password");
-            if (DatabaseInterface.checkUser(name, password) != DatabaseInterface.ID_SUCCESS) {
-                JOptionPaneHelper.showErrorBox(this, "Die Accountvalidierung ist fehlgeschlagen.\n" + "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
-                        "Fehler");
-                checkForUpdates = false;
-            } else {
-                long serverDataVersion = DatabaseInterface.getServerDataVersion(selectedServer);
-                long userDataVersion = DatabaseInterface.getUserDataVersion(name, selectedServer);
-                logger.debug("User data version is " + userDataVersion);
-                logger.debug("Server data version is " + serverDataVersion);
-                if (userDataVersion == serverDataVersion) {
-                    logger.debug("Skip downloading updates");
-                    checkForUpdates = false;
-                }
-            }
-        }
+	    //check settings
+	    if ( !DSWorkbenchSettingsDialog.getSingleton().checkSettings() ) {
+		logger.info("Reading user settings returned error(s)");
+		DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
+	    }
+	} catch ( Exception e ) {
+	    logger.warn("Failed to open profile manager", e);
+	}
 
-        try {
-            if (!DataHolder.getSingleton().loadData(checkForUpdates)) {
-                throw new Exception("loadData() returned 'false'. See log for more details.");
-            }
-        } catch (Exception e) {
-            logger.error("Failed to load server data", e);
-            return false;
-        }
-        // </editor-fold>
+	// <editor-fold defaultstate="collapsed" desc=" Check for data updates ">
+	boolean checkForUpdates = false;
+	try {
+	    checkForUpdates = Boolean.parseBoolean(GlobalOptions.getProperty("check.updates.on.startup"));
+	} catch ( Exception e ) {
+	    checkForUpdates = false;
+	}
+	if ( checkForUpdates && !GlobalOptions.isOfflineMode() ) {
+	    String selectedServer = GlobalOptions.getProperty("default.server");
+	    String name = GlobalOptions.getProperty("account.name");
+	    String password = GlobalOptions.getProperty("account.password");
+	    if ( DatabaseInterface.checkUser(name, password) != DatabaseInterface.ID_SUCCESS ) {
+		JOptionPaneHelper.showErrorBox(this, "Die Accountvalidierung ist fehlgeschlagen.\n" + "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
+					       "Fehler");
+		checkForUpdates = false;
+	    } else {
+		long serverDataVersion = DatabaseInterface.getServerDataVersion(selectedServer);
+		long userDataVersion = DatabaseInterface.getUserDataVersion(name, selectedServer);
+		logger.debug("User data version is " + userDataVersion);
+		logger.debug("Server data version is " + serverDataVersion);
+		if ( userDataVersion == serverDataVersion ) {
+		    logger.debug("Skip downloading updates");
+		    checkForUpdates = false;
+		}
+	    }
+	}
 
-        try {
-            logger.debug("Checking for plugin updates");
-            PluginManager.getSingleton().checkForUpdates();
+	try {
+	    if ( !DataHolder.getSingleton().loadData(checkForUpdates) ) {
+		throw new Exception("loadData() returned 'false'. See log for more details.");
+	    }
+	} catch ( Exception e ) {
+	    logger.error("Failed to load server data", e);
+	    return false;
+	}
+	// </editor-fold>
 
-            logger.debug("Initializing application window");
-            DSWorkbenchMainFrame.getSingleton().init();
-            /* logger.debug("Initializing search frame");
-            DSWorkbenchSearchFrame.getSingleton();*/
+	try {
+	    logger.debug("Checking for plugin updates");
+	    PluginManager.getSingleton().checkForUpdates();
 
-            logger.info("Showing application window");
-            DSWorkbenchMainFrame.getSingleton().setVisible(true);
-            t.stopRunning();
-            setVisible(false);
-            boolean informOnUpdate = true;
+	    logger.debug("Initializing application window");
+	    DSWorkbenchMainFrame.getSingleton().init();
+	    /* logger.debug("Initializing search frame");
+	    DSWorkbenchSearchFrame.getSingleton();*/
 
-            try {
-                String val = GlobalOptions.getProperty("inform.on.updates");
-                if (val != null) {
-                    informOnUpdate = Boolean.parseBoolean(val);
-                }
-            } catch (Exception e) {
-                //value not found, inform by default
-            }
-            if (informOnUpdate) {
-                //check version           
-                double version = DatabaseInterface.getCurrentVersion();
+	    logger.info("Showing application window");
+	    DSWorkbenchMainFrame.getSingleton().setVisible(true);
+	    t.stopRunning();
+	    setVisible(false);
+	    boolean informOnUpdate = true;
 
-                if (version > 0 && version > Constants.VERSION) {
-                    NotifierFrame.doNotification("Eine neue Version (" + version + ") von DS Workbench ist verfügbar.\n" + "Klicke auf das Update Icon um \'http://www.dsworkbench.de\' im Browser zu öffnen.", NotifierFrame.NOTIFY_UPDATE);
-                }
-            }
-            return true;
-        } catch (Throwable th) {
-            logger.fatal("Fatal error while running DS Workbench", th);
-            JOptionPaneHelper.showErrorBox(self, "Ein schwerwiegender Fehler ist aufgetreten.\nMöglicherweise ist deine DS Workbench Installation defekt. Bitte kontaktiere den Entwickler.", "Fehler");
-            return false;
-        }
+	    try {
+		String val = GlobalOptions.getProperty("inform.on.updates");
+		if ( val != null ) {
+		    informOnUpdate = Boolean.parseBoolean(val);
+		}
+	    } catch ( Exception e ) {
+		//value not found, inform by default
+	    }
+	    if ( informOnUpdate ) {
+		//check version
+		double version = DatabaseInterface.getCurrentVersion();
+
+		if ( version > 0 && version > Constants.VERSION ) {
+		    NotifierFrame.doNotification("Eine neue Version (" + version + ") von DS Workbench ist verfügbar.\n" + "Klicke auf das Update Icon um \'http://www.dsworkbench.de\' im Browser zu öffnen.", NotifierFrame.NOTIFY_UPDATE);
+		}
+	    }
+	    return true;
+	} catch ( Throwable th ) {
+	    logger.fatal("Fatal error while running DS Workbench", th);
+	    JOptionPaneHelper.showErrorBox(self, "Ein schwerwiegender Fehler ist aufgetreten.\nMöglicherweise ist deine DS Workbench Installation defekt. Bitte kontaktiere den Entwickler.", "Fehler");
+	    return false;
+	}
     }
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        Locale.setDefault(Locale.GERMAN);
+    public static void main( String args[] ) {
+	Locale.setDefault(Locale.GERMAN);
 
-        //add global ESC listener
-        Toolkit.getDefaultToolkit().getSystemEventQueue().push(
-                new EventQueue() {
+	//add global ESC listener
+	Toolkit.getDefaultToolkit().getSystemEventQueue().push(
+		new EventQueue() {
 
-                    protected void dispatchEvent(AWTEvent event) {
-                        if (event instanceof KeyEvent) {
-                            KeyEvent keyEvent = (KeyEvent) event;
+		    protected void dispatchEvent( AWTEvent event ) {
+			if ( event instanceof KeyEvent ) {
+			    KeyEvent keyEvent = (KeyEvent) event;
 
-                            if ((keyEvent.getID() == KeyEvent.KEY_PRESSED)
-                                    && ((keyEvent).getKeyCode() == KeyEvent.VK_ESCAPE)) {
-                                try {
-                                    JFrame source = (JFrame) keyEvent.getSource();
-                                    if (source != DSWorkbenchMainFrame.getSingleton()) {
-                                        source.setVisible(false);
-                                    }
-                                } catch (Exception e) {
-                                    try {
-                                        JDialog source = (JDialog) keyEvent.getSource();
-                                        source.setVisible(false);
-                                    } catch (Exception inner) {
-                                    }
-                                }
-                            }
+			    if ( (keyEvent.getID() == KeyEvent.KEY_PRESSED)
+				 && ((keyEvent).getKeyCode() == KeyEvent.VK_ESCAPE) ) {
+				try {
+				    JFrame source = (JFrame) keyEvent.getSource();
+				    if ( source != DSWorkbenchMainFrame.getSingleton() ) {
+					source.setVisible(false);
+				    }
+				} catch ( Exception e ) {
+				    try {
+					JDialog source = (JDialog) keyEvent.getSource();
+					source.setVisible(false);
+				    } catch ( Exception inner ) {
+				    }
+				}
+			    }
 
-                        }
-                        super.dispatchEvent(event);
-                    }
-                });
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-        }
+			}
+			super.dispatchEvent(event);
+		    }
 
-        Font f = new Font("SansSerif", Font.PLAIN, 11);
+		});
+	try {
+	    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	} catch ( Exception e ) {
+	}
 
-        UIManager.put("Label.font", f);
-        UIManager.put("TextField.font", f);
-        UIManager.put("ComboBox.font", f);
-        UIManager.put("EditorPane.font", f);
-        UIManager.put("TextArea.font", f);
-        UIManager.put("List.font", f);
-        UIManager.put("Button.font", f);
-        UIManager.put("ToggleButton.font", f);
-        UIManager.put("CheckBox.font", f);
-        UIManager.put("CheckBoxMenuItem.font", f);
-        UIManager.put("Menu.font", f);
-        UIManager.put("MenuItem.font", f);
-        UIManager.put("OptionPane.font", f);
-        UIManager.put("Panel.font", f);
-        UIManager.put("PasswordField.font", f);
-        UIManager.put("PopupMenu.font", f);
-        UIManager.put("ProgressBar.font", f);
-        UIManager.put("RadioButton.font", f);
-        UIManager.put("ToggleButton.font", f);
-        UIManager.put("ScrollPane.font", f);
-        UIManager.put("Table.font", f);
-        UIManager.put("TableHeader.font", f);
-        UIManager.put("TextField.font", f);
-        UIManager.put("TextPane.font", f);
-        UIManager.put("ToolTip.font", f);
-        UIManager.put("Tree.font", f);
-        UIManager.put("Viewport.font", f);
+	Font f = new Font("SansSerif", Font.PLAIN, 11);
 
-
-        //UIManager.put("Panel.background", Constants.DS_BACK);
-        UIManager.put("Label.background", Constants.DS_BACK);
-        UIManager.put("Panel.background", Constants.DS_BACK);
-        UIManager.put("MenuBar.background", Constants.DS_BACK);
-        UIManager.put("ScrollPane.background", Constants.DS_BACK);
-        UIManager.put("Button.background", Constants.DS_BACK_LIGHT);
-        UIManager.put("ToggleButton.background", Constants.DS_BACK_LIGHT);
-        UIManager.put("TabbedPane.background", Constants.DS_BACK);
-        UIManager.put("SplitPane.background", Constants.DS_BACK);
-        UIManager.put("Separator.background", Constants.DS_BACK);
-        UIManager.put("Menu.background", Constants.DS_BACK);
-        UIManager.put("OptionPane.background", Constants.DS_BACK);
-        UIManager.put("ToolBar.background", Constants.DS_BACK);
-
-        //error mode
-        int mode = -1;
-        if (args != null) {
-            for (String arg : args) {
-                if (arg.equals("-d") || arg.equals("--debug")) {
-                    //debug mode
-                    mode = 1;
-                } else if (arg.equals("-i") || arg.equals("--info")) {
-                    //info mode
-                    mode = 0;
-                }
-            }
-        }
-
-        RollingFileAppender a = new org.apache.log4j.RollingFileAppender();
-        a.setLayout(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n"));
-        try {
-            a.setFile("./log/dsworkbench.log", true, true, 1024);
-            switch (mode) {
-                case 0: {
-                    Logger.getRootLogger().setLevel(Level.INFO);
-                    break;
-                }
-                case 1: {
-                    Logger.getRootLogger().setLevel(Level.DEBUG);
-
-                    break;
-                }
-                default: {
-                    Logger.getRootLogger().setLevel(Level.ERROR);
-                    break;
-                }
-            }
+	UIManager.put("Label.font", f);
+	UIManager.put("TextField.font", f);
+	UIManager.put("ComboBox.font", f);
+	UIManager.put("EditorPane.font", f);
+	UIManager.put("TextArea.font", f);
+	UIManager.put("List.font", f);
+	UIManager.put("Button.font", f);
+	UIManager.put("ToggleButton.font", f);
+	UIManager.put("CheckBox.font", f);
+	UIManager.put("CheckBoxMenuItem.font", f);
+	UIManager.put("Menu.font", f);
+	UIManager.put("MenuItem.font", f);
+	UIManager.put("OptionPane.font", f);
+	UIManager.put("Panel.font", f);
+	UIManager.put("PasswordField.font", f);
+	UIManager.put("PopupMenu.font", f);
+	UIManager.put("ProgressBar.font", f);
+	UIManager.put("RadioButton.font", f);
+	UIManager.put("ToggleButton.font", f);
+	UIManager.put("ScrollPane.font", f);
+	UIManager.put("Table.font", f);
+	UIManager.put("TableHeader.font", f);
+	UIManager.put("TextField.font", f);
+	UIManager.put("TextPane.font", f);
+	UIManager.put("ToolTip.font", f);
+	UIManager.put("Tree.font", f);
+	UIManager.put("Viewport.font", f);
 
 
-            Logger.getRootLogger().addAppender(a);
-            Logger.getLogger("de.tor").addAppender(a);
-            Logger.getLogger("dswb").addAppender(a);
-        } catch (IOException ioe) {
-        }
+	//UIManager.put("Panel.background", Constants.DS_BACK);
+	UIManager.put("Label.background", Constants.DS_BACK);
+	UIManager.put("Panel.background", Constants.DS_BACK);
+	UIManager.put("MenuBar.background", Constants.DS_BACK);
+	UIManager.put("ScrollPane.background", Constants.DS_BACK);
+	UIManager.put("Button.background", Constants.DS_BACK_LIGHT);
+	UIManager.put("ToggleButton.background", Constants.DS_BACK_LIGHT);
+	UIManager.put("TabbedPane.background", Constants.DS_BACK);
+	UIManager.put("SplitPane.background", Constants.DS_BACK);
+	UIManager.put("Separator.background", Constants.DS_BACK);
+	UIManager.put("Menu.background", Constants.DS_BACK);
+	UIManager.put("OptionPane.background", Constants.DS_BACK);
+	UIManager.put("ToolBar.background", Constants.DS_BACK);
 
-        SwingUtilities.invokeLater(new Runnable() {
+	//error mode
+	int mode = -1;
+	if ( args != null ) {
+	    for ( String arg : args ) {
+		if ( arg.equals("-d") || arg.equals("--debug") ) {
+		    //debug mode
+		    mode = 1;
+		} else if ( arg.equals("-i") || arg.equals("--info") ) {
+		    //info mode
+		    mode = 0;
+		}
+	    }
+	}
 
-            @Override
-            public void run() {
-                DSWorkbenchSplashScreen.getSingleton().setLocationRelativeTo(null);
-                DSWorkbenchSplashScreen.getSingleton().setVisible(true);
-            }
-        });
+	RollingFileAppender a = new org.apache.log4j.RollingFileAppender();
+	a.setLayout(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n"));
+	try {
+	    a.setFile("./log/dsworkbench.log", true, true, 1024);
+	    switch ( mode ) {
+		case 0: {
+		    Logger.getRootLogger().setLevel(Level.INFO);
+		    break;
+		}
+		case 1: {
+		    Logger.getRootLogger().setLevel(Level.DEBUG);
+
+		    break;
+		}
+		default: {
+		    Logger.getRootLogger().setLevel(Level.ERROR);
+		    break;
+		}
+	    }
+
+
+	    Logger.getRootLogger().addAppender(a);
+	    Logger.getLogger("de.tor").addAppender(a);
+	    Logger.getLogger("dswb").addAppender(a);
+	} catch ( IOException ioe ) {
+	}
+
+	SwingUtilities.invokeLater(new Runnable() {
+
+	    @Override
+	    public void run() {
+		DSWorkbenchSplashScreen.getSingleton().setLocationRelativeTo(null);
+		DSWorkbenchSplashScreen.getSingleton().setVisible(true);
+	    }
+
+	});
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
@@ -482,37 +485,39 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void fireDataHolderEvent(String pText) {
-        jStatusOutput.setText(pText);
+    public void fireDataHolderEvent( String pText ) {
+	jStatusOutput.setText(pText);
     }
 
     public void updateStatus() {
-        jStatusOutput.repaint();//.updateUI();
+	jStatusOutput.repaint();//.updateUI();
     }
 
     @Override
-    public void fireDataLoadedEvent(boolean pSuccess) {
-        if (pSuccess) {
-            jStatusOutput.setText("Daten geladen");
-        } else {
-            jStatusOutput.setText("Download fehlgeschlagen");
-        }
+    public void fireDataLoadedEvent( boolean pSuccess ) {
+	if ( pSuccess ) {
+	    jStatusOutput.setText("Daten geladen");
+	} else {
+	    jStatusOutput.setText("Download fehlgeschlagen");
+	}
     }
+
 }
 
 class HideSplashTask extends TimerTask {
 
     private DSWorkbenchSplashScreen mParent;
 
-    public HideSplashTask(DSWorkbenchSplashScreen pParent) {
-        mParent = pParent;
+    public HideSplashTask( DSWorkbenchSplashScreen pParent ) {
+	mParent = pParent;
     }
 
     public void run() {
-        if (!mParent.hideSplash()) {
-            System.exit(1);
-        }
+	if ( !mParent.hideSplash() ) {
+	    System.exit(1);
+	}
     }
+
 }
 
 class SplashRepaintThread extends Thread {
@@ -520,21 +525,22 @@ class SplashRepaintThread extends Thread {
     private DSWorkbenchSplashScreen mParent;
     private boolean running = true;
 
-    public SplashRepaintThread(DSWorkbenchSplashScreen pParent) {
-        mParent = pParent;
+    public SplashRepaintThread( DSWorkbenchSplashScreen pParent ) {
+	mParent = pParent;
     }
 
     public void run() {
-        while (running) {
-            mParent.updateStatus();
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException ie) {
-            }
-        }
+	while ( running ) {
+	    mParent.updateStatus();
+	    try {
+		Thread.sleep(50);
+	    } catch ( InterruptedException ie ) {
+	    }
+	}
     }
 
     public void stopRunning() {
-        running = false;
+	running = false;
     }
+
 }

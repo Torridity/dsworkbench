@@ -11,6 +11,8 @@ import de.tor.tribes.ui.DSWorkbenchNotepad;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -69,6 +71,19 @@ public class NoteManager {
                 logger.info("Notes file not found under '" + pFile + "'");
             }
         }
+        /*  int cnt = 0;
+        for (Village v : GlobalOptions.getSelectedProfile().getTribe().getVillageList()) {
+        for (int i = 0; i < 3; i++) {
+        Note n = new Note();
+        n.addVillage(v);
+        int icon = (int) Math.rint(Math.random() * 9);
+        n.setMapMarker(icon);
+        n.setNoteText("Text" + cnt);
+        addNote(n);
+        }
+        cnt++;
+
+        }*/
 
         if (notes.size() > 0) {
             //set current note
@@ -90,14 +105,13 @@ public class NoteManager {
             logger.debug("Writing notes to '" + pFile + "'");
         }
         try {
-
-            StringBuffer b = new StringBuffer();
+            StringBuilder b = new StringBuilder();
             b.append("<notes>\n");
             Note[] aNotes = notes.toArray(new Note[]{});
             for (Note n : aNotes) {
                 String xml = n.toXml();
                 if (xml != null) {
-                    b.append(xml + "\n");
+                    b.append(xml).append("\n");
                 }
             }
             b.append("</notes>");
@@ -301,5 +315,23 @@ public class NoteManager {
             }
         }
         return noteList;
+    }
+
+    public Hashtable<Village, List<Note>> getNotesMap() {
+
+        Hashtable<Village, List<Note>> noteMap = new Hashtable<Village, List<Note>>();
+
+        for (Note n : notes) {
+            for (Integer id : n.getVillageIds()) {
+                Village v = DataHolder.getSingleton().getVillagesById().get(id);
+                List<Note> list = noteMap.get(v);
+                if (list == null) {
+                    list = new ArrayList<Note>();
+                    noteMap.put(v, list);
+                }
+                list.add(n);
+            }
+        }
+        return noteMap;
     }
 }

@@ -31,7 +31,6 @@ import java.util.List;
 public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
 
     private BufferedImage mLayer = null;
-    private Point mapPos = null;
     private boolean shouldReset = true;
 
     @Override
@@ -92,6 +91,7 @@ public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
         //iterate through entire row
         int cnt = 0;
         Village currentMouseVillage = MapPanel.getSingleton().getVillageAtMousePos();
+        Hashtable<Village, List<Note>> noteMap = NoteManager.getSingleton().getNotesMap();
         for (int x = 0; x < pSettings.getVisibleVillages().length; x++) {
             //iterate from first row for 'pRows' times
             for (int y = firstRow; y < pSettings.getVisibleVillages()[0].length; y++) {
@@ -104,23 +104,22 @@ public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
                     lastVillageRow = row;
                     lastVillageCol = col;
                 } else {
-                    renderNoteField(v, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pCopyPosition, g2d);
+                    renderNoteField(v, noteMap, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pCopyPosition, g2d);
                 }
             }
         }
-        renderNoteField(lastVillageToDraw, lastVillageRow, lastVillageCol, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pCopyPosition, g2d);
+        renderNoteField(lastVillageToDraw, noteMap, lastVillageRow, lastVillageCol, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pCopyPosition, g2d);
     }
 
-    private void renderNoteField(Village v, int row, int col, int pFieldWidth, int pFieldHeight, int pCopyPosition, Graphics2D g2d) {
+    private void renderNoteField(Village v, Hashtable<Village, List<Note>> pNoteMap, int row, int col, int pFieldWidth, int pFieldHeight, int pCopyPosition, Graphics2D g2d) {
         if (v != null && v.isVisibleOnMap()) {
-            List<Note> notes = NoteManager.getSingleton().getNotesForVillage(v);
+            List<Note> notes = pNoteMap.get(v);//NoteManager.getSingleton().getNotesForVillage(v);
+            if (notes == null || notes.isEmpty()) {
+                return;
+            }
             int half = notes.size() / 2;
             int dx = -half * 2;
             int dy = -half * 2;
-
-            if (NoteManager.getSingleton().getNotesForVillage(v).isEmpty()) {
-                return;
-            }
 
             //render notes
             for (Note n : notes) {

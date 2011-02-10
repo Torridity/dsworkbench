@@ -51,6 +51,7 @@ public class TimeSettingsPanel extends javax.swing.JPanel {
     public void reset() {
         //setup of send time spinner
         jValidAtDay.setTimeEnabled(false);
+        jValidAtExactDay.setTimeEnabled(false);
         Calendar c = Calendar.getInstance();
         jMinTime.setDate(c.getTime());
         c.setTimeInMillis(System.currentTimeMillis() + DateUtils.MILLIS_PER_HOUR);

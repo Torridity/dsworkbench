@@ -32,11 +32,9 @@ public class AttackScriptWriter {
             boolean pStraightLine,
             Color pStartColor,
             Color pEndColor,
-            boolean pShowAttacksInMapPopup,
             boolean pShowAttacksInVillageInfo,
             boolean pShowAttacksOnConfirmPage,
             boolean pShowAttacksOnCommandPage,
-            boolean pShowAttacksOnMap,
             boolean pShowAttacksInOverview) {
         logger.debug("Start writing attack script");
         String tmpl = "";
@@ -102,7 +100,7 @@ public class AttackScriptWriter {
             }
             block += "'send':'" + df.format(new Date(sendTime)) + "',\n";
             block += "'arrive':'" + df.format(a.getArriveTime()) + "',\n";
-            block += "'expired':" + (long) Math.floor((long) sendTime / 1000) + "\n";
+            block += "'expired':" + (long) Math.floor(sendTime / 1000) + "\n";
             block += "},\n";
             data += block;
         }
@@ -118,11 +116,9 @@ public class AttackScriptWriter {
         param += "var straightLine = " + ((pStraightLine) ? 1 : 0) + ";\n";
         param += "var gradientStartColor = 'rgb(" + pStartColor.getRed() + "," + pStartColor.getGreen() + "," + pStartColor.getBlue() + ")';\n";
         param += "var gradientEndColor = 'rgb(" + pEndColor.getRed() + "," + pEndColor.getGreen() + "," + pEndColor.getBlue() + ")';\n";
-        param += "var showAttacksInMapPopup = " + ((pShowAttacksInMapPopup) ? 1 : 0) + ";\n";
         param += "var showAttacksInVillageInfo = " + ((pShowAttacksInVillageInfo) ? 1 : 0) + ";\n";
         param += "var showAttacksOnConfirmPage = " + ((pShowAttacksOnConfirmPage) ? 1 : 0) + ";\n";
         param += "var showAttackOnCommandPage = " + ((pShowAttacksOnCommandPage) ? 1 : 0) + ";\n";
-        param += "var showAttacksOnMap = " + ((pShowAttacksOnMap) ? 1 : 0) + ";\n";
         param += "var showAttacksInOverview = " + ((pShowAttacksInOverview) ? 1 : 0) + ";\n";
 
         tmpl = tmpl.replaceAll("\\$\\$DATA_LOCATION", data);

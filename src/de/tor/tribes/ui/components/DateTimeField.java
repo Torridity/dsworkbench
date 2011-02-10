@@ -32,7 +32,7 @@ public class DateTimeField extends javax.swing.JPanel {
     private TimePicker tp;
     private JDialog dlg;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-    private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss 'Uhr'");
+    private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
     private boolean timeEnabled = true;
 
     /** Creates new form DateTimeField */
@@ -40,8 +40,8 @@ public class DateTimeField extends javax.swing.JPanel {
         initComponents();
         jDateField.setText(dateFormat.format(Calendar.getInstance().getTime()));
         jTimeField.setText(timeFormat.format(Calendar.getInstance().getTime()));
-        jDateField.setEditable(false);
-        jTimeField.setEditable(false);
+        //jDateField.setEditable(false);
+        //jTimeField.setEditable(false);
         jChangeTime.setEnabled(timeEnabled);
         jTimeField.setEnabled(timeEnabled);
     }
@@ -172,7 +172,9 @@ public class DateTimeField extends javax.swing.JPanel {
 
             return result.getTime();
         } catch (Exception e) {
-            return Calendar.getInstance().getTime();
+            Date now = Calendar.getInstance().getTime();
+            setDate(now);
+            return now;
         }
     }
 

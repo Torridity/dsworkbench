@@ -3220,6 +3220,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 		Arrays.sort(ta, Tribe.CASE_INSENSITIVE_ORDER);
 		DefaultComboBoxModel model = new DefaultComboBoxModel();
 		UserProfile[] profiles = ProfileManager.getSingleton().getProfiles(GlobalOptions.getSelectedServer());
+		UserProfile active = null;
 		if ( profiles != null && profiles.length > 0 ) {
 		    model = new DefaultComboBoxModel(profiles);
 
@@ -3233,6 +3234,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 			for ( UserProfile profile : profiles ) {
 			    if ( profile.getProfileId() == profileId ) {
 				jProfileBox.setSelectedItem(profile);
+				active = profile;
 				break;
 			    }
 			}
@@ -3240,7 +3242,11 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 			jProfileBox.setSelectedIndex(0);
 			GlobalOptions.addProperty("player." + GlobalOptions.getSelectedServer(), Long.toString(profiles[0].getProfileId()));
 		    }
-		    GlobalOptions.setSelectedProfile(profiles[0]);
+		    if ( active != null ) {
+			GlobalOptions.setSelectedProfile(active);
+		    } else {
+			GlobalOptions.setSelectedProfile(profiles[0]);
+		    }
 		} else {
 		    model = new DefaultComboBoxModel(new Object[]{"Kein Profil vorhanden"});
 		    jProfileBox.setModel(model);

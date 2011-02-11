@@ -12,8 +12,15 @@
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/DSWorkbenchMerchantDistibutor.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/TribeTribeAttackFrame.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/types/AbstractTroopMovement.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/algo/SettingsPanel.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/DSWorkbenchMainFrame.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/StartupReminder.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/mark/MarkerManager.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/DSWorkbenchSettingsDialog.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/php/json/JSONObject.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/io/WorldDecorationHolder.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/DSWorkbenchProfileDialog.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/types/UserProfile.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/algo/SettingsPanel.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/algo/TimeSettingsPanel.java</file>
     </open-files>
 </project-private>

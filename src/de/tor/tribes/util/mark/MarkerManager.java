@@ -115,8 +115,11 @@ public class MarkerManager {
                 try {
                     MarkerSet m = MarkerSet.fromXml(e);
                     m.setSetName(m.getSetName() + pExtension);
+		    System.out.println(m.getSetName());
                     MarkerSet exist = markers.get(m.getSetName());
                     //replace existing markers
+		    System.out.println(exist);
+		    System.out.println(overwriteMarkers);
                     if (exist == null || overwriteMarkers) {
                         logger.debug("Adding/Replacing existing marker set '" + m.getSetName() + "'");
                         markers.put(m.getSetName(), m);

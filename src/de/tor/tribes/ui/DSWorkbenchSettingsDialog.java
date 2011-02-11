@@ -411,7 +411,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
 	//overwrite group markers on import
 	try {
-	    String val = GlobalOptions.getProperty("import.replace.tag.markers");
+	    String val = GlobalOptions.getProperty("import.replace.markers");
 	    if ( val != null ) {
 		jReplaceTagMarkers.setSelected(Boolean.parseBoolean(val));
 	    }
@@ -2380,7 +2380,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 	/**Validate misc properties*/
 	int sortType = jVillageSortTypeChooser.getSelectedIndex();
 	Village.setOrderType(sortType);
-	GlobalOptions.addProperty("import.replace.tag.markers", Boolean.toString(jReplaceTagMarkers.isSelected()));
+	GlobalOptions.addProperty("import.replace.markers", Boolean.toString(jReplaceTagMarkers.isSelected()));
 
 	GlobalOptions.addProperty("village.order", Integer.toString(sortType));
 	GlobalOptions.addProperty("notify.duration", Integer.toString(jNotifyDurationBox.getSelectedIndex()));

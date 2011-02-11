@@ -45,166 +45,166 @@ public class TimeSettingsPanel extends javax.swing.JPanel {
 
     /** Creates new form TimeSettingsPanel */
     public TimeSettingsPanel() {
-        initComponents();
+	initComponents();
     }
 
     public void reset() {
-        //setup of send time spinner
-        jValidAtDay.setTimeEnabled(false);
-        jValidAtExactDay.setTimeEnabled(false);
-        Calendar c = Calendar.getInstance();
-        jMinTime.setDate(c.getTime());
-        c.setTimeInMillis(System.currentTimeMillis() + DateUtils.MILLIS_PER_HOUR);
-        jMaxTime.setDate(c.getTime());
-        //setup of time frame selection
-        jSendTimeFrame.setMinimumValue(0);
-        jSendTimeFrame.setSliderBackground(Constants.DS_BACK);
-        jSendTimeFrame.setMaximumColor(Constants.DS_BACK_LIGHT);
-        jSendTimeFrame.setMinimumColor(Constants.DS_BACK_LIGHT);
-        jSendTimeFrame.setMaximumValue(24);
-        jSendTimeFrame.setSegmentSize(1);
-        jSendTimeFrame.setUnit("h");
-        jSendTimeFrame.setDecimalFormater(new DecimalFormat("##"));
-        jSendTimeFrame.setBackground(Constants.DS_BACK_LIGHT);
+	//setup of send time spinner
+	jValidAtDay.setTimeEnabled(false);
+	jValidAtExactDay.setEnabled(false);
+	Calendar c = Calendar.getInstance();
+	jMinTime.setDate(c.getTime());
+	c.setTimeInMillis(System.currentTimeMillis() + DateUtils.MILLIS_PER_HOUR);
+	jMaxTime.setDate(c.getTime());
+	//setup of time frame selection
+	jSendTimeFrame.setMinimumValue(0);
+	jSendTimeFrame.setSliderBackground(Constants.DS_BACK);
+	jSendTimeFrame.setMaximumColor(Constants.DS_BACK_LIGHT);
+	jSendTimeFrame.setMinimumColor(Constants.DS_BACK_LIGHT);
+	jSendTimeFrame.setMaximumValue(24);
+	jSendTimeFrame.setSegmentSize(1);
+	jSendTimeFrame.setUnit("h");
+	jSendTimeFrame.setDecimalFormater(new DecimalFormat("##"));
+	jSendTimeFrame.setBackground(Constants.DS_BACK_LIGHT);
 
-        //setup time frame table
-        DefaultListModel model = new DefaultListModel();
-        jSendTimeFramesList.setModel(model);
-        jSendTimeFramesList.setCellRenderer(new TimeFrameListCellRenderer());
-        jTribeOnlyBox.setModel(new DefaultComboBoxModel(new Object[]{"Alle"}));
-        jSendTimeFrame.setSound(false);
+	//setup time frame table
+	DefaultListModel model = new DefaultListModel();
+	jSendTimeFramesList.setModel(model);
+	jSendTimeFramesList.setCellRenderer(new TimeFrameListCellRenderer());
+	jTribeOnlyBox.setModel(new DefaultComboBoxModel(new Object[]{"Alle"}));
+	jSendTimeFrame.setSound(false);
     }
 
-    public void setAllowTribeSpecificFrames(boolean pValue) {
-        allowTribeSpecificFrames = pValue;
-        jPlayerOnlyLabel.setVisible(pValue);
-        jTribeOnlyBox.setVisible(pValue);
+    public void setAllowTribeSpecificFrames( boolean pValue ) {
+	allowTribeSpecificFrames = pValue;
+	jPlayerOnlyLabel.setVisible(pValue);
+	jTribeOnlyBox.setVisible(pValue);
     }
 
     public boolean isAllowTribeSpecificFrames() {
-        return allowTribeSpecificFrames;
+	return allowTribeSpecificFrames;
     }
 
-    public void setMinMaxTimeLabel(String pText) {
-        minMaxTimeLabel = pText;
-        jMinMaxTimeLabel.setText(minMaxTimeLabel);
+    public void setMinMaxTimeLabel( String pText ) {
+	minMaxTimeLabel = pText;
+	jMinMaxTimeLabel.setText(minMaxTimeLabel);
     }
 
-    public void setAllowExactDayArrival(boolean pValue) {
-        allowExactDayArrival = pValue;
-        jOnlyValidAtExactDay.setVisible(pValue);
-        jValidAtExactDay.setVisible(pValue);
+    public void setAllowExactDayArrival( boolean pValue ) {
+	allowExactDayArrival = pValue;
+	jOnlyValidAtExactDay.setVisible(pValue);
+	jValidAtExactDay.setVisible(pValue);
     }
 
     public boolean isAllowExactDayArrival() {
-        return allowTribeSpecificFrames;
+	return allowTribeSpecificFrames;
     }
 
     public String getMinMaxTimeLabel() {
-        return minMaxTimeLabel;
+	return minMaxTimeLabel;
     }
 
-    public void setTimeFrameLabel(String pText) {
-        timeFrameLabel = pText;
-        jSendTimeFrameLabel.setText(timeFrameLabel);
+    public void setTimeFrameLabel( String pText ) {
+	timeFrameLabel = pText;
+	jSendTimeFrameLabel.setText(timeFrameLabel);
     }
 
     public String getTimeFrameLabel() {
-        return timeFrameLabel;
+	return timeFrameLabel;
     }
 
-    public void addTribe(Tribe t) {
-        DefaultComboBoxModel model = (DefaultComboBoxModel) jTribeOnlyBox.getModel();
-        List<Tribe> tribes = new LinkedList<Tribe>();
-        for (int i = 0; i < model.getSize(); i++) {
-            try {
-                tribes.add((Tribe) model.getElementAt(i));
-            } catch (Exception e) {
-            }
-        }
-        if (!tribes.contains(t)) {
-            tribes.add(t);
-            Collections.sort(tribes);
-            model = new DefaultComboBoxModel();
-            model.addElement("Alle");
-            for (Tribe tribe : tribes) {
-                model.addElement(tribe);
-            }
-            jTribeOnlyBox.setModel(model);
-        }
+    public void addTribe( Tribe t ) {
+	DefaultComboBoxModel model = (DefaultComboBoxModel) jTribeOnlyBox.getModel();
+	List<Tribe> tribes = new LinkedList<Tribe>();
+	for ( int i = 0; i < model.getSize(); i++ ) {
+	    try {
+		tribes.add((Tribe) model.getElementAt(i));
+	    } catch ( Exception e ) {
+	    }
+	}
+	if ( !tribes.contains(t) ) {
+	    tribes.add(t);
+	    Collections.sort(tribes);
+	    model = new DefaultComboBoxModel();
+	    model.addElement("Alle");
+	    for ( Tribe tribe : tribes ) {
+		model.addElement(tribe);
+	    }
+	    jTribeOnlyBox.setModel(model);
+	}
     }
 
-    public void removeTribe(Tribe pTribe) {
-        DefaultComboBoxModel model = (DefaultComboBoxModel) jTribeOnlyBox.getModel();
-        List<Tribe> tribes = new LinkedList<Tribe>();
-        for (int i = 0; i < model.getSize(); i++) {
-            try {
-                tribes.add((Tribe) model.getElementAt(i));
-            } catch (Exception e) {
-            }
-        }
-        tribes.remove(pTribe);
-        Collections.sort(tribes);
-        model = new DefaultComboBoxModel();
-        model.addElement("Alle");
-        for (Tribe tribe : tribes) {
-            model.addElement(tribe);
-        }
-        jTribeOnlyBox.setModel(model);
+    public void removeTribe( Tribe pTribe ) {
+	DefaultComboBoxModel model = (DefaultComboBoxModel) jTribeOnlyBox.getModel();
+	List<Tribe> tribes = new LinkedList<Tribe>();
+	for ( int i = 0; i < model.getSize(); i++ ) {
+	    try {
+		tribes.add((Tribe) model.getElementAt(i));
+	    } catch ( Exception e ) {
+	    }
+	}
+	tribes.remove(pTribe);
+	Collections.sort(tribes);
+	model = new DefaultComboBoxModel();
+	model.addElement("Alle");
+	for ( Tribe tribe : tribes ) {
+	    model.addElement(tribe);
+	}
+	jTribeOnlyBox.setModel(model);
     }
 
     public List<TimeSpan> getTimeSpans() {
-        List<TimeSpan> timeSpans = new LinkedList<TimeSpan>();
+	List<TimeSpan> timeSpans = new LinkedList<TimeSpan>();
 
-        //add time frames
-        DefaultListModel model = (DefaultListModel) jSendTimeFramesList.getModel();
-        for (int i = 0; i < model.getSize(); i++) {
-            TimeSpan span = (TimeSpan) model.getElementAt(i);
-            IntRange range = null;
-            if (!span.isValidAtExactTime()) {
-                range = new IntRange(span.getSpan().getMinimumInteger(), span.getSpan().getMaximumInteger());
-            }
-            TimeSpan tmp = new TimeSpan(span.getAtDate(), range, span.isValidFor());
-            timeSpans.add(tmp);
-        }
+	//add time frames
+	DefaultListModel model = (DefaultListModel) jSendTimeFramesList.getModel();
+	for ( int i = 0; i < model.getSize(); i++ ) {
+	    TimeSpan span = (TimeSpan) model.getElementAt(i);
+	    IntRange range = null;
+	    if ( !span.isValidAtExactTime() ) {
+		range = new IntRange(span.getSpan().getMinimumInteger(), span.getSpan().getMaximumInteger());
+	    }
+	    TimeSpan tmp = new TimeSpan(span.getAtDate(), range, span.isValidFor());
+	    timeSpans.add(tmp);
+	}
 
-        return timeSpans;
+	return timeSpans;
     }
 
-    public void setTimeSpans(List<TimeSpan> pSpans) {
-        DefaultListModel model = new DefaultListModel();
-        for (TimeSpan span : pSpans) {
-            model.addElement(span);
-        }
-        jSendTimeFramesList.setModel(model);
+    public void setTimeSpans( List<TimeSpan> pSpans ) {
+	DefaultListModel model = new DefaultListModel();
+	for ( TimeSpan span : pSpans ) {
+	    model.addElement(span);
+	}
+	jSendTimeFramesList.setModel(model);
     }
 
     public Date getMinTime() {
-        return jMinTime.getSelectedDate();
+	return jMinTime.getSelectedDate();
     }
 
-    public void setMinTime(Date pDate) {
-        jMinTime.setDate(pDate);
+    public void setMinTime( Date pDate ) {
+	jMinTime.setDate(pDate);
     }
 
     public Date getMaxTime() {
-        if (jMaxTime.isEnabled()) {
-            return jMaxTime.getSelectedDate();
-        } else {
-            return null;
-        }
+	if ( jMaxTime.isEnabled() ) {
+	    return jMaxTime.getSelectedDate();
+	} else {
+	    return null;
+	}
     }
 
-    public void setMaxTime(Date pDate) {
-        jMaxTime.setDate(pDate);
+    public void setMaxTime( Date pDate ) {
+	jMaxTime.setDate(pDate);
     }
 
     public boolean isMaxTimeEnabled() {
-        return jMaxTime.isEnabled();
+	return jMaxTime.isEnabled();
     }
 
-    public void setMaxTimeEnabled(boolean pValue) {
-        jMaxTime.setEnabled(pValue);
+    public void setMaxTimeEnabled( boolean pValue ) {
+	jMaxTime.setEnabled(pValue);
     }
 
     /** This method is called from within the constructor to
@@ -438,77 +438,77 @@ public class TimeSettingsPanel extends javax.swing.JPanel {
 
     private void fireRemoveTimeFrameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveTimeFrameEvent
         Object[] selection = jSendTimeFramesList.getSelectedValues();
-        if (selection == null || selection.length == 0) {
-            return;
-        }
+	if ( selection == null || selection.length == 0 ) {
+	    return;
+	}
 
-        String message = "Zeitrahmen wirklich entfernen?";
-        if (selection.length > 1) {
-            message = selection.length + " " + message;
-        }
+	String message = "Zeitrahmen wirklich entfernen?";
+	if ( selection.length > 1 ) {
+	    message = selection.length + " " + message;
+	}
 
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Entfernen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-            DefaultListModel model = (DefaultListModel) jSendTimeFramesList.getModel();
-            for (Object o : selection) {
-                model.removeElement(o);
-            }
-        }
+	if ( JOptionPaneHelper.showQuestionConfirmBox(this, message, "Entfernen", "Nein", "Ja") == JOptionPane.YES_OPTION ) {
+	    DefaultListModel model = (DefaultListModel) jSendTimeFramesList.getModel();
+	    for ( Object o : selection ) {
+		model.removeElement(o);
+	    }
+	}
 }//GEN-LAST:event_fireRemoveTimeFrameEvent
 
     private void fireAddNewTimeFrameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddNewTimeFrameEvent
         int min = (int) Math.rint(jSendTimeFrame.getMinimumColoredValue());
-        int max = (int) Math.rint(jSendTimeFrame.getMaximumColoredValue());
-        if (min == max) {
-            //start == end
-            JOptionPaneHelper.showWarningBox(this, "Der angegebene Zeitrahmen ist ungültig", "Warnung");
-            return;
-        }
+	int max = (int) Math.rint(jSendTimeFrame.getMaximumColoredValue());
+	if ( min == max ) {
+	    //start == end
+	    JOptionPaneHelper.showWarningBox(this, "Der angegebene Zeitrahmen ist ungültig", "Warnung");
+	    return;
+	}
 
-        //check if timeframe exists or intersects with other existing frame
-        int intersection = -1;
-        Tribe t = null;
-        try {
-            t = (Tribe) jTribeOnlyBox.getSelectedItem();
-        } catch (Exception e) {
-        }
+	//check if timeframe exists or intersects with other existing frame
+	int intersection = -1;
+	Tribe t = null;
+	try {
+	    t = (Tribe) jTribeOnlyBox.getSelectedItem();
+	} catch ( Exception e ) {
+	}
 
-        TimeSpan newSpan = null;
-        if (jEveryDayValid.isSelected()) {
-            newSpan = new TimeSpan(new IntRange(min, max), t);
-        } else if (jOnlyValidAt.isSelected()) {
-            newSpan = new TimeSpan(jValidAtDay.getSelectedDate(), new IntRange(min, max), t);
-        } else {
-            newSpan = new TimeSpan(jValidAtExactDay.getSelectedDate(), null, t);
-        }
+	TimeSpan newSpan = null;
+	if ( jEveryDayValid.isSelected() ) {
+	    newSpan = new TimeSpan(new IntRange(min, max), t);
+	} else if ( jOnlyValidAt.isSelected() ) {
+	    newSpan = new TimeSpan(jValidAtDay.getSelectedDate(), new IntRange(min, max), t);
+	} else {
+	    newSpan = new TimeSpan(jValidAtExactDay.getSelectedDate(), null, t);
+	}
 
-        DefaultListModel model = (DefaultListModel) jSendTimeFramesList.getModel();
-        for (int i = 0; i < model.getSize(); i++) {
-            TimeSpan existingSpan = (TimeSpan) model.getElementAt(i);
-            if (newSpan.intersects(existingSpan)) {
-                intersection = i + 1;
-                break;
-            }
-        }
+	DefaultListModel model = (DefaultListModel) jSendTimeFramesList.getModel();
+	for ( int i = 0; i < model.getSize(); i++ ) {
+	    TimeSpan existingSpan = (TimeSpan) model.getElementAt(i);
+	    if ( newSpan.intersects(existingSpan) ) {
+		intersection = i + 1;
+		break;
+	    }
+	}
 
-        if (intersection == -1) {
-            model.addElement(newSpan);
-        } else {
-            JOptionPaneHelper.showWarningBox(this, "Das gewählte Zeitfenster überschneidet sich mit dem " + intersection + ". Eintrag.\n"
-                    + "Bitte wähle die Zeitfenster so, dass es zu keinen Überschneidungen kommt.", "Überschneidung");
-        }
+	if ( intersection == -1 ) {
+	    model.addElement(newSpan);
+	} else {
+	    JOptionPaneHelper.showWarningBox(this, "Das gewählte Zeitfenster überschneidet sich mit dem " + intersection + ". Eintrag.\n"
+						   + "Bitte wähle die Zeitfenster so, dass es zu keinen Überschneidungen kommt.", "Überschneidung");
+	}
 }//GEN-LAST:event_fireAddNewTimeFrameEvent
 
     private void fireValidityChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireValidityChangedEvent
-        if (jEveryDayValid.isSelected()) {
-            jValidAtDay.setEnabled(false);
-            jValidAtExactDay.setEnabled(false);
-        } else if (jOnlyValidAt.isSelected()) {
-            jValidAtDay.setEnabled(true);
-            jValidAtExactDay.setEnabled(false);
-        } else {
-            jValidAtDay.setEnabled(false);
-            jValidAtExactDay.setEnabled(true);
-        }
+        if ( jEveryDayValid.isSelected() ) {
+	    jValidAtDay.setEnabled(false);
+	    jValidAtExactDay.setEnabled(false);
+	} else if ( jOnlyValidAt.isSelected() ) {
+	    jValidAtDay.setEnabled(true);
+	    jValidAtExactDay.setEnabled(false);
+	} else {
+	    jValidAtDay.setEnabled(false);
+	    jValidAtExactDay.setEnabled(true);
+	}
 }//GEN-LAST:event_fireValidityChangedEvent
 
     private void fireChangeUseMaxTimeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeUseMaxTimeEvent
@@ -517,19 +517,19 @@ public class TimeSettingsPanel extends javax.swing.JPanel {
 
     private void fireSetMaxTimeToMinTimePlus1HourEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSetMaxTimeToMinTimePlus1HourEvent
         Date d = jMinTime.getSelectedDate();
-        jMaxTime.setDate(DateUtils.addHours(d, 1));
+	jMaxTime.setDate(DateUtils.addHours(d, 1));
     }//GEN-LAST:event_fireSetMaxTimeToMinTimePlus1HourEvent
 
     private void fireSetMaxTimeToMinTimeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSetMaxTimeToMinTimeEvent
         Date d = jMinTime.getSelectedDate();
-        jMaxTime.setDate(d);
+	jMaxTime.setDate(d);
     }//GEN-LAST:event_fireSetMaxTimeToMinTimeEvent
 
     public void addDefaultTimeFrame() {
-        jSendTimeFrame.setMinimumColoredValue(8);
-        jSendTimeFrame.setMinimumColoredValue(24);
-        jEveryDayValid.setSelected(true);
-        fireAddNewTimeFrameEvent(null);
+	jSendTimeFrame.setMinimumColoredValue(8);
+	jSendTimeFrame.setMinimumColoredValue(24);
+	jEveryDayValid.setSelected(true);
+	fireAddNewTimeFrameEvent(null);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
@@ -560,47 +560,48 @@ public class TimeSettingsPanel extends javax.swing.JPanel {
      * @return the allowDisableMaxTime
      */
     public boolean isAllowDisableMaxTime() {
-        return allowDisableMaxTime;
+	return allowDisableMaxTime;
     }
 
     /**
      * @param allowDisableMaxTime the allowDisableMaxTime to set
      */
-    public void setAllowDisableMaxTime(boolean allowDisableMaxTime) {
-        jUseMaxTime.setVisible(allowDisableMaxTime);
-        if (!allowDisableMaxTime && !jMaxTime.isEnabled()) {
-            jMaxTime.setEnabled(true);
-        }
-        this.allowDisableMaxTime = allowDisableMaxTime;
+    public void setAllowDisableMaxTime( boolean allowDisableMaxTime ) {
+	jUseMaxTime.setVisible(allowDisableMaxTime);
+	if ( !allowDisableMaxTime && !jMaxTime.isEnabled() ) {
+	    jMaxTime.setEnabled(true);
+	}
+	this.allowDisableMaxTime = allowDisableMaxTime;
     }
 
     /**
      * @return the allowSetMaxTimeToMinTimePlus1Hour
      */
     public boolean isAllowSetMaxTimeToMinTimePlus1Hour() {
-        return allowSetMaxTimeToMinTimePlus1Hour;
+	return allowSetMaxTimeToMinTimePlus1Hour;
     }
 
     /**
      * @param allowSetMaxTimeToMinTimePlus1Hour the allowSetMaxTimeToMinTimePlus1Hour to set
      */
-    public void setAllowSetMaxTimeToMinTimePlus1Hour(boolean allowSetMaxTimeToMinTimePlus1Hour) {
-        jMaxTimeToMinTimePlus1Hour.setVisible(allowSetMaxTimeToMinTimePlus1Hour);
-        this.allowSetMaxTimeToMinTimePlus1Hour = allowSetMaxTimeToMinTimePlus1Hour;
+    public void setAllowSetMaxTimeToMinTimePlus1Hour( boolean allowSetMaxTimeToMinTimePlus1Hour ) {
+	jMaxTimeToMinTimePlus1Hour.setVisible(allowSetMaxTimeToMinTimePlus1Hour);
+	this.allowSetMaxTimeToMinTimePlus1Hour = allowSetMaxTimeToMinTimePlus1Hour;
     }
 
     /**
      * @return the allowSetMaxTimeToMinTime
      */
     public boolean isAllowSetMaxTimeToMinTime() {
-        return allowSetMaxTimeToMinTime;
+	return allowSetMaxTimeToMinTime;
     }
 
     /**
      * @param allowSetMaxTimeToMinTime the allowSetMaxTimeToMinTime to set
      */
-    public void setAllowSetMaxTimeToMinTime(boolean allowSetMaxTimeToMinTime) {
-        jMaxTimeToMinTime.setVisible(allowSetMaxTimeToMinTime);
-        this.allowSetMaxTimeToMinTime = allowSetMaxTimeToMinTime;
+    public void setAllowSetMaxTimeToMinTime( boolean allowSetMaxTimeToMinTime ) {
+	jMaxTimeToMinTime.setVisible(allowSetMaxTimeToMinTime);
+	this.allowSetMaxTimeToMinTime = allowSetMaxTimeToMinTime;
     }
+
 }

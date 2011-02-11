@@ -92,9 +92,15 @@ public class SettingsPanel extends javax.swing.JPanel {
 	    long maxArrive = (val != null) ? Long.parseLong(val) : System.currentTimeMillis();
 
 	    final long ONE_HOUR = 1000 * 60 * 60;
+
 	    if ( maxStart < System.currentTimeMillis() ) {
 		maxStart = System.currentTimeMillis() + ONE_HOUR;
 	    }
+
+	    if ( minArrive < System.currentTimeMillis() ) {
+		minArrive = System.currentTimeMillis();
+	    }
+
 
 	    if ( maxArrive < System.currentTimeMillis() ) {
 		maxArrive = System.currentTimeMillis() + ONE_HOUR;

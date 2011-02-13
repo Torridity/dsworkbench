@@ -437,13 +437,24 @@ public class StatManager {
             return;
         }
         logger.debug(" - removing data from memory");
-        if (allyData.size() == 0) {
+        if (allyData.isEmpty()) {
             removeAllyData(a);
         } else {
+            allyData.remove(t.getId());
             String dataPath = "./servers/" + GlobalOptions.getSelectedServer() + "/stats/" + a.getId() + "/" + t.getId() + ".stat";
             logger.debug(" - deleting data file '" + dataPath + "'");
             if (new File(dataPath).delete()) {
                 logger.debug("Stats successfully removed");
+            } else {
+                logger.error("Failed to remove stats file");
+            }
+
+            dataPath = "./servers/" + GlobalOptions.getSelectedServer() + "/stats/" + a.getId() + "/ally.mon";
+            if (new File(dataPath).exists()) {
+                logger.debug("'ally.mon' file found. Ally cannot be monitored longer as one entity. Removing file...");
+                if (new File(dataPath).delete()) {
+                    logger.debug("'ally.mon' removed");
+                }
             }
         }
     }

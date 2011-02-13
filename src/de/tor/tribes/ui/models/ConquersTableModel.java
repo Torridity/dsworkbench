@@ -75,12 +75,18 @@ public class ConquersTableModel extends AbstractDSWorkbenchTableModel {
         switch (columnIndex) {
             case 0:
                 return DataHolder.getSingleton().getVillagesById().get(c.getVillageID());
-            case 1:
+            case 1: {
                 NumberFormat nf = NumberFormat.getInstance();
                 nf.setMinimumFractionDigits(0);
                 nf.setMaximumFractionDigits(0);
-                int points = DataHolder.getSingleton().getVillagesById().get(c.getVillageID()).getPoints();
-                return nf.format(points);
+                Village v = DataHolder.getSingleton().getVillagesById().get(c.getVillageID());
+                if (v != null) {
+                    int points = v.getPoints();
+                    return nf.format(points);
+                } else {
+                    return nf.format(0);
+                }
+            }
             case 2: {
                 Village v = DataHolder.getSingleton().getVillagesById().get(c.getVillageID());
                 return "K" + DSCalculator.getContinent(v.getX(), v.getY());

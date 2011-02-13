@@ -72,7 +72,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
 
     DSWorkbenchStatsFrame() {
         initComponents();
-       
+
         try {
             jAlwaysOnTopBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("stats.frame.alwaysOnTop")));
             setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
@@ -908,6 +908,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         //remove tribe element(s)
         Object[] tribesToRemove = jTribeList.getSelectedValues();
         if (tribesToRemove == null || tribesToRemove.length == 0) {
+            JOptionPaneHelper.showInformationBox(this, "Kein Spieler ausgewählt", "Fehler");
             return;
         }
         String message = "";

@@ -58,7 +58,6 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 
 /**
- * @TODO CHECK behavior on server change!!!!!!!!!1
  * @author Charon
  */
 public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements DragGestureListener {

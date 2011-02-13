@@ -65,6 +65,7 @@ public class WorldDecorationHolder {
             loadWorld();
         } catch (Exception e) {
             valid = false;
+            throw e;
         }
     }
 
@@ -74,7 +75,17 @@ public class WorldDecorationHolder {
 
     private static void loadWorld() throws FileNotFoundException, Exception {
         try {
-            GZIPInputStream fin = new GZIPInputStream(new FileInputStream("world.dat.gz"));
+            String server = GlobalOptions.getSelectedServer();
+            int decoId = ServerManager.getServerDecoration(server);
+            GZIPInputStream fin = null;
+            if (decoId == 0) {
+                logger.info("Using default decoration");
+                fin = new GZIPInputStream(new FileInputStream("world.dat.gz"));
+            } else {
+                logger.info("Using decoration #" + decoId);
+                fin = new GZIPInputStream(new FileInputStream("world" + decoId + ".dat.gz"));
+            }
+
             // FileInputStream fin = new FileInputStream("world.dat");
             ByteBuffer bb = ByteBuffer.allocate(1000000);
             byte[] d = new byte[1024];
@@ -85,8 +96,8 @@ public class WorldDecorationHolder {
             decoration = bb.array();
             fin.close();
         } catch (Exception e) {
-            logger.error("Failed to read world.dat.gz");
-            throw new Exception("Unable to read world.dat.gz", e);
+            logger.error("Failed to read decoration file");
+            throw new Exception("Unable to read decoration file", e);
         }
         loadTextures();
     }
@@ -134,7 +145,6 @@ public class WorldDecorationHolder {
             valid = true;
         } catch (Exception e) {
             valid = false;
-            throw new Exception("Failed to load world textures", e);
         }
     }
 

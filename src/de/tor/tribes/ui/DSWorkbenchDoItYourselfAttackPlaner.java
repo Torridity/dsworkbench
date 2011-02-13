@@ -138,7 +138,6 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jScrollPane1.addMouseListener(l);
 
         DoItYourselfCountdownThread thread = new DoItYourselfCountdownThread();
-        thread.setDaemon(true);
         thread.start();
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
@@ -1098,6 +1097,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
 class DoItYourselfCountdownThread extends Thread {
 
     public DoItYourselfCountdownThread() {
+        setDaemon(true);
     }
 
     @Override

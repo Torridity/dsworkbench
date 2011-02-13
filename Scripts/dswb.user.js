@@ -5,14 +5,25 @@
 // @include        http://de*.die-staemme.de/game.php?screen=place*
 // @include        http://de*.die-staemme.de/game.php?*screen=place
 // @include        http://de*.die-staemme.de/game.php?*screen=market&mode=send*
+// @include        http://de*.die-staemme.de/game.php?*mode=groups*
 // @exclude        http://de*.die-staemme.de/game.php?*screen=place&mode=units
 // @exclude        http://de*.die-staemme.de/game.php?*screen=place&mode=sim
 // @exclude        http://de*.die-staemme.de/game.php?*screen=place&mode=neighbor
 // @exclude        http://de*.die-staemme.de/game.php?*screen=place&try=confirm
+
 // ==/UserScript==
 
-
-
+/**********HELPER FUNCTIONS***********/
+	var $x = function(p, context) {
+		if(!context){
+			context = document;
+		}
+		var i, arr = [], xpr = document.evaluate(p, context, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+		for (i = 0; item = xpr.snapshotItem(i); i++)
+			arr.push(item);
+		return arr;
+	};
+	
 if(window.navigator.userAgent.indexOf("Firefox") > -1){
 window.addEventListener('load', function()
 { getArgs(); }, false);
@@ -23,8 +34,38 @@ addLoadEvent(function() {
 }
 
 
+function selectVillages(){
+	try{
+	var ids = document.getElementById('village_ids').value.split(';');
+
+	for (var i = 0; i < ids.length; i++){
+		var id = ids[i];
+		if(id != null && id.length>3){
+	  	$x('//input[@value='+ id + ']')[0].checked = true;
+	 }
+	}
+	}catch(err){
+		alert("Fehler waehrend der Dorfauswahl.");
+	}
+}
+
 //parse arguments
 function getArgs() { 
+	if(document.getElementById('group_assign_table') != null){
+	//groups handling
+	var menu = document.getElementById('overview_menu');
+	var input = document.createElement('input');
+	input.setAttribute('id', 'village_ids');
+	menu.appendChild(input);
+  var button = document.createElement('button');
+	button.textContent = 'Doerfer waehlen';
+	button.addEventListener('click', function(){
+	selectVillages();
+	}, false);
+	
+  	menu.appendChild(button);
+  return;
+  }
    args = new Object();
    var query = location.search.substring(1); 
 
@@ -94,3 +135,4 @@ oldonload = window.onload
     }
   }
 }
+

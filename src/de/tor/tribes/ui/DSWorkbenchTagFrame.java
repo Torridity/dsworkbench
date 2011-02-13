@@ -173,6 +173,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         jButton7 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
         jButton9 = new javax.swing.JButton();
+        jButton10 = new javax.swing.JButton();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
 
         jAddTagDialog.setTitle("Neuer Tag");
@@ -319,6 +320,18 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
             }
         });
 
+        jButton10.setBackground(new java.awt.Color(239, 235, 223));
+        jButton10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/export_js.png"))); // NOI18N
+        jButton10.setToolTipText("Dörfer in der gewählten Gruppe in die Zwischenablage kopieren, um sie per DS Workbench Userscript im Spiel zuzuweisen");
+        jButton10.setMaximumSize(new java.awt.Dimension(59, 35));
+        jButton10.setMinimumSize(new java.awt.Dimension(59, 35));
+        jButton10.setPreferredSize(new java.awt.Dimension(59, 35));
+        jButton10.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCopyVillagesForScriptEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -340,7 +353,8 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
                             .addComponent(jButton6)
                             .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addComponent(jButton7)
-                        .addComponent(jButton8)))
+                        .addComponent(jButton8))
+                    .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -366,7 +380,9 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -477,6 +493,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         if (selection != null) {
             DSWorkbenchMainFrame.getSingleton().centerVillage(selection);
         }
+
     }//GEN-LAST:event_fireCenterVillageEvent
 
     private void fireUntagVillage(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUntagVillage
@@ -577,6 +594,25 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         }
     }//GEN-LAST:event_fireLinkTagsEvent
 
+    private void fireCopyVillagesForScriptEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyVillagesForScriptEvent
+        DefaultListModel model = ((DefaultListModel) jTaggedVillageList.getModel());
+        StringBuilder data = new StringBuilder();
+        if (model.getSize() == 0) {
+            JOptionPaneHelper.showInformationBox(this, "Keine Tag gewählt oder es sind dem Tag keine Dörfer zugeordnet", null);
+            return;
+        }
+        try {
+            for (int i = 0; i < model.getSize(); i++) {
+                data.append(((Village) model.getElementAt(i)).getId()).append(";");
+            }
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(data.toString()), null);
+            JOptionPaneHelper.showInformationBox(this, "Dörfer erfolgreich in die Zwischenablage kopiert.\nFüge sie nun in der Gruppenübersicht in den entsprechende Feld ein\nund weise sie einer neuen Gruppe zu.", null);
+        } catch (Exception e) {
+            logger.error("Failed to copy villages to clipboard", e);
+            JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren in die Zwischenablage", "Fehler");
+        }
+    }//GEN-LAST:event_fireCopyVillagesForScriptEvent
+
     private void updateTaggedVillageList() {
         int[] rows = jTagTable.getSelectedRows();
         if (rows == null || rows.length == 0) {
@@ -669,6 +705,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
     private javax.swing.JDialog jAddTagDialog;
     private javax.swing.JCheckBox jAlwaysOnTopBox;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;

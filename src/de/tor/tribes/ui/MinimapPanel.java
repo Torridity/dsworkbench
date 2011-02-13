@@ -1033,6 +1033,7 @@ class MinimapRepaintThread extends Thread {
     }
 
     MinimapRepaintThread() {
+        setDaemon(true);
     }
 
     public void setVisiblePart(Rectangle pVisible) {

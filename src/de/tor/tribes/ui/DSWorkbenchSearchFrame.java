@@ -62,7 +62,6 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
             jSendResButton.setEnabled(false);
         }
         mSearchThread = new SearchThread("", this);
-        mSearchThread.setDaemon(true);
         mSearchThread.start();
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.search_tool", GlobalOptions.getHelpBroker().getHelpSet());
@@ -478,6 +477,7 @@ class SearchThread extends Thread {
     private SearchListener mListener;
 
     public SearchThread(String pSearchTerm, SearchListener pListener) {
+        setDaemon(true);
         sSearchTerm = pSearchTerm;
         mListener = pListener;
     }

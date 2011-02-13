@@ -18,6 +18,7 @@ public class DatabaseServerEntry {
     private double acceptanceRiseSpeed = 1.0;
     private byte nightBonus = NIGHT_BONUS_0to8;
     private int dataVersion = 0;
+    private int decoration = 0;
 
     public String getServerID() {
         return serverID;
@@ -75,5 +76,19 @@ public class DatabaseServerEntry {
      */
     public void setNightBonus(byte nightBonus) {
         this.nightBonus = nightBonus;
+    }
+
+    /**
+     * @return the decoration
+     */
+    public int getDecoration() {
+        return decoration;
+    }
+
+    /**
+     * @param decoration the decoration to set
+     */
+    public void setDecoration(int decoration) {
+        this.decoration = decoration;
     }
 }

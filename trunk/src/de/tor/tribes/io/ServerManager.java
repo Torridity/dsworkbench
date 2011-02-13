@@ -46,6 +46,7 @@ public class ServerManager {
         el.setAcceptanceRiseSpeed(1.0);
         el.setDataVersion(0);
         el.setNightBonus((byte) 1);
+        el.setDecoration(0);
         SERVERS.add(el);*/
         BufferedReader r = null;
         try {
@@ -60,6 +61,10 @@ public class ServerManager {
                 el.setAcceptanceRiseSpeed(Double.parseDouble(split[2]));
                 el.setDataVersion(0);
                 el.setNightBonus(Byte.parseByte(split[3]));
+                try {
+                    el.setDecoration(Integer.parseInt(split[4]));
+                } catch (Exception ignored) {
+                }
                 SERVERS.add(el);
                 cnt++;
             }
@@ -123,5 +128,14 @@ public class ServerManager {
             }
         }
         return DatabaseServerEntry.NIGHT_BONUS_0to8;
+    }
+
+    public static int getServerDecoration(String pServerID) {
+        for (DatabaseServerEntry entry : SERVERS) {
+            if (entry.getServerID().equals(pServerID)) {
+                return entry.getDecoration();
+            }
+        }
+        return 0;
     }
 }

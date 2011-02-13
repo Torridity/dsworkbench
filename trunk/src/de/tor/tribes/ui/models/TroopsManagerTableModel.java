@@ -256,7 +256,6 @@ public class TroopsManagerTableModel extends AbstractTableModel {
             case 0: {
                 return row.getTribe();
             }
-
             case 1: {
                 return row;
             }
@@ -275,7 +274,9 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                     if (columnIndex < 3 + unitCount) {
                         try {
                             int troopIndex = columnIndex - 3;
+                            System.out.println("Index " + troopIndex);
                             UnitHolder unit = DataHolder.getSingleton().getUnits().get(troopIndex);
+                            System.out.println("Unit: " + unit);
                             switch (viewType) {
                                 case SHOW_OWN_TROOPS:
                                     return TroopsManager.getSingleton().getTroopsForVillage(row).getOwnTroops().get(unit);

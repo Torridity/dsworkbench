@@ -367,6 +367,8 @@ public class MapRenderer extends Thread {
 
                 pG2d.drawImage(mBackBuffer, 0, 0, null);
                 MapPanel.getSingleton().updateComplete(villagePositions, mBackBuffer);
+                //  System.out.println("Complete " + mBackBuffer);
+
             }
         } catch (Throwable t) {
             lRenderedLast = 0;
@@ -2190,7 +2192,7 @@ public class MapRenderer extends Thread {
                     } catch (Exception e) {
                     }
                     c.setDrawColor(co);
-                    c.setDrawAlpha(0.5f);
+                    c.setDrawAlpha(0.8f);
                     c.renderForm(g2d);
                     Image unit = ImageManager.getUnitIcon(u).getImage();
                     Point p = MapPanel.getSingleton().virtualPosToSceenPos((cx + xi), (cy + yi));

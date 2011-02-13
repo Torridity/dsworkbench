@@ -31,7 +31,6 @@ public class MinimapZoomFrame extends javax.swing.JFrame {
         initComponents();
         setMinimap(pMap);
         mDrawThread = new DrawThread(this);
-        mDrawThread.setDaemon(true);
         mDrawThread.start();
         try {
             mBorder = ImageIO.read(new File("graphics/zoom_border.png"));
@@ -124,6 +123,7 @@ class DrawThread extends Thread {
 
     public DrawThread(MinimapZoomFrame pParent) {
         mParent = pParent;
+        setDaemon(true);
     }
 
     @Override

@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.ui.models;
 
+import de.tor.tribes.types.MarkerSet;
 import de.tor.tribes.ui.MarkerCell;
 import de.tor.tribes.util.mark.MarkerManager;
 import java.awt.Color;
@@ -66,7 +67,12 @@ public class MarkerTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return MarkerManager.getSingleton().getMarkerSet(activeSet).getMarkers().size();
+        MarkerSet ms = MarkerManager.getSingleton().getMarkerSet(activeSet);
+        if (ms != null) {
+            return ms.getMarkers().size();
+        } else {
+            return 0;
+        }
     }
 
     @Override

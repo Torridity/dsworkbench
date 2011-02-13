@@ -307,11 +307,11 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
                         .addGap(12, 12, 12)
                         .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jTaskPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE))
@@ -926,8 +926,8 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
                 return;
             }
             for (int i = 0; i < rows.length; i++) {
-                jResultsTable.getSelectionModel().removeSelectionInterval(rows[i],rows[i]);
-		int modelRow = jResultsTable.convertRowIndexToModel(rows[i]);
+                jResultsTable.getSelectionModel().removeSelectionInterval(rows[i], rows[i]);
+                int modelRow = jResultsTable.convertRowIndexToModel(rows[i]);
                 Village source = (Village) jResultsTable.getValueAt(rows[i], 0);
                 Village target = (Village) jResultsTable.getValueAt(rows[i], 2);
                 Transport trans = (Transport) jResultsTable.getValueAt(rows[i], 1);

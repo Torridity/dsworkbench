@@ -1,0 +1,82 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.tor.tribes.util;
+
+import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.MapPanel;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import javax.imageio.ImageIO;
+
+/**
+ *
+ * @author Torridity
+ */
+public class ScreenshotSaver extends Thread {
+
+    private BufferedImage mScreen = null;
+    private File fTargetFile = null;
+    private String mTargetType = null;
+
+    public ScreenshotSaver() {
+        setDaemon(true);
+        setPriority(MIN_PRIORITY);
+    }
+
+    public void planMapShow(File pTargetFile, String pTargetType, BufferedImage pScreen) {
+        fTargetFile = pTargetFile;
+        mTargetType = pTargetType;
+        mScreen = pScreen;
+    }
+
+    public void run() {
+        while (true) {
+            if (mScreen != null) {
+                try {
+                    Point2D.Double pos = MapPanel.getSingleton().getCurrentPosition();
+                    String first = "";
+                    if (ServerSettings.getSingleton().getCoordType() != 2) {
+                        int[] hier = DSCalculator.xyToHierarchical((int) pos.x, (int) pos.y);
+                        first = "Zentrum: " + hier[0] + ":" + hier[1] + ":" + hier[2];
+                    } else {
+                        first = "Zentrum: " + (int) Math.floor(pos.getX()) + "|" + (int) Math.floor(pos.getY());
+                    }
+
+                    BufferedImage result = ImageUtils.createCompatibleBufferedImage(mScreen.getWidth(null), mScreen.getHeight(null), BufferedImage.OPAQUE);
+                    Graphics2D g2d = (Graphics2D) result.getGraphics();
+                    g2d.drawImage(mScreen, 0, 0, null);
+                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
+                    FontMetrics fm = g2d.getFontMetrics();
+                    Rectangle2D firstBounds = fm.getStringBounds(first, g2d);
+                    String second = "Erstellt mit DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION;
+                    Rectangle2D secondBounds = fm.getStringBounds(second, g2d);
+                    g2d.setColor(Constants.DS_BACK_LIGHT);
+                    g2d.fill3DRect(0, (int) (result.getHeight() - firstBounds.getHeight() - secondBounds.getHeight() - 9), (int) (secondBounds.getWidth() + 6), (int) (firstBounds.getHeight() + secondBounds.getHeight() + 9), true);
+                    g2d.setColor(Color.BLACK);
+                    g2d.drawString(first, 3, (int) (result.getHeight() - firstBounds.getHeight() - secondBounds.getHeight() - firstBounds.getY() - 6));
+                    g2d.drawString(second, 3, (int) (result.getHeight() - secondBounds.getHeight() - secondBounds.getY() - 3));
+                    g2d.dispose();
+                    ImageIO.write(result, mTargetType, fTargetFile);
+                    DSWorkbenchMainFrame.getSingleton().fireMapShotDoneEvent();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    DSWorkbenchMainFrame.getSingleton().fireMapShotFailedEvent();
+                    //  mMapShotListener.fireMapShotFailedEvent();
+                }
+                mScreen = null;
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+            }
+        }
+    }
+}

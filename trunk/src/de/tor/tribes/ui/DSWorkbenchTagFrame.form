@@ -150,6 +150,7 @@
                           <Component id="jButton7" alignment="1" min="-2" max="-2" attributes="0"/>
                           <Component id="jButton8" alignment="1" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <Component id="jButton10" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -181,6 +182,8 @@
                           <Component id="jButton6" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jButton4" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jButton10" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Component id="jScrollPane2" pref="170" max="32767" attributes="1"/>
                   </Group>
@@ -346,6 +349,29 @@
           </Properties>
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireLinkTagsEvent"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="jButton10">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="df" green="eb" red="ef" type="rgb"/>
+            </Property>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/res/ui/export_js.png"/>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value="D&#xf6;rfer in der gew&#xe4;hlten Gruppe in die Zwischenablage kopieren, um sie per DS Workbench Userscript im Spiel zuzuweisen"/>
+            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[59, 35]"/>
+            </Property>
+            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[59, 35]"/>
+            </Property>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[59, 35]"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireCopyVillagesForScriptEvent"/>
           </Events>
         </Component>
       </SubComponents>

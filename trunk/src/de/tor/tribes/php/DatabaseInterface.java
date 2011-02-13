@@ -43,9 +43,9 @@ public class DatabaseInterface {
     public static final int ID_USER_NOT_EXIST = -14;
     public static final int ID_VERSION_NOT_ALLOWED = -26;
     public final static String INTERFACE_URL = "http://www.support.dsworkbench.de/interface.php";
-    public static boolean bAccountValidated = false;
-    public static String sValidatedUser = null;
-    public static String sValidatedPassword = null;
+    private static boolean bAccountValidated = false;
+    private static String sValidatedUser = null;
+    private static String sValidatedPassword = null;
 
     private static Object callWebInterface(String pFunction, Hashtable<String, String> pArguments) {
         List<String> lines = new LinkedList<String>();
@@ -225,6 +225,11 @@ public class DatabaseInterface {
                         entry.setServerURL(t.nextToken());
                         entry.setAcceptanceRiseSpeed(Double.parseDouble(t.nextToken()));
                         entry.setNightBonus(Byte.parseByte(t.nextToken()));
+                        try {
+                            entry.setDecoration(Integer.parseInt(t.nextToken()));
+                        } catch (Exception ignore) {
+                            //no decoration entry found
+                        }
                         entries.add(entry);
                     }
                 }

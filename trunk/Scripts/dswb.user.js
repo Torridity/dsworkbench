@@ -10,40 +10,38 @@
 // @exclude        http://de*.die-staemme.de/game.php?*screen=place&mode=sim
 // @exclude        http://de*.die-staemme.de/game.php?*screen=place&mode=neighbor
 // @exclude        http://de*.die-staemme.de/game.php?*screen=place&try=confirm
-
 // ==/UserScript==
 
-/**********HELPER FUNCTIONS***********/
-	var $x = function(p, context) {
-		if(!context){
-			context = document;
-		}
-		var i, arr = [], xpr = document.evaluate(p, context, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-		for (i = 0; item = xpr.snapshotItem(i); i++)
-			arr.push(item);
-		return arr;
-	};
+var $x = function(p, context) {
+	if(!context){
+		context = document;
+	}
+	var i, arr = [], xpr = document.evaluate(p, context, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+	for (i = 0; item = xpr.snapshotItem(i); i++)
+		arr.push(item);
+	return arr;
+};
 	
 if(window.navigator.userAgent.indexOf("Firefox") > -1){
-window.addEventListener('load', function()
-{ getArgs(); }, false);
-}else{
-addLoadEvent(function() {
-  getArgs();
-});
+	window.addEventListener('load', function() { 
+		getArgs();}, false);
+	}else{
+		addLoadEvent(function() {
+  	getArgs();
+	});
 }
 
 
 function selectVillages(){
 	try{
-	var ids = document.getElementById('village_ids').value.split(';');
+		var ids = document.getElementById('village_ids').value.split(';');
 
-	for (var i = 0; i < ids.length; i++){
-		var id = ids[i];
-		if(id != null && id.length>3){
-	  	$x('//input[@value='+ id + ']')[0].checked = true;
-	 }
-	}
+		for (var i = 0; i < ids.length; i++){
+			var id = ids[i];
+			if(id != null && id.length>3){
+	  		$x('//input[@value='+ id + ']')[0].checked = true;
+	 		}
+		}
 	}catch(err){
 		alert("Fehler waehrend der Dorfauswahl.");
 	}
@@ -52,20 +50,21 @@ function selectVillages(){
 //parse arguments
 function getArgs() { 
 	if(document.getElementById('group_assign_table') != null){
-	//groups handling
-	var menu = document.getElementById('overview_menu');
-	var input = document.createElement('input');
-	input.setAttribute('id', 'village_ids');
-	menu.appendChild(input);
-  var button = document.createElement('button');
-	button.textContent = 'Doerfer waehlen';
-	button.addEventListener('click', function(){
-	selectVillages();
-	}, false);
+		//groups handling
+		var menu = document.getElementById('overview_menu');
+		var input = document.createElement('input');
+		input.setAttribute('id', 'village_ids');
+		menu.appendChild(input);
+  	var button = document.createElement('button');
+		button.textContent = 'Doerfer waehlen';
+		button.addEventListener('click', function(){
+			selectVillages();
+		}, false);
 	
   	menu.appendChild(button);
-  return;
-  }
+  	return;
+ 	}
+  
    args = new Object();
    var query = location.search.substring(1); 
 
@@ -78,16 +77,17 @@ function getArgs() {
          args[argname] = unescape(value); 
       } 
    //return args; 
-   if (args.type){
+  if (args.type){
 		type = parseInt(args.type);
-}else{
+	}else{
 	 type = -1;
-}
-if(type == 0){
-  doInsertUnitsAction();
-}else if(type == 1){
-  doInsertResourcesAction();
-}
+	}
+
+	if(type == 0){
+  	doInsertUnitsAction();
+	}else if(type == 1){
+  	doInsertResourcesAction();
+	}
 } 
 
 function doInsertUnitsAction(){      
@@ -99,7 +99,7 @@ function doInsertUnitsAction(){
 	    //get field for unit	    
 	    field = document.getElementsByName(units[i])[0];
    
-	    //if field is valid and arguments contain value for field
+	    //if field is valid and arguments contains value for field
 	    if(field != null && args[units[i]] != null){
 	       //insert value
 				field.value=args[units[i]];
@@ -108,24 +108,24 @@ function doInsertUnitsAction(){
 }
 
 function doInsertResourcesAction(){
- //insert valid value
-    document.getElementsByName('wood')[0].value=args['wood'];
-		document.getElementsByName('stone')[0].value=args['clay'];
-		document.getElementsByName('iron')[0].value=args['iron'];
+  //insert resource value
+	document.getElementsByName('wood')[0].value=args['wood'];
+	document.getElementsByName('stone')[0].value=args['clay'];
+	document.getElementsByName('iron')[0].value=args['iron'];
 }
 
 
 function addLoadEvent(func) {
-var oldonload;
-if(window.navigator.userAgent.indexOf("Firefox") > -1){
-oldonload = unsafeWindow.onload;
-}else{
-oldonload = window.onload
-}
+	var oldonload;
+	if(window.navigator.userAgent.indexOf("Firefox") > -1){
+		oldonload = unsafeWindow.onload;
+	}else{
+		oldonload = window.onload
+	}
 
 
   if (typeof window.onload != 'function') {
-    window.onload = func;
+  	window.onload = func;
   } else {
     window.onload = function() {
       if (oldonload) {

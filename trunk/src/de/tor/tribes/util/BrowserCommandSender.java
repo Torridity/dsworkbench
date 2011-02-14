@@ -81,7 +81,7 @@ public class BrowserCommandSender {
             url += pSource.getId() + "&screen=market&mode=send&target=" + pTarget.getId();
             url += "&type=1";
             url += "&wood=" + pTrans.getSingleTransports().get(0).getAmount();
-            url += "&clay=" + pTrans.getSingleTransports().get(1).getAmount();
+            url += "&stone=" + pTrans.getSingleTransports().get(1).getAmount();
             url += "&iron=" + pTrans.getSingleTransports().get(2).getAmount();
             String browser = GlobalOptions.getProperty("default.browser");
             if (browser == null || browser.length() < 1) {

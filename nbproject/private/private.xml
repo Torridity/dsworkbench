@@ -3,24 +3,15 @@
     <data xmlns="http://www.netbeans.org/ns/profiler/1" version="0.9.1"/>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/algo/TimeSettingsPanel.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/ImageManager.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/io/UnitHolder.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/io/DataHolder.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/DSWorkbenchSplashScreen.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/GlobalOptions.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/DSWorkbenchAttackFrame.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/DSWorkbenchMerchantDistibutor.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/TribeTribeAttackFrame.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/types/AbstractTroopMovement.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/DSWorkbenchMainFrame.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/StartupReminder.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/mark/MarkerManager.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/DSWorkbenchSettingsDialog.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/php/json/JSONObject.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/io/WorldDecorationHolder.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/DSWorkbenchProfileDialog.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/types/UserProfile.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/algo/SettingsPanel.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/algo/TimeSettingsPanel.java</file>
     </open-files>
 </project-private>

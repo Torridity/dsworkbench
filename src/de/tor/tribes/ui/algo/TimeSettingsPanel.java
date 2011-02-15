@@ -15,7 +15,6 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.ui.renderer.TimeFrameListCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.JOptionPaneHelper;
-import java.awt.Dimension;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Collections;
@@ -166,7 +165,6 @@ public class TimeSettingsPanel extends javax.swing.JPanel {
             TimeSpan tmp = new TimeSpan(span.getAtDate(), range, span.isValidFor());
             timeSpans.add(tmp);
         }
-
         return timeSpans;
     }
 

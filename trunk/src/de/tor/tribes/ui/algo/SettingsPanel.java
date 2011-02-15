@@ -207,28 +207,6 @@ public class SettingsPanel extends javax.swing.JPanel {
     /**Return selected send time frames
      */
     public TimeFrame getTimeFrame() {
-	/*  TimeFrame result = new TimeFrame(jSendTime.getSelectedDate(), jArriveTime.getSelectedDate());
-	//add time frames
-	DefaultListModel model = (DefaultListModel) jSendTimeFramesList.getModel();
-	for (int i = 0; i < model.getSize(); i++) {
-	TimeSpan span = (TimeSpan) model.getElementAt(i);
-
-	IntRange s = new IntRange(span.getSpan().getMinimumInteger(), span.getSpan().getMaximumInteger() - 1);
-	System.out.println(s);
-	TimeSpan tmp = new TimeSpan(span.getAtDate(), s, span.isValidFor());
-	result.addTimeSpan(tmp);
-	}
-	if (jVariableArriveTimeBox.isSelected()) {
-	result.setUseVariableArriveTime(true);
-	result.setArriveSpan((int) Math.rint(jArriveTimeFrame.getMinimumColoredValue()), (int) Math.rint(jArriveTimeFrame.getMaximumColoredValue()));
-	}
-	System.out.println(jSendTimeSettingsPanel.getTimeSpans());
-	System.out.println(jArriveTimeSettingsPanel.getTimeSpans());
-
-	Date minTime = jSendTimeSettingsPanel.getMinMaxTime();
-	Date maxTime = jArriveTimeSettingsPanel.getMinMaxTime();
-	 */
-
 	Date sendMaxTime = jSendTimeSettingsPanel.getMaxTime();
 	if ( sendMaxTime == null ) {
 	    sendMaxTime = jArriveTimeSettingsPanel.getMaxTime();

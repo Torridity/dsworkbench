@@ -12,6 +12,7 @@
 // @exclude        http://de*.die-staemme.de/game.php?*screen=place&try=confirm
 // ==/UserScript==
 
+
 var $x = function(p, context) {
 	if(!context){
 		context = document;
@@ -32,39 +33,49 @@ if(window.navigator.userAgent.indexOf("Firefox") > -1){
 }
 
 
+/**Select villages that have been inserted to the custom input field */
 function selectVillages(){
 	try{
 		var ids = document.getElementById('village_ids').value.split(';');
-
+		var valueSet = 0;
 		for (var i = 0; i < ids.length; i++){
 			var id = ids[i];
-			if(id != null && id.length>3){
+			if(id != null && id.length > 3){
+				valueSet++;
 	  		$x('//input[@value='+ id + ']')[0].checked = true;
 	 		}
 		}
+		if(valueSet > 0){
+			//at least one village was found, set input fields background to green
+			document.getElementById('village_ids').setAttribute('style', 'background-color:#00FF00');
+		}else{
+			//no village was found, mark input field red
+			document.getElementById('village_ids').setAttribute('style', 'background-color:#FF0000');
+		}
 	}catch(err){
-		alert("Fehler waehrend der Dorfauswahl.");
+		//some error has occured, mark field red
+		document.getElementById('village_ids').setAttribute('style', 'background-color:#FF0000');
 	}
 }
 
 //parse arguments
 function getArgs() { 
-	if(document.getElementById('group_assign_table') != null){
-		//groups handling
-		var menu = document.getElementById('overview_menu');
+	var table = document.getElementById('group_assign_table');
+	if(table != null){
+		//we are in the groups view, add groups input field
 		var input = document.createElement('input');
+		input.setAttribute('class', 'vis');
 		input.setAttribute('id', 'village_ids');
-		menu.appendChild(input);
-  	var button = document.createElement('button');
-		button.textContent = 'Doerfer waehlen';
-		button.addEventListener('click', function(){
+		input.setAttribute('size', '45');
+		input.setAttribute('value', '<Bitte Dorf-IDs einfuegen>');
+		input.addEventListener('keyup', function(){
 			selectVillages();
 		}, false);
-	
-  	menu.appendChild(button);
+		table.appendChild(input);
   	return;
  	}
-  
+
+  //default handling of browser URL
    args = new Object();
    var query = location.search.substring(1); 
 
@@ -76,44 +87,38 @@ function getArgs() {
          var value = pairs[i].substring(pos+1); 
          args[argname] = unescape(value); 
       } 
-   //return args; 
+
   if (args.type){
+  	//get type field to decide which entries are expected (troops or resources)
 		type = parseInt(args.type);
 	}else{
-	 type = -1;
+		//no valid type found
+	 	type = -1;
 	}
 
 	if(type == 0){
-  	doInsertUnitsAction();
+		//add troops
+  	doInsertAction(new Array("spear", "sword", "axe", "archer", "spy", "light", "marcher", "heavy", "ram", "catapult", "knight", "snob"));
 	}else if(type == 1){
-  	doInsertResourcesAction();
+		//add resources
+  	doInsertAction(new Array("wood", "stone", "iron"));
 	}
 } 
 
-function doInsertUnitsAction(){      
- //all available units
-   units = new Array("spear", "sword", "axe", "archer", "spy","light", "marcher", "heavy", "ram", "catapult", "knight", "snob");
-   //go through all units
-
-   for (var i = 0; i < units.length; ++i){
-	    //get field for unit	    
-	    field = document.getElementsByName(units[i])[0];
+/**Insert a list of elements by their names*/
+function doInsertAction(expectedElements){
+	//go through all expected elements
+   for (var i = 0; i < expectedElements.length; ++i){
+	    //get form field for expected element	    
+	    field = document.getElementsByName(expectedElements[i])[0];
    
-	    //if field is valid and arguments contains value for field
-	    if(field != null && args[units[i]] != null){
-	       //insert value
-				field.value=args[units[i]];
+	    //if field was found and arguments contains a value for the expected element...
+	    if(field != null && args[expectedElements[i]] != null){
+	      //...insert value
+				field.value=args[expectedElements[i]];
       }
    }
-}
-
-function doInsertResourcesAction(){
-  //insert resource value
-	document.getElementsByName('wood')[0].value=args['wood'];
-	document.getElementsByName('stone')[0].value=args['clay'];
-	document.getElementsByName('iron')[0].value=args['iron'];
-}
-
+}      
 
 function addLoadEvent(func) {
 	var oldonload;

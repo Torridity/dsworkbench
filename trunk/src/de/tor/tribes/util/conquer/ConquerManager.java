@@ -167,7 +167,10 @@ public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInte
             }
             updateAcceptance();
             updateFilters();
+            try {
             MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
+        } catch (Exception e) {
+        }
         } else {
             lastUpdate = 0;
             updateFilters();
@@ -434,7 +437,11 @@ public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInte
         for (ConquerManagerListener listener : listeners) {
             listener.fireConquersChangedEvent();
         }
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
+        try {
+            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
+        } catch (Exception e) {
+            //failed to initialize redraw because renderer is still null
+        }
     }
 }
 

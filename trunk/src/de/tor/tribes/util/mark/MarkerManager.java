@@ -437,6 +437,9 @@ public class MarkerManager {
         for (MarkerManagerListener listener : listeners) {
             listener.fireMarkersChangedEvent();
         }
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.MARKER_LAYER);
+        try {
+            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.MARKER_LAYER);
+        } catch (Exception e) {
+        }
     }
 }

@@ -291,7 +291,10 @@ private void fireOkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireO
     TagManager.getSingleton().saveTagsToFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
     setVisible(false);
     //init redraw
-    MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
+    try {
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
+    } catch (Exception e) {
+    }
 }//GEN-LAST:event_fireOkEvent
 
 private void fireCancelEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCancelEvent
@@ -309,11 +312,9 @@ private void fireVillageSelectionChangedEvent(java.awt.event.ItemEvent evt) {//G
         jTagsList.setModel(model);
     }
 }//GEN-LAST:event_fireVillageSelectionChangedEvent
-
     /**
      * @param args the command line arguments
      */
-   
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

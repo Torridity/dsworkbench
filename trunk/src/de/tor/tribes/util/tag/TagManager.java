@@ -266,13 +266,20 @@ public class TagManager {
             }
         }
         boolean added = false;
-        for (Tag t : mTags) {
+        for (Tag t : mTags.toArray(new Tag[]{})) {
             if (t.getName().equals(pTag)) {
-                if (pVillage != null) {
-                    t.tagVillage(pVillage.getId());
+                if (t instanceof LinkedTag) {
+                    //tag exists as linked tag -> remove linked tag before
+                    logger.debug("Linked tag with same name found. Removing linked tag '" + pTag + "'");
+                    mTags.remove(t);
+                    break;
+                } else {
+                    if (pVillage != null) {
+                        t.tagVillage(pVillage.getId());
+                    }
+                    added = true;
+                    break;
                 }
-                added = true;
-                break;
             }
         }
 

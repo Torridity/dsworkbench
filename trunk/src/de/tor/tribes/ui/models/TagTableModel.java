@@ -125,7 +125,10 @@ public class TagTableModel extends AbstractDSWorkbenchTableModel {
             }
         }
         //repaint map
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
+        try {
+            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
+        } catch (Exception e) {
+        }
     }
 
     @Override

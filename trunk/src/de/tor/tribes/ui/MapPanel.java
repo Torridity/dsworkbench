@@ -1383,7 +1383,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     }//GEN-LAST:event_fireVillagePopupActionEvent
 
     private void fireResizeEvent(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_fireResizeEvent
-        getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
     }//GEN-LAST:event_fireResizeEvent
 
     @Override

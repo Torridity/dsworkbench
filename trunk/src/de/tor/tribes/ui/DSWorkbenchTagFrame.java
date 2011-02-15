@@ -445,7 +445,10 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         }
         TagManager.getSingleton().forceUpdate();
         //update map
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
+        try {
+            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
+        } catch (Exception e) {
+        }
     }//GEN-LAST:event_fireRemoveTagsEvent
 
     private void fireRemoveColorEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveColorEvent
@@ -460,7 +463,10 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
             TagManager.getSingleton().getTagByName(name).setTagColor(null);
         }
         jTagTable.repaint();
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
+        try {
+            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
+        } catch (Exception e) {
+        }
     }//GEN-LAST:event_fireRemoveColorEvent
 
     private void fireAddTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddTagEvent
@@ -523,7 +529,10 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
             }
         }
         updateTaggedVillageList();
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
+        try {
+            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
+        } catch (Exception e) {
+        }
     }//GEN-LAST:event_fireUntagVillage
 
     private void fireCopyTagsAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyTagsAsBBCodeToClipboardEvent

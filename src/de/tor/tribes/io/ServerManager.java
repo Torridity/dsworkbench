@@ -70,7 +70,7 @@ public class ServerManager {
             }
             logger.info("Read " + cnt + " external servers");
         } catch (Throwable e) {
-            logger.error("Failed to read external servers", e);
+            logger.warn("Failed to read external servers. Skipping it.");
         } finally {
             try {
                 r.close();

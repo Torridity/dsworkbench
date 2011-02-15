@@ -401,7 +401,10 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 private void fireDrawFilterClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDrawFilterClickedEvent
     GlobalOptions.addProperty("draw.marked.only", Boolean.toString(jToggleDrawFilterButton.isSelected()));
     MinimapPanel.getSingleton().redraw();
-    MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
+    try {
+            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
+        } catch (Exception e) {
+        }
 }//GEN-LAST:event_fireDrawFilterClickedEvent
 
 private void fireMarkerFrameOnTopEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireMarkerFrameOnTopEvent
@@ -514,7 +517,10 @@ private void fireCloseAddRenameDialogEvent(java.awt.event.MouseEvent evt) {//GEN
         jToggleDrawFilterButton.setSelected(!v);
         GlobalOptions.addProperty("draw.marked.only", Boolean.toString(v));
         MinimapPanel.getSingleton().redraw();
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
+        try {
+            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
+        } catch (Exception e) {
+        }
     }
 
     /**Setup marker panel*/

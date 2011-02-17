@@ -16,7 +16,11 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.ProfileManager;
+import java.awt.AWTEvent;
+import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -169,7 +173,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
     protected boolean hideSplash() {
         try {
-
             if (!new File(".").canWrite()) {
                 JOptionPaneHelper.showErrorBox(self, "Fehler bei der Initialisierung.\nDas DS Workbench Verzeichnis ist für deinen Systembenutzer nicht beschreibbar.\nBitte installiere DS Workbench z.B. in dein Benutzerverzeichnis.", "Fehler");
                 return false;
@@ -345,34 +348,33 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         Locale.setDefault(Locale.GERMAN);
 
         //add global ESC listener
-	/*Toolkit.getDefaultToolkit().getSystemEventQueue().push(
-        new EventQueue() {
+        Toolkit.getDefaultToolkit().getSystemEventQueue().push(
+                new EventQueue() {
 
-        protected void dispatchEvent( AWTEvent event ) {
-        if ( event instanceof KeyEvent ) {
-        KeyEvent keyEvent = (KeyEvent) event;
+                    protected void dispatchEvent(AWTEvent event) {
+                        if (event instanceof KeyEvent) {
+                            KeyEvent keyEvent = (KeyEvent) event;
 
-        if ( (keyEvent.getID() == KeyEvent.KEY_PRESSED)
-        && ((keyEvent).getKeyCode() == KeyEvent.VK_ESCAPE) ) {
-        try {
-        JFrame source = (JFrame) keyEvent.getSource();
-        if ( source != DSWorkbenchMainFrame.getSingleton() ) {
-        source.setVisible(false);
-        }
-        } catch ( Exception e ) {
-        try {
-        JDialog source = (JDialog) keyEvent.getSource();
-        source.setVisible(false);
-        } catch ( Exception inner ) {
-        }
-        }
-        }
+                            if ((keyEvent.getID() == KeyEvent.KEY_PRESSED)
+                                    && ((keyEvent).getKeyCode() == KeyEvent.VK_ESCAPE)) {
+                                try {
+                                    JFrame source = (JFrame) keyEvent.getSource();
+                                    if (source != DSWorkbenchMainFrame.getSingleton()) {
+                                        source.setVisible(false);
+                                    }
+                                } catch (Exception e) {
+                                    try {
+                                        JDialog source = (JDialog) keyEvent.getSource();
+                                        source.setVisible(false);
+                                    } catch (Exception inner) {
+                                    }
+                                }
+                            }
 
-        }
-        super.dispatchEvent(event);
-        }
-
-        });*/
+                        }
+                        super.dispatchEvent(event);
+                    }
+                });
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {

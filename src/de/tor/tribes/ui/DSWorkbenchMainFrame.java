@@ -578,6 +578,19 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         //update online state
         onlineStateChanged();
         restoreProperties();
+        /* new Thread(new Runnable() {
+
+
+        public void run() {
+        while (true) {
+        try {
+        DSWorkbenchMainFrame.getSingleton().toBack();
+        Thread.sleep(1000);
+        } catch (Exception e) {
+        }
+        }
+        }
+        }).start();*/
     }
 
     public void storeProperties() {
@@ -589,7 +602,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         GlobalOptions.addProperty("roi.group.expanded", Boolean.toString(jROIGroup.isExpanded()));
     }
 
-    public void restoreProperties() {
+    public final void restoreProperties() {
         try {
             int width = Integer.parseInt(GlobalOptions.getProperty("main.size.width"));
             int height = Integer.parseInt(GlobalOptions.getProperty("main.size.height"));
@@ -729,7 +742,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     }
 
     /**Update UI depending on online state*/
-    public void onlineStateChanged() {
+    public final void onlineStateChanged() {
         jOnlineLabel.setEnabled(!GlobalOptions.isOfflineMode());
         if (GlobalOptions.isOfflineMode()) {
             jOnlineLabel.setToolTipText("Offline");

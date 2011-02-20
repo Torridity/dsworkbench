@@ -477,7 +477,7 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="jSettingsTabbedPane" alignment="1" pref="555" max="32767" attributes="0"/>
+                  <Component id="jSettingsTabbedPane" alignment="1" pref="559" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="jCreateAccountButton" min="-2" pref="151" max="-2" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -496,7 +496,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jSettingsTabbedPane" max="32767" attributes="0"/>
+              <Component id="jSettingsTabbedPane" pref="515" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jCreateAccountButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -542,7 +542,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane3" alignment="0" pref="530" max="32767" attributes="0"/>
+                          <Component id="jScrollPane3" alignment="0" pref="534" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="jAccountNameLabel" max="32767" attributes="1"/>
@@ -679,7 +679,7 @@
                           <Component id="jPanel11" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="jPanel9" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="28" max="32767" attributes="0"/>
+                              <EmptySpace pref="32" max="32767" attributes="0"/>
                               <Component id="jPanel10" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -746,7 +746,7 @@
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="jCheckForUpdatesBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="9" max="32767" attributes="0"/>
+                          <EmptySpace pref="11" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -856,7 +856,7 @@
                               <Component id="jModifyProfileButton" min="-2" max="-2" attributes="0"/>
                               <Component id="jDeleteProfileButton" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="50" max="32767" attributes="0"/>
+                          <EmptySpace pref="52" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -928,7 +928,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jScrollPane1" pref="498" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" pref="502" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -996,7 +996,7 @@
                           <Component id="jPanel5" alignment="0" max="32767" attributes="1"/>
                           <Component id="jDefaultMarkBox" alignment="0" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace pref="159" max="32767" attributes="0"/>
+                      <EmptySpace pref="163" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1288,7 +1288,7 @@
                                       <Component id="jAttackMovementLabel" alignment="0" max="32767" attributes="1"/>
                                       <Component id="jLabel9" alignment="0" max="32767" attributes="1"/>
                                   </Group>
-                                  <Component id="jLabel21" pref="242" max="32767" attributes="1"/>
+                                  <Component id="jLabel21" pref="243" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -1298,12 +1298,12 @@
                           </Group>
                       </Group>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane2" pref="274" max="32767" attributes="2"/>
-                          <Component id="jShowLiveCountdown" pref="274" max="32767" attributes="0"/>
-                          <Component id="jDrawAttacksByDefaultBox" alignment="0" pref="274" max="32767" attributes="1"/>
-                          <Component id="jShowAttackMovementBox" alignment="1" pref="274" max="32767" attributes="1"/>
+                          <Component id="jScrollPane2" pref="275" max="32767" attributes="2"/>
+                          <Component id="jShowLiveCountdown" pref="275" max="32767" attributes="0"/>
+                          <Component id="jDrawAttacksByDefaultBox" alignment="0" pref="275" max="32767" attributes="1"/>
+                          <Component id="jShowAttackMovementBox" alignment="1" pref="275" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace pref="20" max="32767" attributes="0"/>
+                      <EmptySpace pref="22" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1447,7 +1447,7 @@
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="jPanel4" pref="530" max="32767" attributes="0"/>
+                              <Component id="jPanel4" pref="534" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
@@ -1463,10 +1463,10 @@
                                       </Group>
                                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jProxyPassword" alignment="0" pref="205" max="32767" attributes="2"/>
-                                          <Component id="jProxyUser" alignment="0" pref="205" max="32767" attributes="2"/>
-                                          <Component id="jProxyTypeChooser" alignment="0" pref="205" max="32767" attributes="2"/>
-                                          <Component id="jProxyHost" alignment="0" pref="205" max="32767" attributes="2"/>
+                                          <Component id="jProxyPassword" alignment="0" pref="209" max="32767" attributes="2"/>
+                                          <Component id="jProxyUser" alignment="0" pref="209" max="32767" attributes="2"/>
+                                          <Component id="jProxyTypeChooser" alignment="0" pref="209" max="32767" attributes="2"/>
+                                          <Component id="jProxyHost" alignment="0" pref="209" max="32767" attributes="2"/>
                                           <Component id="jRefeshNetworkButton" alignment="1" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
@@ -1673,7 +1673,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="jBrowserPath" pref="356" max="32767" attributes="0"/>
+                                  <Component id="jBrowserPath" pref="360" max="32767" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Component id="jButton1" min="-2" max="-2" attributes="0"/>
                               </Group>
@@ -1783,7 +1783,7 @@
                       <Component id="jPanel7" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel8" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="225" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="227" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1811,9 +1811,9 @@
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jFooterPath" pref="366" max="32767" attributes="1"/>
-                              <Component id="jBlockPath" alignment="0" pref="366" max="32767" attributes="1"/>
-                              <Component id="jHeaderPath" alignment="0" pref="366" max="32767" attributes="1"/>
+                              <Component id="jFooterPath" pref="370" max="32767" attributes="1"/>
+                              <Component id="jBlockPath" alignment="0" pref="370" max="32767" attributes="1"/>
+                              <Component id="jHeaderPath" alignment="0" pref="370" max="32767" attributes="1"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
@@ -1869,7 +1869,7 @@
                                   </Group>
                               </Group>
                           </Group>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace pref="13" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -2064,7 +2064,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jLabel20" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="jScrollPane4" pref="444" max="32767" attributes="0"/>
+                          <Component id="jScrollPane4" pref="448" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -2139,13 +2139,6 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="jLabel16" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
-                              <Component id="jMaxTroopDensity" min="-2" pref="153" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButton8" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="jLabel15" alignment="0" max="32767" attributes="1"/>
                                   <Component id="jLabel14" alignment="0" max="32767" attributes="1"/>
@@ -2162,8 +2155,15 @@
                                   <Component id="jPanel6" min="-2" max="-2" attributes="1"/>
                               </Group>
                           </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="jLabel16" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
+                              <Component id="jMaxTroopDensity" min="-2" pref="153" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jButton8" min="-2" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
-                      <EmptySpace pref="123" max="32767" attributes="0"/>
+                      <EmptySpace pref="125" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -2199,7 +2199,7 @@
                               <Component id="jButton8" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace min="-2" pref="288" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="316" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

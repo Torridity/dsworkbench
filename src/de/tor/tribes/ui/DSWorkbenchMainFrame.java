@@ -423,11 +423,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         // </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc=" Load UI Icons ">
-
-
-
-
-
         try {
             jOnlineLabel.setIcon(new ImageIcon("./graphics/icons/online.png"));
             jEnableClipboardWatchButton.setIcon(new ImageIcon("./graphics/icons/watch_clipboard.png"));
@@ -578,19 +573,25 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         //update online state
         onlineStateChanged();
         restoreProperties();
-        /* new Thread(new Runnable() {
-
+        /*   new Thread(new Runnable() {
 
         public void run() {
         while (true) {
         try {
-        DSWorkbenchMainFrame.getSingleton().toBack();
+        DSWorkbenchMainFrame.getSingleton().setAlwaysOnTop(false);
+
         Thread.sleep(1000);
         } catch (Exception e) {
         }
         }
         }
         }).start();*/
+    }
+
+    @Override
+    public void requestFocus() {
+        System.out.println("FOSUC");
+        super.requestFocus();
     }
 
     public void storeProperties() {
@@ -820,8 +821,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jPanel1.add(MapPanel.getSingleton());
         //build the minimap
         logger.info("Adding MinimapPanel");
-        /*MinimapPanel.getSingleton().setMinimumSize(jMinimapPanel.getMinimumSize());
-        MapPanel.getSingleton().setMinimumSize(jPanel1.getMinimumSize());*/
         jMinimapPanel.add(MinimapPanel.getSingleton());
     }
 
@@ -1679,15 +1678,12 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jCurrentToolLabel.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jCurrentToolLabel.toolTipText")); // NOI18N
         jCurrentToolLabel.setAlignmentY(0.0F);
         jCurrentToolLabel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jCurrentToolLabel.setFocusable(false);
         jCurrentToolLabel.setIconTextGap(0);
         jCurrentToolLabel.setMaximumSize(new java.awt.Dimension(30, 30));
         jCurrentToolLabel.setMinimumSize(new java.awt.Dimension(30, 30));
         jCurrentToolLabel.setPreferredSize(new java.awt.Dimension(30, 30));
-        jCurrentToolLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                firePanelMin(evt);
-            }
-        });
+        jCurrentToolLabel.setRequestFocusEnabled(false);
 
         jButton1.setBackground(new java.awt.Color(239, 235, 223));
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/camera.png"))); // NOI18N
@@ -3089,10 +3085,6 @@ private void fireDSWorkbenchClosingEvent(java.awt.event.WindowEvent evt) {//GEN-
     dispose();
     System.exit(0);
 }//GEN-LAST:event_fireDSWorkbenchClosingEvent
-
-private void firePanelMin(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_firePanelMin
-    jPanel2.setSize(jPanel2.getWidth(), 10);
-}//GEN-LAST:event_firePanelMin
 
 private void fireShowConquersFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowConquersFrameEvent
     if (jShowConquersFrame.isEnabled()) {

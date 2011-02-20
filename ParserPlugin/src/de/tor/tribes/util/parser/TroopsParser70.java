@@ -257,6 +257,7 @@ public class TroopsParser70 implements SilentParserInterface {
             //add troops information
             if (villageLines == 0) {
                 int troopsCount = DataHolder.getSingleton().getUnits().size();
+                
                 if ((v != null)
                         && (ownTroops.size() == troopsCount)
                         && (troopsInVillage.size() == troopsCount)
@@ -302,8 +303,9 @@ public class TroopsParser70 implements SilentParserInterface {
         debug("Getting units from line '" + line + "'");
         StringTokenizer t = new StringTokenizer(line, " \t");
         int uCount = DataHolder.getSingleton().getUnits().size();
+
         if (IS_DEBUG) {
-            uCount = 12;
+            uCount = 9;
         }
         int[] units = new int[uCount];
         int cnt = 0;

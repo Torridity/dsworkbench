@@ -201,7 +201,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         return selectionRect;
     }
 
-    private void initListeners() {
+       private void initListeners() {
         dragSource = DragSource.getDefaultDragSource();
         dragSource.createDefaultDragGestureRecognizer(this, // What component
                 DnDConstants.ACTION_COPY_OR_MOVE, // What drag types?
@@ -476,8 +476,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
                         selectionRect.setXPos(pos.x);
                         selectionRect.setYPos(pos.y);
-                        selectionRect.setXPos(pos.x + 1);
-                        selectionRect.setYPos(pos.y + 1);
+                        selectionRect.setXPos(pos.x);
+                        selectionRect.setYPos(pos.y);
                         break;
                     }
                     case ImageManager.CURSOR_MEASURE: {

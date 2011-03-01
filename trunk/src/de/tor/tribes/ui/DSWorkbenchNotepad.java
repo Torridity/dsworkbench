@@ -16,6 +16,7 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.dnd.VillageTransferable;
 import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.ui.renderer.NoteListCellRenderer;
+import de.tor.tribes.util.BBChangeListener;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
@@ -32,7 +33,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.ListCellRenderer;
-import javax.swing.text.html.HTMLDocument;
 import org.apache.log4j.Logger;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.PluginManager;
@@ -60,8 +60,14 @@ import javax.swing.event.ListSelectionEvent;
 /**
  * @author Charon
  */
-public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements DragGestureListener {
+public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements DragGestureListener, BBChangeListener {
 
+    @Override
+    public void fireBBChangedEvent() {
+        if (currentNote != null) {
+            currentNote.setNoteText(jNotePane.getText());
+        }
+    }
     private static Logger logger = Logger.getLogger("Notepad");
     private static DSWorkbenchNotepad SINGLETON = null;
     /* private Action boldAction = new StyledEditorKit.BoldAction();
@@ -69,6 +75,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Drag
     private Action italicAction = new StyledEditorKit.ItalicAction();*/
     private Note currentNote = null;
     private DragSource dragSource;
+    private BBPanel jNotePane = null;
 
     public static synchronized DSWorkbenchNotepad getSingleton() {
         if (SINGLETON == null) {
@@ -80,47 +87,8 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Drag
     /** Creates new form DSWorkbenchNotepad */
     DSWorkbenchNotepad() {
         initComponents();
-        /*  jBoldButton.setAction(boldAction);
-        jBoldButton.setText("");
-        jBoldButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_bold.png")));
-        jItalicButton.setAction(italicAction);
-        jItalicButton.setText("");
-        jItalicButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_italics.png")));
-        jUnderlineButton.setAction(underlineAction);
-        jUnderlineButton.setText("");
-        jUnderlineButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_underlined.png")));
-        jSize10Button.setAction(new StyledEditorKit.FontSizeAction("10", 10));
-        jSize12Button.setAction(new StyledEditorKit.FontSizeAction("12", 12));
-        jSize14Button.setAction(new StyledEditorKit.FontSizeAction("14", 14));
-        jSize18Button.setAction(new StyledEditorKit.FontSizeAction("18", 18));
-        jSize20Button.setAction(new StyledEditorKit.FontSizeAction("20", 20));
-        jSize28Button.setAction(new StyledEditorKit.FontSizeAction("28", 28));
-        jRedColorButton.setAction(new StyledEditorKit.ForegroundAction("Red", Color.RED));
-        jRedColorButton.setText("");
-        jGreenColorButton.setAction(new StyledEditorKit.ForegroundAction("Green", Color.GREEN));
-        jGreenColorButton.setText("");
-        jBlueColorButton.setAction(new StyledEditorKit.ForegroundAction("Blue", Color.BLUE));
-        jBlueColorButton.setText("");
-        jBlackColorButton.setAction(new StyledEditorKit.ForegroundAction("Black", Color.BLACK));
-        jBlackColorButton.setText("");
-        jCyanColorButton.setAction(new StyledEditorKit.ForegroundAction("Cyan", Color.CYAN));
-        jCyanColorButton.setText("");
-        jOrangeColorButton.setAction(new StyledEditorKit.ForegroundAction("Orange", new Color(255, 102, 0)));
-        jOrangeColorButton.setText("");
-        jPinkColorButton.setAction(new StyledEditorKit.ForegroundAction("Pink", new Color(255, 0, 204)));
-        jPinkColorButton.setText("");
-        jVioletColorButton.setAction(new StyledEditorKit.ForegroundAction("Violet", new Color(152, 153, 255)));
-        jVioletColorButton.setText("");
-        jLeftButton.setAction(new StyledEditorKit.AlignmentAction("<", StyleConstants.ALIGN_LEFT));
-        jLeftButton.setText("");
-        jLeftButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_align_left.png")));
-        jCenterButton.setAction(new StyledEditorKit.AlignmentAction("|", StyleConstants.ALIGN_CENTER));
-        jCenterButton.setText("");
-        jCenterButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_align_center.png")));
-        jRightButton.setAction(new StyledEditorKit.AlignmentAction(">", StyleConstants.ALIGN_RIGHT));
-        jRightButton.setText("");
-        jRightButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_align_right.png")));
-         */
+        jNotePane = new BBPanel(this);
+        jScrollPane2.setViewportView(jNotePane);
         dragSource = DragSource.getDefaultDragSource();
         dragSource.createDefaultDragGestureRecognizer(jNotesList, // What component
                 DnDConstants.ACTION_COPY_OR_MOVE, // What drag types?
@@ -308,7 +276,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Drag
         jSplitPane1 = new javax.swing.JSplitPane();
         jRightPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jNotePane = new javax.swing.JTextArea();
         jSearchField = new javax.swing.JTextField();
         jButton3 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
@@ -489,19 +456,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Drag
         jRightPanel.setOpaque(false);
 
         jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
-        jNotePane.setBackground(new java.awt.Color(255, 255, 204));
-        jNotePane.setColumns(20);
-        jNotePane.setLineWrap(true);
-        jNotePane.setRows(5);
-        jNotePane.setWrapStyleWord(true);
-        jNotePane.setBorder(javax.swing.BorderFactory.createTitledBorder("Notiztext"));
-        jNotePane.addCaretListener(new javax.swing.event.CaretListener() {
-            public void caretUpdate(javax.swing.event.CaretEvent evt) {
-                fireNoteTextUpdateEvent(evt);
-            }
-        });
-        jScrollPane2.setViewportView(jNotePane);
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(448, 254));
 
         jSearchField.setText("<Suchbegriff>");
         jSearchField.setToolTipText("Suchbegriff");
@@ -521,7 +476,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Drag
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("SansSerif", 0, 11));
+        jLabel1.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Letzte Änderung");
 
@@ -641,37 +596,41 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Drag
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
                     .addComponent(jAddVillageField, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jRightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jRightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jButton12, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(7, 7, 7)
                 .addGroup(jRightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jRightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jRightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jRightPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jIconBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(7, 7, 7)
+                        .addGroup(jRightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jRightPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jIconBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jRightPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLastModified, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
+                                .addGap(53, 53, 53)
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jNoteSymbolBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jRightPanelLayout.createSequentialGroup()
+                                .addComponent(jSearchField, javax.swing.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jRightPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLastModified, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
-                        .addGap(53, 53, 53)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jNoteSymbolBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
-                    .addGroup(jRightPanelLayout.createSequentialGroup()
-                        .addComponent(jSearchField, javax.swing.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jRightPanelLayout.setVerticalGroup(
             jRightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jRightPanelLayout.createSequentialGroup()
+            .addGroup(jRightPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jRightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jRightPanelLayout.createSequentialGroup()
@@ -679,27 +638,24 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Drag
                             .addComponent(jIconBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jRightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jRightPanelLayout.createSequentialGroup()
-                                .addGroup(jRightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jNoteSymbolBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLastModified, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE))
-                            .addGroup(jRightPanelLayout.createSequentialGroup()
-                                .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jRightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jNoteSymbolBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLastModified, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 111, Short.MAX_VALUE)
+                        .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jRightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jAddVillageField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -990,12 +946,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Drag
         }
     }//GEN-LAST:event_fireCenterVillageEvent
 
-    private void fireNoteTextUpdateEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireNoteTextUpdateEvent
-        if (currentNote != null) {
-            currentNote.setNoteText(jNotePane.getText());
-        }
-    }//GEN-LAST:event_fireNoteTextUpdateEvent
-
     private void fireVillagesFromClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireVillagesFromClipboardEvent
         try {
             Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
@@ -1160,7 +1110,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Drag
     private void showCurrentNote() {
         if (currentNote == null) {
             jVillageList.setModel(new DefaultListModel());
-            jNotePane.setDocument(new HTMLDocument());
+            jNotePane.setBBCode("");
         } else {
             DefaultListModel model = new DefaultListModel();
             for (Integer id : currentNote.getVillageIds()) {
@@ -1169,7 +1119,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Drag
             }
 
             jVillageList.setModel(model);
-            jNotePane.setText(currentNote.getNoteText());
+            jNotePane.setBBCode(currentNote.getNoteText());
             jLastModified.setText(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(new Date(currentNote.getTimestamp())));
             jIconBox.setSelectedItem(currentNote.getMapMarker());
             jNoteSymbolBox.setSelectedItem(currentNote.getNoteSymbol());
@@ -1333,7 +1283,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Drag
     private javax.swing.JTextField jLastModified;
     private javax.swing.JButton jLeftButton;
     private javax.swing.JPanel jLeftPanel;
-    private javax.swing.JTextArea jNotePane;
     private javax.swing.JComboBox jNoteSymbolBox;
     private javax.swing.JList jNotesList;
     private javax.swing.JButton jOrangeColorButton;

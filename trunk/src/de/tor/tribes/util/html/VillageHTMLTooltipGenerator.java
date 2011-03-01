@@ -18,6 +18,7 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.MapPanel;
+import de.tor.tribes.util.BBCodeFormatter;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.conquer.ConquerManager;
@@ -46,7 +47,7 @@ public class VillageHTMLTooltipGenerator {
         boolean showRanks = Boolean.parseBoolean(GlobalOptions.getProperty("show.popup.ranks"));
         boolean showConquers = Boolean.parseBoolean(GlobalOptions.getProperty("show.popup.conquers"));
         boolean showFarmSpace = Boolean.parseBoolean(GlobalOptions.getProperty("show.popup.farm.space"));
-        String res = "<html><table width=\"400\" style=\"border: solid 1px black; cellspacing:0px;cellpadding: 0px;background-color:#EFEBDF;\">\n";
+        String res = "<html><head>" + BBCodeFormatter.getStyles() + "</head><table width=\"400\" style=\"border: solid 1px black; cellspacing:0px;cellpadding: 0px;background-color:#EFEBDF;\">\n";
         res += buildVillageRow(pVillage);
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);
@@ -299,10 +300,10 @@ public class VillageHTMLTooltipGenerator {
                 }
                 text = text.replaceAll("\n", "<br/>");
                 if (n.getNoteSymbol() == -1) {
-                    res += "<td colspan='3' bgcolor='#F7F5BF'>" + text + "</td>\n";
+                    res += "<td colspan='3' bgcolor='#F7F5BF'>" + BBCodeFormatter.toHtml(text) + "</td>\n";
                 } else {
                     res += "<td bgcolor='#F7F5BF'>" + "<img src=\"" + ImageManager.getNoteImageURL(n.getNoteSymbol()) + "\"/>" + "</td>\n";
-                    res += "<td colspan='2' bgcolor='#F7F5BF'>" + text + "</td>\n";
+                    res += "<td colspan='2' bgcolor='#F7F5BF'>" + BBCodeFormatter.toHtml(text) + "</td>\n";
                 }
                 res += "</tr>\n";
                 // return res;

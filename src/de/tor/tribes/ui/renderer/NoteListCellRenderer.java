@@ -11,8 +11,9 @@
 package de.tor.tribes.ui.renderer;
 
 import de.tor.tribes.types.Note;
+import de.tor.tribes.util.BBCodeFormatter;
+import java.awt.Color;
 import java.awt.Component;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.JList;
@@ -63,7 +64,7 @@ public class NoteListCellRenderer extends javax.swing.JPanel implements ListCell
                 jMapIcon.setText("");
             }
             jNoteText.setHorizontalAlignment(SwingConstants.CENTER);
-            jNoteText.setText(n.toString());
+            jNoteText.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><nobr>" + BBCodeFormatter.toHtml(n.toString()).replaceAll(Pattern.quote("<br/>"), " ") + "<nobr></html>");
         } catch (Exception e) {
             //cast problem
         }
@@ -100,8 +101,8 @@ public class NoteListCellRenderer extends javax.swing.JPanel implements ListCell
         jNoteSymbol.setPreferredSize(new java.awt.Dimension(32, 32));
         add(jNoteSymbol);
 
-        jNoteText.setText("jLabel3");
-        jNoteText.setMaximumSize(new java.awt.Dimension(100, 32));
+        jNoteText.setText("<html><head><style type='text/css'>.ds_link{ color:#804000;font-weight:700;text-decoration:none}a {color:#603000;text-decoration:none}blockquote {background-color:#FFFFFF;}</style></head><nobr><a href='###424|445' class='ds_link'>Torriditys village (424|445) K44</a>  <a href='#Torridity' class='ds_link'>Torridity</a></nobr></html>");
+        jNoteText.setMaximumSize(new java.awt.Dimension(32767, 32767));
         jNoteText.setMinimumSize(new java.awt.Dimension(100, 32));
         jNoteText.setPreferredSize(new java.awt.Dimension(100, 32));
         add(jNoteText);

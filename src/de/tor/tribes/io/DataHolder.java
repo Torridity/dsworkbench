@@ -1329,6 +1329,23 @@ public class DataHolder {
         return null;
     }
 
+    /**Search the ally list for the ally with the provided tag name*/
+    public Ally getAllyByTagName(String pTagName) {
+        Enumeration<Integer> ids = mAllies.keys();
+        while (ids.hasMoreElements()) {
+            Ally a = mAllies.get(ids.nextElement());
+            if (a != null) {
+                if (a.getName() != null) {
+                    if (a.getTag().equals(pTagName)) {
+                        return a;
+                    }
+
+                }
+            }
+        }
+        return null;
+    }
+
     /**Get all tribes*/
     public Hashtable<Integer, Tribe> getTribes() {
         return mTribes;

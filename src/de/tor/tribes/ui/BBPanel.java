@@ -10,17 +10,30 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.ServerManager;
+import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.InvalidTribe;
+import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.Village;
+import de.tor.tribes.util.BBChangeListener;
+import de.tor.tribes.util.BBCodeFormatter;
+import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
-import java.awt.Color;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
+import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.PluginManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.regex.Pattern;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.DefaultStyledDocument;
+import net.java.dev.colorchooser.ColorChooser;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -28,21 +41,118 @@ import javax.swing.text.DefaultStyledDocument;
  */
 public class BBPanel extends javax.swing.JPanel {
 
+    private static Logger logger = Logger.getLogger("BBPanel");
     private String sBuffer = "";
+    private ColorChooser mColorChooser = null;
+    private BBChangeListener mListener = null;
 
     /** Creates new form BBPanel */
-    public BBPanel() {
+    public BBPanel(BBChangeListener pListener) {
         initComponents();
-        //((HTMLEditorKit) jTextPane1.getEditorKit()).setLinkCursor(new Cursor(Cursor.HAND_CURSOR));
+        mListener = pListener;
+        //  ((HTMLEditorKit) jTextPane1.getEditorKit()).setLinkCursor(new Cursor(Cursor.HAND_CURSOR));
+        mColorChooser = new ColorChooser();
+        mColorChooser.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jColorChooseDialog.setVisible(false);
+                fireAddColorCodeEvent();
+            }
+        });
+        jPanel2.add(mColorChooser);
+        jColorChooseDialog.pack();
+        jSizeChooseDialog.pack();
+
+        jSlider1.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                jSizeChooseDialog.setVisible(false);
+                fireSizeCodeEvent();
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        });
+
         jTextPane1.setBackground(Constants.DS_BACK_LIGHT);
         jTextPane1.addHyperlinkListener(new HyperlinkListener() {
 
             @Override
             public void hyperlinkUpdate(HyperlinkEvent e) {
-                System.out.println(e.getURL());
-                System.out.println(e.getDescription());
+                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                    String desc = e.getDescription();
+                    if (desc.startsWith("###")) {
+                        //village
+                        try {
+                            Village v = PluginManager.getSingleton().executeVillageParser(desc.substring(3)).get(0);
+                            //http://zz1.beta.tribalwars.net/game.php?village=11879&screen=info_village&id=11879
+                            if (v != null) {
+                                String url = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+                                url += "/game.php?village=" + v.getId() + "&screen=info_village&id=" + v.getId();
+                                BrowserCommandSender.openPage(url);
+                            }
+                        } catch (Exception ex) {
+                            logger.error("Failed open village link", ex);
+                        }
+                    } else if (desc.startsWith("##")) {
+                        //ally
+                        //http://zz1.beta.tribalwars.net/game.php?village=11879&screen=info_ally&id=1
+                        try {
+                            Ally a = DataHolder.getSingleton().getAllyByName(desc.substring(2));
+                            if (a != null) {
+                                String url = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+                                url += "/game.php?village=" + GlobalOptions.getSelectedProfile().getTribe().getVillageList()[0].getId() + "&screen=info_ally&id=" + a.getId();
+                                BrowserCommandSender.openPage(url);
+                            }
+                        } catch (Exception ex) {
+                            logger.error("Failed open ally link", ex);
+                        }
+                    } else if (desc.startsWith("#")) {
+                        //tribe
+                        //http://zz1.beta.tribalwars.net/game.php?village=11879&screen=info_player&id=15186
+                        try {
+                            Tribe t = DataHolder.getSingleton().getTribeByName(desc.substring(1));
+                            if (!t.equals(InvalidTribe.getSingleton())) {
+                                String url = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+                                url += "/game.php?village=" + GlobalOptions.getSelectedProfile().getTribe().getVillageList()[0].getId() + "&screen=info_player&id=" + t.getId();
+                                BrowserCommandSender.openPage(url);
+                            }
+                        } catch (Exception ex) {
+                            logger.error("Failed open tribe link", ex);
+                        }
+                    } else {
+                        //normal URL
+                        BrowserCommandSender.openPage(desc);
+                    }
+                }
             }
         });
+    }
+
+    public void setBBCode(String pText) {
+        jToggleButton1.setSelected(false);
+        jTextPane1.setContentType("text/plain");
+        jTextPane1.setText(pText);
+        setEditMode(false);
+    }
+
+    public String getText() {
+        return sBuffer;
     }
 
     /** This method is called from within the constructor to
@@ -54,6 +164,15 @@ public class BBPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jColorChooseDialog = new javax.swing.JDialog();
+        jPanel2 = new javax.swing.JPanel();
+        jSizeChooseDialog = new javax.swing.JDialog();
+        jSlider1 = new javax.swing.JSlider();
+        jLabel1 = new javax.swing.JLabel();
+        jTribeMenu = new javax.swing.JPopupMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem3 = new javax.swing.JMenuItem();
         jToggleButton1 = new javax.swing.JToggleButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane();
@@ -67,17 +186,96 @@ public class BBPanel extends javax.swing.JPanel {
         jVillageButton = new javax.swing.JButton();
         jQuoteButton = new javax.swing.JButton();
         jLinkButton = new javax.swing.JButton();
-        jButton10 = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
-        jButton12 = new javax.swing.JButton();
+        jImageButton = new javax.swing.JButton();
+        jColorButton = new javax.swing.JButton();
+        jSizeButton = new javax.swing.JButton();
+        jRemoveButton = new javax.swing.JButton();
 
-        jToggleButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/replace2.png"))); // NOI18N
+        jColorChooseDialog.setAlwaysOnTop(true);
+        jColorChooseDialog.setModal(true);
+        jColorChooseDialog.setUndecorated(true);
+
+        jPanel2.setMaximumSize(new java.awt.Dimension(50, 50));
+        jPanel2.setMinimumSize(new java.awt.Dimension(50, 50));
+        jPanel2.setPreferredSize(new java.awt.Dimension(50, 50));
+        jPanel2.setLayout(new java.awt.GridLayout(1, 1));
+
+        javax.swing.GroupLayout jColorChooseDialogLayout = new javax.swing.GroupLayout(jColorChooseDialog.getContentPane());
+        jColorChooseDialog.getContentPane().setLayout(jColorChooseDialogLayout);
+        jColorChooseDialogLayout.setHorizontalGroup(
+            jColorChooseDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        jColorChooseDialogLayout.setVerticalGroup(
+            jColorChooseDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        jSizeChooseDialog.setUndecorated(true);
+
+        jSlider1.setForeground(new java.awt.Color(0, 0, 0));
+        jSlider1.setMaximum(40);
+        jSlider1.setMinimum(8);
+        jSlider1.setMinorTickSpacing(1);
+        jSlider1.setOrientation(javax.swing.JSlider.VERTICAL);
+        jSlider1.setPaintLabels(true);
+        jSlider1.setPaintTicks(true);
+        jSlider1.setSnapToTicks(true);
+        jSlider1.setValue(12);
+        jSlider1.setMaximumSize(new java.awt.Dimension(30, 130));
+        jSlider1.setMinimumSize(new java.awt.Dimension(30, 130));
+        jSlider1.setOpaque(false);
+        jSlider1.setPreferredSize(new java.awt.Dimension(30, 130));
+        jSlider1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireSliderChangedEvent(evt);
+            }
+        });
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("<html><span style='font-size:12;'>12</span></html>");
+        jLabel1.setMaximumSize(new java.awt.Dimension(50, 130));
+        jLabel1.setMinimumSize(new java.awt.Dimension(50, 130));
+        jLabel1.setPreferredSize(new java.awt.Dimension(50, 130));
+
+        javax.swing.GroupLayout jSizeChooseDialogLayout = new javax.swing.GroupLayout(jSizeChooseDialog.getContentPane());
+        jSizeChooseDialog.getContentPane().setLayout(jSizeChooseDialogLayout);
+        jSizeChooseDialogLayout.setHorizontalGroup(
+            jSizeChooseDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jSizeChooseDialogLayout.createSequentialGroup()
+                .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        jSizeChooseDialogLayout.setVerticalGroup(
+            jSizeChooseDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
+            .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        jMenuItem1.setText("jMenuItem1");
+        jTribeMenu.add(jMenuItem1);
+
+        jMenuItem2.setText("jMenuItem2");
+        jTribeMenu.add(jMenuItem2);
+
+        jMenuItem3.setText("jMenuItem3");
+        jTribeMenu.add(jMenuItem3);
+
+        jToggleButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_edit.png"))); // NOI18N
+        jToggleButton1.setToolTipText("Zwischen Bearbeitungs- und Betrachtungsmodus wechseln");
+        jToggleButton1.setMaximumSize(new java.awt.Dimension(50, 20));
+        jToggleButton1.setMinimumSize(new java.awt.Dimension(50, 20));
+        jToggleButton1.setPreferredSize(new java.awt.Dimension(50, 20));
+        jToggleButton1.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_find.png"))); // NOI18N
         jToggleButton1.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireStateChangeEvent(evt);
             }
         });
 
+        jTextPane1.setEditable(false);
+        jTextPane1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jScrollPane1.setViewportView(jTextPane1);
 
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.LINE_AXIS));
@@ -99,6 +297,11 @@ public class BBPanel extends javax.swing.JPanel {
         jItalicButton.setMaximumSize(new java.awt.Dimension(20, 20));
         jItalicButton.setMinimumSize(new java.awt.Dimension(20, 20));
         jItalicButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jItalicButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAddContentEvent(evt);
+            }
+        });
         jPanel1.add(jItalicButton);
 
         jUnderlineButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/underline.gif"))); // NOI18N
@@ -106,6 +309,11 @@ public class BBPanel extends javax.swing.JPanel {
         jUnderlineButton.setMaximumSize(new java.awt.Dimension(20, 20));
         jUnderlineButton.setMinimumSize(new java.awt.Dimension(20, 20));
         jUnderlineButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jUnderlineButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAddContentEvent(evt);
+            }
+        });
         jPanel1.add(jUnderlineButton);
 
         jStrokeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/stroked.gif"))); // NOI18N
@@ -113,9 +321,15 @@ public class BBPanel extends javax.swing.JPanel {
         jStrokeButton.setMaximumSize(new java.awt.Dimension(20, 20));
         jStrokeButton.setMinimumSize(new java.awt.Dimension(20, 20));
         jStrokeButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jStrokeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAddContentEvent(evt);
+            }
+        });
         jPanel1.add(jStrokeButton);
 
         jTribeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/tribe.gif"))); // NOI18N
+        jTribeButton.setEnabled(false);
         jTribeButton.setMaximumSize(new java.awt.Dimension(20, 20));
         jTribeButton.setMinimumSize(new java.awt.Dimension(20, 20));
         jTribeButton.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -127,97 +341,270 @@ public class BBPanel extends javax.swing.JPanel {
         jPanel1.add(jTribeButton);
 
         jAllyButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/ally.gif"))); // NOI18N
+        jAllyButton.setEnabled(false);
         jAllyButton.setMaximumSize(new java.awt.Dimension(20, 20));
         jAllyButton.setMinimumSize(new java.awt.Dimension(20, 20));
         jAllyButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jAllyButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAddContentEvent(evt);
+            }
+        });
         jPanel1.add(jAllyButton);
 
         jVillageButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/village.gif"))); // NOI18N
+        jVillageButton.setEnabled(false);
         jVillageButton.setMaximumSize(new java.awt.Dimension(20, 20));
         jVillageButton.setMinimumSize(new java.awt.Dimension(20, 20));
         jVillageButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jVillageButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAddContentEvent(evt);
+            }
+        });
         jPanel1.add(jVillageButton);
 
         jQuoteButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/quote.gif"))); // NOI18N
+        jQuoteButton.setEnabled(false);
         jQuoteButton.setMaximumSize(new java.awt.Dimension(20, 20));
         jQuoteButton.setMinimumSize(new java.awt.Dimension(20, 20));
         jQuoteButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jQuoteButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAddContentEvent(evt);
+            }
+        });
         jPanel1.add(jQuoteButton);
 
         jLinkButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/link.gif"))); // NOI18N
+        jLinkButton.setEnabled(false);
         jLinkButton.setMaximumSize(new java.awt.Dimension(20, 20));
         jLinkButton.setMinimumSize(new java.awt.Dimension(20, 20));
         jLinkButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jLinkButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAddContentEvent(evt);
+            }
+        });
         jPanel1.add(jLinkButton);
 
-        jButton10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/image.gif"))); // NOI18N
-        jButton10.setMaximumSize(new java.awt.Dimension(20, 20));
-        jButton10.setMinimumSize(new java.awt.Dimension(20, 20));
-        jButton10.setPreferredSize(new java.awt.Dimension(20, 20));
-        jPanel1.add(jButton10);
+        jImageButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/image.gif"))); // NOI18N
+        jImageButton.setEnabled(false);
+        jImageButton.setMaximumSize(new java.awt.Dimension(20, 20));
+        jImageButton.setMinimumSize(new java.awt.Dimension(20, 20));
+        jImageButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jImageButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAddContentEvent(evt);
+            }
+        });
+        jPanel1.add(jImageButton);
 
-        jButton9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/color.gif"))); // NOI18N
-        jButton9.setMaximumSize(new java.awt.Dimension(20, 20));
-        jButton9.setMinimumSize(new java.awt.Dimension(20, 20));
-        jButton9.setPreferredSize(new java.awt.Dimension(20, 20));
-        jPanel1.add(jButton9);
+        jColorButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/color.gif"))); // NOI18N
+        jColorButton.setEnabled(false);
+        jColorButton.setMaximumSize(new java.awt.Dimension(20, 20));
+        jColorButton.setMinimumSize(new java.awt.Dimension(20, 20));
+        jColorButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jColorButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAddContentEvent(evt);
+            }
+        });
+        jPanel1.add(jColorButton);
 
-        jButton12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/size.gif"))); // NOI18N
-        jButton12.setMaximumSize(new java.awt.Dimension(20, 20));
-        jButton12.setMinimumSize(new java.awt.Dimension(20, 20));
-        jButton12.setPreferredSize(new java.awt.Dimension(20, 20));
-        jPanel1.add(jButton12);
+        jSizeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/size.gif"))); // NOI18N
+        jSizeButton.setEnabled(false);
+        jSizeButton.setMaximumSize(new java.awt.Dimension(20, 20));
+        jSizeButton.setMinimumSize(new java.awt.Dimension(20, 20));
+        jSizeButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jSizeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAddContentEvent(evt);
+            }
+        });
+        jPanel1.add(jSizeButton);
+
+        jRemoveButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/red_x.png"))); // NOI18N
+        jRemoveButton.setToolTipText("Innersten BB-Code ab dem Cursor/der Auswahl löschen");
+        jRemoveButton.setEnabled(false);
+        jRemoveButton.setMaximumSize(new java.awt.Dimension(20, 20));
+        jRemoveButton.setMinimumSize(new java.awt.Dimension(20, 20));
+        jRemoveButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jRemoveButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireRemoveCodeEvent(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE)
-                    .addComponent(jToggleButton1, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addContainerGap())
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                .addComponent(jRemoveButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jToggleButton1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jRemoveButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireStateChangeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireStateChangeEvent
         setEditMode(jToggleButton1.isSelected());
-        jBoldButton.setEnabled(jToggleButton1.isSelected());
-        jItalicButton.setEnabled(jToggleButton1.isSelected());
+        if (!jToggleButton1.isSelected() && mListener != null) {
+            mListener.fireBBChangedEvent();
+        }
     }//GEN-LAST:event_fireStateChangeEvent
 
     private void fireAddContentEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddContentEvent
-        String code = "";
-        if (evt.getSource() == jBoldButton) {
-code = "[b]";
-   
-        } else if (evt.getSource() == jItalicButton) {
+        if (!((JButton) evt.getSource()).isEnabled()) {
+            return;
         }
+        if (evt.getSource() == jBoldButton) {
+            insertBBCode("[b]", "[/b]");
+        } else if (evt.getSource() == jItalicButton) {
+            insertBBCode("[i]", "[/i]");
+        } else if (evt.getSource() == jUnderlineButton) {
+            insertBBCode("[u]", "[/u]");
+        } else if (evt.getSource() == jStrokeButton) {
+            insertBBCode("[s]", "[/s]");
+        } else if (evt.getSource() == jTribeButton) {
+            insertBBCode("[player]", "[/player]");
+        } else if (evt.getSource() == jAllyButton) {
+            insertBBCode("[ally]", "[/ally]");
+        } else if (evt.getSource() == jVillageButton) {
+            insertBBCode("[coord]", "[/coord]");
+        } else if (evt.getSource() == jQuoteButton) {
+            insertBBCode("[quote]", "[/quote]");
+        } else if (evt.getSource() == jLinkButton) {
+            insertBBCode("[url]", "[/url]");
+        } else if (evt.getSource() == jImageButton) {
+            insertBBCode("[img]", "[/img]");
+        } else if (evt.getSource() == jColorButton) {
+            jColorChooseDialog.setLocation(jColorButton.getLocationOnScreen().x, jColorButton.getLocationOnScreen().y);
+            jColorChooseDialog.setVisible(true);
+        } else if (evt.getSource() == jSizeButton) {
+            jSizeChooseDialog.setLocation(jSizeButton.getLocationOnScreen().x, jSizeButton.getLocationOnScreen().y);
+            jSizeChooseDialog.setVisible(true);
+        }
+
+
+    }//GEN-LAST:event_fireAddContentEvent
+
+    private void fireSliderChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireSliderChangedEvent
+        jLabel1.setText("<html><span style='font-size:" + jSlider1.getValue() + ";'>" + jSlider1.getValue() + "</span></html>");
+    }//GEN-LAST:event_fireSliderChangedEvent
+
+    private void fireRemoveCodeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveCodeEvent
+        try {
+            int s = jTextPane1.getSelectionStart();
+            int e = jTextPane1.getSelectionEnd();
+            String text = jTextPane1.getText();
+            String first = text.substring(0, s);
+            String last = text.substring(e);
+            int lastOpenInFirst = first.lastIndexOf("[");
+            int lastCloseInFirst = first.lastIndexOf("]");
+            int firstOpenInLast = last.indexOf("[");
+            int firstCloseInLast = last.indexOf("]");
+            if (lastOpenInFirst < 0 || lastCloseInFirst < 0 || firstOpenInLast < 0 || firstCloseInLast < 0) {
+                //nothing valid found
+                return;
+            }
+            String trimmedFirst = first.substring(0, lastOpenInFirst) + first.substring(lastCloseInFirst + 1);
+            String trimmedLast = last.substring(0, firstOpenInLast) + last.substring(firstCloseInLast + 1);
+            jTextPane1.setText(text.replaceAll(Pattern.quote(first), trimmedFirst).replaceAll(Pattern.quote(last), trimmedLast));
+        } catch (Exception e) {
+            //something strange happened
+        }
+    }//GEN-LAST:event_fireRemoveCodeEvent
+
+    private void fireAddColorCodeEvent() {
+        try {
+            String rgb = Integer.toHexString(mColorChooser.getColor().getRGB());
+            rgb = rgb.substring(2, rgb.length());
+            String pOpenCode = "[color=#" + rgb + "]";
+            String pCloseCode = "[/color]";
+            int s = jTextPane1.getSelectionStart();
+            int e = jTextPane1.getSelectionEnd();
+            String t = ((DefaultStyledDocument) jTextPane1.getDocument()).getText(s, e - s);
+            ((DefaultStyledDocument) jTextPane1.getDocument()).remove(s, e - s);
+            ((DefaultStyledDocument) jTextPane1.getDocument()).insertString(s, pOpenCode + t + pCloseCode, null);
+            if (t.length() == 0) {
+                jTextPane1.setCaretPosition(s + pOpenCode.length());
+            } else {
+                jTextPane1.setCaretPosition(s + pOpenCode.length() + t.length() + pCloseCode.length());
+            }
+            jTextPane1.requestFocus();
+        } catch (Exception ee) {
+            logger.error("Failed to insert color BBCode", ee);
+        }
+    }
+
+    private void fireSizeCodeEvent() {
+        try {
+            String size = Integer.toString(jSlider1.getValue());
+            String pOpenCode = "[size=" + size + "]";
+            String pCloseCode = "[/size]";
+            int s = jTextPane1.getSelectionStart();
+            int e = jTextPane1.getSelectionEnd();
+            String t = ((DefaultStyledDocument) jTextPane1.getDocument()).getText(s, e - s);
+            ((DefaultStyledDocument) jTextPane1.getDocument()).remove(s, e - s);
+            ((DefaultStyledDocument) jTextPane1.getDocument()).insertString(s, pOpenCode + t + pCloseCode, null);
+            if (t.length() == 0) {
+                jTextPane1.setCaretPosition(s + pOpenCode.length());
+            } else {
+                jTextPane1.setCaretPosition(s + pOpenCode.length() + t.length() + pCloseCode.length());
+            }
+            jTextPane1.requestFocus();
+        } catch (Exception ee) {
+            logger.error("Failed to insert size BBCode", ee);
+        }
+    }
+
+    private void insertBBCode(String pOpenCode, String pCloseCode) {
         try {
             int s = jTextPane1.getSelectionStart();
             int e = jTextPane1.getSelectionEnd();
             String t = ((DefaultStyledDocument) jTextPane1.getDocument()).getText(s, e - s);
             ((DefaultStyledDocument) jTextPane1.getDocument()).remove(s, e - s);
-            ((DefaultStyledDocument) jTextPane1.getDocument()).insertString(s, "[b]" + t + "[/b]", null);
+            ((DefaultStyledDocument) jTextPane1.getDocument()).insertString(s, pOpenCode + t + pCloseCode, null);
+            if (t.length() == 0) {
+                jTextPane1.setCaretPosition(s + pOpenCode.length());
+            } else {
+                jTextPane1.setCaretPosition(s + pOpenCode.length() + t.length() + pCloseCode.length());
+            }
+            jTextPane1.requestFocus();
         } catch (Exception ee) {
-            ee.printStackTrace();
+            logger.error("Failed to insert standard BBCode", ee);
         }
-    }//GEN-LAST:event_fireAddContentEvent
+    }
 
     private void setEditMode(boolean pToEditMode) {
+        jBoldButton.setEnabled(pToEditMode);
+        jItalicButton.setEnabled(pToEditMode);
+        jUnderlineButton.setEnabled(pToEditMode);
+        jStrokeButton.setEnabled(pToEditMode);
+        jTribeButton.setEnabled(pToEditMode);
+        jAllyButton.setEnabled(pToEditMode);
+        jVillageButton.setEnabled(pToEditMode);
+        jQuoteButton.setEnabled(pToEditMode);
+        jLinkButton.setEnabled(pToEditMode);
+        jImageButton.setEnabled(pToEditMode);
+        jColorButton.setEnabled(pToEditMode);
+        jSizeButton.setEnabled(pToEditMode);
+        jRemoveButton.setEnabled(pToEditMode);
+        jTextPane1.setEditable(pToEditMode);
         if (pToEditMode) {
             jTextPane1.setContentType("text/plain");
             jTextPane1.setText(sBuffer);
@@ -230,225 +617,33 @@ code = "[b]";
 
     private void buildFormattedCode() {
         jTextPane1.setContentType("text/html");
-        //replace standard HTML items
-        Map<String, String> bbMap = new TreeMap<String, String>();
-        bbMap.put("(\r\n|\r|\n|\n\r)", "<br/>");
-        bbMap.put("\\[b\\](.+?)\\[/b\\]", "<strong>$1</strong>");
-        bbMap.put("\\[s\\](.+?)\\[/s\\]", "<s>$1</s>");
-        bbMap.put("\\[i\\](.+?)\\[/i\\]", "<span style='font-style:italic;'>$1</span>");
-        bbMap.put("\\[u\\](.+?)\\[/u\\]", "<span style='text-decoration:underline;'>$1</span>");
-        /* bbMap.put("\\[h1\\](.+?)\\[/h1\\]", "<h1>$1</h1>");
-        bbMap.put("\\[h2\\](.+?)\\[/h2\\]", "<h2>$1</h2>");
-        bbMap.put("\\[h3\\](.+?)\\[/h3\\]", "<h3>$1</h3>");
-        bbMap.put("\\[h4\\](.+?)\\[/h4\\]", "<h4>$1</h4>");
-        bbMap.put("\\[h5\\](.+?)\\[/h5\\]", "<h5>$1</h5>");
-        bbMap.put("\\[h6\\](.+?)\\[/h6\\]", "<h6>$1</h6>");*/
-        bbMap.put("\\[quote\\](.+?)\\[/quote\\]", "<blockquote>$1</blockquote>");
-        /*  bbMap.put("\\[center\\](.+?)\\[/center\\]", "<div align='center'>$1");
-        bbMap.put("\\[align=(.+?)\\](.+?)\\[/align\\]", "<div align='$1'>$2");*/
-        bbMap.put("\\[color=(.+?)\\](.+?)\\[/color\\]", "<span style='color:$1;'>$2</span>");
-        bbMap.put("\\[size=(.+?)\\](.+?)\\[/size\\]", "<span style='font-size:$1;'>$2</span>");
-        bbMap.put("\\[img\\](.+?)\\[/img\\]", "<img src='$1' />");
-        bbMap.put("\\[img=(.+?),(.+?)\\](.+?)\\[/img\\]", "<img width='$1' height='$2' src='$3' />");
-        /*  bbMap.put("\\[email\\](.+?)\\[/email\\]", "<a href='mailto:$1'>$1</a>");
-        bbMap.put("\\[email=(.+?)\\](.+?)\\[/email\\]", "<a href='mailto:$1'>$2</a>");*/
-        bbMap.put("\\[url\\](.+?)\\[/url\\]", "<a href='$1'>$1</a>");
-        bbMap.put("\\[url=(.+?)\\](.+?)\\[/url\\]", "<a href='$1'>$2</a>");
-
-        String html = sBuffer;
-        int lBefore = 0;
-        do {
-            //do several times to get wrapped contents
-            lBefore = html.length();
-            for (Map.Entry entry : bbMap.entrySet()) {
-                html = html.replaceAll(entry.getKey().toString(), entry.getValue().toString());
-            }
-        } while (html.length() != lBefore);
-
-        bbMap.clear();
-
-        //replace special items
-        bbMap.put("\\[tribe\\](.+?)\\[/tribe\\]", "$1");
-        bbMap.put("\\[player\\](.+?)\\[/player\\]", "$1");
-        bbMap.put("\\[ally\\](.+?)\\[/ally\\]", "$1");
-        bbMap.put("\\[coord\\](.+?)\\[/coord\\]", "$1");
-        bbMap.put("\\[village\\](.+?)\\[/village\\]", "$1");
-
-        do {
-            //do several times to get wrapped contents
-            lBefore = html.length();
-            for (Map.Entry entry : bbMap.entrySet()) {
-                String key = entry.getKey().toString();
-                Pattern p = Pattern.compile(key);
-                Matcher m = p.matcher(html);
-                //replace special items by links
-                while (m.find()) {
-                    String newValue = null;
-                    if (key.indexOf("tribe") > -1 || key.indexOf("player") > -1) {
-                        String tribe = html.substring(m.start(), m.end()).replaceAll(entry.getKey().toString(), "$1");
-                        newValue = "<a href='#" + tribe + "'>" + tribe + "</a>";
-                    } else if (key.indexOf("ally") > -1) {
-                        String ally = html.substring(m.start(), m.end()).replaceAll(entry.getKey().toString(), "$1");
-                        newValue = "<a href='##" + ally + "'>" + ally + "</a>";
-                    } else if (key.indexOf("coord") > -1 || key.indexOf("village") > -1) {
-                        String coord = html.substring(m.start(), m.end()).replaceAll(entry.getKey().toString(), "$1");
-                        newValue = "<a href='###" + coord + "' class='ds_link'>" + coord + "</a>";
-                    }
-                    if (newValue != null) {
-                        html = html.replaceAll(key, newValue);
-                    }
-                }
-            }
-        } while (html.length() != lBefore);
-
-        String style = "<style type='text/css'>"
-                + ".ds_link{ color:#804000;font-weight:700;text-decoration:none}"
-                + "a {color:#4040d0;text-decoration:none}"
-                + "blockquote {background-color:#FFFFFF;}"
-                + "</style>";
-        System.out.println(html);
-        jTextPane1.setText("<html><head>" + style + "</head><body>" + html + "</body></html>");
-    }
-
-    private void buildFormattedCode2() {
-        jTextPane1.setContentType("text/html");
-        String content = sBuffer.replaceAll("\\[b\\]", "<b>").replaceAll("\\[/b\\]", "</b>").replaceAll("\\[i\\]", "<i>").replaceAll("\\[/i\\]", "</i>");
-        StringTokenizer t = new StringTokenizer(content, "[]");
-        StringBuilder b = new StringBuilder();
-        b.append("<html><body>");
-        boolean lookForTribeToken = false;
-        String tribeToken = null;
-        boolean lookForAllyToken = false;
-        String allyToken = null;
-        boolean lookForCoordToken = false;
-        String coordToken = null;
-        while (t.hasMoreTokens()) {
-            String token = t.nextToken();
-            if (token.toLowerCase().equals("tribe")) {
-                tribeToken = "";
-                token = "";
-                lookForTribeToken = true;
-            } else if (token.toLowerCase().equals("/tribe")) {
-                tribeToken = tribeToken.trim();
-                b.append("<a href='##").append(tribeToken).append("'>").append(tribeToken).append("</a>");
-                tribeToken = null;
-            } else if (token.toLowerCase().equals("ally")) {
-                allyToken = "";
-                token = "";
-                lookForAllyToken = true;
-            } else if (token.toLowerCase().equals("/ally")) {
-                allyToken = allyToken.trim();
-                b.append("<a href='#").append(allyToken).append("'>").append(allyToken).append("</a>");
-                allyToken = null;
-            } else if (token.toLowerCase().equals("coord")) {
-                coordToken = "";
-                token = "";
-                lookForCoordToken = true;
-            } else if (token.toLowerCase().equals("/coord")) {
-                coordToken = coordToken.trim();
-                b.append("<a href='###").append(coordToken).append("'>").append(coordToken).append("</a>");
-                coordToken = null;
-            }
-
-
-            if (lookForTribeToken) {
-                tribeToken += token;
-            } else if (lookForAllyToken) {
-                allyToken += token;
-            } else if (lookForCoordToken) {
-                coordToken += token;
-            } else {
-                b.append(token);
-            }
-        }
-
-        b.append("</body></html>");
-        jTextPane1.setText(b.toString().replaceAll("\n", "<BR/>"));
-    }
-
-    private void buildFormattedCode1() {
-        jTextPane1.setContentType("text/html");
-        StringTokenizer t = new StringTokenizer(sBuffer, " \t");
-        StringBuilder b = new StringBuilder();
-        b.append("<html><body>");
-        String tribeString = null;
-        while (t.hasMoreTokens()) {
-            String token = t.nextToken();
-            token = token.replaceAll("\n", "<BR/>").replaceAll("\r", "").trim();
-            if (token.matches("\\[coord\\]\\(*[0-9]{1,3}\\|[0-9]{1,3}\\)*\\[/coord\\]")) {
-                //replace coord
-                String coords = token.replaceAll("\\[coord\\]", "").replaceAll("\\[/coord\\]", "").replaceAll("<BR/>", "");
-                b.append(" <a href='#").append(coords).append("'>").append(coords).append("</a>");
-            } else if (token.matches("\\[tribe\\].{3,}\\[/tribe\\]")) {
-                //replace full tribe
-                String tribe = token.replaceAll("\\[tribe\\]", "").replaceAll("\\[/tribe\\]", "").replaceAll("<BR/>", "");
-                b.append(" <a href='##").append(tribe).append("'>").append(tribe).append("</a>");
-            } else if (token.matches("\\[tribe\\].*")) {
-                //replace tribe start
-                String tribe = token.replaceAll("\\[tribe\\]", "").replaceAll("<BR/>", "").trim();
-                tribeString = tribe;
-            } else if (token.matches(".*\\[/tribe\\]")) {
-                //replace tribe end
-                String tribe = token.replaceAll("\\[/tribe\\]", "").replaceAll("<BR/>", "").trim();
-                tribeString += " " + tribe;
-                b.append(" <a href='##").append(tribeString).append("'>").append(tribeString).append("</a>");
-                tribeString = null;
-            } else if (token.matches("\\[ally\\].{3,}\\[/ally\\]")) {
-                //replace full ally
-                String ally = token.replaceAll("\\[ally\\]", "").replaceAll("\\[/ally\\]", "").replaceAll("<BR/>", "");
-                b.append(" <a href='###").append(ally).append("'>").append(ally).append("</a>");
-            } else if (token.matches("\\[b\\].*\\[/b\\]")) {
-                //replace bold test
-                String text = token.replaceAll("\\[b\\]", "").replaceAll("\\[/b\\]", "");
-                b.append(" <b>").append(text).append("</b>");
-            } else if (token.matches("\\[b\\].*")) {
-                //replace bold start
-                String text = token.replaceAll("\\[b\\]", "");
-                b.append(" <b>").append(text);
-            } else if (token.matches(".*\\[/b\\]")) {
-                //replace bold end
-                String text = token.replaceAll("\\[/b\\]", "");
-                b.append(" ").append(text).append("</b>");
-            } else if (token.matches("\\[i\\].*\\[/i\\]")) {
-                //replace full italic
-                String text = token.replaceAll("\\[i\\]", "").replaceAll("\\[/i\\]", "");
-                b.append(" <i>").append(text).append("</i>");
-            } else if (token.matches("\\[i\\].*")) {
-                //replace italic start
-                String text = token.replaceAll("\\[i\\]", "");
-                b.append(" <i>").append(text);
-            } else if (token.matches(".*\\[/i\\]")) {
-                //replace italic end
-                String text = token.replaceAll("\\[/i\\]", "");
-                b.append(" ").append(text).append("</i>");
-            } else {
-                //normal token
-                if (tribeString == null) {
-                    b.append(" ").append(token);
-                } else {
-                    tribeString += " " + token;
-                }
-            }
-
-        }
-        b.append("</body></html>");
-        jTextPane1.setText(b.toString());
+        jTextPane1.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + BBCodeFormatter.toHtml(sBuffer) + "</body></html>");
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jAllyButton;
     private javax.swing.JButton jBoldButton;
-    private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton12;
-    private javax.swing.JButton jButton9;
+    private javax.swing.JButton jColorButton;
+    private javax.swing.JDialog jColorChooseDialog;
+    private javax.swing.JButton jImageButton;
     private javax.swing.JButton jItalicButton;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JButton jLinkButton;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JButton jQuoteButton;
+    private javax.swing.JButton jRemoveButton;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton jSizeButton;
+    private javax.swing.JDialog jSizeChooseDialog;
+    private javax.swing.JSlider jSlider1;
     private javax.swing.JButton jStrokeButton;
     private javax.swing.JTextPane jTextPane1;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JButton jTribeButton;
+    private javax.swing.JPopupMenu jTribeMenu;
     private javax.swing.JButton jUnderlineButton;
     private javax.swing.JButton jVillageButton;
     // End of variables declaration//GEN-END:variables
@@ -457,7 +652,7 @@ code = "[b]";
         JFrame f = new JFrame();
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(400, 300);
-        f.add(new BBPanel());
+        f.add(new BBPanel(null));
         f.setVisible(true);
         /* String test = "[b]Tester[/b]";
         //"\\[b\\](.+?)\\[/b\\]", "<strong>$1</strong>")

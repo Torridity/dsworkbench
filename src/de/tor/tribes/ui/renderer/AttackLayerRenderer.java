@@ -7,7 +7,6 @@ package de.tor.tribes.ui.renderer;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
-import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.TwoD.ShapeStroke;
 import de.tor.tribes.util.DSCalculator;
@@ -15,8 +14,8 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.attack.AttackManager;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.GradientPaint;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
@@ -25,7 +24,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import javax.swing.ImageIcon;
 
 /**
@@ -68,7 +66,7 @@ public class AttackLayerRenderer extends AbstractDirectLayerRenderer {
                     p,
                     new Rectangle2D.Float(0, 0, 10, 2)
                 },
-                10.0f);
+                20.0f);
 
         p = new GeneralPath();
         p.moveTo(0, 0);
@@ -80,21 +78,16 @@ public class AttackLayerRenderer extends AbstractDirectLayerRenderer {
                     p,
                     new Rectangle2D.Float(0, 0, 10, 2)
                 },
-                20.0f);
+                10.0f);
         Enumeration<String> keys = AttackManager.getSingleton().getPlans();
-        boolean showBarbarian = true;
+       
+        boolean drawExtendedVectors = false;
         try {
-            showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
+            drawExtendedVectors = Boolean.parseBoolean(GlobalOptions.getProperty("extended.attack.vectors"));
         } catch (Exception e) {
-            showBarbarian = true;
+            drawExtendedVectors = false;
         }
 
-        boolean markedOnly = false;
-        try {
-            markedOnly = Boolean.parseBoolean(GlobalOptions.getProperty("draw.marked.only"));
-        } catch (Exception e) {
-            markedOnly = false;
-        }
         while (keys.hasMoreElements()) {
             String plan = keys.nextElement();
             Attack[] attacks = AttackManager.getSingleton().getAttackPlan(plan).toArray(new Attack[]{});
@@ -102,6 +95,7 @@ public class AttackLayerRenderer extends AbstractDirectLayerRenderer {
                 //go through all attacks
                 //render if shown on map or if either source or target are visible
                 if (attack.isShowOnMap() && (attack.getSource().isVisibleOnMap() || attack.getTarget().isVisibleOnMap())) {
+                    long s = System.currentTimeMillis();
                     //only enter if attack should be visible
                     //get line for this attack
                     Line2D.Double attackLine = new Line2D.Double(attack.getSource().getX(), attack.getSource().getY(), attack.getTarget().getX(), attack.getTarget().getY());
@@ -148,21 +142,19 @@ public class AttackLayerRenderer extends AbstractDirectLayerRenderer {
                     }
 
                     pG2D.setColor(attackColors.get(attack.getUnit().getName()));
-                    if (attack.getType() == Attack.FAKE_TYPE || attack.getType() == Attack.FAKE_DEFF_TYPE) {
-                        /* g2d.setStroke(new BasicStroke(3.0f, BasicStroke.CAP_BUTT,
-                        BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f));*/
-                        pG2D.setStroke(stroke_fake);
-                    } else {
-                        pG2D.setStroke(stroke_attack);
+                    if (drawExtendedVectors) {
+                        if (attack.getType() == Attack.FAKE_TYPE || attack.getType() == Attack.FAKE_DEFF_TYPE) {
+                            pG2D.setStroke(stroke_fake);
+                        } else {
+                            pG2D.setStroke(stroke_attack);
+                        }
                     }
 
-
                     pG2D.drawLine((int) Math.floor(xStart), (int) Math.floor(yStart), (int) Math.floor(xEnd), (int) Math.floor(yEnd));
-
+                    pG2D.fillOval((int) Math.floor(xEnd) - 5, (int) Math.floor(yEnd) - 5, 10, 10);
                     if (unitIcon != null) {
                         pG2D.drawImage(unitIcon.getImage(), unitXPos, unitYPos, null);
                     }
-
                 }
             }
             attacks = null;

@@ -9,6 +9,7 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.GenericParserInterface;
 import de.tor.tribes.util.ServerSettings;
@@ -158,13 +159,18 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
                     //System.out.println("WAIT TROOPS " + line);
                     try {
                         String plainUnit = line.replaceAll("\\[unit\\]", "").replaceAll("\\[\\/unit\\]", "").trim();
-                        //    System.out.println("UNIT: " + plainUnit);
-                        String[] unitAmount = plainUnit.split(" ");
-                        UnitHolder u = DataHolder.getSingleton().getUnitByPlainName(unitAmount[0]);
-                        // System.out.println("UNIT : " + u);
-                        Integer amount = Integer.parseInt(unitAmount[1]);
-                        //  System.out.println("AM " + amount);
-                        currentRequest.getTargetInformation(target).addTroopInformation(u, amount);
+                        //System.out.println("UNIT: " + plainUnit);
+                        if (plainUnit.trim().length() != 0) {
+                            //skip empty line
+
+                            String[] unitAmount = plainUnit.split(" ");
+                            UnitHolder u = DataHolder.getSingleton().getUnitByPlainName(unitAmount[0]);
+
+                            //System.out.println("UNIT : " + u);
+                            Integer amount = Integer.parseInt(unitAmount[1]);
+                           // System.out.println("AM " + amount);
+                            currentRequest.getTargetInformation(target).addTroopInformation(u, amount);
+                        }
                     } catch (Exception e) {
                         waitForTroops = false;
                     }
@@ -198,6 +204,7 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
             String data = (String) t.getTransferData(DataFlavor.stringFlavor);
             new SOSParser().parse(data);
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

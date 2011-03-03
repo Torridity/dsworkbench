@@ -1951,7 +1951,6 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
     //mSettingsPanel.getAttacksPerVillage();
     TimeFrame timeFrame = mSettingsPanel.getTimeFrame();
-    System.out.println(timeFrame);
     //start processing
     AbstractAttackAlgorithm algo = null;
     boolean supportMiscUnits = false;

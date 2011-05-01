@@ -11,11 +11,13 @@ package de.tor.tribes.io;
 import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Barbarians;
+import de.tor.tribes.types.test.DummyUnit;
+import de.tor.tribes.types.test.DummyVillage;
 import de.tor.tribes.types.InvalidTribe;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
+import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
@@ -25,7 +27,6 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,6 +35,7 @@ import java.net.URLConnection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -1235,6 +1237,27 @@ public class DataHolder {
         return mVillages;
     }
 
+    public Village getRandomVillage() {
+        Iterator<Integer> it = mVillagesTable.keySet().iterator();
+        int id = -1;
+        int cnt = (int) Math.rint(100.0 * Math.random());
+        while (cnt >= 0 && it.hasNext()) {
+            id = it.next();
+            cnt--;
+        }
+        if (id != -1) {
+             return mVillagesTable.get(id);
+        } else {
+            DummyVillage v = new DummyVillage();
+            v.setId(-cnt);
+            v.setName("Beispieldorf" + cnt);
+            v.setX((short) cnt);
+            v.setY((short) cnt);
+            v.setPoints(cnt * 100);
+            return v;
+        }
+    }
+
     public int countVisibleVillages(Point pStart, Point pEnd) {
         int cnt = 0;
         //sort coordinates
@@ -1370,6 +1393,14 @@ public class DataHolder {
     /**Get all units*/
     public List<UnitHolder> getUnits() {
         return mUnits;
+    }
+
+    public UnitHolder getRandomUnit() {
+        int id = (int) (Math.rint(mUnits.size() * Math.random()));
+        if (id >= mUnits.size()) {
+            return new DummyUnit();
+        }
+        return mUnits.get(id);
     }
 
     /**Get a unit by its name*/

@@ -1,0 +1,113 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.tor.tribes.ui.models;
+
+import de.tor.tribes.types.Marker;
+import de.tor.tribes.types.Note;
+import de.tor.tribes.util.mark.MarkerManager;
+import de.tor.tribes.util.note.NoteManager;
+import java.awt.Color;
+import java.text.SimpleDateFormat;
+import javax.swing.table.AbstractTableModel;
+
+/**
+ *
+ * @author Charon
+ */
+public class NoteTableModel extends AbstractTableModel {
+
+    private String sNoteSet = null;
+    private final Class[] types = new Class[]{Integer.class, String.class, Integer.class, Integer.class, String.class};
+    private final String colNames[] = new String[]{"Icon", "Notiz", "Dörfer", "Kartensymbol", "Letzte Änderung"};
+    private boolean[] editableColumns = new boolean[]{true, true, false, true, false};
+
+    public NoteTableModel(String pMarkerSet) {
+        sNoteSet = pMarkerSet;
+    }
+
+    public void setNoteSet(String pMarkerSet) {
+        sNoteSet = pMarkerSet;
+        fireTableDataChanged();
+    }
+
+    public String getNoteSet() {
+        return sNoteSet;
+    }
+
+    @Override
+    public int getColumnCount() {
+        return colNames.length;
+    }
+
+    @Override
+    public Class getColumnClass(int columnIndex) {
+        return types[columnIndex];
+    }
+
+    @Override
+    public String getColumnName(int columnIndex) {
+        return colNames[columnIndex];
+    }
+
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return editableColumns[columnIndex];
+    }
+
+    @Override
+    public int getRowCount() {
+        if (sNoteSet == null) {
+            return 0;
+        }
+        return NoteManager.getSingleton().getAllElements(sNoteSet).size();
+    }
+
+    @Override
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        if (sNoteSet == null) {
+            return null;
+        }
+
+        Note n = ((Note) NoteManager.getSingleton().getAllElements(sNoteSet).get(rowIndex));
+        switch (columnIndex) {
+            case 0: {
+                return n.getNoteSymbol();
+            }
+            case 1: {
+                return n.getNoteText();
+            }
+            case 2: {
+                return n.getVillageIds().size();
+            }
+            case 3: {
+                return n.getMapMarker();
+            }
+            default: {
+                return new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(n.getTimestamp());
+            }
+        }
+    }
+
+    @Override
+    public void setValueAt(Object pValue, int rowIndex, int columnIndex) {
+        Note n = ((Note) NoteManager.getSingleton().getAllElements(sNoteSet).get(rowIndex));
+        switch (columnIndex) {
+            case 0: {
+                n.setNoteSymbol((Integer) pValue);
+                break;
+            }
+            case 1: {
+                n.setNoteText((String) pValue);
+                // view can't be set
+                break;
+            }
+            case 3: {
+                n.setMapMarker((Integer) pValue);
+                break;
+            }
+        }
+        NoteManager.getSingleton().revalidate(sNoteSet, true);
+    }
+}

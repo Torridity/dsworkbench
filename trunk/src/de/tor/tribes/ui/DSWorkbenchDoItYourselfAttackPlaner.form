@@ -1,98 +1,6 @@
 <?xml version="1.1" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
-  <NonVisualComponents>
-    <Container class="javax.swing.JDialog" name="jTransferToAttackViewDialog">
-
-      <Layout>
-        <DimensionLayout dim="0">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel6" alignment="0" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jNewPlanField" pref="290" max="32767" attributes="0"/>
-                              <Component id="jExistingPlansBox" alignment="0" pref="290" max="32767" attributes="0"/>
-                          </Group>
-                      </Group>
-                      <Group type="102" alignment="1" attributes="0">
-                          <Component id="jCancelButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jOKButton" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-              </Group>
-          </Group>
-        </DimensionLayout>
-        <DimensionLayout dim="1">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jExistingPlansBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jNewPlanField" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jOKButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jCancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace max="32767" attributes="0"/>
-              </Group>
-          </Group>
-        </DimensionLayout>
-      </Layout>
-      <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabel5">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Existierender Plan"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JComboBox" name="jExistingPlansBox">
-          <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="0"/>
-            </Property>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="jLabel6">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Neuer Plan"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JTextField" name="jNewPlanField">
-        </Component>
-        <Component class="javax.swing.JButton" name="jOKButton">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="OK"/>
-          </Properties>
-          <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireDoMoveAttacksToAttackViewEvent"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="jCancelButton">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Abbrechen"/>
-          </Properties>
-          <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireDoMoveAttacksToAttackViewEvent"/>
-          </Events>
-        </Component>
-      </SubComponents>
-    </Container>
-  </NonVisualComponents>
   <Properties>
     <Property name="title" type="java.lang.String" value="Manueller Angriffsplaner"/>
   </Properties>
@@ -155,7 +63,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jPanel3" max="32767" attributes="0"/>
                       </Group>
-                      <Component id="jScrollPane1" pref="666" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="770" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jTaskPane1" min="-2" max="-2" attributes="0"/>
@@ -168,13 +76,13 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jTaskPane1" alignment="0" pref="511" max="32767" attributes="0"/>
+                      <Component id="jTaskPane1" alignment="0" pref="512" max="32767" attributes="0"/>
                       <Group type="102" alignment="1" attributes="0">
                           <Component id="jScrollPane1" pref="299" max="32767" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" max="-2" attributes="0">
                               <Component id="jPanel3" max="32767" attributes="1"/>
-                              <Component id="jPanel2" alignment="1" pref="201" max="32767" attributes="1"/>
+                              <Component id="jPanel2" alignment="1" pref="202" max="32767" attributes="1"/>
                           </Group>
                       </Group>
                   </Group>
@@ -245,10 +153,10 @@
                           </Group>
                       </Group>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jButton1" alignment="1" pref="206" max="32767" attributes="0"/>
-                          <Component id="jUnitBox" pref="206" max="32767" attributes="0"/>
-                          <Component id="jSourceVillage" pref="206" max="32767" attributes="0"/>
-                          <Component id="jTargetVillage" pref="206" max="32767" attributes="0"/>
+                          <Component id="jButton1" alignment="1" pref="258" max="32767" attributes="0"/>
+                          <Component id="jUnitBox" pref="258" max="32767" attributes="0"/>
+                          <Component id="jSourceVillage" pref="258" max="32767" attributes="0"/>
+                          <Component id="jTargetVillage" pref="258" max="32767" attributes="0"/>
                           <Component id="jArriveTime" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -476,17 +384,6 @@
                 <Property name="title" type="java.lang.String" value="&#xdc;bertragen"/>
               </Properties>
               <SubComponents>
-                <Component class="javax.swing.JButton" name="jButton7">
-                  <Properties>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/res/ui/att_overview.png"/>
-                    </Property>
-                    <Property name="toolTipText" type="java.lang.String" value="Markierte Angriffe in Angriffs&#xfc;bersicht einf&#xfc;gen"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireMoveAttacksToAttackViewEvent"/>
-                  </Events>
-                </Component>
                 <Component class="javax.swing.JButton" name="jUnformattedExport">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
@@ -590,23 +487,7 @@
                     <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                   </StatementProvider>
                   <Parameters>
-                    <CodeExpression id="13_jButton7">
-                      <CodeVariable name="jButton7" type="8194" declaredType="javax.swing.JButton"/>
-                      <ExpressionOrigin>
-                        <ExpressionProvider type="ComponentRef">
-                          <ComponentRef name="jButton7"/>
-                        </ExpressionProvider>
-                      </ExpressionOrigin>
-                    </CodeExpression>
-                  </Parameters>
-                </CodeStatement>
-                <CodeStatement>
-                  <CodeExpression id="11"/>
-                  <StatementProvider type="CodeMethod">
-                    <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
-                  </StatementProvider>
-                  <Parameters>
-                    <CodeExpression id="14_jUnformattedExport">
+                    <CodeExpression id="13_jUnformattedExport">
                       <CodeVariable name="jUnformattedExport" type="8194" declaredType="javax.swing.JButton"/>
                       <ExpressionOrigin>
                         <ExpressionProvider type="ComponentRef">
@@ -622,7 +503,7 @@
                     <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                   </StatementProvider>
                   <Parameters>
-                    <CodeExpression id="15_jExportAsBBCode">
+                    <CodeExpression id="14_jExportAsBBCode">
                       <CodeVariable name="jExportAsBBCode" type="8194" declaredType="javax.swing.JButton"/>
                       <ExpressionOrigin>
                         <ExpressionProvider type="ComponentRef">
@@ -638,7 +519,7 @@
                     <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                   </StatementProvider>
                   <Parameters>
-                    <CodeExpression id="16_jButton6">
+                    <CodeExpression id="15_jButton6">
                       <CodeVariable name="jButton6" type="8194" declaredType="javax.swing.JButton"/>
                       <ExpressionOrigin>
                         <ExpressionProvider type="ComponentRef">
@@ -653,7 +534,7 @@
           </SubComponents>
           <LayoutCode>
             <CodeStatement>
-              <CodeExpression id="17_percentLayout5">
+              <CodeExpression id="16_percentLayout5">
                 <CodeVariable name="percentLayout5" type="4096" declaredType="com.l2fprod.common.swing.PercentLayout"/>
                 <ExpressionOrigin>
                   <ExpressionProvider type="CodeConstructor">
@@ -662,16 +543,16 @@
                 </ExpressionOrigin>
               </CodeExpression>
               <StatementProvider type="CodeExpression">
-                <CodeExpression id="17_percentLayout5"/>
+                <CodeExpression id="16_percentLayout5"/>
               </StatementProvider>
             </CodeStatement>
             <CodeStatement>
-              <CodeExpression id="17_percentLayout5"/>
+              <CodeExpression id="16_percentLayout5"/>
               <StatementProvider type="CodeMethod">
                 <CodeMethod name="setGap" class="com.l2fprod.common.swing.PercentLayout" parameterTypes="int"/>
               </StatementProvider>
               <Parameters>
-                <CodeExpression id="18">
+                <CodeExpression id="17">
                   <ExpressionOrigin>
                     <Value type="int" value="14"/>
                   </ExpressionOrigin>
@@ -679,12 +560,12 @@
               </Parameters>
             </CodeStatement>
             <CodeStatement>
-              <CodeExpression id="17_percentLayout5"/>
+              <CodeExpression id="16_percentLayout5"/>
               <StatementProvider type="CodeMethod">
                 <CodeMethod name="setOrientation" class="com.l2fprod.common.swing.PercentLayout" parameterTypes="int"/>
               </StatementProvider>
               <Parameters>
-                <CodeExpression id="19">
+                <CodeExpression id="18">
                   <ExpressionOrigin>
                     <Value type="int" value="1"/>
                   </ExpressionOrigin>
@@ -692,7 +573,7 @@
               </Parameters>
             </CodeStatement>
             <CodeStatement>
-              <CodeExpression id="20_jTaskPane1">
+              <CodeExpression id="19_jTaskPane1">
                 <CodeVariable name="jTaskPane1" type="8194" declaredType="com.l2fprod.common.swing.JTaskPane"/>
                 <ExpressionOrigin>
                   <ExpressionProvider type="ComponentRef">
@@ -704,11 +585,11 @@
                 <CodeMethod name="setLayout" class="java.awt.Container" parameterTypes="java.awt.LayoutManager"/>
               </StatementProvider>
               <Parameters>
-                <CodeExpression id="17_percentLayout5"/>
+                <CodeExpression id="16_percentLayout5"/>
               </Parameters>
             </CodeStatement>
             <CodeStatement>
-              <CodeExpression id="20_jTaskPane1"/>
+              <CodeExpression id="19_jTaskPane1"/>
               <StatementProvider type="CodeMethod">
                 <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
               </StatementProvider>
@@ -717,7 +598,7 @@
               </Parameters>
             </CodeStatement>
             <CodeStatement>
-              <CodeExpression id="20_jTaskPane1"/>
+              <CodeExpression id="19_jTaskPane1"/>
               <StatementProvider type="CodeMethod">
                 <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
               </StatementProvider>
@@ -755,12 +636,12 @@
                               <Component id="jAdeptTimeButton" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="jUnitComboBox" pref="206" max="32767" attributes="1"/>
+                              <Component id="jUnitComboBox" pref="258" max="32767" attributes="1"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jAdeptUnitButton" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="jAttackTypeComboBox" pref="206" max="32767" attributes="1"/>
+                              <Component id="jAttackTypeComboBox" pref="258" max="32767" attributes="1"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jAdeptTypeButton" min="-2" max="-2" attributes="0"/>
                           </Group>

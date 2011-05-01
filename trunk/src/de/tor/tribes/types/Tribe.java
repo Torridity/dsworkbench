@@ -228,7 +228,7 @@ public class Tribe implements Comparable<Tribe>, Serializable {
             res += "<tr><td>&nbsp;&nbsp;&nbsp;Mitglieder: </td><td>" + nf.format(getAlly().getMembers()) + "</td></tr>";
             res += "<tr><td>&nbsp;&nbsp;&nbsp;Punkte: </td><td>" + nf.format(getAlly().getPoints()) + "(" + nf.format(getAlly().getRank()) + ")</td></tr>";
         }
-        Tribe current = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
+        Tribe current = GlobalOptions.getSelectedProfile().getTribe();
         if (current != null) {
             if (!current.equals(this)) {
                 double moral = ((getPoints() / current.getPoints()) * 3 + 0.3) * 100;
@@ -286,7 +286,7 @@ public class Tribe implements Comparable<Tribe>, Serializable {
             return Color.LIGHT_GRAY;
         }
 
-        if (this.equals(DSWorkbenchMainFrame.getSingleton().getCurrentUser())) {
+        if (this.equals(GlobalOptions.getSelectedProfile().getTribe())) {
             return Color.YELLOW;
         }
         Color DEFAULT = null;

@@ -5,6 +5,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.php.ScreenUploadInterface;
 import de.tor.tribes.types.Ally;
@@ -12,7 +13,7 @@ import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.renderer.MapRenderer;
+import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
@@ -61,8 +62,17 @@ import org.jfree.data.general.DefaultPieDataset;
  * @TODO (DIFF) Handle map switch buttons location (Handle by right-click!)
  * @author  jejkal
  */
-public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerListener {
+public class MinimapPanel extends javax.swing.JPanel implements GenericManagerListener {
 
+    @Override
+    public void dataChangedEvent() {
+        dataChangedEvent(null);
+    }
+
+    @Override
+    public void dataChangedEvent(String pGroup) {
+        redraw();
+    }
     private static Logger logger = Logger.getLogger("MinimapCanvas");
     private Image mBuffer = null;
     private int iX = 0;
@@ -120,7 +130,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         int mapHeight = (int) ServerSettings.getSingleton().getMapDimension().getHeight();
         rVisiblePart = new Rectangle(0, 0, mapWidth, mapHeight);
         zoomed = false;
-        MarkerManager.getSingleton().addMarkerManagerListener(this);
+        MarkerManager.getSingleton().addManagerListener(this);
         MinimapRepaintThread.getSingleton().setVisiblePart(rVisiblePart);
         MinimapRepaintThread.getSingleton().start();
 
@@ -707,11 +717,6 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         int mapHeight = (int) ServerSettings.getSingleton().getMapDimension().getHeight();
         rVisiblePart = new Rectangle(0, 0, mapWidth, mapHeight);
         MinimapRepaintThread.getSingleton().setVisiblePart(rVisiblePart);
-        redraw();
-    }
-
-    @Override
-    public void fireMarkersChangedEvent() {
         redraw();
     }
 

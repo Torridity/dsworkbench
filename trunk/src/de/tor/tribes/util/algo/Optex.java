@@ -99,55 +99,24 @@ public class Optex<S extends Source, D extends Destination> {
                             while (i.hasNext()) {
                                 Order o = i.next();
                                 int val = o.getAmount();
-                                //   System.out.println("TEST!");
                                 if (val > 0) {
-                                    // System.out.println("Optimize");
                                     Destination o_d = o.getDestination();
-                                    //if (s1.waresAvailable(o_d) > o.amount && s1.getOrdered() > 0) {
 
-                                    /* if (s1 != s2 &&
-                                    s1.waresAvailable(o_d) == 0 &&
-                                    s1.getOrdered() > 0 &&
-                                    s1.waresAvailable() >= val) {
-                                    // System.out.println("Move " + o.amount + " from " + s2 + " to " + s1 + " for dest " + o.getDestination() + " (" + s1.getOrdered() + "/" + s1.waresAvailable() + ")");
-                                    //remove one delivery if possible
-                                    //System.out.println("Before: " + s1.getOrdered() + "/" + s1.waresAvailable() + "/" + s2.getOrdered() + "/" + s2.waresAvailable());
-
-                                    s2.removeOrder(o_d, val);
-                                    s1.addOrder(o_d, val);
-                                    //    System.out.println("After: " + s1.getOrdered() + "/" + s1.waresAvailable() + "/" + s2.getOrdered() + "/" + s2.waresAvailable());
-                                    //System.out.println("Ord now: " + s2.getOrdered() + "/" + s1.getOrdered());
-                                    improvement = true;
-                                    } else */
-                                    double fact = 1.0;// Math.pow(Math.E, ((val - 5) / -2)) + 1;// (e^-((x-5) / 2) + 1)
-                                    //  System.out.println("Order: " + val + " -> " + fact);
+                                    double fact = 1.0;
                                     double c1 = this._getCosts(s1, o_d);
                                     double c2 = this._getCosts(s2, o_d) * fact;
                                     if (c1 < c2) {
-                                        // if (s1.getOrdered() > 0) {
                                         int swap_amount = 0;
-                                        //swap_amount = Math.min(s1.waresAvailable(o_d), o.amount);
                                         swap_amount = Math.min(s1.waresAvailable(), o.amount);
-
                                         s2.removeOrder(o_d, swap_amount);
                                         s1.addOrder(o_d, swap_amount);
-
                                         improvement = true;
-                                        //}
                                     }
                                 }
                             }
-                            /*int r = s2.removeEmptyOrders();
-                            if (r > 0) {
-                            System.out.println("Remove: " + r + " for " + s2);
-                            }*/
-                        }/*else{
-                        System.out.println("No Order");
-                        }*/
+                        }
                     }
-                }/*else{
-                System.out.println("Full!");
-                }*/
+                }
             }
         }
     }
@@ -231,7 +200,7 @@ public class Optex<S extends Source, D extends Destination> {
             }
 
             int amountOrdered = Math.min(biggest_s.waresAvailable(), biggest_s_d.remainingNeeds());
-           // double fact = Math.pow(Math.E, (((double)amountOrdered - 5) / -2)) + 1;// (e^-((x-5) / 2) + 1)
+            // double fact = Math.pow(Math.E, (((double)amountOrdered - 5) / -2)) + 1;// (e^-((x-5) / 2) + 1)
             if (amountOrdered > 0) {
                 biggest_s.addOrder(biggest_s_d, amountOrdered);
                 biggest_s_d.addOrdered(amountOrdered);
@@ -270,5 +239,3 @@ public class Optex<S extends Source, D extends Destination> {
         return this.costs[source_index].get(d);
     }
 }
-
-

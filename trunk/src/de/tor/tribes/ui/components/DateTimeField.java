@@ -11,6 +11,8 @@
 package de.tor.tribes.ui.components;
 
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.text.SimpleDateFormat;
@@ -34,6 +36,7 @@ public class DateTimeField extends javax.swing.JPanel {
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
     private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
     private boolean timeEnabled = true;
+    private ActionListener mListener = null;
 
     /** Creates new form DateTimeField */
     public DateTimeField() {
@@ -44,6 +47,10 @@ public class DateTimeField extends javax.swing.JPanel {
         //jTimeField.setEditable(false);
         jChangeTime.setEnabled(timeEnabled);
         jTimeField.setEnabled(timeEnabled);
+    }
+
+    public void setActionListener(ActionListener pListener) {
+        mListener = pListener;
     }
 
     final class Listener extends ComponentAdapter {
@@ -61,6 +68,9 @@ public class DateTimeField extends javax.swing.JPanel {
                 }
             }
             dlg.dispose();
+            if (mListener != null) {
+                mListener.actionPerformed(new ActionEvent(this, 0, "changed"));
+            }
         }
 
         Listener() {
@@ -81,16 +91,18 @@ public class DateTimeField extends javax.swing.JPanel {
         jChangeDate = new javax.swing.JButton();
         jChangeTime = new javax.swing.JButton();
 
+        jDateField.setFont(new java.awt.Font("sansserif", 0, 11)); // NOI18N
         jDateField.setMinimumSize(new java.awt.Dimension(10, 20));
-        jDateField.setPreferredSize(new java.awt.Dimension(80, 20));
+        jDateField.setPreferredSize(new java.awt.Dimension(12, 22));
 
+        jTimeField.setFont(new java.awt.Font("sansserif", 0, 11)); // NOI18N
         jTimeField.setMinimumSize(new java.awt.Dimension(10, 20));
-        jTimeField.setPreferredSize(new java.awt.Dimension(80, 20));
+        jTimeField.setPreferredSize(new java.awt.Dimension(80, 22));
 
         jChangeDate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/calendar_31.png"))); // NOI18N
         jChangeDate.setMaximumSize(new java.awt.Dimension(20, 20));
         jChangeDate.setMinimumSize(new java.awt.Dimension(20, 20));
-        jChangeDate.setPreferredSize(new java.awt.Dimension(20, 20));
+        jChangeDate.setPreferredSize(new java.awt.Dimension(22, 22));
         jChangeDate.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireChangeDateTimeEvent(evt);
@@ -100,7 +112,7 @@ public class DateTimeField extends javax.swing.JPanel {
         jChangeTime.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/clock.png"))); // NOI18N
         jChangeTime.setMaximumSize(new java.awt.Dimension(20, 20));
         jChangeTime.setMinimumSize(new java.awt.Dimension(20, 20));
-        jChangeTime.setPreferredSize(new java.awt.Dimension(20, 20));
+        jChangeTime.setPreferredSize(new java.awt.Dimension(22, 22));
         jChangeTime.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireChangeDateTimeEvent(evt);
@@ -112,10 +124,10 @@ public class DateTimeField extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jDateField, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
+                .addComponent(jDateField, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
-                .addComponent(jTimeField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTimeField, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
                 .addComponent(jChangeDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jChangeTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -146,8 +158,8 @@ public class DateTimeField extends javax.swing.JPanel {
 
     public void setTimeEnabled(boolean pValue) {
         timeEnabled = pValue;
-        jChangeTime.setEnabled(timeEnabled);
-        jTimeField.setEnabled(timeEnabled);
+        jChangeTime.setVisible(timeEnabled);
+        jTimeField.setVisible(timeEnabled);
         /* if (!timeEnabled) {
         jTimeField.setEnabled(false);
         } else {
@@ -155,21 +167,33 @@ public class DateTimeField extends javax.swing.JPanel {
         }*/
     }
 
+    public boolean isTimeEnabled() {
+        return timeEnabled;
+    }
+
     public Date getSelectedDate() {
         try {
             Date date = dateFormat.parse(jDateField.getText());
-            Date time = timeFormat.parse(jTimeField.getText());
+
             Calendar c = Calendar.getInstance();
             c.setTime(date);
             Calendar result = Calendar.getInstance();
             result.set(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH));
             result.set(Calendar.MONTH, c.get(Calendar.MONTH));
             result.set(Calendar.YEAR, c.get(Calendar.YEAR));
-            c.setTime(time);
-            result.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY));
-            result.set(Calendar.MINUTE, c.get(Calendar.MINUTE));
-            result.set(Calendar.SECOND, c.get(Calendar.SECOND));
-
+            if (isTimeEnabled()) {
+                Date time = timeFormat.parse(jTimeField.getText());
+                c.setTime(time);
+                result.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY));
+                result.set(Calendar.MINUTE, c.get(Calendar.MINUTE));
+                result.set(Calendar.SECOND, c.get(Calendar.SECOND));
+                result.set(Calendar.MILLISECOND, 0);
+            } else {
+                result.set(Calendar.HOUR_OF_DAY, 0);
+                result.set(Calendar.MINUTE, 0);
+                result.set(Calendar.SECOND, 0);
+                result.set(Calendar.MILLISECOND, 0);
+            }
             return result.getTime();
         } catch (Exception e) {
             Date now = Calendar.getInstance().getTime();

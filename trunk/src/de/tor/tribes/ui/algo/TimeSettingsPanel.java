@@ -35,6 +35,7 @@ public class TimeSettingsPanel extends javax.swing.JPanel {
 
     private String minMaxTimeLabel = "Nicht vor";
     private String timeFrameLabel = "Abschickzeitfenster";
+    private SettingsChangedListener mListener;
     private boolean allowTribeSpecificFrames = true;
     private boolean allowExactDayArrival = true;
     private boolean allowDisableMaxTime = true;
@@ -44,11 +45,15 @@ public class TimeSettingsPanel extends javax.swing.JPanel {
     /** Creates new form TimeSettingsPanel */
     public TimeSettingsPanel() {
         initComponents();
+        jValidAtDay.setTimeEnabled(false);
+    }
+
+    public void setSettingsChangedListener(SettingsChangedListener pListener) {
+        mListener = pListener;
     }
 
     public void reset() {
         //setup of send time spinner
-        jValidAtDay.setTimeEnabled(false);
         jValidAtExactDay.setEnabled(false);
         Calendar c = Calendar.getInstance();
         jMinTime.setDate(c.getTime());
@@ -71,6 +76,13 @@ public class TimeSettingsPanel extends javax.swing.JPanel {
         jSendTimeFramesList.setCellRenderer(new TimeFrameListCellRenderer());
         jTribeOnlyBox.setModel(new DefaultComboBoxModel(new Object[]{"Alle"}));
         jSendTimeFrame.setSound(false);
+        fireTimeFrameChangedEvent();
+    }
+
+    public void fireTimeFrameChangedEvent() {
+        if (mListener != null) {
+            mListener.fireTimeFrameChangedEvent();
+        }
     }
 
     public void setAllowTribeSpecificFrames(boolean pValue) {
@@ -174,6 +186,7 @@ public class TimeSettingsPanel extends javax.swing.JPanel {
             model.addElement(span);
         }
         jSendTimeFramesList.setModel(model);
+        fireTimeFrameChangedEvent();
     }
 
     public Date getMinTime() {
@@ -242,7 +255,6 @@ public class TimeSettingsPanel extends javax.swing.JPanel {
         jUseMaxTime.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/remove.gif"))); // NOI18N
         jUseMaxTime.setMaximumSize(new java.awt.Dimension(20, 20));
         jUseMaxTime.setMinimumSize(new java.awt.Dimension(20, 20));
-        jUseMaxTime.setOpaque(false);
         jUseMaxTime.setPreferredSize(new java.awt.Dimension(20, 20));
         jUseMaxTime.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png"))); // NOI18N
         jUseMaxTime.addItemListener(new java.awt.event.ItemListener() {
@@ -314,7 +326,6 @@ public class TimeSettingsPanel extends javax.swing.JPanel {
         jEveryDayValid.setSelected(true);
         jEveryDayValid.setText("Jeder Tag");
         jEveryDayValid.setToolTipText("Zeitrahmen für jeden Tag gültig");
-        jEveryDayValid.setOpaque(false);
         jEveryDayValid.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireValidityChangedEvent(evt);
@@ -323,7 +334,6 @@ public class TimeSettingsPanel extends javax.swing.JPanel {
 
         buttonGroup1.add(jOnlyValidAt);
         jOnlyValidAt.setText("Nur am:");
-        jOnlyValidAt.setOpaque(false);
         jOnlyValidAt.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireValidityChangedEvent(evt);
@@ -344,7 +354,6 @@ public class TimeSettingsPanel extends javax.swing.JPanel {
 
         buttonGroup1.add(jOnlyValidAtExactDay);
         jOnlyValidAtExactDay.setText("Genau am/um:");
-        jOnlyValidAtExactDay.setOpaque(false);
         jOnlyValidAtExactDay.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireValidityChangedEvent(evt);
@@ -375,7 +384,7 @@ public class TimeSettingsPanel extends javax.swing.JPanel {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane1, 0, 0, Short.MAX_VALUE)
-                            .addComponent(jSendTimeFrame, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
+                            .addComponent(jSendTimeFrame, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jPlayerOnlyLabel)
@@ -386,15 +395,15 @@ public class TimeSettingsPanel extends javax.swing.JPanel {
                                     .addComponent(jValidAtExactDay, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
                                     .addComponent(jValidAtDay, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
                                     .addComponent(jTribeOnlyBox, 0, 327, Short.MAX_VALUE)))
-                            .addComponent(jEveryDayValid, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE))
+                            .addComponent(jEveryDayValid, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jMaxTime, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
-                            .addComponent(jMinTime, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE))
+                            .addComponent(jMaxTime, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
+                            .addComponent(jMinTime, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -416,7 +425,7 @@ public class TimeSettingsPanel extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jSendTimeFrameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE))
                         .addGap(14, 14, 14))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -459,6 +468,7 @@ public class TimeSettingsPanel extends javax.swing.JPanel {
                 model.removeElement(o);
             }
         }
+        fireTimeFrameChangedEvent();
 }//GEN-LAST:event_fireRemoveTimeFrameEvent
 
     private void fireAddNewTimeFrameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddNewTimeFrameEvent
@@ -502,6 +512,7 @@ public class TimeSettingsPanel extends javax.swing.JPanel {
             JOptionPaneHelper.showWarningBox(this, "Das gewählte Zeitfenster überschneidet sich mit dem " + intersection + ". Eintrag.\n"
                     + "Bitte wähle die Zeitfenster so, dass es zu keinen Überschneidungen kommt.", "Überschneidung");
         }
+        fireTimeFrameChangedEvent();
 }//GEN-LAST:event_fireAddNewTimeFrameEvent
 
     private void fireValidityChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireValidityChangedEvent

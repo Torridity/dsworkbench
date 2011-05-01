@@ -4,9 +4,11 @@
  */
 package de.tor.tribes.util.map;
 
+import de.tor.tribes.control.GenericManager;
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.AbstractForm;
 import de.tor.tribes.types.Line;
-import de.tor.tribes.ui.DSWorkbenchFormFrame;
+import de.tor.tribes.ui.views.DSWorkbenchFormFrame;
 import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Color;
@@ -22,11 +24,10 @@ import org.jdom.Element;
  *
  * @author Charon
  */
-public class FormManager {
+public class FormManager extends GenericManager<AbstractForm> {
 
     private static Logger logger = Logger.getLogger("FormManager");
     private static FormManager SINGLETON = null;
-    private List<AbstractForm> forms = null;
 
     public static synchronized FormManager getSingleton() {
         if (SINGLETON == null) {
@@ -36,19 +37,17 @@ public class FormManager {
     }
 
     FormManager() {
-        forms = new LinkedList<AbstractForm>();
+        super(false);
     }
 
-    public void loadFormsFromDatabase(String pUrl) {
-    }
-
-    public void loadFormsFromFile(String pFile) {
-        forms.clear();
+    @Override
+    public void loadElements(String pFile) {
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return;
         }
-
+        invalidate();
+        initialize();
         File formFile = new File(pFile);
         if (formFile.exists()) {
             if (logger.isDebugEnabled()) {
@@ -59,7 +58,7 @@ public class FormManager {
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//forms/form")) {
                     AbstractForm form = AbstractForm.fromXml(e);
                     if (form != null) {
-                        forms.add(form);
+                        addManagedElement(form);
                     }
                 }
                 logger.debug("Forms loaded successfully");
@@ -69,16 +68,19 @@ public class FormManager {
         } else {
             logger.info("No forms found under '" + pFile + "'");
         }
+        revalidate();
     }
 
-    public boolean importForms(File pFile, String pExtension) {
+    @Override
+    public boolean importData(File pFile, String pExtension) {
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return false;
         }
 
         logger.info("Loading forms");
-
+        boolean result = false;
+        invalidate();
         try {
             Document d = JaxenUtils.getDocument(pFile);
             for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//forms/form")) {
@@ -89,27 +91,30 @@ public class FormManager {
                     } else {
                         form.setFormName(form.getFormName() + pExtension);
                     }
-                    forms.add(form);
+                    addManagedElement(form);
                 }
             }
             logger.debug("Forms imported successfully");
             //do a pseudo-scroll to update the forms visibility
             MapPanel.getSingleton().fireScrollEvents(0, 0);
-            return true;
+            result = true;
         } catch (Exception e) {
             logger.error("Failed to import forms", e);
             //do a pseudo-scroll to update the forms visibility
             MapPanel.getSingleton().fireScrollEvents(0, 0);
-            return false;
         }
+        revalidate(true);
+        return result;
     }
 
-    public String getExportData() {
+    @Override
+    public String getExportData(List<String> pGroupsToExport) {
         try {
             logger.debug("Generating forms export data");
             String result = "<forms>\n";
 
-            for (AbstractForm form : forms) {
+            for (ManageableType t : getAllElements()) {
+                AbstractForm form = (AbstractForm) t;
                 result += form.toXml();
             }
             result += "</forms>\n";
@@ -121,15 +126,14 @@ public class FormManager {
         }
     }
 
-    public void saveFormsToDatabase(String pUrl) {
-    }
-
-    public void saveFormsToFile(String pFile) {
+    @Override
+    public void saveElements(String pFile) {
         try {
             FileWriter w = new FileWriter(pFile);
             w.write("<forms>\n");
 
-            for (AbstractForm form : forms) {
+            for (ManageableType type : getAllElements()) {
+                AbstractForm form = (AbstractForm) type;
                 w.write(form.toXml());
             }
             w.write("</forms>\n");
@@ -140,58 +144,26 @@ public class FormManager {
         }
     }
 
-    /**
-     * @return the forms
-     */
-    public synchronized List<AbstractForm> getForms() {
-        return forms;
-    }
-
     public synchronized void addForm(AbstractForm pForm) {
-        if (pForm != null) {
-            forms.add(pForm);
-            DSWorkbenchFormFrame.getSingleton().updateFormList();
-        }
+        addManagedElement(pForm);
     }
 
-    public synchronized void removeForm(AbstractForm pForm) {
-        forms.remove(pForm);
-        DSWorkbenchFormFrame.getSingleton().updateFormList();
+    public void removeForm(AbstractForm pForm) {
+        removeElement(pForm);
     }
 
-    public synchronized void removeForms(Object[] pForms) {
-        if (pForms == null) {
-            return;
-        }
-        for (Object f : pForms) {
-            try {
-                forms.remove((AbstractForm) f);
-            } catch (Exception classcast) {
-            }
-        }
-        DSWorkbenchFormFrame.getSingleton().updateFormList();
+    public void removeForms(List<AbstractForm> pForms) {
+        removeElements(pForms);
     }
 
-    public synchronized List<AbstractForm> getVisibleForms() {
+    public List<AbstractForm> getVisibleForms() {
         List<AbstractForm> visible = new LinkedList<AbstractForm>();
-        for (AbstractForm f : forms) {
+        for (ManageableType t : getAllElements()) {
+            AbstractForm f = (AbstractForm) t;
             if (f.isVisibleOnMap()) {
                 visible.add(f);
             }
         }
         return visible;
-    }
-
-    public static void main(String[] args) {
-        Line l = new Line();
-        l.setXPos(0);
-        l.setYPos(0);
-        l.setXPosEnd(10);
-        l.setYPosEnd(10);
-        l.setDrawColor(Color.RED);
-        l.setStrokeWidth(1.0f);
-        FormManager.getSingleton().addForm(l);
-        FormManager.getSingleton().saveFormsToFile("forms.xml");
-        FormManager.getSingleton().loadFormsFromFile("forms.xml");
     }
 }

@@ -31,7 +31,7 @@ public class ContinentFilter implements ConquerFilterInterface {
         if (continentBounds == null) {
             return true;
         }
-        Village v = DataHolder.getSingleton().getVillagesById().get(pConquer.getVillageID());
+        Village v = pConquer.getVillage();
         if (v == null) {
             return false;
         }

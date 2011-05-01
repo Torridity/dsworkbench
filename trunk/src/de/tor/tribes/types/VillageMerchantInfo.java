@@ -70,6 +70,10 @@ public class VillageMerchantInfo implements Cloneable {
         return stashCapacity;
     }
 
+    public void adaptStashCapacity(int pPercent) {
+        setStashCapacity((int) Math.rint(getStashCapacity() * ((pPercent > 100) ? 100 : pPercent) / 100.0));
+    }
+
     /**
      * @param stashCapacity the stashCapacity to set
      */

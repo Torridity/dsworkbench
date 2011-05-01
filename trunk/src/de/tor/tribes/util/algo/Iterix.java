@@ -83,49 +83,6 @@ public class Iterix extends AbstractAttackAlgorithm {
             mappings = buildMappings(ramAndCataSources, pTargets, pTimeFrame, pMaxAttacksTable);
             //initialize result array
             result = new double[mappings.length][mappings[0].length];
-            // <editor-fold defaultstate="collapsed" desc="Old stuff">
-
-            // int[] sourceMappings = buildSourceMappings(mappings);
-            // int[] targetMappings = buildTargetMappings(mappings);
-
-
-            // mappingsToCSV(mappings, sourceMappings, targetMappings, "mappings.csv");
-   /*     labels = new JLabel[mappings.length + 1][mappings[0].length + 1];
-            labels2 = new JLabel[mappings.length][mappings[0].length];
-            f = new JFrame();
-            JPanel p = new JPanel();
-            JPanel p2 = new JPanel();
-            p.setLayout(new GridLayout(mappings.length + 1, mappings[0].length + 1));
-            p2.setLayout(new GridLayout(mappings.length, mappings[0].length));
-            for (int i = 0; i <= mappings.length; i++) {
-            for (int j = 0; j <= mappings[0].length; j++) {
-            JLabel l = new JLabel("0");
-            l.setOpaque(true);
-            labels[i][j] = l;
-            p.add(l);
-            try {
-            JLabel l2 = new JLabel("0");
-            l2.setOpaque(true);
-            labels2[i][j] = l2;
-            p2.add(l2);
-            } catch (Exception e) {
-            }
-
-            }
-            }
-            f.setLayout(new GridLayout(2, 2));
-            f.add(p);
-            f.add(p2);
-
-            JButton b = new JButton("Calc");
-
-            b.addMouseListener(new MouseListener() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {*/
-
-            // </editor-fold>
-
             try {
                 //long s = System.currentTimeMillis();
                 logText(" - Suche optimale Herkunft-Ziel Kombinationen");
@@ -151,49 +108,6 @@ public class Iterix extends AbstractAttackAlgorithm {
                 logError("Unerwarteter Fehler bei der Off-Berechnung!");
                 return new LinkedList<AbstractTroopMovement>();
             }
-
-            // <editor-fold defaultstate="collapsed" desc="Old stuff">
-            //solve2(ramSources, targets, mappings, result);
-/*              solve(ramSources, targets, mappings, result);
-            int[] sourceMappings = buildSourceMappings(mappings);
-            int[] targetMappings = buildTargetMappings(mappings);
-            drawResults(sourceMappings, targetMappings);
-            colorSelectedValues(selectedSource, selectedTarget);
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
-            });
-            f.add(b);
-            f.pack();
-            f.setVisible(true);
-
-            //solve(ramSources, pTargets, mappings, result);
-            for (int i = 0; i < mappings.length; i++) {
-            for (int j = 0; j < mappings[0].length; j++) {
-            labels[i][j].setText("" + mappings[i][j]);
-            labels2[i][j].setText("" + result[i][j]);
-            }
-            }
-            //init view
-            sourceMappings = buildSourceMappings(mappings);
-            targetMappings = buildTargetMappings(mappings);
-            drawResults(sourceMappings, targetMappings);
-             */
-// </editor-fold>
 
             logText(" - Erstelle Ergebnisliste");
             //store results
@@ -250,7 +164,12 @@ public class Iterix extends AbstractAttackAlgorithm {
         if (cataFakes != null && !cataFakes.isEmpty()) {
             ramAndCataFakes.addAll(cataFakes);
         }
-
+        System.out.println("Copy " + copy);
+        System.out.println("Map " + map);
+        System.out.println("SMap " + sMap);
+        System.out.println("TMap " + tMap);
+        System.out.println("Swap " + swap);
+        System.out.println("Solve " + solve);
         if (ramAndCataFakes == null || ramAndCataFakes.isEmpty()) {
             logText("Keine gültigen Fakes gefunden. Berechnung abgeschlossen.");
             return movementList;
@@ -326,6 +245,7 @@ public class Iterix extends AbstractAttackAlgorithm {
         jf.pack();
         jf.setVisible(true);*/
 
+
         return movementList;
     }
 
@@ -380,40 +300,21 @@ public class Iterix extends AbstractAttackAlgorithm {
                 } else {
                     tMappings[i][j] = 0;
                 }
-
-                /*if (pTimeFrame.isVariableArriveTime()) {
-                Date arriveTime = pTimeFrame.getRandomArriveTime(Math.round(runtime), pSources.get(i).getTribe(), usedDates);
-                if (arriveTime != null) {
-                tMappings[i][j] = pMaxAttacksTable.get(pTargets.get(j));
-                usedDates.add(arriveTime.getTime());
-                cnt++;
-                } else {
-                tMappings[i][j] = 0;
-                }
-                } else {
-                long send = pTimeFrame.getEnd() - Math.round(runtime);
-                if (pTimeFrame.inside(new Date(send), null)) {
-                tMappings[i][j] = pMaxAttacksTable.get(pTargets.get(j));
-                cnt++;
-                } else {
-                tMappings[i][j] = 0;
-                }
-                }*/
             }
         }
 
 
-        int[] s = buildSourceMappings(tMappings);
+        /*int[] s = buildSourceMappings(tMappings);
         int c = 0;
         for (Integer i : s) {
-            if (i != 0) {
-                c++;
-            }
+        if (i != 0) {
+        c++;
         }
+        }*/
 
         int maxCount = pSources.size() * pTargets.size();
         logInfo("   * " + cnt + " von " + maxCount + " Herkunft-Ziel Kombinationen möglich");
-        logInfo("   * " + c + " von " + pSources.size() + " Herkunftsdörfer werden verwendet");
+        // logInfo("   * " + c + " von " + pSources.size() + " Herkunftsdörfer werden verwendet");
         return tMappings;
     }
 
@@ -436,7 +337,7 @@ public class Iterix extends AbstractAttackAlgorithm {
         int mostAttacks = 0;
         int mostAttacksAtIndex = 0;
         int influenceOfSelection = Integer.MAX_VALUE;
-
+        long s = System.currentTimeMillis();
         //solve matrix for all current sources
         for (int i = 0; i < sourcesToTest.size(); i++) {
             //reset temporary data to current state
@@ -481,12 +382,17 @@ public class Iterix extends AbstractAttackAlgorithm {
                 mostAttacksAtIndex = i;
             }
         }
+        solve += (System.currentTimeMillis() - s);
         //solve first step for best parameters
         mostAttacks = solveRecursive(pSources, pTargets, mappings, pResults, mostAttacksAtIndex, false);
         logInfo("   * Neuer Angriff: " + pSources.get(selectedSource) + " -> " + pTargets.get(selectedTarget));
         logInfo("   * " + mostAttacks + " bisher gefundene Angriffe");
         return false;
     }
+    long solve = 0;
+    long copy = 0;
+    long map = 0;
+    long swap = 0;
 
     public int solveRecursive(List<Village> pSources, List<Village> pTargets, double[][] pMappings, double[][] pResults, int pIndex, boolean recurse) {
         //get source list for solving
@@ -500,6 +406,7 @@ public class Iterix extends AbstractAttackAlgorithm {
         Integer sourceIdx = idxs.get(pIndex);
         //decision 2
         int targetID = -1;
+        long s = System.currentTimeMillis();
         int lowestInfluence = Integer.MAX_VALUE;
         for (int i = 0; i < pMappings.length; i++) {
             for (int j = 0; j < pMappings[0].length; j++) {
@@ -510,8 +417,11 @@ public class Iterix extends AbstractAttackAlgorithm {
                 }
             }
         }
-
+        copy += (System.currentTimeMillis() - s);
+        s = System.currentTimeMillis();
         int[] resultSourceMappings = buildSourceMappings(result);
+        map += (System.currentTimeMillis() - s);
+        s = System.currentTimeMillis();
         for (int i = 0; i < pMappings.length; i++) {
             //update target col for current source row (decrement attacks to this target)
             double newValue = pMappings[i][targetID] - 1.0;
@@ -522,7 +432,7 @@ public class Iterix extends AbstractAttackAlgorithm {
                     //last selected source positions
                     if (i == sourceIdx && j == targetID) {
                         //block source-target combination for additional attacks
-                        pResults[i][j] = pResults[i][j] + 1;
+                        pResults[i][j]++;
                         pMappings[i][j] = 0.0;
                     } else if (i == sourceIdx && j != targetID) {
                         //update entire source row
@@ -538,7 +448,7 @@ public class Iterix extends AbstractAttackAlgorithm {
                 }
             }
         }
-
+        swap += (System.currentTimeMillis() - s);
         selectedSource = sourceIdx;
         selectedTarget = targetID;
 
@@ -551,53 +461,6 @@ public class Iterix extends AbstractAttackAlgorithm {
         }
     }
 
-    //enable for one village at one target, probably not all targets are used
-  /*  private List<Integer> selectSources(double[][] pMappings, double[][] pResults) {
-    int[] sourceMappings = buildSourceMappings(pMappings);
-    int[] sourceResultMappings = buildSourceMappings(pResults);
-    //find single mappings
-    int smallesAmount = Integer.MAX_VALUE;
-    //set to 0 to avoid more than one attacks per village
-    int smallesResultCount = Integer.MAX_VALUE;
-    List<Integer> idxs = new LinkedList<Integer>();
-    for (int i = 0; i < sourceMappings.length; i++) {
-    if (sourceMappings[i] > 0) {
-    //valid source
-    if (sourceMappings[i] < smallesAmount) {
-    //lesser targets than worst source
-    if (sourceResultMappings[i] < smallesResultCount) {
-    //lesser targets and lesser results
-    smallesAmount = sourceMappings[i];
-    smallesResultCount = sourceResultMappings[i];
-    idxs.clear();
-    idxs.add(i);
-    } else if (sourceResultMappings[i] == smallesResultCount) {
-    //lesser targets and same results
-    idxs.add(i);
-    } else {
-    //lesser targets but at least one result...ignore
-    }
-    } else {
-    //more targets than worst village
-    if (sourceResultMappings[i] < smallesResultCount) {
-    //more targets but lesser results
-    smallesAmount = sourceMappings[i];
-    smallesResultCount = sourceResultMappings[i];
-    idxs.clear();
-    idxs.add(i);
-    } else if (sourceResultMappings[i] == smallesResultCount) {
-    idxs.add(i);
-    } else {
-    //more targets and more results
-    }
-    }
-    }
-    }
-    if (idxs.isEmpty()) {
-    System.out.println("EMPTY");
-    }
-    return idxs;
-    }*/
     //enable for one village to more targets (all targets can be filled)
     /**Select a list of next sources*/
     private List<Integer> selectSources(double[][] pMappings, double[][] pResults) {
@@ -667,9 +530,12 @@ public class Iterix extends AbstractAttackAlgorithm {
         }
         return count;
     }
+    long sMap = 0;
+    long tMap = 0;
 
     /**Build array of source (row) element sums*/
     private int[] buildSourceMappings(double[][] pMappings) {
+        long s = System.currentTimeMillis();
         int[] sourceMappings = new int[pMappings.length];
         for (int i = 0; i < pMappings.length; i++) {
             //source rows
@@ -680,12 +546,13 @@ public class Iterix extends AbstractAttackAlgorithm {
             }
             sourceMappings[i] = amount;
         }
-
+        sMap += (System.currentTimeMillis() - s);
         return sourceMappings;
     }
 
     /**Build array of target (col) element sums*/
     private int[] buildTargetMappings(double[][] pMappings) {
+        long s = System.currentTimeMillis();
         int[] targetMappings = new int[pMappings[0].length];
         for (int j = 0; j < pMappings[0].length; j++) {
             //target cols
@@ -696,7 +563,7 @@ public class Iterix extends AbstractAttackAlgorithm {
             }
             targetMappings[j] = amount;
         }
-
+        tMap += (System.currentTimeMillis() - s);
         return targetMappings;
     }
 
@@ -769,5 +636,62 @@ public class Iterix extends AbstractAttackAlgorithm {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean test(int[][] data) {
+        int x = (int) (9.0 * Math.random());
+        int y = (int) (9.0 * Math.random());
+
+        data[x][y] = (int) Math.rint(10.0 * Math.random());
+        int sum = sum(data);
+        System.out.println("Added " + data[x][y]);
+        System.out.println("Sum: " + sum);
+      //  print(data);
+        System.out.println("===============");
+
+        if (sum < 100 && sum%2==0) {
+            System.out.println("Taking sum " + sum + " and going to next level...");
+            boolean res = test(data);
+            if (res) {
+                System.out.println("Finished in Iteration");
+                return true;
+            }
+        } else if (sum == 100) {
+            System.out.println("Finished");
+            return true;
+        }
+        System.out.println("Reset " + x + "/" + y + " at sum " + sum);
+        data[x][y] = 0;
+        return test(data);
+    }
+
+    private int sum(int[][] data) {
+        int sum = 0;
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                sum += data[i][j];
+            }
+        }
+        return sum;
+    }
+
+    private void print(int[][] data) {
+        for (int i = 0; i < 10; i++) {
+            String row = "";
+            for (int j = 0; j < 10; j++) {
+                row += data[i][j] + " ";
+            }
+            System.out.println(row);
+        }
+    }
+
+    public static void main(String[] args) {
+        int[][] data = new int[10][10];
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                data[i][j] = 0;
+            }
+        }
+        new Iterix().test(data);
     }
 }

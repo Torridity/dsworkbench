@@ -6,6 +6,7 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.tag.TagManager;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +33,7 @@ public class NoTag extends Tag {
     @Override
     public List<Integer> getVillageIDs() {
         List<Integer> ids = new LinkedList<Integer>();
-        Tribe user = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
+        Tribe user = GlobalOptions.getSelectedProfile().getTribe();
         if (user != null) {
             for (Village v : user.getVillageList()) {
                 if (tagsVillage(v.getId())) {

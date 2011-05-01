@@ -4,8 +4,8 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.ui.DSWorkbenchMerchantDistibutor.Resource;
-import de.tor.tribes.ui.DSWorkbenchMerchantDistibutor.Transport;
+import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor.Resource;
+import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor.Transport;
 import de.tor.tribes.util.Constants;
 import java.awt.Component;
 import java.text.NumberFormat;

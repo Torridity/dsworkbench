@@ -6,6 +6,7 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.attack.AttackManager;
 import java.io.File;
@@ -96,7 +97,6 @@ public class UserProfile {
         addProperty("last.x", DSWorkbenchMainFrame.getSingleton().getCurrentPosition()[0]);
         addProperty("last.y", DSWorkbenchMainFrame.getSingleton().getCurrentPosition()[1]);
         addProperty("zoom", Double.toString(DSWorkbenchMainFrame.getSingleton().getZoomFactor()));
-        addProperty("active.attack.plan", AttackManager.getSingleton().getActiveAttackPlan());
     }
 
     public void restoreProperties() {
@@ -113,7 +113,6 @@ public class UserProfile {
         } catch (Exception e) {
             logger.warn("Failed to set last zoom factor. Probably this is a new UserProfile with no properties set");
         }
-        AttackManager.getSingleton().setActiveAttackPlan(getProperty("active.attack.plan"));
     }
 
     public boolean storeProfileData() {

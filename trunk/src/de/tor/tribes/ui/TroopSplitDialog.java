@@ -102,7 +102,6 @@ public class TroopSplitDialog extends javax.swing.JDialog {
 
         setTitle("Truppen aufsplitten");
         setAlwaysOnTop(true);
-        setModal(true);
 
         jPanel1.setBackground(new java.awt.Color(239, 235, 223));
 

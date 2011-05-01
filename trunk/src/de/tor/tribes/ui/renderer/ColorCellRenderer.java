@@ -8,16 +8,14 @@ import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
+import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
 /**
  *
  * @author Charon
  */
-public class ColorCellRenderer implements TableCellRenderer {
+public class ColorCellRenderer extends DefaultTableRenderer {
 
-    private DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
     private boolean bMarkSelection = true;
 
     public ColorCellRenderer() {
@@ -29,13 +27,16 @@ public class ColorCellRenderer implements TableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        JLabel l = (JLabel) c;
+
         Color selectColor = (Color) value;
-        if (isSelected && bMarkSelection) {
+        if (isSelected && bMarkSelection && selectColor != null) {
             selectColor = selectColor.darker();
         }
-        c.setBackground(selectColor);
-        ((JLabel) c).setText("");
-        return c;
+        l.setBackground(selectColor);
+        l.setForeground(selectColor);
+        l.setText("");
+        return l;
     }
 }

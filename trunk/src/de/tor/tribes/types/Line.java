@@ -36,35 +36,32 @@ public class Line extends AbstractForm {
     private boolean startArrow = false;
     private boolean endArrow = false;
 
-    public static Line fromXml(Element e) {
+    public void loadFromXml(Element e) {
         try {
-            Line l = new Line();
             Element elem = e.getChild("name");
-            l.setFormName(URLDecoder.decode(elem.getTextTrim(), "UTF-8"));
+            setFormName(URLDecoder.decode(elem.getTextTrim(), "UTF-8"));
             elem = e.getChild("pos");
-            l.setXPos(Double.parseDouble(elem.getAttributeValue("x")));
-            l.setYPos(Double.parseDouble(elem.getAttributeValue("y")));
+            setXPos(Double.parseDouble(elem.getAttributeValue("x")));
+            setYPos(Double.parseDouble(elem.getAttributeValue("y")));
             elem = e.getChild("textColor");
-            l.setTextColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
-            l.setTextAlpha(Float.parseFloat(elem.getAttributeValue("a")));
+            setTextColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
+            setTextAlpha(Float.parseFloat(elem.getAttributeValue("a")));
             elem = e.getChild("drawColor");
-            l.setDrawColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
-            l.setDrawAlpha(Float.parseFloat(elem.getAttributeValue("a")));
+            setDrawColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
+            setDrawAlpha(Float.parseFloat(elem.getAttributeValue("a")));
             elem = e.getChild("stroke");
-            l.setStrokeWidth(Float.parseFloat(elem.getAttributeValue("width")));
+            setStrokeWidth(Float.parseFloat(elem.getAttributeValue("width")));
             elem = e.getChild("arrow");
-            l.setStartArrow(Boolean.parseBoolean(elem.getAttributeValue("start")));
-            l.setEndArrow(Boolean.parseBoolean(elem.getAttributeValue("end")));
+            setStartArrow(Boolean.parseBoolean(elem.getAttributeValue("start")));
+            setEndArrow(Boolean.parseBoolean(elem.getAttributeValue("end")));
             elem = e.getChild("end");
-            l.setXPosEnd(Double.parseDouble(elem.getAttributeValue("x")));
-            l.setYPosEnd(Double.parseDouble(elem.getAttributeValue("y")));
+            setXPosEnd(Double.parseDouble(elem.getAttributeValue("x")));
+            setYPosEnd(Double.parseDouble(elem.getAttributeValue("y")));
             elem = e.getChild("textSize");
-            l.setTextSize(Integer.parseInt(elem.getTextTrim()));
+            setTextSize(Integer.parseInt(elem.getTextTrim()));
             elem = e.getChild("drawName");
-            l.setDrawName(Boolean.parseBoolean(elem.getTextTrim()));
-            return l;
+            setDrawName(Boolean.parseBoolean(elem.getTextTrim()));
         } catch (Exception ex) {
-            return null;
         }
     }
 
@@ -202,8 +199,8 @@ public class Line extends AbstractForm {
     }
 
     @Override
-    public String getFormType() {
-        return "line";
+    public FORM_TYPE getFormType() {
+        return FORM_TYPE.LINE;
     }
 
     /**

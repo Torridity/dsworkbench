@@ -5,14 +5,19 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.InvalidTribe;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -22,20 +27,35 @@ public class BBCodeFormatter {
 
     public static String toHtml(String pBBText) {
         //replace standard HTML items
-        Map<String, String> bbMap = new TreeMap<String, String>();
+        Map<String, String> bbMap = new HashMap<String, String>();
         bbMap.put("(\r\n|\r|\n|\n\r)", "<br/>");
         bbMap.put("\\[b\\](.+?)\\[/b\\]", "<strong>$1</strong>");
+        //bbMap.put(Pattern.compile("\\[table\\](.+?)"), "<table border='0' cellspacing='1' cellpadding='4' class='vis' style='border:#999966 1px solid'> $1");
+        bbMap.put("\\[table\\]", "<table border='0' cellspacing='1' cellpadding='4' class='vis' style='border:#999966 1px solid'>");
+        //bbMap.put(Pattern.compile("(.+?)\\[/table\\]"), "$1</table>");
+        bbMap.put("\\[/table\\]", "</table>");
+        //bbMap.put(Pattern.compile("(.+?)\\[\\*\\*\\](.+?)"), "$1<tr><th>$2");
+        bbMap.put("\\[\\*\\*\\]", "<tr><th>");
+        //bbMap.put(Pattern.compile("(.+?)\\[/\\*\\*\\](.+?)"), "$1</th></tr>$2");
+        bbMap.put("\\[/\\*\\*\\]", "</th></tr>");
+        bbMap.put("\\[\\|\\|\\]", "</th><th>");
+        //bbMap.put(Pattern.compile("(.+?)\\[\\*\\](.+?)"), "$1<tr><td>$2");
+        bbMap.put("\\[\\*\\]", "<tr><td>");
+        //bbMap.put(Pattern.compile("(.+?)\\[/\\*\\](.+?)"), "$1</td></tr>$2");
+        bbMap.put("\\[/\\*\\]", "</td></tr>");
+        bbMap.put("\\[\\|\\]", "</td><td>");
         bbMap.put("\\[s\\](.+?)\\[/s\\]", "<s>$1</s>");
         bbMap.put("\\[i\\](.+?)\\[/i\\]", "<span style='font-style:italic;'>$1</span>");
         bbMap.put("\\[u\\](.+?)\\[/u\\]", "<span style='text-decoration:underline;'>$1</span>");
         bbMap.put("\\[quote\\](.+?)\\[/quote\\]", "<div style='display: block;font-size: 12pt;padding-bottom: 0px;padding-left: 10px;padding-right: 0px;padding-top: 0px;background-color:#FFFFFF;'>$1</div>");
-        bbMap.put("\\[quote=(.+?)\\](.+?)\\[/quote\\]", "<div style='display: block;font-size: 12pt;padding-bottom: 0px;padding-left: 10px;padding-right: 0px;padding-top: 0px;'><b>$1</b><div style='background-color:#FFFFFF;'>$2</div></div>");
+        bbMap.put("\\[quote=(.+?)\\](.+?)\\[/quote\\]", "<div style='display: block;font-size: 12pt;padding-bottom: 0px;padding-left: 10px;padding-right: 0px;padding-top: 5px;'><b>$1 hat geschrieben:</b><div style='background-color:#FFFFFF;'>$2</div></div>");
         bbMap.put("\\[color=(.+?)\\](.+?)\\[/color\\]", "<span style='color:$1;'>$2</span>");
         bbMap.put("\\[size=(.+?)\\](.+?)\\[/size\\]", "<span style='font-size:$1;'>$2</span>");
-        bbMap.put("\\[img\\](.+?)\\[/img\\]", "<img src='$1' />");
+        bbMap.put("\\[img\\](.+?)\\[/img\\]", "<img src='$1'/>");
         bbMap.put("\\[url\\](.+?)\\[/url\\]", "<a href='$1'>$1</a>");
         bbMap.put("\\[url=(.+?)\\](.+?)\\[/url\\]", "<a href='$1'>$2</a>");
-
+        String url = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+        bbMap.put("\\[unit\\](.+?)\\[/unit\\]", "<img src='" + url + "/graphic/unit/unit_$1.png'/>");
         String html = pBBText;
         int lBefore = 0;
         do {
@@ -93,7 +113,7 @@ public class BBCodeFormatter {
                             newValue = "<a href='##' class='ds_link'>Ung&uuml;ltiger Stamm</a>";
                         }
                     } else if (key.indexOf("coord") > -1 || key.indexOf("village") > -1) {
-                        String coord = html.substring(m.start(), m.end()).replaceAll(entry.getKey().toString(), "$1");
+                        String coord = html.substring(m.start(), m.end()).replaceAll(key, "$1");
                         Village v = null;
                         try {
                             v = PluginManager.getSingleton().executeVillageParser(coord).get(0);
@@ -107,7 +127,8 @@ public class BBCodeFormatter {
                         }
                     }
                     if (newValue != null) {
-                        html = html.replaceAll(key, newValue);
+                        html = html.replaceFirst(key, EscapeChars.forRegex(newValue));
+                        m = p.matcher(html);
                     }
                 }
             }
@@ -120,11 +141,17 @@ public class BBCodeFormatter {
                 + ".ds_link{ color:#804000;font-weight:700;text-decoration:none}"
                 + "a {color:#603000;text-decoration:none}"
                 + "blockquote {background-color:#FFFFFF;}"
+                + ".vis td { background:#f4e4bc; }"
+                + ".vis th { font-size: 11pt; text-align: left; font-weight:700; background-color: #c1a264}"
                 + "</style>";
     }
 
     public static void main(String[] args) {
-        String reg = "\\[size=(.+?)\\](.?)\\[/size\\]";
-        System.out.println("[size=23][/size]".matches(reg));
+        String reg = "(.+?)\\[\\|\\|\\]";
+        reg = "\\[\\*\\*\\](.+?)\\[/\\*\\*\\]";
+        //System.out.println("Test[||]Test[||]Test".replaceAll(reg, "<th>$1</th>"));
+        // System.out.println("[**]Test[/**]".replaceAll(reg, "<tr>$1</tr>"));
+        System.out.println(BBCodeFormatter.toHtml("[table][**]Test[||]Test2[/**][*]test1[|]test2[/*][/table]"));
+        // System.out.println(StringUtils.replace("Test[||]Test", reg, "<th>$1</th><th>$2</th>"));
     }
 }

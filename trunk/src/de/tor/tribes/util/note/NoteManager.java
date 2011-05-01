@@ -4,15 +4,22 @@
  */
 package de.tor.tribes.util.note;
 
+import de.tor.tribes.control.GenericManager;
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Note;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.DSWorkbenchNotepad;
+import de.tor.tribes.ui.views.DSWorkbenchNotepad;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -23,11 +30,10 @@ import org.jdom.Element;
  *
  * @author Charon
  */
-public class NoteManager {
+public class NoteManager extends GenericManager<Note> {
 
     private static Logger logger = Logger.getLogger("NoteManager");
     private static NoteManager SINGLETON = null;
-    private List<Note> notes = null;
 
     public static synchronized NoteManager getSingleton() {
         if (SINGLETON == null) {
@@ -37,65 +43,91 @@ public class NoteManager {
     }
 
     NoteManager() {
-        notes = new LinkedList<Note>();
+        super(true);
     }
 
-    public void loadNotesFromFile(String pFile) {
+    @Override
+    public String[] getGroups() {
+        String[] groups = super.getGroups();
+        Arrays.sort(groups, new Comparator<String>() {
 
-        notes.clear();
+            @Override
+            public int compare(String o1, String o2) {
+                if (o1.equals(DEFAULT_GROUP)) {
+                    return -1;
+                } else if (o2.equals(DEFAULT_GROUP)) {
+                    return 1;
+                } else {
+                    return String.CASE_INSENSITIVE_ORDER.compare(o1, o2);
+                }
+            }
+        });
+        return groups;
+    }
+
+    @Override
+    public void loadElements(String pFile) {
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return;
         }
         File noteFile = new File(pFile);
+        invalidate();
+        initialize();
         if (noteFile.exists()) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Reading notes from '" + pFile + "'");
             }
             try {
                 Document d = JaxenUtils.getDocument(noteFile);
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//notes/note")) {
-                    try {
-                        Note n = Note.fromXml(e);
-                        notes.add(n);
-                    } catch (Exception inner) {
-                        //ignored, marker invalid
+                List<Element> data = (List<Element>) JaxenUtils.getNodes(d, "//noteData");
+                if (data == null || data.isEmpty()) {
+                    logger.info("Loading legacy data format");
+                    //old version
+                    for (Element e1 : (List<Element>) JaxenUtils.getNodes(d, "//notes/note")) {
+                        try {
+                            Note n = new Note();
+                            n.loadFromXml(e1);
+                            addManagedElement(n);
+                        } catch (Exception inner) {
+                            //ignored, note invalid
+                        }
+                    }
+                } else {
+                    Element dataNode = data.get(0);
+                    double version = Double.parseDouble(dataNode.getAttributeValue("version"));
+                    for (Element e : (List<Element>) JaxenUtils.getNodes(dataNode, "noteSets/noteSet")) {
+                        String setKey = e.getAttributeValue("name");
+                        setKey = URLDecoder.decode(setKey, "UTF-8");
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Loading note set '" + setKey + "'");
+                        }
+                        for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "notes/note")) {
+                            try {
+                                Note n = new Note();
+                                n.loadFromXml(e1);
+                                addManagedElement(setKey, n);
+                            } catch (Exception inner) {
+                                //ignored, marker invalid
+                            }
+                        }
                     }
                 }
                 logger.debug("Notes successfully loaded");
             } catch (Exception e) {
                 logger.error("Failed to load notes", e);
             }
+
         } else {
             if (logger.isInfoEnabled()) {
                 logger.info("Notes file not found under '" + pFile + "'");
             }
         }
-        /*  int cnt = 0;
-        for (Village v : GlobalOptions.getSelectedProfile().getTribe().getVillageList()) {
-        for (int i = 0; i < 3; i++) {
-        Note n = new Note();
-        n.addVillage(v);
-        int icon = (int) Math.rint(Math.random() * 9);
-        n.setMapMarker(icon);
-        n.setNoteText("Text" + cnt);
-        addNote(n);
-        }
-        cnt++;
-
-        }*/
-
-        if (notes.size() > 0) {
-            //set current note
-            DSWorkbenchNotepad.getSingleton().setCurrentNote(notes.get(0));
-        }
+        revalidate();
     }
 
-    public void loadNotesFromDatabase(String pUrl) {
-        logger.info("Not implemented yet");
-    }
-
-    public void saveNotesToFile(String pFile) {
+    @Override
+    public void saveElements(String pFile) {
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return;
@@ -106,15 +138,24 @@ public class NoteManager {
         }
         try {
             StringBuilder b = new StringBuilder();
-            b.append("<notes>\n");
-            Note[] aNotes = notes.toArray(new Note[]{});
-            for (Note n : aNotes) {
-                String xml = n.toXml();
-                if (xml != null) {
-                    b.append(xml).append("\n");
+            b.append("<noteData version=\"1.0\">\n");
+            b.append("<noteSets>\n");
+            Iterator<String> plans = getGroupIterator();
+
+            while (plans.hasNext()) {
+                String key = plans.next();
+                b.append("<noteSet name=\"").append(URLEncoder.encode(key, "UTF-8")).append("\">\n");
+                List<ManageableType> elems = getAllElements(key);
+                b.append("<notes>\n");
+                for (ManageableType elem : elems) {
+                    b.append(elem.toXml()).append("\n");
                 }
+
+                b.append("</notes>\n");
+                b.append("</noteSet>\n");
             }
-            b.append("</notes>");
+            b.append("</noteSets>");
+            b.append("</noteData>");
             FileWriter w = new FileWriter(pFile);
             w.write(b.toString());
             w.flush();
@@ -129,177 +170,148 @@ public class NoteManager {
                 logger.error("Failed to save notes", e);
             }
         }
-
     }
 
-    public void saveNotesToDatabase() {
-        logger.info("Not implemented yet");
-    }
-
-    public String getExportData() {
-        try {
-            logger.debug("Generating notes export data");
-            String result = "<notes>\n";
-
-            Note[] aNotes = notes.toArray(new Note[]{});
-            for (Note note : aNotes) {
-                result += note.toXml();
-            }
-            result += "</notes>\n";
-            logger.debug("Export data generated successfully");
-            return result;
-        } catch (Exception e) {
-            logger.error("Failed to generate notes export data", e);
+    @Override
+    public String getExportData(List<String> pGroupsToExport) {
+        if (pGroupsToExport.isEmpty()) {
             return "";
         }
+        logger.debug("Generating notes export data");
+        StringBuilder b = new StringBuilder();
+        b.append("<noteSets>\n");
+
+        for (String set : pGroupsToExport) {
+            try {
+                b.append("<noteSet name=\"").append(URLEncoder.encode(set, "UTF-8")).append("\">\n");
+                List<ManageableType> elements = getAllElements(set);
+                b.append("<notes>\n");
+
+                for (ManageableType elem : elements) {
+                    b.append(elem.toXml()).append("\n");
+                }
+                b.append("</notes>\n");
+                b.append("</noteSet>\n");
+            } catch (Exception e) {
+                logger.warn("Failed to export note set'" + set + "'", e);
+            }
+        }
+        b.append("</noteSets>\n");
+        logger.debug("Export data generated successfully");
+        return b.toString();
     }
 
-    public boolean importNotes(File pFile) {
+    @Override
+    public boolean importData(File pFile, String pExtension) {
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return false;
         }
-
+        invalidate();
+        boolean result = false;
         logger.info("Loading notes");
-
         try {
             Document d = JaxenUtils.getDocument(pFile);
-            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//notes/note")) {
-                Note note = Note.fromXml(e);
-                if (note != null) {
-                    notes.add(note);
+
+            List<Element> data = (List<Element>) JaxenUtils.getNodes(d, "//noteData");
+            if (data == null || data.isEmpty()) {
+                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//notes/note")) {
+                    Note note = new Note();
+                    note.loadFromXml(e);
+                    if (note != null) {
+                        addManagedElement(note);
+                    }
                 }
-            }
-            logger.debug("Notes imported successfully");
-            DSWorkbenchNotepad.getSingleton().resetView();
-            return true;
-        } catch (Exception e) {
-            logger.error("Failed to import notes", e);
-            DSWorkbenchNotepad.getSingleton().resetView();
-            return false;
-        }
-    }
-
-    public Note getNextNote(Note pCurrent) {
-        if (notes.isEmpty()) {
-            //no element
-            return null;
-        } else if (pCurrent == null || notes.size() == 1) {
-            //only one element
-            return notes.get(0);
-        } else {
-            int id = notes.indexOf(pCurrent);
-            if (id + 1 < notes.size()) {
-                return notes.get(id + 1);
             } else {
-                return notes.get(0);
-            }
-        }
-    }
+                Element dataNode = data.get(0);
+                double version = Double.parseDouble(dataNode.getAttributeValue("version"));
+                for (Element e : (List<Element>) JaxenUtils.getNodes(dataNode, "noteSets/noteSet")) {
+                    String setKey = e.getAttributeValue("name");
+                    setKey = URLDecoder.decode(setKey, "UTF-8");
+                    if (pExtension != null) {
+                        setKey += "_" + pExtension;
+                    }
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Loading note set '" + setKey + "'");
+                    }
+                    addGroup(setKey);
 
-    public Note getPreviousNote(Note pCurrent) {
-        if (notes.isEmpty()) {
-            //no element
-            return null;
-        } else if (pCurrent == null || notes.size() == 1) {
-            //only one element
-            return notes.get(0);
-        } else {
-            int id = notes.indexOf(pCurrent);
-            if (id - 1 >= 0) {
-                return notes.get(id - 1);
-            } else {
-                return notes.get(notes.size() - 1);
-            }
-        }
-    }
-
-    public Note getFirstNote() {
-        //iterator = notes.listIterator();
-        if (notes.isEmpty()) {
-            return null;
-        }
-        return notes.get(0);
-    }
-
-    public Note getLastNote() {
-        if (notes.isEmpty()) {
-            return null;
-        }
-        return notes.get(notes.size() - 1);
-    }
-
-    public List<Note> getNotes() {
-        return notes;
-    }
-
-    public void addNote(Note pNote) {
-        notes.add(pNote);
-    }
-
-    public void removeNote(Note pNote) {
-        notes.remove(pNote);
-    }
-
-    public Note findNote(Note pStart, String pText) {
-        if (pStart == null) {
-            if (notes.size() >= 1) {
-                pStart = notes.get(0);
-            } else {
-                //no notes available
-                return null;
-            }
-        }
-        Note[] aNotes = notes.toArray(new Note[]{});
-        if (aNotes == null) {
-            return null;
-        }
-        for (int i = notes.indexOf(pStart) + 1;;) {
-            Note n = null;
-            if (i < notes.size()) {
-                //search next note
-                n = aNotes[i];
-                i++;
-            } else {
-                //last note reached, start from beginning
-                i = 0;
-                n = aNotes[i];
-                i++;
-            }
-
-            if (n.getNoteText().toLowerCase().indexOf(pText.toLowerCase()) > -1) {
-                //search in note text
-                return n;
-            }
-            //search in village name
-            for (Integer id : n.getVillageIds()) {
-                Village v = DataHolder.getSingleton().getVillagesById().get(id);
-                if (v != null) {
-                    if (v.toString().toLowerCase().indexOf(pText.toLowerCase()) > -1) {
-                        return n;
+                    for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "notes/note")) {
+                        try {
+                            Note n = new Note();
+                            n.loadFromXml(e1);
+                            addManagedElement(setKey, n);
+                        } catch (Exception inner) {
+                            //ignored, marker invalid
+                        }
                     }
                 }
             }
-            if (i == notes.indexOf(pStart) + 1) {
-                break;
-            }
+            logger.debug("Notes imported successfully");
+            result = true;
+        } catch (Exception e) {
+            logger.error("Failed to import notes", e);
+            DSWorkbenchNotepad.getSingleton().resetView();
         }
-        return null;
+        revalidate(true);
+        return result;
     }
 
+    /*   public Note findNote(Note pStart, String pText) {
+    if (pStart == null) {
+    if (notes.size() >= 1) {
+    pStart = notes.get(0);
+    } else {
+    //no notes available
+    return null;
+    }
+    }
+    Note[] aNotes = notes.toArray(new Note[]{});
+    if (aNotes == null) {
+    return null;
+    }
+    for (int i = notes.indexOf(pStart) + 1;;) {
+    Note n = null;
+    if (i < notes.size()) {
+    //search next note
+    n = aNotes[i];
+    i++;
+    } else {
+    //last note reached, start from beginning
+    i = 0;
+    n = aNotes[i];
+    i++;
+    }
+    
+    if (n.getNoteText().toLowerCase().indexOf(pText.toLowerCase()) > -1) {
+    //search in note text
+    return n;
+    }
+    //search in village name
+    for (Integer id : n.getVillageIds()) {
+    Village v = DataHolder.getSingleton().getVillagesById().get(id);
+    if (v != null) {
+    if (v.toString().toLowerCase().indexOf(pText.toLowerCase()) > -1) {
+    return n;
+    }
+    }
+    }
+    if (i == notes.indexOf(pStart) + 1) {
+    break;
+    }
+    }
+    return null;
+    }
+     */
     public Note getNoteForVillage(Village pVillage) {
         if (pVillage == null) {
             return null;
         }
-        for (Note n : notes) {
+        for (ManageableType t : getAllElementsFromAllGroups()) {
+            Note n = (Note) t;
             if (n.getVillageIds().contains(pVillage.getId())) {
                 return n;
             }
-            /*for (Integer id : n.getVillageIds()) {
-            if (id == pVillage.getId()) {
-            return n;
-            }
-            }*/
         }
         return null;
     }
@@ -309,7 +321,8 @@ public class NoteManager {
             return null;
         }
         List<Note> noteList = new LinkedList<Note>();
-        for (Note n : notes) {
+        for (ManageableType t : getAllElementsFromAllGroups()) {
+            Note n = (Note) t;
             if (n.getVillageIds().contains(pVillage.getId())) {
                 noteList.add(n);
             }
@@ -318,10 +331,9 @@ public class NoteManager {
     }
 
     public Hashtable<Village, List<Note>> getNotesMap() {
-
         Hashtable<Village, List<Note>> noteMap = new Hashtable<Village, List<Note>>();
-
-        for (Note n : notes) {
+        for (ManageableType t : getAllElementsFromAllGroups()) {
+            Note n = (Note) t;
             for (Integer id : n.getVillageIds()) {
                 Village v = DataHolder.getSingleton().getVillagesById().get(id);
                 List<Note> list = noteMap.get(v);

@@ -5,30 +5,22 @@
 package de.tor.tribes.ui.renderer;
 
 import de.tor.tribes.types.Tribe;
-import de.tor.tribes.util.Constants;
 import java.awt.Component;
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
+import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
 /**
  *
  * @author Jejkal
  */
-public class TribeCellRenderer extends DefaultTableCellRenderer {
+public class TribeCellRenderer extends DefaultTableRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         JLabel label = (JLabel) c;
         Tribe t = (Tribe) value;
-        if (!isSelected) {
-           if (row % 2 == 0) {
-                label.setBackground(Constants.DS_ROW_B);
-            } else {
-                label.setBackground(Constants.DS_ROW_A);
-            }
-        }
         try {
             label.setText(t.toString());
             label.setToolTipText(t.getToolTipText());

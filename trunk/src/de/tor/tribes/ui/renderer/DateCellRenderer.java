@@ -4,19 +4,18 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.ServerSettings;
 import java.awt.Component;
 import java.text.SimpleDateFormat;
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
+import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
 /**
  *
  * @author Jejkal
  */
-public class DateCellRenderer extends DefaultTableCellRenderer {
+public class DateCellRenderer extends DefaultTableRenderer {
 
     private SimpleDateFormat specialFormat = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
 
@@ -37,18 +36,8 @@ public class DateCellRenderer extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        if (!isSelected) {
-            if (row % 2 == 0) {
-                c.setBackground(Constants.DS_ROW_B);
-            } else {
-                c.setBackground(Constants.DS_ROW_A);
-            }
-        }
-        return c;
-    }
-
-    @Override
-    public void setValue(Object value) {
-        setText((value == null) ? "" : specialFormat.format(value));
+        JLabel label = (JLabel) c;
+        label.setText((value == null) ? "" : specialFormat.format(value));
+        return label;
     }
 }

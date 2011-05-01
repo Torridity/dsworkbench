@@ -27,22 +27,19 @@ public class Text extends AbstractForm {
 
     private java.awt.Rectangle mBounds = null;
 
-    public static AbstractForm fromXml(Element e) {
+    public void loadFromXml(Element e) {
         try {
-            Text l = new Text();
             Element elem = e.getChild("name");
-            l.setFormName(URLDecoder.decode(elem.getTextTrim(), "UTF-8"));
+            setFormName(URLDecoder.decode(elem.getTextTrim(), "UTF-8"));
             elem = e.getChild("pos");
-            l.setXPos(Double.parseDouble(elem.getAttributeValue("x")));
-            l.setYPos(Double.parseDouble(elem.getAttributeValue("y")));
+            setXPos(Double.parseDouble(elem.getAttributeValue("x")));
+            setYPos(Double.parseDouble(elem.getAttributeValue("y")));
             elem = e.getChild("textColor");
-            l.setTextColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
-            l.setTextAlpha(Float.parseFloat(elem.getAttributeValue("a")));
+            setTextColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
+            setTextAlpha(Float.parseFloat(elem.getAttributeValue("a")));
             elem = e.getChild("textSize");
-            l.setTextSize(Integer.parseInt(elem.getTextTrim()));
-            return l;
+            setTextSize(Integer.parseInt(elem.getTextTrim()));
         } catch (Exception ex) {
-            return null;
         }
     }
 
@@ -116,7 +113,7 @@ public class Text extends AbstractForm {
     }
 
     @Override
-    public String getFormType() {
-        return "text";
+    public FORM_TYPE getFormType() {
+        return FORM_TYPE.TEXT;
     }
 }

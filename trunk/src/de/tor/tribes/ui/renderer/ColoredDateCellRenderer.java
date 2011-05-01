@@ -12,59 +12,58 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
+import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
 /**
  * @TODO (DIFF) Smoother color gradient, expired values are stroked
  * @author Jejkal
  */
-public class ColoredDateCellRenderer implements TableCellRenderer {
-
+public class ColoredDateCellRenderer extends DefaultTableRenderer {
+    
     private SimpleDateFormat specialFormat = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
-    private DefaultTableCellRenderer coloredRenderer = null;
-    private DefaultTableCellRenderer defaultRenderer = null;
     private final int MINUTE = (1000 * 60);
-
+    
     public ColoredDateCellRenderer() {
-        //super();
-        coloredRenderer = new DefaultTableCellRenderer();
-        defaultRenderer = new DefaultTableCellRenderer();
+        super();
         if (!ServerSettings.getSingleton().isMillisArrival()) {
             specialFormat = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
         }
     }
-
+    
     public ColoredDateCellRenderer(String pPattern) {
         this();
         specialFormat = new SimpleDateFormat(pPattern);
     }
-
+    
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        Component c = coloredRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
+        Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         JLabel renderComponent = ((JLabel) c);
         Date d = (Date) value;
-        long t = d.getTime();
+        long t = 0;
+        if (d == null) {
+            d = new Date();
+        }
         long now = System.currentTimeMillis();
+        t = d.getTime();
         renderComponent.setText(specialFormat.format(d));
+        
         long diff = t - now;
         long five_minutes = 5 * MINUTE;
         long ten_minutes = 10 * MINUTE;
-
+        Color color = null;
+        
+        if (row % 2 == 0) {
+            color = Constants.DS_ROW_A;
+        } else {
+            color = Constants.DS_ROW_B;
+        }
+        
         if (t <= now) {
             //value is expired, stroke result
-            JLabel label = (JLabel) defaultRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if (!isSelected) {
-                if (row % 2 == 0) {
-                    label.setBackground(Constants.DS_ROW_B);
-                } else {
-                    label.setBackground(Constants.DS_ROW_A);
-                }
-            }
-            label.setText("<html><s>" + specialFormat.format(d) + "</s></html>");
-            return label;
+            renderComponent.setText(specialFormat.format(d));
+            renderComponent.setForeground(Color.RED);
         } else if (diff <= ten_minutes && diff > five_minutes) {
             float ratio = (float) (diff - five_minutes) / (float) five_minutes;
             Color c1 = Color.YELLOW;
@@ -72,8 +71,7 @@ public class ColoredDateCellRenderer implements TableCellRenderer {
             int red = (int) (c2.getRed() * ratio + c1.getRed() * (1 - ratio));
             int green = (int) (c2.getGreen() * ratio + c1.getGreen() * (1 - ratio));
             int blue = (int) (c2.getBlue() * ratio + c1.getBlue() * (1 - ratio));
-            Color time_color = new Color(red, green, blue);
-            renderComponent.setBackground(time_color);
+            color = new Color(red, green, blue);
         } else if (diff <= five_minutes) {
             float ratio = (float) diff / (float) five_minutes;
             Color c1 = Color.RED;
@@ -81,22 +79,18 @@ public class ColoredDateCellRenderer implements TableCellRenderer {
             int red = (int) (c2.getRed() * ratio + c1.getRed() * (1 - ratio));
             int green = (int) (c2.getGreen() * ratio + c1.getGreen() * (1 - ratio));
             int blue = (int) (c2.getBlue() * ratio + c1.getBlue() * (1 - ratio));
-            Color time_color = new Color(red, green, blue);
-            renderComponent.setBackground(time_color);
+            color = new Color(red, green, blue);
         } else {
             //default renderer and color
-            JLabel label = (JLabel) defaultRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
-            if (!isSelected) {
-                if (row % 2 == 0) {
-                    label.setBackground(Constants.DS_ROW_B);
-                } else {
-                    label.setBackground(Constants.DS_ROW_A);
-                }
-            }
-            label.setText(specialFormat.format((Date) value));
-            return label;
+            renderComponent.setText(specialFormat.format((Date) value));
         }
-        return c;
+        
+        
+        if (isSelected) {
+            color = c.getBackground();
+        }
+        renderComponent.setOpaque(true);
+        renderComponent.setBackground(color);
+        return renderComponent;
     }
 }

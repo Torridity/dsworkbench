@@ -5,8 +5,13 @@
 package de.tor.tribes.types;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.util.BBSupport;
+import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.support.SOSFormater;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,8 +25,156 @@ import java.util.List;
  *
  * @author Torridity
  */
-public class SOSRequest {
+public class SOSRequest implements BBSupport {
 
+    private final String[] VARIABLES = new String[]{"%SOS_ICON%", "%TARGET%", "%ATTACKS%", "%DEFENDERS%", "%WALL_INFO%", "%WALL_LEVEL%", "%FIRST_ATTACK%", "%LAST_ATTACK%", "%SOURCE%", "%SOURCE_DATE_TYPE%", "%SOURCE_DATE%", "%SOURCE_TYPE%", "%SUMMARY%"};
+    private final static String STANDARD_TEMPLATE = "[quote]%SOS_ICON% %TARGET% (%ATTACKS%)\n[quote]%DEFENDERS%\n%WALL_INFO%[/quote]\n\n%FIRST_ATTACK%\n%SOURCE_DATE%\n%LAST_ATTACK%\n\n%SUMMARY%[/quote]";
+    private final static String TEMPLATE_PROPERTY = "sos.bbexport.template";
+
+    @Override
+    public String[] getBBVariables() {
+        return VARIABLES;
+    }
+
+    public String[] getReplacementsForTarget(Village pTarget, boolean pExtended) {
+        //TODO Testing only!!
+        String serverURL = "http://de14.die-staemme.de/";//ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+        //main quote
+
+        //village info size
+        String sosImageVal = "[img]" + serverURL + "/graphic/reqdef.png[/img]";
+        String targetVal = pTarget.toBBCode();
+        String attackCountVal = "[img]" + serverURL + "/graphic/unit/att.png[/img] " + attacks.get(pTarget).getAttacks().size();
+        //village details quote
+
+        //add units and wall
+        String unitVal = buildUnitInfo(attacks.get(pTarget));
+        String wallInfoVal = "[img]" + serverURL + "/graphic/buildings/wall.png[/img] " + buildWallInfo(attacks.get(pTarget));
+        String wallLevelVal = Integer.toString(attacks.get(pTarget).getWallLevel());
+
+        //build first-last-attack
+
+        List<TimedAttack> atts = attacks.get(pTarget).getAttacks();
+
+        Collections.sort(atts, SOSRequest.ARRIVE_TIME_COMPARATOR);
+
+        //add first and last attack information
+        SimpleDateFormat dateFormat = null;
+        if (ServerSettings.getSingleton().isMillisArrival()) {
+            dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS");
+        } else {
+            dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        }
+        String firstAttackVal = "[img]" + serverURL + "/graphic/map/attack.png[/img] " + dateFormat.format(new Date(atts.get(0).getlArriveTime()));
+
+        //add details for all attacks
+        int fakeCount = 0;
+        int snobCount = 0;
+        String sourceVal = "";
+        String sourceDateVal = "";
+        String sourceDateTypeVal = "";
+        String sourceTypeVal = "";
+        for (int i = 0; i < atts.size(); i++) {
+            try {
+                TimedAttack attack = atts.get(i);
+                if (attack.isPossibleFake()) {
+                    fakeCount++;
+                } else if (attack.isPossibleSnob()) {
+                    snobCount++;
+                }
+
+                sourceVal += attack.getSource().toBBCode() + "\n";
+
+                if (attack.isPossibleFake()) {
+                    sourceDateTypeVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + " [b](Fake)[/b]" + "\n";
+                    sourceDateVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
+                    sourceTypeVal += attack.getSource().toBBCode() + " [b](Fake)[/b]" + "\n";
+                } else if (attack.isPossibleSnob()) {
+                    sourceDateTypeVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + " [b](AG)[/b]" + "\n";
+                    sourceDateVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
+                    sourceTypeVal += attack.getSource().toBBCode() + " [b](AG)[/b]" + "\n";
+                } else {
+                    sourceDateTypeVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
+                    sourceDateVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
+                    sourceTypeVal += attack.getSource().toBBCode() + "\n";
+                }
+
+            } catch (Exception e) {
+            }
+        }
+
+        sourceVal = sourceVal.trim();
+        sourceTypeVal = sourceTypeVal.trim();
+        sourceDateVal = sourceDateVal.trim();
+        sourceDateTypeVal = sourceDateTypeVal.trim();
+        String lastAttackVal = "[img]" + serverURL + "/graphic/map/return.png[/img] " + dateFormat.format(new Date(atts.get(atts.size() - 1).getlArriveTime()));
+        String summaryVal = "[u]Mögliche Fakes:[/u] " + fakeCount + "\n" + "[u]Mögliche AGs:[/u] " + snobCount;
+
+        return new String[]{sosImageVal, targetVal, attackCountVal, unitVal, wallInfoVal, wallLevelVal, firstAttackVal, lastAttackVal, sourceVal, sourceDateTypeVal, sourceDateVal, sourceTypeVal, summaryVal};
+    }
+
+    private String buildUnitInfo(TargetInformation pTargetInfo) {
+        StringBuffer buffer = new StringBuffer();
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+        String defRow = "";
+        String offRow = "";
+
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            Integer amount = pTargetInfo.getTroops().get(unit);
+            if (amount != null && amount != 0) {
+                if (unit.getPlainName().equals("spear") || unit.getPlainName().equals("sword") || unit.getPlainName().equals("archer") || unit.getPlainName().equals("spy") || unit.getPlainName().equals("heavy") || unit.getPlainName().equals("knight")) {
+                    defRow += unit.toBBCode() + " " + nf.format(amount) + " ";
+                } else {
+                    offRow += unit.toBBCode() + " " + nf.format(amount) + " ";
+                }
+            }
+        }
+        if (defRow.length() > 1) {
+            buffer.append(defRow.trim()).append("\n");
+        }
+        if (offRow.length() > 1) {
+            buffer.append(offRow.trim()).append("\n");
+        }
+        return buffer.toString();
+    }
+
+    private String buildWallInfo(TargetInformation pTargetInfo) {
+        StringBuffer buffer = new StringBuffer();
+        double perc = pTargetInfo.getWallLevel() / 20.0;
+        int filledFields = (int) Math.rint(perc * 15.0);
+        buffer.append("[color=#00FF00]");
+        for (int i = 0; i < filledFields; i++) {
+            buffer.append("█");
+        }
+        buffer.append("[/color]");
+        if (filledFields < 15) {
+            buffer.append("[color=#EEEEEE]");
+            for (int i = 0; i < (15 - filledFields); i++) {
+                buffer.append("█");
+            }
+            buffer.append("[/color]");
+        }
+
+        buffer.append(" (" + pTargetInfo.getWallLevel() + ")");
+        return buffer.toString();
+    }
+
+    @Override
+    public String[] getReplacements(boolean pExtended) {
+        return getReplacementsForTarget(attacks.keys().nextElement(), pExtended);
+    }
+
+    @Override
+    public String getStandardTemplate() {
+        return STANDARD_TEMPLATE;
+    }
+
+    @Override
+    public String getTemplateProperty() {
+        return TEMPLATE_PROPERTY;
+    }
     private Tribe mDefender = null;
     private Hashtable<Village, TargetInformation> attacks = null;
 

@@ -27,6 +27,11 @@ public class BarbarianAlly extends Ally {
         return 0;
     }
 
+    @Override
+    public String toBBCode() {
+        return "Barbaren";
+    }
+
     public String getName() {
         return "Barbaren";
     }

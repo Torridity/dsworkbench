@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.util.algo;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Village;
@@ -16,11 +17,13 @@ import java.util.List;
 import de.tor.tribes.types.Fake;
 import de.tor.tribes.types.Off;
 import de.tor.tribes.util.ServerSettings;
+import java.io.FileWriter;
 import java.util.Collections;
+import java.util.HashMap;
 import org.apache.log4j.Logger;
 
 /**
- * @TODO (DIFF) Bugfix: Fake assignment for random arrive time fixed
+ * @TODO (DIFF) Stop calculation if no more targets are available
  * @author Charon
  */
 public class BruteForce extends AbstractAttackAlgorithm {
@@ -36,6 +39,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
             Hashtable<Village, Integer> pMaxAttacksTable,
             TimeFrame pTimeFrame,
             boolean pFakeOffTargets) {
+
         Enumeration<UnitHolder> unitKeys = pSources.keys();
         Hashtable<Village, Hashtable<UnitHolder, List<Village>>> attacks = new Hashtable<Village, Hashtable<UnitHolder, List<Village>>>();
         logger.debug("Assigning offs");
@@ -61,7 +65,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
                     Collections.shuffle(pTargets);
                     //search all targets
                     logInfo(" - Teste " + pTargets.size() + " mögliche Ziele");
-                    for (Village v : pTargets) {
+                    for (Village v : pTargets.toArray(new Village[]{})) {
                         int maxAttacksPerVillage = pMaxAttacksTable.get(v);
                         double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
                         if (unit.getPlainName().equals("snob")) {
@@ -70,21 +74,9 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                 time = Double.MAX_VALUE;
                             }
                         }
-                        /* Date sendTime = new Date(arrive - (long) time * 1000);
-                        if (pTimeFrame.isVariableArriveTime()) {
-                        //calculate possible arrive time and store it in sendTime
-                        sendTime = pTimeFrame.getRandomArriveTime(Math.round(time * 1000.0), source.getTribe(), new LinkedList<Long>());
-                        if (sendTime == null) {
-                        //no arrive time found, set send time to 1.1.1970
-                        sendTime = new Date(0);
-                        } else {
-                        //arrive time found, set correct send time
-                        sendTime = new Date(sendTime.getTime() - (long) time * 1000);
-                        }
-                        }*/
+
                         long runtime = (long) time * 1000;
                         //check if attack is somehow possible
-                        //if (pTimeFrame.inside(sendTime, source.getTribe())) {
                         if (pTimeFrame.isMovementPossible(runtime, source.getTribe())) {
                             //only calculate if time is in time frame
                             //get list of source villages for current target
@@ -115,14 +107,14 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                         if (!attsPerUnit.contains(source)) {
                                             //only add source if it does not attack current target yet
                                             added = true;
-                                            logInfo("   * Neuer Angriffe: " + source + " > " + v);
+                                            logInfo("   * Neuer Angriffe: " + source + " -> " + v);
                                             attsPerUnit.add(source);
                                         }
                                     } else {
                                         attsPerUnit = new LinkedList<Village>();
                                         //only add source if it does not attack current target yet
                                         added = true;
-                                        logInfo("   * Neuer Angriffe: " + source + " > " + v);
+                                        logInfo("   * Neuer Angriffe: " + source + " -> " + v);
                                         attsPerUnit.add(source);
                                         attacksForVillage.put(unit, attsPerUnit);
                                     }
@@ -132,9 +124,10 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                     }
                                 } else {
                                     //max number of attacks per village reached, continue search
+                                    logInfo("   * Entferne vollständiges Ziel " + v);
+                                    pTargets.remove(v);
                                 }
                             }
-
                         }
 
                         if (vTarget != null) {

@@ -57,8 +57,8 @@
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="jAttackPlanBox" alignment="0" pref="209" max="32767" attributes="0"/>
-                          <Component id="jTimeSpinner" alignment="1" pref="209" max="32767" attributes="1"/>
+                          <Component id="jAttackPlanBox" alignment="0" pref="211" max="32767" attributes="0"/>
+                          <Component id="jTimeSpinner" alignment="1" pref="211" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jButton1" min="-2" max="-2" attributes="0"/>

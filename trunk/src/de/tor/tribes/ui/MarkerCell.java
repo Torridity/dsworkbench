@@ -7,6 +7,8 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.BarbarianAlly;
+import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Tribe;
 import javax.swing.ImageIcon;
@@ -31,14 +33,6 @@ public class MarkerCell extends javax.swing.JPanel implements Comparable<MarkerC
         }
     }
 
-    /*   public static MarkerCell factoryPlayerMarker(Tribe pTribe) throws Exception {
-    return new MarkerCell(pTribe);
-    }
-    
-    public static MarkerCell factoryAllyMarker(Ally pAlly) throws Exception {
-    return new MarkerCell(pAlly);
-    }
-     */
     public static MarkerCell factoryMarkerCell(Marker pMarker) throws Exception {
         if (pMarker == null) {
             return null;
@@ -57,8 +51,11 @@ public class MarkerCell extends javax.swing.JPanel implements Comparable<MarkerC
     /** Creates new form MarkerPanel */
     MarkerCell(Tribe pTribe) throws Exception {
         if (pTribe == null) {
-            throw new InstantiationException("Tribe argument must not be null");
+            //   throw new InstantiationException("Tribe argument must not be null");
+            //TODO: Testing only
+            pTribe = Barbarians.getSingleton();
         }
+
         initComponents();
         mTribe = pTribe;
         jMarkerLabel.setText(mTribe.getName());
@@ -69,7 +66,9 @@ public class MarkerCell extends javax.swing.JPanel implements Comparable<MarkerC
 
     MarkerCell(Ally pAlly) throws Exception {
         if (pAlly == null) {
-            throw new InstantiationException("Ally argument must not be null");
+            //  throw new InstantiationException("Ally argument must not be null");
+            //TODO: Testing only
+            pAlly = BarbarianAlly.getSingleton();
         }
         initComponents();
         mAlly = pAlly;

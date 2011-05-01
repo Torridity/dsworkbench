@@ -5,143 +5,90 @@
 package de.tor.tribes.ui.models;
 
 import de.tor.tribes.types.FightReport;
-import de.tor.tribes.types.ReportSet;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.DSWorkbenchReportFrame;
+import de.tor.tribes.ui.views.DSWorkbenchReportFrame;
 import de.tor.tribes.util.report.ReportManager;
-import de.tor.tribes.util.report.ReportManagerListener;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import javax.swing.table.AbstractTableModel;
 import org.apache.log4j.Logger;
 
 /**
  *
  * @author Torridity
  */
-public class ReportManagerTableModel extends AbstractDSWorkbenchTableModel {
+public class ReportManagerTableModel extends AbstractTableModel {
 
-    private final String PROPERTY_BASE_ID = "report.table.model";
-    protected static Class[] types;
-    protected static String[] colNames;
-    protected static List<String> internalNames;
-    protected static boolean[] editableColumns = null;
-    private static Logger logger = Logger.getLogger("ReportTable");
-    private String sReportSet = ReportManager.DEFAULT_SET;
-    private static ReportManagerTableModel SINGLETON = null;
+    private String sSet = null;
+    private Class[] types = new Class[]{FightReport.class, Date.class, Tribe.class, Village.class, Tribe.class, Village.class, Integer.class, Byte.class};
+    private String[] colNames = new String[]{"Status", "Gesendet", "Angreifer", "Herkunft", "Verteidiger", "Ziel", "Typ", "Sonstiges"};
+    private static Logger logger = Logger.getLogger("ReportTableModel");
 
-    static {
-        internalNames = Arrays.asList(new String[]{"Status", "Gesendet", "Angreifer", "Herkunft", "Verteidiger", "Ziel", "Typ", "Sonstiges"});
-        colNames = new String[]{"Status", "Gesendet", "Angreifer", "Herkunft", "Verteidiger", "Ziel", "Typ", "Sonstiges"};
-        types = new Class[]{FightReport.class, Date.class, Tribe.class, Village.class, Tribe.class, Village.class, Integer.class, Byte.class};
-        editableColumns = new boolean[]{false, false, false, false, false, false, false, false};
+    public ReportManagerTableModel(String pSet) {
+        sSet = pSet;
     }
 
-    public static synchronized ReportManagerTableModel getSingleton() {
-        if (SINGLETON == null) {
-            SINGLETON = new ReportManagerTableModel();
-        }
-        return SINGLETON;
+    public void setReportSet(String pSet) {
+        sSet = pSet;
+        fireTableDataChanged();
     }
 
-    ReportManagerTableModel() {
-        super();
-        ReportManager.getSingleton().addReportManagerListener(new ReportManagerListener() {
-
-            @Override
-            public void fireReportsChangedEvent(String pPlan) {
-                fireTableDataChanged();
-            }
-        });
+    @Override
+    public int getColumnCount() {
+        return colNames.length;
     }
 
-    public synchronized void setActiveReportSet(String pSet) {
-        logger.debug("Setting active report set to '" + pSet + "'");
-        sReportSet = pSet;
+    @Override
+    public Class<?> getColumnClass(int columnIndex) {
+        return types[columnIndex];
     }
 
-    public synchronized String getActiveReportSet() {
-        if (sReportSet == null) {
-            return ReportManager.DEFAULT_SET;
-        }
-        return sReportSet;
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return false;
     }
 
-    public void removeRow(int pRow) {
-        ReportManager.getSingleton().removeReport(sReportSet, pRow);
+    @Override
+    public String getColumnName(int column) {
+        return colNames[column];
     }
 
     @Override
     public int getRowCount() {
-        return ReportManager.getSingleton().getFilteredElementCount();
+        if (sSet == null) {
+            return 0;
+        }
+        return ReportManager.getSingleton().getAllElements(sSet).size();
     }
 
-    public FightReport getReportAtRow(int pRow) {
-        List<FightReport> filtered = ReportManager.getSingleton().getFilteredList();
-        return filtered.get(pRow);
-    }
-
-    /* @Override
-    public int getColumnCount() {
-    return colNames.length;
-    }*/
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        // ReportSet set = ReportManager.getSingleton().getReportSet(sReportSet);
+        if (sSet == null) {
+            return null;
+        }
         try {
-            List<FightReport> reports = ReportManager.getSingleton().getFilteredList();
-            columnIndex = convertViewColumnToModel(columnIndex);
+            FightReport r = (FightReport) ReportManager.getSingleton().getAllElements(sSet).get(rowIndex);
             switch (columnIndex) {
                 case 0:
-                    return reports.get(rowIndex);
+                    return r;
                 case 1:
-                    return new Date(reports.get(rowIndex).getTimestamp());
+                    return new Date(r.getTimestamp());
                 case 2:
-                    return reports.get(rowIndex).getAttacker();
+                    return r.getAttacker();
                 case 3:
-                    return reports.get(rowIndex).getSourceVillage();
+                    return r.getSourceVillage();
                 case 4:
-                    return reports.get(rowIndex).getDefender();
+                    return r.getDefender();
                 case 5:
-                    return reports.get(rowIndex).getTargetVillage();
+                    return r.getTargetVillage();
                 case 6:
-                    return reports.get(rowIndex).guessType();
+                    return r.guessType();
                 default:
-                    return reports.get(rowIndex).getVillageEffects();
+                    return r;
             }
         } catch (Exception e) {
             return null;
         }
-    }
-
-    @Override
-    public String getPropertyBaseID() {
-        return PROPERTY_BASE_ID;
-    }
-
-    @Override
-    public Class[] getColumnClasses() {
-        return types;
-    }
-
-    @Override
-    public String[] getColumnNames() {
-        return colNames;
-    }
-
-    @Override
-    public List<String> getInternalColumnNames() {
-        return internalNames;
-    }
-
-    @Override
-    public boolean[] getEditableColumns() {
-        return editableColumns;
-    }
-
-    @Override
-    public void doNotifyOnColumnChange() {
-        DSWorkbenchReportFrame.getSingleton().fireReportsChangedEvent("");
     }
 }

@@ -132,4 +132,3 @@ public final class DateField extends JPanel {
         f.setVisible(true);
     }
 }
-

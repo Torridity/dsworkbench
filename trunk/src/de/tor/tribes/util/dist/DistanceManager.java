@@ -42,7 +42,7 @@ public class DistanceManager {
         for (int col : pIds) {
             col = col - 1;
             if (col >= 0) {
-                tmp.add((Village) villages.get(col));
+                tmp.add(villages.get(col));
             }
         }
 

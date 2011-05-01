@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.ui.models;
 
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
@@ -58,20 +59,21 @@ public class DoItYourselfAttackTableModel extends AbstractDSWorkbenchTableModel 
     }
 
     public void removeRow(int pRow) {
-        AttackManager.getSingleton().removeDoItYourselfAttack(pRow);
+        Attack a = (Attack) AttackManager.getSingleton().getDoItYourselfAttacks().get(pRow);
+        AttackManager.getSingleton().removeElement(a);
         fireTableDataChanged();
     }
 
     public Attack getAttack(int pRow) {
-        return AttackManager.getSingleton().getDoItYourselfAttacks().get(pRow);
+        return (Attack) AttackManager.getSingleton().getDoItYourselfAttacks().get(pRow);
     }
 
     @Override
     public Object getValueAt(int pRow, int pCol) {
         Attack a = null;
-        List<Attack> attacks = AttackManager.getSingleton().getDoItYourselfAttacks();
-        if (attacks.size() > pRow) {
-            a = attacks.get(pRow);
+        List<ManageableType> elements = AttackManager.getSingleton().getDoItYourselfAttacks();
+        if (elements.size() > pRow) {
+            a = (Attack) elements.get(pRow);
         } else {
             return null;
         }
@@ -138,27 +140,28 @@ public class DoItYourselfAttackTableModel extends AbstractDSWorkbenchTableModel 
 
     @Override
     public int getRowCount() {
-        List<Attack> attacks = AttackManager.getSingleton().getDoItYourselfAttacks();
-        if (attacks == null || attacks.size() == 0) {
+        List<ManageableType> elements = AttackManager.getSingleton().getDoItYourselfAttacks();
+        if (elements == null || elements.isEmpty()) {
             return 0;
         }
-        return attacks.size();
+        return elements.size();
     }
 
     @Override
     public void setValueAt(Object pValue, int pRow, int pCol) {
-        List<Attack> attacks = AttackManager.getSingleton().getDoItYourselfAttacks();
-        if (attacks == null || attacks.size() == 0 || attacks.size() < pRow) {
+        List<ManageableType> attacks = AttackManager.getSingleton().getAllElements(AttackManager.MANUAL_ATTACK_PLAN);
+        if (attacks == null || attacks.isEmpty() || attacks.size() < pRow) {
             return;
         }
         pCol = convertViewColumnToModel(pCol);
+        Attack a = (Attack)attacks.get(pRow);
         switch (pCol) {
             case 0: {
-                attacks.get(pRow).setType((Integer) pValue);
+               a.setType((Integer) pValue);
                 break;
             }
             case 1: {
-                attacks.get(pRow).setUnit((UnitHolder) pValue);
+                a.setUnit((UnitHolder) pValue);
                 break;
             }
             case 2: {
@@ -167,10 +170,10 @@ public class DoItYourselfAttackTableModel extends AbstractDSWorkbenchTableModel 
                     List<Village> parsed = PluginManager.getSingleton().executeVillageParser(v);
                     Village vil = parsed.get(0);
                     if (vil != null) {
-                        attacks.get(pRow).setSource(vil);
+                        a.setSource(vil);
                     }
                 } catch (Exception e) {
-                    attacks.get(pRow).setSource(null);
+                    a.setSource(null);
                 }
                 break;
             }
@@ -180,15 +183,15 @@ public class DoItYourselfAttackTableModel extends AbstractDSWorkbenchTableModel 
                     List<Village> parsed = PluginManager.getSingleton().executeVillageParser(v);
                     Village vil = parsed.get(0);
                     if (vil != null) {
-                        attacks.get(pRow).setTarget(vil);
+                        a.setTarget(vil);
                     }
                 } catch (Exception e) {
-                    attacks.get(pRow).setTarget(null);
+                    a.setTarget(null);
                 }
                 break;
             }
             case 5: {
-                attacks.get(pRow).setArriveTime((Date) pValue);
+                a.setArriveTime((Date) pValue);
                 break;
             }
             default:

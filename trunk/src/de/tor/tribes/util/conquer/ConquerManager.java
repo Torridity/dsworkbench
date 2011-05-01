@@ -4,16 +4,18 @@
  */
 package de.tor.tribes.util.conquer;
 
+import de.tor.tribes.control.GenericManager;
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Conquer;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
+import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.MapPanel;
-import de.tor.tribes.ui.renderer.MapRenderer;
-import de.tor.tribes.util.FilterableManager;
+import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
@@ -35,16 +37,12 @@ import org.jdom.Element;
 /**
  * @author Charon
  */
-public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInterface> {
+public class ConquerManager extends GenericManager<Conquer> {
 
     private static Logger logger = Logger.getLogger("ConquerManager");
     private static ConquerManager SINGLETON = null;
     private long lastUpdate = -1;
-    private List<Conquer> conquers = null;
     private ConquerUpdateThread updateThread = null;
-    private List<ConquerManagerListener> mManagerListeners = null;
-    //  private Conquer[] filteredList = null;
-    // private List<ConquerFilterInterface> filters = null;
 
     public static synchronized ConquerManager getSingleton() {
         if (SINGLETON == null) {
@@ -54,57 +52,31 @@ public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInte
     }
 
     ConquerManager() {
-        conquers = Collections.synchronizedList(new LinkedList<Conquer>());
-        mManagerListeners = new LinkedList<ConquerManagerListener>();
-        // filters = new LinkedList<ConquerFilterInterface>();
+        super(false);
         updateThread = new ConquerUpdateThread();
         updateThread.start();
     }
 
-    public synchronized void addConquerManagerListener(ConquerManagerListener pListener) {
-        if (pListener == null) {
-            return;
-        }
-        if (!mManagerListeners.contains(pListener)) {
-            mManagerListeners.add(pListener);
-        }
-    }
-
-    public synchronized void removeConquerManagerListener(ConquerManagerListener pListener) {
-        mManagerListeners.remove(pListener);
-    }
-
-    @Override
-    public Conquer[] getUnfilteredElements() {
-        return conquers.toArray(new Conquer[]{});
+    public void addConquer(Conquer c) {
+        addManagedElement(c);
     }
 
     public int getConquerCount() {
-        //return filteredList.length;
-        return getFilteredElementCount();
+        return getElementCount();
     }
 
     public Conquer getConquer(int id) {
-        //return filteredList[id];
-        return getFilteredElement(id);
+        return (Conquer) getAllElements().get(id);
     }
 
-    public void forceUpdate() {
-        try {
-            logger.debug("Force conquers update");
-            updateThread.interrupt();
-        } catch (Exception e) {
-        }
-    }
-
-    public void loadConquersFromFile(String pFile) {
-        conquers.clear();
-        //filteredList = new Conquer[]{};
-        clearFilteredList();
+    @Override
+    public void loadElements(String pFile) {
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return;
         }
+        invalidate();
+        initialize();
         File conquerFile = new File(pFile);
         if (conquerFile.exists()) {
             if (logger.isDebugEnabled()) {
@@ -120,8 +92,9 @@ public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInte
                 }
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//conquers/conquer")) {
                     try {
-                        Conquer c = Conquer.fromXml(e);
-                        conquers.add(c);
+                        Conquer c = new Conquer();
+                        c.loadFromXml(e);
+                        addManagedElement(c);
                     } catch (Exception inner) {
                         //ignored, conquer invalid
                     }
@@ -135,11 +108,11 @@ public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInte
             //merge conquers and world data
             logger.debug("Merging conquer data with world data");
             try {
-                Conquer[] conquerA = conquers.toArray(new Conquer[]{});
-                for (Conquer c : conquerA) {
-                    Village v = DataHolder.getSingleton().getVillagesById().get(c.getVillageID());
-                    Tribe loser = DataHolder.getSingleton().getTribes().get(c.getLoser());
-                    Tribe winner = DataHolder.getSingleton().getTribes().get(c.getWinner());
+                for (ManageableType t : getAllElements()) {
+                    Conquer c = (Conquer) t;
+                    Village v = c.getVillage();
+                    Tribe loser = c.getLoser();
+                    Tribe winner = c.getWinner();
                     if (v.getTribeID() != winner.getId()) {
                         //conquer not yet in world data
                         if (loser != null && loser.removeVillage(v)) {
@@ -166,21 +139,21 @@ public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInte
                 lastUpdate = 0;
             }
             updateAcceptance();
-            updateFilters();
             try {
-            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
-        } catch (Exception e) {
-        }
+                MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
+            } catch (Exception e) {
+            }
         } else {
             lastUpdate = 0;
-            updateFilters();
             if (logger.isInfoEnabled()) {
                 logger.info("Conquers file not found under '" + pFile + "'");
             }
         }
+        revalidate();
     }
 
-    public void saveConquersToFile(String pFile) {
+    @Override
+    public void saveElements(String pFile) {
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return;
@@ -192,15 +165,15 @@ public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInte
 
         try {
 
-            StringBuffer b = new StringBuffer();
+            StringBuilder b = new StringBuilder();
             b.append("<conquers>\n");
-            b.append("<lastUpdate>" + getLastUpdate() + "</lastUpdate>\n");
-            Conquer[] conquerA = conquers.toArray(new Conquer[]{});
-            for (Conquer c : conquerA) {
+            b.append("<lastUpdate>").append(getLastUpdate()).append("</lastUpdate>\n");
+            for (ManageableType t : getAllElements()) {
+                Conquer c = (Conquer) t;
                 if (c != null) {
                     String xml = c.toXml();
                     if (xml != null) {
-                        b.append(xml + "\n");
+                        b.append(xml).append("\n");
                     }
                 }
             }
@@ -224,6 +197,7 @@ public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInte
     }
 
     private void updateAcceptance() {
+        invalidate();
         logger.debug("Filtering conquers");
         double risePerHour = 1.0;
         try {
@@ -232,9 +206,9 @@ public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInte
         }
         logger.debug(" - using " + risePerHour + " as acceptance increment value");
         List<Conquer> toRemove = new LinkedList<Conquer>();
-        Conquer[] conquersA = conquers.toArray(new Conquer[]{});
-        for (Conquer c : conquersA) {
-            Village v = DataHolder.getSingleton().getVillagesById().get(c.getVillageID());
+        for (ManageableType t : getAllElements()) {
+            Conquer c = (Conquer) t;
+            Village v = c.getVillage();
             if (v == null) {
                 toRemove.add(c);
             } else {
@@ -250,8 +224,9 @@ public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInte
         }
         logger.debug("Removing " + toRemove.size() + " conquers due to 100% acceptance");
         for (Conquer remove : toRemove) {
-            conquers.remove(remove);
+            removeElement(remove);
         }
+        revalidate();
         fireConquersChangedEvents();
     }
 
@@ -287,12 +262,12 @@ public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInte
                     int newOwner = Integer.parseInt(data[2]);
                     int oldOwner = Integer.parseInt(data[3]);
                     boolean exists = false;
-                    Conquer[] conquerA = conquers.toArray(new Conquer[]{});
-                    for (Conquer c : conquerA) {
-                        if (c.getVillageID() == villageID) {
+                    for (ManageableType t : getAllElements()) {
+                        Conquer c = (Conquer) t;
+                        if (c.getVillage().getId() == villageID) {
                             //already exists
-                            c.setWinner(newOwner);
-                            c.setLoser(oldOwner);
+                            c.setWinner(DataHolder.getSingleton().getTribes().get(newOwner));
+                            c.setLoser(DataHolder.getSingleton().getTribes().get(oldOwner));
                             c.setTimestamp(timestamp);
                             exists = true;
                             break;
@@ -300,11 +275,11 @@ public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInte
                     }
                     if (!exists) {
                         Conquer c = new Conquer();
-                        c.setVillageID(villageID);
+                        c.setVillage(DataHolder.getSingleton().getVillagesById().get(villageID));
                         c.setTimestamp(timestamp);
-                        c.setWinner(newOwner);
-                        c.setLoser(oldOwner);
-                        conquers.add(c);
+                        c.setWinner(DataHolder.getSingleton().getTribes().get(newOwner));
+                        c.setLoser(DataHolder.getSingleton().getTribes().get(oldOwner));
+                        addConquer(c);
                     }
                     Tribe loser = DataHolder.getSingleton().getTribes().get(oldOwner);
                     Tribe winner = DataHolder.getSingleton().getTribes().get(newOwner);
@@ -364,16 +339,15 @@ public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInte
             logger.debug("Setting lastUpdate to NOW (" + lastUpdate + ")");
         }
         updateAcceptance();
-        updateFilters();
     }
 
     public Conquer getConquer(Village pVillage) {
         if (pVillage == null) {
             return null;
         }
-        Conquer[] conquerA = conquers.toArray(new Conquer[]{});
-        for (Conquer c : conquerA) {
-            if (c.getVillageID() == pVillage.getId()) {
+        for (ManageableType t : getAllElements()) {
+            Conquer c = (Conquer) t;
+            if (c.getVillage().getId() == pVillage.getId()) {
                 return c;
             }
         }
@@ -394,20 +368,16 @@ public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInte
         this.lastUpdate = lastUpdate;
     }
 
-    public void conquersUpdatedExternally() {
-        fireConquersChangedEvents();
-    }
-
     public int[] getConquersStats() {
         int grey = 0;
         int friendly = 0;
-        //Conquer[] conquerA = conquers.toArray(new Conquer[]{});
-        for (Conquer c : getFilteredList()) {
-            if (c.getLoser() == 0) {
+        for (ManageableType t : getAllElements()) {
+            Conquer c = (Conquer) t;
+            if (c.getLoser() == null || c.getLoser().equals(Barbarians.getSingleton())) {
                 grey++;
             } else {
-                Tribe loser = DataHolder.getSingleton().getTribes().get(c.getLoser());
-                Tribe winner = DataHolder.getSingleton().getTribes().get(c.getWinner());
+                Tribe loser = c.getLoser();
+                Tribe winner = c.getWinner();
                 if (loser != null && winner != null) {
                     if (loser.getAllyID() == winner.getAllyID()) {
                         if (loser.getAllyID() != 0 && winner.getAllyID() != 0) {
@@ -433,15 +403,22 @@ public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInte
 
     /**Notify all MarkerManagerListeners that the marker data has changed*/
     private void fireConquersChangedEvents() {
-        ConquerManagerListener[] listeners = mManagerListeners.toArray(new ConquerManagerListener[]{});
-        for (ConquerManagerListener listener : listeners) {
-            listener.fireConquersChangedEvent();
-        }
+        revalidate(true);
         try {
             MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
         } catch (Exception e) {
             //failed to initialize redraw because renderer is still null
         }
+    }
+
+    @Override
+    public String getExportData(List<String> pGroupsToExport) {
+        return "";
+    }
+
+    @Override
+    public boolean importData(File pFile, String pExtension) {
+        return true;
     }
 }
 

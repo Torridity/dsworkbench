@@ -9,7 +9,7 @@ import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.NoAlly;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.TribeStatsElement;
-import de.tor.tribes.ui.DSWorkbenchStatsFrame;
+import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
 import de.tor.tribes.util.GlobalOptions;
 import java.io.File;
 import java.io.FileFilter;

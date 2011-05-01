@@ -5,16 +5,16 @@
 package de.tor.tribes.util;
 
 import com.smardec.mousegestures.MouseGesturesListener;
-import de.tor.tribes.ui.DSWorkbenchAttackFrame;
-import de.tor.tribes.ui.DSWorkbenchConquersFrame;
-import de.tor.tribes.ui.DSWorkbenchFormFrame;
+import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
+import de.tor.tribes.ui.views.DSWorkbenchConquersFrame;
+import de.tor.tribes.ui.views.DSWorkbenchFormFrame;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.DSWorkbenchMarkerFrame;
-import de.tor.tribes.ui.DSWorkbenchNotepad;
-import de.tor.tribes.ui.DSWorkbenchReportFrame;
-import de.tor.tribes.ui.DSWorkbenchStatsFrame;
-import de.tor.tribes.ui.DSWorkbenchTagFrame;
-import de.tor.tribes.ui.DSWorkbenchTroopsFrame;
+import de.tor.tribes.ui.views.DSWorkbenchMarkerFrame;
+import de.tor.tribes.ui.views.DSWorkbenchNotepad;
+import de.tor.tribes.ui.views.DSWorkbenchReportFrame;
+import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
+import de.tor.tribes.ui.views.DSWorkbenchTagFrame;
+import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
 import de.tor.tribes.ui.TribeTribeAttackFrame;
 import java.awt.MouseInfo;
 import javax.swing.SwingUtilities;
@@ -30,10 +30,10 @@ public class MouseGestureHandler implements MouseGesturesListener {
         // System.out.println("Gesture: " + string);
         if (DSWorkbenchAttackFrame.getSingleton().isActive()) {
             DSWorkbenchAttackFrame.getSingleton().handleGesture(string);
-        } else if (DSWorkbenchNotepad.getSingleton().isActive()) {
-            DSWorkbenchNotepad.getSingleton().handleGesture(string);
         } else if (DSWorkbenchMarkerFrame.getSingleton().isActive()) {
             DSWorkbenchMarkerFrame.getSingleton().handleGesture(string);
+        } else if (DSWorkbenchNotepad.getSingleton().isActive()) {
+            DSWorkbenchNotepad.getSingleton().handleGesture(string);
         } else if (DSWorkbenchTroopsFrame.getSingleton().isActive()) {
             DSWorkbenchTroopsFrame.getSingleton().handleGesture(string);
         } else if (DSWorkbenchFormFrame.getSingleton().isActive()) {

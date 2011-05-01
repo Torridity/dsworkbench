@@ -4,20 +4,12 @@
  */
 package de.tor.tribes.ui.editors;
 
-import de.tor.tribes.ui.renderer.ColorListCellRenderer;
-import de.tor.tribes.util.Constants;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.KeyboardFocusManager;
-import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 

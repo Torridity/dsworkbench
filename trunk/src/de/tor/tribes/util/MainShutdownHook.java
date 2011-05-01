@@ -5,23 +5,23 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.ui.DSWorkbenchAttackFrame;
-import de.tor.tribes.ui.DSWorkbenchChurchFrame;
-import de.tor.tribes.ui.DSWorkbenchConquersFrame;
+import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
+import de.tor.tribes.ui.views.DSWorkbenchChurchFrame;
+import de.tor.tribes.ui.views.DSWorkbenchConquersFrame;
 import de.tor.tribes.ui.DSWorkbenchDoItYourselfAttackPlaner;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.DSWorkbenchMarkerFrame;
-import de.tor.tribes.ui.DSWorkbenchRankFrame;
-import de.tor.tribes.ui.DSWorkbenchSearchFrame;
-import de.tor.tribes.ui.DSWorkbenchTroopsFrame;
+import de.tor.tribes.ui.views.DSWorkbenchMarkerFrame;
+import de.tor.tribes.ui.views.DSWorkbenchRankFrame;
+import de.tor.tribes.ui.views.DSWorkbenchSearchFrame;
+import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
 import de.tor.tribes.ui.FormConfigFrame;
 import org.apache.log4j.Logger;
-import de.tor.tribes.ui.DSWorkbenchFormFrame;
-import de.tor.tribes.ui.DSWorkbenchNotepad;
-import de.tor.tribes.ui.DSWorkbenchReportFrame;
-import de.tor.tribes.ui.DSWorkbenchSelectionFrame;
-import de.tor.tribes.ui.DSWorkbenchStatsFrame;
-import de.tor.tribes.ui.DSWorkbenchTagFrame;
+import de.tor.tribes.ui.views.DSWorkbenchFormFrame;
+import de.tor.tribes.ui.views.DSWorkbenchNotepad;
+import de.tor.tribes.ui.views.DSWorkbenchReportFrame;
+import de.tor.tribes.ui.views.DSWorkbenchSelectionFrame;
+import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
+import de.tor.tribes.ui.views.DSWorkbenchTagFrame;
 
 /**
  *@TODO (DIFF) Store user data only if it was loaded successfully

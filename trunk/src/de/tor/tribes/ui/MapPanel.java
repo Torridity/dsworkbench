@@ -5,6 +5,10 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
+import de.tor.tribes.ui.views.DSWorkbenchNotepad;
+import de.tor.tribes.ui.views.DSWorkbenchFormFrame;
+import de.tor.tribes.ui.views.DSWorkbenchSelectionFrame;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
@@ -14,7 +18,7 @@ import de.tor.tribes.types.Church;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.dnd.VillageTransferable;
-import de.tor.tribes.ui.renderer.MapRenderer;
+import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ToolChangeListener;
@@ -40,7 +44,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
-import de.tor.tribes.ui.renderer.MenuRenderer;
+import de.tor.tribes.ui.renderer.map.MenuRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ImageUtils;
@@ -201,7 +205,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         return selectionRect;
     }
 
-       private void initListeners() {
+    private void initListeners() {
         dragSource = DragSource.getDefaultDragSource();
         dragSource.createDefaultDragGestureRecognizer(this, // What component
                 DnDConstants.ACTION_COPY_OR_MOVE, // What drag types?
@@ -283,7 +287,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     case ImageManager.CURSOR_DEFAULT: {
                         //center village on click with default cursor
                         if (v != null) {
-                            Tribe t = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
+                            Tribe t = GlobalOptions.getSelectedProfile().getTribe();
                             if ((v != null) && (v.getTribe() != Barbarians.getSingleton()) && (t != Barbarians.getSingleton()) && (t.equals(v.getTribe()))) {
                                 DSWorkbenchMainFrame.getSingleton().setCurrentUserVillage(v);
                             }
@@ -422,7 +426,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     }
                     case ImageManager.CURSOR_NOTE: {
                         if (v != null) {
-                            DSWorkbenchNotepad.getSingleton().addNoteForVillage(v);
+                            //TODO Add note to village
+                            //DSWorkbenchNotepad.getSingleton().addNoteForVillage(v);
                             if (!DSWorkbenchNotepad.getSingleton().isVisible()) {
                                 DSWorkbenchNotepad.getSingleton().setVisible(true);
                             }
@@ -1228,16 +1233,18 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
         } else if (evt.getSource() == jCurrentCreateNoteItem) {
             if (actionMenuVillage != null) {
-                DSWorkbenchNotepad.getSingleton().addNoteForVillage(actionMenuVillage);
+                //TODO Add note to village
+                //DSWorkbenchNotepad.getSingleton().addNoteForVillage(actionMenuVillage);
                 JOptionPaneHelper.showInformationBox(this, "Notiz erstellt", "Information");
             }
         } else if (evt.getSource() == jCurrentAddToNoteItem) {
             if (actionMenuVillage != null) {
-                if (DSWorkbenchNotepad.getSingleton().addVillageToCurrentNote(actionMenuVillage)) {
+                //TODO Add note to village
+                /*if (DSWorkbenchNotepad.getSingleton().addVillageToCurrentNote(actionMenuVillage)) {
                     JOptionPaneHelper.showInformationBox(this, "Dorf hinzugefügt", "Information");
                 } else {
                     JOptionPaneHelper.showWarningBox(this, "Es ist keine Notiz ausgewählt.", "Warnung");
-                }
+                }*/
             }
         } else if (evt.getSource() == jCurrentToAStarAsAttacker || evt.getSource() == jCurrentToAStarAsDefender) {
             VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(actionMenuVillage);
@@ -1350,7 +1357,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
             Village v = actionMenuVillage;
             if (v != null) {
-                DSWorkbenchNotepad.getSingleton().addNoteForVillages(markedVillages);
+                //TODO Add note to village
+              //  DSWorkbenchNotepad.getSingleton().addNoteForVillages(markedVillages);
                 JOptionPaneHelper.showInformationBox(this, "Notiz erstellt", "Information");
             }
         } else if (evt.getSource() == jAllAddToNoteItem) {
@@ -1358,11 +1366,12 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 JOptionPaneHelper.showInformationBox(this, "Keine Dörfer markiert.", "Information");
                 return;
             }
-            if (DSWorkbenchNotepad.getSingleton().addVillagesToCurrentNote(markedVillages)) {
+            //TODO Add note to village
+          /*  if (DSWorkbenchNotepad.getSingleton().addVillagesToCurrentNote(markedVillages)) {
                 JOptionPaneHelper.showInformationBox(this, "Dörfer hinzugefügt", "Information");
             } else {
                 JOptionPaneHelper.showWarningBox(this, "Es ist keine Notiz ausgewählt.", "Warnung");
-            }
+            }*/
         } else if (evt.getSource() == jCenterVillagesIngameItem) {
             if (markedVillages.isEmpty()) {
                 JOptionPaneHelper.showInformationBox(this, "Keine Dörfer markiert.", "Information");
@@ -1574,7 +1583,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             bMapSHotPlaned = false;
         }
         if (positionUpdate) {
-            DSWorkbenchFormFrame.getSingleton().updateFormList();
+            DSWorkbenchFormFrame.getSingleton().updateVisibility();
         }
         positionUpdate = false;
     }

@@ -27,7 +27,6 @@ import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.JFrame;
 
 /**
  *

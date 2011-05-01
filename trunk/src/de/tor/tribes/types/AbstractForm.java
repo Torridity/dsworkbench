@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -16,8 +17,12 @@ import org.jdom.Element;
  *
  * @author Charon
  */
-public abstract class AbstractForm {
+public abstract class AbstractForm extends ManageableType {
 
+    public static enum FORM_TYPE {
+
+        LINE, ARROW, RECTANGLE, CIRCLE, TEXT, FREEFORM
+    }
     private static Logger logger = Logger.getLogger("AbstractForm");
     private double xPos = 0;
     private double yPos = 0;
@@ -32,34 +37,87 @@ public abstract class AbstractForm {
 
     public abstract void renderForm(Graphics2D g2d);
 
+    /**
+     *
+     * @param e
+     * @return
+     */
     public static AbstractForm fromXml(Element e) {
         String formType = e.getAttributeValue("type");
         if (formType.equals("line")) {
             logger.debug("Loading 'line'");
-            return Line.fromXml(e);
+            Line l = new Line();
+            l.loadFromXml(e);
+            return l;
         } else if (formType.equals("arrow")) {
             logger.debug("Loading 'arrow'");
-            return Arrow.fromXml(e);
+            Arrow a = new Arrow();
+            a.loadFromXml(e);
+            return a;
         } else if (formType.equals("rectangle")) {
             logger.debug("Loading 'rectangle'");
-            return Rectangle.fromXml(e);
+            Rectangle r = new Rectangle();
+            r.loadFromXml(e);
+            return r;
         } else if (formType.equals("circle")) {
             logger.debug("Loading 'circle'");
-            return Circle.fromXml(e);
+            Circle c = new Circle();
+            c.loadFromXml(e);
+            return c;
         } else if (formType.equals("text")) {
             logger.debug("Loading 'text'");
-            return Text.fromXml(e);
+            Text t = new Text();
+            t.loadFromXml(e);
+            return t;
         } else if (formType.equals("freeform")) {
             logger.debug("Loading 'freeform'");
-            return FreeForm.fromXml(e);
+            FreeForm f = new FreeForm();
+            f.loadFromXml(e);
+            return f;
         } else {
             return null;
         }
     }
 
+    public FORM_TYPE getTypeForString(String formType) {
+        if (formType.equals("line")) {
+            return FORM_TYPE.LINE;
+        } else if (formType.equals("arrow")) {
+            return FORM_TYPE.ARROW;
+        } else if (formType.equals("rectangle")) {
+            return FORM_TYPE.RECTANGLE;
+        } else if (formType.equals("circle")) {
+            return FORM_TYPE.CIRCLE;
+        } else if (formType.equals("text")) {
+            return FORM_TYPE.TEXT;
+        } else if (formType.equals("freeform")) {
+            return FORM_TYPE.FREEFORM;
+        } else {
+            return null;
+        }
+    }
+
+    public String getTypeAsString(FORM_TYPE formType) {
+        switch (formType) {
+            case ARROW:
+                return "arrow";
+            case CIRCLE:
+                return "circle";
+            case FREEFORM:
+                return "freeform";
+            case LINE:
+                return "line";
+            case RECTANGLE:
+                return "rectangle";
+            default:
+                return "text";
+        }
+    }
+
+    @Override
     public String toXml() {
         try {
-            String xml = "<form type=\"" + getFormType() + "\">\n";
+            String xml = "<form type=\"" + getTypeAsString(getFormType()) + "\">\n";
             xml += "<name><![CDATA[" + URLEncoder.encode(getFormName(), "UTF-8") + "]]></name>\n";
             xml += "<pos x=\"" + getXPos() + "\" y=\"" + getYPos() + "\"/>\n";// rot=\"" + getRotation() + "\"/>\n";
             xml += "<textColor r=\"" + getTextColor().getRed() + "\" g=\"" + getTextColor().getGreen() + "\" b=\"" + getTextColor().getBlue() + "\" a=\"" + getTextAlpha() + "\"/>\n";
@@ -79,16 +137,14 @@ public abstract class AbstractForm {
     public ArrayList<Village> getContainedVillages() {
         java.awt.Rectangle bounds = getBounds();
         ArrayList<Village> v = new ArrayList<Village>();
-        Village[][] villages = DataHolder.getSingleton().getVillages();
         for (int x = bounds.x; x <= bounds.x + bounds.width; x++) {
             for (int y = bounds.y; y <= bounds.y + bounds.height; y++) {
-                Village vi = villages[x][y];
+                Village vi = DataHolder.getSingleton().getVillages()[x][y];
                 if (vi != null) {
                     v.add(vi);
                 }
             }
         }
-
         return v;
     }
 
@@ -159,7 +215,7 @@ public abstract class AbstractForm {
     /**
      * @return the formName
      */
-    public abstract String getFormType();
+    public abstract FORM_TYPE getFormType();
 
     /**
      * @return the rotation
@@ -248,5 +304,20 @@ public abstract class AbstractForm {
      */
     public void setShowMode(boolean showMode) {
         this.showMode = showMode;
+    }
+
+    @Override
+    public String getElementIdentifier() {
+        return "";
+    }
+
+    @Override
+    public String getElementGroupIdentifier() {
+        return "";
+    }
+
+    @Override
+    public String getGroupNameAttributeIdentifier() {
+        return "";
     }
 }

@@ -4,9 +4,12 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.php.json.JSONObject;
+import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.Serializable;
@@ -21,8 +24,11 @@ import java.text.SimpleDateFormat;
  *
  * @author Charon
  */
-public class Attack implements Serializable, Comparable<Attack> {
+public class Attack extends ManageableType implements Serializable, Comparable<Attack>, BBSupport {
 
+    private final static String[] VARIABLES = new String[]{"%TYPE%", "%ATTACKER%", "%SOURCE%", "%UNIT%", "%DEFENDER%", "%TARGET%", "%SEND%", "%ARRIVE%", "%PLACE%", "%PLACE_URL%"};
+    private final static String STANDARD_TEMPLATE = "%TYPE% von %ATTACKER% aus %SOURCE% mit %UNIT% auf %DEFENDER% in %TARGET% startet am [color=#ff0e0e]%SEND%[/color] und kommt am [color=#2eb92e]%ARRIVE%[/color] an (%PLACE%)";
+    private final static String TEMPLATE_PROPERTY = "attack.bbexport.template";
     public static final int NO_TYPE = 0;
     public static final int CLEAN_TYPE = 1;
     public static final int SNOB_TYPE = 2;
@@ -43,26 +49,6 @@ public class Attack implements Serializable, Comparable<Attack> {
         try {
             showOnMap = Boolean.parseBoolean(GlobalOptions.getProperty("draw.attacks.by.default"));
         } catch (Exception e) {
-        }
-    }
-
-    public Attack(Element pElement) {
-        setSource(DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(pElement.getChild("source").getText())));
-        setTarget(DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(pElement.getChild("target").getText())));
-        setArriveTime(new Date(Long.parseLong(pElement.getChild("arrive").getText())));
-        setUnit(DataHolder.getSingleton().getUnitByPlainName(pElement.getChild("unit").getText()));
-        setShowOnMap(Boolean.parseBoolean(JaxenUtils.getNodeValue(pElement, "extensions/showOnMap")));
-        try {
-            setType(Integer.parseInt(JaxenUtils.getNodeValue(pElement, "extensions/type")));
-        } catch (Exception e) {
-            //no type set
-            setType(NO_TYPE);
-        }
-        try {
-            setTransferredToBrowser(Boolean.parseBoolean(JaxenUtils.getNodeValue(pElement, "extensions/transferredToBrowser")));
-        } catch (Exception e) {
-            //not transferred yet
-            setTransferredToBrowser(false);
         }
     }
 
@@ -138,10 +124,7 @@ public class Attack implements Serializable, Comparable<Attack> {
         this.showOnMap = showOnMap;
     }
 
-    public static Attack fromXml(Element pElement) {
-        return new Attack(pElement);
-    }
-
+    @Override
     public String toXml() {
         String xml = "<attack>\n";
         xml += "<source>" + getSource().getId() + "</source>\n";
@@ -224,6 +207,24 @@ public class Attack implements Serializable, Comparable<Attack> {
         this.transferredToBrowser = transferredToBrowser;
     }
 
+    public static String toInternalRepresentation(Attack pAttack) {
+        return pAttack.getSource().getId() + "&" + pAttack.getTarget().getId() + "&" + pAttack.getUnit().getPlainName() + "&" + pAttack.getArriveTime().getTime() + "&" + pAttack.getType() + "&" + pAttack.isShowOnMap() + "&" + pAttack.isTransferredToBrowser();
+
+    }
+
+    public static Attack fromInternalRepresentation(String pLine) {
+        String[] split = pLine.trim().split("&");
+        Attack a = new Attack();
+        a.setSource(DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(split[0])));
+        a.setTarget(DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(split[1])));
+        a.setUnit(DataHolder.getSingleton().getUnitByPlainName(split[2]));
+        a.setArriveTime(new Date(Long.parseLong(split[3])));
+        a.setType(Integer.parseInt(split[4]));
+        a.setShowOnMap(Boolean.parseBoolean(split[5]));
+        a.setTransferredToBrowser(Boolean.parseBoolean(split[6]));
+        return a;
+    }
+
     @Override
     public int compareTo(Attack a) {
         if (getSource().getId() == a.getSource().getId()
@@ -232,5 +233,143 @@ public class Attack implements Serializable, Comparable<Attack> {
             return 0;
         }
         return -1;
+    }
+
+    @Override
+    public void loadFromXml(Element pElement) {
+        setSource(DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(pElement.getChild("source").getText())));
+        setTarget(DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(pElement.getChild("target").getText())));
+        setArriveTime(new Date(Long.parseLong(pElement.getChild("arrive").getText())));
+        setUnit(DataHolder.getSingleton().getUnitByPlainName(pElement.getChild("unit").getText()));
+        setShowOnMap(Boolean.parseBoolean(JaxenUtils.getNodeValue(pElement, "extensions/showOnMap")));
+        try {
+            setType(Integer.parseInt(JaxenUtils.getNodeValue(pElement, "extensions/type")));
+        } catch (Exception e) {
+            //no type set
+            setType(NO_TYPE);
+        }
+        try {
+            setTransferredToBrowser(Boolean.parseBoolean(JaxenUtils.getNodeValue(pElement, "extensions/transferredToBrowser")));
+        } catch (Exception e) {
+            //not transferred yet
+            setTransferredToBrowser(false);
+        }
+    }
+
+    @Override
+    public String getElementIdentifier() {
+        return "attack";
+    }
+
+    @Override
+    public String getElementGroupIdentifier() {
+        return "plan";
+    }
+
+    @Override
+    public String getGroupNameAttributeIdentifier() {
+        return "key";
+    }
+
+    @Override
+    public String getTemplateProperty() {
+        return TEMPLATE_PROPERTY;
+    }
+
+    @Override
+    public String[] getBBVariables() {
+        return VARIABLES;
+    }
+
+    public String getStandardTemplate() {
+        return STANDARD_TEMPLATE;
+    }
+
+    @Override
+    public String[] getReplacements(boolean pExtended) {
+        String sendVal = null;
+        String arrivetVal = null;
+
+        Date aTime = getArriveTime();
+        Date sTime = new Date(aTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(getSource(), getTarget(), getUnit().getSpeed()) * 1000));
+        if (pExtended) {
+            if (ServerSettings.getSingleton().isMillisArrival()) {
+                sendVal = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size]'").format(sTime);
+                arrivetVal = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size]'").format(aTime);
+            } else {
+                sendVal = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(sTime);
+                arrivetVal = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(aTime);
+            }
+        } else {
+            if (ServerSettings.getSingleton().isMillisArrival()) {
+                sendVal = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS").format(sTime);
+                arrivetVal = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS").format(aTime);
+            } else {
+                sendVal = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(sTime);
+                arrivetVal = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(aTime);
+            }
+        }
+        String typeVal = "";
+        switch (getType()) {
+            case Attack.CLEAN_TYPE: {
+                typeVal = "Angriff (Clean-Off)";
+                break;
+            }
+            case Attack.FAKE_TYPE: {
+                typeVal = "Angriff (Fake)";
+                break;
+            }
+            case Attack.SNOB_TYPE: {
+                typeVal = "Angriff (AG)";
+                break;
+            }
+            case Attack.SUPPORT_TYPE: {
+                typeVal = "Unterstützung";
+                break;
+            }
+            default: {
+                typeVal = "Angriff";
+            }
+        }
+
+        String attackerVal = "";
+        if (getSource().getTribe() != Barbarians.getSingleton()) {
+            attackerVal = getSource().getTribe().toBBCode();
+        } else {
+            attackerVal = "Barbaren";
+        }
+        String sourceVal = getSource().toBBCode();
+        String unitVal = "";
+        if (pExtended) {
+            unitVal = "[img]" + ServerManager.getServerURL(GlobalOptions.getSelectedServer()) + "/graphic/unit/unit_" + getUnit().getPlainName() + ".png[/img]";
+        } else {
+            unitVal = getUnit().getName();
+        }
+        String defenderVal = "";
+        if (getTarget().getTribe() != Barbarians.getSingleton()) {
+            defenderVal = getTarget().getTribe().toBBCode();
+        } else {
+            defenderVal = "Barbaren";
+        }
+
+        String targetVal = getTarget().toBBCode();
+
+        //replace place var
+        String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer()) + "/";
+        String placeURL = baseURL + "game.php?village=";
+        int uvID = -1;
+        if (GlobalOptions.getSelectedProfile() != null) {
+            uvID = GlobalOptions.getSelectedProfile().getUVId();
+        }
+
+        if (uvID >= 0) {
+            placeURL = baseURL + "game.php?t=" + uvID + "&village=";
+        }
+        placeURL += getSource().getId() + "&screen=place&mode=command&target=" + getTarget().getId();
+
+        String placeLink = "[url=\"" + placeURL + "\"]Versammlungsplatz[/url]";
+        String placeVal = placeLink;
+        String placeURLVal = placeURL;
+        return new String[]{typeVal, attackerVal, sourceVal, unitVal, defenderVal, targetVal, sendVal, arrivetVal, placeVal, placeURLVal};
     }
 }

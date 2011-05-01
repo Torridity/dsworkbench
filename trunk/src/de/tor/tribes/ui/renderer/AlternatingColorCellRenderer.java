@@ -19,15 +19,7 @@ public class AlternatingColorCellRenderer extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        JLabel label = (JLabel) c;
-        //String v = (String) value;
-        if (!isSelected) {
-            if (row % 2 == 0) {
-                label.setBackground(Constants.DS_ROW_B);
-            } else {
-                label.setBackground(Constants.DS_ROW_A);
-            }
-        }
+        JLabel label = (JLabel) c;      
         try {
             label.setText(value.toString());
         } catch (Exception e) {

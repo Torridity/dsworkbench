@@ -8,6 +8,7 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.dist.DistanceManager;
 import javax.swing.table.AbstractTableModel;
 
@@ -35,8 +36,8 @@ public class DistanceTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        Tribe currentUser = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
-        if(currentUser == null){
+        Tribe currentUser = GlobalOptions.getSelectedProfile().getTribe();
+        if (currentUser == null) {
             return 0;
         }
         return currentUser.getVillages();
@@ -75,7 +76,7 @@ public class DistanceTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Village v1 = DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillageList()[rowIndex];
+        Village v1 = GlobalOptions.getSelectedProfile().getTribe().getVillageList()[rowIndex];
         if (columnIndex == 0) {
             return v1;
         }

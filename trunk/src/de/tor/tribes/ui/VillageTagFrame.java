@@ -10,7 +10,7 @@ import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
-import de.tor.tribes.ui.renderer.MapRenderer;
+import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.tag.TagManagerListener;
 import java.util.Arrays;
@@ -41,7 +41,7 @@ public class VillageTagFrame extends javax.swing.JFrame implements TagManagerLis
 
     public void updateUserTags() {
         jTagsChooser.setModel(new DefaultComboBoxModel(TagManager.getSingleton().getTags().toArray(new Tag[]{})));
-        jTagsChooser.repaint();//.updateUI();
+        jTagsChooser.repaint();
     }
 
     public void showTagsFrame(Village pVillage) {

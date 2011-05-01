@@ -7,7 +7,7 @@ package de.tor.tribes.util;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
+import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
@@ -24,7 +24,7 @@ public class IGMSender {
     private static Logger logger = Logger.getLogger("IGMSender");
 
     public static boolean sendIGM(Tribe pReceiver, String pApiKey, String pSubject, String pMessage) {
-        Tribe t = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
+        Tribe t = GlobalOptions.getSelectedProfile().getTribe();
         try {
             String why = URLEncoder.encode(pSubject, "UTF-8");
             String name = URLEncoder.encode(pReceiver.getName(), "UTF-8");

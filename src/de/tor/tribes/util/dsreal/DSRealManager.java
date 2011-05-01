@@ -6,7 +6,7 @@ package de.tor.tribes.util.dsreal;
 
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
-import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
+import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.dsreal.ui.ChartPanel;
 import java.awt.image.BufferedImage;
@@ -166,7 +166,7 @@ public class DSRealManager {
                 URLConnection con = u.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
                 img = ImageIO.read(con.getInputStream());
             } catch (Exception e) {
-                logger.error("Failed to read from url '" + pUrl + "'");
+                logger.error("Failed to read from url '" + pUrl + "'", e);
             }
 
             if (img != null) {

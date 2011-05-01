@@ -12,30 +12,25 @@ import de.tor.tribes.ui.MarkerCell;
 import de.tor.tribes.util.Constants;
 import java.awt.Color;
 import java.awt.Component;
+import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.table.TableCellRenderer;
+import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
 /**
  *
  * @author Charon
  */
-public class MarkerPanelCellRenderer implements TableCellRenderer {
+public class MarkerPanelCellRenderer extends DefaultTableRenderer {
 
     private Color SELECT_COLOR = new Color(230, 230, 230);
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        JLabel l = (JLabel) c;
         MarkerCell cell = (MarkerCell) value;
-        if (!isSelected) {
-            if (row % 2 == 0) {
-                cell.setBackground(Constants.DS_ROW_B);
-            } else {
-                cell.setBackground(Constants.DS_ROW_A);
-            }
-            return cell;
-        } else {
-            cell.setBackground(SELECT_COLOR);
-            return cell;
-        }
+        cell.setBackground(l.getBackground());
+        cell.setForeground(l.getForeground());
+        return cell;
     }
 }

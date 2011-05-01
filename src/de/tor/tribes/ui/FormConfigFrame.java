@@ -34,7 +34,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
     private static FormConfigFrame SINGLETON = null;
     private ColorChooser mTextColorChooser = null;
     private ColorChooser mDrawColorChooser = null;
-    private SamplePanel mSamplePanel = null;
+    private FormSamplePanel mSamplePanel = null;
     private boolean isInEditMode = false;
 
     public static synchronized FormConfigFrame getSingleton() {
@@ -60,7 +60,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
         mTextColorChooser.addActionListener(l);
         jDrawColorPanel.add(mDrawColorChooser);
         jTextColorPanel.add(mTextColorChooser);
-        mSamplePanel = new SamplePanel();
+        mSamplePanel = new FormSamplePanel();
         jSamplePanel.add(mSamplePanel);
 
         try {
@@ -594,7 +594,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
         mTextColorChooser.setColor(mCurrentForm.getTextColor());
         jTextTransparency.setValue(Math.abs(mCurrentForm.getTextAlpha()));
         jTextHeight.setValue(mCurrentForm.getTextSize());
-        jSamplePanel.repaint();//.updateUI();
+        jSamplePanel.repaint();
 
         //showing frame
         setVisible(true);
@@ -603,7 +603,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
         state &= ~ICONIFIED;
         // Deiconify the frame
         setExtendedState(state);
-        jSamplePanel.repaint();//.updateUI();
+        jSamplePanel.repaint();
         setupMode = false;
     }
 
@@ -868,7 +868,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
             mSamplePanel.setTextSize((Integer) jTextHeight.getValue());
             mSamplePanel.setTextColor(mTextColorChooser.getColor());
             mSamplePanel.setTextTransparency((Float) jTextTransparency.getValue());
-            jSamplePanel.repaint();//.updateUI();
+            jSamplePanel.repaint();
         }
     }
 

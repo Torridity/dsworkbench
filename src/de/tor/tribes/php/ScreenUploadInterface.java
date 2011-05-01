@@ -4,7 +4,7 @@
  */
 package de.tor.tribes.php;
 
-import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
+import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.GlobalOptions;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;

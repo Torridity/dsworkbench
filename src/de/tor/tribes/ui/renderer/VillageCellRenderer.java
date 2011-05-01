@@ -5,17 +5,16 @@
 package de.tor.tribes.ui.renderer;
 
 import de.tor.tribes.types.Village;
-import de.tor.tribes.util.Constants;
 import java.awt.Component;
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
+import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
 /**
  *
  * @author Torridity
  */
-public class VillageCellRenderer extends DefaultTableCellRenderer {
+public class VillageCellRenderer extends DefaultTableRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -23,14 +22,7 @@ public class VillageCellRenderer extends DefaultTableCellRenderer {
         JLabel label = (JLabel) c;
         try {
             Village vil = (Village) value;
-
-            if (!isSelected) {
-                if (row % 2 == 0) {
-                    label.setBackground(Constants.DS_ROW_B);
-                } else {
-                    label.setBackground(Constants.DS_ROW_A);
-                }
-            }
+            label.setOpaque(true);
 
             label.setText(vil.toString());
             label.setToolTipText(vil.getToolTipText());

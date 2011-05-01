@@ -4,24 +4,154 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import org.jdom.Document;
 import org.jdom.Element;
 
 /**
  *
  * @author Torridity
  */
-public class FightReport implements Comparable<FightReport> {
+public class FightReport extends ManageableType implements Comparable<FightReport>, BBSupport {
 
+    private final static String[] VARIABLES = new String[]{"%ATTACKER%", "%SOURCE%", "%DEFENDER%", "%TARGET%", "%SEND_TIME%", "%RESULT%", "%LUCK%", "%MORALE%", "%ATTACKER_TROOPS%",
+        "%DEFENDER_TROOPS%", "%DEFENDERS_OUTSIDE%", "%DEFENDERS_EN_ROUTE%", "%LOYALITY_CHANGE%", "%WALL_CHANGE%", "%BUILDING_CHANGE%"};
+    private final static String STANDARD_TEMPLATE = "[quote][i][b]Betreff:[/b][/i] %ATTACKER% greift %TARGET% an\n[i][b]Gesendet:[/b][/i] %SEND_TIME%\n[size=16]%RESULT%[/size]\n"
+            + "[b]Glück:[/b] %LUCK%\n[b]Moral:[/b] %MORALE%\n\n[b]Angreifer:[/b] %ATTACKER%\n[b]Dorf:[/b] %SOURCE%\n%ATTACKER_TROOPS%\n\n[b]Verteidiger:[/b] %DEFENDER%\n"
+            + "[b]Dorf:[/b] %TARGET%\n %DEFENDER_TROOPS%\n\n%DEFENDERS_OUTSIDE%\n%DEFENDERS_EN_ROUTE%\n%LOYALITY_CHANGE%\n%WALL_CHANGE%\n%BUILDING_CHANGE%[/quote]";
+    private final static String TEMPLATE_PROPERTY = "report.bbexport.template";
+
+    @Override
+    public String[] getBBVariables() {
+        return VARIABLES;
+    }
+
+    @Override
+    public String[] getReplacements(boolean pExtended) {
+        String attackerVal = getAttacker().toBBCode();
+        String targetVal = getTargetVillage().toBBCode();
+        SimpleDateFormat d = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+        String sendDateVal = d.format(new Date(getTimestamp()));
+        String resultVal = "";
+        if (isWon()) {
+            resultVal = "Der Angreifer hat gewonnen";
+        } else {
+            resultVal = "Der Verteidiger hat gewonnen";
+        }
+
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(1);
+        nf.setMinimumFractionDigits(1);
+
+        String luckVal = "[img]http://dsextra.net/ic/luck_" + nf.format(getLuck()) + "[/img] " + nf.format(getLuck()) + "%";
+        nf.setMinimumFractionDigits(0);
+        nf.setMinimumFractionDigits(0);
+        String moraleVal = nf.format(getMoral()) + " %";
+
+        String sourceVal = getSourceVillage().toBBCode();
+        String attackerTroopsVal = "";
+        if (!areAttackersHidden()) {
+
+            attackerTroopsVal = "http://dsextra.net/ic/knights_";
+            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                Integer amount = getAttackers().get(unit);
+                attackerTroopsVal += amount + "_";
+            }
+            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                Integer amount = getDiedAttackers().get(unit);
+                attackerTroopsVal += amount + "_";
+            }
+            attackerTroopsVal = attackerTroopsVal.substring(0, attackerTroopsVal.lastIndexOf("_"));
+            attackerTroopsVal = "[img]" + attackerTroopsVal + "[/img]";
+        } else {
+            attackerTroopsVal = "Durch Besitzer des Berichts verborgen";
+        }
+
+
+        String defenderVal = getDefender().toBBCode();
+        String defenderTroopsVal = "";
+        if (!wasLostEverything()) {
+            defenderTroopsVal = "http://dsextra.net/ic/knights_";
+            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                Integer amount = getDefenders().get(unit);
+                defenderTroopsVal += amount + "_";
+            }
+            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                Integer amount = getDiedDefenders().get(unit);
+                defenderTroopsVal += amount + "_";
+            }
+            defenderTroopsVal = defenderTroopsVal.substring(0, defenderTroopsVal.lastIndexOf("_"));
+            defenderTroopsVal = "[img]" + defenderTroopsVal + "[/img]";
+        } else {
+            defenderTroopsVal = "Keiner deiner Kämpfer ist lebend zurückgekehrt.\nEs konnten keine Informationen über die Truppenstärke des Gegners erlangt werden.";
+        }
+
+        boolean wasAdditionTroops = false;
+        String troopsEnRouteVal = "";
+        if (whereDefendersOnTheWay()) {
+            wasAdditionTroops = true;
+            troopsEnRouteVal = "http://dsextra.net/ic/knights_";
+            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                Integer amount = getDefendersOnTheWay().get(unit);
+                troopsEnRouteVal += amount + "_";
+            }
+            troopsEnRouteVal = troopsEnRouteVal.substring(0, troopsEnRouteVal.lastIndexOf("_"));
+            troopsEnRouteVal = "[b]Truppen des Verteidigers, die unterwegs waren[/b]\n\n" + "[img]" + troopsEnRouteVal + "[/img]";
+        }
+        String troopsOutsideVal = "";
+        if (whereDefendersOutside()) {
+            wasAdditionTroops = true;
+            Enumeration<Village> targetKeys = getDefendersOutside().keys();
+            while (targetKeys.hasMoreElements()) {
+                Village target = targetKeys.nextElement();
+                troopsOutsideVal += target.toBBCode() + "\n\n";
+                String graphUrl = "http://dsextra.net/ic/knights_";
+                for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                    Integer amount = getDefendersOutside().get(target).get(unit);
+                    graphUrl += amount + "_";
+                }
+                graphUrl = graphUrl.substring(0, graphUrl.lastIndexOf("_"));
+                troopsOutsideVal += "[img]" + graphUrl + "[/img]\n\n";
+            }
+        }
+
+        String loyalityChangeVal = "";
+        if (wasSnobAttack()) {
+            loyalityChangeVal = "[b]Veränderung der Zustimmung:[/b] Zustimmung gesunken von " + nf.format(getAcceptanceBefore()) + " auf " + getAcceptanceAfter();
+        }
+
+        String wallChangeVal = "";
+        if (wasWallDamaged()) {
+            wallChangeVal = "[b]Schaden durch Rammen:[/b] Wall beschädigt von Level " + getWallBefore() + " auf Level " + getWallAfter();
+        }
+        String cataChangeVal = "";
+        if (wasBuildingDamaged()) {
+            cataChangeVal = "[b]Schaden durch Katapultbeschuss:[/b] " + getAimedBuilding() + " beschädigt von Level " + getBuildingBefore() + " auf Level " + getBuildingAfter();
+        }
+        return new String[]{attackerVal, sourceVal, defenderVal, targetVal, sendDateVal, resultVal, luckVal, moraleVal, attackerTroopsVal, defenderTroopsVal, troopsOutsideVal, troopsEnRouteVal, loyalityChangeVal, wallChangeVal, cataChangeVal};
+    }
+
+    @Override
+    public String getStandardTemplate() {
+        return STANDARD_TEMPLATE;
+    }
+
+    @Override
+    public String getTemplateProperty() {
+        return TEMPLATE_PROPERTY;
+    }
     private boolean won = false;
     private long timestamp = 0;
     private double luck = 0.0;
@@ -54,97 +184,119 @@ public class FightReport implements Comparable<FightReport> {
         defendersOnTheWay = new Hashtable<UnitHolder, Integer>();
     }
 
-    public FightReport(Element pElement) throws Exception {
-        setTimestamp(Long.parseLong(pElement.getChild("timestamp").getText()));
-        setMoral(Double.parseDouble(pElement.getChild("moral").getText()));
-        setLuck(Double.parseDouble(pElement.getChild("luck").getText()));
-        //attacker stuff
-        Element attackerElement = pElement.getChild("attacker");
-        Element defenderElement = pElement.getChild("defender");
-        int attackerId = Integer.parseInt(attackerElement.getChild("id").getText());
-        setAttacker(DataHolder.getSingleton().getTribes().get(attackerId));
-        int source = Integer.parseInt(attackerElement.getChild("src").getText());
-        setSourceVillage(DataHolder.getSingleton().getVillagesById().get(source));
-        int defenderId = Integer.parseInt(defenderElement.getChild("id").getText());
-        setDefender(DataHolder.getSingleton().getTribes().get(defenderId));
-        int target = Integer.parseInt(defenderElement.getChild("trg").getText());
-        setTargetVillage(DataHolder.getSingleton().getVillagesById().get(target));
-        Element aAmount = attackerElement.getChild("amount");
-        Element aDiedAmount = attackerElement.getChild("died");
-        Element dAmount = defenderElement.getChild("amount");
-        Element dDiedAmount = defenderElement.getChild("died");
-        Element dDefendersOnTheWay = null;
+    public static String toInternalRepresentation(FightReport pReport) {
+        String xml = pReport.toXml();
+        xml = xml.replaceAll("\n", "");
+        return xml;
+    }
 
+    public static FightReport fromInternalRepresentation(String pLine) {
+        FightReport r = new FightReport();
         try {
-            dDefendersOnTheWay = defenderElement.getChild("ontheway");
+            Document d = JaxenUtils.getDocument(pLine);
+            r.loadFromXml((Element) JaxenUtils.getNodes(d, "//report").get(0));
+            return r;
         } catch (Exception e) {
-        }
-
-        Element dDefendersOutside = null;
-        try {
-            dDefendersOutside = defenderElement.getChild("outside");
-        } catch (Exception e) {
-        }
-
-        attackers = new Hashtable<UnitHolder, Integer>();
-        diedAttackers = new Hashtable<UnitHolder, Integer>();
-        defenders = new Hashtable<UnitHolder, Integer>();
-        diedDefenders = new Hashtable<UnitHolder, Integer>();
-        defendersOnTheWay = new Hashtable<UnitHolder, Integer>();
-        defendersOutside = new Hashtable<Village, Hashtable<UnitHolder, Integer>>();
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            String unitName = unit.getPlainName();
-            attackers.put(unit, aAmount.getAttribute(unitName).getIntValue());
-            diedAttackers.put(unit, aDiedAmount.getAttribute(unitName).getIntValue());
-            defenders.put(unit, dAmount.getAttribute(unitName).getIntValue());
-            diedDefenders.put(unit, dDiedAmount.getAttribute(unitName).getIntValue());
-            if (dDefendersOnTheWay != null) {
-                defendersOnTheWay.put(unit, dDefendersOnTheWay.getAttribute(unitName).getIntValue());
-            }
-            if (dDefendersOutside != null) {
-                for (Element e : (List<Element>) JaxenUtils.getNodes(dDefendersOutside, "support")) {
-                    int villageId = e.getAttribute("trg").getIntValue();
-                    int amount = e.getAttribute(unitName).getIntValue();
-                    Village v = DataHolder.getSingleton().getVillagesById().get(villageId);
-                    if (v != null) {
-                        Hashtable<UnitHolder, Integer> unitsInvillage = defendersOutside.get(v);
-                        if (unitsInvillage == null) {
-                            unitsInvillage = new Hashtable<UnitHolder, Integer>();
-                            defendersOutside.put(v, unitsInvillage);
-                        }
-                        unitsInvillage.put(unit, amount);
-                    }
-                }
-            }
-        }
-
-        try {
-            Element e = pElement.getChild("wall");
-            setWallBefore(Byte.parseByte(e.getAttribute("before").getValue()));
-            setWallAfter(Byte.parseByte(e.getAttribute("after").getValue()));
-        } catch (Exception e) {
-            setWallBefore((byte) -1);
-            setWallAfter((byte) -1);
-        }
-        try {
-            Element e = pElement.getChild("building");
-            setAimedBuilding(URLDecoder.decode(e.getAttribute("target").getValue(), "UTF-8"));
-            setBuildingBefore(Byte.parseByte(e.getAttribute("before").getValue()));
-            setBuildingAfter(Byte.parseByte(e.getAttribute("after").getValue()));
-        } catch (Exception e) {
-            setBuildingBefore((byte) -1);
-            setBuildingAfter((byte) -1);
-        }
-        try {
-            Element e = pElement.getChild("acceptance");
-            setAcceptanceBefore(Byte.parseByte(e.getAttribute("before").getValue()));
-            setAcceptanceAfter(Byte.parseByte(e.getAttribute("after").getValue()));
-        } catch (Exception e) {
-            setAcceptanceBefore((byte) 100);
-            setAcceptanceAfter((byte) 100);
+            return null;
         }
     }
 
+    @Override
+    public void loadFromXml(Element pElement) {
+        try {
+            setTimestamp(Long.parseLong(pElement.getChild("timestamp").getText()));
+            setMoral(Double.parseDouble(pElement.getChild("moral").getText()));
+            setLuck(Double.parseDouble(pElement.getChild("luck").getText()));
+            //attacker stuff
+            Element attackerElement = pElement.getChild("attacker");
+            Element defenderElement = pElement.getChild("defender");
+            int attackerId = Integer.parseInt(attackerElement.getChild("id").getText());
+            setAttacker(DataHolder.getSingleton().getTribes().get(attackerId));
+            int source = Integer.parseInt(attackerElement.getChild("src").getText());
+            setSourceVillage(DataHolder.getSingleton().getVillagesById().get(source));
+            int defenderId = Integer.parseInt(defenderElement.getChild("id").getText());
+            setDefender(DataHolder.getSingleton().getTribes().get(defenderId));
+            int target = Integer.parseInt(defenderElement.getChild("trg").getText());
+            setTargetVillage(DataHolder.getSingleton().getVillagesById().get(target));
+            Element aAmount = attackerElement.getChild("amount");
+            Element aDiedAmount = attackerElement.getChild("died");
+            Element dAmount = defenderElement.getChild("amount");
+            Element dDiedAmount = defenderElement.getChild("died");
+            Element dDefendersOnTheWay = null;
+
+            try {
+                dDefendersOnTheWay = defenderElement.getChild("ontheway");
+            } catch (Exception e) {
+            }
+
+            Element dDefendersOutside = null;
+            try {
+                dDefendersOutside = defenderElement.getChild("outside");
+            } catch (Exception e) {
+            }
+
+            attackers = new Hashtable<UnitHolder, Integer>();
+            diedAttackers = new Hashtable<UnitHolder, Integer>();
+            defenders = new Hashtable<UnitHolder, Integer>();
+            diedDefenders = new Hashtable<UnitHolder, Integer>();
+            defendersOnTheWay = new Hashtable<UnitHolder, Integer>();
+            defendersOutside = new Hashtable<Village, Hashtable<UnitHolder, Integer>>();
+            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                String unitName = unit.getPlainName();
+                attackers.put(unit, aAmount.getAttribute(unitName).getIntValue());
+                diedAttackers.put(unit, aDiedAmount.getAttribute(unitName).getIntValue());
+                defenders.put(unit, dAmount.getAttribute(unitName).getIntValue());
+                diedDefenders.put(unit, dDiedAmount.getAttribute(unitName).getIntValue());
+                if (dDefendersOnTheWay != null) {
+                    defendersOnTheWay.put(unit, dDefendersOnTheWay.getAttribute(unitName).getIntValue());
+                }
+                if (dDefendersOutside != null) {
+                    for (Element e : (List<Element>) JaxenUtils.getNodes(dDefendersOutside, "support")) {
+                        int villageId = e.getAttribute("trg").getIntValue();
+                        int amount = e.getAttribute(unitName).getIntValue();
+                        Village v = DataHolder.getSingleton().getVillagesById().get(villageId);
+                        if (v != null) {
+                            Hashtable<UnitHolder, Integer> unitsInvillage = defendersOutside.get(v);
+                            if (unitsInvillage == null) {
+                                unitsInvillage = new Hashtable<UnitHolder, Integer>();
+                                defendersOutside.put(v, unitsInvillage);
+                            }
+                            unitsInvillage.put(unit, amount);
+                        }
+                    }
+                }
+            }
+
+            try {
+                Element e = pElement.getChild("wall");
+                setWallBefore(Byte.parseByte(e.getAttribute("before").getValue()));
+                setWallAfter(Byte.parseByte(e.getAttribute("after").getValue()));
+            } catch (Exception e) {
+                setWallBefore((byte) -1);
+                setWallAfter((byte) -1);
+            }
+            try {
+                Element e = pElement.getChild("building");
+                setAimedBuilding(URLDecoder.decode(e.getAttribute("target").getValue(), "UTF-8"));
+                setBuildingBefore(Byte.parseByte(e.getAttribute("before").getValue()));
+                setBuildingAfter(Byte.parseByte(e.getAttribute("after").getValue()));
+            } catch (Exception e) {
+                setBuildingBefore((byte) -1);
+                setBuildingAfter((byte) -1);
+            }
+            try {
+                Element e = pElement.getChild("acceptance");
+                setAcceptanceBefore(Byte.parseByte(e.getAttribute("before").getValue()));
+                setAcceptanceAfter(Byte.parseByte(e.getAttribute("after").getValue()));
+            } catch (Exception e) {
+                setAcceptanceBefore((byte) 100);
+                setAcceptanceAfter((byte) 100);
+            }
+        } catch (Exception ex) {
+        }
+    }
+
+    @Override
     public String toXml() {
         try {
             String xml = "<report>\n";
@@ -687,14 +839,14 @@ public class FightReport implements Comparable<FightReport> {
         System.out.println(getDiedAttackers());
         System.out.println(getDefenders());
         System.out.println(getDiedDefenders());*/
-        return (getAttacker() != null &&
-                getSourceVillage() != null &&
-                !getAttackers().isEmpty() &&
-                !getDiedAttackers().isEmpty() &&
-                getDefender() != null &&
-                getTargetVillage() != null &&
-                !getDefenders().isEmpty() &&
-                !getDiedDefenders().isEmpty());
+        return (getAttacker() != null
+                && getSourceVillage() != null
+                && !getAttackers().isEmpty()
+                && !getDiedAttackers().isEmpty()
+                && getDefender() != null
+                && getTargetVillage() != null
+                && !getDefenders().isEmpty()
+                && !getDiedDefenders().isEmpty());
     }
 
     public byte getVillageEffects() {
@@ -821,5 +973,20 @@ public class FightReport implements Comparable<FightReport> {
     @Override
     public int compareTo(FightReport o) {
         return getComparableValue().compareTo(o.getComparableValue());
+    }
+
+    @Override
+    public String getElementIdentifier() {
+        return "fightReport";
+    }
+
+    @Override
+    public String getElementGroupIdentifier() {
+        return "reportSet";
+    }
+
+    @Override
+    public String getGroupNameAttributeIdentifier() {
+        return "name";
     }
 }

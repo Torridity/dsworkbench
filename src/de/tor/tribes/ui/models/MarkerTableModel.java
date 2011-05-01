@@ -4,7 +4,7 @@
  */
 package de.tor.tribes.ui.models;
 
-import de.tor.tribes.types.MarkerSet;
+import de.tor.tribes.types.Marker;
 import de.tor.tribes.ui.MarkerCell;
 import de.tor.tribes.util.mark.MarkerManager;
 import java.awt.Color;
@@ -15,48 +15,39 @@ import javax.swing.table.AbstractTableModel;
  * @author Charon
  */
 public class MarkerTableModel extends AbstractTableModel {
-
-    private final Class[] types = new Class[]{
-        MarkerCell.class, Color.class
-    };
-    private final String names[] =
-            new String[]{
-        "Name", "Markierung"
-    };
-    private static MarkerTableModel SINGLETON = null;
-    private String activeSet = "default";
-
-    public static synchronized MarkerTableModel getSingleton() {
-        if (SINGLETON == null) {
-            SINGLETON = new MarkerTableModel();
-        }
-        return SINGLETON;
+    
+    private String sMarkerSet = null;
+    private final Class[] types = new Class[]{MarkerCell.class, Color.class, Boolean.class};
+    private final String colNames[] = new String[]{"Name", "Markierung", "Sichtbar"};
+    
+    public MarkerTableModel(String pMarkerSet) {
+        sMarkerSet = pMarkerSet;
     }
-
-    public String getActiveSet() {
-        if (activeSet == null || MarkerManager.getSingleton().getMarkerSet(activeSet) == null) {
-            activeSet = "default";
-        }
-        return activeSet;
+    
+    public void setMarkerSet(String pMarkerSet) {
+        sMarkerSet = pMarkerSet;
+        fireTableDataChanged();
     }
-
-    public void setActiveSet(String pSet) {
-        if (activeSet == null || MarkerManager.getSingleton().getMarkerSet(activeSet) == null) {
-            activeSet = "default";
-        }
-        activeSet = pSet;
+    
+    public String getMarkerSet() {
+        return sMarkerSet;
     }
-
+    
+    @Override
+    public int getColumnCount() {
+        return colNames.length;
+    }
+    
     @Override
     public Class getColumnClass(int columnIndex) {
         return types[columnIndex];
     }
-
+    
     @Override
     public String getColumnName(int columnIndex) {
-        return names[columnIndex];
+        return colNames[columnIndex];
     }
-
+    
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         if (columnIndex > 0) {
@@ -64,39 +55,39 @@ public class MarkerTableModel extends AbstractTableModel {
         }
         return false;
     }
-
+    
     @Override
     public int getRowCount() {
-        MarkerSet ms = MarkerManager.getSingleton().getMarkerSet(activeSet);
-        if (ms != null) {
-            return ms.getMarkers().size();
-        } else {
+        if (sMarkerSet == null) {
             return 0;
         }
+        return MarkerManager.getSingleton().getAllElements(sMarkerSet).size();
     }
-
-    @Override
-    public int getColumnCount() {
-        return types.length;
-    }
-
+    
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-
+        if (sMarkerSet == null) {
+            return null;
+        }
+        
+        Marker m = ((Marker) MarkerManager.getSingleton().getAllElements(sMarkerSet).get(rowIndex));
         switch (columnIndex) {
             case 0: {
-                return MarkerManager.getSingleton().getMarkerSetMarkers(activeSet)[rowIndex].getView();
+                return m.getView();
             }
             case 1: {
-                return MarkerManager.getSingleton().getMarkerSetMarkers(activeSet)[rowIndex].getMarkerColor();
+                return m.getMarkerColor();
+            }
+            case 2: {
+                return m.isShownOnMap();
             }
         }
         return null;
     }
-
+    
     @Override
     public void setValueAt(Object pValue, int rowIndex, int columnIndex) {
-
+        Marker m = ((Marker) MarkerManager.getSingleton().getAllElements(sMarkerSet).get(rowIndex));
         switch (columnIndex) {
             case 0: {
                 // view can't be set
@@ -104,8 +95,14 @@ public class MarkerTableModel extends AbstractTableModel {
             }
             case 1: {
                 //set color
-                MarkerManager.getSingleton().getMarkerSetMarkers(activeSet)[rowIndex].setMarkerColor((Color) pValue);
+                m.setMarkerColor((Color) pValue);
+                break;
+            }
+            case 2: {
+                m.setShownOnMap((Boolean) pValue);
+                break;
             }
         }
+        MarkerManager.getSingleton().revalidate(sMarkerSet, true);
     }
 }

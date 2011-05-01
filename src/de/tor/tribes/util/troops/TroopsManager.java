@@ -6,7 +6,7 @@ package de.tor.tribes.util.troops;
 
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.DSWorkbenchTroopsFrame;
+import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
 import de.tor.tribes.ui.models.TroopsManagerTableModel;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Image;

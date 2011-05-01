@@ -6,7 +6,7 @@ package de.tor.tribes.php;
 
 import de.tor.tribes.db.DatabaseServerEntry;
 import de.tor.tribes.sec.SecurityAdapter;
-import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
+import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.Constants;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;

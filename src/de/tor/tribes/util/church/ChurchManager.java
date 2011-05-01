@@ -4,26 +4,17 @@
  */
 package de.tor.tribes.util.church;
 
-import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.Barbarians;
+import de.tor.tribes.control.GenericManager;
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.Church;
-import de.tor.tribes.types.Marker;
-import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.DSWorkbenchMarkerFrame;
-import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.ui.MinimapPanel;
-import de.tor.tribes.ui.renderer.MapRenderer;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.xml.JaxenUtils;
-import java.awt.Color;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -31,13 +22,10 @@ import org.jdom.Element;
 /**
  * @author Charon
  */
-public class ChurchManager {
+public class ChurchManager extends GenericManager<Church> {
 
     private static Logger logger = Logger.getLogger("ChurchManager");
     private static ChurchManager SINGLETON = null;
-    private List<Church> churches = null;
-    private DefaultTableModel model = null;
-    private List<ChurchManagerListener> mManagerListeners = null;
 
     public static synchronized ChurchManager getSingleton() {
         if (SINGLETON == null) {
@@ -47,55 +35,17 @@ public class ChurchManager {
     }
 
     ChurchManager() {
-        churches = new LinkedList<Church>();
-        mManagerListeners = new LinkedList<ChurchManagerListener>();
-        model = new javax.swing.table.DefaultTableModel(
-                new Object[][]{},
-                new String[]{
-                    "Spieler", "Dorf", "Reichweite", "Farbe"
-                }) {
-
-            Class[] types = new Class[]{
-                String.class, Village.class, Integer.class, Color.class
-            };
-            boolean[] canEdit = new boolean[]{
-                false, false, false, false
-            };
-
-            @Override
-            public Class getColumnClass(int columnIndex) {
-                return types[columnIndex];
-            }
-
-            @Override
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit[columnIndex];
-            }
-        };
-
+        super(false);
     }
 
-    public synchronized void addChurchManagerListener(ChurchManagerListener pListener) {
-        if (pListener == null) {
-            return;
-        }
-        if (!mManagerListeners.contains(pListener)) {
-            mManagerListeners.add(pListener);
-        }
-    }
-
-    public synchronized void removeChurchManagerListener(ChurchManagerListener pListener) {
-        mManagerListeners.remove(pListener);
-    }
-
-    /**Load markers from file
-     */
-    public void loadChurchesFromFile(String pFile) {
-        churches.clear();
+    @Override
+    public void loadElements(String pFile) {
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return;
         }
+        invalidate();
+        initialize();
         File churchFile = new File(pFile);
         if (churchFile.exists()) {
             if (logger.isDebugEnabled()) {
@@ -105,8 +55,9 @@ public class ChurchManager {
                 Document d = JaxenUtils.getDocument(churchFile);
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//churches/church")) {
                     try {
-                        Church c = new Church(e);
-                        churches.add(c);
+                        Church c = new Church();
+                        c.loadFromXml(e);
+                        addManagedElement(c);
                     } catch (Exception inner) {
                         //ignored, marker invalid
                     }
@@ -120,41 +71,47 @@ public class ChurchManager {
                 logger.info("Churches file not found under '" + pFile + "'");
             }
         }
+        revalidate();
     }
 
-    public boolean importChurches(File pFile) {
+    @Override
+    public boolean importData(File pFile, String pExtension) {
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return false;
         }
+        boolean result = false;
+        invalidate();
         logger.debug("Importing churches");
         try {
             Document d = JaxenUtils.getDocument(pFile);
             for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//churches/church")) {
                 try {
-                    Church c = new Church(e);
-                    churches.add(c);
+                    Church c = new Church();
+                    c.loadFromXml(e);
+                    addManagedElement(c);
                 } catch (Exception inner) {
                     //ignored, marker invalid
                 }
             }
             logger.debug("Churches imported successfully");
-
-            fireChurchesChangedEvents();
-            return true;
+            result = true;
         } catch (Exception e) {
             logger.error("Failed to import churches", e);
-            DSWorkbenchMarkerFrame.getSingleton().fireMarkersChangedEvent();
             MinimapPanel.getSingleton().redraw();
-            return false;
+            result = false;
         }
+        revalidate(true);
+        return result;
     }
 
-    public String getExportData() {
+    @Override
+    public String getExportData(List<String> pGroupsToExport) {
         logger.debug("Generating churches export data");
 
         String result = "<churches>\n";
-        for (Church c : churches) {
+        for (ManageableType t : getAllElements()) {
+            Church c = (Church) t;
             result += c.toXml() + "\n";
         }
         result += "</churches>\n";
@@ -168,9 +125,8 @@ public class ChurchManager {
         logger.info("Not implemented yet");
     }
 
-    /**Load markers to file
-     */
-    public void saveChurchesToFile(String pFile) {
+    @Override
+    public void saveElements(String pFile) {
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return;
@@ -180,11 +136,12 @@ public class ChurchManager {
             logger.debug("Writing churches to '" + pFile + "'");
         }
         try {
-            StringBuffer b = new StringBuffer();
+            StringBuilder b = new StringBuilder();
 
             b.append("<churches>\n");
-            for (Church c : churches) {
-                b.append(c.toXml() + "\n");
+            for (ManageableType t : getAllElements()) {
+                Church c = (Church) t;
+                b.append(c.toXml()).append("\n");
             }
             b.append("</churches>");
             //write data to file
@@ -214,9 +171,9 @@ public class ChurchManager {
         if (v == null) {
             return null;
         }
-        Church[] churchesArray = churches.toArray(new Church[]{});
-        for (Church c : churchesArray) {
-            if (c.getVillageId() == v.getId()) {
+        for (ManageableType t : getAllElements()) {
+            Church c = (Church) t;
+            if (c.getVillage().equals(v)) {
                 return c;
             }
         }
@@ -225,9 +182,10 @@ public class ChurchManager {
 
     public List<Village> getChurchVillages() {
         List<Village> villages = new LinkedList<Village>();
-        Church[] churchesArray = churches.toArray(new Church[]{});
-        for (Church c : churchesArray) {
-            villages.add(DataHolder.getSingleton().getVillagesById().get(c.getVillageId()));
+
+        for (ManageableType t : getAllElements()) {
+            Church c = (Church) t;
+            villages.add(c.getVillage());
         }
         return villages;
     }
@@ -235,73 +193,52 @@ public class ChurchManager {
     public void addChurch(Village pVillage, int pRange) {
         if (pVillage != null) {
             Church c = new Church();
-            c.setVillageId(pVillage.getId());
+            c.setVillage(pVillage);
             c.setRange(pRange);
-            churches.add(c);
+            addManagedElement(c);
         }
-        fireChurchesChangedEvents();
     }
 
     public void removeChurch(Village pVillage) {
         if (pVillage != null) {
-            Church[] churchesArray = churches.toArray(new Church[]{});
-            for (Church c : churchesArray) {
-                if (c.getVillageId() == pVillage.getId()) {
-                    churches.remove(c);
+            Church toRemove = null;
+            for (ManageableType t : getAllElements()) {
+                Church c = (Church) t;
+                if (c.getVillage().equals(pVillage)) {
+                    toRemove = c;
                     break;
                 }
             }
-            fireChurchesChangedEvents();
+
+            if (toRemove != null) {
+                removeElement(toRemove);
+            }
         }
     }
 
     public void removeChurches(Village[] pVillages) {
         if (pVillages != null) {
-            Church[] churchesArray = churches.toArray(new Church[]{});
+            invalidate();
             for (Village v : pVillages) {
                 if (v != null) {
                     //village is valid
-                    for (Church c : churchesArray) {
+                    List<Church> toRemove = new ArrayList<Church>();
+                    for (ManageableType t : getAllElements()) {
+                        Church c = (Church) t;
                         //iterate through all churches
-                        if (c.getVillageId() == v.getId()) {
+                        if (c.getVillage().equals(v)) {
                             //remove current church
-                            churches.remove(c);
+                            toRemove.add(c);
                         }
                     }
+
+                    for (Church c : toRemove) {
+                        removeElement(c);
+                    }
+
                 }
             }
-            fireChurchesChangedEvents();
+            revalidate(true);
         }
-    }
-
-    public void churchesUpdatedExternally() {
-        fireChurchesChangedEvents();
-    }
-
-    /**Get the table model which contains all markers*/
-    public DefaultTableModel getTableModel() {
-        //remove former rows
-        while (model.getRowCount() > 0) {
-            model.removeRow(0);
-        }
-
-        Church[] churchesArray = churches.toArray(new Church[]{});
-        for (Church c : churchesArray) {
-            Integer range = c.getRange();
-            Village v = DataHolder.getSingleton().getVillagesById().get(c.getVillageId());
-            Color col = v.getTribe().getMarkerColor();
-            String tribe = (v.getTribe() == Barbarians.getSingleton()) ? "Barbaren" : v.getTribe().getName();
-            model.addRow(new Object[]{tribe, v, range, col});
-        }
-        return model;
-    }
-
-    /**Notify all MarkerManagerListeners that the marker data has changed*/
-    private void fireChurchesChangedEvents() {
-        ChurchManagerListener[] listeners = mManagerListeners.toArray(new ChurchManagerListener[]{});
-        for (ChurchManagerListener listener : listeners) {
-            listener.fireChurchesChangedEvent();
-        }
-       // MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.MARKER_LAYER);
     }
 }

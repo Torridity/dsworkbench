@@ -26,7 +26,7 @@ public class SkinPreviewFrame extends javax.swing.JDialog {
         setSize(icon.getIconWidth(), icon.getIconHeight());
         jLabel1.setSize(icon.getIconWidth(), icon.getIconHeight());
         jLabel1.setIcon(new ImageIcon(pSkin.getPreviewFile()));
-        setModal(true);
+        setAlwaysOnTop(true);
         pack();
     }
 
@@ -68,7 +68,6 @@ public class SkinPreviewFrame extends javax.swing.JDialog {
 private void fireHidePreviewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHidePreviewEvent
     dispose();
 }//GEN-LAST:event_fireHidePreviewEvent
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables

@@ -73,7 +73,7 @@ public class SupportCalculator {
         //get tagged villages
         List<Village> villages = new LinkedList<Village>();
         if (pTags == null || pTags.isEmpty()) {
-            Tribe own = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
+            Tribe own = GlobalOptions.getSelectedProfile().getTribe();
             if (own == null) {
                 logger.error("Current tribe is 'null'");
                 return movements;

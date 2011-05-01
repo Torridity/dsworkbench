@@ -20,8 +20,8 @@ import org.netbeans.lib.awtextra.AbsoluteLayout;
 public class DatePicker extends JPanel {
 
     private static final Font smallFont = new Font("Dialog", 0, 10);
-    private static final Font largeFont = new Font("Dialog", 0, 12);
-    private static final Insets insets = new Insets(2, 2, 2, 2);
+   // private static final Font largeFont = new Font("Dialog", 0, 10);
+    private static final Insets insets = new Insets(1, 1, 1, 1);
     private static final Color highlight = new Color(255, 255, 204);
     private static final Color white = new Color(255, 255, 255);
     private static final Color gray = new Color(204, 204, 204);
@@ -109,7 +109,7 @@ public class DatePicker extends JPanel {
             }
         });
         add(backButton, new AbsoluteConstraints(10, 10, 20, 20));
-        monthAndYear.setFont(largeFont);
+    //    monthAndYear.setFont(largeFont);
         monthAndYear.setHorizontalAlignment(0);
         monthAndYear.setText(formatDateText(selectedDate.getTime()));
         add(monthAndYear, new AbsoluteConstraints(30, 10, 100, 20));
@@ -130,6 +130,7 @@ public class DatePicker extends JPanel {
             dayHeadings[j].setEditable(false);
             dayHeadings[j].setFont(smallFont);
             dayHeadings[j].setHorizontalAlignment(0);
+            dayHeadings[j].setBorder(BorderFactory.createEmptyBorder());
             dayHeadings[j].setFocusable(false);
             add(dayHeadings[j], new AbsoluteConstraints(i, 40, 21, 21));
             i += 20;
@@ -165,7 +166,7 @@ public class DatePicker extends JPanel {
     private void initButtons(boolean flag) {
         if (flag) {
             Dimension dimension = new Dimension(68, 24);
-            todayButton.setFont(largeFont);
+          //  todayButton.setFont(largeFont);
             todayButton.setText("Heute");
             todayButton.setMargin(insets);
             todayButton.setMaximumSize(dimension);
@@ -179,7 +180,7 @@ public class DatePicker extends JPanel {
                     onToday(actionevent);
                 }
             });
-            cancelButton.setFont(largeFont);
+         //   cancelButton.setFont(largeFont);
             cancelButton.setText("OK");
             cancelButton.setMargin(insets);
             cancelButton.setMaximumSize(dimension);
@@ -196,8 +197,8 @@ public class DatePicker extends JPanel {
             remove(cancelButton);
         }
 
-        add(todayButton, new AbsoluteConstraints(25, 190, 52, -1));
-        add(cancelButton, new AbsoluteConstraints(87, 190, 52, -1));
+        add(todayButton, new AbsoluteConstraints(9, 190, 68, -1));
+        add(cancelButton, new AbsoluteConstraints(87, 190, 48, -1));
     }
 
     private void onToday(ActionEvent actionevent) {
@@ -424,6 +425,11 @@ public class DatePicker extends JPanel {
     }
 
     public static void main(String[] args) {
+         try {
+            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (Exception e) {
+        }
         JFrame f = new JFrame();
         f.add(new DatePicker());
         f.setVisible(true);

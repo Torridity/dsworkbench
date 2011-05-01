@@ -132,7 +132,6 @@ public class AttackScriptWriter {
         } catch (Exception e) {
             logger.error("Failed to write script to target file 'attack_info.user.js'", e);
             return false;
-
         }
 
         logger.info("Script written successfully");

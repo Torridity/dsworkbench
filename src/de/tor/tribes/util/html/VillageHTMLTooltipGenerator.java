@@ -64,7 +64,7 @@ public class VillageHTMLTooltipGenerator {
                 res += buildInfoRow("Stamm:", pVillage.getTribe().getAlly(), showRanks);
             }
             if (showMoral) {
-                Tribe current = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
+                Tribe current = GlobalOptions.getSelectedProfile().getTribe();
                 if (current != null) {
                     if (!current.equals(pVillage.getTribe())) {
                         double moral = ((pVillage.getTribe().getPoints() / current.getPoints()) * 3 + 0.3) * 100;

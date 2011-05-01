@@ -10,6 +10,8 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.control.ManageableType;
+import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
@@ -55,6 +57,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellRenderer;
@@ -206,8 +209,14 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             } catch (java.text.ParseException ex) {
             }
         }
-        jSourceVillage.updateUI();
-        jTargetVillage.updateUI();
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                jSourceVillage.updateUI();
+                jTargetVillage.updateUI();
+            }
+        });
+
     }
 
     protected void updateCountdown() {
@@ -223,13 +232,6 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTransferToAttackViewDialog = new javax.swing.JDialog();
-        jLabel5 = new javax.swing.JLabel();
-        jExistingPlansBox = new javax.swing.JComboBox();
-        jLabel6 = new javax.swing.JLabel();
-        jNewPlanField = new javax.swing.JTextField();
-        jOKButton = new javax.swing.JButton();
-        jCancelButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jAttackTable = new javax.swing.JTable();
@@ -248,7 +250,6 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jTaskPaneGroup2 = new com.l2fprod.common.swing.JTaskPaneGroup();
-        jButton7 = new javax.swing.JButton();
         jUnformattedExport = new javax.swing.JButton();
         jExportAsBBCode = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
@@ -263,63 +264,6 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jAdeptTypeButton = new javax.swing.JButton();
         jNewArriveSpinner = new de.tor.tribes.ui.components.DateTimeField();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
-
-        jLabel5.setText("Existierender Plan");
-
-        jLabel6.setText("Neuer Plan");
-
-        jOKButton.setText("OK");
-        jOKButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireDoMoveAttacksToAttackViewEvent(evt);
-            }
-        });
-
-        jCancelButton.setText("Abbrechen");
-        jCancelButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireDoMoveAttacksToAttackViewEvent(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jTransferToAttackViewDialogLayout = new javax.swing.GroupLayout(jTransferToAttackViewDialog.getContentPane());
-        jTransferToAttackViewDialog.getContentPane().setLayout(jTransferToAttackViewDialogLayout);
-        jTransferToAttackViewDialogLayout.setHorizontalGroup(
-            jTransferToAttackViewDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jTransferToAttackViewDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jTransferToAttackViewDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jTransferToAttackViewDialogLayout.createSequentialGroup()
-                        .addGroup(jTransferToAttackViewDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jTransferToAttackViewDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jNewPlanField, javax.swing.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
-                            .addComponent(jExistingPlansBox, 0, 290, Short.MAX_VALUE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jTransferToAttackViewDialogLayout.createSequentialGroup()
-                        .addComponent(jCancelButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jOKButton)))
-                .addContainerGap())
-        );
-        jTransferToAttackViewDialogLayout.setVerticalGroup(
-            jTransferToAttackViewDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jTransferToAttackViewDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jTransferToAttackViewDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jExistingPlansBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jTransferToAttackViewDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(jNewPlanField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jTransferToAttackViewDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jOKButton)
-                    .addComponent(jCancelButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
 
         setTitle("Manueller Angriffsplaner");
 
@@ -387,10 +331,10 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                         .addComponent(jLabel3)
                         .addGap(49, 49, 49)))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
-                    .addComponent(jUnitBox, 0, 206, Short.MAX_VALUE)
-                    .addComponent(jSourceVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
-                    .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
+                    .addComponent(jUnitBox, 0, 258, Short.MAX_VALUE)
+                    .addComponent(jSourceVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
+                    .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
                     .addComponent(jArriveTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -455,15 +399,6 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         percentLayout7.setGap(2);
         percentLayout7.setOrientation(1);
         jTaskPaneGroup2.getContentPane().setLayout(percentLayout7);
-
-        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_overview.png"))); // NOI18N
-        jButton7.setToolTipText("Markierte Angriffe in Angriffsübersicht einfügen");
-        jButton7.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireMoveAttacksToAttackViewEvent(evt);
-            }
-        });
-        jTaskPaneGroup2.getContentPane().add(jButton7);
 
         jUnformattedExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboard.png"))); // NOI18N
         jUnformattedExport.setToolTipText("Markierte Angriffe unformatiert in die Zwischenablage kopieren");
@@ -553,11 +488,11 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jAdeptTimeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(jUnitComboBox, 0, 206, Short.MAX_VALUE)
+                        .addComponent(jUnitComboBox, 0, 258, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jAdeptUnitButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(jAttackTypeComboBox, 0, 206, Short.MAX_VALUE)
+                        .addComponent(jAttackTypeComboBox, 0, 258, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jAdeptTypeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -582,7 +517,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jAttackTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(70, Short.MAX_VALUE))
+                .addContainerGap(72, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -596,7 +531,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 666, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 770, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTaskPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -606,13 +541,13 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTaskPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 509, Short.MAX_VALUE)
+                    .addComponent(jTaskPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 512, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE))))
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE))))
                 .addContainerGap())
         );
 
@@ -746,16 +681,17 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             //unformatted export
             try {
                 StringBuilder buffer = new StringBuilder();
-                List<Attack> attacks = AttackManager.getSingleton().getDoItYourselfAttacks();
+                List<ManageableType> elements = AttackManager.getSingleton().getDoItYourselfAttacks();
                 for (int i : rows) {
+                    Attack a = (Attack) elements.get(i);
                     jAttackTable.invalidate();
                     int row = jAttackTable.convertRowIndexToModel(i);
-                    Village sVillage = attacks.get(row).getSource();
-                    Village tVillage = attacks.get(row).getTarget();
-                    UnitHolder sUnit = attacks.get(row).getUnit();
-                    Date aTime = attacks.get(row).getArriveTime();
+                    Village sVillage = a.getSource();
+                    Village tVillage = a.getTarget();
+                    UnitHolder sUnit = a.getUnit();
+                    Date aTime = a.getArriveTime();
                     Date sTime = new Date(aTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(sVillage, tVillage, sUnit.getSpeed()) * 1000));
-                    int type = attacks.get(row).getType();
+                    int type = a.getType();
                     String sendtime = null;
                     String arrivetime = null;
 
@@ -835,11 +771,12 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 }
                 String sUrl = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
 
-                List<Attack> attacks = AttackManager.getSingleton().getDoItYourselfAttacks();
+                List<ManageableType> elements = AttackManager.getSingleton().getDoItYourselfAttacks();
                 jAttackTable.invalidate();
                 for (int i : rows) {
                     int row = jAttackTable.convertRowIndexToModel(i);
-                    buffer.append(AttackToBBCodeFormater.formatAttack(attacks.get(row), sUrl, extended));
+                    Attack a = (Attack) elements.get(row);
+                    buffer.append(AttackToBBCodeFormater.formatAttack(a, sUrl, extended));
                 }
 
                 jAttackTable.revalidate();
@@ -881,7 +818,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         if (dir == null) {
             dir = ".";
         }
-        String selectedPlan = AttackManager.getSingleton().getActiveAttackPlan();
+        String selectedPlan = AttackManager.MANUAL_ATTACK_PLAN;
         JFileChooser chooser = null;
         try {
             chooser = new JFileChooser(dir);
@@ -925,11 +862,11 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                     }
                 }
                 int[] rows = jAttackTable.getSelectedRows();
-                List<Attack> attacks = AttackManager.getSingleton().getDoItYourselfAttacks();
+                List<ManageableType> elements = AttackManager.getSingleton().getDoItYourselfAttacks();
                 List<Attack> toExport = new LinkedList<Attack>();
                 for (int i : rows) {
                     int row = jAttackTable.convertRowIndexToModel(i);
-                    toExport.add(attacks.get(row));
+                    toExport.add((Attack) elements.get(row));
                 }
                 AttackPlanHTMLExporter.doExport(target, "-kein Plan-", toExport);
                 //store current directory
@@ -943,48 +880,6 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             }
         }
     }//GEN-LAST:event_fireWriteToHTMLEvent
-
-    private void fireMoveAttacksToAttackViewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMoveAttacksToAttackViewEvent
-        int[] rows = jAttackTable.getSelectedRows();
-        if (rows == null || rows.length == 0) {
-            JOptionPaneHelper.showInformationBox(this, "Keine Angriffe ausgewählt", "Information");
-            return;
-        }
-
-        jExistingPlansBox.setModel(new DefaultComboBoxModel(AttackManager.getSingleton().getPlansAsArray()));
-        jNewPlanField.setText("");
-        jTransferToAttackViewDialog.pack();
-        jTransferToAttackViewDialog.setVisible(true);
-    }//GEN-LAST:event_fireMoveAttacksToAttackViewEvent
-
-    private void fireDoMoveAttacksToAttackViewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDoMoveAttacksToAttackViewEvent
-        if (evt.getSource() == jOKButton) {
-            int[] rows = jAttackTable.getSelectedRows();
-            if (rows == null || rows.length == 0) {
-                JOptionPaneHelper.showInformationBox(this, "Keine Angriffe ausgewählt", "Information");
-                return;
-            }
-            String plan = AttackManager.DEFAULT_PLAN_ID;
-            if (jNewPlanField.getText().length() > 0) {
-                //new plan
-                plan = jNewPlanField.getText();
-                if (AttackManager.getSingleton().getAttackPlan(plan) == null) {
-                    AttackManager.getSingleton().addEmptyPlan(plan);
-                    DSWorkbenchAttackFrame.getSingleton().buildAttackPlanList();
-                }
-            } else {
-                plan = (String) jExistingPlansBox.getSelectedItem();
-            }
-
-            for (int r = rows.length - 1; r >= 0; r--) {
-                int row = jAttackTable.convertRowIndexToModel(rows[r]);
-                Attack a = DoItYourselfAttackTableModel.getSingleton().getAttack(row);
-                AttackManager.getSingleton().addAttackFast(a.getSource(), a.getTarget(), a.getUnit(), a.getArriveTime(), false, plan, a.getType());
-            }
-            AttackManager.getSingleton().forceUpdate(plan);
-        }
-        jTransferToAttackViewDialog.setVisible(false);
-    }//GEN-LAST:event_fireDoMoveAttacksToAttackViewEvent
 
     private void fireAdeptEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAdeptEvent
         int[] rows = jAttackTable.getSelectedRows();
@@ -1062,22 +957,15 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jCancelButton;
-    private javax.swing.JComboBox jExistingPlansBox;
     private javax.swing.JButton jExportAsBBCode;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private de.tor.tribes.ui.components.DateTimeField jNewArriveSpinner;
-    private javax.swing.JTextField jNewPlanField;
-    private javax.swing.JButton jOKButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -1087,7 +975,6 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup1;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup2;
-    private javax.swing.JDialog jTransferToAttackViewDialog;
     private javax.swing.JButton jUnformattedExport;
     private javax.swing.JComboBox jUnitBox;
     private javax.swing.JComboBox jUnitComboBox;

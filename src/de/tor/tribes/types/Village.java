@@ -10,6 +10,7 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
@@ -20,6 +21,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.NumberFormat;
 import java.util.Comparator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -28,8 +30,48 @@ import java.util.StringTokenizer;
  *
  * @author Charon
  */
-public class Village implements Comparable<Village>, Serializable {
+public class Village implements Comparable<Village>, Serializable, BBSupport {
 
+    private final static String[] VARIABLES = new String[]{"%NAME%", "%X%", "%Y%", "%CONTINENT%", "%FULL_NAME%", "%TRIBE%", "%ALLY%", "%POINTS%"};
+    private final static String STANDARD_TEMPLATE = "[coord]%X%|%Y%[/coord]";
+    private final static String TEMPLATE_PROPERTY = "village.bbexport.template";
+
+    @Override
+    public String[] getBBVariables() {
+        return VARIABLES;
+    }
+
+    @Override
+    public String[] getReplacements(boolean pExtended) {
+        String nameVal = getName();
+        String xVal = Short.toString(getX());
+        String yVal = Short.toString(getY());
+        int cont = getContinent();
+        String contVal = "K" + Integer.toString(cont);
+        String fullNameVal = getFullName();
+        String tribeVal = getTribe().toBBCode();
+        Ally a = getTribe().getAlly();
+        if(a == null){
+            a = NoAlly.getSingleton();
+        }
+        String allyVal = a.toBBCode();
+        NumberFormat f = NumberFormat.getInstance();
+        f.setMaximumFractionDigits(0);
+        f.setMinimumFractionDigits(0);
+        String pointsVal = f.format(getPoints());
+
+        return new String[]{nameVal, xVal, yVal, contVal, fullNameVal, tribeVal, allyVal, pointsVal};
+    }
+
+    @Override
+    public String getStandardTemplate() {
+        return STANDARD_TEMPLATE;
+    }
+
+    @Override
+    public String getTemplateProperty() {
+        return TEMPLATE_PROPERTY;
+    }
     public static final Comparator<Village> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
     public static final Comparator<Village> ALLY_TRIBE_VILLAGE_COMPARATOR = new AllyTribeVillageComparator();
     public final static int ORDER_ALPHABETICALLY = 0;
@@ -137,7 +179,7 @@ public class Village implements Comparable<Village>, Serializable {
         String res = getName();
         res += " " + getCoordAsString();
         int cont = getContinent();
-        if (cont < 10) {
+        if (cont < 10 && cont > 0) {
             res += " K0" + cont;
         } else {
             res += " K" + cont;
@@ -356,15 +398,16 @@ public class Village implements Comparable<Village>, Serializable {
 
     @Override
     public String toString() {
-        if (stringRepresentation == null) {
-            if (ServerSettings.getSingleton().getCoordType() != 2) {
-                int[] hier = DSCalculator.xyToHierarchical(getX(), getY());
-                stringRepresentation = getName() + " (" + ((hier[0] < 10) ? "0" + hier[0] : hier[0]) + ":" + ((hier[1] < 10) ? "0" + hier[1] : hier[1]) + ":" + ((hier[2] < 10) ? "0" + hier[2] : hier[2]) + ")";
-            } else {
-                stringRepresentation = getName() + " (" + getX() + "|" + getY() + ")";
-            }
+        /*if (stringRepresentation == null) {
+        if (ServerSettings.getSingleton().getCoordType() != 2) {
+        int[] hier = DSCalculator.xyToHierarchical(getX(), getY());
+        stringRepresentation = getName() + " (" + ((hier[0] < 10) ? "0" + hier[0] : hier[0]) + ":" + ((hier[1] < 10) ? "0" + hier[1] : hier[1]) + ":" + ((hier[2] < 10) ? "0" + hier[2] : hier[2]) + ")";
+        } else {
+        stringRepresentation = getName() + " (" + getX() + "|" + getY() + ")";
         }
-        return stringRepresentation;
+        }
+        return stringRepresentation;*/
+        return getFullName();
     }
 
     public String getToolTipText() {
@@ -376,13 +419,11 @@ public class Village implements Comparable<Village>, Serializable {
     }
 
     public String toBBCode() {
-        int i = (int) Math.rint(Math.random());
-        String tag = (i == 0) ? "village" : "coord";
         if (ServerSettings.getSingleton().getCoordType() != 2) {
             int[] hier = DSCalculator.xyToHierarchical(getX(), getY());
-            return "[" + tag + "]" + hier[0] + ":" + hier[1] + ":" + hier[2] + "[/" + tag + "]";
+            return "[coord]" + hier[0] + ":" + hier[1] + ":" + hier[2] + "[/coord]";
         }
-        return "[" + tag + "]" + getX() + "|" + getY() + "[/" + tag + "]";
+        return "[coord]" + getX() + "|" + getY() + "[/coord]";
     }
 
     @Override

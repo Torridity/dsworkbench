@@ -5,6 +5,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Marker;
 import java.awt.Dimension;
@@ -18,6 +19,9 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Font;
+import java.util.LinkedList;
+import java.util.List;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -39,7 +43,13 @@ public class ScreenshotPanel extends javax.swing.JPanel {
         }
         mBuffer = pBuffer;
         setScaling(1);
-        updateUI();
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                updateUI();
+            }
+        });
     }
 
     public BufferedImage getResult(int pTransparency) {
@@ -56,14 +66,26 @@ public class ScreenshotPanel extends javax.swing.JPanel {
             Font t = new Font("Serif", Font.BOLD, 16);
             g2d.setComposite(a);
             //draw legend
-            int count = MarkerManager.getSingleton().getMarkers().length;
+            List<ManageableType> allElements = MarkerManager.getSingleton().getAllElementsFromAllGroups();
+            List<ManageableType> toRemove = new LinkedList<ManageableType>();
+            for (ManageableType elem : allElements) {
+                Marker m = (Marker) elem;
+                if (!m.isShownOnMap()) {
+                    toRemove.add(elem);
+                }
+            }
+
+            for (ManageableType elem : toRemove) {
+                allElements.remove(elem);
+            }
+
             int legendW = 0;
             //get legend height plus 2 times spacing
-            int legendH = count * b.getGraphics().getFontMetrics().getHeight() + 10;
+            int legendH = allElements.size() * b.getGraphics().getFontMetrics().getHeight() + 10;
             int heightF = b.getGraphics().getFontMetrics().getHeight();
-            for (int i = 0; i < count; i++) {
+            for (ManageableType elem : allElements) {
 
-                Marker m = MarkerManager.getSingleton().getMarkers()[i];
+                Marker m = (Marker) elem;
                 String value = "";
                 switch (m.getMarkerType()) {
                     case Marker.TRIBE_MARKER_TYPE: {
@@ -88,9 +110,9 @@ public class ScreenshotPanel extends javax.swing.JPanel {
             g2d.setColor(Constants.DS_BACK);
             g2d.fillRect(width - legendW - 5, height - legendH - 5, legendW, legendH);
             g2d.setColor(Color.BLACK);
-            for (int i = 0; i < count; i++) {
+            for (int i = 0; i < allElements.size(); i++) {
                 g2d.setColor(Color.BLACK);
-                Marker m = MarkerManager.getSingleton().getMarkers()[i];
+                Marker m = (Marker) allElements.get(i);
                 String value = "";
                 switch (m.getMarkerType()) {
                     case Marker.TRIBE_MARKER_TYPE: {
@@ -102,7 +124,7 @@ public class ScreenshotPanel extends javax.swing.JPanel {
                     }
                 }
 
-                Color c = MarkerManager.getSingleton().getMarkers()[i].getMarkerColor();
+                Color c = m.getMarkerColor();
                 g2d.drawString(value, width - legendW, (height - legendH + 5 + (heightF / 2) + heightF * i));
                 g2d.setColor(c);
                 g2d.fillRect(width - legendW + (legendW - 10 - heightF), height - legendH + i * heightF, heightF, heightF);

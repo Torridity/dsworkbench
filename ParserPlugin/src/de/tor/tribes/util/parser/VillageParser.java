@@ -5,7 +5,7 @@
 package de.tor.tribes.util.parser;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.DummyVillage;
+import de.tor.tribes.types.test.DummyVillage;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GenericParserInterface;

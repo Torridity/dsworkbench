@@ -29,8 +29,10 @@ import java.awt.event.MouseListener;
 import java.util.regex.Pattern;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.event.CaretListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import net.java.dev.colorchooser.ColorChooser;
 import org.apache.log4j.Logger;
@@ -42,17 +44,21 @@ import org.apache.log4j.Logger;
 public class BBPanel extends javax.swing.JPanel {
 
     private static Logger logger = Logger.getLogger("BBPanel");
-    private String sBuffer = "";
-    private ColorChooser mColorChooser = null;
-    private BBChangeListener mListener = null;
+    private String buffer = "";
+    private ColorChooser colorChooser = null;
+    private BBChangeListener changeListener = null;
+
+    public BBPanel() {
+        this(null);
+    }
 
     /** Creates new form BBPanel */
     public BBPanel(BBChangeListener pListener) {
         initComponents();
-        mListener = pListener;
-        //  ((HTMLEditorKit) jTextPane1.getEditorKit()).setLinkCursor(new Cursor(Cursor.HAND_CURSOR));
-        mColorChooser = new ColorChooser();
-        mColorChooser.addActionListener(new ActionListener() {
+        setEditMode(true);
+        changeListener = pListener;
+        colorChooser = new ColorChooser();
+        colorChooser.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -60,7 +66,7 @@ public class BBPanel extends javax.swing.JPanel {
                 fireAddColorCodeEvent();
             }
         });
-        jPanel2.add(mColorChooser);
+        jPanel2.add(colorChooser);
         jColorChooseDialog.pack();
         jSizeChooseDialog.pack();
 
@@ -144,15 +150,22 @@ public class BBPanel extends javax.swing.JPanel {
         });
     }
 
+    public void setBBChangeListener(BBChangeListener pListener) {
+        changeListener = pListener;
+    }
+
     public void setBBCode(String pText) {
-        jToggleButton1.setSelected(false);
         jTextPane1.setContentType("text/plain");
         jTextPane1.setText(pText);
         setEditMode(false);
     }
 
+    public String getBBCode() {
+        return jTextPane1.getText();
+    }
+
     public String getText() {
-        return sBuffer;
+        return buffer;
     }
 
     /** This method is called from within the constructor to
@@ -163,19 +176,20 @@ public class BBPanel extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         jColorChooseDialog = new javax.swing.JDialog();
         jPanel2 = new javax.swing.JPanel();
         jSizeChooseDialog = new javax.swing.JDialog();
         jSlider1 = new javax.swing.JSlider();
         jLabel1 = new javax.swing.JLabel();
-        jTribeMenu = new javax.swing.JPopupMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenuItem3 = new javax.swing.JMenuItem();
-        jToggleButton1 = new javax.swing.JToggleButton();
+        jBBPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane();
+        infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTextPane2 = new javax.swing.JTextPane();
+        jPanel3 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jBoldButton = new javax.swing.JButton();
         jItalicButton = new javax.swing.JButton();
@@ -189,10 +203,11 @@ public class BBPanel extends javax.swing.JPanel {
         jImageButton = new javax.swing.JButton();
         jColorButton = new javax.swing.JButton();
         jSizeButton = new javax.swing.JButton();
+        jTableButton = new javax.swing.JButton();
         jRemoveButton = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         jColorChooseDialog.setAlwaysOnTop(true);
-        jColorChooseDialog.setModal(true);
         jColorChooseDialog.setUndecorated(true);
 
         jPanel2.setMaximumSize(new java.awt.Dimension(50, 50));
@@ -253,30 +268,40 @@ public class BBPanel extends javax.swing.JPanel {
             .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
-        jMenuItem1.setText("jMenuItem1");
-        jTribeMenu.add(jMenuItem1);
+        setMinimumSize(new java.awt.Dimension(363, 251));
+        setLayout(new java.awt.BorderLayout());
 
-        jMenuItem2.setText("jMenuItem2");
-        jTribeMenu.add(jMenuItem2);
-
-        jMenuItem3.setText("jMenuItem3");
-        jTribeMenu.add(jMenuItem3);
-
-        jToggleButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_edit.png"))); // NOI18N
-        jToggleButton1.setToolTipText("Zwischen Bearbeitungs- und Betrachtungsmodus wechseln");
-        jToggleButton1.setMaximumSize(new java.awt.Dimension(50, 20));
-        jToggleButton1.setMinimumSize(new java.awt.Dimension(50, 20));
-        jToggleButton1.setPreferredSize(new java.awt.Dimension(50, 20));
-        jToggleButton1.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_find.png"))); // NOI18N
-        jToggleButton1.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireStateChangeEvent(evt);
-            }
-        });
+        jBBPanel.setBackground(new java.awt.Color(239, 235, 223));
+        jBBPanel.setLayout(new java.awt.BorderLayout());
 
         jTextPane1.setEditable(false);
         jTextPane1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jTextPane1.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                caretupdate(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTextPane1);
+
+        jBBPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        infoPanel.setAnimated(false);
+        infoPanel.setCollapsed(true);
+        infoPanel.setInheritAlpha(false);
+
+        jScrollPane2.setMinimumSize(new java.awt.Dimension(23, 150));
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(8, 150));
+
+        jTextPane2.setContentType("text/html");
+        jScrollPane2.setViewportView(jTextPane2);
+
+        infoPanel.add(jScrollPane2, java.awt.BorderLayout.CENTER);
+
+        jBBPanel.add(infoPanel, java.awt.BorderLayout.SOUTH);
+
+        add(jBBPanel, java.awt.BorderLayout.CENTER);
+
+        jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.LINE_AXIS));
 
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.LINE_AXIS));
 
@@ -424,6 +449,20 @@ public class BBPanel extends javax.swing.JPanel {
         });
         jPanel1.add(jSizeButton);
 
+        jTableButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/table.gif"))); // NOI18N
+        jTableButton.setEnabled(false);
+        jTableButton.setMaximumSize(new java.awt.Dimension(20, 20));
+        jTableButton.setMinimumSize(new java.awt.Dimension(20, 20));
+        jTableButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jTableButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAddContentEvent(evt);
+            }
+        });
+        jPanel1.add(jTableButton);
+
+        jPanel3.add(jPanel1);
+
         jRemoveButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/red_x.png"))); // NOI18N
         jRemoveButton.setToolTipText("Innersten BB-Code ab dem Cursor/der Auswahl löschen");
         jRemoveButton.setEnabled(false);
@@ -435,37 +474,24 @@ public class BBPanel extends javax.swing.JPanel {
                 fireRemoveCodeEvent(evt);
             }
         });
+        jPanel3.add(jRemoveButton);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
-                .addComponent(jRemoveButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRemoveButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+        jButton1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/search.png"))); // NOI18N
+        jButton1.setToolTipText("Blendet die Vorschau in BB-Formatierung ein");
+        jButton1.setMargin(new java.awt.Insets(2, 5, 2, 5));
+        jButton1.setMaximumSize(new java.awt.Dimension(60, 20));
+        jButton1.setMinimumSize(new java.awt.Dimension(60, 20));
+        jButton1.setPreferredSize(new java.awt.Dimension(60, 20));
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireChangePreviewEvent(evt);
+            }
+        });
+        jPanel3.add(jButton1);
+
+        add(jPanel3, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void fireStateChangeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireStateChangeEvent
-        setEditMode(jToggleButton1.isSelected());
-        if (!jToggleButton1.isSelected() && mListener != null) {
-            mListener.fireBBChangedEvent();
-        }
-    }//GEN-LAST:event_fireStateChangeEvent
 
     private void fireAddContentEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddContentEvent
         if (!((JButton) evt.getSource()).isEnabled()) {
@@ -497,6 +523,15 @@ public class BBPanel extends javax.swing.JPanel {
         } else if (evt.getSource() == jSizeButton) {
             jSizeChooseDialog.setLocation(jSizeButton.getLocationOnScreen().x, jSizeButton.getLocationOnScreen().y);
             jSizeChooseDialog.setVisible(true);
+        } else if (evt.getSource() == jTableButton) {
+            try {
+                ((DefaultStyledDocument) jTextPane1.getDocument()).insertString(jTextPane1.getCaretPosition(), "[table]\n[**]head1[||]head2[/**]\n[*]test1[|]test2\n[/table]", null);
+            } catch (BadLocationException ble) {
+            }
+            /**
+            
+            [table][**]head1[||]head2[/**][*]test1[|]test2[/*][/table]
+             */
         }
 
 
@@ -529,9 +564,20 @@ public class BBPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_fireRemoveCodeEvent
 
+    private void caretupdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_caretupdate
+        jTextPane2.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + BBCodeFormatter.toHtml(jTextPane1.getText()) + "</body></html>");
+        if (changeListener != null) {
+            changeListener.fireBBChangedEvent();
+        }
+    }//GEN-LAST:event_caretupdate
+
+    private void fireChangePreviewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangePreviewEvent
+        infoPanel.setCollapsed(!infoPanel.isCollapsed());
+    }//GEN-LAST:event_fireChangePreviewEvent
+
     private void fireAddColorCodeEvent() {
         try {
-            String rgb = Integer.toHexString(mColorChooser.getColor().getRGB());
+            String rgb = Integer.toHexString(colorChooser.getColor().getRGB());
             rgb = rgb.substring(2, rgb.length());
             String pOpenCode = "[color=#" + rgb + "]";
             String pCloseCode = "[/color]";
@@ -590,7 +636,10 @@ public class BBPanel extends javax.swing.JPanel {
         }
     }
 
-    private void setEditMode(boolean pToEditMode) {
+    public void setEditMode(boolean pToEditMode) {
+        if (jBoldButton.isEnabled()) {
+            return;
+        }
         jBoldButton.setEnabled(pToEditMode);
         jItalicButton.setEnabled(pToEditMode);
         jUnderlineButton.setEnabled(pToEditMode);
@@ -603,13 +652,15 @@ public class BBPanel extends javax.swing.JPanel {
         jImageButton.setEnabled(pToEditMode);
         jColorButton.setEnabled(pToEditMode);
         jSizeButton.setEnabled(pToEditMode);
+        jTableButton.setEnabled(pToEditMode);
         jRemoveButton.setEnabled(pToEditMode);
         jTextPane1.setEditable(pToEditMode);
+
         if (pToEditMode) {
             jTextPane1.setContentType("text/plain");
-            jTextPane1.setText(sBuffer);
+            jTextPane1.setText(buffer);
         } else {
-            sBuffer = jTextPane1.getText();
+            buffer = jTextPane1.getText();
             buildFormattedCode();
         }
         jTextPane1.setEditable(pToEditMode);
@@ -617,33 +668,35 @@ public class BBPanel extends javax.swing.JPanel {
 
     private void buildFormattedCode() {
         jTextPane1.setContentType("text/html");
-        jTextPane1.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + BBCodeFormatter.toHtml(sBuffer) + "</body></html>");
+        jTextPane1.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + BBCodeFormatter.toHtml(buffer) + "</body></html>");
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JButton jAllyButton;
+    private javax.swing.JPanel jBBPanel;
     private javax.swing.JButton jBoldButton;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jColorButton;
     private javax.swing.JDialog jColorChooseDialog;
     private javax.swing.JButton jImageButton;
     private javax.swing.JButton jItalicButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JButton jLinkButton;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JButton jQuoteButton;
     private javax.swing.JButton jRemoveButton;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton jSizeButton;
     private javax.swing.JDialog jSizeChooseDialog;
     private javax.swing.JSlider jSlider1;
     private javax.swing.JButton jStrokeButton;
+    private javax.swing.JButton jTableButton;
     private javax.swing.JTextPane jTextPane1;
-    private javax.swing.JToggleButton jToggleButton1;
+    private javax.swing.JTextPane jTextPane2;
     private javax.swing.JButton jTribeButton;
-    private javax.swing.JPopupMenu jTribeMenu;
     private javax.swing.JButton jUnderlineButton;
     private javax.swing.JButton jVillageButton;
     // End of variables declaration//GEN-END:variables

@@ -7,7 +7,7 @@ package de.tor.tribes.util;
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.types.VillageMerchantInfo;
-import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
+import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;

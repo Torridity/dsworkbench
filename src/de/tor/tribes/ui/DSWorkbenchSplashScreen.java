@@ -5,6 +5,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.util.GlobalOptions;
 import org.apache.log4j.Logger;
@@ -86,7 +87,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         jLabel1 = new javax.swing.JLabel();
 
         jProfileDialog.setTitle("Profile");
-        jProfileDialog.setAlwaysOnTop(true);
         jProfileDialog.setModal(true);
         jProfileDialog.setUndecorated(true);
 
@@ -348,7 +348,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         Locale.setDefault(Locale.GERMAN);
 
         //add global ESC listener
-        Toolkit.getDefaultToolkit().getSystemEventQueue().push(
+       /* Toolkit.getDefaultToolkit().getSystemEventQueue().push(
                 new EventQueue() {
 
                     protected void dispatchEvent(AWTEvent event) {
@@ -374,13 +374,14 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                         }
                         super.dispatchEvent(event);
                     }
-                });
+                });*/
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+          //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+              UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception e) {
         }
 
-        Font f = new Font("SansSerif", Font.PLAIN, 11);
+       /* Font f = new Font("SansSerif", Font.PLAIN, 11);
 
         UIManager.put("Label.font", f);
         UIManager.put("TextField.font", f);
@@ -424,7 +425,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         UIManager.put("Menu.background", Constants.DS_BACK);
         UIManager.put("OptionPane.background", Constants.DS_BACK);
         UIManager.put("ToolBar.background", Constants.DS_BACK);
-
+*/
         //error mode
         int mode = -1;
         if (args != null) {
@@ -490,7 +491,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     }
 
     public void updateStatus() {
-        jStatusOutput.repaint();//.updateUI();
+        jStatusOutput.repaint();
     }
 
     @Override

@@ -4,26 +4,24 @@
  */
 package de.tor.tribes.util.attack;
 
+import de.tor.tribes.control.GenericManager;
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.util.GlobalOptions;
-import java.util.Hashtable;
 import java.util.List;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.DSWorkbenchAttackFrame;
-import de.tor.tribes.ui.MapPanel;
-import de.tor.tribes.ui.models.AttackManagerTableModel;
-import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.LinkedList;
+import java.util.Iterator;
 import org.jdom.Document;
 import org.jdom.Element;
 
@@ -31,58 +29,67 @@ import org.jdom.Element;
  *
  * @author Jejkal
  */
-public class AttackManager {
-
+public class AttackManager extends GenericManager<Attack> {
+    
     private static Logger logger = Logger.getLogger("AttackManager");
+    public final static String MANUAL_ATTACK_PLAN = "Manuelle Planung";
     private static AttackManager SINGLETON = null;
-    private Hashtable<String, List<Attack>> mAttackPlans = null;
-    private List<Attack> doItYourselfAttackPlan = null;
-    public static final String DEFAULT_PLAN_ID = "default";
-    private String sActiveAttackPlan = DEFAULT_PLAN_ID;
-    private final List<AttackManagerListener> mManagerListeners = new LinkedList<AttackManagerListener>();
-
+    
     public static synchronized AttackManager getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new AttackManager();
         }
         return SINGLETON;
     }
-
+    
     AttackManager() {
-        mAttackPlans = new Hashtable<String, List<Attack>>();
-        mAttackPlans.put(DEFAULT_PLAN_ID, new LinkedList<Attack>());
-        doItYourselfAttackPlan = new LinkedList<Attack>();
+        super(true);
+        addGroup(MANUAL_ATTACK_PLAN);
+    }
+    
+    @Override
+    public void initialize() {
+        super.initialize();
+        addGroup(MANUAL_ATTACK_PLAN);
+    }
+    
+    @Override
+    public String[] getGroups() {
+        String[] groups = super.getGroups();
+        Arrays.sort(groups, new Comparator<String>() {
+            
+            @Override
+            public int compare(String o1, String o2) {
+                if (o1.equals(DEFAULT_GROUP) || o1.equals(MANUAL_ATTACK_PLAN)) {
+                    return -1;
+                } else if (o2.equals(DEFAULT_GROUP) || o2.equals(MANUAL_ATTACK_PLAN)) {
+                    return 1;
+                } else {
+                    return String.CASE_INSENSITIVE_ORDER.compare(o1, o2);
+                }
+            }
+        });
+        return groups;
     }
 
-    public synchronized void addAttackManagerListener(AttackManagerListener pListener) {
-        if (pListener == null) {
-            return;
-        }
-        if (!mManagerListeners.contains(pListener)) {
-            mManagerListeners.add(pListener);
-        }
-    }
-
-    public synchronized void removeAttackManagerListener(AttackManagerListener pListener) {
-        mManagerListeners.remove(pListener);
-    }
-
-    public void loadAttacksFromDatabase(String pUrl) {
-        //not yet implemented
-    }
-
-    public void loadTroopMovementsFromDisk(String pFile) {
-        mAttackPlans.clear();
-        mAttackPlans.put(DEFAULT_PLAN_ID, new LinkedList<Attack>());
+    /**
+     *
+     * @param pFile
+     */
+    @Override
+    public void loadElements(String pFile) {
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return;
         }
+        invalidate();
+        initialize();
         File attackFile = new File(pFile);
         if (attackFile.exists()) {
             if (logger.isDebugEnabled()) {
                 logger.info("Loading troop movements from '" + pFile + "'");
             }
+            
             try {
                 Document d = JaxenUtils.getDocument(attackFile);
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//plans/plan")) {
@@ -91,18 +98,16 @@ public class AttackManager {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Loading plan '" + planKey + "'");
                     }
-                    List<Attack> planAttacks = new LinkedList<Attack>();
-                    mAttackPlans.put(planKey, planAttacks);
                     for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "attacks/attack")) {
-                        Attack a = new Attack(e1);
+                        Attack a = new Attack();
+                        a.loadFromXml(e1);
                         if (a != null) {
                             Village source = DataHolder.getSingleton().getVillages()[a.getSource().getX()][a.getSource().getY()];
                             Village target = DataHolder.getSingleton().getVillages()[a.getTarget().getX()][a.getTarget().getY()];
-                            addAttackFast(source, target, a.getUnit(), a.getArriveTime(), a.isShowOnMap(), planKey, a.getType(), a.isTransferredToBrowser());
+                            addAttack(source, target, a.getUnit(), a.getArriveTime(), a.isShowOnMap(), planKey, a.getType(), a.isTransferredToBrowser());
                         }
                     }
                 }
-                forceUpdate(DEFAULT_PLAN_ID);
                 logger.debug("Troop movements loaded successfully");
             } catch (Exception e) {
                 logger.error("Failed to load troop movements", e);
@@ -110,104 +115,105 @@ public class AttackManager {
         } else {
             logger.info("No troop movements found under '" + pFile + "'");
         }
+        revalidate();
     }
-
-    public boolean importAttacks(File pFile, String pExtension) {
+    
+    @Override
+    public boolean importData(File pFile, String pExtension) {
+        invalidate();
+        boolean result = false;
         if (pFile == null) {
             logger.error("File argument is 'null'");
-            return false;
-        }
-        try {
-            logger.info("Importing attacks");
-
-            Document d = JaxenUtils.getDocument(pFile);
-            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//plans/plan")) {
-                String planKey = e.getAttributeValue("key");
-                planKey = URLDecoder.decode(planKey, "UTF-8");
-                if (pExtension != null) {
-                    planKey += "_" + pExtension;
-                }
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Loading plan '" + planKey + "'");
-                }
-                List<Attack> planAttacks = null;
-                if (mAttackPlans.containsKey(planKey)) {
-                    planAttacks = mAttackPlans.get(planKey);
-                } else {
-                    planAttacks = new LinkedList<Attack>();
-                    mAttackPlans.put(planKey, planAttacks);
-                }
-                for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "attacks/attack")) {
-                    Attack a = new Attack(e1);
-
-                    if (a != null) {
-                        Village source = DataHolder.getSingleton().getVillages()[a.getSource().getX()][a.getSource().getY()];
-                        Village target = DataHolder.getSingleton().getVillages()[a.getTarget().getX()][a.getTarget().getY()];
-                        addAttackFast(source, target, a.getUnit(), a.getArriveTime(), a.isShowOnMap(), planKey, a.getType());
+        } else {
+            try {
+                logger.info("Importing attacks");
+                Document d = JaxenUtils.getDocument(pFile);
+                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//plans/plan")) {
+                    String planKey = e.getAttributeValue("key");
+                    planKey = URLDecoder.decode(planKey, "UTF-8");
+                    if (pExtension != null) {
+                        planKey += "_" + pExtension;
+                    }
+                    addGroup(planKey);
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Loading plan '" + planKey + "'");
+                    }
+                    
+                    for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "attacks/attack")) {
+                        Attack a = new Attack();
+                        a.loadFromXml(e1);
+                        
+                        if (a != null) {
+                            Village source = DataHolder.getSingleton().getVillages()[a.getSource().getX()][a.getSource().getY()];
+                            Village target = DataHolder.getSingleton().getVillages()[a.getTarget().getX()][a.getTarget().getY()];
+                            addAttack(source, target, a.getUnit(), a.getArriveTime(), a.isShowOnMap(), planKey, a.getType(), false);
+                        }
                     }
                 }
+                
+                logger.debug("Troop movements imported successfully");
+                result = true;
+            } catch (Exception e) {
+                logger.error("Failed to import troop movements", e);
             }
-
-            forceUpdate(DEFAULT_PLAN_ID);
-            DSWorkbenchAttackFrame.getSingleton().buildAttackPlanList();
-            logger.debug("Troop movements imported successfully");
-            return true;
-        } catch (Exception e) {
-            logger.error("Failed to import troop movements", e);
-            forceUpdate(DEFAULT_PLAN_ID);
-            return false;
         }
+        revalidate(true);
+        return result;
     }
 
-    public String getExportData(List<String> plansToExport) {
+    /** 
+     * @param plansToExport
+     * @return
+     */
+    @Override
+    public String getExportData(final List<String> plansToExport) {
         if (plansToExport.isEmpty()) {
             return "";
         }
         logger.debug("Generating attacks export data");
-        String result = "<plans>\n";
-
+        StringBuilder b = new StringBuilder();
+        b.append("<plans>\n");
+        
         for (String plan : plansToExport) {
             try {
-                result += "<plan key=\"" + URLEncoder.encode(plan, "UTF-8") + "\">\n";
-                List<Attack> attacks = mAttackPlans.get(plan);
-                result += "<attacks>\n";
-
-                for (Attack a : attacks) {
-                    result += a.toXml() + "\n";
+                b.append("<plan key=\"").append(URLEncoder.encode(plan, "UTF-8")).append("\">\n");
+                List<ManageableType> elements = getAllElements(plan);
+                b.append("<attacks>\n");
+                
+                for (ManageableType elem : elements) {
+                    b.append(elem.toXml()).append("\n");
                 }
-                result += "</attacks>\n";
-                result += "</plan>\n";
+                b.append("</attacks>\n");
+                b.append("</plan>\n");
             } catch (Exception e) {
                 logger.warn("Failed to export plan '" + plan + "'", e);
             }
         }
-        result += "</plans>\n";
+        b.append("</plans>\n");
         logger.debug("Export data generated successfully");
-        return result;
+        return b.toString();
     }
-
-    public void saveAttacksToDatabase(String pUrl) {
-        //not implemented yet
-    }
-
-    public void saveTroopMovementsToDisk(String pFile) {
+    
+    @Override
+    public void saveElements(String pFile) {
         try {
-            StringBuffer b = new StringBuffer();
+            StringBuilder b = new StringBuilder();
             b.append("<plans>\n");
-            Enumeration<String> plans = mAttackPlans.keys();
-            while (plans.hasMoreElements()) {
-                String key = plans.nextElement();
-                b.append("<plan key=\"" + URLEncoder.encode(key, "UTF-8") + "\">\n");
-                List<Attack> attacks = mAttackPlans.get(key);
+            Iterator<String> plans = getGroupIterator();
+            
+            while (plans.hasNext()) {
+                String key = plans.next();
+                b.append("<plan key=\"").append(URLEncoder.encode(key, "UTF-8")).append("\">\n");
+                List<ManageableType> elems = getAllElements(key);
                 b.append("<attacks>\n");
-                for (Attack a : attacks) {
-                    b.append(a.toXml() + "\n");
+                for (ManageableType elem : elems) {
+                    b.append(elem.toXml()).append("\n");
                 }
-
+                
                 b.append("</attacks>\n");
                 b.append("</plan>\n");
             }
-
+            
             b.append("</plans>\n");
             //write data to file
             FileWriter w = new FileWriter(pFile);
@@ -217,76 +223,29 @@ public class AttackManager {
         } catch (Exception e) {
             logger.error("Failed to store attacks", e);
         }
-
+        
     }
-
-    public synchronized void setActiveAttackPlan(String pPlan) {
-        if (getAttackPlan(pPlan) != null) {
-            sActiveAttackPlan = pPlan;
-        }
-    }
-
-    public synchronized String getActiveAttackPlan() {
-        if (sActiveAttackPlan == null) {
-            return DEFAULT_PLAN_ID;
-        }
-        return sActiveAttackPlan;
-    }
-
-    public synchronized void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime) {
+    
+    public void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, String pPlan) {
         boolean showOnMap = false;
         try {
             showOnMap = Boolean.parseBoolean(GlobalOptions.getProperty("draw.attacks.by.default"));
         } catch (Exception e) {
         }
-        addAttack(pSource, pTarget, pUnit, pArriveTime, showOnMap, getActiveAttackPlan(), -1);
+        addAttack(pSource, pTarget, pUnit, pArriveTime, showOnMap, pPlan, -1, false);
     }
 
-    public synchronized void addAttackFast(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime) {
-        boolean showOnMap = false;
-        try {
-            showOnMap = Boolean.parseBoolean(GlobalOptions.getProperty("draw.attacks.by.default"));
-        } catch (Exception e) {
-        }
-        addAttackFast(pSource, pTarget, pUnit, pArriveTime, showOnMap, getActiveAttackPlan(), -1);
-    }
-
-    public synchronized void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, String pPlan) {
-        boolean showOnMap = false;
-        try {
-            showOnMap = Boolean.parseBoolean(GlobalOptions.getProperty("draw.attacks.by.default"));
-        } catch (Exception e) {
-        }
-        addAttack(pSource, pTarget, pUnit, pArriveTime, showOnMap, pPlan, -1);
-    }
-
-    public synchronized void addAttackFast(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, String pPlan) {
-        boolean showOnMap = false;
-        try {
-            showOnMap = Boolean.parseBoolean(GlobalOptions.getProperty("draw.attacks.by.default"));
-        } catch (Exception e) {
-        }
-        addAttackFast(pSource, pTarget, pUnit, pArriveTime, showOnMap, pPlan, -1);
-    }
-
-    /**Add an attack to the default plan*/
-    public synchronized void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, boolean pShowOnMap) {
-        addAttack(pSource, pTarget, pUnit, pArriveTime, pShowOnMap, getActiveAttackPlan(), -1);
-    }
-
-    /**Add an attack to the default plan*/
-    public synchronized void addAttackFast(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, boolean pShowOnMap) {
-        addAttackFast(pSource, pTarget, pUnit, pArriveTime, pShowOnMap, getActiveAttackPlan(), -1);
-    }
-
-    /**Add an attack to a plan*/
-    public synchronized void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, boolean pShowOnMap, String pPlan, Integer pType) {
-        String plan = pPlan;
-        if (plan == null) {
-            setActiveAttackPlan(DEFAULT_PLAN_ID);
-            plan = getActiveAttackPlan();
-        }
-
+    /**Add an attack to a plan
+     * @param pSource
+     * @param pTarget
+     * @param pUnit
+     * @param pShowOnMap
+     * @param pArriveTime
+     * @param pPlan
+     * @param pTransferredToBrowser
+     * @param pType
+     */
+    public void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, boolean pShowOnMap, String pPlan, Integer pType, boolean pTransferredToBrowser) {
         if (pSource == null || pTarget == null || pUnit == null || pArriveTime == null) {
             logger.error("Invalid attack");
             return;
@@ -297,6 +256,7 @@ public class AttackManager {
         a.setUnit(pUnit);
         a.setArriveTime(pArriveTime);
         a.setShowOnMap(pShowOnMap);
+        a.setTransferredToBrowser(pTransferredToBrowser);
         if (pType == -1) {
             if (pUnit.getPlainName().equals("ram")) {
                 a.setType(Attack.CLEAN_TYPE);
@@ -307,205 +267,29 @@ public class AttackManager {
             } else {
                 a.setType(Attack.NO_TYPE);
             }
-
+            
         } else {
             a.setType(pType);
         }
-
-        List<Attack> attackPlan = mAttackPlans.get(plan);
-        if (attackPlan == null) {
-            attackPlan = new LinkedList<Attack>();
-            attackPlan.add(a);
-            mAttackPlans.put(plan, attackPlan);
-        } else {
-            attackPlan.add(a);
-        }
-
-        fireAttacksChangedEvents(plan);
+        
+        addManagedElement(pPlan, a);
     }
-
-    public synchronized void addAttackFast(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, boolean pShowOnMap, String pPlan, Integer pType, boolean pTransferredToBrowser) {
-        String plan = pPlan;
-        if (plan == null) {
-            setActiveAttackPlan(DEFAULT_PLAN_ID);
-            plan = getActiveAttackPlan();
-        }
-
-        if (pSource == null || pTarget == null || pUnit == null || pArriveTime == null) {
-            logger.error("Invalid attack");
-            return;
-        }
-
-        Attack a = new Attack();
-        a.setSource(pSource);
-        a.setTarget(pTarget);
-        a.setUnit(pUnit);
-        a.setArriveTime(pArriveTime);
-        a.setShowOnMap(pShowOnMap);
-        a.setType(pType);
-        a.setTransferredToBrowser(pTransferredToBrowser);
-        List<Attack> attackPlan = mAttackPlans.get(plan);
-        if (attackPlan == null) {
-            attackPlan = new LinkedList<Attack>();
-            attackPlan.add(a);
-            mAttackPlans.put(plan, attackPlan);
-        } else {
-            attackPlan.add(a);
-        }
-    }
-
-    /**Add an attack to a plan*/
-    public synchronized void addAttackFast(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, boolean pShowOnMap, String pPlan, Integer pType) {
-        addAttackFast(pSource, pTarget, pUnit, pArriveTime, pShowOnMap, pPlan, pType, false);
-    }
-
-    public synchronized void addEmptyPlan(String pPlan) {
-        if (pPlan == null) {
-            return;
-        }
-
-        List<Attack> attackPlan = new LinkedList<Attack>();
-        mAttackPlans.put(pPlan, attackPlan);
-    }
-
-    public synchronized void addDoItYourselfAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, int pType) {
+    
+    public void addDoItYourselfAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, int pType) {
         Attack a = new Attack();
         a.setSource(pSource);
         a.setTarget(pTarget);
         a.setArriveTime(pArriveTime);
         a.setUnit(pUnit);
         a.setType(pType);
-        doItYourselfAttackPlan.add(a);
+        addManagedElement(MANUAL_ATTACK_PLAN, a);
     }
-
-    /**Remove a complete attack plan*/
-    public synchronized void removePlan(String pPlan) {
-        String plan = pPlan;
-        if (pPlan == null || pPlan.equals(DEFAULT_PLAN_ID)) {
-            return;
-        }
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("Removing attack plan '" + plan + "'");
-        }
-
-        mAttackPlans.remove(plan);
-        fireAttacksChangedEvents(plan);
+    
+    public void clearDoItYourselfAttacks() {
+        removeAllElementsFromGroup(MANUAL_ATTACK_PLAN);
     }
-
-    public synchronized void renamePlan(String pPlan, String pNewName) {
-        List<Attack> attacks = mAttackPlans.remove(pPlan);
-        mAttackPlans.put(pNewName, attacks);
-        setActiveAttackPlan(pNewName);
-        fireAttacksChangedEvents(pNewName);
-    }
-
-    public synchronized void removeAttacks(List<Attack> pAttacks) {
-        List<Attack> currentPlan = getAttackPlan();
-        for (Attack a : pAttacks) {
-            currentPlan.remove(a);
-        }
-        fireAttacksChangedEvents(getActiveAttackPlan());
-    }
-
-    /**Remove one attack from the default plan*/
-    public synchronized void removeAttack(int pID) {
-        removeAttacks(getActiveAttackPlan(), new Integer[]{pID});
-    }
-
-    /**Remove a number of attacks from the default plan*/
-    public synchronized void removeAttack(Integer[] pIDs) {
-        removeAttacks(getActiveAttackPlan(), pIDs);
-    }
-
-    /**Remove one attack from any plan*/
-    public synchronized void removeAttack(String pPlan, int pID) {
-        removeAttacks(pPlan, new Integer[]{pID});
-    }
-
-    /**Remove a number of attacks from any plan*/
-    public synchronized void removeAttacks(String pPlan, Integer[] pIDs) {
-        String plan = pPlan;
-        if (plan == null) {
-            plan = DEFAULT_PLAN_ID;
-        }
-        List<Attack> planAttacks = mAttackPlans.get(plan);
-        Attack[] attacks = planAttacks.toArray(new Attack[]{});
-        if (planAttacks != null) {
-            for (int i : pIDs) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Removing attack from plan '" + plan + "'");
-                }
-                planAttacks.remove(attacks[i]);
-            }
-        }
-        fireAttacksChangedEvents(plan);
-    }
-
-    public synchronized void removeDoItYourselfAttack(int pID) {
-        removeDoItYourselfAttacks(new int[]{pID});
-    }
-
-    public synchronized void removeDoItYourselfAttacks(int[] pIDs) {
-        Attack[] attacks = doItYourselfAttackPlan.toArray(new Attack[]{});
-        for (int i : pIDs) {
-            doItYourselfAttackPlan.remove(attacks[i]);
-        }
-    }
-
-    public synchronized void clearDoItYourselfAttacks() {
-        doItYourselfAttackPlan.clear();
-    }
-
-    public synchronized List<Attack> getDoItYourselfAttacks() {
-        return doItYourselfAttackPlan;
-    }
-
-    public List<Attack> getAttackPlan() {
-        return getAttackPlan(null);
-    }
-
-    public List<Attack> getAttackPlan(String pPlan) {
-        String plan = pPlan;
-        if (plan == null) {
-            plan = getActiveAttackPlan();
-        }
-
-        return mAttackPlans.get(plan);
-    }
-
-    public Enumeration<String> getPlans() {
-        return mAttackPlans.keys();
-    }
-
-    public String[] getPlansAsArray() {
-        return mAttackPlans.keySet().toArray(new String[]{});
-    }
-
-    public void forceUpdate() {
-        forceUpdate(getActiveAttackPlan());
-    }
-
-    public void forceUpdate(String pPlan) {
-        fireAttacksChangedEvents(pPlan);
-    }
-
-    /**Notify attack manager listeners about changes*/
-    private void fireAttacksChangedEvents(String pPlan) {
-        String plan = pPlan;
-        if (plan == null) {
-            plan = DEFAULT_PLAN_ID;
-        }
-
-        AttackManagerListener[] listeners = mManagerListeners.toArray(new AttackManagerListener[]{});
-        for (AttackManagerListener listener : listeners) {
-            listener.fireAttacksChangedEvent(plan);
-        }
-
-        /*  try {
-        //if the attacks are read too fast on startup the MapRenderer might be 'null'
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ATTACK_LAYER);
-        } catch (Exception e) {
-        }*/
+    
+    public List<ManageableType> getDoItYourselfAttacks() {
+        return getAllElements(MANUAL_ATTACK_PLAN);
     }
 }

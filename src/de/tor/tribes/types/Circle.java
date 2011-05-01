@@ -35,34 +35,31 @@ public class Circle extends AbstractForm {
     private Color drawColor = Color.WHITE;
     private float drawAlpha = 1.0f;
 
-    public static AbstractForm fromXml(Element e) {
+    public void loadFromXml(Element e) {
         try {
-            Circle l = new Circle();
             Element elem = e.getChild("name");
-            l.setFormName(URLDecoder.decode(elem.getTextTrim(), "UTF-8"));
+            setFormName(URLDecoder.decode(elem.getTextTrim(), "UTF-8"));
             elem = e.getChild("pos");
-            l.setXPos(Double.parseDouble(elem.getAttributeValue("x")));
-            l.setYPos(Double.parseDouble(elem.getAttributeValue("y")));
+            setXPos(Double.parseDouble(elem.getAttributeValue("x")));
+            setYPos(Double.parseDouble(elem.getAttributeValue("y")));
             elem = e.getChild("textColor");
-            l.setTextColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
-            l.setTextAlpha(Float.parseFloat(elem.getAttributeValue("a")));
+            setTextColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
+            setTextAlpha(Float.parseFloat(elem.getAttributeValue("a")));
             elem = e.getChild("drawColor");
-            l.setDrawColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
-            l.setDrawAlpha(Float.parseFloat(elem.getAttributeValue("a")));
+            setDrawColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
+            setDrawAlpha(Float.parseFloat(elem.getAttributeValue("a")));
             elem = e.getChild("stroke");
-            l.setStrokeWidth(Float.parseFloat(elem.getAttributeValue("width")));
+            setStrokeWidth(Float.parseFloat(elem.getAttributeValue("width")));
             elem = e.getChild("end");
-            l.setXPosEnd(Double.parseDouble(elem.getAttributeValue("x")));
-            l.setYPosEnd(Double.parseDouble(elem.getAttributeValue("y")));
+            setXPosEnd(Double.parseDouble(elem.getAttributeValue("x")));
+            setYPosEnd(Double.parseDouble(elem.getAttributeValue("y")));
             elem = e.getChild("filled");
-            l.setFilled(Boolean.parseBoolean(elem.getTextTrim()));
+            setFilled(Boolean.parseBoolean(elem.getTextTrim()));
             elem = e.getChild("textSize");
-            l.setTextSize(Integer.parseInt(elem.getTextTrim()));
+            setTextSize(Integer.parseInt(elem.getTextTrim()));
             elem = e.getChild("drawName");
-            l.setDrawName(Boolean.parseBoolean(elem.getTextTrim()));
-            return l;
+            setDrawName(Boolean.parseBoolean(elem.getTextTrim()));
         } catch (Exception ex) {
-            return null;
         }
     }
 
@@ -100,7 +97,7 @@ public class Circle extends AbstractForm {
             g2d.drawOval(x, y, w, h);
         }
         //Shape clipBefore = g2d.getClip();
-       // g2d.setClip(new Ellipse2D.Float(x, y, w, h));
+        // g2d.setClip(new Ellipse2D.Float(x, y, w, h));
         if (isDrawName()) {
             g2d.setColor(getTextColor());
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
@@ -114,7 +111,7 @@ public class Circle extends AbstractForm {
         g2d.setColor(cBefore);
         g2d.setComposite(coBefore);
         g2d.setFont(fBefore);
-       // g2d.setClip(clipBefore);
+        // g2d.setClip(clipBefore);
     }
 
     public void renderPreview(Graphics2D g2d) {
@@ -184,8 +181,8 @@ public class Circle extends AbstractForm {
     }
 
     @Override
-    public String getFormType() {
-        return "circle";
+    public FORM_TYPE getFormType() {
+        return FORM_TYPE.CIRCLE;
     }
 
     /**

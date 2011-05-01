@@ -14,8 +14,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicArrowButton;
 import org.netbeans.lib.awtextra.AbsoluteConstraints;
 import org.netbeans.lib.awtextra.AbsoluteLayout;
@@ -297,8 +298,13 @@ public class TimePicker extends javax.swing.JPanel {
             public void actionPerformed(ActionEvent actionevent) {
             }
         });
-        minutePanel.add(okButton, new AbsoluteConstraints(110, rowHeight * (max / elemsPerRow) + rowHeight + 10, 40, 20));
-        minutePanel.updateUI();
+        minutePanel.add(okButton, new AbsoluteConstraints(100, rowHeight * (max / elemsPerRow) + rowHeight + 10, 50, 20));
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                minutePanel.updateUI();
+            }
+        });
         updateSize();
     }
 
@@ -335,6 +341,11 @@ public class TimePicker extends javax.swing.JPanel {
     }
 
     public static void main(String[] args) {
+        try {
+            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (Exception e) {
+        }
         JDialog f = new JDialog();
         f.getContentPane().add(new TimePicker(Calendar.getInstance().getTime()));
         //f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -51,13 +51,6 @@ public class Off extends AbstractTroopMovement {
                     a.setType(type);
                     result.add(a);
                 }
-                /* if (!pTimeFrame.isVariableArriveTime()) {
-                a.setArriveTime(new Date(pTimeFrame.getEnd()));
-                } else {
-                long runtime = Math.round(DSCalculator.calculateMoveTimeInSeconds(offSource, target, unit.getSpeed()) * 1000);
-                a.setArriveTime(pTimeFrame.getRandomArriveTime(runtime, offSource.getTribe(), new LinkedList<Long>()));
-                }*/
-
             }
         }
 

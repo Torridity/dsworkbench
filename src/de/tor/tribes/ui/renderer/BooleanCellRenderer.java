@@ -4,46 +4,30 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.dssim.types.UnitHolder;
 import de.tor.tribes.util.Constants;
 import java.awt.Component;
 import javax.swing.JCheckBox;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.table.TableCellRenderer;
+import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  *
  * @author Torridity
  */
-public class BooleanCellRenderer extends JCheckBox implements TableCellRenderer {
+public class BooleanCellRenderer extends DefaultTableCellRenderer {
 
     public BooleanCellRenderer() {
         super();
-        // setRenderer(new UnitListCellRenderer());
-
     }
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        //setModel(new DefaultComboBoxModel(new Object[]{value}));
-        setText("");
-        setHorizontalAlignment(SwingConstants.CENTER);
-        // setBorder(BorderFactory.createEmptyBorder());
-        setOpaque(true);
-        if (!isSelected) {
-            if (row % 2 == 0) {
-                setBackground(Constants.DS_ROW_B);
-            } else {
-                setBackground(Constants.DS_ROW_A);
-            }
-        } else {
-            setForeground(table.getSelectionForeground());
-            super.setBackground(table.getSelectionBackground());
-        }
-
-        setSelected((Boolean) value);
-        // setSelectedItem(value);
-        return this;
+        Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        JCheckBox box = (JCheckBox) c;
+        box.setText("");
+        box.setHorizontalAlignment(SwingConstants.CENTER);
+        box.setSelected((Boolean) value);
+        return box;
     }
 }

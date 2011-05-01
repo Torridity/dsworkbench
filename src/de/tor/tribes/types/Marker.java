@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.MarkerCell;
 import java.awt.Color;
@@ -13,42 +14,17 @@ import org.jdom.Element;
  *
  * @author Charon
  */
-public class Marker{
+public class Marker extends ManageableType {
 
     public final static int TRIBE_MARKER_TYPE = 0;
     public final static int ALLY_MARKER_TYPE = 1;
     private int markerType = 0;
     private int markerID = 0;
     private Color markerColor = null;
+    private boolean shownOnMap = true;
     private transient MarkerCell mView = null;
 
     public Marker() {
-    }
-
-    public Marker(Element pElement) throws Exception {
-        setMarkerType(Integer.parseInt(pElement.getChild("type").getText()));
-        try {
-            setMarkerID(Integer.parseInt(pElement.getChild("id").getText()));
-        } catch (Exception e) {
-            //try to read old marker version with plain text value
-            String value = pElement.getChild("value").getText();
-            if (getMarkerType() == Marker.TRIBE_MARKER_TYPE) {
-                setMarkerID(DataHolder.getSingleton().getTribeByName(value).getId());
-            } else {
-                setMarkerID(DataHolder.getSingleton().getAllyByName(value).getId());
-            }
-        }
-        try {
-            Element e = pElement.getChild("color");
-            int red = e.getAttribute("r").getIntValue();
-            int green = e.getAttribute("g").getIntValue();
-            int blue = e.getAttribute("b").getIntValue();
-            int alpha = e.getAttribute("a").getIntValue();
-            setMarkerColor(new Color(red, green, blue, alpha));
-        } catch (Exception e) {
-            //try to read old color value
-            setMarkerColor(Color.decode(pElement.getChild("color").getText()));
-        }
     }
 
     public int getMarkerType() {
@@ -88,26 +64,107 @@ public class Marker{
         return mView;
     }
 
-    public static Marker fromXml(Element pElement) throws Exception {
-        return new Marker(pElement);
+    public static String toInternalRepresentation(Marker pMarker) {
+        return pMarker.getMarkerID() + "&" + pMarker.getMarkerType() + "&" + pMarker.getMarkerColor().getRed() + "&" + pMarker.getMarkerColor().getGreen() + "&" + pMarker.getMarkerColor().getBlue() + "&" + pMarker.isShownOnMap();
+
     }
 
+    public static Marker fromInternalRepresentation(String pLine) {
+        Marker m = new Marker();
+        try {
+            String[] split = pLine.trim().split("&");
+            m.setMarkerID(Integer.parseInt(split[0]));
+            m.setMarkerType(Integer.parseInt(split[1]));
+            m.setMarkerColor(new Color(Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4])));
+            m.setShownOnMap(Boolean.parseBoolean(split[5]));
+        } catch (NumberFormatException nfe) {
+            m = null;
+        } catch (IllegalArgumentException iae) {
+            m = null;
+        }
+        return m;
+    }
+
+    @Override
     public String toXml() {
         try {
-            String xml = "<marker>\n";
-            xml += "<type>" + getMarkerType() + "</type>\n";
-            xml += "<id>" + getMarkerID() + "</id>\n";
-            /*String hexCol = Integer.toHexString(getMarkerColor().getRGB());
-            hexCol = "#" + hexCol.substring(2, hexCol.length());*/
+            StringBuilder b = new StringBuilder();
+            b.append("<marker>\n");
+            b.append("<type>").append(getMarkerType()).append("</type>\n");
+            b.append("<id>").append(getMarkerID()).append("</id>\n");
             int red = getMarkerColor().getRed();
             int green = getMarkerColor().getGreen();
             int blue = getMarkerColor().getBlue();
             int alpha = getMarkerColor().getAlpha();
-            xml += "<color r=\"" + red + "\" g=\"" + green + "\" b=\"" + blue + "\" a=\"" + alpha + "\"/>\n";
-            xml += "</marker>";
-            return xml;
+            b.append("<color r=\"").append(red).append("\" g=\"").append(green).append("\" b=\"").append(blue).append("\" a=\"").append(alpha).append("\"/>\n");
+            b.append("<shownOnMap>").append(isShownOnMap()).append("</shownOnMap>\n");
+            b.append("</marker>");
+            return b.toString();
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Override
+    public String getElementIdentifier() {
+        return "marker";
+    }
+
+    @Override
+    public String getElementGroupIdentifier() {
+        return "markers";
+    }
+
+    @Override
+    public String getGroupNameAttributeIdentifier() {
+        return "name";
+    }
+
+    @Override
+    public void loadFromXml(Element pElement) {
+        setMarkerType(Integer.parseInt(pElement.getChild("type").getText()));
+        try {
+            setMarkerID(Integer.parseInt(pElement.getChild("id").getText()));
+        } catch (Exception e) {
+            //try to read old marker version with plain text value
+            String value = pElement.getChild("value").getText();
+            if (getMarkerType() == Marker.TRIBE_MARKER_TYPE) {
+                setMarkerID(DataHolder.getSingleton().getTribeByName(value).getId());
+            } else {
+                setMarkerID(DataHolder.getSingleton().getAllyByName(value).getId());
+            }
+        }
+        try {
+            Element e = pElement.getChild("color");
+            int red = e.getAttribute("r").getIntValue();
+            int green = e.getAttribute("g").getIntValue();
+            int blue = e.getAttribute("b").getIntValue();
+            int alpha = e.getAttribute("a").getIntValue();
+            setMarkerColor(new Color(red, green, blue, alpha));
+        } catch (Exception e) {
+            //try to read old color value
+            setMarkerColor(Color.decode(pElement.getChild("color").getText()));
+        }
+        try {
+            String value = pElement.getChild("shownOnMap").getText();
+            setShownOnMap(Boolean.parseBoolean(value));
+        } catch (Exception e) {
+            //try to read old format
+            setShownOnMap(true);
+        }
+    }
+
+    /**
+     * @return the shownOnMap
+     */
+    public boolean isShownOnMap() {
+        return shownOnMap;
+    }
+
+    /**
+     * @param shownOnMap the shownOnMap to set
+     */
+    public void setShownOnMap(boolean shownOnMap) {
+        this.shownOnMap = shownOnMap;
     }
 }

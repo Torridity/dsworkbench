@@ -36,10 +36,8 @@ public class ReportParser implements SilentParserInterface {
                 throw new Exception("No valid report data found");
             }
 
-            String activeSet = ReportManagerTableModel.getSingleton().getActiveReportSet();
-            ReportManager.getSingleton().getReportSet(activeSet).addReport(r);
-            NotifierFrame.doNotification("DS Workbench hat einen Kampfbericht erfolgreich eingelesen.", NotifierFrame.NOTIFY_INFO);
-            ReportManager.getSingleton().forceUpdate(activeSet);
+            ReportManager.getSingleton().addManagedElement(r);
+            NotifierFrame.doNotification("DS Workbench hat einen Kampfbericht erfolgreich eingelesen und in das Berichtset 'default' übertragen.", NotifierFrame.NOTIFY_INFO);
             return true;
         } catch (Exception e) {
             //no valid report data found

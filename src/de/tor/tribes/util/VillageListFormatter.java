@@ -12,6 +12,7 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import java.text.NumberFormat;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -41,28 +42,28 @@ public class VillageListFormatter {
             }
 
             String line = pPattern;
-            line = line.replaceAll("%CNT%", nf2.format(cnt));
+            line = StringUtils.replace(line, "%CNT%", nf2.format(cnt));
             if (pUseBBCode) {
-                line = line.replaceAll("%TRIBE%", t.toBBCode());
+                line = StringUtils.replace(line, "%TRIBE%", t.toBBCode());
             } else {
-                line = line.replaceAll("%TRIBE%", t.toString());
+                line = StringUtils.replace(line, "%TRIBE%", t.toString());
             }
 
             if (pUseBBCode) {
-                line = line.replaceAll("%ALLY%", a.toBBCode());
+                line = StringUtils.replace(line, "%ALLY%", a.toBBCode());
             } else {
-                line = line.replaceAll("%ALLY%", a.toString());
+                line = StringUtils.replace(line, "%ALLY%", a.toString());
             }
             if (pUseBBCode) {
-                line = line.replaceAll("%VILLAGE%", v.toBBCode());
+                line = StringUtils.replace(line, "%VILLAGE%", v.toBBCode());
             } else {
-                line = line.replaceAll("%VILLAGE%", v.toString());
+                line = StringUtils.replace(line, "%VILLAGE%", v.toString());
             }
 
-            line = line.replaceAll("%X%", nf.format(v.getX()));
-            line = line.replaceAll("%Y%", nf.format(v.getY()));
-            line = line.replaceAll("%POINTS%", nf.format(v.getPoints()));
-            b.append(line + "\n");
+            line = StringUtils.replace(line, "%X%", nf.format(v.getX()));
+            line = StringUtils.replace(line, "%Y%", nf.format(v.getY()));
+            line = StringUtils.replace(line, "%POINTS%", nf.format(v.getPoints()));
+            b.append(line).append("\n");
             cnt++;
         }
         return b.toString();
@@ -70,6 +71,6 @@ public class VillageListFormatter {
 
     public static void main(String[] args) {
         String test = "%TRIBE%";
-        System.out.println(test.replaceAll("%TRIBE%", "OK"));
+        System.out.println(StringUtils.replace(test, "%TRIBE%", "OK"));
     }
 }

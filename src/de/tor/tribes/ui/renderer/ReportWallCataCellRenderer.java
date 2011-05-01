@@ -5,8 +5,6 @@
 package de.tor.tribes.ui.renderer;
 
 import de.tor.tribes.types.FightReport;
-import de.tor.tribes.ui.models.ReportManagerTableModel;
-import de.tor.tribes.util.Constants;
 import java.awt.Component;
 import java.io.File;
 import java.util.LinkedList;
@@ -14,19 +12,18 @@ import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
+import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
 /**
  *
  * @author Jejkal
  */
-public class ReportWallCataCellRenderer implements TableCellRenderer {
+public class ReportWallCataCellRenderer extends DefaultTableRenderer {
 
-    private DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
     private List<String> iconsUrls = null;
 
     public ReportWallCataCellRenderer() {
+        super();
         try {
             iconsUrls = new LinkedList<String>();
             iconsUrls.add(new File("./graphics/icons/wall.png").toURI().toURL().toString());
@@ -39,84 +36,44 @@ public class ReportWallCataCellRenderer implements TableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        JLabel l = new JLabel();
-        l.setOpaque(true);
-
-        if (!isSelected) {
-            if (row % 2 == 0) {
-                l.setBackground(Constants.DS_ROW_B);
-            } else {
-                l.setBackground(Constants.DS_ROW_A);
-            }
-        } else {
-            l.setForeground(c.getForeground());
-            l.setBackground(c.getBackground());
-        }
-
-        if (hasFocus) {
-            l.requestFocus();
-        }
+        Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        JLabel label = (JLabel) c;
         try {
-            l.setHorizontalAlignment(SwingConstants.CENTER);
-            byte v = (Byte) value;
-            StringBuffer text = new StringBuffer();
+            label.setHorizontalAlignment(SwingConstants.CENTER);
+            FightReport r = (FightReport) value;
+            byte v = r.getVillageEffects();
+            StringBuilder text = new StringBuilder();
             text.append("<html>");
-            StringBuffer tooltip = new StringBuffer();
+            StringBuilder tooltip = new StringBuilder();
             tooltip.append("<html>");
-            FightReport report = null;
-            try {
-                report = ReportManagerTableModel.getSingleton().getReportAtRow(row);
-                //report = (FightReport) table.getValueAt(row, 0);
-            } catch (Exception e) {
-                report = null;
-            }
             boolean hasTooltip = false;
-            if (report == null) {
-                if ((v & 1) > 0) {
-                    text.append("<img src='" + iconsUrls.get(0) + "'/>");
-                    hasTooltip = true;
-                    tooltip.append("Wall beschädigt<BR/>");
-                }
-                if ((v & 2) > 0) {
-                    text.append("<img src='" + iconsUrls.get(1) + "'/>");
-                    hasTooltip = true;
-                    tooltip.append("Gebäude beschädigt<BR/>");
-                }
-                if ((v & 4) > 0) {
-                    text.append("<img src='" + iconsUrls.get(2) + "'/>");
-                    hasTooltip = true;
-                    tooltip.append("Geadelt");
-                }
-            } else {
-                if ((v & 1) > 0) {
-                    text.append("<img src='" + iconsUrls.get(0) + "'/>");
-                    hasTooltip = true;
-                    tooltip.append("Wall beschädigt von Level " + report.getWallBefore() + " auf Level " + report.getWallAfter() + "<BR/>");
-                }
-                if ((v & 2) > 0) {
-                    text.append("<img src='" + iconsUrls.get(1) + "'/>");
-                    hasTooltip = true;
-                    tooltip.append(report.getAimedBuilding() + " beschädigt von Level " + report.getBuildingBefore() + " auf Level " + report.getBuildingAfter() + "<BR/>");
-                }
-                if ((v & 4) > 0) {
-                    text.append("<img src='" + iconsUrls.get(2) + "'/>");
-                    hasTooltip = true;
-                    tooltip.append("Zustimmung gesenkt von " + report.getAcceptanceBefore() + " auf " + report.getAcceptanceAfter());
-                }
+            if ((v & 1) > 0) {
+                text.append("<img src='").append(iconsUrls.get(0)).append("'/>");
+                hasTooltip = true;
+                tooltip.append("Wall beschädigt von Level ").append(r.getWallBefore()).append(" auf Level ").append(r.getWallAfter()).append("<BR/>");
             }
+            if ((v & 2) > 0) {
+                text.append("<img src='").append(iconsUrls.get(1)).append("'/>");
+                hasTooltip = true;
+                tooltip.append(r.getAimedBuilding()).append(" beschädigt von Level ").append(r.getBuildingBefore()).append(" auf Level ").append(r.getBuildingAfter()).append("<BR/>");
+            }
+            if ((v & 4) > 0) {
+                text.append("<img src='").append(iconsUrls.get(2)).append("'/>");
+                hasTooltip = true;
+                tooltip.append("Zustimmung gesenkt von ").append(r.getAcceptanceBefore()).append(" auf ").append(r.getAcceptanceAfter());
+            }
+
 
             text.append("</html>");
             tooltip.append("</html>");
 
-            l.setText(text.toString());
+            label.setText(text.toString());
             if (hasTooltip) {
-                l.setToolTipText(tooltip.toString());
+                label.setToolTipText(tooltip.toString());
             }
         } catch (Exception e) {
             //cast problem
-            //  e.printStackTrace();
         }
-        return l;
+        return label;
     }
 }

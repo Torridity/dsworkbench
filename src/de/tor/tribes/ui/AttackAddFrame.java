@@ -23,6 +23,7 @@ import java.awt.event.ItemEvent;
 import java.text.NumberFormat;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JSpinner.DateEditor;
@@ -202,11 +203,11 @@ public class AttackAddFrame extends javax.swing.JFrame {
 
         jDistance.setText("Unterschiedliche Entfernungen");
 
-        Enumeration<String> plans = AttackManager.getSingleton().getPlans();
+        Iterator<String> plans = AttackManager.getSingleton().getGroupIterator();
         Object lastSelection = jAttackPlanBox.getSelectedItem();
         DefaultComboBoxModel model = new DefaultComboBoxModel();
-        while (plans.hasMoreElements()) {
-            model.addElement(plans.nextElement());
+        while (plans.hasNext()) {
+            model.addElement(plans.next());
         }
 
         jAttackPlanBox.setModel(model);
@@ -264,11 +265,11 @@ public class AttackAddFrame extends javax.swing.JFrame {
 
         jDistance.setText(nf.format(d));
 
-        Enumeration<String> plans = AttackManager.getSingleton().getPlans();
+        Iterator<String> plans = AttackManager.getSingleton().getGroupIterator();
         Object lastSelection = jAttackPlanBox.getSelectedItem();
         DefaultComboBoxModel model = new DefaultComboBoxModel();
-        while (plans.hasMoreElements()) {
-            model.addElement(plans.nextElement());
+        while (plans.hasNext()) {
+            model.addElement(plans.next());
         }
 
         jAttackPlanBox.setModel(model);

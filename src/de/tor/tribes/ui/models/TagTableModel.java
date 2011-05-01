@@ -6,9 +6,9 @@ package de.tor.tribes.ui.models;
 
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.TagMapMarker;
-import de.tor.tribes.ui.DSWorkbenchTagFrame;
+import de.tor.tribes.ui.views.DSWorkbenchTagFrame;
 import de.tor.tribes.ui.MapPanel;
-import de.tor.tribes.ui.renderer.MapRenderer;
+import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.tag.TagManagerListener;
 import java.util.Arrays;

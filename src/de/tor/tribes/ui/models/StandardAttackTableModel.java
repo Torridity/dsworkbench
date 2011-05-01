@@ -8,7 +8,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.StandardAttackElement;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.DSWorkbenchAttackFrame;
+import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import java.util.Date;

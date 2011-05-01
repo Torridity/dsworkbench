@@ -11,13 +11,13 @@ import java.awt.Component;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
+import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
 /**
  *
  * @author Torridity
  */
-public class FightReportCellRenderer extends DefaultTableCellRenderer {
+public class FightReportCellRenderer extends DefaultTableRenderer {
 
     private ImageIcon BLUE_ICON = null;
     private ImageIcon GREEN_ICON = null;
@@ -26,6 +26,7 @@ public class FightReportCellRenderer extends DefaultTableCellRenderer {
     private ImageIcon GREY_ICON = null;
 
     public FightReportCellRenderer() {
+        super();
         try {
             BLUE_ICON = new ImageIcon(this.getClass().getResource("/res/ui/bullet_ball_blue.png"));
             GREEN_ICON = new ImageIcon(this.getClass().getResource("/res/ui/bullet_ball_green.png"));
@@ -40,13 +41,7 @@ public class FightReportCellRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         JLabel label = (JLabel) c;
-        if (!isSelected) {
-            if (row % 2 == 0) {
-                label.setBackground(Constants.DS_ROW_B);
-            } else {
-                label.setBackground(Constants.DS_ROW_A);
-            }
-        }
+
         FightReport rep = (FightReport) value;
         try {
             label.setText("");
@@ -63,7 +58,6 @@ public class FightReportCellRenderer extends DefaultTableCellRenderer {
             }
             label.setToolTipText(FightReportHTMLToolTipGenerator.buildToolTip(rep));
         } catch (Exception e) {
-            e.printStackTrace();
         }
         return label;
     }

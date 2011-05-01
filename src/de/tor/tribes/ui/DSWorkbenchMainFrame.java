@@ -5,6 +5,24 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
+import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
+import de.tor.tribes.ui.views.DSWorkbenchReTimerFrame;
+import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
+import de.tor.tribes.ui.views.DSWorkbenchNotepad;
+import de.tor.tribes.ui.views.DSWorkbenchFormFrame;
+import de.tor.tribes.ui.views.DSWorkbenchSOSRequestAnalyzer;
+import de.tor.tribes.ui.views.DSWorkbenchMarkerFrame;
+import de.tor.tribes.ui.views.DSWorkbenchReportFrame;
+import de.tor.tribes.ui.views.DSWorkbenchConquersFrame;
+import de.tor.tribes.ui.views.DSWorkbenchChurchFrame;
+import de.tor.tribes.ui.views.DSWorkbenchSelectionFrame;
+import de.tor.tribes.ui.views.DSWorkbenchRankFrame;
+import de.tor.tribes.ui.views.DSWorkbenchSearchFrame;
+import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor;
+import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
+import de.tor.tribes.ui.views.DSWorkbenchDistanceFrame;
+import de.tor.tribes.ui.views.DSWorkbenchTagFrame;
 import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
@@ -23,7 +41,6 @@ import de.tor.tribes.util.ToolChangeListener;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.AWTEvent;
 import java.awt.Desktop;
-import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.KeyEvent;
@@ -37,7 +54,7 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.ui.models.DistanceTableModel;
 import de.tor.tribes.ui.models.StandardAttackTableModel;
-import de.tor.tribes.ui.renderer.MapRenderer;
+import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MainShutdownHook;
@@ -67,6 +84,7 @@ import java.io.FileWriter;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
@@ -76,14 +94,16 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 /**
  * @TODO (DIFF) Included report ex- and import
  * @author  Charon
  */
-public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
+public class DSWorkbenchMainFrame extends JRibbonFrame implements
         MapPanelListener,
         ToolChangeListener,
         DSWorkbenchFrameListener,
@@ -318,35 +338,35 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     } else if ((e.getKeyCode() == KeyEvent.VK_T) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown()) {
                         //search time shortcut
                         ClockFrame.getSingleton().setVisible(!ClockFrame.getSingleton().isVisible());
-                    } else if ((e.getKeyCode() == KeyEvent.VK_F) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown()) {
-                        if (fullscreenFrame == null) {
-                            jPanel1.remove(MapPanel.getSingleton());
-                            fullscreenFrame = new JFrame();
-                            fullscreenFrame.add(MapPanel.getSingleton());
-                            Dimension fullscreen = Toolkit.getDefaultToolkit().getScreenSize();
-                            fullscreenFrame.setSize(fullscreen);
-                            fullscreenFrame.setUndecorated(true);
-                            fullscreenFrame.setVisible(true);
-                        } else {
-                            fullscreenFrame.remove(MapPanel.getSingleton());
-                            jPanel1.add(MapPanel.getSingleton());
-                            jPanel1.repaint();//.updateUI();
-                            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
-                            fullscreenFrame.dispose();
-                            fullscreenFrame = null;
-                        }
-
-                        if (ServerSettings.getSingleton().getCoordType() != 2) {
-                            int[] hier = DSCalculator.hierarchicalToXy(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()), 12);
-                            if (hier != null) {
-                                MapPanel.getSingleton().updateMapPosition(hier[0], hier[1]);
-                            }
-                        } else {
-                            MapPanel.getSingleton().updateMapPosition(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()));
-                        }
-                    } else if ((e.getKeyCode() == KeyEvent.VK_F) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        DSWorkbenchMarkerFrame.getSingleton().firePublicDrawMarkedOnlyChangedEvent();
-                    } else if ((e.getKeyCode() == KeyEvent.VK_S) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
+                    }/* else if ((e.getKeyCode() == KeyEvent.VK_F) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown()) {
+                    if (fullscreenFrame == null) {
+                    jPanel1.remove(MapPanel.getSingleton());
+                    fullscreenFrame = new JFrame();
+                    fullscreenFrame.add(MapPanel.getSingleton());
+                    Dimension fullscreen = Toolkit.getDefaultToolkit().getScreenSize();
+                    fullscreenFrame.setSize(fullscreen);
+                    fullscreenFrame.setUndecorated(true);
+                    fullscreenFrame.setVisible(true);
+                    } else {
+                    fullscreenFrame.remove(MapPanel.getSingleton());
+                    jPanel1.add(MapPanel.getSingleton());
+                    jPanel1.repaint();
+                    MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
+                    fullscreenFrame.dispose();
+                    fullscreenFrame = null;
+                    }
+                    
+                    if (ServerSettings.getSingleton().getCoordType() != 2) {
+                    int[] hier = DSCalculator.hierarchicalToXy(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()), 12);
+                    if (hier != null) {
+                    MapPanel.getSingleton().updateMapPosition(hier[0], hier[1]);
+                    }
+                    } else {
+                    MapPanel.getSingleton().updateMapPosition(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()));
+                    }
+                    } */ /*else if ((e.getKeyCode() == KeyEvent.VK_F) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
+                    DSWorkbenchMarkerFrame.getSingleton().firePublicDrawMarkedOnlyChangedEvent();
+                    } */ else if ((e.getKeyCode() == KeyEvent.VK_S) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
                         fireCreateMapShotEvent(null);
                     } else if (e.getKeyCode() == KeyEvent.VK_F2) {
                         DSWorkbenchAttackFrame.getSingleton().setVisible(!DSWorkbenchAttackFrame.getSingleton().isVisible());
@@ -418,8 +438,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     }
                 }
             }
-        },
-                AWTEvent.KEY_EVENT_MASK);
+        }, AWTEvent.KEY_EVENT_MASK);
         // </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc=" Load UI Icons ">
@@ -573,25 +592,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         //update online state
         onlineStateChanged();
         restoreProperties();
-        /*   new Thread(new Runnable() {
-
-        public void run() {
-        while (true) {
-        try {
-        DSWorkbenchMainFrame.getSingleton().setAlwaysOnTop(false);
-
-        Thread.sleep(1000);
-        } catch (Exception e) {
-        }
-        }
-        }
-        }).start();*/
-    }
-
-    @Override
-    public void requestFocus() {
-        System.out.println("FOSUC");
-        super.requestFocus();
     }
 
     public void storeProperties() {
@@ -703,7 +703,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             if (DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
                 DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
             }
-            ConquerManager.getSingleton().forceUpdate();
+            ConquerManager.getSingleton().revalidate(true);
             //relevant for first start
             propagateLayerOrder();
             MinimapPanel.getSingleton().redraw(true);
@@ -780,7 +780,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         initialized = true;
     }
 
-    protected boolean isInitialized() {
+    public boolean isInitialized() {
         return initialized;
     }
 
@@ -832,145 +832,156 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     @Override
     public void setVisible(boolean v) {
         logger.info("Setting MainWindow visible");
-        boolean t = true;
         super.setVisible(v);
-        if (v) {
-            //only if set to visible
-            MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
+        final boolean vis = v;
+        SwingUtilities.invokeLater(new Runnable() {
 
-            double w = (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getCurrentFieldWidth(dZoomFactor);
-            double h = (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getCurrentFieldHeight(dZoomFactor);
+            public void run() {
+                setupRibbon();
+                if (vis) {
+                    //only if set to visible
+                    MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
 
-            MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
+                    double w = (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getCurrentFieldWidth(dZoomFactor);
+                    double h = (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getCurrentFieldHeight(dZoomFactor);
 
-            // <editor-fold defaultstate="collapsed" desc=" Check frames and toolbar visibility ">
+                    MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
+                    //start ClipboardWatch
+                    ClipboardWatch.getSingleton();
+                    //draw map the first time
+                    fireRefreshMapEvent(null);
+                    showReminder();
+                    // <editor-fold defaultstate="collapsed" desc=" Check frames and toolbar visibility ">
 
-            try {
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("attack.frame.visible"))) {
-                    jShowAttackFrame.setSelected(true);
-                    logger.info("Restoring attack frame");
-                    DSWorkbenchAttackFrame.getSingleton().setVisible(true);
-                }
-            } catch (Exception e) {
-            }
-
-            try {
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("marker.frame.visible"))) {
-                    jShowMarkerFrame.setSelected(true);
-                    logger.info("Restoring marker frame");
-                    DSWorkbenchMarkerFrame.getSingleton().setVisible(true);
-                }
-
-            } catch (Exception e) {
-            }
-
-            try {
-                if (jShowChurchFrame.isEnabled()) {
-                    if (Boolean.parseBoolean(GlobalOptions.getProperty("church.frame.visible"))) {
-                        jShowChurchFrame.setSelected(true);
-                        logger.info("Restoring church frame");
-                        DSWorkbenchChurchFrame.getSingleton().setVisible(true);
+                    try {
+                        if (Boolean.parseBoolean(GlobalOptions.getProperty("attack.frame.visible"))) {
+                            jShowAttackFrame.setSelected(true);
+                            logger.info("Restoring attack frame");
+                            DSWorkbenchAttackFrame.getSingleton().setVisible(true);
+                        }
+                    } catch (Exception e) {
                     }
-                }
-            } catch (Exception e) {
-            }
 
-            try {
-                if (jShowConquersFrame.isEnabled()) {
-                    if (Boolean.parseBoolean(GlobalOptions.getProperty("conquers.frame.visible"))) {
-                        jShowConquersFrame.setSelected(true);
-                        logger.info("Restoring conquers frame");
-                        DSWorkbenchConquersFrame.getSingleton().setVisible(true);
+                    try {
+                        if (Boolean.parseBoolean(GlobalOptions.getProperty("marker.frame.visible"))) {
+                            jShowMarkerFrame.setSelected(true);
+                            logger.info("Restoring marker frame");
+                            DSWorkbenchMarkerFrame.getSingleton().setVisible(true);
+                        }
+
+                    } catch (Exception e) {
                     }
-                }
-            } catch (Exception e) {
-            }
 
-            try {
-                if (jShowNotepadFrame.isEnabled()) {
-                    if (Boolean.parseBoolean(GlobalOptions.getProperty("notepad.frame.visible"))) {
-                        jShowNotepadFrame.setSelected(true);
-                        logger.info("Restoring notepad frame");
-                        DSWorkbenchNotepad.getSingleton().setVisible(true);
+                    try {
+                        if (jShowChurchFrame.isEnabled()) {
+                            if (Boolean.parseBoolean(GlobalOptions.getProperty("church.frame.visible"))) {
+                                jShowChurchFrame.setSelected(true);
+                                logger.info("Restoring church frame");
+                                DSWorkbenchChurchFrame.getSingleton().setVisible(true);
+                            }
+                        }
+                    } catch (Exception e) {
                     }
-                }
-            } catch (Exception e) {
-            }
 
-            try {
-                if (jShowTagFrame.isEnabled()) {
-                    if (Boolean.parseBoolean(GlobalOptions.getProperty("tag.frame.visible"))) {
-                        jShowTagFrame.setSelected(true);
-                        logger.info("Restoring tag frame");
-                        DSWorkbenchTagFrame.getSingleton().setVisible(true);
+                    try {
+                        if (jShowConquersFrame.isEnabled()) {
+                            if (Boolean.parseBoolean(GlobalOptions.getProperty("conquers.frame.visible"))) {
+                                jShowConquersFrame.setSelected(true);
+                                logger.info("Restoring conquers frame");
+                                DSWorkbenchConquersFrame.getSingleton().setVisible(true);
+                            }
+                        }
+                    } catch (Exception e) {
                     }
+
+                    try {
+                        if (jShowNotepadFrame.isEnabled()) {
+                            if (Boolean.parseBoolean(GlobalOptions.getProperty("notepad.frame.visible"))) {
+                                jShowNotepadFrame.setSelected(true);
+                                logger.info("Restoring notepad frame");
+                                DSWorkbenchNotepad.getSingleton().setVisible(true);
+                            }
+                        }
+                    } catch (Exception e) {
+                    }
+
+                    try {
+                        if (jShowTagFrame.isEnabled()) {
+                            if (Boolean.parseBoolean(GlobalOptions.getProperty("tag.frame.visible"))) {
+                                jShowTagFrame.setSelected(true);
+                                logger.info("Restoring tag frame");
+                                DSWorkbenchTagFrame.getSingleton().setVisible(true);
+                            }
+                        }
+                    } catch (Exception e) {
+                    }
+
+                    try {
+                        if (Boolean.parseBoolean(GlobalOptions.getProperty("troops.frame.visible"))) {
+                            jShowTroopsFrame.setSelected(true);
+                            logger.info("Restoring troops frame");
+                            DSWorkbenchTroopsFrame.getSingleton().setVisible(true);
+                        }
+                    } catch (Exception e) {
+                    }
+
+                    try {
+                        if (Boolean.parseBoolean(GlobalOptions.getProperty("rank.frame.visible"))) {
+                            jShowRankFrame.setSelected(true);
+                            logger.info("Restoring rank frame");
+                            DSWorkbenchRankFrame.getSingleton().setVisible(true);
+                        }
+
+                    } catch (Exception e) {
+                    }
+
+                    try {
+                        if (Boolean.parseBoolean(GlobalOptions.getProperty("form.frame.visible"))) {
+                            jShowFormsFrame.setSelected(true);
+                            logger.info("Restoring form frame");
+                            DSWorkbenchFormFrame.getSingleton().setVisible(true);
+                        }
+
+                    } catch (Exception e) {
+                    }
+
+                    try {
+                        if (Boolean.parseBoolean(GlobalOptions.getProperty("search.frame.visible"))) {
+                            logger.info("Restoring search frame");
+                            DSWorkbenchSearchFrame.getSingleton().setVisible(true);
+                        }
+
+                    } catch (Exception e) {
+                    }
+
+                    try {
+                        if (Boolean.parseBoolean(GlobalOptions.getProperty("stats.frame.visible"))) {
+                            jShowStatsFrame.setSelected(true);
+                            logger.info("Restoring stats frame");
+                            DSWorkbenchStatsFrame.getSingleton().setVisible(true);
+                        }
+                    } catch (Exception e) {
+                    }
+
+                    try {
+                        if (Boolean.parseBoolean(GlobalOptions.getProperty("report.frame.visible"))) {
+                            jShowReportFrame.setSelected(true);
+                            logger.info("Restoring report frame");
+                            DSWorkbenchReportFrame.getSingleton().setVisible(true);
+                        }
+                    } catch (Exception e) {
+                    }
+                    // </editor-fold>
                 }
-            } catch (Exception e) {
             }
+        });
+    }
 
-            try {
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("troops.frame.visible"))) {
-                    jShowTroopsFrame.setSelected(true);
-                    logger.info("Restoring troops frame");
-                    DSWorkbenchTroopsFrame.getSingleton().setVisible(true);
-                }
-            } catch (Exception e) {
-            }
-
-            try {
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("rank.frame.visible"))) {
-                    jShowRankFrame.setSelected(true);
-                    logger.info("Restoring rank frame");
-                    DSWorkbenchRankFrame.getSingleton().setVisible(true);
-                }
-
-            } catch (Exception e) {
-            }
-
-            try {
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("form.frame.visible"))) {
-                    jShowFormsFrame.setSelected(true);
-                    logger.info("Restoring form frame");
-                    DSWorkbenchFormFrame.getSingleton().setVisible(true);
-                }
-
-            } catch (Exception e) {
-            }
-
-            try {
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("search.frame.visible"))) {
-                    logger.info("Restoring search frame");
-                    DSWorkbenchSearchFrame.getSingleton().setVisible(true);
-                }
-
-            } catch (Exception e) {
-            }
-
-            try {
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("stats.frame.visible"))) {
-                    jShowStatsFrame.setSelected(true);
-                    logger.info("Restoring stats frame");
-                    DSWorkbenchStatsFrame.getSingleton().setVisible(true);
-                }
-            } catch (Exception e) {
-            }
-
-            try {
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("report.frame.visible"))) {
-                    jShowReportFrame.setSelected(true);
-                    logger.info("Restoring report frame");
-                    DSWorkbenchReportFrame.getSingleton().setVisible(true);
-                }
-            } catch (Exception e) {
-            }
-            // </editor-fold>
-
-            //start ClipboardWatch
-            ClipboardWatch.getSingleton();
-            //draw map the first time
-            fireRefreshMapEvent(null);
-            showReminder();
-        }
+    private void setupRibbon() {
+        RibbonConfigurator.addGeneralToolsTask(this);
+        RibbonConfigurator.addMapToolsTask(this);
+        RibbonConfigurator.addViewTask(this);
+        RibbonConfigurator.addAppIcons(this);
     }
 
     private void showReminder() {
@@ -981,8 +992,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             showNotBefore = 0;
         }
         if (System.currentTimeMillis() > showNotBefore) {
-            StartupReminder reminder = new StartupReminder(this, true);
-            reminder.setLocationRelativeTo(this);
+            StartupReminder reminder = new StartupReminder(this);
             TagManager.getSingleton().addTagManagerListener(reminder);
             TroopsManager.getSingleton().addTroopsManagerListener(reminder);
             reminder.setVisible(true);
@@ -1020,6 +1030,43 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jAddNewROIButton = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jCustomPanel = new javax.swing.JPanel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JSeparator();
+        jMenuItem3 = new javax.swing.JMenuItem();
+        jMenuItem4 = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JSeparator();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        jSearchItem = new javax.swing.JMenuItem();
+        jClockItem = new javax.swing.JMenuItem();
+        jTribeTribeAttackItem = new javax.swing.JMenuItem();
+        jUnitOverviewItem = new javax.swing.JMenuItem();
+        jSelectionOverviewItem = new javax.swing.JMenuItem();
+        jStartAStarItem = new javax.swing.JMenuItem();
+        jDistanceItem = new javax.swing.JMenuItem();
+        jDoItYourselfAttackPlanerItem = new javax.swing.JMenuItem();
+        jReTimeToolEvent = new javax.swing.JMenuItem();
+        jSOSAnalyzerItem = new javax.swing.JMenuItem();
+        jMerchantDistributorItem = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        jShowAttackFrame = new javax.swing.JCheckBoxMenuItem();
+        jShowMarkerFrame = new javax.swing.JCheckBoxMenuItem();
+        jShowTroopsFrame = new javax.swing.JCheckBoxMenuItem();
+        jShowRankFrame = new javax.swing.JCheckBoxMenuItem();
+        jShowFormsFrame = new javax.swing.JCheckBoxMenuItem();
+        jShowChurchFrame = new javax.swing.JCheckBoxMenuItem();
+        jShowConquersFrame = new javax.swing.JCheckBoxMenuItem();
+        jShowNotepadFrame = new javax.swing.JCheckBoxMenuItem();
+        jShowTagFrame = new javax.swing.JCheckBoxMenuItem();
+        jShowStatsFrame = new javax.swing.JCheckBoxMenuItem();
+        jShowReportFrame = new javax.swing.JCheckBoxMenuItem();
+        jMenu4 = new javax.swing.JMenu();
+        jHelpItem = new javax.swing.JMenuItem();
+        jAboutItem = new javax.swing.JMenuItem();
+        jDonateButton = new javax.swing.JMenuItem();
+        jPanel4 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jMinimapPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -1076,47 +1123,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jROIBox = new javax.swing.JComboBox();
         jRemoveROIButton = new javax.swing.JButton();
         jAddROIButton = new javax.swing.JButton();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jSeparator2 = new javax.swing.JSeparator();
-        jMenuItem3 = new javax.swing.JMenuItem();
-        jMenuItem4 = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JSeparator();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenu3 = new javax.swing.JMenu();
-        jSearchItem = new javax.swing.JMenuItem();
-        jClockItem = new javax.swing.JMenuItem();
-        jTribeTribeAttackItem = new javax.swing.JMenuItem();
-        jUnitOverviewItem = new javax.swing.JMenuItem();
-        jSelectionOverviewItem = new javax.swing.JMenuItem();
-        jStartAStarItem = new javax.swing.JMenuItem();
-        jDistanceItem = new javax.swing.JMenuItem();
-        jDoItYourselfAttackPlanerItem = new javax.swing.JMenuItem();
-        jReTimeToolEvent = new javax.swing.JMenuItem();
-        jSOSAnalyzerItem = new javax.swing.JMenuItem();
-        jMerchantDistributorItem = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
-        jShowAttackFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowMarkerFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowTroopsFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowRankFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowFormsFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowChurchFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowConquersFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowNotepadFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowTagFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowStatsFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowReportFrame = new javax.swing.JCheckBoxMenuItem();
-        jMenu4 = new javax.swing.JMenu();
-        jHelpItem = new javax.swing.JMenuItem();
-        jAboutItem = new javax.swing.JMenuItem();
-        jDonateButton = new javax.swing.JMenuItem();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
         jExportDialog.setTitle(bundle.getString("DSWorkbenchMainFrame.jExportDialog.title")); // NOI18N
-
-        jScrollPane1.setOpaque(false);
 
         jAttackExportTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1138,13 +1147,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jScrollPane1.setViewportView(jAttackExportTable);
 
         jExportTags.setText(bundle.getString("DSWorkbenchMainFrame.jExportTags.text")); // NOI18N
-        jExportTags.setOpaque(false);
 
         jExportTroops.setText(bundle.getString("DSWorkbenchMainFrame.jExportTroops.text")); // NOI18N
-        jExportTroops.setOpaque(false);
 
         jExportForms.setText(bundle.getString("DSWorkbenchMainFrame.jExportForms.text")); // NOI18N
-        jExportForms.setOpaque(false);
 
         jExportButton.setText(bundle.getString("DSWorkbenchMainFrame.jExportButton.text")); // NOI18N
         jExportButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -1159,8 +1165,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 fireExportEvent(evt);
             }
         });
-
-        jScrollPane4.setOpaque(false);
 
         jMarkerSetExportTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1182,9 +1186,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jScrollPane4.setViewportView(jMarkerSetExportTable);
 
         jExportNotes.setText(bundle.getString("DSWorkbenchMainFrame.jExportNotes.text")); // NOI18N
-        jExportNotes.setOpaque(false);
-
-        jScrollPane5.setOpaque(false);
 
         jReportSetExportTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1344,686 +1345,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             jCustomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 501, Short.MAX_VALUE)
         );
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle(bundle.getString("DSWorkbenchMainFrame.title")); // NOI18N
-        setBackground(new java.awt.Color(225, 213, 190));
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                fireDSWorkbenchClosingEvent(evt);
-            }
-        });
-        addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentResized(java.awt.event.ComponentEvent evt) {
-                fireFrameResizedEvent(evt);
-            }
-        });
-
-        jPanel1.setBackground(new java.awt.Color(0, 0, 0));
-        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2));
-        jPanel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jPanel1.setDoubleBuffered(false);
-        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.LINE_AXIS));
-
-        jMinimapPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2));
-        jMinimapPanel.setDoubleBuffered(false);
-        jMinimapPanel.setLayout(new java.awt.BorderLayout());
-
-        jScrollPane2.setFocusTraversalPolicyProvider(true);
-
-        jTaskPane1.setBackground(new java.awt.Color(239, 235, 223));
-        com.l2fprod.common.swing.PercentLayout percentLayout1 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout1.setOrientation(1);
-        percentLayout1.setGap(5);
-        jTaskPane1.setLayout(percentLayout1);
-
-        jNavigationGroup.setExpanded(false);
-        jNavigationGroup.setTitle(bundle.getString("DSWorkbenchMainFrame.jNavigationGroup.title")); // NOI18N
-        com.l2fprod.common.swing.PercentLayout percentLayout6 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout6.setOrientation(1);
-        jNavigationGroup.getContentPane().setLayout(percentLayout6);
-
-        jNavigationPanel.setBackground(new java.awt.Color(239, 235, 223));
-
-        jMoveE.setBackground(new java.awt.Color(239, 235, 223));
-        jMoveE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_e.png"))); // NOI18N
-        jMoveE.setMaximumSize(new java.awt.Dimension(21, 21));
-        jMoveE.setMinimumSize(new java.awt.Dimension(21, 21));
-        jMoveE.setPreferredSize(new java.awt.Dimension(21, 21));
-        jMoveE.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireMoveMapEvent(evt);
-            }
-        });
-
-        jMoveNE.setBackground(new java.awt.Color(239, 235, 223));
-        jMoveNE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_ne.png"))); // NOI18N
-        jMoveNE.setMaximumSize(new java.awt.Dimension(21, 21));
-        jMoveNE.setMinimumSize(new java.awt.Dimension(21, 21));
-        jMoveNE.setPreferredSize(new java.awt.Dimension(21, 21));
-        jMoveNE.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireMoveMapEvent(evt);
-            }
-        });
-
-        jMoveN.setBackground(new java.awt.Color(239, 235, 223));
-        jMoveN.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_n.png"))); // NOI18N
-        jMoveN.setMaximumSize(new java.awt.Dimension(21, 21));
-        jMoveN.setMinimumSize(new java.awt.Dimension(21, 21));
-        jMoveN.setPreferredSize(new java.awt.Dimension(21, 21));
-        jMoveN.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireMoveMapEvent(evt);
-            }
-        });
-
-        jMoveNW.setBackground(new java.awt.Color(239, 235, 223));
-        jMoveNW.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_nw.png"))); // NOI18N
-        jMoveNW.setMaximumSize(new java.awt.Dimension(21, 21));
-        jMoveNW.setMinimumSize(new java.awt.Dimension(21, 21));
-        jMoveNW.setPreferredSize(new java.awt.Dimension(21, 21));
-        jMoveNW.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireMoveMapEvent(evt);
-            }
-        });
-
-        jMoveW.setBackground(new java.awt.Color(239, 235, 223));
-        jMoveW.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_w.png"))); // NOI18N
-        jMoveW.setMaximumSize(new java.awt.Dimension(21, 21));
-        jMoveW.setMinimumSize(new java.awt.Dimension(21, 21));
-        jMoveW.setPreferredSize(new java.awt.Dimension(21, 21));
-        jMoveW.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireMoveMapEvent(evt);
-            }
-        });
-
-        jMoveSW.setBackground(new java.awt.Color(239, 235, 223));
-        jMoveSW.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_sw.png"))); // NOI18N
-        jMoveSW.setMaximumSize(new java.awt.Dimension(21, 21));
-        jMoveSW.setMinimumSize(new java.awt.Dimension(21, 21));
-        jMoveSW.setPreferredSize(new java.awt.Dimension(21, 21));
-        jMoveSW.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireMoveMapEvent(evt);
-            }
-        });
-
-        jMoveS.setBackground(new java.awt.Color(239, 235, 223));
-        jMoveS.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_s.png"))); // NOI18N
-        jMoveS.setMaximumSize(new java.awt.Dimension(21, 21));
-        jMoveS.setMinimumSize(new java.awt.Dimension(21, 21));
-        jMoveS.setPreferredSize(new java.awt.Dimension(21, 21));
-        jMoveS.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireMoveMapEvent(evt);
-            }
-        });
-
-        jMoveSE.setBackground(new java.awt.Color(239, 235, 223));
-        jMoveSE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_se.png"))); // NOI18N
-        jMoveSE.setMaximumSize(new java.awt.Dimension(21, 21));
-        jMoveSE.setMinimumSize(new java.awt.Dimension(21, 21));
-        jMoveSE.setPreferredSize(new java.awt.Dimension(21, 21));
-        jMoveSE.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireMoveMapEvent(evt);
-            }
-        });
-
-        jCenterX.setText(bundle.getString("DSWorkbenchMainFrame.jCenterX.text")); // NOI18N
-        jCenterX.setMaximumSize(new java.awt.Dimension(40, 20));
-        jCenterX.setMinimumSize(new java.awt.Dimension(40, 20));
-        jCenterX.setPreferredSize(new java.awt.Dimension(40, 20));
-        jCenterX.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                fireCheckForVillagePositionEvent(evt);
-            }
-        });
-
-        jLabel1.setText(bundle.getString("DSWorkbenchMainFrame.jLabel1.text")); // NOI18N
-
-        jLabel2.setText(bundle.getString("DSWorkbenchMainFrame.jLabel2.text")); // NOI18N
-
-        jCenterY.setText(bundle.getString("DSWorkbenchMainFrame.jCenterY.text")); // NOI18N
-        jCenterY.setMaximumSize(new java.awt.Dimension(40, 20));
-        jCenterY.setMinimumSize(new java.awt.Dimension(40, 20));
-        jCenterY.setPreferredSize(new java.awt.Dimension(40, 20));
-
-        jRefreshButton.setBackground(new java.awt.Color(239, 235, 223));
-        jRefreshButton.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jRefreshButton.toolTipText")); // NOI18N
-        jRefreshButton.setMaximumSize(new java.awt.Dimension(30, 30));
-        jRefreshButton.setMinimumSize(new java.awt.Dimension(30, 30));
-        jRefreshButton.setPreferredSize(new java.awt.Dimension(30, 30));
-        jRefreshButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireRefreshMapEvent(evt);
-            }
-        });
-
-        jMoveE1.setBackground(new java.awt.Color(239, 235, 223));
-        jMoveE1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jMoveE1.setEnabled(false);
-        jMoveE1.setMaximumSize(new java.awt.Dimension(21, 21));
-        jMoveE1.setMinimumSize(new java.awt.Dimension(21, 21));
-        jMoveE1.setPreferredSize(new java.awt.Dimension(21, 21));
-
-        jZoomInButton.setBackground(new java.awt.Color(239, 235, 223));
-        jZoomInButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/zoom_out.png"))); // NOI18N
-        jZoomInButton.setMaximumSize(new java.awt.Dimension(30, 30));
-        jZoomInButton.setMinimumSize(new java.awt.Dimension(30, 30));
-        jZoomInButton.setPreferredSize(new java.awt.Dimension(30, 30));
-        jZoomInButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireZoomEvent(evt);
-            }
-        });
-
-        jZoomOutButton.setBackground(new java.awt.Color(239, 235, 223));
-        jZoomOutButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/zoom_in.png"))); // NOI18N
-        jZoomOutButton.setMaximumSize(new java.awt.Dimension(30, 30));
-        jZoomOutButton.setMinimumSize(new java.awt.Dimension(30, 30));
-        jZoomOutButton.setPreferredSize(new java.awt.Dimension(30, 30));
-        jZoomOutButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireZoomEvent(evt);
-            }
-        });
-
-        jCenterCoordinateIngame.setBackground(new java.awt.Color(239, 235, 223));
-        jCenterCoordinateIngame.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jCenterCoordinateIngame.toolTipText")); // NOI18N
-        jCenterCoordinateIngame.setMaximumSize(new java.awt.Dimension(30, 30));
-        jCenterCoordinateIngame.setMinimumSize(new java.awt.Dimension(30, 30));
-        jCenterCoordinateIngame.setPreferredSize(new java.awt.Dimension(30, 30));
-        jCenterCoordinateIngame.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireCenterCurrentPosInGameEvent(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jNavigationPanelLayout = new javax.swing.GroupLayout(jNavigationPanel);
-        jNavigationPanel.setLayout(jNavigationPanelLayout);
-        jNavigationPanelLayout.setHorizontalGroup(
-            jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jNavigationPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jNavigationPanelLayout.createSequentialGroup()
-                        .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jNavigationPanelLayout.createSequentialGroup()
-                                .addComponent(jMoveNW, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jMoveN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jNavigationPanelLayout.createSequentialGroup()
-                                .addComponent(jMoveW, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jMoveE1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jMoveNE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jMoveE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jNavigationPanelLayout.createSequentialGroup()
-                        .addComponent(jMoveSW, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jMoveS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jMoveSE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jZoomInButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jZoomOutButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15)
-                .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jCenterX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jCenterY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(12, Short.MAX_VALUE))
-        );
-        jNavigationPanelLayout.setVerticalGroup(
-            jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jNavigationPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jNavigationPanelLayout.createSequentialGroup()
-                        .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jMoveNE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jMoveN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jMoveNW, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(4, 4, 4)
-                        .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jMoveE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jMoveW, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jMoveE1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jMoveSW, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jMoveS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jMoveSE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jNavigationPanelLayout.createSequentialGroup()
-                        .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jCenterX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(jCenterY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(jNavigationPanelLayout.createSequentialGroup()
-                            .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(5, 5, 5))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jNavigationPanelLayout.createSequentialGroup()
-                            .addComponent(jZoomInButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(jZoomOutButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jNavigationGroup.getContentPane().add(jNavigationPanel);
-
-        jTaskPane1.add(jNavigationGroup);
-
-        jInformationGroup.setBackground(new java.awt.Color(239, 235, 223));
-        jInformationGroup.setExpanded(false);
-        jInformationGroup.setTitle(bundle.getString("DSWorkbenchMainFrame.jInformationGroup.title")); // NOI18N
-        com.l2fprod.common.swing.PercentLayout percentLayout5 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout5.setOrientation(1);
-        jInformationGroup.getContentPane().setLayout(percentLayout5);
-
-        jInformationPanel.setBackground(new java.awt.Color(239, 235, 223));
-
-        jCurrentPlayerVillages.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jCurrentPlayerVillages.toolTipText")); // NOI18N
-        jCurrentPlayerVillages.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
-            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
-            }
-            public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {
-                fireCurrentPlayerVillagePopupEvent(evt);
-            }
-            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
-            }
-        });
-
-        jCurrentPlayer.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jCurrentPlayer.setMaximumSize(new java.awt.Dimension(155, 14));
-        jCurrentPlayer.setMinimumSize(new java.awt.Dimension(155, 14));
-        jCurrentPlayer.setPreferredSize(new java.awt.Dimension(155, 14));
-
-        jCenterIngameButton.setBackground(new java.awt.Color(239, 235, 223));
-        jCenterIngameButton.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jCenterIngameButton.toolTipText")); // NOI18N
-        jCenterIngameButton.setMaximumSize(new java.awt.Dimension(30, 30));
-        jCenterIngameButton.setMinimumSize(new java.awt.Dimension(30, 30));
-        jCenterIngameButton.setPreferredSize(new java.awt.Dimension(30, 30));
-        jCenterIngameButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireCenterVillageIngameEvent(evt);
-            }
-        });
-
-        jOnlineLabel.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jOnlineLabel.toolTipText")); // NOI18N
-        jOnlineLabel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jOnlineLabel.setMaximumSize(new java.awt.Dimension(30, 30));
-        jOnlineLabel.setMinimumSize(new java.awt.Dimension(30, 30));
-        jOnlineLabel.setPreferredSize(new java.awt.Dimension(30, 30));
-
-        jCurrentToolLabel.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jCurrentToolLabel.toolTipText")); // NOI18N
-        jCurrentToolLabel.setAlignmentY(0.0F);
-        jCurrentToolLabel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jCurrentToolLabel.setFocusable(false);
-        jCurrentToolLabel.setIconTextGap(0);
-        jCurrentToolLabel.setMaximumSize(new java.awt.Dimension(30, 30));
-        jCurrentToolLabel.setMinimumSize(new java.awt.Dimension(30, 30));
-        jCurrentToolLabel.setPreferredSize(new java.awt.Dimension(30, 30));
-        jCurrentToolLabel.setRequestFocusEnabled(false);
-
-        jButton1.setBackground(new java.awt.Color(239, 235, 223));
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/camera.png"))); // NOI18N
-        jButton1.setText(bundle.getString("DSWorkbenchMainFrame.jButton1.text")); // NOI18N
-        jButton1.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jButton1.toolTipText")); // NOI18N
-        jButton1.setMaximumSize(new java.awt.Dimension(30, 30));
-        jButton1.setMinimumSize(new java.awt.Dimension(30, 30));
-        jButton1.setPreferredSize(new java.awt.Dimension(30, 30));
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireCreateMapShotEvent(evt);
-            }
-        });
-
-        jEnableClipboardWatchButton.setBackground(new java.awt.Color(239, 235, 223));
-        jEnableClipboardWatchButton.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jEnableClipboardWatchButton.toolTipText")); // NOI18N
-        jEnableClipboardWatchButton.setMaximumSize(new java.awt.Dimension(30, 30));
-        jEnableClipboardWatchButton.setMinimumSize(new java.awt.Dimension(30, 30));
-        jEnableClipboardWatchButton.setPreferredSize(new java.awt.Dimension(30, 30));
-        jEnableClipboardWatchButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireChangeClipboardWatchEvent(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jInformationPanelLayout = new javax.swing.GroupLayout(jInformationPanel);
-        jInformationPanel.setLayout(jInformationPanelLayout);
-        jInformationPanelLayout.setHorizontalGroup(
-            jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jInformationPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
-                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 218, Short.MAX_VALUE)
-                    .addGroup(jInformationPanelLayout.createSequentialGroup()
-                        .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
-                        .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(4, 4, 4)
-                        .addComponent(jEnableClipboardWatchButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
-        jInformationPanelLayout.setVerticalGroup(
-            jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jInformationPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jCurrentPlayer, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jEnableClipboardWatchButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jInformationGroup.getContentPane().add(jInformationPanel);
-
-        jTaskPane1.add(jInformationGroup);
-
-        jMapGroup.setTitle(bundle.getString("DSWorkbenchMainFrame.jMapGroup.title")); // NOI18N
-        com.l2fprod.common.swing.PercentLayout percentLayout4 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout4.setOrientation(1);
-        jMapGroup.getContentPane().setLayout(percentLayout4);
-
-        jPanel2.setBackground(new java.awt.Color(239, 235, 223));
-        jPanel2.setMinimumSize(new java.awt.Dimension(193, 312));
-        jPanel2.setPreferredSize(new java.awt.Dimension(193, 312));
-
-        jShowMapPopup.setText(bundle.getString("DSWorkbenchMainFrame.jShowMapPopup.text")); // NOI18N
-        jShowMapPopup.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jShowMapPopup.toolTipText")); // NOI18N
-        jShowMapPopup.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jShowMapPopup.setOpaque(false);
-        jShowMapPopup.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                fireShowMapPopupChangedEvent(evt);
-            }
-        });
-
-        jLabel5.setText(bundle.getString("DSWorkbenchMainFrame.jLabel5.text")); // NOI18N
-
-        jLayerList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { " " };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane3.setViewportView(jLayerList);
-
-        jLabel10.setText(bundle.getString("DSWorkbenchMainFrame.jLabel10.text")); // NOI18N
-
-        jLayerUpButton.setBackground(new java.awt.Color(239, 235, 223));
-        jLayerUpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/arrow_up.png"))); // NOI18N
-        jLayerUpButton.setText(bundle.getString("DSWorkbenchMainFrame.jLayerUpButton.text")); // NOI18N
-        jLayerUpButton.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jLayerUpButton.toolTipText")); // NOI18N
-        jLayerUpButton.setMaximumSize(new java.awt.Dimension(20, 20));
-        jLayerUpButton.setMinimumSize(new java.awt.Dimension(20, 20));
-        jLayerUpButton.setPreferredSize(new java.awt.Dimension(20, 20));
-        jLayerUpButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireChangeDrawOrderEvent(evt);
-            }
-        });
-
-        jLayerDownButton.setBackground(new java.awt.Color(239, 235, 223));
-        jLayerDownButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/arrow_down.png"))); // NOI18N
-        jLayerDownButton.setText(bundle.getString("DSWorkbenchMainFrame.jLayerDownButton.text")); // NOI18N
-        jLayerDownButton.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jLayerDownButton.toolTipText")); // NOI18N
-        jLayerDownButton.setMaximumSize(new java.awt.Dimension(20, 20));
-        jLayerDownButton.setMinimumSize(new java.awt.Dimension(20, 20));
-        jLayerDownButton.setPreferredSize(new java.awt.Dimension(20, 20));
-        jLayerDownButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireChangeDrawOrderEvent(evt);
-            }
-        });
-
-        jLabel12.setText(bundle.getString("DSWorkbenchMainFrame.jLabel12.text")); // NOI18N
-
-        jGraphicPacks.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireGraphicPackChangedEvent(evt);
-            }
-        });
-
-        jHighlightTribeVillages.setText(bundle.getString("DSWorkbenchMainFrame.jHighlightTribeVillages.text")); // NOI18N
-        jHighlightTribeVillages.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jHighlightTribeVillages.toolTipText")); // NOI18N
-        jHighlightTribeVillages.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jHighlightTribeVillages.setOpaque(false);
-        jHighlightTribeVillages.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                fireHighlightTribeVillagesChangedEvent(evt);
-            }
-        });
-
-        jShowRuler.setText(bundle.getString("DSWorkbenchMainFrame.jShowRuler.text")); // NOI18N
-        jShowRuler.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jShowRuler.toolTipText")); // NOI18N
-        jShowRuler.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jShowRuler.setOpaque(false);
-        jShowRuler.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                fireShowRulerChangedEvent(evt);
-            }
-        });
-
-        jHourField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jHourField.setText(bundle.getString("DSWorkbenchMainFrame.jHourField.text")); // NOI18N
-        jHourField.setMaximumSize(new java.awt.Dimension(24, 20));
-        jHourField.setMinimumSize(new java.awt.Dimension(24, 20));
-        jHourField.setPreferredSize(new java.awt.Dimension(24, 20));
-        jHourField.addCaretListener(new javax.swing.event.CaretListener() {
-            public void caretUpdate(javax.swing.event.CaretEvent evt) {
-                fireRadarValueChangedEvent(evt);
-            }
-        });
-
-        jMinuteField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jMinuteField.setText(bundle.getString("DSWorkbenchMainFrame.jMinuteField.text")); // NOI18N
-        jMinuteField.setMaximumSize(new java.awt.Dimension(24, 20));
-        jMinuteField.setMinimumSize(new java.awt.Dimension(24, 20));
-        jMinuteField.setPreferredSize(new java.awt.Dimension(24, 20));
-        jMinuteField.addCaretListener(new javax.swing.event.CaretListener() {
-            public void caretUpdate(javax.swing.event.CaretEvent evt) {
-                fireRadarValueChangedEvent(evt);
-            }
-        });
-
-        jLabel11.setText(bundle.getString("DSWorkbenchMainFrame.jLabel11.text")); // NOI18N
-
-        jLabel13.setText(bundle.getString("DSWorkbenchMainFrame.jLabel13.text")); // NOI18N
-
-        jShowMouseOverInfo.setText(bundle.getString("DSWorkbenchMainFrame.jShowMouseOverInfo.text")); // NOI18N
-        jShowMouseOverInfo.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jShowMouseOverInfo.toolTipText")); // NOI18N
-        jShowMouseOverInfo.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jShowMouseOverInfo.setOpaque(false);
-        jShowMouseOverInfo.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                fireShowMouseOverInfoEvent(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jShowMouseOverInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jShowRuler, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
-                        .addGap(6, 6, 6))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel12)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jGraphicPacks, 0, 153, Short.MAX_VALUE))
-                    .addComponent(jHighlightTribeVillages, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
-                    .addComponent(jShowMapPopup, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
-                        .addComponent(jHourField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel11)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jMinuteField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel13))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel10)
-                        .addGap(14, 14, 14)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLayerUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLayerDownButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel12)
-                    .addComponent(jGraphicPacks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jShowMapPopup)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jShowMouseOverInfo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jHighlightTribeVillages)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jShowRuler)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel13)
-                    .addComponent(jHourField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel11)
-                    .addComponent(jMinuteField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel10)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLayerDownButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLayerUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jMapGroup.getContentPane().add(jPanel2);
-
-        jTaskPane1.add(jMapGroup);
-
-        jROIGroup.setExpanded(false);
-        jROIGroup.setTitle(bundle.getString("DSWorkbenchMainFrame.jROIGroup.title")); // NOI18N
-        com.l2fprod.common.swing.PercentLayout percentLayout2 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout2.setOrientation(1);
-        jROIGroup.getContentPane().setLayout(percentLayout2);
-
-        jPanel3.setBackground(new java.awt.Color(239, 235, 223));
-        jPanel3.setMaximumSize(new java.awt.Dimension(293, 70));
-        jPanel3.setMinimumSize(new java.awt.Dimension(293, 70));
-        jPanel3.setPreferredSize(new java.awt.Dimension(293, 70));
-
-        jLabel6.setText(bundle.getString("DSWorkbenchMainFrame.jLabel6.text")); // NOI18N
-
-        jROIBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireROISelectedEvent(evt);
-            }
-        });
-
-        jRemoveROIButton.setBackground(new java.awt.Color(239, 235, 223));
-        jRemoveROIButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/remove.gif"))); // NOI18N
-        jRemoveROIButton.setText(bundle.getString("DSWorkbenchMainFrame.jRemoveROIButton.text")); // NOI18N
-        jRemoveROIButton.setMaximumSize(new java.awt.Dimension(23, 23));
-        jRemoveROIButton.setMinimumSize(new java.awt.Dimension(23, 23));
-        jRemoveROIButton.setPreferredSize(new java.awt.Dimension(23, 23));
-        jRemoveROIButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireChangeROIEvent(evt);
-            }
-        });
-
-        jAddROIButton.setBackground(new java.awt.Color(239, 235, 223));
-        jAddROIButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
-        jAddROIButton.setText(bundle.getString("DSWorkbenchMainFrame.jAddROIButton.text")); // NOI18N
-        jAddROIButton.setMaximumSize(new java.awt.Dimension(23, 23));
-        jAddROIButton.setMinimumSize(new java.awt.Dimension(23, 23));
-        jAddROIButton.setPreferredSize(new java.awt.Dimension(23, 23));
-        jAddROIButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireChangeROIEvent(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jROIBox, 0, 18, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(jRemoveROIButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jAddROIButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(jROIBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jAddROIButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRemoveROIButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-
-        jROIGroup.getContentPane().add(jPanel3);
-
-        jTaskPane1.add(jROIGroup);
-
-        jScrollPane2.setViewportView(jTaskPane1);
 
         jMenuBar1.setBackground(new java.awt.Color(225, 213, 190));
 
@@ -2311,33 +1632,703 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
         jMenuBar1.add(jMenu4);
 
-        setJMenuBar(jMenuBar1);
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle(bundle.getString("DSWorkbenchMainFrame.title")); // NOI18N
+        setBackground(new java.awt.Color(225, 213, 190));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                fireDSWorkbenchClosingEvent(evt);
+            }
+        });
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                fireFrameResizedEvent(evt);
+            }
+        });
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+        jPanel1.setBackground(new java.awt.Color(0, 0, 0));
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2));
+        jPanel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jPanel1.setDoubleBuffered(false);
+        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.LINE_AXIS));
+
+        jMinimapPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2));
+        jMinimapPanel.setDoubleBuffered(false);
+        jMinimapPanel.setLayout(new java.awt.BorderLayout());
+
+        jScrollPane2.setFocusTraversalPolicyProvider(true);
+
+        jTaskPane1.setBackground(new java.awt.Color(239, 235, 223));
+        com.l2fprod.common.swing.PercentLayout percentLayout1 = new com.l2fprod.common.swing.PercentLayout();
+        percentLayout1.setOrientation(1);
+        percentLayout1.setGap(5);
+        jTaskPane1.setLayout(percentLayout1);
+
+        jNavigationGroup.setExpanded(false);
+        jNavigationGroup.setTitle(bundle.getString("DSWorkbenchMainFrame.jNavigationGroup.title")); // NOI18N
+        com.l2fprod.common.swing.PercentLayout percentLayout6 = new com.l2fprod.common.swing.PercentLayout();
+        percentLayout6.setOrientation(1);
+        jNavigationGroup.getContentPane().setLayout(percentLayout6);
+
+        jNavigationPanel.setBackground(new java.awt.Color(239, 235, 223));
+
+        jMoveE.setBackground(new java.awt.Color(239, 235, 223));
+        jMoveE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_e.png"))); // NOI18N
+        jMoveE.setMaximumSize(new java.awt.Dimension(21, 21));
+        jMoveE.setMinimumSize(new java.awt.Dimension(21, 21));
+        jMoveE.setPreferredSize(new java.awt.Dimension(21, 21));
+        jMoveE.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireMoveMapEvent(evt);
+            }
+        });
+
+        jMoveNE.setBackground(new java.awt.Color(239, 235, 223));
+        jMoveNE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_ne.png"))); // NOI18N
+        jMoveNE.setMaximumSize(new java.awt.Dimension(21, 21));
+        jMoveNE.setMinimumSize(new java.awt.Dimension(21, 21));
+        jMoveNE.setPreferredSize(new java.awt.Dimension(21, 21));
+        jMoveNE.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireMoveMapEvent(evt);
+            }
+        });
+
+        jMoveN.setBackground(new java.awt.Color(239, 235, 223));
+        jMoveN.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_n.png"))); // NOI18N
+        jMoveN.setMaximumSize(new java.awt.Dimension(21, 21));
+        jMoveN.setMinimumSize(new java.awt.Dimension(21, 21));
+        jMoveN.setPreferredSize(new java.awt.Dimension(21, 21));
+        jMoveN.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireMoveMapEvent(evt);
+            }
+        });
+
+        jMoveNW.setBackground(new java.awt.Color(239, 235, 223));
+        jMoveNW.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_nw.png"))); // NOI18N
+        jMoveNW.setMaximumSize(new java.awt.Dimension(21, 21));
+        jMoveNW.setMinimumSize(new java.awt.Dimension(21, 21));
+        jMoveNW.setPreferredSize(new java.awt.Dimension(21, 21));
+        jMoveNW.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireMoveMapEvent(evt);
+            }
+        });
+
+        jMoveW.setBackground(new java.awt.Color(239, 235, 223));
+        jMoveW.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_w.png"))); // NOI18N
+        jMoveW.setMaximumSize(new java.awt.Dimension(21, 21));
+        jMoveW.setMinimumSize(new java.awt.Dimension(21, 21));
+        jMoveW.setPreferredSize(new java.awt.Dimension(21, 21));
+        jMoveW.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireMoveMapEvent(evt);
+            }
+        });
+
+        jMoveSW.setBackground(new java.awt.Color(239, 235, 223));
+        jMoveSW.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_sw.png"))); // NOI18N
+        jMoveSW.setMaximumSize(new java.awt.Dimension(21, 21));
+        jMoveSW.setMinimumSize(new java.awt.Dimension(21, 21));
+        jMoveSW.setPreferredSize(new java.awt.Dimension(21, 21));
+        jMoveSW.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireMoveMapEvent(evt);
+            }
+        });
+
+        jMoveS.setBackground(new java.awt.Color(239, 235, 223));
+        jMoveS.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_s.png"))); // NOI18N
+        jMoveS.setMaximumSize(new java.awt.Dimension(21, 21));
+        jMoveS.setMinimumSize(new java.awt.Dimension(21, 21));
+        jMoveS.setPreferredSize(new java.awt.Dimension(21, 21));
+        jMoveS.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireMoveMapEvent(evt);
+            }
+        });
+
+        jMoveSE.setBackground(new java.awt.Color(239, 235, 223));
+        jMoveSE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_se.png"))); // NOI18N
+        jMoveSE.setMaximumSize(new java.awt.Dimension(21, 21));
+        jMoveSE.setMinimumSize(new java.awt.Dimension(21, 21));
+        jMoveSE.setPreferredSize(new java.awt.Dimension(21, 21));
+        jMoveSE.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireMoveMapEvent(evt);
+            }
+        });
+
+        jCenterX.setText(bundle.getString("DSWorkbenchMainFrame.jCenterX.text")); // NOI18N
+        jCenterX.setMaximumSize(new java.awt.Dimension(40, 20));
+        jCenterX.setMinimumSize(new java.awt.Dimension(40, 20));
+        jCenterX.setPreferredSize(new java.awt.Dimension(40, 20));
+        jCenterX.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                fireCheckForVillagePositionEvent(evt);
+            }
+        });
+
+        jLabel1.setText(bundle.getString("DSWorkbenchMainFrame.jLabel1.text")); // NOI18N
+
+        jLabel2.setText(bundle.getString("DSWorkbenchMainFrame.jLabel2.text")); // NOI18N
+
+        jCenterY.setText(bundle.getString("DSWorkbenchMainFrame.jCenterY.text")); // NOI18N
+        jCenterY.setMaximumSize(new java.awt.Dimension(40, 20));
+        jCenterY.setMinimumSize(new java.awt.Dimension(40, 20));
+        jCenterY.setPreferredSize(new java.awt.Dimension(40, 20));
+
+        jRefreshButton.setBackground(new java.awt.Color(239, 235, 223));
+        jRefreshButton.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jRefreshButton.toolTipText")); // NOI18N
+        jRefreshButton.setMaximumSize(new java.awt.Dimension(30, 30));
+        jRefreshButton.setMinimumSize(new java.awt.Dimension(30, 30));
+        jRefreshButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jRefreshButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireRefreshMapEvent(evt);
+            }
+        });
+
+        jMoveE1.setBackground(new java.awt.Color(239, 235, 223));
+        jMoveE1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jMoveE1.setEnabled(false);
+        jMoveE1.setMaximumSize(new java.awt.Dimension(21, 21));
+        jMoveE1.setMinimumSize(new java.awt.Dimension(21, 21));
+        jMoveE1.setPreferredSize(new java.awt.Dimension(21, 21));
+
+        jZoomInButton.setBackground(new java.awt.Color(239, 235, 223));
+        jZoomInButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/zoom_out.png"))); // NOI18N
+        jZoomInButton.setMaximumSize(new java.awt.Dimension(30, 30));
+        jZoomInButton.setMinimumSize(new java.awt.Dimension(30, 30));
+        jZoomInButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jZoomInButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireZoomEvent(evt);
+            }
+        });
+
+        jZoomOutButton.setBackground(new java.awt.Color(239, 235, 223));
+        jZoomOutButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/zoom_in.png"))); // NOI18N
+        jZoomOutButton.setMaximumSize(new java.awt.Dimension(30, 30));
+        jZoomOutButton.setMinimumSize(new java.awt.Dimension(30, 30));
+        jZoomOutButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jZoomOutButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireZoomEvent(evt);
+            }
+        });
+
+        jCenterCoordinateIngame.setBackground(new java.awt.Color(239, 235, 223));
+        jCenterCoordinateIngame.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jCenterCoordinateIngame.toolTipText")); // NOI18N
+        jCenterCoordinateIngame.setMaximumSize(new java.awt.Dimension(30, 30));
+        jCenterCoordinateIngame.setMinimumSize(new java.awt.Dimension(30, 30));
+        jCenterCoordinateIngame.setPreferredSize(new java.awt.Dimension(30, 30));
+        jCenterCoordinateIngame.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCenterCurrentPosInGameEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jNavigationPanelLayout = new javax.swing.GroupLayout(jNavigationPanel);
+        jNavigationPanel.setLayout(jNavigationPanelLayout);
+        jNavigationPanelLayout.setHorizontalGroup(
+            jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jNavigationPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 677, Short.MAX_VALUE)
+                .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jNavigationPanelLayout.createSequentialGroup()
+                        .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jNavigationPanelLayout.createSequentialGroup()
+                                .addComponent(jMoveNW, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jMoveN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jNavigationPanelLayout.createSequentialGroup()
+                                .addComponent(jMoveW, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jMoveE1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jMoveNE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jMoveE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jNavigationPanelLayout.createSequentialGroup()
+                        .addComponent(jMoveSW, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jMoveS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jMoveSE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jScrollPane2, 0, 0, Short.MAX_VALUE)
-                    .addComponent(jMinimapPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE))
-                .addContainerGap())
+                .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jZoomInButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jZoomOutButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15)
+                .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jCenterX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jCenterY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+        jNavigationPanelLayout.setVerticalGroup(
+            jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jNavigationPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 718, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE)))
+                .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jNavigationPanelLayout.createSequentialGroup()
+                        .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jMoveNE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jMoveN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jMoveNW, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(4, 4, 4)
+                        .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jMoveE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jMoveW, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jMoveE1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jMoveSW, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jMoveS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jMoveSE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jNavigationPanelLayout.createSequentialGroup()
+                        .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jCenterX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(jCenterY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(jNavigationPanelLayout.createSequentialGroup()
+                            .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(5, 5, 5))
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jNavigationPanelLayout.createSequentialGroup()
+                            .addComponent(jZoomInButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jZoomOutButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jNavigationGroup.getContentPane().add(jNavigationPanel);
+
+        jTaskPane1.add(jNavigationGroup);
+
+        jInformationGroup.setBackground(new java.awt.Color(239, 235, 223));
+        jInformationGroup.setExpanded(false);
+        jInformationGroup.setTitle(bundle.getString("DSWorkbenchMainFrame.jInformationGroup.title")); // NOI18N
+        com.l2fprod.common.swing.PercentLayout percentLayout5 = new com.l2fprod.common.swing.PercentLayout();
+        percentLayout5.setOrientation(1);
+        jInformationGroup.getContentPane().setLayout(percentLayout5);
+
+        jInformationPanel.setBackground(new java.awt.Color(239, 235, 223));
+
+        jCurrentPlayerVillages.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jCurrentPlayerVillages.toolTipText")); // NOI18N
+        jCurrentPlayerVillages.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
+            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {
+                fireCurrentPlayerVillagePopupEvent(evt);
+            }
+            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
+            }
+        });
+
+        jCurrentPlayer.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jCurrentPlayer.setMaximumSize(new java.awt.Dimension(155, 14));
+        jCurrentPlayer.setMinimumSize(new java.awt.Dimension(155, 14));
+        jCurrentPlayer.setPreferredSize(new java.awt.Dimension(155, 14));
+
+        jCenterIngameButton.setBackground(new java.awt.Color(239, 235, 223));
+        jCenterIngameButton.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jCenterIngameButton.toolTipText")); // NOI18N
+        jCenterIngameButton.setMaximumSize(new java.awt.Dimension(30, 30));
+        jCenterIngameButton.setMinimumSize(new java.awt.Dimension(30, 30));
+        jCenterIngameButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jCenterIngameButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCenterVillageIngameEvent(evt);
+            }
+        });
+
+        jOnlineLabel.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jOnlineLabel.toolTipText")); // NOI18N
+        jOnlineLabel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jOnlineLabel.setMaximumSize(new java.awt.Dimension(30, 30));
+        jOnlineLabel.setMinimumSize(new java.awt.Dimension(30, 30));
+        jOnlineLabel.setPreferredSize(new java.awt.Dimension(30, 30));
+
+        jCurrentToolLabel.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jCurrentToolLabel.toolTipText")); // NOI18N
+        jCurrentToolLabel.setAlignmentY(0.0F);
+        jCurrentToolLabel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jCurrentToolLabel.setFocusable(false);
+        jCurrentToolLabel.setIconTextGap(0);
+        jCurrentToolLabel.setMaximumSize(new java.awt.Dimension(30, 30));
+        jCurrentToolLabel.setMinimumSize(new java.awt.Dimension(30, 30));
+        jCurrentToolLabel.setPreferredSize(new java.awt.Dimension(30, 30));
+        jCurrentToolLabel.setRequestFocusEnabled(false);
+
+        jButton1.setBackground(new java.awt.Color(239, 235, 223));
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/camera.png"))); // NOI18N
+        jButton1.setText(bundle.getString("DSWorkbenchMainFrame.jButton1.text")); // NOI18N
+        jButton1.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jButton1.toolTipText")); // NOI18N
+        jButton1.setMaximumSize(new java.awt.Dimension(30, 30));
+        jButton1.setMinimumSize(new java.awt.Dimension(30, 30));
+        jButton1.setPreferredSize(new java.awt.Dimension(30, 30));
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCreateMapShotEvent(evt);
+            }
+        });
+
+        jEnableClipboardWatchButton.setBackground(new java.awt.Color(239, 235, 223));
+        jEnableClipboardWatchButton.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jEnableClipboardWatchButton.toolTipText")); // NOI18N
+        jEnableClipboardWatchButton.setMaximumSize(new java.awt.Dimension(30, 30));
+        jEnableClipboardWatchButton.setMinimumSize(new java.awt.Dimension(30, 30));
+        jEnableClipboardWatchButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jEnableClipboardWatchButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeClipboardWatchEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jInformationPanelLayout = new javax.swing.GroupLayout(jInformationPanel);
+        jInformationPanel.setLayout(jInformationPanelLayout);
+        jInformationPanelLayout.setHorizontalGroup(
+            jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jInformationPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 245, Short.MAX_VALUE)
+                    .addGroup(jInformationPanelLayout.createSequentialGroup()
+                        .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
+                        .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(4, 4, 4)
+                        .addComponent(jEnableClipboardWatchButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
+        jInformationPanelLayout.setVerticalGroup(
+            jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jInformationPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jCurrentPlayer, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jEnableClipboardWatchButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jInformationGroup.getContentPane().add(jInformationPanel);
+
+        jTaskPane1.add(jInformationGroup);
+
+        jMapGroup.setTitle(bundle.getString("DSWorkbenchMainFrame.jMapGroup.title")); // NOI18N
+        com.l2fprod.common.swing.PercentLayout percentLayout4 = new com.l2fprod.common.swing.PercentLayout();
+        percentLayout4.setOrientation(1);
+        jMapGroup.getContentPane().setLayout(percentLayout4);
+
+        jPanel2.setBackground(new java.awt.Color(239, 235, 223));
+        jPanel2.setMinimumSize(new java.awt.Dimension(193, 312));
+        jPanel2.setPreferredSize(new java.awt.Dimension(193, 312));
+
+        jShowMapPopup.setText(bundle.getString("DSWorkbenchMainFrame.jShowMapPopup.text")); // NOI18N
+        jShowMapPopup.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jShowMapPopup.toolTipText")); // NOI18N
+        jShowMapPopup.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jShowMapPopup.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireShowMapPopupChangedEvent(evt);
+            }
+        });
+
+        jLabel5.setText(bundle.getString("DSWorkbenchMainFrame.jLabel5.text")); // NOI18N
+
+        jLayerList.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { " " };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane3.setViewportView(jLayerList);
+
+        jLabel10.setText(bundle.getString("DSWorkbenchMainFrame.jLabel10.text")); // NOI18N
+
+        jLayerUpButton.setBackground(new java.awt.Color(239, 235, 223));
+        jLayerUpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/arrow_up.png"))); // NOI18N
+        jLayerUpButton.setText(bundle.getString("DSWorkbenchMainFrame.jLayerUpButton.text")); // NOI18N
+        jLayerUpButton.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jLayerUpButton.toolTipText")); // NOI18N
+        jLayerUpButton.setMaximumSize(new java.awt.Dimension(20, 20));
+        jLayerUpButton.setMinimumSize(new java.awt.Dimension(20, 20));
+        jLayerUpButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jLayerUpButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeDrawOrderEvent(evt);
+            }
+        });
+
+        jLayerDownButton.setBackground(new java.awt.Color(239, 235, 223));
+        jLayerDownButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/arrow_down.png"))); // NOI18N
+        jLayerDownButton.setText(bundle.getString("DSWorkbenchMainFrame.jLayerDownButton.text")); // NOI18N
+        jLayerDownButton.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jLayerDownButton.toolTipText")); // NOI18N
+        jLayerDownButton.setMaximumSize(new java.awt.Dimension(20, 20));
+        jLayerDownButton.setMinimumSize(new java.awt.Dimension(20, 20));
+        jLayerDownButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jLayerDownButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeDrawOrderEvent(evt);
+            }
+        });
+
+        jLabel12.setText(bundle.getString("DSWorkbenchMainFrame.jLabel12.text")); // NOI18N
+
+        jGraphicPacks.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireGraphicPackChangedEvent(evt);
+            }
+        });
+
+        jHighlightTribeVillages.setText(bundle.getString("DSWorkbenchMainFrame.jHighlightTribeVillages.text")); // NOI18N
+        jHighlightTribeVillages.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jHighlightTribeVillages.toolTipText")); // NOI18N
+        jHighlightTribeVillages.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jHighlightTribeVillages.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireHighlightTribeVillagesChangedEvent(evt);
+            }
+        });
+
+        jShowRuler.setText(bundle.getString("DSWorkbenchMainFrame.jShowRuler.text")); // NOI18N
+        jShowRuler.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jShowRuler.toolTipText")); // NOI18N
+        jShowRuler.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jShowRuler.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireShowRulerChangedEvent(evt);
+            }
+        });
+
+        jHourField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jHourField.setText(bundle.getString("DSWorkbenchMainFrame.jHourField.text")); // NOI18N
+        jHourField.setMaximumSize(new java.awt.Dimension(24, 20));
+        jHourField.setMinimumSize(new java.awt.Dimension(24, 20));
+        jHourField.setPreferredSize(new java.awt.Dimension(24, 20));
+        jHourField.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                fireRadarValueChangedEvent(evt);
+            }
+        });
+
+        jMinuteField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jMinuteField.setText(bundle.getString("DSWorkbenchMainFrame.jMinuteField.text")); // NOI18N
+        jMinuteField.setMaximumSize(new java.awt.Dimension(24, 20));
+        jMinuteField.setMinimumSize(new java.awt.Dimension(24, 20));
+        jMinuteField.setPreferredSize(new java.awt.Dimension(24, 20));
+        jMinuteField.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                fireRadarValueChangedEvent(evt);
+            }
+        });
+
+        jLabel11.setText(bundle.getString("DSWorkbenchMainFrame.jLabel11.text")); // NOI18N
+
+        jLabel13.setText(bundle.getString("DSWorkbenchMainFrame.jLabel13.text")); // NOI18N
+
+        jShowMouseOverInfo.setText(bundle.getString("DSWorkbenchMainFrame.jShowMouseOverInfo.text")); // NOI18N
+        jShowMouseOverInfo.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jShowMouseOverInfo.toolTipText")); // NOI18N
+        jShowMouseOverInfo.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jShowMouseOverInfo.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireShowMouseOverInfoEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jShowMouseOverInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jShowRuler, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
+                        .addGap(6, 6, 6))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jGraphicPacks, 0, 186, Short.MAX_VALUE))
+                    .addComponent(jHighlightTribeVillages, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                    .addComponent(jShowMapPopup, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 89, Short.MAX_VALUE)
+                        .addComponent(jHourField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jMinuteField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel13))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addGap(14, 14, 14)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLayerUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLayerDownButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel12)
+                    .addComponent(jGraphicPacks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jShowMapPopup)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jShowMouseOverInfo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jHighlightTribeVillages)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jShowRuler)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel13)
+                    .addComponent(jHourField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11)
+                    .addComponent(jMinuteField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel10)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLayerDownButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLayerUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jMapGroup.getContentPane().add(jPanel2);
+
+        jTaskPane1.add(jMapGroup);
+
+        jROIGroup.setExpanded(false);
+        jROIGroup.setTitle(bundle.getString("DSWorkbenchMainFrame.jROIGroup.title")); // NOI18N
+        com.l2fprod.common.swing.PercentLayout percentLayout2 = new com.l2fprod.common.swing.PercentLayout();
+        percentLayout2.setOrientation(1);
+        jROIGroup.getContentPane().setLayout(percentLayout2);
+
+        jPanel3.setBackground(new java.awt.Color(239, 235, 223));
+        jPanel3.setMaximumSize(new java.awt.Dimension(293, 70));
+        jPanel3.setMinimumSize(new java.awt.Dimension(293, 70));
+        jPanel3.setPreferredSize(new java.awt.Dimension(293, 70));
+
+        jLabel6.setText(bundle.getString("DSWorkbenchMainFrame.jLabel6.text")); // NOI18N
+
+        jROIBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireROISelectedEvent(evt);
+            }
+        });
+
+        jRemoveROIButton.setBackground(new java.awt.Color(239, 235, 223));
+        jRemoveROIButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/remove.gif"))); // NOI18N
+        jRemoveROIButton.setText(bundle.getString("DSWorkbenchMainFrame.jRemoveROIButton.text")); // NOI18N
+        jRemoveROIButton.setMaximumSize(new java.awt.Dimension(23, 23));
+        jRemoveROIButton.setMinimumSize(new java.awt.Dimension(23, 23));
+        jRemoveROIButton.setPreferredSize(new java.awt.Dimension(23, 23));
+        jRemoveROIButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeROIEvent(evt);
+            }
+        });
+
+        jAddROIButton.setBackground(new java.awt.Color(239, 235, 223));
+        jAddROIButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
+        jAddROIButton.setText(bundle.getString("DSWorkbenchMainFrame.jAddROIButton.text")); // NOI18N
+        jAddROIButton.setMaximumSize(new java.awt.Dimension(23, 23));
+        jAddROIButton.setMinimumSize(new java.awt.Dimension(23, 23));
+        jAddROIButton.setPreferredSize(new java.awt.Dimension(23, 23));
+        jAddROIButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeROIEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jROIBox, 0, 12, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(jRemoveROIButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jAddROIButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(jROIBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jAddROIButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jRemoveROIButton, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        jROIGroup.getContentPane().add(jPanel3);
+
+        jTaskPane1.add(jROIGroup);
+
+        jScrollPane2.setViewportView(jTaskPane1);
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 693, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 798, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE))
+        );
+
+        getContentPane().add(jPanel4, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     /**Update map position*/
@@ -2531,7 +2522,6 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
     } else if (evt.getSource() == jClockItem) {
         ClockFrame.getSingleton().setVisible(true);
     } else if (evt.getSource() == jTribeTribeAttackItem) {
-        // mTribeTribeAttackFrame.setup();
         mTribeTribeAttackFrame.setVisible(true);
     } else if (evt.getSource() == jUnitOverviewItem) {
         UnitOrderBuilder.showUnitOrder(null, null);
@@ -2709,13 +2699,13 @@ private void fireShowImportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
 
             if (target.exists()) {
                 //do import
-                boolean attackImported = AttackManager.getSingleton().importAttacks(target, extension);
-                boolean markersImported = MarkerManager.getSingleton().importMarkers(target, extension);
-                boolean reportsImported = ReportManager.getSingleton().importReports(target, extension);
+                boolean attackImported = AttackManager.getSingleton().importData(target, extension);
+                boolean markersImported = MarkerManager.getSingleton().importData(target, extension);
+                boolean reportsImported = ReportManager.getSingleton().importData(target, extension);
                 boolean tagImported = TagManager.getSingleton().importTags(target, extension);
                 boolean troopsImported = TroopsManager.getSingleton().importTroops(target);
-                boolean formsImported = FormManager.getSingleton().importForms(target, extension);
-                boolean notesImported = NoteManager.getSingleton().importNotes(target);
+                boolean formsImported = FormManager.getSingleton().importData(target, extension);
+                boolean notesImported = NoteManager.getSingleton().importData(target, extension);
 
                 String message = "Import beendet.\n";
                 if (!attackImported) {
@@ -2855,10 +2845,11 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
                     exportString += AttackManager.getSingleton().getExportData(plansToExport);
                 }
                 if (!setsToExport.isEmpty()) {
-                    exportString += MarkerManager.getSingleton().getExportData(setsToExport.toArray(new String[]{}));
+                    exportString += MarkerManager.getSingleton().getExportData(setsToExport);
                 }
                 if (!reportsToExport.isEmpty()) {
-                    exportString += ReportManager.getSingleton().getExportData(reportsToExport.toArray(new String[]{}));
+                    //TODO: Add report export
+                    exportString += ReportManager.getSingleton().getExportData(null);
                 }
                 if (jExportTags.isSelected()) {
                     exportString += TagManager.getSingleton().getExportData();
@@ -2869,11 +2860,13 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
                 }
 
                 if (jExportForms.isSelected()) {
-                    exportString += FormManager.getSingleton().getExportData();
+                    //TODO: Add form export
+                    exportString += FormManager.getSingleton().getExportData(null);
                 }
 
                 if (jExportNotes.isSelected()) {
-                    exportString += NoteManager.getSingleton().getExportData();
+                    //TODO: Add note set export
+                    exportString += NoteManager.getSingleton().getExportData(null);
                 }
 
                 exportString += "</export>";
@@ -2902,7 +2895,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
 
 private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireOpenExportDialogEvent
     //build attack plan table
-    Enumeration<String> plans = AttackManager.getSingleton().getPlans();
+
     jAttackExportTable.invalidate();
     for (int i = 0; i < jAttackExportTable.getColumnCount(); i++) {
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
@@ -2924,16 +2917,16 @@ private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
     for (int i = 0; i < rows; i++) {
         model.removeRow(0);
     }
-
-    while (plans.hasMoreElements()) {
-        String next = plans.nextElement();
+    Iterator<String> plans = AttackManager.getSingleton().getGroupIterator();
+    while (plans.hasNext()) {
+        String next = plans.next();
         model.addRow(new Object[]{next, Boolean.FALSE});
     }
 
     jAttackExportTable.revalidate();
     jAttackExportTable.repaint();
     //build marker set table
-    String[] sets = MarkerManager.getSingleton().getMarkerSets();
+    String[] sets = MarkerManager.getSingleton().getGroups();
     jMarkerSetExportTable.invalidate();
     for (int i = 0; i < jMarkerSetExportTable.getColumnCount(); i++) {
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
@@ -2960,9 +2953,9 @@ private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
         model.addRow(new Object[]{set, Boolean.FALSE});
     }
     jMarkerSetExportTable.revalidate();
-    jMarkerSetExportTable.repaint();//.updateUI();
+    jMarkerSetExportTable.repaint();
     //build report set table
-    Enumeration<String> reportSets = ReportManager.getSingleton().getReportSets();
+    Iterator<String> reportSets = ReportManager.getSingleton().getGroupIterator();
     jMarkerSetExportTable.invalidate();
     for (int i = 0; i < jReportSetExportTable.getColumnCount(); i++) {
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
@@ -2985,11 +2978,11 @@ private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
         model.removeRow(0);
     }
 
-    while (reportSets.hasMoreElements()) {
-        model.addRow(new Object[]{reportSets.nextElement(), Boolean.FALSE});
+    while (reportSets.hasNext()) {
+        model.addRow(new Object[]{reportSets.next(), Boolean.FALSE});
     }
     jReportSetExportTable.revalidate();
-    jReportSetExportTable.repaint();//.updateUI();
+    jReportSetExportTable.repaint();
     jExportDialog.setAlwaysOnTop(true);
     jExportDialog.setVisible(true);
 }//GEN-LAST:event_fireOpenExportDialogEvent
@@ -3142,8 +3135,14 @@ private void fireChangeDrawOrderEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
             }
             jLayerList.revalidate();
         }
-        jLayerList.updateUI();
-        propagateLayerOrder();
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                jLayerList.updateUI();
+                propagateLayerOrder();
+            }
+        });
+
     } catch (Exception outer) {
     }
 }//GEN-LAST:event_fireChangeDrawOrderEvent
@@ -3248,6 +3247,69 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
         bWatchClipboard = true;
     }
 }//GEN-LAST:event_fireChangeClipboardWatchEvent
+
+    public void planMapshot() {
+        /* MapPanel.getSingleton().planMapShot("png", new File("tmp.png"), this);
+        if (true) {
+        return;
+        }*/
+        Component parent = fullscreenFrame;
+        if (parent == null) {
+            parent = this;
+        }
+
+        if (JOptionPaneHelper.showQuestionConfirmBox(parent, "Willst du die Karte online stellen oder auf deinem Rechner speichern?", "Speichern", "Nur speichern", "Online stellen") == JOptionPane.YES_OPTION) {
+            putOnline = true;
+            MapPanel.getSingleton().planMapShot("png", new File("tmp.png"), this);
+        } else {
+            putOnline = false;
+            String dir = GlobalOptions.getProperty("screen.dir");
+            if (dir == null) {
+                dir = ".";
+            }
+            /* JFileChooser chooser = null;
+            try {
+            chooser = new JFileChooser();
+            } catch (Exception e) {
+            JOptionPaneHelper.showErrorBox(parent, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+            return;
+            }*/
+
+            String type = null;
+            chooser.setSelectedFile(new File(dir));
+            int ret = chooser.showSaveDialog(parent);
+            if (ret == JFileChooser.APPROVE_OPTION) {
+                try {
+                    File f = chooser.getSelectedFile();
+                    javax.swing.filechooser.FileFilter filter = chooser.getFileFilter();
+                    if (filter.getDescription().indexOf("jpeg") > 0) {
+                        type = "jpeg";
+                    } else if (filter.getDescription().indexOf("png") > 0) {
+                        type = "png";
+                    } else {
+                        type = "png";
+                    }
+                    String file = f.getCanonicalPath();
+                    if (!file.endsWith(type)) {
+                        file += "." + type;
+                    }
+                    File target = new File(file);
+                    if (target.exists()) {
+                        //ask if overwrite
+
+                        if (JOptionPaneHelper.showQuestionConfirmBox(parent, "Existierende Datei überschreiben?", "Überschreiben", "Nein", "Ja") != JOptionPane.YES_OPTION) {
+                            return;
+                        }
+                    }
+                    MapPanel.getSingleton().planMapShot(type, target, this);
+
+                    GlobalOptions.addProperty("screen.dir", target.getPath());
+                } catch (Exception e) {
+                    logger.error("Failed to write map shot", e);
+                }
+            }
+        }
+    }
 
     public boolean isWatchClipboard() {
         return bWatchClipboard;
@@ -3385,15 +3447,6 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
         jCurrentPlayerVillages.setSelectedItem(pVillage);
     }
 
-    public Tribe getCurrentUser() {
-        try {
-            Village v = (Village) jCurrentPlayerVillages.getItemAt(0);
-            return v.getTribe();
-        } catch (Exception e) {
-        }
-        return null;
-    }
-
 // <editor-fold defaultstate="collapsed" desc=" Listener EventHandlers ">
     @Override
     public void fireToolChangedEvent(int pTool) {
@@ -3460,7 +3513,6 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
             }
         }
         TagManager.getSingleton().forceUpdate();
-
     }
 
     @Override
@@ -3581,6 +3633,7 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JComboBox jROIBox;
     private com.l2fprod.common.swing.JTaskPaneGroup jROIGroup;
     private javax.swing.JComboBox jROIPosition;

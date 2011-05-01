@@ -4,15 +4,15 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.types.Note;
 import de.tor.tribes.types.TimeSpan;
+import de.tor.tribes.util.Constants;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
-import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
 
 /**
  *
@@ -25,6 +25,23 @@ public class TimeFrameListCellRenderer extends JLabel implements ListCellRendere
         try {
             setOpaque(true);
             TimeSpan span = (TimeSpan) pValue;
+            setBorder(null);
+            switch (span.getDirection()) {
+                case SEND:
+                    setIcon(new ImageIcon(TimeFrameListCellRenderer.class.getResource("/res/ui/move_out.png")));
+                    break;
+                case ARRIVE:
+                    setIcon(new ImageIcon(TimeFrameListCellRenderer.class.getResource("/res/ui/move_in.png")));
+                    break;
+                case NONE:
+                    setIcon(null);
+                    setForeground(Constants.DS_BACK_LIGHT);
+                    setBackground(Constants.DS_BACK_LIGHT);
+                    setSize(list.getWidth(), 2);
+                    /// setBorder(LineBorder.createGrayLineBorder());
+                    setText(" ");
+                    return this;
+            }
             if (pSelected) {
                 setForeground(list.getSelectionForeground());
                 super.setBackground(list.getSelectionBackground());

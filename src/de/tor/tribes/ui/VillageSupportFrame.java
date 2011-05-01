@@ -10,6 +10,8 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.control.ManageableType;
+import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
@@ -49,6 +51,7 @@ import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
+import java.util.Iterator;
 
 /**
  * @author Charon
@@ -294,7 +297,6 @@ public class VillageSupportFrame extends javax.swing.JFrame {
 
         jTransferToAttackOverviewDialog.setTitle("In Angriffsplan einfügen");
         jTransferToAttackOverviewDialog.setAlwaysOnTop(true);
-        jTransferToAttackOverviewDialog.setModal(true);
 
         jLabel7.setText("Existierender Plan");
 
@@ -406,7 +408,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2)
-                            .addComponent(jLabel3)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -433,7 +435,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                     .addComponent(jDefOnlyBox, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -661,10 +663,10 @@ public class VillageSupportFrame extends javax.swing.JFrame {
             return;
         }
         jNewPlanName.setText("");
-        Enumeration<String> plans = AttackManager.getSingleton().getPlans();
+        Iterator<String> plans = AttackManager.getSingleton().getGroupIterator();
         DefaultComboBoxModel model = new DefaultComboBoxModel();
-        while (plans.hasMoreElements()) {
-            model.addElement(plans.nextElement());
+        while (plans.hasNext()) {
+            model.addElement(plans.next());
         }
         jAttackPlansBox.setModel(model);
         jTransferToAttackOverviewDialog.setLocationRelativeTo(jResultDialog);
@@ -681,10 +683,8 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                 planName = (String) jAttackPlansBox.getSelectedItem();
             }
         }
-        if (AttackManager.getSingleton().getAttackPlan(planName) == null) {
-            AttackManager.getSingleton().addEmptyPlan(planName);
-            DSWorkbenchAttackFrame.getSingleton().buildAttackPlanList();
-        }
+        AttackManager.getSingleton().addGroup(planName);
+
 
         if (logger.isDebugEnabled()) {
             logger.debug("Adding attacks to plan '" + planName + "'");
@@ -708,15 +708,16 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         int[] rows = jSupportTable.getSelectedRows();
         Village target = DataHolder.getSingleton().getVillages()[co[0]][co[1]];
         DefaultTableModel resultModel = (DefaultTableModel) jSupportTable.getModel();
+        AttackManager.getSingleton().invalidate();
         for (int r : rows) {
             int row = jSupportTable.convertRowIndexToModel(r);
             Village source = (Village) resultModel.getValueAt(row, 0);
             UnitHolder unit = (UnitHolder) resultModel.getValueAt(row, 1);
             Date sendTime = (Date) resultModel.getValueAt(row, 2);
             long arriveTime = sendTime.getTime() + (long) (DSCalculator.calculateMoveTimeInSeconds(source, target, unit.getSpeed()) * 1000);
-            AttackManager.getSingleton().addAttackFast(source, target, unit, new Date(arriveTime), false, planName, Attack.SUPPORT_TYPE);
+            AttackManager.getSingleton().addAttack(source, target, unit, new Date(arriveTime), false, planName, Attack.SUPPORT_TYPE, false);
         }
-        AttackManager.getSingleton().forceUpdate(planName);
+        AttackManager.getSingleton().revalidate();
         jTransferToAttackOverviewDialog.setVisible(false);
     }//GEN-LAST:event_fireTransferSupportsEvent
 
@@ -763,11 +764,12 @@ public class VillageSupportFrame extends javax.swing.JFrame {
             UnitHolder unit = movement.getUnit();
             Date sendTime = movement.getSendTime();
             int usages = 0;
-            Enumeration<String> plans = AttackManager.getSingleton().getPlans();
-            while (plans.hasMoreElements()) {
-                String planId = plans.nextElement();
-                List<Attack> plan = AttackManager.getSingleton().getAttackPlan(planId);
-                for (Attack a : plan) {
+            Iterator<String> plans = AttackManager.getSingleton().getGroupIterator();
+            while (plans.hasNext()) {
+                String planId = plans.next();
+                List<ManageableType> plan = AttackManager.getSingleton().getAllElements(planId);
+                for (ManageableType e : plan) {
+                    Attack a = (Attack) e;
                     if (a.getSource().equals(village) && a.getType() == Attack.SUPPORT_TYPE) {
                         usages++;
                     }

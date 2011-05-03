@@ -10,122 +10,243 @@
  */
 package de.tor.tribes.ui.views;
 
+import com.smardec.mousegestures.MouseGestures;
+import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.io.ServerManager;
-import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.LinkedTag;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.TagMapMarker;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
-import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.GenericTestPanel;
 import de.tor.tribes.ui.LinkTagsDialog;
-import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.ui.editors.TagMapMarkerCellEditor;
 import de.tor.tribes.ui.models.TagTableModel;
-import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
-import de.tor.tribes.ui.renderer.BooleanCellRenderer;
-import de.tor.tribes.ui.renderer.map.MapRenderer;
-import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
+import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.map.TagMapMarkerRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.PluginManager;
-import de.tor.tribes.util.TagToBBCodeFormater;
+import de.tor.tribes.util.MouseGestureHandler;
 import de.tor.tribes.util.tag.TagManager;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.Collections;
+import java.awt.geom.GeneralPath;
+import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.DefaultListModel;
-import javax.swing.JOptionPane;
+import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableCellRenderer;
+import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
+import org.jdesktop.swingx.JXButton;
+import org.jdesktop.swingx.JXTaskPane;
+import org.jdesktop.swingx.decorator.CompoundHighlighter;
+import org.jdesktop.swingx.decorator.HighlightPredicate;
+import org.jdesktop.swingx.decorator.HighlighterFactory;
+import org.jdesktop.swingx.decorator.PainterHighlighter;
+import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
+import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
+import org.jdesktop.swingx.painter.ImagePainter;
+import org.jdesktop.swingx.painter.MattePainter;
 
 /**
  * @author Jejkal
  */
-public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
+public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ListSelectionListener {
 
+    @Override
+    public void valueChanged(ListSelectionEvent e) {
+        if (e.getValueIsAdjusting()) {
+            int selectionCount = jTagsTable.getSelectedRowCount();
+            if (selectionCount != 0) {
+                showInfo(selectionCount + ((selectionCount == 1) ? " Gruppe gewählt" : " Gruppen gewählt"));
+            }
+        }
+    }
+
+    @Override
+    public void dataChangedEvent() {
+        dataChangedEvent(null);
+    }
+
+    @Override
+    public void dataChangedEvent(String pGroup) {
+        ((TagTableModel) jTagsTable.getModel()).fireTableDataChanged();
+    }
     private static Logger logger = Logger.getLogger("TagView");
     private static DSWorkbenchTagFrame SINGLETON = null;
-    private TableCellRenderer mHeaderRenderer = null;
+    private GenericTestPanel centerPanel = null;
+    private PainterHighlighter highlighter = null;
 
     /** Creates new form DSWorkbenchTagFrame */
     DSWorkbenchTagFrame() {
         initComponents();
+        centerPanel = new GenericTestPanel();
+        jTagPanel.add(centerPanel, BorderLayout.CENTER);
+        centerPanel.setChildPanel(jTagsPanel);
+        buildMenu();
         try {
             jAlwaysOnTopBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("tag.frame.alwaysOnTop")));
             setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
         } catch (Exception e) {
             //setting not available
         }
-        mHeaderRenderer = new SortableTableHeaderRenderer();
 
+        jTagsTable.setModel(new TagTableModel());
+        jTagsTable.getSelectionModel().addListSelectionListener(DSWorkbenchTagFrame.this);
+        jTagsTable.getActionMap().put("find", new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //ignore find
+            }
+        });
+        /* mHeaderRenderer = new SortableTableHeaderRenderer();
+        
         jTagTable.setColumnSelectionAllowed(false);
         TagTableModel.getSingleton().resetRowSorter(jTagTable);
         TagTableModel.getSingleton().loadColumnState();
         AlternatingColorCellRenderer rend = new AlternatingColorCellRenderer();
         jTagTable.setDefaultRenderer(TagMapMarker.class, new TagMapMarkerRenderer());
+        jTagTable.setDefaultRenderer(Boolean.class, new BooleanCellRenderer());
         jTagTable.setDefaultEditor(TagMapMarker.class, new TagMapMarkerCellEditor());
         jTagTable.setDefaultRenderer(String.class, rend);
         jTagTable.setDefaultRenderer(Integer.class, rend);
-        jTagTable.setDefaultRenderer(Boolean.class, new BooleanCellRenderer());
-
+        
         MouseListener l = new MouseListener() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON3 || e.getButton() == MouseEvent.BUTTON2) {
-                    TagTableModel.getSingleton().getPopup().show(jTagTable, e.getX(), e.getY());
-                    TagTableModel.getSingleton().getPopup().requestFocusInWindow();
-                }
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
+        
+        @Override
+        public void mouseClicked(MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON3 || e.getButton() == MouseEvent.BUTTON2) {
+        TagTableModel.getSingleton().getPopup().show(jTagTable, e.getX(), e.getY());
+        TagTableModel.getSingleton().getPopup().requestFocusInWindow();
+        }
+        }
+        
+        @Override
+        public void mousePressed(MouseEvent e) {
+        }
+        
+        @Override
+        public void mouseReleased(MouseEvent e) {
+        }
+        
+        @Override
+        public void mouseEntered(MouseEvent e) {
+        }
+        
+        @Override
+        public void mouseExited(MouseEvent e) {
+        }
         };
-
+        
         jTagTable.addMouseListener(l);
         jScrollPane1.addMouseListener(l);
-        // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.tag_view", GlobalOptions.getHelpBroker().getHelpSet());
+         */ // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        //   GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.tag_view", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
-
-        jAddTagDialog.pack();
+                /*  jAddTagDialog.pack();
         jTagTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+        updateTaggedVillageList();
+        }
+        });*/
 
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                updateTaggedVillageList();
-            }
-        });
 
 
         pack();
+    }
+
+    private void buildMenu() {
+        JXTaskPane editPane = new JXTaskPane();
+        editPane.setTitle("Bearbeiten");
+        JXButton addButton = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/add.png")));
+        addButton.setToolTipText("Erstellt einen neuen Gruppe");
+        addButton.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                int unusedId = 1;
+                while (unusedId < 1000) {
+                    if (TagManager.getSingleton().getTagByName("Neue Gruppe " + unusedId) == null) {
+                        TagManager.getSingleton().addTag("Neue Gruppe " + unusedId);
+                        break;
+                    }
+                    unusedId++;
+                }
+                if (unusedId == 1000) {
+                    JOptionPaneHelper.showErrorBox(DSWorkbenchTagFrame.this, "Du hast mehr als 1000 Gruppen. Bitte lösche zuerst ein paar bevor du Neue erstellst.", "Fehler");
+                    return;
+                }
+            }
+        });
+        editPane.getContentPane().add(addButton);
+        JXButton linkButton = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/branch.png")));
+        linkButton.setToolTipText("Verknüpft mehrerer Gruppen zu einem neuen Gruppe");
+        linkButton.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                LinkedTag t = new LinkTagsDialog(DSWorkbenchTagFrame.this, true).setupAndShow();
+                if (t != null) {
+                    TagManager.getSingleton().addLinkedTag(t);
+                }
+            }
+        });
+        editPane.getContentPane().add(linkButton);
+        JXButton colorRemoveButton = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/color_remove.png")));
+        colorRemoveButton.setToolTipText("Entfernt die Farbe der Kartenmarkierung für die gewählten Gruppen");
+        colorRemoveButton.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                for (Tag t : getSelectedTags()) {
+                    t.setTagColor(null);
+                }
+                ((TagTableModel) jTagsTable.getModel()).fireTableDataChanged();
+
+            }
+        });
+        editPane.getContentPane().add(colorRemoveButton);
+
+        JXTaskPane transferTaskPane = new JXTaskPane();
+        transferTaskPane.setTitle("Übertragen");
+        JXButton transferBB = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/att_clipboardBB.png")));
+        transferBB.setToolTipText("Markierte Gruppen als BB-Codes in die Zwischenablage kopieren");
+        transferBB.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                transferSelectedTagsAsBBCodesToClipboard();
+
+            }
+        });
+        transferTaskPane.getContentPane().add(transferBB);
+        JXButton transferJS = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/export_js.png")));
+        transferJS.setToolTipText("<html>Alle D&ouml;rfer der gew&auml;hlten Gruppe in die Zwischenablage kopieren.<BR/>Auf diesem Wege ist es z.B. m&ouml;glich, verkn&uuml;pfte Gruppen aus DS Workbench ins Spiel zu &uuml;bertragen.<BR>F&uuml;r weitere Informationen sieh bitte in der Hilfe nach.</html>");
+        transferJS.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                transferSelectedTagsToJS();
+            }
+        });
+        transferTaskPane.getContentPane().add(transferJS);
+
+        centerPanel.setupTaskPane(editPane, transferTaskPane);
     }
 
     public static synchronized DSWorkbenchTagFrame getSingleton() {
@@ -135,19 +256,93 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         return SINGLETON;
     }
 
-    public void resetView() {
-        //load tags on server change
-        jTagTable.invalidate();
-        jTagTable.getTableHeader().setReorderingAllowed(false);
+    public void showInfo(String pMessage) {
+        infoPanel.setCollapsed(false);
+        jXLabel1.setBackgroundPainter(new MattePainter(getBackground()));
+        jXLabel1.setForeground(Color.BLACK);
+        jXLabel1.setText(pMessage);
+    }
 
-        //setup renderer and general view
-        jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
-        //update view
-        fireRebuildTableEvent();
-        jTagTable.revalidate();
-        TagTableModel.getSingleton().resetRowSorter(jTagTable);
-        TagTableModel.getSingleton().loadColumnState();
-        jTagTable.repaint();
+    public void showSuccess(String pMessage) {
+        infoPanel.setCollapsed(false);
+        jXLabel1.setBackgroundPainter(new MattePainter(Color.GREEN));
+        jXLabel1.setForeground(Color.BLACK);
+        jXLabel1.setText(pMessage);
+    }
+
+    /**
+     * 
+     * @param pMessage
+     */
+    public void showError(String pMessage) {
+        infoPanel.setCollapsed(false);
+        jXLabel1.setBackgroundPainter(new MattePainter(Color.RED));
+        jXLabel1.setForeground(Color.WHITE);
+        jXLabel1.setText(pMessage);
+    }
+
+    private void transferSelectedTagsAsBBCodesToClipboard() {
+        /* try {
+        List<Attack> attacks = getSelectedAttacks();
+        if (attacks.isEmpty()) {
+        showInfo("Keine Angriffe ausgewählt");
+        return;
+        }
+        boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
+        
+        StringBuilder buffer = new StringBuilder();
+        if (extended) {
+        buffer.append("[u][size=12]Angriffsplan[/size][/u]\n\n");
+        } else {
+        buffer.append("[u]Angriffsplan[/u]\n\n");
+        }
+        String sUrl = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+        
+        for (Attack attack : attacks) {
+        buffer.append(AttackToBBCodeFormater.formatAttack(attack, sUrl, extended));
+        }
+        
+        if (extended) {
+        buffer.append("\n[size=8]Erstellt am ");
+        buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+        buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+        buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url][/size]\n");
+        } else {
+        buffer.append("\nErstellt am ");
+        buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+        buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+        buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url]\n");
+        }
+        
+        String b = buffer.toString();
+        StringTokenizer t = new StringTokenizer(b, "[");
+        int cnt = t.countTokens();
+        if (cnt > 1000) {
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Angriffe benötigen mehr als 1000 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+        return;
+        }
+        }
+        
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
+        String result = "Daten in Zwischenablage kopiert.";
+        //JOptionPaneHelper.showInformationBox(this, result, "Information");
+        showSuccess(result);
+        } catch (Exception e) {
+        logger.error("Failed to copy data to clipboard", e);
+        String result = "Fehler beim Kopieren in die Zwischenablage.";
+        //JOptionPaneHelper.showErrorBox(this, result, "Fehler");
+        showError(result);
+        }*/
+    }
+
+    private void transferSelectedTagsToJS() {
+    }
+
+    @Override
+    public void resetView() {
+        TagManager.getSingleton().addManagerListener(this);
+        jTagsTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
+        ((TagTableModel) jTagsTable.getModel()).fireTableDataChanged();
     }
 
     /** This method is called from within the constructor to
@@ -158,6 +353,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         jAddTagDialog = new javax.swing.JDialog();
         jLabel1 = new javax.swing.JLabel();
@@ -178,7 +374,14 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         jButton8 = new javax.swing.JButton();
         jButton9 = new javax.swing.JButton();
         jButton10 = new javax.swing.JButton();
+        jTagsPanel = new javax.swing.JPanel();
+        jTagTablePanel = new org.jdesktop.swingx.JXPanel();
+        infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
+        jXLabel1 = new org.jdesktop.swingx.JXLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
+        jTagPanel = new org.jdesktop.swingx.JXPanel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
 
         jAddTagDialog.setTitle("Neuer Tag");
         jAddTagDialog.setAlwaysOnTop(true);
@@ -229,8 +432,6 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
                     .addComponent(jButton5))
                 .addContainerGap())
         );
-
-        setTitle("Tags");
 
         jPanel1.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -391,6 +592,43 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
                 .addContainerGap())
         );
 
+        jTagsPanel.setLayout(new java.awt.BorderLayout());
+
+        jTagTablePanel.setLayout(new java.awt.BorderLayout());
+
+        infoPanel.setCollapsed(true);
+        infoPanel.setInheritAlpha(false);
+
+        jXLabel1.setOpaque(true);
+        jXLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jXLabel1fireHideInfoEvent(evt);
+            }
+        });
+        infoPanel.add(jXLabel1, java.awt.BorderLayout.CENTER);
+
+        jTagTablePanel.add(infoPanel, java.awt.BorderLayout.SOUTH);
+
+        jTagsTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane4.setViewportView(jTagsTable);
+
+        jTagTablePanel.add(jScrollPane4, java.awt.BorderLayout.CENTER);
+
+        jTagsPanel.add(jTagTablePanel, java.awt.BorderLayout.CENTER);
+
+        setTitle("Tags");
+        getContentPane().setLayout(new java.awt.GridBagLayout());
+
         jAlwaysOnTopBox.setText("Immer im Vordergrund");
         jAlwaysOnTopBox.setOpaque(false);
         jAlwaysOnTopBox.addItemListener(new java.awt.event.ItemListener() {
@@ -398,27 +636,33 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
                 fireAlwaysOnTopEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jAlwaysOnTopBox, gridBagConstraints);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jAlwaysOnTopBox, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jAlwaysOnTopBox)
-                .addContainerGap())
-        );
+        jTagPanel.setBackground(new java.awt.Color(239, 235, 223));
+        jTagPanel.setLayout(new java.awt.BorderLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 500;
+        gridBagConstraints.ipady = 361;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        getContentPane().add(jTagPanel, gridBagConstraints);
+
+        capabilityInfoPanel1.setPastable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(capabilityInfoPanel1, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -428,49 +672,49 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
     }//GEN-LAST:event_fireAlwaysOnTopEvent
 
     private void fireRemoveTagsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveTagsEvent
-        int[] rows = jTagTable.getSelectedRows();
+        /* int[] rows = jTagTable.getSelectedRows();
         if (rows == null || rows.length == 0) {
-            return;
+        return;
         }
         String message = (rows.length == 1) ? "Tag " : rows.length + " Tags ";
         message += "wirklich löschen?";
         if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Tags löschen", "Nein", "Ja") == JOptionPane.NO_OPTION) {
-            //return if no delete was requested
-            return;
+        //return if no delete was requested
+        return;
         }
-
+        
         List<String> toRemove = new LinkedList<String>();
         for (int row : rows) {
-            int realRow = jTagTable.convertRowIndexToModel(row);
-            toRemove.add((String) TagTableModel.getSingleton().getOriginalValueAt(realRow, 0));
+        int realRow = jTagTable.convertRowIndexToModel(row);
+        toRemove.add((String) TagTableModel.getSingleton().getOriginalValueAt(realRow, 0));
         }
         for (String tag : toRemove) {
-            TagManager.getSingleton().removeTagFastByName(tag);
+        TagManager.getSingleton().removeTagFastByName(tag);
         }
         TagManager.getSingleton().forceUpdate();
         //update map
         try {
-            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
         } catch (Exception e) {
-        }
+        }*/
     }//GEN-LAST:event_fireRemoveTagsEvent
 
     private void fireRemoveColorEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveColorEvent
-        int[] rows = jTagTable.getSelectedRows();
+        /* int[] rows = jTagTable.getSelectedRows();
         if (rows == null || rows.length == 0) {
-            return;
+        return;
         }
-
+        
         for (int row : rows) {
-            row = jTagTable.convertRowIndexToModel(row);
-            String name = (String) TagTableModel.getSingleton().getOriginalValueAt(row, 0);
-            TagManager.getSingleton().getTagByName(name).setTagColor(null);
+        row = jTagTable.convertRowIndexToModel(row);
+        String name = (String) TagTableModel.getSingleton().getOriginalValueAt(row, 0);
+        TagManager.getSingleton().getTagByName(name).setTagColor(null);
         }
         jTagTable.repaint();
         try {
-            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
         } catch (Exception e) {
-        }
+        }*/
     }//GEN-LAST:event_fireRemoveColorEvent
 
     private void fireAddTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddTagEvent
@@ -479,221 +723,239 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
     }//GEN-LAST:event_fireAddTagEvent
 
     private void fireNewTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireNewTagEvent
-        if (evt.getSource() != jCreateTagButton) {
-            //cancel pressed  
-            jAddTagDialog.setVisible(false);
-            return;
+        /*if (evt.getSource() != jCreateTagButton) {
+        //cancel pressed  
+        jAddTagDialog.setVisible(false);
+        return;
         }
         String name = jNewTagName.getText();
         if (name.length() < 1) {
-            JOptionPaneHelper.showWarningBox(jAddTagDialog, "Kein Name angegeben.", "Warnung");
-            return;
+        JOptionPaneHelper.showWarningBox(jAddTagDialog, "Kein Name angegeben.", "Warnung");
+        return;
         }
         Tag t = TagManager.getSingleton().getTagByName(name);
         if (t != null) {
-            JOptionPaneHelper.showWarningBox(jAddTagDialog, "Ein Tag mit dem Namen existiert bereits.", "Warnung");
-            return;
+        JOptionPaneHelper.showWarningBox(jAddTagDialog, "Ein Tag mit dem Namen existiert bereits.", "Warnung");
+        return;
         }
         TagManager.getSingleton().addTag(name);
-        jAddTagDialog.setVisible(false);
+        jAddTagDialog.setVisible(false);*/
     }//GEN-LAST:event_fireNewTagEvent
 
     private void fireCenterVillageEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterVillageEvent
-        Village selection = (Village) jTaggedVillageList.getSelectedValue();
+        /*   Village selection = (Village) jTaggedVillageList.getSelectedValue();
         if (selection != null) {
-            DSWorkbenchMainFrame.getSingleton().centerVillage(selection);
-        }
-
+        DSWorkbenchMainFrame.getSingleton().centerVillage(selection);
+        }*/
     }//GEN-LAST:event_fireCenterVillageEvent
 
     private void fireUntagVillage(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUntagVillage
-        Object[] selection = jTaggedVillageList.getSelectedValues();
+        /*    Object[] selection = jTaggedVillageList.getSelectedValues();
         if (selection != null) {
-            int[] rows = jTagTable.getSelectedRows();
-            if (rows == null || rows.length == 0) {
-                return;
-            }
-
-            String message = (rows.length == 1) ? "Tag " : rows.length + " Tags ";
-            message += "für alle markierten Dörfer löschen?";
-            if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Tags löschen", "Nein", "Ja") == JOptionPane.NO_OPTION) {
-                //return if no delete was requested
-                return;
-            }
-
-            for (int row : rows) {
-                row = jTagTable.convertRowIndexToModel(row);
-                String name = (String) TagTableModel.getSingleton().getOriginalValueAt(row, 0);
-                Tag t = TagManager.getSingleton().getTagByName(name);
-                if (t != null) {
-                    for (Object o : selection) {
-                        t.untagVillage(((Village) o).getId());
-                    }
-                }
-            }
+        int[] rows = jTagTable.getSelectedRows();
+        if (rows == null || rows.length == 0) {
+        return;
+        }
+        
+        String message = (rows.length == 1) ? "Tag " : rows.length + " Tags ";
+        message += "für alle markierten Dörfer löschen?";
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Tags löschen", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+        //return if no delete was requested
+        return;
+        }
+        
+        for (int row : rows) {
+        row = jTagTable.convertRowIndexToModel(row);
+        String name = (String) TagTableModel.getSingleton().getOriginalValueAt(row, 0);
+        Tag t = TagManager.getSingleton().getTagByName(name);
+        if (t != null) {
+        for (Object o : selection) {
+        t.untagVillage(((Village) o).getId());
+        }
+        }
+        }
         }
         updateTaggedVillageList();
         try {
-            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
         } catch (Exception e) {
-        }
+        }*/
     }//GEN-LAST:event_fireUntagVillage
 
     private void fireCopyTagsAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyTagsAsBBCodeToClipboardEvent
 
-        int[] rows = jTagTable.getSelectedRows();
+        /* int[] rows = jTagTable.getSelectedRows();
         if (rows == null || rows.length == 0) {
-            return;
+        return;
         }
-
+        
         boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
-
+        
         String sUrl = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
         String result = "";
         for (int row : rows) {
-            int r = jTagTable.convertRowIndexToModel(row);
-            String name = (String) TagTableModel.getSingleton().getOriginalValueAt(r, 0);
-            Tag t = TagManager.getSingleton().getTagByName(name);
-            if (t != null) {
-                result += TagToBBCodeFormater.formatTag(t, sUrl, extended);
-            }
+        int r = jTagTable.convertRowIndexToModel(row);
+        String name = (String) TagTableModel.getSingleton().getOriginalValueAt(r, 0);
+        Tag t = TagManager.getSingleton().getTagByName(name);
+        if (t != null) {
+        result += TagToBBCodeFormater.formatTag(t, sUrl, extended);
         }
-
+        }
+        
         try {
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
-            JOptionPaneHelper.showInformationBox(this, "Daten in Zwischenablage kopiert.", "Information");
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
+        JOptionPaneHelper.showInformationBox(this, "Daten in Zwischenablage kopiert.", "Information");
         } catch (Exception e) {
-            logger.error("Failed to copy data to clipboard", e);
-            JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren in die Zwischenablage.", "Fehler");
-        }
+        logger.error("Failed to copy data to clipboard", e);
+        JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren in die Zwischenablage.", "Fehler");
+        }*/
     }//GEN-LAST:event_fireCopyTagsAsBBCodeToClipboardEvent
 
     private void fireTagVillagesFromClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTagVillagesFromClipboardEvent
-        try {
-            Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-            List<Village> villages = PluginManager.getSingleton().executeVillageParser((String) t.getTransferData(DataFlavor.stringFlavor));
-            if (villages.isEmpty()) {
-                JOptionPaneHelper.showInformationBox(this, "Keine Dorfdaten in der Zwischenablage gefunden", "Information");
-                return;
-            }
-
-            int row = jTagTable.getSelectedRow();
-            if (row == -1) {
-                return;
-            }
-
-            String tagName = (String) TagTableModel.getSingleton().getOriginalValueAt(row, 0);
-            Tag tag = TagManager.getSingleton().getTagByName(tagName);
-            for (Village v : villages) {
-                tag.tagVillage(v.getId());
-            }
-            updateTaggedVillageList();
-            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
-            if (villages.size() == 1) {
-                JOptionPaneHelper.showInformationBox(this, "Ein Dorf wurden mit dem gewähltem Tag versehen", "Information");
-            } else {
-                JOptionPaneHelper.showInformationBox(this, villages.size() + " Dörfer wurden mit dem gewähltem Tag versehen", "Information");
-            }
-        } catch (Exception e) {
-            logger.error("Failed to get village from clipboard", e);
+        /* try {
+        Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        List<Village> villages = PluginManager.getSingleton().executeVillageParser((String) t.getTransferData(DataFlavor.stringFlavor));
+        if (villages.isEmpty()) {
+        JOptionPaneHelper.showInformationBox(this, "Keine Dorfdaten in der Zwischenablage gefunden", "Information");
+        return;
         }
+        
+        int row = jTagTable.getSelectedRow();
+        if (row == -1) {
+        return;
+        }
+        
+        String tagName = (String) TagTableModel.getSingleton().getOriginalValueAt(row, 0);
+        Tag tag = TagManager.getSingleton().getTagByName(tagName);
+        for (Village v : villages) {
+        tag.tagVillage(v.getId());
+        }
+        updateTaggedVillageList();
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
+        if (villages.size() == 1) {
+        JOptionPaneHelper.showInformationBox(this, "Ein Dorf wurden mit dem gewähltem Tag versehen", "Information");
+        } else {
+        JOptionPaneHelper.showInformationBox(this, villages.size() + " Dörfer wurden mit dem gewähltem Tag versehen", "Information");
+        }
+        } catch (Exception e) {
+        logger.error("Failed to get village from clipboard", e);
+        }*/
     }//GEN-LAST:event_fireTagVillagesFromClipboardEvent
 
     private void fireLinkTagsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireLinkTagsEvent
-
+        /*
         LinkedTag t = new LinkTagsDialog(this, true).setupAndShow();
         if (t != null) {
-            TagManager.getSingleton().addLinkedTag(t);
-        }
+        TagManager.getSingleton().addLinkedTag(t);
+        }*/
     }//GEN-LAST:event_fireLinkTagsEvent
 
     private void fireCopyVillagesForScriptEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyVillagesForScriptEvent
-        DefaultListModel model = ((DefaultListModel) jTaggedVillageList.getModel());
+        /* DefaultListModel model = ((DefaultListModel) jTaggedVillageList.getModel());
         StringBuilder data = new StringBuilder();
         if (model.getSize() == 0) {
-            JOptionPaneHelper.showInformationBox(this, "Keine Tag gewählt oder es sind dem Tag keine Dörfer zugeordnet", null);
-            return;
+        JOptionPaneHelper.showInformationBox(this, "Keine Tag gewählt oder es sind dem Tag keine Dörfer zugeordnet", null);
+        return;
         }
         try {
-            for (int i = 0; i < model.getSize(); i++) {
-                data.append(((Village) model.getElementAt(i)).getId()).append(";");
-            }
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(data.toString()), null);
-            JOptionPaneHelper.showInformationBox(this, "Dörfer erfolgreich in die Zwischenablage kopiert.\nFüge sie nun in der Gruppenübersicht in den entsprechende Feld ein\nund weise sie einer neuen Gruppe zu.", null);
-        } catch (Exception e) {
-            logger.error("Failed to copy villages to clipboard", e);
-            JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren in die Zwischenablage", "Fehler");
+        for (int i = 0; i < model.getSize(); i++) {
+        data.append(((Village) model.getElementAt(i)).getId()).append(";");
         }
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(data.toString()), null);
+        JOptionPaneHelper.showInformationBox(this, "Dörfer erfolgreich in die Zwischenablage kopiert.\nFüge sie nun in der Gruppenübersicht in den entsprechende Feld ein\nund weise sie einer neuen Gruppe zu.", null);
+        } catch (Exception e) {
+        logger.error("Failed to copy villages to clipboard", e);
+        JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren in die Zwischenablage", "Fehler");
+        }*/
     }//GEN-LAST:event_fireCopyVillagesForScriptEvent
 
-    private void updateTaggedVillageList() {
-        int[] rows = jTagTable.getSelectedRows();
-        if (rows == null || rows.length == 0) {
-            return;
-        }
-        DefaultListModel model = new DefaultListModel();
-        List<Village> villages = new LinkedList<Village>();
-        for (int row : rows) {
-            row = jTagTable.convertRowIndexToModel(row);
-            String name = (String) TagTableModel.getSingleton().getOriginalValueAt(row, 0);
-            for (Integer i : TagManager.getSingleton().getTagByName(name).getVillageIDs()) {
-                Village v = DataHolder.getSingleton().getVillagesById().get(i);
-                if (v != null && !villages.contains(v)) {
-                    villages.add(v);
-                }
-            }
-        }
-        Collections.sort(villages);
-        for (Village v : villages) {
-            model.addElement(v);
-        }
-        jTaggedVillageList.setModel(model);
-    }
+    private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXLabel1fireHideInfoEvent
+        infoPanel.setCollapsed(true);
+}//GEN-LAST:event_jXLabel1fireHideInfoEvent
 
+    /*  private void updateTaggedVillageList() {
+    int[] rows = jTagTable.getSelectedRows();
+    if (rows == null || rows.length == 0) {
+    return;
+    }
+    DefaultListModel model = new DefaultListModel();
+    List<Village> villages = new LinkedList<Village>();
+    for (int row : rows) {
+    row = jTagTable.convertRowIndexToModel(row);
+    String name = (String) TagTableModel.getSingleton().getOriginalValueAt(row, 0);
+    for (Integer i : TagManager.getSingleton().getTagByName(name).getVillageIDs()) {
+    Village v = DataHolder.getSingleton().getVillagesById().get(i);
+    if (v != null && !villages.contains(v)) {
+    villages.add(v);
+    }
+    }
+    }
+    Collections.sort(villages);
+    for (Village v : villages) {
+    model.addElement(v);
+    }
+    jTaggedVillageList.setModel(model);
+    }
+    
     public void fireRebuildTableEvent() {
-        try {
-            jTagTable.invalidate();
-            for (int i = 0; i < jTagTable.getColumnCount(); i++) {
-                jTagTable.getColumn(jTagTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderer);
-            }
-            jTagTable.revalidate();
-            jTagTable.repaint();
-        } catch (Exception e) {
-            logger.error("Failed to update tag table", e);
+    try {
+    jTagTable.invalidate();
+    for (int i = 0; i < jTagTable.getColumnCount(); i++) {
+    jTagTable.getColumn(jTagTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderer);
+    }
+    jTagTable.revalidate();
+    jTagTable.repaint();
+    } catch (Exception e) {
+    logger.error("Failed to update tag table", e);
+    }
+    TagTableModel.getSingleton().resetRowSorter(jTagTable);
+    TagTableModel.getSingleton().loadColumnState();
+    }
+     */
+    private List<Tag> getSelectedTags() {
+        final List<Tag> elements = new LinkedList<Tag>();
+        int[] selectedRows = jTagsTable.getSelectedRows();
+        if (selectedRows != null && selectedRows.length < 1) {
+            return elements;
         }
-        TagTableModel.getSingleton().resetRowSorter(jTagTable);
-        TagTableModel.getSingleton().loadColumnState();
+        for (Integer selectedRow : selectedRows) {
+            Tag c = (Tag) TagManager.getSingleton().getAllElements().get(jTagsTable.convertRowIndexToModel(selectedRow));
+            if (c != null) {
+                elements.add(c);
+            }
+        }
+        return elements;
     }
 
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
-        try {
-            Rectangle bounds = jTaggedVillageList.getBounds();
-            Point locationOnScreen = jTaggedVillageList.getLocationOnScreen();
-            bounds.setLocation(locationOnScreen);
-            pDropLocation.move(locationOnScreen.x, locationOnScreen.y);
-            if (bounds.contains(pDropLocation)) {
-                int[] rows = jTagTable.getSelectedRows();
-                if (rows == null || rows.length == 0) {
-                    return;
-                }
-
-                for (int row : rows) {
-                    row = jTagTable.convertRowIndexToModel(row);
-                    String name = (String) TagTableModel.getSingleton().getOriginalValueAt(row, 0);
-                    Tag t = TagManager.getSingleton().getTagByName(name);
-                    for (Village v : pVillages) {
-                        if (v != null && v.getTribe() != Barbarians.getSingleton()) {
-                            t.tagVillage(v.getId());
-                        }
-                    }
-                }
-                updateTaggedVillageList();
-            }
-            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
-        } catch (Exception e) {
-            logger.error("Failed to insert dropped villages", e);
+        /* try {
+        Rectangle bounds = jTaggedVillageList.getBounds();
+        Point locationOnScreen = jTaggedVillageList.getLocationOnScreen();
+        bounds.setLocation(locationOnScreen);
+        pDropLocation.move(locationOnScreen.x, locationOnScreen.y);
+        if (bounds.contains(pDropLocation)) {
+        int[] rows = jTagTable.getSelectedRows();
+        if (rows == null || rows.length == 0) {
+        return;
         }
+        
+        for (int row : rows) {
+        row = jTagTable.convertRowIndexToModel(row);
+        String name = (String) TagTableModel.getSingleton().getOriginalValueAt(row, 0);
+        Tag t = TagManager.getSingleton().getTagByName(name);
+        for (Village v : pVillages) {
+        if (v != null && v.getTribe() != Barbarians.getSingleton()) {
+        t.tagVillage(v.getId());
+        }
+        }
+        }
+        updateTaggedVillageList();
+        }
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
+        } catch (Exception e) {
+        logger.error("Failed to insert dropped villages", e);
+        }*/
     }
 
     // <editor-fold defaultstate="collapsed" desc="Gesture handling">
@@ -703,18 +965,33 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
     }
 
     // </editor-fold>
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
+    public static void main(String[] args) {
+        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
+        GlobalOptions.setSelectedServer("de43");
+        DataHolder.getSingleton().loadData(false);
+        MouseGestures mMouseGestures = new MouseGestures();
+        mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
+        mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
+        mMouseGestures.start();
+        try {
+            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (Exception e) {
+        }
 
-            public void run() {
-                new DSWorkbenchTagFrame().setVisible(true);
-            }
-        });
+        Tag t = new Tag("Mein Tag", true);
+        t.tagVillage(-1);
+        TagManager.getSingleton().addManagedElement(t);
+
+        DSWorkbenchTagFrame.getSingleton().setSize(600, 400);
+        DSWorkbenchTagFrame.getSingleton().resetView();
+        DSWorkbenchTagFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        DSWorkbenchTagFrame.getSingleton().setVisible(true);
+
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
+    private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JDialog jAddTagDialog;
     private javax.swing.JCheckBox jAlwaysOnTopBox;
     private javax.swing.JButton jButton1;
@@ -733,7 +1010,32 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane4;
+    private org.jdesktop.swingx.JXPanel jTagPanel;
     private javax.swing.JTable jTagTable;
+    private org.jdesktop.swingx.JXPanel jTagTablePanel;
     private javax.swing.JList jTaggedVillageList;
+    private javax.swing.JPanel jTagsPanel;
+    private static final org.jdesktop.swingx.JXTable jTagsTable = new org.jdesktop.swingx.JXTable();
+    private org.jdesktop.swingx.JXLabel jXLabel1;
     // End of variables declaration//GEN-END:variables
+
+    static {
+        HighlightPredicate.ColumnHighlightPredicate colu = new HighlightPredicate.ColumnHighlightPredicate(0, 1, 3);
+        jTagsTable.setHighlighters(new CompoundHighlighter(colu, HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B)));
+        jTagsTable.setColumnControlVisible(true);
+        jTagsTable.setDefaultRenderer(TagMapMarker.class, new TagMapMarkerRenderer());
+        jTagsTable.setDefaultEditor(TagMapMarker.class, new TagMapMarkerCellEditor());
+        BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
+        Graphics2D g = back.createGraphics();
+        GeneralPath p = new GeneralPath();
+        p.moveTo(0, 0);
+        p.lineTo(5, 0);
+        p.lineTo(5, 5);
+        p.closePath();
+        g.setColor(Color.GREEN.darker());
+        g.fill(p);
+        g.dispose();
+        jTagsTable.addHighlighter(new PainterHighlighter(HighlightPredicate.EDITABLE, new ImagePainter(back, HorizontalAlignment.RIGHT, VerticalAlignment.TOP)));
+    }
 }

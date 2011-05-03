@@ -341,7 +341,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
         String sourceVal = getSource().toBBCode();
         String unitVal = "";
         if (pExtended) {
-            unitVal = "[img]" + ServerManager.getServerURL(GlobalOptions.getSelectedServer()) + "/graphic/unit/unit_" + getUnit().getPlainName() + ".png[/img]";
+            unitVal = "[unit]" + getUnit().getPlainName() + "[/unit]";
         } else {
             unitVal = getUnit().getName();
         }

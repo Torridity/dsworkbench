@@ -5,6 +5,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.io.DataHolder;
@@ -119,8 +120,8 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
         DropTargetListener,
         DragGestureListener,
         DragSourceListener,
-        TagManagerListener,
-        SettingsChangedListener {
+        SettingsChangedListener,
+        GenericManagerListener {
 
     @Override
     public void fireTimeFrameChangedEvent() {
@@ -137,7 +138,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
     /** Creates new form TribeTribeAttackFrame */
     public TribeTribeAttackFrame() {
         initComponents();
-        TagManager.getSingleton().addTagManagerListener(this);
+        TagManager.getSingleton().addManagerListener(this);
         logPanel = new AlgorithmLogPanel();
         mLogFrame = new JFrame("Informationen zur Berechnung");
         mLogFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -259,7 +260,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
             }
         });
         // </editor-fold>
-        fireTagsChangedEvent();
+        dataChangedEvent();
         DefaultTableCellRenderer headerRenderer = new SortableTableHeaderRenderer();
         for (int i = 0; i < jSourcesTable.getColumnCount(); i++) {
             TableColumn col = jSourcesTable.getColumn(jSourcesTable.getColumnName(i));
@@ -3539,7 +3540,8 @@ private void fireUpdateUsageEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     //perform AND relation
                     List<Integer> villageIds = new LinkedList<Integer>();
                     //get all villages tagged by any tag
-                    for (Tag t : TagManager.getSingleton().getTags()) {
+                    for (ManageableType e : TagManager.getSingleton().getAllElements()) {
+                        Tag t = (Tag) e;
                         for (Integer i : t.getVillageIDs()) {
                             if (!villageIds.contains(i)) {
                                 villageIds.add(i);
@@ -3777,11 +3779,17 @@ private void fireUpdateUsageEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     }
 
     @Override
-    public void fireTagsChangedEvent() {
-        Tag[] tags = TagManager.getSingleton().getTags().toArray(new Tag[]{});
+    public void dataChangedEvent() {
+        dataChangedEvent(null);
+    }
+
+    @Override
+    public void dataChangedEvent(String pGroup) {
+        List<ManageableType> elements = TagManager.getSingleton().getAllElements();
         DefaultListModel tagModel = new DefaultListModel();
         tagModel.addElement("Keinen Tag");
-        for (Tag t : tags) {
+        for (ManageableType e : elements) {
+            Tag t = (Tag) e;
             tagModel.addElement(t);
         }
         jVillageGroupList.setModel(tagModel);
@@ -3799,16 +3807,16 @@ private void fireUpdateUsageEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 fireFilterSourceContinentEvent();
             }
         });
-        if (TagManager.getSingleton().getTags().isEmpty()) {
+        if (elements.isEmpty()) {
             jVillageGroupList.setEnabled(false);
         } else {
             jVillageGroupList.setEnabled(true);
         }
         //select all groups and initialize lists
-        jVillageGroupList.getSelectionModel().setSelectionInterval(0, (tags.length > 0) ? tags.length : tags.length);
+        jVillageGroupList.getSelectionModel().setSelectionInterval(0, (elements.size() > 0) ? elements.size() : 0);
     }
-    // <editor-fold defaultstate="collapsed" desc="Drag&Drop handling">
 
+    // <editor-fold defaultstate="collapsed" desc="Drag&Drop handling">
     @Override
     public void dragEnter(DropTargetDragEvent dtde) {
         if (dtde.isDataFlavorSupported(VillageTransferable.villageDataFlavor) || dtde.isDataFlavorSupported(DataFlavor.stringFlavor)) {

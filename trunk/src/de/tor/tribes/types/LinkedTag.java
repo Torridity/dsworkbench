@@ -4,12 +4,15 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.Color;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Pattern;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -23,38 +26,37 @@ public class LinkedTag extends Tag {
 
     private String sEquation = null;
 
-    /**Factor a linked tag from its DOM representation
-     * @param pElement DOM element received while reading the user tags
-     * @return Tag Tag instance parsed from pElement
-     * @throws Exception
-     */
-    public static LinkedTag fromXml(Element pElement) throws Exception {
-        String name = URLDecoder.decode(pElement.getChild("name").getTextTrim(), "UTF-8");
-        boolean showOnMap = Boolean.parseBoolean(pElement.getAttributeValue("shownOnMap"));
-        LinkedTag t = new LinkedTag(name, showOnMap);
+    @Override
+    public void loadFromXml(Element pElement) {
         try {
-            Element color = pElement.getChild("color");
-            int r = color.getAttribute("r").getIntValue();
-            int g = color.getAttribute("g").getIntValue();
-            int b = color.getAttribute("b").getIntValue();
-            t.setTagColor(new Color(r, g, b));
-        } catch (Exception e) {
-            t.setTagColor(null);
-        }
+            String name = URLDecoder.decode(pElement.getChild("name").getTextTrim(), "UTF-8");
+            boolean bShowOnMap = Boolean.parseBoolean(pElement.getAttributeValue("shownOnMap"));
+            setName(name);
+            setShowOnMap(bShowOnMap);
+            try {
+                Element color = pElement.getChild("color");
+                int r = color.getAttribute("r").getIntValue();
+                int g = color.getAttribute("g").getIntValue();
+                int b = color.getAttribute("b").getIntValue();
+                setTagColor(new Color(r, g, b));
+            } catch (Exception e) {
+                setTagColor(null);
+            }
 
-        try {
-            Element icon = pElement.getChild("icon");
-            t.setTagIcon(Integer.parseInt(icon.getText()));
+            try {
+                Element icon = pElement.getChild("icon");
+                setTagIcon(Integer.parseInt(icon.getText()));
+            } catch (Exception e) {
+                setTagIcon(-1);
+            }
+            String equation = URLDecoder.decode(pElement.getChild("equation").getTextTrim(), "UTF-8");
+            setEquation(equation);
         } catch (Exception e) {
-            t.setTagIcon(-1);
         }
-        String equation = URLDecoder.decode(pElement.getChild("equation").getTextTrim(), "UTF-8");
-        t.setEquation(equation);
-        return t;
     }
 
     @Override
-    public String toXml() throws Exception {
+    public String toXml() {
         try {
             String ret = "<tag shownOnMap=\"" + isShowOnMap() + "\">\n";
             ret += "<name><![CDATA[" + URLEncoder.encode(getName(), "UTF-8") + "]]></name>\n";
@@ -70,8 +72,13 @@ public class LinkedTag extends Tag {
             ret += "</tag>\n";
             return ret;
         } catch (Exception e) {
+            e.printStackTrace();
             return "\n";
         }
+    }
+
+    public LinkedTag() {
+        super();
     }
 
     public LinkedTag(String pName, boolean pShowOnMap) {
@@ -93,14 +100,18 @@ public class LinkedTag extends Tag {
 
     public void updateVillageList() {
         clearTaggedVillages();
-        Tag[] tags = TagManager.getSingleton().getTags().toArray(new Tag[]{});
-        Arrays.sort(tags, Tag.SIZE_ORDER);
+        List<ManageableType> elements = TagManager.getSingleton().getAllElements();
+        List<Tag> lTags = new ArrayList<Tag>();
+        for (ManageableType t : elements) {
+            lTags.add((Tag) t);
+        }
+        Collections.sort(lTags, Tag.SIZE_ORDER);
         ScriptEngineManager factory = new ScriptEngineManager();
         // create a JavaScript engine
         ScriptEngine engine = factory.getEngineByName("JavaScript");
         for (Village v : GlobalOptions.getSelectedProfile().getTribe().getVillageList()) {
             String equation = sEquation;
-            for (Tag t : tags) {
+            for (Tag t : lTags) {
                 equation = equation.replaceAll(Pattern.quote(t.getName()), Boolean.toString(t.tagsVillage(v.getId())));
             }
 

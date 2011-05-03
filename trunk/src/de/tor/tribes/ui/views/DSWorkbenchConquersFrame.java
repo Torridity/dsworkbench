@@ -591,11 +591,6 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-
-        /*System.out.println(Pattern.compile("L~").matcher("L~L").find());
-        if (true) {
-        return;
-        }*/
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -622,7 +617,6 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         DSWorkbenchConquersFrame.getSingleton().resetView();
         DSWorkbenchConquersFrame.getSingleton().dataChangedEvent();
         DSWorkbenchConquersFrame.getSingleton().setVisible(true);
-
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;

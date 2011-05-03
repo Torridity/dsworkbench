@@ -110,7 +110,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jUnitBox.setRenderer(new UnitListCellRenderer());
         DefaultListModel tagModel = new DefaultListModel();
         tagModel.addElement(NoTag.getSingleton());
-        for (Tag t : TagManager.getSingleton().getTags()) {
+        for (ManageableType e : TagManager.getSingleton().getAllElements()) {
+            Tag t = (Tag) e;
             tagModel.addElement(t);
         }
         jTagList.setModel(tagModel);

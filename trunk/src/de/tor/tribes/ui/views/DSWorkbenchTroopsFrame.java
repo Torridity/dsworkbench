@@ -5,6 +5,8 @@
  */
 package de.tor.tribes.ui.views;
 
+import de.tor.tribes.control.GenericManagerListener;
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
@@ -66,7 +68,7 @@ import javax.swing.table.TableColumn;
  * @TODO (DIFF) Supports are updated on new troop parsing
  * @author  Jejkal
  */
-public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements TroopsManagerListener, TagManagerListener {
+public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements TroopsManagerListener, GenericManagerListener {
 
     private static Logger logger = Logger.getLogger("TroopsDialog");
     private static DSWorkbenchTroopsFrame SINGLETON = null;
@@ -136,7 +138,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         jAddTroopsDialog.pack();
         infoPanel = new TroopInfoChartPanel();
         jPanel2.add(infoPanel);
-        TagManager.getSingleton().addTagManagerListener(this);
+        TagManager.getSingleton().addManagerListener(this);
         jTroopsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -854,7 +856,8 @@ private void fireOpenPlaceInGameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private void buildTagList() {
         DefaultListModel model = new DefaultListModel();
         model.addElement(NoTag.getSingleton());
-        for (Tag t : TagManager.getSingleton().getTags()) {
+        for (ManageableType e : TagManager.getSingleton().getAllElements()) {
+            Tag t = (Tag) e;
             model.addElement(t);
         }
         jTagList.setModel(model);
@@ -947,7 +950,12 @@ private void fireOpenPlaceInGameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void fireTagsChangedEvent() {
+    public void dataChangedEvent() {
+        dataChangedEvent(null);
+    }
+
+    @Override
+    public void dataChangedEvent(String pGroup) {
         buildTagList();
     }
 

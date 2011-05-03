@@ -61,8 +61,9 @@ public class StartupReminder extends javax.swing.JDialog implements TroopsManage
 
     @Override
     public void dispose() {
-        TagManager.getSingleton().removeTagManagerListener(this);
-        TroopsManager.getSingleton().removeTroopsManagerListener(this);
+        //TODO: Use internal date for update check...no auto-dispose on listener event!
+     //   TagManager.getSingleton().removeTagManagerListener(this);
+       // TroopsManager.getSingleton().removeTroopsManagerListener(this);
         super.dispose();
     }
 
@@ -71,8 +72,8 @@ public class StartupReminder extends javax.swing.JDialog implements TroopsManage
         super.setVisible(b);
         if (!b) {
             scheduleReminder();
-            TagManager.getSingleton().removeTagManagerListener(this);
-            TroopsManager.getSingleton().removeTroopsManagerListener(this);
+            //TagManager.getSingleton().removeTagManagerListener(this);
+           // TroopsManager.getSingleton().removeTroopsManagerListener(this);
         }
     }
 

@@ -993,8 +993,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         }
         if (System.currentTimeMillis() > showNotBefore) {
             StartupReminder reminder = new StartupReminder(this);
-            TagManager.getSingleton().addTagManagerListener(reminder);
-            TroopsManager.getSingleton().addTroopsManagerListener(reminder);
+            // TagManager.getSingleton().addManagerListener(reminder);
+            // TroopsManager.getSingleton().addTroopsManagerListener(reminder);
             reminder.setVisible(true);
         }
     }
@@ -2702,7 +2702,7 @@ private void fireShowImportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
                 boolean attackImported = AttackManager.getSingleton().importData(target, extension);
                 boolean markersImported = MarkerManager.getSingleton().importData(target, extension);
                 boolean reportsImported = ReportManager.getSingleton().importData(target, extension);
-                boolean tagImported = TagManager.getSingleton().importTags(target, extension);
+                boolean tagImported = TagManager.getSingleton().importData(target, extension);
                 boolean troopsImported = TroopsManager.getSingleton().importTroops(target);
                 boolean formsImported = FormManager.getSingleton().importData(target, extension);
                 boolean notesImported = NoteManager.getSingleton().importData(target, extension);
@@ -2852,7 +2852,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
                     exportString += ReportManager.getSingleton().getExportData(null);
                 }
                 if (jExportTags.isSelected()) {
-                    exportString += TagManager.getSingleton().getExportData();
+                    exportString += TagManager.getSingleton().getExportData(null);
                 }
 
                 if (jExportTroops.isSelected()) {
@@ -3486,6 +3486,7 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     }
 
     public void fireGroupParserEvent(Hashtable<String, List<Village>> pParserResult) {
+        TagManager.getSingleton().invalidate();
         String[] groups = pParserResult.keySet().toArray(new String[]{});
         NotifierFrame.doNotification("DS Workbench hat " + groups.length + ((groups.length == 1) ? " Dorfgruppe " : " Dorfgruppen ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);
         //remove all tags
@@ -3512,7 +3513,7 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
                 }
             }
         }
-        TagManager.getSingleton().forceUpdate();
+        TagManager.getSingleton().revalidate();
     }
 
     @Override

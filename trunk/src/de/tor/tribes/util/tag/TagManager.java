@@ -4,6 +4,8 @@
  */
 package de.tor.tribes.util.tag;
 
+import de.tor.tribes.control.GenericManager;
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.LinkedTag;
 import de.tor.tribes.types.Tag;
 import java.util.List;
@@ -22,12 +24,10 @@ import org.jdom.Element;
 /**Manager for village tags. Tags can be stored in files or in a database (not implemented yet)
  * @author Jejkal
  */
-public class TagManager {
+public class TagManager extends GenericManager<Tag> {
 
     private static Logger logger = Logger.getLogger("TagManager");
     private static TagManager SINGLETON = null;
-    private final static List<Tag> mTags = new LinkedList<Tag>();
-    private final List<TagManagerListener> mManagerListeners = new LinkedList<TagManagerListener>();
 
     public static synchronized TagManager getSingleton() {
         if (SINGLETON == null) {
@@ -37,29 +37,17 @@ public class TagManager {
     }
 
     TagManager() {
+        super(false);
     }
 
-    public synchronized void addTagManagerListener(TagManagerListener pListener) {
-        if (pListener == null) {
-            return;
-        }
-        if (!mManagerListeners.contains(pListener)) {
-            mManagerListeners.add(pListener);
-        }
-    }
-
-    public synchronized void removeTagManagerListener(TagManagerListener pListener) {
-        mManagerListeners.remove(pListener);
-    }
-
-    /**Load tags from a file*/
-    public void loadTagsFromFile(String pFile) {
-        mTags.clear();
+    @Override
+    public void loadElements(String pFile) {
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return;
         }
-
+        invalidate();
+        initialize();
         File tagFile = new File(pFile);
         if (tagFile.exists()) {
             if (logger.isDebugEnabled()) {
@@ -69,18 +57,17 @@ public class TagManager {
                 Document d = JaxenUtils.getDocument(tagFile);
                 int cnt = 0;
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//tags/tag")) {
-                    try {
-                        mTags.add(Tag.fromXml(e));
-                    } catch (Exception inner) {
-                        cnt++;
+                    Tag t = null;
+                    if (e.getChild("equation") != null) {
+                        t = new LinkedTag();
+                        t.loadFromXml(e);
+                    } else {
+                        t = new Tag();
+                        t.loadFromXml(e);
                     }
+                    addManagedElement(t);
                 }
-                if (cnt == 0) {
-                    logger.debug("Tags loaded successfully");
-                } else {
-                    logger.warn(cnt + " errors while loading tags");
-                }
-                Collections.sort(mTags);
+                logger.debug("Tags loaded successfully");
             } catch (Exception e) {
                 logger.error("Failed to load tags", e);
             }
@@ -89,19 +76,24 @@ public class TagManager {
                 logger.info("No tags found under '" + pFile + "'");
             }
         }
-        fireTagsChangedEvents();
+        revalidate();
     }
 
     public void updateLinkedTags() {
         //update linked tags
-        for (Tag t : mTags) {
-            if (t instanceof LinkedTag) {
-                ((LinkedTag) t).updateVillageList();
+        invalidate();
+        for (ManageableType e : getAllElements()) {
+            if (e instanceof LinkedTag) {
+                ((LinkedTag) e).updateVillageList();
             }
         }
+        revalidate();
     }
 
-    public boolean importTags(File pFile, String pExtension) {
+    @Override
+    public boolean importData(File pFile, String pExtension) {
+        invalidate();
+        boolean result = false;
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return false;
@@ -110,51 +102,47 @@ public class TagManager {
         try {
             Document d = JaxenUtils.getDocument(pFile);
             for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//tags/tag")) {
-                try {
-                    Tag t = Tag.fromXml(e);
-                    if (pExtension != null) {
-                        t.setName(t.getName() + "_" + pExtension);
-                    }
-                    Tag existing = getTagByName(t.getName());
-                    if (existing == null) {
-                        //add new tag
-                        mTags.add(t);
-                    } else {
-                        //set tag for new villages
-                        for (Integer villageID : t.getVillageIDs()) {
-                            existing.tagVillage(villageID);
-                        }
+                Tag t = null;
+                if (e.getChild("equation") != null) {
+                    t = new LinkedTag();
+                    t.loadFromXml(e);
+                } else {
+                    t = new Tag();
+                    t.loadFromXml(e);
+                }
 
-                        boolean replaceMarkers = Boolean.parseBoolean(GlobalOptions.getProperty("import.replace.tag.markers"));
-                        if (replaceMarkers) {
-                            existing.setTagColor(t.getTagColor());
-                            existing.setTagIcon(t.getTagIcon());
-                        }
-
+                if (pExtension != null) {
+                    t.setName(t.getName() + "_" + pExtension);
+                }
+                Tag existing = getTagByName(t.getName());
+                if (existing == null) {
+                    //add new tag
+                    addManagedElement(t);
+                } else {
+                    //set tag for new villages
+                    for (Integer villageID : t.getVillageIDs()) {
+                        existing.tagVillage(villageID);
                     }
-                    Collections.sort(mTags);
-                } catch (Exception inner) {
                 }
             }
 
             logger.debug("Tags imported successfully");
-            fireTagsChangedEvents();
-            MinimapPanel.getSingleton().redraw();
-            return true;
+            result = true;
         } catch (Exception e) {
             logger.error("Failed to load tags", e);
-            fireTagsChangedEvents();
-            MinimapPanel.getSingleton().redraw();
-            return false;
         }
+        revalidate(true);
+        return result;
     }
 
-    public String getExportData() {
+    @Override
+    public String getExportData(List<String> pGroupsToExport) {
         try {
             logger.debug("Generating tag export data");
 
             String result = "<tags>\n";
-            for (Tag t : mTags) {
+            for (ManageableType e : getAllElements()) {
+                Tag t = (Tag) e;
                 result += t.toXml();
             }
             result += "</tags>\n";
@@ -166,12 +154,8 @@ public class TagManager {
         }
     }
 
-    /**Load tags from a database (not implemented yet*/
-    public void loadFromDatabase(String pUrl) {
-    }
-
-    /**Save tags to a file*/
-    public void saveTagsToFile(String pFile) {
+    @Override
+    public void saveElements(String pFile) {
         if (pFile == null) {
             logger.error("File argument is 'null'");
         }
@@ -180,7 +164,8 @@ public class TagManager {
 
             StringBuilder b = new StringBuilder();
             b.append("<tags>\n");
-            for (Tag t : mTags) {
+            for (ManageableType e : getAllElements()) {
+                Tag t = (Tag) e;
                 b.append(t.toXml());
             }
             b.append("</tags>\n");
@@ -194,21 +179,14 @@ public class TagManager {
         }
     }
 
-    /**Save tags to a database (not implemented yet)*/
-    public void saveTagsToDatabase(String pUrl) {
-    }
-
-    public synchronized List<Tag> getTags() {
-        return mTags;
-    }
-
     /**Get all tags for a village*/
     public synchronized List<Tag> getTags(Village pVillage) {
         if (pVillage == null) {
             return new LinkedList<Tag>();
         }
         List<Tag> tags = new LinkedList<Tag>();
-        for (Tag t : mTags) {
+        for (ManageableType e : getAllElements()) {
+            Tag t = (Tag) e;
             if (t.tagsVillage(pVillage.getId())) {
                 tags.add(t);
             }
@@ -217,7 +195,8 @@ public class TagManager {
     }
 
     public Tag getTagByName(String pName) {
-        for (Tag t : mTags) {
+        for (ManageableType e : getAllElements()) {
+            Tag t = (Tag) e;
             if (t.getName().equals(pName)) {
                 return t;
             }
@@ -227,28 +206,29 @@ public class TagManager {
 
     public void removeTagByName(String pName) {
         Tag toRemove = null;
-        for (Tag t : mTags) {
+        for (ManageableType e : getAllElements()) {
+            Tag t = (Tag) e;
             if (t.getName().equals(pName)) {
                 toRemove = t;
                 break;
             }
         }
         if (toRemove != null) {
-            removeTag(toRemove);
+            removeElement(toRemove);
         }
-        fireTagsChangedEvents();
     }
 
     public void removeTagFastByName(String pName) {
         Tag toRemove = null;
-        for (Tag t : mTags) {
+        for (ManageableType e : getAllElements()) {
+            Tag t = (Tag) e;
             if (t.getName().equals(pName)) {
                 toRemove = t;
                 break;
             }
         }
         if (toRemove != null) {
-            removeTag(toRemove);
+            removeElement(toRemove);
         }
     }
 
@@ -266,12 +246,13 @@ public class TagManager {
             }
         }
         boolean added = false;
-        for (Tag t : mTags.toArray(new Tag[]{})) {
+        for (ManageableType e : getAllElements()) {
+            Tag t = (Tag) e;
             if (t.getName().equals(pTag)) {
                 if (t instanceof LinkedTag) {
                     //tag exists as linked tag -> remove linked tag before
                     logger.debug("Linked tag with same name found. Removing linked tag '" + pTag + "'");
-                    mTags.remove(t);
+                    removeElement(t);
                     break;
                 } else {
                     if (pVillage != null) {
@@ -292,12 +273,7 @@ public class TagManager {
                 //add only valid villages
                 nt.tagVillage(pVillage.getId());
             }
-            mTags.add(nt);
-            Collections.sort(mTags);
-        }
-
-        if (pUpdate) {
-            fireTagsChangedEvents();
+            addManagedElement(nt);
         }
     }
 
@@ -319,9 +295,7 @@ public class TagManager {
         if (pLinkedTag == null) {
             return;
         }
-        mTags.add(pLinkedTag);
-        Collections.sort(mTags);
-        fireTagsChangedEvents();
+        addManagedElement(pLinkedTag);
     }
 
     /**Remove a tag from a village*/
@@ -332,7 +306,8 @@ public class TagManager {
         if (logger.isDebugEnabled()) {
             logger.debug("Removing tag '" + pTag + "' from village " + pVillage);
         }
-        for (Tag t : mTags) {
+        for (ManageableType e : getAllElements()) {
+            Tag t = (Tag) e;
             if (t.getName().equals(pTag)) {
                 t.untagVillage(pVillage.getId());
             }
@@ -345,14 +320,10 @@ public class TagManager {
             return;
         }
 
-        for (Tag t : mTags) {
+        for (ManageableType e : getAllElements()) {
+            Tag t = (Tag) e;
             t.untagVillage(pVillage.getId());
         }
-    }
-
-    public synchronized void removeTag(Tag pTag) {
-        mTags.remove(pTag);
-        fireTagsChangedEvents();
     }
 
     public synchronized boolean shouldVillageBeRendered(Village pVillage) {
@@ -372,18 +343,5 @@ public class TagManager {
             }
         }
         return drawVillage;
-    }
-
-    public void forceUpdate() {
-        fireTagsChangedEvents();
-    }
-
-    /**Notify attack manager listeners about changes*/
-    private void fireTagsChangedEvents() {
-        updateLinkedTags();
-        TagManagerListener[] listeners = mManagerListeners.toArray(new TagManagerListener[]{});
-        for (TagManagerListener listener : listeners) {
-            listener.fireTagsChangedEvent();
-        }
     }
 }

@@ -4,6 +4,13 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.control.ManageableType;
+import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.ServerManager;
+import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.util.BBSupport;
+import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.bb.VillageListFormatter;
 import org.jdom.Element;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Color;
@@ -18,7 +25,7 @@ import org.jdom.Document;
  *
  * @author Charon
  */
-public class Tag implements Comparable<Tag> {
+public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
 
     /**<tags>
      * <tag name="TagName" shownOnMap="true">
@@ -30,47 +37,93 @@ public class Tag implements Comparable<Tag> {
      */
     public static final Comparator<Tag> CASE_INSENSITIVE_ORDER = new CaseInsensitiveTagComparator();
     public static final Comparator<Tag> SIZE_ORDER = new SizeComparator();
+    private final static String[] VARIABLES = new String[]{"%NAME%", "%VILLAGE_LIST%", "%VILLAGE_COUNT%", "%COLOR%", "%ICON%"};
+    private final static String STANDARD_TEMPLATE = "[coord]%X%|%Y%[/coord]";
+    private final static String TEMPLATE_PROPERTY = "village.bbexport.template";
     private String sName = null;
     private List<Integer> mVillageIDs = new LinkedList<Integer>();
     //-1 means no icon
     private TagMapMarker mapMarker = null;
     private boolean showOnMap = true;
 
-    /**Factor a tag from its DOM representation 
-     * @param pElement DOM element received while reading the user tags
-     * @return Tag Tag instance parsed from pElement
-     */
-    public static Tag fromXml(Element pElement) throws Exception {
+    @Override
+    public String[] getBBVariables() {
+        return VARIABLES;
+    }
+
+    @Override
+    public String[] getReplacements(boolean pExtended) {
+        String nameVal = getName();
+        List<Village> villages = new LinkedList<Village>();
+        for (Integer id : getVillageIDs()) {
+            Village v = DataHolder.getSingleton().getVillagesById().get(id);
+            if (v != null) {
+                villages.add(v);
+            }
+        }
+        String villageListVal = new VillageListFormatter().formatElements(villages, pExtended);
+        String villageCountVal = Integer.toString(getVillageIDs().size());
+        String colorVal = "";
+        if (getTagColor() != null) {
+            colorVal = Integer.toHexString(getTagColor().getRGB());
+        }
+        String iconVal = "";
+        if (getTagIcon() != -1) {
+            try {
+                UnitHolder u = DataHolder.getSingleton().getUnits().get(getTagIcon());
+                iconVal = "[unit]" + u.getPlainName() + "[/unit]";
+            } catch (Exception e) {
+            }
+        }
+
+        return new String[]{nameVal, villageListVal, villageCountVal, colorVal, iconVal};
+    }
+
+    @Override
+    public String getStandardTemplate() {
+        return STANDARD_TEMPLATE;
+    }
+
+    @Override
+    public String getTemplateProperty() {
+        return TEMPLATE_PROPERTY;
+    }
+
+    @Override
+    public void loadFromXml(Element pElement) {
         try {
-            if (pElement.getChild("equation") != null) {
-                return LinkedTag.fromXml(pElement);
+            String name = URLDecoder.decode(pElement.getChild("name").getTextTrim(), "UTF-8");
+            boolean bShowOnMap = Boolean.parseBoolean(pElement.getAttributeValue("shownOnMap"));
+            setName(name);
+            setShowOnMap(bShowOnMap);
+            try {
+                Element color = pElement.getChild("color");
+                int r = color.getAttribute("r").getIntValue();
+                int g = color.getAttribute("g").getIntValue();
+                int b = color.getAttribute("b").getIntValue();
+                setTagColor(new Color(r, g, b));
+            } catch (Exception e) {
+                setTagColor(null);
+            }
+
+            try {
+                Element icon = pElement.getChild("icon");
+                setTagIcon(Integer.parseInt(icon.getText()));
+            } catch (Exception e) {
+                setTagIcon(-1);
+            }
+
+            for (Element e : (List<Element>) JaxenUtils.getNodes(pElement, "villages/village")) {
+                tagVillage(Integer.parseInt(e.getValue()));
             }
         } catch (Exception e) {
         }
-        String name = URLDecoder.decode(pElement.getChild("name").getTextTrim(), "UTF-8");
-        boolean showOnMap = Boolean.parseBoolean(pElement.getAttributeValue("shownOnMap"));
-        Tag t = new Tag(name, showOnMap);
-        try {
-            Element color = pElement.getChild("color");
-            int r = color.getAttribute("r").getIntValue();
-            int g = color.getAttribute("g").getIntValue();
-            int b = color.getAttribute("b").getIntValue();
-            t.setTagColor(new Color(r, g, b));
-        } catch (Exception e) {
-            t.setTagColor(null);
-        }
 
-        try {
-            Element icon = pElement.getChild("icon");
-            t.setTagIcon(Integer.parseInt(icon.getText()));
-        } catch (Exception e) {
-            t.setTagIcon(-1);
-        }
+    }
 
-        for (Element e : (List<Element>) JaxenUtils.getNodes(pElement, "villages/village")) {
-            t.tagVillage(Integer.parseInt(e.getValue()));
-        }
-        return t;
+    public Tag() {
+        setMapMarker(new TagMapMarker());
+
     }
 
     /**Default constructor*/
@@ -159,7 +212,8 @@ public class Tag implements Comparable<Tag> {
     /**Convert this tag into its XML representation
      * @return String String that contains the XML representation
      */
-    public String toXml() throws Exception {
+    @Override
+    public String toXml() {
         try {
             String ret = "<tag shownOnMap=\"" + isShowOnMap() + "\">\n";
             ret += "<name><![CDATA[" + URLEncoder.encode(getName(), "UTF-8") + "]]></name>\n";
@@ -184,7 +238,8 @@ public class Tag implements Comparable<Tag> {
         String tag = "<tags><tag shownOnMap=\"true\"><name><![CDATA[Mein Tag]]></name><villages><village>4711</village></villages></tag></tags>";
         Document d = JaxenUtils.getDocument(tag);
         for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//tags/tag")) {
-            System.out.println(Tag.fromXml(e));
+            Tag t = new Tag();
+            t.loadFromXml(e);
         }
     }
 
@@ -221,6 +276,21 @@ public class Tag implements Comparable<Tag> {
      */
     public final void setMapMarker(TagMapMarker mapMarker) {
         this.mapMarker = mapMarker;
+    }
+
+    @Override
+    public String getElementIdentifier() {
+        return "tag";
+    }
+
+    @Override
+    public String getElementGroupIdentifier() {
+        return "tags";
+    }
+
+    @Override
+    public String getGroupNameAttributeIdentifier() {
+        return "";
     }
 
     private static class CaseInsensitiveTagComparator implements Comparator<Tag>, java.io.Serializable {

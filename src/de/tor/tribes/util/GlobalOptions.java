@@ -231,7 +231,7 @@ public class GlobalOptions {
             logger.debug("Loading attacks");
             AttackManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/attacks.xml");
             logger.debug("Loading tags");
-            TagManager.getSingleton().loadTagsFromFile(getSelectedProfile().getProfileDirectory() + "/tags.xml");
+            TagManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/tags.xml");
             logger.debug("Loading troops");
             TroopsManager.getSingleton().loadTroopsFromFile(getSelectedProfile().getProfileDirectory() + "/troops.xml");
             logger.debug("Loading forms");
@@ -264,7 +264,7 @@ public class GlobalOptions {
             logger.debug("Saving attacks");
             AttackManager.getSingleton().saveElements(getSelectedProfile().getProfileDirectory() + "/attacks.xml");
             logger.debug("Saving tags");
-            TagManager.getSingleton().saveTagsToFile(getSelectedProfile().getProfileDirectory() + "/tags.xml");
+            TagManager.getSingleton().saveElements(getSelectedProfile().getProfileDirectory() + "/tags.xml");
             logger.debug("Saving troops");
             TroopsManager.getSingleton().saveTroopsToFile(getSelectedProfile().getProfileDirectory() + "/troops.xml");
             logger.debug("Saving forms");

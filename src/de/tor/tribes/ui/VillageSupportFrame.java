@@ -83,12 +83,13 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         setTitle("Unterstützung für " + mCurrentVillage);
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         DefaultListModel model = new DefaultListModel();
-        for (Tag t : TagManager.getSingleton().getTags()) {
+        for (ManageableType e : TagManager.getSingleton().getAllElements()) {
+            Tag t = (Tag) e;
             model.addElement(t);
         }
         jTagsList.setModel(model);
         //select all
-        jTagsList.getSelectionModel().setSelectionInterval(0, TagManager.getSingleton().getTags().size() - 1);
+        jTagsList.getSelectionModel().setSelectionInterval(0, TagManager.getSingleton().getElementCount() - 1);
         jResultDialog.pack();
         setVisible(true);
     }
@@ -98,12 +99,13 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         setTitle("Unterstützung für " + mCurrentVillage);
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         DefaultListModel model = new DefaultListModel();
-        for (Tag t : TagManager.getSingleton().getTags()) {
+        for (ManageableType e : TagManager.getSingleton().getAllElements()) {
+            Tag t = (Tag) e;
             model.addElement(t);
         }
         jTagsList.setModel(model);
         //select all
-        jTagsList.getSelectionModel().setSelectionInterval(0, TagManager.getSingleton().getTags().size() - 1);
+        jTagsList.getSelectionModel().setSelectionInterval(0, TagManager.getSingleton().getElementCount() - 1);
         SimpleDateFormat dateFormat = null;
         if (ServerSettings.getSingleton().isMillisArrival()) {
             dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS");

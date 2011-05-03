@@ -21,7 +21,7 @@ import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.ToolChangeListener;
 import de.tor.tribes.util.mark.MarkerManager;
-import de.tor.tribes.util.mark.MarkerManagerListener;
+import de.tor.tribes.util.tag.TagManager;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
@@ -131,6 +131,7 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
         rVisiblePart = new Rectangle(0, 0, mapWidth, mapHeight);
         zoomed = false;
         MarkerManager.getSingleton().addManagerListener(this);
+        TagManager.getSingleton().addManagerListener(this);
         MinimapRepaintThread.getSingleton().setVisiblePart(rVisiblePart);
         MinimapRepaintThread.getSingleton().start();
 

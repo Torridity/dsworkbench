@@ -5,8 +5,11 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.control.GenericManagerListener;
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Barbarians;
+import de.tor.tribes.types.LinkedTag;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
@@ -22,14 +25,14 @@ import javax.swing.DefaultListModel;
 /**
  * @author  Charon
  */
-public class VillageTagFrame extends javax.swing.JFrame implements TagManagerListener {
-
+public class VillageTagFrame extends javax.swing.JFrame implements GenericManagerListener {
+    
     private static VillageTagFrame SINGLETON = null;
-
+    
     public static synchronized VillageTagFrame getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new VillageTagFrame();
-            TagManager.getSingleton().addTagManagerListener(SINGLETON);
+            TagManager.getSingleton().addManagerListener(SINGLETON);
         }
         return SINGLETON;
     }
@@ -38,12 +41,18 @@ public class VillageTagFrame extends javax.swing.JFrame implements TagManagerLis
     VillageTagFrame() {
         initComponents();
     }
-
+    
     public void updateUserTags() {
-        jTagsChooser.setModel(new DefaultComboBoxModel(TagManager.getSingleton().getTags().toArray(new Tag[]{})));
+        List<Tag> lTags = new LinkedList<Tag>();
+        for (ManageableType e : TagManager.getSingleton().getAllElements()) {
+            if (!(e instanceof LinkedTag)) {
+                lTags.add((Tag) e);
+            }
+        }
+        jTagsChooser.setModel(new DefaultComboBoxModel(lTags.toArray(new Tag[lTags.size()])));
         jTagsChooser.repaint();
     }
-
+    
     public void showTagsFrame(Village pVillage) {
         updateUserTags();
         Tribe t = pVillage.getTribe();
@@ -53,29 +62,29 @@ public class VillageTagFrame extends javax.swing.JFrame implements TagManagerLis
         jPlayerName.setText(t.getName());
         Village[] list = t.getVillageList();
         Arrays.sort(list);
-
+        
         jVillageList.setModel(new DefaultComboBoxModel(list));
         jVillageList.setSelectedItem(pVillage);
-
+        
         List<Tag> tags = TagManager.getSingleton().getTags(pVillage);
-
+        
         DefaultListModel lModel = new DefaultListModel();
-
+        
         for (Tag tag : tags) {
             lModel.addElement(tag);
         }
-
+        
         jTagsList.setModel(lModel);
-
+        
         setVisible(true);
     }
-
+    
     public void showTagsFrame(List<Village> pVillage) {
         updateUserTags();
         Village[] list = pVillage.toArray(new Village[]{});
         jPlayerName.setText("Mehrfachauswahl");
         Arrays.sort(list);
-
+        
         jVillageList.setModel(new DefaultComboBoxModel(list));
         jVillageList.setSelectedItem(pVillage.get(0));
         List<Tag> allTags = new LinkedList<Tag>();
@@ -87,16 +96,16 @@ public class VillageTagFrame extends javax.swing.JFrame implements TagManagerLis
                 }
             }
         }
-
-
+        
+        
         DefaultListModel lModel = new DefaultListModel();
-
+        
         for (Tag tag : allTags) {
             lModel.addElement(tag);
         }
-
+        
         jTagsList.setModel(lModel);
-
+        
         setVisible(true);
     }
 
@@ -242,7 +251,7 @@ private void fireAddTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
         if (tag == null) {
             return;
         }
-
+        
         for (int i = 0; i < jVillageList.getItemCount(); i++) {
             Village v = (Village) jVillageList.getItemAt(i);
             if (v.getTribe() != Barbarians.getSingleton()) {
@@ -263,7 +272,7 @@ private void fireAddTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
         }
     }
 }//GEN-LAST:event_fireAddTagEvent
-
+    
 private void fireRemoveTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveTagEvent
     Tag selectedTag = (Tag) jTagsList.getSelectedValue();
     if (selectedTag == null) {
@@ -286,21 +295,18 @@ private void fireRemoveTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
     DefaultListModel model = (DefaultListModel) jTagsList.getModel();
     model.removeElement(selectedTag);
 }//GEN-LAST:event_fireRemoveTagEvent
-
+    
 private void fireOkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireOkEvent
-    TagManager.getSingleton().saveTagsToFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
-    setVisible(false);
+   /* TagManager.getSingleton().saveElements(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
+    setVisible(false);*/
     //init redraw
-    try {
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
-    } catch (Exception e) {
-    }
+    TagManager.getSingleton().revalidate(true);
 }//GEN-LAST:event_fireOkEvent
-
+    
 private void fireCancelEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCancelEvent
     setVisible(false);
 }//GEN-LAST:event_fireCancelEvent
-
+    
 private void fireVillageSelectionChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireVillageSelectionChangedEvent
     if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
         DefaultListModel model = new DefaultListModel();
@@ -331,7 +337,12 @@ private void fireVillageSelectionChangedEvent(java.awt.event.ItemEvent evt) {//G
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void fireTagsChangedEvent() {
+    public void dataChangedEvent() {
+        dataChangedEvent(null);
+    }
+    
+    @Override
+    public void dataChangedEvent(String pGroup) {
         updateUserTags();
     }
 }

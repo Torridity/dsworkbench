@@ -334,7 +334,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         }));
-        transferTaskPane.getContentPane().add(factoryButton("/res/ui/att_clipboardBB.png", "Markierte Angriffe als BB-Codes in die Zwischenablage kopieren.Der Inhalt der Zwischenablage kann dann z.B. in das Stammesforum, die Notizen oder IGMs eingef&uuml;gt werden", new MouseAdapter() {
+        transferTaskPane.getContentPane().add(factoryButton("/res/ui/att_clipboardBB.png", "Markierte Angriffe als BB-Codes in die Zwischenablage kopieren. Der Inhalt der Zwischenablage kann dann z.B. in das Stammesforum, die Notizen oder IGMs eingef&uuml;gt werden", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {

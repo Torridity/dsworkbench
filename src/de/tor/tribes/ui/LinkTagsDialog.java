@@ -10,6 +10,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.LinkedTag;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.ui.editors.LinkGroupColorCellEditor;
@@ -19,14 +20,12 @@ import de.tor.tribes.ui.renderer.MultiColorCellRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.tag.TagManager;
-import java.awt.Color;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.swing.DefaultComboBoxModel;
 
 /**
  *
@@ -38,41 +37,41 @@ public class LinkTagsDialog extends javax.swing.JDialog {
     private List<Tag> tags = null;
 
     /** Creates new form LinkTagDialog */
-    public LinkTagsDialog( java.awt.Frame parent, boolean modal ) {
-	super(parent, modal);
-	initComponents();
-	tags = new LinkedList<Tag>();
-	tags.add(new Tag("Off", true));
-	tags.add(new Tag("Def", true));
-	tags.add(new Tag("Off_F", true));
-	tags.add(new Tag("Off_A", true));
-	tags.add(new Tag("Off_R", true));
-	tags.add(new Tag("Deff_A", true));
-	tags.add(new Tag("Deff_R", true));
+    public LinkTagsDialog(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
+        initComponents();
+        tags = new LinkedList<Tag>();
+        tags.add(new Tag("Off", true));
+        tags.add(new Tag("Def", true));
+        tags.add(new Tag("Off_F", true));
+        tags.add(new Tag("Off_A", true));
+        tags.add(new Tag("Off_R", true));
+        tags.add(new Tag("Deff_A", true));
+        tags.add(new Tag("Deff_R", true));
     }
 
     public LinkedTag setupAndShow() {
-	jTable1.setModel(new TagLinkMatrixModel());
-	jTable1.setDefaultRenderer(Integer.class, new MultiColorCellRenderer());
-	jTable1.setDefaultRenderer(Tag.class, new AlternatingColorCellRenderer());
-	jTable1.setDefaultEditor(Integer.class, new LinkGroupColorCellEditor());
-	jTable1.setRowHeight(21);
-	for ( int i = 0; i < jTable1.getColumnCount(); i++ ) {
-	    jTable1.getColumn(jTable1.getColumnName(i)).setHeaderRenderer(new SortableTableHeaderRenderer());
-	}
+        jTable1.setModel(new TagLinkMatrixModel());
+        jTable1.setDefaultRenderer(Integer.class, new MultiColorCellRenderer());
+        jTable1.setDefaultRenderer(Tag.class, new AlternatingColorCellRenderer());
+        jTable1.setDefaultEditor(Integer.class, new LinkGroupColorCellEditor());
+        jTable1.setRowHeight(21);
+        for (int i = 0; i < jTable1.getColumnCount(); i++) {
+            jTable1.getColumn(jTable1.getColumnName(i)).setHeaderRenderer(new SortableTableHeaderRenderer());
+        }
 
-	setVisible(true);
+        setVisible(true);
 
-	if ( bCreateLinkedTag ) {
-	    LinkedTag t = new LinkedTag(jTagName.getText(), true);
-	    String equation = ((TagLinkMatrixModel) jTable1.getModel()).getEquation();
-	    equation = equation.replaceAll("UND", "&&");
-	    equation = equation.replaceAll("ODER", "||");
-	    t.setEquation(equation);
-	    t.updateVillageList();
-	    return t;
-	}
-	return null;
+        if (bCreateLinkedTag) {
+            LinkedTag t = new LinkedTag(jTagName.getText(), true);
+            String equation = ((TagLinkMatrixModel) jTable1.getModel()).getEquation();
+            equation = equation.replaceAll("UND", "&&");
+            equation = equation.replaceAll("ODER", "||");
+            t.setEquation(equation);
+            t.updateVillageList();
+            return t;
+        }
+        return null;
     }
 
     /** This method is called from within the constructor to
@@ -198,72 +197,74 @@ public class LinkTagsDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireAcceptEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAcceptEvent
-        if ( evt.getSource() == jDoCreateButton ) {
-	    System.out.println(((TagLinkMatrixModel) jTable1.getModel()).getEquation());
-	    if ( jTagName.getText().length() < 1 ) {
-		JOptionPaneHelper.showWarningBox(this, "Du musst einen Namen für den neuen Tag angeben.", "Warnung");
-		return;
-	    }
-	    if ( jTagName.getText().equals("ODER") || jTagName.getText().equals("UND") ) {
-		JOptionPaneHelper.showWarningBox(this, "Folgende Begriffe sind als Tag Namen gesperrt: UND, ODER\nGib bitte einen anderen Namen an.", "Warnung");
-		return;
-	    }
+        if (evt.getSource() == jDoCreateButton) {
+            System.out.println(((TagLinkMatrixModel) jTable1.getModel()).getEquation());
+            if (jTagName.getText().length() < 1) {
+                JOptionPaneHelper.showWarningBox(this, "Du musst einen Namen für den neuen Tag angeben.", "Warnung");
+                return;
+            }
+            if (jTagName.getText().equals("ODER") || jTagName.getText().equals("UND")) {
+                JOptionPaneHelper.showWarningBox(this, "Folgende Begriffe sind als Tag Namen gesperrt: UND, ODER\nGib bitte einen anderen Namen an.", "Warnung");
+                return;
+            }
 
-	    String equation = ((TagLinkMatrixModel) jTable1.getModel()).getEquation();
-	    Tag[] pTags = TagManager.getSingleton().getTags().toArray(new Tag[]{});
-	    Arrays.sort(pTags, Tag.SIZE_ORDER);
+            String equation = ((TagLinkMatrixModel) jTable1.getModel()).getEquation();
+            List<ManageableType> elements = TagManager.getSingleton().getAllElements();
+            List<Tag> lTags = new LinkedList<Tag>();
+            for (ManageableType e : elements) {
+                lTags.add((Tag) e);
+            }
+            Collections.sort(lTags, Tag.SIZE_ORDER);
 
-	    for ( Tag t : pTags ) {
-		//for (Tag t : pTags) {
-		equation = equation.replaceAll(Pattern.quote(t.getName()), "true");
-	    }
+            for (Tag t : lTags) {
+                //for (Tag t : pTags) {
+                equation = equation.replaceAll(Pattern.quote(t.getName()), "true");
+            }
 
-	    for ( int i = 0; i < 99; i++ ) {
-		equation = equation.replaceAll(Pattern.quote("K" + ((i < 10) ? "0" : "") + i), "true");
-	    }
+            for (int i = 0; i < 99; i++) {
+                equation = equation.replaceAll(Pattern.quote("K" + ((i < 10) ? "0" : "") + i), "true");
+            }
 
-	    equation = equation.replaceAll("UND", "&&");
-	    equation = equation.replaceAll("ODER", "||");
-	    ScriptEngineManager factory = new ScriptEngineManager();
-	    // create a JavaScript engine
-	    ScriptEngine engine = factory.getEngineByName("JavaScript");
-	    // evaluate JavaScript code from String
-	    try {
-		engine.eval("var b = eval(\"" + equation + "\")");
-	    } catch ( Exception e ) {
-		JOptionPaneHelper.showWarningBox(this, "Die angegebene Verknüpfung scheint fehlerhaft zu sein.\nBitte überprüfe sie noch einmal.", "Warnung");
-		return;
-	    }
+            equation = equation.replaceAll("UND", "&&");
+            equation = equation.replaceAll("ODER", "||");
+            ScriptEngineManager factory = new ScriptEngineManager();
+            // create a JavaScript engine
+            ScriptEngine engine = factory.getEngineByName("JavaScript");
+            // evaluate JavaScript code from String
+            try {
+                engine.eval("var b = eval(\"" + equation + "\")");
+            } catch (Exception e) {
+                JOptionPaneHelper.showWarningBox(this, "Die angegebene Verknüpfung scheint fehlerhaft zu sein.\nBitte überprüfe sie noch einmal.", "Warnung");
+                return;
+            }
 
-	    bCreateLinkedTag = true;
-	}
-	dispose();
+            bCreateLinkedTag = true;
+        }
+        dispose();
     }//GEN-LAST:event_fireAcceptEvent
 
     private void fireShowLinkInPlainTextEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowLinkInPlainTextEvent
         String equation = ((TagLinkMatrixModel) jTable1.getModel()).getEquationAsHtml();
-	JOptionPaneHelper.showInformationBox(this, "<html>Der verknüpfte Tag mit dem Namen '" + jTagName.getText() + "' befindet sich<BR/> " + equation + "</html>", "Verknüpfung");
+        JOptionPaneHelper.showInformationBox(this, "<html>Der verknüpfte Tag mit dem Namen '" + jTagName.getText() + "' befindet sich<BR/> " + equation + "</html>", "Verknüpfung");
     }//GEN-LAST:event_fireShowLinkInPlainTextEvent
 
     /**
      * @param args the command line arguments
      */
-    public static void main( String args[] ) {
-	java.awt.EventQueue.invokeLater(new Runnable() {
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
 
-	    public void run() {
-		LinkTagsDialog dialog = new LinkTagsDialog(new javax.swing.JFrame(), true);
-		dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void run() {
+                LinkTagsDialog dialog = new LinkTagsDialog(new javax.swing.JFrame(), true);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 
-		    public void windowClosing( java.awt.event.WindowEvent e ) {
-			System.exit(0);
-		    }
-
-		});
-		dialog.setupAndShow();
-	    }
-
-	});
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setupAndShow();
+            }
+        });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

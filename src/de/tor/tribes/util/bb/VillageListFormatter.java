@@ -52,7 +52,6 @@ public class VillageListFormatter extends BasicFormatter<Village> {
         }
         String replacedEnd = StringUtils.replaceEach(afterList, new String[]{ELEMENT_COUNT}, new String[]{f.format(pElements.size())});
         b.append(replacedEnd);
-        System.out.println(b.toString());
         return b.toString();
     }
 

@@ -38,7 +38,10 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
     public static final Comparator<Tag> CASE_INSENSITIVE_ORDER = new CaseInsensitiveTagComparator();
     public static final Comparator<Tag> SIZE_ORDER = new SizeComparator();
     private final static String[] VARIABLES = new String[]{"%NAME%", "%VILLAGE_LIST%", "%VILLAGE_COUNT%", "%COLOR%", "%ICON%"};
-    private final static String STANDARD_TEMPLATE = "[coord]%X%|%Y%[/coord]";
+    private final static String STANDARD_TEMPLATE = "[u][color=\"%COLOR%\"][b]%NAME%[/b][/color][/u]\n"
+            + "%ICON%\n"
+            + "Dörfer: %VILLAGE_COUNT%\n"
+            + "[quote]%VILLAGE_LIST%[/quote]";
     private final static String TEMPLATE_PROPERTY = "village.bbexport.template";
     private String sName = null;
     private List<Integer> mVillageIDs = new LinkedList<Integer>();
@@ -65,14 +68,13 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
         String villageCountVal = Integer.toString(getVillageIDs().size());
         String colorVal = "";
         if (getTagColor() != null) {
-            colorVal = Integer.toHexString(getTagColor().getRGB());
+            colorVal = "#" + Integer.toHexString(getTagColor().getRGB() & 0x00ffffff);
         }
         String iconVal = "";
         if (getTagIcon() != -1) {
-            try {
-                UnitHolder u = DataHolder.getSingleton().getUnits().get(getTagIcon());
+            UnitHolder u = DataHolder.getSingleton().getUnits().get(getTagIcon());
+            if (u != null) {
                 iconVal = "[unit]" + u.getPlainName() + "[/unit]";
-            } catch (Exception e) {
             }
         }
 

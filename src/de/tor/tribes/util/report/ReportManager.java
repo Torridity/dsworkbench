@@ -170,7 +170,7 @@ public class ReportManager extends GenericManager<FightReport> {
             Iterator<String> setKeys = getGroupIterator();
             while (setKeys.hasNext()) {
                 String set = setKeys.next();
-                b.append("<reportSet name=\"").append(set).append("\"\n");
+                b.append("<reportSet name=\"").append(set).append("\">\n");
                 for (ManageableType t : getAllElements(set)) {
                     b.append(t.toXml()).append("\n");
                 }

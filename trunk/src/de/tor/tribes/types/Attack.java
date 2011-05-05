@@ -180,11 +180,6 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
 
     @Override
     public String toString() {
-        /* long send = getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(getSource(), getTarget(), getUnit().getSpeed()) * 1000);
-        SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(send);
-        String result = getSource() + " > " + getTarget() + ": " + f.format(c.getTime()) + " ... " + f.format(getArriveTime());*/
         SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
         String result = getSource() + "\n";
         result += getTarget() + "\n";

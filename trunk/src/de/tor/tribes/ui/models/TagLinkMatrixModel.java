@@ -282,7 +282,7 @@ public class TagLinkMatrixModel extends AbstractTableModel {
             if (builder.length() > 0) {
                 builder.append(" <BR/>oder<BR/> ");
             }
-            builder.append("<b><font color='#00FF00'>").append(group2.toString()).append("</font></b>");
+            builder.append("<b><font color='#1C7B38'>").append(group2.toString()).append("</font></b>");
         }
         if (group3.length() > 0) {
             if (builder.length() > 0) {

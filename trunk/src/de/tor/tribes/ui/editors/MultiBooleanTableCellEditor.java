@@ -10,6 +10,8 @@
  */
 package de.tor.tribes.ui.editors;
 
+import de.tor.tribes.util.Constants;
+import java.awt.Color;
 import javax.swing.JFrame;
 
 /**
@@ -17,17 +19,26 @@ import javax.swing.JFrame;
  * @author Torridity
  */
 public class MultiBooleanTableCellEditor extends javax.swing.JPanel {
-
+    
     public static final int VALUE1 = 8;
     public static final int VALUE2 = 4;
     public static final int VALUE3 = 2;
     public static final int VALUE4 = 1;
+    public static final Color COLOR1 = Color.RED;
+    public static final Color COLOR2 = Color.GREEN;
+    public static final Color COLOR3 = Color.BLUE;
+    public static final Color COLOR4 = Color.MAGENTA;
 
     /** Creates new form MultiBooleanTableCellEditor */
     public MultiBooleanTableCellEditor() {
         initComponents();
+        jLabel1.setBackground(Constants.DS_BACK_LIGHT);
+        jLabel2.setBackground(Constants.DS_BACK_LIGHT);
+        jLabel3.setBackground(Constants.DS_BACK_LIGHT);
+        jLabel4.setBackground(Constants.DS_BACK_LIGHT);
+        
     }
-
+    
     public static boolean isOptionSet(int pValue, int pOption) {
         switch (pOption) {
             case VALUE1:
@@ -39,37 +50,38 @@ public class MultiBooleanTableCellEditor extends javax.swing.JPanel {
                 return false;
         }
     }
-
+    
     public int getSelection() {
         int value = 0;
-        if (jValue1.isSelected()) {
+        if (jLabel1.getBackground().equals(COLOR1)) {
             value |= VALUE1;
         }
-        if (jValue2.isSelected()) {
+        if (jLabel2.getBackground().equals(COLOR2)) {
             value |= VALUE2;
         }
-        if (jValue3.isSelected()) {
+        if (jLabel3.getBackground().equals(COLOR3)) {
             value |= VALUE3;
         }
-        if (jValue4.isSelected()) {
+        if (jLabel4.getBackground().equals(COLOR4)) {
             value |= VALUE4;
         }
         return value;
     }
-
+    
     public void setSelection(int pSelection) {
-        jValue1.setSelected((pSelection & VALUE1) != 0);
-        jValue2.setSelected((pSelection & VALUE2) != 0);
-        jValue3.setSelected((pSelection & VALUE3) != 0);
-        jValue4.setSelected((pSelection & VALUE4) != 0);
+        jLabel1.setBackground(((pSelection & VALUE1) != 0) ? COLOR1 : Constants.DS_BACK_LIGHT);
+        jLabel2.setBackground(((pSelection & VALUE2) != 0) ? COLOR2 : Constants.DS_BACK_LIGHT);
+        jLabel3.setBackground(((pSelection & VALUE3) != 0) ? COLOR3 : Constants.DS_BACK_LIGHT);
+        jLabel4.setBackground(((pSelection & VALUE4) != 0) ? COLOR4 : Constants.DS_BACK_LIGHT);
     }
-
+    
     public static void main(String[] args) {
         int value = 0;
         value |= VALUE2;
         value |= VALUE4;
-
+        
         JFrame f = new JFrame();
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         MultiBooleanTableCellEditor ed = new MultiBooleanTableCellEditor();
         ed.setSelection(value);
         f.add(ed);
@@ -84,11 +96,16 @@ public class MultiBooleanTableCellEditor extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         jValue2 = new javax.swing.JCheckBox();
         jValue3 = new javax.swing.JCheckBox();
         jValue1 = new javax.swing.JCheckBox();
         jValue4 = new javax.swing.JCheckBox();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
 
         jValue2.setBackground(new java.awt.Color(0, 255, 0));
         jValue2.setMargin(new java.awt.Insets(1, 1, 1, 1));
@@ -114,28 +131,116 @@ public class MultiBooleanTableCellEditor extends javax.swing.JPanel {
         jValue4.setMinimumSize(new java.awt.Dimension(18, 18));
         jValue4.setPreferredSize(new java.awt.Dimension(18, 18));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jValue1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jValue2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jValue3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jValue4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jValue1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(jValue2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(jValue3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(jValue4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
+        setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        setOpaque(false);
+        setLayout(new java.awt.GridBagLayout());
+
+        jLabel1.setBackground(new java.awt.Color(255, 0, 0));
+        jLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jLabel1.setMaximumSize(new java.awt.Dimension(100, 100));
+        jLabel1.setMinimumSize(new java.awt.Dimension(18, 18));
+        jLabel1.setOpaque(true);
+        jLabel1.setPreferredSize(new java.awt.Dimension(18, 18));
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeValueEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(1, 1, 1, 1);
+        add(jLabel1, gridBagConstraints);
+
+        jLabel2.setBackground(new java.awt.Color(0, 255, 0));
+        jLabel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jLabel2.setMaximumSize(new java.awt.Dimension(100, 100));
+        jLabel2.setMinimumSize(new java.awt.Dimension(18, 18));
+        jLabel2.setOpaque(true);
+        jLabel2.setPreferredSize(new java.awt.Dimension(18, 18));
+        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeValueEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(1, 1, 1, 1);
+        add(jLabel2, gridBagConstraints);
+
+        jLabel3.setBackground(new java.awt.Color(0, 0, 255));
+        jLabel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jLabel3.setMaximumSize(new java.awt.Dimension(100, 100));
+        jLabel3.setMinimumSize(new java.awt.Dimension(18, 18));
+        jLabel3.setOpaque(true);
+        jLabel3.setPreferredSize(new java.awt.Dimension(18, 18));
+        jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeValueEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(1, 1, 1, 1);
+        add(jLabel3, gridBagConstraints);
+
+        jLabel4.setBackground(new java.awt.Color(255, 0, 255));
+        jLabel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jLabel4.setMaximumSize(new java.awt.Dimension(100, 100));
+        jLabel4.setMinimumSize(new java.awt.Dimension(18, 18));
+        jLabel4.setOpaque(true);
+        jLabel4.setPreferredSize(new java.awt.Dimension(18, 18));
+        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeValueEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(1, 1, 1, 1);
+        add(jLabel4, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void fireChangeValueEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeValueEvent
+        
+        if (evt.getSource() == jLabel1) {
+            if (jLabel1.getBackground().equals(COLOR1)) {
+                jLabel1.setBackground(Constants.DS_BACK_LIGHT);
+            } else {
+                jLabel1.setBackground(COLOR1);
+            }
+        } else if (evt.getSource() == jLabel2) {
+            if (jLabel2.getBackground().equals(COLOR2)) {
+                jLabel2.setBackground(Constants.DS_BACK_LIGHT);
+            } else {
+                jLabel2.setBackground(COLOR2);
+            }
+        } else if (evt.getSource() == jLabel3) {
+            if (jLabel3.getBackground().equals(COLOR3)) {
+                jLabel3.setBackground(Constants.DS_BACK_LIGHT);
+            } else {
+                jLabel3.setBackground(COLOR3);
+            }
+        } else if (evt.getSource() == jLabel4) {
+            if (jLabel4.getBackground().equals(COLOR4)) {
+                jLabel4.setBackground(Constants.DS_BACK_LIGHT);
+            } else {
+                jLabel4.setBackground(COLOR4);
+            }
+        }
+    }//GEN-LAST:event_fireChangeValueEvent
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JCheckBox jValue1;
     private javax.swing.JCheckBox jValue2;
     private javax.swing.JCheckBox jValue3;

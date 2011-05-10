@@ -120,9 +120,9 @@ public class StandardAttackElement {
     }
 
     public int getTroopsAmount(Village pVillage) {
-        VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage);
+        VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.OWN);
         boolean haveTroopInfo = true;
-        if (holder == null) {
+        if (own == null) {
             //no info available
             //haveTroopInfo = false;
             if (logger.isDebugEnabled()) {
@@ -131,15 +131,13 @@ public class StandardAttackElement {
             return 0;
         }
 
-        Hashtable<UnitHolder, Integer> ownTroops = holder.getOwnTroops();
-
-        if (ownTroops == null) {
+        if (own == null) {
             //no troops in village
             logger.debug("No own troops found for village '" + pVillage + "'");
             return 0;
         }
 
-        Integer availableAmount = ownTroops.get(unit);
+        Integer availableAmount = own.getTroopsOfUnitInVillage(unit);
 
         if (availableAmount == 0) {
             //no troops of this type in village

@@ -27,9 +27,9 @@ import org.apache.commons.lang.time.DurationFormatUtils;
 public class AttackTableModel extends AbstractTableModel {
 
     private String sPlan = null;
-    private Class[] types = new Class[]{Tribe.class, Ally.class, Village.class, Tribe.class, Ally.class, Village.class, UnitHolder.class, Date.class, Date.class, Boolean.class, Integer.class, String.class, Boolean.class};
-    private String[] colNames = new String[]{"Angreifer", "Stamm (Angreifer)", "Herkunft", "Verteidiger", "Stamm (Verteidiger)", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Einzeichnen", "Typ", "Verbleibend", "Übertragen"};
-    private boolean[] editableColumns = new boolean[]{false, false, false, false, false, false, true, true, true, true, true, false, true};
+    private Class[] types = new Class[]{Tribe.class, Ally.class, Village.class, Tribe.class, Ally.class, Village.class, UnitHolder.class, Date.class, Date.class, Integer.class, String.class, Attack.class};
+    private String[] colNames = new String[]{"Angreifer", "Stamm (Angreifer)", "Herkunft", "Verteidiger", "Stamm (Verteidiger)", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Typ", "Verbleibend", "Sonstiges"};
+    private boolean[] editableColumns = new boolean[]{false, false, false, false, false, false, true, true, true, true, false, false};
 
     public AttackTableModel(String pPlan) {
         sPlan = pPlan;
@@ -125,17 +125,15 @@ public class AttackTableModel extends AbstractTableModel {
                 case 8:
                     return a.getArriveTime();//new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(a.getArriveTime());
                 case 9:
-                    return a.isShowOnMap();
-                case 10:
                     return a.getType();
-                case 11: {
+                case 10: {
                     long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
                     long t = sendTime - System.currentTimeMillis();
                     t = (t <= 0) ? 0 : t;
                     return DurationFormatUtils.formatDuration(t, "HHH:mm:ss.SSS", true);
                 }
                 default: {
-                    return a.isTransferredToBrowser();
+                    return a;
                 }
             }
         } catch (Exception e) {
@@ -151,22 +149,6 @@ public class AttackTableModel extends AbstractTableModel {
         try {
             Attack a = (Attack) AttackManager.getSingleton().getAllElements(sPlan).get(pRow);
             switch (pCol) {
-                case 2: {
-                    if (pValue == null) {
-                        a.setSource(null);
-                    } else {
-                        a.setSource((Village) pValue);
-                    }
-                    break;
-                }
-                case 5: {
-                    if (pValue == null) {
-                        a.setTarget(null);
-                    } else {
-                        a.setTarget((Village) pValue);
-                    }
-                    break;
-                }
                 case 6: {
                     if (pValue == null) {
                         a.setUnit(null);
@@ -195,26 +177,15 @@ public class AttackTableModel extends AbstractTableModel {
                 }
                 case 9: {
                     if (pValue == null) {
-                        a.setShowOnMap(false);
-                    } else {
-                        a.setShowOnMap((Boolean) pValue);
-                    }
-                    break;
-                }
-                case 10: {
-                    if (pValue == null) {
                         a.setType(Attack.NO_TYPE);
                     } else {
                         a.setType((Integer) pValue);
                     }
                     break;
                 }
-                case 11: {
+                default: {
                     //not editable
                     break;
-                }
-                default: {
-                    a.setTransferredToBrowser((Boolean) pValue);
                 }
             }
         } catch (Exception e) {

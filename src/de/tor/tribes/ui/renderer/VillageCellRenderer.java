@@ -20,15 +20,9 @@ public class VillageCellRenderer extends DefaultTableRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         JLabel label = (JLabel) c;
-        try {
-            Village vil = (Village) value;
-            label.setOpaque(true);
-
-            label.setText(vil.toString());
-            label.setToolTipText(vil.getToolTipText());
-        } catch (Exception e) {
-            label.setText("Ungültig");
-        }
-        return c;
+        Village vil = (Village) value;
+        label.setText(vil.toString());
+        label.setToolTipText(vil.getToolTipText());
+        return label;
     }
 }

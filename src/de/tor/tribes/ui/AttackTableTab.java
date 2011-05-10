@@ -19,6 +19,7 @@ import de.tor.tribes.ui.editors.AttackTypeCellEditor;
 import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.models.AttackTableModel;
+import de.tor.tribes.ui.renderer.AttackMiscInfoRenderer;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
@@ -35,6 +36,7 @@ import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.bb.AttackListFormatter;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
 import de.tor.tribes.util.js.AttackScriptWriter;
 import java.awt.Color;
@@ -99,6 +101,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private static AttackTableModel attackModel = null;
     private static boolean KEY_LISTENER_ADDED = false;
     private PainterHighlighter highlighter = null;
+    private ActionListener actionListener = null;
 
     static {
         //TODO add date coloring!=
@@ -112,6 +115,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jxAttackTable.setDefaultRenderer(Date.class, new ColoredDateCellRenderer());
         jxAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jxAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
+        jxAttackTable.setDefaultRenderer(Attack.class, new AttackMiscInfoRenderer());
         attackModel = new AttackTableModel(AttackManager.DEFAULT_GROUP);
         jxAttackTable.setModel(attackModel);
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
@@ -125,7 +129,6 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         g.fill(p);
         g.dispose();
         jxAttackTable.addHighlighter(new PainterHighlighter(HighlightPredicate.EDITABLE, new ImagePainter(back, HorizontalAlignment.RIGHT, VerticalAlignment.TOP)));
-
     }
 
     /** Creates new form AttackTablePanel
@@ -134,6 +137,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
      * @param pActionListener
      */
     public AttackTableTab(String pAttackPlan, final ActionListener pActionListener) {
+        actionListener = pActionListener;
         sAttackPlan = pAttackPlan;
         initComponents();
         jScrollPane1.setViewportView(jxAttackTable);
@@ -250,7 +254,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
     public void updatePlan() {
         attackModel.setPlan(sAttackPlan);
-        String[] cols = new String[]{"Einheit", "Einzeichnen", "Typ", "Übertragen"};
+        String[] cols = new String[]{"Einheit", "Typ", "Sonstiges"};
         for (String col : cols) {
             TableColumnExt columns = jxAttackTable.getColumnExt(col);
             columns.setPreferredWidth(80);
@@ -550,8 +554,8 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE))
+                    .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jMinuteField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -600,7 +604,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 16, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 24, Short.MAX_VALUE)
                 .addComponent(jArriveDateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -673,7 +677,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel18)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRandomField, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                        .addComponent(jRandomField, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel19)))
                 .addContainerGap())
@@ -897,122 +901,22 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireDoExportAsScriptEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDoExportAsScriptEvent
-        Integer width = 5;
-
         if (evt.getSource() == jDoScriptExportButton) {
-            List<Attack> attacks = getSelectedAttacks();
-            if (attacks.isEmpty()) {
-                return;
-            }
-
-            if (AttackScriptWriter.writeAttackScript(attacks, false, width, true, Color.GREEN, Color.RED, jShowAttacksInVillageInfo.isSelected(), jShowAttacksOnConfirmPage.isSelected(), jShowAttacksInPlace.isSelected(), jShowAttacksInOverview.isSelected())) {
-                showSuccess("Script erfolgreich nach 'zz_attack_info.user.js' geschrieben.\nDenke bitte daran, das Script in deinem Browser einzufügen/zu aktualisieren!");
-                if (System.getProperty("os.name").startsWith("Windows")) {
-                    //if (JOptionPaneHelper.showQuestionConfirmBox(this, "Script erfolgreich nach 'zz_attack_info.user.js' geschrieben.\nDenke bitte daran, das Script in deinem Browser einzufügen/zu aktualisieren!\nMöchtest du das Speicherverzeichnis des Scripts nun im Explorer öffnen?", "Information", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-                    if (JOptionPaneHelper.showQuestionConfirmBox(this, "Möchtest du das Speicherverzeichnis des Scripts nun im Explorer öffnen?", "Information", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-                        try {
-                            Runtime.getRuntime().exec("explorer.exe .\\");
-                        } catch (Exception e) {
-                            // JOptionPaneHelper.showWarningBox(this, "Explorer konnte nicht geöffnet werden.", "Information");
-                            showError("Explorer konnte nicht geöffnet werden.");
-                        }
-                    }
-                } else {
-//                    JOptionPaneHelper.showInformationBox(this, "Script erfolgreich nach 'zz_attack_info.user.js' geschrieben.\nDenke bitte daran, das Script in deinem Browser einzufügen/zu aktualisieren!", "Information");   
-                }
-            } else {
-                //JOptionPaneHelper.showErrorBox(this, "Fehler beim Schreiben des Scripts.", "Fehler");
-                showError("Fehler beim Schreiben des Scripts.");
-            }
+            actionListener.actionPerformed(new ActionEvent(this, 0, "ExportScript"));
         }
-
-        //store properties
-        GlobalOptions.addProperty("attack.script.draw.vectors", Boolean.toString(false));
-        GlobalOptions.addProperty("attack.script.vectors.width", Integer.toString(width));
-        GlobalOptions.addProperty("attack.script.attacks.in.village.info", Boolean.toString(jShowAttacksInVillageInfo.isSelected()));
-        GlobalOptions.addProperty("attack.script.attacks.on.confirm.page", Boolean.toString(jShowAttacksOnConfirmPage.isSelected()));
-        GlobalOptions.addProperty("attack.script.attacks.in.place", Boolean.toString(jShowAttacksInPlace.isSelected()));
-        GlobalOptions.addProperty("attack.script.attacks.in.overview", Boolean.toString(jShowAttacksInOverview.isSelected()));
-
         jScriptExportDialog.setVisible(false);
     }//GEN-LAST:event_fireDoExportAsScriptEvent
 
     private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSendIGMsEvent
         if (evt.getSource() == jSendButton) {
-            String subject = jSubject.getText();
-            String apiKey = jAPIKey.getText().trim();
-            AttackIGMSender.SenderResult result = AttackIGMSender.sendAttackNotifications(getSelectedAttacks(), subject, apiKey);
-            switch (result.getCode()) {
-                case AttackIGMSender.ID_ERROR_WHILE_SUBMITTING:
-                    // JOptionPaneHelper.showErrorBox(jSendAttacksIGMDialog, result.getMessage(), "Fehler");
-                    showError(result.getMessage());
-                    break;
-                case AttackIGMSender.ID_TOO_MANY_IGMS_PER_TRIBE:
-                    //JOptionPaneHelper.showWarningBox(jSendAttacksIGMDialog, result.getMessage(), "Warnung");
-                    showError(result.getMessage());
-                    break;
-                default:
-                    //JOptionPaneHelper.showInformationBox(jSendAttacksIGMDialog, result.getMessage(), "Information");
-                    showSuccess(result.getMessage());
-            }
+            actionListener.actionPerformed(new ActionEvent(this, 0, "SendIGM"));
         }
         jSendAttacksIGMDialog.setVisible(false);
 }//GEN-LAST:event_fireSendIGMsEvent
 
     private void fireCloseTimeChangeDialogEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCloseTimeChangeDialogEvent
         if (evt.getSource() == jOKButton) {
-            List<Attack> attacksToModify = getSelectedAttacks();
-            if (jMoveTimeOption.isSelected()) {
-                Integer sec = (Integer) jSecondsField.getValue();
-                Integer min = (Integer) jMinuteField.getValue();
-                Integer hour = (Integer) jHourField.getValue();
-                Integer day = (Integer) jDayField.getValue();
-
-                for (Attack attack : attacksToModify) {
-                    // int row = jAttackTable.convertRowIndexToModel(i);
-                    long arrive = attack.getArriveTime().getTime();
-                    long diff = sec * 1000 + min * 60000 + hour * 3600000 + day * 86400000;
-                    //later if first index is selected
-                    //if later, add diff to arrival, else remove diff from arrival
-                    arrive += diff;
-                    attack.setArriveTime(new Date(arrive));
-                }
-
-            } else if (jModifyArrivalOption.isSelected()) {
-                Date arrive = jArriveDateField.getSelectedDate();
-                for (Attack attack : attacksToModify) {
-                    //later if first index is selected
-                    //if later, add diff to arrival, else remove diff from arrival
-                    attack.setArriveTime(arrive);
-                }
-
-            } else if (jRandomizeOption.isSelected()) {
-                long rand = (Long) jRandomField.getValue() * 60 * 60 * 1000;
-                for (Attack attack : attacksToModify) {
-                    // int row = jAttackTable.convertRowIndexToModel(i);
-                    Calendar c = Calendar.getInstance();
-                    boolean valid = false;
-                    while (!valid) {
-                        //random until valid value was found
-                        long arrive = attack.getArriveTime().getTime();
-                        //later if first index is selected
-                        //if later, add diff to arrival, else remove diff from arrival
-                        int sign = (Math.random() > .5) ? 1 : -1;
-                        arrive = (long) (arrive + (sign * Math.random() * rand));
-
-                        c.setTimeInMillis(arrive);
-                        int hours = c.get(Calendar.HOUR_OF_DAY);
-                        if (hours >= 0 && hours < 8 && jNotRandomToNightBonus.isSelected()) {
-                            //only invalid if in night bonus and this is not allowed
-                            valid = false;
-                        } else {
-                            valid = true;
-                        }
-                    }
-                    attack.setArriveTime(c.getTime());
-                }
-            }
-            attackModel.fireTableDataChanged();
+            actionListener.actionPerformed(new ActionEvent(this, 0, "TimeChange"));
         }
 
         jTimeChangeDialog.setVisible(false);
@@ -1107,36 +1011,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
     private void fireChangeUnitTypeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeUnitTypeEvent
         if (evt.getSource() == jAcceptChangeUnitTypeButton) {
-            int newType = -2;
-            if (jAdeptTypeBox.isSelected()) {
-                if (jNoType.isSelected()) {
-                    newType = Attack.NO_TYPE;
-                } else if (jAttackType.isSelected()) {
-                    newType = Attack.CLEAN_TYPE;
-                } else if (jEnobleType.isSelected()) {
-                    newType = Attack.SNOB_TYPE;
-                } else if (jDefType.isSelected()) {
-                    newType = Attack.SUPPORT_TYPE;
-                } else if (jFakeType.isSelected()) {
-                    newType = Attack.FAKE_TYPE;
-                } else if (jFakeDefType.isSelected()) {
-                    newType = Attack.FAKE_DEFF_TYPE;
-                }
-            }
-            UnitHolder newUnit = null;
-            if (jAdeptUnitBox.isSelected()) {
-                newUnit = (UnitHolder) jUnitBox.getSelectedItem();
-            }
-
-            for (Attack attack : getSelectedAttacks()) {
-                if (newType != -2) {
-                    attack.setType(newType);
-                }
-                if (newUnit != null) {
-                    attack.setUnit(newUnit);
-                }
-            }
-            attackModel.fireTableDataChanged();
+            actionListener.actionPerformed(new ActionEvent(this, 0, "UnitChange"));
         }
         jChangeAttackTypeDialog.setVisible(false);
 }//GEN-LAST:event_fireChangeUnitTypeEvent
@@ -1161,25 +1036,25 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
-    private javax.swing.JTextField jAPIKey;
-    private javax.swing.JButton jAcceptChangeUnitTypeButton;
-    private javax.swing.JCheckBox jAdeptTypeBox;
-    private javax.swing.JCheckBox jAdeptUnitBox;
+    private static javax.swing.JTextField jAPIKey;
+    private static javax.swing.JButton jAcceptChangeUnitTypeButton;
+    private static javax.swing.JCheckBox jAdeptTypeBox;
+    private static javax.swing.JCheckBox jAdeptUnitBox;
     private javax.swing.JPanel jAdeptUnitPanel;
-    private de.tor.tribes.ui.components.DateTimeField jArriveDateField;
-    private javax.swing.JRadioButton jAttackType;
-    private javax.swing.JButton jButton13;
-    private javax.swing.JButton jButton14;
-    private javax.swing.JButton jButton15;
-    private javax.swing.JButton jCancelButton;
+    private static de.tor.tribes.ui.components.DateTimeField jArriveDateField;
+    private static javax.swing.JRadioButton jAttackType;
+    private static javax.swing.JButton jButton13;
+    private static javax.swing.JButton jButton14;
+    private static javax.swing.JButton jButton15;
+    private static javax.swing.JButton jCancelButton;
     private static javax.swing.JDialog jChangeAttackTypeDialog;
-    private javax.swing.JSpinner jDayField;
-    private javax.swing.JRadioButton jDefType;
-    private javax.swing.JButton jDoScriptExportButton;
-    private javax.swing.JRadioButton jEnobleType;
-    private javax.swing.JRadioButton jFakeDefType;
-    private javax.swing.JRadioButton jFakeType;
-    private javax.swing.JSpinner jHourField;
+    private static javax.swing.JSpinner jDayField;
+    private static javax.swing.JRadioButton jDefType;
+    private static javax.swing.JButton jDoScriptExportButton;
+    private static javax.swing.JRadioButton jEnobleType;
+    private static javax.swing.JRadioButton jFakeDefType;
+    private static javax.swing.JRadioButton jFakeType;
+    private static javax.swing.JSpinner jHourField;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
@@ -1196,32 +1071,165 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JSpinner jMinuteField;
-    private javax.swing.JRadioButton jModifyArrivalOption;
-    private javax.swing.JRadioButton jMoveTimeOption;
-    private javax.swing.JRadioButton jNoType;
-    private javax.swing.JCheckBox jNotRandomToNightBonus;
-    private javax.swing.JButton jOKButton;
+    private static javax.swing.JSpinner jMinuteField;
+    private static javax.swing.JRadioButton jModifyArrivalOption;
+    private static javax.swing.JRadioButton jMoveTimeOption;
+    private static javax.swing.JRadioButton jNoType;
+    private static javax.swing.JCheckBox jNotRandomToNightBonus;
+    private static javax.swing.JButton jOKButton;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
-    private javax.swing.JFormattedTextField jRandomField;
-    private javax.swing.JRadioButton jRandomizeOption;
+    private static javax.swing.JFormattedTextField jRandomField;
+    private static javax.swing.JRadioButton jRandomizeOption;
     private static javax.swing.JDialog jScriptExportDialog;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSpinner jSecondsField;
+    private static javax.swing.JSpinner jSecondsField;
     private static javax.swing.JDialog jSendAttacksIGMDialog;
-    private javax.swing.JButton jSendButton;
-    private javax.swing.JCheckBox jShowAttacksInOverview;
-    private javax.swing.JCheckBox jShowAttacksInPlace;
-    private javax.swing.JCheckBox jShowAttacksInVillageInfo;
-    private javax.swing.JCheckBox jShowAttacksOnConfirmPage;
-    private javax.swing.JTextField jSubject;
+    private static javax.swing.JButton jSendButton;
+    private static javax.swing.JCheckBox jShowAttacksInOverview;
+    private static javax.swing.JCheckBox jShowAttacksInPlace;
+    private static javax.swing.JCheckBox jShowAttacksInVillageInfo;
+    private static javax.swing.JCheckBox jShowAttacksOnConfirmPage;
+    private static javax.swing.JTextField jSubject;
     private static javax.swing.JDialog jTimeChangeDialog;
-    private javax.swing.JComboBox jUnitBox;
+    private static javax.swing.JComboBox jUnitBox;
     private org.jdesktop.swingx.JXLabel jXLabel1;
     // End of variables declaration//GEN-END:variables
+
+    public void fireChangeTimeEvent() {
+        List<Attack> attacksToModify = getSelectedAttacks();
+        if (jMoveTimeOption.isSelected()) {
+            Integer sec = (Integer) jSecondsField.getValue();
+            Integer min = (Integer) jMinuteField.getValue();
+            Integer hour = (Integer) jHourField.getValue();
+            Integer day = (Integer) jDayField.getValue();
+
+            for (Attack attack : attacksToModify) {
+                long arrive = attack.getArriveTime().getTime();
+                long diff = sec * 1000 + min * 60000 + hour * 3600000 + day * 86400000;
+                //later if first index is selected
+                //if later, add diff to arrival, else remove diff from arrival
+                arrive += diff;
+                attack.setArriveTime(new Date(arrive));
+            }
+
+        } else if (jModifyArrivalOption.isSelected()) {
+            Date arrive = jArriveDateField.getSelectedDate();
+            for (Attack attack : attacksToModify) {
+                //later if first index is selected
+                //if later, add diff to arrival, else remove diff from arrival
+                attack.setArriveTime(arrive);
+            }
+
+        } else if (jRandomizeOption.isSelected()) {
+            long rand = (Long) jRandomField.getValue() * 60 * 60 * 1000;
+            for (Attack attack : attacksToModify) {
+                Calendar c = Calendar.getInstance();
+                boolean valid = false;
+                while (!valid) {
+                    //random until valid value was found
+                    long arrive = attack.getArriveTime().getTime();
+                    //later if first index is selected
+                    //if later, add diff to arrival, else remove diff from arrival
+                    int sign = (Math.random() > .5) ? 1 : -1;
+                    arrive = (long) (arrive + (sign * Math.random() * rand));
+
+                    c.setTimeInMillis(arrive);
+                    int hours = c.get(Calendar.HOUR_OF_DAY);
+                    if (hours >= 0 && hours < 8 && jNotRandomToNightBonus.isSelected()) {
+                        //only invalid if in night bonus and this is not allowed
+                        valid = false;
+                    } else {
+                        valid = true;
+                    }
+                }
+                attack.setArriveTime(c.getTime());
+            }
+        }
+        attackModel.fireTableDataChanged();
+    }
+
+    public void fireChangeUnitEvent() {
+        int newType = -2;
+        if (jAdeptTypeBox.isSelected()) {
+            if (jNoType.isSelected()) {
+                newType = Attack.NO_TYPE;
+            } else if (jAttackType.isSelected()) {
+                newType = Attack.CLEAN_TYPE;
+            } else if (jEnobleType.isSelected()) {
+                newType = Attack.SNOB_TYPE;
+            } else if (jDefType.isSelected()) {
+                newType = Attack.SUPPORT_TYPE;
+            } else if (jFakeType.isSelected()) {
+                newType = Attack.FAKE_TYPE;
+            } else if (jFakeDefType.isSelected()) {
+                newType = Attack.FAKE_DEFF_TYPE;
+            }
+        }
+        UnitHolder newUnit = null;
+        if (jAdeptUnitBox.isSelected()) {
+            newUnit = (UnitHolder) jUnitBox.getSelectedItem();
+        }
+
+        for (Attack attack : getSelectedAttacks()) {
+            if (newType != -2) {
+                attack.setType(newType);
+            }
+            if (newUnit != null) {
+                attack.setUnit(newUnit);
+            }
+        }
+        attackModel.fireTableDataChanged();
+    }
+
+    public void fireSendIGMEvent() {
+        String subject = jSubject.getText();
+        String apiKey = jAPIKey.getText().trim();
+        AttackIGMSender.SenderResult result = AttackIGMSender.sendAttackNotifications(getSelectedAttacks(), subject, apiKey);
+        switch (result.getCode()) {
+            case AttackIGMSender.ID_ERROR_WHILE_SUBMITTING:
+                // JOptionPaneHelper.showErrorBox(jSendAttacksIGMDialog, result.getMessage(), "Fehler");
+                showError(result.getMessage());
+                break;
+            case AttackIGMSender.ID_TOO_MANY_IGMS_PER_TRIBE:
+                //JOptionPaneHelper.showWarningBox(jSendAttacksIGMDialog, result.getMessage(), "Warnung");
+                showError(result.getMessage());
+                break;
+            default:
+                //JOptionPaneHelper.showInformationBox(jSendAttacksIGMDialog, result.getMessage(), "Information");
+                showSuccess(result.getMessage());
+        }
+    }
+
+    public void fireExportScriptEvent() {
+        List<Attack> attacks = getSelectedAttacks();
+        if (attacks.isEmpty()) {
+            return;
+        }
+
+        if (AttackScriptWriter.writeAttackScript(attacks, false, 5, true, Color.GREEN, Color.RED, jShowAttacksInVillageInfo.isSelected(), jShowAttacksOnConfirmPage.isSelected(), jShowAttacksInPlace.isSelected(), jShowAttacksInOverview.isSelected())) {
+            showSuccess("Script erfolgreich nach 'zz_attack_info.user.js' geschrieben.\nDenke bitte daran, das Script in deinem Browser einzufügen/zu aktualisieren!");
+            if (System.getProperty("os.name").startsWith("Windows")) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Möchtest du das Speicherverzeichnis des Scripts nun im Explorer öffnen?", "Information", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                    try {
+                        Runtime.getRuntime().exec("explorer.exe .\\");
+                    } catch (Exception e) {
+                        showError("Explorer konnte nicht geöffnet werden.");
+                    }
+                }
+            }
+        } else {
+            showError("Fehler beim Schreiben des Scripts.");
+        }
+        //store properties
+        GlobalOptions.addProperty("attack.script.draw.vectors", Boolean.toString(false));
+        GlobalOptions.addProperty("attack.script.attacks.in.village.info", Boolean.toString(jShowAttacksInVillageInfo.isSelected()));
+        GlobalOptions.addProperty("attack.script.attacks.on.confirm.page", Boolean.toString(jShowAttacksOnConfirmPage.isSelected()));
+        GlobalOptions.addProperty("attack.script.attacks.in.place", Boolean.toString(jShowAttacksInPlace.isSelected()));
+        GlobalOptions.addProperty("attack.script.attacks.in.overview", Boolean.toString(jShowAttacksInOverview.isSelected()));
+    }
 
     public void cleanup() {
         List<ManageableType> elements = AttackManager.getSingleton().getAllElements(getAttackPlan());
@@ -1382,11 +1390,8 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             } else {
                 buffer.append("[u]Angriffsplan[/u]\n\n");
             }
-            String sUrl = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
 
-            for (Attack attack : attacks) {
-                buffer.append(AttackToBBCodeFormater.formatAttack(attack, sUrl, extended));
-            }
+            buffer.append(new AttackListFormatter().formatElements(attacks, extended));
 
             if (extended) {
                 buffer.append("\n[size=8]Erstellt am ");

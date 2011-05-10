@@ -30,7 +30,7 @@ import de.tor.tribes.ui.dnd.VillageTransferable;
 import de.tor.tribes.ui.editors.AttackTypeCellEditor;
 import de.tor.tribes.ui.editors.FakeCellEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
-import de.tor.tribes.ui.models.TroopsManagerTableModel;
+import de.tor.tribes.ui.models.TroopsTableModel;
 import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
@@ -138,7 +138,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
     /** Creates new form TribeTribeAttackFrame */
     public TribeTribeAttackFrame() {
         initComponents();
-        TagManager.getSingleton().addManagerListener(this);
+        TagManager.getSingleton().addManagerListener(TribeTribeAttackFrame.this);
         logPanel = new AlgorithmLogPanel();
         mLogFrame = new JFrame("Informationen zur Berechnung");
         mLogFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -153,7 +153,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
         jAttackResultDetailsFrame.pack();
         jTargetResultDetailsFrame.pack();
         dragSource = DragSource.getDefaultDragSource();
-        dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY_OR_MOVE, this);
+        dragSource.createDefaultDragGestureRecognizer(TribeTribeAttackFrame.this, DnDConstants.ACTION_COPY_OR_MOVE, this);
         DropTarget dropTarget = new DropTarget(this, this);
         this.setDropTarget(dropTarget);
         for (MouseListener l : jAllTargetsComboBox.getMouseListeners()) {
@@ -2781,9 +2781,9 @@ private void fireUseSnobEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     Hashtable<Village, Integer> assignedTroops = new Hashtable<Village, Integer>();
     for (int row = 0; row < rows; row++) {
         Village v = (Village) model.getValueAt(row, 0);
-        VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(v);
+        VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.IN_VILLAGE);
         if (troops != null) {
-            int availSnobs = troops.getTroopsInVillage().get(snob);
+            int availSnobs = troops.getTroopsOfUnitInVillage(snob);
             Integer assignedSnobs = assignedTroops.get(v);
             if (assignedSnobs == null) {
                 assignedSnobs = 0;
@@ -2954,7 +2954,7 @@ private void fireUpdateUsageEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         for (Village pSource : pSourceVillages) {
             VillageTroopsHolder troopsForVillage = TroopsManager.getSingleton().getTroopsForVillage(pSource);
             if (troopsForVillage != null) {
-                int ownTroopsInVillage = troopsForVillage.getTroopPopCount(TroopsManagerTableModel.SHOW_OWN_TROOPS);
+                int ownTroopsInVillage = troopsForVillage.getTroopPopCount();
                 if (ownTroopsInVillage < 20000) {
                     if (!villagesWithSmallTroopCount.contains(pSource)) {
                         villagesWithSmallTroopCount.add(pSource);

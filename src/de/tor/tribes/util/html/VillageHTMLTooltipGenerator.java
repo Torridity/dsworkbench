@@ -222,9 +222,12 @@ public class VillageHTMLTooltipGenerator {
         res += "<table width=\"100%\" style=\"border: solid 1px black; padding: 4px;background-color:#EFEBDF;\">\n";
         res += "<tr>\n";
         //add unit table
-        VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage);
+        VillageTroopsHolder inVillage = TroopsManager.getSingleton().getTroopsForVillage(pVillage);
+        VillageTroopsHolder outside = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.OUTWARDS);
+        VillageTroopsHolder onTheWay = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.ON_THE_WAY);
+
         Village current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
-        if (holder == null && (current != null && current.equals(pVillage))) {
+        if (inVillage == null && outside == null && onTheWay == null && (current != null && current.equals(pVillage))) {
             //we have the active user village but no troops
             return "";
         }
@@ -238,22 +241,22 @@ public class VillageHTMLTooltipGenerator {
             }
             res += "<img src=\"" + VillageHTMLTooltipGenerator.class.getResource("/res/ui/" + unit.getPlainName() + ".png") + "\"/>";
             res += "<BR/>\n";
-            if (holder != null) {
-                Integer amount = holder.getTroopsInVillage().get(unit);
+            if (inVillage != null) {
+                Integer amount = inVillage.getTroopsOfUnitInVillage(unit);
                 if (amount == 0) {
                     res += "<font style=\"color:#DED3B9;\">0</font>\n";
                 } else {
                     res += "<font>" + amount + "</font>\n";
                 }
                 res += "<BR/>\n";
-                amount = holder.getTroopsOutside().get(unit);
+                amount = outside.getTroopsOfUnitInVillage(unit);
                 if (amount == 0) {
                     res += "<font style=\"color:#DED3B9;\">0</font>\n";
                 } else {
                     res += "<font>" + amount + "</font>\n";
                 }
                 res += "<BR/>\n";
-                amount = holder.getTroopsOnTheWay().get(unit);
+                amount = onTheWay.getTroopsOfUnitInVillage(unit);
                 if (amount == 0) {
                     res += "<font style=\"color:#DED3B9;\">0</font>\n";
                 } else {

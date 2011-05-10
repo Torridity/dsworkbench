@@ -31,7 +31,7 @@ import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.models.TroopsManagerTableModel;
+import de.tor.tribes.ui.models.TroopsTableModel;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.ClipboardWatch;
 import de.tor.tribes.util.Constants;
@@ -445,7 +445,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         try {
             jOnlineLabel.setIcon(new ImageIcon("./graphics/icons/online.png"));
             jEnableClipboardWatchButton.setIcon(new ImageIcon("./graphics/icons/watch_clipboard.png"));
-            jCenterIngameButton.setIcon(new ImageIcon("./graphics/icons/center.png"));
+            jCenterIngameButton.setIcon(new ImageIcon(DSWorkbenchMainFrame.class.getResource("/res/ui/center_ingame.png")));
             jRefreshButton.setIcon(new ImageIcon("./graphics/icons/refresh.png"));
             jCenterCoordinateIngame.setIcon(new ImageIcon("./graphics/icons/center.png"));
         } catch (Exception e) {
@@ -665,7 +665,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             //ConquersTableModel.getSingleton();
             DSWorkbenchConquersFrame.getSingleton().resetView();
             //update troops table and troops view
-            TroopsManagerTableModel.getSingleton().setup();
             StandardAttackTableModel.getSingleton().setup();
             DSWorkbenchTroopsFrame.getSingleton().resetView();
             DistanceManager.getSingleton().clear();
@@ -2703,7 +2702,7 @@ private void fireShowImportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
                 boolean markersImported = MarkerManager.getSingleton().importData(target, extension);
                 boolean reportsImported = ReportManager.getSingleton().importData(target, extension);
                 boolean tagImported = TagManager.getSingleton().importData(target, extension);
-                boolean troopsImported = TroopsManager.getSingleton().importTroops(target);
+                boolean troopsImported = TroopsManager.getSingleton().importData(target, null);
                 boolean formsImported = FormManager.getSingleton().importData(target, extension);
                 boolean notesImported = NoteManager.getSingleton().importData(target, extension);
 
@@ -2856,7 +2855,8 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
                 }
 
                 if (jExportTroops.isSelected()) {
-                    exportString += TroopsManager.getSingleton().getExportData();
+                      //TODO: Add form export
+                    exportString += TroopsManager.getSingleton().getExportData(null);
                 }
 
                 if (jExportForms.isSelected()) {

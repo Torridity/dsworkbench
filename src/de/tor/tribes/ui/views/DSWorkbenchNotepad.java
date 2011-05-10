@@ -29,6 +29,7 @@ import de.tor.tribes.ui.NoteTableTab;
 import de.tor.tribes.ui.dnd.VillageTransferable;
 import de.tor.tribes.util.BBChangeListener;
 import de.tor.tribes.util.BBCodeFormatter;
+import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
@@ -302,18 +303,21 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
     private void buildMenu() {
         JXTaskPane transferTaskPane = new JXTaskPane();
         transferTaskPane.setTitle("Übertragen");
-        JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
-        transferVillageList.setToolTipText("Zentriert das gewählte Notizdorf auf der Hauptkarte");
+        JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/center_ingame.png")));
+        transferVillageList.setToolTipText("Zentriert das gewählte Notizdorf im Spiel");
         transferVillageList.addMouseListener(new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                centerNoteVillage();
+                NoteTableTab tab = getActiveTab();
+                if (tab != null) {
+                    tab.centerNoteVillageInGame();
+                }
             }
         });
         transferTaskPane.getContentPane().add(transferVillageList);
         JXButton transferNotes = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/att_clipboardBB.png")));
-        transferNotes.setToolTipText("Überträgt die gewählten Notizen in die Zwischenablage");
+        transferNotes.setToolTipText("Überträgt die gewählten Notizen als BB-Codes in die Zwischenablage");
         transferNotes.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -335,38 +339,15 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                centerNoteVillage();
+                NoteTableTab tab = getActiveTab();
+                if (tab != null) {
+                    tab.centerNoteVillage();
+                }
             }
         });
 
         miscPane.getContentPane().add(centerVillage);
-
-        JXButton exportEditor = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
-        exportEditor.setToolTipText("Öffnet den Editor für das Format des BB-Code Exports");
-        exportEditor.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                jExportFormatDialog.pack();
-                bBPanel1.setBBChangeListener(new BBChangeListener() {
-
-                    @Override
-                    public void fireBBChangedEvent() {
-                        jTextPane1.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body><nobr>" + BBCodeFormatter.toHtml(bBPanel1.getText()) + "</nobr></body></html>");
-                    }
-                });
-                jExportFormatDialog.setVisible(true);
-
-            }
-        });
-
-        miscPane.getContentPane().add(exportEditor);
         centerPanel.setupTaskPane(transferTaskPane, miscPane);
-    }
-
-    private void centerNoteVillage() {
-        Village v = (Village) jVillageList.getSelectedValue();
-        DSWorkbenchMainFrame.getSingleton().centerVillage(v);
     }
 
     /**Get the currently selected tab*/
@@ -1597,29 +1578,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         if (tab != null) {
             tab.updateFilter(jTextField1.getText(), jFilterCaseSensitive.isSelected(), jFilterRows.isSelected());
         }
-    }
-
-    private void showCurrentNote() {
-        /* if (currentNote == null) {
-        jVillageList.setModel(new DefaultListModel());
-        jNotePane.setBBCode("");
-        } else {
-        DefaultListModel model = new DefaultListModel();
-        for (Integer id : currentNote.getVillageIds()) {
-        Village v = DataHolder.getSingleton().getVillagesById().get(id);
-        model.addElement(v);
-        }
-        
-        jVillageList.setModel(model);
-        jNotePane.setBBCode(currentNote.getNoteText());
-        jLastModified.setText(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(new Date(currentNote.getTimestamp())));
-        jIconBox.setSelectedItem(currentNote.getMapMarker());
-        jNoteSymbolBox.setSelectedItem(currentNote.getNoteSymbol());
-        jNotesList.setSelectedValue(currentNote, true);
-        }
-        
-        List<Note> n = NoteManager.getSingleton().getNotes();
-        setTitle("Notizblock - Notiz " + (n.indexOf(currentNote) + 1) + " von " + n.size());*/
     }
 
     @Override

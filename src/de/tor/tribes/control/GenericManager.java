@@ -20,6 +20,7 @@ import java.util.List;
 public abstract class GenericManager<C extends ManageableType> {
 
     public static final String DEFAULT_GROUP = "default";
+    private String alternateDefaultGroupName = null;
     private List<GenericManagerListener> listeners = new ArrayList<GenericManagerListener>();
     private HashMap<String, List<ManageableType>> managedElementGroups = new HashMap<String, List<ManageableType>>();
     private boolean groupable = false;
@@ -27,14 +28,23 @@ public abstract class GenericManager<C extends ManageableType> {
 
     /**Default non-groupable constructor*/
     public GenericManager() {
-        this(false);
+        this(null, false);
     }
 
     /**Default groupable constructor
      * @param pGroupable
      */
     public GenericManager(boolean pGroupable) {
+        this(null, pGroupable);
+    }
+
+    public String getDefaultGroupName() {
+        return alternateDefaultGroupName;
+    }
+
+    public GenericManager(String pDefaultGroup, boolean pGroupable) {
         groupable = pGroupable;
+        alternateDefaultGroupName = pDefaultGroup;
         initialize();
     }
 
@@ -312,23 +322,23 @@ public abstract class GenericManager<C extends ManageableType> {
         fireDataChangedEvents(pGroup);
     }
 
-    public void invalidate() {
+    public final void invalidate() {
         valid = false;
     }
 
-    public void revalidate() {
+    public final void revalidate() {
         revalidate(null, false);
     }
 
-    public void revalidate(boolean pNotify) {
+    public final void revalidate(boolean pNotify) {
         revalidate(null, pNotify);
     }
 
-    public void revalidate(String pGroup) {
+    public final void revalidate(String pGroup) {
         revalidate(pGroup, false);
     }
 
-    public void revalidate(String pGroup, boolean notify) {
+    public final void revalidate(String pGroup, boolean notify) {
         valid = true;
         if (notify) {
             if (pGroup == null) {
@@ -339,11 +349,11 @@ public abstract class GenericManager<C extends ManageableType> {
         }
     }
 
-    private void fireDataChangedEvents() {
+    public final void fireDataChangedEvents() {
         fireDataChangedEvents(null);
     }
 
-    private void fireDataChangedEvents(String pGroup) {
+    public final void fireDataChangedEvents(String pGroup) {
         if (!valid) {
             return;
         }
@@ -362,6 +372,9 @@ public abstract class GenericManager<C extends ManageableType> {
 
     }
 
+    /////////////////////////////////////////////
+    ////Abstract methods that must be implemented
+    /////////////////////////////////////////////
     public abstract void loadElements(String pFile);
 
     public abstract void saveElements(String pFile);
@@ -369,7 +382,4 @@ public abstract class GenericManager<C extends ManageableType> {
     public abstract String getExportData(final List<String> pGroupsToExport);
 
     public abstract boolean importData(File pFile, String pExtension);
-
-    public static void main(String[] args) {
-    }
 }

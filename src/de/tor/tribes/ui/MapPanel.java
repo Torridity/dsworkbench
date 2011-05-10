@@ -1257,30 +1257,29 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 }*/
             }
         } else if (evt.getSource() == jCurrentToAStarAsAttacker || evt.getSource() == jCurrentToAStarAsDefender) {
-            VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(actionMenuVillage);
-            if (holder == null) {
-                JOptionPaneHelper.showInformationBox(this, "Keine Truppeninformationen vorhanden", "Information");
+            VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(actionMenuVillage, TroopsManager.TROOP_TYPE.OWN);
+            if (own == null) {
+                JOptionPaneHelper.showInformationBox(this, "Keine Truppeninformationen (Eigene) vorhanden", "Information");
                 return;
             }
             Hashtable<String, Double> values = new Hashtable<String, Double>();
-            Hashtable<UnitHolder, Integer> ownTroops = holder.getOwnTroops();
-            if (evt.getSource() == jCurrentToAStarAsAttacker && ownTroops == null) {
+            if (evt.getSource() == jCurrentToAStarAsAttacker && own == null) {
                 JOptionPaneHelper.showInformationBox(this, "Keine Truppeninformationen vorhanden", "Information");
                 return;
             }
             
-            Hashtable<UnitHolder, Integer> inVillage = holder.getTroopsInVillage();
+            VillageTroopsHolder inVillage = TroopsManager.getSingleton().getTroopsForVillage(actionMenuVillage, TroopsManager.TROOP_TYPE.IN_VILLAGE);
             if (evt.getSource() == jCurrentToAStarAsDefender && inVillage == null) {
-                JOptionPaneHelper.showInformationBox(this, "Keine Truppeninformationen vorhanden", "Information");
+                JOptionPaneHelper.showInformationBox(this, "Keine Truppeninformationen (im Dorf= vorhanden", "Information");
                 return;
             }
             
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
                 if (evt.getSource() == jCurrentToAStarAsAttacker) {
-                    values.put("att_" + unit.getPlainName(), (double) ownTroops.get(unit));
+                    values.put("att_" + unit.getPlainName(), (double) own.getTroopsOfUnitInVillage(unit));
                 }
                 if (evt.getSource() == jCurrentToAStarAsDefender) {
-                    values.put("def_" + unit.getPlainName(), (double) inVillage.get(unit));
+                    values.put("def_" + unit.getPlainName(), (double) inVillage.getTroopsOfUnitInVillage(unit));
                 }
             }
             if (!DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {

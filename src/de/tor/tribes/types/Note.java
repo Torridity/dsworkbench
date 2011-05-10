@@ -186,11 +186,6 @@ public class Note extends ManageableType implements BBSupport {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        String note = "<notes><note><timestamp>10001232</timestamp><text>MeinText</text></note></notes>";
-        Document d = JaxenUtils.getDocument(note);
-    }
-
     /**
      * @return the villageIds
      */
@@ -231,6 +226,7 @@ public class Note extends ManageableType implements BBSupport {
      */
     public void setMapMarker(int mapMarker) {
         this.mapMarker = mapMarker;
+        setTimestamp(System.currentTimeMillis());
     }
 
     /**
@@ -245,6 +241,7 @@ public class Note extends ManageableType implements BBSupport {
      */
     public void setNoteSymbol(int noteSymbol) {
         this.noteSymbol = noteSymbol;
+        setTimestamp(System.currentTimeMillis());
     }
 
     @Override

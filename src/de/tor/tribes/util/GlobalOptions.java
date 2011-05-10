@@ -211,6 +211,9 @@ public class GlobalOptions {
 
     /**Get the value of a property*/
     public static String getProperty(String pKey) {
+        if (pKey == null) {
+            return null;
+        }
         return GLOBAL_PROPERTIES.getProperty(pKey);
     }
 
@@ -233,7 +236,7 @@ public class GlobalOptions {
             logger.debug("Loading tags");
             TagManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/tags.xml");
             logger.debug("Loading troops");
-            TroopsManager.getSingleton().loadTroopsFromFile(getSelectedProfile().getProfileDirectory() + "/troops.xml");
+            TroopsManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/troops.xml");
             logger.debug("Loading forms");
             FormManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/forms.xml");
             logger.debug("Loading churches");
@@ -266,7 +269,7 @@ public class GlobalOptions {
             logger.debug("Saving tags");
             TagManager.getSingleton().saveElements(getSelectedProfile().getProfileDirectory() + "/tags.xml");
             logger.debug("Saving troops");
-            TroopsManager.getSingleton().saveTroopsToFile(getSelectedProfile().getProfileDirectory() + "/troops.xml");
+            TroopsManager.getSingleton().saveElements(getSelectedProfile().getProfileDirectory() + "/troops.xml");
             logger.debug("Saving forms");
             FormManager.getSingleton().saveElements(getSelectedProfile().getProfileDirectory() + "/forms.xml");
             logger.debug("Saving churches");

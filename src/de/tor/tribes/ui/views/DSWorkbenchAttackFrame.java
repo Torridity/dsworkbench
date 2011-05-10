@@ -84,7 +84,15 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
     public void actionPerformed(ActionEvent e) {
         AttackTableTab activeTab = getActiveTab();
         if (e.getActionCommand() != null && activeTab != null) {
-            if (e.getActionCommand().equals("Copy")) {
+            if (e.getActionCommand().equals("TimeChange")) {
+                activeTab.fireChangeTimeEvent();
+            } else if (e.getActionCommand().equals("UnitChange")) {
+                activeTab.fireChangeUnitEvent();
+            } else if (e.getActionCommand().equals("SendIGM")) {
+                activeTab.fireSendIGMEvent();
+            } else if (e.getActionCommand().equals("ExportScript")) {
+                activeTab.fireExportScriptEvent();
+            } else if (e.getActionCommand().equals("Copy")) {
                 activeTab.transferSelection(AttackTableTab.TRANSFER_TYPE.COPY_TO_INTERNAL_CLIPBOARD);
             } else if (e.getActionCommand().equals("Cut")) {
                 activeTab.transferSelection(AttackTableTab.TRANSFER_TYPE.CUT_TO_INTERNAL_CLIPBOARD);

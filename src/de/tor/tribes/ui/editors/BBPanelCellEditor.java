@@ -7,9 +7,11 @@ package de.tor.tribes.ui.editors;
 import de.tor.tribes.ui.BBPanel;
 import de.tor.tribes.util.BBChangeListener;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.MouseInfo;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowListener;
 import java.util.EventObject;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JDialog;
@@ -35,6 +37,16 @@ public class BBPanelCellEditor extends AbstractCellEditor implements TableCellEd
 
             @Override
             public void fireBBChangedEvent() {
+            }
+        });
+        editor.addFocusListener(new FocusListener() {
+
+            @Override
+            public void focusGained(FocusEvent e) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
                 dlg.setVisible(false);
                 fireEditingStopped();
             }
@@ -51,17 +63,17 @@ public class BBPanelCellEditor extends AbstractCellEditor implements TableCellEd
 
     @Override
     public Object getCellEditorValue() {
-        return editor.getText();
+        return editor.getBBCode();
     }
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         editor.setBBCode((String) value);
         editor.setEditMode(true);
-        // editor.setSize(200, 100);
-        /*editor.setPreferredSize(new Dimension(200, 100));
-        editor.setMinimumSize(new Dimension(200, 100));*/
-        dlg = new JDialog(new JFrame(), true);
+        editor.setSize(360, 250);
+        editor.setPreferredSize(new Dimension(360, 250));
+        editor.setMinimumSize(new Dimension(360, 250));
+        dlg = new JDialog(new JFrame(), false);
         dlg.setLocation(MouseInfo.getPointerInfo().getLocation());
         dlg.setResizable(false);
         dlg.setUndecorated(true);

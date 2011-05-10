@@ -20,7 +20,7 @@ import java.awt.Graphics2D;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JFrame;
-import de.tor.tribes.ui.models.TroopsManagerTableModel;
+import de.tor.tribes.ui.models.TroopsTableModel;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -56,10 +56,10 @@ public class TroopInfoChartPanel extends javax.swing.JPanel {
             holder = TroopsManager.getSingleton().getTroopsForVillage(village);
         }
         if (holder != null) {
-            int own = holder.getTroopPopCount(TroopsManagerTableModel.SHOW_OWN_TROOPS);
-            int inVillage = holder.getTroopPopCount(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
-            int outside = holder.getTroopPopCount(TroopsManagerTableModel.SHOW_TROOPS_OUTSIDE);
-            int ontheway = holder.getTroopPopCount(TroopsManagerTableModel.SHOW_TROOPS_ON_THE_WAY);
+            int own = holder.getTroopPopCount();
+            int inVillage = holder.getTroopPopCount();
+            int outside = holder.getTroopPopCount();
+            int ontheway = holder.getTroopPopCount();
             //invillage(own, foreign), outside, ontheway
             int overall = inVillage + outside + ontheway;
             double percInVillage = (inVillage != 0) ? ((double) inVillage / (double) overall) : 0;

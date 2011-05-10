@@ -35,6 +35,17 @@ public class JOptionPaneHelper {
         return result;
     }
 
+    public static int showQuestionThreeChoicesBox(Component pParent, String pMessage, String pTitle, String pLeftOption, String pMiddleOption, String pRightOption) {
+        UIManager.put("OptionPane.noButtonText", pLeftOption);
+        UIManager.put("OptionPane.yesButtonText", pMiddleOption);
+        UIManager.put("OptionPane.cancelButtonText", pRightOption);
+        int result = JOptionPane.showConfirmDialog(pParent, pMessage, pTitle, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        UIManager.put("OptionPane.noButtonText", "No");
+        UIManager.put("OptionPane.yesButtonText", "Yes");
+        UIManager.put("OptionPane.cancelButtonText", "Cancel");
+        return result;
+    }
+
     public static int showInformationConfirmBox(Component pParent, String pMessage, String pTitle, String pLeftOption, String pRightOption) {
         UIManager.put("OptionPane.noButtonText", pLeftOption);
         UIManager.put("OptionPane.yesButtonText", pRightOption);
@@ -47,7 +58,7 @@ public class JOptionPaneHelper {
     public static int showWarningConfirmBox(Component pParent, String pMessage, String pTitle, String pLeftOption, String pRightOption) {
         UIManager.put("OptionPane.noButtonText", pLeftOption);
         UIManager.put("OptionPane.yesButtonText", pRightOption);
-        int result = JOptionPane.showConfirmDialog(pParent, pMessage, pTitle, JOptionPane.YES_NO_OPTION,  JOptionPane.WARNING_MESSAGE);
+        int result = JOptionPane.showConfirmDialog(pParent, pMessage, pTitle, JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         UIManager.put("OptionPane.noButtonText", "No");
         UIManager.put("OptionPane.yesButtonText", "Yes");
         return result;

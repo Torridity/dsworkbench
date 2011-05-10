@@ -355,21 +355,15 @@ public class TroopSplitDialog extends javax.swing.JDialog {
             while (unitKeys.hasMoreElements()) {
                 UnitHolder unitKey = unitKeys.nextElement();
                 Integer splitAmount = pSplitValues.get(unitKey);
-                VillageTroopsHolder troopsHolder = TroopsManager.getSingleton().getTroopsForVillage(mVillage);
-                if (troopsHolder == null) {
-                    //do nothing if troops info is not available
-                    iSplitCount = -1;
-                    return;
-                }
-
-                Hashtable<UnitHolder, Integer> ownTroopsInVillage = troopsHolder.getOwnTroops();
-                if (ownTroopsInVillage == null) {
+                VillageTroopsHolder ownTroops = TroopsManager.getSingleton().getTroopsForVillage(mVillage, TroopsManager.TROOP_TYPE.OWN);
+       
+                  if (ownTroops == null) {
                     //do nothing if there are no own troops in the village
                     iSplitCount = 0;
                     return;
                 }
 
-                int amountInVillage = ownTroopsInVillage.get(unitKey);
+                int amountInVillage = ownTroops.getTroopsOfUnitInVillage(unitKey);
                 int split = amountInVillage / splitAmount;
                 int currentSplitCount = split;
                 int rest = amountInVillage - split * splitAmount;

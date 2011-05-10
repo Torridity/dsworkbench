@@ -20,9 +20,11 @@ import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.NoteCellRenderer;
 import de.tor.tribes.ui.renderer.NoteIconCellRenderer;
 import de.tor.tribes.ui.renderer.VisibilityCellRenderer;
+import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.bb.NoteListFormatter;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.note.NoteManager;
 import java.awt.Color;
@@ -38,8 +40,11 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
@@ -203,6 +208,25 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
         jXLabel1.setText(pMessage);
     }
 
+    public void centerNoteVillage() {
+        Village v = (Village) jxVillageList.getSelectedValue();
+        if (v == null) {
+            showInfo("Kein Dorf ausgewählt");
+            return;
+        }
+        DSWorkbenchMainFrame.getSingleton().centerVillage(v);
+    }
+
+    public void centerNoteVillageInGame() {
+        Village v = (Village) jxVillageList.getSelectedValue();
+        if (v == null) {
+            showInfo("Kein Dorf ausgewählt");
+            return;
+        }
+
+        BrowserCommandSender.centerVillage(v);
+    }
+
     public String getNoteSet() {
         return sMarkerSet;
     }
@@ -352,11 +376,54 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
             case FROM_INTERNAL_CLIPBOARD:
                 copyFromInternalClipboard();
                 break;
-            case CLIPBOARD_PLAIN:
-                break;
             case CLIPBOARD_BB:
-
+                copyBBToExternalClipboardEvent();
                 break;
+        }
+    }
+
+    private void copyBBToExternalClipboardEvent() {
+        try {
+            List<Note> notes = getSelectedNotes();
+            if (notes.isEmpty()) {
+                showInfo("Keine Notizen ausgewählt");
+                return;
+            }
+            boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
+
+            StringBuilder buffer = new StringBuilder();
+
+            buffer.append(new NoteListFormatter().formatElements(notes, extended));
+
+            if (extended) {
+                buffer.append("\n[size=8]Erstellt am ");
+                buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+                buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url][/size]\n");
+            } else {
+                buffer.append("\nErstellt am ");
+                buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+                buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url]\n");
+            }
+
+            String b = buffer.toString();
+            StringTokenizer t = new StringTokenizer(b, "[");
+            int cnt = t.countTokens();
+            if (cnt > 1000) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Notizen benötigen mehr als 1000 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                    return;
+                }
+            }
+
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
+            String result = "Daten in Zwischenablage kopiert.";
+            //JOptionPaneHelper.showInformationBox(this, result, "Information");
+            showSuccess(result);
+        } catch (Exception e) {
+            logger.error("Failed to copy data to clipboard", e);
+            String result = "Fehler beim Kopieren in die Zwischenablage.";
+            showError(result);
         }
     }
 

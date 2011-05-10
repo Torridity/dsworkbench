@@ -30,7 +30,6 @@ public class TroopAmountListCellRenderer extends JLabel implements ListCellRende
             String value = (String) pValue;
 
             String[] amountAndName = value.split(" ");
-            int amount = Integer.parseInt(amountAndName[0]);
             String name = amountAndName[1].trim();
             UnitHolder unit = DataHolder.getSingleton().getUnitByPlainName(name);
             ImageIcon icon = ImageManager.getUnitIcon(unit);

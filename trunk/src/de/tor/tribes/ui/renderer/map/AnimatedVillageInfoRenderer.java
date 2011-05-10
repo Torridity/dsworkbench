@@ -7,7 +7,7 @@ package de.tor.tribes.ui.renderer.map;
 import de.tor.tribes.types.Note;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.ImageManager;
-import de.tor.tribes.ui.models.TroopsManagerTableModel;
+import de.tor.tribes.ui.models.TroopsTableModel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.note.NoteManager;
 import de.tor.tribes.util.troops.TroopsManager;
@@ -82,10 +82,10 @@ public class AnimatedVillageInfoRenderer {
         int centerY = (int) Math.floor(mCurrentLocation.getCenterY());
         int halfDiameter = (int) Math.floor(iDiameter / 2.0);
         if (mVillage != null && (holder = TroopsManager.getSingleton().getTroopsForVillage(mVillage)) != null) {
-            double offValue = holder.getOffValue(TroopsManagerTableModel.SHOW_OWN_TROOPS);
-            double defArchValue = holder.getDefArcherValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
-            double defCavValue = holder.getDefCavalryValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
-            double defValue = holder.getDefValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
+            double offValue = holder.getOffValue();
+            double defArchValue = holder.getDefArcherValue();
+            double defCavValue = holder.getDefCavalryValue();
+            double defValue = holder.getDefValue();
             double fightValueIn = offValue + defValue + defArchValue + defCavValue;
             Color before = g2d.getColor();
             Composite cb = g2d.getComposite();

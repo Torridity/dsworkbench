@@ -176,7 +176,6 @@ public class BBPanel extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         jColorChooseDialog = new javax.swing.JDialog();
         jPanel2 = new javax.swing.JPanel();
@@ -275,7 +274,7 @@ public class BBPanel extends javax.swing.JPanel {
         jBBPanel.setLayout(new java.awt.BorderLayout());
 
         jTextPane1.setEditable(false);
-        jTextPane1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jTextPane1.setFont(new java.awt.Font("Tahoma", 0, 12));
         jTextPane1.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {
                 caretupdate(evt);
@@ -476,7 +475,7 @@ public class BBPanel extends javax.swing.JPanel {
         });
         jPanel3.add(jRemoveButton);
 
-        jButton1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jButton1.setFont(new java.awt.Font("Tahoma", 0, 10));
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/search.png"))); // NOI18N
         jButton1.setToolTipText("Blendet die Vorschau in BB-Formatierung ein");
         jButton1.setMargin(new java.awt.Insets(2, 5, 2, 5));

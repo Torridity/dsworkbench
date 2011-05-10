@@ -8,7 +8,7 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.MapPanel;
-import de.tor.tribes.ui.models.TroopsManagerTableModel;
+import de.tor.tribes.ui.models.TroopsTableModel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
@@ -196,8 +196,8 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
             } catch (Exception e) {
                 maxDef = 650000;
             }
-            double defIn = holder.getDefValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
-            double defOwn = holder.getDefValue(TroopsManagerTableModel.SHOW_OWN_TROOPS);
+            double defIn = holder.getDefValue();
+            double defOwn = holder.getDefValue();
             double percOfMax = defIn / maxDef;
             double percFromOthers = (defIn - defOwn) / defIn;
             double half = (double) maxDef / 2.0;
@@ -289,10 +289,10 @@ class TroopAnimator {
         }
         VillageTroopsHolder holder = null;
         if (v != null && (holder = TroopsManager.getSingleton().getTroopsForVillage(v)) != null) {
-            double offValue = holder.getOffValue(TroopsManagerTableModel.SHOW_OWN_TROOPS);
-            double defArchValue = holder.getDefArcherValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
-            double defCavValue = holder.getDefCavalryValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
-            double defValue = holder.getDefValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
+            double offValue = holder.getOffValue();
+            double defArchValue = holder.getDefArcherValue();
+            double defCavValue = holder.getDefCavalryValue();
+            double defValue = holder.getDefValue();
 
             double fightValueIn = offValue + defValue + defArchValue + defCavValue;
             int centerX = (int) Math.floor((double) col * pFieldWidth + pFieldWidth / 2.0 - 16 + pDx);

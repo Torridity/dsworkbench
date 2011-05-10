@@ -125,7 +125,7 @@ public class SupportCalculator {
 
     private static UnitHolder calculateAvailableUnits(Village pTarget, Village pSource, Hashtable<UnitHolder, Integer> pUnitTable, Date pArrive, int pMinNumber) {
         Enumeration<UnitHolder> allowedKeys = pUnitTable.keys();
-        VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(pSource);
+        VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(pSource, TroopsManager.TROOP_TYPE.OWN);
         if (troops == null) {
             return null;
         }
@@ -134,8 +134,7 @@ public class SupportCalculator {
         UnitHolder slowestPossible = null;
         while (allowedKeys.hasMoreElements()) {
             UnitHolder unit = allowedKeys.nextElement();
-            //int index = pUnitTable.get(unit);
-            int availCount = troops.getOwnTroops().get(unit);
+            int availCount = troops.getTroopsOfUnitInVillage(unit);
             if (availCount > pMinNumber) {
                 long ms = (long) (DSCalculator.calculateMoveTimeInSeconds(pSource, pTarget, unit.getSpeed()) * 1000);
                 if (pArrive.getTime() - ms > System.currentTimeMillis()) {

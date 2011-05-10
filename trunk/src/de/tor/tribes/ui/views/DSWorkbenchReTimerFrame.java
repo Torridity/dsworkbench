@@ -1218,10 +1218,10 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             } else {
                 f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss");
             }
-            VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(candidate);
+            VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(candidate, TroopsManager.TROOP_TYPE.OWN);
             boolean useVillage = true;
             if (holder != null) {
-                if (holder.getOwnTroops().get(unit) == 0) {
+                if (holder.getTroopsOfUnitInVillage(unit) == 0) {
                     useVillage = false;
                 }
             }

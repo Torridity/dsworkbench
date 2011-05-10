@@ -7,7 +7,7 @@ package de.tor.tribes.util;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.models.TroopsManagerTableModel;
+import de.tor.tribes.ui.models.TroopsTableModel;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.util.Enumeration;
@@ -20,7 +20,8 @@ import java.util.Hashtable;
 public class TroopInformationToBBCodeFormater {
 
     public static String formatTroopInformation(Village pVillage, int pType, boolean pFully, String pServerURL, boolean pExtended) {
-        VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage);
+       //@TODO implement list formatter
+      /*  VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage);
         String result = "[u]Truppeninformationen für " + pVillage.toBBCode() + "[/u]\n\n";
 
         if (holder != null) {
@@ -63,8 +64,8 @@ public class TroopInformationToBBCodeFormater {
             }
         } else {
             result += " Es liegen keine Informationen vor\n";
-        }
-        return result;
+        }*/
+        return "";
     }
 
     private static String buildTroopsInformation(Hashtable<UnitHolder, Integer> pUnits, String pServerURL, boolean pExtended) {

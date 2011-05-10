@@ -22,6 +22,7 @@ public class NumberFormatCellRenderer extends DefaultTableRenderer {
         super();
         format.setMinimumFractionDigits(0);
         format.setMaximumFractionDigits(0);
+
     }
 
     public NumberFormatCellRenderer(NumberFormat pCustomFormat) {

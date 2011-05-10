@@ -16,6 +16,7 @@ import de.tor.tribes.types.test.DummyUnit;
 import de.tor.tribes.types.test.DummyVillage;
 import de.tor.tribes.ui.components.CollapseExpandTrigger;
 import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.attack.AttackManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -46,6 +47,7 @@ public class GenericTestPanel extends javax.swing.JPanel {
 
     private JComponent centerComponent = null;
     private boolean menuEnabled = true;
+    private JXTaskPaneContainer taskContainer = null;
 
     /** Creates new form GenericTestPanel */
     public GenericTestPanel(boolean menuEnabled) {
@@ -73,16 +75,56 @@ public class GenericTestPanel extends javax.swing.JPanel {
         this(true);
     }
 
+    public void setMenuVisible(boolean pValue) {
+        menuPanel.setCollapsed(!pValue);
+    }
+
+    public boolean isMenuVisible() {
+        return !menuPanel.isCollapsed();
+    }
+
     public void setupTaskPane(JComponent... pTaskPane) {
-        JXTaskPaneContainer cont = new JXTaskPaneContainer();
-        for (JComponent pane : pTaskPane) {
-            cont.add(pane);
+        setupTaskPane(null, null, pTaskPane);
+    }
+
+    public void setupTaskPane(String pVisibility, String pStandardValues, JComponent... pTaskPane) {
+        /* String prop = GlobalOptions.getProperty(pVisibility);
+        String[] visibilityInfo = null;
+        if (prop != null) {
+        visibilityInfo = prop.split(";");
+        
+        } else {
+        if (pStandardValues != null) {
+        visibilityInfo = pStandardValues.split(";");
+        }
+        }
+        
+        if (visibilityInfo == null || visibilityInfo.length < pTaskPane.length) {
+        visibilityInfo = new String[pTaskPane.length];
+        for (int i = 0; i < pTaskPane.length; i++) {
+        visibilityInfo[i] = "true";
+        }
+        }
+        
+        boolean[] visibility = new boolean[visibilityInfo.length];
+        for (int i = 0; i < visibilityInfo.length; i++) {
+        visibility[i] = Boolean.parseBoolean(visibilityInfo[i]);
+        }*/
+        taskContainer = new JXTaskPaneContainer();
+
+        for (int i = 0; i < pTaskPane.length; i++) {
+            taskContainer.add(pTaskPane[i]);
+            /* if (pTaskPane[i] instanceof JXTaskPane) {
+            ((JXTaskPane) pTaskPane[i]).setCollapsed(!visibility[i]);
+            }*/
         }
         menuPanel.remove(jXTaskPaneContainer1);
-        JScrollPane s = new JScrollPane(cont);
+        JScrollPane s = new JScrollPane(taskContainer);
         s.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         menuPanel.add(s, BorderLayout.CENTER);
-        //  menuPanel.setCollapsed(true);
+    }
+
+    public void restoreView(String pProperty, String pDefaultValue) {
     }
 
     /** This method is called from within the constructor to

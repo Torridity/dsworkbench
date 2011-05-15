@@ -383,7 +383,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         }));
-        transferTaskPane.getContentPane().add(factoryButton("/res/ui/att_browser.png", "Markierte Angriffe in den Browser &uuml;bertragen. Im Normalfall werden nur einzelne Angriffe &uuml;bertragen. F&uuml;r das &Uuml;bertragen mehrerer Angriff ist zuerst das Klickkonto entsprechend zu f&uuml;llen", new MouseAdapter() {
+        transferTaskPane.getContentPane().add(factoryButton("/res/ui/att_browser.png", "Markierte Angriffe in den Browser &uuml;bertragen. Im Normalfall werden nur einzelne Angriffe &uuml;bertragen. F&uuml;r das &Uuml;bertragen mehrerer Angriffe ist zuerst das Klickkonto entsprechend zu f&uuml;llen", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {

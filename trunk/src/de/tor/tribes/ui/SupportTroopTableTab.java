@@ -107,19 +107,14 @@ public class SupportTroopTableTab extends javax.swing.JPanel implements ListSele
         initComponents();
         jScrollPane1.setViewportView(jxTroopTable);
         if (!KEY_LISTENER_ADDED) {
-            KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
-            KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
-            KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK, false);
             KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
-            jxTroopTable.registerKeyboardAction(pActionListener, "Copy", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-            jxTroopTable.registerKeyboardAction(pActionListener, "Cut", cut, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-            jxTroopTable.registerKeyboardAction(pActionListener, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxTroopTable.registerKeyboardAction(pActionListener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxTroopTable.getActionMap().put("find", new AbstractAction() {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    pActionListener.actionPerformed(new ActionEvent(jxTroopTable, 0, "Find"));
+                    //no find for support tab
+                    JOptionPaneHelper.showInformationBox(jxTroopTable, "Die Suchfunktion ist für die Unterstützungsansicht nicht verfügbar", "Information");
                 }
             });
 

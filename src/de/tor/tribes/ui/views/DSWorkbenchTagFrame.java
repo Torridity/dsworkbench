@@ -606,7 +606,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
     private List<Tag> getSelectedTags() {
         final List<Tag> elements = new LinkedList<Tag>();
         int[] selectedRows = jTagsTable.getSelectedRows();
-        if (selectedRows != null && selectedRows.length < 1) {
+        if (selectedRows == null || selectedRows.length < 1) {
             return elements;
         }
         for (Integer selectedRow : selectedRows) {

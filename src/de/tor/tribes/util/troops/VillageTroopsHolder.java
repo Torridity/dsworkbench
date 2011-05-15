@@ -16,6 +16,7 @@ import java.util.Hashtable;
 import java.util.List;
 import org.jdom.Element;
 import de.tor.tribes.ui.models.TroopsTableModel;
+import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.GlobalOptions;
 import java.util.LinkedList;
 import org.jdom.DataConversionException;
@@ -23,8 +24,12 @@ import org.jdom.DataConversionException;
 /**
  * @author Jejkal
  */
-public class VillageTroopsHolder extends ManageableType {
+public class VillageTroopsHolder extends ManageableType implements BBSupport {
 
+    private final static String[] VARIABLES = new String[]{"%VILLAGE%", "%SPEAR_ICON%", "%SWORD_ICON%", "%AXE_ICON%", "%ARCHER_ICON%", "%SPY_ICON%", "%LIGHT_ICON%", "%MARCHER_ICON%", "%HEAVY_ICON%", "%RAM_ICON%", "%CATA_ICON%", "%KNIGHT_ICON%", "%SNOB_ICON%", "%MILITIA_ICON%", "%SPEAR_AMOUNT%", "%SWORD_AMOUNT%", "%AXE_AMOUNT%", "%ARCHER_AMOUNT%", "%SPY_AMOUNT%", "%LIGHT_AMOUNT%", "%MARCHER_AMOUNT%", "%HEAVY_AMOUNT%", "%RAM_AMOUNT%", "%CATA_AMOUNT%", "%KNIGHT_AMOUNT%", "%SNOB_AMOUNT%", "%MILITIA_AMOUNT%"};
+    private final static String STANDARD_TEMPLATE = "[table]\n"
+            + "[**]%SPEAR_ICON%[||]%SWORD_ICON%[||]%AXE_ICON%[||]%ARCHER_ICON%[||]%SPY_ICON%[||]%LIGHT_ICON%[||]%MARCHER_ICON%[||]%HEAVY_ICON%[||]%RAM_ICON%[||]%CATA_ICON%[||]%SNOB_ICON%[/**]\n";
+    private final static String TEMPLATE_PROPERTY = "troop.bbexport.template";
     private Village village = null;
     private Hashtable<UnitHolder, Integer> troops = null;
     private Date state = null;
@@ -89,7 +94,7 @@ public class VillageTroopsHolder extends ManageableType {
     }
 
     public void setTroops(Hashtable<UnitHolder, Integer> pTroops) {
-        troops = (Hashtable<UnitHolder, Integer>)pTroops.clone();
+        troops = (Hashtable<UnitHolder, Integer>) pTroops.clone();
     }
 
     public Hashtable<UnitHolder, Integer> getTroops() {
@@ -226,5 +231,71 @@ public class VillageTroopsHolder extends ManageableType {
     @Override
     public String getGroupNameAttributeIdentifier() {
         return "name";
+    }
+
+    @Override
+    public String getStandardTemplate() {
+        return STANDARD_TEMPLATE;
+    }
+
+    @Override
+    public String getTemplateProperty() {
+        return TEMPLATE_PROPERTY;
+    }
+
+    @Override
+    public String[] getBBVariables() {
+        return VARIABLES;
+    }
+
+    @Override
+    public String[] getReplacements(boolean pExtended) {
+        Village v = getVillage();
+        String villageVal = "-";
+        if (v != null) {
+            villageVal = getVillage().toBBCode();
+        }
+        String spearIcon = "[unit]spear[/unit]";
+        String spearVal = getValueForUnit("spear");
+        String swordIcon = "[unit]sword[/unit]";
+        String swordVal = getValueForUnit("sword");
+        String axeIcon = "[unit]axe[/unit]";
+        String axeVal = getValueForUnit("axe");
+        String archerIcon = "[unit]archer[/unit]";
+        String archerVal = getValueForUnit("archer");
+        String spyIcon = "[unit]spy[/unit]";
+        String spyVal = getValueForUnit("spy");
+        String lightIcon = "[unit]light[/unit]";
+        String lightVal = getValueForUnit("light");
+        String marcherIcon = "[unit]marcher[/unit]";
+        String marcherVal = getValueForUnit("marcher");
+        String heavyIcon = "[unit]heavy[/unit]";
+        String heavyVal = getValueForUnit("heavy");
+        String ramIcon = "[unit]ram[/unit]";
+        String ramVal = getValueForUnit("ram");
+        String cataIcon = "[unit]catapult[/unit]";
+        String cataVal = getValueForUnit("catapult");
+        String snobIcon = "[unit]snob[/unit]";
+        String snobVal = getValueForUnit("snob");
+        String knightIcon = "[unit]knight[/unit]";
+        String knightVal = getValueForUnit("knight");
+        String militiaIcon = "[unit]militia[/unit]";
+        String militiaVal = getValueForUnit("militia");
+
+        return new String[]{villageVal, spearIcon, swordIcon, axeIcon, archerIcon, spyIcon, lightIcon, marcherIcon, heavyIcon, ramIcon, cataIcon, knightIcon, snobIcon, militiaIcon,
+                    spearVal, swordVal, axeVal, archerVal, spyVal, lightVal, marcherVal, heavyVal, ramVal, cataVal, knightVal, snobVal, militiaVal};
+    }
+
+    private String getValueForUnit(String pName) {
+        UnitHolder u = DataHolder.getSingleton().getUnitByPlainName(pName);
+        if (u == null) {
+            return "-";
+        }
+        Integer i = troops.get(u);
+        if (i == null) {
+            return "0";
+        }
+
+        return i.toString();
     }
 }

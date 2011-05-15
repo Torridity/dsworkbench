@@ -12,7 +12,6 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.ui.views.DSWorkbenchReTimerFrame;
-import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.ui.editors.AttackTypeCellEditor;
@@ -26,7 +25,6 @@ import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.util.AttackIGMSender;
-import de.tor.tribes.util.AttackToBBCodeFormater;
 import de.tor.tribes.util.AttackToPlainTextFormatter;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;

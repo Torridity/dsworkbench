@@ -392,7 +392,11 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
             boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
 
             StringBuilder buffer = new StringBuilder();
-
+            if (extended) {
+                buffer.append("[u][size=12]Notizübersicht[/size][/u]\n\n");
+            } else {
+                buffer.append("[u]Notizübersicht[/u]\n\n");
+            }
             buffer.append(new NoteListFormatter().formatElements(notes, extended));
 
             if (extended) {

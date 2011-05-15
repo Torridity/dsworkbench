@@ -15,27 +15,31 @@ import org.jdesktop.swingx.renderer.DefaultTableRenderer;
  * @author Jejkal
  */
 public class NumberFormatCellRenderer extends DefaultTableRenderer {
-
+    
     private NumberFormat format = NumberFormat.getInstance();
-
+    
     public NumberFormatCellRenderer() {
         super();
         format.setMinimumFractionDigits(0);
         format.setMaximumFractionDigits(0);
-
+        
     }
-
+    
     public NumberFormatCellRenderer(NumberFormat pCustomFormat) {
         this();
         format = pCustomFormat;
     }
-
+    
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         JLabel label = (JLabel) c;
         if (value != null) {
-            label.setText(format.format(value));
+            if (value instanceof Number) {
+                label.setText(format.format(value));
+            } else {
+                label.setText("-");
+            }
         } else {
             label.setText("0");
         }

@@ -29,7 +29,7 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.report.ReportFormater;
+import de.tor.tribes.util.bb.ReportListFormatter;
 import de.tor.tribes.util.report.ReportManager;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -382,11 +382,17 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
             showInfo("Keine Berichte ausgewählt");
             return;
         }
+        boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
 
         StringBuilder b = new StringBuilder();
-        for (FightReport r : selection) {
-            b.append(ReportFormater.format(r)).append("\n");
+        if (extended) {
+            b.append("[u][size=12]Angriffsberichte[/size][/u]\n\n");
+        } else {
+            b.append("[u]Angriffsberichte[/u]\n\n");
         }
+
+        b.append(new ReportListFormatter().formatElements(selection, extended)).append("\n");
+
         try {
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b.toString()), null);
             String result = "Daten in Zwischenablage kopiert.";

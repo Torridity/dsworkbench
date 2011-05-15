@@ -8,7 +8,7 @@ package de.tor.tribes.util;
  *
  * @author Torridity
  */
-public interface BBSupport<C> {
+public interface BBSupport {
 
     public String getStandardTemplate();
 

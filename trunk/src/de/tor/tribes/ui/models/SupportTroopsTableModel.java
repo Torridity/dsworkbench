@@ -9,58 +9,41 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.ImageManager;
-import de.tor.tribes.util.troops.TroopsManager;
+import de.tor.tribes.ui.models.TroopsTableModel.COL_CONTENT;
+import de.tor.tribes.ui.tree.IncomingTroopsUserObject;
+import de.tor.tribes.ui.tree.OutgoingTroopsUserObject;
+import de.tor.tribes.util.troops.SupportVillageTroopsHolder;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.ImageIcon;
-import javax.swing.table.AbstractTableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import org.jdesktop.swingx.treetable.AbstractTreeTableModel;
 
 /**
  *
- * @author Jejkal
+ * @author Torridity
  */
-public class TroopsTableModel extends AbstractTableModel {
+public class SupportTroopsTableModel extends AbstractTreeTableModel {
 
-    public enum COL_CONTENT {
-
-        TRIBE, VILLAGE, LAST_CHANGE, SPEAR, SWORD, AXE, ARCHER, SPY, LIGHT, MARCHER, HEAVY, RAM, CATA, KNIGHT, MILITIA, SNOB, OFF, DEF, DEF_CAV, DEF_ARCH, OUTSIDE, INSIDE, FARM
-    }
-    private String sSet = null;
-    private NumberFormat nf = NumberFormat.getInstance();
+    private List<TroopsTableModel.COL_CONTENT> content = null;
     private HashMap<String, ImageIcon> columnIcons = null;
-    private List<COL_CONTENT> content = null;
 
-    public TroopsTableModel(String pSet) {
-        sSet = pSet;
-        fireTableStructureChanged();
-        nf.setMinimumFractionDigits(0);
-        nf.setMaximumFractionDigits(0);
+    public SupportTroopsTableModel(DefaultMutableTreeNode pRoot) {
+        super(pRoot);
+        buildStructure();
     }
 
-    public void setTroopSet(String pSet) {
-        sSet = pSet;
-        fireTableDataChanged();
-    }
-
-    public String getTroopSet() {
-        return sSet;
-
-    }
-
-    @Override
-    public final void fireTableStructureChanged() {
+    public final void buildStructure() {
         content = new LinkedList<COL_CONTENT>();
-        content.add(COL_CONTENT.TRIBE);
         content.add(COL_CONTENT.VILLAGE);
+        content.add(COL_CONTENT.TRIBE);
         content.add(COL_CONTENT.LAST_CHANGE);
         columnIcons = new HashMap<String, ImageIcon>();
-        columnIcons.put("Spieler", null);
         columnIcons.put("Dorf", null);
+        columnIcons.put("Spieler", null);
         columnIcons.put("Stand", null);
 
         for (UnitHolder pUnit : DataHolder.getSingleton().getUnits()) {
@@ -107,12 +90,6 @@ public class TroopsTableModel extends AbstractTableModel {
         columnIcons.put("Unterstützungen außerhalb", new ImageIcon("graphics/icons/move_out.png"));
         columnIcons.put("Unterstützungen innerhalb", new ImageIcon("graphics/icons/move_in.png"));
         columnIcons.put("Bauernhofbedarf", new ImageIcon("graphics/icons/farm.png"));
-        super.fireTableStructureChanged();
-    }
-
-    @Override
-    public int getColumnCount() {
-        return content.size();
     }
 
     @Override
@@ -152,31 +129,6 @@ public class TroopsTableModel extends AbstractTableModel {
                 return Float.class;
         }
         return null;
-    }
-
-    @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        if (content == null || columnIndex < 0 || sSet.equals(TroopsManager.SUPPORT_GROUP)) {
-            return false;
-        }
-        COL_CONTENT colContent = content.get(columnIndex);
-        switch (colContent) {
-            case SPEAR:
-            case SWORD:
-            case AXE:
-            case ARCHER:
-            case SPY:
-            case LIGHT:
-            case MARCHER:
-            case HEAVY:
-            case RAM:
-            case CATA:
-            case KNIGHT:
-            case MILITIA:
-            case SNOB:
-                return true;
-        }
-        return false;
     }
 
     @Override
@@ -235,7 +187,6 @@ public class TroopsTableModel extends AbstractTableModel {
                 return "Bauernhofbedarf";
         }
         return null;
-        //return colNames[columnIndex];
     }
 
     public ImageIcon getColumnIcon(String pColumnName) {
@@ -246,121 +197,114 @@ public class TroopsTableModel extends AbstractTableModel {
     }
 
     @Override
-    public int getRowCount() {
-        if (sSet == null) {
-            return 0;
-        }
-        return TroopsManager.getSingleton().getAllElements(sSet).size();
+    public int getColumnCount() {
+        return content.size();
     }
 
     @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        if (content == null) {
-            return null;
+    public Object getValueAt(Object arg0, int arg1) {
+        if (arg0 instanceof DefaultMutableTreeNode) {
+            DefaultMutableTreeNode dataNode = (DefaultMutableTreeNode) arg0;
+            if (dataNode.getUserObject() instanceof SupportVillageTroopsHolder) {
+                return getColumnValue((SupportVillageTroopsHolder) dataNode.getUserObject(), arg1);
+            } else if (dataNode.getUserObject() instanceof OutgoingTroopsUserObject) {
+                OutgoingTroopsUserObject u = (OutgoingTroopsUserObject) dataNode.getUserObject();
+                return getColumnValue(u.getTroopsHolder(), arg1);
+            } else if (dataNode.getUserObject() instanceof IncomingTroopsUserObject) {
+                IncomingTroopsUserObject u = (IncomingTroopsUserObject) dataNode.getUserObject();
+                return getColumnValue(u.getTroopsHolder(), arg1);
+            }
         }
+        return null;
+    }
 
-        COL_CONTENT colContent = content.get(columnIndex);
-        VillageTroopsHolder h = TroopsManager.getSingleton().getManagedElement(sSet, rowIndex);
+    private Object getColumnValue(VillageTroopsHolder pHolder, int col) {
+        COL_CONTENT colContent = content.get(col);
         switch (colContent) {
             case TRIBE:
-                return h.getVillage().getTribe();
+                return pHolder.getVillage().getTribe();
             case VILLAGE:
-                return h.getVillage();
+                return pHolder.getVillage();
             case LAST_CHANGE:
-                return new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(h.getState());
+                if (pHolder.getState().getTime() == 0) {
+                    return "-";
+                }
+                return new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(pHolder.getState());
             case SPEAR:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("spear"));
+                return pHolder.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("spear"));
             case SWORD:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("sword"));
+                return pHolder.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("sword"));
             case AXE:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("axe"));
+                return pHolder.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("axe"));
             case ARCHER:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("archer"));
+                return pHolder.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("archer"));
             case SPY:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("spy"));
+                return pHolder.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("spy"));
             case LIGHT:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("light"));
+                return pHolder.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("light"));
             case MARCHER:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("marcher"));
+                return pHolder.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("marcher"));
             case HEAVY:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("heavy"));
+                return pHolder.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("heavy"));
             case RAM:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("ram"));
+                return pHolder.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("ram"));
             case CATA:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("catapult"));
+                return pHolder.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("catapult"));
             case KNIGHT:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("knight"));
+                return pHolder.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("knight"));
             case MILITIA:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("militia"));
+                return pHolder.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("militia"));
             case SNOB:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("snob"));
+                return pHolder.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("snob"));
             case OFF:
-                return h.getOffValue();
+                return "-";
             case DEF:
-                return h.getDefValue();
+                return pHolder.getDefValue();
             case DEF_CAV:
-                return h.getDefCavalryValue();
+                return pHolder.getDefCavalryValue();
             case DEF_ARCH:
-                return h.getDefArcherValue();
+                return pHolder.getDefArcherValue();
             case OUTSIDE:
+                if (pHolder instanceof SupportVillageTroopsHolder) {
+                    return ((SupportVillageTroopsHolder) pHolder).getOutgoingSupports().size();
+                }
                 return 0;
             case INSIDE:
+                if (pHolder instanceof SupportVillageTroopsHolder) {
+                    return ((SupportVillageTroopsHolder) pHolder).getIncomingSupports().size();
+                }
                 return 0;
             case FARM:
-                return h.getFarmSpace();
+                return pHolder.getFarmSpace();
         }
         return null;
     }
 
     @Override
-    public void setValueAt(Object pValue, int pRow, int pCol) {
-        if (content == null) {
-            return;
+    public Object getChild(Object parent, int index) {
+        if (parent instanceof DefaultMutableTreeNode) {
+            DefaultMutableTreeNode nodes = (DefaultMutableTreeNode) parent;
+            return nodes.getChildAt(index);
         }
-        COL_CONTENT colContent = content.get(pCol);
-        VillageTroopsHolder h = TroopsManager.getSingleton().getManagedElement(sSet, pRow);
-        Long val = (Long) pValue;
-        switch (colContent) {
-            case SPEAR:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("spear"), val.intValue());
-                break;
-            case SWORD:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("sword"), val.intValue());
-                break;
-            case AXE:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("axe"), val.intValue());
-                break;
-            case ARCHER:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("archer"), val.intValue());
-                break;
-            case SPY:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("spy"), val.intValue());
-                break;
-            case LIGHT:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("light"), val.intValue());
-                break;
-            case MARCHER:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("marcher"), val.intValue());
-                break;
-            case HEAVY:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("heavy"), val.intValue());
-                break;
-            case RAM:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("ram"), val.intValue());
-                break;
-            case CATA:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("catapult"), val.intValue());
-                break;
-            case KNIGHT:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("knight"), val.intValue());
-                break;
-            case MILITIA:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("militia"), val.intValue());
-                break;
-            case SNOB:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("snob"), val.intValue());
-                break;
-        }
+        return null;
+    }
 
+    @Override
+    public int getChildCount(Object parent) {
+        if (parent instanceof DefaultMutableTreeNode) {
+            DefaultMutableTreeNode nodes = (DefaultMutableTreeNode) parent;
+            return nodes.getChildCount();
+        }
+        return 0;
+    }
+
+    @Override
+    public int getIndexOfChild(Object parent, Object child) {
+        return 0;
+    }
+
+    @Override
+    public boolean isLeaf(Object node) {
+        return getChildCount(node) == 0;
     }
 }

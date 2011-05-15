@@ -1,0 +1,153 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.tor.tribes.ui.decorator;
+
+import de.tor.tribes.types.Tag;
+import de.tor.tribes.types.Village;
+import de.tor.tribes.util.troops.TroopsManager;
+import de.tor.tribes.util.troops.VillageTroopsHolder;
+import java.awt.Component;
+import java.util.List;
+import org.jdesktop.swingx.decorator.ComponentAdapter;
+import org.jdesktop.swingx.decorator.HighlightPredicate;
+
+/**
+ *
+ * @author Torridity
+ */
+public class GroupPredicate implements HighlightPredicate {
+
+    public static final int ALL = -1;
+    private int highlightColumn;
+    private int testColumn;
+    private boolean relation;
+    private List<Tag> groups;
+
+    /**
+     * Instantiates a Predicate with the given Pattern and testColumn index
+     * (in model coordinates) highlighting all columns.
+     *  A column index of -1 is interpreted
+     * as "all". 
+     * 
+     * @param pattern the Pattern to test the cell value against
+     * @param testColumn the column index in model coordinates
+     *   of the cell which contains the value to test against the pattern 
+     */
+    public GroupPredicate(List<Tag> groups, int testColumn, boolean pRelation) {
+        this(groups, testColumn, ALL, pRelation);
+    }
+
+    /**
+     * Instantiates a Predicate with the given Pattern and test-/decorate
+     * column index in model coordinates. A column index of -1 is interpreted
+     * as "all". 
+     * 
+     * 
+     * @param pattern the Pattern to test the cell value against
+     * @param testColumn the column index in model coordinates 
+     *   of the cell which contains the value
+     *   to test against the pattern 
+     * @param decorateColumn the column index in model coordinates
+     *   of the cell which should be 
+     *   decorated if the test against the value succeeds.
+     */
+    public GroupPredicate(List<Tag> groups, int testColumn, int decorateColumn, boolean pRelation) {
+        this.groups = groups;
+        this.testColumn = testColumn;
+        this.highlightColumn = decorateColumn;
+        this.relation = pRelation;
+    }
+
+    @Override
+    public boolean isHighlighted(Component renderer, ComponentAdapter adapter) {
+        if (isHighlightCandidate(adapter)) {
+            return test(adapter);
+        }
+        return false;
+    }
+
+    /**
+     * Test the value. This is called only if the 
+     * pre-check returned true, because accessing the 
+     * value might be potentially costly
+     * @param adapter
+     * @return
+     */
+    private boolean test(ComponentAdapter adapter) {
+        // single test column
+        if (testColumn >= 0) {
+            return testColumn(adapter, testColumn);
+        }
+        // test all
+        for (int column = 0; column < adapter.getColumnCount(); column++) {
+            boolean result = testColumn(adapter, column);
+            if (result) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param adapter
+     * @param testColumn
+     * @return
+     */
+    private boolean testColumn(ComponentAdapter adapter, int testColumn) {
+        if (!adapter.isTestable(testColumn)) {
+            return false;
+        }
+
+        int rowToTest = adapter.convertRowIndexToModel(adapter.row);
+        VillageTroopsHolder h = (VillageTroopsHolder) TroopsManager.getSingleton().getAllElements().get(rowToTest);
+        Village v = h.getVillage();
+        //true == 
+        //false ||
+        boolean result = false;
+        if (relation) {
+            //and connection
+            boolean failure = false;
+            for (Tag t : groups) {
+                if (!t.tagsVillage(v.getId())) {
+                    failure = true;
+                    break;
+                }
+            }
+            if (!failure) {
+                result = true;
+            }
+        } else {
+            //or connection
+            for (Tag t : groups) {
+                if (t.tagsVillage(v.getId())) {
+                    result = true;
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * A quick pre-check.
+     * @param adapter
+     * 
+     * @return
+     */
+    private boolean isHighlightCandidate(ComponentAdapter adapter) {
+        return (groups != null)
+                && ((highlightColumn < 0)
+                || (highlightColumn == adapter.convertColumnIndexToModel(adapter.column)));
+    }
+
+    /**
+     * 
+     * @return returns the column index to decorate (in model coordinates)
+     */
+    public int getHighlightColumn() {
+        return highlightColumn;
+    }
+}

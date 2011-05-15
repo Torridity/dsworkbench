@@ -214,20 +214,20 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
         if (set == null) {
             return;
         }
-        if (set.containsKey(pElement.getVillage())) {
-            set.remove(pElement.getVillage());
-            changed = true;
-        }
+
+        changed = set.remove(pElement.getVillage()) != null;
 
         if (changed) {
             fireDataChangedEvents(pGroup);
         }
     }
 
+    @Override
     public void removeElements(List<VillageTroopsHolder> pElements) {
         removeElements(getDefaultGroupName(), pElements);
     }
 
+    @Override
     public void removeElements(String pGroup, List<VillageTroopsHolder> pElements) {
         if (pElements == null || pElements.isEmpty()) {
             return;

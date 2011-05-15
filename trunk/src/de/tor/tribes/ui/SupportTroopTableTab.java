@@ -10,23 +10,29 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.TroopTableTab.TRANSFER_TYPE;
 import de.tor.tribes.ui.decorator.GroupPredicate;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
-import de.tor.tribes.ui.models.TroopsTableModel;
+import de.tor.tribes.ui.models.SupportTroopsTableModel;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.PercentCellRenderer;
+import de.tor.tribes.ui.renderer.SupportTreeTableCellRenderer;
+import de.tor.tribes.ui.renderer.SupportTroopTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.TroopAmountListCellRenderer;
-import de.tor.tribes.ui.renderer.TroopTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.VisibilityCellRenderer;
+import de.tor.tribes.ui.tree.IncomingTroopsUserObject;
+import de.tor.tribes.ui.tree.OutgoingTroopsUserObject;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.bb.TroopListFormatter;
+import de.tor.tribes.util.troops.SupportVillageTroopsHolder;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.Color;
@@ -41,7 +47,9 @@ import java.awt.image.BufferedImage;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -54,8 +62,11 @@ import javax.swing.RowFilter;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.JXTreeTable;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.decorator.PainterHighlighter;
@@ -68,17 +79,11 @@ import org.jdesktop.swingx.painter.MattePainter;
  *
  * @author Torridity
  */
-public class TroopTableTab extends javax.swing.JPanel implements ListSelectionListener, TabInterface {
+public class SupportTroopTableTab extends javax.swing.JPanel implements ListSelectionListener, TabInterface {
 
     private static Logger logger = Logger.getLogger("TroopTableTab");
-
-    public static enum TRANSFER_TYPE {
-
-        CLIPBOARD_PLAIN, CLIPBOARD_BB, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD
-    }
     private String sTroopSet = null;
-    private final static JXTable jxTroopTable = new JXTable();
-    private static TroopsTableModel troopModel = null;
+    private final static JXTreeTable jxTroopTable = new JXTreeTable();
     private static boolean KEY_LISTENER_ADDED = false;
     private PainterHighlighter highlighter = null;
     private ActionListener actionListener = null;
@@ -89,30 +94,16 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         jxTroopTable.setDefaultRenderer(Float.class, new PercentCellRenderer());
         jxTroopTable.setDefaultRenderer(Boolean.class, new VisibilityCellRenderer());
         jxTroopTable.setDefaultRenderer(Number.class, new NumberFormatCellRenderer());
-
-        troopModel = new TroopsTableModel(TroopsManager.getSingleton().getDefaultGroupName());
-        jxTroopTable.setModel(troopModel);
-
-        BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
-        Graphics2D g = back.createGraphics();
-        GeneralPath p = new GeneralPath();
-        p.moveTo(0, 0);
-        p.lineTo(5, 0);
-        p.lineTo(5, 5);
-        p.closePath();
-        g.setColor(Color.GREEN.darker());
-        g.fill(p);
-        g.dispose();
-        jxTroopTable.addHighlighter(new PainterHighlighter(HighlightPredicate.EDITABLE, new ImagePainter(back, HorizontalAlignment.RIGHT, VerticalAlignment.TOP)));
+        jxTroopTable.setTreeCellRenderer(new SupportTreeTableCellRenderer());
     }
 
     /** Creates new form TroopTableTab
      * @param pTroopSet
      * @param pActionListener
      */
-    public TroopTableTab(String pTroopSet, final ActionListener pActionListener) {
+    public SupportTroopTableTab(final ActionListener pActionListener) {
         actionListener = pActionListener;
-        sTroopSet = pTroopSet;
+        sTroopSet = TroopsManager.SUPPORT_GROUP;
         initComponents();
         jScrollPane1.setViewportView(jxTroopTable);
         if (!KEY_LISTENER_ADDED) {
@@ -134,12 +125,10 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
 
             KEY_LISTENER_ADDED = true;
         }
-        jxTroopTable.getSelectionModel().addListSelectionListener(TroopTableTab.this);
+        jxTroopTable.getSelectionModel().addListSelectionListener(SupportTroopTableTab.this);
         jTroopAmountList.setCellRenderer(new TroopAmountListCellRenderer());
-        troopModel.fireTableStructureChanged();
     }
 
-    @Override
     public void deregister() {
         jxTroopTable.getSelectionModel().removeListSelectionListener(this);
     }
@@ -147,7 +136,9 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
     @Override
     public void valueChanged(ListSelectionEvent e) {
         if (e.getValueIsAdjusting()) {
-            int selectionCount = jxTroopTable.getSelectedRowCount();
+
+            //int selectionCount = jxTroopTable.getSelectedRowCount();
+            int selectionCount = getSelectedVillages().size();
             if (selectionCount != 0) {
                 showInfo(selectionCount + ((selectionCount == 1) ? " Dorf gewählt" : " Dörfer gewählt"));
             }
@@ -156,7 +147,6 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         }
     }
 
-    @Override
     public void updateSelectionInfo() {
         List<VillageTroopsHolder> selection = getSelectedVillages();
         HashMap<UnitHolder, Integer> amounts = new HashMap<UnitHolder, Integer>();
@@ -212,14 +202,37 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         return jxTroopTable;
     }
 
-    @Override
     public void updateSet() {
-        troopModel.setTroopSet(sTroopSet);
+        jxTroopTable.setTreeTableModel(new SupportTroopsTableModel(buildTreeTableData()));
         jScrollPane1.setViewportView(jxTroopTable);
-        jxTroopTable.getTableHeader().setDefaultRenderer(new TroopTableHeaderRenderer());
+        jxTroopTable.getTableHeader().setDefaultRenderer(new SupportTroopTableHeaderRenderer());
     }
 
-    @Override
+    public DefaultMutableTreeNode buildTreeTableData() {
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
+        List<ManageableType> elems = TroopsManager.getSingleton().getAllElements(TroopsManager.SUPPORT_GROUP);
+
+        for (ManageableType elem : elems) {
+            SupportVillageTroopsHolder s = (SupportVillageTroopsHolder) elem;
+            DefaultMutableTreeNode villageNode = new DefaultMutableTreeNode(s);
+            Hashtable<Village, Hashtable<UnitHolder, Integer>> incElems = s.getIncomingSupports();
+            Enumeration<Village> villageKeys = incElems.keys();
+            while (villageKeys.hasMoreElements()) {
+                Village villageKey = villageKeys.nextElement();
+                villageNode.add(new DefaultMutableTreeNode(new IncomingTroopsUserObject(s.getVillage(), villageKey, incElems.get(villageKey))));
+            }
+            Hashtable<Village, Hashtable<UnitHolder, Integer>> outElems = s.getOutgoingSupports();
+            villageKeys = outElems.keys();
+            while (villageKeys.hasMoreElements()) {
+                Village villageKey = villageKeys.nextElement();
+                villageNode.add(new DefaultMutableTreeNode(new OutgoingTroopsUserObject(s.getVillage(), villageKey, outElems.get(villageKey))));
+            }
+            root.add(villageNode);
+        }
+        return root;
+
+    }
+
     public void updateFilter(final List<Tag> groups, final boolean pRelation, final boolean pFilterRows) {
         if (highlighter != null) {
             jxTroopTable.removeHighlighter(highlighter);
@@ -394,7 +407,6 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         }
     }
 
-    @Override
     public void centerVillage() {
         List<VillageTroopsHolder> selection = getSelectedVillages();
         if (selection.isEmpty()) {
@@ -404,7 +416,6 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         DSWorkbenchMainFrame.getSingleton().centerVillage(selection.get(0).getVillage());
     }
 
-    @Override
     public void centerVillageInGame() {
         List<VillageTroopsHolder> selection = getSelectedVillages();
         if (selection.isEmpty()) {
@@ -415,7 +426,6 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         BrowserCommandSender.centerVillage(selection.get(0).getVillage());
     }
 
-    @Override
     public void openPlaceInGame() {
         List<VillageTroopsHolder> selection = getSelectedVillages();
         if (selection.isEmpty()) {
@@ -435,25 +445,15 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         }
 
         if (pAsk) {
-            String message = ((selectedVillages.size() == 1) ? "Truppeninformation " : (selectedVillages.size() + " Truppeninformationen ")) + "sind zum Löschen gewählt.\nAus welcher Kategorie sollen die Daten gelöscht werden?";
-            int result = JOptionPaneHelper.showQuestionThreeChoicesBox(this, message, "Truppeninformationen löschen", "Nur '" + getTroopSet() + "'", "Keine", "Alle");
-            if (result == JOptionPane.NO_OPTION) {
+            String message = "Alle Unterstützungen aus den gewählten Dörfern löschen?";
+            int result = JOptionPaneHelper.showQuestionConfirmBox(this, message, "Truppeninformationen löschen", "Nein", "Ja");
+            if (result == JOptionPane.YES_OPTION) {
                 //remove only from current view
                 TroopsManager.getSingleton().invalidate();
                 for (VillageTroopsHolder holder : selectedVillages) {
                     TroopsManager.getSingleton().removeElement(getTroopSet(), holder);
                 }
                 TroopsManager.getSingleton().revalidate(getTroopSet(), true);
-                return true;
-            } else if (result == JOptionPane.CANCEL_OPTION) {
-                //remove all entries
-                TroopsManager.getSingleton().invalidate();
-                for (VillageTroopsHolder holder : selectedVillages) {
-                    for (String group : TroopsManager.getSingleton().getGroups()) {
-                        TroopsManager.getSingleton().removeElement(group, holder);
-                    }
-                }
-                TroopsManager.getSingleton().revalidate(true);
                 return true;
             } else {
                 //remove nothing
@@ -476,12 +476,18 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         if (selectedRows != null && selectedRows.length < 1) {
             return selectedVillages;
         }
+
+
         for (Integer selectedRow : selectedRows) {
-            VillageTroopsHolder t = (VillageTroopsHolder) TroopsManager.getSingleton().getAllElements(getTroopSet()).get(jxTroopTable.convertRowIndexToModel(selectedRow));
-            if (t != null) {
-                selectedVillages.add(t);
+            TreePath p = jxTroopTable.getPathForRow(selectedRow);
+            if (p.getPathCount() >= 2) {
+                VillageTroopsHolder h = (VillageTroopsHolder) ((DefaultMutableTreeNode) p.getPath()[1]).getUserObject();
+                if (!selectedVillages.contains(h)) {
+                    selectedVillages.add(h);
+                }
             }
         }
+
         return selectedVillages;
     }
 }

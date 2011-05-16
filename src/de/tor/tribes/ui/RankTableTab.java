@@ -64,6 +64,7 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
 
     private void buildTribeModel() {
         logger.debug("Building tribe ranking");
+        jxRankTable.getTableHeader().setReorderingAllowed(false);
         theModel = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{

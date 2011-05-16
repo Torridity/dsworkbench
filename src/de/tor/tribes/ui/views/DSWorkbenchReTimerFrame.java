@@ -24,6 +24,7 @@ import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
+import de.tor.tribes.util.BBCodeFormatter;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -34,9 +35,7 @@ import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.tag.TagManagerListener;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.awt.Color;
 import java.awt.Point;
-import java.awt.event.ItemEvent;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
@@ -48,11 +47,15 @@ import java.util.List;
 import java.util.StringTokenizer;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
-import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 
 /**
@@ -70,13 +73,24 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         }
         return SINGLETON;
     }
+    private Attack parsedAttack = null;
 
     /** Creates new form DSWorkbenchReTimerFrame */
     DSWorkbenchReTimerFrame() {
         initComponents();
+        jPossibleUnits.setCellRenderer(new UnitListCellRenderer());
+        jPossibleUnits.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    updateAttackBBView();
+                }
+            }
+        });
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.retime_tool", GlobalOptions.getHelpBroker().getHelpSet());
+        //  GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.retime_tool", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
     }
 
@@ -208,10 +222,9 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jLabel28 = new javax.swing.JLabel();
         jButton18 = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jComandArea = new javax.swing.JTextArea();
-        jLabel1 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jParserInfo = new javax.swing.JTextPane();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jSourceVillage = new javax.swing.JTextField();
@@ -232,9 +245,9 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jEstSendTime = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         jReturnField = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jParserInfo = new javax.swing.JTextPane();
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jComandArea = new javax.swing.JTextArea();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTagList = new javax.swing.JList();
@@ -246,6 +259,10 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jScrollPane4 = new javax.swing.JScrollPane();
         jAttackPlanTable = new javax.swing.JTable();
         jLabel12 = new javax.swing.JLabel();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        jBBTextPane = new javax.swing.JTextPane();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        jPossibleUnits = new javax.swing.JList();
         jMainAlwaysOnTopBox = new javax.swing.JCheckBox();
 
         jResultFrame.setTitle("Re-Timing Ergebnisse");
@@ -310,7 +327,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 369, Short.MAX_VALUE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -558,23 +575,17 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             .addGap(0, 169, Short.MAX_VALUE)
         );
 
-        setTitle("Re-Time Werkzeug");
+        jLabel5.setText("Status");
 
-        jPanel1.setBackground(new java.awt.Color(239, 235, 223));
+        jScrollPane2.setBorder(null);
+        jScrollPane2.setMaximumSize(new java.awt.Dimension(32767, 50));
+        jScrollPane2.setMinimumSize(new java.awt.Dimension(21, 50));
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(2, 50));
 
-        jScrollPane1.setToolTipText("");
-
-        jComandArea.setColumns(20);
-        jComandArea.setRows(5);
-        jComandArea.setToolTipText("Angriffsbefehl hierhin kopieren");
-        jComandArea.addCaretListener(new javax.swing.event.CaretListener() {
-            public void caretUpdate(javax.swing.event.CaretEvent evt) {
-                fireComandDataChangedEvent(evt);
-            }
-        });
-        jScrollPane1.setViewportView(jComandArea);
-
-        jLabel1.setText("Angriffsbefehl");
+        jParserInfo.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jParserInfo.setEditable(false);
+        jParserInfo.setToolTipText("Statusmeldungen über das Einlesen des Angriffsbefehls");
+        jScrollPane2.setViewportView(jParserInfo);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Gelesene Werte"));
         jPanel2.setOpaque(false);
@@ -738,11 +749,11 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                     .addComponent(jLabel9))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jReturnField, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
-                    .addComponent(jArriveField, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
-                    .addComponent(jSourceVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
-                    .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
-                    .addComponent(jEstSendTime, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE))
+                    .addComponent(jReturnField, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
+                    .addComponent(jArriveField, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
+                    .addComponent(jSourceVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
+                    .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
+                    .addComponent(jEstSendTime, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -776,17 +787,22 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 .addContainerGap())
         );
 
-        jLabel5.setText("Status");
+        setTitle("Re-Time Werkzeug");
 
-        jScrollPane2.setBorder(null);
-        jScrollPane2.setMaximumSize(new java.awt.Dimension(32767, 50));
-        jScrollPane2.setMinimumSize(new java.awt.Dimension(21, 50));
-        jScrollPane2.setPreferredSize(new java.awt.Dimension(2, 50));
+        jPanel1.setBackground(new java.awt.Color(239, 235, 223));
 
-        jParserInfo.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        jParserInfo.setEditable(false);
-        jParserInfo.setToolTipText("Statusmeldungen über das Einlesen des Angriffsbefehls");
-        jScrollPane2.setViewportView(jParserInfo);
+        jScrollPane1.setToolTipText("");
+
+        jComandArea.setColumns(20);
+        jComandArea.setRows(5);
+        jComandArea.setText("<Kopierten Angriffsbefehl hier einfügen>");
+        jComandArea.setToolTipText("Angriffsbefehl hierhin kopieren");
+        jComandArea.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                fireComandDataChangedEvent(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jComandArea);
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Einstellungen für das Gegentimen"));
         jPanel4.setOpaque(false);
@@ -857,9 +873,9 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                     .addComponent(jLabel8))
                 .addGap(14, 14, 14)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE)
                     .addComponent(jButton1)
-                    .addComponent(jUnitBox, 0, 193, Short.MAX_VALUE))
+                    .addComponent(jUnitBox, 0, 342, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -867,7 +883,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
                     .addComponent(jLabel7)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -875,7 +891,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                             .addComponent(jLabel8))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
                             .addComponent(jLabel12))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -884,43 +900,42 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 .addContainerGap())
         );
 
+        jBBTextPane.setContentType("text/html");
+        jScrollPane6.setViewportView(jBBTextPane);
+
+        jPossibleUnits.setBorder(javax.swing.BorderFactory.createTitledBorder("Mögliche Einheiten"));
+        jScrollPane7.setViewportView(jPossibleUnits);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)))
+                        .addContainerGap()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 647, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(13, 13, 13)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(10, 10, 10)
+                        .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 63, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 63, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -957,36 +972,27 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireComandDataChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireComandDataChangedEvent
+        parsedAttack = new Attack();
         List<Village> villages = PluginManager.getSingleton().executeVillageParser(jComandArea.getText());
         if (villages == null || villages.isEmpty() || villages.size() < 2) {
-            jParserInfo.setBackground(Color.YELLOW);
-            jParserInfo.setText("Keine Dörfer gefunden.\n" + "Möglicherweise handelt es sich nicht um einen gültigen Angriffsbefehl.");
-            return;
-        }
-
-        Village source = villages.get(0);
-        Village target = villages.get(1);
-        if (jComandArea.getText().indexOf(PluginManager.getSingleton().getVariableValue("sos.arrive.time")) > -1) {
-            //change village order for SOS requests
-            source = villages.get(1);
-            target = villages.get(0);
-        }
-        jSourceVillage.setText(source.toString());
-        jTargetVillage.setText(target.toString());
-        boolean fromSelection = false;
-        Date arriveDate = null;
-        SimpleDateFormat f = null;
-        if (!ServerSettings.getSingleton().isMillisArrival()) {
-            f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format"));
+            //   jParserInfo.setBackground(Color.YELLOW);
+            //jParserInfo.setText("Keine Dörfer gefunden.\n" + "Möglicherweise handelt es sich nicht um einen gültigen Angriffsbefehl.");
+            parsedAttack = null;
         } else {
-            f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format.ms"));
-        }
+            Village source = villages.get(0);
+            Village target = villages.get(1);
+            if (jComandArea.getText().indexOf(PluginManager.getSingleton().getVariableValue("sos.arrive.time")) > -1) {
+                //change village order for SOS requests
+                source = villages.get(1);
+                target = villages.get(0);
+            }
+            parsedAttack.setSource(source);
+            parsedAttack.setTarget(target);
 
-        try {
-            String text = jComandArea.getText();
-            String selection = jComandArea.getSelectedText();
-            String arrive = null;
-            if (selection == null) {
+            Date arriveDate = null;
+            try {
+                String text = jComandArea.getText();
+                String arrive = null;
                 String arriveLine = null;
                 if (text.indexOf(PluginManager.getSingleton().getVariableValue("attack.arrive.time")) > -1) {
                     arriveLine = text.substring(text.indexOf(PluginManager.getSingleton().getVariableValue("attack.arrive.time")));
@@ -1011,68 +1017,51 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 String date = tokenizer.nextToken();
                 String time = tokenizer.nextToken();
                 arrive = date.trim() + " " + time.trim();
-            } else {
-                fromSelection = true;
-                arrive = selection;
-            }
-            arriveDate = f.parse(arrive);
-
-            jArriveField.setText(f.format(arriveDate));
-            jParserInfo.setBackground(Color.GREEN);
-            jParserInfo.setText("Angriffsbefehl erfolgreich gelesen.");
-        } catch (Exception e) {
-            if (!fromSelection) {
-                jParserInfo.setBackground(Color.RED);
-                jParserInfo.setText("Es konnte keine Ankunftszeit gefunden werden.\nBitte markiere im oberen Textfeld die Ankunftszeit und -datum.");
-                return;
-            } else {
-                jParserInfo.setBackground(Color.RED);
-                jParserInfo.setText("Aus der Auswahl konnte keine Ankunftszeit bestimmt werden.\nBitte versuche, den Angriffsbefehl erneut zu kopieren oder wende dich an den DS Workbench Support.");
-                return;
-            }
-        }
-
-        //calc possible units
-        double dist = DSCalculator.calculateDistance(source, target);
-
-        Hashtable<String, JCheckBox> unitsCheckboxMappings = new Hashtable<String, JCheckBox>();
-
-        unitsCheckboxMappings.put("axe", jAxeBox);
-        unitsCheckboxMappings.put("sword", jSwordBox);
-        unitsCheckboxMappings.put("spy", jSpyBox);
-        unitsCheckboxMappings.put("light", jLightBox);
-        unitsCheckboxMappings.put("heavy", jHeavyBox);
-        unitsCheckboxMappings.put("ram", jRamBox);
-        unitsCheckboxMappings.put("knight", jPalaBox);
-        unitsCheckboxMappings.put("snob", jSnobBox);
-
-        Enumeration<String> unitKeys = unitsCheckboxMappings.keys();
-        while (unitKeys.hasMoreElements()) {
-            String plainName = unitKeys.nextElement();
-            JCheckBox unitBox = unitsCheckboxMappings.get(plainName);
-            UnitHolder unit = DataHolder.getSingleton().getUnitByPlainName(plainName);
-            if (unit != null) {
-                long dur = (long) Math.floor(dist * unit.getSpeed() * 60000.0);
-                if (arriveDate.getTime() - dur > System.currentTimeMillis()) {
-                    unitBox.setEnabled(false);
+                SimpleDateFormat f = null;
+                if (!ServerSettings.getSingleton().isMillisArrival()) {
+                    f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format"));
                 } else {
-                    unitBox.setEnabled(true);
+                    f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format.ms"));
                 }
+                arriveDate = f.parse(arrive);
+                parsedAttack.setArriveTime(arriveDate);
+            } catch (Exception ignored) {
+                parsedAttack = null;
+            }
+
+            //calc possible units
+            double dist = DSCalculator.calculateDistance(source, target);
+
+            String[] units = new String[]{"axe", "sword", "spy", "light", "heavy", "ram", "knight", "snob"};
+            DefaultListModel model = new DefaultListModel();
+            for (String unit : units) {
+                UnitHolder unitHolder = DataHolder.getSingleton().getUnitByPlainName(unit);
+                if (unit != null) {
+                    long dur = (long) Math.floor(dist * unitHolder.getSpeed() * 60000.0);
+                    if (arriveDate.getTime() - dur <= System.currentTimeMillis()) {
+                        model.addElement(unitHolder);
+                    }
+                }
+            }
+
+            if (model.isEmpty()) {
+                //no element 
+                parsedAttack = null;
+            }
+            jPossibleUnits.setModel(model);
+
+            UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
+            UnitHolder axe = DataHolder.getSingleton().getUnitByPlainName("axe");
+            UnitHolder spy = DataHolder.getSingleton().getUnitByPlainName("spy");
+            if (model.contains(ram)) {
+                jPossibleUnits.setSelectedValue(ram, true);
+            } else if (model.contains(axe)) {
+                jPossibleUnits.setSelectedValue(axe, true);
             } else {
-                unitBox.setEnabled(false);
+                jPossibleUnits.setSelectedValue(spy, true);
             }
         }
-
-        if (jRamBox.isEnabled()) {
-            jRamBox.setSelected(true);
-            fireEstUnitChangedEvent(new ItemEvent(jRamBox, 0, null, 0));
-        } else if (jAxeBox.isEnabled()) {
-            jAxeBox.setSelected(true);
-            fireEstUnitChangedEvent(new ItemEvent(jAxeBox, 0, null, 0));
-        } else {
-            jSpyBox.setSelected(true);
-            jEstSendTime.setText("(unbekannt)");
-        }
+        updateAttackBBView();
     }//GEN-LAST:event_fireComandDataChangedEvent
 
     private void fireEstUnitChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireEstUnitChangedEvent
@@ -1105,7 +1094,6 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             Date arrive = f.parse(jArriveField.getText());
             Village source = PluginManager.getSingleton().executeVillageParser(jSourceVillage.getText()).get(0);
             Village target = PluginManager.getSingleton().executeVillageParser(jTargetVillage.getText()).get(0);
-            // double dist = DSCalculator.calculateDistance(source, target);
             double dur = DSCalculator.calculateMoveTimeInSeconds(source, target, unit.getSpeed()) * 1000.0;
             long send = arrive.getTime() - (long) dur;
             double ret = (double) arrive.getTime() + dur;
@@ -1126,8 +1114,6 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     }//GEN-LAST:event_fireEstUnitChangedEvent
 
     private void fireCalculateReTimingsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateReTimingsEvent
-
-
         DefaultTableModel model = (DefaultTableModel) jAttackPlanTable.getModel();
 
         List<String> selectedPlans = new LinkedList<String>();
@@ -1398,6 +1384,42 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jFilterDialog.setVisible(true);
     }//GEN-LAST:event_fireShowFilterDialogEvent
 
+    private void updateAttackBBView() {
+        StringBuilder bbBuilder = new StringBuilder();
+        if (parsedAttack != null
+                && parsedAttack.getSource() != null
+                && parsedAttack.getTarget() != null
+                && jPossibleUnits.getSelectedValue() != null
+                && parsedAttack.getArriveTime() != null) {
+            SimpleDateFormat f = null;
+            if (ServerSettings.getSingleton().isMillisArrival()) {
+                f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss:SSS");
+            } else {
+                f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss");
+            }
+
+            bbBuilder.append("[table][**]Ziel[||]").append(parsedAttack.getTarget().toBBCode()).append("[/**]\n");
+            bbBuilder.append("[*]Herkunft[|]").append(parsedAttack.getSource().toBBCode()).append("[/*]\n");
+
+            bbBuilder.append("[*]Ankunft[|]").append(f.format(parsedAttack.getArriveTime())).append("[/*]\n");
+            UnitHolder u = (UnitHolder) jPossibleUnits.getSelectedValue();
+            bbBuilder.append("[*]Vermutete Einheit[|]" + "[unit]").append(u.getPlainName()).append("[/unit][/*]\n");
+
+            double dur = DSCalculator.calculateMoveTimeInSeconds(parsedAttack.getSource(), parsedAttack.getTarget(), u.getSpeed()) * 1000.0;
+            long send = parsedAttack.getArriveTime().getTime() - (long) dur;
+            double ret = (double) parsedAttack.getArriveTime().getTime() + dur;
+            ret /= 1000;
+            ret = Math.round(ret + .5);
+            ret *= 1000;
+
+            bbBuilder.append("[*]Errechnete Abschickzeit[|]").append(f.format(new Date(send))).append("[/*]\n");
+            bbBuilder.append("[*]Errechnete Rückkehr[|]").append(f.format(new Date((long) ret))).append("[/*][/table]\n");
+        } else {
+            bbBuilder.append("[b][color=\"FF0000\"]Kein Angriff gefunden[/color][/b]");
+        }
+        jBBTextPane.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + BBCodeFormatter.toHtml(bbBuilder.toString()) + "</body></html>");
+    }
+
     public void setCustomAttack(String pAttack) {
         jComandArea.setText(pAttack);
         fireComandDataChangedEvent(null);
@@ -1453,12 +1475,23 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
+        GlobalOptions.setSelectedServer("de43");
+        DataHolder.getSingleton().loadData(false);
+        try {
+            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (Exception e) {
+        }
 
-            public void run() {
-                new DSWorkbenchReTimerFrame().setVisible(true);
-            }
-        });
+
+        DSWorkbenchReTimerFrame.getSingleton().setSize(600, 400);
+        DSWorkbenchReTimerFrame.getSingleton().resetView();
+        DSWorkbenchReTimerFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        DSWorkbenchReTimerFrame.getSingleton().setVisible(true);
+
+
+
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
@@ -1468,6 +1501,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     private javax.swing.JDialog jAttackPlanSelectionDialog;
     private javax.swing.JTable jAttackPlanTable;
     private javax.swing.JCheckBox jAxeBox;
+    private javax.swing.JTextPane jBBTextPane;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton17;
     private javax.swing.JButton jButton18;
@@ -1484,7 +1518,6 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     private javax.swing.JComboBox jFilterUnitBox;
     private javax.swing.JCheckBox jHeavyBox;
     private javax.swing.JButton jInsertButton;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -1514,6 +1547,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JTextPane jParserInfo;
+    private javax.swing.JList jPossibleUnits;
     private javax.swing.JCheckBox jRamBox;
     private javax.swing.JCheckBox jRelationBox;
     private javax.swing.JFrame jResultFrame;
@@ -1525,6 +1559,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JCheckBox jSnobBox;
     private javax.swing.JTextField jSourceVillage;
     private javax.swing.JCheckBox jSpyBox;

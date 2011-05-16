@@ -69,7 +69,7 @@ public class BrowserCommandSender {
         return true;
     }
 
-    public static void sendRes(Village pSource, Village pTarget, Transport pTrans) {
+    public static boolean sendRes(Village pSource, Village pTarget, Transport pTrans) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             logger.debug("Transfer resources to browser for village '" + pSource + "' to '" + pTarget);
@@ -94,9 +94,10 @@ public class BrowserCommandSender {
                 Thread.sleep(100);
             } catch (Exception ignored) {
             }
+            return true;
         } catch (Throwable t) {
-            JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
             logger.error("Failed to open browser window", t);
+            return false;
         }
     }
 
@@ -124,7 +125,6 @@ public class BrowserCommandSender {
             } catch (Exception ignored) {
             }
         } catch (Throwable t) {
-            JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
             logger.error("Failed to open browser window", t);
             return false;
         }
@@ -178,7 +178,7 @@ public class BrowserCommandSender {
         return true;
     }
 
-    public static void openPlaceTroopsView(Village pSource) {
+    public static boolean openPlaceTroopsView(Village pSource) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             String url = baseURL + "/game.php?village=";
@@ -198,13 +198,14 @@ public class BrowserCommandSender {
                 Thread.sleep(100);
             } catch (Exception ignored) {
             }
+            return true;
         } catch (Throwable t) {
-            JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
             logger.error("Failed to open browser window", t);
+            return false;
         }
     }
 
-    public static void centerVillage(Village pSource) {
+    public static boolean centerVillage(Village pSource) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             String url = baseURL + "/game.php?village=";
@@ -224,13 +225,14 @@ public class BrowserCommandSender {
                 Thread.sleep(100);
             } catch (Exception ignored) {
             }
+            return true;
         } catch (Throwable t) {
-            JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
             logger.error("Failed to open browser window", t);
+            return false;
         }
     }
 
-    public static void centerCoordinate(int pX, int pY) {
+    public static boolean centerCoordinate(int pX, int pY) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             String url = baseURL + "/game.php?village=";
@@ -251,13 +253,14 @@ public class BrowserCommandSender {
                 Thread.sleep(100);
             } catch (Exception ignored) {
             }
+            return true;
         } catch (Throwable t) {
-            JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
             logger.error("Failed to open browser window", t);
+            return false;
         }
     }
 
-    public static void sendRes(Village pSource, Village pTarget) {
+    public static boolean sendRes(Village pSource, Village pTarget) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             String url = baseURL + "/game.php?village=";
@@ -278,9 +281,10 @@ public class BrowserCommandSender {
                 Thread.sleep(100);
             } catch (Exception ignored) {
             }
+            return true;
         } catch (Throwable t) {
-            JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
             logger.error("Failed to open browser window", t);
+            return false;
         }
     }
 }

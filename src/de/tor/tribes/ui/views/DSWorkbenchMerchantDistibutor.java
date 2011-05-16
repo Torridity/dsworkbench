@@ -17,13 +17,14 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.types.VillageMerchantInfo;
 import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.GenericTestPanel;
-import de.tor.tribes.ui.renderer.BooleanCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
+import de.tor.tribes.ui.renderer.SentNotSentCellRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.TradeDirectionCellRenderer;
 import de.tor.tribes.ui.renderer.TransportCellRenderer;
 import de.tor.tribes.ui.renderer.VillageCellRenderer;
+import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -60,11 +61,11 @@ import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
+import org.jdesktop.swingx.JXCollapsiblePane;
+import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -84,7 +85,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         if (e.getValueIsAdjusting()) {
             int selectionCount = jMerchantTable.getSelectedRowCount();
             if (selectionCount != 0) {
-                showInfo(selectionCount + ((selectionCount == 1) ? " Eintrag gewählt" : " Einträge gewählt"));
+                showInfo(infoPanel, jXInfoLabel, selectionCount + ((selectionCount == 1) ? " Eintrag gewählt" : " Einträge gewählt"));
             }
         }
     }
@@ -136,6 +137,22 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
                 //ignore find
             }
         });
+        jResultsTable.registerKeyboardAction(DSWorkbenchMerchantDistibutor.this, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jResultsTable.registerKeyboardAction(DSWorkbenchMerchantDistibutor.this, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jResultsTable.getActionMap().put("find", new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //ignore find
+            }
+        });
+        jResultsDataTable.getActionMap().put("find", new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //ignore find
+            }
+        });
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         //  GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.merchant_distributor", GlobalOptions.getHelpBroker().getHelpSet());
@@ -150,42 +167,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
     }
 
     private void buildMenu() {
-        JXTaskPane editPane = new JXTaskPane();
-        editPane.setTitle("Bearbeiten");
-        JXButton bothButton = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/trade_both.png")));
-        bothButton.setToolTipText("Ändert die Handelsrichtung für die gewählten Einträge in 'Lieferant und Empfänger'");
-        bothButton.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                changeDirection(VillageMerchantInfo.Direction.BOTH);
-            }
-        });
-        editPane.getContentPane().add(bothButton);
-
-        JXButton inButton = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/trade_in.png")));
-        inButton.setToolTipText("Ändert die Handelsrichtung für die gewählten Einträge in 'Empfänger'");
-        inButton.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                changeDirection(VillageMerchantInfo.Direction.INCOMING);
-            }
-        });
-        editPane.getContentPane().add(inButton);
-        JXButton outButton = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/trade_out.png")));
-        outButton.setToolTipText("Ändert die Handelsrichtung für die gewählten Einträge in 'Lieferant'");
-        outButton.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                changeDirection(VillageMerchantInfo.Direction.OUTGOING);
-            }
-        });
-        editPane.getContentPane().add(outButton);
-
-
-
+        //@TODO Implement "save and load transports" feature --> to profile dir
 
         JXTaskPane transferPane = new JXTaskPane();
         transferPane.setTitle("Übertragen");
@@ -200,8 +182,52 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         });
         transferPane.getContentPane().add(toBrowser);
 
+
+        JXTaskPane editPane = new JXTaskPane();
+        editPane.setTitle("Bearbeiten");
+        JXButton bothButton = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/trade_both.png")));
+        bothButton.setPreferredSize(toBrowser.getPreferredSize());
+        bothButton.setMinimumSize(toBrowser.getMinimumSize());
+        bothButton.setMaximumSize(toBrowser.getMaximumSize());
+        bothButton.setToolTipText("Ändert die Handelsrichtung für die gewählten Einträge in 'Lieferant und Empfänger'");
+        bothButton.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                changeDirection(VillageMerchantInfo.Direction.BOTH);
+            }
+        });
+        editPane.getContentPane().add(bothButton);
+
+        JXButton inButton = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/trade_in.png")));
+        inButton.setPreferredSize(toBrowser.getPreferredSize());
+        inButton.setMinimumSize(toBrowser.getMinimumSize());
+        inButton.setMaximumSize(toBrowser.getMaximumSize());
+        inButton.setToolTipText("Ändert die Handelsrichtung für die gewählten Einträge in 'Empfänger'");
+        inButton.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                changeDirection(VillageMerchantInfo.Direction.INCOMING);
+            }
+        });
+        editPane.getContentPane().add(inButton);
+        JXButton outButton = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/trade_out.png")));
+        outButton.setPreferredSize(toBrowser.getPreferredSize());
+        outButton.setMinimumSize(toBrowser.getMinimumSize());
+        outButton.setMaximumSize(toBrowser.getMaximumSize());
+        outButton.setToolTipText("Ändert die Handelsrichtung für die gewählten Einträge in 'Lieferant'");
+        outButton.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                changeDirection(VillageMerchantInfo.Direction.OUTGOING);
+            }
+        });
+        editPane.getContentPane().add(outButton);
+
         JXTaskPane miscPane = new JXTaskPane();
-        transferPane.setTitle("Sonstiges");
+        miscPane.setTitle("Sonstiges");
         JXButton calculateButton = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/att_validate.png")));
         calculateButton.setToolTipText("Startet die Berechnung möglicher Transporte");
         calculateButton.addMouseListener(new MouseAdapter() {
@@ -213,13 +239,13 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         });
         miscPane.getContentPane().add(calculateButton);
 
-        centerPanel.setupTaskPane(editPane, transferPane, miscPane);
+        centerPanel.setupTaskPane(jClickAccountLabel, editPane, transferPane, miscPane);
     }
 
     private void changeDirection(VillageMerchantInfo.Direction pDirection) {
         int[] selectedRows = jMerchantTable.getSelectedRows();
         if (selectedRows == null || selectedRows.length < 1) {
-            showInfo("Keine Einträge ausgewählt");
+            showInfo(infoPanel, jXInfoLabel, "Keine Einträge ausgewählt");
             return;
         }
 
@@ -228,16 +254,54 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
             merchantInfos.get(row).setDirection(pDirection);
         }
         rebuildTable(jMerchantTable, merchantInfos);
-        showSuccess("Handelsrichtung angepasst");
+        showSuccess(infoPanel, jXInfoLabel, "Handelsrichtung angepasst");
     }
 
     private void transferSelectionToBrowser() {
+        if (merchantTabbedPane.getSelectedIndex() != 1) {
+            merchantTabbedPane.setSelectedIndex(1);
+        }
+
+        int[] selection = jResultsTable.getSelectedRows();
+
+        if (selection == null || selection.length == 0) {
+            showInfo(resultInfoPanel, jXResultInfoLabel, "Keine Transporte ausgewählt");
+        }
+
+        if (iClickAccount == 0) {
+            iClickAccount = 1;
+        }
+
+        int transferCount = 0;
+        for (int row : selection) {
+            int realRow = jResultsTable.convertRowIndexToModel(row);
+            Village source = (Village) jResultsTable.getValueAt(realRow, jResultsTable.convertColumnIndexToModel(0));
+            Transport t = (Transport) jResultsTable.getValueAt(realRow, jResultsTable.convertColumnIndexToModel(1));
+            Village target = (Village) jResultsTable.getValueAt(realRow, jResultsTable.convertColumnIndexToModel(2));
+            if (BrowserCommandSender.sendRes(source, target, t)) {
+                transferCount++;
+                jResultsTable.setValueAt(true, realRow, jResultsTable.convertColumnIndexToModel(3));
+                iClickAccount--;
+            } else {
+                transferCount = -1;
+                break;
+            }
+            if (iClickAccount == 0) {
+                break;
+            }
+        }
+        updateClickAccount();
+
+        if (transferCount > 0) {
+            showSuccess(resultInfoPanel, jXResultInfoLabel, ((transferCount == 1) ? "Transport" : "Transporte") + " in den Browser übertragen");
+        } else {
+            showError(resultInfoPanel, jXResultInfoLabel, "Einer oder mehrere Transporte konnten nicht in den Browser übertragen werden");
+        }
     }
 
     private void calculateTransports() {
-        //@TODO change settings dialog to fit Nimbus design
         if (merchantInfos.size() < 2) {
-            showError("Es müssen mindestens 2 Dörfer eingetragen sein");
+            showError(infoPanel, jXInfoLabel, "Es müssen mindestens 2 Dörfer eingetragen sein");
             return;
         }
         boolean haveInc = false;
@@ -254,10 +318,10 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         }
 
         if (!haveInc && !haveDual) {
-            showError("Keine Rohstoffempfänger angegeben");
+            showError(infoPanel, jXInfoLabel, "Keine Rohstoffempfänger angegeben");
             return;
         } else if (!haveSend && !haveDual) {
-            showError("Keine Rohstofflieferanten angegeben");
+            showError(infoPanel, jXInfoLabel, "Keine Rohstofflieferanten angegeben");
             return;
         }
 
@@ -277,28 +341,17 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         java.awt.GridBagConstraints gridBagConstraints;
 
         buttonGroup1 = new javax.swing.ButtonGroup();
-        jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jMerchantDataTable = new javax.swing.JTable();
-        jTaskPane1 = new com.l2fprod.common.swing.JTaskPane();
-        jTaskPaneGroup2 = new com.l2fprod.common.swing.JTaskPaneGroup();
-        jInsertBothButton = new javax.swing.JButton();
-        jInsertReceiveButton = new javax.swing.JButton();
-        jInsertSendButton = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jTaskPaneGroup1 = new com.l2fprod.common.swing.JTaskPaneGroup();
-        jTradeBothButton = new javax.swing.JButton();
-        jTradeInButton = new javax.swing.JButton();
-        jTradeOutButton = new javax.swing.JButton();
         jxMerchantTablePanel = new org.jdesktop.swingx.JXPanel();
         infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
-        jXLabel1 = new org.jdesktop.swingx.JXLabel();
+        jXInfoLabel = new org.jdesktop.swingx.JXLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
         jClickAccountLabel = new javax.swing.JLabel();
         merchantTabbedPane = new com.jidesoft.swing.JideTabbedPane();
         jXResultTransportsPanel = new org.jdesktop.swingx.JXPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jResultsTable = new org.jdesktop.swingx.JXTable();
+        resultInfoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
+        jXResultInfoLabel = new org.jdesktop.swingx.JXLabel();
         jXResultDistributionPanel = new org.jdesktop.swingx.JXPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
@@ -338,157 +391,18 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
         jCheckBox1 = new javax.swing.JCheckBox();
 
-        jPanel1.setBackground(new java.awt.Color(239, 235, 223));
-
-        jMerchantDataTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane1.setViewportView(jMerchantDataTable);
-
-        jTaskPane1.setBackground(new java.awt.Color(239, 235, 223));
-        com.l2fprod.common.swing.PercentLayout percentLayout1 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout1.setGap(14);
-        percentLayout1.setOrientation(1);
-        jTaskPane1.setLayout(percentLayout1);
-
-        jTaskPaneGroup2.setTitle("Einlesen");
-        com.l2fprod.common.swing.PercentLayout percentLayout3 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout3.setGap(2);
-        percentLayout3.setOrientation(1);
-        jTaskPaneGroup2.getContentPane().setLayout(percentLayout3);
-
-        jInsertBothButton.setBackground(new java.awt.Color(239, 235, 223));
-        jInsertBothButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/res_both_from_clipboard.png"))); // NOI18N
-        jInsertBothButton.setToolTipText("Daten aus der Zwischenablage lesen (Empfang und Lieferung)");
-        jInsertBothButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireReadDataEvent(evt);
-            }
-        });
-        jTaskPaneGroup2.getContentPane().add(jInsertBothButton);
-
-        jInsertReceiveButton.setBackground(new java.awt.Color(239, 235, 223));
-        jInsertReceiveButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/res_in_from_clipboard.png"))); // NOI18N
-        jInsertReceiveButton.setToolTipText("Daten aus der Zwischenablage lesen (Nur Empfang)");
-        jInsertReceiveButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireReadDataEvent(evt);
-            }
-        });
-        jTaskPaneGroup2.getContentPane().add(jInsertReceiveButton);
-
-        jInsertSendButton.setBackground(new java.awt.Color(239, 235, 223));
-        jInsertSendButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/res_out_from_clipboard.png"))); // NOI18N
-        jInsertSendButton.setToolTipText("Daten aus der Zwischenablage lesen (Nur Lieferung)");
-        jInsertSendButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireReadDataEvent(evt);
-            }
-        });
-        jTaskPaneGroup2.getContentPane().add(jInsertSendButton);
-
-        jButton5.setBackground(new java.awt.Color(239, 235, 223));
-        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
-        jButton5.setToolTipText("Markierte Einträge löschen");
-        jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireRemoveMarkedEntriesEvent(evt);
-            }
-        });
-        jTaskPaneGroup2.getContentPane().add(jButton5);
-
-        jTaskPane1.add(jTaskPaneGroup2);
-
-        jTaskPaneGroup1.setTitle("Herkunft/Ziel");
-        com.l2fprod.common.swing.PercentLayout percentLayout2 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout2.setGap(2);
-        percentLayout2.setOrientation(1);
-        jTaskPaneGroup1.getContentPane().setLayout(percentLayout2);
-
-        jTradeBothButton.setBackground(new java.awt.Color(239, 235, 223));
-        jTradeBothButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/trade_both.png"))); // NOI18N
-        jTradeBothButton.setToolTipText("Markierte Dörfer sind Ressourcenlieferer und -empfänger");
-        jTradeBothButton.setMaximumSize(new java.awt.Dimension(57, 33));
-        jTradeBothButton.setMinimumSize(new java.awt.Dimension(57, 33));
-        jTradeBothButton.setPreferredSize(new java.awt.Dimension(57, 33));
-        jTradeBothButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireChangeTradeDirectionEvent(evt);
-            }
-        });
-        jTaskPaneGroup1.getContentPane().add(jTradeBothButton);
-
-        jTradeInButton.setBackground(new java.awt.Color(239, 235, 223));
-        jTradeInButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/trade_in.png"))); // NOI18N
-        jTradeInButton.setToolTipText("Markierte Dörfer sind nur Ressourcenempfänger");
-        jTradeInButton.setMaximumSize(new java.awt.Dimension(57, 33));
-        jTradeInButton.setMinimumSize(new java.awt.Dimension(57, 33));
-        jTradeInButton.setPreferredSize(new java.awt.Dimension(57, 33));
-        jTradeInButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireChangeTradeDirectionEvent(evt);
-            }
-        });
-        jTaskPaneGroup1.getContentPane().add(jTradeInButton);
-
-        jTradeOutButton.setBackground(new java.awt.Color(239, 235, 223));
-        jTradeOutButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/trade_out.png"))); // NOI18N
-        jTradeOutButton.setToolTipText("Markierte Dörfer sind nur Ressourcenlieferer");
-        jTradeOutButton.setMaximumSize(new java.awt.Dimension(57, 33));
-        jTradeOutButton.setMinimumSize(new java.awt.Dimension(57, 33));
-        jTradeOutButton.setPreferredSize(new java.awt.Dimension(57, 33));
-        jTradeOutButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireChangeTradeDirectionEvent(evt);
-            }
-        });
-        jTaskPaneGroup1.getContentPane().add(jTradeOutButton);
-
-        jTaskPane1.add(jTaskPaneGroup1);
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTaskPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTaskPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                        .addGap(212, 212, 212)))
-                .addContainerGap())
-        );
-
         jxMerchantTablePanel.setLayout(new java.awt.BorderLayout());
 
         infoPanel.setCollapsed(true);
         infoPanel.setInheritAlpha(false);
 
-        jXLabel1.setOpaque(true);
-        jXLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+        jXInfoLabel.setOpaque(true);
+        jXInfoLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                jXLabel1fireHideInfoEvent(evt);
+                jXInfoLabelfireHideInfoEvent(evt);
             }
         });
-        infoPanel.add(jXLabel1, java.awt.BorderLayout.CENTER);
+        infoPanel.add(jXInfoLabel, java.awt.BorderLayout.CENTER);
 
         jxMerchantTablePanel.add(infoPanel, java.awt.BorderLayout.SOUTH);
 
@@ -539,7 +453,20 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
 
         jXResultTransportsPanel.add(jScrollPane3, java.awt.BorderLayout.CENTER);
 
-        jXResultDistributionPanel.setLayout(new java.awt.BorderLayout());
+        resultInfoPanel.setCollapsed(true);
+        resultInfoPanel.setInheritAlpha(false);
+
+        jXResultInfoLabel.setOpaque(true);
+        jXResultInfoLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jXResultInfoLabelfireHideInfoEvent(evt);
+            }
+        });
+        resultInfoPanel.add(jXResultInfoLabel, java.awt.BorderLayout.CENTER);
+
+        jXResultTransportsPanel.add(resultInfoPanel, java.awt.BorderLayout.SOUTH);
+
+        jXResultDistributionPanel.setLayout(new java.awt.BorderLayout(0, 10));
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Sonstige Ergebnisse"));
         jPanel4.setOpaque(false);
@@ -615,6 +542,9 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
 
         jXResultDistributionPanel.add(jScrollPane5, java.awt.BorderLayout.CENTER);
 
+        jCalculationSettingsDialog.setTitle("Einstellungen");
+        jCalculationSettingsDialog.setModal(true);
+
         jPanel2.setOpaque(false);
         jPanel2.setPreferredSize(new java.awt.Dimension(560, 100));
 
@@ -639,54 +569,54 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
 
         jTargetWood.setText("400000");
         jTargetWood.setEnabled(false);
-        jTargetWood.setMaximumSize(new java.awt.Dimension(50, 20));
-        jTargetWood.setMinimumSize(new java.awt.Dimension(50, 20));
-        jTargetWood.setPreferredSize(new java.awt.Dimension(50, 20));
+        jTargetWood.setMaximumSize(new java.awt.Dimension(60, 25));
+        jTargetWood.setMinimumSize(new java.awt.Dimension(60, 25));
+        jTargetWood.setPreferredSize(new java.awt.Dimension(60, 25));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/holz.png"))); // NOI18N
         jLabel1.setEnabled(false);
 
         jTargetClay.setText("400000");
         jTargetClay.setEnabled(false);
-        jTargetClay.setMaximumSize(new java.awt.Dimension(50, 20));
-        jTargetClay.setMinimumSize(new java.awt.Dimension(50, 20));
-        jTargetClay.setPreferredSize(new java.awt.Dimension(50, 20));
+        jTargetClay.setMaximumSize(new java.awt.Dimension(60, 25));
+        jTargetClay.setMinimumSize(new java.awt.Dimension(60, 25));
+        jTargetClay.setPreferredSize(new java.awt.Dimension(60, 25));
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/lehm.png"))); // NOI18N
         jLabel2.setEnabled(false);
 
         jTargetIron.setText("400000");
         jTargetIron.setEnabled(false);
-        jTargetIron.setMaximumSize(new java.awt.Dimension(50, 20));
-        jTargetIron.setMinimumSize(new java.awt.Dimension(50, 20));
-        jTargetIron.setPreferredSize(new java.awt.Dimension(50, 20));
+        jTargetIron.setMaximumSize(new java.awt.Dimension(60, 25));
+        jTargetIron.setMinimumSize(new java.awt.Dimension(60, 25));
+        jTargetIron.setPreferredSize(new java.awt.Dimension(60, 25));
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/eisen.png"))); // NOI18N
         jLabel3.setEnabled(false);
 
         jRemainWood.setText("100000");
         jRemainWood.setEnabled(false);
-        jRemainWood.setMaximumSize(new java.awt.Dimension(50, 20));
-        jRemainWood.setMinimumSize(new java.awt.Dimension(50, 20));
-        jRemainWood.setPreferredSize(new java.awt.Dimension(50, 20));
+        jRemainWood.setMaximumSize(new java.awt.Dimension(50, 25));
+        jRemainWood.setMinimumSize(new java.awt.Dimension(50, 25));
+        jRemainWood.setPreferredSize(new java.awt.Dimension(60, 25));
 
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/lehm.png"))); // NOI18N
         jLabel4.setEnabled(false);
 
         jRemainClay.setText("100000");
         jRemainClay.setEnabled(false);
-        jRemainClay.setMaximumSize(new java.awt.Dimension(50, 20));
-        jRemainClay.setMinimumSize(new java.awt.Dimension(50, 20));
-        jRemainClay.setPreferredSize(new java.awt.Dimension(50, 20));
+        jRemainClay.setMaximumSize(new java.awt.Dimension(60, 25));
+        jRemainClay.setMinimumSize(new java.awt.Dimension(60, 25));
+        jRemainClay.setPreferredSize(new java.awt.Dimension(60, 25));
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/eisen.png"))); // NOI18N
         jLabel5.setEnabled(false);
 
         jRemainIron.setText("100000");
         jRemainIron.setEnabled(false);
-        jRemainIron.setMaximumSize(new java.awt.Dimension(50, 20));
-        jRemainIron.setMinimumSize(new java.awt.Dimension(50, 20));
-        jRemainIron.setPreferredSize(new java.awt.Dimension(50, 20));
+        jRemainIron.setMaximumSize(new java.awt.Dimension(60, 25));
+        jRemainIron.setMinimumSize(new java.awt.Dimension(60, 25));
+        jRemainIron.setPreferredSize(new java.awt.Dimension(60, 25));
 
         jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/holz.png"))); // NOI18N
         jLabel6.setEnabled(false);
@@ -697,9 +627,9 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
 
         jMinTransportAmount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jMinTransportAmount.setText("10000");
-        jMinTransportAmount.setMaximumSize(new java.awt.Dimension(40, 20));
-        jMinTransportAmount.setMinimumSize(new java.awt.Dimension(40, 20));
-        jMinTransportAmount.setPreferredSize(new java.awt.Dimension(40, 20));
+        jMinTransportAmount.setMaximumSize(new java.awt.Dimension(60, 25));
+        jMinTransportAmount.setMinimumSize(new java.awt.Dimension(60, 25));
+        jMinTransportAmount.setPreferredSize(new java.awt.Dimension(60, 25));
 
         jLabel14.setText("Rohstoffen ignorieren.");
 
@@ -707,7 +637,8 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         jIgnoreTransportsButton.setOpaque(false);
 
         jMaxFilling.setText("95");
-        jMaxFilling.setMinimumSize(new java.awt.Dimension(59, 20));
+        jMaxFilling.setMinimumSize(new java.awt.Dimension(59, 25));
+        jMaxFilling.setPreferredSize(new java.awt.Dimension(59, 25));
 
         jLabel13.setText("Maximaler Füllstand");
 
@@ -733,12 +664,12 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel15)
-                            .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)))
+                            .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
-                            .addComponent(jAdjustingDistribution, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jEqualDistribution, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE))
+                            .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
+                            .addComponent(jEqualDistribution, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
+                            .addComponent(jAdjustingDistribution, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE))
                         .addGap(23, 23, 23)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
@@ -765,7 +696,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
                                 .addComponent(jLabel5)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jRemainIron, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(115, Short.MAX_VALUE))
+                .addGap(65, 65, 65))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -825,11 +756,11 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         jCalculationSettingsDialog.getContentPane().setLayout(jCalculationSettingsDialogLayout);
         jCalculationSettingsDialogLayout.setHorizontalGroup(
             jCalculationSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jCalculationSettingsDialogLayout.createSequentialGroup()
+            .addGroup(jCalculationSettingsDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jCalculationSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 541, Short.MAX_VALUE)
-                    .addGroup(jCalculationSettingsDialogLayout.createSequentialGroup()
+                .addGroup(jCalculationSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jCalculationSettingsDialogLayout.createSequentialGroup()
                         .addComponent(jButton6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jCalculateButton)))
@@ -839,7 +770,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
             jCalculationSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jCalculationSettingsDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jCalculationSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jCalculateButton)
@@ -887,132 +818,6 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void fireReadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireReadDataEvent
-        /* try {
-        Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-        String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-        List<VillageMerchantInfo> infos = PluginManager.getSingleton().executeMerchantParser(data);
-        if (infos.isEmpty()) {
-        JOptionPaneHelper.showInformationBox(this, "Keine Einträge gefunden", "Information");
-        return;
-        }
-        
-        VillageMerchantInfo.Direction currentDir = VillageMerchantInfo.Direction.BOTH;
-        if (evt.getSource() == jInsertSendButton) {
-        currentDir = VillageMerchantInfo.Direction.OUTGOING;
-        } else if (evt.getSource() == jInsertReceiveButton) {
-        currentDir = VillageMerchantInfo.Direction.INCOMING;
-        }
-        
-        for (VillageMerchantInfo newInfo : infos) {
-        newInfo.setDirection(currentDir);
-        }
-        
-        int changesToBoth = 0;
-        int dirChanges = 0;
-        for (VillageMerchantInfo existingInfo : merchantInfos) {
-        VillageMerchantInfo toRemove = null;
-        for (VillageMerchantInfo newInfo : infos) {
-        if (existingInfo.getVillage().equals(newInfo.getVillage())) {
-        //info exists
-        if (existingInfo.getDirection() == VillageMerchantInfo.Direction.INCOMING && newInfo.getDirection() == VillageMerchantInfo.Direction.OUTGOING
-        || existingInfo.getDirection() == VillageMerchantInfo.Direction.OUTGOING && newInfo.getDirection() == VillageMerchantInfo.Direction.INCOMING) {
-        //village acceptes only one and gets the other -> change to both
-        existingInfo.setDirection(VillageMerchantInfo.Direction.BOTH);
-        changesToBoth++;
-        } else if (existingInfo.getDirection() != currentDir) {
-        //set to new direction
-        existingInfo.setDirection(currentDir);
-        dirChanges++;
-        }
-        toRemove = newInfo;
-        break;
-        }
-        }
-        
-        if (toRemove != null) {
-        infos.remove(toRemove);
-        }
-        }
-        int newInfos = infos.size();
-        Collections.addAll(merchantInfos, infos.toArray(new VillageMerchantInfo[]{}));
-        
-        rebuildTable(jMerchantDataTable, merchantInfos);
-        String message = "";
-        if (newInfos == 0 && changesToBoth == 0 && dirChanges == 0) {
-        message = "Keine Veränderung durch neue Einträge";
-        } else {
-        message = "Veränderung der erfassten Dörfer:\n";
-        message += " * " + newInfos + ((newInfos == 1) ? " neuer Eintrag\n" : " neue Einträge\n");
-        message += " * " + changesToBoth + " Wechsel zu 'Lieferant+Empfänger'\n";
-        message += " * " + dirChanges + " Wechsel der Handelsrichtung\n";
-        
-        }
-        //JOptionPaneHelper.showInformationBox(this, message, "Information");
-        NotifierFrame.doNotification("DS Workbench hat " + infos.size() + " Handelspartner in der Zwischenablage gefunden.\n" + message, NotifierFrame.NOTIFY_INFO);
-        // }
-        
-        } catch (Exception e) {
-        logger.error("Failed to read merchant data", e);
-        JOptionPaneHelper.showErrorBox(this, "Fehler beim Lesen aus der Zwischenablage", "Fehler");
-        }*/
-    }//GEN-LAST:event_fireReadDataEvent
-
-    private void fireChangeTradeDirectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeTradeDirectionEvent
-        /*  VillageMerchantInfo.Direction dir = VillageMerchantInfo.Direction.BOTH;
-        if (evt.getSource() == jTradeBothButton) {
-        dir = VillageMerchantInfo.Direction.BOTH;
-        } else if (evt.getSource() == jTradeInButton) {
-        dir = VillageMerchantInfo.Direction.INCOMING;
-        } else if (evt.getSource() == jTradeOutButton) {
-        dir = VillageMerchantInfo.Direction.OUTGOING;
-        }
-        
-        int[] rows = jMerchantDataTable.getSelectedRows();
-        if (rows == null || rows.length == 0) {
-        return;
-        }
-        
-        for (int i = 0; i < rows.length; i++) {
-        int row = jMerchantDataTable.convertRowIndexToModel(rows[i]);
-        merchantInfos.get(row).setDirection(dir);
-        }
-        rebuildTable(jMerchantDataTable, merchantInfos);*/
-    }//GEN-LAST:event_fireChangeTradeDirectionEvent
-
-    private void fireRemoveMarkedEntriesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveMarkedEntriesEvent
-
-        /*   int[] rows = jMerchantDataTable.getSelectedRows();
-        if (rows == null || rows.length == 0) {
-        return;
-        }
-        
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, (rows.length + ((rows.length == 1) ? " Eintrag wirklich löschen?" : " Einträge wirklich löschen?")), "Einträge löschen", "Nein", "Ja") == JOptionPane.NO_OPTION) {
-        return;
-        }
-        Arrays.sort(rows);
-        List<Village> villagesToRemove = new LinkedList<Village>();
-        DefaultTableModel model = ((DefaultTableModel) jMerchantDataTable.getModel());
-        jMerchantDataTable.invalidate();
-        for (int i = rows.length - 1; i >= 0; i--) {
-        int row = jMerchantDataTable.convertRowIndexToModel(rows[i]);
-        villagesToRemove.add((Village) model.getValueAt(row, 0));
-        model.removeRow(row);
-        }
-        jMerchantDataTable.revalidate();
-        
-        List<VillageMerchantInfo> infosToRemove = new LinkedList<VillageMerchantInfo>();
-        for (VillageMerchantInfo info : merchantInfos) {
-        if (villagesToRemove.contains(info.getVillage())) {
-        infosToRemove.add(info);
-        }
-        }
-        
-        for (VillageMerchantInfo info : infosToRemove) {
-        merchantInfos.remove(info);
-        }*/
-    }//GEN-LAST:event_fireRemoveMarkedEntriesEvent
 
     private void fireCalculateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateEvent
         if (evt.getSource() == jCalculateButton) {
@@ -1103,33 +908,33 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         updateClickAccount();
     }//GEN-LAST:event_fireClickAccountChangedEvent
 
-    private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXLabel1fireHideInfoEvent
+    private void jXInfoLabelfireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXInfoLabelfireHideInfoEvent
         infoPanel.setCollapsed(true);
-}//GEN-LAST:event_jXLabel1fireHideInfoEvent
+}//GEN-LAST:event_jXInfoLabelfireHideInfoEvent
 
-    public void showInfo(String pMessage) {
-        infoPanel.setCollapsed(false);
-        jXLabel1.setBackgroundPainter(new MattePainter(getBackground()));
-        jXLabel1.setForeground(Color.BLACK);
-        jXLabel1.setText(pMessage);
+    private void jXResultInfoLabelfireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXResultInfoLabelfireHideInfoEvent
+        resultInfoPanel.setCollapsed(true);
+    }//GEN-LAST:event_jXResultInfoLabelfireHideInfoEvent
+
+    public void showInfo(JXCollapsiblePane pPane, JXLabel pLabel, String pMessage) {
+        pPane.setCollapsed(false);
+        pLabel.setBackgroundPainter(new MattePainter(getBackground()));
+        pLabel.setForeground(Color.BLACK);
+        pLabel.setText(pMessage);
     }
 
-    public void showSuccess(String pMessage) {
-        infoPanel.setCollapsed(false);
-        jXLabel1.setBackgroundPainter(new MattePainter(Color.GREEN));
-        jXLabel1.setForeground(Color.BLACK);
-        jXLabel1.setText(pMessage);
+    public void showSuccess(JXCollapsiblePane pPane, JXLabel pLabel, String pMessage) {
+        pPane.setCollapsed(false);
+        pLabel.setBackgroundPainter(new MattePainter(Color.GREEN));
+        pLabel.setForeground(Color.BLACK);
+        pLabel.setText(pMessage);
     }
 
-    /**
-     * 
-     * @param pMessage
-     */
-    public void showError(String pMessage) {
-        infoPanel.setCollapsed(false);
-        jXLabel1.setBackgroundPainter(new MattePainter(Color.RED));
-        jXLabel1.setForeground(Color.WHITE);
-        jXLabel1.setText(pMessage);
+    public void showError(JXCollapsiblePane pPane, JXLabel pLabel, String pMessage) {
+        pPane.setCollapsed(false);
+        pLabel.setBackgroundPainter(new MattePainter(Color.RED));
+        pLabel.setForeground(Color.WHITE);
+        pLabel.setText(pMessage);
     }
 
     private void readMerchantInfoFromClipboard() {
@@ -1138,7 +943,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
             String data = (String) t.getTransferData(DataFlavor.stringFlavor);
             List<VillageMerchantInfo> infos = PluginManager.getSingleton().executeMerchantParser(data);
             if (infos.isEmpty()) {
-                showInfo("Keine Einträge in der Zwischenablage gefunden");
+                showInfo(infoPanel, jXInfoLabel, "Keine Einträge in der Zwischenablage gefunden");
                 return;
             }
 
@@ -1184,29 +989,46 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
             Collections.addAll(merchantInfos, infos.toArray(new VillageMerchantInfo[]{}));
 
             rebuildTable(jMerchantTable, merchantInfos);
-            showSuccess("<html>" + ((infos.size() == 1) ? "1 neuen Eintrag " : infos.size() + " neue Eintr&auml;ge") + " hinzugef&uuml;gt<br/>"
+            showSuccess(infoPanel, jXInfoLabel, "<html>" + ((infos.size() == 1) ? "1 neuen Eintrag " : infos.size() + " neue Eintr&auml;ge") + " hinzugef&uuml;gt<br/>"
                     + ((changesToBoth + dirChanges == 1) ? "1 Eintrag " : (changesToBoth + dirChanges) + " Eintr&auml;ge") + " ver&auml;ndert</html>");
         } catch (Exception e) {
             logger.error("Failed to read merchant data", e);
-            showError("Fehler beim Lesen aus der Zwischenablage");
+            showError(infoPanel, jXInfoLabel, "Fehler beim Lesen aus der Zwischenablage");
         }
     }
 
     private void removeSelection() {
-        int[] selectedRows = jMerchantTable.getSelectedRows();
-        if (selectedRows == null || selectedRows.length < 1) {
-            showInfo("Keine Einträge ausgewählt");
-            return;
-        }
 
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du " + ((selectedRows.length == 1) ? "den gewählten Eintrag " : "die gewählten Einträge ") + "wirklich löschen?", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-            for (Integer selectedRow : selectedRows) {
-                int row = jMerchantTable.convertRowIndexToModel(selectedRow);
-                merchantInfos.remove(row);
+        if (merchantTabbedPane.getSelectedIndex() == 0) {
+            int[] selectedRows = jMerchantTable.getSelectedRows();
+            if (selectedRows == null || selectedRows.length < 1) {
+                showInfo(infoPanel, jXInfoLabel, "Keine Einträge ausgewählt");
+                return;
             }
-            rebuildTable(jMerchantTable, merchantInfos);
+
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du " + ((selectedRows.length == 1) ? "den gewählten Eintrag " : "die gewählten Einträge ") + "wirklich löschen?", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                for (Integer selectedRow : selectedRows) {
+                    merchantInfos.remove(jMerchantTable.convertRowIndexToModel(selectedRow));
+                }
+                rebuildTable(jMerchantTable, merchantInfos);
+            }
+            showSuccess(infoPanel, jXInfoLabel, "Einträge gelöscht");
+        } else if (merchantTabbedPane.getSelectedIndex() == 1) {
+            int[] selectedRows = jResultsTable.getSelectedRows();
+            if (selectedRows == null || selectedRows.length < 1) {
+                showInfo(resultInfoPanel, jXResultInfoLabel, "Keine Einträge ausgewählt");
+                return;
+            }
+
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du " + ((selectedRows.length == 1) ? "den gewählten Eintrag " : "die gewählten Einträge ") + "wirklich löschen?", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                DefaultTableModel model = (DefaultTableModel) jResultsTable.getModel();
+                int numRows = selectedRows.length;
+                for (int i = 0; i < numRows; i++) {
+                    model.removeRow(jResultsTable.convertRowIndexToModel(jResultsTable.getSelectedRow()));
+                }
+            }
+            showSuccess(resultInfoPanel, jXResultInfoLabel, "Einträge gelöscht");
         }
-        showSuccess("Einträge gelöscht");
     }
 
     private void updateClickAccount() {
@@ -1448,12 +1270,10 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         jPerfectResults.setText(Integer.toString(perfectResults));
 
         //set sorter
-        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
-        jResultsTable.setRowSorter(sorter);
-        sorter.setModel(model);
+        jResultsTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jResultsTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jResultsTable.setDefaultRenderer(Transport.class, new TransportCellRenderer());
-        jResultsTable.setDefaultRenderer(Boolean.class, new BooleanCellRenderer());
+        jResultsTable.setDefaultRenderer(Boolean.class, new SentNotSentCellRenderer());
         SortableTableHeaderRenderer mHeaderRenderer = new SortableTableHeaderRenderer();
         for (int i = 0; i < jResultsTable.getColumnCount(); i++) {
             jResultsTable.getColumn(jResultsTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderer);
@@ -1492,7 +1312,6 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
     private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JRadioButton jAdjustingDistribution;
-    private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jCalculateButton;
     private javax.swing.JDialog jCalculationSettingsDialog;
@@ -1500,9 +1319,6 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
     private javax.swing.JLabel jClickAccountLabel;
     private javax.swing.JRadioButton jEqualDistribution;
     private javax.swing.JCheckBox jIgnoreTransportsButton;
-    private javax.swing.JButton jInsertBothButton;
-    private javax.swing.JButton jInsertReceiveButton;
-    private javax.swing.JButton jInsertSendButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel13;
@@ -1517,11 +1333,9 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JTextField jMaxFilling;
-    private javax.swing.JTable jMerchantDataTable;
     private javax.swing.JPanel jMerchantPanel;
     private static final org.jdesktop.swingx.JXTable jMerchantTable = new org.jdesktop.swingx.JXTable();
     private javax.swing.JTextField jMinTransportAmount;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JLabel jPerfectResults;
@@ -1530,25 +1344,20 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
     private javax.swing.JTextField jRemainWood;
     private org.jdesktop.swingx.JXTable jResultsDataTable;
     private org.jdesktop.swingx.JXTable jResultsTable;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTextField jTargetClay;
     private javax.swing.JTextField jTargetIron;
     private javax.swing.JTextField jTargetWood;
-    private com.l2fprod.common.swing.JTaskPane jTaskPane1;
-    private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup1;
-    private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup2;
-    private javax.swing.JButton jTradeBothButton;
-    private javax.swing.JButton jTradeInButton;
-    private javax.swing.JButton jTradeOutButton;
     private javax.swing.JLabel jUsedMerchants;
     private javax.swing.JLabel jUsedTransports;
-    private org.jdesktop.swingx.JXLabel jXLabel1;
+    private org.jdesktop.swingx.JXLabel jXInfoLabel;
     private org.jdesktop.swingx.JXPanel jXResultDistributionPanel;
+    private org.jdesktop.swingx.JXLabel jXResultInfoLabel;
     private org.jdesktop.swingx.JXPanel jXResultTransportsPanel;
     private org.jdesktop.swingx.JXPanel jxMerchantTablePanel;
     private com.jidesoft.swing.JideTabbedPane merchantTabbedPane;
+    private org.jdesktop.swingx.JXCollapsiblePane resultInfoPanel;
     // End of variables declaration//GEN-END:variables
 }

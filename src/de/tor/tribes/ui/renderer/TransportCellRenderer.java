@@ -11,17 +11,17 @@ import java.awt.Component;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
+import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
 /**
  *
  * @author Torridity
  */
-public class TransportCellRenderer extends DefaultTableCellRenderer {
+public class TransportCellRenderer extends DefaultTableRenderer {
 
     private DefaultTableCellRenderer renderer = null;
     private NumberFormat nf;
@@ -45,47 +45,29 @@ public class TransportCellRenderer extends DefaultTableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        JLabel label = ((JLabel) c);
+        Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        JLabel label = (JLabel) c;
 
-
-        if (!isSelected) {
-            if (row % 2 == 0) {
-                label.setBackground(Constants.DS_ROW_B);
-            } else {
-                label.setBackground(Constants.DS_ROW_A);
-            }
-        }
         Transport t = (Transport) value;
 
         Resource woodTransport = t.getSingleTransports().get(0);
         Resource clayTransport = t.getSingleTransports().get(1);
         Resource ironTransport = t.getSingleTransports().get(2);
 
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder();
         text.append("<html>");
         text.append(nf.format(woodTransport.getAmount()));
         text.append(" ");
-        text.append("<img src='" + iconsUrls.get(0) + "'/>");
+        text.append("<img src='").append(iconsUrls.get(0)).append("'/>");
         text.append(nf.format(clayTransport.getAmount()));
         text.append(" ");
-        text.append("<img src='" + iconsUrls.get(1) + "'/>");
+        text.append("<img src='").append(iconsUrls.get(1)).append("'/>");
         text.append(nf.format(ironTransport.getAmount()));
         text.append(" ");
-        text.append("<img src='" + iconsUrls.get(2) + "'/>");
+        text.append("<img src='").append(iconsUrls.get(2)).append("'/>");
         text.append("</html>");
         label.setText(text.toString());
-        /* label.setText(nf.format(res.getAmount()));
-        if (res.getType() == Resource.Type.WOOD) {
-        label.setIcon(woodIcon);
-        } else if (res.getType() == Resource.Type.CLAY) {
-        label.setIcon(clayIcon);
-        } else if (res.getType() == Resource.Type.IRON) {
-        label.setIcon(ironIcon);
-        }*/
-        // label.setIconTextGap(3);
         label.setHorizontalAlignment(SwingConstants.CENTER);
-        //  label.setHorizontalAlignment(SwingConstants.CENTER);
         return label;
     }
 }

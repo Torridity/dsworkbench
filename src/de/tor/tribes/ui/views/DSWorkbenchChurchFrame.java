@@ -230,7 +230,8 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             return;
         }
         int row = jChurchTable.convertRowIndexToModel(rows[0]);
-        Village v = ((Village) ((DefaultTableModel) jChurchTable.getModel()).getValueAt(row, 1));
+        int col = jChurchTable.convertColumnIndexToModel(1);
+        Village v = ((Village) ((DefaultTableModel) jChurchTable.getModel()).getValueAt(row, col));
         DSWorkbenchMainFrame.getSingleton().centerVillage(v);
     }//GEN-LAST:event_fireCenterChurchVillageEvent
 
@@ -256,10 +257,9 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     }
 
     private void centerChurchVillage() {
-        int row = jChurchTable.getSelectedRow();
-
-        row = jChurchTable.convertRowIndexToModel(row);
-        Village v = ((Village) ((ChurchTableModel) jChurchTable.getModel()).getValueAt(row, 1));
+        int row = jChurchTable.convertRowIndexToModel(jChurchTable.getSelectedRow());
+        int col = jChurchTable.convertColumnIndexToModel(1);
+        Village v = ((Village) ((ChurchTableModel) jChurchTable.getModel()).getValueAt(row, col));
         DSWorkbenchMainFrame.getSingleton().centerVillage(v);
     }
 
@@ -299,7 +299,8 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             jChurchTable.invalidate();
             for (int i = rows.length - 1; i >= 0; i--) {
                 int row = jChurchTable.convertRowIndexToModel(rows[i]);
-                Village v = ((Village) ((ChurchTableModel) jChurchTable.getModel()).getValueAt(row, 1));
+                int col = jChurchTable.convertColumnIndexToModel(1);
+                Village v = ((Village) ((ChurchTableModel) jChurchTable.getModel()).getValueAt(row, col));
                 toRemove.add(v);
             }
             jChurchTable.revalidate();

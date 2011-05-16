@@ -69,7 +69,7 @@ public class MerchantParser implements GenericParserInterface<VillageMerchantInf
     }
 
     public static void main(String[] args) throws Exception {
-        Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         String data = (String) t.getTransferData(DataFlavor.stringFlavor);
         /*  String line = "Cartulia (440|878) K84  	22.09	9.495	109.359 120.800 107.054 	400000	74/74	5758/24000	morgen um 20:06 Uhr";
         String line2 = " Rattennest (-47|35) (439|868) K84  	32.02	10.019	29.295 342.763 762 	400000	110/110	11791/24000";

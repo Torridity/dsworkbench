@@ -321,16 +321,16 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
+                  <EmptySpace pref="312" max="32767" attributes="0"/>
+                  <Component id="jButton6" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Component id="jCalculateButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jPanel2" alignment="1" pref="486" max="32767" attributes="0"/>
-                      <Group type="102" alignment="1" attributes="0">
-                          <Component id="jButton6" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="jCalculateButton" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
+              </Group>
+              <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jPanel2" min="-2" pref="476" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -352,7 +352,9 @@
       <SubComponents>
         <Container class="javax.swing.JPanel" name="jPanel2">
           <Properties>
-            <Property name="opaque" type="boolean" value="false"/>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="df" green="eb" red="ef" type="rgb"/>
+            </Property>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[560, 100]"/>
             </Property>
@@ -364,51 +366,41 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="1">
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="jIgnoreTransportsButton" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                                      <Component id="jMinTransportAmount" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="0" attributes="1">
-                                      <Component id="jLabel13" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jMaxFilling" max="32767" attributes="0"/>
-                                  </Group>
-                              </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabel15" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel14" alignment="0" pref="247" max="32767" attributes="0"/>
-                              </Group>
+                          <Component id="jEqualDistribution" alignment="0" pref="167" max="32767" attributes="1"/>
+                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                              <Component id="jLabel13" alignment="0" max="32767" attributes="1"/>
+                              <Component id="jIgnoreTransportsButton" alignment="0" max="32767" attributes="1"/>
+                              <Component id="jLabel7" alignment="0" max="32767" attributes="1"/>
+                              <Component id="jAdjustingDistribution" alignment="0" max="32767" attributes="1"/>
                           </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="jLabel7" pref="177" max="32767" attributes="1"/>
-                                  <Component id="jEqualDistribution" alignment="0" pref="177" max="32767" attributes="1"/>
-                                  <Component id="jAdjustingDistribution" alignment="0" pref="177" max="32767" attributes="1"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jTargetWood" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Component id="jTargetClay" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Component id="jTargetIron" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="jMaxFilling" max="32767" attributes="1"/>
+                                  <Component id="jMinTransportAmount" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="jRemainWood" alignment="0" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="jLabel14" alignment="1" max="32767" attributes="1"/>
                                   <Group type="102" alignment="1" attributes="0">
-                                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jTargetWood" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                                      <Component id="jTargetClay" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                                      <Component id="jTargetIron" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="1" attributes="0">
-                                      <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jRemainWood" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="jRemainClay" min="-2" max="-2" attributes="0"/>
@@ -417,10 +409,11 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="jRemainIron" min="-2" max="-2" attributes="0"/>
                                   </Group>
+                                  <Component id="jLabel15" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
-                      <EmptySpace min="-2" pref="65" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -440,26 +433,32 @@
                           <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jRemainIron" min="-2" max="-2" attributes="1"/>
-                          <Component id="jLabel7" alignment="0" max="32767" attributes="1"/>
-                          <Component id="jLabel6" alignment="0" max="32767" attributes="1"/>
-                          <Component id="jLabel4" alignment="0" max="32767" attributes="1"/>
-                          <Component id="jLabel5" alignment="0" max="32767" attributes="1"/>
-                          <Component id="jRemainWood" alignment="0" min="-2" max="-2" attributes="1"/>
-                          <Component id="jRemainClay" alignment="0" min="-2" max="-2" attributes="1"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jLabel7" pref="25" max="32767" attributes="1"/>
+                          <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="jRemainIron" min="-2" max="-2" attributes="1"/>
+                              <Component id="jLabel6" alignment="0" max="32767" attributes="1"/>
+                              <Component id="jLabel4" alignment="0" max="32767" attributes="1"/>
+                              <Component id="jLabel5" alignment="0" max="32767" attributes="1"/>
+                              <Component id="jRemainWood" alignment="0" min="-2" max="-2" attributes="1"/>
+                              <Component id="jRemainClay" alignment="0" min="-2" max="-2" attributes="1"/>
+                          </Group>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jMinTransportAmount" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel14" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jIgnoreTransportsButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel13" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jMaxFilling" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel15" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel14" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jIgnoreTransportsButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel13" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel15" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jMaxFilling" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Component id="jMinTransportAmount" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                   </Group>
@@ -639,7 +638,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="jMinTransportAmount">
               <Properties>
-                <Property name="horizontalAlignment" type="int" value="0"/>
+                <Property name="horizontalAlignment" type="int" value="2"/>
                 <Property name="text" type="java.lang.String" value="10000"/>
                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[60, 25]"/>

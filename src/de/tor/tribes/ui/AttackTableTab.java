@@ -1414,12 +1414,10 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
             String result = "Daten in Zwischenablage kopiert.";
-            //JOptionPaneHelper.showInformationBox(this, result, "Information");
             showSuccess(result);
         } catch (Exception e) {
             logger.error("Failed to copy data to clipboard", e);
             String result = "Fehler beim Kopieren in die Zwischenablage.";
-            //JOptionPaneHelper.showErrorBox(this, result, "Fehler");
             showError(result);
         }
     }

@@ -19,10 +19,11 @@ import de.tor.tribes.types.NoTag;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.TroopFilterElement;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.types.test.DummyProfile;
 import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.GenericTestPanel;
-import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
+import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
@@ -52,11 +53,11 @@ import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
+import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -69,12 +70,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
+import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
@@ -97,6 +97,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("Copy")) {
             copySelectionToInternalClipboard();
+        } else if (e.getActionCommand().equals("Cut")) {
+            cutSelectionToInternalClipboard();
         } else if (e.getActionCommand().equals("Delete")) {
             removeSelection();
         }
@@ -128,9 +130,18 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         buildMenu();
 
         KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
-        KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, ActionEvent.CTRL_MASK, false);
+        KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
+        KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK, false);
         jResultTable.registerKeyboardAction(DSWorkbenchReTimerFrame.this, "Copy", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jResultTable.registerKeyboardAction(DSWorkbenchReTimerFrame.this, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jResultTable.registerKeyboardAction(DSWorkbenchReTimerFrame.this, "Cut", cut, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jResultTable.getActionMap().put("find", new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //ignore find
+            }
+        });
         jResultTable.getSelectionModel().addListSelectionListener(DSWorkbenchReTimerFrame.this);
         jPossibleUnits.setCellRenderer(new UnitListCellRenderer());
         jPossibleUnits.addListSelectionListener(new ListSelectionListener() {
@@ -152,8 +163,10 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         JXTaskPane editPane = new JXTaskPane();
         editPane.setTitle("Bearbeiten");
         JXButton filterRetimes = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/filter_strength.png")));
-        filterRetimes.setToolTipText("<html>Filtern der gefundenen ReTime Angriffe nach der bekannten Truppenst&auml;rke im Dorf<br/>Es ist ratsam, vor der Filterung zu pr&uuml;fen, ob die in DS Workbench importierten<br/>"
-                + "Truppeninformationen aktuell sind</html>");
+        filterRetimes.setToolTipText("<html>Filtern der gefundenen ReTime Angriffe nach der bekannten Truppenst&auml;rke im Dorf<br/>"
+                + "Es ist ratsam, vor der Filterung zu pr&uuml;fen, ob die in DS Workbench importierten<br/>"
+                + "Truppeninformationen aktuell sind. Nach der Filterung sind die Eintr&auml;ge markiert, welche die eingestellten<br/>"
+                + "Filterbedingungen <b>NICHT</b> erf&uuml;llen.</html>");
         filterRetimes.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -227,6 +240,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     // </editor-fold>
     @Override
     public void resetView() {
+        buildResults(null, null, null);
     }
 
     private void copySelectionToInternalClipboard() {
@@ -249,6 +263,12 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         } catch (HeadlessException hex) {
             showError("Fehler beim Kopieren der Angriffe");
         }
+    }
+
+    private void cutSelectionToInternalClipboard() {
+        copySelectionToInternalClipboard();
+        removeSelection(false);
+        showSuccess("Einträge ausgeschnitten");
     }
 
     private void copyAttacksToClipboardAsBBCode() {
@@ -302,6 +322,10 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     }
 
     private void removeSelection() {
+        removeSelection(true);
+    }
+
+    private void removeSelection(boolean ask) {
         jideRetimeTabbedPane.setSelectedIndex(1);
         int[] selectedRows = jResultTable.getSelectedRows();
         if (selectedRows == null || selectedRows.length < 1) {
@@ -309,7 +333,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             return;
         }
 
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du " + ((selectedRows.length == 1) ? "den gewählten Eintrag " : "die gewählten Einträge ") + "wirklich löschen?", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+        if (!ask || JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du " + ((selectedRows.length == 1) ? "den gewählten Eintrag " : "die gewählten Einträge ") + "wirklich löschen?", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             DefaultTableModel model = (DefaultTableModel) jResultTable.getModel();
             int numRows = selectedRows.length;
             for (int i = 0; i < numRows; i++) {
@@ -445,7 +469,6 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         java.awt.GridBagConstraints gridBagConstraints;
 
         buttonGroup1 = new javax.swing.ButtonGroup();
-        jButton3 = new javax.swing.JButton();
         jAttackPlanSelectionDialog = new javax.swing.JDialog();
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
@@ -468,30 +491,6 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jFilterList = new javax.swing.JList();
         jLabel28 = new javax.swing.JLabel();
         jButton18 = new javax.swing.JButton();
-        jPanel7 = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jParserInfo = new javax.swing.JTextPane();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jSourceVillage = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jTargetVillage = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
-        jArriveField = new javax.swing.JTextField();
-        jPanel3 = new javax.swing.JPanel();
-        jAxeBox = new javax.swing.JCheckBox();
-        jSwordBox = new javax.swing.JCheckBox();
-        jSpyBox = new javax.swing.JCheckBox();
-        jLightBox = new javax.swing.JCheckBox();
-        jHeavyBox = new javax.swing.JCheckBox();
-        jRamBox = new javax.swing.JCheckBox();
-        jPalaBox = new javax.swing.JCheckBox();
-        jSnobBox = new javax.swing.JCheckBox();
-        jLabel6 = new javax.swing.JLabel();
-        jEstSendTime = new javax.swing.JTextField();
-        jLabel9 = new javax.swing.JLabel();
-        jReturnField = new javax.swing.JTextField();
         jInputPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jComandArea = new javax.swing.JTextArea();
@@ -518,14 +517,6 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jReTimePanel = new javax.swing.JPanel();
         jMainAlwaysOnTopBox = new javax.swing.JCheckBox();
         capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
-
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_overview.png"))); // NOI18N
-        jButton3.setToolTipText("Markierte Angriffe in die Angriffsübersicht einfügen");
-        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireShowAttackPlanSelectionDialogEvent(evt);
-            }
-        });
 
         jAttackPlanSelectionDialog.setTitle("Angriffsplanauswahl");
         jAttackPlanSelectionDialog.setAlwaysOnTop(true);
@@ -725,229 +716,6 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 .addContainerGap())
         );
 
-        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 203, Short.MAX_VALUE)
-        );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 169, Short.MAX_VALUE)
-        );
-
-        jLabel5.setText("Status");
-
-        jScrollPane2.setBorder(null);
-        jScrollPane2.setMaximumSize(new java.awt.Dimension(32767, 50));
-        jScrollPane2.setMinimumSize(new java.awt.Dimension(21, 50));
-        jScrollPane2.setPreferredSize(new java.awt.Dimension(2, 50));
-
-        jParserInfo.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        jParserInfo.setEditable(false);
-        jParserInfo.setToolTipText("Statusmeldungen über das Einlesen des Angriffsbefehls");
-        jScrollPane2.setViewportView(jParserInfo);
-
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Gelesene Werte"));
-        jPanel2.setOpaque(false);
-
-        jLabel2.setText("Herkunft");
-
-        jSourceVillage.setToolTipText("Gelesene Herkunft des Angriffs");
-
-        jLabel3.setText("Ziel");
-
-        jTargetVillage.setToolTipText("Gelesenes Ziel des Angriffs");
-
-        jLabel4.setText("Ankunft");
-
-        jArriveField.setToolTipText("Gelesene Ankunftszeit des Angriffs");
-
-        jPanel3.setOpaque(false);
-        jPanel3.setLayout(new java.awt.GridLayout(4, 2));
-
-        buttonGroup1.add(jAxeBox);
-        jAxeBox.setText("Axt");
-        jAxeBox.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png"))); // NOI18N
-        jAxeBox.setDisabledSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png"))); // NOI18N
-        jAxeBox.setDoubleBuffered(true);
-        jAxeBox.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_grey.png"))); // NOI18N
-        jAxeBox.setOpaque(false);
-        jAxeBox.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_green.png"))); // NOI18N
-        jAxeBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireEstUnitChangedEvent(evt);
-            }
-        });
-        jPanel3.add(jAxeBox);
-
-        buttonGroup1.add(jSwordBox);
-        jSwordBox.setText("Schwert");
-        jSwordBox.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png"))); // NOI18N
-        jSwordBox.setDisabledSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png"))); // NOI18N
-        jSwordBox.setDoubleBuffered(true);
-        jSwordBox.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_grey.png"))); // NOI18N
-        jSwordBox.setOpaque(false);
-        jSwordBox.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_green.png"))); // NOI18N
-        jSwordBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireEstUnitChangedEvent(evt);
-            }
-        });
-        jPanel3.add(jSwordBox);
-
-        buttonGroup1.add(jSpyBox);
-        jSpyBox.setText("Späher");
-        jSpyBox.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png"))); // NOI18N
-        jSpyBox.setDisabledSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png"))); // NOI18N
-        jSpyBox.setDoubleBuffered(true);
-        jSpyBox.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_grey.png"))); // NOI18N
-        jSpyBox.setOpaque(false);
-        jSpyBox.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_green.png"))); // NOI18N
-        jSpyBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireEstUnitChangedEvent(evt);
-            }
-        });
-        jPanel3.add(jSpyBox);
-
-        buttonGroup1.add(jLightBox);
-        jLightBox.setText("LKav");
-        jLightBox.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png"))); // NOI18N
-        jLightBox.setDisabledSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png"))); // NOI18N
-        jLightBox.setDoubleBuffered(true);
-        jLightBox.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_grey.png"))); // NOI18N
-        jLightBox.setOpaque(false);
-        jLightBox.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_green.png"))); // NOI18N
-        jLightBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireEstUnitChangedEvent(evt);
-            }
-        });
-        jPanel3.add(jLightBox);
-
-        buttonGroup1.add(jHeavyBox);
-        jHeavyBox.setText("SKav");
-        jHeavyBox.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png"))); // NOI18N
-        jHeavyBox.setDisabledSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png"))); // NOI18N
-        jHeavyBox.setDoubleBuffered(true);
-        jHeavyBox.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_grey.png"))); // NOI18N
-        jHeavyBox.setOpaque(false);
-        jHeavyBox.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_green.png"))); // NOI18N
-        jHeavyBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireEstUnitChangedEvent(evt);
-            }
-        });
-        jPanel3.add(jHeavyBox);
-
-        buttonGroup1.add(jRamBox);
-        jRamBox.setText("Ramme");
-        jRamBox.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png"))); // NOI18N
-        jRamBox.setDisabledSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png"))); // NOI18N
-        jRamBox.setDoubleBuffered(true);
-        jRamBox.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_grey.png"))); // NOI18N
-        jRamBox.setOpaque(false);
-        jRamBox.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_green.png"))); // NOI18N
-        jRamBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireEstUnitChangedEvent(evt);
-            }
-        });
-        jPanel3.add(jRamBox);
-
-        buttonGroup1.add(jPalaBox);
-        jPalaBox.setText("Paladin");
-        jPalaBox.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png"))); // NOI18N
-        jPalaBox.setDisabledSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png"))); // NOI18N
-        jPalaBox.setDoubleBuffered(true);
-        jPalaBox.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_grey.png"))); // NOI18N
-        jPalaBox.setOpaque(false);
-        jPalaBox.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_green.png"))); // NOI18N
-        jPalaBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireEstUnitChangedEvent(evt);
-            }
-        });
-        jPanel3.add(jPalaBox);
-
-        buttonGroup1.add(jSnobBox);
-        jSnobBox.setText("AG");
-        jSnobBox.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png"))); // NOI18N
-        jSnobBox.setDisabledSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png"))); // NOI18N
-        jSnobBox.setDoubleBuffered(true);
-        jSnobBox.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_grey.png"))); // NOI18N
-        jSnobBox.setOpaque(false);
-        jSnobBox.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_green.png"))); // NOI18N
-        jSnobBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireEstUnitChangedEvent(evt);
-            }
-        });
-        jPanel3.add(jSnobBox);
-
-        jLabel6.setText("Abschickzeit");
-
-        jEstSendTime.setToolTipText("Abschickzeit des Angriffs unter Verwendung der gewählten Einheit");
-        jEstSendTime.setEnabled(false);
-
-        jLabel9.setText("Rückkehr");
-
-        jReturnField.setToolTipText("Rückkehr der Truppen unter Verwendung der gewählten Einheit");
-        jReturnField.setEnabled(false);
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel9))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jReturnField, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
-                    .addComponent(jArriveField, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
-                    .addComponent(jSourceVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
-                    .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
-                    .addComponent(jEstSendTime, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(jSourceVillage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(jTargetVillage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jEstSendTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel6))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(jArriveField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(jReturnField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-
         jScrollPane1.setToolTipText("");
 
         jComandArea.setColumns(20);
@@ -988,8 +756,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE))
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -1072,32 +840,32 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jSettingsPanelLayout.setHorizontalGroup(
             jSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jSettingsPanelLayout.createSequentialGroup()
-                .addGap(44, 44, 44)
-                .addGroup(jSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jRelationBox, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE)
-                    .addGroup(jSettingsPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel8)
-                        .addGap(18, 18, 18)
-                        .addComponent(jUnitBox, 0, 232, Short.MAX_VALUE)))
+                .addContainerGap()
+                .addGroup(jSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jRelationBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jSettingsPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jUnitBox, 0, 204, Short.MAX_VALUE))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jSettingsPanelLayout.setVerticalGroup(
             jSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jSettingsPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jSettingsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
+                .addGroup(jSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jRelationBox)
                     .addGroup(jSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jUnitBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jUnitBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jRelationBox))
                 .addContainerGap())
         );
 
@@ -1121,23 +889,22 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jCalculationSettingsDialog.getContentPane().setLayout(jCalculationSettingsDialogLayout);
         jCalculationSettingsDialogLayout.setHorizontalGroup(
             jCalculationSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jCalculationSettingsDialogLayout.createSequentialGroup()
-                .addContainerGap(418, Short.MAX_VALUE)
-                .addComponent(jButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jDoCalculateButton)
-                .addContainerGap())
             .addGroup(jCalculationSettingsDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSettingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jCalculationSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jCalculationSettingsDialogLayout.createSequentialGroup()
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jDoCalculateButton))
+                    .addComponent(jSettingsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jCalculationSettingsDialogLayout.setVerticalGroup(
             jCalculationSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jCalculationSettingsDialogLayout.createSequentialGroup()
+            .addGroup(jCalculationSettingsDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSettingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jSettingsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jCalculationSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jDoCalculateButton)
                     .addComponent(jButton2))
@@ -1260,56 +1027,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         updateAttackBBView();
     }//GEN-LAST:event_fireComandDataChangedEvent
 
-    private void fireEstUnitChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireEstUnitChangedEvent
-        UnitHolder unit = null;
-        if (evt.getSource() == jAxeBox) {
-            unit = DataHolder.getSingleton().getUnitByPlainName("axe");
-        } else if (evt.getSource() == jSwordBox) {
-            unit = DataHolder.getSingleton().getUnitByPlainName("sword");
-        } else if (evt.getSource() == jSpyBox) {
-            unit = DataHolder.getSingleton().getUnitByPlainName("spy");
-        } else if (evt.getSource() == jLightBox) {
-            unit = DataHolder.getSingleton().getUnitByPlainName("light");
-        } else if (evt.getSource() == jHeavyBox) {
-            unit = DataHolder.getSingleton().getUnitByPlainName("heavy");
-        } else if (evt.getSource() == jRamBox) {
-            unit = DataHolder.getSingleton().getUnitByPlainName("ram");
-        } else if (evt.getSource() == jPalaBox) {
-            unit = DataHolder.getSingleton().getUnitByPlainName("knight");
-        } else if (evt.getSource() == jSnobBox) {
-            unit = DataHolder.getSingleton().getUnitByPlainName("snob");
-        }
-        SimpleDateFormat f = null;
-
-        if (!ServerSettings.getSingleton().isMillisArrival()) {
-            f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format"));
-        } else {
-            f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format.ms"));
-        }
-        try {
-            Date arrive = f.parse(jArriveField.getText());
-            Village source = PluginManager.getSingleton().executeVillageParser(jSourceVillage.getText()).get(0);
-            Village target = PluginManager.getSingleton().executeVillageParser(jTargetVillage.getText()).get(0);
-            double dur = DSCalculator.calculateMoveTimeInSeconds(source, target, unit.getSpeed()) * 1000.0;
-            long send = arrive.getTime() - (long) dur;
-            double ret = (double) arrive.getTime() + dur;
-            ret /= 1000;
-            ret = Math.round(ret + .5);
-            ret *= 1000;
-            if (ServerSettings.getSingleton().isMillisArrival()) {
-                f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss:SSS");
-            } else {
-                f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss");
-            }
-            jEstSendTime.setText("~ " + f.format(new Date(send)));
-            jReturnField.setText("~ " + f.format(new Date((long) ret)));
-        } catch (Exception e) {
-            jEstSendTime.setText("(unbekannt)");
-            jReturnField.setText("(unbekannt)");
-        }
-    }//GEN-LAST:event_fireEstUnitChangedEvent
-
     private void fireCalculateReTimingsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateReTimingsEvent
+        jCalculationSettingsDialog.setVisible(false);
         if (evt.getSource() == jDoCalculateButton) {
             DefaultTableModel model = (DefaultTableModel) jAttackPlanTable.getModel();
 
@@ -1321,7 +1040,6 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 }
             }
 
-            // Enumeration<String> plans = AttackManager.getSingleton().getPlans();
             List<Village> ignore = new LinkedList<Village>();
             //process all plans
             for (String plan : selectedPlans) {
@@ -1332,14 +1050,13 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                     Attack a = (Attack) element;
                     if (!ignore.contains(a.getSource())) {
                         ignore.add(a.getSource());
-
                     }
                 }
             }
 
             Object[] tags = jTagList.getSelectedValues();
             if (tags == null || tags.length == 0) {
-                JOptionPaneHelper.showInformationBox(this, "Keine Dorfgruppe ausgewählt", "Information");
+                JOptionPaneHelper.showInformationBox(DSWorkbenchReTimerFrame.this, "Keine Dorfgruppe ausgewählt", "Information");
                 return;
             }
 
@@ -1368,7 +1085,6 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                             break;
                         }
                     }
-
                     if (oneFailed) {
                         //at least one tag is not valid for village
                         candidates.remove(v_tmp);
@@ -1377,13 +1093,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 }
             }
 
-            Village target = null;
-            try {
-                target = PluginManager.getSingleton().executeVillageParser(jSourceVillage.getText()).get(0);
-            } catch (Exception e) {
-                //no target set
-                return;
-            }
+            Village target = parsedAttack.getTarget();
             UnitHolder unit = (UnitHolder) jUnitBox.getSelectedItem();
             Hashtable<Village, Date> timings = new Hashtable<Village, Date>();
 
@@ -1405,8 +1115,13 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 }
                 if (useVillage) {
                     try {
-                        Date ret = f.parse(jReturnField.getText().replaceAll("~", "").trim());
-                        long sendTime = ret.getTime() - runtime;
+                        double dur = DSCalculator.calculateMoveTimeInSeconds(parsedAttack.getSource(), target, unit.getSpeed()) * 1000.0;
+                        double ret = (double)parsedAttack.getArriveTime().getTime() + dur;
+                        ret /= 1000;
+                        ret = Math.round(ret + .5);
+                        ret *= 1000;
+
+                        long sendTime = (long) ret - runtime;
                         if (sendTime > System.currentTimeMillis() + 60000) {
                             timings.put(candidate, new Date(sendTime));
                         }
@@ -1414,10 +1129,9 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                     }
                 }
             }
-
             buildResults(timings, target, unit);
         }
-        jCalculationSettingsDialog.setVisible(false);
+
     }//GEN-LAST:event_fireCalculateReTimingsEvent
 
     private void fireTransferAttacksToAttackViewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferAttacksToAttackViewEvent
@@ -1443,21 +1157,6 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         }
         jAttackPlanSelectionDialog.setVisible(false);
     }//GEN-LAST:event_fireTransferAttacksToAttackViewEvent
-
-    private void fireShowAttackPlanSelectionDialogEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowAttackPlanSelectionDialogEvent
-        /*int[] rows = jResultTable.getSelectedRows();
-        if (rows == null || rows.length == 0) {
-        JOptionPaneHelper.showInformationBox(jResultFrame, "Keine Angriffe ausgewählt", "Information");
-        return;
-        }
-        DefaultComboBoxModel model = new DefaultComboBoxModel(AttackManager.getSingleton().getGroups());
-        jExistingAttackPlanBox.setModel(model);
-        jExistingAttackPlanBox.setSelectedItem(AttackManager.DEFAULT_GROUP);
-        jNewAttackPlanField.setText("");
-        jAttackPlanSelectionDialog.pack();
-        jAttackPlanSelectionDialog.setLocationRelativeTo(jResultFrame);
-        jAttackPlanSelectionDialog.setVisible(true);*/
-    }//GEN-LAST:event_fireShowAttackPlanSelectionDialogEvent
 
     private void fireAlwaysOnTopChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireAlwaysOnTopChangedEvent
         setAlwaysOnTop(jMainAlwaysOnTopBox.isSelected());
@@ -1529,21 +1228,11 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                     }
                 }
             }
-
-            jResultTable.invalidate();
-            for (int i = rowsToRemove.size() - 1; i >= 0; i--) {
-                int row = rowsToRemove.get(i);
-                ((DefaultTableModel) jResultTable.getModel()).removeRow(row);
+            jResultTable.getSelectionModel().setValueIsAdjusting(true);
+            for (int row : rowsToRemove) {
+                jResultTable.getSelectionModel().addSelectionInterval(row, row);
             }
-            jResultTable.revalidate();
-            String message = "Es wurden keine Angriffe entfernt.";
-            if (removeCount == 1) {
-                message = "Es wurde ein Angriff entfernt.";
-            } else if (removeCount > 1) {
-                message = "Es wurden " + removeCount + " Angriffe entfernt.";
-            }
-
-            JOptionPaneHelper.showInformationBox(jFilterDialog, message, "Information");
+            jResultTable.getSelectionModel().setValueIsAdjusting(false);
         }
         jFilterDialog.setVisible(false);
 }//GEN-LAST:event_fireApplyTroopFiltersEvent
@@ -1647,23 +1336,28 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             }
         };
         jResultTable.setModel(resultModel);
-        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(resultModel);
-        jResultTable.setRowSorter(sorter);
-        Enumeration<Village> sourceKeys = pTimings.keys();
-        while (sourceKeys.hasMoreElements()) {
-            Village source = sourceKeys.nextElement();
-            Date send = pTimings.get(source);
-            resultModel.addRow(new Object[]{source, pUnit, pTarget, send});
-        }
-        jResultTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
-        AlternatingColorCellRenderer rend = new AlternatingColorCellRenderer();
-        jResultTable.setDefaultRenderer(Village.class, rend);
-        jResultTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         jResultTable.setRowHeight(20);
-        DefaultTableCellRenderer headerRenderer = new SortableTableHeaderRenderer();
-        for (int i = 0; i < jResultTable.getColumnCount(); i++) {
-            jResultTable.getColumn(jResultTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+        jResultTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
+        jResultTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
+        jResultTable.setDefaultRenderer(Date.class, new DateCellRenderer());
+        jResultTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
+
+        if (pTimings == null || pTarget == null || pUnit == null) {
+            return;
         }
+
+
+        /* Enumeration<Village> sourceKeys = pTimings.keys();
+        while (sourceKeys.hasMoreElements()) {
+        Village source = sourceKeys.nextElement();
+        Date send = pTimings.get(source);
+        resultModel.addRow(new Object[]{source, pUnit, pTarget, send});
+        }*/
+
+        for (int i = 0; i < 10; i++) {
+            resultModel.addRow(new Object[]{DataHolder.getSingleton().getRandomVillage(), DataHolder.getSingleton().getRandomUnit(), DataHolder.getSingleton().getRandomVillage(), new Date()});
+        }
+
         jideRetimeTabbedPane.setSelectedIndex(1);
     }
 
@@ -1677,6 +1371,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     public static void main(String args[]) {
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         GlobalOptions.setSelectedServer("de43");
+        GlobalOptions.setSelectedProfile(new DummyProfile());
         DataHolder.getSingleton().loadData(false);
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -1694,74 +1389,49 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JButton jApplyFiltersButton;
-    private javax.swing.JTextField jArriveField;
     private javax.swing.JDialog jAttackPlanSelectionDialog;
     private javax.swing.JTable jAttackPlanTable;
-    private javax.swing.JCheckBox jAxeBox;
     private javax.swing.JTextPane jBBTextPane;
     private javax.swing.JButton jButton17;
     private javax.swing.JButton jButton18;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton20;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton5;
     private javax.swing.JDialog jCalculationSettingsDialog;
     private javax.swing.JTextArea jComandArea;
     private javax.swing.JButton jDoCalculateButton;
-    private javax.swing.JTextField jEstSendTime;
     private javax.swing.JComboBox jExistingAttackPlanBox;
     private javax.swing.JDialog jFilterDialog;
     private javax.swing.JList jFilterList;
     private javax.swing.JComboBox jFilterUnitBox;
-    private javax.swing.JCheckBox jHeavyBox;
     private javax.swing.JPanel jInputPanel;
     private javax.swing.JButton jInsertButton;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
-    private javax.swing.JCheckBox jLightBox;
     private javax.swing.JCheckBox jMainAlwaysOnTopBox;
     private javax.swing.JTextField jMaxValue;
     private javax.swing.JTextField jMinValue;
     private javax.swing.JTextField jNewAttackPlanField;
-    private javax.swing.JCheckBox jPalaBox;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
-    private javax.swing.JTextPane jParserInfo;
     private javax.swing.JList jPossibleUnits;
-    private javax.swing.JCheckBox jRamBox;
     private javax.swing.JPanel jReTimePanel;
     private javax.swing.JCheckBox jRelationBox;
     private org.jdesktop.swingx.JXPanel jResultPanel;
     private static final org.jdesktop.swingx.JXTable jResultTable = new org.jdesktop.swingx.JXTable();
-    private javax.swing.JTextField jReturnField;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane14;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JPanel jSettingsPanel;
-    private javax.swing.JCheckBox jSnobBox;
-    private javax.swing.JTextField jSourceVillage;
-    private javax.swing.JCheckBox jSpyBox;
-    private javax.swing.JCheckBox jSwordBox;
     private javax.swing.JList jTagList;
-    private javax.swing.JTextField jTargetVillage;
     private javax.swing.JComboBox jUnitBox;
     private org.jdesktop.swingx.JXLabel jXInfoLabel;
     private com.jidesoft.swing.JideTabbedPane jideRetimeTabbedPane;

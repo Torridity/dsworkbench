@@ -80,6 +80,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         if (e.getActionCommand() != null && activeTab != null) {
             if (e.getActionCommand().equals("Copy")) {
                 activeTab.transferSelection(ReportTableTab.TRANSFER_TYPE.COPY_TO_INTERNAL_CLIPBOARD);
+            } else  if (e.getActionCommand().equals("BBCopy")) {
+                activeTab.transferSelection(ReportTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
             } else if (e.getActionCommand().equals("Cut")) {
                 activeTab.transferSelection(ReportTableTab.TRANSFER_TYPE.CUT_TO_INTERNAL_CLIPBOARD);
             } else if (e.getActionCommand().equals("Paste")) {
@@ -254,7 +256,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         transferTaskPane.getContentPane().add(transferVillageList);
-        JXButton transferNotes = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/att_clipboardBB.png")));
+      /*  JXButton transferNotes = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/att_clipboardBB.png")));
         transferNotes.setToolTipText("Überträgt den gewählten Bericht als BB-Code in die Zwischenablage");
         transferNotes.addMouseListener(new MouseAdapter() {
 
@@ -268,7 +270,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         });
         transferTaskPane.getContentPane().add(transferNotes);
 
-
+*/
         JXTaskPane miscPane = new JXTaskPane();
         miscPane.setTitle("Sonstiges");
         JXButton centerVillage = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/medal.png")));

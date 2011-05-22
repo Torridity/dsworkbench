@@ -20,6 +20,7 @@ public class CapabilityInfoPanel extends javax.swing.JPanel {
     private boolean copyable = true;
     private boolean pastable = true;
     private boolean deletable = true;
+    private boolean bbSupport = true;
 
     /** Creates new form CapabilityInfoPanel */
     public CapabilityInfoPanel() {
@@ -37,18 +38,23 @@ public class CapabilityInfoPanel extends javax.swing.JPanel {
 
         jCopy = new javax.swing.JLabel();
         jPaste = new javax.swing.JLabel();
+        jBBSupport = new javax.swing.JLabel();
         jDelete = new javax.swing.JLabel();
         jFind = new javax.swing.JLabel();
 
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.LINE_AXIS));
 
         jCopy.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_copy.png"))); // NOI18N
-        jCopy.setToolTipText("<html><b>Kopieren/Ausschneiden von Eintr&auml;gen per STRG+C bzw. STRG+X</b><br/>In einigen Ansichten werden Eintr&auml;ge so kopiert,<br/>dass sie in genau diese Ansicht wieder eingef&uuml;gt werden k&ouml;nnen.<br/>\nIn anderen Ansichten werden Dorfkoordinaten kopiert,<br/>die an verschiedenen anderen Stellen aus der Zwischenablage gelesen werden k&ouml;nnen</html>");
+        jCopy.setToolTipText("<html><b>Kopieren/Ausschneiden von Eintr&auml;gen per STRG+C bzw. STRG+X</b><br/>In einigen Ansichten werden Eintr&auml;ge so kopiert,<br/>dass sie in genau diese oder eine vergleichbare Ansicht wieder eingef&uuml;gt werden k&ouml;nnen.<br/>\nIn anderen Ansichten werden Dorfkoordinaten kopiert,<br/>die an verschiedenen anderen Stellen aus der Zwischenablage gelesen werden k&ouml;nnen</html>");
         add(jCopy);
 
         jPaste.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/clipboard_empty.png"))); // NOI18N
         jPaste.setToolTipText("<html><b>Einf&uuml;gen von Eintr&auml;gen per STRG+V</b><br/>In eigenen Ansichten k&ouml;nnen nur spezielle Eintr&auml;ge eingef&uuml;gt werden,<br/>die vorher aus derselben Ansicht kopiert wurden.<br/>In anderen Ansichten k&ouml;nnen Dorfkoordinaten aus beliebigen Quellen eingef&uuml;gt werden</html>");
         add(jPaste);
+
+        jBBSupport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/bb_to_clipboard.png"))); // NOI18N
+        jBBSupport.setToolTipText("<html><b>Kopieren von Eintr&auml;gen als BB-Codes per STRG+B</b><br/>In dieser Ansicht k&ouml;nnen Eintr&auml;ge als BB-Codes in die Zwischenablage kopiert werden.<br/>Von dort aus kann man sie dann per STRG+V im Spiel in Notizen, IGMs oder das Forum einf&uuml;gen.</html>");
+        add(jBBSupport);
 
         jDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_delete.png"))); // NOI18N
         jDelete.setToolTipText("<html><b>L&ouml;schen von Eintr&auml;gen per ENTF</b></html>");
@@ -59,6 +65,7 @@ public class CapabilityInfoPanel extends javax.swing.JPanel {
         add(jFind);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jBBSupport;
     private javax.swing.JLabel jCopy;
     private javax.swing.JLabel jDelete;
     private javax.swing.JLabel jFind;
@@ -123,5 +130,20 @@ public class CapabilityInfoPanel extends javax.swing.JPanel {
     public void setPastable(boolean pastable) {
         this.pastable = pastable;
         jPaste.setVisible(pastable);
+    }
+
+    /**
+     * @return the bbSupport
+     */
+    public boolean isBbSupport() {
+        return bbSupport;
+    }
+
+    /**
+     * @param bbSupport the bbSupport to set
+     */
+    public void setBbSupport(boolean bbSupport) {
+        this.bbSupport = bbSupport;
+          jBBSupport.setVisible(bbSupport);
     }
 }

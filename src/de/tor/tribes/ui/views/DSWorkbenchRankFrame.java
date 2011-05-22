@@ -236,7 +236,6 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         jXRankPanel.setLayout(new java.awt.BorderLayout());
 
         jRankTabPane.setScrollSelectedTabOnWheel(true);
-        jRankTabPane.setShowCloseButton(false);
         jRankTabPane.setShowGripper(true);
         jRankTabPane.setTabEditingAllowed(true);
         jXRankPanel.add(jRankTabPane, java.awt.BorderLayout.CENTER);
@@ -360,6 +359,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jRankPanel, gridBagConstraints);
 
+        capabilityInfoPanel1.setBbSupport(false);
         capabilityInfoPanel1.setCopyable(false);
         capabilityInfoPanel1.setDeletable(false);
         capabilityInfoPanel1.setPastable(false);

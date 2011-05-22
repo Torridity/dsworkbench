@@ -4,9 +4,10 @@
  */
 package de.tor.tribes.util.bb;
 
-import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.SOSRequest;
+import de.tor.tribes.types.Village;
 import java.text.NumberFormat;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
@@ -42,10 +43,14 @@ public class SosListFormatter extends BasicFormatter<SOSRequest> {
         String replacedStart = StringUtils.replaceEach(beforeList, new String[]{ELEMENT_COUNT}, new String[]{f.format(pElements.size())});
         b.append(replacedStart);
         for (SOSRequest s : pElements) {
-            String[] replacements = s.getReplacements(pExtended);
-            String itemLine = StringUtils.replaceEach(listItemTemplate, s.getBBVariables(), replacements);
-            itemLine = StringUtils.replaceEach(itemLine, new String[]{ELEMENT_ID, ELEMENT_COUNT}, new String[]{f.format(cnt), f.format(pElements.size())});
-            b.append(itemLine).append("\n");
+            Enumeration<Village> targets = s.getTargets();
+            while (targets.hasMoreElements()) {
+                Village target = targets.nextElement();
+                String[] replacements = s.getReplacementsForTarget(target, pExtended);
+                String itemLine = StringUtils.replaceEach(listItemTemplate, s.getBBVariables(), replacements);
+                itemLine = StringUtils.replaceEach(itemLine, new String[]{ELEMENT_ID, ELEMENT_COUNT}, new String[]{f.format(cnt), f.format(pElements.size())});
+                b.append(itemLine).append("\n").append("\n");
+            }
             cnt++;
         }
         String replacedEnd = StringUtils.replaceEach(afterList, new String[]{ELEMENT_COUNT}, new String[]{f.format(pElements.size())});

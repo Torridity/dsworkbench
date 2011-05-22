@@ -70,7 +70,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
  * @author Charon
  */
 public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ListSelectionListener {
-
+//TODO check if data load works in real application
     private static Logger logger = Logger.getLogger("ConquerView");
     private static DSWorkbenchConquersFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
@@ -400,6 +400,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jConquerPanel, gridBagConstraints);
 
+        capabilityInfoPanel1.setBbSupport(false);
         capabilityInfoPanel1.setCopyable(false);
         capabilityInfoPanel1.setDeletable(false);
         capabilityInfoPanel1.setPastable(false);

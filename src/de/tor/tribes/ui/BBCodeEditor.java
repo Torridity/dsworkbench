@@ -131,20 +131,26 @@ public class BBCodeEditor extends javax.swing.JFrame {
         //sample SOS request
         SOSRequest sampleSOSRequest = new SOSRequest();
         sampleSOSRequest.setDefender(Barbarians.getSingleton());
-        sampleSOSRequest.addTarget(targetVillage);
-        sampleSOSRequest.getTargetInformation(targetVillage).setWallLevel(20);
-        sampleSOSRequest.getTargetInformation(targetVillage).addAttack(sourceVillage, new Date());
-        sampleSOSRequest.getTargetInformation(targetVillage).addAttack(sourceVillage, new Date());
-        sampleSOSRequest.getTargetInformation(targetVillage).addTroopInformation(DataHolder.getSingleton().getRandomUnit(), 300);
-        SOSRequest sampleSOSRequest2 = new SOSRequest();
+        sampleSOSRequest.addTarget(noteVillage1);
+        sampleSOSRequest.getTargetInformation(noteVillage1).setWallLevel(20);
+        sampleSOSRequest.getTargetInformation(noteVillage1).addAttack(sourceVillage, new Date());
+        sampleSOSRequest.getTargetInformation(noteVillage1).addAttack(sourceVillage, new Date());
+        sampleSOSRequest.getTargetInformation(noteVillage1).addTroopInformation(DataHolder.getSingleton().getRandomUnit(), 300);
+        sampleSOSRequest.addTarget(noteVillage2);
+        sampleSOSRequest.getTargetInformation(noteVillage2).setWallLevel(10);
+        sampleSOSRequest.getTargetInformation(noteVillage2).addAttack(sourceVillage, new Date());
+        sampleSOSRequest.getTargetInformation(noteVillage2).addAttack(sourceVillage, new Date());
+        sampleSOSRequest.getTargetInformation(noteVillage2).addTroopInformation(DataHolder.getSingleton().getRandomUnit(), 100);
+
+        /* SOSRequest sampleSOSRequest2 = new SOSRequest();
         sampleSOSRequest2.setDefender(Barbarians.getSingleton());
-        sampleSOSRequest2.addTarget(targetVillage);
-        sampleSOSRequest2.getTargetInformation(targetVillage).setWallLevel(10);
-        sampleSOSRequest2.getTargetInformation(targetVillage).addAttack(sourceVillage, new Date());
-        sampleSOSRequest2.getTargetInformation(targetVillage).addAttack(sourceVillage, new Date());
-        sampleSOSRequest2.getTargetInformation(targetVillage).addTroopInformation(DataHolder.getSingleton().getRandomUnit(), 100);
+        sampleSOSRequest2.addTarget(noteVillage2);
+        sampleSOSRequest2.getTargetInformation(noteVillage2).setWallLevel(10);
+        sampleSOSRequest2.getTargetInformation(noteVillage2).addAttack(sourceVillage, new Date());
+        sampleSOSRequest2.getTargetInformation(noteVillage2).addAttack(sourceVillage, new Date());
+        sampleSOSRequest2.getTargetInformation(noteVillage2).addTroopInformation(DataHolder.getSingleton().getRandomUnit(), 100);*/
         sampleRequests.add(sampleSOSRequest);
-        sampleRequests.add(sampleSOSRequest2);
+        //sampleRequests.add(sampleSOSRequest2);
         //sample report
         FightReport sampleReport = new FightReport();
         sampleReport.setAimedBuilding("Wall");

@@ -404,6 +404,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jDistancePanel, gridBagConstraints);
 
+        capabilityInfoPanel1.setBbSupport(false);
         capabilityInfoPanel1.setCopyable(false);
         capabilityInfoPanel1.setSearchable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();

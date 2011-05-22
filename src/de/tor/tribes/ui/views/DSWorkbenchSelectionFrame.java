@@ -18,9 +18,9 @@ import de.tor.tribes.types.NoAlly;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.types.test.DummyProfile;
 import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
-import de.tor.tribes.ui.ImageManager;
-import de.tor.tribes.ui.dnd.VillageTransferable;
+import de.tor.tribes.ui.GenericTestPanel;
 import de.tor.tribes.ui.tree.AllyNode;
 import de.tor.tribes.ui.tree.NodeCellRenderer;
 import de.tor.tribes.ui.tree.SelectionTreeRootNode;
@@ -28,50 +28,93 @@ import de.tor.tribes.ui.tree.TagNode;
 import de.tor.tribes.ui.tree.TribeNode;
 import de.tor.tribes.ui.tree.VillageNode;
 import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PluginManager;
-import de.tor.tribes.util.VillageListFormatter;
+import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.VillageSelectionListener;
+import de.tor.tribes.util.bb.VillageListFormatter;
 import de.tor.tribes.util.html.SelectionHTMLExporter;
 import de.tor.tribes.util.tag.TagManager;
-import java.awt.Cursor;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.HeadlessException;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
-import java.awt.dnd.DragSourceDragEvent;
-import java.awt.dnd.DragSourceDropEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
+import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTree;
+import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
+import org.jdesktop.swingx.JXButton;
+import org.jdesktop.swingx.JXTaskPane;
+import org.jdesktop.swingx.painter.MattePainter;
 
 /**
  * @TODO (DIFF) Fixed problem when one tag was applied to villages of two users
  * @author Charon
  */
-public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implements VillageSelectionListener, DragGestureListener {
+public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implements VillageSelectionListener, ActionListener, TreeSelectionListener {
 
+    @Override
+    public void valueChanged(TreeSelectionEvent e) {
+        List<Village> selection = getSelectedElements();
+        if (selection != null && !selection.isEmpty()) {
+            showInfo(((selection.size() == 1) ? "Ein Dorf" : selection.size() + " Dörfer") + " ausgewählt");
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getActionCommand().equals("Copy")) {
+            copySelectionToInternalClipboard();
+        } else if (e.getActionCommand().equals("BBCopy")) {
+            copyBBToExternalClipboardEvent();
+        } else if (e.getActionCommand().equals("Cut")) {
+            cutSelectionToInternalClipboard();
+        } else if (e.getActionCommand().equals("Paste")) {
+            pasteFromInternalClipboard();
+        } else if (e.getActionCommand().equals("Delete")) {
+            removeSelection();
+        }
+
+    }
     private static Logger logger = Logger.getLogger("SelectionFrame");
     private static DSWorkbenchSelectionFrame SINGLETON = null;
     private SelectionTreeRootNode mRoot = null;
     private List<Village> treeData = null;
     private boolean treeMode = true;
-    private DragSource dragSource;
+    private GenericTestPanel centerPanel = null;
 
     public static synchronized DSWorkbenchSelectionFrame getSingleton() {
         if (SINGLETON == null) {
@@ -83,11 +126,11 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
     /** Creates new form DSWorkbenchSelectionFrame */
     DSWorkbenchSelectionFrame() {
         initComponents();
-        String format = GlobalOptions.getProperty("village.format");
-        if (format == null) {
-            format = "%VILLAGE% (%POINTS%)";
-        }
-        jExportFormatField.setText(format);
+        centerPanel = new GenericTestPanel(true);
+        jSelectionPanel.add(centerPanel, BorderLayout.CENTER);
+        centerPanel.setChildPanel(jSelectionTreePanel);
+        buildMenu();
+
         try {
             jAlwaysOnTopBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("selection.frame.alwaysOnTop")));
             setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
@@ -96,72 +139,81 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         }
         treeData = new LinkedList<Village>();
         jSelectionTree.setCellRenderer(new NodeCellRenderer());
-        dragSource = DragSource.getDefaultDragSource();
-        dragSource.createDefaultDragGestureRecognizer(jSelectionTree, // What component
-                DnDConstants.ACTION_COPY_OR_MOVE, // What drag types?
-                this);// the listener
 
-        buildTree();
-        for (MouseListener l : jVillagePointsFilterComboBox.getMouseListeners()) {
-            jVillagePointsFilterComboBox.removeMouseListener(l);
-        }
-
-        jVillagePointsFilterComboBox.addMouseListener(new MouseListener() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                fireFilterSelectionByPointsEvent();
-            }
+        KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
+        KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
+        KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
+        KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
+        KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK, false);
+        jSelectionTree.registerKeyboardAction(DSWorkbenchSelectionFrame.this, "Copy", copy, JComponent.WHEN_FOCUSED);
+        jSelectionTree.registerKeyboardAction(DSWorkbenchSelectionFrame.this, "BBCopy", bbCopy, JComponent.WHEN_FOCUSED);
+        jSelectionTree.registerKeyboardAction(DSWorkbenchSelectionFrame.this, "Delete", delete, JComponent.WHEN_FOCUSED);
+        jSelectionTree.registerKeyboardAction(DSWorkbenchSelectionFrame.this, "Paste", paste, JComponent.WHEN_FOCUSED);
+        jSelectionTree.registerKeyboardAction(DSWorkbenchSelectionFrame.this, "Cut", cut, JComponent.WHEN_FOCUSED);
+        jSelectionTree.getActionMap().put("find", new AbstractAction() {
 
             @Override
-            public void mousePressed(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
+            public void actionPerformed(ActionEvent e) {
+                //ignore find
             }
         });
+        jSelectionTree.getSelectionModel().addTreeSelectionListener(DSWorkbenchSelectionFrame.this);
+
+        buildTree();
+
         //<editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.selection_tool", GlobalOptions.getHelpBroker().getHelpSet());
+        //   GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.selection_tool", GlobalOptions.getHelpBroker().getHelpSet());
         //</editor-fold>
     }
 
-    private void fireFilterSelectionByPointsEvent() {
-        int min = 9000;
-        switch (jVillagePointsFilterComboBox.getSelectedIndex()) {
-            case 0:
-                min = 3000;
-                break;
-            case 1:
-                min = 5000;
-                break;
-            case 2:
-                min = 7000;
-                break;
-            default:
-                min = 9000;
-        }
-        int removed = 0;
+    private void filterByPoints(int pPoints) {
+        int selected = 0;
         for (Village v : treeData.toArray(new Village[]{})) {
-            if (v.getPoints() < min) {
-                treeData.remove(v);
-                removed++;
+
+            if (v.getPoints() < pPoints) {
+                TreePath p = findByName(jSelectionTree, v);
+                if (p != null) {
+                    jSelectionTree.getSelectionModel().addSelectionPath(p);
+                    selected++;
+                }
             }
         }
-
-        buildTree();
-        String message = removed + ((removed == 1) ? " Dorf" : " Dörfer") + " entfernt";
-        JOptionPaneHelper.showInformationBox(this, message, "Information");
+        jSelectionTree.requestFocus();
+        showInfo(((selected == 1) ? "Ein Dorf" : selected + " Dörfer") + " ausgewählt");
     }
 
+    public TreePath findByName(JTree tree, Village node) {
+        TreeNode root = (TreeNode) tree.getModel().getRoot();
+        return find2(tree, new TreePath(root), node, 0);
+    }
+
+    private TreePath find2(JTree tree, TreePath parent, Village pNode, int depth) {
+        TreeNode node = (TreeNode) parent.getLastPathComponent();
+        DefaultMutableTreeNode o = (DefaultMutableTreeNode) node;
+
+        // If equal, go down the branch
+        if (o.getUserObject().equals(pNode)) {
+            // If at end, return match
+            return parent;
+        } else {
+            // Traverse children
+            if (node.getChildCount() >= 0) {
+                for (Enumeration e = node.children(); e.hasMoreElements();) {
+                    TreeNode n = (TreeNode) e.nextElement();
+                    TreePath path = parent.pathByAddingChild(n);
+                    TreePath result = find2(tree, path, pNode, depth + 1);
+                    // Found a match
+                    if (result != null) {
+                        return result;
+                    }
+                }
+            }
+        }
+        // No match at this branch
+        return null;
+    }
+
+    @Override
     public void resetView() {
         treeData.clear();
         buildTree();
@@ -233,8 +285,311 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                 mRoot.add(new VillageNode(v));
             }
         }
-        ((DefaultTreeModel) jSelectionTree.getModel()).setRoot(mRoot);
-        //jSelectionTree.setCellRenderer(new NodeCellRenderer());
+
+        jSelectionTree.setModel(new DefaultTreeModel(mRoot));
+    }
+
+    private void buildMenu() {
+        JXTaskPane editPane = new JXTaskPane();
+        editPane.setTitle("Bearbeiten");
+        JXButton filter3k = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/3k.png")));
+        filter3k.setToolTipText("Wählt alle Dörfer mit weniger als 3000 Punkten");
+        filter3k.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                filterByPoints(3000);
+            }
+        });
+
+        editPane.getContentPane().add(filter3k);
+
+        JXButton filter5k = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/5k.png")));
+
+        filter5k.setToolTipText("Wählt alle Dörfer mit weniger als 5000 Punkten");
+        filter5k.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                filterByPoints(5000);
+            }
+        });
+
+        editPane.getContentPane().add(filter5k);
+        JXButton filter7k = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/7k.png")));
+
+        filter7k.setToolTipText("Wählt alle Dörfer mit weniger als 7000 Punkten");
+        filter7k.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                filterByPoints(7000);
+            }
+        });
+
+        editPane.getContentPane().add(filter7k);
+
+        JXButton filter9k = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/9k.png")));
+
+        filter9k.setToolTipText("Wählt alle Dörfer mit weniger als 9000 Punkten");
+        filter9k.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                filterByPoints(9000);
+            }
+        });
+
+        editPane.getContentPane().add(filter9k);
+
+
+        JXTaskPane transferPane = new JXTaskPane();
+        transferPane.setTitle("Übertragen");
+        JXButton toHtml = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/att_HTML.png")));
+
+        toHtml.setToolTipText("Gewählte Dörfer als HTML Datei exportieren");
+        toHtml.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                exportAsHTML();
+            }
+        });
+        transferPane.getContentPane().add(toHtml);
+
+        JXTaskPane miscPane = new JXTaskPane();
+        miscPane.setTitle("Sonstiges");
+        JXButton structure = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/branch.png")));
+
+        structure.setToolTipText("Wechsel zwischen Baumstruktur und Liste");
+        structure.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                switchViewType();
+            }
+        });
+        miscPane.getContentPane().add(structure);
+        JXButton region = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/region_select.png")));
+
+        region.setToolTipText("Auswahl aller Dörfer innerhalb bestimmter Koordinaten");
+        region.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                showRegionSelection();
+            }
+        });
+        miscPane.getContentPane().add(region);
+        centerPanel.setupTaskPane(editPane, transferPane, miscPane);
+    }
+
+    public void showInfo(String pMessage) {
+        infoPanel.setCollapsed(false);
+        jXInfoLabel.setBackgroundPainter(new MattePainter(getBackground()));
+        jXInfoLabel.setForeground(Color.BLACK);
+        jXInfoLabel.setText(pMessage);
+    }
+
+    public void showSuccess(String pMessage) {
+        infoPanel.setCollapsed(false);
+        jXInfoLabel.setBackgroundPainter(new MattePainter(Color.GREEN));
+        jXInfoLabel.setForeground(Color.BLACK);
+        jXInfoLabel.setText(pMessage);
+    }
+
+    public void showError(String pMessage) {
+        infoPanel.setCollapsed(false);
+        jXInfoLabel.setBackgroundPainter(new MattePainter(Color.RED));
+        jXInfoLabel.setForeground(Color.WHITE);
+        jXInfoLabel.setText(pMessage);
+    }
+
+    private boolean copySelectionToInternalClipboard() {
+        List<Village> selection = getSelectedElements();
+        if (selection.isEmpty()) {
+            showInfo("Kein Dorf ausgewählt");
+            return false;
+        }
+
+        StringBuilder b = new StringBuilder();
+        for (Village v : selection) {
+            b.append(v.getCoordAsString()).append("\n");
+        }
+        try {
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b.toString()), null);
+        } catch (HeadlessException he) {
+            logger.error("Failed to copy data to clipboard", he);
+            showError("Fehler beim Kopieren in die Zwischenablage");
+        }
+        showSuccess(((selection.size() == 1) ? "Dorf" : selection.size() + " Dörfer") + " in kopiert");
+        return true;
+    }
+
+    private void cutSelectionToInternalClipboard() {
+        List<Village> selection = getSelectedElements();
+        if (copySelectionToInternalClipboard()) {
+            removeSelection(false);
+            showSuccess(((selection.size() == 1) ? "Dorf" : selection.size() + " Dörfer") + " ausgeschnitten");
+        }
+    }
+
+    private void pasteFromInternalClipboard() {
+        List<Village> villages = null;
+        try {
+            Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+            villages = PluginManager.getSingleton().executeVillageParser((String) t.getTransferData(DataFlavor.stringFlavor));
+        } catch (Exception e) {
+            logger.error("Failed to read village data from clipboard", e);
+            showError("Fehler beim Lesen aus der Zwischenablage");
+        }
+
+        if (villages == null || villages.isEmpty()) {
+            showInfo("Keine Dörfer in der Zwischenablage gefunden");
+        } else {
+            addVillages(villages);
+            showSuccess(((villages.size() == 1) ? "Dorf" : villages.size() + " Dörfer") + " eingefügt");
+        }
+    }
+
+    private void copyBBToExternalClipboardEvent() {
+        try {
+            List<Village> selection = getSelectedElements();
+            if (selection.isEmpty()) {
+                showInfo("Keine Elemente ausgewählt");
+                return;
+            }
+            boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
+
+            StringBuilder buffer = new StringBuilder();
+            if (extended) {
+                buffer.append("[u][size=12]Dorfliste[/size][/u]\n\n");
+            } else {
+                buffer.append("[u]Dorfliste[/u]\n\n");
+            }
+            buffer.append(new VillageListFormatter().formatElements(selection, extended));
+
+            if (extended) {
+                buffer.append("\n[size=8]Erstellt am ");
+                buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+                buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url][/size]\n");
+            } else {
+                buffer.append("\nErstellt am ");
+                buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+                buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url]\n");
+            }
+
+            String b = buffer.toString();
+            StringTokenizer t = new StringTokenizer(b, "[");
+            int cnt = t.countTokens();
+            if (cnt > 1000) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Dörfer benötigen mehr als 1000 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                    return;
+                }
+            }
+
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
+            showSuccess("Daten in Zwischenablage kopiert");
+        } catch (Exception e) {
+            logger.error("Failed to copy data to clipboard", e);
+            showError("Fehler beim Kopieren in die Zwischenablage");
+        }
+    }
+
+    private void removeSelection() {
+        removeSelection(true);
+    }
+
+    private void removeSelection(boolean pAsk) {
+        if (pAsk && JOptionPaneHelper.showQuestionConfirmBox(this, "Alle markierten Einträge und ihre untergeordneten Einträge löschen?", "Löschen", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+            return;
+        }
+        int cnt = 0;
+        for (Village v : getSelectedElements()) {
+            treeData.remove(v);
+            cnt++;
+        }
+        buildTree();
+        showSuccess(((cnt == 1) ? "Dorf" : cnt + " Dörfer") + " gelöscht");
+    }
+
+    private void exportAsHTML() {
+        List<Village> selection = getSelectedElements();
+        if (selection.isEmpty()) {
+            showInfo("Keine Dörfer ausgewählt");
+            return;
+        }
+        //do HTML export
+        String dir = GlobalOptions.getProperty("screen.dir");
+        if (dir == null) {
+            dir = ".";
+        }
+
+        JFileChooser chooser = null;
+        try {
+            //handle vista problem
+            chooser = new JFileChooser(dir);
+        } catch (Exception e) {
+            JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+            return;
+        }
+
+        chooser.setDialogTitle("Datei auswählen");
+        chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+
+            @Override
+            public boolean accept(File f) {
+                if ((f != null) && (f.isDirectory() || f.getName().endsWith(".html"))) {
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public String getDescription() {
+                return "*.html";
+            }
+        });
+        //open dialog
+        chooser.setSelectedFile(new File(dir + "/Dorfliste.html"));
+        int ret = chooser.showSaveDialog(this);
+        if (ret == JFileChooser.APPROVE_OPTION) {
+            try {
+                //check extension
+                File f = chooser.getSelectedFile();
+                String file = f.getCanonicalPath();
+                if (!file.endsWith(".html")) {
+                    file += ".html";
+                }
+
+                //check overwrite
+                File target = new File(file);
+                if (target.exists()) {
+                    if (JOptionPaneHelper.showQuestionConfirmBox(this, "Bestehende Datei überschreiben?", "Überschreiben", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                        //do not overwrite
+                        return;
+                    }
+                }
+                //do export
+                SelectionHTMLExporter.doExport(target, selection);
+                GlobalOptions.addProperty("screen.dir", target.getParent());
+                showSuccess("Auswahl erfolgreich gespeichert");
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du die erstellte Datei jetzt im Browser betrachten?", "Information", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                    BrowserCommandSender.openPage(target.toURI().toURL().toString());
+                }
+            } catch (Exception inner) {
+                logger.error("Failed to write selection to HTML", inner);
+                showError("Fehler beim Speichern");
+            }
+        }
+    }
+
+    private void showRegionSelection() {
+        jRegionSelectDialog.pack();
+        jRegionSelectDialog.setLocationRelativeTo(DSWorkbenchSelectionFrame.this);
+        jRegionSelectDialog.setVisible(true);
     }
 
     /** This method is called from within the constructor to
@@ -245,297 +600,138 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-        jPanel1 = new javax.swing.JPanel();
+        jSelectionTreePanel = new org.jdesktop.swingx.JXPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jSelectionTree = new javax.swing.JTree();
-        jButton1 = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
-        jExportUnformattedButton = new javax.swing.JButton();
-        jExportBBButton = new javax.swing.JButton();
-        jExportHTMLButton = new javax.swing.JButton();
-        jExportFormatField = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
+        jSelectionTree = new org.jdesktop.swingx.JXTree();
+        infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
+        jXInfoLabel = new org.jdesktop.swingx.JXLabel();
+        jRegionSelectDialog = new javax.swing.JDialog();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jXStart = new javax.swing.JSpinner();
-        jYStart = new javax.swing.JSpinner();
-        jXEnd = new javax.swing.JSpinner();
-        jYEnd = new javax.swing.JSpinner();
-        jButton2 = new javax.swing.JButton();
-        jViewTypeButton = new javax.swing.JButton();
-        jViewTypeButton1 = new javax.swing.JButton();
-        jLabel6 = new javax.swing.JLabel();
-        jVillagePointsFilterComboBox = new javax.swing.JComboBox();
+        jLabel7 = new javax.swing.JLabel();
+        jPerformSelection = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jStartX = new javax.swing.JSpinner();
+        jStartY = new javax.swing.JSpinner();
+        jLabel8 = new javax.swing.JLabel();
+        jEndX = new javax.swing.JSpinner();
+        jLabel9 = new javax.swing.JLabel();
+        jEndY = new javax.swing.JSpinner();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
+        jSelectionPanel = new javax.swing.JPanel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
 
-        setTitle("Auswahl");
+        jSelectionTreePanel.setLayout(new java.awt.BorderLayout());
 
-        jPanel1.setBackground(new java.awt.Color(239, 235, 223));
-
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Auswahl (2 Stämme)");
-        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Stamm1 (2 Spieler)");
-        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Spieler1 (3 Dörfer)");
-        javax.swing.tree.DefaultMutableTreeNode treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Dorf1");
-        treeNode3.add(treeNode4);
-        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Dorf2");
-        treeNode3.add(treeNode4);
-        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Dorf3");
-        treeNode3.add(treeNode4);
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Spieler2 (2 Dörfer)");
-        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Dorf1");
-        treeNode3.add(treeNode4);
-        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Dorf2");
-        treeNode3.add(treeNode4);
-        treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Stamm2 (1 Spieler)");
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Spieler1 (2 Dörfer)");
-        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Dorf1");
-        treeNode3.add(treeNode4);
-        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("Dorf2");
-        treeNode3.add(treeNode4);
-        treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);
-        jSelectionTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jScrollPane1.setViewportView(jSelectionTree);
 
-        jButton1.setBackground(new java.awt.Color(239, 235, 223));
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
-        jButton1.setToolTipText("Gewählte Elemente löschen");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireRemoveNodeEvent(evt);
+        jSelectionTreePanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        infoPanel.setCollapsed(true);
+        infoPanel.setInheritAlpha(false);
+
+        jXInfoLabel.setOpaque(true);
+        jXInfoLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jXInfoLabelfireHideInfoEvent(evt);
+            }
+        });
+        infoPanel.add(jXInfoLabel, java.awt.BorderLayout.CENTER);
+
+        jSelectionTreePanel.add(infoPanel, java.awt.BorderLayout.SOUTH);
+
+        jLabel1.setText("Start");
+
+        jLabel7.setText("Ende");
+
+        jPerformSelection.setText("Auswählen");
+        jPerformSelection.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                firePerformRegionSelectionEvent(evt);
             }
         });
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Export"));
-        jPanel2.setOpaque(false);
-
-        jExportUnformattedButton.setBackground(new java.awt.Color(239, 235, 223));
-        jExportUnformattedButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboard.png"))); // NOI18N
-        jExportUnformattedButton.setToolTipText("Markierte Elemente unformatiert in die Zwischenablage kopieren");
-        jExportUnformattedButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireExportEvent(evt);
+        jButton3.setText("Abbrechen");
+        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                firePerformRegionSelectionEvent(evt);
             }
         });
 
-        jExportBBButton.setBackground(new java.awt.Color(239, 235, 223));
-        jExportBBButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboardBB.png"))); // NOI18N
-        jExportBBButton.setToolTipText("Markierte Elemente als BB-Codes in die Zwischenablage kopieren");
-        jExportBBButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireExportEvent(evt);
-            }
-        });
+        jStartX.setModel(new javax.swing.SpinnerNumberModel(0, 0, 999, 1));
+        jStartX.setMinimumSize(new java.awt.Dimension(80, 25));
+        jStartX.setPreferredSize(new java.awt.Dimension(80, 25));
 
-        jExportHTMLButton.setBackground(new java.awt.Color(239, 235, 223));
-        jExportHTMLButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_HTML.png"))); // NOI18N
-        jExportHTMLButton.setToolTipText("Markierte Elemente als HTML in einer Datei speichern");
-        jExportHTMLButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireExportEvent(evt);
-            }
-        });
+        jStartY.setModel(new javax.swing.SpinnerNumberModel(0, 0, 999, 1));
+        jStartY.setMinimumSize(new java.awt.Dimension(80, 25));
+        jStartY.setPreferredSize(new java.awt.Dimension(80, 25));
 
-        jExportFormatField.setText("%TRIBE% %VILLAGE% %POINTS%");
-        jExportFormatField.setToolTipText("<html>\n<b>%TRIBE%</b>: Besitzer<br/>\n<b>%ALLY%</b>: Stamm<br/>\n<b>%VILLAGE%</b>: Dorfname und -koordinaten<br/>\n<b>%X%</b>: X-Koordinate<br/>\n<b>%Y%</b>: Y-Koordinate<br/>\n<b>%POINTS%</b>: Dorfpunkte\n</html>");
+        jLabel8.setText("|");
 
-        jLabel5.setText("Format");
+        jEndX.setModel(new javax.swing.SpinnerNumberModel(0, 0, 999, 1));
+        jEndX.setMinimumSize(new java.awt.Dimension(80, 25));
+        jEndX.setPreferredSize(new java.awt.Dimension(80, 25));
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        jLabel9.setText("|");
+
+        jEndY.setModel(new javax.swing.SpinnerNumberModel(0, 0, 999, 1));
+        jEndY.setMinimumSize(new java.awt.Dimension(80, 25));
+        jEndY.setPreferredSize(new java.awt.Dimension(80, 25));
+
+        javax.swing.GroupLayout jRegionSelectDialogLayout = new javax.swing.GroupLayout(jRegionSelectDialog.getContentPane());
+        jRegionSelectDialog.getContentPane().setLayout(jRegionSelectDialogLayout);
+        jRegionSelectDialogLayout.setHorizontalGroup(
+            jRegionSelectDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jRegionSelectDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel5)
-                .addGap(30, 30, 30)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jExportHTMLButton)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jExportFormatField, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jExportUnformattedButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jExportBBButton)))
-                .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jExportBBButton, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jExportUnformattedButton, javax.swing.GroupLayout.Alignment.LEADING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jExportHTMLButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jExportFormatField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
-                .addGap(61, 61, 61))
-        );
-
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Bereichsauswahl"));
-        jPanel3.setOpaque(false);
-
-        jLabel1.setText("X-Start");
-
-        jLabel2.setText("Y-Start");
-
-        jLabel3.setText("X-Ende");
-
-        jLabel4.setText("Y-Ende");
-
-        jXStart.setModel(new javax.swing.SpinnerNumberModel(0, 0, 1000, 1));
-        jXStart.setMaximumSize(new java.awt.Dimension(60, 18));
-
-        jYStart.setModel(new javax.swing.SpinnerNumberModel(0, 0, 1000, 1));
-        jYStart.setMaximumSize(new java.awt.Dimension(60, 18));
-
-        jXEnd.setModel(new javax.swing.SpinnerNumberModel(0, 0, 1000, 1));
-        jXEnd.setMaximumSize(new java.awt.Dimension(60, 18));
-
-        jYEnd.setModel(new javax.swing.SpinnerNumberModel(0, 0, 1000, 1));
-        jYEnd.setMaximumSize(new java.awt.Dimension(60, 18));
-
-        jButton2.setBackground(new java.awt.Color(239, 235, 223));
-        jButton2.setText("Wählen");
-        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireSelectRegionEvent(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jRegionSelectDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jRegionSelectDialogLayout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jXStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jYStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 119, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jYEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jXEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addComponent(jButton2)
+                        .addGap(18, 18, 18)
+                        .addComponent(jStartX, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jStartY, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jRegionSelectDialogLayout.createSequentialGroup()
+                        .addComponent(jButton3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPerformSelection))
+                    .addGroup(jRegionSelectDialogLayout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addGap(18, 18, 18)
+                        .addComponent(jEndX, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jEndY, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)))
                 .addContainerGap())
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        jRegionSelectDialogLayout.setVerticalGroup(
+            jRegionSelectDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jRegionSelectDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(jXStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(jYStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel3)
-                                .addComponent(jXEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jYEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel4)))
-                        .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jViewTypeButton.setBackground(new java.awt.Color(239, 235, 223));
-        jViewTypeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/branch.png"))); // NOI18N
-        jViewTypeButton.setToolTipText("Baumstruktur an/aus");
-        jViewTypeButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireSwitchViewEvent(evt);
-            }
-        });
-
-        jViewTypeButton1.setBackground(new java.awt.Color(239, 235, 223));
-        jViewTypeButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/clipboard.png"))); // NOI18N
-        jViewTypeButton1.setToolTipText("Dörfer in der Zwischenablage suchen");
-        jViewTypeButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireFindVillageInClipboardEvent(evt);
-            }
-        });
-
-        jLabel6.setText("Punktschwache Dörfer entfernen");
-
-        jVillagePointsFilterComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "< 3.000 Punkte", "< 5.000 Punkte", "< 7.000 Punkte", "< 9.000 Punkte", " ", " ", " " }));
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
-        jVillagePointsFilterComboBox.setToolTipText(bundle.getString("TribeTribeAttackFrame.jAllTargetsComboBox.toolTipText")); // NOI18N
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jVillagePointsFilterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1)
-                    .addComponent(jViewTypeButton)
-                    .addComponent(jViewTypeButton1))
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jViewTypeButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jViewTypeButton1))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jRegionSelectDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jStartX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jStartY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jVillagePointsFilterComboBox, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
-                    .addComponent(jLabel6))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jRegionSelectDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(jEndX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jEndY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jRegionSelectDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jPerformSelection)
+                    .addComponent(jButton3))
                 .addContainerGap())
         );
+
+        setTitle("Auswahl");
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jAlwaysOnTopBox.setText("Immer im Vordergrund");
         jAlwaysOnTopBox.setOpaque(false);
@@ -544,170 +740,64 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                 fireAlwaysOnTopChangedEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jAlwaysOnTopBox, gridBagConstraints);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jAlwaysOnTopBox))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jAlwaysOnTopBox)
-                .addContainerGap())
-        );
+        jSelectionPanel.setBackground(new java.awt.Color(239, 235, 223));
+        jSelectionPanel.setLayout(new java.awt.BorderLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        getContentPane().add(jSelectionPanel, gridBagConstraints);
+
+        capabilityInfoPanel1.setSearchable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(capabilityInfoPanel1, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void fireRemoveNodeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveNodeEvent
-
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Alle markierten Einträge und ihre untergeordneten Einträge löschen?", "Löschen", "Nein", "Ja") == JOptionPane.NO_OPTION) {
-            return;
-        }
-
-        for (Village v : getSelectedElements()) {
-            treeData.remove(v);
-        }
-        buildTree();
-    }//GEN-LAST:event_fireRemoveNodeEvent
-
-    private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireExportEvent
-        List<Village> selection = new LinkedList<Village>();
-        for (Village v : getSelectedElements()) {
-            selection.add(v);
-        }
-
-        //check if sth is selected
-        if (selection.isEmpty()) {
-            JOptionPaneHelper.showInformationBox(this, "Keine Elemente ausgewählt.", "Fehler");
-            return;
-        }
-
-        if (evt.getSource() == jExportHTMLButton) {
-            //do HTML export
-            String dir = GlobalOptions.getProperty("screen.dir");
-            if (dir == null) {
-                dir = ".";
-            }
-
-            JFileChooser chooser = null;
-            try {
-                //handle vista problem
-                chooser = new JFileChooser(dir);
-            } catch (Exception e) {
-                JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
-                return;
-            }
-
-            chooser.setDialogTitle("Datei auswählen");
-            chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
-
-                @Override
-                public boolean accept(File f) {
-                    if ((f != null) && (f.isDirectory() || f.getName().endsWith(".html"))) {
-                        return true;
-                    }
-                    return false;
-                }
-
-                @Override
-                public String getDescription() {
-                    return "*.html";
-                }
-            });
-            //open dialog
-            chooser.setSelectedFile(new File(dir + "/Dorfliste.html"));
-            int ret = chooser.showSaveDialog(this);
-            if (ret == JFileChooser.APPROVE_OPTION) {
-                try {
-                    //check extension
-                    File f = chooser.getSelectedFile();
-                    String file = f.getCanonicalPath();
-                    if (!file.endsWith(".html")) {
-                        file += ".html";
-                    }
-
-                    //check overwrite
-                    File target = new File(file);
-                    if (target.exists()) {
-                        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Bestehende Datei überschreiben?", "Überschreiben", "Nein", "Ja") == JOptionPane.NO_OPTION) {
-                            //do not overwrite
-                            return;
-                        }
-                    }
-                    //do export
-                    SelectionHTMLExporter.doExport(target, selection);
-                    GlobalOptions.addProperty("screen.dir", target.getParent());
-                    if (JOptionPaneHelper.showQuestionConfirmBox(this, "Auswahl erfolgreich gespeichert.\nWillst du die erstellte Datei jetzt im Browser betrachten?", "Information", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-                        BrowserCommandSender.openPage(target.toURI().toURL().toString());
-                    }
-                } catch (Exception inner) {
-                    logger.error("Failed to write selection to HTML", inner);
-                    JOptionPaneHelper.showErrorBox(this, "Fehler beim Speichern.", "Fehler");
-                }
-            }
-        } else {
-            //export to clipboard
-            try {
-                boolean bbCode = (evt.getSource() == jExportBBButton);
-                String result = VillageListFormatter.format(selection, jExportFormatField.getText(), bbCode);
-                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result.toString()), null);
-                JOptionPaneHelper.showInformationBox(this, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert");
-                GlobalOptions.addProperty("village.format", jExportFormatField.getText());
-            } catch (Exception e) {
-                logger.error("Failed to copy data to clipboard", e);
-                JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren der Daten.", "Fehler");
-            }
-        }
-    }//GEN-LAST:event_fireExportEvent
 
     private void fireAlwaysOnTopChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireAlwaysOnTopChangedEvent
         setAlwaysOnTop(!isAlwaysOnTop());
     }//GEN-LAST:event_fireAlwaysOnTopChangedEvent
 
-    private void fireSelectRegionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectRegionEvent
-        try {
-            int xs = (Integer) jXStart.getValue();
-            int ys = (Integer) jYStart.getValue();
-            int xe = (Integer) jXEnd.getValue();
-            int ye = (Integer) jYEnd.getValue();
+    private void jXInfoLabelfireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXInfoLabelfireHideInfoEvent
+        infoPanel.setCollapsed(true);
+}//GEN-LAST:event_jXInfoLabelfireHideInfoEvent
 
-            fireSelectionFinishedEvent(new Point(xs, ys), new Point(xe, ye));
-        } catch (Exception e) {
-            logger.error("Error during selection", e);
+    private void firePerformRegionSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_firePerformRegionSelectionEvent
+        if (evt.getSource() == jPerformSelection) {
+            Point start = new Point((Integer) jStartX.getValue(), (Integer) jStartY.getValue());
+            Point end = new Point((Integer) jEndX.getValue(), (Integer) jEndY.getValue());
+            if (start.x < 0 || end.x < 0 || start.y > ServerSettings.getSingleton().getMapDimension().height || end.y > ServerSettings.getSingleton().getMapDimension().getHeight()) {
+                showError("Ungültiger Start- oder Endpunkt");
+            } else if ((Math.abs(end.x - start.x) * (end.y - start.y)) > 30000) {
+                showError("<html>Die angegebene Auswahl k&ouml;nnte mehr als 10.000 D&ouml;rfer umfassen.<br/>"
+                        + "Die Auswahl k&ouml;nnte so sehr lange dauern. Bitte verkleinere den gew&auml;hlten Bereich.");
+            } else {
+                List<Village> selection = DataHolder.getSingleton().getVillagesInRegion(start, end);
+                addVillages(selection);
+            }
         }
 
-    }//GEN-LAST:event_fireSelectRegionEvent
+        jRegionSelectDialog.setVisible(false);
+    }//GEN-LAST:event_firePerformRegionSelectionEvent
 
-    private void fireSwitchViewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSwitchViewEvent
+    private void switchViewType() {
         treeMode = !treeMode;
         buildTree();
-    }//GEN-LAST:event_fireSwitchViewEvent
-
-    private void fireFindVillageInClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireFindVillageInClipboardEvent
-        try {
-            Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-            List<Village> villages = PluginManager.getSingleton().executeVillageParser((String) t.getTransferData(DataFlavor.stringFlavor));
-            if (villages == null || villages.isEmpty()) {
-                JOptionPaneHelper.showInformationBox(this, "Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.", "Information");
-                return;
-            } else {
-                addVillages(villages);
-            }
-        } catch (Exception e) {
-            logger.error("Failed to parse villages from clipboard", e);
-        }
-    }//GEN-LAST:event_fireFindVillageInClipboardEvent
+    }
 
     public List<Village> getSelectedElements() {
         TreePath[] paths = jSelectionTree.getSelectionModel().getSelectionPaths();
@@ -771,32 +861,51 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
         addVillages(pVillages);
     }
+
+    public static void main(String[] args) {
+
+        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
+        GlobalOptions.setSelectedServer("de43");
+        GlobalOptions.setSelectedProfile(new DummyProfile());
+        DataHolder.getSingleton().loadData(false);
+        try {
+            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (Exception e) {
+        }
+        List<Village> selection = new LinkedList<Village>();
+        for (int i = 0; i < 100; i++) {
+            selection.add(DataHolder.getSingleton().getRandomVillage());
+        }
+
+        DSWorkbenchSelectionFrame.getSingleton().setSize(600, 500);
+        DSWorkbenchSelectionFrame.getSingleton().resetView();
+        DSWorkbenchSelectionFrame.getSingleton().addVillages(selection);
+
+        DSWorkbenchSelectionFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        DSWorkbenchSelectionFrame.getSingleton().setVisible(true);
+
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
+    private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JCheckBox jAlwaysOnTopBox;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jExportBBButton;
-    private javax.swing.JTextField jExportFormatField;
-    private javax.swing.JButton jExportHTMLButton;
-    private javax.swing.JButton jExportUnformattedButton;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JSpinner jEndX;
+    private javax.swing.JSpinner jEndY;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JButton jPerformSelection;
+    private javax.swing.JDialog jRegionSelectDialog;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTree jSelectionTree;
-    private javax.swing.JButton jViewTypeButton;
-    private javax.swing.JButton jViewTypeButton1;
-    private javax.swing.JComboBox jVillagePointsFilterComboBox;
-    private javax.swing.JSpinner jXEnd;
-    private javax.swing.JSpinner jXStart;
-    private javax.swing.JSpinner jYEnd;
-    private javax.swing.JSpinner jYStart;
+    private javax.swing.JPanel jSelectionPanel;
+    private org.jdesktop.swingx.JXTree jSelectionTree;
+    private org.jdesktop.swingx.JXPanel jSelectionTreePanel;
+    private javax.swing.JSpinner jStartX;
+    private javax.swing.JSpinner jStartY;
+    private org.jdesktop.swingx.JXLabel jXInfoLabel;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -822,32 +931,5 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         }
         Collections.sort(treeData, Village.ALLY_TRIBE_VILLAGE_COMPARATOR);
         buildTree();
-    }
-
-    @Override
-    public void dragGestureRecognized(DragGestureEvent dge) {
-        List<Village> v = getSelectedElements();
-        if (v == null) {
-            return;
-        }
-        Cursor c = null;
-        if (!v.isEmpty()) {
-            c = ImageManager.createVillageDragCursor(v.size());
-            setCursor(c);
-            dge.startDrag(c, new VillageTransferable(v), this);
-        }
-    }
-
-    @Override
-    public void dragEnter(DragSourceDragEvent dsde) {
-    }
-
-    @Override
-    public void dragOver(DragSourceDragEvent dsde) {
-    }
-
-    @Override
-    public void dragDropEnd(DragSourceDropEvent dsde) {
-        setCursor(Cursor.getDefaultCursor());
     }
 }

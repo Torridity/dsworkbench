@@ -207,6 +207,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jChurchFrameAlwaysOnTop, gridBagConstraints);
 
+        capabilityInfoPanel1.setBbSupport(false);
         capabilityInfoPanel1.setCopyable(false);
         capabilityInfoPanel1.setPastable(false);
         capabilityInfoPanel1.setSearchable(false);

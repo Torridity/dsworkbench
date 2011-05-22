@@ -68,7 +68,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
  * @author Charon
  */
 public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements ListSelectionListener, GenericManagerListener {
-
+//@TODO: Fix edit form frame to fit nimbus L&F
     private static Logger logger = Logger.getLogger("FormFrame");
     private static DSWorkbenchFormFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
@@ -351,6 +351,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jAlwaysOnTop, gridBagConstraints);
 
+        capabilityInfoPanel1.setBbSupport(false);
         capabilityInfoPanel1.setPastable(false);
         capabilityInfoPanel1.setSearchable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();

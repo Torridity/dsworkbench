@@ -1294,6 +1294,7 @@ public class DataHolder {
                 showBarbarian = true;
             }
 
+            System.out.println(xStart + " - " + xEnd + " - " + yStart + " - " + yEnd );
             for (int x = xStart; x <= xEnd; x++) {
                 for (int y = yStart; y <= yEnd; y++) {
                     Village v = getVillages()[x][y];

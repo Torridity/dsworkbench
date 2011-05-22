@@ -94,6 +94,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 activeTab.fireExportScriptEvent();
             } else if (e.getActionCommand().equals("Copy")) {
                 activeTab.transferSelection(AttackTableTab.TRANSFER_TYPE.COPY_TO_INTERNAL_CLIPBOARD);
+            } else if (e.getActionCommand().equals("BBCopy")) {
+                activeTab.transferSelection(AttackTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
             } else if (e.getActionCommand().equals("Cut")) {
                 activeTab.transferSelection(AttackTableTab.TRANSFER_TYPE.CUT_TO_INTERNAL_CLIPBOARD);
             } else if (e.getActionCommand().equals("Paste")) {
@@ -342,7 +344,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         }));
-        transferTaskPane.getContentPane().add(factoryButton("/res/ui/att_clipboardBB.png", "Markierte Angriffe als BB-Codes in die Zwischenablage kopieren. Der Inhalt der Zwischenablage kann dann z.B. in das Stammesforum, die Notizen oder IGMs eingef&uuml;gt werden", new MouseAdapter() {
+      /*  transferTaskPane.getContentPane().add(factoryButton("/res/ui/att_clipboardBB.png", "Markierte Angriffe als BB-Codes in die Zwischenablage kopieren. Der Inhalt der Zwischenablage kann dann z.B. in das Stammesforum, die Notizen oder IGMs eingef&uuml;gt werden", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -351,7 +353,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                     activeTab.transferSelection(AttackTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
                 }
             }
-        }));
+        }));*/
 
         transferTaskPane.getContentPane().add(factoryButton("/res/ui/att_HTML.png", "Markierte Angriffe in eine HTML Datei kopieren.<br/>Die erstellte Datei kann dann per eMail verschickt oder zum Abschicken von Angriffen ohne ge&ouml;ffnetesDS Workbench verwendet werden", new MouseAdapter() {
 

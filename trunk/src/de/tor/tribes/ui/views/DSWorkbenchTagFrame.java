@@ -81,11 +81,13 @@ import org.jdesktop.swingx.table.TableColumnExt;
  * @author Jejkal
  */
 public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ListSelectionListener, ActionListener {
-
+//@TODO: notify map on change
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("Paste")) {
             pasteVillagesFromClipboard();
+        } if (e.getActionCommand().equals("BBCopy")) {
+            transferSelectedTagsAsBBCodesToClipboard();
         } else if (e.getActionCommand().equals("Delete")) {
             if (e.getSource() != null) {
                 if (e.getSource().equals(jTagsTable)) {
@@ -149,8 +151,10 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         });
 
         KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
+        KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         jTagsTable.registerKeyboardAction(DSWorkbenchTagFrame.this, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jTagsTable.registerKeyboardAction(DSWorkbenchTagFrame.this, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jVillageList.registerKeyboardAction(DSWorkbenchTagFrame.this, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jTagsTable.registerKeyboardAction(DSWorkbenchTagFrame.this, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
@@ -244,7 +248,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
             }
         });
         transferTaskPane.getContentPane().add(centerIngame);
-        JXButton transferBB = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/att_clipboardBB.png")));
+        /*JXButton transferBB = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/att_clipboardBB.png")));
         transferBB.setToolTipText("Markierte Gruppen als BB-Codes in die Zwischenablage kopieren");
         transferBB.addMouseListener(new MouseAdapter() {
 
@@ -254,7 +258,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
 
             }
         });
-        transferTaskPane.getContentPane().add(transferBB);
+        transferTaskPane.getContentPane().add(transferBB);*/
         JXButton transferJS = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/export_js.png")));
         transferJS.setToolTipText("<html>Alle D&ouml;rfer der gew&auml;hlten Gruppe in die Zwischenablage kopieren.<BR/>Auf diesem Wege ist es z.B. m&ouml;glich, verkn&uuml;pfte Gruppen aus DS Workbench ins Spiel zu &uuml;bertragen.<BR>F&uuml;r weitere Informationen sieh bitte in der Hilfe nach.</html>");
         transferJS.addMouseListener(new MouseAdapter() {

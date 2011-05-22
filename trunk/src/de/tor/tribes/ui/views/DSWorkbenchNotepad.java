@@ -88,7 +88,7 @@ import org.jdesktop.swingx.painter.MattePainter;
  * @author Charon
  */
 public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, DragGestureListener {
-
+//TODO remove dummy village from default view, check if bb-editor always hides, put village list also on left side?
     @Override
     public void actionPerformed(ActionEvent e) {
 
@@ -96,6 +96,8 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         if (e.getActionCommand() != null && activeTab != null) {
             if (e.getActionCommand().equals("Copy")) {
                 activeTab.transferSelection(NoteTableTab.TRANSFER_TYPE.COPY_TO_INTERNAL_CLIPBOARD);
+            } else if (e.getActionCommand().equals("BBCopy")) {
+                activeTab.transferSelection(NoteTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
             } else if (e.getActionCommand().equals("Cut")) {
                 activeTab.transferSelection(NoteTableTab.TRANSFER_TYPE.CUT_TO_INTERNAL_CLIPBOARD);
             } else if (e.getActionCommand().equals("Paste")) {
@@ -316,7 +318,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             }
         });
         transferTaskPane.getContentPane().add(transferVillageList);
-        JXButton transferNotes = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/att_clipboardBB.png")));
+      /*  JXButton transferNotes = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/att_clipboardBB.png")));
         transferNotes.setToolTipText("Überträgt die gewählten Notizen als BB-Codes in die Zwischenablage");
         transferNotes.addMouseListener(new MouseAdapter() {
 
@@ -329,7 +331,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             }
         });
         transferTaskPane.getContentPane().add(transferNotes);
-
+*/
 
         JXTaskPane miscPane = new JXTaskPane();
         miscPane.setTitle("Sonstiges");

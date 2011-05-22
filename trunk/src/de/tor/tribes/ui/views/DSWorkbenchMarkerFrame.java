@@ -40,7 +40,7 @@ import org.apache.log4j.Logger;
  * @author  Charon
  */
 public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener {
-
+//@TODO Fit size, notifiy map on change, don't paint does not work
     private static Logger logger = Logger.getLogger("MarkerView");
     private static DSWorkbenchMarkerFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
@@ -290,6 +290,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jMarkersPanel, gridBagConstraints);
 
+        capabilityInfoPanel1.setBbSupport(false);
         capabilityInfoPanel1.setSearchable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

@@ -79,7 +79,11 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
             if (activeTab != null) {
                 activeTab.deleteSelection();
             }
-        } else if (e.getActionCommand().equals("Find")) {
+        } else  if (e.getActionCommand().equals("BBCopy")) {
+            if (activeTab != null) {
+                activeTab.transferSelection(TroopTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
+            }
+        }else if (e.getActionCommand().equals("Find")) {
             BufferedImage back = ImageUtils.createCompatibleBufferedImage(3, 3, BufferedImage.TRANSLUCENT);
             Graphics g = back.getGraphics();
             g.setColor(new Color(120, 120, 120, 120));
@@ -169,7 +173,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         transferTaskPane.getContentPane().add(transferVillageList);
-        JXButton transferInfo = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/att_clipboardBB.png")));
+     /*   JXButton transferInfo = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/att_clipboardBB.png")));
         transferInfo.setToolTipText("Überträgt die gewählten Dörfer als BB-Codes in die Zwischenablage");
         transferInfo.addMouseListener(new MouseAdapter() {
 
@@ -181,7 +185,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         });
-        transferTaskPane.getContentPane().add(transferInfo);
+        transferTaskPane.getContentPane().add(transferInfo);*/
         JXButton openPlace = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/place.png")));
         openPlace.setToolTipText("Öffnet den Versammlungsplatz des gewählten Dorfes im Spiel");
         openPlace.addMouseListener(new MouseAdapter() {
@@ -194,10 +198,10 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         });
-        openPlace.setSize(transferInfo.getWidth(), transferInfo.getHeight());
-        openPlace.setMinimumSize(transferInfo.getMinimumSize());
-        openPlace.setMaximumSize(transferInfo.getMaximumSize());
-        openPlace.setPreferredSize(transferInfo.getPreferredSize());
+        openPlace.setSize(transferVillageList.getSize());
+        openPlace.setMinimumSize(transferVillageList.getMinimumSize());
+        openPlace.setMaximumSize(transferVillageList.getMaximumSize());
+        openPlace.setPreferredSize(transferVillageList.getPreferredSize());
         transferTaskPane.getContentPane().add(openPlace);
 
         JXTaskPane miscPane = new JXTaskPane();

@@ -248,17 +248,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
             }
         });
         transferTaskPane.getContentPane().add(centerIngame);
-        /*JXButton transferBB = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/att_clipboardBB.png")));
-        transferBB.setToolTipText("Markierte Gruppen als BB-Codes in die Zwischenablage kopieren");
-        transferBB.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                transferSelectedTagsAsBBCodesToClipboard();
-
-            }
-        });
-        transferTaskPane.getContentPane().add(transferBB);*/
+      
         JXButton transferJS = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/export_js.png")));
         transferJS.setToolTipText("<html>Alle D&ouml;rfer der gew&auml;hlten Gruppe in die Zwischenablage kopieren.<BR/>Auf diesem Wege ist es z.B. m&ouml;glich, verkn&uuml;pfte Gruppen aus DS Workbench ins Spiel zu &uuml;bertragen.<BR>F&uuml;r weitere Informationen sieh bitte in der Hilfe nach.</html>");
         transferJS.addMouseListener(new MouseAdapter() {
@@ -549,7 +539,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         villageListPanel.setPreferredSize(new java.awt.Dimension(180, 80));
         villageListPanel.setLayout(new java.awt.BorderLayout());
 
-        jScrollPane5.setBorder(javax.swing.BorderFactory.createTitledBorder("Dorfliste"));
+        jScrollPane5.setBorder(javax.swing.BorderFactory.createTitledBorder("Zugeordnete Dörfer"));
 
         jScrollPane5.setViewportView(jVillageList);
 

@@ -49,6 +49,7 @@ import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.RowFilter;
@@ -58,7 +59,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import org.apache.log4j.Logger;
-import org.jdesktop.swingx.JXList;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -69,6 +69,8 @@ import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
 import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
+import org.pushingpixels.substance.api.DecorationAreaType;
+import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 
 /**
  *
@@ -84,13 +86,15 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
     }
     private String sMarkerSet = null;
     private final static JXTable jxNoteTable = new JXTable();
-    private final static JXList jxVillageList = new JXList();
+    private final static JList jxVillageList = new JList();
     private static NoteTableModel noteModel = null;
     private static boolean KEY_LISTENER_ADDED = false;
     private PainterHighlighter highlighter = null;
 
     static {
-        jxNoteTable.addHighlighter(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
+        //jxNoteTable.addHighlighter(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
+        jxNoteTable.addHighlighter(HighlighterFactory.createAlternateStriping(SubstanceLookAndFeel.getCurrentSkin().getBackgroundColorScheme(DecorationAreaType.GENERAL).getLightColor(),
+                SubstanceLookAndFeel.getCurrentSkin().getBackgroundColorScheme(DecorationAreaType.GENERAL).getMidColor()));
 
         jxNoteTable.setColumnControlVisible(true);
         jxNoteTable.setDefaultRenderer(String.class, new NoteCellRenderer());
@@ -326,13 +330,13 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
         setLayout(new java.awt.BorderLayout());
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Zugeordnete Dörfer"));
-        jPanel1.setPreferredSize(new java.awt.Dimension(150, 140));
+        jPanel1.setPreferredSize(new java.awt.Dimension(180, 80));
         jPanel1.setLayout(new java.awt.BorderLayout());
 
         jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         jPanel1.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
-        add(jPanel1, java.awt.BorderLayout.SOUTH);
+        add(jPanel1, java.awt.BorderLayout.WEST);
 
         jPanel2.setLayout(new java.awt.BorderLayout());
 

@@ -46,8 +46,8 @@ import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.RowFilter;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -65,12 +65,18 @@ import org.jdesktop.swingx.decorator.PainterHighlighter;
 import org.jdesktop.swingx.decorator.PatternPredicate;
 import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
+import org.pushingpixels.substance.api.SubstanceLookAndFeel;
+import org.pushingpixels.substance.api.skin.SubstanceAutumnLookAndFeel;
+import org.pushingpixels.substance.api.skin.SubstanceBusinessBlackSteelLookAndFeel;
+import org.pushingpixels.substance.api.skin.SubstanceDustLookAndFeel;
+import org.pushingpixels.substance.api.skin.SubstanceNebulaLookAndFeel;
 
 /**
  * @author Charon
  */
 public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ListSelectionListener {
 //TODO check if data load works in real application
+
     private static Logger logger = Logger.getLogger("ConquerView");
     private static DSWorkbenchConquersFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
@@ -592,11 +598,15 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+
+
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+            //  UIManager.setLookAndFeel(new SubstanceBusinessBlackSteelLookAndFeel());
         } catch (Exception e) {
+            e.printStackTrace();
         }
         DSWorkbenchConquersFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         for (int i = 0; i < 50; i++) {
@@ -618,6 +628,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         DSWorkbenchConquersFrame.getSingleton().resetView();
         DSWorkbenchConquersFrame.getSingleton().dataChangedEvent();
         DSWorkbenchConquersFrame.getSingleton().setVisible(true);
+
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;

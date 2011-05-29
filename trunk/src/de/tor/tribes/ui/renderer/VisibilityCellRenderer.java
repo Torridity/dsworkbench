@@ -9,13 +9,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import org.jdesktop.swingx.renderer.DefaultTableRenderer;
+import org.pushingpixels.substance.api.renderers.SubstanceDefaultTableCellRenderer;
 
 /**
  *
  * @author Torridity
  */
-public class VisibilityCellRenderer extends DefaultTableRenderer {
+public class VisibilityCellRenderer extends SubstanceDefaultTableCellRenderer {
 
     private ImageIcon visible = null;
     private ImageIcon invisible = null;

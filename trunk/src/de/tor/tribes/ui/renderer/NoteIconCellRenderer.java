@@ -12,12 +12,13 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
+import org.pushingpixels.substance.api.renderers.SubstanceDefaultTableCellRenderer;
 
 /**
  *
  * @author Torridity
  */
-public class NoteIconCellRenderer extends DefaultTableRenderer {
+public class NoteIconCellRenderer extends SubstanceDefaultTableCellRenderer {
 
     public enum ICON_TYPE {
 
@@ -27,13 +28,14 @@ public class NoteIconCellRenderer extends DefaultTableRenderer {
 
     public NoteIconCellRenderer(ICON_TYPE pType) {
         type = pType;
+        
     }
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        JLabel label = ((JLabel) c);
         try {
-            JLabel label = ((JLabel) c);
             label.setText("");
             label.setHorizontalAlignment(SwingConstants.CENTER);
             if (type.equals(ICON_TYPE.NOTE) && ((Integer) value) == -1) {
@@ -45,6 +47,6 @@ public class NoteIconCellRenderer extends DefaultTableRenderer {
             }
         } catch (Exception e) {
         }
-        return c;
+        return label;
     }
 }

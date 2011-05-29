@@ -42,6 +42,7 @@ public class CapabilityInfoPanel extends javax.swing.JPanel {
         jDelete = new javax.swing.JLabel();
         jFind = new javax.swing.JLabel();
 
+        setOpaque(false);
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.LINE_AXIS));
 
         jCopy.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_copy.png"))); // NOI18N

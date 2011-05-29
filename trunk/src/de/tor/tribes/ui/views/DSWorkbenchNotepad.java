@@ -27,9 +27,6 @@ import de.tor.tribes.ui.GenericTestPanel;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.NoteTableTab;
 import de.tor.tribes.ui.dnd.VillageTransferable;
-import de.tor.tribes.util.BBChangeListener;
-import de.tor.tribes.util.BBCodeFormatter;
-import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
@@ -69,13 +66,15 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.StringTokenizer;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -83,12 +82,17 @@ import org.apache.log4j.ConsoleAppender;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.painter.MattePainter;
+import org.pushingpixels.substance.api.DecorationAreaType;
+import org.pushingpixels.substance.api.SubstanceLookAndFeel;
+import org.pushingpixels.substance.api.skin.DustCoffeeSkin;
+import org.pushingpixels.substance.api.skin.SkinInfo;
 
 /**
  * @author Charon
  */
 public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, DragGestureListener {
 //TODO remove dummy village from default view, check if bb-editor always hides, put village list also on left side?
+
     @Override
     public void actionPerformed(ActionEvent e) {
 
@@ -318,20 +322,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             }
         });
         transferTaskPane.getContentPane().add(transferVillageList);
-      /*  JXButton transferNotes = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/att_clipboardBB.png")));
-        transferNotes.setToolTipText("Überträgt die gewählten Notizen als BB-Codes in die Zwischenablage");
-        transferNotes.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                NoteTableTab tab = getActiveTab();
-                if (tab != null) {
-                    tab.transferSelection(NoteTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
-                }
-            }
-        });
-        transferTaskPane.getContentPane().add(transferNotes);
-*/
 
         JXTaskPane miscPane = new JXTaskPane();
         miscPane.setTitle("Sonstiges");
@@ -1609,55 +1599,71 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
     }
 
     public static void main(String[] args) {
-        MouseGestures mMouseGestures = new MouseGestures();
-        mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
-        mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
-        mMouseGestures.start();
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
-        }
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        DSWorkbenchNotepad.getSingleton().setSize(600, 400);
+        SwingUtilities.invokeLater(new Runnable() {
 
-        NoteManager.getSingleton().addGroup("test1");
-        NoteManager.getSingleton().addGroup("asd2");
-        NoteManager.getSingleton().addGroup("awe3");
-        for (int i = 0; i < 5; i++) {
-            Note n = new Note();
-            n.setNoteText("Test");
-            n.setTimestamp(System.currentTimeMillis());
-            n.setMapMarker(ImageManager.ID_NOTE_ICON_0);
-            n.setNoteSymbol(ImageManager.NOTE_SYMBOL_AXE);
-            n.addVillage(new DummyVillage());
-            n.addVillage(new DummyVillage());
-            n.addVillage(new DummyVillage());
-            Note n2 = new Note();
-            n2.setNoteText("Test2");
-            n2.setTimestamp(System.currentTimeMillis());
-            n2.setMapMarker(ImageManager.ID_NOTE_ICON_1);
-            n2.setNoteSymbol(ImageManager.NOTE_SYMBOL_SNOB);
-            n2.addVillage(new DummyVillage());
-            n2.addVillage(new DummyVillage());
-            Note n3 = new Note();
-            n3.setNoteText("Test3");
-            n3.setTimestamp(System.currentTimeMillis());
-            n3.setMapMarker(ImageManager.ID_NOTE_ICON_1);
-            n3.setNoteSymbol(ImageManager.NOTE_SYMBOL_SPEAR);
-            n3.addVillage(new DummyVillage());
-            n3.addVillage(new DummyVillage());
-            n3.addVillage(new DummyVillage());
-            n3.addVillage(new DummyVillage());
+            public void run() {
 
-            NoteManager.getSingleton().addManagedElement(n);
-            NoteManager.getSingleton().addManagedElement("test1", n2);
-            NoteManager.getSingleton().addManagedElement("asd2", n3);
-        }
-        DSWorkbenchNotepad.getSingleton().resetView();
-        DSWorkbenchNotepad.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        DSWorkbenchNotepad.getSingleton().setVisible(true);
 
+                MouseGestures mMouseGestures = new MouseGestures();
+                mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
+                mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
+                mMouseGestures.start();
+                Map<String, SkinInfo> skins = SubstanceLookAndFeel.getAllSkins();
+                Iterator<String> skinKeys = skins.keySet().iterator();
+                while (skinKeys.hasNext()) {
+                    System.out.println(skinKeys.next());
+                }
+
+                try {
+                    //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                    //UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+                    //JFrame.setDefaultLookAndFeelDecorated(true);
+
+                    SubstanceLookAndFeel.setSkin(SubstanceLookAndFeel.getAllSkins().get("Nebula Brick Wall").getClassName());
+                    //  UIManager.put(SubstanceLookAndFeel.FOCUS_KIND, FocusKind.NONE);
+                } catch (Exception e) {
+                }
+                Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
+                DSWorkbenchNotepad.getSingleton().setSize(600, 400);
+
+                NoteManager.getSingleton().addGroup("test1");
+                NoteManager.getSingleton().addGroup("asd2");
+                NoteManager.getSingleton().addGroup("awe3");
+                for (int i = 0; i < 5; i++) {
+                    Note n = new Note();
+                    n.setNoteText("Test");
+                    n.setTimestamp(System.currentTimeMillis());
+                    n.setMapMarker(ImageManager.ID_NOTE_ICON_0);
+                    n.setNoteSymbol(ImageManager.NOTE_SYMBOL_AXE);
+                    n.addVillage(new DummyVillage());
+                    n.addVillage(new DummyVillage());
+                    n.addVillage(new DummyVillage());
+                    Note n2 = new Note();
+                    n2.setNoteText("Test2");
+                    n2.setTimestamp(System.currentTimeMillis());
+                    n2.setMapMarker(ImageManager.ID_NOTE_ICON_1);
+                    n2.setNoteSymbol(ImageManager.NOTE_SYMBOL_SNOB);
+                    n2.addVillage(new DummyVillage());
+                    n2.addVillage(new DummyVillage());
+                    Note n3 = new Note();
+                    n3.setNoteText("Test3");
+                    n3.setTimestamp(System.currentTimeMillis());
+                    n3.setMapMarker(ImageManager.ID_NOTE_ICON_1);
+                    n3.setNoteSymbol(ImageManager.NOTE_SYMBOL_SPEAR);
+                    n3.addVillage(new DummyVillage());
+                    n3.addVillage(new DummyVillage());
+                    n3.addVillage(new DummyVillage());
+                    n3.addVillage(new DummyVillage());
+
+                    NoteManager.getSingleton().addManagedElement(n);
+                    NoteManager.getSingleton().addManagedElement("test1", n2);
+                    NoteManager.getSingleton().addManagedElement("asd2", n3);
+                }
+                DSWorkbenchNotepad.getSingleton().resetView();
+                DSWorkbenchNotepad.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                DSWorkbenchNotepad.getSingleton().setVisible(true);
+            }
+        });
     }
 
     @Override

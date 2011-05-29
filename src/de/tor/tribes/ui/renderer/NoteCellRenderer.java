@@ -8,13 +8,13 @@ import de.tor.tribes.util.BBCodeFormatter;
 import java.awt.Component;
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import org.jdesktop.swingx.renderer.DefaultTableRenderer;
+import org.pushingpixels.substance.api.renderers.SubstanceDefaultTableCellRenderer;
 
 /**
  *
  * @author Torridity
  */
-public class NoteCellRenderer extends DefaultTableRenderer {
+public class NoteCellRenderer extends SubstanceDefaultTableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {

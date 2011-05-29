@@ -14,14 +14,14 @@ import javax.swing.RowSorter;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.plaf.UIResource;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
+import org.pushingpixels.substance.api.renderers.SubstanceDefaultTableCellRenderer;
 
 /**
  *
  * @author Jejkal
  */
-public class DefaultTableHeaderRenderer extends DefaultTableCellRenderer implements UIResource {
+public class DefaultTableHeaderRenderer extends SubstanceDefaultTableCellRenderer implements UIResource {
 
     private boolean horizontalTextPositionSet;
 
@@ -38,7 +38,7 @@ public class DefaultTableHeaderRenderer extends DefaultTableCellRenderer impleme
             Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
         Icon sortIcon = null;
-        setBackground(Constants.DS_BACK);
+       // setBackground(Constants.DS_BACK);
         boolean isPaintingForPrint = false;
 
         if (table != null) {
@@ -56,7 +56,7 @@ public class DefaultTableHeaderRenderer extends DefaultTableCellRenderer impleme
                 if (bgColor == null) {
                     bgColor = header.getBackground();
                 }
-                setForeground(fgColor);
+             //   setForeground(fgColor);
                // setBackground(bgColor);
 
                 setFont(header.getFont());

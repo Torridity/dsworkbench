@@ -10,19 +10,26 @@
  */
 package de.tor.tribes.ui.views;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.TribeStatsElement;
 import de.tor.tribes.types.TribeStatsElement.Stats;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
+import de.tor.tribes.ui.GenericTestPanel;
+import de.tor.tribes.ui.NoteTableTab;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.StatTextBuilder;
 import de.tor.tribes.util.stat.StatManager;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.event.ItemEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -32,10 +39,17 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Logger;
+import org.jdesktop.swingx.JXButton;
+import org.jdesktop.swingx.JXTaskPane;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -62,6 +76,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
     private JFreeChart chart = null;
     private XYPointerAnnotation startPointer = null;
     private XYPointerAnnotation endPointer = null;
+    private GenericTestPanel centerPanel = null;
 
     public static synchronized DSWorkbenchStatsFrame getSingleton() {
         if (SINGLETON == null) {
@@ -72,7 +87,10 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
 
     DSWorkbenchStatsFrame() {
         initComponents();
-
+        centerPanel = new GenericTestPanel();
+        jStatsPanel.add(centerPanel, BorderLayout.CENTER);
+        centerPanel.setChildPanel(jMainStatPanel);
+        buildMenu();
         try {
             jAlwaysOnTopBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("stats.frame.alwaysOnTop")));
             setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
@@ -119,12 +137,92 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         jStartDate.setDate(c.getTime());
         jEndDate.setDate(c.getTime());
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.stats_view", GlobalOptions.getHelpBroker().getHelpSet());
+        //  GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.stats_view", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
 
         pack();
     }
 
+    private void buildMenu() {
+        JXTaskPane editPane = new JXTaskPane();
+        editPane.setTitle("Bearbeiten");
+        JXButton removeSelection = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/delete_region.png")));
+        removeSelection.setToolTipText("Löscht alle Datenpunkte zwischen der Start- und Endmarkierung");
+        removeSelection.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                removeSelection();
+            }
+        });
+        JXButton selectStart = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/beginning.png")));
+        selectStart.setToolTipText("<html>Setzt eine Startmarkierung beim gew&auml;hlten Datenpunkt.<br/>"
+                + "Das Setzen von Start- bzw. Endpunkten ist nur f&uuml;r die (rote) Hauptachse unterst&uuml;tzt</html>");
+        selectStart.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                setStartAnnotation();
+            }
+        });
+        selectStart.setSize(removeSelection.getSize());
+        selectStart.setMinimumSize(removeSelection.getMinimumSize());
+        selectStart.setMaximumSize(removeSelection.getMaximumSize());
+        selectStart.setPreferredSize(removeSelection.getPreferredSize());
+        editPane.getContentPane().add(selectStart);
+        JXButton selectEnd = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/end.png")));
+        selectEnd.setToolTipText("<html>Setzt eine Startmarkierung beim gew&auml;hlten Datenpunkt.<br/>"
+                + "Das Setzen von Start- bzw. Endpunkten ist nur f&uuml;r die (rote) Hauptachse unterst&uuml;tzt</html>");
+        selectEnd.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                setEndAnnotation();
+            }
+        });
+        selectEnd.setSize(removeSelection.getSize());
+        selectEnd.setMinimumSize(removeSelection.getMinimumSize());
+        selectEnd.setMaximumSize(removeSelection.getMaximumSize());
+        selectEnd.setPreferredSize(removeSelection.getPreferredSize());
+        editPane.getContentPane().add(selectEnd);
+        //finally add remove button
+        editPane.getContentPane().add(removeSelection);
+
+        JXButton createStats = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/medal.png")));
+        createStats.setToolTipText("Erzeugt Statistiken für Spieler des gewählten Stammes");
+        createStats.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                createStatistics();
+            }
+        });
+        editPane.getContentPane().add(createStats);
+
+
+        JXTaskPane viewPane = new JXTaskPane();
+        viewPane.setTitle("Anzeige");
+        viewPane.getContentPane().add(jViewSelectionBox);
+        /* viewPane.getContentPane().add(jShowPoints);
+        viewPane.getContentPane().add(jShowRank);
+        viewPane.getContentPane().add(jShowVillages);
+        viewPane.getContentPane().add(jShowKillsOff);
+        viewPane.getContentPane().add(jShowRankOff);
+        viewPane.getContentPane().add(jShowKillsDef);
+        viewPane.getContentPane().add(jShowRankDef);*/
+
+        JXTaskPane settingsPane = new JXTaskPane();
+        settingsPane.setTitle("Einstellungen");
+
+        settingsPane.getContentPane().add(jShowItemValues);
+        settingsPane.getContentPane().add(jShowLegend);
+        settingsPane.getContentPane().add(jShowLines);
+        settingsPane.getContentPane().add(jShowDataPoints);
+
+        centerPanel.setupTaskPane(editPane, viewPane, settingsPane);
+    }
+
+    @Override
     public void resetView() {
         Ally[] allies = StatManager.getSingleton().getMonitoredAllies();
         Arrays.sort(allies);
@@ -140,7 +238,8 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         chart = null;
         startPointer = null;
         endPointer = null;
-        if (jShowPoints.isSelected()) {
+        int idx = jViewSelectionBox.getSelectedIndex();
+        if (idx == 0) {
             TimeSeriesCollection pointsDataset = new TimeSeriesCollection();
             for (TribeStatsElement elem : pElems) {
                 TimeSeries pointSeries = new TimeSeries("Punkte (" + elem.getTribe().getName() + ")");
@@ -149,15 +248,11 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                 Long[] points = elem.getPoints();
                 for (int i = 0; i < timestamps.length; i++) {
                     pointSeries.add(new Second(new Date(timestamps[i])), points[i]);
-                    //  pointSeries2.add(new Second(new Date(timestamps[i])), points[i] - 1000l);
                 }
                 pointsDataset.addSeries(pointSeries);
-                // pointsDataset.addSeries(pointSeries2);
             }
             addDataset("Punkte", pointsDataset);
-        }
-
-        if (jShowRank.isSelected()) {
+        } else if (idx == 1) {
             TimeSeriesCollection rankDataset = new TimeSeriesCollection();
             for (TribeStatsElement elem : pElems) {
                 TimeSeries rankSeries = new TimeSeries("Rang (" + elem.getTribe().getName() + ")");
@@ -169,9 +264,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                 rankDataset.addSeries(rankSeries);
             }
             addDataset("Rang", rankDataset);
-        }
-
-        if (jShowVillages.isSelected()) {
+        } else if (idx == 2) {
             TimeSeriesCollection villageDataset = new TimeSeriesCollection();
             for (TribeStatsElement elem : pElems) {
                 TimeSeries villageSeries = new TimeSeries("Dörfer (" + elem.getTribe().getName() + ")");
@@ -183,9 +276,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                 villageDataset.addSeries(villageSeries);
             }
             addDataset("Dörfer", villageDataset);
-        }
-
-        if (jShowKillsOff.isSelected()) {
+        } else if (idx == 3) {
             TimeSeriesCollection killsOffDataset = new TimeSeriesCollection();
             for (TribeStatsElement elem : pElems) {
                 TimeSeries bashOffSeries = new TimeSeries("Kills (Off) (" + elem.getTribe().getName() + ")");
@@ -197,9 +288,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                 killsOffDataset.addSeries(bashOffSeries);
             }
             addDataset("Kills (Off)", killsOffDataset);
-        }
-
-        if (jShowRankOff.isSelected()) {
+        } else if (idx == 4) {
             TimeSeriesCollection rankOffDataset = new TimeSeriesCollection();
             for (TribeStatsElement elem : pElems) {
                 TimeSeries rankOffSeries = new TimeSeries("Rang (Off) (" + elem.getTribe().getName() + ")");
@@ -211,9 +300,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                 rankOffDataset.addSeries(rankOffSeries);
             }
             addDataset("Rang (Off)", rankOffDataset);
-        }
-
-        if (jShowKillsDef.isSelected()) {
+        } else if (idx == 5) {
             TimeSeriesCollection killsDefDataset = new TimeSeriesCollection();
             for (TribeStatsElement elem : pElems) {
                 TimeSeries bashDefSeries = new TimeSeries("Kills (Def) (" + elem.getTribe().getName() + ")");
@@ -225,9 +312,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                 killsDefDataset.addSeries(bashDefSeries);
             }
             addDataset("Kills (Def)", killsDefDataset);
-        }
-
-        if (jShowRankDef.isSelected()) {
+        } else if (idx == 6) {
             TimeSeriesCollection rankDefDataset = new TimeSeriesCollection();
             for (TribeStatsElement elem : pElems) {
                 TimeSeries rankDefSeries = new TimeSeries("Rang (Def) (" + elem.getTribe().getName() + ")");
@@ -339,6 +424,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         jStatsCreateFrame = new javax.swing.JFrame();
         jPanel2 = new javax.swing.JPanel();
@@ -372,22 +458,13 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         jButton8 = new javax.swing.JButton();
         jStartDate = new de.tor.tribes.ui.components.DateTimeField();
         jEndDate = new de.tor.tribes.ui.components.DateTimeField();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        jMainStatPanel = new javax.swing.JPanel();
+        jChartPanel = new javax.swing.JPanel();
+        jPanel7 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jAllyList = new javax.swing.JList();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTribeList = new javax.swing.JList();
-        jChartPanel = new javax.swing.JPanel();
-        jTaskPane1 = new com.l2fprod.common.swing.JTaskPane();
-        jTaskPaneGroup1 = new com.l2fprod.common.swing.JTaskPaneGroup();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jExportToClipboardButton = new javax.swing.JButton();
-        jTaskPaneGroup2 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jShowPoints = new javax.swing.JCheckBox();
         jShowRank = new javax.swing.JCheckBox();
         jShowVillages = new javax.swing.JCheckBox();
@@ -395,12 +472,18 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         jShowRankOff = new javax.swing.JCheckBox();
         jShowKillsDef = new javax.swing.JCheckBox();
         jShowRankDef = new javax.swing.JCheckBox();
-        jTaskPaneGroup3 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jShowItemValues = new javax.swing.JCheckBox();
         jShowLegend = new javax.swing.JCheckBox();
         jShowLines = new javax.swing.JCheckBox();
         jShowDataPoints = new javax.swing.JCheckBox();
+        jButton2 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
+        jExportToClipboardButton = new javax.swing.JButton();
+        jViewSelectionBox = new javax.swing.JComboBox();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
+        jStatsPanel = new org.jdesktop.swingx.JXPanel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
 
         jStatsCreateFrame.setTitle("Statistiken erstellen");
 
@@ -495,7 +578,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 444, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -521,7 +604,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jUseBBCodesBox)
-                .addContainerGap(318, Short.MAX_VALUE))
+                .addContainerGap(329, Short.MAX_VALUE))
         );
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -561,16 +644,15 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                                     .addComponent(jLabel4))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jStartDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jUsedTribes, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(jEndDate, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                                    .addComponent(jUsedTribes, javax.swing.GroupLayout.Alignment.LEADING, 0, 211, Short.MAX_VALUE)
+                                    .addComponent(jStartDate, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jWeeklyStats, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jMonthlyStats, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE))
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE))
                     .addComponent(jButton8, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
@@ -584,14 +666,14 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                             .addComponent(jUsedTribes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jStartDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jStartDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jEndDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(jEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jMonthlyStats, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jWeeklyStats, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -622,51 +704,139 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                 .addContainerGap())
         );
 
-        setTitle("Statistiken");
-
-        jPanel1.setBackground(new java.awt.Color(239, 235, 223));
-
-        jLabel1.setText("Überwachte Stämme");
-        jLabel1.setMaximumSize(new java.awt.Dimension(100, 14));
-        jLabel1.setMinimumSize(new java.awt.Dimension(100, 14));
-        jLabel1.setPreferredSize(new java.awt.Dimension(100, 14));
-
-        jLabel2.setText("Überwachte Spieler");
-        jLabel2.setMaximumSize(new java.awt.Dimension(100, 14));
-        jLabel2.setMinimumSize(new java.awt.Dimension(100, 14));
-        jLabel2.setPreferredSize(new java.awt.Dimension(100, 14));
-
-        jScrollPane1.setMinimumSize(new java.awt.Dimension(258, 130));
-
-        jScrollPane1.setViewportView(jAllyList);
-
-        jScrollPane2.setViewportView(jTribeList);
+        jMainStatPanel.setLayout(new java.awt.BorderLayout());
 
         jChartPanel.setBackground(new java.awt.Color(239, 235, 223));
         jChartPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jChartPanel.setPreferredSize(new java.awt.Dimension(499, 300));
         jChartPanel.setLayout(new java.awt.BorderLayout());
+        jMainStatPanel.add(jChartPanel, java.awt.BorderLayout.CENTER);
 
-        jTaskPane1.setOpaque(false);
-        com.l2fprod.common.swing.PercentLayout percentLayout1 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout1.setGap(14);
-        percentLayout1.setOrientation(1);
-        jTaskPane1.setLayout(percentLayout1);
+        jPanel7.setPreferredSize(new java.awt.Dimension(516, 150));
+        jPanel7.setLayout(new java.awt.GridBagLayout());
 
-        jTaskPaneGroup1.setTitle("Verwaltung");
-        com.l2fprod.common.swing.PercentLayout percentLayout2 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout2.setGap(2);
-        percentLayout2.setOrientation(1);
-        jTaskPaneGroup1.getContentPane().setLayout(percentLayout2);
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Überwachte Stämme"));
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(258, 100));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(258, 150));
 
-        jButton1.setBackground(new java.awt.Color(239, 235, 223));
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
-        jButton1.setToolTipText("Statistiken für markierte Spieler löschen");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireRemoveMonitoredElementEvent(evt);
+        jScrollPane1.setViewportView(jAllyList);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanel7.add(jScrollPane1, gridBagConstraints);
+
+        jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder("Überwachte Spieler"));
+        jScrollPane2.setMinimumSize(new java.awt.Dimension(258, 100));
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(258, 150));
+
+        jScrollPane2.setViewportView(jTribeList);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanel7.add(jScrollPane2, gridBagConstraints);
+
+        jMainStatPanel.add(jPanel7, java.awt.BorderLayout.NORTH);
+
+        jShowPoints.setSelected(true);
+        jShowPoints.setText("Punkte anzeigen");
+        jShowPoints.setOpaque(false);
+        jShowPoints.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireUpdateChartEvent(evt);
             }
         });
-        jTaskPaneGroup1.getContentPane().add(jButton1);
+
+        jShowRank.setText("Rang anzeigen");
+        jShowRank.setOpaque(false);
+        jShowRank.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireUpdateChartEvent(evt);
+            }
+        });
+
+        jShowVillages.setText("Dörfer anzeigen");
+        jShowVillages.setOpaque(false);
+        jShowVillages.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireUpdateChartEvent(evt);
+            }
+        });
+
+        jShowKillsOff.setText("Kills (Off) anzeigen");
+        jShowKillsOff.setOpaque(false);
+        jShowKillsOff.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireUpdateChartEvent(evt);
+            }
+        });
+
+        jShowRankOff.setText("Rang (Off) anzeigen");
+        jShowRankOff.setOpaque(false);
+        jShowRankOff.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireUpdateChartEvent(evt);
+            }
+        });
+
+        jShowKillsDef.setText("Kills (Deff) anzeigen");
+        jShowKillsDef.setOpaque(false);
+        jShowKillsDef.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireUpdateChartEvent(evt);
+            }
+        });
+
+        jShowRankDef.setText("Rang (Deff) anzeigen");
+        jShowRankDef.setOpaque(false);
+        jShowRankDef.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireUpdateChartEvent(evt);
+            }
+        });
+
+        jShowItemValues.setText("Werte anzeigen");
+        jShowItemValues.setToolTipText("Zeigt die Werte der Datenpunkte im Diagramm an");
+        jShowItemValues.setOpaque(false);
+        jShowItemValues.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireUpdateChartEvent(evt);
+            }
+        });
+
+        jShowLegend.setSelected(true);
+        jShowLegend.setText("Legende anzeigen");
+        jShowLegend.setOpaque(false);
+        jShowLegend.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireUpdateChartEvent(evt);
+            }
+        });
+
+        jShowLines.setSelected(true);
+        jShowLines.setText("Linien anzeigen");
+        jShowLines.setOpaque(false);
+        jShowLines.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireUpdateChartEvent(evt);
+            }
+        });
+
+        jShowDataPoints.setSelected(true);
+        jShowDataPoints.setText("Datenpunkte anzeigen");
+        jShowDataPoints.setOpaque(false);
+        jShowDataPoints.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireUpdateChartEvent(evt);
+            }
+        });
 
         jButton2.setBackground(new java.awt.Color(239, 235, 223));
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/beginning.png"))); // NOI18N
@@ -679,7 +849,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                 fireRemoveDateBeforeEvent(evt);
             }
         });
-        jTaskPaneGroup1.getContentPane().add(jButton2);
 
         jButton4.setBackground(new java.awt.Color(239, 235, 223));
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/end.png"))); // NOI18N
@@ -692,7 +861,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                 fireRemoveDataAfterEvent(evt);
             }
         });
-        jTaskPaneGroup1.getContentPane().add(jButton4);
 
         jButton5.setBackground(new java.awt.Color(239, 235, 223));
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/delete_region.png"))); // NOI18N
@@ -705,7 +873,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                 fireRemoveRegionEvent(evt);
             }
         });
-        jTaskPaneGroup1.getContentPane().add(jButton5);
 
         jExportToClipboardButton.setBackground(new java.awt.Color(239, 235, 223));
         jExportToClipboardButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/medal.png"))); // NOI18N
@@ -718,222 +885,52 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                 fireCreateStatisticsEvent(evt);
             }
         });
-        jTaskPaneGroup1.getContentPane().add(jExportToClipboardButton);
 
-        jTaskPane1.add(jTaskPaneGroup1);
-
-        jTaskPaneGroup2.setTitle("Angezeigte Daten");
-        jTaskPaneGroup2.setToolTipText("");
-        com.l2fprod.common.swing.PercentLayout percentLayout3 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout3.setGap(2);
-        percentLayout3.setOrientation(1);
-        jTaskPaneGroup2.getContentPane().setLayout(percentLayout3);
-
-        jShowPoints.setSelected(true);
-        jShowPoints.setText("Punkte anzeigen");
-        jShowPoints.setOpaque(false);
-        jShowPoints.addItemListener(new java.awt.event.ItemListener() {
+        jViewSelectionBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Punkte", "Rang (Punkte)", "Dörfer", "Kills (Off)", "Rang (Off)", "Kills (Def)", "Rang (Def)" }));
+        jViewSelectionBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireUpdateChartEvent(evt);
+                fireViewChangedEvent(evt);
             }
         });
-        jTaskPaneGroup2.getContentPane().add(jShowPoints);
 
-        jShowRank.setText("Rang anzeigen");
-        jShowRank.setOpaque(false);
-        jShowRank.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireUpdateChartEvent(evt);
-            }
-        });
-        jTaskPaneGroup2.getContentPane().add(jShowRank);
-
-        jShowVillages.setText("Dörfer anzeigen");
-        jShowVillages.setOpaque(false);
-        jShowVillages.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireUpdateChartEvent(evt);
-            }
-        });
-        jTaskPaneGroup2.getContentPane().add(jShowVillages);
-
-        jShowKillsOff.setText("Kills (Off) anzeigen");
-        jShowKillsOff.setOpaque(false);
-        jShowKillsOff.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireUpdateChartEvent(evt);
-            }
-        });
-        jTaskPaneGroup2.getContentPane().add(jShowKillsOff);
-
-        jShowRankOff.setText("Rang (Off) anzeigen");
-        jShowRankOff.setOpaque(false);
-        jShowRankOff.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireUpdateChartEvent(evt);
-            }
-        });
-        jTaskPaneGroup2.getContentPane().add(jShowRankOff);
-
-        jShowKillsDef.setText("Kills (Deff) anzeigen");
-        jShowKillsDef.setOpaque(false);
-        jShowKillsDef.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireUpdateChartEvent(evt);
-            }
-        });
-        jTaskPaneGroup2.getContentPane().add(jShowKillsDef);
-
-        jShowRankDef.setText("Rang (Deff) anzeigen");
-        jShowRankDef.setOpaque(false);
-        jShowRankDef.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireUpdateChartEvent(evt);
-            }
-        });
-        jTaskPaneGroup2.getContentPane().add(jShowRankDef);
-
-        jTaskPane1.add(jTaskPaneGroup2);
-
-        jTaskPaneGroup3.setExpanded(false);
-        jTaskPaneGroup3.setTitle("Diagrammoptionen");
-        com.l2fprod.common.swing.PercentLayout percentLayout4 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout4.setGap(2);
-        percentLayout4.setOrientation(1);
-        jTaskPaneGroup3.getContentPane().setLayout(percentLayout4);
-
-        jShowItemValues.setText("Werte anzeigen");
-        jShowItemValues.setToolTipText("Zeigt die Werte der Datenpunkte im Diagramm an");
-        jShowItemValues.setOpaque(false);
-        jShowItemValues.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireUpdateChartEvent(evt);
-            }
-        });
-        jTaskPaneGroup3.getContentPane().add(jShowItemValues);
-
-        jShowLegend.setSelected(true);
-        jShowLegend.setText("Legende anzeigen");
-        jShowLegend.setOpaque(false);
-        jShowLegend.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireUpdateChartEvent(evt);
-            }
-        });
-        jTaskPaneGroup3.getContentPane().add(jShowLegend);
-
-        jShowLines.setSelected(true);
-        jShowLines.setText("Linien anzeigen");
-        jShowLines.setOpaque(false);
-        jShowLines.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireUpdateChartEvent(evt);
-            }
-        });
-        jTaskPaneGroup3.getContentPane().add(jShowLines);
-
-        jShowDataPoints.setSelected(true);
-        jShowDataPoints.setText("Datenpunkte anzeigen");
-        jShowDataPoints.setOpaque(false);
-        jShowDataPoints.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireUpdateChartEvent(evt);
-            }
-        });
-        jTaskPaneGroup3.getContentPane().add(jShowDataPoints);
-
-        jTaskPane1.add(jTaskPaneGroup3);
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jChartPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTaskPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTaskPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 661, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jScrollPane2))
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
+        setTitle("Statistiken");
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jAlwaysOnTopBox.setText("Immer im Vordergrund");
         jAlwaysOnTopBox.setOpaque(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jAlwaysOnTopBox, gridBagConstraints);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jAlwaysOnTopBox)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jAlwaysOnTopBox)
-                .addContainerGap())
-        );
+        jStatsPanel.setBackground(new java.awt.Color(239, 235, 223));
+        jStatsPanel.setLayout(new java.awt.BorderLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        getContentPane().add(jStatsPanel, gridBagConstraints);
+
+        capabilityInfoPanel1.setBbSupport(false);
+        capabilityInfoPanel1.setCopyable(false);
+        capabilityInfoPanel1.setPastable(false);
+        capabilityInfoPanel1.setSearchable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(capabilityInfoPanel1, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void fireRemoveMonitoredElementEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveMonitoredElementEvent
-        //remove tribe element(s)
-        Object[] tribesToRemove = jTribeList.getSelectedValues();
-        if (tribesToRemove == null || tribesToRemove.length == 0) {
-            JOptionPaneHelper.showInformationBox(this, "Kein Spieler ausgewählt", "Fehler");
-            return;
-        }
-        String message = "";
-        if (tribesToRemove.length == 1) {
-            message = "Statistiken für markierten Spieler löschen?";
-        } else {
-            message = "Statistiken für markierte Spieler löschen?";
-        }
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-            for (Object o : tribesToRemove) {
-                StatManager.getSingleton().removeTribeData((Tribe) o);
-            }
-        } else {
-            return;
-        }
-        resetView();
-    }//GEN-LAST:event_fireRemoveMonitoredElementEvent
-
     private void fireUpdateChartEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireUpdateChartEvent
-        Object tribeSelection = jTribeList.getSelectedValue();
+        Object[] tribeSelection = jTribeList.getSelectedValues();
         if (tribeSelection == null) {
             jChartPanel.removeAll();
             SwingUtilities.invokeLater(new Runnable() {
@@ -947,10 +944,11 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         }
         List<TribeStatsElement> elems = new LinkedList<TribeStatsElement>();
 
-        Tribe t = (Tribe) tribeSelection;
-        TribeStatsElement elem = StatManager.getSingleton().getStatsForTribe(t);
-        if (elem != null) {
-            elems.add(elem);
+        for (Object o : tribeSelection) {
+            TribeStatsElement elem = StatManager.getSingleton().getStatsForTribe((Tribe) o);
+            if (elem != null) {
+                elems.add(elem);
+            }
         }
         updateChart(elems);
     }//GEN-LAST:event_fireUpdateChartEvent
@@ -1142,15 +1140,219 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
 
     }//GEN-LAST:event_fireChangeStatTimeEvent
 
+    private void fireViewChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireViewChangedEvent
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            Object[] tribeSelection = jTribeList.getSelectedValues();
+            if (tribeSelection == null || tribeSelection.length == 0) {
+                jChartPanel.removeAll();
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    public void run() {
+                        jChartPanel.updateUI();
+                    }
+                });
+
+                return;
+            }
+            List<TribeStatsElement> elems = new LinkedList<TribeStatsElement>();
+
+            for (Object o : tribeSelection) {
+                TribeStatsElement elem = StatManager.getSingleton().getStatsForTribe((Tribe) o);
+                if (elem != null) {
+                    elems.add(elem);
+                }
+            }
+            updateChart(elems);
+        }
+    }//GEN-LAST:event_fireViewChangedEvent
+
+    private void setStartAnnotation() {
+        XYPlot plot = ((XYPlot) chart.getPlot());
+
+        double x = plot.getDomainCrosshairValue();
+        double y = plot.getRangeCrosshairValue();
+
+        if (startPointer != null) {
+            plot.removeAnnotation(startPointer);
+        }
+
+        if (startPointer != null && startPointer.getX() == x) {
+            plot.removeAnnotation(startPointer);
+            startPointer = null;
+        } else {
+            if (endPointer != null) {
+                if (endPointer.getX() < x) {
+                    //flip start and end
+                    plot.removeAnnotation(endPointer);
+                    startPointer = new XYPointerAnnotation("Start", endPointer.getX(), endPointer.getY(), 3 * Math.PI / 4.0);
+                    startPointer.setPaint(Color.green);
+                    plot.addAnnotation(startPointer);
+                    endPointer = new XYPointerAnnotation("Ende", x, y, 3 * Math.PI / 4.0);
+                    endPointer.setPaint(Color.red);
+                    plot.addAnnotation(endPointer);
+                } else {
+                    startPointer = new XYPointerAnnotation("Start", x, y, 3 * Math.PI / 4.0);
+                    startPointer.setPaint(Color.green);
+                    plot.addAnnotation(startPointer);
+                }
+            } else {
+                startPointer = new XYPointerAnnotation("Start", x, y, 3 * Math.PI / 4.0);
+                startPointer.setPaint(Color.green);
+                plot.addAnnotation(startPointer);
+            }
+        }
+
+        jChartPanel.repaint();
+    }
+
+    private void setEndAnnotation() {
+        XYPlot plot = ((XYPlot) chart.getPlot());
+        double x = plot.getDomainCrosshairValue();
+        double y = plot.getRangeCrosshairValue();
+        if (endPointer != null) {
+            plot.removeAnnotation(endPointer);
+        }
+
+        if (endPointer != null && endPointer.getX() == x) {
+            plot.removeAnnotation(endPointer);
+            endPointer = null;
+        } else {
+            if (startPointer != null) {
+                if (startPointer.getX() > x) {
+                    //flip start and end
+                    plot.removeAnnotation(startPointer);
+                    endPointer = new XYPointerAnnotation("Ende", startPointer.getX(), startPointer.getY(), 3 * Math.PI / 4.0);
+                    endPointer.setPaint(Color.red);
+                    plot.addAnnotation(endPointer);
+                    startPointer = new XYPointerAnnotation("Start", x, y, 3 * Math.PI / 4.0);
+                    startPointer.setPaint(Color.green);
+                    plot.addAnnotation(startPointer);
+                } else {
+                    endPointer = new XYPointerAnnotation("Ende", x, y, 3 * Math.PI / 4.0);
+                    endPointer.setPaint(Color.red);
+                    plot.addAnnotation(endPointer);
+                }
+            } else {
+                endPointer = new XYPointerAnnotation("Ende", x, y, 3 * Math.PI / 4.0);
+                endPointer.setPaint(Color.red);
+                plot.addAnnotation(endPointer);
+            }
+        }
+
+        jChartPanel.repaint();
+    }
+
+    private void removeSelection() {
+        if (startPointer == null && endPointer == null) {
+            JOptionPaneHelper.showInformationBox(this, "Es wurde kein Bereich ausgewählt.", "Information");
+            return;
+        }
+        Object tribeSelection = jTribeList.getSelectedValue();
+        if (tribeSelection == null) {
+            return;
+        }
+
+        if (startPointer == null) {
+            //remove before end
+            long v = (long) endPointer.getX();
+            String date = new SimpleDateFormat("dd.MM.yyyy 'um' HH:mm:ss").format(new Date(v));
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Alle Werte vor dem " + date + " löschen?", "Werte löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                StatManager.getSingleton().removeDataBefore((Tribe) tribeSelection, new Date(v).getTime());
+                fireUpdateChartEvent(null);
+            }
+        } else if (endPointer == null) {
+            //remove after start
+            long v = (long) startPointer.getX();
+            String date = new SimpleDateFormat("dd.MM.yyyy 'um' HH:mm:ss").format(new Date(v));
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Alle Werte nach dem " + date + " löschen?", "Werte löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                StatManager.getSingleton().removeDataAfter((Tribe) tribeSelection, new Date(v).getTime());
+                fireUpdateChartEvent(null);
+            }
+        } else {
+            //remove date between
+            long vstart = (long) startPointer.getX();
+            long vend = (long) endPointer.getX();
+
+            String startDate = new SimpleDateFormat("dd.MM.yyyy 'um' HH:mm:ss").format(new Date(vstart));
+            String endDate = new SimpleDateFormat("dd.MM.yyyy 'um' HH:mm:ss").format(new Date(vend));
+
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Alle Werte zwischen dem " + startDate + " und dem " + endDate + " löschen?", "Werte löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                StatManager.getSingleton().removeDataBetween((Tribe) tribeSelection, new Date(vstart).getTime(), new Date(vend).getTime());
+                fireUpdateChartEvent(null);
+            }
+        }
+
+        fireUpdateChartEvent(null);
+    }
+
+    private void createStatistics() {
+        DefaultListModel tribeModel = (DefaultListModel) jTribeList.getModel();
+        if (tribeModel.isEmpty()) {
+            JOptionPaneHelper.showInformationBox(this, "Bitte zuerst einen Stamm auswählen.", "Information");
+            return;
+        }
+        DefaultListModel statsTribeModel = new DefaultListModel();
+        for (int i = 0; i < tribeModel.getSize(); i++) {
+            statsTribeModel.addElement(tribeModel.get(i));
+        }
+        jStatsTribeList.setModel(statsTribeModel);
+        jStatsCreateFrame.pack();
+        jStatsCreateFrame.setVisible(true);
+    }
+
+    private void removeMonitoredElement() {
+        //remove tribe element(s)
+        Object[] tribesToRemove = jTribeList.getSelectedValues();
+        if (tribesToRemove == null || tribesToRemove.length == 0) {
+            JOptionPaneHelper.showInformationBox(this, "Kein Spieler ausgewählt", "Fehler");
+            return;
+        }
+        String message = "";
+        if (tribesToRemove.length == 1) {
+            message = "Statistiken für markierten Spieler löschen?";
+        } else {
+            message = "Statistiken für markierte Spieler löschen?";
+        }
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+            for (Object o : tribesToRemove) {
+                StatManager.getSingleton().removeTribeData((Tribe) o);
+            }
+        } else {
+            return;
+        }
+        resetView();
+    }
+
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
+
+    public static void main(String args[]) {
+
+        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
+        try {
+            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+            //  UIManager.setLookAndFeel(new SubstanceBusinessBlackSteelLookAndFeel());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        GlobalOptions.setSelectedServer("de68");
+        DataHolder.getSingleton().loadData(false);
+        StatManager.getSingleton().setup();
+
+        DSWorkbenchStatsFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        DSWorkbenchStatsFrame.getSingleton().resetView();
+        DSWorkbenchStatsFrame.getSingleton().setVisible(true);
+
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
     private javax.swing.JList jAllyList;
     private javax.swing.JCheckBox jAlwaysOnTopBox;
     private javax.swing.JTextArea jBashDefArea;
     private javax.swing.JTextArea jBashOffArea;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
@@ -1158,20 +1360,19 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
     private javax.swing.JPanel jChartPanel;
     private de.tor.tribes.ui.components.DateTimeField jEndDate;
     private javax.swing.JButton jExportToClipboardButton;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JTextArea jLoserArea;
+    private javax.swing.JPanel jMainStatPanel;
     private javax.swing.JButton jMonthlyStats;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JTextArea jPointsArea;
@@ -1196,15 +1397,13 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
     private javax.swing.JCheckBox jShowVillages;
     private de.tor.tribes.ui.components.DateTimeField jStartDate;
     private javax.swing.JFrame jStatsCreateFrame;
+    private org.jdesktop.swingx.JXPanel jStatsPanel;
     private javax.swing.JList jStatsTribeList;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private com.l2fprod.common.swing.JTaskPane jTaskPane1;
-    private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup1;
-    private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup2;
-    private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup3;
     private javax.swing.JList jTribeList;
     private javax.swing.JCheckBox jUseBBCodesBox;
     private javax.swing.JComboBox jUsedTribes;
+    private javax.swing.JComboBox jViewSelectionBox;
     private javax.swing.JButton jWeeklyStats;
     private javax.swing.JTextArea jWinnerArea;
     // End of variables declaration//GEN-END:variables

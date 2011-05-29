@@ -76,7 +76,7 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
     }
 
     public abstract void resetView();
-
+    
     public synchronized void addFrameListener(DSWorkbenchFrameListener pListener) {
         if (pListener == null) {
             return;

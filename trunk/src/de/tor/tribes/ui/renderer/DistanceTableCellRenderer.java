@@ -45,13 +45,31 @@ public class DistanceTableCellRenderer implements TableCellRenderer {
         JLabel l = (JLabel) c;
         l.setText(nf.format(value));
         double v = (Double) value;
+
         if (!isSelected) {
-            if (v < markerMin) {
+            if (v <= markerMin) {
                 c.setBackground(Color.GREEN);
-            } else if (v > markerMax) {
+            } else if (v >= markerMax) {
                 c.setBackground(Color.RED);
-            }else{
-                c.setBackground(Color.YELLOW);
+            } else if ((v > markerMin) && (v < markerMax)) {
+                double diff = markerMax - markerMin;
+                float ratio = 0;
+                if (diff > 0) {
+                    ratio = (float) ((v - markerMin) / (markerMax - markerMin));
+                }
+                Color c1 = Color.YELLOW;
+                Color c2 = Color.RED;
+                int red = (int) Math.rint(c2.getRed() * ratio + c1.getRed() * (1f - ratio));
+                int green = (int) Math.rint(c2.getGreen() * ratio + c1.getGreen() * (1f - ratio));
+                int blue = (int) Math.rint(c2.getBlue() * ratio + c1.getBlue() * (1f - ratio));
+
+                red = (red < 0) ? 0 : red;
+                green = (green < 0) ? 0 : green;
+                blue = (blue < 0) ? 0 : blue;
+                red = (red > 255) ? 255 : red;
+                green = (green > 255) ? 255 : green;
+                blue = (blue > 255) ? 255 : blue;
+                c.setBackground(new Color(red, green, blue));
             }
         }
         return c;

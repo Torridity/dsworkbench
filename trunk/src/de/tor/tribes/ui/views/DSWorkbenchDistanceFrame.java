@@ -10,6 +10,7 @@
  */
 package de.tor.tribes.ui.views;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.test.DummyProfile;
 import de.tor.tribes.types.test.DummyVillage;
 import de.tor.tribes.types.Village;
@@ -18,11 +19,10 @@ import de.tor.tribes.ui.GenericTestPanel;
 import de.tor.tribes.ui.models.DistanceTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.DistanceTableCellRenderer;
-import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PluginManager;
+import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.dist.DistanceManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -35,7 +35,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -47,6 +46,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
+import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.decorator.CompoundHighlighter;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -61,7 +61,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
     private static Logger logger = Logger.getLogger("DistanceFrame");
     private static DSWorkbenchDistanceFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
-    private static DistanceTableCellRenderer cellRenderer = new DistanceTableCellRenderer();
+    private static final DistanceTableCellRenderer cellRenderer = new DistanceTableCellRenderer();
 
     public static synchronized DSWorkbenchDistanceFrame getSingleton() {
         if (SINGLETON == null) {
@@ -73,10 +73,11 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
     /** Creates new form DSWorkbenchDistanceFrame */
     DSWorkbenchDistanceFrame() {
         initComponents();
-        centerPanel = new GenericTestPanel(false);
+        centerPanel = new GenericTestPanel(true);
         jDistancePanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildPanel(jPanel2);
-        jDistanceTable.setModel(DistanceTableModel.getSingleton());
+        buildMenu();
+        // jDistanceTable.setModel(DistanceTableModel.getSingleton());
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
         jDistanceTable.registerKeyboardAction(new ActionListener() {
@@ -106,14 +107,19 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         // </editor-fold>
     }
 
+    private void buildMenu() {
+        JXTaskPane editPane = new JXTaskPane();
+        editPane.setTitle("Bereichsfärbung");
+        editPane.getContentPane().add(rangeSlider1);
+        centerPanel.setupTaskPane(editPane);
+    }
+
     @Override
     public void valueChanged(ListSelectionEvent e) {
-        //  if (e.getValueIsAdjusting()) {
         int selectionCount = jDistanceTable.getColumnModel().getSelectedColumns().length;
         if (selectionCount != 0) {
             showInfo(selectionCount + ((selectionCount == 1) ? " Spalte gewählt" : " Spalten gewählt"));
         }
-        // }
     }
 
     @Override
@@ -141,7 +147,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
             }
         }
 
-        jDistanceTable.setModel(DistanceTableModel.getSingleton());
+        jDistanceTable.setModel(new DistanceTableModel());
         jDistanceTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jDistanceTable.revalidate();
         jDistanceTable.repaint();
@@ -176,11 +182,11 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
                 showError("Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.");
                 return;
             } else {
-                jDistanceTable.invalidate();
+                //jDistanceTable.invalidate();
                 for (Village v : villages) {
                     DistanceManager.getSingleton().addVillage(v);
                 }
-                DistanceTableModel.getSingleton().fireTableStructureChanged();
+                ((DistanceTableModel) jDistanceTable.getModel()).fireTableStructureChanged();
                 resetView();
             }
             showSuccess(villages.size() + ((villages.size() == 1) ? " Dorf " : " Dörfer ") + "aus der Zwischenablage eingefügt");
@@ -221,131 +227,14 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jPanel1 = new javax.swing.JPanel();
-        jCopyFromClipboardEvent = new javax.swing.JButton();
-        jCopyFromClipboardEvent1 = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        jMinValue = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        jMaxValue = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jCopyFromClipboardEvent2 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
         jXLabel1 = new org.jdesktop.swingx.JXLabel();
+        rangeSlider1 = new com.jidesoft.swing.RangeSlider();
         jCheckBox1 = new javax.swing.JCheckBox();
         jDistancePanel = new javax.swing.JPanel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
-
-        jPanel1.setBackground(new java.awt.Color(239, 235, 223));
-
-        jCopyFromClipboardEvent.setBackground(new java.awt.Color(239, 235, 223));
-        jCopyFromClipboardEvent.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/clipboard.png"))); // NOI18N
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
-        jCopyFromClipboardEvent.setText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.text")); // NOI18N
-        jCopyFromClipboardEvent.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.toolTipText")); // NOI18N
-        jCopyFromClipboardEvent.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireCopyVillagesFromClipboardEvent(evt);
-            }
-        });
-
-        jCopyFromClipboardEvent1.setBackground(new java.awt.Color(239, 235, 223));
-        jCopyFromClipboardEvent1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
-        jCopyFromClipboardEvent1.setText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.text")); // NOI18N
-        jCopyFromClipboardEvent1.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.toolTipText")); // NOI18N
-        jCopyFromClipboardEvent1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireRemoveColumnEvent(evt);
-            }
-        });
-
-        jLabel1.setBackground(new java.awt.Color(0, 0, 0));
-        jLabel1.setForeground(new java.awt.Color(0, 255, 0));
-        jLabel1.setText("Minimale Entfernung");
-        jLabel1.setOpaque(true);
-
-        jMinValue.setText("10");
-        jMinValue.setToolTipText("Gibt die Entfernung an, ab der Werte in der Tabelle grün eingezeichnet werden");
-        jMinValue.setMaximumSize(new java.awt.Dimension(80, 20));
-        jMinValue.setMinimumSize(new java.awt.Dimension(80, 20));
-        jMinValue.setPreferredSize(new java.awt.Dimension(80, 20));
-
-        jLabel2.setBackground(new java.awt.Color(0, 0, 0));
-        jLabel2.setForeground(new java.awt.Color(255, 0, 0));
-        jLabel2.setText("Maximale Entfernung");
-        jLabel2.setOpaque(true);
-
-        jMaxValue.setText("20");
-        jMaxValue.setToolTipText("Gibt die Entfernung an, ab der Werte in der Tabelle rot eingezeichnet werden");
-        jMaxValue.setMaximumSize(new java.awt.Dimension(80, 20));
-        jMaxValue.setMinimumSize(new java.awt.Dimension(80, 20));
-        jMaxValue.setPreferredSize(new java.awt.Dimension(80, 20));
-
-        jLabel3.setText("Felder");
-
-        jLabel4.setText("Felder");
-
-        jCopyFromClipboardEvent2.setBackground(new java.awt.Color(239, 235, 223));
-        jCopyFromClipboardEvent2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/replace2.png"))); // NOI18N
-        jCopyFromClipboardEvent2.setText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.text")); // NOI18N
-        jCopyFromClipboardEvent2.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.toolTipText")); // NOI18N
-        jCopyFromClipboardEvent2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireUpdateEvent(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jCopyFromClipboardEvent)
-                        .addComponent(jCopyFromClipboardEvent1))
-                    .addComponent(jCopyFromClipboardEvent2, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel2))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jMinValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel3))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jMaxValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel4)))))
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jCopyFromClipboardEvent)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jCopyFromClipboardEvent1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jCopyFromClipboardEvent2)
-                .addGap(18, 278, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jMinValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jMaxValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addContainerGap())
-        );
 
         jPanel2.setLayout(new java.awt.BorderLayout());
 
@@ -362,6 +251,8 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         ));
         jDistanceTable.setColumnControlVisible(true);
         jDistanceTable.setColumnSelectionAllowed(true);
+        jDistanceTable.setDoubleBuffered(true);
+        jDistanceTable.setEditable(false);
         jScrollPane2.setViewportView(jDistanceTable);
 
         jPanel2.add(jScrollPane2, java.awt.BorderLayout.CENTER);
@@ -378,6 +269,24 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         infoPanel.add(jXLabel1, java.awt.BorderLayout.CENTER);
 
         jPanel2.add(infoPanel, java.awt.BorderLayout.SOUTH);
+
+        rangeSlider1.setMajorTickSpacing(10);
+        rangeSlider1.setMaximum(70);
+        rangeSlider1.setMinorTickSpacing(1);
+        rangeSlider1.setPaintLabels(true);
+        rangeSlider1.setPaintTicks(true);
+        rangeSlider1.setValue(10);
+        rangeSlider1.setExtent(10);
+        rangeSlider1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireRangeUpdateEvent(evt);
+            }
+        });
+        rangeSlider1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireStateChangedEvent(evt);
+            }
+        });
 
         setTitle("Entfernungsübersicht");
         getContentPane().setLayout(new java.awt.GridBagLayout());
@@ -417,75 +326,21 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void fireCopyVillagesFromClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyVillagesFromClipboardEvent
-        try {
-            Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-
-            List<Village> villages = PluginManager.getSingleton().executeVillageParser((String) t.getTransferData(DataFlavor.stringFlavor));//VillageParser.parse((String) t.getTransferData(DataFlavor.stringFlavor));
-            if (villages == null || villages.isEmpty()) {
-                JOptionPaneHelper.showInformationBox(this, "Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.", "Information");
-                return;
-            } else {
-                jDistanceTable.invalidate();
-                for (Village v : villages) {
-                    DistanceManager.getSingleton().addVillage(v);
-                }
-                DistanceTableModel.getSingleton().fireTableStructureChanged();
-                jDistanceTable.revalidate();
-                resetView();
-            }
-        } catch (Exception e) {
-            logger.error("Failed to parse villages from clipboard", e);
-        }
-    }//GEN-LAST:event_fireCopyVillagesFromClipboardEvent
-
-    private void fireRemoveColumnEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveColumnEvent
-        int[] cols = jDistanceTable.getSelectedColumns();
-        if (cols == null) {
-            return;
-        }
-        jDistanceTable.invalidate();
-        int[] correctedCols = new int[cols.length];
-        for (int i = 0; i < cols.length; i++) {
-            correctedCols[i] = jDistanceTable.convertColumnIndexToModel(cols[i]);
-        }
-
-        DistanceManager.getSingleton().removeVillages(correctedCols);
-        DistanceTableModel.getSingleton().fireTableStructureChanged();
-        jDistanceTable.revalidate();
-        resetView();
-    }//GEN-LAST:event_fireRemoveColumnEvent
-
-    private void fireUpdateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUpdateEvent
-        int min = 10;
-        int max = 20;
-        try {
-            min = Integer.parseInt(jMinValue.getText());
-        } catch (Exception e) {
-            JOptionPaneHelper.showWarningBox(this, "Der Eintrag für den minimalen Wert ist ungültig.", "Fehler");
-            return;
-        }
-        try {
-            max = Integer.parseInt(jMaxValue.getText());
-        } catch (Exception e) {
-            JOptionPaneHelper.showWarningBox(this, "Der Eintrag für den maximalen Wert ist ungültig.", "Fehler");
-            return;
-        }
-
-        if (min >= max) {
-            JOptionPaneHelper.showWarningBox(this, "Der minimale Wert muss kleiner als der maximale Wert sein.", "Fehler");
-            return;
-        }
-
-        cellRenderer.setMarkerMin(min);
-        cellRenderer.setMarkerMax(max);
-        System.out.println(jDistanceTable.getColumnModel().getColumn(0).getHeaderRenderer());
-        jDistanceTable.repaint();
-    }//GEN-LAST:event_fireUpdateEvent
-
     private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXLabel1fireHideInfoEvent
         infoPanel.setCollapsed(true);
 }//GEN-LAST:event_jXLabel1fireHideInfoEvent
+
+    private void fireRangeUpdateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRangeUpdateEvent
+        cellRenderer.setMarkerMin(rangeSlider1.getLowValue());
+        cellRenderer.setMarkerMax(rangeSlider1.getHighValue());
+        jDistanceTable.repaint();
+    }//GEN-LAST:event_fireRangeUpdateEvent
+
+    private void fireStateChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireStateChangedEvent
+        cellRenderer.setMarkerMin(rangeSlider1.getLowValue());
+        cellRenderer.setMarkerMax(rangeSlider1.getHighValue());
+        jDistanceTable.repaint();
+    }//GEN-LAST:event_fireStateChangedEvent
 
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
@@ -493,7 +348,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
             for (Village v : pVillages) {
                 DistanceManager.getSingleton().addVillage(v);
             }
-            DistanceTableModel.getSingleton().fireTableStructureChanged();
+            ((DistanceTableModel) jDistanceTable.getModel()).fireTableStructureChanged();
             jDistanceTable.revalidate();
             resetView();
         } catch (Exception e) {
@@ -502,7 +357,13 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
     }
 
     public static void main(String args[]) {
-        Locale.setDefault(Locale.GERMAN);
+        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
+
+        GlobalOptions.setSelectedServer("de68");
+        DataHolder.getSingleton().loadData(false);
+        ProfileManager.getSingleton().loadProfiles();
+
+        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de68")[0]);
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
@@ -511,7 +372,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         GlobalOptions.setSelectedProfile(new DummyProfile());
         for (int i = 0; i < 10; i++) {
-            DistanceManager.getSingleton().addVillage(new DummyVillage((short) i, (short) i));
+            DistanceManager.getSingleton().addVillage(DataHolder.getSingleton().getRandomVillage());
         }
         DSWorkbenchDistanceFrame.getSingleton().resetView();
         DSWorkbenchDistanceFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -522,28 +383,19 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
     private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JButton jCopyFromClipboardEvent;
-    private javax.swing.JButton jCopyFromClipboardEvent1;
-    private javax.swing.JButton jCopyFromClipboardEvent2;
     private javax.swing.JPanel jDistancePanel;
     private static final org.jdesktop.swingx.JXTable jDistanceTable = new org.jdesktop.swingx.JXTable();
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JTextField jMaxValue;
-    private javax.swing.JTextField jMinValue;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;
     private org.jdesktop.swingx.JXLabel jXLabel1;
+    private com.jidesoft.swing.RangeSlider rangeSlider1;
     // End of variables declaration//GEN-END:variables
 
     static {
         HighlightPredicate.ColumnHighlightPredicate colu = new HighlightPredicate.ColumnHighlightPredicate(0);
         jDistanceTable.setHighlighters(new CompoundHighlighter(colu, HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B)));
         jDistanceTable.setColumnControlVisible(true);
-        jDistanceTable.setDefaultRenderer(Double.class, new DistanceTableCellRenderer());
-        jDistanceTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
+        jDistanceTable.setDefaultRenderer(Double.class, cellRenderer);
+        //jDistanceTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
     }
 }

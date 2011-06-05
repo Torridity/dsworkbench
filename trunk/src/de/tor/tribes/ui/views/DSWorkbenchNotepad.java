@@ -66,15 +66,14 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.StringTokenizer;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -82,10 +81,6 @@ import org.apache.log4j.ConsoleAppender;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.painter.MattePainter;
-import org.pushingpixels.substance.api.DecorationAreaType;
-import org.pushingpixels.substance.api.SubstanceLookAndFeel;
-import org.pushingpixels.substance.api.skin.DustCoffeeSkin;
-import org.pushingpixels.substance.api.skin.SkinInfo;
 
 /**
  * @author Charon
@@ -118,11 +113,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
                 g.dispose();
                 TexturePaint paint = new TexturePaint(back, new Rectangle2D.Double(0, 0, back.getWidth(), back.getHeight()));
                 jxSearchPane.setBackgroundPainter(new MattePainter(paint));
-                DefaultListModel model = new DefaultListModel();
-
-
-                /* jXColumnList.setModel(model);
-                jXColumnList.setSelectedIndex(0);*/
                 jxSearchPane.setVisible(true);
             }
         }
@@ -327,6 +317,10 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         miscPane.setTitle("Sonstiges");
         JXButton centerVillage = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
         centerVillage.setToolTipText("Zentriert das gewählte Notizdorf auf der Hauptkarte");
+        centerVillage.setSize(transferVillageList.getSize());
+        centerVillage.setMinimumSize(transferVillageList.getMinimumSize());
+        centerVillage.setMaximumSize(transferVillageList.getMaximumSize());
+        centerVillage.setPreferredSize(transferVillageList.getPreferredSize());
         centerVillage.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -1608,18 +1602,18 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
                 mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
                 mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
                 mMouseGestures.start();
-                Map<String, SkinInfo> skins = SubstanceLookAndFeel.getAllSkins();
+                /*   Map<String, SkinInfo> skins = SubstanceLookAndFeel.getAllSkins();
                 Iterator<String> skinKeys = skins.keySet().iterator();
                 while (skinKeys.hasNext()) {
-                    System.out.println(skinKeys.next());
+                System.out.println(skinKeys.next());
                 }
-
+                 */
                 try {
                     //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                    //UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
                     //JFrame.setDefaultLookAndFeelDecorated(true);
 
-                    SubstanceLookAndFeel.setSkin(SubstanceLookAndFeel.getAllSkins().get("Nebula Brick Wall").getClassName());
+                    // SubstanceLookAndFeel.setSkin(SubstanceLookAndFeel.getAllSkins().get("Twilight").getClassName());
                     //  UIManager.put(SubstanceLookAndFeel.FOCUS_KIND, FocusKind.NONE);
                 } catch (Exception e) {
                 }

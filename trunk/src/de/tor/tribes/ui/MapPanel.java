@@ -46,9 +46,7 @@ import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
 import de.tor.tribes.ui.renderer.map.MenuRenderer;
-import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MapShotListener;
 import de.tor.tribes.util.ScreenshotSaver;
@@ -57,10 +55,8 @@ import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.stat.StatManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.FontMetrics;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
@@ -80,7 +76,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -268,10 +263,10 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 if (!shiftDown && !MenuRenderer.getSingleton().isVisible()) {
                     //left click, no shift and no opened menu clears selected villages
                     markedVillages.clear();
-                    DSWorkbenchSelectionFrame.getSingleton().resetView();
+                    //DSWorkbenchSelectionFrame.getSingleton().resetView();
                 }
                 
-                if (tmpCursor == ImageManager.CURSOR_SELECTION) {
+                if (shiftDown && tmpCursor == ImageManager.CURSOR_SELECTION) {
                     //add current mouse village if there is one
                     if (v != null) {
                         if (!markedVillages.contains(v)) {
@@ -847,9 +842,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     public void setCurrentCursor(int pCurrentCursor) {
         iCurrentCursor = pCurrentCursor;
         setCursor(ImageManager.getCursor(iCurrentCursor));
-        /*if (pCurrentCursor == ImageManager.CURSOR_SELECTION) {
-        DSWorkbenchSelectionFrame.getSingleton().setVisible(true);
-        }*/
         fireToolChangedEvents(iCurrentCursor);
     }
     

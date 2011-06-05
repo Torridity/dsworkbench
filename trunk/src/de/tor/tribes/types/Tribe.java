@@ -180,7 +180,7 @@ public class Tribe implements Comparable<Tribe>, Serializable {
         if (villageList == null) {
             villageList = new LinkedList<Village>();
         }
-        return villageList.toArray(new Village[]{});
+        return villageList.toArray(new Village[villageList.size()]);
     }
 
     public String getHTMLInfo() {

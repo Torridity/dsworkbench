@@ -69,8 +69,6 @@ import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
 import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
-import org.pushingpixels.substance.api.DecorationAreaType;
-import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 
 /**
  *
@@ -92,9 +90,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
     private PainterHighlighter highlighter = null;
 
     static {
-        //jxNoteTable.addHighlighter(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
-        jxNoteTable.addHighlighter(HighlighterFactory.createAlternateStriping(SubstanceLookAndFeel.getCurrentSkin().getBackgroundColorScheme(DecorationAreaType.GENERAL).getLightColor(),
-                SubstanceLookAndFeel.getCurrentSkin().getBackgroundColorScheme(DecorationAreaType.GENERAL).getMidColor()));
+        jxNoteTable.addHighlighter(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
 
         jxNoteTable.setColumnControlVisible(true);
         jxNoteTable.setDefaultRenderer(String.class, new NoteCellRenderer());
@@ -147,7 +143,6 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     pActionListener.actionPerformed(new ActionEvent(jxNoteTable, 0, "Find"));
-                    //disable find
                 }
             });
             KEY_LISTENER_ADDED = true;

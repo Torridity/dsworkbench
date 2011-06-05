@@ -122,8 +122,7 @@ public class ConquerTableModel extends AbstractTableModel {
             }
             default: {
                 Village v = c.getVillage();
-                //TODO: Testing stuff
-                Village vUser = null;//DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
+                Village vUser = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                 if (vUser != null) {
                     return DSCalculator.calculateDistance(v, vUser);
                 } else {

@@ -175,7 +175,7 @@
         <Component class="javax.swing.JComboBox" name="jComboBox1">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="7">
+              <StringArray count="11">
                 <StringItem index="0" value="Angriffe"/>
                 <StringItem index="1" value="Notizen"/>
                 <StringItem index="2" value="Dorflisten"/>
@@ -183,6 +183,10 @@
                 <StringItem index="4" value="Kampfbericht"/>
                 <StringItem index="5" value="Gruppen"/>
                 <StringItem index="6" value="Truppen"/>
+                <StringItem index="7" value="Statistik (Punkte)"/>
+                <StringItem index="8" value="Statistik (Angriff)"/>
+                <StringItem index="9" value="Statistik (Verteidigung)"/>
+                <StringItem index="10" value="Statistik (Gewinner/Verlierer)"/>
               </StringArray>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">

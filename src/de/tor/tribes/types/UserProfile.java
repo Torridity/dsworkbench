@@ -26,6 +26,7 @@ public class UserProfile {
     private long iProfileId = -1;
     private String sServerId = null;
     private Properties mProperties = null;
+    private Tribe tribe = null;
 
     public UserProfile() {
         mProperties = new Properties();
@@ -33,6 +34,7 @@ public class UserProfile {
 
     public void setTribeName(String pTribe) {
         addProperty("tribe.name", pTribe);
+        tribe = null;
     }
 
     public String getTribeName() {
@@ -40,8 +42,10 @@ public class UserProfile {
     }
 
     public Tribe getTribe() {
-        String tribeNameProp = getProperty("tribe.name");
-        return DataHolder.getSingleton().getTribeByName(tribeNameProp);
+        if (tribe == null) {
+            tribe = DataHolder.getSingleton().getTribeByName(getProperty("tribe.name"));
+        }
+        return tribe;
     }
 
     public void setProfileId(long pProfileId) {
@@ -196,6 +200,7 @@ public class UserProfile {
         return success;
     }
 
+    @Override
     public String toString() {
         return getTribeName() + " (" + getServerId() + ")";
     }

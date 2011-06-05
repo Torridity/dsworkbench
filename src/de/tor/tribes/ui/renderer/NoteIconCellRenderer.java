@@ -12,13 +12,12 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
-import org.pushingpixels.substance.api.renderers.SubstanceDefaultTableCellRenderer;
 
 /**
  *
  * @author Torridity
  */
-public class NoteIconCellRenderer extends SubstanceDefaultTableCellRenderer {
+public class NoteIconCellRenderer extends DefaultTableRenderer {
 
     public enum ICON_TYPE {
 

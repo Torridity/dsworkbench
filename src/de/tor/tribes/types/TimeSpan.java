@@ -94,7 +94,6 @@ public class TimeSpan implements Comparable<TimeSpan> {
 
     @Override
     public int compareTo(TimeSpan o) {
-        //TODO implement compareTo!!
         if (getDirection().equals(TimeSpan.DIRECTION.SEND) && o.getDirection().equals(TimeSpan.DIRECTION.NONE)) {
             return -1;
         } else if (getDirection().equals(TimeSpan.DIRECTION.ARRIVE) && o.getDirection().equals(TimeSpan.DIRECTION.NONE)) {

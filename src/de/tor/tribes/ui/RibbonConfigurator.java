@@ -28,15 +28,12 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JToolBar.Separator;
 import org.pushingpixels.flamingo.api.common.CommandButtonDisplayState;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.JCommandButtonPanel;
@@ -56,7 +53,6 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
 import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
 import org.pushingpixels.flamingo.api.ribbon.resize.IconRibbonBandResizePolicy;
-import org.pushingpixels.flamingo.internal.ui.ribbon.BasicRibbonUI;
 
 /**
  *
@@ -152,6 +148,7 @@ public class RibbonConfigurator {
             }
         }));
 
+        //////////////////
 
         JCommandButton attackViewButton = factoryButton("Angriffe", "graphics/big/axe.png", "Öffnet die Angriffsübersicht", "Die Angriffsübersicht erlaubt es, geplante Angriffe zu verwalten, zu modifizieren, zu exportieren (z.B. als BB-Codes) und in den Browser zu übertragen. Angriffe müssen vorher durch eins der verfügbaren Angriffswerkzeuge automatisch oder manuell erstellt werden", true);
         attackViewButton.addActionListener(new ActionListener() {

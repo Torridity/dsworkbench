@@ -5,17 +5,19 @@
 package de.tor.tribes.ui.editors;
 
 import de.tor.tribes.ui.BBPanel;
+import de.tor.tribes.ui.views.DSWorkbenchNotepad;
 import de.tor.tribes.util.BBChangeListener;
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.MouseInfo;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.EventObject;
 import javax.swing.AbstractCellEditor;
+import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -39,18 +41,6 @@ public class BBPanelCellEditor extends AbstractCellEditor implements TableCellEd
             public void fireBBChangedEvent() {
             }
         });
-        editor.addFocusListener(new FocusListener() {
-
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                dlg.setVisible(false);
-                fireEditingStopped();
-            }
-        });
     }
 
     @Override
@@ -63,31 +53,54 @@ public class BBPanelCellEditor extends AbstractCellEditor implements TableCellEd
 
     @Override
     public Object getCellEditorValue() {
+        System.out.println(editor.getBBCode());
         return editor.getBBCode();
     }
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        if (value == null) {
+            return editor;
+        }
         editor.setBBCode((String) value);
         editor.setEditMode(true);
         editor.setSize(360, 250);
         editor.setPreferredSize(new Dimension(360, 250));
         editor.setMinimumSize(new Dimension(360, 250));
-        dlg = new JDialog(new JFrame(), false);
-        dlg.setLocation(MouseInfo.getPointerInfo().getLocation());
+        showEditor();
+
+        return new JLabel("Bearbeite...");
+    }
+
+    private void showEditor() {
+        dlg = new JDialog(DSWorkbenchNotepad.getSingleton(), false);
+        Point pos = MouseInfo.getPointerInfo().getLocation();
+        pos.translate(-50, -50);
+        dlg.setLocation(pos);
         dlg.setResizable(false);
         dlg.setUndecorated(true);
+        dlg.getContentPane().setLayout(new BorderLayout());
+        dlg.getContentPane().add(editor, BorderLayout.CENTER);
         JPanel p = new JPanel();
-        p.add(editor);
-        dlg.getContentPane().add(p);
+        p.setLayout(new BorderLayout());
+        final JButton ok = new JButton("Übernehmen");
+        ok.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                dlg.setVisible(false);
+                fireEditingStopped();
+            }
+        });
+        p.add(ok, BorderLayout.CENTER);
+        dlg.getContentPane().add(p, BorderLayout.SOUTH);
         dlg.pack();
+
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
                 dlg.setVisible(true);
             }
         });
-
-        return new JLabel("");
     }
 }

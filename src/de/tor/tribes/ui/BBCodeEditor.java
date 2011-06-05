@@ -20,6 +20,8 @@ import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.Note;
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.Tag;
+import de.tor.tribes.types.TribeStatsElement;
+import de.tor.tribes.types.TribeStatsElement.Stats;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BBChangeListener;
 import de.tor.tribes.util.BBCodeFormatter;
@@ -27,12 +29,16 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.bb.AttackListFormatter;
 import de.tor.tribes.util.bb.BasicFormatter;
+import de.tor.tribes.util.bb.DefStatsFormatter;
+import de.tor.tribes.util.bb.KillStatsFormatter;
 import de.tor.tribes.util.bb.NoteListFormatter;
+import de.tor.tribes.util.bb.PointStatsFormatter;
 import de.tor.tribes.util.bb.ReportListFormatter;
 import de.tor.tribes.util.bb.SosListFormatter;
 import de.tor.tribes.util.bb.TagListFormatter;
 import de.tor.tribes.util.bb.TroopListFormatter;
 import de.tor.tribes.util.bb.VillageListFormatter;
+import de.tor.tribes.util.bb.WinnerLoserStatsFormatter;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.Color;
 import java.awt.event.ItemEvent;
@@ -57,6 +63,7 @@ public class BBCodeEditor extends javax.swing.JFrame {
     private List<SOSRequest> sampleRequests = new LinkedList<SOSRequest>();
     private List<Tag> sampleTags = new LinkedList<Tag>();
     private List<Note> sampleNotes = new LinkedList<Note>();
+    private List<Stats> sampleStats = new LinkedList<Stats>();
     private List<VillageTroopsHolder> sampleTroops = new LinkedList<VillageTroopsHolder>();
     private BasicFormatter element = null;
     private BasicFormatter<Attack> attackFormatter = new AttackListFormatter();
@@ -65,6 +72,10 @@ public class BBCodeEditor extends javax.swing.JFrame {
     private BasicFormatter<SOSRequest> sosFormatter = new SosListFormatter();
     private BasicFormatter<Note> noteFormatter = new NoteListFormatter();
     private BasicFormatter<Tag> tagFormatter = new TagListFormatter();
+    private BasicFormatter<Stats> pointStatsFormatter = new PointStatsFormatter();
+    private BasicFormatter<Stats> offStatsFormatter = new KillStatsFormatter();
+    private BasicFormatter<Stats> defStatsFormatter = new DefStatsFormatter();
+    private BasicFormatter<Stats> winnerLoserStatsFormatter = new WinnerLoserStatsFormatter();
     private BasicFormatter<VillageTroopsHolder> troopsFormatter = new TroopListFormatter();
 
     /** Creates new form BBCodeEditor */
@@ -141,14 +152,6 @@ public class BBCodeEditor extends javax.swing.JFrame {
         sampleSOSRequest.getTargetInformation(noteVillage2).addAttack(sourceVillage, new Date());
         sampleSOSRequest.getTargetInformation(noteVillage2).addAttack(sourceVillage, new Date());
         sampleSOSRequest.getTargetInformation(noteVillage2).addTroopInformation(DataHolder.getSingleton().getRandomUnit(), 100);
-
-        /* SOSRequest sampleSOSRequest2 = new SOSRequest();
-        sampleSOSRequest2.setDefender(Barbarians.getSingleton());
-        sampleSOSRequest2.addTarget(noteVillage2);
-        sampleSOSRequest2.getTargetInformation(noteVillage2).setWallLevel(10);
-        sampleSOSRequest2.getTargetInformation(noteVillage2).addAttack(sourceVillage, new Date());
-        sampleSOSRequest2.getTargetInformation(noteVillage2).addAttack(sourceVillage, new Date());
-        sampleSOSRequest2.getTargetInformation(noteVillage2).addTroopInformation(DataHolder.getSingleton().getRandomUnit(), 100);*/
         sampleRequests.add(sampleSOSRequest);
         //sampleRequests.add(sampleSOSRequest2);
         //sample report
@@ -210,6 +213,14 @@ public class BBCodeEditor extends javax.swing.JFrame {
         h2.setTroops(troops);
         sampleTroops.add(h);
         sampleTroops.add(h2);
+
+
+        TribeStatsElement e1 = new TribeStatsElement(DataHolder.getSingleton().getRandomVillage().getTribe());
+        e1.addRandomSnapshots();
+        TribeStatsElement e2 = new TribeStatsElement(DataHolder.getSingleton().getRandomVillage().getTribe());
+        e2.addRandomSnapshots();
+        sampleStats.add(e1.generateStats(e1.getTimestamps()[0], e1.getTimestamps()[1]));
+        sampleStats.add(e2.generateStats(e2.getTimestamps()[0], e2.getTimestamps()[1]));
     }
 
     /** This method is called from within the constructor to
@@ -313,7 +324,7 @@ public class BBCodeEditor extends javax.swing.JFrame {
 
         jPanel1.setLayout(new java.awt.BorderLayout(5, 0));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Angriffe", "Notizen", "Dorflisten", "SOS-Anfragen", "Kampfbericht", "Gruppen", "Truppen" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Angriffe", "Notizen", "Dorflisten", "SOS-Anfragen", "Kampfbericht", "Gruppen", "Truppen", "Statistik (Punkte)", "Statistik (Angriff)", "Statistik (Verteidigung)", "Statistik (Gewinner/Verlierer)" }));
         jComboBox1.setMinimumSize(new java.awt.Dimension(66, 20));
         jComboBox1.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -389,6 +400,26 @@ public class BBCodeEditor extends javax.swing.JFrame {
                     bBPanel2.setBBCode(element.getTemplate());
                     result = element.formatElements(sampleTroops, true);
                     break;
+                case 7:
+                    element = pointStatsFormatter;
+                    bBPanel2.setBBCode(element.getTemplate());
+                    result = element.formatElements(sampleStats, true);
+                    break;
+                case 8:
+                    element = offStatsFormatter;
+                    bBPanel2.setBBCode(element.getTemplate());
+                    result = element.formatElements(sampleStats, true);
+                    break;
+                case 9:
+                    element = defStatsFormatter;
+                    bBPanel2.setBBCode(element.getTemplate());
+                    result = element.formatElements(sampleStats, true);
+                    break;
+                case 10:
+                    element = winnerLoserStatsFormatter;
+                    bBPanel2.setBBCode(element.getTemplate());
+                    result = element.formatElements(sampleStats, true);
+                    break;
             }
         }
 
@@ -443,6 +474,26 @@ public class BBCodeEditor extends javax.swing.JFrame {
                 element = troopsFormatter;
                 GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
                 result = element.formatElements(sampleTroops, true);
+                break;
+            case 7:
+                element = pointStatsFormatter;
+                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
+                result = element.formatElements(sampleStats, true);
+                break;
+            case 8:
+                element = offStatsFormatter;
+                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
+                result = element.formatElements(sampleStats, true);
+                break;
+            case 9:
+                element = defStatsFormatter;
+                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
+                result = element.formatElements(sampleStats, true);
+                break;
+            case 10:
+                element = winnerLoserStatsFormatter;
+                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
+                result = element.formatElements(sampleStats, true);
                 break;
         }
         jTextPane1.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + BBCodeFormatter.toHtml(result) + "</body></html>");

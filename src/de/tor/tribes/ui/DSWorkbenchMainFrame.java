@@ -669,7 +669,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             DSWorkbenchTroopsFrame.getSingleton().resetView();
             DistanceManager.getSingleton().clear();
             StatManager.getSingleton().setup();
-            DistanceTableModel.getSingleton().fireTableStructureChanged();
+           // DistanceTableModel.getSingleton().fireTableStructureChanged();
             DSWorkbenchDistanceFrame.getSingleton().resetView();
             DSWorkbenchStatsFrame.getSingleton().resetView();
             DSWorkbenchDoItYourselfAttackPlaner.getSingleton().resetView();

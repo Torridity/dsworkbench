@@ -20,14 +20,13 @@ public class DistanceTableModel extends AbstractTableModel {
 
     private static DistanceTableModel SINGLETON = null;
 
-    public static synchronized DistanceTableModel getSingleton() {
-        if (SINGLETON == null) {
-            SINGLETON = new DistanceTableModel();
-        }
-        return SINGLETON;
+    /*public static synchronized DistanceTableModel getSingleton() {
+    if (SINGLETON == null) {
+    SINGLETON = new DistanceTableModel();
     }
-
-    DistanceTableModel() {
+    return SINGLETON;
+    }*/
+    public DistanceTableModel() {
     }
 
     public void clear() {
@@ -53,8 +52,7 @@ public class DistanceTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        int res = DistanceManager.getSingleton().getVillages().length + 1;
-        return res;
+        return DistanceManager.getSingleton().getVillages().length + 1;
     }
 
     @Override
@@ -76,11 +74,16 @@ public class DistanceTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
+long s = System.currentTimeMillis();
+        Object result = null;
         Village v1 = GlobalOptions.getSelectedProfile().getTribe().getVillageList()[rowIndex];
         if (columnIndex == 0) {
-            return v1;
+            result = v1;
+        } else {
+            Village v2 = DistanceManager.getSingleton().getVillages()[columnIndex - 1];
+            result = DSCalculator.calculateDistance(v1, v2);
         }
-        Village v2 = DistanceManager.getSingleton().getVillages()[columnIndex - 1];
-        return DSCalculator.calculateDistance(v1, v2);
+        System.out.println("D " + (System.currentTimeMillis() - s));
+        return result;
     }
 }

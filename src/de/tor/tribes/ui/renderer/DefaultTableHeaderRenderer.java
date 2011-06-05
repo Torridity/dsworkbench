@@ -4,7 +4,6 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.util.Constants;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.Icon;
@@ -14,14 +13,14 @@ import javax.swing.RowSorter;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.plaf.UIResource;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
-import org.pushingpixels.substance.api.renderers.SubstanceDefaultTableCellRenderer;
 
 /**
  *
  * @author Jejkal
  */
-public class DefaultTableHeaderRenderer extends SubstanceDefaultTableCellRenderer implements UIResource {
+public class DefaultTableHeaderRenderer extends DefaultTableCellRenderer implements UIResource {
 
     private boolean horizontalTextPositionSet;
 

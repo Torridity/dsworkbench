@@ -5,16 +5,16 @@
 package de.tor.tribes.types;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.util.BBSupport;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.commons.lang.time.DateUtils;
 
 /**
  *
@@ -117,6 +117,23 @@ public class TribeStatsElement {
         rankOffList.add((short) tribe.getRankAtt());
         bashDefList.add((long) tribe.getKillsDef());
         rankDefList.add((short) tribe.getRankDef());
+    }
+
+    public void addRandomSnapshots() {
+        long[] snapshots = new long[]{System.currentTimeMillis() - DateUtils.MILLIS_PER_DAY, System.currentTimeMillis()};
+        int cnt = 0;
+        for (long snapshot : snapshots) {
+            timestampList.add(snapshot);
+            rankList.add(tribe.getRank() + (int) Math.round(cnt * .1 * tribe.getRank()));
+            pointList.add((long) tribe.getPoints() + (int) Math.round(cnt * .1 * tribe.getPoints()));
+            villageList.add(tribe.getVillages());
+            bashOffList.add((long) tribe.getKillsAtt() + (int) Math.round(cnt * .1 * tribe.getKillsAtt()));
+            rankOffList.add((short) (tribe.getRankAtt() + (int) Math.round(cnt * .1 * tribe.getRankAtt())));
+            bashDefList.add((long) tribe.getKillsDef() + (int) Math.round(cnt * .1 * tribe.getKillsDef()));
+            rankDefList.add((short) (tribe.getRankDef() + (int) Math.round(cnt * .1 * tribe.getRankDef())));
+            System.out.println(pointList.get(cnt));
+            cnt++;
+        }
     }
 
     public void store(File pFile) throws Exception {
@@ -254,10 +271,10 @@ public class TribeStatsElement {
         int startIndex = -1;
         int endIndex = -1;
         for (long timestamp : timestamps) {
-            if (timestamp > pStart && startIndex == -1) {
+            if (timestamp >= pStart && startIndex == -1) {
                 startIndex = cnt;
             }
-            if (timestamp > pEnd && endIndex == -1) {
+            if (timestamp >= pEnd && endIndex == -1) {
                 endIndex = cnt;
             }
             if (startIndex > -1 && endIndex > -1) {
@@ -303,7 +320,7 @@ public class TribeStatsElement {
         return result;
     }
 
-    public static class Stats implements Comparable<Stats> {
+    public static class Stats implements Comparable<Stats>, BBSupport {
 
         private TribeStatsElement parent = null;
         private long pointStart = 0;
@@ -505,12 +522,40 @@ public class TribeStatsElement {
             return (double) bashOffDiff / (double) pDiff;
         }
 
+        public Double getExpansion() {
+            double perc = 0;
+            if (getPointStart() > 0) {
+                perc = (double) 100 * (double) getPointDiff() / (double) getPointStart();
+            }
+            return perc;
+        }
 // </editor-fold>
+
         @Override
         public int compareTo(Stats o) {
             return 0;
         }
         public static final Comparator<Stats> POINTS_COMPARATOR = new StatPointsComparator();
+
+        @Override
+        public String getStandardTemplate() {
+            return "";
+        }
+
+        @Override
+        public String getTemplateProperty() {
+            return "";
+        }
+
+        @Override
+        public String[] getBBVariables() {
+            return new String[]{};
+        }
+
+        @Override
+        public String[] getReplacements(boolean pExtended) {
+            return new String[]{};
+        }
 
         private static class StatPointsComparator implements Comparator<Stats>, java.io.Serializable {
 
@@ -580,6 +625,15 @@ public class TribeStatsElement {
             @Override
             public int compare(Stats s1, Stats s2) {
                 return s2.getKillPerPoint().compareTo(s1.getKillPerPoint());
+            }
+        }
+        public static final Comparator<Stats> EXPANSION_COMPARATOR = new ExpansionComparator();
+
+        private static class ExpansionComparator implements Comparator<Stats>, java.io.Serializable {
+
+            @Override
+            public int compare(Stats s1, Stats s2) {
+                return s2.getExpansion().compareTo(s1.getExpansion());
             }
         }
     }

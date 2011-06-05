@@ -47,7 +47,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.RowFilter;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -65,11 +64,6 @@ import org.jdesktop.swingx.decorator.PainterHighlighter;
 import org.jdesktop.swingx.decorator.PatternPredicate;
 import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
-import org.pushingpixels.substance.api.SubstanceLookAndFeel;
-import org.pushingpixels.substance.api.skin.SubstanceAutumnLookAndFeel;
-import org.pushingpixels.substance.api.skin.SubstanceBusinessBlackSteelLookAndFeel;
-import org.pushingpixels.substance.api.skin.SubstanceDustLookAndFeel;
-import org.pushingpixels.substance.api.skin.SubstanceNebulaLookAndFeel;
 
 /**
  * @author Charon

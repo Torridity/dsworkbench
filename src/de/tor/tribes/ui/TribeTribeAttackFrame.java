@@ -7,7 +7,6 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.control.ManageableType;
-import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
@@ -25,12 +24,10 @@ import de.tor.tribes.ui.TroopSplitDialog.TroopSplit;
 import de.tor.tribes.ui.algo.AlgorithmLogPanel;
 import de.tor.tribes.ui.algo.SettingsChangedListener;
 import de.tor.tribes.ui.algo.SettingsPanel;
-import de.tor.tribes.ui.algo.AttackTimePanel;
 import de.tor.tribes.ui.dnd.VillageTransferable;
 import de.tor.tribes.ui.editors.AttackTypeCellEditor;
 import de.tor.tribes.ui.editors.FakeCellEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
-import de.tor.tribes.ui.models.TroopsTableModel;
 import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
@@ -74,7 +71,6 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 import de.tor.tribes.util.tag.TagManager;
-import de.tor.tribes.util.tag.TagManagerListener;
 import de.tor.tribes.util.troops.TroopsManager;
 import java.awt.Color;
 import java.util.StringTokenizer;
@@ -1945,15 +1941,12 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     boolean supportMiscUnits = false;
     if (mSettingsPanel.useBruteForce()) {
         logger.info("Using 'BruteForce' calculation");
-        //TODO: Testing only!
         algo = new BruteForce();
-        // algo = new AttackOptexImpl();
         supportMiscUnits = true;
         logPanel.setAbortable(false);
     } else {
         logger.info("Using 'systematic' calculation");
-        //  algo = new Iterix();
-        algo = new Recurrection();
+        algo = new Iterix();
         supportMiscUnits = false;
         logPanel.setAbortable(true);
     }

@@ -86,7 +86,7 @@ import org.jdesktop.swingx.painter.MattePainter;
  * @author Charon
  */
 public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, DragGestureListener {
-//TODO remove dummy village from default view, check if bb-editor always hides, put village list also on left side?
+//TODO remove dummy village from default view, check if bb-editor always hides, implement drag and drop!
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -1569,7 +1569,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
         /* if (currentNote == null) {
-        return;
+        return;ji
         }
         try {
         Rectangle bounds = jVillageList.getBounds();
@@ -1597,17 +1597,10 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
 
             public void run() {
 
-
                 MouseGestures mMouseGestures = new MouseGestures();
                 mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
                 mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
                 mMouseGestures.start();
-                /*   Map<String, SkinInfo> skins = SubstanceLookAndFeel.getAllSkins();
-                Iterator<String> skinKeys = skins.keySet().iterator();
-                while (skinKeys.hasNext()) {
-                System.out.println(skinKeys.next());
-                }
-                 */
                 try {
                     //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                     UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");

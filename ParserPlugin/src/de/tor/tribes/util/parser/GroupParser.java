@@ -65,6 +65,8 @@ public class GroupParser implements SilentParserInterface {
 			//group count found, next token must be groups
 			//skip version 7.0 village points token
 			elemTok.nextToken();
+                        //skip version 7.1 farm space token
+                        elemTok.nextToken();
 			groupsToken = elemTok.nextToken().trim();
 		    } catch ( Exception e ) {
 			//group count not found (Google Chrome uses 2 tabs after village)
@@ -72,9 +74,11 @@ public class GroupParser implements SilentParserInterface {
 			groupCountToken = elemTok.nextToken().trim();
 			//skip village points token
 			elemTok.nextToken();
+                        //skip again...version 7.1 farm space token ^^
+                        elemTok.nextToken();
 			groupsToken = elemTok.nextToken().trim();
 		    }
-
+                 
 		    Village v = new VillageParser().parse(villageToken).get(0);
 		    /* try {
 		    String coord = villageToken.substring(villageToken.lastIndexOf("(") + 1, villageToken.lastIndexOf(")"));

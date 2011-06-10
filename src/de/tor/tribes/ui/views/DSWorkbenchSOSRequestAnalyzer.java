@@ -365,10 +365,9 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         }
 
         for (int row : rows) {
-            int realRow = jResultTable.convertRowIndexToModel(row);
-            Village target = (Village) jResultTable.getValueAt(realRow, jResultTable.convertColumnIndexToModel(1));
-            Village source = (Village) jResultTable.getValueAt(realRow, jResultTable.convertColumnIndexToModel(3));
-            String arrive = (String) jResultTable.getValueAt(realRow, jResultTable.convertColumnIndexToModel(4));
+            Village target = (Village) jResultTable.getValueAt(row, 1);
+            Village source = (Village) jResultTable.getValueAt(row, 3);
+            String arrive = (String) jResultTable.getValueAt(row, 4);
             SimpleDateFormat f = null;
             if (!ServerSettings.getSingleton().isMillisArrival()) {
                 f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format"));

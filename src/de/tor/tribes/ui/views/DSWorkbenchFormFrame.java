@@ -104,6 +104,8 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
                 copySelectionToInternalClipboard();
             }
         }, "Copy", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        //@TODO Implement delete!!
+        
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         //   GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.form_view", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>

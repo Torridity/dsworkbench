@@ -345,8 +345,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             return attacks;
         }
 
-        for (Integer selectedRow : selectedRows) {
-            int row = jResultTable.convertRowIndexToModel(selectedRow);
+        for (Integer row : selectedRows) {
             Village source = (Village) jResultTable.getValueAt(row, 0);
             UnitHolder unit = (UnitHolder) jResultTable.getValueAt(row, 1);
             Village target = (Village) jResultTable.getValueAt(row, 2);

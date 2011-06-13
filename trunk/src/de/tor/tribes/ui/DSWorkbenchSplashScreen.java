@@ -39,7 +39,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.RollingFileAppender;
 
 /**
- * @TODO (DIFF) "Close everything by ESC" added
  * @author  Jejkal
  */
 public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataHolderListener {

@@ -1,12 +1,10 @@
 <?xml version="1.1" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <NonVisualComponents>
     <Container class="javax.swing.JDialog" name="jScriptExportDialog">
       <Properties>
-        <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jScriptExportDialog.title" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-        </Property>
+        <Property name="title" type="java.lang.String" value="Scripteinstellungen"/>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -15,24 +13,20 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jShowAttacksInVillageInfo" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jShowAttacksOnConfirmPage" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jShowAttacksInPlace" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="jShowAttacksInOverview" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="72" max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                  <EmptySpace pref="123" max="32767" attributes="0"/>
-              </Group>
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="214" max="32767" attributes="0"/>
-                  <Component id="jButton14" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jDoScriptExportButton" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Component id="jShowAttacksInPlace" alignment="0" pref="327" max="32767" attributes="1"/>
+                      <Component id="jShowAttacksInOverview" alignment="0" pref="327" max="32767" attributes="0"/>
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace pref="133" max="32767" attributes="0"/>
+                          <Component id="jButton14" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jDoScriptExportButton" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="jShowAttacksOnConfirmPage" alignment="0" pref="327" max="32767" attributes="1"/>
+                      <Component id="jShowAttacksInVillageInfo" alignment="0" pref="327" max="32767" attributes="0"/>
+                  </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -62,9 +56,7 @@
         <Component class="javax.swing.JCheckBox" name="jShowAttacksInVillageInfo">
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jShowAttacksInVillageInfo.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="Angriffe in den Dorfinformationen anzeigen"/>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -73,9 +65,7 @@
         <Component class="javax.swing.JCheckBox" name="jShowAttacksOnConfirmPage">
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jShowAttacksOnConfirmPage.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="Angriffe auf der Angriffsbest&#xe4;tigungsseite anzeigen"/>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -84,9 +74,7 @@
         <Component class="javax.swing.JCheckBox" name="jShowAttacksInPlace">
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jShowAttacksInPlace.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="Angriffe im Versammlungsplatz anzeigen"/>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -95,9 +83,7 @@
         <Component class="javax.swing.JCheckBox" name="jShowAttacksInOverview">
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jShowAttacksInOverview.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="Angriffe in den &#xdc;bersichten anzeigen"/>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -105,9 +91,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jDoScriptExportButton">
           <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jDoScriptExportButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="Script erstellen"/>
           </Properties>
           <Events>
             <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireDoExportAsScriptEvent"/>
@@ -118,9 +102,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jButton14">
           <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jButton14.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="Abbrechen"/>
           </Properties>
           <Events>
             <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireDoExportAsScriptEvent"/>
@@ -132,11 +114,6 @@
       </SubComponents>
     </Container>
     <Container class="javax.swing.JDialog" name="jSendAttacksIGMDialog">
-      <Properties>
-        <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jSendAttacksIGMDialog.title" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-        </Property>
-      </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
       </AuxValues>
@@ -152,10 +129,10 @@
                               <Component id="jLabel20" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel22" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="93" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jAPIKey" alignment="0" pref="298" max="32767" attributes="0"/>
-                              <Component id="jSubject" alignment="0" pref="298" max="32767" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="jAPIKey" pref="334" max="32767" attributes="0"/>
+                              <Component id="jSubject" alignment="0" pref="334" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
@@ -194,43 +171,27 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="jLabel20">
           <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel20.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="Betreff"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="jSubject">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jSubject.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel22">
           <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel22.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="API-Key"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="jAPIKey">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jAPIKey.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="jSendButton">
           <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jSendButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="IGMs senden"/>
           </Properties>
           <Events>
             <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireSendIGMsEvent"/>
@@ -241,9 +202,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jButton13">
           <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jButton13.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="Abbrechen"/>
           </Properties>
           <Events>
             <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireSendIGMsEvent"/>
@@ -256,9 +215,7 @@
     </Container>
     <Container class="javax.swing.JDialog" name="jTimeChangeDialog">
       <Properties>
-        <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jTimeChangeDialog.title" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-        </Property>
+        <Property name="title" type="java.lang.String" value="Zeiten &#xe4;ndern"/>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -314,9 +271,7 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="jOKButton">
           <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jOKButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="OK"/>
           </Properties>
           <Events>
             <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireCloseTimeChangeDialogEvent"/>
@@ -327,9 +282,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jCancelButton">
           <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jCancelButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="Abbrechen"/>
           </Properties>
           <Events>
             <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireCloseTimeChangeDialogEvent"/>
@@ -352,11 +305,11 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel14" alignment="1" pref="210" max="32767" attributes="1"/>
-                          <Component id="jLabel5" alignment="1" pref="210" max="32767" attributes="1"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="jLabel5" max="32767" attributes="1"/>
+                          <Component id="jLabel14" alignment="0" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace pref="91" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jMinuteField" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jSecondsField" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -403,48 +356,72 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="jLabel7">
               <Properties>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel7.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                </Property>
+                <Property name="text" type="java.lang.String" value="Tage"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel5">
               <Properties>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel5.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                </Property>
+                <Property name="text" type="java.lang.String" value="Minuten"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JSpinner" name="jDayField">
+              <Properties>
+                <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[60, 20]"/>
+                </Property>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[60, 20]"/>
+                </Property>
+              </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
               </AuxValues>
             </Component>
             <Component class="javax.swing.JSpinner" name="jMinuteField">
+              <Properties>
+                <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[60, 20]"/>
+                </Property>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[60, 20]"/>
+                </Property>
+              </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
               </AuxValues>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel6">
               <Properties>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel6.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                </Property>
+                <Property name="text" type="java.lang.String" value="Stunden"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JSpinner" name="jHourField">
+              <Properties>
+                <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[60, 20]"/>
+                </Property>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[60, 20]"/>
+                </Property>
+              </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
               </AuxValues>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel14">
               <Properties>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel14.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                </Property>
+                <Property name="text" type="java.lang.String" value="Sekunden"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JSpinner" name="jSecondsField">
+              <Properties>
+                <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[60, 20]"/>
+                </Property>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[60, 20]"/>
+                </Property>
+              </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
               </AuxValues>
@@ -466,7 +443,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" pref="24" max="32767" attributes="0"/>
+                      <EmptySpace type="unrelated" max="32767" attributes="0"/>
                       <Component id="jArriveDateField" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -488,9 +465,8 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="jLabel8">
               <Properties>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel8.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                </Property>
+                <Property name="text" type="java.lang.String" value="Neue Ankunftzeit"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
@@ -509,12 +485,7 @@
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
               <ComponentRef name="buttonGroup2"/>
             </Property>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jModifyArrivalOption.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
-            <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jModifyArrivalOption.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="Ankunftzeit angleichen"/>
           </Properties>
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="jModifyArrivalOptionfireModifyTimeEvent"/>
@@ -529,12 +500,7 @@
               <ComponentRef name="buttonGroup2"/>
             </Property>
             <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jMoveTimeOption.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
-            <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jMoveTimeOption.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="Verschieben"/>
           </Properties>
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="jMoveTimeOptionfireModifyTimeEvent"/>
@@ -548,9 +514,7 @@
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
               <ComponentRef name="buttonGroup2"/>
             </Property>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jRandomizeOption.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="Zuf&#xe4;llig verschieben"/>
           </Properties>
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="jRandomizeOptionfireModifyTimeEvent"/>
@@ -574,13 +538,13 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="jNotRandomToNightBonus" alignment="0" pref="365" max="32767" attributes="0"/>
+                          <Component id="jNotRandomToNightBonus" alignment="0" pref="351" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="jLabel17" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="jLabel18" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jRandomField" pref="230" max="32767" attributes="0"/>
+                              <Component id="jRandomField" pref="264" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jLabel19" min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -609,26 +573,19 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="jLabel17">
               <Properties>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel17.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                </Property>
+                <Property name="text" type="java.lang.String" value="Zeitfenster"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel18">
               <Properties>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel18.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                </Property>
+                <Property name="text" type="java.lang.String" value="+/-"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JFormattedTextField" name="jRandomField">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="4"/>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jFormattedTextField1.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                </Property>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <AuxValues>
@@ -637,18 +594,13 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel19">
               <Properties>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel19.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                </Property>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="jNotRandomToNightBonus">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jNotRandomToNightBonus.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                </Property>
+                <Property name="text" type="java.lang.String" value="Nicht in Nachtbonus verschieben"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <AuxValues>
@@ -661,9 +613,7 @@
     </Container>
     <Container class="javax.swing.JDialog" name="jChangeAttackTypeDialog">
       <Properties>
-        <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jChangeAttackTypeDialog.title" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-        </Property>
+        <Property name="title" type="java.lang.String" value="Angriffstyp anpassen"/>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -686,7 +636,7 @@
                   <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
               </Group>
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="53" max="32767" attributes="0"/>
+                  <EmptySpace pref="70" max="32767" attributes="0"/>
                   <Component id="jButton15" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jAcceptChangeUnitTypeButton" min="-2" max="-2" attributes="0"/>
@@ -738,28 +688,18 @@
                   <ComponentRef name="buttonGroup1"/>
                 </Property>
                 <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jNoType.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                </Property>
+                <Property name="text" type="java.lang.String" value="Keiner"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
               </AuxValues>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel23">
-              <Properties>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel23.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                </Property>
-              </Properties>
             </Component>
             <Component class="javax.swing.JRadioButton" name="jAttackType">
               <Properties>
                 <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                   <ComponentRef name="buttonGroup1"/>
-                </Property>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jAttackType.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
               <AuxValues>
@@ -771,18 +711,12 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/res/ui/axe.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel28.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JRadioButton" name="jEnobleType">
               <Properties>
                 <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                   <ComponentRef name="buttonGroup1"/>
-                </Property>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jEnobleType.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
               <AuxValues>
@@ -794,18 +728,12 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/res/ui/snob.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel24.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JRadioButton" name="jDefType">
               <Properties>
                 <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                   <ComponentRef name="buttonGroup1"/>
-                </Property>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jDefType.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
               <AuxValues>
@@ -817,18 +745,12 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/res/ally.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel25.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JRadioButton" name="jFakeType">
               <Properties>
                 <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                   <ComponentRef name="buttonGroup1"/>
-                </Property>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jFakeType.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
               <AuxValues>
@@ -840,18 +762,12 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/res/ui/fake.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel26.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JRadioButton" name="jFakeDefType">
               <Properties>
                 <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                   <ComponentRef name="buttonGroup1"/>
-                </Property>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jFakeDefType.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
               <AuxValues>
@@ -862,9 +778,6 @@
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/res/ui/def_fake.png"/>
-                </Property>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel27.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
@@ -894,7 +807,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jUnitBox" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="95" max="32767" attributes="0"/>
+                      <EmptySpace pref="107" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -915,9 +828,7 @@
         </Container>
         <Component class="javax.swing.JButton" name="jAcceptChangeUnitTypeButton">
           <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jAcceptChangeUnitTypeButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="&#xdc;bernehmen"/>
           </Properties>
           <Events>
             <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireChangeUnitTypeEvent"/>
@@ -928,9 +839,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jButton15">
           <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jButton15.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="Abbrechen"/>
           </Properties>
           <Events>
             <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireChangeUnitTypeEvent"/>
@@ -942,9 +851,7 @@
         <Component class="javax.swing.JCheckBox" name="jAdeptTypeBox">
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jAdeptTypeBox.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="Typ angleichen"/>
           </Properties>
           <Events>
             <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="jAdeptTypeBoxfireEnableDisableAdeptTypeEvent"/>
@@ -955,9 +862,7 @@
         </Component>
         <Component class="javax.swing.JCheckBox" name="jAdeptUnitBox">
           <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jAdeptUnitBox.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="Einheit angleichen"/>
           </Properties>
           <Events>
             <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="jAdeptUnitBoxfireEnableDisableChangeUnitEvent"/>

@@ -67,8 +67,6 @@ import org.apache.log4j.Logger;
  * 4: Misc. Extended Map Decoration: e.g. troop qualification or active village marker
  * 5: Live Layer: Redraw in every drawing cycle e.g. Drag line, tool popup(?), (troop movement?)
  * 6-16: Free assignable
- * @TODO (DIFF) Added arrow form
- *
  * @author Charon
  */
 public class MapRenderer extends Thread {
@@ -154,6 +152,7 @@ public class MapRenderer extends Thread {
      * @param pDrawOrder
      */
     public void setDrawOrder(List<Integer> pDrawOrder) {
+        System.out.println("Order " + pDrawOrder);
         drawOrder = new LinkedList<Integer>(pDrawOrder);
     }
 
@@ -674,7 +673,6 @@ public class MapRenderer extends Thread {
         }
 
         Village mouseVillage = MapPanel.getSingleton().getVillageAtMousePos();
-
         //render temp form
         if (!FormConfigFrame.getSingleton().isInEditMode()) {
             //only render in create mode to avoid multi-drawing

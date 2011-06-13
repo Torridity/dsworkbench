@@ -578,7 +578,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jCheckAccountButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="222" max="32767" attributes="0"/>
+                      <EmptySpace pref="252" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1914,17 +1914,11 @@
                 </Component>
                 <Component class="javax.swing.JTextField" name="jHeaderPath">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jTextField3.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                    </Property>
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JTextField" name="jBlockPath">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jTextField3.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                    </Property>
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                 </Component>

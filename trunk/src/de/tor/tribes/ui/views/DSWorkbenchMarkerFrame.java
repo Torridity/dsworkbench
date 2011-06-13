@@ -41,6 +41,7 @@ import org.apache.log4j.Logger;
  */
 public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener {
 //@TODO Fit size, notifiy map on change, don't paint does not work
+
     private static Logger logger = Logger.getLogger("MarkerView");
     private static DSWorkbenchMarkerFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
@@ -186,7 +187,6 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
 
     /**Initialize and add one tab for each marker set to jTabbedPane1*/
     public void generateMarkerTabs() {
-        jMarkerTabPane.invalidate();
         while (jMarkerTabPane.getTabCount() > 0) {
             MarkerTableTab tab = (MarkerTableTab) jMarkerTabPane.getComponentAt(0);
             tab.deregister();
@@ -204,10 +204,11 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         for (String plan : plans) {
             MarkerTableTab tab = new MarkerTableTab(plan, this);
             jMarkerTabPane.addTab(plan, tab);
+            if (cnt == 0) {
+                jMarkerTabPane.setTabClosableAt(0, false);
+            }
             cnt++;
         }
-        jMarkerTabPane.setTabClosableAt(0, false);
-        jMarkerTabPane.revalidate();
         jMarkerTabPane.setSelectedIndex(0);
         MarkerTableTab tab = getActiveTab();
         if (tab != null) {

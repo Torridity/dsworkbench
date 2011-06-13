@@ -4,10 +4,12 @@
  */
 package de.tor.tribes.ui.renderer.map;
 
+import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.Intersection;
+import de.tor.tribes.util.troops.SupportVillageTroopsHolder;
 import de.tor.tribes.util.troops.TroopsManager;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -19,6 +21,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -52,146 +55,150 @@ public class SupportLayerRenderer extends AbstractDirectLayerRenderer {
     }
 
     private void renderSupports(Point2D.Double pMapPos, List<Village> pVisibleVillages, RenderSettings pSettings, Graphics2D pG2D) {
-        //@TODO Update support renderer
-      /*  for (Village v : DSWorkbenchTroopsFrame.getSingleton().getSelectedTroopsVillages()) {
-        //process source villages
-        if (v.isVisibleOnMap()) {
-        List<Village> villages = new LinkedList<Village>();
-        
-        for (Village target : TroopsManager.getSingleton().getTroopsForVillage(v).getSupportTargets()) {
-        if (target.isVisibleOnMap()) {
-        villages.add(target);
+        for (Village v : DSWorkbenchTroopsFrame.getSingleton().getSelectedSupportVillages()) {
+            //process source villages
+            if (v.isVisibleOnMap()) {
+                List<Village> villages = new LinkedList<Village>();
+                SupportVillageTroopsHolder holder = (SupportVillageTroopsHolder)TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.SUPPORT);
+
+                Hashtable<Village, Hashtable<UnitHolder, Integer>> incs = holder.getIncomingSupports();
+                 Hashtable<Village, Hashtable<UnitHolder, Integer>> outs = holder.getOutgoingSupports();
+                
+                 Enumeration<Village> keys = incs.keys();
+                 while(keys.hasMoreElements()){
+                     Village key = keys.nextElement();
+                     if(!villages.contains(key)){
+                         villages.add(key);
+                     }
+                 }
+                 keys = outs.keys();
+                 while(keys.hasMoreElements()){
+                     Village key = keys.nextElement();
+                     if(!villages.contains(key)){
+                         villages.add(key);
+                     }
+                 }
+                 
+                for (Village target : villages) {
+                    Line2D.Double supportLine = new Line2D.Double(v.getX() * pSettings.getFieldWidth(), v.getY() * pSettings.getFieldHeight(), target.getX() * pSettings.getFieldWidth(), target.getY() * pSettings.getFieldHeight());
+
+                    //draw full line
+                    double xStart = (supportLine.getX1() - pMapPos.getX() * pSettings.getFieldWidth()) + pSettings.getFieldWidth() / 2;
+                    double yStart = (supportLine.getY1() - pMapPos.getY() * pSettings.getFieldHeight()) + pSettings.getFieldHeight() / 2;
+                    double xEnd = (supportLine.getX2() - pMapPos.getX() * pSettings.getFieldWidth()) + pSettings.getFieldWidth() / 2;
+                    double yEnd = (supportLine.getY2() - pMapPos.getY() * pSettings.getFieldHeight()) + pSettings.getFieldHeight() / 2;
+
+                    if (pVisibleVillages.contains(v) && pVisibleVillages.contains(target)) {
+                        pG2D.setColor(Color.YELLOW);
+                        pG2D.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
+                        pG2D.drawOval((int) xEnd - 2, (int) yEnd - 2, 4, 4);
+                    } else if (pVisibleVillages.contains(v) && !pVisibleVillages.contains(target)) {
+                        pG2D.setColor(Color.GREEN);
+                        //draw clipped support line
+                        pG2D.setClip((int) Math.rint(xStart - 50), (int) Math.rint(yStart - 50), 100, 100);
+                        pG2D.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
+                        pG2D.setClip(null);
+                        //get bounding rectangle sides
+                        Line2D.Double top = new Line2D.Double(xStart - 50.0, yStart - 50.0, xStart + 50.0, yStart - 50.0);
+                        Line2D.Double right = new Line2D.Double(xStart + 50.0, yStart - 50.0, xStart + 50.0, yStart + 50.0);
+                        Line2D.Double bottom = new Line2D.Double(xStart - 50.0, yStart + 50.0, xStart + 50.0, yStart + 50.0);
+                        Line2D.Double left = new Line2D.Double(xStart - 50.0, yStart - 50.0, xStart - 50.0, yStart + 50.0);
+
+                        //get intersection point
+                        Point2D inter = new Point.Double();
+                        try {
+                            inter = Intersection.getIntersection(new Line2D.Double(xStart, yStart, xEnd, yEnd), top);
+                            if (inter == null) {
+                                throw new Exception();
+                            }
+                        } catch (Exception e1) {
+                            try {
+                                inter = Intersection.getIntersection(new Line2D.Double(xStart, yStart, xEnd, yEnd), right);
+                                if (inter == null) {
+                                    throw new Exception();
+                                }
+                            } catch (Exception e2) {
+                                try {
+                                    inter = Intersection.getIntersection(new Line2D.Double(xStart, yStart, xEnd, yEnd), bottom);
+                                    if (inter == null) {
+                                        throw new Exception();
+                                    }
+                                } catch (Exception e3) {
+                                    try {
+                                        inter = Intersection.getIntersection(new Line2D.Double(xStart, yStart, xEnd, yEnd), left);
+                                        if (inter == null) {
+                                            throw new Exception();
+                                        }
+                                    } catch (Exception e4) {
+                                    }
+                                }
+                            }
+                        }
+                        //draw distance label
+                        if (inter != null) {
+                            double dist = DSCalculator.calculateDistance(v, target);
+                            String d = NumberFormat.getInstance().format(dist);
+                            Rectangle2D bb = pG2D.getFontMetrics().getStringBounds(d, pG2D);
+                            pG2D.fillRect((int) (inter.getX() + bb.getX()), (int) (inter.getY() + bb.getY()), (int) bb.getWidth(), (int) bb.getHeight());
+                            pG2D.setColor(Color.BLACK);
+                            pG2D.drawString(d, (int) inter.getX(), (int) inter.getY());
+                        }
+                    } else if (!pVisibleVillages.contains(v) && pVisibleVillages.contains(target)) {
+                        pG2D.setColor(Color.RED);
+                        //draw clipped support line
+                        pG2D.setClip((int) Math.rint(xEnd - 50), (int) Math.rint(yEnd - 50), 100, 100);
+                        pG2D.drawLine((int) Math.rint(xEnd), (int) Math.rint(yEnd), (int) Math.rint(xStart), (int) Math.rint(yStart));
+                        pG2D.setClip(null);
+                        //get bounding rectangle sides
+                        Line2D.Double top = new Line2D.Double(xEnd - 50.0, yEnd - 50.0, xEnd + 50.0, yEnd - 50.0);
+                        Line2D.Double right = new Line2D.Double(xEnd + 50.0, yEnd - 50.0, xEnd + 50.0, yEnd + 50.0);
+                        Line2D.Double bottom = new Line2D.Double(xEnd - 50.0, yEnd + 50.0, xEnd + 50.0, yEnd + 50.0);
+                        Line2D.Double left = new Line2D.Double(xEnd - 50.0, yEnd - 50.0, xEnd - 50.0, yEnd + 50.0);
+
+                        //get intersection point
+                        Point2D inter = new Point.Double();
+                        try {
+                            inter = Intersection.getIntersection(new Line2D.Double(xEnd, yEnd, xStart, yStart), top);
+                            if (inter == null) {
+                                throw new Exception();
+                            }
+                        } catch (Exception e1) {
+                            try {
+                                inter = Intersection.getIntersection(new Line2D.Double(xEnd, yEnd, xStart, yStart), right);
+                                if (inter == null) {
+                                    throw new Exception();
+                                }
+                            } catch (Exception e2) {
+                                try {
+                                    inter = Intersection.getIntersection(new Line2D.Double(xEnd, yEnd, xStart, yStart), bottom);
+                                    if (inter == null) {
+                                        throw new Exception();
+                                    }
+                                } catch (Exception e3) {
+                                    try {
+                                        inter = Intersection.getIntersection(new Line2D.Double(xEnd, yEnd, xStart, yStart), left);
+                                        if (inter == null) {
+                                            throw new Exception();
+                                        }
+                                    } catch (Exception e4) {
+                                    }
+                                }
+                            }
+                        }
+
+                        //draw distance label
+                        if (inter != null) {
+                            double dist = DSCalculator.calculateDistance(v, target);
+                            String d = NumberFormat.getInstance().format(dist);
+                            Rectangle2D bb = pG2D.getFontMetrics().getStringBounds(d, pG2D);
+                            pG2D.fillRect((int) Math.floor(inter.getX() + bb.getX()), (int) Math.floor(inter.getY() + bb.getY()), (int) Math.floor(bb.getWidth()), (int) Math.floor(bb.getHeight()));
+                            pG2D.setColor(Color.BLACK);
+                            pG2D.drawString(d, (int) inter.getX(), (int) inter.getY());
+                        }
+                    }
+                }
+            }
         }
-        }
-        
-        Enumeration<Village> sources = TroopsManager.getSingleton().getTroopsForVillage(v).getSupports().keys();
-        while (sources.hasMoreElements()) {
-        Village source = sources.nextElement();
-        if (!villages.contains(source)) {
-        villages.add(source);
-        }
-        }
-        
-        for (Village target : villages) {
-        Line2D.Double supportLine = new Line2D.Double(v.getX() * pSettings.getFieldWidth(), v.getY() * pSettings.getFieldHeight(), target.getX() * pSettings.getFieldWidth(), target.getY() * pSettings.getFieldHeight());
-        
-        //draw full line
-        double xStart = (supportLine.getX1() - pMapPos.getX() * pSettings.getFieldWidth()) + pSettings.getFieldWidth() / 2;
-        double yStart = (supportLine.getY1() - pMapPos.getY() * pSettings.getFieldHeight()) + pSettings.getFieldHeight() / 2;
-        double xEnd = (supportLine.getX2() - pMapPos.getX() * pSettings.getFieldWidth()) + pSettings.getFieldWidth() / 2;
-        double yEnd = (supportLine.getY2() - pMapPos.getY() * pSettings.getFieldHeight()) + pSettings.getFieldHeight() / 2;
-        
-        if (pVisibleVillages.contains(v) && pVisibleVillages.contains(target)) {
-        pG2D.setColor(Color.YELLOW);
-        pG2D.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
-        pG2D.drawOval((int) xEnd - 2, (int) yEnd - 2, 4, 4);
-        } else if (pVisibleVillages.contains(v) && !pVisibleVillages.contains(target)) {
-        pG2D.setColor(Color.GREEN);
-        //draw clipped support line
-        pG2D.setClip((int) Math.rint(xStart - 50), (int) Math.rint(yStart - 50), 100, 100);
-        pG2D.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
-        pG2D.setClip(null);
-        //get bounding rectangle sides
-        Line2D.Double top = new Line2D.Double(xStart - 50.0, yStart - 50.0, xStart + 50.0, yStart - 50.0);
-        Line2D.Double right = new Line2D.Double(xStart + 50.0, yStart - 50.0, xStart + 50.0, yStart + 50.0);
-        Line2D.Double bottom = new Line2D.Double(xStart - 50.0, yStart + 50.0, xStart + 50.0, yStart + 50.0);
-        Line2D.Double left = new Line2D.Double(xStart - 50.0, yStart - 50.0, xStart - 50.0, yStart + 50.0);
-        
-        //get intersection point
-        Point2D inter = new Point.Double();
-        try {
-        inter = Intersection.getIntersection(new Line2D.Double(xStart, yStart, xEnd, yEnd), top);
-        if (inter == null) {
-        throw new Exception();
-        }
-        } catch (Exception e1) {
-        try {
-        inter = Intersection.getIntersection(new Line2D.Double(xStart, yStart, xEnd, yEnd), right);
-        if (inter == null) {
-        throw new Exception();
-        }
-        } catch (Exception e2) {
-        try {
-        inter = Intersection.getIntersection(new Line2D.Double(xStart, yStart, xEnd, yEnd), bottom);
-        if (inter == null) {
-        throw new Exception();
-        }
-        } catch (Exception e3) {
-        try {
-        inter = Intersection.getIntersection(new Line2D.Double(xStart, yStart, xEnd, yEnd), left);
-        if (inter == null) {
-        throw new Exception();
-        }
-        } catch (Exception e4) {
-        }
-        }
-        }
-        }
-        //draw distance label
-        if (inter != null) {
-        double dist = DSCalculator.calculateDistance(v, target);
-        String d = NumberFormat.getInstance().format(dist);
-        Rectangle2D bb = pG2D.getFontMetrics().getStringBounds(d, pG2D);
-        pG2D.fillRect((int) (inter.getX() + bb.getX()), (int) (inter.getY() + bb.getY()), (int) bb.getWidth(), (int) bb.getHeight());
-        pG2D.setColor(Color.BLACK);
-        pG2D.drawString(d, (int) inter.getX(), (int) inter.getY());
-        }
-        } else if (!pVisibleVillages.contains(v) && pVisibleVillages.contains(target)) {
-        pG2D.setColor(Color.RED);
-        //draw clipped support line
-        pG2D.setClip((int) Math.rint(xEnd - 50), (int) Math.rint(yEnd - 50), 100, 100);
-        pG2D.drawLine((int) Math.rint(xEnd), (int) Math.rint(yEnd), (int) Math.rint(xStart), (int) Math.rint(yStart));
-        pG2D.setClip(null);
-        //get bounding rectangle sides
-        Line2D.Double top = new Line2D.Double(xEnd - 50.0, yEnd - 50.0, xEnd + 50.0, yEnd - 50.0);
-        Line2D.Double right = new Line2D.Double(xEnd + 50.0, yEnd - 50.0, xEnd + 50.0, yEnd + 50.0);
-        Line2D.Double bottom = new Line2D.Double(xEnd - 50.0, yEnd + 50.0, xEnd + 50.0, yEnd + 50.0);
-        Line2D.Double left = new Line2D.Double(xEnd - 50.0, yEnd - 50.0, xEnd - 50.0, yEnd + 50.0);
-        
-        //get intersection point
-        Point2D inter = new Point.Double();
-        try {
-        inter = Intersection.getIntersection(new Line2D.Double(xEnd, yEnd, xStart, yStart), top);
-        if (inter == null) {
-        throw new Exception();
-        }
-        } catch (Exception e1) {
-        try {
-        inter = Intersection.getIntersection(new Line2D.Double(xEnd, yEnd, xStart, yStart), right);
-        if (inter == null) {
-        throw new Exception();
-        }
-        } catch (Exception e2) {
-        try {
-        inter = Intersection.getIntersection(new Line2D.Double(xEnd, yEnd, xStart, yStart), bottom);
-        if (inter == null) {
-        throw new Exception();
-        }
-        } catch (Exception e3) {
-        try {
-        inter = Intersection.getIntersection(new Line2D.Double(xEnd, yEnd, xStart, yStart), left);
-        if (inter == null) {
-        throw new Exception();
-        }
-        } catch (Exception e4) {
-        }
-        }
-        }
-        }
-        
-        //draw distance label
-        if (inter != null) {
-        double dist = DSCalculator.calculateDistance(v, target);
-        String d = NumberFormat.getInstance().format(dist);
-        Rectangle2D bb = pG2D.getFontMetrics().getStringBounds(d, pG2D);
-        pG2D.fillRect((int) Math.floor(inter.getX() + bb.getX()), (int) Math.floor(inter.getY() + bb.getY()), (int) Math.floor(bb.getWidth()), (int) Math.floor(bb.getHeight()));
-        pG2D.setColor(Color.BLACK);
-        pG2D.drawString(d, (int) inter.getX(), (int) inter.getY());
-        }
-        }
-        }
-        }
-        }*/
     }
 
     private boolean Intersects(Point2D.Double line1Point1, Point2D.Double line1Point2, Point2D.Double line2Point1, Point2D.Double line2Point2, Point2D.Double intersection) { // Based on the 2d line intersection method from "comp.graphics.algorithmsFrequently Asked Questions"

@@ -5,10 +5,11 @@
  */
 package de.tor.tribes.ui;
 
-import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
-import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.ui.views.DSWorkbenchReTimerFrame;
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
+import de.tor.tribes.ui.views.DSWorkbenchDistanceFrame;
+import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
+import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
 import de.tor.tribes.ui.views.DSWorkbenchNotepad;
 import de.tor.tribes.ui.views.DSWorkbenchFormFrame;
 import de.tor.tribes.ui.views.DSWorkbenchSOSRequestAnalyzer;
@@ -21,7 +22,6 @@ import de.tor.tribes.ui.views.DSWorkbenchRankFrame;
 import de.tor.tribes.ui.views.DSWorkbenchSearchFrame;
 import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor;
 import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
-import de.tor.tribes.ui.views.DSWorkbenchDistanceFrame;
 import de.tor.tribes.ui.views.DSWorkbenchTagFrame;
 import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
@@ -100,7 +100,6 @@ import javax.swing.table.DefaultTableModel;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 /**
- * @TODO (DIFF) Included report ex- and import
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends JRibbonFrame implements
@@ -656,7 +655,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             MapPanel.getSingleton().resetServerDependendSettings();
             MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
             MapPanel.getSingleton().getAttackAddFrame().buildUnitBox();
-
             //setup views
             DSWorkbenchMarkerFrame.getSingleton().resetView();
             DSWorkbenchChurchFrame.getSingleton().resetView();
@@ -677,6 +675,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             DSWorkbenchReportFrame.getSingleton().resetView();
             DSWorkbenchSOSRequestAnalyzer.getSingleton().resetView();
             DSWorkbenchMerchantDistibutor.getSingleton().resetView();
+              
             //update attack planner
             if (mTribeTribeAttackFrame != null) {
                 mTribeTribeAttackFrame.setup();
@@ -1123,8 +1122,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jRemoveROIButton = new javax.swing.JButton();
         jAddROIButton = new javax.swing.JButton();
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
-        jExportDialog.setTitle(bundle.getString("DSWorkbenchMainFrame.jExportDialog.title")); // NOI18N
+        jExportDialog.setTitle("Export");
 
         jAttackExportTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1145,20 +1143,20 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jAttackExportTable.setOpaque(false);
         jScrollPane1.setViewportView(jAttackExportTable);
 
-        jExportTags.setText(bundle.getString("DSWorkbenchMainFrame.jExportTags.text")); // NOI18N
+        jExportTags.setText("Tags exportieren");
 
-        jExportTroops.setText(bundle.getString("DSWorkbenchMainFrame.jExportTroops.text")); // NOI18N
+        jExportTroops.setText("Truppen exportieren");
 
-        jExportForms.setText(bundle.getString("DSWorkbenchMainFrame.jExportForms.text")); // NOI18N
+        jExportForms.setText("Formen exportieren");
 
-        jExportButton.setText(bundle.getString("DSWorkbenchMainFrame.jExportButton.text")); // NOI18N
+        jExportButton.setText("Exportieren");
         jExportButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireExportEvent(evt);
             }
         });
 
-        jCancelExportButton.setText(bundle.getString("DSWorkbenchMainFrame.jCancelExportButton.text")); // NOI18N
+        jCancelExportButton.setText("Abbrechen");
         jCancelExportButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireExportEvent(evt);
@@ -1184,7 +1182,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMarkerSetExportTable.setOpaque(false);
         jScrollPane4.setViewportView(jMarkerSetExportTable);
 
-        jExportNotes.setText(bundle.getString("DSWorkbenchMainFrame.jExportNotes.text")); // NOI18N
+        jExportNotes.setText("Notizen exportieren");
 
         jReportSetExportTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1253,35 +1251,33 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                 .addContainerGap())
         );
 
-        jAddROIDialog.setTitle(bundle.getString("DSWorkbenchMainFrame.jAddROIDialog.title")); // NOI18N
+        jAddROIDialog.setTitle("ROI hinzufügen");
 
-        jLabel7.setText(bundle.getString("DSWorkbenchMainFrame.jLabel7.text")); // NOI18N
+        jLabel7.setText("Zentrum");
 
-        jROIRegion.setText(bundle.getString("DSWorkbenchMainFrame.jROIRegion.text")); // NOI18N
         jROIRegion.setEnabled(false);
         jROIRegion.setMaximumSize(new java.awt.Dimension(120, 20));
         jROIRegion.setMinimumSize(new java.awt.Dimension(120, 20));
         jROIRegion.setPreferredSize(new java.awt.Dimension(120, 20));
 
-        jLabel8.setText(bundle.getString("DSWorkbenchMainFrame.jLabel8.text")); // NOI18N
+        jLabel8.setText("Bezeichnung");
 
-        jROITextField.setText(bundle.getString("DSWorkbenchMainFrame.jROITextField.text")); // NOI18N
-        jROITextField.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jROITextField.toolTipText")); // NOI18N
+        jROITextField.setToolTipText("Eindeutige Bezeichnung zur Kennzeichnung der ROI");
 
-        jLabel9.setText(bundle.getString("DSWorkbenchMainFrame.jLabel9.text")); // NOI18N
+        jLabel9.setText("Position");
 
         jROIPosition.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Ende" }));
-        jROIPosition.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jROIPosition.toolTipText")); // NOI18N
+        jROIPosition.setToolTipText("Position der ROI (Positionen 1-10 können per Shortcut gewählt werden)");
 
-        jAddNewROIButton.setText(bundle.getString("DSWorkbenchMainFrame.jAddNewROIButton.text")); // NOI18N
-        jAddNewROIButton.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jAddNewROIButton.toolTipText")); // NOI18N
+        jAddNewROIButton.setText("Hinzufügen");
+        jAddNewROIButton.setToolTipText("ROI hinzufügen");
         jAddNewROIButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireAddROIDoneEvent(evt);
             }
         });
 
-        jButton5.setText(bundle.getString("DSWorkbenchMainFrame.jButton5.text")); // NOI18N
+        jButton5.setText("Abbrechen");
         jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireAddROIDoneEvent(evt);
@@ -1349,11 +1345,11 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
         jMenu1.setBackground(new java.awt.Color(225, 213, 190));
         jMenu1.setMnemonic('a');
-        jMenu1.setText(bundle.getString("DSWorkbenchMainFrame.jMenu1.text")); // NOI18N
+        jMenu1.setText("Allgemein");
 
         jMenuItem1.setBackground(new java.awt.Color(239, 235, 223));
         jMenuItem1.setMnemonic('t');
-        jMenuItem1.setText(bundle.getString("DSWorkbenchMainFrame.jMenuItem1.text")); // NOI18N
+        jMenuItem1.setText("Einstellungen");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireShowSettingsEvent(evt);
@@ -1363,7 +1359,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu1.add(jSeparator2);
 
         jMenuItem3.setBackground(new java.awt.Color(239, 235, 223));
-        jMenuItem3.setText(bundle.getString("DSWorkbenchMainFrame.jMenuItem3.text")); // NOI18N
+        jMenuItem3.setText("Import...");
         jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireShowImportDialogEvent(evt);
@@ -1372,7 +1368,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu1.add(jMenuItem3);
 
         jMenuItem4.setBackground(new java.awt.Color(239, 235, 223));
-        jMenuItem4.setText(bundle.getString("DSWorkbenchMainFrame.jMenuItem4.text")); // NOI18N
+        jMenuItem4.setText("Export...");
         jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireOpenExportDialogEvent(evt);
@@ -1383,7 +1379,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
         jMenuItem2.setBackground(new java.awt.Color(239, 235, 223));
         jMenuItem2.setMnemonic('n');
-        jMenuItem2.setText(bundle.getString("DSWorkbenchMainFrame.jMenuItem2.text")); // NOI18N
+        jMenuItem2.setText("Beenden");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireExitEvent(evt);
@@ -1395,11 +1391,11 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
         jMenu3.setBackground(new java.awt.Color(225, 213, 190));
         jMenu3.setMnemonic('e');
-        jMenu3.setText(bundle.getString("DSWorkbenchMainFrame.jMenu3.text")); // NOI18N
+        jMenu3.setText("Werkzeuge");
 
         jSearchItem.setBackground(new java.awt.Color(239, 235, 223));
         jSearchItem.setMnemonic('s');
-        jSearchItem.setText(bundle.getString("DSWorkbenchMainFrame.jSearchItem.text")); // NOI18N
+        jSearchItem.setText("Suche");
         jSearchItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireToolsActionEvent(evt);
@@ -1408,7 +1404,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu3.add(jSearchItem);
 
         jClockItem.setBackground(new java.awt.Color(239, 235, 223));
-        jClockItem.setText(bundle.getString("DSWorkbenchMainFrame.jClockItem.text")); // NOI18N
+        jClockItem.setText("Uhr");
         jClockItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireToolsActionEvent(evt);
@@ -1417,7 +1413,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu3.add(jClockItem);
 
         jTribeTribeAttackItem.setBackground(new java.awt.Color(239, 235, 223));
-        jTribeTribeAttackItem.setText(bundle.getString("DSWorkbenchMainFrame.jTribeTribeAttackItem.text")); // NOI18N
+        jTribeTribeAttackItem.setText("Angriffsplaner");
         jTribeTribeAttackItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireToolsActionEvent(evt);
@@ -1426,7 +1422,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu3.add(jTribeTribeAttackItem);
 
         jUnitOverviewItem.setBackground(new java.awt.Color(239, 235, 223));
-        jUnitOverviewItem.setText(bundle.getString("DSWorkbenchMainFrame.jUnitOverviewItem.text")); // NOI18N
+        jUnitOverviewItem.setText("Laufzeitenübersicht");
         jUnitOverviewItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireToolsActionEvent(evt);
@@ -1435,7 +1431,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu3.add(jUnitOverviewItem);
 
         jSelectionOverviewItem.setBackground(new java.awt.Color(239, 235, 223));
-        jSelectionOverviewItem.setText(bundle.getString("DSWorkbenchMainFrame.jSelectionOverviewItem.text_1")); // NOI18N
+        jSelectionOverviewItem.setText("Auswahlübersicht");
         jSelectionOverviewItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireToolsActionEvent(evt);
@@ -1444,7 +1440,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu3.add(jSelectionOverviewItem);
 
         jStartAStarItem.setBackground(new java.awt.Color(239, 235, 223));
-        jStartAStarItem.setText(bundle.getString("DSWorkbenchMainFrame.jStartAStarItem.text_1")); // NOI18N
+        jStartAStarItem.setText("A*Star");
         jStartAStarItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireToolsActionEvent(evt);
@@ -1453,7 +1449,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu3.add(jStartAStarItem);
 
         jDistanceItem.setBackground(new java.awt.Color(239, 235, 223));
-        jDistanceItem.setText(bundle.getString("DSWorkbenchMainFrame.jDistanceItem.text_1")); // NOI18N
+        jDistanceItem.setText("Entfernungsübersicht");
         jDistanceItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireToolsActionEvent(evt);
@@ -1462,7 +1458,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu3.add(jDistanceItem);
 
         jDoItYourselfAttackPlanerItem.setBackground(new java.awt.Color(239, 235, 223));
-        jDoItYourselfAttackPlanerItem.setText(bundle.getString("DSWorkbenchMainFrame.jDoItYourselfAttackPlanerItem.text_1")); // NOI18N
+        jDoItYourselfAttackPlanerItem.setText("Manueller Angriffsplaner");
         jDoItYourselfAttackPlanerItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireToolsActionEvent(evt);
@@ -1471,7 +1467,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu3.add(jDoItYourselfAttackPlanerItem);
 
         jReTimeToolEvent.setBackground(new java.awt.Color(239, 235, 223));
-        jReTimeToolEvent.setText(bundle.getString("DSWorkbenchMainFrame.jReTimeToolEvent.text_1")); // NOI18N
+        jReTimeToolEvent.setText("Re-Time Werkzeug");
         jReTimeToolEvent.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireToolsActionEvent(evt);
@@ -1480,7 +1476,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu3.add(jReTimeToolEvent);
 
         jSOSAnalyzerItem.setBackground(new java.awt.Color(239, 235, 223));
-        jSOSAnalyzerItem.setText(bundle.getString("DSWorkbenchMainFrame.jSOSAnalyzerItem.text_1")); // NOI18N
+        jSOSAnalyzerItem.setText("SOS Analyzer");
         jSOSAnalyzerItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireToolsActionEvent(evt);
@@ -1489,7 +1485,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu3.add(jSOSAnalyzerItem);
 
         jMerchantDistributorItem.setBackground(new java.awt.Color(239, 235, 223));
-        jMerchantDistributorItem.setText(bundle.getString("DSWorkbenchMainFrame.jMerchantDistributorItem.text_1")); // NOI18N
+        jMerchantDistributorItem.setText("Rohstoffverteiler");
         jMerchantDistributorItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireToolsActionEvent(evt);
@@ -1501,10 +1497,10 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
         jMenu2.setBackground(new java.awt.Color(225, 213, 190));
         jMenu2.setMnemonic('n');
-        jMenu2.setText(bundle.getString("DSWorkbenchMainFrame.jMenu2.text")); // NOI18N
+        jMenu2.setText("Ansicht");
 
         jShowAttackFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowAttackFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowAttackFrame.text")); // NOI18N
+        jShowAttackFrame.setText("Angriffe");
         jShowAttackFrame.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireShowAttackFrameEvent(evt);
@@ -1513,7 +1509,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu2.add(jShowAttackFrame);
 
         jShowMarkerFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowMarkerFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowMarkerFrame.text")); // NOI18N
+        jShowMarkerFrame.setText("Markierungen");
         jShowMarkerFrame.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireShowMarkerFrameEvent(evt);
@@ -1522,7 +1518,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu2.add(jShowMarkerFrame);
 
         jShowTroopsFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowTroopsFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowTroopsFrame.text")); // NOI18N
+        jShowTroopsFrame.setText("Truppenübersicht");
         jShowTroopsFrame.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireShowTroopsFrameEvent(evt);
@@ -1531,7 +1527,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu2.add(jShowTroopsFrame);
 
         jShowRankFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowRankFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowRankFrame.text")); // NOI18N
+        jShowRankFrame.setText("Ranglisten");
         jShowRankFrame.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireShowRangFrameEvent(evt);
@@ -1540,7 +1536,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu2.add(jShowRankFrame);
 
         jShowFormsFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowFormsFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowFormsFrame.text")); // NOI18N
+        jShowFormsFrame.setText("Formen");
         jShowFormsFrame.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireShowFormsFrameEvent(evt);
@@ -1549,7 +1545,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu2.add(jShowFormsFrame);
 
         jShowChurchFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowChurchFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowChurchFrame.text")); // NOI18N
+        jShowChurchFrame.setText("Kirchen");
         jShowChurchFrame.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireShowChurchFrameEvent(evt);
@@ -1558,7 +1554,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu2.add(jShowChurchFrame);
 
         jShowConquersFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowConquersFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowConquersFrame.text")); // NOI18N
+        jShowConquersFrame.setText("Eroberungen");
         jShowConquersFrame.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireShowConquersFrameEvent(evt);
@@ -1567,7 +1563,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu2.add(jShowConquersFrame);
 
         jShowNotepadFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowNotepadFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowNotepadFrame.text")); // NOI18N
+        jShowNotepadFrame.setText("Notizblock");
         jShowNotepadFrame.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireShowNotepadEvent(evt);
@@ -1576,7 +1572,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu2.add(jShowNotepadFrame);
 
         jShowTagFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowTagFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowTagFrame.text")); // NOI18N
+        jShowTagFrame.setText("Tags");
         jShowTagFrame.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireShowTagFrameEvent(evt);
@@ -1585,7 +1581,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu2.add(jShowTagFrame);
 
         jShowStatsFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowStatsFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowStatsFrame.text")); // NOI18N
+        jShowStatsFrame.setText("Statistiken");
         jShowStatsFrame.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireShowStatsFrameEvent(evt);
@@ -1594,7 +1590,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu2.add(jShowStatsFrame);
 
         jShowReportFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowReportFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowReportFrame.text")); // NOI18N
+        jShowReportFrame.setText("Berichtsdatenbank");
         jShowReportFrame.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireShowReportFrameEvent(evt);
@@ -1605,14 +1601,14 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenuBar1.add(jMenu2);
 
         jMenu4.setBackground(new java.awt.Color(225, 213, 190));
-        jMenu4.setText(bundle.getString("DSWorkbenchMainFrame.jMenu4.text")); // NOI18N
+        jMenu4.setText("?");
 
         jHelpItem.setBackground(new java.awt.Color(239, 235, 223));
-        jHelpItem.setText(bundle.getString("DSWorkbenchMainFrame.jHelpItem.text")); // NOI18N
+        jHelpItem.setText("Hilfe");
         jMenu4.add(jHelpItem);
 
         jAboutItem.setBackground(new java.awt.Color(239, 235, 223));
-        jAboutItem.setText(bundle.getString("DSWorkbenchMainFrame.jAboutItem.text")); // NOI18N
+        jAboutItem.setText("Über...");
         jAboutItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireShowAboutEvent(evt);
@@ -1621,7 +1617,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu4.add(jAboutItem);
 
         jDonateButton.setBackground(new java.awt.Color(239, 235, 223));
-        jDonateButton.setText(bundle.getString("DSWorkbenchMainFrame.jDonateButton.text_1")); // NOI18N
+        jDonateButton.setText("Spenden...");
         jDonateButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireDoDonationEvent(evt);
@@ -1632,7 +1628,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenuBar1.add(jMenu4);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle(bundle.getString("DSWorkbenchMainFrame.title")); // NOI18N
+        setTitle("DS Workbench 0.92b");
         setBackground(new java.awt.Color(225, 213, 190));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -1664,7 +1660,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jTaskPane1.setLayout(percentLayout1);
 
         jNavigationGroup.setExpanded(false);
-        jNavigationGroup.setTitle(bundle.getString("DSWorkbenchMainFrame.jNavigationGroup.title")); // NOI18N
+        jNavigationGroup.setTitle("Navigation");
         com.l2fprod.common.swing.PercentLayout percentLayout6 = new com.l2fprod.common.swing.PercentLayout();
         percentLayout6.setOrientation(1);
         jNavigationGroup.getContentPane().setLayout(percentLayout6);
@@ -1759,7 +1755,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             }
         });
 
-        jCenterX.setText(bundle.getString("DSWorkbenchMainFrame.jCenterX.text")); // NOI18N
+        jCenterX.setText("500");
         jCenterX.setMaximumSize(new java.awt.Dimension(40, 20));
         jCenterX.setMinimumSize(new java.awt.Dimension(40, 20));
         jCenterX.setPreferredSize(new java.awt.Dimension(40, 20));
@@ -1769,17 +1765,17 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             }
         });
 
-        jLabel1.setText(bundle.getString("DSWorkbenchMainFrame.jLabel1.text")); // NOI18N
+        jLabel1.setText("X");
 
-        jLabel2.setText(bundle.getString("DSWorkbenchMainFrame.jLabel2.text")); // NOI18N
+        jLabel2.setText("Y");
 
-        jCenterY.setText(bundle.getString("DSWorkbenchMainFrame.jCenterY.text")); // NOI18N
+        jCenterY.setText("500");
         jCenterY.setMaximumSize(new java.awt.Dimension(40, 20));
         jCenterY.setMinimumSize(new java.awt.Dimension(40, 20));
         jCenterY.setPreferredSize(new java.awt.Dimension(40, 20));
 
         jRefreshButton.setBackground(new java.awt.Color(239, 235, 223));
-        jRefreshButton.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jRefreshButton.toolTipText")); // NOI18N
+        jRefreshButton.setToolTipText("Position aktualisieren");
         jRefreshButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jRefreshButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jRefreshButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -1819,7 +1815,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         });
 
         jCenterCoordinateIngame.setBackground(new java.awt.Color(239, 235, 223));
-        jCenterCoordinateIngame.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jCenterCoordinateIngame.toolTipText")); // NOI18N
+        jCenterCoordinateIngame.setToolTipText("Zentrieren (InGame)");
         jCenterCoordinateIngame.setMaximumSize(new java.awt.Dimension(30, 30));
         jCenterCoordinateIngame.setMinimumSize(new java.awt.Dimension(30, 30));
         jCenterCoordinateIngame.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -1872,7 +1868,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                 .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
         jNavigationPanelLayout.setVerticalGroup(
             jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1921,14 +1917,14 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
         jInformationGroup.setBackground(new java.awt.Color(239, 235, 223));
         jInformationGroup.setExpanded(false);
-        jInformationGroup.setTitle(bundle.getString("DSWorkbenchMainFrame.jInformationGroup.title")); // NOI18N
+        jInformationGroup.setTitle("Allgemeine Informationen");
         com.l2fprod.common.swing.PercentLayout percentLayout5 = new com.l2fprod.common.swing.PercentLayout();
         percentLayout5.setOrientation(1);
         jInformationGroup.getContentPane().setLayout(percentLayout5);
 
         jInformationPanel.setBackground(new java.awt.Color(239, 235, 223));
 
-        jCurrentPlayerVillages.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jCurrentPlayerVillages.toolTipText")); // NOI18N
+        jCurrentPlayerVillages.setToolTipText("Aktives Dorf als Ausgangspunkt für InGame Aktionen");
         jCurrentPlayerVillages.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
             public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
             }
@@ -1945,7 +1941,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jCurrentPlayer.setPreferredSize(new java.awt.Dimension(155, 14));
 
         jCenterIngameButton.setBackground(new java.awt.Color(239, 235, 223));
-        jCenterIngameButton.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jCenterIngameButton.toolTipText")); // NOI18N
+        jCenterIngameButton.setToolTipText("Zentrieren (InGame)");
         jCenterIngameButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jCenterIngameButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jCenterIngameButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -1955,13 +1951,13 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             }
         });
 
-        jOnlineLabel.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jOnlineLabel.toolTipText")); // NOI18N
+        jOnlineLabel.setToolTipText("Online/Offline Modus");
         jOnlineLabel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jOnlineLabel.setMaximumSize(new java.awt.Dimension(30, 30));
         jOnlineLabel.setMinimumSize(new java.awt.Dimension(30, 30));
         jOnlineLabel.setPreferredSize(new java.awt.Dimension(30, 30));
 
-        jCurrentToolLabel.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jCurrentToolLabel.toolTipText")); // NOI18N
+        jCurrentToolLabel.setToolTipText("Momentan gewähltes Werkzeug");
         jCurrentToolLabel.setAlignmentY(0.0F);
         jCurrentToolLabel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jCurrentToolLabel.setFocusable(false);
@@ -1973,8 +1969,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
         jButton1.setBackground(new java.awt.Color(239, 235, 223));
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/camera.png"))); // NOI18N
-        jButton1.setText(bundle.getString("DSWorkbenchMainFrame.jButton1.text")); // NOI18N
-        jButton1.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jButton1.toolTipText")); // NOI18N
+        jButton1.setToolTipText("Foto der Hauptkarte erstellen");
         jButton1.setMaximumSize(new java.awt.Dimension(30, 30));
         jButton1.setMinimumSize(new java.awt.Dimension(30, 30));
         jButton1.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -1985,7 +1980,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         });
 
         jEnableClipboardWatchButton.setBackground(new java.awt.Color(239, 235, 223));
-        jEnableClipboardWatchButton.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jEnableClipboardWatchButton.toolTipText")); // NOI18N
+        jEnableClipboardWatchButton.setToolTipText("Suche nach Informationen in der Zwischenablage an-/ausschalten");
         jEnableClipboardWatchButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jEnableClipboardWatchButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jEnableClipboardWatchButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -2002,15 +1997,15 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jInformationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
-                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 245, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 239, Short.MAX_VALUE)
                     .addGroup(jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
                         .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(4, 4, 4)
                         .addComponent(jEnableClipboardWatchButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -2037,7 +2032,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
         jTaskPane1.add(jInformationGroup);
 
-        jMapGroup.setTitle(bundle.getString("DSWorkbenchMainFrame.jMapGroup.title")); // NOI18N
+        jMapGroup.setTitle("Kartenanzeige");
         com.l2fprod.common.swing.PercentLayout percentLayout4 = new com.l2fprod.common.swing.PercentLayout();
         percentLayout4.setOrientation(1);
         jMapGroup.getContentPane().setLayout(percentLayout4);
@@ -2046,8 +2041,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jPanel2.setMinimumSize(new java.awt.Dimension(193, 312));
         jPanel2.setPreferredSize(new java.awt.Dimension(193, 312));
 
-        jShowMapPopup.setText(bundle.getString("DSWorkbenchMainFrame.jShowMapPopup.text")); // NOI18N
-        jShowMapPopup.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jShowMapPopup.toolTipText")); // NOI18N
+        jShowMapPopup.setText("Kartenpopup anzeigen");
+        jShowMapPopup.setToolTipText("Zeigt Informationen über das Dorf unter dem Mauszeiger an");
         jShowMapPopup.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jShowMapPopup.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -2055,7 +2050,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             }
         });
 
-        jLabel5.setText(bundle.getString("DSWorkbenchMainFrame.jLabel5.text")); // NOI18N
+        jLabel5.setText("Laufzeitradius");
 
         jLayerList.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { " " };
@@ -2064,12 +2059,11 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         });
         jScrollPane3.setViewportView(jLayerList);
 
-        jLabel10.setText(bundle.getString("DSWorkbenchMainFrame.jLabel10.text")); // NOI18N
+        jLabel10.setText("Ebenen");
 
         jLayerUpButton.setBackground(new java.awt.Color(239, 235, 223));
         jLayerUpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/arrow_up.png"))); // NOI18N
-        jLayerUpButton.setText(bundle.getString("DSWorkbenchMainFrame.jLayerUpButton.text")); // NOI18N
-        jLayerUpButton.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jLayerUpButton.toolTipText")); // NOI18N
+        jLayerUpButton.setToolTipText("Ebene nach oben verschieben");
         jLayerUpButton.setMaximumSize(new java.awt.Dimension(20, 20));
         jLayerUpButton.setMinimumSize(new java.awt.Dimension(20, 20));
         jLayerUpButton.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -2081,8 +2075,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
         jLayerDownButton.setBackground(new java.awt.Color(239, 235, 223));
         jLayerDownButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/arrow_down.png"))); // NOI18N
-        jLayerDownButton.setText(bundle.getString("DSWorkbenchMainFrame.jLayerDownButton.text")); // NOI18N
-        jLayerDownButton.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jLayerDownButton.toolTipText")); // NOI18N
+        jLayerDownButton.setToolTipText("Ebene nach unten verschieben");
         jLayerDownButton.setMaximumSize(new java.awt.Dimension(20, 20));
         jLayerDownButton.setMinimumSize(new java.awt.Dimension(20, 20));
         jLayerDownButton.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -2092,7 +2085,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             }
         });
 
-        jLabel12.setText(bundle.getString("DSWorkbenchMainFrame.jLabel12.text")); // NOI18N
+        jLabel12.setText("Grafikpaket");
 
         jGraphicPacks.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -2100,8 +2093,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             }
         });
 
-        jHighlightTribeVillages.setText(bundle.getString("DSWorkbenchMainFrame.jHighlightTribeVillages.text")); // NOI18N
-        jHighlightTribeVillages.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jHighlightTribeVillages.toolTipText")); // NOI18N
+        jHighlightTribeVillages.setText("Spielerdörfer hervorheben");
+        jHighlightTribeVillages.setToolTipText("Markiert im Kartenausschnitt alle Dörfer des Spielers, dessen Dorf unter dem Mauszeiger liegt");
         jHighlightTribeVillages.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jHighlightTribeVillages.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -2109,8 +2102,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             }
         });
 
-        jShowRuler.setText(bundle.getString("DSWorkbenchMainFrame.jShowRuler.text")); // NOI18N
-        jShowRuler.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jShowRuler.toolTipText")); // NOI18N
+        jShowRuler.setText("Lineal anzeigen");
+        jShowRuler.setToolTipText("Zeichnet ein Koordinatenlineal am Kartenrand");
         jShowRuler.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jShowRuler.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -2119,7 +2112,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         });
 
         jHourField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jHourField.setText(bundle.getString("DSWorkbenchMainFrame.jHourField.text")); // NOI18N
+        jHourField.setText("1");
         jHourField.setMaximumSize(new java.awt.Dimension(24, 20));
         jHourField.setMinimumSize(new java.awt.Dimension(24, 20));
         jHourField.setPreferredSize(new java.awt.Dimension(24, 20));
@@ -2130,7 +2123,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         });
 
         jMinuteField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jMinuteField.setText(bundle.getString("DSWorkbenchMainFrame.jMinuteField.text")); // NOI18N
+        jMinuteField.setText("0");
         jMinuteField.setMaximumSize(new java.awt.Dimension(24, 20));
         jMinuteField.setMinimumSize(new java.awt.Dimension(24, 20));
         jMinuteField.setPreferredSize(new java.awt.Dimension(24, 20));
@@ -2140,12 +2133,12 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             }
         });
 
-        jLabel11.setText(bundle.getString("DSWorkbenchMainFrame.jLabel11.text")); // NOI18N
+        jLabel11.setText("h");
 
-        jLabel13.setText(bundle.getString("DSWorkbenchMainFrame.jLabel13.text")); // NOI18N
+        jLabel13.setText("min");
 
-        jShowMouseOverInfo.setText(bundle.getString("DSWorkbenchMainFrame.jShowMouseOverInfo.text")); // NOI18N
-        jShowMouseOverInfo.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jShowMouseOverInfo.toolTipText")); // NOI18N
+        jShowMouseOverInfo.setText("MouseOver Infos anzeigen");
+        jShowMouseOverInfo.setToolTipText("Zeigt Informationen über das Dorf unter dem Mauszeiger an");
         jShowMouseOverInfo.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jShowMouseOverInfo.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -2160,19 +2153,19 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jShowMouseOverInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                    .addComponent(jShowMouseOverInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jShowRuler, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
+                        .addComponent(jShowRuler, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
                         .addGap(6, 6, 6))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel12)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jGraphicPacks, 0, 186, Short.MAX_VALUE))
-                    .addComponent(jHighlightTribeVillages, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
-                    .addComponent(jShowMapPopup, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                        .addComponent(jGraphicPacks, 0, 191, Short.MAX_VALUE))
+                    .addComponent(jHighlightTribeVillages, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
+                    .addComponent(jShowMapPopup, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 89, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 107, Short.MAX_VALUE)
                         .addComponent(jHourField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel11)
@@ -2183,7 +2176,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel10)
                         .addGap(14, 14, 14)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE))
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addComponent(jLayerUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -2220,7 +2213,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLayerDownButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLayerUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         jMapGroup.getContentPane().add(jPanel2);
@@ -2228,7 +2221,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jTaskPane1.add(jMapGroup);
 
         jROIGroup.setExpanded(false);
-        jROIGroup.setTitle(bundle.getString("DSWorkbenchMainFrame.jROIGroup.title")); // NOI18N
+        jROIGroup.setTitle("ROIs");
         com.l2fprod.common.swing.PercentLayout percentLayout2 = new com.l2fprod.common.swing.PercentLayout();
         percentLayout2.setOrientation(1);
         jROIGroup.getContentPane().setLayout(percentLayout2);
@@ -2238,7 +2231,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jPanel3.setMinimumSize(new java.awt.Dimension(293, 70));
         jPanel3.setPreferredSize(new java.awt.Dimension(293, 70));
 
-        jLabel6.setText(bundle.getString("DSWorkbenchMainFrame.jLabel6.text")); // NOI18N
+        jLabel6.setText("ROIs");
 
         jROIBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -2248,7 +2241,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
         jRemoveROIButton.setBackground(new java.awt.Color(239, 235, 223));
         jRemoveROIButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/remove.gif"))); // NOI18N
-        jRemoveROIButton.setText(bundle.getString("DSWorkbenchMainFrame.jRemoveROIButton.text")); // NOI18N
         jRemoveROIButton.setMaximumSize(new java.awt.Dimension(23, 23));
         jRemoveROIButton.setMinimumSize(new java.awt.Dimension(23, 23));
         jRemoveROIButton.setPreferredSize(new java.awt.Dimension(23, 23));
@@ -2260,7 +2252,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
         jAddROIButton.setBackground(new java.awt.Color(239, 235, 223));
         jAddROIButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
-        jAddROIButton.setText(bundle.getString("DSWorkbenchMainFrame.jAddROIButton.text")); // NOI18N
         jAddROIButton.setMaximumSize(new java.awt.Dimension(23, 23));
         jAddROIButton.setMinimumSize(new java.awt.Dimension(23, 23));
         jAddROIButton.setPreferredSize(new java.awt.Dimension(23, 23));
@@ -2280,7 +2271,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jROIBox, 0, 12, Short.MAX_VALUE))
+                        .addComponent(jROIBox, 0, 18, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addComponent(jRemoveROIButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -2297,7 +2288,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jAddROIButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRemoveROIButton, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE))
+                    .addComponent(jRemoveROIButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 

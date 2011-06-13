@@ -78,9 +78,6 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
- * @TODO (DIFF) Implemented SOS analyzer
- * @TODO (DIFF) Confirm box on submit to attack view
- * @TODO (DIFF) Correct tooltips for buttons
  * @author Torridity
  */
 public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame implements ActionListener {

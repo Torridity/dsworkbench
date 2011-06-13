@@ -73,10 +73,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
 
 // -Dsun.java2d.d3d=true -Dsun.java2d.translaccel=true -Dsun.java2d.ddforcevram=true
 /**
- * @TODO (DIFF) Confirm message for removing expired attacks
- * @TODO (DIFF) Removed limit for attacks to browser feature
- * @TODO (DIFF) Changing of attack type and unit implemented
- * @author  Charon
+  * @author  Charon
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener {
 
@@ -111,6 +108,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 g.drawLine(0, 0, 3, 3);
                 g.dispose();
                 TexturePaint paint = new TexturePaint(back, new Rectangle2D.Double(0, 0, back.getWidth(), back.getHeight()));
+                
                 jxSearchPane.setBackgroundPainter(new MattePainter(paint));
                 DefaultListModel model = new DefaultListModel();
 
@@ -487,8 +485,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jAttackFrameAlwaysOnTop = new javax.swing.JCheckBox();
         capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
-        jStandardAttackDialog.setTitle(bundle.getString("DSWorkbenchAttackFrame.jStandardAttackDialog.title")); // NOI18N
+        jStandardAttackDialog.setTitle("Standardangriffe");
         jStandardAttackDialog.setModal(true);
 
         jStandardAttackTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -502,10 +499,10 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jStandardAttackTable.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jStandardAttackTable.toolTipText")); // NOI18N
+        jStandardAttackTable.setToolTipText("");
         jScrollPane5.setViewportView(jStandardAttackTable);
 
-        jButton11.setText(bundle.getString("DSWorkbenchAttackFrame.jButton11.text")); // NOI18N
+        jButton11.setText("Schließen");
         jButton11.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireApplyStandardAttacksEvent(evt);
@@ -519,9 +516,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jScrollPane6.setMinimumSize(new java.awt.Dimension(472, 159));
         jScrollPane6.setPreferredSize(new java.awt.Dimension(472, 159));
 
-        jTextPane1.setContentType(bundle.getString("DSWorkbenchAttackFrame.jTextPane1.contentType")); // NOI18N
+        jTextPane1.setContentType("text/html");
         jTextPane1.setEditable(false);
-        jTextPane1.setText(bundle.getString("DSWorkbenchAttackFrame.jTextPane1.text")); // NOI18N
+        jTextPane1.setText("<html><p style=\"margin-top: 0\"> Für die obere Tabelle gibt es vier mögliche Formatvorgaben:<UL><LI><I>Ganze Zahlen</I> (0 &lt;= X &lt;= Max.), um eine feste Anzahl einer Truppenart einzufügen (z.B: '100')<LI><I>Alle</I>, um alle Truppen einzufügen (z.B: 'Alle')\n<LI><I>Alle - X</I>, um alle Truppen abzüglich einer bestimmten Anzahl einzufügen (z.B: 'Alle - 100')\n<LI><I>X%</I>, um einen prozentualen Anteil aller Truppen einzufügen (z.B: '50%')\n</UL> </p></html>");
         jTextPane1.setOpaque(false);
         jScrollPane6.setViewportView(jTextPane1);
 
@@ -553,8 +550,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jClickAccountLabel.setFont(new java.awt.Font("sansserif", 0, 11));
         jClickAccountLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jClickAccountLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/LeftClick.png"))); // NOI18N
-        jClickAccountLabel.setText(bundle.getString("DSWorkbenchAttackFrame.jClickAccountLabel.text")); // NOI18N
-        jClickAccountLabel.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jClickAccountLabel.toolTipText")); // NOI18N
+        jClickAccountLabel.setText("Klick-Konto [0]");
+        jClickAccountLabel.setToolTipText("0 Klick(s) aufgeladen");
         jClickAccountLabel.setAlignmentY(1.0F);
         jClickAccountLabel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
         jClickAccountLabel.setMaximumSize(new java.awt.Dimension(110, 40));
@@ -686,7 +683,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         });
         jNewPlanPanel.add(jLabel1, java.awt.BorderLayout.CENTER);
 
-        setTitle(bundle.getString("DSWorkbenchAttackFrame.title")); // NOI18N
+        setTitle("Angriffe");
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jAttackPanel.setBackground(new java.awt.Color(239, 235, 223));
@@ -702,7 +699,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jAttackPanel, gridBagConstraints);
 
-        jAttackFrameAlwaysOnTop.setText(bundle.getString("DSWorkbenchAttackFrame.jAttackFrameAlwaysOnTop.text")); // NOI18N
+        jAttackFrameAlwaysOnTop.setText("Immer im Vordergrund");
         jAttackFrameAlwaysOnTop.setOpaque(false);
         jAttackFrameAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -815,7 +812,6 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             tab.deregister();
             jAttackTabPane.removeTabAt(0);
         }
-
         LabelUIResource lr = new LabelUIResource();
         lr.setLayout(new BorderLayout());
         lr.add(jNewPlanPanel, BorderLayout.CENTER);
@@ -824,11 +820,13 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
 
         //insert default tab to first place
         int cnt = 0;
+       
         for (String plan : plans) {
             AttackTableTab tab = new AttackTableTab(plan, this);
             jAttackTabPane.addTab(plan, tab);
             cnt++;
         }
+       
         jAttackTabPane.setTabClosableAt(0, false);
         jAttackTabPane.setTabClosableAt(1, false);
         jAttackTabPane.revalidate();

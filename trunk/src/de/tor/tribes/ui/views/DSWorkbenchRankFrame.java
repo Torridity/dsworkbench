@@ -191,7 +191,6 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
             jRankTabPane.removeTabAt(0);
         }
 
-
         RankTableTab tribeTab = new RankTableTab(RankTableTab.RANK_TYPE.TRIBE, this);
         jRankTabPane.addTab("Spieler", tribeTab);
         RankTableTab allyTab = new RankTableTab(RankTableTab.RANK_TYPE.ALLY, this);

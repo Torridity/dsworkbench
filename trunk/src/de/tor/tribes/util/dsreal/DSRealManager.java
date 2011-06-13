@@ -17,7 +17,6 @@ import javax.imageio.ImageIO;
 import org.apache.log4j.Logger;
 
 /**
- * @TODO (DIFF) Switched to new DSReal version
  * @author Charon
  */
 public class DSRealManager {

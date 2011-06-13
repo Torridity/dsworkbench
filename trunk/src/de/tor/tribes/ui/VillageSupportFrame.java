@@ -11,7 +11,6 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.control.ManageableType;
-import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;

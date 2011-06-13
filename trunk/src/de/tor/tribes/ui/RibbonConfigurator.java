@@ -4,9 +4,10 @@
  */
 package de.tor.tribes.ui;
 
-import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
-import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.ui.views.DSWorkbenchReTimerFrame;
+import de.tor.tribes.ui.views.DSWorkbenchDistanceFrame;
+import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
+import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
 import de.tor.tribes.ui.views.DSWorkbenchNotepad;
 import de.tor.tribes.ui.views.DSWorkbenchFormFrame;
 import de.tor.tribes.ui.views.DSWorkbenchSOSRequestAnalyzer;
@@ -19,7 +20,6 @@ import de.tor.tribes.ui.views.DSWorkbenchSearchFrame;
 import de.tor.tribes.ui.views.DSWorkbenchRankFrame;
 import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor;
 import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
-import de.tor.tribes.ui.views.DSWorkbenchDistanceFrame;
 import de.tor.tribes.ui.views.DSWorkbenchTagFrame;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.util.GlobalOptions;

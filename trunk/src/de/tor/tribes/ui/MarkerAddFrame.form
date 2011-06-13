@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.1" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.6" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <Properties>
@@ -10,11 +10,11 @@
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
   </SyntheticProperties>
   <AuxValues>
-    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
     <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
-    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
@@ -40,11 +40,11 @@
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jCancelButton" min="-2" max="-2" attributes="1"/>
-                      <EmptySpace pref="139" max="32767" attributes="0"/>
+                      <EmptySpace pref="143" max="32767" attributes="0"/>
                       <Component id="jOKButton" min="-2" max="-2" attributes="1"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="jAllyColorPanel" max="32767" attributes="1"/>
+                      <Component id="jAllyColorPanel" pref="172" max="32767" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jEnemyButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -101,9 +101,7 @@
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="df" green="eb" red="ef" type="rgb"/>
         </Property>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="MarkerAddFrame.jOKButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-        </Property>
+        <Property name="text" type="java.lang.String" value="OK"/>
       </Properties>
       <Events>
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireAddMarkEvent"/>
@@ -114,9 +112,7 @@
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="df" green="eb" red="ef" type="rgb"/>
         </Property>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="MarkerAddFrame.jCancelButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-        </Property>
+        <Property name="text" type="java.lang.String" value="Abbrechen"/>
       </Properties>
       <Events>
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jCancelButtonfireAbortMarkEvent"/>
@@ -144,18 +140,14 @@
     </Container>
     <Component class="javax.swing.JCheckBox" name="jMarkAlly">
       <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="MarkerAddFrame.jMarkAlly.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-        </Property>
+        <Property name="text" type="java.lang.String" value="Stamm markieren"/>
         <Property name="opaque" type="boolean" value="false"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JCheckBox" name="jMarkTribe">
       <Properties>
         <Property name="selected" type="boolean" value="true"/>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="MarkerAddFrame.jMarkTribe.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-        </Property>
+        <Property name="text" type="java.lang.String" value="Spieler markieren"/>
         <Property name="opaque" type="boolean" value="false"/>
       </Properties>
     </Component>
@@ -181,16 +173,12 @@
     </Container>
     <Component class="javax.swing.JLabel" name="jTribeName">
       <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="MarkerAddFrame.jTribeName.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-        </Property>
+        <Property name="text" type="java.lang.String" value="jLabel1"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jAllyName">
       <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="MarkerAddFrame.jAllyName.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-        </Property>
+        <Property name="text" type="java.lang.String" value="jLabel1"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="jNapButton">
@@ -204,12 +192,7 @@
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
           <Image iconType="3" name="/res/ui/nap.png"/>
         </Property>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="MarkerAddFrame.jNapButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-        </Property>
-        <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="MarkerAddFrame.jNapButton.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-        </Property>
+        <Property name="toolTipText" type="java.lang.String" value="NAP Farbmarkierung w&#xe4;hlen"/>
         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
           <Insets value="[2, 2, 2, 2]"/>
         </Property>
@@ -229,12 +212,7 @@
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
           <Image iconType="3" name="/res/ui/handshake.png"/>
         </Property>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="MarkerAddFrame.jBndButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-        </Property>
-        <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="MarkerAddFrame.jBndButton.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-        </Property>
+        <Property name="toolTipText" type="java.lang.String" value="BND Farbmarkierung w&#xe4;hlen"/>
         <Property name="iconTextGap" type="int" value="0"/>
         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
           <Insets value="[0, 0, 0, 0]"/>
@@ -255,12 +233,7 @@
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
           <Image iconType="3" name="/res/ui/enemy.png"/>
         </Property>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="MarkerAddFrame.jEnemyButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-        </Property>
-        <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="MarkerAddFrame.jEnemyButton.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-        </Property>
+        <Property name="toolTipText" type="java.lang.String" value="Feind Farbmarkierung w&#xe4;hlen"/>
         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
           <Insets value="[2, 2, 2, 2]"/>
         </Property>

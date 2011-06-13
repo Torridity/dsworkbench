@@ -33,7 +33,6 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
     private BufferedImage mLayer = null;
     private Point mapPos = null;
     private boolean shouldReset = true;
-    private Hashtable<Village, TroopAnimator> animators = new Hashtable<Village, TroopAnimator>();
 
     @Override
     public void performRendering(RenderSettings pSettings, Graphics2D pG2d) {

@@ -23,7 +23,6 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 
 /**
- * @TODO (DIFF) Stop calculation if no more targets are available
  * @author Charon
  */
 public class BruteForce extends AbstractAttackAlgorithm {

@@ -80,7 +80,6 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
 
 /**
- * @TODO (DIFF) Fixed stats time frame problems
  * @author Torridity
  */
 public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements ActionListener {

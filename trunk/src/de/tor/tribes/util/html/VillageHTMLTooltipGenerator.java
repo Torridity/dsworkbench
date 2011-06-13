@@ -227,7 +227,7 @@ public class VillageHTMLTooltipGenerator {
         VillageTroopsHolder onTheWay = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.ON_THE_WAY);
 
         Village current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
-        if (inVillage == null && outside == null && onTheWay == null && (current != null && current.equals(pVillage))) {
+        if (inVillage == null && outside == null && onTheWay == null) {//&& (current != null && current.equals(pVillage))) {
             //we have the active user village but no troops
             return "";
         }
@@ -249,14 +249,14 @@ public class VillageHTMLTooltipGenerator {
                     res += "<font>" + amount + "</font>\n";
                 }
                 res += "<BR/>\n";
-                amount = outside.getTroopsOfUnitInVillage(unit);
+                amount = (outside == null) ? 0 : outside.getTroopsOfUnitInVillage(unit);
                 if (amount == 0) {
                     res += "<font style=\"color:#DED3B9;\">0</font>\n";
                 } else {
                     res += "<font>" + amount + "</font>\n";
                 }
                 res += "<BR/>\n";
-                amount = onTheWay.getTroopsOfUnitInVillage(unit);
+                amount = (onTheWay == null) ? 0 : onTheWay.getTroopsOfUnitInVillage(unit);
                 if (amount == 0) {
                     res += "<font style=\"color:#DED3B9;\">0</font>\n";
                 } else {

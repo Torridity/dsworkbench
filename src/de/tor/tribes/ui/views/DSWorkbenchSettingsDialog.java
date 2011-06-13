@@ -36,9 +36,14 @@ import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.util.ServerChangeListener;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.ui.MinimapPanel;
+import de.tor.tribes.ui.MinimapPanel;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
+import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
+import de.tor.tribes.ui.views.DSWorkbenchProfileDialog;
 import de.tor.tribes.util.AttackToBBCodeFormater;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -61,7 +66,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import org.apache.log4j.Level;
 
 /**
- * @TODO (DIFF) Profile dialog appears in background on MacOS!!
  * @author Jejkal
  */
 public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
@@ -1094,7 +1098,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jAccountPasswordLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCheckAccountButton)
-                .addContainerGap(222, Short.MAX_VALUE))
+                .addContainerGap(252, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab("Login", new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
@@ -1771,11 +1775,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
         jLabel19.setText("Footer");
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
-        jHeaderPath.setText(bundle.getString("DSWorkbenchSettingsDialog.jTextField3.text")); // NOI18N
         jHeaderPath.setEnabled(false);
 
-        jBlockPath.setText(bundle.getString("DSWorkbenchSettingsDialog.jTextField3.text")); // NOI18N
         jBlockPath.setEnabled(false);
 
         jFooterPath.setText("<Standard>");
@@ -2372,7 +2373,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         }
         setVisible(false);
         DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
-        DSWorkbenchAttackFrame.getSingleton().getCountdownThread().updateSettings();
+       DSWorkbenchAttackFrame.getSingleton().getCountdownThread().updateSettings();
         MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
         MinimapPanel.getSingleton().redraw();
     }//GEN-LAST:event_fireOkEvent

@@ -80,7 +80,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 /**
- * @TODO (DIFF) Transfer off to A*Star now uses own troops instead of all in village
  * @author Charon
  */
 public class MapPanel extends JPanel implements DragGestureListener, // For recognizing the start of drags

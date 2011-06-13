@@ -59,7 +59,6 @@ import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 
 /**
- * @TODO (DIFF) Handle map switch buttons location (Handle by right-click!)
  * @author  jejkal
  */
 public class MinimapPanel extends javax.swing.JPanel implements GenericManagerListener {

@@ -10,8 +10,9 @@
  */
 package de.tor.tribes.ui;
 
-import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.ui.views.DSWorkbenchReTimerFrame;
+import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.ui.editors.AttackTypeCellEditor;
@@ -23,7 +24,6 @@ import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
-import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.util.AttackIGMSender;
 import de.tor.tribes.util.AttackToPlainTextFormatter;
 import de.tor.tribes.util.BrowserCommandSender;
@@ -390,29 +390,28 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
         jXLabel1 = new org.jdesktop.swingx.JXLabel();
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
-        jScriptExportDialog.setTitle(bundle.getString("DSWorkbenchAttackFrame.jScriptExportDialog.title")); // NOI18N
+        jScriptExportDialog.setTitle("Scripteinstellungen");
 
         jShowAttacksInVillageInfo.setSelected(true);
-        jShowAttacksInVillageInfo.setText(bundle.getString("DSWorkbenchAttackFrame.jShowAttacksInVillageInfo.text")); // NOI18N
+        jShowAttacksInVillageInfo.setText("Angriffe in den Dorfinformationen anzeigen");
 
         jShowAttacksOnConfirmPage.setSelected(true);
-        jShowAttacksOnConfirmPage.setText(bundle.getString("DSWorkbenchAttackFrame.jShowAttacksOnConfirmPage.text")); // NOI18N
+        jShowAttacksOnConfirmPage.setText("Angriffe auf der Angriffsbestätigungsseite anzeigen");
 
         jShowAttacksInPlace.setSelected(true);
-        jShowAttacksInPlace.setText(bundle.getString("DSWorkbenchAttackFrame.jShowAttacksInPlace.text")); // NOI18N
+        jShowAttacksInPlace.setText("Angriffe im Versammlungsplatz anzeigen");
 
         jShowAttacksInOverview.setSelected(true);
-        jShowAttacksInOverview.setText(bundle.getString("DSWorkbenchAttackFrame.jShowAttacksInOverview.text")); // NOI18N
+        jShowAttacksInOverview.setText("Angriffe in den Übersichten anzeigen");
 
-        jDoScriptExportButton.setText(bundle.getString("DSWorkbenchAttackFrame.jDoScriptExportButton.text")); // NOI18N
+        jDoScriptExportButton.setText("Script erstellen");
         jDoScriptExportButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 fireDoExportAsScriptEvent(evt);
             }
         });
 
-        jButton14.setText(bundle.getString("DSWorkbenchAttackFrame.jButton14.text")); // NOI18N
+        jButton14.setText("Abbrechen");
         jButton14.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 fireDoExportAsScriptEvent(evt);
@@ -423,21 +422,18 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jScriptExportDialog.getContentPane().setLayout(jScriptExportDialogLayout);
         jScriptExportDialogLayout.setHorizontalGroup(
             jScriptExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jScriptExportDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jScriptExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jShowAttacksInVillageInfo)
-                    .addComponent(jShowAttacksOnConfirmPage)
-                    .addComponent(jShowAttacksInPlace)
-                    .addGroup(jScriptExportDialogLayout.createSequentialGroup()
-                        .addComponent(jShowAttacksInOverview)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(123, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jScriptExportDialogLayout.createSequentialGroup()
-                .addContainerGap(214, Short.MAX_VALUE)
-                .addComponent(jButton14)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jDoScriptExportButton)
+                .addContainerGap()
+                .addGroup(jScriptExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jShowAttacksInPlace, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
+                    .addComponent(jShowAttacksInOverview, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
+                    .addGroup(jScriptExportDialogLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 133, Short.MAX_VALUE)
+                        .addComponent(jButton14)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jDoScriptExportButton))
+                    .addComponent(jShowAttacksOnConfirmPage, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
+                    .addComponent(jShowAttacksInVillageInfo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jScriptExportDialogLayout.setVerticalGroup(
@@ -458,24 +454,18 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 .addContainerGap())
         );
 
-        jSendAttacksIGMDialog.setTitle(bundle.getString("DSWorkbenchAttackFrame.jSendAttacksIGMDialog.title")); // NOI18N
+        jLabel20.setText("Betreff");
 
-        jLabel20.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel20.text")); // NOI18N
+        jLabel22.setText("API-Key");
 
-        jSubject.setText(bundle.getString("DSWorkbenchAttackFrame.jSubject.text")); // NOI18N
-
-        jLabel22.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel22.text")); // NOI18N
-
-        jAPIKey.setText(bundle.getString("DSWorkbenchAttackFrame.jAPIKey.text")); // NOI18N
-
-        jSendButton.setText(bundle.getString("DSWorkbenchAttackFrame.jSendButton.text")); // NOI18N
+        jSendButton.setText("IGMs senden");
         jSendButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 fireSendIGMsEvent(evt);
             }
         });
 
-        jButton13.setText(bundle.getString("DSWorkbenchAttackFrame.jButton13.text")); // NOI18N
+        jButton13.setText("Abbrechen");
         jButton13.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 fireSendIGMsEvent(evt);
@@ -493,10 +483,10 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                         .addGroup(jSendAttacksIGMDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel20)
                             .addComponent(jLabel22))
-                        .addGap(93, 93, 93)
-                        .addGroup(jSendAttacksIGMDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jAPIKey, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
-                            .addComponent(jSubject, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)))
+                        .addGap(18, 18, 18)
+                        .addGroup(jSendAttacksIGMDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jAPIKey, javax.swing.GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE)
+                            .addComponent(jSubject, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jSendAttacksIGMDialogLayout.createSequentialGroup()
                         .addComponent(jButton13)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -521,16 +511,16 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTimeChangeDialog.setTitle(bundle.getString("DSWorkbenchAttackFrame.jTimeChangeDialog.title")); // NOI18N
+        jTimeChangeDialog.setTitle("Zeiten ändern");
 
-        jOKButton.setText(bundle.getString("DSWorkbenchAttackFrame.jOKButton.text")); // NOI18N
+        jOKButton.setText("OK");
         jOKButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 fireCloseTimeChangeDialogEvent(evt);
             }
         });
 
-        jCancelButton.setText(bundle.getString("DSWorkbenchAttackFrame.jCancelButton.text")); // NOI18N
+        jCancelButton.setText("Abbrechen");
         jCancelButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 fireCloseTimeChangeDialogEvent(evt);
@@ -539,13 +529,25 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
         jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jLabel7.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel7.text")); // NOI18N
+        jLabel7.setText("Tage");
 
-        jLabel5.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel5.text")); // NOI18N
+        jLabel5.setText("Minuten");
 
-        jLabel6.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel6.text")); // NOI18N
+        jDayField.setMinimumSize(new java.awt.Dimension(60, 20));
+        jDayField.setPreferredSize(new java.awt.Dimension(60, 20));
 
-        jLabel14.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel14.text")); // NOI18N
+        jMinuteField.setMinimumSize(new java.awt.Dimension(60, 20));
+        jMinuteField.setPreferredSize(new java.awt.Dimension(60, 20));
+
+        jLabel6.setText("Stunden");
+
+        jHourField.setMinimumSize(new java.awt.Dimension(60, 20));
+        jHourField.setPreferredSize(new java.awt.Dimension(60, 20));
+
+        jLabel14.setText("Sekunden");
+
+        jSecondsField.setMinimumSize(new java.awt.Dimension(60, 20));
+        jSecondsField.setPreferredSize(new java.awt.Dimension(60, 20));
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -553,10 +555,10 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jMinuteField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jSecondsField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -592,7 +594,8 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
         jPanel4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jLabel8.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel8.text")); // NOI18N
+        jLabel8.setText("Neue Ankunftzeit");
+        jLabel8.setToolTipText("");
         jLabel8.setEnabled(false);
 
         jArriveDateField.setEnabled(false);
@@ -604,7 +607,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 24, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jArriveDateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -619,8 +622,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         );
 
         buttonGroup2.add(jModifyArrivalOption);
-        jModifyArrivalOption.setText(bundle.getString("DSWorkbenchAttackFrame.jModifyArrivalOption.text")); // NOI18N
-        jModifyArrivalOption.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jModifyArrivalOption.toolTipText")); // NOI18N
+        jModifyArrivalOption.setText("Ankunftzeit angleichen");
         jModifyArrivalOption.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 jModifyArrivalOptionfireModifyTimeEvent(evt);
@@ -629,8 +631,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
         buttonGroup2.add(jMoveTimeOption);
         jMoveTimeOption.setSelected(true);
-        jMoveTimeOption.setText(bundle.getString("DSWorkbenchAttackFrame.jMoveTimeOption.text")); // NOI18N
-        jMoveTimeOption.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jMoveTimeOption.toolTipText")); // NOI18N
+        jMoveTimeOption.setText("Verschieben");
         jMoveTimeOption.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 jMoveTimeOptionfireModifyTimeEvent(evt);
@@ -638,7 +639,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         });
 
         buttonGroup2.add(jRandomizeOption);
-        jRandomizeOption.setText(bundle.getString("DSWorkbenchAttackFrame.jRandomizeOption.text")); // NOI18N
+        jRandomizeOption.setText("Zufällig verschieben");
         jRandomizeOption.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 jRandomizeOptionfireModifyTimeEvent(evt);
@@ -647,21 +648,19 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
         jPanel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jLabel17.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel17.text")); // NOI18N
+        jLabel17.setText("Zeitfenster");
         jLabel17.setEnabled(false);
 
-        jLabel18.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel18.text")); // NOI18N
+        jLabel18.setText("+/-");
         jLabel18.setEnabled(false);
 
         jRandomField.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        jRandomField.setText(bundle.getString("DSWorkbenchAttackFrame.jFormattedTextField1.text")); // NOI18N
         jRandomField.setEnabled(false);
 
-        jLabel19.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel19.text")); // NOI18N
         jLabel19.setEnabled(false);
 
         jNotRandomToNightBonus.setSelected(true);
-        jNotRandomToNightBonus.setText(bundle.getString("DSWorkbenchAttackFrame.jNotRandomToNightBonus.text")); // NOI18N
+        jNotRandomToNightBonus.setText("Nicht in Nachtbonus verschieben");
         jNotRandomToNightBonus.setEnabled(false);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -671,13 +670,13 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jNotRandomToNightBonus, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 365, Short.MAX_VALUE)
+                    .addComponent(jNotRandomToNightBonus, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel17)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel18)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRandomField, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                        .addComponent(jRandomField, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel19)))
                 .addContainerGap())
@@ -737,57 +736,45 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 .addContainerGap())
         );
 
-        jChangeAttackTypeDialog.setTitle(bundle.getString("DSWorkbenchAttackFrame.jChangeAttackTypeDialog.title")); // NOI18N
+        jChangeAttackTypeDialog.setTitle("Angriffstyp anpassen");
 
         jPanel6.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel6.setLayout(new java.awt.GridLayout(6, 2));
 
         buttonGroup1.add(jNoType);
         jNoType.setSelected(true);
-        jNoType.setText(bundle.getString("DSWorkbenchAttackFrame.jNoType.text")); // NOI18N
+        jNoType.setText("Keiner");
         jPanel6.add(jNoType);
-
-        jLabel23.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel23.text")); // NOI18N
         jPanel6.add(jLabel23);
 
         buttonGroup1.add(jAttackType);
-        jAttackType.setText(bundle.getString("DSWorkbenchAttackFrame.jAttackType.text")); // NOI18N
         jPanel6.add(jAttackType);
 
         jLabel28.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/axe.png"))); // NOI18N
-        jLabel28.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel28.text")); // NOI18N
         jPanel6.add(jLabel28);
 
         buttonGroup1.add(jEnobleType);
-        jEnobleType.setText(bundle.getString("DSWorkbenchAttackFrame.jEnobleType.text")); // NOI18N
         jPanel6.add(jEnobleType);
 
         jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/snob.png"))); // NOI18N
-        jLabel24.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel24.text")); // NOI18N
         jPanel6.add(jLabel24);
 
         buttonGroup1.add(jDefType);
-        jDefType.setText(bundle.getString("DSWorkbenchAttackFrame.jDefType.text")); // NOI18N
         jPanel6.add(jDefType);
 
         jLabel25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ally.png"))); // NOI18N
-        jLabel25.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel25.text")); // NOI18N
         jPanel6.add(jLabel25);
 
         buttonGroup1.add(jFakeType);
-        jFakeType.setText(bundle.getString("DSWorkbenchAttackFrame.jFakeType.text")); // NOI18N
         jPanel6.add(jFakeType);
 
         jLabel26.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/fake.png"))); // NOI18N
-        jLabel26.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel26.text")); // NOI18N
         jPanel6.add(jLabel26);
 
         buttonGroup1.add(jFakeDefType);
-        jFakeDefType.setText(bundle.getString("DSWorkbenchAttackFrame.jFakeDefType.text")); // NOI18N
         jPanel6.add(jFakeDefType);
 
         jLabel27.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/def_fake.png"))); // NOI18N
-        jLabel27.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel27.text")); // NOI18N
         jPanel6.add(jLabel27);
 
         jAdeptUnitPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -808,17 +795,17 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             .addGroup(jAdeptUnitPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jUnitBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(95, Short.MAX_VALUE))
+                .addContainerGap(107, Short.MAX_VALUE))
         );
 
-        jAcceptChangeUnitTypeButton.setText(bundle.getString("DSWorkbenchAttackFrame.jAcceptChangeUnitTypeButton.text")); // NOI18N
+        jAcceptChangeUnitTypeButton.setText("Übernehmen");
         jAcceptChangeUnitTypeButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 fireChangeUnitTypeEvent(evt);
             }
         });
 
-        jButton15.setText(bundle.getString("DSWorkbenchAttackFrame.jButton15.text")); // NOI18N
+        jButton15.setText("Abbrechen");
         jButton15.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 fireChangeUnitTypeEvent(evt);
@@ -826,14 +813,14 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         });
 
         jAdeptTypeBox.setSelected(true);
-        jAdeptTypeBox.setText(bundle.getString("DSWorkbenchAttackFrame.jAdeptTypeBox.text")); // NOI18N
+        jAdeptTypeBox.setText("Typ angleichen");
         jAdeptTypeBox.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jAdeptTypeBoxfireEnableDisableAdeptTypeEvent(evt);
             }
         });
 
-        jAdeptUnitBox.setText(bundle.getString("DSWorkbenchAttackFrame.jAdeptUnitBox.text")); // NOI18N
+        jAdeptUnitBox.setText("Einheit angleichen");
         jAdeptUnitBox.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jAdeptUnitBoxfireEnableDisableChangeUnitEvent(evt);
@@ -855,7 +842,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                     .addComponent(jAdeptUnitBox))
                 .addGap(11, 11, 11))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jChangeAttackTypeDialogLayout.createSequentialGroup()
-                .addContainerGap(53, Short.MAX_VALUE)
+                .addContainerGap(70, Short.MAX_VALUE)
                 .addComponent(jButton15)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jAcceptChangeUnitTypeButton)

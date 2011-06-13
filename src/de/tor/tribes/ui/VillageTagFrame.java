@@ -7,15 +7,12 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.control.ManageableType;
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.LinkedTag;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
-import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.util.tag.TagManager;
-import de.tor.tribes.util.tag.TagManagerListener;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -131,16 +128,15 @@ public class VillageTagFrame extends javax.swing.JFrame implements GenericManage
         jCancelButton = new javax.swing.JButton();
         jVillageList = new javax.swing.JComboBox();
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
-        setTitle(bundle.getString("VillageTagFrame.title")); // NOI18N
+        setTitle("Tag hinzufügen");
 
-        jTribeLabel.setText(bundle.getString("VillageTagFrame.jTribeLabel.text")); // NOI18N
+        jTribeLabel.setText("Spieler");
 
-        jVillageLabel.setText(bundle.getString("VillageTagFrame.jVillageLabel.text")); // NOI18N
+        jVillageLabel.setText("Dorf");
 
         jScrollPane1.setViewportView(jTagsList);
 
-        jLabel3.setText(bundle.getString("VillageTagFrame.jLabel3.text")); // NOI18N
+        jLabel3.setText("Tags");
 
         jPlayerName.setBackground(new java.awt.Color(239, 235, 223));
         jPlayerName.setEditable(false);
@@ -165,14 +161,14 @@ public class VillageTagFrame extends javax.swing.JFrame implements GenericManage
             }
         });
 
-        jOKButton.setText(bundle.getString("VillageTagFrame.jOKButton.text")); // NOI18N
+        jOKButton.setText("OK");
         jOKButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireOkEvent(evt);
             }
         });
 
-        jCancelButton.setText(bundle.getString("VillageTagFrame.jCancelButton.text")); // NOI18N
+        jCancelButton.setText("Abbrechen");
         jCancelButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCancelEvent(evt);

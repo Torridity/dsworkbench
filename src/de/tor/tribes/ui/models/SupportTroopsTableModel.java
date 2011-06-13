@@ -30,6 +30,7 @@ public class SupportTroopsTableModel extends AbstractTreeTableModel {
 
     private List<TroopsTableModel.COL_CONTENT> content = null;
     private HashMap<String, ImageIcon> columnIcons = null;
+    private boolean topLevelOnly = false;
 
     public SupportTroopsTableModel(DefaultMutableTreeNode pRoot) {
         super(pRoot);
@@ -201,6 +202,11 @@ public class SupportTroopsTableModel extends AbstractTreeTableModel {
         return content.size();
     }
 
+    /**Return top level elements only --> used within DSWorkbenchTroopFrame for support renderer*/
+    public void setTopLevelOnly(boolean pValue) {
+        topLevelOnly = pValue;
+    }
+
     @Override
     public Object getValueAt(Object arg0, int arg1) {
         if (arg0 instanceof DefaultMutableTreeNode) {
@@ -208,9 +214,15 @@ public class SupportTroopsTableModel extends AbstractTreeTableModel {
             if (dataNode.getUserObject() instanceof SupportVillageTroopsHolder) {
                 return getColumnValue((SupportVillageTroopsHolder) dataNode.getUserObject(), arg1);
             } else if (dataNode.getUserObject() instanceof OutgoingTroopsUserObject) {
+                if (topLevelOnly) {
+                    return null;
+                }
                 OutgoingTroopsUserObject u = (OutgoingTroopsUserObject) dataNode.getUserObject();
                 return getColumnValue(u.getTroopsHolder(), arg1);
             } else if (dataNode.getUserObject() instanceof IncomingTroopsUserObject) {
+                if (topLevelOnly) {
+                    return null;
+                }
                 IncomingTroopsUserObject u = (IncomingTroopsUserObject) dataNode.getUserObject();
                 return getColumnValue(u.getTroopsHolder(), arg1);
             }

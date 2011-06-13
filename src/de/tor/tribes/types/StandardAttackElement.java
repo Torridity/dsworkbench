@@ -15,7 +15,6 @@ import org.apache.log4j.Logger;
 import org.jdom.Element;
 
 /**
- * @TODO (DIFF) Fixed error handling of no troops are available (fixed 'Cannot open browser' bug)
  * @author Charon
  */
 public class StandardAttackElement {

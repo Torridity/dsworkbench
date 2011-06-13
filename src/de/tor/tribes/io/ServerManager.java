@@ -16,7 +16,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO (DIFF) Allowed to add additional servers via local servers.txt
  * @author Charon
  */
 public class ServerManager {

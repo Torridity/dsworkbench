@@ -81,7 +81,6 @@ import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
- * @TODO (DIFF) Fixed problem when one tag was applied to villages of two users
  * @author Charon
  */
 public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implements VillageSelectionListener, ActionListener, TreeSelectionListener {

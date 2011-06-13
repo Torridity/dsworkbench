@@ -72,10 +72,6 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
- *@TODO (DIFF) Added merchant distributor
- * @TODO (DIFF) Add "ignore transports < X" field
- * @TODO (DIFF) Add confirm box on removing villages
- * @TODO (DIFF) Add confirm box on impossible calculation
  * @author Jejkal
  */
 public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame implements ListSelectionListener, ActionListener {
@@ -161,8 +157,11 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
     
     @Override
     public void resetView() {
+        System.out.println("CL");
         merchantInfos.clear();
+        System.out.println("B");
         rebuildTable(jMerchantTable, merchantInfos);
+        System.out.println("RES");
         buildResults(new LinkedList<VillageMerchantInfo>(), new LinkedList<List<MerchantSource>>(), new int[]{0, 0, 0});
     }
     
@@ -424,7 +423,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         jClickAccountLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/LeftClick.png"))); // NOI18N
         jClickAccountLabel.setText("Klick-Konto [0]");
         jClickAccountLabel.setToolTipText("0 Klick(s) aufgeladen");
-        jClickAccountLabel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jClickAccountLabel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
         jClickAccountLabel.setMaximumSize(new java.awt.Dimension(110, 40));
         jClickAccountLabel.setMinimumSize(new java.awt.Dimension(110, 40));
         jClickAccountLabel.setOpaque(true);

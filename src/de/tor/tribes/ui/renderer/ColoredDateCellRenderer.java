@@ -16,7 +16,6 @@ import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
 /**
- * @TODO (DIFF) Smoother color gradient, expired values are stroked
  * @author Jejkal
  */
 public class ColoredDateCellRenderer extends DefaultTableRenderer {

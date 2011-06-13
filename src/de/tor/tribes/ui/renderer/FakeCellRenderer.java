@@ -11,12 +11,13 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
+import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
 /**
  *
  * @author Torridity
  */
-public class FakeCellRenderer extends DefaultTableCellRenderer {
+public class FakeCellRenderer extends DefaultTableRenderer {
 
     private DefaultTableCellRenderer renderer = null;
     private ImageIcon fakeIcon;
@@ -39,14 +40,6 @@ public class FakeCellRenderer extends DefaultTableCellRenderer {
         Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         JLabel label = ((JLabel) c);
         label.setText("");
-
-        if (!isSelected) {
-            if (row % 2 == 0) {
-                label.setBackground(Constants.DS_ROW_B);
-            } else {
-                label.setBackground(Constants.DS_ROW_A);
-            }
-        }
         try {
             boolean v = (Boolean) value;
             label.setIcon(((v) ? fakeIcon : noFakeIcon));

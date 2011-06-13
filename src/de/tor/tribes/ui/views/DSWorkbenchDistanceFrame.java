@@ -10,9 +10,9 @@
  */
 package de.tor.tribes.ui.views;
 
+import com.jidesoft.swing.RangeSlider;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.test.DummyProfile;
-import de.tor.tribes.types.test.DummyVillage;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.GenericTestPanel;
@@ -110,7 +110,24 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
     private void buildMenu() {
         JXTaskPane editPane = new JXTaskPane();
         editPane.setTitle("Bereichsfärbung");
-        editPane.getContentPane().add(rangeSlider1);
+        final RangeSlider slider = new RangeSlider(RangeSlider.HORIZONTAL);
+        slider.setMajorTickSpacing(10);
+        slider.setMaximum(70);
+        slider.setMinorTickSpacing(1);
+        slider.setPaintLabels(true);
+        slider.setPaintTicks(true);
+        slider.setValue(10);
+        slider.setExtent(10);
+        slider.addMouseListener(new java.awt.event.MouseAdapter() {
+
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                cellRenderer.setMarkerMin(slider.getLowValue());
+                cellRenderer.setMarkerMax(slider.getHighValue());
+                jDistanceTable.repaint();
+            }
+        });
+        
+        editPane.getContentPane().add(slider);
         centerPanel.setupTaskPane(editPane);
     }
 
@@ -215,6 +232,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         jXLabel1.setBackgroundPainter(new MattePainter(Color.RED));
         jXLabel1.setForeground(Color.WHITE);
         jXLabel1.setText(pMessage);
+
     }
 
     /** This method is called from within the constructor to
@@ -231,7 +249,6 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         jScrollPane2 = new javax.swing.JScrollPane();
         infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
         jXLabel1 = new org.jdesktop.swingx.JXLabel();
-        rangeSlider1 = new com.jidesoft.swing.RangeSlider();
         jCheckBox1 = new javax.swing.JCheckBox();
         jDistancePanel = new javax.swing.JPanel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
@@ -269,24 +286,6 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         infoPanel.add(jXLabel1, java.awt.BorderLayout.CENTER);
 
         jPanel2.add(infoPanel, java.awt.BorderLayout.SOUTH);
-
-        rangeSlider1.setMajorTickSpacing(10);
-        rangeSlider1.setMaximum(70);
-        rangeSlider1.setMinorTickSpacing(1);
-        rangeSlider1.setPaintLabels(true);
-        rangeSlider1.setPaintTicks(true);
-        rangeSlider1.setValue(10);
-        rangeSlider1.setExtent(10);
-        rangeSlider1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                fireRangeUpdateEvent(evt);
-            }
-        });
-        rangeSlider1.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                fireStateChangedEvent(evt);
-            }
-        });
 
         setTitle("Entfernungsübersicht");
         getContentPane().setLayout(new java.awt.GridBagLayout());
@@ -329,18 +328,6 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
     private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXLabel1fireHideInfoEvent
         infoPanel.setCollapsed(true);
 }//GEN-LAST:event_jXLabel1fireHideInfoEvent
-
-    private void fireRangeUpdateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRangeUpdateEvent
-        cellRenderer.setMarkerMin(rangeSlider1.getLowValue());
-        cellRenderer.setMarkerMax(rangeSlider1.getHighValue());
-        jDistanceTable.repaint();
-    }//GEN-LAST:event_fireRangeUpdateEvent
-
-    private void fireStateChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireStateChangedEvent
-        cellRenderer.setMarkerMin(rangeSlider1.getLowValue());
-        cellRenderer.setMarkerMax(rangeSlider1.getHighValue());
-        jDistanceTable.repaint();
-    }//GEN-LAST:event_fireStateChangedEvent
 
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
@@ -388,7 +375,6 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;
     private org.jdesktop.swingx.JXLabel jXLabel1;
-    private com.jidesoft.swing.RangeSlider rangeSlider1;
     // End of variables declaration//GEN-END:variables
 
     static {

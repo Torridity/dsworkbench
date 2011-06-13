@@ -58,8 +58,7 @@ public class MarkerAddFrame extends javax.swing.JFrame {
         setUndecorated(true);
 
         jOKButton.setBackground(new java.awt.Color(239, 235, 223));
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
-        jOKButton.setText(bundle.getString("MarkerAddFrame.jOKButton.text")); // NOI18N
+        jOKButton.setText("OK");
         jOKButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireAddMarkEvent(evt);
@@ -67,7 +66,7 @@ public class MarkerAddFrame extends javax.swing.JFrame {
         });
 
         jCancelButton.setBackground(new java.awt.Color(239, 235, 223));
-        jCancelButton.setText(bundle.getString("MarkerAddFrame.jCancelButton.text")); // NOI18N
+        jCancelButton.setText("Abbrechen");
         jCancelButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jCancelButtonfireAbortMarkEvent(evt);
@@ -80,11 +79,11 @@ public class MarkerAddFrame extends javax.swing.JFrame {
         jTribeColorPanel.setPreferredSize(new java.awt.Dimension(238, 23));
         jTribeColorPanel.setLayout(new java.awt.BorderLayout());
 
-        jMarkAlly.setText(bundle.getString("MarkerAddFrame.jMarkAlly.text")); // NOI18N
+        jMarkAlly.setText("Stamm markieren");
         jMarkAlly.setOpaque(false);
 
         jMarkTribe.setSelected(true);
-        jMarkTribe.setText(bundle.getString("MarkerAddFrame.jMarkTribe.text")); // NOI18N
+        jMarkTribe.setText("Spieler markieren");
         jMarkTribe.setOpaque(false);
 
         jAllyColorPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -93,15 +92,14 @@ public class MarkerAddFrame extends javax.swing.JFrame {
         jAllyColorPanel.setPreferredSize(new java.awt.Dimension(164, 23));
         jAllyColorPanel.setLayout(new java.awt.BorderLayout());
 
-        jTribeName.setText(bundle.getString("MarkerAddFrame.jTribeName.text")); // NOI18N
+        jTribeName.setText("jLabel1");
 
-        jAllyName.setText(bundle.getString("MarkerAddFrame.jAllyName.text")); // NOI18N
+        jAllyName.setText("jLabel1");
 
         jNapButton.setBackground(new java.awt.Color(127, 0, 127));
         jNapButton.setForeground(new java.awt.Color(255, 255, 255));
         jNapButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/nap.png"))); // NOI18N
-        jNapButton.setText(bundle.getString("MarkerAddFrame.jNapButton.text")); // NOI18N
-        jNapButton.setToolTipText(bundle.getString("MarkerAddFrame.jNapButton.toolTipText")); // NOI18N
+        jNapButton.setToolTipText("NAP Farbmarkierung wählen");
         jNapButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
         jNapButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -112,8 +110,7 @@ public class MarkerAddFrame extends javax.swing.JFrame {
         jBndButton.setBackground(new java.awt.Color(0, 160, 244));
         jBndButton.setForeground(new java.awt.Color(255, 255, 255));
         jBndButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/handshake.png"))); // NOI18N
-        jBndButton.setText(bundle.getString("MarkerAddFrame.jBndButton.text")); // NOI18N
-        jBndButton.setToolTipText(bundle.getString("MarkerAddFrame.jBndButton.toolTipText")); // NOI18N
+        jBndButton.setToolTipText("BND Farbmarkierung wählen");
         jBndButton.setIconTextGap(0);
         jBndButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jBndButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -125,8 +122,7 @@ public class MarkerAddFrame extends javax.swing.JFrame {
         jEnemyButton.setBackground(new java.awt.Color(255, 0, 0));
         jEnemyButton.setForeground(new java.awt.Color(255, 255, 255));
         jEnemyButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/enemy.png"))); // NOI18N
-        jEnemyButton.setText(bundle.getString("MarkerAddFrame.jEnemyButton.text")); // NOI18N
-        jEnemyButton.setToolTipText(bundle.getString("MarkerAddFrame.jEnemyButton.toolTipText")); // NOI18N
+        jEnemyButton.setToolTipText("Feind Farbmarkierung wählen");
         jEnemyButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
         jEnemyButton.setMaximumSize(new java.awt.Dimension(31, 23));
         jEnemyButton.setMinimumSize(new java.awt.Dimension(31, 23));
@@ -155,10 +151,10 @@ public class MarkerAddFrame extends javax.swing.JFrame {
                         .addComponent(jAllyName, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jCancelButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 139, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 143, Short.MAX_VALUE)
                         .addComponent(jOKButton))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jAllyColorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jAllyColorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jEnemyButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)

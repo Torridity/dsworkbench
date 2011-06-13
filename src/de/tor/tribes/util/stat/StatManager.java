@@ -19,9 +19,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
- * @TODO (DIFF) Added ally based stats
- * @TODO (DIFF) Bugfix: Removal of tribes now works
- * @TODO (DIFF) Stats update performed after loading
  * @author Jejkal
  */
 public class StatManager {

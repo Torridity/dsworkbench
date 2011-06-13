@@ -78,6 +78,7 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
+ * @TODO ADapt filter dialog to attack frame style
  * @author Jejkal
  */
 public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements ListSelectionListener, ActionListener {
@@ -482,7 +483,6 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jApplyFiltersButton = new javax.swing.JButton();
         jScrollPane14 = new javax.swing.JScrollPane();
         jFilterList = new javax.swing.JList();
-        jLabel28 = new javax.swing.JLabel();
         jButton18 = new javax.swing.JButton();
         jInputPanel = new javax.swing.JPanel();
         jScrollPane6 = new javax.swing.JScrollPane();
@@ -512,7 +512,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
 
         jAttackPlanSelectionDialog.setTitle("Angriffsplanauswahl");
-        jAttackPlanSelectionDialog.setAlwaysOnTop(true);
+        jAttackPlanSelectionDialog.setModal(true);
 
         jLabel10.setText("Existierender Plan");
 
@@ -571,6 +571,9 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jFilterDialog.setTitle("Truppenfilter hinzufügen");
+        jFilterDialog.setModal(true);
+
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("TribeTribeAttackFrame.jPanel3.border.title"))); // NOI18N
 
@@ -578,26 +581,24 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jFilterUnitBox.setMinimumSize(new java.awt.Dimension(51, 25));
         jFilterUnitBox.setPreferredSize(new java.awt.Dimension(51, 25));
 
-        jLabel25.setText(bundle.getString("TribeTribeAttackFrame.jLabel25.text")); // NOI18N
+        jLabel25.setText("Einheit");
 
-        jLabel26.setText(bundle.getString("TribeTribeAttackFrame.jLabel26.text")); // NOI18N
+        jLabel26.setText("Min");
 
-        jLabel27.setText(bundle.getString("TribeTribeAttackFrame.jLabel27.text")); // NOI18N
+        jLabel27.setText("Max");
 
         jButton17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
-        jButton17.setText(bundle.getString("TribeTribeAttackFrame.jButton17.text")); // NOI18N
+        jButton17.setText("Hinzufügen");
         jButton17.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireAddTroopFilterEvent(evt);
             }
         });
 
-        jMinValue.setText(bundle.getString("TribeTribeAttackFrame.jMinValue.text")); // NOI18N
         jMinValue.setMaximumSize(new java.awt.Dimension(51, 25));
         jMinValue.setMinimumSize(new java.awt.Dimension(51, 25));
         jMinValue.setPreferredSize(new java.awt.Dimension(51, 25));
 
-        jMaxValue.setText(bundle.getString("TribeTribeAttackFrame.jMaxValue.text")); // NOI18N
         jMaxValue.setMaximumSize(new java.awt.Dimension(51, 25));
         jMaxValue.setMinimumSize(new java.awt.Dimension(51, 25));
         jMaxValue.setPreferredSize(new java.awt.Dimension(51, 25));
@@ -617,7 +618,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jMinValue, 0, 0, Short.MAX_VALUE)
                             .addComponent(jFilterUnitBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel27)
                         .addGap(18, 18, 18)
                         .addComponent(jMaxValue, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -642,7 +643,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 .addContainerGap())
         );
 
-        jButton20.setText(bundle.getString("TribeTribeAttackFrame.jButton20.text")); // NOI18N
+        jButton20.setText("Abbrechen");
         jButton20.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireApplyTroopFiltersEvent(evt);
@@ -650,20 +651,19 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         });
 
         jApplyFiltersButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png"))); // NOI18N
-        jApplyFiltersButton.setText(bundle.getString("TribeTribeAttackFrame.jApplyFiltersButton.text")); // NOI18N
+        jApplyFiltersButton.setText("Übernehmen");
         jApplyFiltersButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireApplyTroopFiltersEvent(evt);
             }
         });
 
+        jScrollPane14.setBorder(javax.swing.BorderFactory.createTitledBorder("Filter"));
+
         jScrollPane14.setViewportView(jFilterList);
 
-        jLabel28.setText(bundle.getString("TribeTribeAttackFrame.jLabel28.text")); // NOI18N
-
         jButton18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/remove.gif"))); // NOI18N
-        jButton18.setText(bundle.getString("TribeTribeAttackFrame.jButton18.text")); // NOI18N
-        jButton18.setToolTipText(bundle.getString("TribeTribeAttackFrame.jButton18.toolTipText")); // NOI18N
+        jButton18.setText("Entfernen");
         jButton18.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireRemoveTroopFilterEvent(evt);
@@ -678,17 +678,14 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 .addContainerGap()
                 .addGroup(jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jFilterDialogLayout.createSequentialGroup()
-                        .addComponent(jLabel28)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jFilterDialogLayout.createSequentialGroup()
-                                .addComponent(jButton20)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jButton18, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jApplyFiltersButton, javax.swing.GroupLayout.Alignment.TRAILING)))
-                            .addComponent(jScrollPane14, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE))))
+                    .addComponent(jScrollPane14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jFilterDialogLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                        .addComponent(jButton20)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButton18, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jApplyFiltersButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jFilterDialogLayout.setVerticalGroup(
@@ -697,9 +694,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 .addContainerGap()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel28)
-                    .addComponent(jScrollPane14, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE))
+                .addComponent(jScrollPane14, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton18)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -714,7 +709,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jBBTextPane.setContentType("text/html");
         jScrollPane6.setViewportView(jBBTextPane);
 
-        jPossibleUnits.setBorder(javax.swing.BorderFactory.createTitledBorder("Mögliche Einheiten"));
+        jScrollPane7.setBorder(javax.swing.BorderFactory.createTitledBorder("Mögliche Einheiten"));
+
         jScrollPane7.setViewportView(jPossibleUnits);
 
         jCommandArea.setColumns(20);
@@ -785,9 +781,9 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jSettingsPanel.setBackground(new java.awt.Color(239, 235, 223));
 
         jScrollPane3.setBackground(new java.awt.Color(239, 235, 223));
+        jScrollPane3.setBorder(javax.swing.BorderFactory.createTitledBorder("Verwendete Dorfgruppen"));
         jScrollPane3.setOpaque(false);
 
-        jTagList.setBorder(javax.swing.BorderFactory.createTitledBorder("Verwendete Dorfgruppen"));
         jTagList.setToolTipText("Zu verwendende Gruppen");
         jScrollPane3.setViewportView(jTagList);
 
@@ -849,8 +845,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jSettingsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -1394,7 +1390,6 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
-    private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JCheckBox jMainAlwaysOnTopBox;
     private javax.swing.JTextField jMaxValue;

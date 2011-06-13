@@ -98,8 +98,7 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
         jInGameOptionsLabel = new javax.swing.JLabel();
         jSearchFrameAlwaysOnTop = new javax.swing.JCheckBox();
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
-        setTitle(bundle.getString("DSWorkbenchSearchFrame.title")); // NOI18N
+        setTitle("Suche");
 
         jPlayerSearch.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -112,8 +111,7 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
             }
         });
 
-        java.util.ResourceBundle bundle1 = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/views/Bundle"); // NOI18N
-        jSearchTermLabel.setText(bundle1.getString("DSWorkbenchSearchFrame.jSearchTermLabel.text")); // NOI18N
+        jSearchTermLabel.setText("Suchbegriff");
 
         jTribesList.setMaximumSize(new java.awt.Dimension(200, 20));
         jTribesList.setMinimumSize(new java.awt.Dimension(200, 20));
@@ -124,11 +122,11 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
             }
         });
 
-        jTribesLabel.setText(bundle1.getString("DSWorkbenchSearchFrame.jTribesLabel.text")); // NOI18N
+        jTribesLabel.setText("Spieler");
 
         jMarkAllyButton.setBackground(new java.awt.Color(239, 235, 223));
-        jMarkAllyButton.setText(bundle1.getString("DSWorkbenchSearchFrame.jMarkAllyButton.text")); // NOI18N
-        jMarkAllyButton.setToolTipText(bundle1.getString("DSWorkbenchSearchFrame.jMarkAllyButton.toolTipText")); // NOI18N
+        jMarkAllyButton.setText("Markieren");
+        jMarkAllyButton.setToolTipText("Stamm markieren");
         jMarkAllyButton.setMaximumSize(new java.awt.Dimension(100, 23));
         jMarkAllyButton.setMinimumSize(new java.awt.Dimension(100, 23));
         jMarkAllyButton.setPreferredSize(new java.awt.Dimension(100, 23));
@@ -147,11 +145,11 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
             }
         });
 
-        jAlliesLabel.setText(bundle1.getString("DSWorkbenchSearchFrame.jAlliesLabel.text")); // NOI18N
+        jAlliesLabel.setText("Stämme");
 
         jMarkTribeButton.setBackground(new java.awt.Color(239, 235, 223));
-        jMarkTribeButton.setText(bundle1.getString("DSWorkbenchSearchFrame.jMarkTribeButton.text")); // NOI18N
-        jMarkTribeButton.setToolTipText(bundle1.getString("DSWorkbenchSearchFrame.jMarkTribeButton.toolTipText")); // NOI18N
+        jMarkTribeButton.setText("Markieren");
+        jMarkTribeButton.setToolTipText("Spieler markieren");
         jMarkTribeButton.setMaximumSize(new java.awt.Dimension(100, 23));
         jMarkTribeButton.setMinimumSize(new java.awt.Dimension(100, 23));
         jMarkTribeButton.setPreferredSize(new java.awt.Dimension(100, 23));
@@ -161,11 +159,11 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
             }
         });
 
-        jVillagesLabel.setText(bundle1.getString("DSWorkbenchSearchFrame.jVillagesLabel.text")); // NOI18N
+        jVillagesLabel.setText("Dörfer");
 
         jCenterButton.setBackground(new java.awt.Color(239, 235, 223));
-        jCenterButton.setText(bundle1.getString("DSWorkbenchSearchFrame.jCenterButton.text")); // NOI18N
-        jCenterButton.setToolTipText(bundle1.getString("DSWorkbenchSearchFrame.jCenterButton.toolTipText")); // NOI18N
+        jCenterButton.setText("Zentrieren");
+        jCenterButton.setToolTipText("Dorf in DS Workbench zentrieren");
         jCenterButton.setMaximumSize(new java.awt.Dimension(100, 23));
         jCenterButton.setMinimumSize(new java.awt.Dimension(100, 23));
         jCenterButton.setPreferredSize(new java.awt.Dimension(100, 23));
@@ -178,7 +176,7 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
         jVillageList.setPreferredSize(new java.awt.Dimension(200, 20));
 
         jCenterInGameButton.setBackground(new java.awt.Color(239, 235, 223));
-        jCenterInGameButton.setToolTipText(bundle1.getString("DSWorkbenchSearchFrame.jCenterInGameButton.toolTipText")); // NOI18N
+        jCenterInGameButton.setToolTipText("Karte zentrieren");
         jCenterInGameButton.setMaximumSize(new java.awt.Dimension(31, 31));
         jCenterInGameButton.setMinimumSize(new java.awt.Dimension(31, 31));
         jCenterInGameButton.setPreferredSize(new java.awt.Dimension(31, 31));
@@ -189,7 +187,7 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
         });
 
         jSendResButton.setBackground(new java.awt.Color(239, 235, 223));
-        jSendResButton.setToolTipText(bundle1.getString("DSWorkbenchSearchFrame.jSendResButton.toolTipText")); // NOI18N
+        jSendResButton.setToolTipText("Rohstoffe schicken");
         jSendResButton.setMaximumSize(new java.awt.Dimension(31, 31));
         jSendResButton.setMinimumSize(new java.awt.Dimension(31, 31));
         jSendResButton.setPreferredSize(new java.awt.Dimension(31, 31));
@@ -200,7 +198,7 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
         });
 
         jSendDefButton.setBackground(new java.awt.Color(239, 235, 223));
-        jSendDefButton.setToolTipText(bundle1.getString("DSWorkbenchSearchFrame.jSendDefButton.toolTipText")); // NOI18N
+        jSendDefButton.setToolTipText("Unterstützung schicken");
         jSendDefButton.setMaximumSize(new java.awt.Dimension(31, 31));
         jSendDefButton.setMinimumSize(new java.awt.Dimension(31, 31));
         jSendDefButton.setPreferredSize(new java.awt.Dimension(31, 31));
@@ -210,7 +208,7 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
             }
         });
 
-        jInGameOptionsLabel.setText(bundle1.getString("DSWorkbenchSearchFrame.jInGameOptionsLabel.text")); // NOI18N
+        jInGameOptionsLabel.setText("InGame Optionen");
 
         javax.swing.GroupLayout jPlayerSearchLayout = new javax.swing.GroupLayout(jPlayerSearch);
         jPlayerSearch.setLayout(jPlayerSearchLayout);
@@ -275,7 +273,7 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jSearchFrameAlwaysOnTop.setText(bundle1.getString("DSWorkbenchSearchFrame.jSearchFrameAlwaysOnTop.text")); // NOI18N
+        jSearchFrameAlwaysOnTop.setText("Immer im Vordergrund");
         jSearchFrameAlwaysOnTop.setOpaque(false);
         jSearchFrameAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {

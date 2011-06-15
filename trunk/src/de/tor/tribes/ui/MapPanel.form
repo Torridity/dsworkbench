@@ -87,14 +87,6 @@
             </MenuItem>
             <MenuItem class="javax.swing.JSeparator" name="jSeparator4">
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="jCurrentAddToNoteItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Der gew&#xe4;hlten Notiz hinzuf&#xfc;gen"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
-              </Events>
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jCurrentCreateNoteItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Notiz erstellen"/>
@@ -205,14 +197,6 @@
             <MenuItem class="javax.swing.JMenuItem" name="jAllCreateNoteItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Notiz erstellen"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="jAllAddToNoteItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Der gew&#xe4;hlten Notiz hinzuf&#xfc;gen"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>

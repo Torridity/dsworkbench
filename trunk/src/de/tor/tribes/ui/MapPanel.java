@@ -430,8 +430,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     }
                     case ImageManager.CURSOR_NOTE: {
                         if (v != null) {
-                            //TODO Add note to village
-                            //DSWorkbenchNotepad.getSingleton().addNoteForVillage(v);
+                            DSWorkbenchNotepad.getSingleton().addNoteForVillage(v);
                             if (!DSWorkbenchNotepad.getSingleton().isVisible()) {
                                 DSWorkbenchNotepad.getSingleton().setVisible(true);
                             }
@@ -868,7 +867,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         jVillageInfoIngame = new javax.swing.JMenuItem();
         jVillagePlaceIngame = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JSeparator();
-        jCurrentAddToNoteItem = new javax.swing.JMenuItem();
         jCurrentCreateNoteItem = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JSeparator();
         jCurrentToAttackPlanerAsTargetItem = new javax.swing.JMenuItem();
@@ -888,7 +886,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         jAllToAttackPlanerAsTargetItem = new javax.swing.JMenuItem();
         jSeparator6 = new javax.swing.JSeparator();
         jAllCreateNoteItem = new javax.swing.JMenuItem();
-        jAllAddToNoteItem = new javax.swing.JMenuItem();
         jSeparator8 = new javax.swing.JSeparator();
         jCenterVillagesIngameItem = new javax.swing.JMenuItem();
 
@@ -960,14 +957,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         });
         jCurrentVillageSubmenu.add(jVillagePlaceIngame);
         jCurrentVillageSubmenu.add(jSeparator4);
-
-        jCurrentAddToNoteItem.setText("Der gewählten Notiz hinzufügen");
-        jCurrentAddToNoteItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireVillagePopupActionEvent(evt);
-            }
-        });
-        jCurrentVillageSubmenu.add(jCurrentAddToNoteItem);
 
         jCurrentCreateNoteItem.setText("Notiz erstellen");
         jCurrentCreateNoteItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1074,14 +1063,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
         });
         jMarkedVillageSubmenu.add(jAllCreateNoteItem);
-
-        jAllAddToNoteItem.setText("Der gewählten Notiz hinzufügen");
-        jAllAddToNoteItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireVillagePopupActionEvent(evt);
-            }
-        });
-        jMarkedVillageSubmenu.add(jAllAddToNoteItem);
         jMarkedVillageSubmenu.add(jSeparator8);
 
         jCenterVillagesIngameItem.setText("Im Spiel zentrieren (max. 10 Dörfer)");
@@ -1234,18 +1215,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
         } else if (evt.getSource() == jCurrentCreateNoteItem) {
             if (actionMenuVillage != null) {
-                //TODO Add note to village
-                //DSWorkbenchNotepad.getSingleton().addNoteForVillage(actionMenuVillage);
+                DSWorkbenchNotepad.getSingleton().addNoteForVillage(actionMenuVillage);
                 JOptionPaneHelper.showInformationBox(this, "Notiz erstellt", "Information");
-            }
-        } else if (evt.getSource() == jCurrentAddToNoteItem) {
-            if (actionMenuVillage != null) {
-                //TODO Add note to village
-                /*if (DSWorkbenchNotepad.getSingleton().addVillageToCurrentNote(actionMenuVillage)) {
-                JOptionPaneHelper.showInformationBox(this, "Dorf hinzugefügt", "Information");
-                } else {
-                JOptionPaneHelper.showWarningBox(this, "Es ist keine Notiz ausgewählt.", "Warnung");
-                }*/
             }
         } else if (evt.getSource() == jCurrentToAStarAsAttacker || evt.getSource() == jCurrentToAStarAsDefender) {
             VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(actionMenuVillage, TroopsManager.TROOP_TYPE.OWN);
@@ -1357,22 +1328,10 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
             Village v = actionMenuVillage;
             if (v != null) {
-                //TODO Add note to village
-                //  DSWorkbenchNotepad.getSingleton().addNoteForVillages(markedVillages);
+                DSWorkbenchNotepad.getSingleton().addNoteForVillages(markedVillages);
                 JOptionPaneHelper.showInformationBox(this, "Notiz erstellt", "Information");
             }
-        } else if (evt.getSource() == jAllAddToNoteItem) {
-            if (markedVillages.isEmpty()) {
-                JOptionPaneHelper.showInformationBox(this, "Keine Dörfer markiert.", "Information");
-                return;
-            }
-            //TODO Add note to village
-          /*  if (DSWorkbenchNotepad.getSingleton().addVillagesToCurrentNote(markedVillages)) {
-            JOptionPaneHelper.showInformationBox(this, "Dörfer hinzugefügt", "Information");
-            } else {
-            JOptionPaneHelper.showWarningBox(this, "Es ist keine Notiz ausgewählt.", "Warnung");
-            }*/
-        } else if (evt.getSource() == jCenterVillagesIngameItem) {
+        }  else if (evt.getSource() == jCenterVillagesIngameItem) {
             if (markedVillages.isEmpty()) {
                 JOptionPaneHelper.showInformationBox(this, "Keine Dörfer markiert.", "Information");
                 return;
@@ -1733,7 +1692,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem jAllAddToNoteItem;
     private javax.swing.JMenuItem jAllCoordAsBBToClipboardItem;
     private javax.swing.JMenuItem jAllCoordToClipboardItem;
     private javax.swing.JMenuItem jAllCreateNoteItem;
@@ -1744,7 +1702,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     private javax.swing.JMenuItem jCenterVillagesIngameItem;
     private javax.swing.JMenuItem jCopyPlayerVillagesAsBBCodeToClipboardItem;
     private javax.swing.JMenuItem jCopyPlayerVillagesToClipboardItem;
-    private javax.swing.JMenuItem jCurrentAddToNoteItem;
     private javax.swing.JMenuItem jCurrentCoordAsBBToClipboardItem;
     private javax.swing.JMenuItem jCurrentCoordToClipboardItem;
     private javax.swing.JMenuItem jCurrentCreateNoteItem;

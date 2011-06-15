@@ -26,6 +26,7 @@ import de.tor.tribes.ui.renderer.VisibilityCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.map.FormManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -47,6 +48,7 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
@@ -69,6 +71,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
  */
 public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements ListSelectionListener, GenericManagerListener {
 //@TODO: Fix edit form frame to fit nimbus L&F
+
     private static Logger logger = Logger.getLogger("FormFrame");
     private static DSWorkbenchFormFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
@@ -97,6 +100,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         }
 
         KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
+        KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         jFormsTable.registerKeyboardAction(new ActionListener() {
 
             @Override
@@ -104,8 +108,15 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
                 copySelectionToInternalClipboard();
             }
         }, "Copy", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        //@TODO Implement delete!!
-        
+
+        jFormsTable.registerKeyboardAction(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteSelection();
+            }
+        }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         //   GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.form_view", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
@@ -174,6 +185,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         try {
             List<AbstractForm> selection = getSelectedForms();
             if (selection.isEmpty()) {
+                showInfo("Keine Formen gewählt");
                 return;
             }
             ArrayList<Village> villages = new ArrayList<Village>();
@@ -195,6 +207,26 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
             logger.error("Failed to copy villages to clipboard", e);
             String result = "Fehler beim Kopieren in die Zwischenablage.";
             showError(result);
+        }
+    }
+
+    private void deleteSelection() {
+        List<AbstractForm> selection = getSelectedForms();
+        if (selection.isEmpty()) {
+            showInfo("Keine Formen gewählt");
+            return;
+        }
+
+        String message = ((selection.size() == 1) ? "Form " : (selection.size() + " Formen")) + "wirklich löschen?";
+
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+            FormManager.getSingleton().invalidate();
+            for (AbstractForm f : selection) {
+                FormManager.getSingleton().removeElement(f);
+            }
+
+            showSuccess(((selection.size() == 1) ? "Form " : (selection.size() + " Formen ")) + "gelöscht");
+            FormManager.getSingleton().revalidate(true);
         }
     }
 

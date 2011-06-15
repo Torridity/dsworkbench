@@ -45,7 +45,9 @@ import org.apache.log4j.Logger;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.MouseGestureHandler;
+import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.VillageListFormatter;
+import de.tor.tribes.util.mark.MarkerManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -69,7 +71,6 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 import javax.swing.AbstractAction;
-import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -85,8 +86,7 @@ import org.jdesktop.swingx.painter.MattePainter;
 /**
  * @author Charon
  */
-public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, DragGestureListener {
-//TODO remove dummy village from default view, check if bb-editor always hides, implement drag and drop!
+public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -132,7 +132,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
     }
     private static Logger logger = Logger.getLogger("Notepad");
     private static DSWorkbenchNotepad SINGLETON = null;
-    private DragSource dragSource;
     private BBPanel jNotePane = null;
     private GenericTestPanel centerPanel = null;
 
@@ -151,11 +150,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         centerPanel.setChildPanel(jXNotePanel);
         buildMenu();
         jScrollPane2.setViewportView(jNotePane);
-        dragSource = DragSource.getDefaultDragSource();
-        dragSource.createDefaultDragGestureRecognizer(jNotesList, // What component
-                DnDConstants.ACTION_COPY_OR_MOVE, // What drag types?
-                this);// the listener
-
         try {
             jAlwaysOnTopBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("notepad.frame.alwaysOnTop")));
             setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
@@ -164,7 +158,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         }
 
         //setup map marker box
-        for (int i = 0; i <= ImageManager.ID_NOTE_ICON_13; i++) {
+     /*   for (int i = 0; i <= ImageManager.ID_NOTE_ICON_13; i++) {
             jIconBox.addItem(i);
         }
 
@@ -214,7 +208,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
                 return c;
             }
         });
-
+*/
 
         jNoteTabbedPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
         jNoteTabbedPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
@@ -383,7 +377,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
     public void resetView() {
         NoteManager.getSingleton().addManagerListener(this);
         generateNoteTabs();
-        //refreshNoteList();
     }
 
     public void setVillageFieldExternally(Village pVillage) {
@@ -405,48 +398,34 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         jSearchField.setText(pVillage.toString());
     }
 
-    /* public void addNoteForVillage(Village pVillage) {
-    Note n = new Note();
-    n.addVillage(pVillage);
-    n.setNoteText("(kein Text)");
-    n.setMapMarker(0);
-    NoteManager.getSingleton().addNote(n);
-    currentNote = n;
-    refreshNoteList();
+    public void addNoteForVillage(Village pVillage) {
+        NoteTableTab tab = getActiveTab();
+        if (tab != null) {
+            String set = getActiveTab().getNoteSet();
+
+            Note n = new Note();
+            n.addVillage(pVillage);
+            n.setNoteText("(kein Text)");
+            n.setMapMarker(0);
+            NoteManager.getSingleton().addManagedElement(set, n);
+        }
     }
-    
+
     public void addNoteForVillages(List<Village> pVillages) {
-    Note n = new Note();
-    for (Village v : pVillages) {
-    n.addVillage(v);
+        NoteTableTab tab = getActiveTab();
+        if (tab != null) {
+            String set = getActiveTab().getNoteSet();
+
+            Note n = new Note();
+            for (Village v : pVillages) {
+                n.addVillage(v);
+            }
+            n.setNoteText("(kein Text)");
+            n.setMapMarker(0);
+            NoteManager.getSingleton().addManagedElement(set, n);
+        }
     }
-    n.setNoteText("(kein Text)");
-    n.setMapMarker(0);
-    NoteManager.getSingleton().addNote(n);
-    currentNote = n;
-    refreshNoteList();
-    }
-    
-    public boolean addVillageToCurrentNote(Village pVillage) {
-    if (currentNote != null) {
-    currentNote.addVillage(pVillage);
-    showCurrentNote();
-    return true;
-    }
-    return false;
-    }
-    
-    public boolean addVillagesToCurrentNote(List<Village> pVillages) {
-    if (currentNote != null) {
-    for (Village v : pVillages) {
-    currentNote.addVillage(v);
-    }
-    showCurrentNote();
-    return true;
-    }
-    return false;
-    }
-     */
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -1566,7 +1545,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         }
     }
 
-    @Override
+   /* @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
         /* if (currentNote == null) {
         return;ji
@@ -1590,13 +1569,16 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         } catch (Exception e) {
         logger.error("Failed to insert dropped villages", e);
         }*/
-    }
+  //  }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
-
+                GlobalOptions.setSelectedServer("de43");
+                DataHolder.getSingleton().loadData(false);
+                ProfileManager.getSingleton().loadProfiles();
+                GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
                 MouseGestures mMouseGestures = new MouseGestures();
                 mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
                 mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
@@ -1653,7 +1635,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         });
     }
 
-    @Override
+ /*   @Override
     public void dragGestureRecognized(DragGestureEvent dge) {
         Note selectedNote = (Note) jNotesList.getSelectedValue();
 
@@ -1683,7 +1665,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
     @Override
     public void dragDropEnd(DragSourceDropEvent dsde) {
         setCursor(Cursor.getDefaultCursor());
-    }
+    }*/
 
     // <editor-fold defaultstate="collapsed" desc="Gesture handling">
     @Override

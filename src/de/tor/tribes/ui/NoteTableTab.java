@@ -10,7 +10,7 @@
  */
 package de.tor.tribes.ui;
 
-import de.tor.tribes.types.test.DummyVillage;
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Note;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.editors.BBPanelCellEditor;
@@ -24,8 +24,8 @@ import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.bb.NoteListFormatter;
-import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.note.NoteManager;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -34,6 +34,10 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -88,7 +92,6 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
     private static NoteTableModel noteModel = null;
     private static boolean KEY_LISTENER_ADDED = false;
     private PainterHighlighter highlighter = null;
-
     static {
         jxNoteTable.addHighlighter(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
 
@@ -138,6 +141,13 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
             jxNoteTable.registerKeyboardAction(pActionListener, "Cut", cut, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxNoteTable.registerKeyboardAction(pActionListener, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxNoteTable.registerKeyboardAction(pActionListener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            jxVillageList.registerKeyboardAction(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    deleteVillagesFromNotes();
+                }
+            }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxNoteTable.getActionMap().put("find", new AbstractAction() {
 
                 @Override
@@ -169,22 +179,18 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
     private void updateVillageList() {
         if (noteModel.getNoteSet().equals(getNoteSet())) {
             DefaultListModel model = new DefaultListModel();
-            jxVillageList.invalidate();
             List<Note> notes = getSelectedNotes();
             List<Village> villages = new LinkedList<Village>();
             for (Note n : notes) {
                 for (int id : n.getVillageIds()) {
-                    //TODO: Connect to dataholder
-                    Village v = new DummyVillage();//DataHolder.getSingleton().getVillagesById().get(id);
+                    Village v = DataHolder.getSingleton().getVillagesById().get(id);
                     if (v != null && !villages.contains(v)) {
                         villages.add(v);
                         model.addElement(v);
                     }
                 }
             }
-
             jxVillageList.setModel(model);
-            jxVillageList.revalidate();
         }
     }
 
@@ -472,7 +478,29 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
                     cnt++;
                 }
             }
-            showSuccess(cnt + ((cnt == 1) ? " Notiz eingefügt" : " Notizen eingefügt"));
+            if (cnt > 0) {
+                showSuccess(cnt + ((cnt == 1) ? " Notiz eingefügt" : " Notizen eingefügt"));
+            } else {
+                logger.debug("No notes found, try to insert villages");
+                List<Note> notes = getSelectedNotes();
+                if (notes.isEmpty()) {
+                    logger.info("No notes selected, returning");
+                    return;
+                }
+                List<Village> villages = PluginManager.getSingleton().executeVillageParser(data);
+                if (!villages.isEmpty()) {
+                    logger.info("Villages found, adding them to selected notes");
+
+                    for (Note n : notes) {
+                        for (Village v : villages) {
+                            n.addVillage(v);
+                        }
+                    }
+
+                    String message = ((villages.size() == 1) ? "Dorf wurde " : villages.size() + " Dörfer wurden ") + ((notes.size() == 1) ? "der Notiz" : "den Notizen") + " hinzugefügt";
+                    showSuccess(message);
+                }
+            }
         } catch (UnsupportedFlavorException ufe) {
             logger.error("Failed to copy notes from internal clipboard", ufe);
             showError("Fehler beim Einfügen der Notizen");
@@ -481,7 +509,6 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
             showError("Fehler beim Einfügen der Notizen");
         }
         noteModel.fireTableDataChanged();
-        MarkerManager.getSingleton().revalidate();
     }
 
     public boolean deleteSelection(boolean pAsk) {
@@ -502,6 +529,35 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
 
     public void deleteSelection() {
         deleteSelection(true);
+    }
+
+    private void deleteVillagesFromNotes() {
+        Object[] selection = jxVillageList.getSelectedValues();
+
+        if (selection == null || selection.length == 0) {
+            showInfo("Keine Dörfer gewählt");
+            return;
+        }
+
+        List<Note> notes = getSelectedNotes();
+
+        if (notes.isEmpty()) {
+            showInfo("Keine Notizen gewählt");
+            return;
+        }
+
+        String message = ((selection.length == 1) ? "Dorf aus " : selection.length + " Dörfer aus ") + ((notes.size() == 1) ? "der gewählten Notiz" : "den gewählten Notizen") + " löschen?";
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+            for (Object o : selection) {
+                Village v = (Village) o;
+                for (Note n : notes) {
+                    n.removeVillage(v);
+                }
+            }
+
+            showSuccess(((selection.length == 1) ? "Dorf " : selection.length + " Dörfer ") + "gelöscht");
+            noteModel.fireTableDataChanged();
+        }
     }
 
     private List<Note> getSelectedNotes() {

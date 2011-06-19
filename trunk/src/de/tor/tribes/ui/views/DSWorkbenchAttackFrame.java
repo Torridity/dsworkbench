@@ -684,17 +684,16 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jNewPlanPanel.add(jLabel1, java.awt.BorderLayout.CENTER);
 
         setTitle("Angriffe");
+        setMinimumSize(new java.awt.Dimension(700, 500));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jAttackPanel.setBackground(new java.awt.Color(239, 235, 223));
-        jAttackPanel.setPreferredSize(new java.awt.Dimension(300, 400));
+        jAttackPanel.setPreferredSize(new java.awt.Dimension(700, 500));
         jAttackPanel.setLayout(new java.awt.BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 668;
-        gridBagConstraints.ipady = 471;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jAttackPanel, gridBagConstraints);
@@ -898,8 +897,8 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         } catch (Exception e) {
         }
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        DSWorkbenchAttackFrame.getSingleton().setSize(800, 600);
-
+      //  DSWorkbenchAttackFrame.getSingleton().setSize(800, 600);
+DSWorkbenchAttackFrame.getSingleton().pack();
         AttackManager.getSingleton().addGroup("test1");
         AttackManager.getSingleton().addGroup("asd2");
         AttackManager.getSingleton().addGroup("awe3");

@@ -102,7 +102,6 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private ActionListener actionListener = null;
 
     static {
-        //TODO add date coloring!=
         jxAttackTable.setRowHeight(24);
         HighlightPredicate.ColumnHighlightPredicate colu = new HighlightPredicate.ColumnHighlightPredicate(0, 1, 2, 3, 4, 5, 6, 9, 10, 11, 12);
         jxAttackTable.setHighlighters(new CompoundHighlighter(colu, HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B)));

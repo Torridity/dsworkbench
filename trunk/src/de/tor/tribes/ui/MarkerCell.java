@@ -51,9 +51,7 @@ public class MarkerCell extends javax.swing.JPanel implements Comparable<MarkerC
     /** Creates new form MarkerPanel */
     MarkerCell(Tribe pTribe) throws Exception {
         if (pTribe == null) {
-            //   throw new InstantiationException("Tribe argument must not be null");
-            //TODO: Testing only
-            pTribe = Barbarians.getSingleton();
+            throw new InstantiationException("Tribe argument must not be null");
         }
 
         initComponents();
@@ -66,9 +64,7 @@ public class MarkerCell extends javax.swing.JPanel implements Comparable<MarkerC
 
     MarkerCell(Ally pAlly) throws Exception {
         if (pAlly == null) {
-            //  throw new InstantiationException("Ally argument must not be null");
-            //TODO: Testing only
-            pAlly = BarbarianAlly.getSingleton();
+            throw new InstantiationException("Ally argument must not be null");
         }
         initComponents();
         mAlly = pAlly;

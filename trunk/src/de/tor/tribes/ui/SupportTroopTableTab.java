@@ -108,7 +108,9 @@ public class SupportTroopTableTab extends javax.swing.JPanel implements ListSele
         jScrollPane1.setViewportView(jxTroopTable);
         if (!KEY_LISTENER_ADDED) {
             KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
+            KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
             jxTroopTable.registerKeyboardAction(pActionListener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            jxTroopTable.registerKeyboardAction(pActionListener, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxTroopTable.getActionMap().put("find", new AbstractAction() {
 
                 @Override
@@ -353,6 +355,7 @@ public class SupportTroopTableTab extends javax.swing.JPanel implements ListSele
     private void copyBBToExternalClipboardEvent() {
         try {
             List<VillageTroopsHolder> troops = getSelectedVillages();
+            
             if (troops.isEmpty()) {
                 showInfo("Keine Dörfer ausgewählt");
                 return;

@@ -265,6 +265,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         jNewPlanPanel.add(jLabel3, java.awt.BorderLayout.CENTER);
 
         setTitle("Markierungen");
+        setMinimumSize(new java.awt.Dimension(400, 300));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jMarkerFrameAlwaysOnTop.setText("Immer im Vordergrund");
@@ -351,8 +352,8 @@ private void fireCreateMarkerSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         } catch (Exception e) {
         }
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        DSWorkbenchMarkerFrame.getSingleton().setSize(800, 600);
-
+        // DSWorkbenchMarkerFrame.getSingleton().setSize(800, 600);
+        DSWorkbenchMarkerFrame.getSingleton().pack();
         MarkerManager.getSingleton().addGroup("test1");
         MarkerManager.getSingleton().addGroup("asd2");
         MarkerManager.getSingleton().addGroup("awe3");

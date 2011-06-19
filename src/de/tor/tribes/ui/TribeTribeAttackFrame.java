@@ -221,6 +221,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
     private JFrame mLogFrame = null;
     private TroopSplitDialog mTroopSplitDialog = null;
     private GenericTestPanel centerPanel = null;
+    private TroopFilterDialog filterDialog = null;
 
     /** Creates new form TribeTribeAttackFrame */
     public TribeTribeAttackFrame() {
@@ -294,6 +295,8 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
                 fireAddFilteredTargetVillages();
             }
         });
+
+        filterDialog = new TroopFilterDialog(this, true);
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
      /*   GlobalOptions.getHelpBroker().enableHelp(jSourcePanel, "pages.attack_planer_source", GlobalOptions.getHelpBroker().getHelpSet());
@@ -500,6 +503,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
         jVictimTable.setModel(victimModel);
         // </editor-fold>
         dataChangedEvent();
+        filterDialog.reset();
         jSourcesTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jVictimTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         String[] cols = new String[]{"Einheit", "Fake", "Anwendbar"};
@@ -577,9 +581,37 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
     private void filterByTroopStrength() {
         int idx = jideTabbedPane1.getSelectedIndex();
         if (idx == 0) {
-            jFilterFrame.pack();
+            /*   jFilterFrame.pack();
             jFilterFrame.setLocationRelativeTo(this);
-            jFilterFrame.setVisible(true);
+            jFilterFrame.setVisible(true);*/
+
+            List<Village> sources = new LinkedList<Village>();
+            for (int i = 0; i < jSourcesTable.getRowCount(); i++) {
+                //go through all rows in attack table and get source village
+                sources.add((Village) jSourcesTable.getValueAt(i, 0));
+            }
+            int sizeBefore = sources.size();
+
+            if (sizeBefore == 0) {
+                showInfo(sourceInfoPanel, jxSourceInfoLabel, "Keine Herkunftsdörfer vorhanden");
+                return;
+            }
+            filterDialog.show(sources);
+
+            for (int i = jSourcesTable.getRowCount() - 1; i >= 0; i--) {
+                //go through all rows in attack table and get source village
+                Village v = (Village) jSourcesTable.getValueAt(i, 0);
+                if (!sources.contains(v)) {
+                    ((DefaultTableModel) jSourcesTable.getModel()).removeRow(jSourcesTable.convertRowIndexToModel(i));
+                }
+            }
+
+            int diff = sizeBefore - sources.size();
+            if (diff == 0) {
+                showSuccess(sourceInfoPanel, jxSourceInfoLabel, "Keine Dörfer entfernt");
+            } else {
+                showSuccess(sourceInfoPanel, jxSourceInfoLabel, ((diff == 1) ? "Ein Dorf entfernt" : diff + " Dörfer entfernt"));
+            }
         } else {
             //no valid tab    
             showInfo(targetInfoPanel, jxTargetInfoLabel, "Diese Funktion ist nur für Herkunftsdörfer verfügbar");

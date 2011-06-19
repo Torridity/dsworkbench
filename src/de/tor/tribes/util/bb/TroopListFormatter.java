@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.util.bb;
 
+import de.tor.tribes.util.troops.SupportVillageTroopsHolder;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.text.NumberFormat;
 import java.util.LinkedList;

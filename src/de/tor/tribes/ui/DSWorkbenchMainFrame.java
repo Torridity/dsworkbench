@@ -2846,7 +2846,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
                 }
 
                 if (jExportTroops.isSelected()) {
-                      //TODO: Add form export
+                      //TODO: Add troop export
                     exportString += TroopsManager.getSingleton().getExportData(null);
                 }
 

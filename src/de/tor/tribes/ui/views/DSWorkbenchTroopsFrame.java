@@ -145,6 +145,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
+        
         DataHolder.getSingleton().addDataHolderListener(DSWorkbenchTroopsFrame.this);
 
         jXGroupsList.addListSelectionListener(new ListSelectionListener() {
@@ -412,15 +413,12 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 628;
-        gridBagConstraints.ipady = 406;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jTroopsPanel, gridBagConstraints);
 
         capabilityInfoPanel1.setCopyable(false);
         capabilityInfoPanel1.setPastable(false);
-        capabilityInfoPanel1.setSearchable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;

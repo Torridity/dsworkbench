@@ -1545,8 +1545,10 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         }
     }
 
-   /* @Override
+    @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
+        
+    }
         /* if (currentNote == null) {
         return;ji
         }

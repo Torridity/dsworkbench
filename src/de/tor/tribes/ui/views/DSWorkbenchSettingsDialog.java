@@ -36,14 +36,9 @@ import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.util.ServerChangeListener;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.MapPanel;
-import de.tor.tribes.ui.MapPanel;
-import de.tor.tribes.ui.MinimapPanel;
 import de.tor.tribes.ui.MinimapPanel;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
-import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
-import de.tor.tribes.ui.views.DSWorkbenchProfileDialog;
 import de.tor.tribes.util.AttackToBBCodeFormater;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -61,9 +56,7 @@ import java.net.SocketAddress;
 import java.util.Comparator;
 import javax.swing.JFileChooser;
 import javax.swing.JTable;
-import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
-import org.apache.log4j.Level;
 
 /**
  * @author Jejkal

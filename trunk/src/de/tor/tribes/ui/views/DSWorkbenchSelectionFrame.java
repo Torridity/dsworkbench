@@ -80,7 +80,8 @@ import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.painter.MattePainter;
 
-/**
+/**@TODO fix frame size
+ * @TODO deselect selected elements on village size button click to avoid deletion of unwanted elements
  * @author Charon
  */
 public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implements VillageSelectionListener, ActionListener, TreeSelectionListener {

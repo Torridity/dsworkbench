@@ -283,4 +283,61 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
     public String getGroupNameAttributeIdentifier() {
         return "";
     }
+
+    @Override
+    public String[] getReplacements(boolean pExtended) {
+        Village v = getVillage();
+        String villageVal = "-";
+        if (v != null) {
+            villageVal = getVillage().toBBCode();
+        }
+        Hashtable<UnitHolder, Integer> troops = getTroops();
+        String spearIcon = "[unit]spear[/unit]";
+        String spearVal = getValueForUnit(troops, "spear");
+        String swordIcon = "[unit]sword[/unit]";
+        String swordVal = getValueForUnit(troops, "sword");
+        String axeIcon = "[unit]axe[/unit]";
+        String axeVal = getValueForUnit(troops, "axe");
+        String archerIcon = "[unit]archer[/unit]";
+        String archerVal = getValueForUnit(troops, "archer");
+        String spyIcon = "[unit]spy[/unit]";
+        String spyVal = getValueForUnit(troops, "spy");
+        String lightIcon = "[unit]light[/unit]";
+        String lightVal = getValueForUnit(troops, "light");
+        String marcherIcon = "[unit]marcher[/unit]";
+        String marcherVal = getValueForUnit(troops, "marcher");
+        String heavyIcon = "[unit]heavy[/unit]";
+        String heavyVal = getValueForUnit(troops, "heavy");
+        String ramIcon = "[unit]ram[/unit]";
+        String ramVal = getValueForUnit(troops, "ram");
+        String cataIcon = "[unit]catapult[/unit]";
+        String cataVal = getValueForUnit(troops, "catapult");
+        String snobIcon = "[unit]snob[/unit]";
+        String snobVal = getValueForUnit(troops, "snob");
+        String knightIcon = "[unit]knight[/unit]";
+        String knightVal = getValueForUnit(troops, "knight");
+        String militiaIcon = "[unit]militia[/unit]";
+        String militiaVal = getValueForUnit(troops, "militia");
+
+        return new String[]{villageVal, spearIcon, swordIcon, axeIcon, archerIcon, spyIcon, lightIcon, marcherIcon, heavyIcon, ramIcon, cataIcon, knightIcon, snobIcon, militiaIcon,
+                    spearVal, swordVal, axeVal, archerVal, spyVal, lightVal, marcherVal, heavyVal, ramVal, cataVal, knightVal, snobVal, militiaVal};
+    }
+
+    private String getValueForUnit(Hashtable<UnitHolder, Integer> pTroops, String pName) {
+        UnitHolder u = DataHolder.getSingleton().getUnitByPlainName(pName);
+        if (u == null) {
+            return "-";
+        }
+        Integer i = null;
+        if (pTroops != null) {
+            i = pTroops.get(u);
+            if (i == null) {
+                i = 0;
+            }
+        } else {
+            i = 0;
+        }
+
+        return i.toString();
+    }
 }

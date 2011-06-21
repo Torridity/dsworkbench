@@ -8,7 +8,7 @@
  *
  * Created on Nov 25, 2009, 10:27:45 PM
  */
-package de.tor.tribes.ui;
+package de.tor.tribes.ui.views;
 
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
@@ -17,6 +17,7 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.editors.AttackTypeCellEditor;
 import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
@@ -64,6 +65,7 @@ import javax.swing.text.DefaultFormatter;
 import org.apache.log4j.Logger;
 
 /**
+ * @TODO Switch to new design
  * @author Torridity
  */
 public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFrame {

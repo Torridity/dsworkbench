@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.ui.views.DSWorkbenchDoItYourselfAttackPlaner;
 import de.tor.tribes.ui.views.DSWorkbenchReTimerFrame;
 import de.tor.tribes.ui.views.DSWorkbenchDistanceFrame;
 import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;

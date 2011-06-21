@@ -370,9 +370,7 @@ public class SupportTroopTableTab extends javax.swing.JPanel implements ListSele
             }
 
             buffer.append("Herkunft der Daten: '").append(getTroopSet()).append("'\n\n");
-
             buffer.append(new TroopListFormatter().formatElements(troops, extended));
-
             if (extended) {
                 buffer.append("\n[size=8]Erstellt am ");
                 buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));

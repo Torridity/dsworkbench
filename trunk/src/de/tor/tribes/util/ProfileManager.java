@@ -25,6 +25,7 @@ public class ProfileManager {
     private static Logger logger = Logger.getLogger("ProfileManager");
     private static ProfileManager SINGLETON = null;
     private List<UserProfile> mProfiles = null;
+    private List<ProfileManagerListener> mListeners = null;
 
     public static synchronized ProfileManager getSingleton() {
         if (SINGLETON == null) {
@@ -35,6 +36,17 @@ public class ProfileManager {
 
     ProfileManager() {
         mProfiles = new LinkedList<UserProfile>();
+        mListeners = new LinkedList<ProfileManagerListener>();
+    }
+
+    public void addProfileManagerListener(ProfileManagerListener pListener) {
+        if (!mListeners.contains(pListener)) {
+            mListeners.add(pListener);
+        }
+    }
+
+    public void removeProfileManagerListener(ProfileManagerListener pListener) {
+        mListeners.remove(pListener);
     }
 
     public UserProfile[] getProfiles() {
@@ -139,6 +151,13 @@ public class ProfileManager {
                     }
                 }
             }
+        }
+    }
+
+    public void fireProfilesLoadedEvents() {
+        ProfileManagerListener[] listeners = mListeners.toArray(new ProfileManagerListener[mListeners.size()]);
+        for (ProfileManagerListener listener : listeners) {
+            listener.fireProfilesLoadedEvent();
         }
     }
 

@@ -8,7 +8,7 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.DSWorkbenchDoItYourselfAttackPlaner;
+import de.tor.tribes.ui.views.DSWorkbenchDoItYourselfAttackPlaner;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.attack.AttackManager;

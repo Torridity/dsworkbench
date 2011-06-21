@@ -79,7 +79,7 @@ import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
 
-/**
+/**@TODO fix frame size
  * @author Torridity
  */
 public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements ActionListener {

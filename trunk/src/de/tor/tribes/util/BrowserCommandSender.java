@@ -8,6 +8,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor.Transport;
 import de.tor.tribes.util.attack.StandardAttackManager;
@@ -24,21 +25,30 @@ public class BrowserCommandSender {
 
     private static Logger logger = Logger.getLogger("BrowserInterface");
 
-    public static boolean sendAttack(Attack pAttack) {
+    public static boolean sendAttack(Attack pAttack, UserProfile pProfile) {
         boolean result = false;
         if (pAttack != null) {
-            result = sendTroops(pAttack.getSource(), pAttack.getTarget(), pAttack.getType());
+            result = sendTroops(pAttack.getSource(), pAttack.getTarget(), pAttack.getType(), pProfile);
             pAttack.setTransferredToBrowser(result);
         }
         return result;
     }
 
-    private static boolean sendTroops(Village pSource, Village pTarget, int pType) {
+    public static boolean sendAttack(Attack pAttack) {
+        return sendAttack(pAttack, null);
+    }
+
+    private static boolean sendTroops(Village pSource, Village pTarget, int pType, UserProfile pProfile) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             logger.debug("Transfer troops to browser for village '" + pSource + "' to '" + pTarget + "' with type '" + pType + "'");
             String url = baseURL + "/game.php?village=";
-            int uvID = GlobalOptions.getSelectedProfile().getUVId();
+            int uvID = -1;
+            if (pProfile != null) {
+                uvID = pProfile.getUVId();
+            } else {
+                uvID = GlobalOptions.getSelectedProfile().getUVId();
+            }
             if (uvID >= 0) {
                 url = baseURL + "/game.php?t=" + uvID + "&village=";
             }

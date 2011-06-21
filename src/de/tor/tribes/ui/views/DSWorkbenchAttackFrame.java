@@ -12,10 +12,12 @@ import com.jidesoft.swing.TabEditingValidator;
 import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.control.ManageableType;
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.test.DummyUnit;
 import de.tor.tribes.types.test.DummyVillage;
 import de.tor.tribes.types.StandardAttackElement;
+import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.AttackTableTab;
@@ -33,6 +35,8 @@ import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MouseGestureHandler;
+import de.tor.tribes.util.ProfileManager;
+import de.tor.tribes.util.ProfileManagerListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -50,6 +54,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.AbstractAction;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
@@ -72,10 +77,23 @@ import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
 
 // -Dsun.java2d.d3d=true -Dsun.java2d.translaccel=true -Dsun.java2d.ddforcevram=true
+// <editor-fold defaultstate="collapsed" desc=" NOTIFY THREAD ">
 /**
-  * @author  Charon
+ * @author  Charon
  */
-public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener {
+public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, ProfileManagerListener {
+
+    @Override
+    public void fireProfilesLoadedEvent() {
+        UserProfile[] profiles = ProfileManager.getSingleton().getProfiles(GlobalOptions.getSelectedServer());
+        DefaultComboBoxModel model = new DefaultComboBoxModel(new Object[]{"Standard"});
+        if (profiles != null && profiles.length > 0) {
+            for (UserProfile profile : profiles) {
+                model.addElement(profile);
+            }
+        }
+        jProfileBox.setModel(model);
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -108,7 +126,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 g.drawLine(0, 0, 3, 3);
                 g.dispose();
                 TexturePaint paint = new TexturePaint(back, new Rectangle2D.Double(0, 0, back.getWidth(), back.getHeight()));
-                
+
                 jxSearchPane.setBackgroundPainter(new MattePainter(paint));
                 DefaultListModel model = new DefaultListModel();
 
@@ -144,6 +162,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         centerPanel = new GenericTestPanel();
         jAttackPanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildPanel(jXAttackPanel);
+        fireProfilesLoadedEvent();
         buildMenu();
         try {
             jAttackFrameAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("attack.frame.alwaysOnTop")));
@@ -241,6 +260,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         });
+        ProfileManager.getSingleton().addProfileManagerListener(this);
 
         setGlassPane(jxSearchPane);
         pack();
@@ -342,16 +362,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         }));
-      /*  transferTaskPane.getContentPane().add(factoryButton("/res/ui/att_clipboardBB.png", "Markierte Angriffe als BB-Codes in die Zwischenablage kopieren. Der Inhalt der Zwischenablage kann dann z.B. in das Stammesforum, die Notizen oder IGMs eingef&uuml;gt werden", new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                AttackTableTab activeTab = getActiveTab();
-                if (activeTab != null) {
-                    activeTab.transferSelection(AttackTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
-                }
-            }
-        }));*/
 
         transferTaskPane.getContentPane().add(factoryButton("/res/ui/att_HTML.png", "Markierte Angriffe in eine HTML Datei kopieren.<br/>Die erstellte Datei kann dann per eMail verschickt oder zum Abschicken von Angriffen ohne ge&ouml;ffnetesDS Workbench verwendet werden", new MouseAdapter() {
 
@@ -437,7 +447,15 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         }));
         // </editor-fold>
-        centerPanel.setupTaskPane(jClickAccountLabel, editTaskPane, transferTaskPane, miscTaskPane);
+        centerPanel.setupTaskPane(jClickAccountLabel, jProfileQuickChange, editTaskPane, transferTaskPane, miscTaskPane);
+    }
+
+    public UserProfile getQuickProfile() {
+        Object o = jProfileBox.getSelectedItem();
+        if (o instanceof UserProfile) {
+            return (UserProfile) o;
+        }
+        return null;
     }
 
     /**Factory a new button*/
@@ -481,6 +499,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jAttackTabPane = new com.jidesoft.swing.JideTabbedPane();
         jNewPlanPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        jProfileQuickChange = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jProfileBox = new javax.swing.JComboBox();
         jAttackPanel = new javax.swing.JPanel();
         jAttackFrameAlwaysOnTop = new javax.swing.JCheckBox();
         capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
@@ -547,7 +568,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         );
 
         jClickAccountLabel.setBackground(new java.awt.Color(255, 255, 255));
-        jClickAccountLabel.setFont(new java.awt.Font("sansserif", 0, 11));
+        jClickAccountLabel.setFont(new java.awt.Font("sansserif", 0, 11)); // NOI18N
         jClickAccountLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jClickAccountLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/LeftClick.png"))); // NOI18N
         jClickAccountLabel.setText("Klick-Konto [0]");
@@ -682,6 +703,30 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         jNewPlanPanel.add(jLabel1, java.awt.BorderLayout.CENTER);
+
+        jProfileQuickChange.setBackground(new java.awt.Color(255, 255, 255));
+        jProfileQuickChange.setLayout(new java.awt.GridBagLayout());
+
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("Profil-Schnellauswahl");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 5);
+        jProfileQuickChange.add(jLabel2, gridBagConstraints);
+
+        jProfileBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jProfileBox.setToolTipText("Erlaubt die Schnellauswahl des Benutzerprofils mit dem Angriffe in den Browser übertragen werden");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 5, 5, 5);
+        jProfileQuickChange.add(jProfileBox, gridBagConstraints);
 
         setTitle("Angriffe");
         setMinimumSize(new java.awt.Dimension(700, 500));
@@ -819,13 +864,13 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
 
         //insert default tab to first place
         int cnt = 0;
-       
+
         for (String plan : plans) {
             AttackTableTab tab = new AttackTableTab(plan, this);
             jAttackTabPane.addTab(plan, tab);
             cnt++;
         }
-       
+
         jAttackTabPane.setTabClosableAt(0, false);
         jAttackTabPane.setTabClosableAt(1, false);
         jAttackTabPane.revalidate();
@@ -887,35 +932,41 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     }
 
     public static void main(String[] args) {
+        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         MouseGestures mMouseGestures = new MouseGestures();
         mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
         mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
         mMouseGestures.start();
+        GlobalOptions.setSelectedServer("de43");
+        ProfileManager.getSingleton().loadProfiles();
+        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
+
+        DataHolder.getSingleton().loadData(false);
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception e) {
         }
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-      //  DSWorkbenchAttackFrame.getSingleton().setSize(800, 600);
-DSWorkbenchAttackFrame.getSingleton().pack();
+
+        //  DSWorkbenchAttackFrame.getSingleton().setSize(800, 600);
+        DSWorkbenchAttackFrame.getSingleton().pack();
         AttackManager.getSingleton().addGroup("test1");
         AttackManager.getSingleton().addGroup("asd2");
         AttackManager.getSingleton().addGroup("awe3");
         for (int i = 0; i < 100; i++) {
             Attack a = new Attack();
-            a.setSource(new DummyVillage((short) (Math.random() * 100), (short) (Math.random() * 100)));
-            a.setTarget(new DummyVillage((short) (Math.random() * 100), (short) (Math.random() * 100)));
+            a.setSource(DataHolder.getSingleton().getRandomVillage());
+            a.setTarget(DataHolder.getSingleton().getRandomVillage());
             a.setArriveTime(new Date(Math.round(Math.random() * System.currentTimeMillis())));
             a.setUnit(new DummyUnit());
             Attack a1 = new Attack();
-            a1.setSource(new DummyVillage((short) (Math.random() * 100), (short) (Math.random() * 100)));
-            a1.setTarget(new DummyVillage((short) (Math.random() * 100), (short) (Math.random() * 100)));
+            a1.setSource(DataHolder.getSingleton().getRandomVillage());
+            a1.setTarget(DataHolder.getSingleton().getRandomVillage());
             a1.setArriveTime(new Date(Math.round(Math.random() * System.currentTimeMillis())));
             a1.setUnit(new DummyUnit());
             Attack a2 = new Attack();
-            a2.setSource(new DummyVillage((short) (Math.random() * 100), (short) (Math.random() * 100)));
-            a2.setTarget(new DummyVillage((short) (Math.random() * 100), (short) (Math.random() * 100)));
+            a2.setSource(DataHolder.getSingleton().getRandomVillage());
+            a2.setTarget(DataHolder.getSingleton().getRandomVillage());
             a2.setArriveTime(new Date(Math.round(Math.random() * System.currentTimeMillis())));
             a2.setUnit(new DummyUnit());
             AttackManager.getSingleton().addManagedElement(a);
@@ -988,9 +1039,12 @@ DSWorkbenchAttackFrame.getSingleton().pack();
     private javax.swing.JCheckBox jFilterCaseSensitive;
     private javax.swing.JCheckBox jFilterRows;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JPanel jNewPlanPanel;
+    private javax.swing.JComboBox jProfileBox;
+    private javax.swing.JPanel jProfileQuickChange;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
@@ -1004,7 +1058,7 @@ DSWorkbenchAttackFrame.getSingleton().pack();
     private org.jdesktop.swingx.JXPanel jxSearchPane;
     // End of variables declaration//GEN-END:variables
 }
-// <editor-fold defaultstate="collapsed" desc=" NOTIFY THREAD ">
+
 class NotifyThread extends Thread {
 
     private static Logger logger = Logger.getLogger("AttackNotificationHelper");

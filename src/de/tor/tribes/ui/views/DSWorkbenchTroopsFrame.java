@@ -60,7 +60,7 @@ import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTreeTable;
 import org.jdesktop.swingx.painter.MattePainter;
 
-/**
+/**@TODO fix frame size
  * @author  Jejkal
  */
 public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, DataHolderListener {

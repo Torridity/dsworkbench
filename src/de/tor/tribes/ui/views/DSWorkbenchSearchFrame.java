@@ -25,7 +25,7 @@ import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
 
 /**
- *
+ *@TODO fix for nimbus
  * @author  Jejkal
  */
 public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements SearchListener {

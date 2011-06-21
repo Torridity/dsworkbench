@@ -15,6 +15,7 @@ import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.ui.editors.AttackTypeCellEditor;
 import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
@@ -1482,19 +1483,24 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             return;
         }
         int sentAttacks = 0;
+        UserProfile profile = DSWorkbenchAttackFrame.getSingleton().getQuickProfile();
 
         for (Attack a : attacks) {
             if (attacks.size() == 1 || DSWorkbenchAttackFrame.getSingleton().getClickAccountValue() > 0) {
-                BrowserCommandSender.sendAttack(a);
-                a.setTransferredToBrowser(true);
-                if (attacks.size() > 1) {
-                    DSWorkbenchAttackFrame.getSingleton().decreaseClickAccountValue();
+                if (BrowserCommandSender.sendAttack(a, profile)) {
+                    a.setTransferredToBrowser(true);
+                    if (attacks.size() > 1) {
+                        DSWorkbenchAttackFrame.getSingleton().decreaseClickAccountValue();
+                    }
+                    sentAttacks++;
                 }
-                sentAttacks++;
             }
         }
-
-        showInfo(sentAttacks + " von " + attacks.size() + " Angriffe(n) in den Browser übertragen");
+        String usedProfile = "";
+        if (profile != null) {
+            usedProfile = "als " + profile.toString();
+        }
+        showInfo(sentAttacks + " von " + attacks.size() + " Angriffe(n) " + usedProfile + " in den Browser übertragen");
     }
 
     private boolean copyToInternalClipboard() {

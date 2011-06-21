@@ -8,7 +8,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.ui.views.DSWorkbenchChurchFrame;
 import de.tor.tribes.ui.views.DSWorkbenchConquersFrame;
-import de.tor.tribes.ui.DSWorkbenchDoItYourselfAttackPlaner;
+import de.tor.tribes.ui.views.DSWorkbenchDoItYourselfAttackPlaner;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.views.DSWorkbenchMarkerFrame;
 import de.tor.tribes.ui.views.DSWorkbenchRankFrame;

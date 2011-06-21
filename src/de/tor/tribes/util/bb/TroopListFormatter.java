@@ -21,10 +21,10 @@ public class TroopListFormatter extends BasicFormatter<VillageTroopsHolder> {
     private final String TEMPLATE_PROPERTY = "troops.list.bbexport.template";
     private final String STANDARD_TEMPLATE = "[b]Truppenübersicht[/b]\n"
             + "[table]\n"
-            + "[**]Dorf[||]%SPEAR_ICON%[||]%SWORD_ICON%[||]%AXE_ICON%[||]%ARCHER_ICON%[||]%SPY_ICON%[||]%LIGHT_ICON%[||]%MARCHER_ICON%[||]%HEAVY_ICON%[||]%RAM_ICON%[||]%CATA_ICON%[||]%KNIGHT_ICON%[||]%SNOB_ICON%[/**]"
+            + "[**]Dorf[||]%SPEAR_ICON%[||]%SWORD_ICON%[||]%AXE_ICON%[||]%ARCHER_ICON%[||]%SPY_ICON%[||]%LIGHT_ICON%[||]%MARCHER_ICON%[||]%HEAVY_ICON%[||]%RAM_ICON%[||]%CATA_ICON%[||]%KNIGHT_ICON%[||]%SNOB_ICON%[/**]\n"
             + LIST_START
             + "[*]%VILLAGE%[|]%SPEAR_AMOUNT%[|]%SWORD_AMOUNT%[|]%AXE_AMOUNT%[|]%ARCHER_AMOUNT%[|]%SPY_AMOUNT%[|]%LIGHT_AMOUNT%[|]%MARCHER_AMOUNT%[|]%HEAVY_AMOUNT%[|]%RAM_AMOUNT%[|]%CATA_AMOUNT%[|]%KNIGHT_AMOUNT%[|]%SNOB_AMOUNT%[/*]"
-            + LIST_END + "\n"
+            + LIST_END
             + "[/table]";
 
     @Override
@@ -40,7 +40,7 @@ public class TroopListFormatter extends BasicFormatter<VillageTroopsHolder> {
         VillageTroopsHolder dummyHolder = new VillageTroopsHolder();
         //replace unit icons
         replacedStart = StringUtils.replaceEach(replacedStart, dummyHolder.getBBVariables(), dummyHolder.getReplacements(pExtended));
-        b.append(replacedStart);
+        b.append(replacedStart).append("\n");
         for (VillageTroopsHolder t : pElements) {
             String[] replacements = t.getReplacements(pExtended);
             String itemLine = StringUtils.replaceEach(listItemTemplate, t.getBBVariables(), replacements);

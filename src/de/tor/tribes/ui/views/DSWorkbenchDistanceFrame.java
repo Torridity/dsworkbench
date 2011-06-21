@@ -53,7 +53,7 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
- *
+*@TODO fix frame size
  * @author Jejkal
  */
 public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implements ListSelectionListener {

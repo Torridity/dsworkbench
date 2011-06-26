@@ -29,8 +29,12 @@ public class MarkerPanelCellRenderer extends DefaultTableRenderer {
         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         JLabel l = (JLabel) c;
         MarkerCell cell = (MarkerCell) value;
-        cell.setBackground(l.getBackground());
-        cell.setForeground(l.getForeground());
+        if (cell != null) {
+            cell.setBackground(l.getBackground());
+            cell.setForeground(l.getForeground());
+        } else {
+            return c;
+        }
         return cell;
     }
 }

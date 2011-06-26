@@ -668,7 +668,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             DSWorkbenchTroopsFrame.getSingleton().resetView();
             DistanceManager.getSingleton().clear();
             StatManager.getSingleton().setup();
-           // DistanceTableModel.getSingleton().fireTableStructureChanged();
+            // DistanceTableModel.getSingleton().fireTableStructureChanged();
             DSWorkbenchDistanceFrame.getSingleton().resetView();
             DSWorkbenchStatsFrame.getSingleton().resetView();
             DSWorkbenchDoItYourselfAttackPlaner.getSingleton().resetView();
@@ -676,7 +676,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             DSWorkbenchReportFrame.getSingleton().resetView();
             DSWorkbenchSOSRequestAnalyzer.getSingleton().resetView();
             DSWorkbenchMerchantDistibutor.getSingleton().resetView();
-              
+
             //update attack planner
             if (mTribeTribeAttackFrame != null) {
                 mTribeTribeAttackFrame.setup();
@@ -696,7 +696,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
             jShowChurchFrame.setEnabled(ServerSettings.getSingleton().isChurch());
             jROIBox.setModel(new DefaultComboBoxModel(ROIManager.getSingleton().getROIs()));
-
             DSWorkbenchSelectionFrame.getSingleton().resetView();
             DSWorkbenchNotepad.getSingleton().resetView();
             if (DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
@@ -711,7 +710,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             //DSWorkbenchNotepad.getSingleton();
             //DSWorkbenchTroopsFrame.getSingleton();
             //DSWorkbenchRankFrame.getSingleton();
-            DSWorkbenchFormFrame.getSingleton();
+            DSWorkbenchFormFrame.getSingleton().resetView();
             //DSWorkbenchMarkerFrame.getSingleton();
             // DSWorkbenchChurchFrame.getSingleton();
             //DSWorkbenchConquersFrame.getSingleton();
@@ -1005,20 +1004,24 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         jExportDialog = new javax.swing.JDialog();
         jScrollPane1 = new javax.swing.JScrollPane();
         jAttackExportTable = new javax.swing.JTable();
-        jExportTags = new javax.swing.JCheckBox();
-        jExportTroops = new javax.swing.JCheckBox();
-        jExportForms = new javax.swing.JCheckBox();
         jExportButton = new javax.swing.JButton();
         jCancelExportButton = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
         jMarkerSetExportTable = new javax.swing.JTable();
-        jExportNotes = new javax.swing.JCheckBox();
         jScrollPane5 = new javax.swing.JScrollPane();
         jReportSetExportTable = new javax.swing.JTable();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        jNoteSetExportTable = new javax.swing.JTable();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        jTroopSetExportTable = new javax.swing.JTable();
+        jPanel5 = new javax.swing.JPanel();
+        jExportTags = new javax.swing.JCheckBox();
+        jExportForms = new javax.swing.JCheckBox();
         jAddROIDialog = new javax.swing.JDialog();
         jLabel7 = new javax.swing.JLabel();
         jROIRegion = new javax.swing.JTextField();
@@ -1124,6 +1127,10 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jAddROIButton = new javax.swing.JButton();
 
         jExportDialog.setTitle("Export");
+        jExportDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
+
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(100, 100));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(100, 100));
 
         jAttackExportTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1144,11 +1151,15 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jAttackExportTable.setOpaque(false);
         jScrollPane1.setViewportView(jAttackExportTable);
 
-        jExportTags.setText("Tags exportieren");
-
-        jExportTroops.setText("Truppen exportieren");
-
-        jExportForms.setText("Formen exportieren");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 0.3;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jExportDialog.getContentPane().add(jScrollPane1, gridBagConstraints);
 
         jExportButton.setText("Exportieren");
         jExportButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -1156,6 +1167,12 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                 fireExportEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jExportDialog.getContentPane().add(jExportButton, gridBagConstraints);
 
         jCancelExportButton.setText("Abbrechen");
         jCancelExportButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -1163,6 +1180,14 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                 fireExportEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jExportDialog.getContentPane().add(jCancelExportButton, gridBagConstraints);
+
+        jScrollPane4.setMinimumSize(new java.awt.Dimension(100, 100));
+        jScrollPane4.setPreferredSize(new java.awt.Dimension(100, 100));
 
         jMarkerSetExportTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1183,7 +1208,18 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMarkerSetExportTable.setOpaque(false);
         jScrollPane4.setViewportView(jMarkerSetExportTable);
 
-        jExportNotes.setText("Notizen exportieren");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 0.3;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jExportDialog.getContentPane().add(jScrollPane4, gridBagConstraints);
+
+        jScrollPane5.setMinimumSize(new java.awt.Dimension(100, 100));
+        jScrollPane5.setPreferredSize(new java.awt.Dimension(100, 100));
 
         jReportSetExportTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1204,53 +1240,116 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jReportSetExportTable.setOpaque(false);
         jScrollPane5.setViewportView(jReportSetExportTable);
 
-        javax.swing.GroupLayout jExportDialogLayout = new javax.swing.GroupLayout(jExportDialog.getContentPane());
-        jExportDialog.getContentPane().setLayout(jExportDialogLayout);
-        jExportDialogLayout.setHorizontalGroup(
-            jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jExportDialogLayout.createSequentialGroup()
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 0.3;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jExportDialog.getContentPane().add(jScrollPane5, gridBagConstraints);
+
+        jScrollPane6.setMinimumSize(new java.awt.Dimension(100, 100));
+        jScrollPane6.setPreferredSize(new java.awt.Dimension(100, 100));
+
+        jNoteSetExportTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Notizset", "Exportieren"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Boolean.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jNoteSetExportTable.setOpaque(false);
+        jScrollPane6.setViewportView(jNoteSetExportTable);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 0.3;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jExportDialog.getContentPane().add(jScrollPane6, gridBagConstraints);
+
+        jScrollPane7.setMinimumSize(new java.awt.Dimension(100, 100));
+        jScrollPane7.setPreferredSize(new java.awt.Dimension(100, 100));
+
+        jTroopSetExportTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Truppeninformationen", "Exportieren"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Boolean.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jTroopSetExportTable.setOpaque(false);
+        jScrollPane7.setViewportView(jTroopSetExportTable);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 0.3;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jExportDialog.getContentPane().add(jScrollPane7, gridBagConstraints);
+
+        jPanel5.setPreferredSize(new java.awt.Dimension(100, 100));
+
+        jExportTags.setText("Gruppen exportieren");
+
+        jExportForms.setText("Formen exportieren");
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
-                    .addGroup(jExportDialogLayout.createSequentialGroup()
-                        .addComponent(jExportTroops)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
-                        .addComponent(jExportForms))
-                    .addGroup(jExportDialogLayout.createSequentialGroup()
-                        .addComponent(jExportTags)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE)
-                        .addComponent(jExportNotes))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jExportDialogLayout.createSequentialGroup()
-                        .addComponent(jCancelExportButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jExportButton))
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE))
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jExportForms, javax.swing.GroupLayout.DEFAULT_SIZE, 305, Short.MAX_VALUE)
+                    .addComponent(jExportTags, javax.swing.GroupLayout.DEFAULT_SIZE, 305, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        jExportDialogLayout.setVerticalGroup(
-            jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jExportDialogLayout.createSequentialGroup()
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jExportTags)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jExportTroops)
-                    .addComponent(jExportForms))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jExportTags)
-                    .addComponent(jExportNotes))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jExportButton)
-                    .addComponent(jCancelExportButton))
-                .addContainerGap())
+                .addComponent(jExportForms)
+                .addContainerGap(57, Short.MAX_VALUE))
         );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 0.3;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jExportDialog.getContentPane().add(jPanel5, gridBagConstraints);
 
         jAddROIDialog.setTitle("ROI hinzufügen");
 
@@ -2770,14 +2869,33 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
                 reportsToExport.add(set);
             }
         }
+
+        List<String> troopSetsToExport = new LinkedList<String>();
+        for (int i = 0; i < jTroopSetExportTable.getRowCount(); i++) {
+            String set = (String) jTroopSetExportTable.getValueAt(i, 0);
+            Boolean export = (Boolean) jTroopSetExportTable.getValueAt(i, 1);
+            if (export) {
+                logger.debug("Selecting troop set '" + set + "' to export list");
+                troopSetsToExport.add(set);
+            }
+        }
+        List<String> noteSetsToExport = new LinkedList<String>();
+        for (int i = 0; i < jNoteSetExportTable.getRowCount(); i++) {
+            String set = (String) jNoteSetExportTable.getValueAt(i, 0);
+            Boolean export = (Boolean) jNoteSetExportTable.getValueAt(i, 1);
+            if (export) {
+                logger.debug("Selecting note set '" + set + "' to export list");
+                noteSetsToExport.add(set);
+            }
+        }
         boolean needExport = false;
         needExport = !plansToExport.isEmpty();
         needExport |= !setsToExport.isEmpty();
         needExport |= !reportsToExport.isEmpty();
         needExport |= jExportTags.isSelected();
-        needExport |= jExportTroops.isSelected();
+        needExport |= !troopSetsToExport.isEmpty();
         needExport |= jExportForms.isSelected();
-        needExport |= jExportNotes.isSelected();
+        needExport |= !noteSetsToExport.isEmpty();
 
         if (!needExport) {
             JOptionPaneHelper.showWarningBox(jExportDialog, "Keine Daten für den Export gewählt", "Export");
@@ -2828,7 +2946,6 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
                     if (JOptionPaneHelper.showQuestionConfirmBox(jExportDialog, "Bestehende Datei überschreiben?", "Export", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                         return;
                     }
-
                 }
 
                 String exportString = "<export>\n";
@@ -2839,26 +2956,22 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
                     exportString += MarkerManager.getSingleton().getExportData(setsToExport);
                 }
                 if (!reportsToExport.isEmpty()) {
-                    //TODO: Add report export
-                    exportString += ReportManager.getSingleton().getExportData(null);
+                    exportString += ReportManager.getSingleton().getExportData(reportsToExport);
                 }
                 if (jExportTags.isSelected()) {
                     exportString += TagManager.getSingleton().getExportData(null);
                 }
 
-                if (jExportTroops.isSelected()) {
-                      //TODO: Add troop export
-                    exportString += TroopsManager.getSingleton().getExportData(null);
+                if (!troopSetsToExport.isEmpty()) {
+                    exportString += TroopsManager.getSingleton().getExportData(troopSetsToExport);
                 }
 
                 if (jExportForms.isSelected()) {
-                    //TODO: Add form export
                     exportString += FormManager.getSingleton().getExportData(null);
                 }
 
-                if (jExportNotes.isSelected()) {
-                    //TODO: Add note set export
-                    exportString += NoteManager.getSingleton().getExportData(null);
+                if (!noteSetsToExport.isEmpty()) {
+                    exportString += NoteManager.getSingleton().getExportData(noteSetsToExport);
                 }
 
                 exportString += "</export>";
@@ -2886,24 +2999,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
 }//GEN-LAST:event_fireExportEvent
 
 private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireOpenExportDialogEvent
-    //build attack plan table
-
-    jAttackExportTable.invalidate();
-    for (int i = 0; i < jAttackExportTable.getColumnCount(); i++) {
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
-
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                c.setBackground(Constants.DS_BACK);
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                r.setText("<html><b>" + r.getText() + "</b></html>");
-                return c;
-            }
-        };
-        jAttackExportTable.getColumn(jAttackExportTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
-    }
-
+    //build attack table
     DefaultTableModel model = (DefaultTableModel) jAttackExportTable.getModel();
     int rows = model.getRowCount();
     for (int i = 0; i < rows; i++) {
@@ -2915,26 +3011,8 @@ private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
         model.addRow(new Object[]{next, Boolean.FALSE});
     }
 
-    jAttackExportTable.revalidate();
-    jAttackExportTable.repaint();
     //build marker set table
     String[] sets = MarkerManager.getSingleton().getGroups();
-    jMarkerSetExportTable.invalidate();
-    for (int i = 0; i < jMarkerSetExportTable.getColumnCount(); i++) {
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
-
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                c.setBackground(Constants.DS_BACK);
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                r.setText("<html><b>" + r.getText() + "</b></html>");
-                return c;
-            }
-        };
-        jMarkerSetExportTable.getColumn(jMarkerSetExportTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
-    }
-
     model = (DefaultTableModel) jMarkerSetExportTable.getModel();
     rows = model.getRowCount();
     for (int i = 0; i < rows; i++) {
@@ -2944,25 +3022,9 @@ private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
     for (String set : sets) {
         model.addRow(new Object[]{set, Boolean.FALSE});
     }
-    jMarkerSetExportTable.revalidate();
-    jMarkerSetExportTable.repaint();
-    //build report set table
-    Iterator<String> reportSets = ReportManager.getSingleton().getGroupIterator();
-    jMarkerSetExportTable.invalidate();
-    for (int i = 0; i < jReportSetExportTable.getColumnCount(); i++) {
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                c.setBackground(Constants.DS_BACK);
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                r.setText("<html><b>" + r.getText() + "</b></html>");
-                return c;
-            }
-        };
-        jReportSetExportTable.getColumn(jReportSetExportTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
-    }
+    //build report set table
+    String[] reportSets = ReportManager.getSingleton().getGroups();
 
     model = (DefaultTableModel) jReportSetExportTable.getModel();
     rows = model.getRowCount();
@@ -2970,11 +3032,34 @@ private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
         model.removeRow(0);
     }
 
-    while (reportSets.hasNext()) {
-        model.addRow(new Object[]{reportSets.next(), Boolean.FALSE});
+    for (String set : reportSets) {
+        model.addRow(new Object[]{set, Boolean.FALSE});
     }
-    jReportSetExportTable.revalidate();
-    jReportSetExportTable.repaint();
+
+    //build troop table 
+    String[] troopSets = TroopsManager.getSingleton().getGroups();
+
+    model = (DefaultTableModel) jTroopSetExportTable.getModel();
+    rows = model.getRowCount();
+    for (int i = 0; i < rows; i++) {
+        model.removeRow(0);
+    }
+
+    for (String set : troopSets) {
+        model.addRow(new Object[]{set, Boolean.FALSE});
+    }
+    //build note table 
+    String[] noteSets = NoteManager.getSingleton().getGroups();
+
+    model = (DefaultTableModel) jNoteSetExportTable.getModel();
+    rows = model.getRowCount();
+    for (int i = 0; i < rows; i++) {
+        model.removeRow(0);
+    }
+
+    for (String set : noteSets) {
+        model.addRow(new Object[]{set, Boolean.FALSE});
+    }
     jExportDialog.setAlwaysOnTop(true);
     jExportDialog.setVisible(true);
 }//GEN-LAST:event_fireOpenExportDialogEvent
@@ -3574,9 +3659,7 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JButton jExportButton;
     private javax.swing.JDialog jExportDialog;
     private javax.swing.JCheckBox jExportForms;
-    private javax.swing.JCheckBox jExportNotes;
     private javax.swing.JCheckBox jExportTags;
-    private javax.swing.JCheckBox jExportTroops;
     private javax.swing.JComboBox jGraphicPacks;
     private javax.swing.JMenuItem jHelpItem;
     private javax.swing.JCheckBox jHighlightTribeVillages;
@@ -3622,11 +3705,13 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JButton jMoveW;
     private com.l2fprod.common.swing.JTaskPaneGroup jNavigationGroup;
     private javax.swing.JPanel jNavigationPanel;
+    private javax.swing.JTable jNoteSetExportTable;
     private javax.swing.JLabel jOnlineLabel;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JComboBox jROIBox;
     private com.l2fprod.common.swing.JTaskPaneGroup jROIGroup;
     private javax.swing.JComboBox jROIPosition;
@@ -3642,6 +3727,8 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JMenuItem jSearchItem;
     private javax.swing.JMenuItem jSelectionOverviewItem;
     private javax.swing.JSeparator jSeparator1;
@@ -3663,6 +3750,7 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JMenuItem jStartAStarItem;
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;
     private javax.swing.JMenuItem jTribeTribeAttackItem;
+    private javax.swing.JTable jTroopSetExportTable;
     private javax.swing.JMenuItem jUnitOverviewItem;
     private javax.swing.JButton jZoomInButton;
     private javax.swing.JButton jZoomOutButton;

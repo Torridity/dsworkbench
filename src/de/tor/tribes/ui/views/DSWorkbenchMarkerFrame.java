@@ -11,6 +11,7 @@ import com.jidesoft.swing.TabEditingListener;
 import com.jidesoft.swing.TabEditingValidator;
 import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.control.GenericManagerListener;
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
@@ -20,6 +21,7 @@ import java.util.List;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MouseGestureHandler;
+import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -40,7 +42,7 @@ import org.apache.log4j.Logger;
  * @author  Charon
  */
 public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener {
-//@TODO Fit size, notifiy map on change, don't paint does not work
+//@TODO notifiy map on change, don't paint does not work
 
     private static Logger logger = Logger.getLogger("MarkerView");
     private static DSWorkbenchMarkerFrame SINGLETON = null;
@@ -352,24 +354,27 @@ private void fireCreateMarkerSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         } catch (Exception e) {
         }
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        // DSWorkbenchMarkerFrame.getSingleton().setSize(800, 600);
         DSWorkbenchMarkerFrame.getSingleton().pack();
         MarkerManager.getSingleton().addGroup("test1");
         MarkerManager.getSingleton().addGroup("asd2");
         MarkerManager.getSingleton().addGroup("awe3");
+        GlobalOptions.setSelectedServer("de68");
+        ProfileManager.getSingleton().loadProfiles();
+        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de68")[0]);
+        DataHolder.getSingleton().loadData(false);
         for (int i = 0; i < 5; i++) {
             Marker a = new Marker();
-            a.setMarkerColor(Color.RED);
-            a.setMarkerID(-1);
-            a.setMarkerType(a.TRIBE_MARKER_TYPE);
+            a.setMarkerColor(Color.GREEN);
+            a.setMarkerID(DataHolder.getSingleton().getRandomVillage().getTribeID());
+            a.setMarkerType(Marker.TRIBE_MARKER_TYPE);
             Marker a2 = new Marker();
             a2.setMarkerColor(Color.RED);
-            a2.setMarkerID(-1);
-            a2.setMarkerType(a.TRIBE_MARKER_TYPE);
+            a2.setMarkerID(DataHolder.getSingleton().getRandomVillage().getTribeID());
+            a2.setMarkerType(Marker.TRIBE_MARKER_TYPE);
             Marker a3 = new Marker();
-            a3.setMarkerColor(Color.RED);
-            a3.setMarkerID(-1);
-            a3.setMarkerType(a.TRIBE_MARKER_TYPE);
+            a3.setMarkerColor(Color.BLUE);
+            a3.setMarkerID(DataHolder.getSingleton().getRandomVillage().getTribeID());
+            a3.setMarkerType(Marker.TRIBE_MARKER_TYPE);
             MarkerManager.getSingleton().addManagedElement(a);
             MarkerManager.getSingleton().addManagedElement("test1", a2);
             MarkerManager.getSingleton().addManagedElement("asd2", a3);

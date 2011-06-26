@@ -79,7 +79,6 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
- * @TODO fix frame size
  * @author Jejkal
  */
 public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements ListSelectionListener, ActionListener {
@@ -749,6 +748,11 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 .addContainerGap())
         );
 
+        jideRetimeTabbedPane.setMinimumSize(new java.awt.Dimension(500, 400));
+        jideRetimeTabbedPane.setPreferredSize(new java.awt.Dimension(500, 400));
+
+        jResultPanel.setMinimumSize(new java.awt.Dimension(500, 400));
+        jResultPanel.setPreferredSize(new java.awt.Dimension(500, 400));
         jResultPanel.setLayout(new java.awt.BorderLayout());
 
         infoPanel.setCollapsed(true);
@@ -903,6 +907,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jReTimePanel.setBackground(new java.awt.Color(239, 235, 223));
+        jReTimePanel.setMinimumSize(new java.awt.Dimension(600, 450));
+        jReTimePanel.setPreferredSize(new java.awt.Dimension(600, 450));
         jReTimePanel.setLayout(new java.awt.BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1409,7 +1415,6 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         } catch (Exception e) {
         }
 
-        DSWorkbenchReTimerFrame.getSingleton().setSize(600, 400);
         DSWorkbenchReTimerFrame.getSingleton().resetView();
         DSWorkbenchReTimerFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         DSWorkbenchReTimerFrame.getSingleton().setVisible(true);

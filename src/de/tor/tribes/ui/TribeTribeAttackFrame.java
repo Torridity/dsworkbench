@@ -3043,7 +3043,6 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
      */
     public void fireAddTargetsEvent(List<Village> pVillages) {
         DefaultTableModel victimModel = (DefaultTableModel) jVictimTable.getModel();
-        jVictimTable.invalidate();
         for (Village v : pVillages) {
             if (v != null) {
                 boolean contains = false;
@@ -3067,8 +3066,28 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
             }
         }
         updateInfo();
-        jVictimTable.revalidate();
-        jVictimTable.repaint();
+        ((DefaultTableModel) jVictimTable.getModel()).fireTableDataChanged();
+    }
+
+    public void fireAddTargetEvent(Village pTarget, int pAmount) {
+        DefaultTableModel victimModel = (DefaultTableModel) jVictimTable.getModel();
+
+        if (pTarget != null) {
+            boolean contains = false;
+            for (int row = 0; row < jVictimTable.getRowCount(); row++) {
+                if (jVictimTable.getValueAt(row, 1).equals(pTarget)) {
+                    contains = true;
+                    jVictimTable.setValueAt(pAmount, row, 3);
+                    break;
+                }
+            }
+            if (!contains) {
+                victimModel.addRow(new Object[]{pTarget.getTribe(), pTarget, jMarkTargetAsFake.isSelected(), pAmount, 0});
+            }
+        }
+
+        updateInfo();
+        victimModel.fireTableDataChanged();
     }
 
     /**Show result frame for calculated attacks*/

@@ -154,7 +154,6 @@ public class Iterix extends AbstractAttackAlgorithm {
         }
 
         //assign fakes
-        //@TODO Check if faking existing source-target could happen/if checking for it makes sense
         logText("Berechne Fakes");
         List<Village> ramAndCataFakes = pFakes.get(ram);
         if (ramAndCataFakes == null || ramAndCataFakes.isEmpty()) {

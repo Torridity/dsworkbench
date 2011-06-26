@@ -51,9 +51,9 @@ import org.jdesktop.swingx.decorator.CompoundHighlighter;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
+import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
-*@TODO fix frame size
  * @author Jejkal
  */
 public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implements ListSelectionListener {
@@ -77,7 +77,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         jDistancePanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildPanel(jPanel2);
         buildMenu();
-        // jDistanceTable.setModel(DistanceTableModel.getSingleton());
+        jDistanceTable.setModel(new DistanceTableModel());
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
         jDistanceTable.registerKeyboardAction(new ActionListener() {
@@ -126,7 +126,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
                 jDistanceTable.repaint();
             }
         });
-        
+
         editPane.getContentPane().add(slider);
         centerPanel.setupTaskPane(editPane);
     }
@@ -141,21 +141,23 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
 
     @Override
     public void resetView() {
-        jDistanceTable.invalidate();
         jDistanceTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
         int w0 = 100;
         for (Village v : GlobalOptions.getSelectedProfile().getTribe().getVillageList()) {
-            int w = getGraphics().getFontMetrics().stringWidth(v.getFullName());
+            int w = jDistanceTable.getGraphics().getFontMetrics().stringWidth(v.getFullName());
             if (w > w0) {
                 w0 = w;
             }
         }
         for (int i = 0; i < jDistanceTable.getColumnCount(); i++) {
-            TableColumn column = jDistanceTable.getColumnModel().getColumn(i);
+            TableColumnExt column = jDistanceTable.getColumnExt(i);
             if (i == 0) {
                 column.setWidth(w0);
                 column.setPreferredWidth(w0);
+                column.setMaxWidth(w0);
+                column.setMinWidth(w0);
+                column.setResizable(false);
             } else {
                 String v = (String) column.getHeaderValue();
                 int w = getGraphics().getFontMetrics().stringWidth(v);
@@ -164,10 +166,8 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
             }
         }
 
-        jDistanceTable.setModel(new DistanceTableModel());
         jDistanceTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
-        jDistanceTable.revalidate();
-        jDistanceTable.repaint();
+        ((DistanceTableModel) jDistanceTable.getModel()).fireTableDataChanged();
     }
 
     private void deleteSelectedColumns() {
@@ -180,12 +180,10 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         }
 
         colsToRemove.remove(jDistanceTable.getColumn("Eigene"));
-        jDistanceTable.invalidate();
         for (TableColumn colu : colsToRemove) {
             jDistanceTable.getColumnModel().removeColumn(colu);
         }
         DistanceManager.getSingleton().removeVillages(realCols);
-        jDistanceTable.revalidate();
         ((DistanceTableModel) jDistanceTable.getModel()).fireTableStructureChanged();
         resetView();
         showSuccess(colsToRemove.size() + ((colsToRemove.size() == 1) ? " Spalte " : " Spalten ") + "gelöscht");
@@ -253,7 +251,12 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         jDistancePanel = new javax.swing.JPanel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
 
+        jPanel2.setMinimumSize(new java.awt.Dimension(300, 360));
+        jPanel2.setPreferredSize(new java.awt.Dimension(300, 360));
         jPanel2.setLayout(new java.awt.BorderLayout());
+
+        jScrollPane2.setMinimumSize(new java.awt.Dimension(300, 360));
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(300, 360));
 
         jDistanceTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -270,6 +273,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         jDistanceTable.setColumnSelectionAllowed(true);
         jDistanceTable.setDoubleBuffered(true);
         jDistanceTable.setEditable(false);
+        jDistanceTable.setMinimumSize(new java.awt.Dimension(300, 360));
         jScrollPane2.setViewportView(jDistanceTable);
 
         jPanel2.add(jScrollPane2, java.awt.BorderLayout.CENTER);
@@ -288,6 +292,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         jPanel2.add(infoPanel, java.awt.BorderLayout.SOUTH);
 
         setTitle("Entfernungsübersicht");
+        setMinimumSize(new java.awt.Dimension(600, 500));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jCheckBox1.setText("Immer im Vordergrund");
@@ -300,14 +305,13 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         getContentPane().add(jCheckBox1, gridBagConstraints);
 
         jDistancePanel.setBackground(new java.awt.Color(239, 235, 223));
+        jDistancePanel.setMinimumSize(new java.awt.Dimension(300, 400));
         jDistancePanel.setPreferredSize(new java.awt.Dimension(300, 400));
         jDistancePanel.setLayout(new java.awt.BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 668;
-        gridBagConstraints.ipady = 471;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jDistancePanel, gridBagConstraints);
@@ -336,7 +340,6 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
                 DistanceManager.getSingleton().addVillage(v);
             }
             ((DistanceTableModel) jDistanceTable.getModel()).fireTableStructureChanged();
-            jDistanceTable.revalidate();
             resetView();
         } catch (Exception e) {
             logger.error("Failed to received dropped villages", e);
@@ -346,18 +349,18 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
     public static void main(String args[]) {
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
 
-        GlobalOptions.setSelectedServer("de68");
+        GlobalOptions.setSelectedServer("de43");
         DataHolder.getSingleton().loadData(false);
         ProfileManager.getSingleton().loadProfiles();
 
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de68")[0]);
+        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception e) {
         }
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedProfile(new DummyProfile());
+
         for (int i = 0; i < 10; i++) {
             DistanceManager.getSingleton().addVillage(DataHolder.getSingleton().getRandomVillage());
         }

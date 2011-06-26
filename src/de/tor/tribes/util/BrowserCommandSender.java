@@ -79,12 +79,17 @@ public class BrowserCommandSender {
         return true;
     }
 
-    public static boolean sendRes(Village pSource, Village pTarget, Transport pTrans) {
+    public static boolean sendRes(Village pSource, Village pTarget, Transport pTrans, UserProfile pProfile) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             logger.debug("Transfer resources to browser for village '" + pSource + "' to '" + pTarget);
             String url = baseURL + "/game.php?village=";
-            int uvID = GlobalOptions.getSelectedProfile().getUVId();
+            int uvID = -1;
+            if (pProfile != null) {
+                uvID = pProfile.getUVId();
+            } else {
+                uvID = GlobalOptions.getSelectedProfile().getUVId();
+            }
             if (uvID >= 0) {
                 url = baseURL + "/game.php?t=" + uvID + "&village=";
             }

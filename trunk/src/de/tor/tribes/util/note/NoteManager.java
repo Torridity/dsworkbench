@@ -257,52 +257,7 @@ public class NoteManager extends GenericManager<Note> {
         return result;
     }
 
-    /*   public Note findNote(Note pStart, String pText) {
-    if (pStart == null) {
-    if (notes.size() >= 1) {
-    pStart = notes.get(0);
-    } else {
-    //no notes available
-    return null;
-    }
-    }
-    Note[] aNotes = notes.toArray(new Note[]{});
-    if (aNotes == null) {
-    return null;
-    }
-    for (int i = notes.indexOf(pStart) + 1;;) {
-    Note n = null;
-    if (i < notes.size()) {
-    //search next note
-    n = aNotes[i];
-    i++;
-    } else {
-    //last note reached, start from beginning
-    i = 0;
-    n = aNotes[i];
-    i++;
-    }
-    
-    if (n.getNoteText().toLowerCase().indexOf(pText.toLowerCase()) > -1) {
-    //search in note text
-    return n;
-    }
-    //search in village name
-    for (Integer id : n.getVillageIds()) {
-    Village v = DataHolder.getSingleton().getVillagesById().get(id);
-    if (v != null) {
-    if (v.toString().toLowerCase().indexOf(pText.toLowerCase()) > -1) {
-    return n;
-    }
-    }
-    }
-    if (i == notes.indexOf(pStart) + 1) {
-    break;
-    }
-    }
-    return null;
-    }
-     */
+   
     public Note getNoteForVillage(Village pVillage) {
         if (pVillage == null) {
             return null;

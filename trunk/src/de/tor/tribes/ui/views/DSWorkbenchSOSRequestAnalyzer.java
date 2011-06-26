@@ -78,7 +78,6 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
- * @TODO fix frame size
  * @author Torridity
  */
 public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame implements ActionListener {
@@ -137,7 +136,6 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
             }
         });
 
-        jXInputArea.setPrompt("SOS Anfrage hier einfügen");
         DefaultTableModel sosTableModel = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
@@ -157,6 +155,8 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
                 return false;
             }
         };
+        jXInputArea.setPrompt("SOS-Anfrage hier einfügen");
+
         jResultTable.setModel(sosTableModel);
         jResultTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jResultTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
@@ -164,6 +164,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         jResultTable.setColumnControlVisible(true);
         jResultTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         jResultTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
+        jResultTable.requestFocus();
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         // GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.sos_analyzer", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
@@ -701,10 +702,16 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
                 .addContainerGap())
         );
 
-        jSOSInputPanel.setLayout(new java.awt.GridBagLayout());
+        jSOSInputPanel.setMinimumSize(new java.awt.Dimension(500, 400));
+        jSOSInputPanel.setPreferredSize(new java.awt.Dimension(500, 400));
+        jSOSInputPanel.setLayout(new java.awt.BorderLayout(0, 10));
+
+        jScrollPane4.setMinimumSize(new java.awt.Dimension(166, 100));
+        jScrollPane4.setPreferredSize(new java.awt.Dimension(166, 100));
 
         jXInputArea.setColumns(20);
         jXInputArea.setRows(5);
+        jXInputArea.setPrompt("Bla");
         jXInputArea.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {
                 fireSosRequestUpdateEvent(evt);
@@ -712,16 +719,9 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         });
         jScrollPane4.setViewportView(jXInputArea);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.3;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jSOSInputPanel.add(jScrollPane4, gridBagConstraints);
+        jSOSInputPanel.add(jScrollPane4, java.awt.BorderLayout.NORTH);
 
+        jResultPanel.setPreferredSize(new java.awt.Dimension(360, 300));
         jResultPanel.setLayout(new java.awt.BorderLayout());
 
         infoPanel.setCollapsed(true);
@@ -749,19 +749,15 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
 
         jResultPanel.add(jScrollPane6, java.awt.BorderLayout.CENTER);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.7;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jSOSInputPanel.add(jResultPanel, gridBagConstraints);
+        jSOSInputPanel.add(jResultPanel, java.awt.BorderLayout.CENTER);
 
         setTitle("SOS Analyzer");
+        setMinimumSize(new java.awt.Dimension(600, 500));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jSOSPanel.setBackground(new java.awt.Color(239, 235, 223));
+        jSOSPanel.setMinimumSize(new java.awt.Dimension(500, 400));
+        jSOSPanel.setPreferredSize(new java.awt.Dimension(600, 500));
         jSOSPanel.setLayout(new java.awt.BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1259,7 +1255,6 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         } catch (Exception e) {
         }
 
-        DSWorkbenchSOSRequestAnalyzer.getSingleton().setSize(600, 400);
         DSWorkbenchSOSRequestAnalyzer.getSingleton().resetView();
         DSWorkbenchSOSRequestAnalyzer.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         DSWorkbenchSOSRequestAnalyzer.getSingleton().setVisible(true);

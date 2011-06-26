@@ -60,7 +60,7 @@ import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTreeTable;
 import org.jdesktop.swingx.painter.MattePainter;
 
-/**@TODO fix frame size
+/**
  * @author  Jejkal
  */
 public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, DataHolderListener {
@@ -145,7 +145,6 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
-        
         DataHolder.getSingleton().addDataHolderListener(DSWorkbenchTroopsFrame.this);
 
         jXGroupsList.addListSelectionListener(new ListSelectionListener() {
@@ -178,19 +177,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         transferTaskPane.getContentPane().add(transferVillageList);
-        /*   JXButton transferInfo = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/att_clipboardBB.png")));
-        transferInfo.setToolTipText("Überträgt die gewählten Dörfer als BB-Codes in die Zwischenablage");
-        transferInfo.addMouseListener(new MouseAdapter() {
-        
-        @Override
-        public void mouseReleased(MouseEvent e) {
-        TabInterface tab = getActiveTab();
-        if (tab != null) {
-        tab.transferSelection(TroopTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
-        }
-        }
-        });
-        transferTaskPane.getContentPane().add(transferInfo);*/
+
         JXButton openPlace = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/place.png")));
         openPlace.setToolTipText("Öffnet den Versammlungsplatz des gewählten Dorfes im Spiel");
         openPlace.addMouseListener(new MouseAdapter() {
@@ -225,6 +212,26 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         });
 
         miscPane.getContentPane().add(centerVillage);
+
+        JXButton refillSupport = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/filter_off.png")));
+        refillSupport.setToolTipText("<html>Auff&uuml;llen der Unterst&uuml;tzungen für die gew&auml;hlten D&ouml;rfer<br/>"
+                + "Die D&ouml;rfer werden so oft in den Angriffsplaner als Ziel eingef&uuml;gtm<br/>"
+                + "bis die Truppenanzahl im Dorf der eingestellten Menge entspricht,<br/>"
+                + "sofern entsprechend viele Unterst&uuml;zungen<br/>"
+                + "mit der eingestellten Truppenzahl zugewiesen werden k&ouml;nnen</html>");
+        refillSupport.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                TabInterface tab = getActiveTab();
+                if (tab != null) {
+                    tab.refillSupports();
+                }
+            }
+        });
+
+        miscPane.getContentPane().add(refillSupport);
+
         centerPanel.setupTaskPane(transferTaskPane, miscPane);
     }
 
@@ -304,6 +311,8 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         jTroopsPanel = new javax.swing.JPanel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
 
+        jXTroopsPanel.setMinimumSize(new java.awt.Dimension(700, 500));
+        jXTroopsPanel.setPreferredSize(new java.awt.Dimension(700, 500));
         jXTroopsPanel.setLayout(new java.awt.BorderLayout());
 
         jTroopsTabPane.setScrollSelectedTabOnWheel(true);
@@ -408,6 +417,8 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         getContentPane().add(jTroopsInformationAlwaysOnTop, gridBagConstraints);
 
         jTroopsPanel.setBackground(new java.awt.Color(239, 235, 223));
+        jTroopsPanel.setMinimumSize(new java.awt.Dimension(700, 500));
+        jTroopsPanel.setPreferredSize(new java.awt.Dimension(700, 500));
         jTroopsPanel.setLayout(new java.awt.BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -533,7 +544,6 @@ private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception e) {
         }
-        DSWorkbenchTroopsFrame.getSingleton().setSize(800, 600);
         GlobalOptions.setSelectedServer("de43");
         DataHolder.getSingleton().loadData(false);
 

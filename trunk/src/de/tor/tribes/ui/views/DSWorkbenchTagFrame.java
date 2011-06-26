@@ -81,12 +81,12 @@ import org.jdesktop.swingx.table.TableColumnExt;
  * @author Jejkal
  */
 public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ListSelectionListener, ActionListener {
-//@TODO: notify map on change
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("Paste")) {
             pasteVillagesFromClipboard();
-        } if (e.getActionCommand().equals("BBCopy")) {
+        } else if (e.getActionCommand().equals("BBCopy")) {
             transferSelectedTagsAsBBCodesToClipboard();
         } else if (e.getActionCommand().equals("Delete")) {
             if (e.getSource() != null) {
@@ -124,7 +124,6 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
     private static Logger logger = Logger.getLogger("TagView");
     private static DSWorkbenchTagFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
-    private PainterHighlighter highlighter = null;
 
     /** Creates new form DSWorkbenchTagFrame */
     DSWorkbenchTagFrame() {
@@ -248,7 +247,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
             }
         });
         transferTaskPane.getContentPane().add(centerIngame);
-      
+
         JXButton transferJS = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/export_js.png")));
         transferJS.setToolTipText("<html>Alle D&ouml;rfer der gew&auml;hlten Gruppe in die Zwischenablage kopieren.<BR/>Auf diesem Wege ist es z.B. m&ouml;glich, verkn&uuml;pfte Gruppen aus DS Workbench ins Spiel zu &uuml;bertragen.<BR>F&uuml;r weitere Informationen sieh bitte in der Hilfe nach.</html>");
         transferJS.addMouseListener(new MouseAdapter() {
@@ -389,11 +388,6 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
     }
 
     private void pasteVillagesFromClipboard() {
-        List<Tag> selection = getSelectedTags();
-        if (selection.isEmpty()) {
-            showInfo("Keine Gruppe ausgewählt, zu denen Dörfer hinzugefügt werden können");
-            return;
-        }
         List<Village> villages = null;
         try {
             Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
@@ -407,20 +401,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
             showError("Fehler beim Lesen aus der Zwischenablage");
         }
 
-        String tag_string = (selection.size() == 1) ? "der gewählten Gruppe " : "den gewählten Gruppen ";
-        String village_string = (villages.size() == 1) ? " Dorf " : " Dörfer ";
-        String village_count_string = (villages.size() == 1) ? " dieses " : " diese ";
-
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, villages.size() + village_string + "in der Zwischenablage gefunden.\nMöchtest du " + village_count_string + tag_string + " hinzufügen?\n(Bereits vorhandene Dörfer werden nicht hinzugefügt)", "Dörfer hinzufügen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-            TagManager.getSingleton().invalidate();
-            for (Tag t : selection) {
-                for (Village v : villages) {
-                    t.tagVillage(v.getId());
-                }
-            }
-            TagManager.getSingleton().revalidate(true);
-            showSuccess("Dörfer erfolgreich zugewiesen");
-        }
+        fireVillagesDraggedEvent(villages, null);
     }
 
     private void transferSelectedTagsAsBBCodesToClipboard() {
@@ -502,7 +483,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         jTagPanel = new org.jdesktop.swingx.JXPanel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
 
-        jTagsPanel.setLayout(new java.awt.BorderLayout());
+        jTagsPanel.setLayout(new java.awt.BorderLayout(10, 0));
 
         jTagTablePanel.setLayout(new java.awt.BorderLayout());
 
@@ -614,33 +595,25 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
 
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
-        /* try {
-        Rectangle bounds = jTaggedVillageList.getBounds();
-        Point locationOnScreen = jTaggedVillageList.getLocationOnScreen();
-        bounds.setLocation(locationOnScreen);
-        pDropLocation.move(locationOnScreen.x, locationOnScreen.y);
-        if (bounds.contains(pDropLocation)) {
-        int[] rows = jTagTable.getSelectedRows();
-        if (rows == null || rows.length == 0) {
-        return;
+        List<Tag> selection = getSelectedTags();
+        if (selection.isEmpty()) {
+            showInfo("Keine Gruppe ausgewählt, zu denen Dörfer hinzugefügt werden können");
+            return;
         }
-        
-        for (int row : rows) {
-        row = jTagTable.convertRowIndexToModel(row);
-        String name = (String) TagTableModel.getSingleton().getOriginalValueAt(row, 0);
-        Tag t = TagManager.getSingleton().getTagByName(name);
-        for (Village v : pVillages) {
-        if (v != null && v.getTribe() != Barbarians.getSingleton()) {
-        t.tagVillage(v.getId());
+        String tag_string = (selection.size() == 1) ? "der gewählten Gruppe " : "den gewählten Gruppen ";
+        String village_string = (pVillages.size() == 1) ? " Dorf " : " Dörfer ";
+        String village_count_string = (pVillages.size() == 1) ? " dieses " : " diese ";
+
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, pVillages.size() + village_string + "in der Zwischenablage gefunden.\nMöchtest du " + village_count_string + tag_string + " hinzufügen?\n(Bereits vorhandene Dörfer werden nicht hinzugefügt)", "Dörfer hinzufügen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+            TagManager.getSingleton().invalidate();
+            for (Tag t : selection) {
+                for (Village v : pVillages) {
+                    t.tagVillage(v.getId());
+                }
+            }
+            TagManager.getSingleton().revalidate(true);
+            showSuccess("Dörfer erfolgreich zugewiesen");
         }
-        }
-        }
-        updateTaggedVillageList();
-        }
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
-        } catch (Exception e) {
-        logger.error("Failed to insert dropped villages", e);
-        }*/
     }
 
     // <editor-fold defaultstate="collapsed" desc="Gesture handling">

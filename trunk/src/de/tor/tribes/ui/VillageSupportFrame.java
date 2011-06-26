@@ -639,8 +639,8 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                 String b = buffer.toString();
                 StringTokenizer t = new StringTokenizer(b, "[");
                 int cnt = t.countTokens();
-                if (cnt > 500) {
-                    if (JOptionPaneHelper.showQuestionConfirmBox(jResultDialog, "Die zu exportierenden Unterstützungen benötigen mehr als 500 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                if (cnt > 1000) {
+                    if (JOptionPaneHelper.showQuestionConfirmBox(jResultDialog, "Die zu exportierenden Unterstützungen benötigen mehr als 1000 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                         return;
                     }
                 }

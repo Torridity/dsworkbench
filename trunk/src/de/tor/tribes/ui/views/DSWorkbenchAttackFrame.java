@@ -15,7 +15,6 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.test.DummyUnit;
-import de.tor.tribes.types.test.DummyVillage;
 import de.tor.tribes.types.StandardAttackElement;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.Village;
@@ -25,6 +24,7 @@ import de.tor.tribes.ui.GenericTestPanel;
 import de.tor.tribes.ui.NotifierFrame;
 import de.tor.tribes.ui.editors.StandardAttackElementEditor;
 import de.tor.tribes.ui.models.StandardAttackTableModel;
+import java.awt.event.WindowEvent;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import de.tor.tribes.util.GlobalOptions;
@@ -47,8 +47,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -81,7 +87,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
 /**
  * @author  Charon
  */
-public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, ProfileManagerListener {
+public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, ProfileManagerListener, Serializable {
 
     @Override
     public void fireProfilesLoadedEvent() {
@@ -151,13 +157,13 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
     public static synchronized DSWorkbenchAttackFrame getSingleton() {
         if (SINGLETON == null) {
-            SINGLETON = new DSWorkbenchAttackFrame();
+            SINGLETON = new DSWorkbenchAttackFrame(null);
         }
         return SINGLETON;
     }
 
     /** Creates new form DSWorkbenchAttackFrame */
-    DSWorkbenchAttackFrame() {
+    DSWorkbenchAttackFrame(String dummy) {
         initComponents();
         centerPanel = new GenericTestPanel();
         jAttackPanel.add(centerPanel, BorderLayout.CENTER);
@@ -976,8 +982,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         DSWorkbenchAttackFrame.getSingleton().resetView();
         DSWorkbenchAttackFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         DSWorkbenchAttackFrame.getSingleton().setVisible(true);
-
-    }
+         }
     // <editor-fold defaultstate="collapsed" desc="Gesture Handling">
 
     @Override

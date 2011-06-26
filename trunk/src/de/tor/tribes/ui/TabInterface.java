@@ -29,6 +29,8 @@ public interface TabInterface {
     public void openPlaceInGame();
 
     public void centerVillage();
-    
+
     public void updateSelectionInfo();
+
+    public void refillSupports();
 }

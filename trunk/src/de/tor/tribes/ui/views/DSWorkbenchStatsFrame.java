@@ -79,7 +79,7 @@ import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
 
-/**@TODO fix frame size
+/**
  * @author Torridity
  */
 public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements ActionListener {
@@ -508,6 +508,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         jStatsPanel = new org.jdesktop.swingx.JXPanel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
 
+        jMainStatPanel.setMinimumSize(new java.awt.Dimension(516, 300));
         jMainStatPanel.setLayout(new java.awt.BorderLayout());
 
         jChartPanel.setBackground(new java.awt.Color(239, 235, 223));
@@ -816,6 +817,8 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         getContentPane().add(jAlwaysOnTopBox, gridBagConstraints);
 
         jStatsPanel.setBackground(new java.awt.Color(239, 235, 223));
+        jStatsPanel.setMinimumSize(new java.awt.Dimension(700, 500));
+        jStatsPanel.setPreferredSize(new java.awt.Dimension(700, 500));
         jStatsPanel.setLayout(new java.awt.BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

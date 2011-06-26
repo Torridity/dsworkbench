@@ -42,6 +42,7 @@ import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 
 /**Global settings used by almost all components. e.g. WorldData or UI specific objects
+ * @TODO save data to user home
  * @author Charon
  */
 public class GlobalOptions {
@@ -77,14 +78,6 @@ public class GlobalOptions {
         loadHelpSystem();
         logger.debug("Loading properties");
         loadProperties();
-        /*  logger.debug("Loading cursors");
-        ImageManager.loadCursors();
-        logger.debug("Loading unit icons");
-        ImageManager.loadUnitIcons();
-        logger.debug("Loading note icons");
-        ImageManager.loadNoteIcons();
-        logger.debug("Loading note symbols");
-        ImageManager.loadNoteSymbols();*/
         logger.debug("Loading graphic pack");
         loadSkin();
         logger.debug("Loading world.dat");

@@ -58,6 +58,7 @@ public class Marker extends ManageableType {
             try {
                 mView = MarkerCell.factoryMarkerCell(this);
             } catch (Exception e) {
+                e.printStackTrace();
                 mView = null;
             }
         }

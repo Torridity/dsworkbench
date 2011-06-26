@@ -25,7 +25,6 @@ import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO fix for nimbus
  * @author  Jejkal
  */
 public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements SearchListener {
@@ -102,9 +101,9 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
 
         jPlayerSearch.setBackground(new java.awt.Color(239, 235, 223));
 
-        jSearchTerm.setMaximumSize(new java.awt.Dimension(200, 20));
-        jSearchTerm.setMinimumSize(new java.awt.Dimension(200, 20));
-        jSearchTerm.setPreferredSize(new java.awt.Dimension(200, 20));
+        jSearchTerm.setMaximumSize(new java.awt.Dimension(200, 25));
+        jSearchTerm.setMinimumSize(new java.awt.Dimension(200, 25));
+        jSearchTerm.setPreferredSize(new java.awt.Dimension(200, 25));
         jSearchTerm.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {
                 fireValueChangedEvent(evt);
@@ -112,10 +111,13 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
         });
 
         jSearchTermLabel.setText("Suchbegriff");
+        jSearchTermLabel.setMaximumSize(new java.awt.Dimension(70, 25));
+        jSearchTermLabel.setMinimumSize(new java.awt.Dimension(70, 25));
+        jSearchTermLabel.setPreferredSize(new java.awt.Dimension(70, 25));
 
-        jTribesList.setMaximumSize(new java.awt.Dimension(200, 20));
-        jTribesList.setMinimumSize(new java.awt.Dimension(200, 20));
-        jTribesList.setPreferredSize(new java.awt.Dimension(200, 20));
+        jTribesList.setMaximumSize(new java.awt.Dimension(200, 25));
+        jTribesList.setMinimumSize(new java.awt.Dimension(200, 25));
+        jTribesList.setPreferredSize(new java.awt.Dimension(200, 25));
         jTribesList.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireTribeSelectionChangedEvent(evt);
@@ -123,22 +125,25 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
         });
 
         jTribesLabel.setText("Spieler");
+        jTribesLabel.setMaximumSize(new java.awt.Dimension(70, 25));
+        jTribesLabel.setMinimumSize(new java.awt.Dimension(70, 25));
+        jTribesLabel.setPreferredSize(new java.awt.Dimension(70, 25));
 
         jMarkAllyButton.setBackground(new java.awt.Color(239, 235, 223));
         jMarkAllyButton.setText("Markieren");
         jMarkAllyButton.setToolTipText("Stamm markieren");
-        jMarkAllyButton.setMaximumSize(new java.awt.Dimension(100, 23));
-        jMarkAllyButton.setMinimumSize(new java.awt.Dimension(100, 23));
-        jMarkAllyButton.setPreferredSize(new java.awt.Dimension(100, 23));
+        jMarkAllyButton.setMaximumSize(new java.awt.Dimension(100, 25));
+        jMarkAllyButton.setMinimumSize(new java.awt.Dimension(100, 25));
+        jMarkAllyButton.setPreferredSize(new java.awt.Dimension(100, 25));
         jMarkAllyButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireAddMarkerEvent(evt);
             }
         });
 
-        jAllyList.setMaximumSize(new java.awt.Dimension(200, 20));
-        jAllyList.setMinimumSize(new java.awt.Dimension(200, 20));
-        jAllyList.setPreferredSize(new java.awt.Dimension(200, 20));
+        jAllyList.setMaximumSize(new java.awt.Dimension(200, 25));
+        jAllyList.setMinimumSize(new java.awt.Dimension(200, 25));
+        jAllyList.setPreferredSize(new java.awt.Dimension(200, 25));
         jAllyList.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireAllySelectionChangedEvent(evt);
@@ -146,13 +151,16 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
         });
 
         jAlliesLabel.setText("Stämme");
+        jAlliesLabel.setMaximumSize(new java.awt.Dimension(70, 25));
+        jAlliesLabel.setMinimumSize(new java.awt.Dimension(70, 25));
+        jAlliesLabel.setPreferredSize(new java.awt.Dimension(70, 25));
 
         jMarkTribeButton.setBackground(new java.awt.Color(239, 235, 223));
         jMarkTribeButton.setText("Markieren");
         jMarkTribeButton.setToolTipText("Spieler markieren");
-        jMarkTribeButton.setMaximumSize(new java.awt.Dimension(100, 23));
-        jMarkTribeButton.setMinimumSize(new java.awt.Dimension(100, 23));
-        jMarkTribeButton.setPreferredSize(new java.awt.Dimension(100, 23));
+        jMarkTribeButton.setMaximumSize(new java.awt.Dimension(100, 25));
+        jMarkTribeButton.setMinimumSize(new java.awt.Dimension(100, 25));
+        jMarkTribeButton.setPreferredSize(new java.awt.Dimension(100, 25));
         jMarkTribeButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireAddMarkerEvent(evt);
@@ -160,20 +168,25 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
         });
 
         jVillagesLabel.setText("Dörfer");
+        jVillagesLabel.setMaximumSize(new java.awt.Dimension(70, 25));
+        jVillagesLabel.setMinimumSize(new java.awt.Dimension(70, 25));
+        jVillagesLabel.setPreferredSize(new java.awt.Dimension(70, 25));
 
         jCenterButton.setBackground(new java.awt.Color(239, 235, 223));
         jCenterButton.setText("Zentrieren");
         jCenterButton.setToolTipText("Dorf in DS Workbench zentrieren");
-        jCenterButton.setMaximumSize(new java.awt.Dimension(100, 23));
-        jCenterButton.setMinimumSize(new java.awt.Dimension(100, 23));
-        jCenterButton.setPreferredSize(new java.awt.Dimension(100, 23));
+        jCenterButton.setMaximumSize(new java.awt.Dimension(100, 25));
+        jCenterButton.setMinimumSize(new java.awt.Dimension(100, 25));
+        jCenterButton.setPreferredSize(new java.awt.Dimension(100, 25));
         jCenterButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCenterMapEvent(evt);
             }
         });
 
-        jVillageList.setPreferredSize(new java.awt.Dimension(200, 20));
+        jVillageList.setMaximumSize(new java.awt.Dimension(200, 25));
+        jVillageList.setMinimumSize(new java.awt.Dimension(200, 25));
+        jVillageList.setPreferredSize(new java.awt.Dimension(200, 25));
 
         jCenterInGameButton.setBackground(new java.awt.Color(239, 235, 223));
         jCenterInGameButton.setToolTipText("Karte zentrieren");
@@ -218,10 +231,10 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
                 .addContainerGap()
                 .addGroup(jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jInGameOptionsLabel)
-                    .addComponent(jSearchTermLabel)
-                    .addComponent(jVillagesLabel)
-                    .addComponent(jTribesLabel)
-                    .addComponent(jAlliesLabel))
+                    .addComponent(jSearchTermLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jVillagesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTribesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jAlliesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jAllyList, 0, 386, Short.MAX_VALUE)
@@ -246,21 +259,21 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
             .addGroup(jPlayerSearchLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jSearchTermLabel)
+                    .addComponent(jSearchTermLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jSearchTerm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jMarkAllyButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jAllyList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jAlliesLabel))
+                    .addComponent(jAlliesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jMarkTribeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTribesLabel)
+                    .addComponent(jTribesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTribesList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jVillagesLabel)
+                    .addComponent(jVillagesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCenterButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jVillageList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -270,7 +283,7 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
                         .addComponent(jInGameOptionsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jSendResButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jSendDefButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         jSearchFrameAlwaysOnTop.setText("Immer im Vordergrund");

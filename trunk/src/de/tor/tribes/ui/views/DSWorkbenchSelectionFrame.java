@@ -80,8 +80,7 @@ import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.painter.MattePainter;
 
-/**@TODO fix frame size
- * @TODO deselect selected elements on village size button click to avoid deletion of unwanted elements
+/**
  * @author Charon
  */
 public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implements VillageSelectionListener, ActionListener, TreeSelectionListener {
@@ -168,8 +167,8 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
 
     private void filterByPoints(int pPoints) {
         int selected = 0;
+        jSelectionTree.getSelectionModel().clearSelection();
         for (Village v : treeData.toArray(new Village[]{})) {
-
             if (v.getPoints() < pPoints) {
                 TreePath p = findByName(jSelectionTree, v);
                 if (p != null) {
@@ -622,6 +621,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         jSelectionPanel = new javax.swing.JPanel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
 
+        jSelectionTreePanel.setPreferredSize(new java.awt.Dimension(600, 322));
         jSelectionTreePanel.setLayout(new java.awt.BorderLayout());
 
         jScrollPane1.setViewportView(jSelectionTree);
@@ -748,6 +748,8 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         getContentPane().add(jAlwaysOnTopBox, gridBagConstraints);
 
         jSelectionPanel.setBackground(new java.awt.Color(239, 235, 223));
+        jSelectionPanel.setMinimumSize(new java.awt.Dimension(600, 400));
+        jSelectionPanel.setPreferredSize(new java.awt.Dimension(600, 400));
         jSelectionPanel.setLayout(new java.awt.BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -878,7 +880,6 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
             selection.add(DataHolder.getSingleton().getRandomVillage());
         }
 
-        DSWorkbenchSelectionFrame.getSingleton().setSize(600, 500);
         DSWorkbenchSelectionFrame.getSingleton().resetView();
         DSWorkbenchSelectionFrame.getSingleton().addVillages(selection);
 

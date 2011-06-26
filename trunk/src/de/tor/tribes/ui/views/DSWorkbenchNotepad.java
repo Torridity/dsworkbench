@@ -1018,6 +1018,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
                 .addContainerGap())
         );
 
+        jXNotePanel.setPreferredSize(new java.awt.Dimension(500, 400));
         jXNotePanel.setLayout(new java.awt.BorderLayout());
 
         jNoteTabbedPane.setShowCloseButton(true);
@@ -1176,6 +1177,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         );
 
         setTitle("Notizen");
+        setMinimumSize(new java.awt.Dimension(500, 400));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jAlwaysOnTopBox.setText("Immer im Vordergrund");
@@ -1391,8 +1393,8 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         String b = builder.toString();
         StringTokenizer t = new StringTokenizer(b, "[");
         int cnt = t.countTokens();
-        if (cnt > 500) {
-            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Notizen benötigen mehr als 500 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+        if (cnt > 1000) {
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Notizen benötigen mehr als 1000 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                 return;
             }
         }
@@ -1481,8 +1483,8 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         String b = builder.toString();
         StringTokenizer t = new StringTokenizer(b, "[");
         int cnt = t.countTokens();
-        if (cnt > 500) {
-            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Notizen benötigen mehr als 500 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+        if (cnt > 1000) {
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Notizen benötigen mehr als 1000 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                 return;
             }
         }

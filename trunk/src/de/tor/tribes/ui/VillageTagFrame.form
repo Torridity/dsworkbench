@@ -31,15 +31,18 @@
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jPlayerName" alignment="0" pref="344" max="32767" attributes="0"/>
-                  <Component id="jScrollPane1" alignment="0" pref="344" max="32767" attributes="1"/>
-                  <Component id="jVillageList" alignment="0" pref="344" max="32767" attributes="0"/>
+                  <Component id="jPlayerName" alignment="0" pref="302" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" alignment="0" pref="302" max="32767" attributes="1"/>
+                  <Component id="jVillageList" alignment="0" pref="302" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="jCancelButton" min="-2" max="-2" attributes="0"/>
-                          <Component id="jTagsChooser" alignment="1" pref="282" max="32767" attributes="1"/>
+                          <Group type="102" attributes="0">
+                              <EmptySpace pref="155" max="32767" attributes="0"/>
+                              <Component id="jCancelButton" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="jTagsChooser" pref="240" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="jOKButton" alignment="0" max="32767" attributes="1"/>
                           <Group type="102" alignment="1" attributes="0">
@@ -50,7 +53,7 @@
                       </Group>
                   </Group>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -70,22 +73,20 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jScrollPane1" min="-2" max="-2" attributes="0"/>
+                  <Component id="jScrollPane1" pref="236" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jTagsChooser" pref="25" max="32767" attributes="1"/>
-                  <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="jButton1" alignment="0" max="32767" attributes="1"/>
-                      <Component id="jButton2" alignment="0" max="32767" attributes="1"/>
-                  </Group>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="jTagsChooser" max="32767" attributes="1"/>
+                  <Component id="jButton1" alignment="0" max="32767" attributes="1"/>
+                  <Component id="jButton2" alignment="0" max="32767" attributes="1"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jOKButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jCancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>

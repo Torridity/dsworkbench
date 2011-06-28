@@ -53,6 +53,7 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
@@ -178,6 +179,13 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         miscPane.getContentPane().add(searchButton);
 
         centerPanel.setupTaskPane(editPane, miscPane);
+    }
+
+    public void storeCustomProperties(Configuration pCconfig) {
+    }
+
+    public String getPropertyPrefix() {
+        return "forms.view";
     }
 
     private void copySelectionToInternalClipboard() {

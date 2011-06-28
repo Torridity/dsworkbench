@@ -63,6 +63,7 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
@@ -164,7 +165,12 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         initialize();
         pack();
     }
+    public void storeCustomProperties(Configuration pCconfig) {
+    }
 
+    public String getPropertyPrefix() {
+        return "tag.view";
+    }
     private void initialize() {
         String prop = GlobalOptions.getProperty("tag.frame.table.visibility");
         if (prop == null) {

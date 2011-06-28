@@ -60,6 +60,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 
 import org.apache.log4j.Logger;
@@ -239,7 +240,12 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jCreateStatsFrame.pack();
         pack();
     }
+    public void storeCustomProperties(Configuration pCconfig) {
+    }
 
+    public String getPropertyPrefix() {
+        return "report.view";
+    }
     private void buildMenu() {
         JXTaskPane transferTaskPane = new JXTaskPane();
         transferTaskPane.setTitle("Übertragen");

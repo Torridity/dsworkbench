@@ -26,42 +26,28 @@ import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.GenericTestPanel;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.NoteTableTab;
-import de.tor.tribes.ui.dnd.VillageTransferable;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.note.NoteManager;
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.util.List;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.ListCellRenderer;
 import org.apache.log4j.Logger;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.MouseGestureHandler;
 import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.VillageListFormatter;
-import de.tor.tribes.util.mark.MarkerManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.TexturePaint;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
-import java.awt.dnd.DragSourceDragEvent;
-import java.awt.dnd.DragSourceDropEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -72,12 +58,12 @@ import java.util.LinkedList;
 import java.util.StringTokenizer;
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
+import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
@@ -159,56 +145,56 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
 
         //setup map marker box
      /*   for (int i = 0; i <= ImageManager.ID_NOTE_ICON_13; i++) {
-            jIconBox.addItem(i);
+        jIconBox.addItem(i);
         }
-
+        
         ListCellRenderer r = new ListCellRenderer() {
-
-            @Override
-            public Component getListCellRendererComponent(
-                    JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                Component c = new DefaultListCellRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                try {
-                    JLabel label = ((JLabel) c);
-                    label.setText("");
-                    BufferedImage symbol = ImageManager.getNoteIcon((Integer) value);
-                    label.setIcon(new ImageIcon(symbol.getScaledInstance(18, 18, BufferedImage.SCALE_FAST)));
-                } catch (Exception e) {
-                }
-                return c;
-            }
+        
+        @Override
+        public Component getListCellRendererComponent(
+        JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        Component c = new DefaultListCellRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        try {
+        JLabel label = ((JLabel) c);
+        label.setText("");
+        BufferedImage symbol = ImageManager.getNoteIcon((Integer) value);
+        label.setIcon(new ImageIcon(symbol.getScaledInstance(18, 18, BufferedImage.SCALE_FAST)));
+        } catch (Exception e) {
+        }
+        return c;
+        }
         };
         jIconBox.setRenderer(r);
-
+        
         //setup note symbol box
         for (int i = -1; i <= ImageManager.NOTE_SYMBOL_WALL; i++) {
-            jNoteSymbolBox.addItem(i);
+        jNoteSymbolBox.addItem(i);
         }
-
+        
         jNoteSymbolBox.setRenderer(new ListCellRenderer() {
-
-            @Override
-            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                Component c = new DefaultListCellRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                try {
-                    JLabel label = ((JLabel) c);
-                    label.setHorizontalAlignment(SwingConstants.CENTER);
-                    label.setText("");
-                    int val = (Integer) value;
-                    if (val != -1) {
-                        BufferedImage symbol = ImageManager.getNoteSymbol(val);
-                        label.setIcon(new ImageIcon(symbol.getScaledInstance(18, 18, BufferedImage.SCALE_FAST)));
-                    } else {
-                        //no symbol
-                        label.setIcon(null);
-                        label.setText("-");
-                    }
-                } catch (Exception e) {
-                }
-                return c;
-            }
+        
+        @Override
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        Component c = new DefaultListCellRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        try {
+        JLabel label = ((JLabel) c);
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        label.setText("");
+        int val = (Integer) value;
+        if (val != -1) {
+        BufferedImage symbol = ImageManager.getNoteSymbol(val);
+        label.setIcon(new ImageIcon(symbol.getScaledInstance(18, 18, BufferedImage.SCALE_FAST)));
+        } else {
+        //no symbol
+        label.setIcon(null);
+        label.setText("-");
+        }
+        } catch (Exception e) {
+        }
+        return c;
+        }
         });
-*/
+         */
 
         jNoteTabbedPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
         jNoteTabbedPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
@@ -288,6 +274,13 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         //  GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.notes_view", GlobalOptions.getHelpBroker().getHelpSet());
         //</editor-fold>
 
+    }
+
+    public void storeCustomProperties(Configuration pCconfig) {
+    }
+
+    public String getPropertyPrefix() {
+        return "notes.view";
     }
 
     private void buildMenu() {
@@ -1495,9 +1488,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             logger.error("Failed to copy data to clipboard", e);
             JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren der Daten.", "Fehler");
         }
-
-
-
     }//GEN-LAST:event_fireNotesToClipboardByVillageEvent
 
     private void fireEnterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireEnterEvent
@@ -1549,31 +1539,30 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
 
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
-        
     }
-        /* if (currentNote == null) {
-        return;ji
-        }
-        try {
-        Rectangle bounds = jVillageList.getBounds();
-        Point locationWithinNotepad = jVillageList.getLocationOnScreen();
-        Point notepadLocation = this.getLocationOnScreen();
-        locationWithinNotepad.translate(-notepadLocation.x, -notepadLocation.y);
-        bounds.setLocation(locationWithinNotepad);
-        if (bounds.contains(pDropLocation)) {
-        for (Village v : pVillages) {
-        currentNote.addVillage(v);
-        }
-        }
-        showCurrentNote();
-        try {
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.NOTE_LAYER);
-        } catch (Exception e) {
-        }
-        } catch (Exception e) {
-        logger.error("Failed to insert dropped villages", e);
-        }*/
-  //  }
+    /* if (currentNote == null) {
+    return;ji
+    }
+    try {
+    Rectangle bounds = jVillageList.getBounds();
+    Point locationWithinNotepad = jVillageList.getLocationOnScreen();
+    Point notepadLocation = this.getLocationOnScreen();
+    locationWithinNotepad.translate(-notepadLocation.x, -notepadLocation.y);
+    bounds.setLocation(locationWithinNotepad);
+    if (bounds.contains(pDropLocation)) {
+    for (Village v : pVillages) {
+    currentNote.addVillage(v);
+    }
+    }
+    showCurrentNote();
+    try {
+    MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.NOTE_LAYER);
+    } catch (Exception e) {
+    }
+    } catch (Exception e) {
+    logger.error("Failed to insert dropped villages", e);
+    }*/
+    //  }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -1639,38 +1628,37 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         });
     }
 
- /*   @Override
+    /*   @Override
     public void dragGestureRecognized(DragGestureEvent dge) {
-        Note selectedNote = (Note) jNotesList.getSelectedValue();
-
-        List<Village> villageList = new LinkedList<Village>();
-        for (Integer villageId : selectedNote.getVillageIds()) {
-            Village v = DataHolder.getSingleton().getVillagesById().get(villageId);
-            if (!villageList.contains(v)) {
-                villageList.add(v);
-            }
-        }
-        if (villageList.isEmpty()) {
-            return;
-        }
-        Cursor c = ImageManager.createVillageDragCursor(villageList.size());
-        setCursor(c);
-        dge.startDrag(c, new VillageTransferable(villageList), this);
+    Note selectedNote = (Note) jNotesList.getSelectedValue();
+    
+    List<Village> villageList = new LinkedList<Village>();
+    for (Integer villageId : selectedNote.getVillageIds()) {
+    Village v = DataHolder.getSingleton().getVillagesById().get(villageId);
+    if (!villageList.contains(v)) {
+    villageList.add(v);
     }
-
+    }
+    if (villageList.isEmpty()) {
+    return;
+    }
+    Cursor c = ImageManager.createVillageDragCursor(villageList.size());
+    setCursor(c);
+    dge.startDrag(c, new VillageTransferable(villageList), this);
+    }
+    
     @Override
     public void dragEnter(DragSourceDragEvent dsde) {
     }
-
+    
     @Override
     public void dragOver(DragSourceDragEvent dsde) {
     }
-
+    
     @Override
     public void dragDropEnd(DragSourceDropEvent dsde) {
-        setCursor(Cursor.getDefaultCursor());
+    setCursor(Cursor.getDefaultCursor());
     }*/
-
     // <editor-fold defaultstate="collapsed" desc="Gesture handling">
     @Override
     public void fireExportAsBBGestureEvent() {

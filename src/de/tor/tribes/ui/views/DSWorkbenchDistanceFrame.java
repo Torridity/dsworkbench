@@ -12,7 +12,6 @@ package de.tor.tribes.ui.views;
 
 import com.jidesoft.swing.RangeSlider;
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.test.DummyProfile;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.GenericTestPanel;
@@ -44,6 +43,7 @@ import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
+import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTaskPane;
@@ -106,7 +106,12 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         //   GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.distance_overview", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
     }
+    public void storeCustomProperties(Configuration pCconfig) {
+    }
 
+    public String getPropertyPrefix() {
+        return "distance.view";
+    }
     private void buildMenu() {
         JXTaskPane editPane = new JXTaskPane();
         editPane.setTitle("Bereichsfärbung");

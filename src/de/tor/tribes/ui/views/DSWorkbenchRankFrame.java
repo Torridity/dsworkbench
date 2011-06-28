@@ -41,6 +41,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
@@ -132,7 +133,12 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
 // </editor-fold>
         // updateRankTable();
     }
+    public void storeCustomProperties(Configuration pCconfig) {
+    }
 
+    public String getPropertyPrefix() {
+        return "rank.view";
+    }
     private void buildMenu() {
         JXTaskPane statsTaskPane = new JXTaskPane();
         statsTaskPane.setTitle("Statistiken");

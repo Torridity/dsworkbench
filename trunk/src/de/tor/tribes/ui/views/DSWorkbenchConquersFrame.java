@@ -52,6 +52,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
+import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
@@ -136,6 +137,13 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
             SINGLETON = new DSWorkbenchConquersFrame();
         }
         return SINGLETON;
+    }
+
+    public void storeCustomProperties(Configuration pCconfig) {
+    }
+
+    public String getPropertyPrefix() {
+        return "conquers.view";
     }
 
     private void buildMenu() {

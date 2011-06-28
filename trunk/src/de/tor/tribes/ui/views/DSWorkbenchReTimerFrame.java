@@ -71,6 +71,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
@@ -164,7 +165,12 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         //  GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.retime_tool", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
     }
+    public void storeCustomProperties(Configuration pCconfig) {
+    }
 
+    public String getPropertyPrefix() {
+        return "retime.view";
+    }
     private void buildMenu() {
         JXTaskPane editPane = new JXTaskPane();
         editPane.setTitle("Bearbeiten");

@@ -53,9 +53,9 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.jdesktop.swingx.JXButton;
-import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTreeTable;
 import org.jdesktop.swingx.painter.MattePainter;
@@ -159,6 +159,13 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         // </editor-fold>
         setGlassPane(jxSearchPane);
         pack();
+    }
+
+    public void storeCustomProperties(Configuration pCconfig) {
+    }
+
+    public String getPropertyPrefix() {
+        return "troops.view";
     }
 
     private void buildMenu() {

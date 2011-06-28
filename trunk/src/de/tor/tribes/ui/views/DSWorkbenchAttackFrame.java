@@ -24,7 +24,6 @@ import de.tor.tribes.ui.GenericTestPanel;
 import de.tor.tribes.ui.NotifierFrame;
 import de.tor.tribes.ui.editors.StandardAttackElementEditor;
 import de.tor.tribes.ui.models.StandardAttackTableModel;
-import java.awt.event.WindowEvent;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import de.tor.tribes.util.GlobalOptions;
@@ -47,13 +46,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.WindowListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.beans.XMLDecoder;
-import java.beans.XMLEncoder;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Iterator;
@@ -75,6 +69,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.UIResource;
 import javax.swing.table.DefaultTableModel;
+import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
@@ -270,6 +265,13 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
         setGlassPane(jxSearchPane);
         pack();
+    }
+
+    public void storeCustomProperties(Configuration pConfig) {
+    }
+
+    public String getPropertyPrefix() {
+        return "attack.view";
     }
 
     public JDialog getStandardAttackDialog() {
@@ -982,7 +984,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         DSWorkbenchAttackFrame.getSingleton().resetView();
         DSWorkbenchAttackFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         DSWorkbenchAttackFrame.getSingleton().setVisible(true);
-         }
+    }
     // <editor-fold defaultstate="collapsed" desc="Gesture Handling">
 
     @Override

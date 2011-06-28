@@ -21,12 +21,10 @@ import de.tor.tribes.ui.editors.AttackTypeCellEditor;
 import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.models.DoItYourselfAttackTableModel;
-import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.AttackMiscInfoRenderer;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.AttackTypeListCellRenderer;
 import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
-import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
@@ -70,6 +68,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.DefaultFormatter;
+import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
@@ -171,6 +170,13 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
 //        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.manual_attack_planer", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
         pack();
+    }
+
+    public void storeCustomProperties(Configuration pCconfig) {
+    }
+
+    public String getPropertyPrefix() {
+        return "manual.attack.planer.view";
     }
 
     public static synchronized DSWorkbenchDoItYourselfAttackPlaner getSingleton() {

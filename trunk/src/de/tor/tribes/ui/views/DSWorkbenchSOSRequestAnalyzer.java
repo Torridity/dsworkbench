@@ -70,6 +70,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
@@ -169,7 +170,12 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         // GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.sos_analyzer", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
     }
+    public void storeCustomProperties(Configuration pCconfig) {
+    }
 
+    public String getPropertyPrefix() {
+        return "sos.view";
+    }
     private void buildMenu() {
         JXTaskPane transferPane = new JXTaskPane();
         transferPane.setTitle("Übertragen");

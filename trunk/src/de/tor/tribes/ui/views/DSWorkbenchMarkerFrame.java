@@ -35,6 +35,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 
@@ -166,6 +167,13 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
 //        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.markers_view", GlobalOptions.getHelpBroker().getHelpSet());
 // </editor-fold>
         pack();
+    }
+
+    public void storeCustomProperties(Configuration pCconfig) {
+    }
+
+    public String getPropertyPrefix() {
+        return "marker.view";
     }
 
     public static DSWorkbenchMarkerFrame getSingleton() {

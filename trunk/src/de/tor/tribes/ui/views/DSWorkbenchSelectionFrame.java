@@ -74,6 +74,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
@@ -164,7 +165,12 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         //   GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.selection_tool", GlobalOptions.getHelpBroker().getHelpSet());
         //</editor-fold>
     }
+    public void storeCustomProperties(Configuration pCconfig) {
+    }
 
+    public String getPropertyPrefix() {
+        return "selection.view";
+    }
     private void filterByPoints(int pPoints) {
         int selected = 0;
         jSelectionTree.getSelectionModel().clearSelection();

@@ -48,6 +48,7 @@ import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
@@ -115,6 +116,13 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         // </editor-fold>
         jChurchTable.getSelectionModel().addListSelectionListener(DSWorkbenchChurchFrame.this);
         pack();
+    }
+
+    public void storeCustomProperties(Configuration pConfig) {
+    }
+
+    public String getPropertyPrefix() {
+        return "church.view";
     }
 
     /** This method is called from within the constructor to

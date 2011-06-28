@@ -65,6 +65,7 @@ import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
@@ -170,7 +171,12 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         //  GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.merchant_distributor", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
     }
+    public void storeCustomProperties(Configuration pCconfig) {
+    }
 
+    public String getPropertyPrefix() {
+        return "merchant.view";
+    }
     @Override
     public void resetView() {
         merchantInfos.clear();

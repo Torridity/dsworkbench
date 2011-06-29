@@ -174,7 +174,8 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
 
     public void storeCustomProperties(Configuration pCconfig) {
     }
-
+ public void restoreCustomProperties(Configuration pConfig) {
+    }
     public String getPropertyPrefix() {
         return "manual.attack.planer.view";
     }

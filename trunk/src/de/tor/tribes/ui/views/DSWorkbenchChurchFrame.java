@@ -92,7 +92,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         initComponents();
         centerPanel = new GenericTestPanel();
         jChurchPanel.add(centerPanel, BorderLayout.CENTER);
-        centerPanel.setChildPanel(jXPanel1);
+        centerPanel.setChildComponent(jXPanel1);
         buildMenu();
 
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
@@ -119,6 +119,9 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     }
 
     public void storeCustomProperties(Configuration pConfig) {
+    }
+
+    public void restoreCustomProperties(Configuration pConfig) {
     }
 
     public String getPropertyPrefix() {

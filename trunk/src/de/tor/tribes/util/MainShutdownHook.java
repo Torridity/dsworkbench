@@ -74,6 +74,7 @@ public class MainShutdownHook extends Thread {
             DSWorkbenchMainFrame.getSingleton().storeProperties();
             logger.debug("Saving global properties");
             GlobalOptions.saveProperties();
+            DSWorkbenchAttackFrame.getSingleton().storeProperties();
             logger.debug("Shutdown finished");
         } catch (Throwable t) {
             logger.error("Shutdown failed", t);

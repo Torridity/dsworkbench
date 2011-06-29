@@ -10,6 +10,7 @@ import de.tor.tribes.ui.dnd.VillageTransferable;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSWorkbenchFrameListener;
 import de.tor.tribes.util.DSWorkbenchGesturedFrame;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -85,7 +86,9 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
 
     public abstract void resetView();
 
-    public abstract void storeCustomProperties(Configuration pCconfig);
+    public abstract void storeCustomProperties(Configuration pConfig);
+
+    public abstract void restoreCustomProperties(Configuration pConfig);
 
     public abstract String getPropertyPrefix();
 
@@ -98,12 +101,21 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
         }
         String prefix = getPropertyPrefix();
         PropertiesConfiguration config = null;
+        boolean newConfig = false;
+        if (!new File(dataDir + "/usergui.properties").exists()) {
+            config = new PropertiesConfiguration();
+            newConfig = true;
+        }
         try {
-            config = new PropertiesConfiguration(dataDir + "/usergui.properties");
-            config.addProperty(prefix + ".width", getWidth());
-            config.addProperty(prefix + ".height", getHeight());
-            config.addProperty(prefix + ".visible", isVisible());
-            config.addProperty(prefix + ".alwaysOnTop", isAlwaysOnTop());
+            if (config == null) {
+                config = new PropertiesConfiguration(dataDir + "/usergui.properties");
+            }
+            config.setProperty(prefix + ".width", getWidth());
+            config.setProperty(prefix + ".height", getHeight());
+            config.setProperty(prefix + ".x", getX());
+            config.setProperty(prefix + ".y", getY());
+            config.setProperty(prefix + ".visible", isVisible());
+            config.setProperty(prefix + ".alwaysOnTop", isAlwaysOnTop());
         } catch (ConfigurationException ex) {
             logger.error("Failed to create properties", ex);
             return;
@@ -112,11 +124,40 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
         storeCustomProperties(config);
 
         try {
-            config.save();
+            if (newConfig) {
+                config.save(dataDir + "/usergui.properties");
+            } else {
+                config.save();
+            }
         } catch (ConfigurationException ex) {
             logger.error("Failed to write properties", ex);
             return;
         }
+    }
+
+    public void restoreProperties() {
+        String dataDir = DataHolder.getSingleton().getDataDirectory();
+        if (!new File(dataDir).exists()) {
+            logger.warn("Data directory '" + dataDir + "' does not exist. Skip reading properties");
+            return;
+        }
+        String prefix = getPropertyPrefix();
+        PropertiesConfiguration config = null;
+        try {
+            config = new PropertiesConfiguration(dataDir + "/usergui.properties");
+            config.setThrowExceptionOnMissing(false);
+            Dimension size = new Dimension(config.getInteger(prefix + ".width", getWidth()), config.getInteger(prefix + ".height", getHeight()));
+            setPreferredSize(size);
+            setSize(size);
+            setLocation(config.getInteger(prefix + ".x", getX()), config.getInteger(prefix + ".y", getY()));
+            setVisible(config.getBoolean(prefix + ".visible", false));
+            setAlwaysOnTop(config.getBoolean(prefix + ".alwaysOnTop", false));
+        } catch (ConfigurationException ex) {
+            logger.error("Failed to read properties", ex);
+            return;
+        }
+
+        restoreCustomProperties(config);
     }
 
     public synchronized void addFrameListener(DSWorkbenchFrameListener pListener) {

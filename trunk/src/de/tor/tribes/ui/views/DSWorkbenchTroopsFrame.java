@@ -122,7 +122,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
 
         centerPanel = new GenericTestPanel(true);
         jTroopsPanel.add(centerPanel, BorderLayout.CENTER);
-        centerPanel.setChildPanel(jXTroopsPanel);
+        centerPanel.setChildComponent(jXTroopsPanel);
         buildMenu();
         try {
             jTroopsInformationAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("troops.frame.alwaysOnTop")));
@@ -163,7 +163,8 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
 
     public void storeCustomProperties(Configuration pCconfig) {
     }
-
+ public void restoreCustomProperties(Configuration pConfig) {
+    }
     public String getPropertyPrefix() {
         return "troops.view";
     }

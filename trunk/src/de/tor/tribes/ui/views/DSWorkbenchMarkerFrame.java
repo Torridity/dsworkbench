@@ -83,7 +83,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         initComponents();
         centerPanel = new GenericTestPanel(false);
         jMarkersPanel.add(centerPanel, BorderLayout.CENTER);
-        centerPanel.setChildPanel(jXMarkerPanel);
+        centerPanel.setChildComponent(jXMarkerPanel);
         try {
             jMarkerFrameAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("marker.frame.alwaysOnTop")));
             setAlwaysOnTop(jMarkerFrameAlwaysOnTop.isSelected());
@@ -171,7 +171,8 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
 
     public void storeCustomProperties(Configuration pCconfig) {
     }
-
+ public void restoreCustomProperties(Configuration pConfig) {
+    }
     public String getPropertyPrefix() {
         return "marker.view";
     }

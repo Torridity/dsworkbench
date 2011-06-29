@@ -99,7 +99,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         initComponents();
         centerPanel = new GenericTestPanel();
         jRankPanel.add(centerPanel, BorderLayout.CENTER);
-        centerPanel.setChildPanel(jXRankPanel);
+        centerPanel.setChildComponent(jXRankPanel);
         buildMenu();
         try {
             jAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("rank.frame.alwaysOnTop")));
@@ -135,7 +135,8 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
     }
     public void storeCustomProperties(Configuration pCconfig) {
     }
-
+ public void restoreCustomProperties(Configuration pConfig) {
+    }
     public String getPropertyPrefix() {
         return "rank.view";
     }

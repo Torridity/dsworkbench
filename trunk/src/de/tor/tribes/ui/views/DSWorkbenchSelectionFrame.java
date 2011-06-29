@@ -128,7 +128,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         initComponents();
         centerPanel = new GenericTestPanel(true);
         jSelectionPanel.add(centerPanel, BorderLayout.CENTER);
-        centerPanel.setChildPanel(jSelectionTreePanel);
+        centerPanel.setChildComponent(jSelectionTreePanel);
         buildMenu();
 
         try {
@@ -165,12 +165,17 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         //   GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.selection_tool", GlobalOptions.getHelpBroker().getHelpSet());
         //</editor-fold>
     }
+
     public void storeCustomProperties(Configuration pCconfig) {
+    }
+
+    public void restoreCustomProperties(Configuration pConfig) {
     }
 
     public String getPropertyPrefix() {
         return "selection.view";
     }
+
     private void filterByPoints(int pPoints) {
         int selected = 0;
         jSelectionTree.getSelectionModel().clearSelection();

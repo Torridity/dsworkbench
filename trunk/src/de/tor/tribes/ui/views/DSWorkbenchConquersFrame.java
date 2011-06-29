@@ -81,7 +81,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         initComponents();
         centerPanel = new GenericTestPanel();
         jConquerPanel.add(centerPanel, BorderLayout.CENTER);
-        centerPanel.setChildPanel(jConquersPanel);
+        centerPanel.setChildComponent(jConquersPanel);
         buildMenu();
         try {
             jConquersFrameAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("conquers.frame.alwaysOnTop")));
@@ -140,6 +140,9 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
     }
 
     public void storeCustomProperties(Configuration pCconfig) {
+    }
+
+    public void restoreCustomProperties(Configuration pConfig) {
     }
 
     public String getPropertyPrefix() {

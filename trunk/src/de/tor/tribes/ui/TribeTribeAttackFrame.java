@@ -228,7 +228,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
         initComponents();
         centerPanel = new GenericTestPanel();
         jMainPanel.add(centerPanel, BorderLayout.CENTER);
-        centerPanel.setChildPanel(jxAttackPlanerPanel);
+        centerPanel.setChildComponent(jxAttackPlanerPanel);
 
         buildMenu();
 

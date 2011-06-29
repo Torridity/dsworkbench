@@ -115,7 +115,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         initComponents();
         centerPanel = new GenericTestPanel();
         jStatsPanel.add(centerPanel, BorderLayout.CENTER);
-        centerPanel.setChildPanel(jMainStatPanel);
+        centerPanel.setChildComponent(jMainStatPanel);
         buildMenu();
 
         KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
@@ -177,7 +177,8 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
     }
     public void storeCustomProperties(Configuration pCconfig) {
     }
-
+ public void restoreCustomProperties(Configuration pConfig) {
+    }
     public String getPropertyPrefix() {
         return "stats.view";
     }

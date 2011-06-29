@@ -143,7 +143,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         initComponents();
         centerPanel = new GenericTestPanel();
         jReportsPanel.add(centerPanel, BorderLayout.CENTER);
-        centerPanel.setChildPanel(jXReportsPanel);
+        centerPanel.setChildComponent(jXReportsPanel);
         buildMenu();
         try {
             jAlwaysOnTopBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("report.frame.alwaysOnTop")));
@@ -242,7 +242,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     }
     public void storeCustomProperties(Configuration pCconfig) {
     }
-
+ public void restoreCustomProperties(Configuration pConfig) {
+    }
     public String getPropertyPrefix() {
         return "report.view";
     }

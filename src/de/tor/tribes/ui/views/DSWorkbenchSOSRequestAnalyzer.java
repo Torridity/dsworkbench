@@ -118,7 +118,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         initComponents();
         centerPanel = new GenericTestPanel(true);
         jSOSPanel.add(centerPanel, BorderLayout.CENTER);
-        centerPanel.setChildPanel(jSOSInputPanel);
+        centerPanel.setChildComponent(jSOSInputPanel);
         buildMenu();
 
         KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
@@ -172,7 +172,8 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     }
     public void storeCustomProperties(Configuration pCconfig) {
     }
-
+ public void restoreCustomProperties(Configuration pConfig) {
+    }
     public String getPropertyPrefix() {
         return "sos.view";
     }

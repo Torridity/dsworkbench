@@ -75,7 +75,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         initComponents();
         centerPanel = new GenericTestPanel(true);
         jDistancePanel.add(centerPanel, BorderLayout.CENTER);
-        centerPanel.setChildPanel(jPanel2);
+        centerPanel.setChildComponent(jPanel2);
         buildMenu();
         jDistanceTable.setModel(new DistanceTableModel());
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
@@ -106,12 +106,17 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         //   GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.distance_overview", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
     }
+
     public void storeCustomProperties(Configuration pCconfig) {
+    }
+
+    public void restoreCustomProperties(Configuration pConfig) {
     }
 
     public String getPropertyPrefix() {
         return "distance.view";
     }
+
     private void buildMenu() {
         JXTaskPane editPane = new JXTaskPane();
         editPane.setTitle("Bereichsfärbung");

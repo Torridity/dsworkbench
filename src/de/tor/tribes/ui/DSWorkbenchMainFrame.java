@@ -660,6 +660,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             DSWorkbenchMarkerFrame.getSingleton().resetView();
             DSWorkbenchChurchFrame.getSingleton().resetView();
             DSWorkbenchAttackFrame.getSingleton().resetView();
+             DSWorkbenchAttackFrame.getSingleton().restoreProperties();
             DSWorkbenchTagFrame.getSingleton().resetView();
             //ConquersTableModel.getSingleton();
             DSWorkbenchConquersFrame.getSingleton().resetView();

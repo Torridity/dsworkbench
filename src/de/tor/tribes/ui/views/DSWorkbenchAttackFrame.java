@@ -36,6 +36,7 @@ import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MouseGestureHandler;
 import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.ProfileManagerListener;
+import de.tor.tribes.util.PropertyHelper;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -78,7 +79,6 @@ import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
 
 // -Dsun.java2d.d3d=true -Dsun.java2d.translaccel=true -Dsun.java2d.ddforcevram=true
-// <editor-fold defaultstate="collapsed" desc=" NOTIFY THREAD ">
 /**
  * @author  Charon
  */
@@ -162,7 +162,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         initComponents();
         centerPanel = new GenericTestPanel();
         jAttackPanel.add(centerPanel, BorderLayout.CENTER);
-        centerPanel.setChildPanel(jXAttackPanel);
+        centerPanel.setChildComponent(jXAttackPanel);
         fireProfilesLoadedEvent();
         buildMenu();
         try {
@@ -268,6 +268,28 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
     }
 
     public void storeCustomProperties(Configuration pConfig) {
+        pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
+        pConfig.setProperty(getPropertyPrefix() + ".click.account", iClickAccount);
+        int selectedIndex = jAttackTabPane.getModel().getSelectedIndex();
+        if (selectedIndex >= 0) {
+            pConfig.setProperty(getPropertyPrefix() + ".tab.selection", selectedIndex);
+        }
+        AttackTableTab tab = ((AttackTableTab) jAttackTabPane.getComponentAt(0));
+        PropertyHelper.storeTableProperties(tab.getAttackTable(), pConfig, getPropertyPrefix());
+    }
+
+    public void restoreCustomProperties(Configuration pConfig) {
+        centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
+        try {
+            jAttackTabPane.setSelectedIndex(pConfig.getInteger(getPropertyPrefix() + ".tab.selection", 0));
+        } catch (Exception e) {
+        }
+
+        iClickAccount = pConfig.getInteger(getPropertyPrefix() + ".click.account", 0);
+        updateClickAccount();
+
+        AttackTableTab tab = ((AttackTableTab) jAttackTabPane.getComponentAt(0));
+        PropertyHelper.restoreTableProperties(tab.getAttackTable(), pConfig, getPropertyPrefix());
     }
 
     public String getPropertyPrefix() {
@@ -1066,6 +1088,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     // End of variables declaration//GEN-END:variables
 }
 
+// <editor-fold defaultstate="collapsed" desc=" NOTIFY THREAD ">
 class NotifyThread extends Thread {
 
     private static Logger logger = Logger.getLogger("AttackNotificationHelper");

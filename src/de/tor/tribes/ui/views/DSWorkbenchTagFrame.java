@@ -131,7 +131,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         initComponents();
         centerPanel = new GenericTestPanel();
         jTagPanel.add(centerPanel, BorderLayout.CENTER);
-        centerPanel.setChildPanel(jTagsPanel);
+        centerPanel.setChildComponent(jTagsPanel);
         buildMenu();
         try {
             jAlwaysOnTopBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("tag.frame.alwaysOnTop")));
@@ -167,7 +167,8 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
     }
     public void storeCustomProperties(Configuration pCconfig) {
     }
-
+ public void restoreCustomProperties(Configuration pConfig) {
+    }
     public String getPropertyPrefix() {
         return "tag.view";
     }

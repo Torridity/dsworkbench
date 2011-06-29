@@ -68,6 +68,7 @@ public class GenericTestPanel extends javax.swing.JPanel {
             remove(menuPanel);
             centerPanel.remove(menuCollapsePanel);
         }
+
     }
 
     /** Creates new form GenericTestPanel */
@@ -84,47 +85,14 @@ public class GenericTestPanel extends javax.swing.JPanel {
     }
 
     public void setupTaskPane(JComponent... pTaskPane) {
-        setupTaskPane(null, null, pTaskPane);
-    }
-
-    public void setupTaskPane(String pVisibility, String pStandardValues, JComponent... pTaskPane) {
-        /* String prop = GlobalOptions.getProperty(pVisibility);
-        String[] visibilityInfo = null;
-        if (prop != null) {
-        visibilityInfo = prop.split(";");
-        
-        } else {
-        if (pStandardValues != null) {
-        visibilityInfo = pStandardValues.split(";");
-        }
-        }
-        
-        if (visibilityInfo == null || visibilityInfo.length < pTaskPane.length) {
-        visibilityInfo = new String[pTaskPane.length];
-        for (int i = 0; i < pTaskPane.length; i++) {
-        visibilityInfo[i] = "true";
-        }
-        }
-        
-        boolean[] visibility = new boolean[visibilityInfo.length];
-        for (int i = 0; i < visibilityInfo.length; i++) {
-        visibility[i] = Boolean.parseBoolean(visibilityInfo[i]);
-        }*/
         taskContainer = new JXTaskPaneContainer();
-
         for (int i = 0; i < pTaskPane.length; i++) {
             taskContainer.add(pTaskPane[i]);
-            /* if (pTaskPane[i] instanceof JXTaskPane) {
-            ((JXTaskPane) pTaskPane[i]).setCollapsed(!visibility[i]);
-            }*/
         }
         menuPanel.remove(jXTaskPaneContainer1);
         JScrollPane s = new JScrollPane(taskContainer);
         s.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         menuPanel.add(s, BorderLayout.CENTER);
-    }
-
-    public void restoreView(String pProperty, String pDefaultValue) {
     }
 
     /** This method is called from within the constructor to
@@ -180,7 +148,7 @@ public class GenericTestPanel extends javax.swing.JPanel {
     /**
      * @param childPanel the childPanel to set
      */
-    public void setChildPanel(JComponent centerComponent) {
+    public void setChildComponent(JComponent centerComponent) {
         this.centerComponent = centerComponent;
         centerPanel.removeAll();
         if (menuEnabled) {
@@ -226,7 +194,7 @@ public class GenericTestPanel extends javax.swing.JPanel {
         for (String group : AttackManager.getSingleton().getGroups()) {
             t.add(group, new AttackTableTab(group, null));
         }
-        p.setChildPanel(t);
+        p.setChildComponent(t);
         t.getModel().addChangeListener(new ChangeListener() {
 
             @Override

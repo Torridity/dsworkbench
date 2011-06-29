@@ -133,7 +133,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         initComponents();
         centerPanel = new GenericTestPanel();
         jNotesPanel.add(centerPanel, BorderLayout.CENTER);
-        centerPanel.setChildPanel(jXNotePanel);
+        centerPanel.setChildComponent(jXNotePanel);
         buildMenu();
         jScrollPane2.setViewportView(jNotePane);
         try {
@@ -278,7 +278,8 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
 
     public void storeCustomProperties(Configuration pCconfig) {
     }
-
+ public void restoreCustomProperties(Configuration pConfig) {
+    }
     public String getPropertyPrefix() {
         return "notes.view";
     }

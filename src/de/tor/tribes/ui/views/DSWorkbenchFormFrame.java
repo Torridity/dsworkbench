@@ -88,7 +88,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         initComponents();
         centerPanel = new GenericTestPanel();
         jFormPanel.add(centerPanel, BorderLayout.CENTER);
-        centerPanel.setChildPanel(jFormTablePanel);
+        centerPanel.setChildComponent(jFormTablePanel);
         jFormsTable.setModel(new FormTableModel());
         jFormsTable.getSelectionModel().addListSelectionListener(DSWorkbenchFormFrame.this);
         buildMenu();
@@ -183,7 +183,8 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
 
     public void storeCustomProperties(Configuration pCconfig) {
     }
-
+ public void restoreCustomProperties(Configuration pConfig) {
+    }
     public String getPropertyPrefix() {
         return "forms.view";
     }

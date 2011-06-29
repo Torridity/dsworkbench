@@ -125,7 +125,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
 
         centerPanel = new GenericTestPanel(true);
         jReTimePanel.add(centerPanel, BorderLayout.CENTER);
-        centerPanel.setChildPanel(jideRetimeTabbedPane);
+        centerPanel.setChildComponent(jideRetimeTabbedPane);
         jideRetimeTabbedPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
         jideRetimeTabbedPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
         jideRetimeTabbedPane.setBoldActiveTab(true);
@@ -167,7 +167,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     }
     public void storeCustomProperties(Configuration pCconfig) {
     }
-
+ public void restoreCustomProperties(Configuration pConfig) {
+    }
     public String getPropertyPrefix() {
         return "retime.view";
     }

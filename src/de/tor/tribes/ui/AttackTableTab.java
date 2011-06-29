@@ -530,24 +530,36 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jLabel7.setText("Tage");
+        jLabel7.setMaximumSize(new java.awt.Dimension(24, 25));
+        jLabel7.setMinimumSize(new java.awt.Dimension(24, 25));
+        jLabel7.setPreferredSize(new java.awt.Dimension(24, 25));
 
         jLabel5.setText("Minuten");
+        jLabel5.setMaximumSize(new java.awt.Dimension(38, 25));
+        jLabel5.setMinimumSize(new java.awt.Dimension(38, 25));
+        jLabel5.setPreferredSize(new java.awt.Dimension(38, 25));
 
-        jDayField.setMinimumSize(new java.awt.Dimension(60, 20));
-        jDayField.setPreferredSize(new java.awt.Dimension(60, 20));
+        jDayField.setMinimumSize(new java.awt.Dimension(60, 25));
+        jDayField.setPreferredSize(new java.awt.Dimension(60, 25));
 
-        jMinuteField.setMinimumSize(new java.awt.Dimension(60, 20));
-        jMinuteField.setPreferredSize(new java.awt.Dimension(60, 20));
+        jMinuteField.setMinimumSize(new java.awt.Dimension(60, 25));
+        jMinuteField.setPreferredSize(new java.awt.Dimension(60, 25));
 
         jLabel6.setText("Stunden");
+        jLabel6.setMaximumSize(new java.awt.Dimension(40, 25));
+        jLabel6.setMinimumSize(new java.awt.Dimension(40, 25));
+        jLabel6.setPreferredSize(new java.awt.Dimension(40, 25));
 
-        jHourField.setMinimumSize(new java.awt.Dimension(60, 20));
-        jHourField.setPreferredSize(new java.awt.Dimension(60, 20));
+        jHourField.setMinimumSize(new java.awt.Dimension(60, 25));
+        jHourField.setPreferredSize(new java.awt.Dimension(60, 25));
 
         jLabel14.setText("Sekunden");
+        jLabel14.setMaximumSize(new java.awt.Dimension(47, 25));
+        jLabel14.setMinimumSize(new java.awt.Dimension(47, 25));
+        jLabel14.setPreferredSize(new java.awt.Dimension(47, 25));
 
         jSecondsField.setMinimumSize(new java.awt.Dimension(60, 20));
-        jSecondsField.setPreferredSize(new java.awt.Dimension(60, 20));
+        jSecondsField.setPreferredSize(new java.awt.Dimension(60, 25));
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -555,22 +567,22 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+                    .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jMinuteField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jSecondsField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(43, 43, 43)
+                .addGap(10, 10, 10)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jHourField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jDayField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -650,12 +662,20 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
         jLabel17.setText("Zeitfenster");
         jLabel17.setEnabled(false);
+        jLabel17.setMaximumSize(new java.awt.Dimension(80, 25));
+        jLabel17.setMinimumSize(new java.awt.Dimension(80, 25));
+        jLabel17.setPreferredSize(new java.awt.Dimension(80, 25));
 
         jLabel18.setText("+/-");
         jLabel18.setEnabled(false);
+        jLabel18.setMaximumSize(new java.awt.Dimension(16, 25));
+        jLabel18.setMinimumSize(new java.awt.Dimension(16, 25));
+        jLabel18.setPreferredSize(new java.awt.Dimension(16, 25));
 
         jRandomField.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         jRandomField.setEnabled(false);
+        jRandomField.setMinimumSize(new java.awt.Dimension(6, 25));
+        jRandomField.setPreferredSize(new java.awt.Dimension(6, 25));
 
         jLabel19.setEnabled(false);
 
@@ -672,11 +692,11 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jNotRandomToNightBonus, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(jLabel17)
+                        .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel18)
+                        .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRandomField, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
+                        .addComponent(jRandomField, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel19)))
                 .addContainerGap())
@@ -686,8 +706,8 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel17)
-                    .addComponent(jLabel18)
+                    .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jRandomField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel19))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -1268,6 +1288,8 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     public void changeSelectionTime() {
         if (!getSelectedAttacks().isEmpty()) {
             jTimeChangeDialog.setVisible(true);
+        } else {
+            showInfo("Keine Angriffe gewählt");
         }
     }
 
@@ -1276,6 +1298,8 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             jChangeAttackTypeDialog.setLocationRelativeTo(this);
             jChangeAttackTypeDialog.pack();
             jChangeAttackTypeDialog.setVisible(true);
+        } else {
+            showInfo("Keine Angriffe gewählt");
         }
     }
 
@@ -1285,6 +1309,8 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 a.setTransferredToBrowser(false);
             }
             attackModel.fireTableDataChanged();
+        } else {
+            showInfo("Keine Angriffe gewählt");
         }
     }
 
@@ -1294,11 +1320,14 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 a.setShowOnMap(!a.isShowOnMap());
             }
             attackModel.fireTableDataChanged();
+        } else {
+            showInfo("Keine Angriffe gewählt");
         }
     }
 
     public void transferToScript() {
         if (getSelectedAttacks().isEmpty()) {
+            showInfo("Keine Angriffe gewählt");
             return;
         }
         jScriptExportDialog.pack();
@@ -1334,6 +1363,9 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 break;
             case DSWB_RETIME:
                 sendAttackToRetimeFrame();
+                break;
+            case FILE_GM:
+                transferToScript();
                 break;
         }
     }
@@ -1412,6 +1444,13 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     }
 
     private void copyHTMLToFileEvent() {
+        List<Attack> toExport = getSelectedAttacks();
+
+        if (toExport.isEmpty()) {
+            showInfo("Keine Angriffe ausgewählt");
+            return;
+        }
+
         String dir = GlobalOptions.getProperty("screen.dir");
         if (dir == null) {
             dir = ".";
@@ -1460,7 +1499,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                     }
                 }
 
-                List<Attack> toExport = getSelectedAttacks();
+
                 AttackPlanHTMLExporter.doExport(target, selectedPlan, toExport);
                 //store current directory
                 GlobalOptions.addProperty("screen.dir", target.getParent());
@@ -1557,6 +1596,11 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     }
 
     private void sendAttacksAsIGM() {
+        if (getSelectedAttacks().isEmpty()) {
+            showInfo("Kein Angriffe gewählt");
+            return;
+        }
+
         jSubject.setText("Deine Angriffe (Plan: " + getAttackPlan() + ")");
         jSendAttacksIGMDialog.pack();
         jSendAttacksIGMDialog.setLocationRelativeTo(this);
@@ -1565,6 +1609,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
     private void sendAttackToRetimeFrame() {
         if (getSelectedAttacks().isEmpty()) {
+            showInfo("Kein Angriffe gewählt");
             return;
         }
         Attack attack = getSelectedAttacks().get(0);

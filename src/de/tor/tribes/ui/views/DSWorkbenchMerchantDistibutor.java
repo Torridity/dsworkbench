@@ -129,7 +129,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         initComponents();
         centerPanel = new GenericTestPanel(true);
         jMerchantPanel.add(centerPanel, BorderLayout.CENTER);
-        centerPanel.setChildPanel(merchantTabbedPane);
+        centerPanel.setChildComponent(merchantTabbedPane);
         buildMenu();
 
         merchantTabbedPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
@@ -173,7 +173,8 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
     }
     public void storeCustomProperties(Configuration pCconfig) {
     }
-
+ public void restoreCustomProperties(Configuration pConfig) {
+    }
     public String getPropertyPrefix() {
         return "merchant.view";
     }

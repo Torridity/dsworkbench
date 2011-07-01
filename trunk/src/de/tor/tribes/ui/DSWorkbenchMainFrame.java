@@ -76,6 +76,7 @@ import de.tor.tribes.util.stat.StatManager;
 import java.io.File;
 import javax.swing.JFileChooser;
 import de.tor.tribes.util.troops.TroopsManager;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
@@ -817,7 +818,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         MapPanel.getSingleton().addToolChangeListener(this);
         MinimapPanel.getSingleton().addToolChangeListener(this);
         logger.info("Adding MapPanel");
-        jPanel1.add(MapPanel.getSingleton());
+        jPanel1.add(MapPanel.getSingleton(), BorderLayout.CENTER);
         //build the minimap
         logger.info("Adding MinimapPanel");
         jMinimapPanel.add(MinimapPanel.getSingleton());
@@ -1742,11 +1743,11 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             }
         });
 
-        jPanel1.setBackground(new java.awt.Color(0, 0, 0));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2));
+        jPanel1.setForeground(new java.awt.Color(240, 240, 240));
         jPanel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jPanel1.setDoubleBuffered(false);
-        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.LINE_AXIS));
+        jPanel1.setLayout(new java.awt.BorderLayout());
 
         jMinimapPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2));
         jMinimapPanel.setDoubleBuffered(false);
@@ -1755,16 +1756,9 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jScrollPane2.setFocusTraversalPolicyProvider(true);
 
         jTaskPane1.setBackground(new java.awt.Color(239, 235, 223));
-        com.l2fprod.common.swing.PercentLayout percentLayout1 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout1.setOrientation(1);
-        percentLayout1.setGap(5);
-        jTaskPane1.setLayout(percentLayout1);
 
         jNavigationGroup.setExpanded(false);
         jNavigationGroup.setTitle("Navigation");
-        com.l2fprod.common.swing.PercentLayout percentLayout6 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout6.setOrientation(1);
-        jNavigationGroup.getContentPane().setLayout(percentLayout6);
 
         jNavigationPanel.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -2019,9 +2013,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jInformationGroup.setBackground(new java.awt.Color(239, 235, 223));
         jInformationGroup.setExpanded(false);
         jInformationGroup.setTitle("Allgemeine Informationen");
-        com.l2fprod.common.swing.PercentLayout percentLayout5 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout5.setOrientation(1);
-        jInformationGroup.getContentPane().setLayout(percentLayout5);
 
         jInformationPanel.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -2134,9 +2125,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jTaskPane1.add(jInformationGroup);
 
         jMapGroup.setTitle("Kartenanzeige");
-        com.l2fprod.common.swing.PercentLayout percentLayout4 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout4.setOrientation(1);
-        jMapGroup.getContentPane().setLayout(percentLayout4);
 
         jPanel2.setBackground(new java.awt.Color(239, 235, 223));
         jPanel2.setMinimumSize(new java.awt.Dimension(193, 312));
@@ -2323,9 +2311,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
         jROIGroup.setExpanded(false);
         jROIGroup.setTitle("ROIs");
-        com.l2fprod.common.swing.PercentLayout percentLayout2 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout2.setOrientation(1);
-        jROIGroup.getContentPane().setLayout(percentLayout2);
 
         jPanel3.setBackground(new java.awt.Color(239, 235, 223));
         jPanel3.setMaximumSize(new java.awt.Dimension(293, 70));

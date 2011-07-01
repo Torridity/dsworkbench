@@ -4,7 +4,7 @@
 <comment/>
 <entry key="profiler.attach.remote">false</entry>
 <entry key="profiler.attach.server.type">Java Application</entry>
-<entry key="profiler.attach.host.os">Windows, 32bit JVM</entry>
+<entry key="profiler.attach.host.os">Windows</entry>
 <entry key="profiler.attach.dynamic.jdk16">true</entry>
 <entry key="profiler.attach.direct">false</entry>
 <entry key="profiler.attach.target.type">Application</entry>

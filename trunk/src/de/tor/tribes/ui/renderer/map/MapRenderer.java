@@ -203,7 +203,8 @@ public class MapRenderer {
     private AttackLayerRenderer attackLayer = new AttackLayerRenderer();
     private SupportLayerRenderer supportLayer = new SupportLayerRenderer();
     private NoteLayerRenderer noteLayer = new NoteLayerRenderer();
-    int fillFactor = 0;
+    /**RenderSettings used within the last rendering cyle*/
+    private RenderSettings settings = null;
 
     public void renderAll(Graphics2D pG2d) {
         try {
@@ -211,26 +212,14 @@ public class MapRenderer {
             int h = MapPanel.getSingleton().getHeight();
             if ((w != 0) && (h != 0)) {
                 Graphics2D g2d = null;
+                if (settings == null) {
+                    //settings not set yet, use current map position
+                    settings = new RenderSettings(MapPanel.getSingleton().getVirtualBounds());
+                }
                 if (mBackBuffer == null) {
                     //create main buffer during first iteration
                     mBackBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.OPAQUE);
                     mBackBuffer.setAccelerationPriority(1);
-                    /* mFrontBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.TRANSLUCENT);
-                    BufferedImage bi = ImageUtils.createCompatibleBufferedImage(3, 3, Transparency.TRANSLUCENT);
-                    Graphics2D g2 = bi.createGraphics();
-                    ImageUtils.setupGraphics(g2);
-                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .5f));
-                    g2.setColor(Color.WHITE);
-                    g2.fillRect(0, 0, 3, 3);
-                    g2.setColor(new Color(168, 168, 168));
-                    g2.drawLine(0, 2, 2, 0);
-                    g2.dispose();
-                    TexturePaint tp = new TexturePaint(bi, new Rectangle2D.Double(0, 0, 3, 3));
-                    Graphics2D g2d1 = mFrontBuffer.createGraphics();
-                    ImageUtils.setupGraphics(g2d1);
-                    g2d1.setPaint(tp);
-                    g2d1.fillRect(0, 0, w, h);
-                    g2d1.dispose();*/
                     g2d = (Graphics2D) mBackBuffer.getGraphics();
                     ImageUtils.setupGraphics(g2d);
                     //set redraw required flag if nothin was drawn yet
@@ -242,22 +231,6 @@ public class MapRenderer {
                         //map panel has resized
                         mBackBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.OPAQUE);
                         mBackBuffer.setAccelerationPriority(1);
-                        /* mFrontBuffer = ImageUtils.createCompatibleBufferedImage(w, h, Transparency.TRANSLUCENT);
-                        BufferedImage bi = ImageUtils.createCompatibleBufferedImage(3, 3, Transparency.TRANSLUCENT);
-                        Graphics2D g2 = bi.createGraphics();
-                        ImageUtils.setupGraphics(g2);
-                        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .5f));
-                        g2.setColor(Color.WHITE);
-                        g2.fillRect(0, 0, 3, 3);
-                        g2.setColor(new Color(107, 107, 107));
-                        g2.drawLine(0, 2, 2, 0);
-                        g2.dispose();
-                        TexturePaint tp = new TexturePaint(bi, new Rectangle2D.Double(0, 0, 3, 3));
-                        Graphics2D g2d1 = mFrontBuffer.createGraphics();
-                        ImageUtils.setupGraphics(g2d1);
-                        g2d1.setPaint(tp);
-                        g2d1.fillRect(0, 0, w, h);
-                        g2d1.dispose();*/
                         g2d = (Graphics2D) mBackBuffer.getGraphics();
                         ImageUtils.setupGraphics(g2d);
                         //set redraw required flag if size has changed
@@ -268,15 +241,17 @@ public class MapRenderer {
                         g2d = (Graphics2D) mBackBuffer.getGraphics();
                     }
                 }
+
+                if (mapRedrawRequired) {
+                    //if the entire map has to be redrawn, reset the render settings
+                    settings = new RenderSettings(MapPanel.getSingleton().getVirtualBounds());
+                }
                 g2d.setClip(0, 0, w, h);
                 //get currently selected user village for marking -> one call reduces sync effort
                 currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
-                //check if redraw required
-                RenderSettings settings = new RenderSettings(MapPanel.getSingleton().getVirtualBounds());
                 currentZoom = settings.getZoom();
 
                 if (mapRedrawRequired) {
-                    fillFactor = 120;
                     //complete redraw is required
                     calculateVisibleVillages();
                     if (viewStartPoint == null) {
@@ -284,11 +259,9 @@ public class MapRenderer {
                     }
                     mapRedrawRequired = false;
                 }
-                fillFactor -= (int)Math.rint(10.0 * (120.0 / fillFactor));
-                if (fillFactor < 0) {
-                    fillFactor = 0;
-                }
+
                 settings.setVisibleVillages(mVisibleVillages);
+                //get the movement of the map relative to a) the last reset or b) the last rendering cycle
                 settings.calculateSettings(MapPanel.getSingleton().getVirtualBounds());
                 boolean mapDrawn = false;
                 for (Integer layer : drawOrder) {
@@ -302,14 +275,6 @@ public class MapRenderer {
                     } else if (layer == 2) {
                         tagLayer.performRendering(settings, g2d);
                     } else if (layer == 3) {
-                        //render other layers (active village, troop type)
-                        // if (mapDrawn) {
-                        //only draw layer if map is drawn
-                        //If not, this layer is hidden behind the map
-                        //  renderDecoration(g2d);
-                        // System.out.println("DTD " + (System.currentTimeMillis() - s));
-                        //  }
-                        //  logger.info(" - DECO " + (System.currentTimeMillis() - s));
                     } else if (layer == 4) {
                         //render troop density
                         troopDensityLayer.performRendering(settings, g2d);
@@ -333,16 +298,16 @@ public class MapRenderer {
                     selection.renderForm(g2d);
                 }
                 //render menu
-                MenuRenderer.getSingleton().renderMenu(g2d);
+              /*  MenuRenderer.getSingleton().renderMenu(g2d);
                 if (fillFactor > 0) {
-                    g2d.setColor(new Color(0, 0, 0, fillFactor));
-                    g2d.fillRect(0, 0, mBackBuffer.getWidth(), mBackBuffer.getHeight());
-                }
+                g2d.setColor(new Color(0, 0, 0, fillFactor));
+                g2d.fillRect(0, 0, mBackBuffer.getWidth(), mBackBuffer.getHeight());
+                }*/
                 g2d.dispose();
-
+                //store the map position rendered in this cycle in the render settings
+                settings = new RenderSettings(settings.getMapBounds());
                 pG2d.drawImage(mBackBuffer, 0, 0, null);
                 MapPanel.getSingleton().updateComplete(villagePositions, mBackBuffer);
-                //  System.out.println("Complete " + mBackBuffer);
             }
         } catch (Throwable t) {
             lRenderedLast = 0;
@@ -386,14 +351,7 @@ public class MapRenderer {
         //ceil
         iVillagesX = (int) Math.ceil((double) MapPanel.getSingleton().getWidth() / currentFieldWidth);
         iVillagesY = (int) Math.ceil((double) MapPanel.getSingleton().getHeight() / currentFieldHeight);
-        //add small buffer
-     /*   iVillagesX++;
-        iVillagesY++;*/
-
-
-
         //village start
-
         int xStartVillage = (int) Math.floor(dCenterX - iVillagesX / 2.0);
         int yStartVillage = (int) Math.floor(dCenterY - iVillagesY / 2.0);
         //double start
@@ -402,21 +360,12 @@ public class MapRenderer {
         double dYStart = dCenterY - (double) iVillagesY / 2.0;
 
         //village end
-
-        /*int xEndVillage = (int) Math.ceil(dCenterX + (double) iVillagesX / 2.0);
-        int yEndVillage = (int) Math.ceil(dCenterY + (double) iVillagesY / 2.0);
-         */
         int xEndVillage = (int) Math.floor(dXStart + iVillagesX);
         int yEndVillage = (int) Math.floor(dYStart + iVillagesY);
-        /*  xEndVillage++;
-        yEndVillage++;*/
-
-        //   System.out.println("Start: " + dXStart + "/" + dYStart);
 
         //correct village count
         viewStartPoint = new Point2D.Double(dXStart, dYStart);
 
-        //       System.out.println(viewStartPoint);
         double dx = 0 - ((viewStartPoint.x - Math.floor(viewStartPoint.x)) * currentFieldWidth);
         double dy = 0 - ((viewStartPoint.y - Math.floor(viewStartPoint.y)) * currentFieldHeight);
 
@@ -428,9 +377,7 @@ public class MapRenderer {
         }
         iVillagesX = xEndVillage - xStartVillage;
         iVillagesY = yEndVillage - yStartVillage;
-        /*  System.out.println("Start: " + xStartVillage + "/" + yStartVillage);
-        System.out.println("End: " + xEndVillage + "/" + yEndVillage);
-        System.out.println("XY " + iVillagesX + "/" + iVillagesY);*/
+
         mVisibleVillages = new Village[iVillagesX + 1][iVillagesY + 1];
 
         int x = 0;
@@ -701,7 +648,6 @@ public class MapRenderer {
                             } else {
                                 g2d.fillRect(0, (int) Math.floor(rulerEnd) + j * (int) Math.rint(currentFieldHeight), (int) Math.rint(currentFieldWidth), (int) Math.rint(currentFieldHeight));
                             }
-
                         } else {
                             g2d.copyArea(rulerPart.x, rulerPart.y, rulerPart.width, rulerPart.height, (int) Math.floor(rulerStart) - rulerPart.x, (int) Math.floor(rulerEnd) + j * (int) Math.rint(currentFieldHeight) - rulerPart.y);
                         }

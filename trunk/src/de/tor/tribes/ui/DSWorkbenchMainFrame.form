@@ -851,9 +851,6 @@
       <SubComponents>
         <Container class="javax.swing.JPanel" name="jPanel1">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="0" green="0" red="0" type="rgb"/>
-            </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                 <LineBorder thickness="2">
@@ -861,13 +858,16 @@
                 </LineBorder>
               </Border>
             </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="f0" green="f0" red="f0" type="rgb"/>
+            </Property>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-              <Color id="Default Cursor"/>
+              <Color id="Standardcursor"/>
             </Property>
             <Property name="doubleBuffered" type="boolean" value="false"/>
           </Properties>
 
-          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
         </Container>
         <Container class="javax.swing.JPanel" name="jMinimapPanel">
           <Properties>
@@ -1348,73 +1348,6 @@
                       </SubComponents>
                     </Container>
                   </SubComponents>
-                  <LayoutCode>
-                    <CodeStatement>
-                      <CodeExpression id="1_percentLayout6">
-                        <CodeVariable name="percentLayout6" type="4096" declaredType="com.l2fprod.common.swing.PercentLayout"/>
-                        <ExpressionOrigin>
-                          <ExpressionProvider type="CodeConstructor">
-                            <CodeConstructor class="com.l2fprod.common.swing.PercentLayout" parameterTypes=""/>
-                          </ExpressionProvider>
-                        </ExpressionOrigin>
-                      </CodeExpression>
-                      <StatementProvider type="CodeExpression">
-                        <CodeExpression id="1_percentLayout6"/>
-                      </StatementProvider>
-                    </CodeStatement>
-                    <CodeStatement>
-                      <CodeExpression id="1_percentLayout6"/>
-                      <StatementProvider type="CodeMethod">
-                        <CodeMethod name="setOrientation" class="com.l2fprod.common.swing.PercentLayout" parameterTypes="int"/>
-                      </StatementProvider>
-                      <Parameters>
-                        <CodeExpression id="2">
-                          <ExpressionOrigin>
-                            <Value type="int" value="1"/>
-                          </ExpressionOrigin>
-                        </CodeExpression>
-                      </Parameters>
-                    </CodeStatement>
-                    <CodeStatement>
-                      <CodeExpression id="3">
-                        <ExpressionOrigin>
-                          <CodeExpression id="4_jNavigationGroup">
-                            <CodeVariable name="jNavigationGroup" type="8194" declaredType="com.l2fprod.common.swing.JTaskPaneGroup"/>
-                            <ExpressionOrigin>
-                              <ExpressionProvider type="ComponentRef">
-                                <ComponentRef name="jNavigationGroup"/>
-                              </ExpressionProvider>
-                            </ExpressionOrigin>
-                          </CodeExpression>
-                          <ExpressionProvider type="CodeMethod">
-                            <CodeMethod name="getContentPane" class="com.l2fprod.common.swing.JTaskPaneGroup" parameterTypes=""/>
-                          </ExpressionProvider>
-                        </ExpressionOrigin>
-                      </CodeExpression>
-                      <StatementProvider type="CodeMethod">
-                        <CodeMethod name="setLayout" class="java.awt.Container" parameterTypes="java.awt.LayoutManager"/>
-                      </StatementProvider>
-                      <Parameters>
-                        <CodeExpression id="1_percentLayout6"/>
-                      </Parameters>
-                    </CodeStatement>
-                    <CodeStatement>
-                      <CodeExpression id="3"/>
-                      <StatementProvider type="CodeMethod">
-                        <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
-                      </StatementProvider>
-                      <Parameters>
-                        <CodeExpression id="5_jNavigationPanel">
-                          <CodeVariable name="jNavigationPanel" type="8194" declaredType="javax.swing.JPanel"/>
-                          <ExpressionOrigin>
-                            <ExpressionProvider type="ComponentRef">
-                              <ComponentRef name="jNavigationPanel"/>
-                            </ExpressionProvider>
-                          </ExpressionOrigin>
-                        </CodeExpression>
-                      </Parameters>
-                    </CodeStatement>
-                  </LayoutCode>
                 </Container>
                 <Container class="com.l2fprod.common.swing.JTaskPaneGroup" name="jInformationGroup">
                   <Properties>
@@ -1614,73 +1547,6 @@
                       </SubComponents>
                     </Container>
                   </SubComponents>
-                  <LayoutCode>
-                    <CodeStatement>
-                      <CodeExpression id="6_percentLayout5">
-                        <CodeVariable name="percentLayout5" type="4096" declaredType="com.l2fprod.common.swing.PercentLayout"/>
-                        <ExpressionOrigin>
-                          <ExpressionProvider type="CodeConstructor">
-                            <CodeConstructor class="com.l2fprod.common.swing.PercentLayout" parameterTypes=""/>
-                          </ExpressionProvider>
-                        </ExpressionOrigin>
-                      </CodeExpression>
-                      <StatementProvider type="CodeExpression">
-                        <CodeExpression id="6_percentLayout5"/>
-                      </StatementProvider>
-                    </CodeStatement>
-                    <CodeStatement>
-                      <CodeExpression id="6_percentLayout5"/>
-                      <StatementProvider type="CodeMethod">
-                        <CodeMethod name="setOrientation" class="com.l2fprod.common.swing.PercentLayout" parameterTypes="int"/>
-                      </StatementProvider>
-                      <Parameters>
-                        <CodeExpression id="7">
-                          <ExpressionOrigin>
-                            <Value type="int" value="1"/>
-                          </ExpressionOrigin>
-                        </CodeExpression>
-                      </Parameters>
-                    </CodeStatement>
-                    <CodeStatement>
-                      <CodeExpression id="8">
-                        <ExpressionOrigin>
-                          <CodeExpression id="9_jInformationGroup">
-                            <CodeVariable name="jInformationGroup" type="8194" declaredType="com.l2fprod.common.swing.JTaskPaneGroup"/>
-                            <ExpressionOrigin>
-                              <ExpressionProvider type="ComponentRef">
-                                <ComponentRef name="jInformationGroup"/>
-                              </ExpressionProvider>
-                            </ExpressionOrigin>
-                          </CodeExpression>
-                          <ExpressionProvider type="CodeMethod">
-                            <CodeMethod name="getContentPane" class="com.l2fprod.common.swing.JTaskPaneGroup" parameterTypes=""/>
-                          </ExpressionProvider>
-                        </ExpressionOrigin>
-                      </CodeExpression>
-                      <StatementProvider type="CodeMethod">
-                        <CodeMethod name="setLayout" class="java.awt.Container" parameterTypes="java.awt.LayoutManager"/>
-                      </StatementProvider>
-                      <Parameters>
-                        <CodeExpression id="6_percentLayout5"/>
-                      </Parameters>
-                    </CodeStatement>
-                    <CodeStatement>
-                      <CodeExpression id="8"/>
-                      <StatementProvider type="CodeMethod">
-                        <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
-                      </StatementProvider>
-                      <Parameters>
-                        <CodeExpression id="10_jInformationPanel">
-                          <CodeVariable name="jInformationPanel" type="8194" declaredType="javax.swing.JPanel"/>
-                          <ExpressionOrigin>
-                            <ExpressionProvider type="ComponentRef">
-                              <ComponentRef name="jInformationPanel"/>
-                            </ExpressionProvider>
-                          </ExpressionOrigin>
-                        </CodeExpression>
-                      </Parameters>
-                    </CodeStatement>
-                  </LayoutCode>
                 </Container>
                 <Container class="com.l2fprod.common.swing.JTaskPaneGroup" name="jMapGroup">
                   <Properties>
@@ -1962,73 +1828,6 @@
                       </SubComponents>
                     </Container>
                   </SubComponents>
-                  <LayoutCode>
-                    <CodeStatement>
-                      <CodeExpression id="11_percentLayout4">
-                        <CodeVariable name="percentLayout4" type="4096" declaredType="com.l2fprod.common.swing.PercentLayout"/>
-                        <ExpressionOrigin>
-                          <ExpressionProvider type="CodeConstructor">
-                            <CodeConstructor class="com.l2fprod.common.swing.PercentLayout" parameterTypes=""/>
-                          </ExpressionProvider>
-                        </ExpressionOrigin>
-                      </CodeExpression>
-                      <StatementProvider type="CodeExpression">
-                        <CodeExpression id="11_percentLayout4"/>
-                      </StatementProvider>
-                    </CodeStatement>
-                    <CodeStatement>
-                      <CodeExpression id="11_percentLayout4"/>
-                      <StatementProvider type="CodeMethod">
-                        <CodeMethod name="setOrientation" class="com.l2fprod.common.swing.PercentLayout" parameterTypes="int"/>
-                      </StatementProvider>
-                      <Parameters>
-                        <CodeExpression id="12">
-                          <ExpressionOrigin>
-                            <Value type="int" value="1"/>
-                          </ExpressionOrigin>
-                        </CodeExpression>
-                      </Parameters>
-                    </CodeStatement>
-                    <CodeStatement>
-                      <CodeExpression id="13">
-                        <ExpressionOrigin>
-                          <CodeExpression id="14_jMapGroup">
-                            <CodeVariable name="jMapGroup" type="8194" declaredType="com.l2fprod.common.swing.JTaskPaneGroup"/>
-                            <ExpressionOrigin>
-                              <ExpressionProvider type="ComponentRef">
-                                <ComponentRef name="jMapGroup"/>
-                              </ExpressionProvider>
-                            </ExpressionOrigin>
-                          </CodeExpression>
-                          <ExpressionProvider type="CodeMethod">
-                            <CodeMethod name="getContentPane" class="com.l2fprod.common.swing.JTaskPaneGroup" parameterTypes=""/>
-                          </ExpressionProvider>
-                        </ExpressionOrigin>
-                      </CodeExpression>
-                      <StatementProvider type="CodeMethod">
-                        <CodeMethod name="setLayout" class="java.awt.Container" parameterTypes="java.awt.LayoutManager"/>
-                      </StatementProvider>
-                      <Parameters>
-                        <CodeExpression id="11_percentLayout4"/>
-                      </Parameters>
-                    </CodeStatement>
-                    <CodeStatement>
-                      <CodeExpression id="13"/>
-                      <StatementProvider type="CodeMethod">
-                        <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
-                      </StatementProvider>
-                      <Parameters>
-                        <CodeExpression id="15_jPanel2">
-                          <CodeVariable name="jPanel2" type="8194" declaredType="javax.swing.JPanel"/>
-                          <ExpressionOrigin>
-                            <ExpressionProvider type="ComponentRef">
-                              <ComponentRef name="jPanel2"/>
-                            </ExpressionProvider>
-                          </ExpressionOrigin>
-                        </CodeExpression>
-                      </Parameters>
-                    </CodeStatement>
-                  </LayoutCode>
                 </Container>
                 <Container class="com.l2fprod.common.swing.JTaskPaneGroup" name="jROIGroup">
                   <Properties>
@@ -2154,168 +1953,8 @@
                       </SubComponents>
                     </Container>
                   </SubComponents>
-                  <LayoutCode>
-                    <CodeStatement>
-                      <CodeExpression id="16_percentLayout2">
-                        <CodeVariable name="percentLayout2" type="4096" declaredType="com.l2fprod.common.swing.PercentLayout"/>
-                        <ExpressionOrigin>
-                          <ExpressionProvider type="CodeConstructor">
-                            <CodeConstructor class="com.l2fprod.common.swing.PercentLayout" parameterTypes=""/>
-                          </ExpressionProvider>
-                        </ExpressionOrigin>
-                      </CodeExpression>
-                      <StatementProvider type="CodeExpression">
-                        <CodeExpression id="16_percentLayout2"/>
-                      </StatementProvider>
-                    </CodeStatement>
-                    <CodeStatement>
-                      <CodeExpression id="16_percentLayout2"/>
-                      <StatementProvider type="CodeMethod">
-                        <CodeMethod name="setOrientation" class="com.l2fprod.common.swing.PercentLayout" parameterTypes="int"/>
-                      </StatementProvider>
-                      <Parameters>
-                        <CodeExpression id="17">
-                          <ExpressionOrigin>
-                            <Value type="int" value="1"/>
-                          </ExpressionOrigin>
-                        </CodeExpression>
-                      </Parameters>
-                    </CodeStatement>
-                    <CodeStatement>
-                      <CodeExpression id="18">
-                        <ExpressionOrigin>
-                          <CodeExpression id="19_jROIGroup">
-                            <CodeVariable name="jROIGroup" type="8194" declaredType="com.l2fprod.common.swing.JTaskPaneGroup"/>
-                            <ExpressionOrigin>
-                              <ExpressionProvider type="ComponentRef">
-                                <ComponentRef name="jROIGroup"/>
-                              </ExpressionProvider>
-                            </ExpressionOrigin>
-                          </CodeExpression>
-                          <ExpressionProvider type="CodeMethod">
-                            <CodeMethod name="getContentPane" class="com.l2fprod.common.swing.JTaskPaneGroup" parameterTypes=""/>
-                          </ExpressionProvider>
-                        </ExpressionOrigin>
-                      </CodeExpression>
-                      <StatementProvider type="CodeMethod">
-                        <CodeMethod name="setLayout" class="java.awt.Container" parameterTypes="java.awt.LayoutManager"/>
-                      </StatementProvider>
-                      <Parameters>
-                        <CodeExpression id="16_percentLayout2"/>
-                      </Parameters>
-                    </CodeStatement>
-                    <CodeStatement>
-                      <CodeExpression id="18"/>
-                      <StatementProvider type="CodeMethod">
-                        <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
-                      </StatementProvider>
-                      <Parameters>
-                        <CodeExpression id="20_jPanel3">
-                          <CodeVariable name="jPanel3" type="8194" declaredType="javax.swing.JPanel"/>
-                          <ExpressionOrigin>
-                            <ExpressionProvider type="ComponentRef">
-                              <ComponentRef name="jPanel3"/>
-                            </ExpressionProvider>
-                          </ExpressionOrigin>
-                        </CodeExpression>
-                      </Parameters>
-                    </CodeStatement>
-                  </LayoutCode>
                 </Container>
               </SubComponents>
-              <LayoutCode>
-                <CodeStatement>
-                  <CodeExpression id="21_percentLayout1">
-                    <CodeVariable name="percentLayout1" type="4096" declaredType="com.l2fprod.common.swing.PercentLayout"/>
-                    <ExpressionOrigin>
-                      <ExpressionProvider type="CodeConstructor">
-                        <CodeConstructor class="com.l2fprod.common.swing.PercentLayout" parameterTypes=""/>
-                      </ExpressionProvider>
-                    </ExpressionOrigin>
-                  </CodeExpression>
-                  <StatementProvider type="CodeExpression">
-                    <CodeExpression id="21_percentLayout1"/>
-                  </StatementProvider>
-                </CodeStatement>
-                <CodeStatement>
-                  <CodeExpression id="21_percentLayout1"/>
-                  <StatementProvider type="CodeMethod">
-                    <CodeMethod name="setOrientation" class="com.l2fprod.common.swing.PercentLayout" parameterTypes="int"/>
-                  </StatementProvider>
-                  <Parameters>
-                    <CodeExpression id="22">
-                      <ExpressionOrigin>
-                        <Value type="int" value="1"/>
-                      </ExpressionOrigin>
-                    </CodeExpression>
-                  </Parameters>
-                </CodeStatement>
-                <CodeStatement>
-                  <CodeExpression id="21_percentLayout1"/>
-                  <StatementProvider type="CodeMethod">
-                    <CodeMethod name="setGap" class="com.l2fprod.common.swing.PercentLayout" parameterTypes="int"/>
-                  </StatementProvider>
-                  <Parameters>
-                    <CodeExpression id="23">
-                      <ExpressionOrigin>
-                        <Value type="int" value="5"/>
-                      </ExpressionOrigin>
-                    </CodeExpression>
-                  </Parameters>
-                </CodeStatement>
-                <CodeStatement>
-                  <CodeExpression id="24_jTaskPane1">
-                    <CodeVariable name="jTaskPane1" type="8194" declaredType="com.l2fprod.common.swing.JTaskPane"/>
-                    <ExpressionOrigin>
-                      <ExpressionProvider type="ComponentRef">
-                        <ComponentRef name="jTaskPane1"/>
-                      </ExpressionProvider>
-                    </ExpressionOrigin>
-                  </CodeExpression>
-                  <StatementProvider type="CodeMethod">
-                    <CodeMethod name="setLayout" class="java.awt.Container" parameterTypes="java.awt.LayoutManager"/>
-                  </StatementProvider>
-                  <Parameters>
-                    <CodeExpression id="21_percentLayout1"/>
-                  </Parameters>
-                </CodeStatement>
-                <CodeStatement>
-                  <CodeExpression id="24_jTaskPane1"/>
-                  <StatementProvider type="CodeMethod">
-                    <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
-                  </StatementProvider>
-                  <Parameters>
-                    <CodeExpression id="4_jNavigationGroup"/>
-                  </Parameters>
-                </CodeStatement>
-                <CodeStatement>
-                  <CodeExpression id="24_jTaskPane1"/>
-                  <StatementProvider type="CodeMethod">
-                    <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
-                  </StatementProvider>
-                  <Parameters>
-                    <CodeExpression id="9_jInformationGroup"/>
-                  </Parameters>
-                </CodeStatement>
-                <CodeStatement>
-                  <CodeExpression id="24_jTaskPane1"/>
-                  <StatementProvider type="CodeMethod">
-                    <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
-                  </StatementProvider>
-                  <Parameters>
-                    <CodeExpression id="14_jMapGroup"/>
-                  </Parameters>
-                </CodeStatement>
-                <CodeStatement>
-                  <CodeExpression id="24_jTaskPane1"/>
-                  <StatementProvider type="CodeMethod">
-                    <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
-                  </StatementProvider>
-                  <Parameters>
-                    <CodeExpression id="19_jROIGroup"/>
-                  </Parameters>
-                </CodeStatement>
-              </LayoutCode>
             </Container>
           </SubComponents>
         </Container>

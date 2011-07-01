@@ -479,9 +479,15 @@ if(typeof unsafeWindow != 'undefined'){
 						countdownSpanNode.appendChild(document.createTextNode('Warte...'));
 						expiredNode.setAttribute('style', 'display:none');
 						var serverTime = win.getTime(win.$("#serverTime"));
-					  var startTimeFromNow = serverTime + getRemainingTime(pAttack.expired);
-					  win.addTimer(countdownSpanNode, startTimeFromNow, false);
-					  win.startTimer();
+						var startTimeFromNow = serverTime + getRemainingTime(pAttack.expired);
+						win.addTimer(countdownSpanNode, startTimeFromNow, false);
+						var title = document.getElementsByTagName("title")[0];
+						if(title.getAttribute('class') != 'timer'){
+							title.setAttribute('class', 'timer');
+							title.appendChild(document.createTextNode('Warte...'));
+							win.addTimer(title, startTimeFromNow, false);
+						}
+						win.startTimer();
 						pTableRow.appendChild(tableCell);
 						pTableRow.appendChild(expiredNode);
 						return;

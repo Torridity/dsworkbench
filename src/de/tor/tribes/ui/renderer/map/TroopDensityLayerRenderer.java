@@ -5,15 +5,11 @@
 package de.tor.tribes.ui.renderer.map;
 
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.MapPanel;
-import de.tor.tribes.ui.models.TroopsTableModel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
-import de.tor.tribes.util.mark.MarkerManager;
-import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.AlphaComposite;
@@ -26,7 +22,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.text.NumberFormat;
-import java.util.Hashtable;
 
 public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
 

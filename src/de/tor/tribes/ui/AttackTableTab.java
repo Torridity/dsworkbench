@@ -1544,6 +1544,10 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
     private boolean copyToInternalClipboard() {
         List<Attack> selection = getSelectedAttacks();
+        if (selection.isEmpty()) {
+            showInfo("Keine Angriffe gewählt");
+            return false;
+        }
         StringBuilder b = new StringBuilder();
         int cnt = 0;
         for (Attack a : selection) {
@@ -1562,6 +1566,10 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
     private void cutToInternalClipboard() {
         int size = getSelectedAttacks().size();
+        if (size == 0) {
+            showInfo("Keine Angriffe gewählt");
+            return;
+        }
         if (copyToInternalClipboard() && deleteSelection(false)) {
             showSuccess(size + ((size == 1) ? " Angriff ausgeschnitten" : " Angriffe ausgeschnitten"));
         } else {

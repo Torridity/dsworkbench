@@ -21,11 +21,15 @@ public class RenderSettings {
     private boolean layerVisible = false;
 
     protected RenderSettings(Rectangle2D pCurrentMapBounds) {
+        refreshZoom();
+        setMapBounds(pCurrentMapBounds);
+    }
+
+    public final void refreshZoom() {
         double currentZoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
         setZoom(currentZoom);
         setFieldWidth(GlobalOptions.getSkin().getCurrentFieldWidth(zoom));
         setFieldHeight(GlobalOptions.getSkin().getCurrentFieldHeight(zoom));
-        setMapBounds(pCurrentMapBounds);
     }
 
     public void calculateSettings(Rectangle2D pNewBounds) {
@@ -41,9 +45,6 @@ public class RenderSettings {
             setDeltaY(getMovementY() / (double) getFieldHeight());
         }
 
-        /*int fieldsX = (getDeltaX() > 0) ? (int) Math.round(getDeltaX()) : (int) Math.floor(getDeltaX());
-        int fieldsY = (getDeltaY() > 0) ? (int) Math.round(getDeltaY()) : (int) Math.floor(getDeltaY());
-         */
         int facX = 1;
         int facY = 1;
         if (getDeltaX() < 0) {
@@ -56,7 +57,7 @@ public class RenderSettings {
         }
         int fieldsX = (int) Math.round(getDeltaX()) + 1;
         int fieldsY = (int) Math.round(getDeltaY()) + 1;
-       
+
         setColumnsToRender((fieldsX + 1) * facX);
         setRowsToRender((fieldsY + 1) * facY);
 

@@ -17,7 +17,6 @@ import java.awt.geom.Rectangle2D;
 public abstract class AbstractBufferedLayerRenderer {
 
     private boolean fullRenderRequired = true;
-    private Rectangle2D renderedBounds = null;
 
     public abstract void performRendering(RenderSettings pSettings, Graphics2D pG2d);
 
@@ -34,16 +33,5 @@ public abstract class AbstractBufferedLayerRenderer {
     public void setFullRenderRequired(boolean fullRenderRequired) {
         this.fullRenderRequired = fullRenderRequired;
     }
-    /**
-     * @return the renderedBounds
-     */
-    /*  public Rectangle2D getRenderedBounds() {
-    return renderedBounds;
-    }*/
-    /**
-     * @param renderedBounds the renderedBounds to set
-     */
-    /*  public void setRenderedBounds(Rectangle2D renderedBounds) {
-    this.renderedBounds = renderedBounds;
-    }*/
+   
 }

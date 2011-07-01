@@ -34,7 +34,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,13 +49,41 @@ import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
+import java.awt.Color;
+import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.Iterator;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
+import org.jdesktop.swingx.painter.MattePainter;
 
 /**
  * @author Charon
  */
-public class VillageSupportFrame extends javax.swing.JFrame {
+public class VillageSupportFrame extends javax.swing.JFrame implements ActionListener {
 
+    public static enum TRANSFER_TYPE {
+
+        CLIPBOARD_BB, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+        if (e.getActionCommand().equals("Copy")) {
+            transferSelection(VillageSupportFrame.TRANSFER_TYPE.COPY_TO_INTERNAL_CLIPBOARD);
+        } else if (e.getActionCommand().equals("BBCopy")) {
+            transferSelection(VillageSupportFrame.TRANSFER_TYPE.CLIPBOARD_BB);
+        } else if (e.getActionCommand().equals("Cut")) {
+            transferSelection(VillageSupportFrame.TRANSFER_TYPE.CUT_TO_INTERNAL_CLIPBOARD);
+        } else if (e.getActionCommand().equals("Delete")) {
+            deleteSelection(true);
+        }
+
+    }
     private static Logger logger = Logger.getLogger("SupportDialog");
     private static VillageSupportFrame SINGLETON = null;
     private Village mCurrentVillage = null;
@@ -72,9 +99,98 @@ public class VillageSupportFrame extends javax.swing.JFrame {
     VillageSupportFrame() {
         initComponents();
         jTransferToAttackOverviewDialog.pack();
+
+        KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
+        KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
+        KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK, false);
+        KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
+        jSupportTable.registerKeyboardAction(this, "Copy", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jSupportTable.registerKeyboardAction(this, "Cut", cut, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+        jSupportTable.registerKeyboardAction(this, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jSupportTable.registerKeyboardAction(this, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jSupportTable.getActionMap().put("find", new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //ignore find
+            }
+        });
+
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.support_tool", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
+    }
+
+    public void transferSelection(TRANSFER_TYPE pType) {
+        switch (pType) {
+            case COPY_TO_INTERNAL_CLIPBOARD:
+                copyToInternalClipboard();
+                break;
+            case CUT_TO_INTERNAL_CLIPBOARD:
+                cutToInternalClipboard();
+                break;
+            case CLIPBOARD_BB:
+                //@TODO move bb support to here
+                break;
+        }
+
+    }
+
+    private boolean copyToInternalClipboard() {
+        List<Attack> selection = getSelectedSupports();
+        if (selection.isEmpty()) {
+            showInfo("Keine Unterstützungen gewählt");
+            return false;
+        }
+        StringBuilder b = new StringBuilder();
+        int cnt = 0;
+        for (Attack a : selection) {
+            b.append(Attack.toInternalRepresentation(a)).append("\n");
+            cnt++;
+        }
+        try {
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b.toString()), null);
+            showSuccess(cnt + ((cnt == 1) ? " Unterstützung kopiert" : " Unterstützungen kopiert"));
+            return true;
+        } catch (HeadlessException hex) {
+            showError("Fehler beim Kopieren der Unterstützungen");
+            return false;
+        }
+    }
+
+    private void cutToInternalClipboard() {
+        int size = getSelectedSupports().size();
+        if (size == 0) {
+            showInfo("Keine Unterstützungen gewählt");
+            return;
+        }
+        if (copyToInternalClipboard() && deleteSelection(false)) {
+            showSuccess(size + ((size == 1) ? " Angriff ausgeschnitten" : " Angriffe ausgeschnitten"));
+        } else {
+            showError("Fehler beim Ausschneiden der Angriffe");
+        }
+    }
+
+    public void showSuccess(String pMessage) {
+        infoPanel.setCollapsed(false);
+        jXLabel1.setBackgroundPainter(new MattePainter(Color.GREEN));
+        jXLabel1.setForeground(Color.BLACK);
+        jXLabel1.setText(pMessage);
+    }
+
+    public void showInfo(String pMessage) {
+        infoPanel.setCollapsed(false);
+        jXLabel1.setBackgroundPainter(new MattePainter(getBackground()));
+        jXLabel1.setForeground(Color.BLACK);
+        jXLabel1.setText(pMessage);
+    }
+
+    public void showError(String pMessage) {
+        infoPanel.setCollapsed(false);
+        jXLabel1.setBackgroundPainter(new MattePainter(Color.RED));
+        jXLabel1.setForeground(Color.WHITE);
+        jXLabel1.setText(pMessage);
     }
 
     public void showSupportFrame(Village pCurrent) {
@@ -111,9 +227,22 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         } else {
             dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
         }
-        jArriveTime.setText(dateFormat.format(new Date(pArriveTime)));
+        dateTimeField.setDate(dateTimeField.getSelectedDate());
         jResultDialog.pack();
         setVisible(true);
+    }
+
+    private boolean deleteSelection(boolean pAsk) {
+        List<Attack> selectedSupports = getSelectedSupports();
+        if (pAsk) {
+            String message = ((selectedSupports.size() == 1) ? "Unterstützung " : (selectedSupports.size() + " Unterstützungen ")) + "wirklich löschen?";
+            if (selectedSupports.isEmpty() || JOptionPaneHelper.showQuestionConfirmBox(this, message, "Angriffe löschen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
+                return false;
+            }
+        }
+        //@TODO implement delete
+
+        return true;
     }
 
     /** This method is called from within the constructor to
@@ -128,16 +257,17 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         jResultDialog = new javax.swing.JDialog();
         jLabel5 = new javax.swing.JLabel();
         jTargetVillage = new javax.swing.JTextField();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jSupportTable = new javax.swing.JTable();
         jButton3 = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         jArriveTime = new javax.swing.JTextField();
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jSupportTable = new org.jdesktop.swingx.JXTable();
+        infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
+        jXLabel1 = new org.jdesktop.swingx.JXLabel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
         jTransferToAttackOverviewDialog = new javax.swing.JDialog();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
@@ -145,7 +275,9 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         jNewPlanName = new javax.swing.JTextField();
         jButton9 = new javax.swing.JButton();
         jButton10 = new javax.swing.JButton();
-        jArriveTimeSpinner = new javax.swing.JSpinner();
+        jButton7 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
+        jButton8 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jDefOnlyBox = new javax.swing.JCheckBox();
         jLabel2 = new javax.swing.JLabel();
@@ -156,27 +288,18 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jMinUnitCountSpinner = new javax.swing.JSpinner();
+        dateTimeField = new de.tor.tribes.ui.components.DateTimeField();
 
         jResultDialog.setTitle("Mögliche Unterstützungen");
 
         jLabel5.setText("Zu unterstützendes Dorf");
+        jLabel5.setMaximumSize(new java.awt.Dimension(118, 25));
+        jLabel5.setMinimumSize(new java.awt.Dimension(118, 25));
+        jLabel5.setPreferredSize(new java.awt.Dimension(118, 25));
 
         jTargetVillage.setEditable(false);
-
-        jSupportTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jSupportTable.setOpaque(false);
-        jSupportTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        jScrollPane2.setViewportView(jSupportTable);
+        jTargetVillage.setMinimumSize(new java.awt.Dimension(6, 25));
+        jTargetVillage.setPreferredSize(new java.awt.Dimension(6, 25));
 
         jButton3.setBackground(new java.awt.Color(239, 235, 223));
         jButton3.setText("Schließen");
@@ -187,8 +310,13 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         });
 
         jLabel6.setText("Ankunftzeit");
+        jLabel6.setMaximumSize(new java.awt.Dimension(55, 25));
+        jLabel6.setMinimumSize(new java.awt.Dimension(55, 25));
+        jLabel6.setPreferredSize(new java.awt.Dimension(55, 25));
 
         jArriveTime.setEditable(false);
+        jArriveTime.setMinimumSize(new java.awt.Dimension(6, 25));
+        jArriveTime.setPreferredSize(new java.awt.Dimension(6, 25));
 
         jButton5.setBackground(new java.awt.Color(239, 235, 223));
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/speed.png"))); // NOI18N
@@ -214,60 +342,63 @@ public class VillageSupportFrame extends javax.swing.JFrame {
             }
         });
 
-        jButton4.setBackground(new java.awt.Color(239, 235, 223));
-        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboard.png"))); // NOI18N
-        jButton4.setToolTipText("Unformatiert in die Zwischenablage kopieren");
-        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireCopyUnformatedToClipboardEvent(evt);
-            }
-        });
+        jPanel1.setLayout(new java.awt.BorderLayout());
 
-        jButton7.setBackground(new java.awt.Color(239, 235, 223));
-        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboardBB.png"))); // NOI18N
-        jButton7.setToolTipText("Als BB-Code in die Zwischenablage kopieren");
-        jButton7.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireCopyBBCodeToClipboardEvent(evt);
+        jSupportTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
             }
-        });
+        ));
+        jScrollPane3.setViewportView(jSupportTable);
 
-        jButton8.setBackground(new java.awt.Color(239, 235, 223));
-        jButton8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_overview.png"))); // NOI18N
-        jButton8.setToolTipText("Truppenbewegungen in Angriffsübersicht einfügen");
-        jButton8.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireMoveSupportsToAttackViewEvent(evt);
+        jPanel1.add(jScrollPane3, java.awt.BorderLayout.CENTER);
+
+        infoPanel.setCollapsed(true);
+        infoPanel.setInheritAlpha(false);
+
+        jXLabel1.setOpaque(true);
+        jXLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jXLabel1fireHideInfoEvent(evt);
             }
         });
+        infoPanel.add(jXLabel1, java.awt.BorderLayout.CENTER);
+
+        jPanel1.add(infoPanel, java.awt.BorderLayout.SOUTH);
+
+        capabilityInfoPanel1.setPastable(false);
+        capabilityInfoPanel1.setSearchable(false);
 
         javax.swing.GroupLayout jResultDialogLayout = new javax.swing.GroupLayout(jResultDialog.getContentPane());
         jResultDialog.getContentPane().setLayout(jResultDialogLayout);
         jResultDialogLayout.setHorizontalGroup(
             jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jResultDialogLayout.createSequentialGroup()
+            .addGroup(jResultDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 474, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jResultDialogLayout.createSequentialGroup()
-                        .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jArriveTime, javax.swing.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE)
-                            .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE)))
-                    .addComponent(jButton3)
+                .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 583, Short.MAX_VALUE)
                     .addGroup(jResultDialogLayout.createSequentialGroup()
+                        .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
+                            .addComponent(jArriveTime, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jResultDialogLayout.createSequentialGroup()
+                        .addComponent(capabilityInfoPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 458, Short.MAX_VALUE)
+                        .addComponent(jButton3))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jResultDialogLayout.createSequentialGroup()
                         .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton7)))
+                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jResultDialogLayout.setVerticalGroup(
@@ -275,24 +406,22 @@ public class VillageSupportFrame extends javax.swing.JFrame {
             .addGroup(jResultDialogLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTargetVillage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jArriveTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton3)
+                .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(13, 13, 13)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(capabilityInfoPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -356,28 +485,66 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jButton7.setBackground(new java.awt.Color(239, 235, 223));
+        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboardBB.png"))); // NOI18N
+        jButton7.setToolTipText("Als BB-Code in die Zwischenablage kopieren");
+        jButton7.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCopyBBCodeToClipboardEvent(evt);
+            }
+        });
+
+        jButton4.setBackground(new java.awt.Color(239, 235, 223));
+        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboard.png"))); // NOI18N
+        jButton4.setToolTipText("Unformatiert in die Zwischenablage kopieren");
+        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCopyUnformatedToClipboardEvent(evt);
+            }
+        });
+
+        jButton8.setBackground(new java.awt.Color(239, 235, 223));
+        jButton8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_overview.png"))); // NOI18N
+        jButton8.setToolTipText("Truppenbewegungen in Angriffsübersicht einfügen");
+        jButton8.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireMoveSupportsToAttackViewEvent(evt);
+            }
+        });
+
         setTitle("Unterstützung");
 
-        jArriveTimeSpinner.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), new java.util.Date(), null, java.util.Calendar.DAY_OF_MONTH));
-        jArriveTimeSpinner.setToolTipText("Zeitpunkt zu dem die Deff im Zieldorf gebraucht wird");
-        jArriveTimeSpinner.setEditor(new javax.swing.JSpinner.DateEditor(jArriveTimeSpinner, "dd.MM.yy 'um' HH:mm:ss"));
-
         jLabel1.setText("Ankunftzeit");
+        jLabel1.setMaximumSize(new java.awt.Dimension(150, 25));
+        jLabel1.setMinimumSize(new java.awt.Dimension(150, 25));
+        jLabel1.setPreferredSize(new java.awt.Dimension(150, 25));
 
         jDefOnlyBox.setSelected(true);
         jDefOnlyBox.setToolTipText("Bei der Berechnung nur echte Deff-Einheiten (Speer, Schwert, Bogen, SKav) berücksichtigen. Rammen, Späher und AGs werden in jedem Fall ignoriert.");
         jDefOnlyBox.setAlignmentY(0.0F);
         jDefOnlyBox.setIconTextGap(0);
         jDefOnlyBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jDefOnlyBox.setMaximumSize(new java.awt.Dimension(17, 25));
+        jDefOnlyBox.setMinimumSize(new java.awt.Dimension(17, 25));
         jDefOnlyBox.setOpaque(false);
+        jDefOnlyBox.setPreferredSize(new java.awt.Dimension(17, 25));
 
         jLabel2.setText("Nur Deff berücksichtigen");
+        jLabel2.setMaximumSize(new java.awt.Dimension(150, 25));
+        jLabel2.setMinimumSize(new java.awt.Dimension(150, 25));
+        jLabel2.setPreferredSize(new java.awt.Dimension(150, 25));
 
-        jLabel3.setText("<html>Dörfer mit folgenden Tags<BR/>berücksichtigen</html>");
+        jLabel3.setText("<html>Dörfer aus folgenden Gruppen berücksichtigen</html>");
+        jLabel3.setMaximumSize(new java.awt.Dimension(150, 100));
+        jLabel3.setMinimumSize(new java.awt.Dimension(150, 14));
+        jLabel3.setPreferredSize(new java.awt.Dimension(150, 30));
 
         jScrollPane1.setViewportView(jTagsList);
 
         jLabel4.setText("Min. Anzahl Einheiten");
+        jLabel4.setMaximumSize(new java.awt.Dimension(150, 25));
+        jLabel4.setMinimumSize(new java.awt.Dimension(150, 25));
+        jLabel4.setPreferredSize(new java.awt.Dimension(150, 25));
 
         jButton1.setText("Berechnen");
         jButton1.setToolTipText("Starte die Berechnung der maximalen Kampfkraft");
@@ -397,6 +564,14 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         jMinUnitCountSpinner.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(0), Integer.valueOf(0), null, Integer.valueOf(1)));
         jMinUnitCountSpinner.setToolTipText("Minimale Anzahl der Einheiten aus einem Dorf, die als Unterstützung berücksichtigt werden");
         jMinUnitCountSpinner.setEditor(new javax.swing.JSpinner.NumberEditor(jMinUnitCountSpinner, ""));
+        jMinUnitCountSpinner.setMinimumSize(new java.awt.Dimension(31, 25));
+        jMinUnitCountSpinner.setPreferredSize(new java.awt.Dimension(31, 25));
+
+        dateTimeField.setToolTipText("Datum und Uhrzeit des Zeitrahmens");
+        dateTimeField.setEnabled(false);
+        dateTimeField.setMaximumSize(new java.awt.Dimension(32767, 25));
+        dateTimeField.setMinimumSize(new java.awt.Dimension(64, 25));
+        dateTimeField.setPreferredSize(new java.awt.Dimension(258, 25));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -404,49 +579,52 @@ public class VillageSupportFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel4, 0, 0, Short.MAX_VALUE)
+                    .addComponent(jLabel1, 0, 0, Short.MAX_VALUE)
+                    .addComponent(jLabel2, 0, 0, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 144, Short.MAX_VALUE))
+                .addGap(16, 16, 16)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jArriveTimeSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
-                            .addComponent(jDefOnlyBox)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
-                            .addComponent(jMinUnitCountSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)))
+                    .addComponent(jDefOnlyBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jMinUnitCountSpinner, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE)
+                            .addComponent(dateTimeField, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButton2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton1)))
+                        .addGap(21, 21, 21)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jArriveTimeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jDefOnlyBox, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(dateTimeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jDefOnlyBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jMinUnitCountSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
-                .addGap(11, 11, 11))
+                .addContainerGap())
         );
 
         pack();
@@ -458,7 +636,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
 
     private void fireCalculateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateEvent
         boolean defOnly = jDefOnlyBox.isSelected();
-        Date arrive = (Date) jArriveTimeSpinner.getValue();
+        Date arrive = dateTimeField.getSelectedDate();
         Integer minUnitCnt = (Integer) jMinUnitCountSpinner.getValue();
         List<Tag> allowedTags = new LinkedList<Tag>();
         for (Object o : jTagsList.getSelectedValues()) {
@@ -472,7 +650,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         } else {
             buildResults(movements);
             jTargetVillage.setText(mCurrentVillage.toString());
-            jArriveTime.setText(new SimpleDateFormat("dd.MM.yy HH:mm:ss").format((Date) jArriveTimeSpinner.getValue()));
+            jArriveTime.setText(new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(dateTimeField.getSelectedDate()));
             jResultDialog.setLocationRelativeTo(this);
             jResultDialog.setVisible(true);
         }
@@ -726,6 +904,10 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         jTransferToAttackOverviewDialog.setVisible(false);
     }//GEN-LAST:event_fireCancelTransferSupportsEvent
 
+    private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXLabel1fireHideInfoEvent
+        infoPanel.setCollapsed(true);
+}//GEN-LAST:event_jXLabel1fireHideInfoEvent
+
     private void buildResults(List<SupportCalculator.SupportMovement> pMovements) {
         DefaultTableModel model = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
@@ -885,9 +1067,33 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         }
         JOptionPaneHelper.showInformationBox(jResultDialog, buffer.toString(), "Maximale Kampfkraft");
     }
+
+    private List<Attack> getSelectedSupports() {
+        final List<Attack> selectedSupports = new LinkedList<Attack>();
+        int[] selectedRows = jSupportTable.getSelectedRows();
+        if (selectedRows != null && selectedRows.length < 1) {
+            return selectedSupports;
+        }
+
+        for (Integer selectedRow : selectedRows) {
+            Village source = (Village) jSupportTable.getValueAt(selectedRow, 0);
+            UnitHolder unit = (UnitHolder) jSupportTable.getValueAt(selectedRow, 1);
+            Date sendTime = (Date) jSupportTable.getValueAt(selectedRow, 2);
+            Attack a = new Attack();
+            a.setSource(source);
+            a.setTarget(mCurrentVillage);
+            a.setUnit(unit);
+            a.setArriveTime(new Date(sendTime.getTime() + (long) (DSCalculator.calculateMoveTimeInSeconds(source, mCurrentVillage, unit.getSpeed()) * 1000)));
+            a.setType(Attack.SUPPORT_TYPE);
+            selectedSupports.add(a);
+        }
+        return selectedSupports;
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
+    private de.tor.tribes.ui.components.DateTimeField dateTimeField;
+    private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JTextField jArriveTime;
-    private javax.swing.JSpinner jArriveTimeSpinner;
     private javax.swing.JComboBox jAttackPlansBox;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
@@ -910,12 +1116,14 @@ public class VillageSupportFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JSpinner jMinUnitCountSpinner;
     private javax.swing.JTextField jNewPlanName;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JDialog jResultDialog;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jSupportTable;
+    private javax.swing.JScrollPane jScrollPane3;
+    private org.jdesktop.swingx.JXTable jSupportTable;
     private javax.swing.JList jTagsList;
     private javax.swing.JTextField jTargetVillage;
     private javax.swing.JDialog jTransferToAttackOverviewDialog;
+    private org.jdesktop.swingx.JXLabel jXLabel1;
     // End of variables declaration//GEN-END:variables
 }

@@ -47,7 +47,6 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
@@ -138,7 +137,6 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jButton1 = new javax.swing.JButton();
         jXPanel1 = new org.jdesktop.swingx.JXPanel();
         infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
         jXLabel1 = new org.jdesktop.swingx.JXLabel();
@@ -146,18 +144,6 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         jChurchPanel = new org.jdesktop.swingx.JXPanel();
         jChurchFrameAlwaysOnTop = new javax.swing.JCheckBox();
         capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
-
-        jButton1.setBackground(new java.awt.Color(239, 235, 223));
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/center.png"))); // NOI18N
-        jButton1.setToolTipText("Gewähltes Kirchendorf auf der Karte zentrieren");
-        jButton1.setMaximumSize(new java.awt.Dimension(57, 33));
-        jButton1.setMinimumSize(new java.awt.Dimension(57, 33));
-        jButton1.setPreferredSize(new java.awt.Dimension(57, 33));
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireCenterChurchVillageEvent(evt);
-            }
-        });
 
         jXPanel1.setLayout(new java.awt.BorderLayout());
 
@@ -236,17 +222,6 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         setAlwaysOnTop(!isAlwaysOnTop());
     }//GEN-LAST:event_fireChurchFrameOnTopEvent
 
-    private void fireCenterChurchVillageEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterChurchVillageEvent
-        int[] rows = jChurchTable.getSelectedRows();
-        if (rows.length != 1) {
-            return;
-        }
-        int row = jChurchTable.convertRowIndexToModel(rows[0]);
-        int col = jChurchTable.convertColumnIndexToModel(1);
-        Village v = ((Village) ((DefaultTableModel) jChurchTable.getModel()).getValueAt(row, col));
-        DSWorkbenchMainFrame.getSingleton().centerVillage(v);
-    }//GEN-LAST:event_fireCenterChurchVillageEvent
-
     private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXLabel1fireHideInfoEvent
         infoPanel.setCollapsed(true);
 }//GEN-LAST:event_jXLabel1fireHideInfoEvent
@@ -269,10 +244,16 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     }
 
     private void centerChurchVillage() {
-        int row = jChurchTable.convertRowIndexToModel(jChurchTable.getSelectedRow());
-        int col = jChurchTable.convertColumnIndexToModel(1);
-        Village v = ((Village) ((ChurchTableModel) jChurchTable.getModel()).getValueAt(row, col));
-        DSWorkbenchMainFrame.getSingleton().centerVillage(v);
+        //@TODO check if this works
+        //int row = jChurchTable.convertRowIndexToModel(jChurchTable.getSelectedRow());
+        //int col = jChurchTable.convertColumnIndexToModel(1);
+        Village v = (Village) jChurchTable.getValueAt(jChurchTable.getSelectedRow(), 1);
+        //Village v = ((Village) ((ChurchTableModel) jChurchTable.getModel()).getValueAt(row, col));
+        if (v != null) {
+            DSWorkbenchMainFrame.getSingleton().centerVillage(v);
+        } else {
+            showInfo("Keine Kirche gewählt");
+        }
     }
 
     @Override
@@ -364,7 +345,6 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
-    private javax.swing.JButton jButton1;
     private javax.swing.JCheckBox jChurchFrameAlwaysOnTop;
     private org.jdesktop.swingx.JXPanel jChurchPanel;
     private static final org.jdesktop.swingx.JXTable jChurchTable = new org.jdesktop.swingx.JXTable();

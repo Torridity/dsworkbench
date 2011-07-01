@@ -61,7 +61,10 @@ import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Paint;
 import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
@@ -71,6 +74,7 @@ import java.awt.dnd.DragSource;
 import java.awt.dnd.DragSourceListener;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetListener;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -1140,6 +1144,17 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 fireResizeEvent(evt);
             }
         });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 548, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 410, Short.MAX_VALUE)
+        );
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireVillagePopupActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireVillagePopupActionEvent
@@ -1413,7 +1428,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     }//GEN-LAST:event_fireResizeEvent
 
     @Override
-    public void paint(Graphics g) {
+    public void paintComponent(Graphics g) {
         /**Draw buffer into panel*/
         try {
             //calculate move direction if mouse is dragged outside the map
@@ -1455,7 +1470,19 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 fireScrollEvents(sx, sy);
             }
             //draw off-screen image of map
-            mMapRenderer.renderAll((Graphics2D) g);
+
+            Graphics2D g2d = (Graphics2D) g;
+            AffineTransform t0 = g2d.getTransform();
+            Color c0 = g2d.getColor();
+            Paint p0 = g2d.getPaint();
+            Shape cl0 = g2d.getClip();
+            Stroke s0 = g2d.getStroke();
+            mMapRenderer.renderAll(g2d);
+            g2d.setTransform(t0);
+            g2d.setPaint(p0);
+            g2d.setColor(c0);
+            g2d.setClip(cl0);
+            g2d.setStroke(s0);
             /* if(bMapSHotPlaned){
             BufferedImage result = ImageUtils.createCompatibleBufferedImage(getWidth(), getHeight(), BufferedImage.OPAQUE);
             mMapRenderer.renderAll((Graphics2D) result.getGraphics());
@@ -1531,7 +1558,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     }
 
     public Rectangle2D getVirtualBounds() {
-        return mVirtualBounds;
+        return (Rectangle2D) mVirtualBounds.clone();
     }
 
     /**Get village at current mouse position, null if there is no village*/

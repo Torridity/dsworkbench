@@ -167,8 +167,8 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
         if (!mFrameListeners.contains(pListener)) {
             mFrameListeners.add(pListener);
         }
-    }
-
+    } 
+    
     public synchronized void removeFrameListener(DSWorkbenchFrameListener pListener) {
         mFrameListeners.remove(pListener);
     }

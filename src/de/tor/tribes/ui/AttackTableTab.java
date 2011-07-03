@@ -281,7 +281,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 }
             }
             for (Integer col : relevantCols) {
-                PatternPredicate patternPredicate0 = new PatternPredicate(pCaseSensitive ? "" : "(?i)" + Pattern.quote(pValue), col);
+                PatternPredicate patternPredicate0 = new PatternPredicate((pCaseSensitive ? "" : "(?i)") + Pattern.quote(pValue), col);
                 MattePainter mp = new MattePainter(new Color(0, 0, 0, 120));
                 highlighter = new PainterHighlighter(new HighlightPredicate.NotHighlightPredicate(patternPredicate0), mp);
                 jxAttackTable.addHighlighter(highlighter);
@@ -1583,7 +1583,6 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
             String[] lines = data.split("\n");
             int cnt = 0;
-            AttackManager.getSingleton().invalidate();
             for (String line : lines) {
                 Attack a = Attack.fromInternalRepresentation(line);
                 if (a != null) {
@@ -1600,7 +1599,6 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             showError("Fehler beim Einfügen der Angriffe");
         }
         attackModel.fireTableDataChanged();
-        AttackManager.getSingleton().revalidate();
     }
 
     private void sendAttacksAsIGM() {

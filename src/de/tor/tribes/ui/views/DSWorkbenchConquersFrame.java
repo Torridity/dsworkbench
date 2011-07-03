@@ -150,8 +150,20 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
     }
 
     private void buildMenu() {
-        JXTaskPane miscPane = new JXTaskPane();
-        miscPane.setTitle("Sonstiges");
+        JXTaskPane transferPane = new JXTaskPane();
+        transferPane.setTitle("Übertragen");
+
+        JXButton button2 = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/att_browser.png")));
+        button2.setToolTipText("Zentriert die markierte Eroberungen im Spiel");
+        button2.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                centerVillageInGame();
+            }
+        });
+
+        transferPane.getContentPane().add(button2);
         JXButton button1 = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
         button1.setToolTipText("Zentriert die markierte Eroberung auf der Hauptkarte");
         button1.addMouseListener(new MouseAdapter() {
@@ -162,19 +174,8 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
             }
         });
 
-        miscPane.getContentPane().add(button1);
-        JXButton button2 = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/att_browser.png")));
-        button2.setToolTipText("Zentriert bis zu 10 markierte Eroberungen im Spiel");
-        button2.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                centerVillageInGame();
-            }
-        });
-
-        miscPane.getContentPane().add(button2);
-        centerPanel.setupTaskPane(miscPane);
+        transferPane.getContentPane().add(button1);
+        centerPanel.setupTaskPane(transferPane);
     }
 
     /** This method is called from within the constructor to
@@ -478,7 +479,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                 }
             }
             for (Integer col : relevantCols) {
-                PatternPredicate patternPredicate0 = new PatternPredicate(jFilterCaseSensitive.isSelected() ? "" : "(?i)" + Pattern.quote(jTextField1.getText()), col);
+                PatternPredicate patternPredicate0 = new PatternPredicate((jFilterCaseSensitive.isSelected() ? "" : "(?i)") + Pattern.quote(jTextField1.getText()), col);
                 MattePainter mp = new MattePainter(new Color(0, 0, 0, 120));
                 highlighter = new PainterHighlighter(new HighlightPredicate.NotHighlightPredicate(patternPredicate0), mp);
                 jConquersTable.addHighlighter(highlighter);
@@ -603,7 +604,6 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-
 
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         try {

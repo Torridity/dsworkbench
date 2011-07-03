@@ -99,6 +99,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
     @Override
     public void actionPerformed(ActionEvent e) {
         AttackTableTab activeTab = getActiveTab();
+        int idx = jAttackTabPane.getSelectedIndex();
         if (e.getActionCommand() != null && activeTab != null) {
             if (e.getActionCommand().equals("TimeChange")) {
                 activeTab.fireChangeTimeEvent();
@@ -114,8 +115,10 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 activeTab.transferSelection(AttackTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
             } else if (e.getActionCommand().equals("Cut")) {
                 activeTab.transferSelection(AttackTableTab.TRANSFER_TYPE.CUT_TO_INTERNAL_CLIPBOARD);
+                jAttackTabPane.setSelectedIndex(idx);
             } else if (e.getActionCommand().equals("Paste")) {
                 activeTab.transferSelection(AttackTableTab.TRANSFER_TYPE.FROM_INTERNAL_CLIPBOARD);
+                jAttackTabPane.setSelectedIndex(idx);
             } else if (e.getActionCommand().equals("Delete")) {
                 activeTab.deleteSelection(true);
             } else if (e.getActionCommand().equals("Find")) {
@@ -598,7 +601,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         );
 
         jClickAccountLabel.setBackground(new java.awt.Color(255, 255, 255));
-        jClickAccountLabel.setFont(new java.awt.Font("sansserif", 0, 11)); // NOI18N
+        jClickAccountLabel.setFont(new java.awt.Font("sansserif", 0, 11));
         jClickAccountLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jClickAccountLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/LeftClick.png"))); // NOI18N
         jClickAccountLabel.setText("Klick-Konto [0]");
@@ -748,7 +751,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 5);
         jProfileQuickChange.add(jLabel2, gridBagConstraints);
 
-        jProfileBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jProfileBox.setToolTipText("Erlaubt die Schnellauswahl des Benutzerprofils mit dem Angriffe in den Browser übertragen werden");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

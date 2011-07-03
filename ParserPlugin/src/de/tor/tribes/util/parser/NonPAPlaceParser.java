@@ -11,11 +11,13 @@ import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.troops.TroopsManager;
+import de.tor.tribes.util.troops.TroopsManager.TROOP_TYPE;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -127,24 +129,49 @@ public class NonPAPlaceParser implements SilentParserInterface {
             if ((v != null)
                     && (ownTroops.size() == troopsCount)
                     && (troopsInVillage.size() == troopsCount)) {
-
+                TroopsManager.getSingleton().invalidate();
                 VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
-                if (holder == null) {
-                    TroopsManager.getSingleton().addTroopsForVillageFast(v, new LinkedList<Integer>());
-                    holder = TroopsManager.getSingleton().getTroopsForVillage(v);
+                VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(v, TROOP_TYPE.OWN);
+                if (own == null) {
+                    own = new VillageTroopsHolder(v, new Date());
+                    own.setTroops(ownTroops);
+                    TroopsManager.getSingleton().addManagedElement(TroopsManager.OWN_GROUP, holder);
+                } else {
+                    own.setState(new Date());
+                    own.setTroops(ownTroops);
+                }
+                VillageTroopsHolder inVillage = TroopsManager.getSingleton().getTroopsForVillage(v, TROOP_TYPE.IN_VILLAGE);
+                if (inVillage == null) {
+                    inVillage = new VillageTroopsHolder(v, new Date());
+                    inVillage.setTroops(troopsInVillage);
+                    TroopsManager.getSingleton().addManagedElement(TroopsManager.IN_VILLAGE_GROUP, holder);
+
+                } else {
+                    inVillage.setState(new Date());
+                    inVillage.setTroops(troopsInVillage);
+                }
+                //@TODO handle supports
+                /*  if (holder == null) {
+                TroopsManager.getSingleton().addTroopsForVillageFast(v, new LinkedList<Integer>());
+                holder = TroopsManager.getSingleton().getTroopsForVillage(v);
                 }
                 //set current state
                 holder.setState(Calendar.getInstance().getTime());
                 holder.setOwnTroops(ownTroops);
-                holder.setTroopsInVillage(troopsInVillage);
+                holder.setTroopsInVillage(troopsInVillage);*/
+
+
                 //set supports
-                Enumeration<Village> supportsToThisKeys = supportsToThis.keys();
+  /*              Enumeration<Village> supportsToThisKeys = supportsToThis.keys();
                 Hashtable<UnitHolder, Integer> troopsOutside = holder.getTroopsOutside();
                 if (troopsOutside.isEmpty()) {
                     for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
                         troopsOutside.put(u, 0);
                     }
                 }
+
+
+
 
                 //adding all supports to  current village 'v'
                 while (supportsToThisKeys.hasMoreElements()) {
@@ -198,10 +225,10 @@ public class NonPAPlaceParser implements SilentParserInterface {
                         holder2.updateSupportValues();
                     }
                     holder.setTroopsOutside(troopsOutside);
-                }
+                }*/
             }
         }
-        TroopsManager.getSingleton().forceUpdate();
+        TroopsManager.getSingleton().revalidate(true);
         return true;
     }
 

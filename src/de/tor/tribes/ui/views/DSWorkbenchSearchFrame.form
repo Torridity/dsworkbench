@@ -78,7 +78,7 @@
                           <Component id="jCenterInGameButton" min="-2" max="-2" attributes="1"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jSendDefButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="jSendResButton" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -119,15 +119,13 @@
                       <Component id="jVillageList" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jCenterInGameButton" alignment="0" max="32767" attributes="1"/>
-                          <Component id="jInGameOptionsLabel" alignment="0" max="32767" attributes="1"/>
-                      </Group>
-                      <Component id="jSendResButton" min="-2" max="-2" attributes="1"/>
-                      <Component id="jSendDefButton" alignment="0" min="-2" pref="31" max="-2" attributes="1"/>
+                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                      <Component id="jCenterInGameButton" alignment="0" max="32767" attributes="1"/>
+                      <Component id="jInGameOptionsLabel" alignment="0" max="32767" attributes="1"/>
+                      <Component id="jSendResButton" alignment="0" max="32767" attributes="1"/>
+                      <Component id="jSendDefButton" alignment="0" max="32767" attributes="1"/>
                   </Group>
-                  <EmptySpace pref="26" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -329,13 +327,13 @@
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Karte zentrieren"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[31, 31]"/>
+              <Dimension value="[35, 35]"/>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[31, 31]"/>
+              <Dimension value="[35, 35]"/>
             </Property>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[31, 31]"/>
+              <Dimension value="[35, 35]"/>
             </Property>
           </Properties>
           <Events>
@@ -349,13 +347,13 @@
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Rohstoffe schicken"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[31, 31]"/>
+              <Dimension value="[35, 35]"/>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[31, 31]"/>
+              <Dimension value="[35, 35]"/>
             </Property>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[31, 31]"/>
+              <Dimension value="[35, 35]"/>
             </Property>
           </Properties>
           <Events>
@@ -369,13 +367,13 @@
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Unterst&#xfc;tzung schicken"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[31, 31]"/>
+              <Dimension value="[35, 35]"/>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[31, 31]"/>
+              <Dimension value="[35, 35]"/>
             </Property>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[31, 31]"/>
+              <Dimension value="[35, 35]"/>
             </Property>
           </Properties>
           <Events>

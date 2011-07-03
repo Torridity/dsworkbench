@@ -165,13 +165,17 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         initialize();
         pack();
     }
+
     public void storeCustomProperties(Configuration pCconfig) {
     }
- public void restoreCustomProperties(Configuration pConfig) {
+
+    public void restoreCustomProperties(Configuration pConfig) {
     }
+
     public String getPropertyPrefix() {
         return "tag.view";
     }
+
     private void initialize() {
         String prop = GlobalOptions.getProperty("tag.frame.table.visibility");
         if (prop == null) {
@@ -265,9 +269,6 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
             }
         });
         transferTaskPane.getContentPane().add(transferJS);
-
-        JXTaskPane miscTaskPane = new JXTaskPane();
-        miscTaskPane.setTitle("Sonstiges");
         JXButton centerButton = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
         centerButton.setToolTipText("Zentriert das erste gewählte Dorf auf der Hauptkarte");
         centerButton.addMouseListener(new MouseAdapter() {
@@ -277,9 +278,9 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
                 centerVillage();
             }
         });
-        miscTaskPane.add(centerButton);
-        //   centerPanel.setupTaskPane(GlobalOptions.getProperty("tag.manager.task.visibility"), "true;true;false", editPane, transferTaskPane, miscTaskPane);
-        centerPanel.setupTaskPane(editPane, transferTaskPane, miscTaskPane);
+        transferTaskPane.getContentPane().add(centerButton);
+
+        centerPanel.setupTaskPane(editPane, transferTaskPane);
     }
 
     public static synchronized DSWorkbenchTagFrame getSingleton() {

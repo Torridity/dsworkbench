@@ -102,6 +102,7 @@ public class NoteManager extends GenericManager<Note> {
                         if (logger.isDebugEnabled()) {
                             logger.debug("Loading note set '" + setKey + "'");
                         }
+                        addGroup(setKey);
                         for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "notes/note")) {
                             try {
                                 Note n = new Note();
@@ -257,7 +258,6 @@ public class NoteManager extends GenericManager<Note> {
         return result;
     }
 
-   
     public Note getNoteForVillage(Village pVillage) {
         if (pVillage == null) {
             return null;

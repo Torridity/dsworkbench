@@ -274,7 +274,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
                 }
             }
             for (Integer col : relevantCols) {
-                PatternPredicate patternPredicate0 = new PatternPredicate(pCaseSensitive ? "" : "(?i)" + Pattern.quote(pValue), col);
+                PatternPredicate patternPredicate0 = new PatternPredicate((pCaseSensitive ? "" : "(?i)") + Pattern.quote(pValue), col);
                 MattePainter mp = new MattePainter(new Color(0, 0, 0, 120));
                 highlighter = new PainterHighlighter(new HighlightPredicate.NotHighlightPredicate(patternPredicate0), mp);
                 jxNoteTable.addHighlighter(highlighter);

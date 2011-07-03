@@ -23,18 +23,12 @@ import javax.swing.table.AbstractTableModel;
  */
 public class DoItYourselfAttackTableModel extends AbstractTableModel {
 
-    private final String PROPERTY_BASE_ID = "manual.attack.planer.table.model";
     private static Logger logger = Logger.getLogger("DoItYourselfAttackTable");
     protected static Class[] types = new Class[]{Integer.class, UnitHolder.class, Village.class, Village.class, Date.class, Date.class, String.class};
     protected static String[] colNames = new String[]{"Angriffstyp", "Einheit", "Herkunft", "Ziel", "Abschickzeit", "Ankunftzeit", "Verbleibend"};
     protected static boolean[] editableColumns = new boolean[]{true, true, false, false, true, true, false};
 
     public DoItYourselfAttackTableModel() {
-    }
-
-    public void clear() {
-        AttackManager.getSingleton().clearDoItYourselfAttacks();
-        fireTableDataChanged();
     }
 
     @Override

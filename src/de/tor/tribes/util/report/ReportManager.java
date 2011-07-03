@@ -60,7 +60,7 @@ public class ReportManager extends GenericManager<FightReport> {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Loading report set '" + setKey + "'");
                     }
-
+                    addGroup(setKey);
                     for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "reports/report")) {
                         FightReport r = new FightReport();
                         r.loadFromXml(e1);

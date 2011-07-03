@@ -163,8 +163,10 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
 
     public void storeCustomProperties(Configuration pCconfig) {
     }
- public void restoreCustomProperties(Configuration pConfig) {
+
+    public void restoreCustomProperties(Configuration pConfig) {
     }
+
     public String getPropertyPrefix() {
         return "troops.view";
     }
@@ -203,9 +205,6 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         openPlace.setMaximumSize(transferVillageList.getMaximumSize());
         openPlace.setPreferredSize(transferVillageList.getPreferredSize());
         transferTaskPane.getContentPane().add(openPlace);
-
-        JXTaskPane miscPane = new JXTaskPane();
-        miscPane.setTitle("Sonstiges");
         JXButton centerVillage = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
         centerVillage.setToolTipText("Zentriert das gewählte Dorf auf der Hauptkarte");
         centerVillage.addMouseListener(new MouseAdapter() {
@@ -219,7 +218,11 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
-        miscPane.getContentPane().add(centerVillage);
+        transferTaskPane.getContentPane().add(centerVillage);
+
+        JXTaskPane miscPane = new JXTaskPane();
+        miscPane.setTitle("Sonstiges");
+
 
         JXButton refillSupport = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/filter_off.png")));
         refillSupport.setToolTipText("<html>Auff&uuml;llen der Unterst&uuml;tzungen für die gew&auml;hlten D&ouml;rfer<br/>"

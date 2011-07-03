@@ -36,8 +36,9 @@ public class ReportParser implements SilentParserInterface {
                 throw new Exception("No valid report data found");
             }
             //TODO Switch to new version
-           // ReportManager.getSingleton().addManagedElement(r);
-             ReportManager.getSingleton().getReportSet(ReportManager.DEFAULT_SET).addReport(r);
+            // ReportManager.getSingleton().addManagedElement(r);
+            //   ReportManager.getSingleton().getReportSet(ReportManager.DEFAULT_SET).addReport(r);
+            ReportManager.getSingleton().addManagedElement(r);//getReportSet(ReportManager.DEFAULT_SET).addReport(r);
             NotifierFrame.doNotification("DS Workbench hat einen Kampfbericht erfolgreich eingelesen und in das Berichtset 'default' übertragen.", NotifierFrame.NOTIFY_INFO);
             return true;
         } catch (Exception e) {

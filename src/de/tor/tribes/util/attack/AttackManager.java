@@ -30,34 +30,34 @@ import org.jdom.Element;
  * @author Jejkal
  */
 public class AttackManager extends GenericManager<Attack> {
-    
+
     private static Logger logger = Logger.getLogger("AttackManager");
     public final static String MANUAL_ATTACK_PLAN = "Manuelle Planung";
     private static AttackManager SINGLETON = null;
-    
+
     public static synchronized AttackManager getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new AttackManager();
         }
         return SINGLETON;
     }
-    
+
     AttackManager() {
         super(true);
         addGroup(MANUAL_ATTACK_PLAN);
     }
-    
+
     @Override
     public void initialize() {
         super.initialize();
         addGroup(MANUAL_ATTACK_PLAN);
     }
-    
+
     @Override
     public String[] getGroups() {
         String[] groups = super.getGroups();
         Arrays.sort(groups, new Comparator<String>() {
-            
+
             @Override
             public int compare(String o1, String o2) {
                 if (o1.equals(DEFAULT_GROUP) || o1.equals(MANUAL_ATTACK_PLAN)) {
@@ -89,7 +89,7 @@ public class AttackManager extends GenericManager<Attack> {
             if (logger.isDebugEnabled()) {
                 logger.info("Loading troop movements from '" + pFile + "'");
             }
-            
+
             try {
                 Document d = JaxenUtils.getDocument(attackFile);
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//plans/plan")) {
@@ -98,6 +98,7 @@ public class AttackManager extends GenericManager<Attack> {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Loading plan '" + planKey + "'");
                     }
+                    addGroup(planKey);
                     for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "attacks/attack")) {
                         Attack a = new Attack();
                         a.loadFromXml(e1);
@@ -117,7 +118,7 @@ public class AttackManager extends GenericManager<Attack> {
         }
         revalidate();
     }
-    
+
     @Override
     public boolean importData(File pFile, String pExtension) {
         invalidate();
@@ -138,11 +139,11 @@ public class AttackManager extends GenericManager<Attack> {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Loading plan '" + planKey + "'");
                     }
-                    
+
                     for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "attacks/attack")) {
                         Attack a = new Attack();
                         a.loadFromXml(e1);
-                        
+
                         if (a != null) {
                             Village source = DataHolder.getSingleton().getVillages()[a.getSource().getX()][a.getSource().getY()];
                             Village target = DataHolder.getSingleton().getVillages()[a.getTarget().getX()][a.getTarget().getY()];
@@ -150,7 +151,7 @@ public class AttackManager extends GenericManager<Attack> {
                         }
                     }
                 }
-                
+
                 logger.debug("Troop movements imported successfully");
                 result = true;
             } catch (Exception e) {
@@ -173,13 +174,13 @@ public class AttackManager extends GenericManager<Attack> {
         logger.debug("Generating attacks export data");
         StringBuilder b = new StringBuilder();
         b.append("<plans>\n");
-        
+
         for (String plan : plansToExport) {
             try {
                 b.append("<plan key=\"").append(URLEncoder.encode(plan, "UTF-8")).append("\">\n");
                 List<ManageableType> elements = getAllElements(plan);
                 b.append("<attacks>\n");
-                
+
                 for (ManageableType elem : elements) {
                     b.append(elem.toXml()).append("\n");
                 }
@@ -193,14 +194,15 @@ public class AttackManager extends GenericManager<Attack> {
         logger.debug("Export data generated successfully");
         return b.toString();
     }
-    
+
     @Override
     public void saveElements(String pFile) {
+
         try {
             StringBuilder b = new StringBuilder();
             b.append("<plans>\n");
             Iterator<String> plans = getGroupIterator();
-            
+
             while (plans.hasNext()) {
                 String key = plans.next();
                 b.append("<plan key=\"").append(URLEncoder.encode(key, "UTF-8")).append("\">\n");
@@ -209,11 +211,11 @@ public class AttackManager extends GenericManager<Attack> {
                 for (ManageableType elem : elems) {
                     b.append(elem.toXml()).append("\n");
                 }
-                
+
                 b.append("</attacks>\n");
                 b.append("</plan>\n");
             }
-            
+
             b.append("</plans>\n");
             //write data to file
             FileWriter w = new FileWriter(pFile);
@@ -223,9 +225,9 @@ public class AttackManager extends GenericManager<Attack> {
         } catch (Exception e) {
             logger.error("Failed to store attacks", e);
         }
-        
+
     }
-    
+
     public void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, String pPlan) {
         boolean showOnMap = false;
         try {
@@ -267,14 +269,14 @@ public class AttackManager extends GenericManager<Attack> {
             } else {
                 a.setType(Attack.NO_TYPE);
             }
-            
+
         } else {
             a.setType(pType);
         }
-        
+
         addManagedElement(pPlan, a);
     }
-    
+
     public void addDoItYourselfAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, int pType) {
         Attack a = new Attack();
         a.setSource(pSource);
@@ -284,11 +286,11 @@ public class AttackManager extends GenericManager<Attack> {
         a.setType(pType);
         addManagedElement(MANUAL_ATTACK_PLAN, a);
     }
-    
+
     public void clearDoItYourselfAttacks() {
         removeAllElementsFromGroup(MANUAL_ATTACK_PLAN);
     }
-    
+
     public List<ManageableType> getDoItYourselfAttacks() {
         return getAllElements(MANUAL_ATTACK_PLAN);
     }

@@ -73,6 +73,7 @@ public class MarkerManager extends GenericManager<Marker> {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Loading marker set '" + setKey + "'");
                     }
+                     addGroup(setKey);
                     for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "markers/marker")) {
                         Marker m = new Marker();
                         m.loadFromXml(e1);

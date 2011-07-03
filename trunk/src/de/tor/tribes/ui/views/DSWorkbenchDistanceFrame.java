@@ -14,10 +14,12 @@ import com.jidesoft.swing.RangeSlider;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
+import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.GenericTestPanel;
 import de.tor.tribes.ui.models.DistanceTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.DistanceTableCellRenderer;
+import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.PluginManager;
@@ -25,6 +27,7 @@ import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.dist.DistanceManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
@@ -32,9 +35,12 @@ import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JTable;
@@ -46,6 +52,7 @@ import javax.swing.table.TableColumn;
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
+import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.decorator.CompoundHighlighter;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
@@ -138,7 +145,46 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         });
 
         editPane.getContentPane().add(slider);
-        centerPanel.setupTaskPane(editPane);
+
+        JXTaskPane transferTaskPane = new JXTaskPane();
+        transferTaskPane.setTitle("Übertragen");
+        JXButton centerVillageInGame = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/center_ingame.png")));
+        centerVillageInGame.setToolTipText("Zentriert das gewählte Dorf im Spiel");
+        centerVillageInGame.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                centerSelectionInGame();
+            }
+        });
+        transferTaskPane.getContentPane().add(centerVillageInGame);
+        JXButton openPlace = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/place.png")));
+        openPlace.setToolTipText("Öffnet den Versammlungsplatz des gewählten Dorfes im Spiel");
+        openPlace.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                openPlaceOfSelectionInGame();
+            }
+        });
+        openPlace.setSize(centerVillageInGame.getSize());
+        openPlace.setMinimumSize(centerVillageInGame.getMinimumSize());
+        openPlace.setMaximumSize(centerVillageInGame.getMaximumSize());
+        openPlace.setPreferredSize(centerVillageInGame.getPreferredSize());
+        transferTaskPane.getContentPane().add(openPlace);
+
+        JXButton centerVillage = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
+        centerVillage.setToolTipText("Zentriert das gewählte Dorf auf der Hauptkarte");
+        centerVillage.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                centerSelectionOnMap();
+            }
+        });
+        transferTaskPane.getContentPane().add(centerVillage);
+
+        centerPanel.setupTaskPane(editPane, transferTaskPane);
     }
 
     @Override
@@ -178,6 +224,48 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
 
         jDistanceTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         ((DistanceTableModel) jDistanceTable.getModel()).fireTableDataChanged();
+    }
+
+    private void centerSelectionInGame() {
+        int row = jDistanceTable.getSelectedRow();
+        if (row < 0) {
+            showInfo("Kein Dorf gewählt");
+            return;
+        }
+        Village v = (Village) jDistanceTable.getValueAt(row, 0);
+        if (v != null) {
+            BrowserCommandSender.centerVillage(v);
+        } else {
+            showInfo("Kein Dorf gewählt");
+        }
+    }
+
+    private void openPlaceOfSelectionInGame() {
+        int row = jDistanceTable.getSelectedRow();
+        if (row < 0) {
+            showInfo("Kein Dorf gewählt");
+            return;
+        }
+        Village v = (Village) jDistanceTable.getValueAt(row, 0);
+        if (v != null) {
+            BrowserCommandSender.openPlaceTroopsView(v);
+        } else {
+            showInfo("Kein Dorf gewählt");
+        }
+    }
+
+    private void centerSelectionOnMap() {
+        int row = jDistanceTable.getSelectedRow();
+        if (row < 0) {
+            showInfo("Kein Dorf gewählt");
+            return;
+        }
+        Village v = (Village) jDistanceTable.getValueAt(row, 0);
+        if (v != null) {
+            DSWorkbenchMainFrame.getSingleton().centerVillage(v);
+        } else {
+            showInfo("Kein Dorf gewählt");
+        }
     }
 
     private void deleteSelectedColumns() {

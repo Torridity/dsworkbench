@@ -36,7 +36,8 @@ public class SupportParser implements SilentParserInterface {
 	StringTokenizer lineTok = new StringTokenizer(pTroopsString, "\n\r");
 	Village v = null;
 	boolean retValue = false;
-	while ( lineTok.hasMoreElements() ) {
+        //@TODO handle supports
+	/*while ( lineTok.hasMoreElements() ) {
 	    //parse single line for village
 	    String line = lineTok.nextToken();
 	    if ( line.indexOf(ParserVariableManager.getSingleton().getProperty("troops.in.village")) > 0 ) {
@@ -83,7 +84,7 @@ public class SupportParser implements SilentParserInterface {
 			//remove existing supports
 			holder.clearSupportTargets();
 		    }*/
-		    Village supportTarget = null;
+	/*	    Village supportTarget = null;
 		    try {
 			supportTarget = new VillageParser().parse(line).get(0);
 		    } catch ( Exception e ) {
@@ -127,7 +128,7 @@ public class SupportParser implements SilentParserInterface {
 	}
 	if ( retValue ) {
 	    TroopsManager.getSingleton().forceUpdate();
-	}
+	}*/
 	return retValue;
     }
 

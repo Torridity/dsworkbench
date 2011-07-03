@@ -20,6 +20,7 @@ import de.tor.tribes.ui.editors.ChurchLevelCellEditor;
 import de.tor.tribes.ui.models.ChurchTableModel;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
+import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
@@ -227,8 +228,19 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
 }//GEN-LAST:event_jXLabel1fireHideInfoEvent
 
     private void buildMenu() {
-        JXTaskPane miscPane = new JXTaskPane();
-        miscPane.setTitle("Sonstiges");
+        JXTaskPane transferPane = new JXTaskPane();
+        transferPane.setTitle("Übertragen");
+        JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/center_ingame.png")));
+        transferVillageList.setToolTipText("Zentriert das Kirchendorf im Spiel");
+        transferVillageList.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                centerChurchInGame();
+            }
+        });
+        transferPane.getContentPane().add(transferVillageList);
+
         JXButton button = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
         button.setToolTipText("Zentriert das Kirchendorf auf der Hauptkarte");
         button.addMouseListener(new MouseAdapter() {
@@ -239,18 +251,23 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
-        miscPane.getContentPane().add(button);
-        centerPanel.setupTaskPane(miscPane);
+        transferPane.getContentPane().add(button);
+        centerPanel.setupTaskPane(transferPane);
     }
 
     private void centerChurchVillage() {
-        //@TODO check if this works
-        //int row = jChurchTable.convertRowIndexToModel(jChurchTable.getSelectedRow());
-        //int col = jChurchTable.convertColumnIndexToModel(1);
         Village v = (Village) jChurchTable.getValueAt(jChurchTable.getSelectedRow(), 1);
-        //Village v = ((Village) ((ChurchTableModel) jChurchTable.getModel()).getValueAt(row, col));
         if (v != null) {
             DSWorkbenchMainFrame.getSingleton().centerVillage(v);
+        } else {
+            showInfo("Keine Kirche gewählt");
+        }
+    }
+
+    private void centerChurchInGame() {
+        Village v = (Village) jChurchTable.getValueAt(jChurchTable.getSelectedRow(), 1);
+        if (v != null) {
+            BrowserCommandSender.centerVillage(v);
         } else {
             showInfo("Keine Kirche gewählt");
         }

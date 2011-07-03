@@ -15,16 +15,29 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.TroopFilterElement;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
+import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.ProfileManager;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Logger;
 
 /**
  * @TODO save and load filter set
@@ -32,13 +45,16 @@ import javax.swing.KeyStroke;
  */
 public class TroopFilterDialog extends javax.swing.JDialog {
 
-    private boolean INITIALIZED = false;
+    private static Logger logger = Logger.getLogger("TroopFilter");
     private boolean doFilter = false;
+    private Hashtable<String, List<TroopFilterElement>> filterSets = new Hashtable<String, List<TroopFilterElement>>();
 
     /** Creates new form TroopFilterDialog */
     public TroopFilterDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+
+
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         jFilterList.registerKeyboardAction(new ActionListener() {
 
@@ -47,6 +63,15 @@ public class TroopFilterDialog extends javax.swing.JDialog {
                 removeSelectedFilters();
             }
         }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+        jList1.registerKeyboardAction(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                removeFilterSet();
+            }
+        }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
         reset();
     }
 
@@ -90,6 +115,11 @@ public class TroopFilterDialog extends javax.swing.JDialog {
         jScrollPane14 = new javax.swing.JScrollPane();
         jFilterList = new javax.swing.JList();
         jStrictFilter = new javax.swing.JCheckBox();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList();
+        jTextField1 = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setTitle("Truppenfilter");
         setModal(true);
@@ -165,7 +195,7 @@ public class TroopFilterDialog extends javax.swing.JDialog {
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jMinValue, 0, 0, Short.MAX_VALUE)
                             .addComponent(jFilterUnitBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                         .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jMaxValue, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -197,32 +227,80 @@ public class TroopFilterDialog extends javax.swing.JDialog {
         jStrictFilter.setSelected(true);
         jStrictFilter.setText("Strenge Filterung");
         jStrictFilter.setToolTipText("<html>Alle Filterbedingungen müssen erf&uuml;llt sein, damit ein Dorf zugelassen wird.<br/>\nIst dieses Feld deaktiviert reicht mindestens eine Bedingung.</html>");
-        jStrictFilter.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jStrictFilter.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        jStrictFilter.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jStrictFilter.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         jStrictFilter.setOpaque(false);
+
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Gespeicherte Filtersätze"));
+
+        jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jList1.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                jList1ValueChanged(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jList1);
+
+        jTextField1.setMinimumSize(new java.awt.Dimension(6, 25));
+        jTextField1.setPreferredSize(new java.awt.Dimension(59, 25));
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png"))); // NOI18N
+        jButton1.setToolTipText("Filtersatz speichern");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireSaveFilterSetEvent(evt);
+            }
+        });
+
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/refresh.png"))); // NOI18N
+        jButton2.setToolTipText("Filtersatz laden");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireLoadFilterSetEvent(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane14, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE)
-                    .addComponent(jStrictFilter, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jStrictFilter, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jScrollPane14, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, 0)
+                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane14, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton2)
+                            .addComponent(jButton1))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane14, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jStrictFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(jStrictFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -235,7 +313,7 @@ public class TroopFilterDialog extends javax.swing.JDialog {
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(capabilityInfoPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 103, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 286, Short.MAX_VALUE)
                         .addComponent(jButton20)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jApplyFiltersButton)))
@@ -249,9 +327,8 @@ public class TroopFilterDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(capabilityInfoPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jApplyFiltersButton)
-                        .addComponent(jButton20, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)))
+                    .addComponent(jButton20, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
+                    .addComponent(jApplyFiltersButton))
                 .addContainerGap())
         );
 
@@ -306,6 +383,151 @@ public class TroopFilterDialog extends javax.swing.JDialog {
         setVisible(false);
 }//GEN-LAST:event_fireApplyTroopFiltersEvent
 
+    private void jList1ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jList1ValueChanged
+        jTextField1.setText((String) jList1.getSelectedValue());
+    }//GEN-LAST:event_jList1ValueChanged
+
+    private void fireSaveFilterSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSaveFilterSetEvent
+        String setName = jTextField1.getText();
+        DefaultListModel filterModel = (DefaultListModel) jFilterList.getModel();
+
+        if (setName == null || setName.length() == 0) {
+            JOptionPaneHelper.showInformationBox(this, "Bitte einen Namen für das neue Filterset angeben", "Information");
+            return;
+        }
+
+        if (filterModel.getSize() == 0) {
+            JOptionPaneHelper.showInformationBox(this, "Ein Filterset muss mindestens einen Eintrag enthalten", "Information");
+            return;
+        }
+
+        if (filterSets.get(setName) != null) {
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Das Filterset '" + setName + "' existiert bereits.\nMöchtest du es überschreiben?", "Bestätigung", "Nein", "Ja") != JOptionPane.OK_OPTION) {
+                return;
+            }
+        }
+
+        StringBuilder b = new StringBuilder();
+        b.append(setName).append(",");
+        List<TroopFilterElement> elements = new LinkedList<TroopFilterElement>();
+        for (int j = 0; j < filterModel.size(); j++) {
+            TroopFilterElement elem = (TroopFilterElement) filterModel.get(j);
+            elements.add(new TroopFilterElement(elem.getUnit(), elem.getMin(), elem.getMax()));
+        }
+
+        filterSets.put(setName, elements);
+        updateFilterSetList();
+    }//GEN-LAST:event_fireSaveFilterSetEvent
+
+    private void fireLoadFilterSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireLoadFilterSetEvent
+        String selection = (String) jList1.getSelectedValue();
+        if (selection != null) {
+            List<TroopFilterElement> elems = filterSets.get(selection);
+            DefaultListModel model = new DefaultListModel();
+            for (TroopFilterElement elem : elems) {
+                model.addElement(new TroopFilterElement(elem.getUnit(), elem.getMin(), elem.getMax()));
+            }
+            jFilterList.setModel(model);
+        }
+    }//GEN-LAST:event_fireLoadFilterSetEvent
+
+    private void removeFilterSet() {
+        String setName = (String) jList1.getSelectedValue();
+        if (setName == null || filterSets.get(setName) == null) {
+            return;
+        }
+
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Möchtest du das Filterset '" + setName + "' wirklich löschen?", "Bestätigung", "Nein", "Ja") != JOptionPane.OK_OPTION) {
+            return;
+        }
+
+        filterSets.remove(setName);
+        updateFilterSetList();
+    }
+
+    private void saveFilterSets() {
+        String profileDir = GlobalOptions.getSelectedProfile().getProfileDirectory();
+        File filterFile = new File(profileDir + "/filters.sav");
+
+        StringBuilder b = new StringBuilder();
+        Enumeration<String> setKeys = filterSets.keys();
+
+        while (setKeys.hasMoreElements()) {
+            String key = setKeys.nextElement();
+            b.append(key).append(",");
+            List<TroopFilterElement> elements = filterSets.get(key);
+            for (int i = 0; i < elements.size(); i++) {
+                TroopFilterElement elem = elements.get(i);
+                b.append(elem.getUnit().getPlainName()).append("/").append(elem.getMin()).append("/").append(elem.getMax());
+                if (i < elements.size() - 1) {
+                    b.append(",");
+                }
+            }
+            b.append("\n");
+        }
+
+        FileWriter w = null;
+        try {
+            w = new FileWriter(filterFile);
+            w.write(b.toString());
+            w.flush();
+        } catch (Exception e) {
+            logger.error("Failed to write troop filters", e);
+        } finally {
+            try {
+                w.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    private void loadFilterSets() {
+        filterSets.clear();
+        String profileDir = GlobalOptions.getSelectedProfile().getProfileDirectory();
+        File filterFile = new File(profileDir + "/filters.sav");
+        if (!filterFile.exists()) {
+            return;
+        }
+
+        BufferedReader r = null;
+
+        try {
+            r = new BufferedReader(new FileReader(filterFile));
+            String line = "";
+            while ((line = r.readLine()) != null) {
+                String[] split = line.split(",");
+                String name = split[0];
+                List<TroopFilterElement> elements = new LinkedList<TroopFilterElement>();
+                for (int i = 1; i < split.length; i++) {
+                    String[] elemSplit = split[i].split("/");
+                    TroopFilterElement elem = new TroopFilterElement(DataHolder.getSingleton().getUnitByPlainName(elemSplit[0]), Integer.parseInt(elemSplit[1]), Integer.parseInt(elemSplit[2]));
+                    elements.add(elem);
+                }
+                filterSets.put(name, elements);
+            }
+        } catch (Exception e) {
+            logger.error("Failed to read troop filters", e);
+        } finally {
+            try {
+                r.close();
+            } catch (Exception ignored) {
+            }
+        }
+
+        updateFilterSetList();
+    }
+
+    private void updateFilterSetList() {
+        DefaultListModel model = new DefaultListModel();
+
+        Enumeration<String> keys = filterSets.keys();
+        while (keys.hasMoreElements()) {
+            model.addElement(keys.nextElement());
+        }
+
+        jList1.setModel(model);
+    }
+
     public void reset() {
         jFilterList.setModel(new DefaultListModel());
     }
@@ -313,6 +535,8 @@ public class TroopFilterDialog extends javax.swing.JDialog {
     public void show(List<Village> pVillageToFilter) {
         jFilterUnitBox.setModel(new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{})));
         jFilterUnitBox.setRenderer(new UnitListCellRenderer());
+        //load filter sets
+        loadFilterSets();
 
         doFilter = false;
         pack();
@@ -346,41 +570,50 @@ public class TroopFilterDialog extends javax.swing.JDialog {
                 }
             }
         }
+        saveFilterSets();
     }
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
+        GlobalOptions.setSelectedServer("de43");
+        ProfileManager.getSingleton().loadProfiles();
+        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
+        DataHolder.getSingleton().loadData(false);
+
+        final TroopFilterDialog dialog = new TroopFilterDialog(null, false);
+        dialog.reset();
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                TroopFilterDialog dialog = new TroopFilterDialog(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
+                dialog.show(new LinkedList<Village>());
             }
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel3;
     private javax.swing.JButton jApplyFiltersButton;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton17;
+    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton20;
     private javax.swing.JList jFilterList;
     private javax.swing.JComboBox jFilterUnitBox;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
+    private javax.swing.JList jList1;
     private javax.swing.JTextField jMaxValue;
     private javax.swing.JTextField jMinValue;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane14;
     private javax.swing.JCheckBox jStrictFilter;
+    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }

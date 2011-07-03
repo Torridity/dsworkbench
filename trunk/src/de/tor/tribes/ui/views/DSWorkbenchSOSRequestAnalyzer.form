@@ -792,7 +792,7 @@
   <Properties>
     <Property name="title" type="java.lang.String" value="SOS Analyzer"/>
     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[600, 500]"/>
+      <Dimension value="[830, 500]"/>
     </Property>
   </Properties>
   <SyntheticProperties>

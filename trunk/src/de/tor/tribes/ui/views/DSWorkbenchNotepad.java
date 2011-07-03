@@ -301,8 +301,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         });
         transferTaskPane.getContentPane().add(transferVillageList);
 
-        JXTaskPane miscPane = new JXTaskPane();
-        miscPane.setTitle("Sonstiges");
         JXButton centerVillage = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
         centerVillage.setToolTipText("Zentriert das gewählte Notizdorf auf der Hauptkarte");
         centerVillage.setSize(transferVillageList.getSize());
@@ -320,8 +318,8 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             }
         });
 
-        miscPane.getContentPane().add(centerVillage);
-        centerPanel.setupTaskPane(transferTaskPane, miscPane);
+        transferTaskPane.getContentPane().add(centerVillage);
+        centerPanel.setupTaskPane(transferTaskPane);
     }
 
     /**Get the currently selected tab*/

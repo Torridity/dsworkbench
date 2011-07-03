@@ -40,7 +40,7 @@ public class TroopsParser70 implements SilentParserInterface {
     im Dorf	15000	15000	5493	15000	950	2449	257	5000	300	30	0	1	Truppen
     auswärts	0	0	0	0	0	0	0	0	0	0	0	0
     unterwegs	0	0	0	0	0	0	0	0	0	0	0	0	Befehle
-
+    
      */
     public boolean parse(String pData) {
         StringTokenizer lineTokenizer = new StringTokenizer(pData, "\n\r");
@@ -58,6 +58,7 @@ public class TroopsParser70 implements SilentParserInterface {
 
 
         int foundTroops = 0;
+        TroopsManager.getSingleton().invalidate();
         while (!lineList.isEmpty()) {
             String currentLine = lineList.remove(0);
             Village v = null;
@@ -77,8 +78,8 @@ public class TroopsParser70 implements SilentParserInterface {
         boolean retValue = (foundTroops != 0);
         if (retValue) {
             NotifierFrame.doNotification("DS Workbench hat Truppeninformationen zu " + foundTroops + ((foundTroops == 1) ? " Dorf " : " Dörfern ") + " in die Truppenübersicht eingetragen.", NotifierFrame.NOTIFY_INFO);
-            TroopsManager.getSingleton().forceUpdate();
         }
+        TroopsManager.getSingleton().revalidate(retValue);
         return retValue;
     }
 
@@ -123,12 +124,23 @@ public class TroopsParser70 implements SilentParserInterface {
                     troopsOnTheWay.put(unit, onTheWayUnits[cnt]);
                     cnt++;
                 }
-                TroopsManager.getSingleton().addTroopsForVillageFast(pVillage, new LinkedList<Integer>());
+                /* TroopsManager.getSingleton().addTroopsForVillageFast(pVillage, new LinkedList<Integer>());
                 VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage);
                 holder.setOwnTroops(ownTroops);
                 holder.setTroopsInVillage(troopsInVillage);
                 holder.setTroopsOutside(troopsOutside);
-                holder.setTroopsOnTheWay(troopsOnTheWay);
+                holder.setTroopsOnTheWay(troopsOnTheWay);*/
+
+                VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.OWN, true);
+                VillageTroopsHolder inVillage = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.IN_VILLAGE, true);
+                VillageTroopsHolder outside = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.OUTWARDS, true);
+                VillageTroopsHolder onTheWay = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.ON_THE_WAY, true);
+
+
+                own.setTroops(ownTroops);
+                inVillage.setTroops(troopsInVillage);
+                outside.setTroops(troopsOutside);
+                onTheWay.setTroops(troopsOnTheWay);
             } else {
                 debug("Skip adding troops");
             }
@@ -182,7 +194,7 @@ public class TroopsParser70 implements SilentParserInterface {
         }
     }
 
-    public boolean parse1(String pTroopsString) {
+   /* public boolean parse1(String pTroopsString) {
         StringTokenizer lineTok = new StringTokenizer(pTroopsString, "\n\r");
         int villageLines = -1;
         boolean retValue = false;
@@ -257,19 +269,29 @@ public class TroopsParser70 implements SilentParserInterface {
             //add troops information
             if (villageLines == 0) {
                 int troopsCount = DataHolder.getSingleton().getUnits().size();
-                
+
                 if ((v != null)
                         && (ownTroops.size() == troopsCount)
                         && (troopsInVillage.size() == troopsCount)
                         && (troopsOutside.size() == troopsCount)
                         && (troopsOnTheWay.size() == troopsCount)) {
                     //add troops to manager
-                    TroopsManager.getSingleton().addTroopsForVillageFast(v, new LinkedList<Integer>());
+                   /* TroopsManager.getSingleton().addTroopsForVillageFast(v, new LinkedList<Integer>());
                     VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
                     holder.setOwnTroops(ownTroops);
                     holder.setTroopsInVillage(troopsInVillage);
                     holder.setTroopsOutside(troopsOutside);
-                    holder.setTroopsOnTheWay(troopsOnTheWay);
+                    holder.setTroopsOnTheWay(troopsOnTheWay);*/
+         /*           VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN, true);
+                    VillageTroopsHolder inVillage = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.IN_VILLAGE, true);
+                    VillageTroopsHolder outside = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OUTWARDS, true);
+                    VillageTroopsHolder onTheWay = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.ON_THE_WAY, true);
+
+
+                    own.setTroops(ownTroops);
+                    inVillage.setTroops(troopsInVillage);
+                    outside.setTroops(troopsOutside);
+                    onTheWay.setTroops(troopsOnTheWay);
                     //troops.clear();
                     ownTroops.clear();
                     troopsInVillage.clear();
@@ -294,7 +316,7 @@ public class TroopsParser70 implements SilentParserInterface {
         }
         return retValue;
     }
-
+*/
     private static int[] parseUnits(String pLine) throws RuntimeException {
         String line = pLine.replaceAll(ParserVariableManager.getSingleton().getProperty("troops.own"), "").
                 replaceAll(ParserVariableManager.getSingleton().getProperty("troops.commands"), "").
@@ -338,7 +360,7 @@ public class TroopsParser70 implements SilentParserInterface {
             + "im Dorf	15000	15000	5493	15000	950	2449	257	5000	300	30	0	1	Truppen\n"
             + "auswärts	0	0	0	0	0	0	0	0	0	0	0	0\n"
             + "unterwegs	0	0	0	0	0	0	0	0	0	0	0	0	Befehle\n";
-
+            
              */
             String data = (String) t.getTransferData(DataFlavor.stringFlavor);
             new TroopsParser70().parse(data);

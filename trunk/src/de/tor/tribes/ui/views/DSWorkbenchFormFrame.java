@@ -23,6 +23,7 @@ import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.ui.models.FormTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.VisibilityCellRenderer;
+import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
@@ -153,9 +154,19 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
 
         editPane.getContentPane().add(editButton);
 
-        JXTaskPane miscPane = new JXTaskPane();
-        miscPane.setTitle("Sonstiges");
-        JXButton centerButton = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
+        JXTaskPane transferPane = new JXTaskPane();
+        transferPane.setTitle("Übertragen");
+        JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/center_ingame.png")));
+        transferVillageList.setToolTipText("Zentriert den Mittelpunkt der gewählten Zeichnung im Spiel");
+        transferVillageList.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                centerFormInGame();
+            }
+        });
+        transferPane.getContentPane().add(transferVillageList);
+        JXButton centerButton = new JXButton(new ImageIcon(DSWorkbenchFormFrame.class.getResource("/res/center_24x24.png")));
         centerButton.setToolTipText("Zentriert die Zeichnung auf der Hauptkarte");
         centerButton.addMouseListener(new MouseAdapter() {
 
@@ -165,8 +176,11 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
             }
         });
 
-        miscPane.getContentPane().add(centerButton);
+        transferPane.getContentPane().add(centerButton);
 
+
+        JXTaskPane miscPane = new JXTaskPane();
+        miscPane.setTitle("Sonstiges");
         JXButton searchButton = new JXButton(new ImageIcon("./graphics/icons/search.png"));
         searchButton.setToolTipText("Lässt die gewählten Zeichnungen auf der Hauptkarte kurz aufblinken");
         searchButton.addMouseListener(new MouseAdapter() {
@@ -183,8 +197,10 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
 
     public void storeCustomProperties(Configuration pCconfig) {
     }
- public void restoreCustomProperties(Configuration pConfig) {
+
+    public void restoreCustomProperties(Configuration pConfig) {
     }
+
     public String getPropertyPrefix() {
         return "forms.view";
     }
@@ -280,8 +296,26 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
             return;
         }
         Rectangle r = selection.get(0).getBounds();
+
         if (r != null) {
             DSWorkbenchMainFrame.getSingleton().centerPosition((int) Math.rint(r.getCenterX()), (int) Math.rint(r.getCenterY()));
+        } else {
+            showInfo("Ein Mittelpunkt kann für diese Zeichnung nicht bestimmt werden");
+        }
+    }
+
+    private void centerFormInGame() {
+        List<AbstractForm> selection = getSelectedForms();
+        if (selection.isEmpty()) {
+            showError("Keine Zeichnung gewählt");
+            return;
+        }
+        Rectangle r = selection.get(0).getBounds();
+
+        if (r != null) {
+            BrowserCommandSender.centerCoordinate((int) Math.rint(r.getCenterX()), (int) Math.rint(r.getCenterY()));
+        } else {
+            showInfo("Ein Mittelpunkt kann für diese Zeichnung nicht bestimmt werden");
         }
     }
 

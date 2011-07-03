@@ -16,7 +16,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -246,6 +246,10 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
     }
 
     public VillageTroopsHolder getTroopsForVillage(Village pVillage, TROOP_TYPE pType) {
+        return getTroopsForVillage(pVillage, pType, false);
+    }
+
+    public VillageTroopsHolder getTroopsForVillage(Village pVillage, TROOP_TYPE pType, boolean pCreate) {
         String group = null;
         switch (pType) {
             case ON_THE_WAY:
@@ -269,7 +273,13 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
                 return (VillageTroopsHolder) t;
             }
         }
-        return null;
+        if (pCreate) {
+            VillageTroopsHolder newHolder = new VillageTroopsHolder(pVillage, new Date());
+            addManagedElement(group, newHolder);
+            return newHolder;
+        } else {
+            return null;
+        }
     }
 
     public Image getTroopsMarkerForVillage(Village pVillage) {

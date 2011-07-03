@@ -80,20 +80,7 @@ public class GroupParser implements SilentParserInterface {
 		    }
                  
 		    Village v = new VillageParser().parse(villageToken).get(0);
-		    /* try {
-		    String coord = villageToken.substring(villageToken.lastIndexOf("(") + 1, villageToken.lastIndexOf(")"));
-		    if ( ServerSettings.getSingleton().getCoordType() != 2 ) {
-		    String[] split = coord.trim().split("[(\\:)]");
-		    int[] xy = DSCalculator.hierarchicalToXy(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
-		    v = DataHolder.getSingleton().getVillages()[xy[0]][xy[1]];
-		    } else {
-		    String[] split = coord.trim().split("[(\\|)]");
-		    v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[0])][Integer.parseInt(split[1])];
-		    }
-		    } catch ( Exception e ) {
-		    }
 
-		     */
 		    if ( v != null ) {
 			//valid line found
 			int groupCount = 0;

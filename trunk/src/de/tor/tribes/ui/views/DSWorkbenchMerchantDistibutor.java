@@ -48,6 +48,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -171,13 +176,17 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         //  GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.merchant_distributor", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
     }
+
     public void storeCustomProperties(Configuration pCconfig) {
     }
- public void restoreCustomProperties(Configuration pConfig) {
+
+    public void restoreCustomProperties(Configuration pConfig) {
     }
+
     public String getPropertyPrefix() {
         return "merchant.view";
     }
+
     @Override
     public void resetView() {
         merchantInfos.clear();
@@ -186,8 +195,6 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
     }
 
     private void buildMenu() {
-        //@TODO Implement "save and load transports" feature --> to profile dir
-
         JXTaskPane transferPane = new JXTaskPane();
         transferPane.setTitle("Übertragen");
         JXButton toBrowser = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/att_browser.png")));
@@ -244,9 +251,34 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         });
         editPane.getContentPane().add(outButton);
 
-        JXTaskPane miscPane = new JXTaskPane();
-        miscPane.setTitle("Sonstiges");
-        JXButton calculateButton = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/att_validate.png")));
+        JXButton saveTransports = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/trade_out.png")));
+        saveTransports.setPreferredSize(toBrowser.getPreferredSize());
+        saveTransports.setMinimumSize(toBrowser.getMinimumSize());
+        saveTransports.setMaximumSize(toBrowser.getMaximumSize());
+        saveTransports.setToolTipText("Speichert die aktuell errechneten Transporte, um sie zu einem späteren Zeitpunkt zu verschicken");
+        saveTransports.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                saveTransports();
+            }
+        });
+        transferPane.getContentPane().add(saveTransports);
+        JXButton loadTransports = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/trade_out.png")));
+        loadTransports.setPreferredSize(toBrowser.getPreferredSize());
+        loadTransports.setMinimumSize(toBrowser.getMinimumSize());
+        loadTransports.setMaximumSize(toBrowser.getMaximumSize());
+        loadTransports.setToolTipText("Laden der vorher gespeicherten Transporte");
+        loadTransports.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                loadTransports();
+            }
+        });
+        transferPane.getContentPane().add(loadTransports);
+
+        JXButton calculateButton = new JXButton("<html><p align=\"center\">Berechnung<br/>starten</p></html>");//new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/att_validate.png")));
         calculateButton.setToolTipText("Startet die Berechnung möglicher Transporte");
         calculateButton.addMouseListener(new MouseAdapter() {
 
@@ -255,9 +287,8 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
                 calculateTransports();
             }
         });
-        miscPane.getContentPane().add(calculateButton);
 
-        centerPanel.setupTaskPane(jClickAccountLabel, jProfileQuickChange, editPane, transferPane, miscPane);
+        centerPanel.setupTaskPane(jClickAccountLabel, jProfileQuickChange, editPane, transferPane, calculateButton);
     }
 
     public UserProfile getQuickProfile() {
@@ -269,6 +300,9 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
     }
 
     private void changeDirection(VillageMerchantInfo.Direction pDirection) {
+        if (merchantTabbedPane.getSelectedIndex() != 0) {
+            merchantTabbedPane.setSelectedIndex(0);
+        }
         int[] selectedRows = jMerchantTable.getSelectedRows();
         if (selectedRows == null || selectedRows.length < 1) {
             showInfo(infoPanel, jXInfoLabel, "Keine Einträge ausgewählt");
@@ -359,6 +393,129 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         jCalculationSettingsDialog.setVisible(true);
     }
 
+    private void saveTransports() {
+        if (merchantTabbedPane.getSelectedIndex() != 1) {
+            merchantTabbedPane.setSelectedIndex(1);
+        }
+        //Village.class, Transport.class, Village.class, Boolean.class
+        //DefaultTableModel model = (DefaultTableModel) jResultsTable.getModel();
+
+        if (jResultsTable.getRowCount() == 0) {
+            showInfo(resultInfoPanel, jXResultInfoLabel, "Keine errechneten Transporte vorhanden");
+            return;
+        }
+        boolean ignoreSent = false;
+        if (JOptionPaneHelper.showQuestionConfirmBox(DSWorkbenchMerchantDistibutor.this, "Bereits abgeschickte Transporte ignorieren?", "Ignorieren", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+            ignoreSent = true;
+        }
+        StringBuilder b = new StringBuilder();
+        int cnt = 0;
+        for (int i = 0; i < jResultsTable.getRowCount(); i++) {
+            Village source = (Village) jResultsTable.getValueAt(i, 0);
+            Transport t = (Transport) jResultsTable.getValueAt(i, 1);
+            Village target = (Village) jResultsTable.getValueAt(i, 2);
+            Boolean submitted = (Boolean) jResultsTable.getValueAt(i, 3);
+
+            if (!(ignoreSent && submitted)) {
+                b.append(source.getId()).append(",");
+                b.append(t.getSingleTransports().get(0).getAmount()).append(",").append(t.getSingleTransports().get(1).getAmount()).append(",").append(t.getSingleTransports().get(2).getAmount()).append(",");
+                b.append(target.getId()).append(",");
+                b.append(submitted).append("\n");
+                cnt++;
+            }
+        }
+
+        String profileDir = GlobalOptions.getSelectedProfile().getProfileDirectory();
+        FileWriter w = null;
+        try {
+            w = new FileWriter(new File(profileDir + "/transports.sav"));
+            w.write(b.toString());
+            w.flush();
+            showSuccess(resultInfoPanel, jXResultInfoLabel, ((cnt == 1) ? "Transport " : cnt + " Transporte ") + "gespeichert");
+        } catch (IOException ioe) {
+            showError(resultInfoPanel, jXResultInfoLabel, "Fehler beim Speichern der Transporte");
+        } finally {
+            if (w != null) {
+                try {
+                    w.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+    }
+
+    private void loadTransports() {
+        if (merchantTabbedPane.getSelectedIndex() != 1) {
+            merchantTabbedPane.setSelectedIndex(1);
+        }
+        String profileDir = GlobalOptions.getSelectedProfile().getProfileDirectory();
+        File transportsFile = new File(profileDir + "/transports.sav");
+        if (!transportsFile.exists()) {
+            showInfo(resultInfoPanel, jXResultInfoLabel, "Keine gespeicherten Transporte gefunden");
+            return;
+        }
+        BufferedReader r = null;
+        try {
+            DefaultTableModel model = new javax.swing.table.DefaultTableModel(
+                    new Object[][]{},
+                    new String[]{
+                        "Herkunft", "Rohstoff", "Ziel", "Übertragen"
+                    }) {
+
+                Class[] types = new Class[]{
+                    Village.class, Transport.class, Village.class, Boolean.class
+                };
+
+                @Override
+                public Class getColumnClass(int columnIndex) {
+                    return types[columnIndex];
+                }
+
+                @Override
+                public boolean isCellEditable(int row, int col) {
+                    return false;
+                }
+            };
+
+            r = new BufferedReader(new FileReader(transportsFile));
+            String line = "";
+            int cnt = 0;
+            while ((line = r.readLine()) != null) {
+                String[] split = line.split(",");
+                Village sourceVillage = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(split[0]));
+                Resource wood = new Resource(Integer.parseInt(split[1]), Resource.Type.WOOD);
+                Resource clay = new Resource(Integer.parseInt(split[2]), Resource.Type.CLAY);
+                Resource iron = new Resource(Integer.parseInt(split[3]), Resource.Type.IRON);
+                Village targetVillage = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(split[4]));
+                boolean submitted = Boolean.parseBoolean(split[5]);
+
+                if (sourceVillage != null && targetVillage != null) {
+                    List<Resource> resources = new LinkedList<Resource>();
+                    resources.add(wood);
+                    resources.add(clay);
+                    resources.add(iron);
+                    Transport t = new Transport(resources);
+                    model.addRow(new Object[]{sourceVillage, t, targetVillage, submitted});
+                    cnt++;
+                }
+                jResultsTable.setModel(model);
+                showSuccess(resultInfoPanel, jXResultInfoLabel, ((cnt == 1) ? "Transport " : cnt + " Transporte ") + "geladen");
+            }
+
+        } catch (IOException ioe) {
+            showError(resultInfoPanel, jXResultInfoLabel, "Fehler beim Laden der Transporte");
+        } catch (Exception e) {
+            showError(resultInfoPanel, jXResultInfoLabel, "Fehler beim Laden der Transporte");
+        } finally {
+            if (r != null) {
+                try {
+                    r.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -393,27 +550,23 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         jResultsDataTable = new org.jdesktop.swingx.JXTable();
         jCalculationSettingsDialog = new javax.swing.JDialog();
         jPanel2 = new javax.swing.JPanel();
-        jEqualDistribution = new javax.swing.JRadioButton();
+        jPanel1 = new javax.swing.JPanel();
+        jTargetWood = new com.jidesoft.swing.LabeledTextField();
+        jTargetClay = new com.jidesoft.swing.LabeledTextField();
+        jTargetIron = new com.jidesoft.swing.LabeledTextField();
         jAdjustingDistribution = new javax.swing.JRadioButton();
-        jTargetWood = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        jTargetClay = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        jTargetIron = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jRemainWood = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
-        jRemainClay = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        jRemainIron = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
+        jRemainWood = new com.jidesoft.swing.LabeledTextField();
+        jRemainClay = new com.jidesoft.swing.LabeledTextField();
+        jRemainIron = new com.jidesoft.swing.LabeledTextField();
+        jEqualDistribution = new javax.swing.JRadioButton();
+        jIgnoreTransportsButton = new javax.swing.JCheckBox();
         jMinTransportAmount = new javax.swing.JTextField();
         jLabel14 = new javax.swing.JLabel();
-        jIgnoreTransportsButton = new javax.swing.JCheckBox();
+        jSlider1 = new javax.swing.JSlider();
+        jPanel3 = new javax.swing.JPanel();
         jMaxFilling = new javax.swing.JTextField();
         jLabel13 = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
         jButton6 = new javax.swing.JButton();
         jCalculateButton = new javax.swing.JButton();
         jProfileQuickChange = new javax.swing.JPanel();
@@ -467,6 +620,9 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
                 fireClickAccountChangedEvent(evt);
             }
         });
+
+        merchantTabbedPane.setMinimumSize(new java.awt.Dimension(600, 500));
+        merchantTabbedPane.setPreferredSize(new java.awt.Dimension(600, 500));
 
         jXResultTransportsPanel.setLayout(new java.awt.BorderLayout());
 
@@ -580,101 +736,231 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         jPanel2.setBackground(new java.awt.Color(239, 235, 223));
         jPanel2.setPreferredSize(new java.awt.Dimension(560, 100));
 
-        buttonGroup1.add(jEqualDistribution);
-        jEqualDistribution.setSelected(true);
-        jEqualDistribution.setText("Gleichverteilung");
-        jEqualDistribution.setOpaque(false);
-        jEqualDistribution.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireCalculationTypeChangedEvent(evt);
-            }
-        });
+        jPanel1.setOpaque(false);
+        jPanel1.setLayout(new java.awt.GridBagLayout());
+
+        jTargetWood.setEnabled(false);
+        jTargetWood.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/holz.png"))); // NOI18N
+        jTargetWood.setMaximumSize(new java.awt.Dimension(150, 25));
+        jTargetWood.setMinimumSize(new java.awt.Dimension(150, 25));
+        jTargetWood.setPreferredSize(new java.awt.Dimension(150, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jTargetWood, gridBagConstraints);
+
+        jTargetClay.setEnabled(false);
+        jTargetClay.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/lehm.png"))); // NOI18N
+        jTargetClay.setMaximumSize(new java.awt.Dimension(150, 25));
+        jTargetClay.setMinimumSize(new java.awt.Dimension(150, 25));
+        jTargetClay.setPreferredSize(new java.awt.Dimension(150, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jTargetClay, gridBagConstraints);
+
+        jTargetIron.setEnabled(false);
+        jTargetIron.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/eisen.png"))); // NOI18N
+        jTargetIron.setMaximumSize(new java.awt.Dimension(150, 25));
+        jTargetIron.setMinimumSize(new java.awt.Dimension(150, 25));
+        jTargetIron.setPreferredSize(new java.awt.Dimension(150, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jTargetIron, gridBagConstraints);
 
         buttonGroup1.add(jAdjustingDistribution);
         jAdjustingDistribution.setText("Gewünschter Lagerbestand");
+        jAdjustingDistribution.setMaximumSize(new java.awt.Dimension(200, 25));
+        jAdjustingDistribution.setMinimumSize(new java.awt.Dimension(200, 25));
         jAdjustingDistribution.setOpaque(false);
+        jAdjustingDistribution.setPreferredSize(new java.awt.Dimension(200, 25));
         jAdjustingDistribution.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireCalculationTypeChangedEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jAdjustingDistribution, gridBagConstraints);
 
-        jTargetWood.setText("400000");
-        jTargetWood.setEnabled(false);
-        jTargetWood.setMaximumSize(new java.awt.Dimension(60, 25));
-        jTargetWood.setMinimumSize(new java.awt.Dimension(60, 25));
-        jTargetWood.setPreferredSize(new java.awt.Dimension(60, 25));
-
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/holz.png"))); // NOI18N
-        jLabel1.setEnabled(false);
-
-        jTargetClay.setText("400000");
-        jTargetClay.setEnabled(false);
-        jTargetClay.setMaximumSize(new java.awt.Dimension(60, 25));
-        jTargetClay.setMinimumSize(new java.awt.Dimension(60, 25));
-        jTargetClay.setPreferredSize(new java.awt.Dimension(60, 25));
-
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/lehm.png"))); // NOI18N
-        jLabel2.setEnabled(false);
-
-        jTargetIron.setText("400000");
-        jTargetIron.setEnabled(false);
-        jTargetIron.setMaximumSize(new java.awt.Dimension(60, 25));
-        jTargetIron.setMinimumSize(new java.awt.Dimension(60, 25));
-        jTargetIron.setPreferredSize(new java.awt.Dimension(60, 25));
-
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/eisen.png"))); // NOI18N
-        jLabel3.setEnabled(false);
-
-        jRemainWood.setText("100000");
-        jRemainWood.setEnabled(false);
-        jRemainWood.setMaximumSize(new java.awt.Dimension(50, 25));
-        jRemainWood.setMinimumSize(new java.awt.Dimension(50, 25));
-        jRemainWood.setPreferredSize(new java.awt.Dimension(60, 25));
-
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/lehm.png"))); // NOI18N
-        jLabel4.setEnabled(false);
-
-        jRemainClay.setText("100000");
-        jRemainClay.setEnabled(false);
-        jRemainClay.setMaximumSize(new java.awt.Dimension(60, 25));
-        jRemainClay.setMinimumSize(new java.awt.Dimension(60, 25));
-        jRemainClay.setPreferredSize(new java.awt.Dimension(60, 25));
-
-        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/eisen.png"))); // NOI18N
-        jLabel5.setEnabled(false);
-
-        jRemainIron.setText("100000");
-        jRemainIron.setEnabled(false);
-        jRemainIron.setMaximumSize(new java.awt.Dimension(60, 25));
-        jRemainIron.setMinimumSize(new java.awt.Dimension(60, 25));
-        jRemainIron.setPreferredSize(new java.awt.Dimension(60, 25));
-
-        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/holz.png"))); // NOI18N
-        jLabel6.setEnabled(false);
-
-        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel7.setText("Min. Füllstand");
         jLabel7.setEnabled(false);
+        jLabel7.setMaximumSize(new java.awt.Dimension(200, 25));
+        jLabel7.setMinimumSize(new java.awt.Dimension(200, 25));
+        jLabel7.setPreferredSize(new java.awt.Dimension(200, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 30, 5, 5);
+        jPanel1.add(jLabel7, gridBagConstraints);
+
+        jRemainWood.setEnabled(false);
+        jRemainWood.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/holz.png"))); // NOI18N
+        jRemainWood.setMaximumSize(new java.awt.Dimension(150, 25));
+        jRemainWood.setMinimumSize(new java.awt.Dimension(150, 25));
+        jRemainWood.setPreferredSize(new java.awt.Dimension(150, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jRemainWood, gridBagConstraints);
+
+        jRemainClay.setEnabled(false);
+        jRemainClay.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/lehm.png"))); // NOI18N
+        jRemainClay.setMaximumSize(new java.awt.Dimension(150, 25));
+        jRemainClay.setMinimumSize(new java.awt.Dimension(150, 25));
+        jRemainClay.setPreferredSize(new java.awt.Dimension(150, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jRemainClay, gridBagConstraints);
+
+        jRemainIron.setEnabled(false);
+        jRemainIron.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/eisen.png"))); // NOI18N
+        jRemainIron.setMaximumSize(new java.awt.Dimension(150, 25));
+        jRemainIron.setMinimumSize(new java.awt.Dimension(150, 25));
+        jRemainIron.setPreferredSize(new java.awt.Dimension(150, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jRemainIron, gridBagConstraints);
+
+        buttonGroup1.add(jEqualDistribution);
+        jEqualDistribution.setSelected(true);
+        jEqualDistribution.setText("Gleichverteilung");
+        jEqualDistribution.setMaximumSize(new java.awt.Dimension(200, 25));
+        jEqualDistribution.setMinimumSize(new java.awt.Dimension(200, 25));
+        jEqualDistribution.setOpaque(false);
+        jEqualDistribution.setPreferredSize(new java.awt.Dimension(200, 25));
+        jEqualDistribution.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireCalculationTypeChangedEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jEqualDistribution, gridBagConstraints);
+
+        jIgnoreTransportsButton.setText("Transporte mit weniger als");
+        jIgnoreTransportsButton.setMaximumSize(new java.awt.Dimension(200, 25));
+        jIgnoreTransportsButton.setMinimumSize(new java.awt.Dimension(200, 25));
+        jIgnoreTransportsButton.setOpaque(false);
+        jIgnoreTransportsButton.setPreferredSize(new java.awt.Dimension(200, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(15, 5, 5, 5);
+        jPanel1.add(jIgnoreTransportsButton, gridBagConstraints);
 
         jMinTransportAmount.setHorizontalAlignment(javax.swing.JTextField.LEFT);
         jMinTransportAmount.setText("10000");
-        jMinTransportAmount.setMaximumSize(new java.awt.Dimension(60, 25));
-        jMinTransportAmount.setMinimumSize(new java.awt.Dimension(60, 25));
-        jMinTransportAmount.setPreferredSize(new java.awt.Dimension(60, 25));
+        jMinTransportAmount.setMaximumSize(new java.awt.Dimension(150, 25));
+        jMinTransportAmount.setMinimumSize(new java.awt.Dimension(150, 25));
+        jMinTransportAmount.setPreferredSize(new java.awt.Dimension(150, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(15, 5, 5, 5);
+        jPanel1.add(jMinTransportAmount, gridBagConstraints);
 
         jLabel14.setText("Rohstoffen ignorieren.");
+        jLabel14.setMaximumSize(new java.awt.Dimension(150, 25));
+        jLabel14.setMinimumSize(new java.awt.Dimension(150, 25));
+        jLabel14.setPreferredSize(new java.awt.Dimension(150, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(15, 5, 5, 5);
+        jPanel1.add(jLabel14, gridBagConstraints);
 
-        jIgnoreTransportsButton.setText("Transporte mit weniger als");
-        jIgnoreTransportsButton.setOpaque(false);
+        jSlider1.setMajorTickSpacing(1);
+        jSlider1.setMinimum(50);
+        jSlider1.setMinorTickSpacing(1);
+        jSlider1.setPaintTicks(true);
+        jSlider1.setValue(95);
+        jSlider1.setMaximumSize(new java.awt.Dimension(150, 40));
+        jSlider1.setMinimumSize(new java.awt.Dimension(150, 40));
+        jSlider1.setPreferredSize(new java.awt.Dimension(150, 40));
+        jSlider1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jSlider1StateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jSlider1, gridBagConstraints);
 
+        jPanel3.setMaximumSize(new java.awt.Dimension(100, 25));
+        jPanel3.setMinimumSize(new java.awt.Dimension(100, 25));
+        jPanel3.setOpaque(false);
+        jPanel3.setPreferredSize(new java.awt.Dimension(100, 25));
+        jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.LINE_AXIS));
+
+        jMaxFilling.setEditable(false);
         jMaxFilling.setText("95");
         jMaxFilling.setMinimumSize(new java.awt.Dimension(59, 25));
         jMaxFilling.setPreferredSize(new java.awt.Dimension(59, 25));
+        jPanel3.add(jMaxFilling);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(13, 5, 5, 5);
+        jPanel1.add(jPanel3, gridBagConstraints);
 
         jLabel13.setText("Maximaler Füllstand");
-
-        jLabel15.setText("%");
+        jLabel13.setMaximumSize(new java.awt.Dimension(200, 25));
+        jLabel13.setMinimumSize(new java.awt.Dimension(200, 25));
+        jLabel13.setPreferredSize(new java.awt.Dimension(200, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 30, 5, 5);
+        jPanel1.add(jLabel13, gridBagConstraints);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -682,85 +968,15 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jEqualDistribution, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jLabel13, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jIgnoreTransportsButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jAdjustingDistribution, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(23, 23, 23)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTargetWood, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTargetClay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTargetIron, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jMaxFilling, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jMinTransportAmount, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jRemainWood, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jRemainClay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jRemainIron, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel15))))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jEqualDistribution)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jAdjustingDistribution)
-                    .addComponent(jTargetWood, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
-                    .addComponent(jTargetClay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(jTargetIron, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jRemainIron, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jRemainWood, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jRemainClay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel14)
-                            .addComponent(jIgnoreTransportsButton))
-                        .addGap(13, 13, 13)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel13)
-                            .addComponent(jLabel15)
-                            .addComponent(jMaxFilling, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jMinTransportAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(20, 20, 20))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         jButton6.setBackground(new java.awt.Color(239, 235, 223));
@@ -785,27 +1001,26 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         jCalculationSettingsDialog.getContentPane().setLayout(jCalculationSettingsDialogLayout);
         jCalculationSettingsDialogLayout.setHorizontalGroup(
             jCalculationSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jCalculationSettingsDialogLayout.createSequentialGroup()
-                .addContainerGap(312, Short.MAX_VALUE)
-                .addComponent(jButton6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCalculateButton)
-                .addContainerGap())
-            .addGroup(jCalculationSettingsDialogLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jCalculationSettingsDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 476, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jCalculationSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 735, Short.MAX_VALUE)
+                    .addGroup(jCalculationSettingsDialogLayout.createSequentialGroup()
+                        .addComponent(jButton6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCalculateButton)))
+                .addContainerGap())
         );
         jCalculationSettingsDialogLayout.setVerticalGroup(
             jCalculationSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jCalculationSettingsDialogLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jCalculationSettingsDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jCalculationSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jCalculateButton)
                     .addComponent(jButton6))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         jProfileQuickChange.setBackground(new java.awt.Color(255, 255, 255));
@@ -822,7 +1037,6 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 5);
         jProfileQuickChange.add(jLabel11, gridBagConstraints);
 
-        jProfileBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jProfileBox.setToolTipText("Erlaubt die Schnellauswahl des Benutzerprofils mit dem Transporte in den Browser übertragen werden");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -833,16 +1047,17 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         jProfileQuickChange.add(jProfileBox, gridBagConstraints);
 
         setTitle("Rohstoffverteiler");
+        setMinimumSize(new java.awt.Dimension(600, 400));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jMerchantPanel.setBackground(new java.awt.Color(239, 235, 223));
+        jMerchantPanel.setMinimumSize(new java.awt.Dimension(700, 500));
+        jMerchantPanel.setPreferredSize(new java.awt.Dimension(700, 600));
         jMerchantPanel.setLayout(new java.awt.BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 628;
-        gridBagConstraints.ipady = 437;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jMerchantPanel, gridBagConstraints);
@@ -941,12 +1156,6 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         jTargetWood.setEnabled(jAdjustingDistribution.isSelected());
         jTargetClay.setEnabled(jAdjustingDistribution.isSelected());
         jTargetIron.setEnabled(jAdjustingDistribution.isSelected());
-        jLabel1.setEnabled(jAdjustingDistribution.isSelected());
-        jLabel2.setEnabled(jAdjustingDistribution.isSelected());
-        jLabel3.setEnabled(jAdjustingDistribution.isSelected());
-        jLabel4.setEnabled(jAdjustingDistribution.isSelected());
-        jLabel5.setEnabled(jAdjustingDistribution.isSelected());
-        jLabel6.setEnabled(jAdjustingDistribution.isSelected());
         jLabel7.setEnabled(jAdjustingDistribution.isSelected());
         jRemainWood.setEnabled(jAdjustingDistribution.isSelected());
         jRemainClay.setEnabled(jAdjustingDistribution.isSelected());
@@ -969,6 +1178,10 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
     private void jXResultInfoLabelfireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXResultInfoLabelfireHideInfoEvent
         resultInfoPanel.setCollapsed(true);
     }//GEN-LAST:event_jXResultInfoLabelfireHideInfoEvent
+
+    private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider1StateChanged
+        jMaxFilling.setText(Integer.toString(jSlider1.getValue()) + " %");
+    }//GEN-LAST:event_jSlider1StateChanged
 
     public void showInfo(JXCollapsiblePane pPane, JXLabel pLabel, String pMessage) {
         pPane.setCollapsed(false);
@@ -1000,7 +1213,6 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
                 showInfo(infoPanel, jXInfoLabel, "Keine Einträge in der Zwischenablage gefunden");
                 return;
             }
-
 
             String message = "In der Zwischenablage" + ((infos.size() == 1) ? " wurde 1 Eintrag" : " wurden " + infos.size() + " Einträge") + " gefunden.\n"
                     + "Für welche Transportrichtung" + ((infos.size() == 1) ? " soll dieser Eintrag" : " sollen diese Einträge") + " verwendet werden?";
@@ -1351,7 +1563,10 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
     public static void main(String[] args) {
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         GlobalOptions.setSelectedServer("de43");
+        ProfileManager.getSingleton().loadProfiles();
+        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
         DataHolder.getSingleton().loadData(false);
+
         MouseGestures mMouseGestures = new MouseGestures();
         mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
         mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
@@ -1362,7 +1577,6 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         } catch (Exception e) {
         }
 
-        DSWorkbenchMerchantDistibutor.getSingleton().setSize(600, 400);
         DSWorkbenchMerchantDistibutor.getSingleton().resetView();
         DSWorkbenchMerchantDistibutor.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         DSWorkbenchMerchantDistibutor.getSingleton().setVisible(true);
@@ -1379,17 +1593,10 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
     private javax.swing.JLabel jClickAccountLabel;
     private javax.swing.JRadioButton jEqualDistribution;
     private javax.swing.JCheckBox jIgnoreTransportsButton;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -1397,22 +1604,25 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
     private javax.swing.JPanel jMerchantPanel;
     private static final org.jdesktop.swingx.JXTable jMerchantTable = new org.jdesktop.swingx.JXTable();
     private javax.swing.JTextField jMinTransportAmount;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JLabel jPerfectResults;
     private javax.swing.JComboBox jProfileBox;
     private javax.swing.JPanel jProfileQuickChange;
-    private javax.swing.JTextField jRemainClay;
-    private javax.swing.JTextField jRemainIron;
-    private javax.swing.JTextField jRemainWood;
+    private com.jidesoft.swing.LabeledTextField jRemainClay;
+    private com.jidesoft.swing.LabeledTextField jRemainIron;
+    private com.jidesoft.swing.LabeledTextField jRemainWood;
     private org.jdesktop.swingx.JXTable jResultsDataTable;
     private org.jdesktop.swingx.JXTable jResultsTable;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JTextField jTargetClay;
-    private javax.swing.JTextField jTargetIron;
-    private javax.swing.JTextField jTargetWood;
+    private javax.swing.JSlider jSlider1;
+    private com.jidesoft.swing.LabeledTextField jTargetClay;
+    private com.jidesoft.swing.LabeledTextField jTargetIron;
+    private com.jidesoft.swing.LabeledTextField jTargetWood;
     private javax.swing.JLabel jUsedMerchants;
     private javax.swing.JLabel jUsedTransports;
     private org.jdesktop.swingx.JXLabel jXInfoLabel;

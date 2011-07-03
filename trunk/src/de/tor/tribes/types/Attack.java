@@ -208,15 +208,20 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
     }
 
     public static Attack fromInternalRepresentation(String pLine) {
-        String[] split = pLine.trim().split("&");
-        Attack a = new Attack();
-        a.setSource(DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(split[0])));
-        a.setTarget(DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(split[1])));
-        a.setUnit(DataHolder.getSingleton().getUnitByPlainName(split[2]));
-        a.setArriveTime(new Date(Long.parseLong(split[3])));
-        a.setType(Integer.parseInt(split[4]));
-        a.setShowOnMap(Boolean.parseBoolean(split[5]));
-        a.setTransferredToBrowser(Boolean.parseBoolean(split[6]));
+        Attack a = null;
+        try {
+            String[] split = pLine.trim().split("&");
+            a = new Attack();
+            a.setSource(DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(split[0])));
+            a.setTarget(DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(split[1])));
+            a.setUnit(DataHolder.getSingleton().getUnitByPlainName(split[2]));
+            a.setArriveTime(new Date(Long.parseLong(split[3])));
+            a.setType(Integer.parseInt(split[4]));
+            a.setShowOnMap(Boolean.parseBoolean(split[5]));
+            a.setTransferredToBrowser(Boolean.parseBoolean(split[6]));
+        } catch (Exception e) {
+            a = null;
+        }
         return a;
     }
 

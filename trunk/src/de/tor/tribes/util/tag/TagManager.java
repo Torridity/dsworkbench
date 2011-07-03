@@ -54,7 +54,6 @@ public class TagManager extends GenericManager<Tag> {
             }
             try {
                 Document d = JaxenUtils.getDocument(tagFile);
-                int cnt = 0;
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//tags/tag")) {
                     Tag t = null;
                     if (e.getChild("equation") != null) {

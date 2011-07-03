@@ -759,7 +759,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         jSOSInputPanel.add(jResultPanel, java.awt.BorderLayout.CENTER);
 
         setTitle("SOS Analyzer");
-        setMinimumSize(new java.awt.Dimension(600, 500));
+        setMinimumSize(new java.awt.Dimension(830, 500));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jSOSPanel.setBackground(new java.awt.Color(239, 235, 223));

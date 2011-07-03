@@ -14,7 +14,6 @@ import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.StringTokenizer;
 
 /**
@@ -41,8 +40,8 @@ public class TroopsParser implements SilentParserInterface {
         Hashtable<UnitHolder, Integer> troopsInVillage = new Hashtable<UnitHolder, Integer>();
         Hashtable<UnitHolder, Integer> troopsOutside = new Hashtable<UnitHolder, Integer>();
         Hashtable<UnitHolder, Integer> troopsOnTheWay = new Hashtable<UnitHolder, Integer>();
+        TroopsManager.getSingleton().invalidate();
         while (lineTok.hasMoreElements()) {
-
             //parse single line for village
             String line = lineTok.nextToken();
             //tokenize line by tab and space
@@ -105,12 +104,18 @@ public class TroopsParser implements SilentParserInterface {
                         && (troopsOutside.size() == troopsCount)
                         && (troopsOnTheWay.size() == troopsCount)) {
                     //add troops to manager
-                    TroopsManager.getSingleton().addTroopsForVillageFast(v, new LinkedList<Integer>());
-                    VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
-                    holder.setOwnTroops(ownTroops);
-                    holder.setTroopsInVillage(troopsInVillage);
-                    holder.setTroopsOutside(troopsOutside);
-                    holder.setTroopsOnTheWay(troopsOnTheWay);
+
+                    //TroopsManager.getSingleton().addTroopsForVillageFast(v, new LinkedList<Integer>());
+                    VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN, true);
+                    VillageTroopsHolder inVillage = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.IN_VILLAGE, true);
+                    VillageTroopsHolder outside = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OUTWARDS, true);
+                    VillageTroopsHolder onTheWay = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.ON_THE_WAY, true);
+
+
+                    own.setTroops(ownTroops);
+                    inVillage.setTroops(troopsInVillage);
+                    outside.setTroops(troopsOutside);
+                    onTheWay.setTroops(troopsOnTheWay);
                     //troops.clear();
                     ownTroops.clear();
                     troopsInVillage.clear();
@@ -131,8 +136,8 @@ public class TroopsParser implements SilentParserInterface {
         }
         if (retValue) {
             NotifierFrame.doNotification("DS Workbench hat Truppeninformationen zu " + foundTroops + ((foundTroops == 1) ? " Dorf " : " Dörfern ") + " in die Truppenübersicht eingetragen.", NotifierFrame.NOTIFY_INFO);
-            TroopsManager.getSingleton().forceUpdate();
         }
+        TroopsManager.getSingleton().revalidate(retValue);
         return retValue;
     }
 
@@ -193,9 +198,9 @@ public class TroopsParser implements SilentParserInterface {
     }
 
     public static void main(String[] args) {
-  
 
-	/*
+
+        /*
         Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         try {
         String s = " 003 | Spitfire (471|482) K44\n" +
@@ -208,8 +213,8 @@ public class TroopsParser implements SilentParserInterface {
         "im Dorf	600	500	0	0	134	0	0	354	0	0	0	1	Truppen\n" +
         "auswärts	4400	3000	0	3000	66	0	0	1046	0	0	0	0\n" +
         "unterwegs	0	0	0	0	0	0	0	0	0	0	0	0	Befehle\n";
-
-
+        
+        
         String data = (String) t.getTransferData(DataFlavor.stringFlavor);
         TroopsParser.parse(data);
         } catch (Exception e) {

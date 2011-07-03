@@ -174,8 +174,10 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
 
     public void storeCustomProperties(Configuration pCconfig) {
     }
- public void restoreCustomProperties(Configuration pConfig) {
+
+    public void restoreCustomProperties(Configuration pConfig) {
     }
+
     public String getPropertyPrefix() {
         return "manual.attack.planer.view";
     }
@@ -191,7 +193,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
     public void resetView() {
         AttackManager.getSingleton().addManagerListener(this);
         //setup renderer and general view
-        ((DoItYourselfAttackTableModel) jAttackTable.getModel()).clear();
+       // ((DoItYourselfAttackTableModel) jAttackTable.getModel()).clear();
 
         HighlightPredicate.ColumnHighlightPredicate colu = new HighlightPredicate.ColumnHighlightPredicate(0, 1, 2, 3, 6);
         jAttackTable.setRowHeight(24);

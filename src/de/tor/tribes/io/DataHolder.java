@@ -534,7 +534,7 @@ public class DataHolder {
         return true;
     }
 
-    public synchronized boolean isLoading() {
+    public boolean isLoading() {
         return loading;
     }
 
@@ -579,7 +579,7 @@ public class DataHolder {
         return getTribesForServer(pServer, null);
     }
 
-    public Hashtable<Integer, Tribe> getTribesForServer(String pServer, Hashtable<Integer, Tribe> pTribes) {
+    private Hashtable<Integer, Tribe> getTribesForServer(String pServer, Hashtable<Integer, Tribe> pTribes) {
         try {
             String dataDir = Constants.SERVER_DIR + "/" + pServer;
             BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(dataDir + "/tribe.txt.gz"))));
@@ -611,7 +611,7 @@ public class DataHolder {
         return getAlliesForServer(pServer, null);
     }
 
-    public Hashtable<Integer, Ally> getAlliesForServer(String pServer, Hashtable<Integer, Ally> pAllies) {
+    private Hashtable<Integer, Ally> getAlliesForServer(String pServer, Hashtable<Integer, Ally> pAllies) {
         try {
             String dataDir = Constants.SERVER_DIR + "/" + GlobalOptions.getSelectedServer();
             BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(dataDir + "/ally.txt.gz"))));
@@ -1237,6 +1237,11 @@ public class DataHolder {
         return mVillages;
     }
 
+    public void removeTempData() {
+        System.gc();
+        System.gc();
+    }
+
     public Village getRandomVillage() {
         Iterator<Integer> it = mVillagesTable.keySet().iterator();
         int id = -1;
@@ -1246,7 +1251,7 @@ public class DataHolder {
             cnt--;
         }
         if (id != -1) {
-             return mVillagesTable.get(id);
+            return mVillagesTable.get(id);
         } else {
             DummyVillage v = new DummyVillage();
             v.setId(-cnt);
@@ -1294,7 +1299,6 @@ public class DataHolder {
                 showBarbarian = true;
             }
 
-            System.out.println(xStart + " - " + xEnd + " - " + yStart + " - " + yEnd );
             for (int x = xStart; x <= xEnd; x++) {
                 for (int y = yStart; y <= yEnd; y++) {
                     Village v = getVillages()[x][y];
@@ -1324,11 +1328,6 @@ public class DataHolder {
             }
         }
         return mVillagesTable;
-    }
-
-    public void removeTempData() {
-        System.gc();
-        System.gc();
     }
 
     /**Get all allies*/
@@ -1434,14 +1433,14 @@ public class DataHolder {
         return mBuildings;
     }
 
-    public synchronized void fireDataHolderEvents(String pMessage) {
+    private void fireDataHolderEvents(String pMessage) {
         DataHolderListener[] listeners = mListeners.toArray(new DataHolderListener[]{});
         for (DataHolderListener listener : listeners) {
             listener.fireDataHolderEvent(pMessage);
         }
     }
 
-    public synchronized void fireDataLoadedEvents(boolean pSuccess) {
+    private void fireDataLoadedEvents(boolean pSuccess) {
         DataHolderListener[] listeners = mListeners.toArray(new DataHolderListener[]{});
         for (DataHolderListener listener : listeners) {
             listener.fireDataLoadedEvent(pSuccess);

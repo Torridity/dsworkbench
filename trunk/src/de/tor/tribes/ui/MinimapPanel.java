@@ -18,6 +18,7 @@ import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.ToolChangeListener;
 import de.tor.tribes.util.mark.MarkerManager;
@@ -44,13 +45,18 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
+import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -427,6 +433,7 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
 
     @Override
     public void paint(Graphics g) {
+        super.paint(g);
         try {
             Graphics2D g2d = (Graphics2D) g;
             g2d.clearRect(0, 0, getWidth(), getHeight());
@@ -434,7 +441,6 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
 
             if (iCurrentView == ID_MINIMAP) {
                 g2d.setColor(Color.YELLOW);
-
 
                 int mapWidth = rVisiblePart.width;
                 int mapHeight = rVisiblePart.height;
@@ -502,8 +508,6 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
                 g2d.drawRect(r.x, r.y, r.width, r.height);
             }
             g2d.dispose();
-
-
         } catch (Exception e) {
             logger.error("Failed painting Minimap", e);
         }
@@ -527,23 +531,19 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
                     mZoomFrame.setLocation(0, 0);
                 }
                 if (mBuffer == null) {
-                    mBuffer = pBuffer;
-
                     if (pBuffer == null) {
                         MinimapRepaintThread.getSingleton().update();
                         return;
                     }
 
-                    mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
+                    mBuffer = pBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
                 } else if ((mBuffer.getWidth(null) != getWidth()) || (mBuffer.getHeight(null) != getHeight())) {
                     mZoomFrame.setMinimap(pBuffer);
-                    mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
+                    mBuffer = pBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
                 } else if (doRedraw) {
                     mZoomFrame.setMinimap(pBuffer);
-                    mBuffer = pBuffer;
-                    mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
+                    mBuffer = pBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
                 }
-
             } else {
                 // long s = System.currentTimeMillis();
                 int hash = MapPanel.getSingleton().getMapRenderer().getAllyCount().hashCode();
@@ -635,21 +635,22 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
 
 
         if (iCurrentView == ID_ALLY_CHART) {
-            Hashtable<Ally, Integer> allyCount = MapPanel.getSingleton().getMapRenderer().getAllyCount();
+            HashMap<Ally, Integer> allyCount = MapPanel.getSingleton().getMapRenderer().getAllyCount();
             int overallVillages = 0;
-            Enumeration<Ally> keys = allyCount.keys();
+            Iterator<Entry<Ally, Integer>> keys = allyCount.entrySet().iterator();
             //count all villages
-            while (keys.hasMoreElements()) {
-                overallVillages += allyCount.get(keys.nextElement());
+            while (keys.hasNext()) {
+                overallVillages += allyCount.get(keys.next().getValue());
             }
-            keys = allyCount.keys();
+            keys = allyCount.entrySet().iterator();
 
             double rest = 0;
             // Hashtable<Ally, Marker> marks = new Hashtable<Ally, Marker>();
 
-            while (keys.hasMoreElements()) {
-                Ally a = keys.nextElement();
-                Integer v = allyCount.get(a);
+            while (keys.hasNext()) {
+                Entry<Ally, Integer> next = keys.next();
+                Ally a = next.getKey();
+                Integer v = next.getValue();
                 Double perc = new Double((double) v / (double) overallVillages * 100);
 
                 if (perc > 5.0) {
@@ -667,23 +668,24 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
 
             dataset.setValue("Sonstige", rest);
         } else {
-            Hashtable<Tribe, Integer> tribeCount = MapPanel.getSingleton().getMapRenderer().getTribeCount();
+            HashMap<Tribe, Integer> tribeCount = MapPanel.getSingleton().getMapRenderer().getTribeCount();
 
             int overallVillages = 0;
-            Enumeration<Tribe> keys = tribeCount.keys();
+            Iterator<Entry<Tribe, Integer>> keys = tribeCount.entrySet().iterator();
             //count all villages
 
-            while (keys.hasMoreElements()) {
-                overallVillages += tribeCount.get(keys.nextElement());
+            while (keys.hasNext()) {
+                overallVillages += tribeCount.get(keys.next().getValue());
             }
-            keys = tribeCount.keys();
+            keys = tribeCount.entrySet().iterator();
 
             double rest = 0;
             //  Hashtable<Tribe, Marker> marks = new Hashtable<Tribe, Marker>();
 
-            while (keys.hasMoreElements()) {
-                Tribe t = keys.nextElement();
-                Integer v = tribeCount.get(t);
+            while (keys.hasNext()) {
+                Entry<Tribe, Integer> next = keys.next();
+                Tribe t = next.getKey();
+                Integer v = next.getValue();
 
                 Double perc = new Double((double) v / (double) overallVillages * 100);
                 if (perc > 5.0) {
@@ -1000,6 +1002,20 @@ private void firePutScreenOnlineEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     }
 
 }//GEN-LAST:event_firePutScreenOnlineEvent
+
+    public static void main(String[] args) {
+        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
+        GlobalOptions.setSelectedServer("de43");
+        ProfileManager.getSingleton().loadProfiles();
+        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
+        DataHolder.getSingleton().loadData(false);
+        JFrame f = new JFrame();
+        f.getContentPane().add(MinimapPanel.getSingleton());
+        f.pack();
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setVisible(true);
+
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

@@ -179,8 +179,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         // </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc=" General UI setup ">
-        Vector<String> v = new Vector<String>(Constants.LAYER_COUNT);
-        for (int i = 0; i < Constants.LAYER_COUNT; i++) {
+        Vector<String> v = new Vector<String>(Constants.LAYERS.size());
+        for (int i = 0; i < Constants.LAYERS.size(); i++) {
             v.add("");
         }
 
@@ -576,7 +576,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
 //        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "index", GlobalOptions.getHelpBroker().getHelpSet());
-      //  jHelpItem.addActionListener(GlobalOptions.getHelpDisplay());
+        //  jHelpItem.addActionListener(GlobalOptions.getHelpDisplay());
 
         // </editor-fold>
 
@@ -661,7 +661,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             DSWorkbenchMarkerFrame.getSingleton().resetView();
             DSWorkbenchChurchFrame.getSingleton().resetView();
             DSWorkbenchAttackFrame.getSingleton().resetView();
-             DSWorkbenchAttackFrame.getSingleton().restoreProperties();
+            DSWorkbenchAttackFrame.getSingleton().restoreProperties();
             DSWorkbenchTagFrame.getSingleton().resetView();
             //ConquersTableModel.getSingleton();
             DSWorkbenchConquersFrame.getSingleton().resetView();

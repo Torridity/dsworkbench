@@ -24,7 +24,7 @@ import de.tor.tribes.ui.LinkTagsDialog;
 import de.tor.tribes.ui.editors.TagMapMarkerCellEditor;
 import de.tor.tribes.ui.models.TagTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.map.TagMapMarkerRenderer;
+import de.tor.tribes.ui.renderer.TagMapMarkerRenderer;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;

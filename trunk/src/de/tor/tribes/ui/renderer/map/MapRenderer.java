@@ -225,7 +225,6 @@ public class MapRenderer {
                         g2d = (Graphics2D) mBackBuffer.getGraphics();
                     }
                 }
-                System.out.println("Prepare: " + (System.currentTimeMillis() - s));
                 if (bMapRedrawRequired) {
                     //if the entire map has to be redrawn, reset the render settings
                     mRenderSettings = new RenderSettings(MapPanel.getSingleton().getVirtualBounds());
@@ -242,7 +241,6 @@ public class MapRenderer {
                     }
                     bMapRedrawRequired = false;
                 }
-                System.out.println("Calculate: " + (System.currentTimeMillis() - s));
                 mRenderSettings.setVisibleVillages(mVisibleVillages);
                 //get the movement of the map relative to a) the last reset or b) the last rendering cycle
                 mRenderSettings.calculateSettings(MapPanel.getSingleton().getVirtualBounds());
@@ -272,10 +270,8 @@ public class MapRenderer {
                     }
                 }
 
-                System.out.println("RenderLayers: " + (System.currentTimeMillis() - s));
                 //draw live layer -> always on top
                 renderLiveLayer(g2d);
-                System.out.println("RenderLiveLayer: " + (System.currentTimeMillis() - s));
                 //render selection
                 de.tor.tribes.types.Rectangle selection = MapPanel.getSingleton().getSelectionRect();
                 if (selection != null) {
@@ -291,9 +287,7 @@ public class MapRenderer {
                 //store the map position rendered in this cycle in the render settings
                 mRenderSettings = new RenderSettings(mRenderSettings.getMapBounds());
                 pG2d.drawImage(mBackBuffer, 0, 0, null);
-                System.out.println("Drawn: " + (System.currentTimeMillis() - s));
                 MapPanel.getSingleton().updateComplete(mVillagePositions, mBackBuffer);
-                System.out.println("Finished: " + (System.currentTimeMillis() - s));
             }
         } catch (Throwable t) {
             lRenderedLast = 0;
@@ -546,6 +540,7 @@ public class MapRenderer {
                     c.setXPos(xp);
                     c.setYPos(yp);
                     c.setFilled(false);
+                    c.setStrokeWidth(3f);
                     c.setXPosEnd(xp + diam);
                     c.setYPosEnd(yp + diam);
                     Color co = Color.RED;

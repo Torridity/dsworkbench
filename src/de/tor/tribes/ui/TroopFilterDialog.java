@@ -14,14 +14,18 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.TroopFilterElement;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.components.CollapseExpandTrigger;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ProfileManager;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -30,6 +34,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
@@ -40,7 +45,6 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 
 /**
- * @TODO save and load filter set
  * @author Torridity
  */
 public class TroopFilterDialog extends javax.swing.JDialog {
@@ -71,7 +75,16 @@ public class TroopFilterDialog extends javax.swing.JDialog {
                 removeFilterSet();
             }
         }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        CollapseExpandTrigger trigger = new CollapseExpandTrigger();
+        trigger.addMouseListener(new MouseAdapter() {
 
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                sourceInfoPanel.setCollapsed(!sourceInfoPanel.isCollapsed());
+            }
+        });
+        jPanel7.setBorder(BorderFactory.createLineBorder(Color.lightGray));
+        jPanel7.add(trigger, BorderLayout.CENTER);
         reset();
     }
 
@@ -99,10 +112,10 @@ public class TroopFilterDialog extends javax.swing.JDialog {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-        capabilityInfoPanel3 = new de.tor.tribes.ui.CapabilityInfoPanel();
-        jApplyFiltersButton = new javax.swing.JButton();
-        jButton20 = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jFilterUnitBox = new javax.swing.JComboBox();
@@ -115,35 +128,29 @@ public class TroopFilterDialog extends javax.swing.JDialog {
         jScrollPane14 = new javax.swing.JScrollPane();
         jFilterList = new javax.swing.JList();
         jStrictFilter = new javax.swing.JCheckBox();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
-        jTextField1 = new javax.swing.JTextField();
+        jPanel7 = new javax.swing.JPanel();
+        sourceInfoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
+        jPanel5 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jTextField1 = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList();
+        capabilityInfoPanel3 = new de.tor.tribes.ui.CapabilityInfoPanel();
+        jApplyFiltersButton = new javax.swing.JButton();
+        jButton20 = new javax.swing.JButton();
 
         setTitle("Truppenfilter");
+        setMinimumSize(new java.awt.Dimension(219, 400));
         setModal(true);
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        capabilityInfoPanel3.setBbSupport(false);
-        capabilityInfoPanel3.setCopyable(false);
-        capabilityInfoPanel3.setPastable(false);
-        capabilityInfoPanel3.setSearchable(false);
+        jPanel4.setLayout(new java.awt.BorderLayout());
 
-        jApplyFiltersButton.setText("Anwenden");
-        jApplyFiltersButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireApplyTroopFiltersEvent(evt);
-            }
-        });
-
-        jButton20.setText("Abbrechen");
-        jButton20.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireApplyTroopFiltersEvent(evt);
-            }
-        });
+        jPanel2.setLayout(new java.awt.BorderLayout());
 
         jPanel1.setBackground(new java.awt.Color(239, 235, 223));
+        jPanel1.setMinimumSize(new java.awt.Dimension(200, 200));
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Neuer Filter"));
         jPanel3.setOpaque(false);
@@ -195,7 +202,7 @@ public class TroopFilterDialog extends javax.swing.JDialog {
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jMinValue, 0, 0, Short.MAX_VALUE)
                             .addComponent(jFilterUnitBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 89, Short.MAX_VALUE)
                         .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jMaxValue, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -231,18 +238,45 @@ public class TroopFilterDialog extends javax.swing.JDialog {
         jStrictFilter.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         jStrictFilter.setOpaque(false);
 
-        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Gespeicherte Filtersätze"));
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jStrictFilter, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
+                    .addComponent(jScrollPane14, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane14, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jStrictFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
 
-        jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jList1.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                jList1ValueChanged(evt);
-            }
-        });
-        jScrollPane1.setViewportView(jList1);
+        jPanel2.add(jPanel1, java.awt.BorderLayout.CENTER);
 
-        jTextField1.setMinimumSize(new java.awt.Dimension(6, 25));
-        jTextField1.setPreferredSize(new java.awt.Dimension(59, 25));
+        jPanel7.setMaximumSize(new java.awt.Dimension(32767, 20));
+        jPanel7.setMinimumSize(new java.awt.Dimension(20, 20));
+        jPanel7.setPreferredSize(new java.awt.Dimension(20, 20));
+        jPanel7.setLayout(new java.awt.BorderLayout());
+        jPanel2.add(jPanel7, java.awt.BorderLayout.EAST);
+
+        jPanel4.add(jPanel2, java.awt.BorderLayout.CENTER);
+
+        sourceInfoPanel.setAnimated(false);
+        sourceInfoPanel.setCollapsed(true);
+        sourceInfoPanel.setDirection(org.jdesktop.swingx.JXCollapsiblePane.Direction.LEFT);
+        sourceInfoPanel.setInheritAlpha(false);
+
+        jPanel5.setMinimumSize(new java.awt.Dimension(190, 360));
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png"))); // NOI18N
         jButton1.setToolTipText("Filtersatz speichern");
@@ -260,77 +294,99 @@ public class TroopFilterDialog extends javax.swing.JDialog {
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        jTextField1.setMinimumSize(new java.awt.Dimension(59, 25));
+        jTextField1.setPreferredSize(new java.awt.Dimension(59, 25));
+
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Gespeicherte Filtersätze"));
+
+        jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jList1.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                jList1ValueChanged(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jList1);
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jStrictFilter, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jScrollPane14, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, 0)
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE))))
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                        .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane14, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton2)
-                            .addComponent(jButton1))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jStrictFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton2)
+                    .addComponent(jButton1)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(capabilityInfoPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 286, Short.MAX_VALUE)
-                        .addComponent(jButton20)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jApplyFiltersButton)))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(capabilityInfoPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton20, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
-                    .addComponent(jApplyFiltersButton))
-                .addContainerGap())
-        );
+        sourceInfoPanel.add(jPanel5, java.awt.BorderLayout.CENTER);
+
+        jPanel4.add(sourceInfoPanel, java.awt.BorderLayout.EAST);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jPanel4, gridBagConstraints);
+
+        capabilityInfoPanel3.setBbSupport(false);
+        capabilityInfoPanel3.setCopyable(false);
+        capabilityInfoPanel3.setPastable(false);
+        capabilityInfoPanel3.setSearchable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 5, 10, 5);
+        getContentPane().add(capabilityInfoPanel3, gridBagConstraints);
+
+        jApplyFiltersButton.setText("Anwenden");
+        jApplyFiltersButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireApplyTroopFiltersEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 5, 10, 10);
+        getContentPane().add(jApplyFiltersButton, gridBagConstraints);
+
+        jButton20.setText("Abbrechen");
+        jButton20.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireApplyTroopFiltersEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 5, 10, 5);
+        getContentPane().add(jButton20, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -610,10 +666,15 @@ public class TroopFilterDialog extends javax.swing.JDialog {
     private javax.swing.JTextField jMaxValue;
     private javax.swing.JTextField jMinValue;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane14;
     private javax.swing.JCheckBox jStrictFilter;
     private javax.swing.JTextField jTextField1;
+    private org.jdesktop.swingx.JXCollapsiblePane sourceInfoPanel;
     // End of variables declaration//GEN-END:variables
 }

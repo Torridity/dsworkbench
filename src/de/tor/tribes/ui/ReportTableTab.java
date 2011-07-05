@@ -11,6 +11,7 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
+import de.tor.tribes.dssim.util.AStarResultReceiver;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FightReport;
@@ -34,6 +35,7 @@ import de.tor.tribes.util.report.ReportManager;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.HeadlessException;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -75,8 +77,24 @@ import org.jdesktop.swingx.table.TableColumnExt;
  *
  * @author Torridity
  */
-public class ReportTableTab extends javax.swing.JPanel implements ListSelectionListener {
+public class ReportTableTab extends javax.swing.JPanel implements ListSelectionListener, AStarResultReceiver {
 
+    @Override
+    public void fireNotifyOnResultEvent(Point point, int pAttacks) {
+        System.out.println("HERE");
+        if (point == null) {
+            showError("Die Zielkoordinate ist ungültig");
+            return;
+        }
+        Village v = DataHolder.getSingleton().getVillages()[point.x][point.y];
+        if (v != null) {
+            DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddTargetEvent(v, pAttacks);
+            DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true);
+            DSWorkbenchMainFrame.getSingleton().getAttackPlaner().toFront();
+        } else {
+            showError("Das Zieldorf ist ungültig");
+        }
+    }
     private static Logger logger = Logger.getLogger("ReportTableTab");
 
     public static enum TRANSFER_TYPE {
@@ -347,10 +365,9 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
     private void transferReportToAStar() {
         List<FightReport> selection = getSelectedReports();
         if (selection.isEmpty()) {
-            showInfo("Keine Berichte ausgewählt");
+            showInfo("Kein Bericht ausgewählt");
             return;
         }
-
 
         FightReport report = selection.get(0);
         Hashtable<String, Double> values = new Hashtable<String, Double>();
@@ -374,8 +391,8 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
             DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
             DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
         }
-
-        DSWorkbenchSimulatorFrame.getSingleton().insertValuesExternally(values);
+        Point coord = new Point(report.getTargetVillage().getX(), report.getTargetVillage().getY());
+        DSWorkbenchSimulatorFrame.getSingleton().insertValuesExternally(coord, values, this);
     }
 
     private void copyBBToExternalClipboardEvent() {

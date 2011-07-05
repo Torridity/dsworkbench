@@ -20,6 +20,7 @@ import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ProfileManager;
+import de.tor.tribes.util.SplitSetHelper;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.BorderLayout;
@@ -70,18 +71,18 @@ public class TroopSplitDialog extends javax.swing.JDialog {
                 removeSplitEnty();
             }
         }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        
-        CollapseExpandTrigger trigger = new CollapseExpandTrigger();
-            trigger.addMouseListener(new MouseAdapter() {
 
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    sourceInfoPanel.setCollapsed(!sourceInfoPanel.isCollapsed());
-                }
-            });
-            jPanel7.setBorder(BorderFactory.createLineBorder(Color.lightGray));
-            jPanel7.add(trigger, BorderLayout.CENTER);
-        
+        CollapseExpandTrigger trigger = new CollapseExpandTrigger();
+        trigger.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                sourceInfoPanel.setCollapsed(!sourceInfoPanel.isCollapsed());
+            }
+        });
+        jPanel7.setBorder(BorderFactory.createLineBorder(Color.lightGray));
+        jPanel7.add(trigger, BorderLayout.CENTER);
+
     }
 
     /**Initialize all entries, renderers and reset the entire view*/
@@ -390,7 +391,6 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.ipady = 7;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(10, 5, 10, 5);
         getContentPane().add(capabilityInfoPanel3, gridBagConstraints);
@@ -504,77 +504,12 @@ public class TroopSplitDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_fireLoadSplitSetEvent
 
     private void saveSplitSets() {
-        String profileDir = GlobalOptions.getSelectedProfile().getProfileDirectory();
-        File filterFile = new File(profileDir + "/splits.sav");
-
-        StringBuilder b = new StringBuilder();
-        Enumeration<String> setKeys = splitSets.keys();
-
-        while (setKeys.hasMoreElements()) {
-            String key = setKeys.nextElement();
-            b.append(key).append(",");
-            Hashtable<UnitHolder, Integer> elements = splitSets.get(key);
-            Enumeration<UnitHolder> keys = elements.keys();
-            int cnt = 0;
-            while (keys.hasMoreElements()) {
-
-                UnitHolder unit = keys.nextElement();
-                b.append(unit.getPlainName()).append("/").append(elements.get(unit));
-                if (cnt < elements.size() - 1) {
-                    b.append(",");
-                }
-                cnt++;
-            }
-            b.append("\n");
-        }
-
-        FileWriter w = null;
-        try {
-            w = new FileWriter(filterFile);
-            w.write(b.toString());
-            w.flush();
-        } catch (Exception e) {
-            logger.error("Failed to write split sets", e);
-        } finally {
-            try {
-                w.close();
-            } catch (Exception e) {
-            }
-        }
+        SplitSetHelper.saveSplitSets(splitSets);
     }
 
     private void loadSplitSets() {
         splitSets.clear();
-        String profileDir = GlobalOptions.getSelectedProfile().getProfileDirectory();
-        File filterFile = new File(profileDir + "/splits.sav");
-        if (!filterFile.exists()) {
-            return;
-        }
-
-        BufferedReader r = null;
-
-        try {
-            r = new BufferedReader(new FileReader(filterFile));
-            String line = "";
-            while ((line = r.readLine()) != null) {
-                String[] split = line.split(",");
-                String name = split[0];
-                Hashtable<UnitHolder, Integer> elements = new Hashtable<UnitHolder, Integer>();
-                for (int i = 1; i < split.length; i++) {
-                    String[] elemSplit = split[i].split("/");
-                    elements.put(DataHolder.getSingleton().getUnitByPlainName(elemSplit[0]), Integer.parseInt(elemSplit[1]));
-                }
-                splitSets.put(name, elements);
-            }
-        } catch (Exception e) {
-            logger.error("Failed to read split sets", e);
-        } finally {
-            try {
-                r.close();
-            } catch (Exception ignored) {
-            }
-        }
-
+        SplitSetHelper.loadSplitSets(splitSets);
         updateSplitSetList();
     }
 

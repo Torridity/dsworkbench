@@ -1749,9 +1749,9 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="capabilityInfoPanel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jInfoLabel" pref="873" max="32767" attributes="0"/>
+                      <Component id="jInfoLabel" pref="801" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="jMainPanel" alignment="1" pref="931" max="32767" attributes="0"/>
+                  <Component id="jMainPanel" alignment="1" pref="859" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -1761,7 +1761,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jMainPanel" pref="610" max="32767" attributes="0"/>
+              <Component id="jMainPanel" pref="504" max="32767" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
                   <Component id="capabilityInfoPanel1" min="-2" pref="20" max="-2" attributes="0"/>

@@ -229,7 +229,11 @@
                   <Group type="103" groupAlignment="1" attributes="0">
                       <Component id="jPanel5" alignment="0" max="32767" attributes="0"/>
                       <Component id="jRandomizeOption" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jModifyArrivalOption" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="jModifyArrivalOption" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="jModifySendOption" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <Component id="jPanel4" alignment="0" max="32767" attributes="0"/>
                       <Component id="jMoveTimeOption" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Group type="102" alignment="1" attributes="0">
@@ -251,7 +255,10 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="jModifyArrivalOption" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jModifyArrivalOption" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jModifySendOption" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jPanel4" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -480,7 +487,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="32767" attributes="0"/>
-                      <Component id="jArriveDateField" min="-2" max="-2" attributes="0"/>
+                      <Component id="jDateField" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -491,7 +498,7 @@
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
                           <Component id="jLabel8" alignment="0" max="32767" attributes="1"/>
-                          <Component id="jArriveDateField" alignment="0" max="32767" attributes="1"/>
+                          <Component id="jDateField" alignment="0" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -506,7 +513,7 @@
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
-            <Component class="de.tor.tribes.ui.components.DateTimeField" name="jArriveDateField">
+            <Component class="de.tor.tribes.ui.components.DateTimeField" name="jDateField">
               <Properties>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
@@ -524,7 +531,7 @@
             <Property name="text" type="java.lang.String" value="Ankunftzeit angleichen"/>
           </Properties>
           <Events>
-            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="jModifyArrivalOptionfireModifyTimeEvent"/>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireModifyTimeEvent"/>
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -539,7 +546,7 @@
             <Property name="text" type="java.lang.String" value="Verschieben"/>
           </Properties>
           <Events>
-            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="jMoveTimeOptionfireModifyTimeEvent"/>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireModifyTimeEvent"/>
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -553,7 +560,7 @@
             <Property name="text" type="java.lang.String" value="Zuf&#xe4;llig verschieben"/>
           </Properties>
           <Events>
-            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="jRandomizeOptionfireModifyTimeEvent"/>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireModifyTimeEvent"/>
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -640,6 +647,7 @@
             <Component class="javax.swing.JFormattedTextField" name="jRandomField">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="4"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Zeitfenster in Stunden&lt;br/&gt;Wird hier 2 eingegeben, so werden alle Angriffe um einen zuf&#xe4;lligen Wert&lt;br/&gt;&#xa; in einem Bereich von -2 bis +2 Stunden,&lt;br/&gt; ausgehend von ihrer aktuellen Zeit, verschoben.&lt;/html&gt;"/>
                 <Property name="enabled" type="boolean" value="false"/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[6, 25]"/>
@@ -661,6 +669,7 @@
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Nicht in Nachtbonus verschieben"/>
+                <Property name="toolTipText" type="java.lang.String" value="DS Workbench sorgt daf&#xfc;r, dass Angriffe nicht im Nachtbonus landen"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <AuxValues>
@@ -669,6 +678,20 @@
             </Component>
           </SubComponents>
         </Container>
+        <Component class="javax.swing.JRadioButton" name="jModifySendOption">
+          <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="buttonGroup2"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Abschickzeit angleichen"/>
+          </Properties>
+          <Events>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireModifyTimeEvent"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
+          </AuxValues>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JDialog" name="jChangeAttackTypeDialog">

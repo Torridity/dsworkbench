@@ -25,7 +25,6 @@ public class DSCalculator {
 
     public static double calculateMoveTimeInMinutes(Village pSource, Village pTarget, double pMinPerField) {
         return calculateMoveTimeInSeconds(pSource, pTarget, pMinPerField) / 60.0;
-        //calculateDistance(pSource, pTarget) * pMinPerField;
     }
 
     public static double calculateMoveTimeInSeconds(Village pSource, Village pTarget, double pMinPerField) {
@@ -33,6 +32,14 @@ public class DSCalculator {
             return calculateDistance(pSource, pTarget) * pMinPerField * 60.0;
         } else {
             return Math.round(calculateDistance(pSource, pTarget) * pMinPerField * 60.0);
+        }
+    }
+
+    public static long calculateMoveTimeInMillis(Village pSource, Village pTarget, double pMinPerField) {
+        if (ServerSettings.getSingleton().isMillisArrival()) {
+            return Math.round(calculateDistance(pSource, pTarget) * pMinPerField * 60000l);
+        } else {
+            return Math.round(calculateDistance(pSource, pTarget) * pMinPerField * 60l) * 1000l;
         }
     }
 

@@ -155,13 +155,13 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
     public static synchronized DSWorkbenchAttackFrame getSingleton() {
         if (SINGLETON == null) {
-            SINGLETON = new DSWorkbenchAttackFrame(null);
+            SINGLETON = new DSWorkbenchAttackFrame();
         }
         return SINGLETON;
     }
 
     /** Creates new form DSWorkbenchAttackFrame */
-    DSWorkbenchAttackFrame(String dummy) {
+    DSWorkbenchAttackFrame() {
         initComponents();
         centerPanel = new GenericTestPanel();
         jAttackPanel.add(centerPanel, BorderLayout.CENTER);

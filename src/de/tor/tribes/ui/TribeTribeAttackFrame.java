@@ -581,15 +581,20 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
     private void filterByTroopStrength() {
         int idx = jideTabbedPane1.getSelectedIndex();
         if (idx == 0) {
-            /*   jFilterFrame.pack();
-            jFilterFrame.setLocationRelativeTo(this);
-            jFilterFrame.setVisible(true);*/
+            int[] selectedRows = jSourcesTable.getSelectedRows();
+            if (selectedRows == null || selectedRows.length == 0) {
+                showInfo(sourceInfoPanel, jxSourceInfoLabel, "Keine Herkunftsdörfer gewählt");
+                return;
+            }
 
             List<Village> sources = new LinkedList<Village>();
-            for (int i = 0; i < jSourcesTable.getRowCount(); i++) {
-                //go through all rows in attack table and get source village
+            List<Village> selection = new LinkedList<Village>();
+            for (int i : selectedRows) {
+                //go through selected rows in attack table and get source village
                 sources.add((Village) jSourcesTable.getValueAt(i, 0));
+                selection.add((Village) jSourcesTable.getValueAt(i, 0));
             }
+
             int sizeBefore = sources.size();
 
             if (sizeBefore == 0) {
@@ -601,7 +606,9 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
             for (int i = jSourcesTable.getRowCount() - 1; i >= 0; i--) {
                 //go through all rows in attack table and get source village
                 Village v = (Village) jSourcesTable.getValueAt(i, 0);
-                if (!sources.contains(v)) {
+                if (selection.contains(v)
+                        && !sources.contains(v)) {
+                    //remove entry if village was selected before and is not in list after filtering
                     ((DefaultTableModel) jSourcesTable.getModel()).removeRow(jSourcesTable.convertRowIndexToModel(i));
                 }
             }
@@ -1860,7 +1867,8 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
                             .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jAllTargetsComboBox, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addComponent(jMarkTargetAsFake, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)

@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicArrowButton;
+import org.apache.commons.lang.time.DateUtils;
 import org.netbeans.lib.awtextra.AbsoluteConstraints;
 import org.netbeans.lib.awtextra.AbsoluteLayout;
 
@@ -73,7 +74,11 @@ public class TimePicker extends javax.swing.JPanel {
     }
 
     public Date getTime() {
-        return new GregorianCalendar(0, 0, 0, pHour, pMinute).getTime();
+
+        Date d = new GregorianCalendar(0, 0, 0, pHour, pMinute).getTime();
+        d = DateUtils.setSeconds(d, 0);
+        d = DateUtils.setMilliseconds(d, 0);
+        return d;
     }
 
     private void init() {

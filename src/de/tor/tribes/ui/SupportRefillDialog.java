@@ -29,7 +29,7 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO link to saved splits and store default amounts
+ *@TODO store default amounts for def
  * @author Torridity
  */
 public class SupportRefillDialog extends javax.swing.JDialog {

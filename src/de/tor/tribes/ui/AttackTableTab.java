@@ -161,7 +161,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             KEY_LISTENER_ADDED = true;
         }
         jxAttackTable.getSelectionModel().addListSelectionListener(AttackTableTab.this);
-        jArriveDateField.setDate(new Date());
+        jDateField.setDate(new Date());
         String prop = GlobalOptions.getProperty("attack.script.attacks.in.village.info");
         jShowAttacksInVillageInfo.setSelected((prop == null) ? true : Boolean.parseBoolean(prop));
         prop = GlobalOptions.getProperty("attack.script.attacks.on.confirm.page");
@@ -354,7 +354,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jSecondsField = new javax.swing.JSpinner();
         jPanel4 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
-        jArriveDateField = new de.tor.tribes.ui.components.DateTimeField();
+        jDateField = new de.tor.tribes.ui.components.DateTimeField();
         jModifyArrivalOption = new javax.swing.JRadioButton();
         jMoveTimeOption = new javax.swing.JRadioButton();
         jRandomizeOption = new javax.swing.JRadioButton();
@@ -364,6 +364,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jRandomField = new javax.swing.JFormattedTextField();
         jLabel19 = new javax.swing.JLabel();
         jNotRandomToNightBonus = new javax.swing.JCheckBox();
+        jModifySendOption = new javax.swing.JRadioButton();
         jChangeAttackTypeDialog = new javax.swing.JDialog();
         jPanel6 = new javax.swing.JPanel();
         jNoType = new javax.swing.JRadioButton();
@@ -610,7 +611,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jLabel8.setToolTipText("");
         jLabel8.setEnabled(false);
 
-        jArriveDateField.setEnabled(false);
+        jDateField.setEnabled(false);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -620,7 +621,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 .addContainerGap()
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jArriveDateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jDateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -629,7 +630,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jArriveDateField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jDateField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -637,7 +638,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jModifyArrivalOption.setText("Ankunftzeit angleichen");
         jModifyArrivalOption.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                jModifyArrivalOptionfireModifyTimeEvent(evt);
+                fireModifyTimeEvent(evt);
             }
         });
 
@@ -646,7 +647,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jMoveTimeOption.setText("Verschieben");
         jMoveTimeOption.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                jMoveTimeOptionfireModifyTimeEvent(evt);
+                fireModifyTimeEvent(evt);
             }
         });
 
@@ -654,7 +655,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jRandomizeOption.setText("Zufällig verschieben");
         jRandomizeOption.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                jRandomizeOptionfireModifyTimeEvent(evt);
+                fireModifyTimeEvent(evt);
             }
         });
 
@@ -673,6 +674,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jLabel18.setPreferredSize(new java.awt.Dimension(16, 25));
 
         jRandomField.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jRandomField.setToolTipText("<html>Zeitfenster in Stunden<br/>Wird hier 2 eingegeben, so werden alle Angriffe um einen zufälligen Wert<br/>\n in einem Bereich von -2 bis +2 Stunden,<br/> ausgehend von ihrer aktuellen Zeit, verschoben.</html>");
         jRandomField.setEnabled(false);
         jRandomField.setMinimumSize(new java.awt.Dimension(6, 25));
         jRandomField.setPreferredSize(new java.awt.Dimension(6, 25));
@@ -681,6 +683,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
         jNotRandomToNightBonus.setSelected(true);
         jNotRandomToNightBonus.setText("Nicht in Nachtbonus verschieben");
+        jNotRandomToNightBonus.setToolTipText("DS Workbench sorgt dafür, dass Angriffe nicht im Nachtbonus landen");
         jNotRandomToNightBonus.setEnabled(false);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -715,6 +718,14 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        buttonGroup2.add(jModifySendOption);
+        jModifySendOption.setText("Abschickzeit angleichen");
+        jModifySendOption.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireModifyTimeEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jTimeChangeDialogLayout = new javax.swing.GroupLayout(jTimeChangeDialog.getContentPane());
         jTimeChangeDialog.getContentPane().setLayout(jTimeChangeDialogLayout);
         jTimeChangeDialogLayout.setHorizontalGroup(
@@ -724,7 +735,10 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jRandomizeOption, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jModifyArrivalOption, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jTimeChangeDialogLayout.createSequentialGroup()
+                        .addComponent(jModifyArrivalOption)
+                        .addGap(18, 18, 18)
+                        .addComponent(jModifySendOption))
                     .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jMoveTimeOption, javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
@@ -742,7 +756,9 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jModifyArrivalOption)
+                .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jModifyArrivalOption)
+                    .addComponent(jModifySendOption))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -929,13 +945,13 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jTimeChangeDialog.setVisible(false);
 }//GEN-LAST:event_fireCloseTimeChangeDialogEvent
 
-    private void jModifyArrivalOptionfireModifyTimeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jModifyArrivalOptionfireModifyTimeEvent
+    private void fireModifyTimeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireModifyTimeEvent
         boolean moveMode = false;
         boolean arriveMode = false;
         boolean randomMode = false;
         if (evt.getSource() == jMoveTimeOption) {
             moveMode = true;
-        } else if (evt.getSource() == jModifyArrivalOption) {
+        } else if (evt.getSource() == jModifyArrivalOption || evt.getSource() == jModifySendOption) {
             arriveMode = true;
         } else if (evt.getSource() == jRandomizeOption) {
             randomMode = true;
@@ -949,72 +965,14 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jDayField.setEnabled(moveMode);
         //set arrive options
         jLabel8.setEnabled(arriveMode);
-        jArriveDateField.setEnabled(arriveMode);
+        jDateField.setEnabled(arriveMode);
         //random options
         jLabel17.setEnabled(randomMode);
         jLabel18.setEnabled(randomMode);
         jLabel19.setEnabled(randomMode);
         jRandomField.setEnabled(randomMode);
         jNotRandomToNightBonus.setEnabled(randomMode);
-}//GEN-LAST:event_jModifyArrivalOptionfireModifyTimeEvent
-
-    private void jMoveTimeOptionfireModifyTimeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jMoveTimeOptionfireModifyTimeEvent
-        boolean moveMode = false;
-        boolean arriveMode = false;
-        boolean randomMode = false;
-        if (evt.getSource() == jMoveTimeOption) {
-            moveMode = true;
-        } else if (evt.getSource() == jModifyArrivalOption) {
-            arriveMode = true;
-        } else if (evt.getSource() == jRandomizeOption) {
-            randomMode = true;
-        }
-        jLabel5.setEnabled(moveMode);
-        jLabel6.setEnabled(moveMode);
-        jLabel7.setEnabled(moveMode);
-        jSecondsField.setEnabled(moveMode);
-        jMinuteField.setEnabled(moveMode);
-        jHourField.setEnabled(moveMode);
-        jDayField.setEnabled(moveMode);
-        //set arrive options
-        jLabel8.setEnabled(arriveMode);
-        jArriveDateField.setEnabled(arriveMode);
-        //random options
-        jLabel17.setEnabled(randomMode);
-        jLabel18.setEnabled(randomMode);
-        jLabel19.setEnabled(randomMode);
-        jRandomField.setEnabled(randomMode);
-        jNotRandomToNightBonus.setEnabled(randomMode);
-}//GEN-LAST:event_jMoveTimeOptionfireModifyTimeEvent
-
-    private void jRandomizeOptionfireModifyTimeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jRandomizeOptionfireModifyTimeEvent
-        boolean moveMode = false;
-        boolean arriveMode = false;
-        boolean randomMode = false;
-        if (evt.getSource() == jMoveTimeOption) {
-            moveMode = true;
-        } else if (evt.getSource() == jModifyArrivalOption) {
-            arriveMode = true;
-        } else if (evt.getSource() == jRandomizeOption) {
-            randomMode = true;
-        }
-        jLabel5.setEnabled(moveMode);
-        jLabel6.setEnabled(moveMode);
-        jLabel7.setEnabled(moveMode);
-        jSecondsField.setEnabled(moveMode);
-        jMinuteField.setEnabled(moveMode);
-        jHourField.setEnabled(moveMode);
-        jDayField.setEnabled(moveMode);
-        //set arrive options
-        jLabel8.setEnabled(arriveMode);
-        jArriveDateField.setEnabled(arriveMode);
-        //random options
-        jLabel17.setEnabled(randomMode);
-        jLabel18.setEnabled(randomMode);
-        jLabel19.setEnabled(randomMode);
-        jRandomField.setEnabled(randomMode);
-        jNotRandomToNightBonus.setEnabled(randomMode);
-}//GEN-LAST:event_jRandomizeOptionfireModifyTimeEvent
+}//GEN-LAST:event_fireModifyTimeEvent
 
     private void fireChangeUnitTypeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeUnitTypeEvent
         if (evt.getSource() == jAcceptChangeUnitTypeButton) {
@@ -1048,13 +1006,13 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private static javax.swing.JCheckBox jAdeptTypeBox;
     private static javax.swing.JCheckBox jAdeptUnitBox;
     private javax.swing.JPanel jAdeptUnitPanel;
-    private static de.tor.tribes.ui.components.DateTimeField jArriveDateField;
     private static javax.swing.JRadioButton jAttackType;
     private static javax.swing.JButton jButton13;
     private static javax.swing.JButton jButton14;
     private static javax.swing.JButton jButton15;
     private static javax.swing.JButton jCancelButton;
     private static javax.swing.JDialog jChangeAttackTypeDialog;
+    private static de.tor.tribes.ui.components.DateTimeField jDateField;
     private static javax.swing.JSpinner jDayField;
     private static javax.swing.JRadioButton jDefType;
     private static javax.swing.JButton jDoScriptExportButton;
@@ -1080,6 +1038,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private javax.swing.JLabel jLabel8;
     private static javax.swing.JSpinner jMinuteField;
     private static javax.swing.JRadioButton jModifyArrivalOption;
+    private static javax.swing.JRadioButton jModifySendOption;
     private static javax.swing.JRadioButton jMoveTimeOption;
     private static javax.swing.JRadioButton jNoType;
     private static javax.swing.JCheckBox jNotRandomToNightBonus;
@@ -1123,11 +1082,15 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             }
 
         } else if (jModifyArrivalOption.isSelected()) {
-            Date arrive = jArriveDateField.getSelectedDate();
+            Date arrive = jDateField.getSelectedDate();
             for (Attack attack : attacksToModify) {
-                //later if first index is selected
-                //if later, add diff to arrival, else remove diff from arrival
                 attack.setArriveTime(arrive);
+            }
+
+        } else if (jModifySendOption.isSelected()) {
+            Date arrive = jDateField.getSelectedDate();
+            for (Attack attack : attacksToModify) {
+                attack.setSendTime(arrive);
             }
 
         } else if (jRandomizeOption.isSelected()) {

@@ -73,7 +73,7 @@ public class MarkerManager extends GenericManager<Marker> {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Loading marker set '" + setKey + "'");
                     }
-                     addGroup(setKey);
+                    addGroup(setKey);
                     for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "markers/marker")) {
                         Marker m = new Marker();
                         m.loadFromXml(e1);
@@ -334,12 +334,13 @@ public class MarkerManager extends GenericManager<Marker> {
         for (String group : getGroups()) {
             for (ManageableType t : getAllElements(group)) {
                 Marker m = (Marker) t;
-                if ((m.getMarkerType() == Marker.TRIBE_MARKER_TYPE) && (m.getMarkerID() == tribe.getId())) {
+                if (((m.getMarkerType() == Marker.TRIBE_MARKER_TYPE) && (m.getMarkerID() == tribe.getId()))
+                        || (ally != null && (m.getMarkerType() == Marker.ALLY_MARKER_TYPE) && (m.getMarkerID() == ally.getId()))) {
                     return m;
                 }
-                if (ally != null && (m.getMarkerType() == Marker.ALLY_MARKER_TYPE) && (m.getMarkerID() == ally.getId())) {
-                    return m;
-                }
+                /*if (ally != null && (m.getMarkerType() == Marker.ALLY_MARKER_TYPE) && (m.getMarkerID() == ally.getId())) {
+                return m;
+                }*/
             }
         }
         //no marker found

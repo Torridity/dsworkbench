@@ -17,7 +17,6 @@ import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.mark.MarkerManager;
-import de.tor.tribes.util.tag.TagManager;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -445,10 +444,10 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         int textureId = -1;
         BufferedImage sprite = null;
 
-
+        Marker villageMarker = MarkerManager.getSingleton().getMarker(v);
         if (v != null
                 && !(v.getTribe().equals(Barbarians.getSingleton()) && !showBarbarian)
-                && !(MarkerManager.getSingleton().getMarker(v) == null && markedOnly && !v.getTribe().getName().equals(GlobalOptions.getSelectedProfile().getTribeName()))) {
+                && !(villageMarker == null && markedOnly && !v.getTribe().getName().equals(GlobalOptions.getSelectedProfile().getTribeName()))) {
             //village field that has to be rendered
             v.setVisibleOnMap(true);
             if (GlobalOptions.getSkin().isMinimapSkin()) {

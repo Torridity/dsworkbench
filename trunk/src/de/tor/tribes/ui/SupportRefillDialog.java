@@ -29,11 +29,11 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO store default amounts for def
  * @author Torridity
  */
 public class SupportRefillDialog extends javax.swing.JDialog {
 
+    private static Logger logger = Logger.getLogger("RefillDialog");
     private List<VillageTroopsHolder> mTroopHolders = null;
     private Hashtable<String, Hashtable<UnitHolder, Integer>> splitSets = new Hashtable<String, Hashtable<UnitHolder, Integer>>();
 
@@ -81,7 +81,7 @@ public class SupportRefillDialog extends javax.swing.JDialog {
         SplitSetHelper.loadSplitSets(splitSets);
 
         jSplitSetBox.setModel(new DefaultComboBoxModel(splitSets.keySet().toArray(new String[splitSets.size()])));
-
+        restoreDefaultAmount();
         setVisible(true);
     }
 
@@ -335,6 +335,7 @@ public class SupportRefillDialog extends javax.swing.JDialog {
             DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true);
             DSWorkbenchMainFrame.getSingleton().getAttackPlaner().toFront();
         }
+        storeDefaultAmount();
         setVisible(false);
     }//GEN-LAST:event_fireConfirmEvent
 
@@ -358,6 +359,38 @@ public class SupportRefillDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_fireSplitSetSelectionChangedEvent
 
+    private void storeDefaultAmount() {
+        try {
+            int spearGoal = Integer.parseInt(jSpearAmount.getText());
+            int swordGoal = Integer.parseInt(jSwordAmount.getText());
+            int archerGoal = Integer.parseInt(jArcherAmount.getText());
+            int spyGoal = Integer.parseInt(jSpyAmount.getText());
+            int heavyGoal = Integer.parseInt(jHeavyAmount.getText());
+            GlobalOptions.addProperty("support.refill.amount", spearGoal + ":" + swordGoal + ":" + archerGoal + ":" + spyGoal + ":" + heavyGoal);
+        } catch (Exception e) {
+        }
+    }
+
+    private void restoreDefaultAmount() {
+        String amounts = GlobalOptions.getProperty("support.refill.amount");
+        if (amounts != null) {
+            try {
+                String[] sAmounts = amounts.split(":");
+                jSpearAmount.setText(sAmounts[0]);
+                jSwordAmount.setText(sAmounts[1]);
+                jArcherAmount.setText(sAmounts[2]);
+                jSpyAmount.setText(sAmounts[3]);
+                jHeavyAmount.setText(sAmounts[4]);
+            } catch (NullPointerException npe) {
+                logger.error("Failed to read standard refill values", npe);
+            } catch (ArrayIndexOutOfBoundsException aioobe) {
+                logger.error("Failed to read standard refill values", aioobe);
+            }
+        }else{
+            logger.info("No standard refill values found");
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -373,7 +406,7 @@ public class SupportRefillDialog extends javax.swing.JDialog {
 
             public void run() {
                 SupportRefillDialog dialog = new SupportRefillDialog(new javax.swing.JFrame(), true);
-                
+
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 
                     public void windowClosing(java.awt.event.WindowEvent e) {

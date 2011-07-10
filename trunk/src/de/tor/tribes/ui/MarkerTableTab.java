@@ -152,6 +152,20 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
         }
     }
 
+    public void changeVisibility(boolean pValue) {
+        List<Marker> markers = getSelectedMarkers();
+        if (markers.isEmpty()) {
+            showInfo("Keine Markierungen gewählt");
+            return;
+        }
+        MarkerManager.getSingleton().invalidate();
+        for (Marker m : markers) {
+            m.setShownOnMap(pValue);
+        }
+        markerModel.fireTableDataChanged();
+        MarkerManager.getSingleton().revalidate(true);
+    }
+
     public void showSuccess(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(Color.GREEN));

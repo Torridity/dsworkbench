@@ -28,8 +28,10 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -38,12 +40,13 @@ import javax.swing.event.ChangeListener;
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
+import org.jdesktop.swingx.JXButton;
+import org.jdesktop.swingx.JXTaskPane;
 
 /**
  * @author  Charon
  */
 public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener {
-//@TODO notifiy map on change, don't paint does not work
 
     private static Logger logger = Logger.getLogger("MarkerView");
     private static DSWorkbenchMarkerFrame SINGLETON = null;
@@ -81,9 +84,10 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
     /** Creates new form DSWorkbenchMarkerFrame */
     DSWorkbenchMarkerFrame() {
         initComponents();
-        centerPanel = new GenericTestPanel(false);
+        centerPanel = new GenericTestPanel(true);
         jMarkersPanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildComponent(jXMarkerPanel);
+        buildMenu();
         try {
             jMarkerFrameAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("marker.frame.alwaysOnTop")));
             setAlwaysOnTop(jMarkerFrameAlwaysOnTop.isSelected());
@@ -169,10 +173,48 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         pack();
     }
 
+    private void buildMenu() {
+        JXTaskPane editPane = new JXTaskPane();
+        editPane.setTitle("Bearbeiten");
+        JXButton showButton = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/eye_large.png")));
+
+        showButton.setToolTipText("Blendet die Dörfer der gewählten Spieler/Stämme auf der Hauptkarte ein");
+        showButton.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                MarkerTableTab tab = getActiveTab();
+                if (tab != null) {
+                    tab.changeVisibility(true);
+                }
+            }
+        });
+        editPane.getContentPane().add(showButton);
+        JXButton hideButton = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/eye_forbidden_large.png")));
+
+        hideButton.setToolTipText("Blendet die Dörfer der gewählten Spieler/Stämme auf der Hauptkarte aus");
+        hideButton.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                MarkerTableTab tab = getActiveTab();
+                if (tab != null) {
+                    tab.changeVisibility(false);
+                }
+            }
+        });
+        editPane.getContentPane().add(hideButton);
+
+
+        centerPanel.setupTaskPane(editPane);
+    }
+
     public void storeCustomProperties(Configuration pCconfig) {
     }
- public void restoreCustomProperties(Configuration pConfig) {
+
+    public void restoreCustomProperties(Configuration pConfig) {
     }
+
     public String getPropertyPrefix() {
         return "marker.view";
     }

@@ -46,6 +46,7 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -103,9 +104,9 @@ public class MapRenderer {
     private long lCurrentSleepTime = 50;
     private int iCurrentFPS = 0;
     private float alpha = 0.0f;
-    private HashMap<Ally, Integer> mAllyCount = new HashMap<Ally, Integer>();
-    private HashMap<Tribe, Integer> mTribeCount = new HashMap<Tribe, Integer>();
-    private HashMap<Village, AnimatedVillageInfoRenderer> mAnimators = new HashMap<Village, AnimatedVillageInfoRenderer>();
+    private Hashtable<Ally, Integer> mAllyCount = new Hashtable<Ally, Integer>();
+    private Hashtable<Tribe, Integer> mTribeCount = new Hashtable<Tribe, Integer>();
+    private Hashtable<Village, AnimatedVillageInfoRenderer> mAnimators = new Hashtable<Village, AnimatedVillageInfoRenderer>();
     //rendering layers
     private MapLayerRenderer mMapLayer = new MapLayerRenderer();
     private TroopDensityLayerRenderer mTroopDensityLayer = new TroopDensityLayerRenderer();
@@ -412,12 +413,12 @@ public class MapRenderer {
         return dCurrentZoom;
     }
 
-    public HashMap<Tribe, Integer> getTribeCount() {
-        return (HashMap<Tribe, Integer>) mTribeCount.clone();
+    public Hashtable<Tribe, Integer> getTribeCount() {
+        return (Hashtable<Tribe, Integer>) mTribeCount.clone();
     }
 
-    public HashMap<Ally, Integer> getAllyCount() {
-        return (HashMap<Ally, Integer>) mAllyCount.clone();
+    public Hashtable<Ally, Integer> getAllyCount() {
+        return (Hashtable<Ally, Integer>) mAllyCount.clone();
     }
 
     /**Render e.g. drag line, radar, popup*/
@@ -439,42 +440,6 @@ public class MapRenderer {
                 f.renderForm(g2d);
             }
         }
-        // <editor-fold defaultstate="collapsed" desc="Mark current players villages">
-
-        if (Boolean.parseBoolean(GlobalOptions.getProperty("highlight.tribes.villages"))) {
-            Tribe mouseTribe = Barbarians.getSingleton();
-            if (mouseVillage != null) {
-                mouseTribe = mouseVillage.getTribe();
-                if (mouseTribe == null) {
-                    mouseTribe = Barbarians.getSingleton();
-                }
-
-            } else {
-                mouseTribe = null;
-            }
-
-            Composite c = g2d.getComposite();
-
-            Paint p = g2d.getPaint();
-            if (mouseTribe != null) {
-                //Rectangle copy = null;
-                Iterator<Village> keys = mVillagePositions.keySet().iterator();
-
-                while (keys.hasNext()) {
-                    Village v = keys.next();
-                    if ((v.getTribe() == null && mouseTribe.equals(Barbarians.getSingleton())) || (v.getTribe() != null && mouseTribe.equals(v.getTribe()))) {
-                        Rectangle r = mVillagePositions.get(v);
-                        // if (copy == null) {
-                        Ellipse2D ellipse = new Ellipse2D.Float(r.x, r.y, r.height, r.height);
-                        g2d.setPaint(new RoundGradientPaint(r.getCenterX(), r.getCenterY(), Color.yellow, new Point2D.Double(0, r.height / 2), new Color(0, 0, 0, 0)));
-                        g2d.fill(ellipse);
-                    }
-                }
-            }
-            g2d.setPaint(p);
-            g2d.setComposite(c);
-        }
-// </editor-fold>
         // <editor-fold defaultstate="collapsed" desc=" Draw Drag line (Foreground)">
         Line2D.Double dragLine = new Line2D.Double(-1, -1, xDragLineEnd, yDragLineEnd);
         if (mSourceVillage != null) {
@@ -510,6 +475,45 @@ public class MapRenderer {
 
         }
         //</editor-fold>
+
+        boolean mouseDown = MapPanel.getSingleton().isMouseDown();
+
+        // <editor-fold defaultstate="collapsed" desc="Mark current players villages">
+
+        if (!mouseDown && Boolean.parseBoolean(GlobalOptions.getProperty("highlight.tribes.villages"))) {
+            Tribe mouseTribe = Barbarians.getSingleton();
+            if (mouseVillage != null) {
+                mouseTribe = mouseVillage.getTribe();
+                if (mouseTribe == null) {
+                    mouseTribe = Barbarians.getSingleton();
+                }
+
+            } else {
+                mouseTribe = null;
+            }
+
+            Composite c = g2d.getComposite();
+
+            Paint p = g2d.getPaint();
+            if (mouseTribe != null) {
+                //Rectangle copy = null;
+                Iterator<Village> keys = mVillagePositions.keySet().iterator();
+
+                while (keys.hasNext()) {
+                    Village v = keys.next();
+                    if ((v.getTribe() == null && mouseTribe.equals(Barbarians.getSingleton())) || (v.getTribe() != null && mouseTribe.equals(v.getTribe()))) {
+                        Rectangle r = mVillagePositions.get(v);
+                        // if (copy == null) {
+                        Ellipse2D ellipse = new Ellipse2D.Float(r.x, r.y, r.height, r.height);
+                        g2d.setPaint(new RoundGradientPaint(r.getCenterX(), r.getCenterY(), Color.yellow, new Point2D.Double(0, r.height / 2), new Color(0, 0, 0, 0)));
+                        g2d.fill(ellipse);
+                    }
+                }
+            }
+            g2d.setPaint(p);
+            g2d.setComposite(c);
+        }
+// </editor-fold>
         // <editor-fold defaultstate="collapsed" desc=" Draw radar information ">
         Village radarVillage = MapPanel.getSingleton().getRadarVillage();
         List<Village> radarVillages = new LinkedList<Village>();
@@ -518,13 +522,12 @@ public class MapRenderer {
             radarVillages.add(radarVillage);
         }
 
-//add mouse village if radar tool is selected
+        //add mouse village if radar tool is selected
         if (mouseVillage != null && MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_RADAR) {
             //check if radar village == mouse village
-            if (!radarVillages.contains(mouseVillage)) {
+            if (!mouseDown && !radarVillages.contains(mouseVillage)) {
                 radarVillages.add(mouseVillage);
             }
-
         }
 
         for (Village v : radarVillages) {
@@ -568,7 +571,7 @@ public class MapRenderer {
 // </editor-fold>
 
         //draw additional info
-        if (mouseVillage != null && Boolean.parseBoolean(GlobalOptions.getProperty("show.mouseover.info"))) {
+        if (!mouseDown && mouseVillage != null && Boolean.parseBoolean(GlobalOptions.getProperty("show.mouseover.info"))) {
             Rectangle rect = mVillagePositions.get(mouseVillage);
             AnimatedVillageInfoRenderer animator = mAnimators.get(mouseVillage);
             if (animator == null) {
@@ -578,13 +581,12 @@ public class MapRenderer {
             animator.update(mouseVillage, rect, g2d);
         }
 
-        Iterator<Entry<Village, AnimatedVillageInfoRenderer>> iterator = mAnimators.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Entry<Village, AnimatedVillageInfoRenderer> next = iterator.next();
-            Village keyVillage = next.getKey();
-            AnimatedVillageInfoRenderer animator = next.getValue();
+        Enumeration<Village> iterator = mAnimators.keys();
+        while (iterator.hasMoreElements()) {
+            Village next = iterator.nextElement();
+            AnimatedVillageInfoRenderer animator = mAnimators.get(next);
             if (animator.isFinished()) {
-                mAnimators.remove(keyVillage);
+                mAnimators.remove(next);
             } else {
                 animator.update(mouseVillage, mVillagePositions.get(animator.getVillage()), g2d);
             }
@@ -730,7 +732,7 @@ public class MapRenderer {
             g2d.setColor(c);
         }
 
-        if (Boolean.parseBoolean(GlobalOptions.getProperty("show.map.popup"))) {
+        if (!MapPanel.getSingleton().isMouseDown() && Boolean.parseBoolean(GlobalOptions.getProperty("show.map.popup"))) {
             try {
                 if (DSWorkbenchMainFrame.getSingleton().isActive() && MapPanel.getSingleton().getMousePosition() != null) {
                     if (mouseVillage == null) {

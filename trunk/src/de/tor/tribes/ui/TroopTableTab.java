@@ -69,11 +69,11 @@ import org.jdesktop.swingx.painter.MattePainter;
  * @author Torridity
  */
 public class TroopTableTab extends javax.swing.JPanel implements ListSelectionListener, TabInterface {
-    
+
     private static Logger logger = Logger.getLogger("TroopTableTab");
-    
+
     public static enum TRANSFER_TYPE {
-        
+
         CLIPBOARD_PLAIN, CLIPBOARD_BB, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD
     }
     private String sTroopSet = null;
@@ -82,17 +82,17 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
     private static boolean KEY_LISTENER_ADDED = false;
     private PainterHighlighter highlighter = null;
     private ActionListener actionListener = null;
-    
+
     static {
         jxTroopTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jxTroopTable.setColumnControlVisible(true);
         jxTroopTable.setDefaultRenderer(Float.class, new PercentCellRenderer());
         jxTroopTable.setDefaultRenderer(Boolean.class, new VisibilityCellRenderer());
         jxTroopTable.setDefaultRenderer(Number.class, new NumberFormatCellRenderer());
-        
+
         troopModel = new TroopsTableModel(TroopsManager.getSingleton().getDefaultGroupName());
         jxTroopTable.setModel(troopModel);
-        
+
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
         Graphics2D g = back.createGraphics();
         GeneralPath p = new GeneralPath();
@@ -121,25 +121,25 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
             jxTroopTable.registerKeyboardAction(pActionListener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxTroopTable.registerKeyboardAction(pActionListener, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxTroopTable.getActionMap().put("find", new AbstractAction() {
-                
+
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     pActionListener.actionPerformed(new ActionEvent(jxTroopTable, 0, "Find"));
                 }
             });
-            
+
             KEY_LISTENER_ADDED = true;
         }
         jxTroopTable.getSelectionModel().addListSelectionListener(TroopTableTab.this);
         jTroopAmountList.setCellRenderer(new TroopAmountListCellRenderer());
         troopModel.fireTableStructureChanged();
     }
-    
+
     @Override
     public void deregister() {
         jxTroopTable.getSelectionModel().removeListSelectionListener(this);
     }
-    
+
     @Override
     public void valueChanged(ListSelectionEvent e) {
         if (e.getValueIsAdjusting()) {
@@ -151,7 +151,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
             actionListener.actionPerformed(new ActionEvent(jxTroopTable, 0, "SelectionDone"));
         }
     }
-    
+
     @Override
     public void updateSelectionInfo() {
         List<VillageTroopsHolder> selection = getSelectedVillages();
@@ -174,51 +174,51 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
             model.addElement(nf.format(amounts.get(u)) + " " + u.getPlainName());
         }
-        
+
         jTroopAmountList.setModel(model);
         jTroopAmountList.repaint();
     }
-    
+
     public void refillSupports() {
         showInfo("Diese Funktion ist nur für Unterstützungen verfügbar");
     }
-    
+
     public void showSuccess(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(Color.GREEN));
         jXLabel1.setForeground(Color.BLACK);
         jXLabel1.setText(pMessage);
     }
-    
+
     public void showInfo(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(getBackground()));
         jXLabel1.setForeground(Color.BLACK);
         jXLabel1.setText(pMessage);
     }
-    
+
     public void showError(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(Color.RED));
         jXLabel1.setForeground(Color.WHITE);
         jXLabel1.setText(pMessage);
     }
-    
+
     public String getTroopSet() {
         return sTroopSet;
     }
-    
+
     public JXTable getTroopTable() {
         return jxTroopTable;
     }
-    
+
     @Override
     public void updateSet() {
         troopModel.setTroopSet(sTroopSet);
         jScrollPane1.setViewportView(jxTroopTable);
         jxTroopTable.getTableHeader().setDefaultRenderer(new TroopTableHeaderRenderer());
     }
-    
+
     @Override
     public void updateFilter(final List<Tag> groups, final boolean pRelation, final boolean pFilterRows) {
         if (highlighter != null) {
@@ -232,14 +232,12 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
             jxTroopTable.addHighlighter(highlighter);
         } else {
             jxTroopTable.setRowFilter(new RowFilter<TableModel, Integer>() {
-                
+
                 @Override
                 public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
                     Integer row = entry.getIdentifier();
                     VillageTroopsHolder h = (VillageTroopsHolder) TroopsManager.getSingleton().getAllElements().get(row);
                     Village v = h.getVillage();
-                    //true == 
-                    //false ||
                     boolean result = false;
                     if (pRelation) {
                         //and connection
@@ -265,7 +263,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
                     return result;
                 }
             });
-            
+
         }
     }
 
@@ -341,7 +339,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
                 break;
         }
     }
-    
+
     private void copyBBToExternalClipboardEvent() {
         try {
             List<VillageTroopsHolder> troops = getSelectedVillages();
@@ -350,18 +348,18 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
                 return;
             }
             boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
-            
+
             StringBuilder buffer = new StringBuilder();
             if (extended) {
                 buffer.append("[u][size=12]Truppenübersicht[/size][/u]\n\n");
             } else {
                 buffer.append("[u]Truppenübersicht[/u]\n\n");
             }
-            
+
             buffer.append("Herkunft der Daten: '").append(getTroopSet()).append("'\n\n");
-            
+
             buffer.append(new TroopListFormatter().formatElements(troops, extended));
-            
+
             if (extended) {
                 buffer.append("\n[size=8]Erstellt am ");
                 buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
@@ -373,7 +371,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
                 buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
                 buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url]\n");
             }
-            
+
             String b = buffer.toString();
             StringTokenizer t = new StringTokenizer(b, "[");
             int cnt = t.countTokens();
@@ -382,7 +380,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
                     return;
                 }
             }
-            
+
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
             String result = "Daten in Zwischenablage kopiert.";
             showSuccess(result);
@@ -393,7 +391,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
             showError(result);
         }
     }
-    
+
     @Override
     public void centerVillage() {
         List<VillageTroopsHolder> selection = getSelectedVillages();
@@ -403,7 +401,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         }
         DSWorkbenchMainFrame.getSingleton().centerVillage(selection.get(0).getVillage());
     }
-    
+
     @Override
     public void centerVillageInGame() {
         List<VillageTroopsHolder> selection = getSelectedVillages();
@@ -411,10 +409,10 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
             showInfo("Kein Dorf ausgewählt");
             return;
         }
-        
+
         BrowserCommandSender.centerVillage(selection.get(0).getVillage());
     }
-    
+
     @Override
     public void openPlaceInGame() {
         List<VillageTroopsHolder> selection = getSelectedVillages();
@@ -422,18 +420,18 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
             showInfo("Kein Dorf ausgewählt");
             return;
         }
-        
+
         BrowserCommandSender.openPlaceTroopsView(selection.get(0).getVillage());
     }
-    
+
     public boolean deleteSelection(boolean pAsk) {
         List<VillageTroopsHolder> selectedVillages = getSelectedVillages();
-        
+
         if (selectedVillages.isEmpty()) {
             showInfo("Kein Dorf ausgewählt");
             return true;
         }
-        
+
         if (pAsk) {
             String message = ((selectedVillages.size() == 1) ? "Truppeninformation " : (selectedVillages.size() + " Truppeninformationen ")) + "sind zum Löschen gewählt.\nAus welcher Kategorie sollen die Daten gelöscht werden?";
             int result = JOptionPaneHelper.showQuestionThreeChoicesBox(this, message, "Truppeninformationen löschen", "Nur '" + getTroopSet() + "'", "Keine", "Alle");
@@ -460,16 +458,16 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
                 return true;
             }
         }
-        
+
         showSuccess(selectedVillages.size() + " Truppeninformation(en) gelöscht");
         return true;
     }
-    
+
     @Override
     public void deleteSelection() {
         deleteSelection(true);
     }
-    
+
     private List<VillageTroopsHolder> getSelectedVillages() {
         final List<VillageTroopsHolder> selectedVillages = new LinkedList<VillageTroopsHolder>();
         int[] selectedRows = jxTroopTable.getSelectedRows();

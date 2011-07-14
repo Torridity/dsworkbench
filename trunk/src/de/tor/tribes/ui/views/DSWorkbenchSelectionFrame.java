@@ -131,12 +131,6 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         centerPanel.setChildComponent(jSelectionTreePanel);
         buildMenu();
 
-        try {
-            jAlwaysOnTopBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("selection.frame.alwaysOnTop")));
-            setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
-        } catch (Exception e) {
-            //setting not available
-        }
         treeData = new LinkedList<Village>();
         jSelectionTree.setCellRenderer(new NodeCellRenderer());
 
@@ -162,14 +156,26 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         buildTree();
 
         //<editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        //   GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.selection_tool", GlobalOptions.getHelpBroker().getHelpSet());
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.selection_tool", GlobalOptions.getHelpBroker().getHelpSet());
+        }
         //</editor-fold>
     }
 
-    public void storeCustomProperties(Configuration pCconfig) {
+    public void storeCustomProperties(Configuration pConfig) {
+        pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
+        pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
+
     }
 
     public void restoreCustomProperties(Configuration pConfig) {
+        centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
+        try {
+            jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
+        } catch (Exception e) {
+        }
+
+        setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
     }
 
     public String getPropertyPrefix() {

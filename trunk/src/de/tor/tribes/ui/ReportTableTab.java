@@ -81,7 +81,6 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
 
     @Override
     public void fireNotifyOnResultEvent(Point point, int pAttacks) {
-        System.out.println("HERE");
         if (point == null) {
             showError("Die Zielkoordinate ist ungültig");
             return;

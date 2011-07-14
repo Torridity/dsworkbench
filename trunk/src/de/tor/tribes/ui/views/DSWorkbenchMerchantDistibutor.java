@@ -18,6 +18,7 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.types.VillageMerchantInfo;
 import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.GenericTestPanel;
+import de.tor.tribes.ui.ReportTableTab;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.SentNotSentCellRenderer;
@@ -33,6 +34,7 @@ import de.tor.tribes.util.MouseGestureHandler;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.ProfileManagerListener;
+import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.algo.MerchantDestination;
 import de.tor.tribes.util.algo.MerchantDistributor;
 import de.tor.tribes.util.algo.MerchantSource;
@@ -82,6 +84,7 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
+ * @TODO add load and save icons
  * @author Jejkal
  */
 public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame implements ListSelectionListener, ActionListener, ProfileManagerListener {
@@ -173,14 +176,34 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         });
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        //  GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.merchant_distributor", GlobalOptions.getHelpBroker().getHelpSet());
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.merchant_distributor", GlobalOptions.getHelpBroker().getHelpSet());
+        }
         // </editor-fold>
     }
 
-    public void storeCustomProperties(Configuration pCconfig) {
+    public void storeCustomProperties(Configuration pConfig) {
+        pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
+        pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTop.isSelected());
+
+        PropertyHelper.storeTableProperties(jMerchantTable, pConfig, getPropertyPrefix() + ".merchantTable");
+        PropertyHelper.storeTableProperties(jResultsTable, pConfig, getPropertyPrefix() + ".resultsTable");
+        PropertyHelper.storeTableProperties(jResultsDataTable, pConfig, getPropertyPrefix() + ".resultDataTable");
     }
 
     public void restoreCustomProperties(Configuration pConfig) {
+        centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
+
+        try {
+            jAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
+        } catch (Exception e) {
+        }
+
+        setAlwaysOnTop(jAlwaysOnTop.isSelected());
+
+        PropertyHelper.restoreTableProperties(jMerchantTable, pConfig, getPropertyPrefix() + ".merchantTable");
+        PropertyHelper.restoreTableProperties(jResultsTable, pConfig, getPropertyPrefix() + ".resultsTable");
+        PropertyHelper.restoreTableProperties(jResultsDataTable, pConfig, getPropertyPrefix() + ".resultDataTable");
     }
 
     public String getPropertyPrefix() {
@@ -574,7 +597,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         jProfileBox = new javax.swing.JComboBox();
         jMerchantPanel = new javax.swing.JPanel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        jAlwaysOnTop = new javax.swing.JCheckBox();
 
         jxMerchantTablePanel.setLayout(new java.awt.BorderLayout());
 
@@ -1071,9 +1094,9 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(capabilityInfoPanel1, gridBagConstraints);
 
-        jCheckBox1.setText("Immer im Vordergrund");
-        jCheckBox1.setOpaque(false);
-        jCheckBox1.addItemListener(new java.awt.event.ItemListener() {
+        jAlwaysOnTop.setText("Immer im Vordergrund");
+        jAlwaysOnTop.setOpaque(false);
+        jAlwaysOnTop.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireAlwaysOnTopEvent(evt);
             }
@@ -1083,7 +1106,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        getContentPane().add(jCheckBox1, gridBagConstraints);
+        getContentPane().add(jAlwaysOnTop, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -1586,10 +1609,10 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
     private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JRadioButton jAdjustingDistribution;
+    private javax.swing.JCheckBox jAlwaysOnTop;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jCalculateButton;
     private javax.swing.JDialog jCalculationSettingsDialog;
-    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jClickAccountLabel;
     private javax.swing.JRadioButton jEqualDistribution;
     private javax.swing.JCheckBox jIgnoreTransportsButton;

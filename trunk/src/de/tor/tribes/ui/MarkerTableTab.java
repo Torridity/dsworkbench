@@ -371,7 +371,7 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
             showError("Fehler beim Einfügen der Markierungen");
         }
         markerModel.fireTableDataChanged();
-        MarkerManager.getSingleton().revalidate();
+        MarkerManager.getSingleton().revalidate(getMarkerSet(), true);
     }
 
     public boolean deleteSelection(boolean pAsk) {

@@ -170,18 +170,35 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         jEndDate.setDate(c.getTime());
         jStatCreatePanel.setVisible(false);
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        //  GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.stats_view", GlobalOptions.getHelpBroker().getHelpSet());
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.stats_view", GlobalOptions.getHelpBroker().getHelpSet());
+        }
         // </editor-fold>
 
         pack();
     }
-    public void storeCustomProperties(Configuration pCconfig) {
+
+    public void storeCustomProperties(Configuration pConfig) {
+        pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
+        pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
     }
- public void restoreCustomProperties(Configuration pConfig) {
+
+    public void restoreCustomProperties(Configuration pConfig) {
+        centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
+
+        try {
+            jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
+        } catch (Exception e) {
+        }
+
+        setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
+
     }
+
     public String getPropertyPrefix() {
         return "stats.view";
     }
+
     private void buildMenu() {
         JXTaskPane editPane = new JXTaskPane();
         editPane.setTitle("Bearbeiten");
@@ -662,21 +679,25 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Auswertung"));
 
         jPointsPane.setContentType("text/html");
+        jPointsPane.setEditable(false);
         jScrollPane7.setViewportView(jPointsPane);
 
         jTabbedPane1.addTab("Punkte", new javax.swing.ImageIcon(getClass().getResource("/res/goblet_gold.png")), jScrollPane7); // NOI18N
 
         jBashOffPane.setContentType("text/html");
+        jBashOffPane.setEditable(false);
         jScrollPane10.setViewportView(jBashOffPane);
 
         jTabbedPane1.addTab("Bash (Off)", new javax.swing.ImageIcon(getClass().getResource("/res/barracks.png")), jScrollPane10); // NOI18N
 
         jBashDefPane.setContentType("text/html");
+        jBashDefPane.setEditable(false);
         jScrollPane11.setViewportView(jBashDefPane);
 
         jTabbedPane1.addTab("Bash (Deff)", new javax.swing.ImageIcon(getClass().getResource("/res/ally.png")), jScrollPane11); // NOI18N
 
         jWinnerLoserPane.setContentType("text/html");
+        jWinnerLoserPane.setEditable(false);
         jScrollPane12.setViewportView(jWinnerLoserPane);
 
         jTabbedPane1.addTab("Gewinner/Verlierer", new javax.swing.ImageIcon(getClass().getResource("/res/up_plus.png")), jScrollPane12); // NOI18N
@@ -875,7 +896,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
     }//GEN-LAST:event_fireUpdateChartEvent
 
     private void fireViewChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireViewChangedEvent
-        if (evt.getStateChange() == ItemEvent.SELECTED) {
+        if ((evt == null || evt.getStateChange() == ItemEvent.SELECTED) && (theChartPanel != null && theChartPanel.isVisible())) {
             Object[] tribeSelection = jTribeList.getSelectedValues();
             if (tribeSelection == null || tribeSelection.length == 0) {
                 jChartPanel.removeAll();
@@ -968,26 +989,26 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
     private void transferBBCodeToClipboard() {
         int idx = jTabbedPane1.getSelectedIndex();
         if (idx == 0) {
-            copyStatsToClipboard(sPointStats);
+            copyStatsToClipboard("Punkte", sPointStats);
         } else if (idx == 1) {
-            copyStatsToClipboard(sBashOffStats);
+            copyStatsToClipboard("Bash (Off)", sBashOffStats);
         } else if (idx == 2) {
-            copyStatsToClipboard(sBashDefStats);
+            copyStatsToClipboard("Bash (Deff)", sBashDefStats);
         } else if (idx == 3) {
-            copyStatsToClipboard(sWinnerLoserStats);
+            copyStatsToClipboard("Gewinner/Verlierer", sWinnerLoserStats);
         } else {
             JOptionPaneHelper.showInformationBox(DSWorkbenchStatsFrame.this, "Bitte wähle den Abschnitt der Auswertung den du kopieren möchtest", "Information");
         }
     }
 
-    private void copyStatsToClipboard(String pStatText) {
+    private void copyStatsToClipboard(String pType, String pStatText) {
         if (pStatText == null) {
             JOptionPaneHelper.showInformationBox(DSWorkbenchStatsFrame.this, "Bitte erstelle erst eine Auswertung bevor du die Daten kopierst", "Information");
             return;
         }
         try {
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(pStatText), null);
-            JOptionPaneHelper.showInformationBox(DSWorkbenchStatsFrame.this, "Daten in Zwischenablage kopiert", "Information");
+            JOptionPaneHelper.showInformationBox(DSWorkbenchStatsFrame.this, "Daten der Auswertung '" + pType + "' in Zwischenablage kopiert", "Information");
         } catch (HeadlessException he) {
             JOptionPaneHelper.showErrorBox(DSWorkbenchStatsFrame.this, "Fehler beim Kopieren in die Zwischenablage", "Fehler");
         }
@@ -1124,10 +1145,13 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
             jStatCreatePanel.setVisible(false);
             if (theChartPanel != null) {
                 jChartPanel.add(theChartPanel, BorderLayout.CENTER);
+                theChartPanel.setVisible(true);
+                fireViewChangedEvent(null);
             }
         } else {
             if (theChartPanel != null) {
                 jChartPanel.remove(theChartPanel);
+                theChartPanel.setVisible(false);
             }
             jStatCreatePanel.setVisible(true);
             jChartPanel.add(jStatCreatePanel, BorderLayout.CENTER);

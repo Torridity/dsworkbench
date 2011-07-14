@@ -47,10 +47,10 @@ public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
         Graphics2D g2d = null;
 
         if (mLayer == null) {
-            if (pSettings.getVisibleVillages().length * pSettings.getFieldWidth() > ImageManager.ID_NOTE_ICON_13 * 32) {
-                mLayer = ImageUtils.createCompatibleBufferedImage(pSettings.getVisibleVillages().length * pSettings.getFieldWidth(), pSettings.getVisibleVillages()[0].length * pSettings.getFieldHeight() + 100, BufferedImage.TRANSLUCENT);
+            if (pSettings.getVillagesInX() * pSettings.getFieldWidth() > ImageManager.ID_NOTE_ICON_13 * 32) {
+                mLayer = ImageUtils.createCompatibleBufferedImage(pSettings.getVillagesInX()* pSettings.getFieldWidth(), pSettings.getVillagesInY() * pSettings.getFieldHeight() + 100, BufferedImage.TRANSLUCENT);
             } else {
-                mLayer = ImageUtils.createCompatibleBufferedImage(ImageManager.ID_NOTE_ICON_13 * 32, pSettings.getVisibleVillages()[0].length * pSettings.getFieldHeight() + 100, BufferedImage.TRANSLUCENT);
+                mLayer = ImageUtils.createCompatibleBufferedImage(ImageManager.ID_NOTE_ICON_13 * 32, pSettings.getVillagesInY() * pSettings.getFieldHeight() + 100, BufferedImage.TRANSLUCENT);
             }
 
             g2d = mLayer.createGraphics();
@@ -86,11 +86,11 @@ public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
         int cnt = 0;
         Village currentMouseVillage = MapPanel.getSingleton().getVillageAtMousePos();
         Hashtable<Village, List<Note>> noteMap = NoteManager.getSingleton().getNotesMap();
-        for (int x = 0; x < pSettings.getVisibleVillages().length; x++) {
+        for (int x = 0; x < pSettings.getVillagesInX(); x++) {
             //iterate from first row for 'pRows' times
-            for (int y = firstRow; y < pSettings.getVisibleVillages()[0].length; y++) {
+            for (int y = firstRow; y < pSettings.getVillagesInY(); y++) {
                 cnt++;
-                Village v = pSettings.getVisibleVillages()[x][y];
+                Village v = pSettings.getVisibleVillage(x, y);
                 int row = y - firstRow;
                 int col = x;
                 if (v != null && currentMouseVillage != null && v.equals(currentMouseVillage)) {

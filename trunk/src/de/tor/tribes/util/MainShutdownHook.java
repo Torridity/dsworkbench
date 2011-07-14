@@ -15,10 +15,14 @@ import de.tor.tribes.ui.views.DSWorkbenchRankFrame;
 import de.tor.tribes.ui.views.DSWorkbenchSearchFrame;
 import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
 import de.tor.tribes.ui.FormConfigFrame;
+import de.tor.tribes.ui.views.DSWorkbenchDistanceFrame;
 import org.apache.log4j.Logger;
 import de.tor.tribes.ui.views.DSWorkbenchFormFrame;
+import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor;
 import de.tor.tribes.ui.views.DSWorkbenchNotepad;
+import de.tor.tribes.ui.views.DSWorkbenchReTimerFrame;
 import de.tor.tribes.ui.views.DSWorkbenchReportFrame;
+import de.tor.tribes.ui.views.DSWorkbenchSOSRequestAnalyzer;
 import de.tor.tribes.ui.views.DSWorkbenchSelectionFrame;
 import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
 import de.tor.tribes.ui.views.DSWorkbenchTagFrame;
@@ -43,7 +47,7 @@ public class MainShutdownHook extends Thread {
                 return;
             }
             GlobalOptions.saveUserData();
-            GlobalOptions.addProperty("attack.frame.visible", Boolean.toString(DSWorkbenchAttackFrame.getSingleton().isVisible()));
+            /* GlobalOptions.addProperty("attack.frame.visible", Boolean.toString(DSWorkbenchAttackFrame.getSingleton().isVisible()));
             GlobalOptions.addProperty("marker.frame.visible", Boolean.toString(DSWorkbenchMarkerFrame.getSingleton().isVisible()));
             GlobalOptions.addProperty("church.frame.visible", Boolean.toString(DSWorkbenchChurchFrame.getSingleton().isVisible()));
             GlobalOptions.addProperty("conquers.frame.visible", Boolean.toString(DSWorkbenchConquersFrame.getSingleton().isVisible()));
@@ -69,12 +73,28 @@ public class MainShutdownHook extends Thread {
             GlobalOptions.addProperty("search.frame.alwaysOnTop", Boolean.toString(DSWorkbenchSearchFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("selection.frame.alwaysOnTop", Boolean.toString(DSWorkbenchSelectionFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("report.frame.alwaysOnTop", Boolean.toString(DSWorkbenchReportFrame.getSingleton().isAlwaysOnTop()));
-            GlobalOptions.addProperty("report.frame.visible", Boolean.toString(DSWorkbenchReportFrame.getSingleton().isVisible()));
+            GlobalOptions.addProperty("report.frame.visible", Boolean.toString(DSWorkbenchReportFrame.getSingleton().isVisible()));*/
             GlobalOptions.addProperty("layer.order", DSWorkbenchMainFrame.getSingleton().getLayerOrder());
             DSWorkbenchMainFrame.getSingleton().storeProperties();
             logger.debug("Saving global properties");
             GlobalOptions.saveProperties();
             DSWorkbenchAttackFrame.getSingleton().storeProperties();
+            DSWorkbenchChurchFrame.getSingleton().storeProperties();
+            DSWorkbenchDistanceFrame.getSingleton().storeProperties();
+            DSWorkbenchDoItYourselfAttackPlaner.getSingleton().storeProperties();
+            DSWorkbenchMarkerFrame.getSingleton().storeProperties();
+            DSWorkbenchMerchantDistibutor.getSingleton().storeProperties();
+            DSWorkbenchReTimerFrame.getSingleton().storeProperties();
+            DSWorkbenchSOSRequestAnalyzer.getSingleton().storeProperties();
+            DSWorkbenchStatsFrame.getSingleton().storeProperties();
+            DSWorkbenchTagFrame.getSingleton().storeProperties();
+            DSWorkbenchConquersFrame.getSingleton().storeProperties();
+            DSWorkbenchFormFrame.getSingleton().storeProperties();
+            DSWorkbenchRankFrame.getSingleton().storeProperties();
+            DSWorkbenchNotepad.getSingleton().storeProperties();
+            DSWorkbenchTroopsFrame.getSingleton().storeProperties();
+            DSWorkbenchSelectionFrame.getSingleton().storeProperties();
+            DSWorkbenchReportFrame.getSingleton().storeProperties();
             logger.debug("Shutdown finished");
         } catch (Throwable t) {
             logger.error("Shutdown failed", t);

@@ -306,11 +306,11 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 if (e.getButton() != MouseEvent.BUTTON1) {
                     //second button might show village menu
                     Village v = getVillageAtMousePos();
-                    if (v == null) {
+                    if (v != null) {
                         //show menu
-                        MenuRenderer.getSingleton().setMenuLocation(e.getX(), e.getY());
+                      /*  MenuRenderer.getSingleton().setMenuLocation(e.getX(), e.getY());
                         MenuRenderer.getSingleton().switchVisibility();
-                    } else {
+                        } else {*/
                         //show village menu
                         actionMenuVillage = v;
                         jVillageActionsMenu.show(MapPanel.getSingleton(), e.getX(), e.getY());
@@ -516,9 +516,9 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     return;
                 }
 
-                if (MenuRenderer.getSingleton().isVisible()) {
+                /*if (MenuRenderer.getSingleton().isVisible()) {
                     return;
-                }
+                }*/
                 boolean isAttack = false;
                 mouseDown = true;
                 if (!spaceDown) {
@@ -873,6 +873,10 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         actionMenuVillage = null;
     }
 
+    public boolean isMouseDown(){
+        return mouseDown;
+    }
+    
     public Village getToolSourceVillage() {
         return mSourceVillage;
     }

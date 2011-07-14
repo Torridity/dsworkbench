@@ -28,6 +28,7 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.map.FormManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -93,12 +94,6 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         jFormsTable.setModel(new FormTableModel());
         jFormsTable.getSelectionModel().addListSelectionListener(DSWorkbenchFormFrame.this);
         buildMenu();
-        try {
-            jAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("form.frame.alwaysOnTop")));
-            setAlwaysOnTop(jAlwaysOnTop.isSelected());
-        } catch (Exception e) {
-            //setting not available
-        }
 
         KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
@@ -119,7 +114,9 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        //   GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.form_view", GlobalOptions.getHelpBroker().getHelpSet());
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.form_view", GlobalOptions.getHelpBroker().getHelpSet());
+        }
         // </editor-fold>
     }
 
@@ -195,10 +192,24 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         centerPanel.setupTaskPane(editPane, miscPane);
     }
 
-    public void storeCustomProperties(Configuration pCconfig) {
+    public void storeCustomProperties(Configuration pConfig) {
+        pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
+        pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTop.isSelected());
+
+        PropertyHelper.storeTableProperties(jFormsTable, pConfig, getPropertyPrefix());
     }
 
     public void restoreCustomProperties(Configuration pConfig) {
+        centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
+
+        try {
+            jAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
+        } catch (Exception e) {
+        }
+
+        setAlwaysOnTop(jAlwaysOnTop.isSelected());
+
+        PropertyHelper.restoreTableProperties(jFormsTable, pConfig, getPropertyPrefix());
     }
 
     public String getPropertyPrefix() {

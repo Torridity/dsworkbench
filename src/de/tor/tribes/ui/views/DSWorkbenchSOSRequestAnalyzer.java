@@ -35,6 +35,7 @@ import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PluginManager;
+import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.bb.SosListFormatter;
@@ -167,16 +168,36 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         jResultTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jResultTable.requestFocus();
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        // GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.sos_analyzer", GlobalOptions.getHelpBroker().getHelpSet());
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.sos_analyzer", GlobalOptions.getHelpBroker().getHelpSet());
+        }
         // </editor-fold>
     }
-    public void storeCustomProperties(Configuration pCconfig) {
+
+    public void storeCustomProperties(Configuration pConfig) {
+        pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
+        pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
+
+        PropertyHelper.storeTableProperties(jResultTable, pConfig, getPropertyPrefix());
     }
- public void restoreCustomProperties(Configuration pConfig) {
+
+    public void restoreCustomProperties(Configuration pConfig) {
+        centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
+
+        try {
+            jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
+        } catch (Exception e) {
+        }
+
+        setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
+
+        PropertyHelper.restoreTableProperties(jResultTable, pConfig, getPropertyPrefix());
     }
+
     public String getPropertyPrefix() {
         return "sos.view";
     }
+
     private void buildMenu() {
         JXTaskPane transferPane = new JXTaskPane();
         transferPane.setTitle("Übertragen");

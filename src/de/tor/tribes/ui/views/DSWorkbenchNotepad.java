@@ -26,6 +26,7 @@ import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.GenericTestPanel;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.NoteTableTab;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
@@ -40,6 +41,7 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.MouseGestureHandler;
 import de.tor.tribes.util.ProfileManager;
+import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.VillageListFormatter;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -136,66 +138,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         centerPanel.setChildComponent(jXNotePanel);
         buildMenu();
         jScrollPane2.setViewportView(jNotePane);
-        try {
-            jAlwaysOnTopBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("notepad.frame.alwaysOnTop")));
-            setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
-        } catch (Exception e) {
-            //setting not available
-        }
-
-        //setup map marker box
-     /*   for (int i = 0; i <= ImageManager.ID_NOTE_ICON_13; i++) {
-        jIconBox.addItem(i);
-        }
-        
-        ListCellRenderer r = new ListCellRenderer() {
-        
-        @Override
-        public Component getListCellRendererComponent(
-        JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        Component c = new DefaultListCellRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-        try {
-        JLabel label = ((JLabel) c);
-        label.setText("");
-        BufferedImage symbol = ImageManager.getNoteIcon((Integer) value);
-        label.setIcon(new ImageIcon(symbol.getScaledInstance(18, 18, BufferedImage.SCALE_FAST)));
-        } catch (Exception e) {
-        }
-        return c;
-        }
-        };
-        jIconBox.setRenderer(r);
-        
-        //setup note symbol box
-        for (int i = -1; i <= ImageManager.NOTE_SYMBOL_WALL; i++) {
-        jNoteSymbolBox.addItem(i);
-        }
-        
-        jNoteSymbolBox.setRenderer(new ListCellRenderer() {
-        
-        @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        Component c = new DefaultListCellRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-        try {
-        JLabel label = ((JLabel) c);
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setText("");
-        int val = (Integer) value;
-        if (val != -1) {
-        BufferedImage symbol = ImageManager.getNoteSymbol(val);
-        label.setIcon(new ImageIcon(symbol.getScaledInstance(18, 18, BufferedImage.SCALE_FAST)));
-        } else {
-        //no symbol
-        label.setIcon(null);
-        label.setText("-");
-        }
-        } catch (Exception e) {
-        }
-        return c;
-        }
-        });
-         */
-
+      
         jNoteTabbedPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
         jNoteTabbedPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
         jNoteTabbedPane.setBoldActiveTab(true);
@@ -244,7 +187,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
 
             @Override
             public boolean shouldStartEdit(int tabIndex, MouseEvent event) {
-                return !(tabIndex == 0 || tabIndex == 1);
+                return !(tabIndex == 0);
             }
         });
         jNoteTabbedPane.setCloseAction(new AbstractAction("closeAction") {
@@ -271,15 +214,44 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         setGlassPane(jxSearchPane);
 
         //<editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        //  GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.notes_view", GlobalOptions.getHelpBroker().getHelpSet());
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.notes_view", GlobalOptions.getHelpBroker().getHelpSet());
+        }
         //</editor-fold>
 
     }
 
-    public void storeCustomProperties(Configuration pCconfig) {
+    public void storeCustomProperties(Configuration pConfig) {
+        pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
+        pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
+
+        int selectedIndex = jNoteTabbedPane.getModel().getSelectedIndex();
+        if (selectedIndex >= 0) {
+            pConfig.setProperty(getPropertyPrefix() + ".tab.selection", selectedIndex);
+        }
+
+
+        NoteTableTab tab = ((NoteTableTab) jNoteTabbedPane.getComponentAt(0));
+        PropertyHelper.storeTableProperties(tab.getNoteTable(), pConfig, getPropertyPrefix());
     }
- public void restoreCustomProperties(Configuration pConfig) {
+
+    public void restoreCustomProperties(Configuration pConfig) {
+        centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
+        try {
+            jNoteTabbedPane.setSelectedIndex(pConfig.getInteger(getPropertyPrefix() + ".tab.selection", 0));
+        } catch (Exception e) {
+        }
+        try {
+            jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
+        } catch (Exception e) {
+        }
+
+        setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
+
+        NoteTableTab tab = ((NoteTableTab) jNoteTabbedPane.getComponentAt(0));
+        PropertyHelper.restoreTableProperties(tab.getNoteTable(), pConfig, getPropertyPrefix());
     }
+
     public String getPropertyPrefix() {
         return "notes.view";
     }
@@ -1567,6 +1539,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
+                Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
                 GlobalOptions.setSelectedServer("de43");
                 DataHolder.getSingleton().loadData(false);
                 ProfileManager.getSingleton().loadProfiles();
@@ -1584,7 +1557,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
                     //  UIManager.put(SubstanceLookAndFeel.FOCUS_KIND, FocusKind.NONE);
                 } catch (Exception e) {
                 }
-                Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
+
                 DSWorkbenchNotepad.getSingleton().setSize(600, 400);
 
                 NoteManager.getSingleton().addGroup("test1");

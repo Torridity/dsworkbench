@@ -27,7 +27,6 @@ import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.dist.DistanceManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
@@ -110,14 +109,27 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         });
         jDistanceTable.getSelectionModel().addListSelectionListener(DSWorkbenchDistanceFrame.this);
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        //   GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.distance_overview", GlobalOptions.getHelpBroker().getHelpSet());
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.distance_overview", GlobalOptions.getHelpBroker().getHelpSet());
+        }
         // </editor-fold>
     }
 
-    public void storeCustomProperties(Configuration pCconfig) {
+    public void storeCustomProperties(Configuration pConfig) {
+        pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
+        pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTop.isSelected());
+
     }
 
     public void restoreCustomProperties(Configuration pConfig) {
+        centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
+
+        try {
+            jAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
+        } catch (Exception e) {
+        }
+
+        setAlwaysOnTop(jAlwaysOnTop.isSelected());
     }
 
     public String getPropertyPrefix() {
@@ -345,7 +357,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         jScrollPane2 = new javax.swing.JScrollPane();
         infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
         jXLabel1 = new org.jdesktop.swingx.JXLabel();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        jAlwaysOnTop = new javax.swing.JCheckBox();
         jDistancePanel = new javax.swing.JPanel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
 
@@ -393,14 +405,14 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         setMinimumSize(new java.awt.Dimension(600, 500));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        jCheckBox1.setText("Immer im Vordergrund");
-        jCheckBox1.setOpaque(false);
+        jAlwaysOnTop.setText("Immer im Vordergrund");
+        jAlwaysOnTop.setOpaque(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        getContentPane().add(jCheckBox1, gridBagConstraints);
+        getContentPane().add(jAlwaysOnTop, gridBagConstraints);
 
         jDistancePanel.setBackground(new java.awt.Color(239, 235, 223));
         jDistancePanel.setMinimumSize(new java.awt.Dimension(300, 400));
@@ -470,7 +482,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
-    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox jAlwaysOnTop;
     private javax.swing.JPanel jDistancePanel;
     private static final org.jdesktop.swingx.JXTable jDistanceTable = new org.jdesktop.swingx.JXTable();
     private javax.swing.JPanel jPanel2;

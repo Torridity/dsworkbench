@@ -25,6 +25,7 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import java.awt.BorderLayout;
@@ -112,16 +113,33 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
 
         jChurchTable.setModel(new ChurchTableModel());
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-//        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.church_view", GlobalOptions.getHelpBroker().getHelpSet());
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.church_view", GlobalOptions.getHelpBroker().getHelpSet());
+        }
         // </editor-fold>
         jChurchTable.getSelectionModel().addListSelectionListener(DSWorkbenchChurchFrame.this);
         pack();
     }
 
     public void storeCustomProperties(Configuration pConfig) {
+        pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
+        pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jChurchFrameAlwaysOnTop.isSelected());
+
+        PropertyHelper.storeTableProperties(jChurchTable, pConfig, getPropertyPrefix());
+
     }
 
     public void restoreCustomProperties(Configuration pConfig) {
+        centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
+
+        try {
+            jChurchFrameAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
+        } catch (Exception e) {
+        }
+
+        setAlwaysOnTop(jChurchFrameAlwaysOnTop.isSelected());
+
+        PropertyHelper.restoreTableProperties(jChurchTable, pConfig, getPropertyPrefix());
     }
 
     public String getPropertyPrefix() {

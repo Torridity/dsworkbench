@@ -163,11 +163,29 @@ public class RenderSettings {
         this.mMapBounds = (Rectangle2D) mMapBounds.clone();
     }
 
-    /**
-     * @return the mVisibleVillages
-     */
-    public Village[][] getVisibleVillages() {
-        return mVisibleVillages;
+    public int getVillagesInX() {
+        if (mVisibleVillages == null) {
+            return 0;
+        }
+        return mVisibleVillages.length;
+    }
+
+    public int getVillagesInY() {
+        if (mVisibleVillages == null || mVisibleVillages.length == 0) {
+            return 0;
+        }
+        return mVisibleVillages[0].length;
+    }
+
+    public Village getVisibleVillage(int x, int y) {
+        if (mVisibleVillages == null) {
+            return null;
+        }
+        try {
+            return mVisibleVillages[x][y];
+        } catch (ArrayIndexOutOfBoundsException aioobe) {
+            return null;
+        }
     }
 
     /**

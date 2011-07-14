@@ -34,6 +34,7 @@ import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PluginManager;
+import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.bb.AttackListFormatter;
@@ -162,16 +163,36 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         });
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        //  GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.retime_tool", GlobalOptions.getHelpBroker().getHelpSet());
+        if (!Constants.DEBUG) {
+          GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.retime_tool", GlobalOptions.getHelpBroker().getHelpSet());
+        }
         // </editor-fold>
     }
-    public void storeCustomProperties(Configuration pCconfig) {
+
+    public void storeCustomProperties(Configuration pConfig) {
+        pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
+        pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
+
+        PropertyHelper.storeTableProperties(jResultTable, pConfig, getPropertyPrefix());
     }
- public void restoreCustomProperties(Configuration pConfig) {
+
+    public void restoreCustomProperties(Configuration pConfig) {
+        centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
+
+        try {
+            jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
+        } catch (Exception e) {
+        }
+
+        setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
+
+        PropertyHelper.restoreTableProperties(jResultTable, pConfig, getPropertyPrefix());
     }
+
     public String getPropertyPrefix() {
         return "retime.view";
     }
+
     private void buildMenu() {
         JXTaskPane editPane = new JXTaskPane();
         editPane.setTitle("Bearbeiten");
@@ -515,7 +536,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jDoCalculateButton = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jReTimePanel = new javax.swing.JPanel();
-        jMainAlwaysOnTopBox = new javax.swing.JCheckBox();
+        jAlwaysOnTopBox = new javax.swing.JCheckBox();
         capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
 
         jAttackPlanSelectionDialog.setTitle("Angriffsplanauswahl");
@@ -925,9 +946,9 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jReTimePanel, gridBagConstraints);
 
-        jMainAlwaysOnTopBox.setText("Immer im Vordergrund");
-        jMainAlwaysOnTopBox.setOpaque(false);
-        jMainAlwaysOnTopBox.addItemListener(new java.awt.event.ItemListener() {
+        jAlwaysOnTopBox.setText("Immer im Vordergrund");
+        jAlwaysOnTopBox.setOpaque(false);
+        jAlwaysOnTopBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireAlwaysOnTopChangedEvent(evt);
             }
@@ -937,7 +958,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        getContentPane().add(jMainAlwaysOnTopBox, gridBagConstraints);
+        getContentPane().add(jAlwaysOnTopBox, gridBagConstraints);
 
         capabilityInfoPanel1.setSearchable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -990,7 +1011,9 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 }
                 arriveDate = f.parse(arrive);
                 parsedAttack.setArriveTime(arriveDate);
-                if(arriveDate == null) throw new Exception("Invalid arrive");
+                if (arriveDate == null) {
+                    throw new Exception("Invalid arrive");
+                }
             } catch (Exception ignored) {
                 parsedAttack = null;
             }
@@ -1161,7 +1184,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     }//GEN-LAST:event_fireTransferAttacksToAttackViewEvent
 
     private void fireAlwaysOnTopChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireAlwaysOnTopChangedEvent
-        setAlwaysOnTop(jMainAlwaysOnTopBox.isSelected());
+        setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
     }//GEN-LAST:event_fireAlwaysOnTopChangedEvent
 
     private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireRelationChangedEvent
@@ -1265,11 +1288,11 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             showInfo("Keine ReTime Angriffe zur Filterung vorhanden");
             return;
         }
-     /*   // <editor-fold defaultstate="collapsed" desc="Build filter dialog">
+        /*   // <editor-fold defaultstate="collapsed" desc="Build filter dialog">
         jFilterUnitBox.setModel(new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{})));
         jFilterUnitBox.setRenderer(new UnitListCellRenderer());
         jFilterList.setModel(new DefaultListModel());
-// </editor-fold>*/
+        // </editor-fold>*/
         TroopFilterDialog filterDialog = new TroopFilterDialog(this, true);
 
         List<Village> sources = new LinkedList<Village>();
@@ -1430,6 +1453,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     private javax.swing.ButtonGroup buttonGroup1;
     private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
+    private javax.swing.JCheckBox jAlwaysOnTopBox;
     private javax.swing.JButton jApplyFiltersButton;
     private javax.swing.JDialog jAttackPlanSelectionDialog;
     private javax.swing.JTable jAttackPlanTable;
@@ -1454,7 +1478,6 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JCheckBox jMainAlwaysOnTopBox;
     private javax.swing.JTextField jMaxValue;
     private javax.swing.JTextField jMinValue;
     private javax.swing.JTextField jNewAttackPlanField;

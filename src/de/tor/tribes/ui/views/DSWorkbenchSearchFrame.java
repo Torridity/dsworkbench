@@ -67,7 +67,9 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
         mSearchThread = new SearchThread("", this);
         mSearchThread.start();
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-       // GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.search_tool", GlobalOptions.getHelpBroker().getHelpSet());
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.search_tool", GlobalOptions.getHelpBroker().getHelpSet());
+        }
         // </editor-fold>
     }
 
@@ -436,8 +438,6 @@ private void fireSearchFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) 
         DSWorkbenchSearchFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         DSWorkbenchSearchFrame.getSingleton().setVisible(true);
     }
-
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jAlliesLabel;

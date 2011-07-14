@@ -20,11 +20,13 @@ import de.tor.tribes.ui.SupportTroopTableTab;
 import de.tor.tribes.ui.TabInterface;
 import de.tor.tribes.ui.TroopTableTab;
 import de.tor.tribes.ui.models.SupportTroopsTableModel;
+import de.tor.tribes.util.Constants;
 import java.awt.event.ActionEvent;
 import org.apache.log4j.Logger;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.MouseGestureHandler;
+import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.SupportVillageTroopsHolder;
 import java.util.List;
@@ -124,12 +126,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         jTroopsPanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildComponent(jXTroopsPanel);
         buildMenu();
-        try {
-            jTroopsInformationAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("troops.frame.alwaysOnTop")));
-            setAlwaysOnTop(jTroopsInformationAlwaysOnTop.isSelected());
-        } catch (Exception e) {
-            //setting not available
-        }
+
         jTroopsTabPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
         jTroopsTabPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
         jTroopsTabPane.setBoldActiveTab(true);
@@ -155,16 +152,43 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        //    GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.troops_view", GlobalOptions.getHelpBroker().getHelpSet());
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.troops_view", GlobalOptions.getHelpBroker().getHelpSet());
+        }
         // </editor-fold>
         setGlassPane(jxSearchPane);
         pack();
     }
 
-    public void storeCustomProperties(Configuration pCconfig) {
+    public void storeCustomProperties(Configuration pConfig) {
+        pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
+        pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jTroopsInformationAlwaysOnTop.isSelected());
+
+        int selectedIndex = jTroopsTabPane.getModel().getSelectedIndex();
+        if (selectedIndex >= 0) {
+            pConfig.setProperty(getPropertyPrefix() + ".tab.selection", selectedIndex);
+        }
+
+
+        TroopTableTab tab = ((TroopTableTab) jTroopsTabPane.getComponentAt(0));
+        PropertyHelper.storeTableProperties(tab.getTroopTable(), pConfig, getPropertyPrefix());
     }
 
     public void restoreCustomProperties(Configuration pConfig) {
+        centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
+        try {
+            jTroopsTabPane.setSelectedIndex(pConfig.getInteger(getPropertyPrefix() + ".tab.selection", 0));
+        } catch (Exception e) {
+        }
+        try {
+            jTroopsInformationAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
+        } catch (Exception e) {
+        }
+
+        setAlwaysOnTop(jTroopsInformationAlwaysOnTop.isSelected());
+
+        TroopTableTab tab = ((TroopTableTab) jTroopsTabPane.getComponentAt(0));
+        PropertyHelper.restoreTableProperties(tab.getTroopTable(), pConfig, getPropertyPrefix());
     }
 
     public String getPropertyPrefix() {

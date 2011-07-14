@@ -15,11 +15,10 @@ import com.jidesoft.swing.TabEditingEvent;
 import com.jidesoft.swing.TabEditingListener;
 import com.jidesoft.swing.TabEditingValidator;
 import com.smardec.mousegestures.MouseGestures;
+import com.sun.corba.se.impl.orbutil.closure.Constant;
 import de.tor.tribes.control.GenericManagerListener;
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;
-import de.tor.tribes.types.Barbarians;
-import de.tor.tribes.types.test.DummyVillage;
-import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.FightStats;
 import de.tor.tribes.types.SingleAttackerStat;
 import de.tor.tribes.types.Tribe;
@@ -27,10 +26,13 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.GenericTestPanel;
 import de.tor.tribes.ui.ReportTableTab;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MouseGestureHandler;
+import de.tor.tribes.util.ProfileManager;
+import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.report.ReportStatBuilder;
 import java.awt.BorderLayout;
@@ -81,7 +83,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         if (e.getActionCommand() != null && activeTab != null) {
             if (e.getActionCommand().equals("Copy")) {
                 activeTab.transferSelection(ReportTableTab.TRANSFER_TYPE.COPY_TO_INTERNAL_CLIPBOARD);
-            } else  if (e.getActionCommand().equals("BBCopy")) {
+            } else if (e.getActionCommand().equals("BBCopy")) {
                 activeTab.transferSelection(ReportTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
             } else if (e.getActionCommand().equals("Cut")) {
                 activeTab.transferSelection(ReportTableTab.TRANSFER_TYPE.CUT_TO_INTERNAL_CLIPBOARD);
@@ -104,7 +106,9 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                 for (int i = 0; i < activeTab.getReportTable().getColumnCount(); i++) {
                     TableColumnExt col = activeTab.getReportTable().getColumnExt(i);
                     if (col.isVisible()) {
-                        model.addElement(col.getTitle());
+                        if (!col.getTitle().equals("Status") && !col.getTitle().equals("Typ") && !col.getTitle().equals("Sonstiges")) {
+                            model.addElement(col.getTitle());
+                        }
                     }
                 }
                 jXColumnList.setModel(model);
@@ -145,12 +149,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jReportsPanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildComponent(jXReportsPanel);
         buildMenu();
-        try {
-            jAlwaysOnTopBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("report.frame.alwaysOnTop")));
-            setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
-        } catch (Exception e) {
-            //setting not available
-        }
         jReportsTabbedPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
         jReportsTabbedPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
         jReportsTabbedPane.setBoldActiveTab(true);
@@ -231,22 +229,53 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         setGlassPane(jxSearchPane);
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        // GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.reports_view", GlobalOptions.getHelpBroker().getHelpSet());
-        //  GlobalOptions.getHelpBroker().enableHelpKey(jFilterDialog.getRootPane(), "pages.reports_view_filters", GlobalOptions.getHelpBroker().getHelpSet());
-        //  GlobalOptions.getHelpBroker().enableHelpKey(jCreateStatsFrame.getRootPane(), "pages.reports_view_stats", GlobalOptions.getHelpBroker().getHelpSet());
-
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.reports_view", GlobalOptions.getHelpBroker().getHelpSet());
+            GlobalOptions.getHelpBroker().enableHelpKey(jFilterDialog.getRootPane(), "pages.reports_view_filters", GlobalOptions.getHelpBroker().getHelpSet());
+            GlobalOptions.getHelpBroker().enableHelpKey(jCreateStatsFrame.getRootPane(), "pages.reports_view_stats", GlobalOptions.getHelpBroker().getHelpSet());
+        }
         // </editor-fold>
 
         jCreateStatsFrame.pack();
         pack();
     }
-    public void storeCustomProperties(Configuration pCconfig) {
+
+    public void storeCustomProperties(Configuration pConfig) {
+        pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
+        pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
+
+        int selectedIndex = jReportsTabbedPane.getModel().getSelectedIndex();
+        if (selectedIndex >= 0) {
+            pConfig.setProperty(getPropertyPrefix() + ".tab.selection", selectedIndex);
+        }
+
+
+        ReportTableTab tab = ((ReportTableTab) jReportsTabbedPane.getComponentAt(0));
+        PropertyHelper.storeTableProperties(tab.getReportTable(), pConfig, getPropertyPrefix());
     }
- public void restoreCustomProperties(Configuration pConfig) {
+
+    public void restoreCustomProperties(Configuration pConfig) {
+        centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
+        try {
+            jReportsTabbedPane.setSelectedIndex(pConfig.getInteger(getPropertyPrefix() + ".tab.selection", 0));
+        } catch (Exception e) {
+        }
+        try {
+            jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
+        } catch (Exception e) {
+        }
+
+        setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
+
+        ReportTableTab tab = ((ReportTableTab) jReportsTabbedPane.getComponentAt(0));
+        PropertyHelper.restoreTableProperties(tab.getReportTable(), pConfig, getPropertyPrefix());
+
     }
+
     public String getPropertyPrefix() {
         return "report.view";
     }
+
     private void buildMenu() {
         JXTaskPane transferTaskPane = new JXTaskPane();
         transferTaskPane.setTitle("Übertragen");
@@ -263,21 +292,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         transferTaskPane.getContentPane().add(transferVillageList);
-      /*  JXButton transferNotes = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/att_clipboardBB.png")));
-        transferNotes.setToolTipText("Überträgt den gewählten Bericht als BB-Code in die Zwischenablage");
-        transferNotes.addMouseListener(new MouseAdapter() {
 
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                ReportTableTab tab = getActiveTab();
-                if (tab != null) {
-                    tab.transferSelection(ReportTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
-                }
-            }
-        });
-        transferTaskPane.getContentPane().add(transferNotes);
-
-*/
         JXTaskPane miscPane = new JXTaskPane();
         miscPane.setTitle("Sonstiges");
         JXButton centerVillage = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/medal.png")));
@@ -1086,7 +1101,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
         jList1.setModel(model);
         jList1.setSelectionInterval(0, model.size() - 1);
-
+        fireRebuildStatsEvent();
     }//GEN-LAST:event_fireDoCreateStatsEvent
 
     private void fireStatOptionsChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireStatOptionsChangedEvent
@@ -1870,19 +1885,23 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 // </editor-fold>
 
     public static void main(String[] args) {
+        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         MouseGestures mMouseGestures = new MouseGestures();
         mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
         mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
         mMouseGestures.start();
-
+        GlobalOptions.setSelectedServer("de43");
+        DataHolder.getSingleton().loadData(false);
+        ProfileManager.getSingleton().loadProfiles();
+        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
+        GlobalOptions.loadUserData();
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception e) {
         }
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         DSWorkbenchReportFrame.getSingleton().setSize(800, 600);
-        FightReport r = new FightReport();
+        /*FightReport r = new FightReport();
         r.setAcceptanceAfter((byte) 100);
         r.setAcceptanceBefore((byte) 100);
         r.setAimedBuilding("Wall");
@@ -1900,7 +1919,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         ReportManager.getSingleton().addManagedElement(r);
         ReportManager.getSingleton().addGroup("test1");
         ReportManager.getSingleton().addGroup("asd2");
-        ReportManager.getSingleton().addGroup("awe3");
+        ReportManager.getSingleton().addGroup("awe3");*/
 
         DSWorkbenchReportFrame.getSingleton().resetView();
         DSWorkbenchReportFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

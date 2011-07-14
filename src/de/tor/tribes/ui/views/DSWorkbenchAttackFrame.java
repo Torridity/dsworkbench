@@ -30,6 +30,7 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.ui.renderer.StandardAttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitTableHeaderRenderer;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -137,7 +138,10 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 for (int i = 0; i < activeTab.getAttackTable().getColumnCount(); i++) {
                     TableColumnExt col = activeTab.getAttackTable().getColumnExt(i);
                     if (col.isVisible()) {
-                        model.addElement(col.getTitle());
+                        if (!col.getTitle().equals("Einheit") && !col.getTitle().equals("Typ") && !col.getTitle().equals("Sonstiges")
+                                && !col.getTitle().equals("Abschickzeit") && !col.getTitle().equals("Ankunftzeit") && !col.getTitle().equals("Verbleibend")) {
+                            model.addElement(col.getTitle());
+                        }
                     }
                 }
                 jXColumnList.setModel(model);
@@ -168,12 +172,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         centerPanel.setChildComponent(jXAttackPanel);
         fireProfilesLoadedEvent();
         buildMenu();
-        try {
-            jAttackFrameAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("attack.frame.alwaysOnTop")));
-            setAlwaysOnTop(jAttackFrameAlwaysOnTop.isSelected());
-        } catch (Exception e) {
-            //setting not available
-        }
 
         jAttackTabPane.setCloseAction(new AbstractAction("closeAction") {
 
@@ -249,9 +247,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        //   GlobalOptions.getHelpBroker().enableHelpKey(jSelectionFilterDialog.getRootPane(), "pages.attack_select_filter", GlobalOptions.getHelpBroker().getHelpSet());
-        //    GlobalOptions.getHelpBroker().enableHelpKey(jTimeChangeDialog.getRootPane(), "pages.change_attack_times", GlobalOptions.getHelpBroker().getHelpSet());
-        //   GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.attack_view", GlobalOptions.getHelpBroker().getHelpSet());
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.attack_view", GlobalOptions.getHelpBroker().getHelpSet());
+        }
         // </editor-fold>
 
         jAttackTabPane.getModel().addChangeListener(new ChangeListener() {
@@ -272,11 +270,14 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
-        pConfig.setProperty(getPropertyPrefix() + ".click.account", iClickAccount);
+        pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAttackFrameAlwaysOnTop.isSelected());
+
         int selectedIndex = jAttackTabPane.getModel().getSelectedIndex();
         if (selectedIndex >= 0) {
             pConfig.setProperty(getPropertyPrefix() + ".tab.selection", selectedIndex);
         }
+
+
         AttackTableTab tab = ((AttackTableTab) jAttackTabPane.getComponentAt(0));
         PropertyHelper.storeTableProperties(tab.getAttackTable(), pConfig, getPropertyPrefix());
     }
@@ -287,9 +288,12 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             jAttackTabPane.setSelectedIndex(pConfig.getInteger(getPropertyPrefix() + ".tab.selection", 0));
         } catch (Exception e) {
         }
+        try {
+            jAttackFrameAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
+        } catch (Exception e) {
+        }
 
-        iClickAccount = pConfig.getInteger(getPropertyPrefix() + ".click.account", 0);
-        updateClickAccount();
+        setAlwaysOnTop(jAttackFrameAlwaysOnTop.isSelected());
 
         AttackTableTab tab = ((AttackTableTab) jAttackTabPane.getComponentAt(0));
         PropertyHelper.restoreTableProperties(tab.getAttackTable(), pConfig, getPropertyPrefix());

@@ -32,7 +32,6 @@ import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.models.TroopsTableModel;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.ClipboardWatch;
 import de.tor.tribes.util.Constants;
@@ -53,7 +52,6 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
-import de.tor.tribes.ui.models.DistanceTableModel;
 import de.tor.tribes.ui.models.StandardAttackTableModel;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.util.DSCalculator;
@@ -93,11 +91,9 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
@@ -575,9 +571,10 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         //</editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-//        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "index", GlobalOptions.getHelpBroker().getHelpSet());
-        //  jHelpItem.addActionListener(GlobalOptions.getHelpDisplay());
-
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "index", GlobalOptions.getHelpBroker().getHelpSet());
+            jHelpItem.addActionListener(GlobalOptions.getHelpDisplay());
+        }
         // </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc=" Init A*Star HelpSystem ">
@@ -659,25 +656,36 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             MapPanel.getSingleton().getAttackAddFrame().buildUnitBox();
             //setup views
             DSWorkbenchMarkerFrame.getSingleton().resetView();
+            DSWorkbenchMarkerFrame.getSingleton().restoreProperties();
             DSWorkbenchChurchFrame.getSingleton().resetView();
+            DSWorkbenchChurchFrame.getSingleton().restoreProperties();
             DSWorkbenchAttackFrame.getSingleton().resetView();
             DSWorkbenchAttackFrame.getSingleton().restoreProperties();
             DSWorkbenchTagFrame.getSingleton().resetView();
-            //ConquersTableModel.getSingleton();
+            DSWorkbenchTagFrame.getSingleton().restoreProperties();
             DSWorkbenchConquersFrame.getSingleton().resetView();
+            DSWorkbenchConquersFrame.getSingleton().restoreProperties();
             //update troops table and troops view
             StandardAttackTableModel.getSingleton().setup();
             DSWorkbenchTroopsFrame.getSingleton().resetView();
+            DSWorkbenchTroopsFrame.getSingleton().restoreProperties();
             DistanceManager.getSingleton().clear();
             StatManager.getSingleton().setup();
             // DistanceTableModel.getSingleton().fireTableStructureChanged();
             DSWorkbenchDistanceFrame.getSingleton().resetView();
+            DSWorkbenchDistanceFrame.getSingleton().restoreProperties();
             DSWorkbenchStatsFrame.getSingleton().resetView();
+            DSWorkbenchStatsFrame.getSingleton().restoreProperties();
             DSWorkbenchDoItYourselfAttackPlaner.getSingleton().resetView();
+            DSWorkbenchDoItYourselfAttackPlaner.getSingleton().restoreProperties();
             DSWorkbenchReTimerFrame.getSingleton().resetView();
+            DSWorkbenchReTimerFrame.getSingleton().restoreProperties();
             DSWorkbenchReportFrame.getSingleton().resetView();
+            DSWorkbenchReportFrame.getSingleton().restoreProperties();
             DSWorkbenchSOSRequestAnalyzer.getSingleton().resetView();
+            DSWorkbenchSOSRequestAnalyzer.getSingleton().restoreProperties();
             DSWorkbenchMerchantDistibutor.getSingleton().resetView();
+            DSWorkbenchMerchantDistibutor.getSingleton().restoreProperties();
 
             //update attack planner
             if (mTribeTribeAttackFrame != null) {
@@ -686,6 +694,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
             DSWorkbenchSettingsDialog.getSingleton().setupAttackColorTable();
             DSWorkbenchRankFrame.getSingleton().resetView();
+            DSWorkbenchRankFrame.getSingleton().restoreProperties();
 
             if (ServerSettings.getSingleton().getCoordType() != 2) {
                 jLabel1.setText("K");
@@ -699,7 +708,9 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             jShowChurchFrame.setEnabled(ServerSettings.getSingleton().isChurch());
             jROIBox.setModel(new DefaultComboBoxModel(ROIManager.getSingleton().getROIs()));
             DSWorkbenchSelectionFrame.getSingleton().resetView();
+            DSWorkbenchSelectionFrame.getSingleton().restoreProperties();
             DSWorkbenchNotepad.getSingleton().resetView();
+            DSWorkbenchNotepad.getSingleton().restoreProperties();
             if (DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
                 DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
             }
@@ -707,33 +718,13 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             //relevant for first start
             propagateLayerOrder();
             MinimapPanel.getSingleton().redraw(true);
-            //call all frames during first execution
-            // DSWorkbenchAttackFrame.getSingleton();
-            //DSWorkbenchNotepad.getSingleton();
-            //DSWorkbenchTroopsFrame.getSingleton();
-            //DSWorkbenchRankFrame.getSingleton();
+
             DSWorkbenchFormFrame.getSingleton().resetView();
-            //DSWorkbenchMarkerFrame.getSingleton();
-            // DSWorkbenchChurchFrame.getSingleton();
-            //DSWorkbenchConquersFrame.getSingleton();
-            // DSWorkbenchNotepad.getSingleton();
-            //  DSWorkbenchTagFrame.getSingleton();
+            DSWorkbenchFormFrame.getSingleton().restoreProperties();
             FormConfigFrame.getSingleton();
             DSWorkbenchSearchFrame.getSingleton();
-            // DSWorkbenchSelectionFrame.getSingleton();
-            // DSWorkbenchStatsFrame.getSingleton();
-            // DSWorkbenchReTimerFrame.getSingleton();
-            // DSWorkbenchDoItYourselfAttackPlaner.getSingleton();
-            // DSWorkbenchReportFrame.getSingleton();
-            logger.info("Server settings updated");
 
-            /* if (!DSWorkbenchSettingsDialog.getSingleton().isVisible()) {
-            long dataVersion = DataHolder.getSingleton().getDataAge();
-            long oneDayAgo = System.currentTimeMillis() - 1000 * 60 * 60 * 24;
-            if (dataVersion < oneDayAgo) {
-            JOptionPaneHelper.showWarningBox(this, "Deine Weltdaten sind älter als 24 Stunden.\n" + "Es wird empfohlen, sie sobald wie möglich zu aktualisieren.", "Warnung");
-            }
-            }*/
+            logger.info("Server settings updated");
             if (isVisible() && !DSWorkbenchSettingsDialog.getSingleton().isVisible()) {
                 showReminder();
             }
@@ -982,6 +973,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         RibbonConfigurator.addMapToolsTask(this);
         RibbonConfigurator.addViewTask(this);
         RibbonConfigurator.addAppIcons(this);
+        //RibbonConfigurator.addMiscBand(this, jNavigationPanel);
     }
 
     private void showReminder() {
@@ -1761,6 +1753,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jNavigationGroup.setTitle("Navigation");
 
         jNavigationPanel.setBackground(new java.awt.Color(239, 235, 223));
+        jNavigationPanel.setMinimumSize(new java.awt.Dimension(236, 95));
 
         jMoveE.setBackground(new java.awt.Color(239, 235, 223));
         jMoveE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_e.png"))); // NOI18N
@@ -1963,7 +1956,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                 .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(33, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jNavigationPanelLayout.setVerticalGroup(
             jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

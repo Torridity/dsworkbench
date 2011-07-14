@@ -25,6 +25,7 @@ import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
+import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.conquer.ConquerManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -139,10 +140,24 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         return SINGLETON;
     }
 
-    public void storeCustomProperties(Configuration pCconfig) {
+    public void storeCustomProperties(Configuration pConfig) {
+        pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
+        pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jConquersFrameAlwaysOnTop.isSelected());
+        PropertyHelper.storeTableProperties(jConquersTable, pConfig, getPropertyPrefix());
+
     }
 
     public void restoreCustomProperties(Configuration pConfig) {
+        centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
+
+        try {
+            jConquersFrameAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
+        } catch (Exception e) {
+        }
+
+        setAlwaysOnTop(jConquersFrameAlwaysOnTop.isSelected());
+
+        PropertyHelper.restoreTableProperties(jConquersTable, pConfig, getPropertyPrefix());
     }
 
     public String getPropertyPrefix() {

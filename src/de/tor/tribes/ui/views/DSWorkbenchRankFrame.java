@@ -17,9 +17,11 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.GenericTestPanel;
 import de.tor.tribes.ui.RankTableTab;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.MouseGestureHandler;
+import de.tor.tribes.util.PropertyHelper;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -101,12 +103,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         jRankPanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildComponent(jXRankPanel);
         buildMenu();
-        try {
-            jAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("rank.frame.alwaysOnTop")));
-            setAlwaysOnTop(jAlwaysOnTop.isSelected());
-        } catch (Exception e) {
-            //setting not available
-        }
+
         jRankTabPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
         jRankTabPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
         jRankTabPane.setBoldActiveTab(true);
@@ -129,17 +126,48 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         });
         setGlassPane(jxSearchPane);
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        // GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.ranking_view", GlobalOptions.getHelpBroker().getHelpSet());
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.ranking_view", GlobalOptions.getHelpBroker().getHelpSet());
+        }
 // </editor-fold>
         // updateRankTable();
     }
-    public void storeCustomProperties(Configuration pCconfig) {
+
+    public void storeCustomProperties(Configuration pConfig) {
+        pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
+        pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTop.isSelected());
+
+        int selectedIndex = jRankTabPane.getModel().getSelectedIndex();
+        if (selectedIndex >= 0) {
+            pConfig.setProperty(getPropertyPrefix() + ".tab.selection", selectedIndex);
+        }
+
+
+        RankTableTab tab = ((RankTableTab) jRankTabPane.getComponentAt(0));
+        PropertyHelper.storeTableProperties(tab.getRankTable(), pConfig, getPropertyPrefix());
     }
- public void restoreCustomProperties(Configuration pConfig) {
+
+    public void restoreCustomProperties(Configuration pConfig) {
+        centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
+        try {
+            jRankTabPane.setSelectedIndex(pConfig.getInteger(getPropertyPrefix() + ".tab.selection", 0));
+        } catch (Exception e) {
+        }
+        try {
+            jAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
+        } catch (Exception e) {
+        }
+
+        setAlwaysOnTop(jAlwaysOnTop.isSelected());
+
+        RankTableTab tab = ((RankTableTab) jRankTabPane.getComponentAt(0));
+        PropertyHelper.restoreTableProperties(tab.getRankTable(), pConfig, getPropertyPrefix());
     }
+
     public String getPropertyPrefix() {
         return "rank.view";
     }
+
     private void buildMenu() {
         JXTaskPane statsTaskPane = new JXTaskPane();
         statsTaskPane.setTitle("Statistiken");

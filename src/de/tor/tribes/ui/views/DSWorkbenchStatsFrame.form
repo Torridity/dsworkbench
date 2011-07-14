@@ -351,6 +351,7 @@
                     <Component class="javax.swing.JEditorPane" name="jPointsPane">
                       <Properties>
                         <Property name="contentType" type="java.lang.String" value="text/html"/>
+                        <Property name="editable" type="boolean" value="false"/>
                       </Properties>
                     </Component>
                   </SubComponents>
@@ -375,6 +376,7 @@
                     <Component class="javax.swing.JEditorPane" name="jBashOffPane">
                       <Properties>
                         <Property name="contentType" type="java.lang.String" value="text/html"/>
+                        <Property name="editable" type="boolean" value="false"/>
                       </Properties>
                     </Component>
                   </SubComponents>
@@ -399,6 +401,7 @@
                     <Component class="javax.swing.JEditorPane" name="jBashDefPane">
                       <Properties>
                         <Property name="contentType" type="java.lang.String" value="text/html"/>
+                        <Property name="editable" type="boolean" value="false"/>
                       </Properties>
                     </Component>
                   </SubComponents>
@@ -423,6 +426,7 @@
                     <Component class="javax.swing.JEditorPane" name="jWinnerLoserPane">
                       <Properties>
                         <Property name="contentType" type="java.lang.String" value="text/html"/>
+                        <Property name="editable" type="boolean" value="false"/>
                       </Properties>
                     </Component>
                   </SubComponents>

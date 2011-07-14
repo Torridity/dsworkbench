@@ -32,6 +32,7 @@ import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MouseGestureHandler;
 import de.tor.tribes.util.PluginManager;
+import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.bb.TagListFormatter;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.BorderLayout;
@@ -133,12 +134,6 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         jTagPanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildComponent(jTagsPanel);
         buildMenu();
-        try {
-            jAlwaysOnTopBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("tag.frame.alwaysOnTop")));
-            setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
-        } catch (Exception e) {
-            //setting not available
-        }
 
         jTagsTable.setModel(new TagTableModel());
         jTagsTable.getSelectionModel().addListSelectionListener(DSWorkbenchTagFrame.this);
@@ -159,17 +154,33 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         jTagsTable.registerKeyboardAction(DSWorkbenchTagFrame.this, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        //   GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.tag_view", GlobalOptions.getHelpBroker().getHelpSet());
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.tag_view", GlobalOptions.getHelpBroker().getHelpSet());
+        }
         // </editor-fold>
 
         initialize();
         pack();
     }
 
-    public void storeCustomProperties(Configuration pCconfig) {
+    public void storeCustomProperties(Configuration pConfig) {
+        pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
+        pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
+
+        PropertyHelper.storeTableProperties(jTagsTable, pConfig, getPropertyPrefix());
+
     }
 
     public void restoreCustomProperties(Configuration pConfig) {
+        centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
+
+        try {
+            jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
+        } catch (Exception e) {
+        }
+
+        setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
+        PropertyHelper.restoreTableProperties(jTagsTable, pConfig, getPropertyPrefix());
     }
 
     public String getPropertyPrefix() {

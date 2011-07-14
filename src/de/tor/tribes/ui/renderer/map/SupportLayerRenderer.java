@@ -41,10 +41,11 @@ public class SupportLayerRenderer extends AbstractDirectLayerRenderer {
         Stroke s = pG2d.getStroke();
         Color b = pG2d.getColor();
         List<Village> visibleVillages = new LinkedList<Village>();
-        for (int i = 0; i < pSettings.getVisibleVillages().length; i++) {
-            for (int j = 0; j < pSettings.getVisibleVillages()[0].length; j++) {
-                if (pSettings.getVisibleVillages()[i][j] != null) {
-                    visibleVillages.add(pSettings.getVisibleVillages()[i][j]);
+        for (int i = 0; i < pSettings.getVillagesInX(); i++) {
+            for (int j = 0; j < pSettings.getVillagesInY(); j++) {
+                Village v = pSettings.getVisibleVillage(i, j);
+                if (v != null) {
+                    visibleVillages.add(v);
                 }
             }
         }
@@ -59,26 +60,26 @@ public class SupportLayerRenderer extends AbstractDirectLayerRenderer {
             //process source villages
             if (v.isVisibleOnMap()) {
                 List<Village> villages = new LinkedList<Village>();
-                SupportVillageTroopsHolder holder = (SupportVillageTroopsHolder)TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.SUPPORT);
+                SupportVillageTroopsHolder holder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.SUPPORT);
 
                 Hashtable<Village, Hashtable<UnitHolder, Integer>> incs = holder.getIncomingSupports();
-                 Hashtable<Village, Hashtable<UnitHolder, Integer>> outs = holder.getOutgoingSupports();
-                
-                 Enumeration<Village> keys = incs.keys();
-                 while(keys.hasMoreElements()){
-                     Village key = keys.nextElement();
-                     if(!villages.contains(key)){
-                         villages.add(key);
-                     }
-                 }
-                 keys = outs.keys();
-                 while(keys.hasMoreElements()){
-                     Village key = keys.nextElement();
-                     if(!villages.contains(key)){
-                         villages.add(key);
-                     }
-                 }
-                 
+                Hashtable<Village, Hashtable<UnitHolder, Integer>> outs = holder.getOutgoingSupports();
+
+                Enumeration<Village> keys = incs.keys();
+                while (keys.hasMoreElements()) {
+                    Village key = keys.nextElement();
+                    if (!villages.contains(key)) {
+                        villages.add(key);
+                    }
+                }
+                keys = outs.keys();
+                while (keys.hasMoreElements()) {
+                    Village key = keys.nextElement();
+                    if (!villages.contains(key)) {
+                        villages.add(key);
+                    }
+                }
+
                 for (Village target : villages) {
                     Line2D.Double supportLine = new Line2D.Double(v.getX() * pSettings.getFieldWidth(), v.getY() * pSettings.getFieldHeight(), target.getX() * pSettings.getFieldWidth(), target.getY() * pSettings.getFieldHeight());
 

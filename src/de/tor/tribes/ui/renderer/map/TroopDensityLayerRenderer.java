@@ -48,8 +48,8 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
                         || MapPanel.getSingleton().getWidth() < mLayer.getWidth() - 100
                         || MapPanel.getSingleton().getHeight() > mLayer.getHeight()
                         || MapPanel.getSingleton().getHeight() < mLayer.getHeight() - 100
-                        || MapPanel.getSingleton().getWidth() < pSettings.getFieldWidth() * pSettings.getVisibleVillages().length
-                        || MapPanel.getSingleton().getHeight() < pSettings.getFieldHeight() * pSettings.getVisibleVillages()[0].length) {
+                        || MapPanel.getSingleton().getWidth() < pSettings.getFieldWidth() * pSettings.getVillagesInX()
+                        || MapPanel.getSingleton().getHeight() < pSettings.getFieldHeight() * pSettings.getVillagesInY()) {
                     mLayer.flush();
                     mLayer = null;
                 }
@@ -58,7 +58,7 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
         Graphics2D g2d = null;
         if (isFullRenderRequired()) {
             if (mLayer == null) {
-                mLayer = ImageUtils.createCompatibleBufferedImage(pSettings.getVisibleVillages().length * pSettings.getFieldWidth(), pSettings.getVisibleVillages()[0].length * pSettings.getFieldHeight(), BufferedImage.BITMASK);
+                mLayer = ImageUtils.createCompatibleBufferedImage(pSettings.getVillagesInX() * pSettings.getFieldWidth(), pSettings.getVillagesInY() * pSettings.getFieldHeight(), BufferedImage.BITMASK);
                 g2d = mLayer.createGraphics();
             } else {
                 g2d = (Graphics2D) mLayer.getGraphics();
@@ -67,7 +67,7 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
                 g2d.fillRect(0, 0, mLayer.getWidth(), mLayer.getHeight());
                 g2d.setComposite(c);
             }
-            pSettings.setRowsToRender(pSettings.getVisibleVillages()[0].length);
+            pSettings.setRowsToRender(pSettings.getVillagesInY());
         } else {
 //copy existing data to new location
             g2d = (Graphics2D) mLayer.getGraphics();
@@ -78,7 +78,7 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
         BufferedImage img = renderTroopRows(pSettings);
         AffineTransform trans = AffineTransform.getTranslateInstance(0, 0);
         if (pSettings.getRowsToRender() < 0) {
-            trans.setToTranslation(0, (pSettings.getVisibleVillages()[0].length + pSettings.getRowsToRender()) * pSettings.getFieldHeight());
+            trans.setToTranslation(0, (pSettings.getVillagesInY() + pSettings.getRowsToRender()) * pSettings.getFieldHeight());
         }
         g2d.drawRenderedImage(img, trans);
         if (isFullRenderRequired()) {
@@ -88,7 +88,7 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
             img = renderTroopColumns(pSettings);
             trans = AffineTransform.getTranslateInstance(0, 0);
             if (pSettings.getColumnsToRender() < 0) {
-                trans.setToTranslation((pSettings.getVisibleVillages().length + pSettings.getColumnsToRender()) * pSettings.getFieldWidth(), 0);
+                trans.setToTranslation((pSettings.getVillagesInX() + pSettings.getColumnsToRender()) * pSettings.getFieldWidth(), 0);
             }
             g2d.drawRenderedImage(img, trans);
         }
@@ -123,19 +123,19 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
         int dx = 0;//(int) Math.floor(pSettings.getDeltaX());
         int dy = 0;//(int) Math.floor(pSettings.getDeltaY());
         //create new buffer for rendering
-        BufferedImage newColumns = ImageUtils.createCompatibleBufferedImage(Math.abs(pSettings.getColumnsToRender()) * pSettings.getFieldWidth(), pSettings.getVisibleVillages()[0].length * pSettings.getFieldHeight(), BufferedImage.BITMASK);
+        BufferedImage newColumns = ImageUtils.createCompatibleBufferedImage(Math.abs(pSettings.getColumnsToRender()) * pSettings.getFieldWidth(), pSettings.getVillagesInY() * pSettings.getFieldHeight(), BufferedImage.BITMASK);
         //calculate first row that will be rendered
-        int firstCol = (pSettings.getColumnsToRender() > 0) ? 0 : pSettings.getVisibleVillages().length - Math.abs(pSettings.getColumnsToRender());
+        int firstCol = (pSettings.getColumnsToRender() > 0) ? 0 : pSettings.getVillagesInX() - Math.abs(pSettings.getColumnsToRender());
         Graphics2D g2d = newColumns.createGraphics();
         ImageUtils.setupGraphics(g2d);
         //iterate through entire row
         int cnt = 0;
 
         for (int x = firstCol; x < firstCol + Math.abs(pSettings.getColumnsToRender()); x++) {
-            for (int y = 0; y < pSettings.getVisibleVillages()[0].length; y++) {
+            for (int y = 0; y < pSettings.getVillagesInY(); y++) {
                 cnt++;
                 //iterate from first row for 'pRows' times
-                Village v = pSettings.getVisibleVillages()[x][y];
+                Village v = pSettings.getVisibleVillage(x, y);
                 int row = y;
                 int col = x - firstCol;
                 renderField(v, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), dx, dy, pSettings.getZoom(), g2d);
@@ -148,9 +148,9 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
 
     private BufferedImage renderTroopRows(RenderSettings pSettings) {
         //calculate first row that will be rendered
-        BufferedImage newRows = ImageUtils.createCompatibleBufferedImage(pSettings.getVisibleVillages().length * pSettings.getFieldWidth(), Math.abs(pSettings.getRowsToRender()) * pSettings.getFieldHeight(), BufferedImage.BITMASK);
+        BufferedImage newRows = ImageUtils.createCompatibleBufferedImage(pSettings.getVillagesInX() * pSettings.getFieldWidth(), Math.abs(pSettings.getRowsToRender()) * pSettings.getFieldHeight(), BufferedImage.BITMASK);
         //calculate first row that will be rendered
-        int firstRow = (pSettings.getRowsToRender() > 0) ? 0 : pSettings.getVisibleVillages()[0].length - Math.abs(pSettings.getRowsToRender());
+        int firstRow = (pSettings.getRowsToRender() > 0) ? 0 : pSettings.getVillagesInY() - Math.abs(pSettings.getRowsToRender());
         Graphics2D g2d = newRows.createGraphics();
         ImageUtils.setupGraphics(g2d);
         //iterate through entire rows
@@ -161,11 +161,11 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
         int lastVillageRow = 0;
         int lastVillageCol = 0;
         Village currentMouseVillage = MapPanel.getSingleton().getVillageAtMousePos();
-        for (int x = 0; x < pSettings.getVisibleVillages().length; x++) {
+        for (int x = 0; x < pSettings.getVillagesInX(); x++) {
             //iterate from first row for 'pRows' times
             for (int y = firstRow; y < firstRow + Math.abs(pSettings.getRowsToRender()); y++) {
                 cnt++;
-                Village v = pSettings.getVisibleVillages()[x][y];
+                Village v = pSettings.getVisibleVillage(x, y);
                 int row = y - firstRow;
                 int col = x;
                 if (v != null && currentMouseVillage != null && v.equals(currentMouseVillage)) {

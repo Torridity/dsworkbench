@@ -635,22 +635,21 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
 
 
         if (iCurrentView == ID_ALLY_CHART) {
-            HashMap<Ally, Integer> allyCount = MapPanel.getSingleton().getMapRenderer().getAllyCount();
+            Hashtable<Ally, Integer> allyCount = MapPanel.getSingleton().getMapRenderer().getAllyCount();
             int overallVillages = 0;
-            Iterator<Entry<Ally, Integer>> keys = allyCount.entrySet().iterator();
+            Enumeration<Ally> keys = allyCount.keys();
             //count all villages
-            while (keys.hasNext()) {
-                overallVillages += allyCount.get(keys.next().getValue());
+            while (keys.hasMoreElements()) {
+                overallVillages += allyCount.get(keys.nextElement());
             }
-            keys = allyCount.entrySet().iterator();
+            keys = allyCount.keys();
 
             double rest = 0;
             // Hashtable<Ally, Marker> marks = new Hashtable<Ally, Marker>();
 
-            while (keys.hasNext()) {
-                Entry<Ally, Integer> next = keys.next();
-                Ally a = next.getKey();
-                Integer v = next.getValue();
+            while (keys.hasMoreElements()) {
+                Ally a = keys.nextElement();
+                Integer v = allyCount.get(a);
                 Double perc = new Double((double) v / (double) overallVillages * 100);
 
                 if (perc > 5.0) {
@@ -668,24 +667,24 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
 
             dataset.setValue("Sonstige", rest);
         } else {
-            HashMap<Tribe, Integer> tribeCount = MapPanel.getSingleton().getMapRenderer().getTribeCount();
+            Hashtable<Tribe, Integer> tribeCount = MapPanel.getSingleton().getMapRenderer().getTribeCount();
 
             int overallVillages = 0;
-            Iterator<Entry<Tribe, Integer>> keys = tribeCount.entrySet().iterator();
+            Enumeration<Tribe> keys = tribeCount.keys();
             //count all villages
 
-            while (keys.hasNext()) {
-                overallVillages += tribeCount.get(keys.next().getValue());
+            while (keys.hasMoreElements()) {
+                overallVillages += tribeCount.get(keys.nextElement());
             }
-            keys = tribeCount.entrySet().iterator();
+            keys = tribeCount.keys();
 
             double rest = 0;
             //  Hashtable<Tribe, Marker> marks = new Hashtable<Tribe, Marker>();
 
-            while (keys.hasNext()) {
-                Entry<Tribe, Integer> next = keys.next();
-                Tribe t = next.getKey();
-                Integer v = next.getValue();
+            while (keys.hasMoreElements()) {
+                Tribe t = keys.nextElement();
+
+                Integer v = tribeCount.get(t);
 
                 Double perc = new Double((double) v / (double) overallVillages * 100);
                 if (perc > 5.0) {

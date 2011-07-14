@@ -129,6 +129,7 @@ import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
+ * @TODO show info if we are in the settings pane and click on menu function
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements

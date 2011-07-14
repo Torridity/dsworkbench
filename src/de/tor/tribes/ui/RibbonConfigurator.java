@@ -36,6 +36,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.pushingpixels.flamingo.api.common.CommandButtonDisplayState;
+import org.pushingpixels.flamingo.api.common.HorizontalAlignment;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.JCommandButtonPanel;
 import org.pushingpixels.flamingo.api.common.RichTooltip;
@@ -46,6 +47,7 @@ import org.pushingpixels.flamingo.api.common.popup.JCommandPopupMenu;
 import org.pushingpixels.flamingo.api.common.popup.JPopupPanel;
 import org.pushingpixels.flamingo.api.common.popup.PopupPanelCallback;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
+import org.pushingpixels.flamingo.api.ribbon.JRibbonComponent;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenu;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryFooter;
@@ -56,7 +58,7 @@ import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
 import org.pushingpixels.flamingo.api.ribbon.resize.IconRibbonBandResizePolicy;
 
 /**
- *
+ *@todo implement app menu entries
  * @author Torridity
  */
 public class RibbonConfigurator {
@@ -490,6 +492,15 @@ public class RibbonConfigurator {
 
         RibbonTask task1 = new RibbonTask("Allgemeine Werkzeuge", attackToolsBand, defendToolsBand, infoToolBand, miscToolsBand);
         frame.getRibbon().addTask(task1);
+    }
+
+    public static void addMiscBand(JRibbonFrame frame, JPanel p) {
+        JRibbonBand infoViewBand = new JRibbonBand("Informationen", getResizableIconFromFile("graphics/big/information.png"));
+        JRibbonComponent alignLeadingWrapper1 = new JRibbonComponent(p);
+        infoViewBand.addRibbonComponent(alignLeadingWrapper1, 3);
+
+        RibbonTask task = new RibbonTask("Ansicht", infoViewBand);
+        frame.getRibbon().addTask(task);
     }
 
     public static void addMapToolsTask(JRibbonFrame frame) {

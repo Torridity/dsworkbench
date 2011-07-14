@@ -113,7 +113,7 @@
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
   <SubComponents>
-    <Component class="javax.swing.JCheckBox" name="jCheckBox1">
+    <Component class="javax.swing.JCheckBox" name="jAlwaysOnTop">
       <Properties>
         <Property name="text" type="java.lang.String" value="Immer im Vordergrund"/>
         <Property name="opaque" type="boolean" value="false"/>

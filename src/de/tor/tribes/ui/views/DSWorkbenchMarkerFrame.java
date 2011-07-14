@@ -17,6 +17,7 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.GenericTestPanel;
 import de.tor.tribes.ui.MarkerTableTab;
+import de.tor.tribes.util.Constants;
 import java.util.List;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -88,12 +89,6 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         jMarkersPanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildComponent(jXMarkerPanel);
         buildMenu();
-        try {
-            jMarkerFrameAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("marker.frame.alwaysOnTop")));
-            setAlwaysOnTop(jMarkerFrameAlwaysOnTop.isSelected());
-        } catch (Exception e) {
-            //setting not available
-        }
 
         jMarkerTabPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
         jMarkerTabPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
@@ -143,7 +138,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
 
             @Override
             public boolean shouldStartEdit(int tabIndex, MouseEvent event) {
-                return !(tabIndex == 0 || tabIndex == 1);
+                return !(tabIndex == 0);
             }
         });
         jMarkerTabPane.setCloseAction(new AbstractAction("closeAction") {
@@ -168,7 +163,9 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         });
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-//        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.markers_view", GlobalOptions.getHelpBroker().getHelpSet());
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.markers_view", GlobalOptions.getHelpBroker().getHelpSet());
+        }
 // </editor-fold>
         pack();
     }

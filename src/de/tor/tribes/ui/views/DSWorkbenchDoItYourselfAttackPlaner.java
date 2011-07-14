@@ -35,6 +35,7 @@ import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MouseGestureHandler;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.ProfileManager;
+import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
 import java.awt.Color;
@@ -132,12 +133,6 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
     /** Creates new form DSWorkbenchDoItYourselflAttackPlaner */
     DSWorkbenchDoItYourselfAttackPlaner() {
         initComponents();
-        try {
-            jAlwaysOnTopBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("doityourself.attack.frame.alwaysOnTop")));
-            setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
-        } catch (Exception e) {
-            //setting not available
-        }
 
         jAttackTable.setModel(new DoItYourselfAttackTableModel());
         jAttackTable.getSelectionModel().addListSelectionListener(DSWorkbenchDoItYourselfAttackPlaner.this);
@@ -167,15 +162,28 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         thread.start();
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-//        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.manual_attack_planer", GlobalOptions.getHelpBroker().getHelpSet());
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.manual_attack_planer", GlobalOptions.getHelpBroker().getHelpSet());
+        }
         // </editor-fold>
         pack();
     }
 
-    public void storeCustomProperties(Configuration pCconfig) {
+    public void storeCustomProperties(Configuration pConfig) {
+        pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
+        PropertyHelper.storeTableProperties(jAttackTable, pConfig, getPropertyPrefix());
+
     }
 
     public void restoreCustomProperties(Configuration pConfig) {
+        try {
+            jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
+        } catch (Exception e) {
+        }
+
+        setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
+
+        PropertyHelper.restoreTableProperties(jAttackTable, pConfig, getPropertyPrefix());
     }
 
     public String getPropertyPrefix() {
@@ -193,7 +201,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
     public void resetView() {
         AttackManager.getSingleton().addManagerListener(this);
         //setup renderer and general view
-       // ((DoItYourselfAttackTableModel) jAttackTable.getModel()).clear();
+        // ((DoItYourselfAttackTableModel) jAttackTable.getModel()).clear();
 
         HighlightPredicate.ColumnHighlightPredicate colu = new HighlightPredicate.ColumnHighlightPredicate(0, 1, 2, 3, 6);
         jAttackTable.setRowHeight(24);

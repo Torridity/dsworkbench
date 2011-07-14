@@ -908,6 +908,9 @@
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="df" green="eb" red="ef" type="rgb"/>
                         </Property>
+                        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                          <Dimension value="[236, 95]"/>
+                        </Property>
                       </Properties>
 
                       <Layout>
@@ -963,7 +966,7 @@
                                       <Component id="jRefreshButton" min="-2" max="-2" attributes="1"/>
                                       <Component id="jCenterCoordinateIngame" min="-2" max="-2" attributes="1"/>
                                   </Group>
-                                  <EmptySpace pref="33" max="32767" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>

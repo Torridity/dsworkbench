@@ -762,7 +762,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
     </Container>
-    <Component class="javax.swing.JCheckBox" name="jMainAlwaysOnTopBox">
+    <Component class="javax.swing.JCheckBox" name="jAlwaysOnTopBox">
       <Properties>
         <Property name="text" type="java.lang.String" value="Immer im Vordergrund"/>
         <Property name="opaque" type="boolean" value="false"/>

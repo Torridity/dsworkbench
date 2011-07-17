@@ -137,8 +137,8 @@ public abstract class AbstractForm extends ManageableType {
     public ArrayList<Village> getContainedVillages() {
         java.awt.Rectangle bounds = getBounds();
         ArrayList<Village> v = new ArrayList<Village>();
-        for (int x = bounds.x; x <= bounds.x + bounds.width; x++) {
-            for (int y = bounds.y; y <= bounds.y + bounds.height; y++) {
+        for (int x = bounds.x; x < bounds.x + bounds.width; x++) {
+            for (int y = bounds.y; y < bounds.y + bounds.height; y++) {
                 Village vi = DataHolder.getSingleton().getVillages()[x][y];
                 if (vi != null) {
                     v.add(vi);

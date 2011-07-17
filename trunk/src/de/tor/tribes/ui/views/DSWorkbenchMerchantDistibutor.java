@@ -85,6 +85,7 @@ import org.jdesktop.swingx.painter.MattePainter;
 
 /**
  * @TODO add load and save icons
+ * @TODO quick profile selection does not work at all
  * @author Jejkal
  */
 public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame implements ListSelectionListener, ActionListener, ProfileManagerListener {
@@ -363,7 +364,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
             Village target = (Village) jResultsTable.getValueAt(row, 2);
             if (BrowserCommandSender.sendRes(source, target, t, profile)) {
                 transferCount++;
-                jResultsTable.setValueAt(true, row, jResultsTable.convertColumnIndexToModel(3));
+                jResultsTable.setValueAt(true, row, 3);
                 iClickAccount--;
             } else {
                 transferCount = -1;
@@ -604,6 +605,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         infoPanel.setCollapsed(true);
         infoPanel.setInheritAlpha(false);
 
+        jXInfoLabel.setText("Keine Meldung");
         jXInfoLabel.setOpaque(true);
         jXInfoLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
@@ -667,6 +669,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         resultInfoPanel.setCollapsed(true);
         resultInfoPanel.setInheritAlpha(false);
 
+        jXResultInfoLabel.setText("Keine Meldung");
         jXResultInfoLabel.setOpaque(true);
         jXResultInfoLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {

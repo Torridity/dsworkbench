@@ -648,6 +648,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         infoPanel.setCollapsed(true);
         infoPanel.setInheritAlpha(false);
 
+        jXInfoLabel.setText("Keine Meldung");
         jXInfoLabel.setOpaque(true);
         jXInfoLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {

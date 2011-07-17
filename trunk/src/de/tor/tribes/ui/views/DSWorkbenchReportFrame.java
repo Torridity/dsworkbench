@@ -15,7 +15,6 @@ import com.jidesoft.swing.TabEditingEvent;
 import com.jidesoft.swing.TabEditingListener;
 import com.jidesoft.swing.TabEditingValidator;
 import com.smardec.mousegestures.MouseGestures;
-import com.sun.corba.se.impl.orbutil.closure.Constant;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;

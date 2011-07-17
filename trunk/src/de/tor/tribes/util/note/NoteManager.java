@@ -291,12 +291,14 @@ public class NoteManager extends GenericManager<Note> {
             Note n = (Note) t;
             for (Integer id : n.getVillageIds()) {
                 Village v = DataHolder.getSingleton().getVillagesById().get(id);
-                List<Note> list = noteMap.get(v);
-                if (list == null) {
-                    list = new ArrayList<Note>();
-                    noteMap.put(v, list);
+                if (v != null) {
+                    List<Note> list = noteMap.get(v);
+                    if (list == null) {
+                        list = new ArrayList<Note>();
+                        noteMap.put(v, list);
+                    }
+                    list.add(n);
                 }
-                list.add(n);
             }
         }
         return noteMap;

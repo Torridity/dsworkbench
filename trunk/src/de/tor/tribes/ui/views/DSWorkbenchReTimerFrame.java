@@ -164,7 +164,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         if (!Constants.DEBUG) {
-          GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.retime_tool", GlobalOptions.getHelpBroker().getHelpSet());
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.retime_tool", GlobalOptions.getHelpBroker().getHelpSet());
         }
         // </editor-fold>
     }
@@ -200,7 +200,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         filterRetimes.setToolTipText("<html>Filtern der gefundenen ReTime Angriffe nach der bekannten Truppenst&auml;rke im Dorf<br/>"
                 + "Es ist ratsam, vor der Filterung zu pr&uuml;fen, ob die in DS Workbench importierten<br/>"
                 + "Truppeninformationen aktuell sind. Nach der Filterung sind die Eintr&auml;ge markiert, welche die eingestellten<br/>"
-                + "Filterbedingungen <b>NICHT</b> erf&uuml;llen.</html>");
+                + "Filterbedingungen <b>NICHT</b> erf&uuml;llen, um sie direkt l&ouml;schen zu k&ouml;nnen.</html>");
         filterRetimes.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -273,7 +273,11 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             showInfo("Keine Angriffe ausgewählt");
             return;
         }
-
+        /*
+        Herkunft: Rattennest (-42|35) (444|868) K84
+        Ziel: Rattennest (-43|38) (443|871) K84
+        Ankunft: 17.04.10 18:44:00:931
+         */
         StringBuilder b = new StringBuilder();
         int cnt = 0;
         for (Attack a : selection) {
@@ -783,9 +787,11 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jResultPanel.setPreferredSize(new java.awt.Dimension(500, 400));
         jResultPanel.setLayout(new java.awt.BorderLayout());
 
+        infoPanel.setAnimated(false);
         infoPanel.setCollapsed(true);
         infoPanel.setInheritAlpha(false);
 
+        jXInfoLabel.setText("Keine Meldung");
         jXInfoLabel.setOpaque(true);
         jXInfoLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
@@ -1288,11 +1294,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             showInfo("Keine ReTime Angriffe zur Filterung vorhanden");
             return;
         }
-        /*   // <editor-fold defaultstate="collapsed" desc="Build filter dialog">
-        jFilterUnitBox.setModel(new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{})));
-        jFilterUnitBox.setRenderer(new UnitListCellRenderer());
-        jFilterList.setModel(new DefaultListModel());
-        // </editor-fold>*/
+       
         TroopFilterDialog filterDialog = new TroopFilterDialog(this, true);
 
         List<Village> sources = new LinkedList<Village>();
@@ -1317,34 +1319,6 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         } else {
             showSuccess(((diff == 1) ? "Ein Angriff entfernt" : diff + " Angriffe entfernt"));
         }
-
-        /* if (evt.getSource() == jApplyFiltersButton) {
-        DefaultListModel filterModel = (DefaultListModel) jFilterList.getModel();
-        List<Integer> rowsToRemove = new LinkedList<Integer>();
-        int removeCount = 0;
-        for (int i = 0; i < jResultTable.getRowCount(); i++) {
-        //go through all rows in attack table and get source village
-        Village v = (Village) jResultTable.getValueAt(i, 0);
-        for (int j = 0; j < filterModel.size(); j++) {
-        //check for all filters if villag is allowed
-        if (!((TroopFilterElement) filterModel.get(j)).allowsVillage(v)) {
-        //village is not allowed, add to remove list
-        int row = jResultTable.convertRowIndexToModel(i);
-        rowsToRemove.add(row);
-        removeCount++;
-        }
-        }
-        }
-        jResultTable.getSelectionModel().setValueIsAdjusting(true);
-        for (int row : rowsToRemove) {
-        jResultTable.getSelectionModel().addSelectionInterval(row, row);
-        }
-        jResultTable.getSelectionModel().setValueIsAdjusting(false);
-        }*/
-
-        /*jFilterDialog.pack();
-        jFilterDialog.setLocationRelativeTo(DSWorkbenchReTimerFrame.this);
-        jFilterDialog.setVisible(true);*/
     }
 
     private void updateAttackBBView() {

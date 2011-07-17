@@ -457,6 +457,7 @@
       <SubComponents>
         <Container class="org.jdesktop.swingx.JXCollapsiblePane" name="infoPanel">
           <Properties>
+            <Property name="animated" type="boolean" value="false"/>
             <Property name="collapsed" type="boolean" value="true"/>
             <Property name="inheritAlpha" type="boolean" value="false"/>
           </Properties>
@@ -470,6 +471,7 @@
           <SubComponents>
             <Component class="org.jdesktop.swingx.JXLabel" name="jXInfoLabel">
               <Properties>
+                <Property name="text" type="java.lang.String" value="Keine Meldung"/>
                 <Property name="opaque" type="boolean" value="true"/>
               </Properties>
               <Events>

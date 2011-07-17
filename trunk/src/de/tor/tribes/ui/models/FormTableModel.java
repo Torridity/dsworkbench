@@ -17,36 +17,36 @@ import javax.swing.table.AbstractTableModel;
  * @author Torridity
  */
 public class FormTableModel extends AbstractTableModel {
-    
+
     private Class[] types = new Class[]{String.class, String.class, Integer.class, Integer.class, Integer.class, Integer.class, Boolean.class};
     private String[] colNames = new String[]{"Name", "Typ", "X", "Y", "Breite", "Höhe", "Sichtbar"};
     private boolean[] editableColumns = new boolean[]{true, false, true, true, true, true, false};
-    
+
     @Override
     public int getColumnCount() {
         return colNames.length;
     }
-    
+
     @Override
     public Class<?> getColumnClass(int columnIndex) {
         return types[columnIndex];
     }
-    
+
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return editableColumns[columnIndex];
     }
-    
+
     @Override
     public String getColumnName(int column) {
         return colNames[column];
     }
-    
+
     @Override
     public int getRowCount() {
         return FormManager.getSingleton().getAllElements().size();
     }
-    
+
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         AbstractForm f = (AbstractForm) FormManager.getSingleton().getAllElements().get(rowIndex);
@@ -76,36 +76,36 @@ public class FormTableModel extends AbstractTableModel {
                 }
             }
             case 2:
-                return Math.round(f.getXPos());
+                return f.getBounds().x;
             case 3:
-                return Math.round(f.getYPos());
+                return f.getBounds().y;
             case 4:
                 switch (type) {
                     case ARROW:
-                        return Math.round(((Arrow) f).getBounds().getWidth());
+                        return ((Arrow) f).getBounds().width;
                     case CIRCLE:
-                        return Math.round(((Circle) f).getBounds().getWidth());
+                        return ((Circle) f).getBounds().width;
                     case FREEFORM:
                         return 0;
                     case LINE:
-                        return Math.round(((Line) f).getBounds().getWidth());
+                        return ((Line) f).getBounds().width;
                     case RECTANGLE:
-                        return Math.round(((Rectangle) f).getBounds().getWidth());
+                        return ((Rectangle) f).getBounds().width;
                     default:
                         return 0;
                 }
             case 5:
                 switch (type) {
                     case ARROW:
-                        return Math.round(((Arrow) f).getBounds().getHeight());
+                        return ((Arrow) f).getBounds().height;
                     case CIRCLE:
-                        return Math.round(((Circle) f).getBounds().getHeight());
+                        return ((Circle) f).getBounds().height;
                     case FREEFORM:
                         return 0;
                     case LINE:
-                        return Math.round(((Line) f).getBounds().getHeight());
+                        return ((Line) f).getBounds().height;
                     case RECTANGLE:
-                        return Math.round(((Rectangle) f).getBounds().getHeight());
+                        return ((Rectangle) f).getBounds().height;
                     default:
                         return 0;
                 }
@@ -113,7 +113,7 @@ public class FormTableModel extends AbstractTableModel {
                 return f.isVisibleOnMap();
         }
     }
-    
+
     @Override
     public void setValueAt(Object o, int rowIndex, int columnIndex) {
         AbstractForm f = (AbstractForm) FormManager.getSingleton().getAllElements().get(rowIndex);

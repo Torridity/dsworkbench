@@ -134,7 +134,6 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
             return;
         }
     }
-
     public void restoreProperties() {
         String dataDir = DataHolder.getSingleton().getDataDirectory();
         if (!new File(dataDir).exists()) {
@@ -153,7 +152,7 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
             setVisible(config.getBoolean(prefix + ".visible", false));
             setAlwaysOnTop(config.getBoolean(prefix + ".alwaysOnTop", false));
         } catch (ConfigurationException ex) {
-            logger.error("Failed to read properties", ex);
+            logger.info("Cannot to read properties", ex);
             return;
         }
 

@@ -81,6 +81,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
 
 // -Dsun.java2d.d3d=true -Dsun.java2d.translaccel=true -Dsun.java2d.ddforcevram=true
 /**
+ * @TODO new profile creation does not update quick select
  * @author  Charon
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, ProfileManagerListener, Serializable {
@@ -1212,7 +1213,7 @@ class CountdownThread extends Thread {
     public void run() {
         while (true) {
             try {
-                if (showCountdown) {//&& DSWorkbenchAttackFrame_1.getSingleton().isVisible() && AttackManagerTableModel.getSingleton().isColVisible(11)) {
+                if (showCountdown && DSWorkbenchAttackFrame.getSingleton().isVisible()) {
                     DSWorkbenchAttackFrame.getSingleton().updateCountdown();
                     //yield();
                     sleep(100);

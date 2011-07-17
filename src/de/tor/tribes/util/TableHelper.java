@@ -19,6 +19,7 @@ public class TableHelper {
         if (selrows == null || selrows.length == 0) {
             return 0;
         }
+
         DefaultTableModel theModel = ((DefaultTableModel) pTable.getModel());
         for (int i = selrows.length - 1; i > -1; i--) {
             int rowInModel = pTable.convertRowIndexToModel(selrows[i]);

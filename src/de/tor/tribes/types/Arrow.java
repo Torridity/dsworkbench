@@ -93,10 +93,10 @@ public class Arrow extends AbstractForm {
     public java.awt.Rectangle getBounds() {
         Point2D.Double s = new Point2D.Double(getXPos(), getYPos());
         Point2D.Double e = new Point2D.Double(getXPosEnd(), getYPosEnd());
-        int x = (int) ((s.x < e.x) ? s.x : e.x);
-        int y = (int) ((s.y < e.y) ? s.y : e.y);
-        int w = (int) Math.rint(Math.abs(s.x - e.x));
-        int h = (int) Math.rint(Math.abs(s.y - e.y));
+        int x = (int) Math.round((s.x < e.x) ? s.x : e.x);
+        int y = (int) Math.round((s.y < e.y) ? s.y : e.y);
+        int w = (int) Math.round(Math.abs(s.x - e.x));
+        int h = (int) Math.round(Math.abs(s.y - e.y));
         return new java.awt.Rectangle(x, y, w, h);
     }
 

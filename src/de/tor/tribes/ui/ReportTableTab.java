@@ -300,6 +300,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
         infoPanel.setCollapsed(true);
         infoPanel.setInheritAlpha(false);
 
+        jXLabel1.setText("Keine Meldung");
         jXLabel1.setOpaque(true);
         jXLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {

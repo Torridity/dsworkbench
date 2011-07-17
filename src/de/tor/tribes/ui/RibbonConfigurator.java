@@ -23,6 +23,7 @@ import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor;
 import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
 import de.tor.tribes.ui.views.DSWorkbenchTagFrame;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
+import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import java.awt.BorderLayout;
@@ -36,7 +37,6 @@ import javax.imageio.ImageIO;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.pushingpixels.flamingo.api.common.CommandButtonDisplayState;
-import org.pushingpixels.flamingo.api.common.HorizontalAlignment;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.JCommandButtonPanel;
 import org.pushingpixels.flamingo.api.common.RichTooltip;
@@ -77,14 +77,16 @@ public class RibbonConfigurator {
         CommandButtonKind.ACTION_ONLY);
         importSubmenu.setDescriptionText("Importieren von Angriffsplänen, Markierungen, Berichten usw.");
          */
-        RibbonApplicationMenuEntryPrimary importEntry = new RibbonApplicationMenuEntryPrimary(getResizableIconFromFile("graphics/icons/replace2.png"), "Import", new ActionListener() {
+        RibbonApplicationMenuEntryPrimary importEntry = new RibbonApplicationMenuEntryPrimary(getResizableIconFromFile("graphics/icons/24x24/load.png"), "Import", new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+                DSWorkbenchMainFrame.getSingleton().doImport();
             }
         }, JCommandButton.CommandButtonKind.ACTION_ONLY);
-        RibbonApplicationMenuEntryPrimary exportEntry = new RibbonApplicationMenuEntryPrimary(getResizableIconFromFile("graphics/icons/replace2.png"), "Export", new ActionListener() {
+        RibbonApplicationMenuEntryPrimary exportEntry = new RibbonApplicationMenuEntryPrimary(getResizableIconFromFile("graphics/icons/24x24/save.png"), "Export", new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+                DSWorkbenchMainFrame.getSingleton().doExport();
             }
         }, JCommandButton.CommandButtonKind.ACTION_ONLY);
 
@@ -111,9 +113,10 @@ public class RibbonConfigurator {
         appmen.addMenuEntry(exportEntry);
         appmen.addMenuSeparator();
 
-        RibbonApplicationMenuEntryPrimary settingsEntry = new RibbonApplicationMenuEntryPrimary(getResizableIconFromFile("graphics/icons/replace2.png"), "Einstellungen", new ActionListener() {
+        RibbonApplicationMenuEntryPrimary settingsEntry = new RibbonApplicationMenuEntryPrimary(getResizableIconFromFile("graphics/icons/settings.png"), "Einstellungen", new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+                DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
             }
         }, JCommandButton.CommandButtonKind.ACTION_ONLY);
 
@@ -129,9 +132,11 @@ public class RibbonConfigurator {
 
         appmen.addMenuEntry(settingsEntry);
         appmen.addMenuSeparator();
-        RibbonApplicationMenuEntryPrimary exitEntry = new RibbonApplicationMenuEntryPrimary(getResizableIconFromFile("graphics/icons/replace2.png"), "Beenden", new ActionListener() {
+        RibbonApplicationMenuEntryPrimary exitEntry = new RibbonApplicationMenuEntryPrimary( new system_log_out(), "Beenden", new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+                DSWorkbenchMainFrame.getSingleton().doExit();
+                
             }
         }, JCommandButton.CommandButtonKind.ACTION_ONLY);
 
@@ -145,9 +150,10 @@ public class RibbonConfigurator {
             }
         });
         appmen.addMenuEntry(exitEntry);
-        appmen.addFooterEntry(new RibbonApplicationMenuEntryFooter(getResizableIconFromFile("graphics/icons/replace2.png"), "Beenden", new ActionListener() {
+        appmen.addFooterEntry(new RibbonApplicationMenuEntryFooter( new system_log_out(), "Beenden", new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+                DSWorkbenchMainFrame.getSingleton().doExit();
             }
         }));
 

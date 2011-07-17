@@ -163,10 +163,10 @@ public class Circle extends AbstractForm {
     public java.awt.Rectangle getBounds() {
         Point2D.Double s = new Point2D.Double(getXPos(), getYPos());
         Point.Double e = new Point2D.Double(getXPosEnd(), getYPosEnd());
-        int x = (int) Math.rint((s.getX() < e.getX()) ? s.getX() : e.getX());
-        int y = (int) Math.rint((s.getY() < e.getY()) ? s.getY() : e.getY());
-        int w = (int) Math.rint(Math.abs(s.getX() - e.getX()));
-        int h = (int) Math.rint(Math.abs(s.getY() - e.getY()));
+        int x = (int) Math.round((s.getX() < e.getX()) ? s.getX() : e.getX());
+        int y = (int) Math.round((s.getY() < e.getY()) ? s.getY() : e.getY());
+        int w = (int) Math.round(Math.abs(s.getX() - e.getX()));
+        int h = (int) Math.round(Math.abs(s.getY() - e.getY()));
         return new java.awt.Rectangle(x, y, w, h);
     }
 

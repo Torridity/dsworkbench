@@ -66,6 +66,7 @@ import org.apache.log4j.Logger;
  * 4: Misc. Extended Map Decoration: e.g. troop qualification or active village marker
  * 5: Live Layer: Redraw in every drawing cycle e.g. Drag line, tool popup(?), (troop movement?)
  * 6-16: Free assignable
+ * 
  * @author Charon
  */
 public class MapRenderer {
@@ -195,7 +196,6 @@ public class MapRenderer {
         try {
             int w = MapPanel.getSingleton().getWidth();
             int h = MapPanel.getSingleton().getHeight();
-            long s = System.currentTimeMillis();
             if ((w != 0) && (h != 0)) {
                 Graphics2D g2d = null;
                 if (mRenderSettings == null) {
@@ -249,42 +249,72 @@ public class MapRenderer {
                 boolean mapDrawn = false;
                 for (Integer layer : mDrawOrder) {
                     if (layer == 0) {
-                        mMapLayer.setMarkOnTop(mapDrawn);
-                        mMapLayer.performRendering(mRenderSettings, g2d);
+                        try {
+                            mMapLayer.setMarkOnTop(mapDrawn);
+                            mMapLayer.performRendering(mRenderSettings, g2d);
+                        } catch (Exception e) {
+                            logger.warn("Failed to render map/marker layer");
+                        }
                     } else if (layer == 1) {
                         //set mapDrawn flag to indicate markOnTop rendering for layer 0
                         mapDrawn = true;
                     } else if (layer == 2) {
-                        mTagLayer.performRendering(mRenderSettings, g2d);
-                    } else if (layer == 4) {
+                        try {
+                            mTagLayer.performRendering(mRenderSettings, g2d);
+                        } catch (Exception e) {
+                            logger.warn("Failed to render group layer");
+                        }
+                    } else if (layer == 3) {
                         //render troop density
-                        mTroopDensityLayer.performRendering(mRenderSettings, g2d);
+                        try {
+                            mTroopDensityLayer.performRendering(mRenderSettings, g2d);
+                        } catch (Exception e) {
+                            logger.warn("Failed to render troop density layer");
+                        }
+                    } else if (layer == 4) {
+                        try {
+                            mNoteLayer.performRendering(mRenderSettings, g2d);
+                        } catch (Exception e) {
+                            logger.warn("Failed to render note layer");
+                        }
                     } else if (layer == 5) {
-                        mNoteLayer.performRendering(mRenderSettings, g2d);
+                        try {
+                            mAttackLayer.performRendering(mRenderSettings, g2d);
+                        } catch (Exception e) {
+                            logger.warn("Failed to render attack layer");
+                        }
                     } else if (layer == 6) {
-                        mAttackLayer.performRendering(mRenderSettings, g2d);
+                        try {
+                            mSupportLayer.performRendering(mRenderSettings, g2d);
+                        } catch (Exception e) {
+                            logger.warn("Failed to render support layer");
+                        }
                     } else if (layer == 7) {
-                        mSupportLayer.performRendering(mRenderSettings, g2d);
+                        try {
+                            mFormsLayer.performRendering(mRenderSettings, g2d);
+                        } catch (Exception e) {
+                            logger.warn("Failed to render forms layer");
+                        }
                     } else if (layer == 8) {
-                        mFormsLayer.performRendering(mRenderSettings, g2d);
-                    } else if (layer == 9) {
-                        mChurchLayer.performRendering(mRenderSettings, g2d);
-                    }
+                        try {
+                            mChurchLayer.performRendering(mRenderSettings, g2d);
+                        } catch (Exception e) {
+                            logger.warn("Failed to render church layer");
+                        }
+                    } 
                 }
 
                 //draw live layer -> always on top
-                renderLiveLayer(g2d);
+                try {
+                    renderLiveLayer(g2d);
+                } catch (Exception e) {
+                    logger.warn("Failed to render live layer");
+                }
                 //render selection
                 de.tor.tribes.types.Rectangle selection = MapPanel.getSingleton().getSelectionRect();
                 if (selection != null) {
                     selection.renderForm(g2d);
                 }
-                //render menu
-              /*  MenuRenderer.getSingleton().renderMenu(g2d);
-                if (fillFactor > 0) {
-                g2d.setColor(new Color(0, 0, 0, fillFactor));
-                g2d.fillRect(0, 0, mBackBuffer.getWidth(), mBackBuffer.getHeight());
-                }*/
                 g2d.dispose();
                 //store the map position rendered in this cycle in the render settings
                 mRenderSettings = new RenderSettings(mRenderSettings.getMapBounds());

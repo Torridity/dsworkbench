@@ -102,6 +102,7 @@
       <SubComponents>
         <Component class="org.jdesktop.swingx.JXLabel" name="jXLabel1">
           <Properties>
+            <Property name="text" type="java.lang.String" value="Keine Meldung"/>
             <Property name="opaque" type="boolean" value="true"/>
           </Properties>
           <Events>

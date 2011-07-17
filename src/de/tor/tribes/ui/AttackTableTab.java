@@ -221,9 +221,6 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         return sAttackPlan;
     }
 
-    /*  public Component getTabRenderer() {
-    return mTabRenderer;
-    }*/
     public JXTable getAttackTable() {
         return jxAttackTable;
     }
@@ -238,7 +235,6 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 }
                 startX += (jxAttackTable.getColumnExt(i).isVisible()) ? jxAttackTable.getColumnExt(i).getWidth() : 0;
             }
-
             jxAttackTable.repaint(startX, 0, startX + col.getWidth(), jxAttackTable.getHeight());
         }
     }
@@ -253,7 +249,6 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 }
                 startX += (jxAttackTable.getColumnExt(i).isVisible()) ? jxAttackTable.getColumnExt(i).getWidth() : 0;
             }
-
             jxAttackTable.repaint(startX, 0, startX + col.getWidth(), jxAttackTable.getHeight());
         }
     }
@@ -918,6 +913,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         infoPanel.setCollapsed(true);
         infoPanel.setInheritAlpha(false);
 
+        jXLabel1.setText("Keine Meldung");
         jXLabel1.setOpaque(true);
         jXLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {

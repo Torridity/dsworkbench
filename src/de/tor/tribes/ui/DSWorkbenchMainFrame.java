@@ -143,7 +143,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         outlookBar.addBar("Karte", jMapPanel);
         outlookBar.addBar("ROI", jROIPanel);
         outlookBar.setVisibleBar(1);
-        jScrollPane2.getViewport().setView(outlookBar);
+        jScrollPane2.setViewportView(outlookBar);
 
 
         mAbout = new AboutDialog(this, true);

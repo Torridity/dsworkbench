@@ -58,7 +58,6 @@ import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
 import org.pushingpixels.flamingo.api.ribbon.resize.IconRibbonBandResizePolicy;
 
 /**
- *@todo implement app menu entries
  * @author Torridity
  */
 public class RibbonConfigurator {

@@ -428,7 +428,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         GlobalOptions.getHelpBroker().enableHelp(jTemplateSettings, "pages.template_settings", GlobalOptions.getHelpBroker().getHelpSet());
         GlobalOptions.getHelpBroker().enableHelp(jMiscSettings, "pages.misc_settings", GlobalOptions.getHelpBroker().getHelpSet());
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.settings", GlobalOptions.getHelpBroker().getHelpSet());
-       */ // </editor-fold>
+         */ // </editor-fold>
     }
 
     public Proxy getWebProxy() {
@@ -2556,7 +2556,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         }
         setVisible(false);
         DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
-       DSWorkbenchAttackFrame.getSingleton().getCountdownThread().updateSettings();
+        DSWorkbenchAttackFrame.getSingleton().getCountdownThread().updateSettings();
         MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
         MinimapPanel.getSingleton().redraw();
     }//GEN-LAST:event_fireOkEvent
@@ -3134,7 +3134,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         DSWorkbenchProfileDialog.getSingleton().setLocationRelativeTo(this);
         DSWorkbenchProfileDialog.getSingleton().showAddProfileDialog();
     } else if (evt.getSource() == jModifyProfileButton) {
-       DSWorkbenchProfileDialog.getSingleton().setLocationRelativeTo(this);
+        DSWorkbenchProfileDialog.getSingleton().setLocationRelativeTo(this);
         UserProfile profile = (UserProfile) jProfileBox.getSelectedItem();
         if (profile == null) {
             return;

@@ -84,7 +84,6 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
- * @TODO add load and save icons
  * @TODO quick profile selection does not work at all
  * @author Jejkal
  */
@@ -275,7 +274,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         });
         editPane.getContentPane().add(outButton);
 
-        JXButton saveTransports = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/trade_out.png")));
+        JXButton saveTransports = new JXButton(new ImageIcon("graphics/icons/24x24/save.png"));
         saveTransports.setPreferredSize(toBrowser.getPreferredSize());
         saveTransports.setMinimumSize(toBrowser.getMinimumSize());
         saveTransports.setMaximumSize(toBrowser.getMaximumSize());
@@ -288,7 +287,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
             }
         });
         transferPane.getContentPane().add(saveTransports);
-        JXButton loadTransports = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/trade_out.png")));
+        JXButton loadTransports = new JXButton(new ImageIcon("graphics/icons/24x24/load.png"));
         loadTransports.setPreferredSize(toBrowser.getPreferredSize());
         loadTransports.setMinimumSize(toBrowser.getMinimumSize());
         loadTransports.setMaximumSize(toBrowser.getMaximumSize());

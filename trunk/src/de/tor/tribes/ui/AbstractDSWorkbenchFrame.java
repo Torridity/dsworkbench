@@ -152,7 +152,7 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
             setVisible(config.getBoolean(prefix + ".visible", false));
             setAlwaysOnTop(config.getBoolean(prefix + ".alwaysOnTop", false));
         } catch (ConfigurationException ex) {
-            logger.info("Cannot to read properties", ex);
+            logger.info("Cannot read properties", ex);
             return;
         }
 

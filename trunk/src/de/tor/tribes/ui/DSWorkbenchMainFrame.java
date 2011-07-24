@@ -55,6 +55,7 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.ui.models.StandardAttackTableModel;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
+import de.tor.tribes.util.BBCodeFormatter;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MainShutdownHook;
@@ -96,10 +97,10 @@ import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
+import org.jdesktop.swingx.painter.MattePainter;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 /**
- * @todo restore of properties should not be performed on each serverSettingsChanged
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends JRibbonFrame implements
@@ -116,7 +117,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     private AboutDialog mAbout = null;
     private static DSWorkbenchMainFrame SINGLETON = null;
     private boolean initialized = false;
-    private JFrame fullscreenFrame = null;
     private boolean putOnline = false;
     private MouseGestures mMouseGestures = new MouseGestures();
     private boolean bWatchClipboard = true;
@@ -270,7 +270,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             public void eventDispatched(AWTEvent event) {
                 if (((KeyEvent) event).getID() == KeyEvent.KEY_PRESSED) {
                     KeyEvent e = (KeyEvent) event;
-                    if (DSWorkbenchMainFrame.getSingleton().isActive() || fullscreenFrame != null) {
+                    if (DSWorkbenchMainFrame.getSingleton().isActive()) {
                         //move shortcuts
                         if (e.getKeyCode() == KeyEvent.VK_DOWN) {
                             scroll(0.0, 2.0);
@@ -347,35 +347,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                     } else if ((e.getKeyCode() == KeyEvent.VK_T) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown()) {
                         //search time shortcut
                         ClockFrame.getSingleton().setVisible(!ClockFrame.getSingleton().isVisible());
-                    }/* else if ((e.getKeyCode() == KeyEvent.VK_F) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown()) {
-                    if (fullscreenFrame == null) {
-                    jPanel1.remove(MapPanel.getSingleton());
-                    fullscreenFrame = new JFrame();
-                    fullscreenFrame.add(MapPanel.getSingleton());
-                    Dimension fullscreen = Toolkit.getDefaultToolkit().getScreenSize();
-                    fullscreenFrame.setSize(fullscreen);
-                    fullscreenFrame.setUndecorated(true);
-                    fullscreenFrame.setVisible(true);
-                    } else {
-                    fullscreenFrame.remove(MapPanel.getSingleton());
-                    jPanel1.add(MapPanel.getSingleton());
-                    jPanel1.repaint();
-                    MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
-                    fullscreenFrame.dispose();
-                    fullscreenFrame = null;
-                    }
-                    
-                    if (ServerSettings.getSingleton().getCoordType() != 2) {
-                    int[] hier = DSCalculator.hierarchicalToXy(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()), 12);
-                    if (hier != null) {
-                    MapPanel.getSingleton().updateMapPosition(hier[0], hier[1]);
-                    }
-                    } else {
-                    MapPanel.getSingleton().updateMapPosition(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()));
-                    }
-                    } */ /*else if ((e.getKeyCode() == KeyEvent.VK_F) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                    DSWorkbenchMarkerFrame.getSingleton().firePublicDrawMarkedOnlyChangedEvent();
-                    } */ else if ((e.getKeyCode() == KeyEvent.VK_S) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
+                    } else if ((e.getKeyCode() == KeyEvent.VK_S) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
                         fireCreateMapShotEvent(null);
                     } else if (e.getKeyCode() == KeyEvent.VK_F2) {
                         DSWorkbenchAttackFrame.getSingleton().setVisible(!DSWorkbenchAttackFrame.getSingleton().isVisible());
@@ -682,7 +654,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             DSWorkbenchSOSRequestAnalyzer.getSingleton().restoreProperties();
             DSWorkbenchMerchantDistibutor.getSingleton().resetView();
             DSWorkbenchMerchantDistibutor.getSingleton().restoreProperties();
-
+            BBCodeEditor.getSingleton().reset();
             //update attack planner
             if (mTribeTribeAttackFrame != null) {
                 mTribeTribeAttackFrame.setup();
@@ -969,22 +941,38 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         RibbonConfigurator.addMapToolsTask(this);
         RibbonConfigurator.addViewTask(this);
         RibbonConfigurator.addAppIcons(this);
-        //RibbonConfigurator.addMiscBand(this, jNavigationPanel);
     }
 
     private void showReminder() {
-        long showNotBefore = 0;
+        /*  long showNotBefore = 0;
         try {
-            showNotBefore = Long.parseLong(GlobalOptions.getProperty("startup.reminder.not.before"));
+        showNotBefore = Long.parseLong(GlobalOptions.getProperty("startup.reminder.not.before"));
         } catch (Exception e) {
-            showNotBefore = 0;
+        showNotBefore = 0;
         }
         if (System.currentTimeMillis() > showNotBefore) {
-            StartupReminder reminder = new StartupReminder(this);
-            // TagManager.getSingleton().addManagerListener(reminder);
-            // TroopsManager.getSingleton().addTroopsManagerListener(reminder);
-            reminder.setVisible(true);
-        }
+        StartupReminder reminder = new StartupReminder(this);
+        // TagManager.getSingleton().addManagerListener(reminder);
+        // TroopsManager.getSingleton().addTroopsManagerListener(reminder);
+        reminder.setVisible(true);
+        }*/
+        showInfo("Weltdaten aktuell? Truppen importiert? Gruppen importiert?");
+    }
+
+    public void showInfo(String pMessage) {
+        infoPanel.setCollapsed(false);
+        jXLabel1.setBackgroundPainter(new MattePainter(Color.YELLOW));
+        jXLabel1.setIcon(new ImageIcon("./graphics/icons/warning.png"));
+        jXLabel1.setForeground(Color.BLACK);
+        jXLabel1.setText(pMessage);
+    }
+
+    public void showSuccess(String pMessage) {
+        infoPanel.setCollapsed(false);
+        jXLabel1.setBackgroundPainter(new MattePainter(Color.GREEN));
+        jXLabel1.setIcon(new ImageIcon(DSWorkbenchMainFrame.class.getResource("/res/checkbox.png")));
+        jXLabel1.setForeground(Color.BLACK);
+        jXLabel1.setText(pMessage);
     }
 
     /** This method is called from within the constructor to
@@ -1108,6 +1096,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jEnableClipboardWatchButton = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
+        infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
+        jXLabel1 = new org.jdesktop.swingx.JXLabel();
         jMinimapPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
 
@@ -2387,6 +2377,20 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jPanel1.setDoubleBuffered(false);
         jPanel1.setLayout(new java.awt.BorderLayout());
 
+        infoPanel.setCollapsed(true);
+        infoPanel.setInheritAlpha(false);
+
+        jXLabel1.setText("Keine Meldung");
+        jXLabel1.setOpaque(true);
+        jXLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jXLabel1fireHideInfoEvent(evt);
+            }
+        });
+        infoPanel.add(jXLabel1, java.awt.BorderLayout.CENTER);
+
+        jPanel1.add(infoPanel, java.awt.BorderLayout.SOUTH);
+
         jMinimapPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2));
         jMinimapPanel.setDoubleBuffered(false);
         jMinimapPanel.setLayout(new java.awt.BorderLayout());
@@ -2406,11 +2410,11 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 798, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 719, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel4, java.awt.BorderLayout.CENTER);
@@ -2529,7 +2533,6 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
         checkZoomRange();
 
         dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
-        //System.out.println("Main: " + dZoomFactor);
         double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
         int xPos = Integer.parseInt(jCenterX.getText());
@@ -2671,10 +2674,7 @@ private void fireShowMapPopupChangedEvent(javax.swing.event.ChangeEvent evt) {//
 }//GEN-LAST:event_fireShowMapPopupChangedEvent
 
 private void fireCreateMapShotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateMapShotEvent
-    Component parent = fullscreenFrame;
-    if (parent == null) {
-        parent = this;
-    }
+    Component parent = this;
 
     if (JOptionPaneHelper.showQuestionConfirmBox(parent, "Willst du die Karte online stellen oder auf deinem Rechner speichern?", "Speichern", "Nur speichern", "Online stellen") == JOptionPane.YES_OPTION) {
         putOnline = true;
@@ -3078,7 +3078,6 @@ private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
         MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
     }
 }//GEN-LAST:event_fireGraphicPackChangedEvent
-
 private void fireShowStatsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowStatsFrameEvent
     if (jShowStatsFrame.isEnabled()) {
         DSWorkbenchStatsFrame.getSingleton().setVisible(!DSWorkbenchStatsFrame.getSingleton().isVisible());
@@ -3095,7 +3094,6 @@ private void fireShowReportFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
 private void fireHighlightTribeVillagesChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireHighlightTribeVillagesChangedEvent
     GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(jHighlightTribeVillages.isSelected()));
 }//GEN-LAST:event_fireHighlightTribeVillagesChangedEvent
-
 private void fireShowRulerChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireShowRulerChangedEvent
     GlobalOptions.addProperty("show.ruler", Boolean.toString(jShowRuler.isSelected()));
 }//GEN-LAST:event_fireShowRulerChangedEvent
@@ -3152,6 +3150,10 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
         bWatchClipboard = true;
     }
 }//GEN-LAST:event_fireChangeClipboardWatchEvent
+
+private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXLabel1fireHideInfoEvent
+    infoPanel.setCollapsed(true);
+}//GEN-LAST:event_jXLabel1fireHideInfoEvent
 
     public void doExit() {
         fireDSWorkbenchClosingEvent(null);
@@ -3320,10 +3322,7 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     }
 
     public void planMapshot() {
-        Component parent = fullscreenFrame;
-        if (parent == null) {
-            parent = this;
-        }
+        Component parent = this;
 
         if (JOptionPaneHelper.showQuestionConfirmBox(parent, "Willst du die Karte online stellen oder auf deinem Rechner speichern?", "Speichern", "Nur speichern", "Online stellen") == JOptionPane.YES_OPTION) {
             putOnline = true;
@@ -3334,13 +3333,6 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
             if (dir == null) {
                 dir = ".";
             }
-            /* JFileChooser chooser = null;
-            try {
-            chooser = new JFileChooser();
-            } catch (Exception e) {
-            JOptionPaneHelper.showErrorBox(parent, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
-            return;
-            }*/
 
             String type = null;
             chooser.setSelectedFile(new File(dir));
@@ -3555,7 +3547,8 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     public void fireGroupParserEvent(Hashtable<String, List<Village>> pParserResult) {
         TagManager.getSingleton().invalidate();
         String[] groups = pParserResult.keySet().toArray(new String[]{});
-        NotifierFrame.doNotification("DS Workbench hat " + groups.length + ((groups.length == 1) ? " Dorfgruppe " : " Dorfgruppen ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);
+        //NotifierFrame.doNotification("DS Workbench hat " + groups.length + ((groups.length == 1) ? " Dorfgruppe " : " Dorfgruppen ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);
+        showSuccess("DS Workbench hat " + groups.length + ((groups.length == 1) ? " Dorfgruppe " : " Dorfgruppen ") + "in der Zwischenablage gefunden.");
         //remove all tags
         for (String group : groups) {
             List<Village> villagesForGroup = pParserResult.get(group);
@@ -3585,10 +3578,8 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
 
     @Override
     public void fireMapShotDoneEvent() {
-        Component parent = fullscreenFrame;
-        if (parent == null) {
-            parent = this;
-        }
+        Component parent = this;
+
 
         if (!putOnline) {
             JOptionPaneHelper.showInformationBox(parent, "Kartengrafik erfolgreich gespeichert.", "Information");
@@ -3615,16 +3606,12 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
 
     @Override
     public void fireMapShotFailedEvent() {
-        Component parent = fullscreenFrame;
-        if (parent == null) {
-            parent = this;
-        }
-
-        JOptionPaneHelper.showErrorBox(parent, "Fehler beim Speichern der Kartengrafik.", "Fehler");
+        JOptionPaneHelper.showErrorBox(this, "Fehler beim Speichern der Kartengrafik.", "Fehler");
     }
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Generated Variables">
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JMenuItem jAboutItem;
     private javax.swing.JButton jAddNewROIButton;
     private javax.swing.JButton jAddROIButton;
@@ -3737,6 +3724,7 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JMenuItem jTribeTribeAttackItem;
     private javax.swing.JTable jTroopSetExportTable;
     private javax.swing.JMenuItem jUnitOverviewItem;
+    private org.jdesktop.swingx.JXLabel jXLabel1;
     private javax.swing.JButton jZoomInButton;
     private javax.swing.JButton jZoomOutButton;
     // End of variables declaration//GEN-END:variables

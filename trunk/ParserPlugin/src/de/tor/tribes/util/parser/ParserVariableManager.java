@@ -77,10 +77,5 @@ public class ParserVariableManager {
         return property;
     }
 
-    public static void main(String[] args) throws Exception {
-        //System.out.println(ParserVariableManager.getSingleton().getProperty("troops.place.from.village"));
-
-        System.out.println(ParserVariableManager.class.getMethod("getSingleton").invoke(null));
-
-    }
+   
 }

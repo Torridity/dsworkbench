@@ -18,7 +18,6 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.types.VillageMerchantInfo;
 import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.GenericTestPanel;
-import de.tor.tribes.ui.ReportTableTab;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.SentNotSentCellRenderer;
@@ -84,7 +83,6 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
- * @TODO quick profile selection does not work at all
  * @author Jejkal
  */
 public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame implements ListSelectionListener, ActionListener, ProfileManagerListener {
@@ -175,6 +173,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
             }
         });
 
+        ProfileManager.getSingleton().addProfileManagerListener(DSWorkbenchMerchantDistibutor.this);
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         if (!Constants.DEBUG) {
             GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.merchant_distributor", GlobalOptions.getHelpBroker().getHelpSet());
@@ -1538,7 +1537,6 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
             }
 
 
-            // System.out.println(transports);
             Enumeration<Village> sourceKeys = transports.keys();
             while (sourceKeys.hasMoreElements()) {
                 Village sourceVillage = sourceKeys.nextElement();

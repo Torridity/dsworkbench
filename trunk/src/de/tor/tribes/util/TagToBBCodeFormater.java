@@ -51,11 +51,5 @@ public class TagToBBCodeFormater {
         result += "\n";
         return result;
     }
-    
-    public static void main(String[] args) {
-        Tag t = new Tag("Test", true);
-        t.setTagIcon(-1);
-        t.setTagColor(Color.RED);
-        System.out.println(        TagToBBCodeFormater.formatTag(t,"test", true));
-    }
+
 }

@@ -87,8 +87,4 @@ public class IGMSender {
             return false;
         }
     }
-
-    public static void main(String[] args) {
-        System.out.println(IGMSender.sendIGM("Rattenfutter", "64ef1ebccdfd2b1e345a3514f2569419420b024c", "Test", "test"));
-    }
 }

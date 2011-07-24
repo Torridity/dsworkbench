@@ -26,8 +26,6 @@ public class MerchantParser implements GenericParserInterface<VillageMerchantInf
         while (lineTok.hasMoreElements()) {
             //parse single line for village
             String line = lineTok.nextToken();
-            // List<Village> villages = VillageParser.parse(line);
-            //Village v = villages.get(villages.size() - 1);
             Village v = null;
             StringTokenizer t = new StringTokenizer(line, " \t");
             String merchants = null;

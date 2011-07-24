@@ -112,9 +112,30 @@ public class RibbonConfigurator {
         appmen.addMenuEntry(exportEntry);
         appmen.addMenuSeparator();
 
+        RibbonApplicationMenuEntryPrimary bbEditorEntry = new RibbonApplicationMenuEntryPrimary(getResizableIconFromFile("graphics/icons/bbeditor.png"), "BB-Template Editor", new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+              BBCodeEditor.getSingleton().setVisible(true);                
+            }
+        }, JCommandButton.CommandButtonKind.ACTION_ONLY);
+
+        bbEditorEntry.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
+
+            public void menuEntryActivated(JPanel targetPanel) {
+                targetPanel.removeAll();
+                targetPanel.setLayout(new BorderLayout());
+                targetPanel.add(new JLabel("<html>BB-Template Editor zur eigenen Gestaltung aller Templates f&uuml;r den BB-Code Export</html>"), BorderLayout.CENTER);
+                targetPanel.revalidate();
+            }
+        });
+
+        appmen.addMenuEntry(bbEditorEntry);
+        
+        
         RibbonApplicationMenuEntryPrimary settingsEntry = new RibbonApplicationMenuEntryPrimary(getResizableIconFromFile("graphics/icons/settings.png"), "Einstellungen", new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+                GlobalOptions.storeViewStates();
                 DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
             }
         }, JCommandButton.CommandButtonKind.ACTION_ONLY);
@@ -130,12 +151,13 @@ public class RibbonConfigurator {
         });
 
         appmen.addMenuEntry(settingsEntry);
+
         appmen.addMenuSeparator();
-        RibbonApplicationMenuEntryPrimary exitEntry = new RibbonApplicationMenuEntryPrimary( new system_log_out(), "Beenden", new ActionListener() {
+        RibbonApplicationMenuEntryPrimary exitEntry = new RibbonApplicationMenuEntryPrimary(new system_log_out(), "Beenden", new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 DSWorkbenchMainFrame.getSingleton().doExit();
-                
+
             }
         }, JCommandButton.CommandButtonKind.ACTION_ONLY);
 
@@ -149,7 +171,7 @@ public class RibbonConfigurator {
             }
         });
         appmen.addMenuEntry(exitEntry);
-        appmen.addFooterEntry(new RibbonApplicationMenuEntryFooter( new system_log_out(), "Beenden", new ActionListener() {
+        appmen.addFooterEntry(new RibbonApplicationMenuEntryFooter(new system_log_out(), "Beenden", new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 DSWorkbenchMainFrame.getSingleton().doExit();

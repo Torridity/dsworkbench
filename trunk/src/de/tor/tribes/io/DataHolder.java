@@ -154,8 +154,8 @@ public class DataHolder {
      */
     public boolean serverSupported() {
         fireDataHolderEvents("Prüfe Server Einstellungen");
+        File settings = new File(getDataDirectory() + "/settings.xml");
         try {
-            File settings = new File(getDataDirectory() + "/settings.xml");
             if (settings.exists()) {
                 ServerSettings.getSingleton().loadSettings(GlobalOptions.getSelectedServer());
                 try {
@@ -185,17 +185,7 @@ public class DataHolder {
                         throw new Exception("Failed to load server settings");
                     }
 
-                    /*Document d = JaxenUtils.getDocument(settings);
-                    Integer mapType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/sector"));*/
-                    /* Integer mapType = ServerSettings.getSingleton().getCoordType();
-                    if (mapType != 2) {
-                    logger.error("Map type '" + mapType + "' is not supported yet");
-                    fireDataHolderEvents("Der gewählte Sever wird leider (noch) nicht unterstützt");
-                    return false;
-                    }*/
                     try {
-                        //Integer bonusType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/bonus_new"));
-                        //  currentBonusType = bonusType;
                         currentBonusType = ServerSettings.getSingleton().getNewBonus();
                     } catch (Exception e) {
                         //bonus_new field not found. Set to old type
@@ -205,6 +195,7 @@ public class DataHolder {
             }
         } catch (Exception e) {
             logger.error("Failed to check server settings", e);
+            settings.delete();
             return false;
         }
         return true;
@@ -293,8 +284,8 @@ public class DataHolder {
                         }
                     }//end of read local data
                 } else {
-                    logger.error("Server not supported");
-                    fireDataHolderEvents("Server nicht unterstützt");
+                    logger.error("Failed to read server settings");
+                    fireDataHolderEvents("Fehler beim Lesen der Servereinstellungen. Möglicherweise ist der gewählte Server gerade offline. Versuch es in wenigen Minuten noch einmal.");
                     fireDataLoadedEvents(false);
                     GlobalOptions.setInternatDataDamaged(true);
                     return false;
@@ -424,7 +415,7 @@ public class DataHolder {
                                     recreateLocal = true;
                                 } else {
                                     logger.error(" - Second try failed");
-                                    fireDataHolderEvents("Downloadversuch vom DS Workbench Server fehlgeschlagen. Laden wird abgebrochen!");
+                                    fireDataHolderEvents("Downloadversuch vom DS Workbench Server fehlgeschlagen. Download wird abgebrochen!");
                                     loading = false;
                                     fireDataLoadedEvents(false);
                                     GlobalOptions.setInternatDataDamaged(true);
@@ -456,7 +447,7 @@ public class DataHolder {
                                 recreateLocal = true;
                             } else {
                                 logger.error(" - Second try failed");
-                                fireDataHolderEvents("Erneuter Downloadversuch fehlgeschlagen. Laden wird abgebrochen!");
+                                fireDataHolderEvents("Erneuter Downloadversuch fehlgeschlagen. Download wird abgebrochen!");
                                 loading = false;
                                 fireDataLoadedEvents(false);
                                 GlobalOptions.setInternatDataDamaged(true);
@@ -465,8 +456,8 @@ public class DataHolder {
                         }
                     }//end of read local data
                 } else {
-                    logger.error("Server not supported");
-                    fireDataHolderEvents("Server nicht unterstützt");
+                    logger.error("Failed to read server settings");
+                    fireDataHolderEvents("Fehler beim Lesen der Servereinstellungen. Möglicherweise ist der gewählte Server gerade offline. Versuch es in wenigen Minuten noch einmal.");
                     fireDataLoadedEvents(false);
                     GlobalOptions.setInternatDataDamaged(true);
                     return false;

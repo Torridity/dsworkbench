@@ -131,11 +131,6 @@ public class FightStats {
 
         if (pReport.wasLostEverything() && pReport.wasWallDamaged()) {
             int diff = pReport.getWallBefore() - pReport.getWallAfter();
-           /* int rams = pReport.getAttackers().get(DataHolder.getSingleton().getUnitByPlainName("ram"));
-
-            double defkill = 4 * (pReport.getWallBefore() - pReport.getWallAfter()) / (Math.pow(1.09, pReport.getWallBefore()) * rams);
-            int losses = (int) Math.round(defkill * 1000000) / 10000;
-            System.out.println("Losses: " + losses);*/
             switch (diff) {
                 case 1:
                    // System.out.println("add 2");

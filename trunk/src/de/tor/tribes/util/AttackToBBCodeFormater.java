@@ -200,14 +200,4 @@ public class AttackToBBCodeFormater {
         return "#" + Integer.toHexString(new Color(randomColor).getRGB()).substring(2);
     }
 
-    public static void main(String[] args) {
-        String tesst = "red";
-        Color c = Color.decode("#ff0e0e");
-        System.out.println(c);
-        System.out.println(c.getRGB());
-        int c2 = c.getRGB() + (int) Math.rint(Math.random() * 10);
-        System.out.println(new Color(c2));
-        System.out.println(Integer.toHexString(new Color(c2).getRGB()));
-        //System.out.println(tesst.replaceAll("red", "#ff0e0e"));
-    }
 }

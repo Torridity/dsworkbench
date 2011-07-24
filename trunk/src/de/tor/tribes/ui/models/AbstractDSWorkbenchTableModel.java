@@ -304,15 +304,4 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
         }
         return realCol;
     }
-
-    /* public static void main(String[] args) {
-    boolean[] cols = new boolean[]{true, false, false, false, false, true, false, false};
-    int realCol = 5;
-    for (int i = 0; i < 5; i++) {
-    if (!cols[i]) {
-    realCol--;
-    }
-    }
-    System.out.println("Real " + realCol);
-    }*/
 }

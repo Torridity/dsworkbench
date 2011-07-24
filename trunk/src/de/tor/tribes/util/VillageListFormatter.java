@@ -69,8 +69,5 @@ public class VillageListFormatter {
         return b.toString();
     }
 
-    public static void main(String[] args) {
-        String test = "%TRIBE%";
-        System.out.println(StringUtils.replace(test, "%TRIBE%", "OK"));
-    }
+   
 }

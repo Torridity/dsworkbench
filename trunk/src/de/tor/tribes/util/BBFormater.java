@@ -28,14 +28,4 @@ public class BBFormater {
         String template = getTemplate(pElement);
         return StringUtils.replaceEach(template, pElement.getBBVariables(), pElement.getReplacements(pExtended));
     }
-
-    public static void main(String[] args) {
-        Attack sampleAttack = new Attack();
-        sampleAttack.setSource(new DummyVillage());
-        sampleAttack.setTarget(new DummyVillage());
-        sampleAttack.setArriveTime(new Date());
-        sampleAttack.setType(Attack.CLEAN_TYPE);
-        sampleAttack.setUnit(new DummyUnit());
-        System.out.println(formatElement(sampleAttack, true));
-    }
 }

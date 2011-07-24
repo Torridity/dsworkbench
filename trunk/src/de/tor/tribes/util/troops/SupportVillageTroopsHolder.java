@@ -68,7 +68,7 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
         String result = "<troopInfo type=\"support\">\n";
         result += "<id>" + getVillage().getId() + "</id>\n";
         result += "<state>" + getState().getTime() + "</state>\n";
-        result += "<troops";
+        result += "<troops>";
 
         List<UnitHolder> units = DataHolder.getSingleton().getUnits();
         for (UnitHolder unit : units) {

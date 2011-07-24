@@ -301,7 +301,7 @@ public class MapRenderer {
                         } catch (Exception e) {
                             logger.warn("Failed to render church layer");
                         }
-                    } 
+                    }
                 }
 
                 //draw live layer -> always on top
@@ -646,6 +646,9 @@ public class MapRenderer {
             double rulerEnd = -1 * dCurrentFieldHeight * (viewStartPoint.y - yVillage);
             Composite com = g2d.getComposite();
             Color c = g2d.getColor();
+
+            Rectangle activeRow = null;
+            Rectangle activeCol = null;
             for (int i = 0; i < mVisibleVillages.length; i++) {
                 for (int j = 0; j < mVisibleVillages[0].length; j++) {
                     if (i == 0) {
@@ -669,14 +672,11 @@ public class MapRenderer {
                                 g2d.fillRect(0, (int) Math.floor(rulerEnd) + j * (int) Math.rint(dCurrentFieldHeight), (int) Math.rint(dCurrentFieldWidth), (int) Math.rint(dCurrentFieldHeight));
                             }
                         } else {
-                            g2d.copyArea(rulerPart.x, rulerPart.y, rulerPart.width, rulerPart.height, (int) Math.floor(rulerStart) - rulerPart.x, (int) Math.floor(rulerEnd) + j * (int) Math.rint(dCurrentFieldHeight) - rulerPart.y);
+                            g2d.copyArea(rulerPart.x, rulerPart.y, rulerPart.width, rulerPart.height, 0, (int) Math.floor(rulerEnd) + j * (int) Math.rint(dCurrentFieldHeight) - rulerPart.y);
                         }
 
                         if (mouseVillage != null && mouseVillage.getY() == (yVillage + j)) {
-                            g2d.setColor(Color.YELLOW);
-                            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-                            g2d.fillRect(0, rulerPart.y, rulerPart.width, rulerPart.height);
-                            g2d.setComposite(com);
+                            activeRow = new Rectangle(0, rulerPart.y, rulerPart.width, rulerPart.height);
                         }
                     }
                     if (j == mVisibleVillages[0].length - 1) {
@@ -701,20 +701,27 @@ public class MapRenderer {
                             }
 
                         } else {
-                            g2d.copyArea(rulerPart.x, rulerPart.y, rulerPart.width, rulerPart.height, (int) Math.floor(rulerStart) + i * (int) Math.rint(dCurrentFieldWidth) - rulerPart.x, (int) Math.floor(rulerEnd) - rulerPart.y);
+                            g2d.copyArea(rulerPart.x, rulerPart.y, rulerPart.width, rulerPart.height, (int) Math.floor(rulerStart) + i * (int) Math.rint(dCurrentFieldWidth) - rulerPart.x, 0);
                         }
 
                         if (mouseVillage != null && mouseVillage.getX() == (xVillage + i)) {
-                            g2d.setColor(Color.YELLOW);
-                            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-                            g2d.fillRect(rulerPart.x, 0, rulerPart.width, rulerPart.height);
-                            g2d.setComposite(com);
+                            activeCol = new Rectangle(rulerPart.x, 0, rulerPart.width, rulerPart.height);
                         }
                     }
                 }
             }
 
+            //draw active village marker
+            if (activeRow != null && activeCol != null) {
+                g2d.setColor(Color.YELLOW);
+                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+                g2d.fillRect(0, activeRow.y, activeRow.width, activeRow.height);
+                g2d.fillRect(activeCol.x, 0, activeCol.width, activeCol.height);
+            }
+
             g2d.setComposite(com);
+            
+            //draw font
             g2d.setColor(Color.BLACK);
             for (int i = 0; i < mVisibleVillages.length; i++) {
                 for (int j = 0; j < mVisibleVillages[0].length; j++) {

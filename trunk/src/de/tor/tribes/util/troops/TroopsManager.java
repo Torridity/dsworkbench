@@ -8,6 +8,7 @@ import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.dnd.VillageTransferable;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Image;
 import java.io.File;
@@ -274,7 +275,12 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
             }
         }
         if (pCreate) {
-            VillageTroopsHolder newHolder = new VillageTroopsHolder(pVillage, new Date());
+            VillageTroopsHolder newHolder = null;
+            if (pType.equals(TROOP_TYPE.SUPPORT)) {
+                newHolder = new SupportVillageTroopsHolder(pVillage, new Date());
+            } else {
+                newHolder = new VillageTroopsHolder(pVillage, new Date());
+            }
             addManagedElement(group, newHolder);
             return newHolder;
         } else {
@@ -499,7 +505,6 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
             for (String group : getGroups()) {
                 b.append("<troopGroup name=\"").append(URLEncoder.encode(group, "UTF-8")).append("\">\n");
                 b.append("<troopInfos>\n");
-
                 for (ManageableType t : getAllElements(group)) {
                     b.append(t.toXml()).append("\n");
                 }

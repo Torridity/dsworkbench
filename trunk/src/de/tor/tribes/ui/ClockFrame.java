@@ -8,10 +8,12 @@ package de.tor.tribes.ui;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.Toolkit;
+import java.awt.TrayIcon;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.imageio.ImageIO;
 import javax.swing.JSpinner.DateEditor;
-import javax.swing.SpinnerDateModel;
 
 /**
  * @author  Jejkal
@@ -34,8 +36,8 @@ public class ClockFrame extends javax.swing.JFrame {
         getContentPane().setBackground(Constants.DS_BACK);
         jSpinner1.setValue(new Date(System.currentTimeMillis()));
         ((DateEditor) jSpinner1.getEditor()).getFormat().applyPattern("dd.MM.yy HH:mm:ss.SSS");
-        tThread = new TimerThread(this);
-        tThread.start();
+        //tThread = new TimerThread(this);
+       // tThread.start();
            // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.clock_tool", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
@@ -54,17 +56,9 @@ public class ClockFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
         jSpinner1 = new javax.swing.JSpinner();
         jActivateTimerButton = new javax.swing.JToggleButton();
-
-        setTitle("Uhr");
-
-        jLabel1.setBackground(new java.awt.Color(239, 235, 223));
-        jLabel1.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        jLabel1.setText("jLabel1");
-        jLabel1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jLabel1.setOpaque(true);
+        jLabel1 = new javax.swing.JLabel();
 
         jSpinner1.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MILLISECOND));
 
@@ -76,43 +70,40 @@ public class ClockFrame extends javax.swing.JFrame {
             }
         });
 
+        setTitle("Uhr");
+
+        jLabel1.setBackground(new java.awt.Color(239, 235, 223));
+        jLabel1.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        jLabel1.setText("jLabel1");
+        jLabel1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jLabel1.setOpaque(true);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jActivateTimerButton)
-                        .addGap(74, 74, 74))))
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jActivateTimerButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
 private void fireActivateTimerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireActivateTimerEvent
-    if (jActivateTimerButton.isSelected()) {
+   /* if (jActivateTimerButton.isSelected()) {
         tThread.setNotifyTime(((Date) jSpinner1.getValue()).getTime());
     } else {
         tThread.setNotifyTime(-1);
-    }
+    }*/
 }//GEN-LAST:event_fireActivateTimerEvent
 
     /**
@@ -120,12 +111,12 @@ private void fireActivateTimerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
      */
     public static void main(String args[]) {
 
-        /*java.awt.EventQueue.invokeLater(new Runnable() {
+        java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
                 new ClockFrame().setVisible(true);
             }
-        });*/
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -160,7 +151,9 @@ class TimerThread extends Thread {
             long currentTime = System.currentTimeMillis();
 
             if ((lNotifyTime != -1) && (currentTime >= lNotifyTime)) {
-                mParent.beep();
+                mParent.beep();try{
+               new TrayIcon(ImageIO.read(new File("./graphics/big/axe.png"))).displayMessage("Some Message", "ALARM!", TrayIcon.MessageType.INFO);
+                }catch(Exception e){}
                 lNotifyTime = -1;
             }
             if (mParent.isVisible()) {

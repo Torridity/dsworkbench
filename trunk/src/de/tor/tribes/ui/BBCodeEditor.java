@@ -55,7 +55,7 @@ import org.apache.log4j.Logger;
  *
  * @author Torridity
  */
-public class BBCodeEditor extends javax.swing.JFrame {
+public class BBCodeEditor extends javax.swing.JDialog {
 
     private final List<Attack> sampleAttacks = new LinkedList<Attack>();
     private final List<Village> sampleVillages = new LinkedList<Village>();
@@ -77,9 +77,19 @@ public class BBCodeEditor extends javax.swing.JFrame {
     private BasicFormatter<Stats> defStatsFormatter = new DefStatsFormatter();
     private BasicFormatter<Stats> winnerLoserStatsFormatter = new WinnerLoserStatsFormatter();
     private BasicFormatter<VillageTroopsHolder> troopsFormatter = new TroopListFormatter();
+    private static BBCodeEditor SINGLETON = null;
+
+    public static synchronized BBCodeEditor getSingleton() {
+        if (SINGLETON == null) {
+            SINGLETON = new BBCodeEditor();
+        }
+        return SINGLETON;
+    }
 
     /** Creates new form BBCodeEditor */
-    public BBCodeEditor() {
+    BBCodeEditor() {
+        super();
+        setModal(true);
         initComponents();
         buildSampleData();
         jTextPane1.setBackground(Constants.DS_BACK_LIGHT);
@@ -94,9 +104,14 @@ public class BBCodeEditor extends javax.swing.JFrame {
             }
         });
 
-        fireExportTypeChangedEvent(new ItemEvent(jButton1, 0, null, ItemEvent.SELECTED));
+        fireExportTypeChangedEvent(new ItemEvent(jApplyButton, 0, null, ItemEvent.SELECTED));
     }
 
+    public void reset(){
+        buildSampleData();
+        updatePreview();
+    }
+    
     private void buildSampleData() {
         //sample village
         Village sampleVillage = DataHolder.getSingleton().getRandomVillage();
@@ -235,7 +250,7 @@ public class BBCodeEditor extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane();
-        jButton1 = new javax.swing.JButton();
+        jApplyButton = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jBBPanel = new javax.swing.JPanel();
         bBPanel2 = new de.tor.tribes.ui.BBPanel();
@@ -248,7 +263,7 @@ public class BBCodeEditor extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("BB-Code Editor");
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Vorschau"));
@@ -269,19 +284,31 @@ public class BBCodeEditor extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
         getContentPane().add(jScrollPane1, gridBagConstraints);
 
-        jButton1.setText("Übernehmen");
+        jApplyButton.setText("Schließen");
+        jApplyButton.setToolTipText("Beendet den BB-Editor. Änderungen werden während dem Editiervorgang automatisch gespeichert.");
+        jApplyButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireApplyBBTemplatesEvent(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(10, 5, 10, 10);
-        getContentPane().add(jButton1, gridBagConstraints);
+        getContentPane().add(jApplyButton, gridBagConstraints);
 
-        jButton2.setText("Abbrechen");
+        jButton2.setText("Standard wiederherstellen");
+        jButton2.setToolTipText("Stellt den Standardwert für das gewählte Template her");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireResetEvent(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 5);
         getContentPane().add(jButton2, gridBagConstraints);
 
@@ -333,7 +360,7 @@ public class BBCodeEditor extends javax.swing.JFrame {
         });
         jPanel1.add(jComboBox1, java.awt.BorderLayout.CENTER);
 
-        jLabel1.setText("Zu exportierende Daten");
+        jLabel1.setText("Export Template für");
         jPanel1.add(jLabel1, java.awt.BorderLayout.WEST);
 
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/information.png"))); // NOI18N
@@ -437,6 +464,51 @@ public class BBCodeEditor extends javax.swing.JFrame {
         infoPanel.setCollapsed(!infoPanel.isCollapsed());
     }//GEN-LAST:event_fireShowTemplateVarsDialogEvent
 
+    private void fireApplyBBTemplatesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireApplyBBTemplatesEvent
+        setVisible(false);
+    }//GEN-LAST:event_fireApplyBBTemplatesEvent
+
+    private void fireResetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireResetEvent
+
+        switch (jComboBox1.getSelectedIndex()) {
+            case 0:
+                element = attackFormatter;
+                break;
+            case 1:
+                element = noteFormatter;
+                break;
+            case 2:
+                element = villageFormatter;
+                break;
+            case 3:
+                element = sosFormatter;
+                break;
+            case 4:
+                element = reportFormatter;
+                break;
+            case 5:
+                element = tagFormatter;
+                break;
+            case 6:
+                element = troopsFormatter;
+                break;
+            case 7:
+                element = pointStatsFormatter;
+                break;
+            case 8:
+                element = offStatsFormatter;
+                break;
+            case 9:
+                element = defStatsFormatter;
+                break;
+            case 10:
+                element = winnerLoserStatsFormatter;
+                break;
+        }
+        bBPanel2.setBBCode(element.getStandardTemplate());
+        updatePreview();
+    }//GEN-LAST:event_fireResetEvent
+
     private void updatePreview() {
         String result = "";
         switch (jComboBox1.getSelectedIndex()) {
@@ -522,8 +594,8 @@ public class BBCodeEditor extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.BBPanel bBPanel2;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
+    private javax.swing.JButton jApplyButton;
     private javax.swing.JPanel jBBPanel;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JComboBox jComboBox1;

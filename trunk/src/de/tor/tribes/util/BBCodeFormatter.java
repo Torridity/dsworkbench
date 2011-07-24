@@ -145,13 +145,4 @@ public class BBCodeFormatter {
                 + ".vis th { font-size: 11pt; text-align: left; font-weight:700; background-color: #c1a264}"
                 + "</style>";
     }
-
-    public static void main(String[] args) {
-        String reg = "(.+?)\\[\\|\\|\\]";
-        reg = "\\[\\*\\*\\](.+?)\\[/\\*\\*\\]";
-        //System.out.println("Test[||]Test[||]Test".replaceAll(reg, "<th>$1</th>"));
-        // System.out.println("[**]Test[/**]".replaceAll(reg, "<tr>$1</tr>"));
-        System.out.println(BBCodeFormatter.toHtml("[table][**]Test[||]Test2[/**][*]test1[|]test2[/*][/table]"));
-        // System.out.println(StringUtils.replace("Test[||]Test", reg, "<th>$1</th><th>$2</th>"));
-    }
 }

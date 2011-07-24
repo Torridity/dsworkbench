@@ -81,7 +81,6 @@ import org.jdesktop.swingx.table.TableColumnExt;
 
 // -Dsun.java2d.d3d=true -Dsun.java2d.translaccel=true -Dsun.java2d.ddforcevram=true
 /**
- * @TODO new profile creation does not update quick select
  * @author  Charon
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, ProfileManagerListener, Serializable {
@@ -89,6 +88,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
     @Override
     public void fireProfilesLoadedEvent() {
         UserProfile[] profiles = ProfileManager.getSingleton().getProfiles(GlobalOptions.getSelectedServer());
+
         DefaultComboBoxModel model = new DefaultComboBoxModel(new Object[]{"Standard"});
         if (profiles != null && profiles.length > 0) {
             for (UserProfile profile : profiles) {
@@ -263,7 +263,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         });
-        ProfileManager.getSingleton().addProfileManagerListener(this);
+
+        ProfileManager.getSingleton().addProfileManagerListener(DSWorkbenchAttackFrame.this);
 
         setGlassPane(jxSearchPane);
         pack();
@@ -663,6 +664,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
+        jXColumnList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(jXColumnList);
 
         jLabel22.setText("Spalten");

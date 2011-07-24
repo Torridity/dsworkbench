@@ -53,7 +53,6 @@ public class BBPanelCellEditor extends AbstractCellEditor implements TableCellEd
 
     @Override
     public Object getCellEditorValue() {
-        System.out.println(editor.getBBCode());
         return editor.getBBCode();
     }
 

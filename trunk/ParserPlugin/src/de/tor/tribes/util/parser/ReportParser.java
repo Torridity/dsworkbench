@@ -8,8 +8,8 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.NotifierFrame;
-import de.tor.tribes.ui.models.ReportManagerTableModel;
 import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.report.ReportManager;
 import java.awt.Toolkit;
@@ -35,11 +35,12 @@ public class ReportParser implements SilentParserInterface {
             if (!r.isValid()) {
                 throw new Exception("No valid report data found");
             }
-            //TODO Switch to new version
-            // ReportManager.getSingleton().addManagedElement(r);
-            //   ReportManager.getSingleton().getReportSet(ReportManager.DEFAULT_SET).addReport(r);
-            ReportManager.getSingleton().addManagedElement(r);//getReportSet(ReportManager.DEFAULT_SET).addReport(r);
-            NotifierFrame.doNotification("DS Workbench hat einen Kampfbericht erfolgreich eingelesen und in das Berichtset 'default' übertragen.", NotifierFrame.NOTIFY_INFO);
+            ReportManager.getSingleton().addManagedElement(r);
+            try {
+                DSWorkbenchMainFrame.getSingleton().showSuccess("DS Workbench hat einen Kampfbericht erfolgreich eingelesen und in das Berichtset 'default' übertragen.");
+            } catch (Exception e) {
+                NotifierFrame.doNotification("DS Workbench hat einen Kampfbericht erfolgreich eingelesen und in das Berichtset 'default' übertragen.", NotifierFrame.NOTIFY_INFO);
+            }
             return true;
         } catch (Exception e) {
             //no valid report data found

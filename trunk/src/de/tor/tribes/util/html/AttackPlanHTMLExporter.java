@@ -391,10 +391,4 @@ public class AttackPlanHTMLExporter {
 
         return result;
     }
-
-    public static void main(String[] args) {
-        String t = TARGET_VILLAGE_NAME;
-        System.out.println(StringUtils.replace(t, TARGET_VILLAGE_NAME, "*$$$Rohan$$$* (613|136) K16"));
-
-    }
 }

@@ -566,9 +566,4 @@ public class ImageManager {
 
     }
 
-    public static void main(String[] args) throws Exception {
-        URL u = new File("graphics/icons/spear.png").toURI().toURL();
-        u = ImageManager.class.getResource("/res/ui/fake.png");
-        System.out.println(new File(u.getFile()).getName());
-    }
 }

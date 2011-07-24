@@ -12,7 +12,23 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.test.DummyUserProfile;
 import de.tor.tribes.types.UserProfile;
-import de.tor.tribes.ui.ImageManager;
+import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
+import de.tor.tribes.ui.views.DSWorkbenchChurchFrame;
+import de.tor.tribes.ui.views.DSWorkbenchConquersFrame;
+import de.tor.tribes.ui.views.DSWorkbenchDistanceFrame;
+import de.tor.tribes.ui.views.DSWorkbenchDoItYourselfAttackPlaner;
+import de.tor.tribes.ui.views.DSWorkbenchFormFrame;
+import de.tor.tribes.ui.views.DSWorkbenchMarkerFrame;
+import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor;
+import de.tor.tribes.ui.views.DSWorkbenchNotepad;
+import de.tor.tribes.ui.views.DSWorkbenchRankFrame;
+import de.tor.tribes.ui.views.DSWorkbenchReTimerFrame;
+import de.tor.tribes.ui.views.DSWorkbenchReportFrame;
+import de.tor.tribes.ui.views.DSWorkbenchSOSRequestAnalyzer;
+import de.tor.tribes.ui.views.DSWorkbenchSelectionFrame;
+import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
+import de.tor.tribes.ui.views.DSWorkbenchTagFrame;
+import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import de.tor.tribes.util.church.ChurchManager;
@@ -182,6 +198,7 @@ public class GlobalOptions {
 
     /**Store the global properties*/
     public static void saveProperties() {
+        logger.debug("Saving global properties");
         try {
             FileOutputStream fout = new FileOutputStream("global.properties");
             GLOBAL_PROPERTIES.store(fout, "Automatically generated. Please do not modify!");
@@ -190,6 +207,27 @@ public class GlobalOptions {
         } catch (Exception e) {
             logger.error("Failed to write properties", e);
         }
+    }
+
+    public static void storeViewStates() {
+        logger.debug("Saving view state");
+        DSWorkbenchAttackFrame.getSingleton().storeProperties();
+        DSWorkbenchChurchFrame.getSingleton().storeProperties();
+        DSWorkbenchDistanceFrame.getSingleton().storeProperties();
+        DSWorkbenchDoItYourselfAttackPlaner.getSingleton().storeProperties();
+        DSWorkbenchMarkerFrame.getSingleton().storeProperties();
+        DSWorkbenchMerchantDistibutor.getSingleton().storeProperties();
+        DSWorkbenchReTimerFrame.getSingleton().storeProperties();
+        DSWorkbenchSOSRequestAnalyzer.getSingleton().storeProperties();
+        DSWorkbenchStatsFrame.getSingleton().storeProperties();
+        DSWorkbenchTagFrame.getSingleton().storeProperties();
+        DSWorkbenchConquersFrame.getSingleton().storeProperties();
+        DSWorkbenchFormFrame.getSingleton().storeProperties();
+        DSWorkbenchRankFrame.getSingleton().storeProperties();
+        DSWorkbenchNotepad.getSingleton().storeProperties();
+        DSWorkbenchTroopsFrame.getSingleton().storeProperties();
+        DSWorkbenchSelectionFrame.getSingleton().storeProperties();
+        DSWorkbenchReportFrame.getSingleton().storeProperties();
     }
 
     /**Add a property*/

@@ -151,7 +151,9 @@ public class ProfileManager {
                     }
                 }
             }
+
         }
+        fireProfilesLoadedEvents();
     }
 
     public void fireProfilesLoadedEvents() {

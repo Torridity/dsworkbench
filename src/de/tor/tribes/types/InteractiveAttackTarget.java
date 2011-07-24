@@ -79,7 +79,6 @@ public class InteractiveAttackTarget extends InteractiveAttackElement {
         double dx = pFx / 8 * Math.log10(d);
         double dy = pFy / 8 * Math.log10(d);
 
-        //  System.out.println(dx + "/" + dy);
         translatePosition(-dx, -dy);
     }
 

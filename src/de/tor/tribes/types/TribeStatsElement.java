@@ -131,7 +131,6 @@ public class TribeStatsElement {
             rankOffList.add((short) (tribe.getRankAtt() + (int) Math.round(cnt * .1 * tribe.getRankAtt())));
             bashDefList.add((long) tribe.getKillsDef() + (int) Math.round(cnt * .1 * tribe.getKillsDef()));
             rankDefList.add((short) (tribe.getRankDef() + (int) Math.round(cnt * .1 * tribe.getRankDef())));
-            System.out.println(pointList.get(cnt));
             cnt++;
         }
     }

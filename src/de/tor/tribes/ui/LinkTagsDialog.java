@@ -202,7 +202,6 @@ public class LinkTagsDialog extends javax.swing.JDialog {
 
     private void fireAcceptEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAcceptEvent
         if (evt.getSource() == jDoCreateButton) {
-            System.out.println(((TagLinkMatrixModel) jXTable1.getModel()).getEquation());
             if (jTagName.getText().length() < 1) {
                 JOptionPaneHelper.showWarningBox(this, "Du musst einen Namen für den neuen Tag angeben.", "Warnung");
                 return;

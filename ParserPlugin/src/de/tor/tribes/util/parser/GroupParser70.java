@@ -115,7 +115,7 @@ public class GroupParser70 implements SilentParserInterface {
 		}
 	    }
 	}
-	if ( groups.size() != 0 ) {
+	if ( !groups.isEmpty() ) {
 	    DSWorkbenchMainFrame.getSingleton().fireGroupParserEvent(groups);
 	    return true;
 	}
@@ -206,8 +206,8 @@ public class GroupParser70 implements SilentParserInterface {
 	} else {
 	//no groups
 	}*/
-	System.out.println("D " + (System.currentTimeMillis() - s));
-	if ( groupMap.size() != 0 ) {
+	//System.out.println("D " + (System.currentTimeMillis() - s));
+	if ( !groupMap.isEmpty() ) {
 	    DSWorkbenchMainFrame.getSingleton().fireGroupParserEvent(groupMap);
 	    return true;
 	}

@@ -237,11 +237,4 @@ public class StandardAttackElement {
 
         return result;
     }
-
-    public static void main(String[] args) {
-        String dyn = "Alle - 100";
-        String v = dyn.replaceAll("Alle - ", "").trim();
-        int substract = Integer.parseInt(v);
-        System.out.println(substract);
-    }
 }

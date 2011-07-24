@@ -314,6 +314,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
+        jXColumnList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane2.setViewportView(jXColumnList);
 
         jLabel22.setText("Spalten");

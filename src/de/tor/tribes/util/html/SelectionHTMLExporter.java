@@ -295,11 +295,4 @@ public class SelectionHTMLExporter {
             logger.error("Failed to write HTML selection to file", e);
         }
     }
-
-    public static void main(String[] args) {
-        String test = "$taat";
-        String t = "$TEST";
-
-        System.out.println(t.replaceAll("\\$TEST", EscapeChars.forHTML(test)));
-    }
 }

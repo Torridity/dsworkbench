@@ -1719,9 +1719,5 @@ public class StringHelper {
         return getEndsWithAnyIgnoreCasePattern(terms).matcher(s).matches();
     }
 
-    public static void main(String[] args) {
-        try{
-            System.out.println(URLEncoder.encode("ö", "utf-8"));
-        }catch(Exception e){}
-    }
+  
 }

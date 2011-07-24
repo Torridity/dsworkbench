@@ -195,13 +195,4 @@ public class AttackScriptWriter {
         }
         return res;
     }
-
-    public static void main(String[] args) throws Exception {
-        /* int v = 136628250;
-        int w = 24 * 60 * 60 * 1000;
-        System.out.println(v);
-        System.out.println(w);
-        System.out.println(Math.floor(v / (24 * 60 * 60 * 1000)));*/
-        System.out.println(URLEncoder.encode("krieger.odins", "UTF-8"));
-    }
 }

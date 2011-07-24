@@ -205,8 +205,8 @@ public class GroupParser implements SilentParserInterface {
 	} else {
 	//no groups
 	}*/
-	System.out.println("D " + (System.currentTimeMillis() - s));
-	if ( groupMap.size() != 0 ) {
+	//System.out.println("D " + (System.currentTimeMillis() - s));
+	if ( !groupMap.isEmpty() ) {
 	    DSWorkbenchMainFrame.getSingleton().fireGroupParserEvent(groupMap);
 	    return true;
 	}

@@ -97,6 +97,8 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
 
         KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
+        KeyStroke find = KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK, false);
+
         jFormsTable.registerKeyboardAction(new ActionListener() {
 
             @Override
@@ -112,6 +114,14 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
                 deleteSelection();
             }
         }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+        jFormsTable.registerKeyboardAction(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //no find
+            }
+        }, "Find", find, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         if (!Constants.DEBUG) {

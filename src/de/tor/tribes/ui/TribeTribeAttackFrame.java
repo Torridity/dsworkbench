@@ -177,7 +177,6 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
             } else if (e.getSource() != null && e.getSource().equals(jVictimTable)) {
                 fireTransferEvent(TRANSFER_TYPE.COPY_TARGET_TO_INTERNAL_CLIPBOARD);
             } else if (e.getSource() != null && e.getSource().equals(jResultsTable)) {
-                System.out.println("Copy result");
                 fireTransferEvent(TRANSFER_TYPE.COPY_ATTACK_TO_INTERNAL_CLIPBOARD);
             }
         } else if (e.getActionCommand().equals("Paste")) {

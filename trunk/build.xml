@@ -11,14 +11,14 @@
     <description>Builds, tests, and runs the project DSWorkbench.</description>
     <import file="nbproject/build-impl.xml"/>
 
-     <!--target name="package-for-store" depends="jar">
+     <target name="package-for-store" depends="jar">
 
-        <property name="store.jar.name" value="DSWorkbench"/-->
+        <property name="store.jar.name" value="DSWorkbench"/>
 
 
         <!-- don't edit below this line -->
 
-        <!--property name="store.dir" value="store"/>
+        <property name="store.dir" value="store"/>
         <property name="store.jar" value="${store.dir}/${store.jar.name}.jar"/>
 
         <echo message="Packaging ${application.title} into a single JAR at ${store.jar}"/>
@@ -42,7 +42,7 @@
 
         <delete file="${store.dir}/temp_final.jar"/>
 
-    </target-->
+    </target>
 
  <!--target name="-post-jar">
      <taskdef resource="proguard/ant/task.properties"

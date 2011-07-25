@@ -31,7 +31,6 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 /**
- *
  * @author Torridity
  */
 public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
@@ -281,11 +280,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         }
 
         boolean markedOnly = false;
-        try {
-            markedOnly = Boolean.parseBoolean(GlobalOptions.getProperty("draw.marked.only"));
-        } catch (Exception e) {
-            markedOnly = false;
-        }
+        
         //iterate through entire row
         int cnt = 0;
         boolean useDecoration = true;
@@ -361,11 +356,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         }
 
         boolean markedOnly = false;
-        try {
-            markedOnly = Boolean.parseBoolean(GlobalOptions.getProperty("draw.marked.only"));
-        } catch (Exception e) {
-            markedOnly = false;
-        }
+      
         //iterate through entire row
         int cnt = 0;
         boolean useDecoration = true;
@@ -504,11 +495,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             showBarbarian = true;
         }
         boolean markedOnly = false;
-        try {
-            markedOnly = Boolean.parseBoolean(GlobalOptions.getProperty("draw.marked.only"));
-        } catch (Exception e) {
-            markedOnly = false;
-        }
+       
         if (v != null
                 && !(v.getTribe().equals(Barbarians.getSingleton()) && !showBarbarian)
                 && !(MarkerManager.getSingleton().getMarker(v) == null && markedOnly && !v.getTribe().getName().equals(GlobalOptions.getSelectedProfile().getTribeName()))) {

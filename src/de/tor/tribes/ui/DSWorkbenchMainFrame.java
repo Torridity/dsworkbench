@@ -483,27 +483,27 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         try {
             String val = GlobalOptions.getProperty("show.mouseover.info");
             if (val == null) {
-                jShowMouseOverInfo.setSelected(true);
-                GlobalOptions.addProperty("show.mouseover.info", Boolean.toString(true));
+                jShowMouseOverInfo.setSelected(false);
+                GlobalOptions.addProperty("show.mouseover.info", Boolean.toString(jShowMouseOverInfo.isSelected()));
             } else {
                 jShowMouseOverInfo.setSelected(Boolean.parseBoolean(val));
             }
         } catch (Exception e) {
-            jShowMouseOverInfo.setSelected(true);
-            GlobalOptions.addProperty("show.mouseover.info", Boolean.toString(true));
+            jShowMouseOverInfo.setSelected(false);
+            GlobalOptions.addProperty("show.mouseover.info", Boolean.toString(jShowMouseOverInfo.isSelected()));
 
         }
         try {
             String val = GlobalOptions.getProperty("highlight.tribes.villages");
             if (val == null) {
-                jHighlightTribeVillages.setSelected(true);
-                GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(true));
+                jHighlightTribeVillages.setSelected(false);
+                GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(jHighlightTribeVillages.isSelected()));
             } else {
                 jHighlightTribeVillages.setSelected(Boolean.parseBoolean(val));
             }
         } catch (Exception e) {
-            jHighlightTribeVillages.setSelected(true);
-            GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(true));
+            jHighlightTribeVillages.setSelected(false);
+            GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(jHighlightTribeVillages.isSelected()));
         }
         try {
             String val = GlobalOptions.getProperty("show.ruler");

@@ -24,6 +24,7 @@ import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
 import de.tor.tribes.ui.views.DSWorkbenchTagFrame;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import java.awt.BorderLayout;
@@ -115,7 +116,7 @@ public class RibbonConfigurator {
         RibbonApplicationMenuEntryPrimary bbEditorEntry = new RibbonApplicationMenuEntryPrimary(getResizableIconFromFile("graphics/icons/bbeditor.png"), "BB-Template Editor", new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-              BBCodeEditor.getSingleton().setVisible(true);                
+                BBCodeEditor.getSingleton().setVisible(true);
             }
         }, JCommandButton.CommandButtonKind.ACTION_ONLY);
 
@@ -130,8 +131,8 @@ public class RibbonConfigurator {
         });
 
         appmen.addMenuEntry(bbEditorEntry);
-        
-        
+
+
         RibbonApplicationMenuEntryPrimary settingsEntry = new RibbonApplicationMenuEntryPrimary(getResizableIconFromFile("graphics/icons/settings.png"), "Einstellungen", new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -267,7 +268,9 @@ public class RibbonConfigurator {
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        GlobalOptions.getHelpBroker().setDisplayed(true);
+                        if (!Constants.DEBUG) {
+                            GlobalOptions.getHelpBroker().setDisplayed(true);
+                        }
                     }
                 });
     }

@@ -1122,12 +1122,7 @@ class MinimapRepaintThread extends Thread {
         }
 
         boolean markedOnly = false;
-        try {
-            markedOnly = Boolean.parseBoolean(GlobalOptions.getProperty("draw.marked.only"));
-        } catch (Exception e) {
-            markedOnly = false;
-        }
-
+      
         if (ServerSettings.getSingleton().getMapDimension() == null) {
 //could not draw minimap if dimensions are not loaded yet
             return false;

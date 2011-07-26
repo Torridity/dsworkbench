@@ -13,46 +13,46 @@ import de.tor.tribes.util.troops.VillageTroopsHolder;
  * @author Torridity
  */
 public class TroopFilterElement {
-
+    
     private UnitHolder unit = null;
     private int minAmount = 0;
     private int maxAmount = 0;
-
+    
     public TroopFilterElement(UnitHolder pUnit, int pMin, int pMax) {
         unit = pUnit;
+        setMin(pMin);
+        setMax(pMax);
+    }
+    
+    public UnitHolder getUnit() {
+        return unit;
+    }
+    
+    public int getMin() {
+        return minAmount;
+    }
+    
+    public int getMax() {
+        return maxAmount;
+    }
+    
+    public void setMin(int pMin) {
         if (pMin < 0) {
             minAmount = Integer.MIN_VALUE;
         } else {
             minAmount = pMin;
         }
+    }
+    
+    public void setMax(int pMax) {
         if (pMax < 0) {
             //no max
-            pMax = Integer.MAX_VALUE;
+            maxAmount = Integer.MAX_VALUE;
         } else {
             maxAmount = pMax;
         }
     }
-
-    public UnitHolder getUnit() {
-        return unit;
-    }
-
-    public int getMin() {
-        return minAmount;
-    }
-
-    public int getMax() {
-        return maxAmount;
-    }
-
-    public void setMin(int pMin) {
-        minAmount = pMin;
-    }
-
-    public void setMax(int pMax) {
-        maxAmount = pMax;
-    }
-
+    
     public boolean allowsVillage(Village pVillage) {
         VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage);
         if (holder == null) {
@@ -61,7 +61,7 @@ public class TroopFilterElement {
         int amount = holder.getTroopsOfUnitInVillage(getUnit());
         return (amount >= minAmount && amount <= maxAmount);
     }
-
+    
     @Override
     public String toString() {
         String res = "";

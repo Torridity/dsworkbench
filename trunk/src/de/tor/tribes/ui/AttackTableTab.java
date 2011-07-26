@@ -388,6 +388,9 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jAdeptUnitBox = new javax.swing.JCheckBox();
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jXTable1 = new org.jdesktop.swingx.JXTable();
         jScrollPane1 = new javax.swing.JScrollPane();
         infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
         jXLabel1 = new org.jdesktop.swingx.JXLabel();
@@ -903,6 +906,36 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 .addContainerGap())
         );
 
+        jXTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(jXTable1);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 724, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 491, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         setBackground(new java.awt.Color(255, 255, 255));
         setOpaque(false);
         setLayout(new java.awt.BorderLayout());
@@ -1045,6 +1078,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private static javax.swing.JRadioButton jNoType;
     private static javax.swing.JCheckBox jNotRandomToNightBonus;
     private static javax.swing.JButton jOKButton;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
@@ -1053,6 +1087,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private static javax.swing.JRadioButton jRandomizeOption;
     private static javax.swing.JDialog jScriptExportDialog;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private static javax.swing.JSpinner jSecondsField;
     private static javax.swing.JDialog jSendAttacksIGMDialog;
     private static javax.swing.JButton jSendButton;
@@ -1064,6 +1099,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private static javax.swing.JDialog jTimeChangeDialog;
     private static javax.swing.JComboBox jUnitBox;
     private org.jdesktop.swingx.JXLabel jXLabel1;
+    private org.jdesktop.swingx.JXTable jXTable1;
     // End of variables declaration//GEN-END:variables
 
     public void fireChangeTimeEvent() {

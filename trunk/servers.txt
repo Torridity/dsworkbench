@@ -1,2 +1,1 @@
-de68;http://de68.die-staemme.de;1.6;0
-de69;http://de69.die-staemme.de;1;0
+de99;http://zz1.beta.tribalwars.net;3;0

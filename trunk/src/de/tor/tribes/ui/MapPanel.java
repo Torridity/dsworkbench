@@ -874,7 +874,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     }
 
     public boolean isMouseDown(){
-        return mouseDown;
+        return mouseDown && iCurrentCursor != ImageManager.CURSOR_MEASURE;
     }
     
     public Village getToolSourceVillage() {

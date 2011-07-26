@@ -30,7 +30,7 @@ public class TroopsParser70 implements SilentParserInterface {
     private static Logger logger = Logger.getLogger("TroopsParser70");
     private static boolean IS_DEBUG = false;
     /*
-    003 | Spitfire (471|482) K44  
+    003 | Spitfire (472|481) K44  
     eigene	2500	1500	0	1964	500	0	0	1396	0	0	0	0	Befehle
     im Dorf	2500	1500	0	1964	500	0	0	1396	0	0	0	0	Truppen
     auswärts	0	0	0	0	0	0	0	0	0	0	0	0
@@ -147,7 +147,7 @@ public class TroopsParser70 implements SilentParserInterface {
                 outside.setTroops(troopsOutside);
                 onTheWay.setTroops(troopsOnTheWay);
             } else {
-                debug("Skip adding troops");
+                debug("Skip adding troops due to debug mode");
             }
             return true;
         } catch (Exception e) {
@@ -170,6 +170,7 @@ public class TroopsParser70 implements SilentParserInterface {
 
     private int[] handleLine(String pLine, String pTypeProperty) {
         try {
+                debug("Test line '" + pLine + "' for property '" + pTypeProperty + "'");
             if (pLine.trim().indexOf(pTypeProperty) > -1) {
                 debug("Handle line '" + pLine + "' for property '" + pTypeProperty + "'");
                 int[] units = parseUnits(pLine.substring(pLine.indexOf(pTypeProperty)));

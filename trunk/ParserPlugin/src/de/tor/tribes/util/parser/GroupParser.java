@@ -29,13 +29,13 @@ public class GroupParser implements SilentParserInterface {
 
     private static Logger logger = Logger.getLogger("GroupParser");
     /*
-    (09) Sunset Beach (459|468) K44  	2	Fertig; Off	» bearbeiten
-    )=-g-town-=( (469|476) K44  	2	Fertig; Off	» bearbeiten
-    003 | Spitfire (471|482) K44  	2	Deff; Fertig	» bearbeiten
-    024 | Spitfire (470|482) K44  	2	Fertig; Off	» bearbeiten
-    053 | Spitfire (472|482) K44  	2	Fertig; Off	» bearbeiten
-    2Fast4You (475|480) K44  	2	Deff; Fertig	» bearbeiten
-    Aberdeen - Eastside (497|469) K44  	2	Off; Truppenbau	» bearbeiten
+    (09) Sunset Beach (459|468) K44  	2   1023    2323	Fertig; Off	» bearbeiten
+    )=-g-town-=( (469|476) K44  	2   1234    2323	Fertig; Off	» bearbeiten
+    003 | Spitfire (471|482) K44  	2   2323    2323	Deff; Fertig	» bearbeiten
+    024 | Spitfire (470|482) K44  	2   2323    2323	Fertig; Off	» bearbeiten
+    053 | Spitfire (472|482) K44  	2   2323    2323	Fertig; Off	» bearbeiten
+    2Fast4You (475|480) K44  	2   2323    2323	Deff; Fertig	» bearbeiten
+    Aberdeen - Eastside (497|469) K44  	2   2323    2323	Off; Truppenbau	» bearbeiten
      */
 
     public boolean parse( String pGroupsString ) {

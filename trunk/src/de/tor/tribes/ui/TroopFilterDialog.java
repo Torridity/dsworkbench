@@ -398,25 +398,31 @@ public class TroopFilterDialog extends javax.swing.JDialog {
         int max = Integer.MAX_VALUE;
         try {
             min = Integer.parseInt(jMinValue.getText());
-            jMinValue.setBackground(Color.WHITE);
         } catch (Exception e) {
-            jMinValue.setBackground(Color.RED);
-            return;
+            min = Integer.MIN_VALUE;
         }
         try {
             max = Integer.parseInt(jMaxValue.getText());
-            jMaxValue.setBackground(Color.WHITE);
         } catch (Exception e) {
-            jMaxValue.setBackground(Color.RED);
-            return;
+            max = Integer.MIN_VALUE;
         }
-        if (min > max) {
+        if (min > max && max > 0) {
             int tmp = min;
             min = max;
             max = tmp;
             jMinValue.setText("" + min);
             jMaxValue.setText("" + max);
         }
+        
+        if(min < 0 && max < 0){
+            jMinValue.setBackground(Color.RED);
+            jMaxValue.setBackground(Color.RED);
+            return;
+        }else{
+            jMinValue.setBackground(Color.WHITE);
+            jMaxValue.setBackground(Color.WHITE);
+        }
+        
         for (int i = 0; i < filterModel.size(); i++) {
             TroopFilterElement listElem = (TroopFilterElement) filterModel.get(i);
             if (listElem.getUnit().equals(unit)) {

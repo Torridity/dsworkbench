@@ -101,6 +101,11 @@ import org.jdesktop.swingx.painter.MattePainter;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 /**
+ * @TODO Check A*Star field size for nimbus
+ * @TODO Check map rendering with temp. not symbol drawing
+ * @TODO Attack view -> submit single attack to browser does not jump to next line
+ * @TODO Check attack import -> markers are removed?
+ * @TODO allow to set manually sent to browser and draw in attack view?
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends JRibbonFrame implements
@@ -3573,7 +3578,7 @@ private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
                 }
             }
         }
-        TagManager.getSingleton().revalidate();
+        TagManager.getSingleton().revalidate(true);
     }
 
     @Override

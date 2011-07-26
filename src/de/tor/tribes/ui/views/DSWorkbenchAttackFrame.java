@@ -64,6 +64,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -265,7 +266,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         });
 
         ProfileManager.getSingleton().addProfileManagerListener(DSWorkbenchAttackFrame.this);
-
+    jStandardAttackDialog.pack();
         setGlassPane(jxSearchPane);
         pack();
     }
@@ -971,6 +972,8 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     }
 
     public static void main(String[] args) {
+
+        
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         MouseGestures mMouseGestures = new MouseGestures();
         mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
@@ -984,6 +987,9 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+            UIManager.put("Table.showGrid", true);
+            UIManager.put("Table.gridColor", Color.RED);
+UIManager.put("Table.disabled", false);
         } catch (Exception e) {
         }
 

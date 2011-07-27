@@ -141,7 +141,6 @@ public class TroopsParser70 implements SilentParserInterface {
                 VillageTroopsHolder outside = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.OUTWARDS, true);
                 VillageTroopsHolder onTheWay = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.ON_THE_WAY, true);
 
-
                 own.setTroops(ownTroops);
                 inVillage.setTroops(troopsInVillage);
                 outside.setTroops(troopsOutside);

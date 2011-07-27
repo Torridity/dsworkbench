@@ -102,10 +102,10 @@ import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 /**
  * @TODO Check A*Star field size for nimbus
- * @TODO Check map rendering with temp. not symbol drawing
- * @TODO Attack view -> submit single attack to browser does not jump to next line
  * @TODO Check attack import -> markers are removed?
  * @TODO allow to set manually sent to browser and draw in attack view?
+ * @TODO Check problems with troop view (null-entries for villageTroopsHolder) on server change or on server change with troop info in clipboard?!
+ * @TODO Add STRG+C and STRG+B capability icons to main frame, implement STRG+B for map panel
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends JRibbonFrame implements

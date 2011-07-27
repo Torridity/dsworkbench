@@ -115,6 +115,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jxAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
         jxAttackTable.setDefaultRenderer(Attack.class, new AttackMiscInfoRenderer());
         attackModel = new AttackTableModel(AttackManager.DEFAULT_GROUP);
+
         jxAttackTable.setModel(attackModel);
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
         Graphics2D g = back.createGraphics();
@@ -134,10 +135,10 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
      * @param pAttackPlan
      * @param pActionListener
      */
-    public AttackTableTab(String pAttackPlan, final ActionListener pActionListener) {
+    public AttackTableTab(String pAttackPlan, final ActionListener pActionListener) {        
         actionListener = pActionListener;
         sAttackPlan = pAttackPlan;
-        initComponents();
+        initComponents();    
         jScrollPane1.setViewportView(jxAttackTable);
         if (!KEY_LISTENER_ADDED) {
             KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
@@ -1525,15 +1526,23 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         int sentAttacks = 0;
         UserProfile profile = DSWorkbenchAttackFrame.getSingleton().getQuickProfile();
 
+        
         for (Attack a : attacks) {
-            if (attacks.size() == 1 || DSWorkbenchAttackFrame.getSingleton().getClickAccountValue() > 0) {
+           // if (attacks.size() == 1 || DSWorkbenchAttackFrame.getSingleton().getClickAccountValue() > 0) {
                 if (BrowserCommandSender.sendAttack(a, profile)) {
                     a.setTransferredToBrowser(true);
                     if (attacks.size() > 1) {
                         DSWorkbenchAttackFrame.getSingleton().decreaseClickAccountValue();
                     }
                     sentAttacks++;
+                    if(DSWorkbenchAttackFrame.getSingleton().getClickAccountValue() == 0){
+                        break;
+                    }
                 }
+            //}
+            
+            if(sentAttacks == 1){
+                jxAttackTable.getSelectionModel().setSelectionInterval(jxAttackTable.getSelectedRow()+1, jxAttackTable.getSelectedRow()+1);
             }
         }
         String usedProfile = "";

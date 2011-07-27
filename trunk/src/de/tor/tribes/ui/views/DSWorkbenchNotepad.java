@@ -257,6 +257,24 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
     }
 
     private void buildMenu() {
+        JXTaskPane editTaskPane = new JXTaskPane();
+        editTaskPane.setTitle("Bearbeiten");
+        
+        JXButton newNote = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/document_new_24x24.png")));
+        newNote.setToolTipText("Erstellt eine leere Notiz");
+        newNote.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                NoteTableTab tab = getActiveTab();
+                if (tab != null) {
+                    tab.createNote();
+                }
+            }
+        });
+        editTaskPane.getContentPane().add(newNote);
+        
+        
         JXTaskPane transferTaskPane = new JXTaskPane();
         transferTaskPane.setTitle("Übertragen");
         JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/center_ingame.png")));
@@ -291,7 +309,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         });
 
         transferTaskPane.getContentPane().add(centerVillage);
-        centerPanel.setupTaskPane(transferTaskPane);
+        centerPanel.setupTaskPane(editTaskPane, transferTaskPane);
     }
 
     /**Get the currently selected tab*/
@@ -995,7 +1013,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
 
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_new_24x24.png"))); // NOI18N
-        jLabel4.setToolTipText("Leeren Angriffsplan erstellen");
+        jLabel4.setToolTipText("Leeres Notizset erstellen");
         jLabel4.setMaximumSize(new java.awt.Dimension(40, 40));
         jLabel4.setMinimumSize(new java.awt.Dimension(40, 40));
         jLabel4.setOpaque(true);

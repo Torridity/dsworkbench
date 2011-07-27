@@ -61,6 +61,7 @@ import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.HeadlessException;
 import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -74,6 +75,9 @@ import java.awt.dnd.DragSource;
 import java.awt.dnd.DragSourceListener;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -84,7 +88,10 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.management.MBeanServer;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 /**
@@ -158,6 +165,24 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         attackAddFrame = new AttackAddFrame();
         mVirtualBounds = new Rectangle2D.Double(0.0, 0.0, 0.0, 0.0);
         markedVillages = new LinkedList<Village>();
+        KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
+        this.registerKeyboardAction(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (markedVillages != null && !markedVillages.isEmpty()) {
+                    try {
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(markedVillages.toString()), null);
+                        DSWorkbenchMainFrame.getSingleton().showSuccess(((markedVillages.size() == 1) ? "Ein Dorf " : markedVillages.size() + " Dörfer ") + "in die Zwischenablage kopiert");
+                    } catch (Exception ex) {
+                        logger.error("Failed to copy village from map to clipboard", ex);
+                    }
+                } else {
+                    DSWorkbenchMainFrame.getSingleton().showSuccess("Keine Dörfer zum Kopieren markiert");
+                }
+            }
+        }, "Copy", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
 
         initListeners();
         new Timer("RepaintTimer", true).schedule(new TimerTask() {
@@ -517,7 +542,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 }
 
                 /*if (MenuRenderer.getSingleton().isVisible()) {
-                    return;
+                return;
                 }*/
                 boolean isAttack = false;
                 mouseDown = true;
@@ -652,7 +677,10 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                                     markedVillages.add(v);
                                 }
                             }
-                            DSWorkbenchSelectionFrame.getSingleton().toFront();
+                            if (!markedVillages.isEmpty()) {
+                                DSWorkbenchMainFrame.getSingleton().showInfo(((markedVillages.size() == 1) ? "Dorf " : markedVillages.size() + " Dörfer ") + "in die Auswahlübersicht übertragen");
+                            }
+                            requestFocus();
                             selectionRect = null;
                             break;
                         }
@@ -873,10 +901,10 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         actionMenuVillage = null;
     }
 
-    public boolean isMouseDown(){
+    public boolean isMouseDown() {
         return mouseDown && iCurrentCursor != ImageManager.CURSOR_MEASURE;
     }
-    
+
     public Village getToolSourceVillage() {
         return mSourceVillage;
     }

@@ -86,12 +86,13 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
 
         CLIPBOARD_PLAIN, CLIPBOARD_BB, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD
     }
-    private String sMarkerSet = null;
+    private String sNoteSet = null;
     private final static JXTable jxNoteTable = new JXTable();
     private final static JList jxVillageList = new JList();
     private static NoteTableModel noteModel = null;
     private static boolean KEY_LISTENER_ADDED = false;
     private PainterHighlighter highlighter = null;
+
     static {
         jxNoteTable.addHighlighter(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
 
@@ -126,7 +127,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
      * @param pActionListener
      */
     public NoteTableTab(String pMarkerSet, final ActionListener pActionListener) {
-        sMarkerSet = pMarkerSet;
+        sNoteSet = pMarkerSet;
         initComponents();
         jScrollPane1.setViewportView(jxNoteTable);
         jScrollPane2.setViewportView(jxVillageList);
@@ -235,7 +236,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
     }
 
     public String getNoteSet() {
-        return sMarkerSet;
+        return sNoteSet;
     }
 
     public JXTable getNoteTable() {
@@ -243,7 +244,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
     }
 
     public void updateSet() {
-        noteModel.setNoteSet(sMarkerSet);
+        noteModel.setNoteSet(sNoteSet);
         String[] cols = new String[]{"Icon", "Kartensymbol"};
         for (String col : cols) {
             TableColumnExt columns = jxNoteTable.getColumnExt(col);
@@ -373,6 +374,12 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
     private org.jdesktop.swingx.JXLabel jXLabel1;
     // End of variables declaration//GEN-END:variables
 
+    
+    public void createNote(){
+        NoteManager.getSingleton().addManagedElement(sNoteSet, new Note());
+        showInfo("Notiz erstellt");
+    }
+    
     public void transferSelection(TRANSFER_TYPE pType) {
         switch (pType) {
             case COPY_TO_INTERNAL_CLIPBOARD:
@@ -466,6 +473,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
     }
 
     private void copyFromInternalClipboard() {
+        boolean changed = false;
         try {
             String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
 
@@ -479,13 +487,16 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
                     cnt++;
                 }
             }
+            NoteManager.getSingleton().revalidate();
             if (cnt > 0) {
                 showSuccess(cnt + ((cnt == 1) ? " Notiz eingefügt" : " Notizen eingefügt"));
+                changed = true;
             } else {
                 logger.debug("No notes found, try to insert villages");
                 List<Note> notes = getSelectedNotes();
                 if (notes.isEmpty()) {
                     logger.info("No notes selected, returning");
+                    showInfo("Keine Notizen gewählt, um Dörfer hinzuzufügen");
                     return;
                 }
                 List<Village> villages = PluginManager.getSingleton().executeVillageParser(data);
@@ -500,6 +511,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
 
                     String message = ((villages.size() == 1) ? "Dorf wurde " : villages.size() + " Dörfer wurden ") + ((notes.size() == 1) ? "der Notiz" : "den Notizen") + " hinzugefügt";
                     showSuccess(message);
+                    changed = true;
                 }
             }
         } catch (UnsupportedFlavorException ufe) {
@@ -509,7 +521,11 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
             logger.error("Failed to copy notes from internal clipboard", ioe);
             showError("Fehler beim Einfügen der Notizen");
         }
-        noteModel.fireTableDataChanged();
+        if (changed) {
+            noteModel.fireTableDataChanged();
+        } else {
+            showInfo("<html>Keine Notizen in der Zwischenablage gefunden bzw.<br/>keine Notizen markiert, um D&ouml;rfer hinzuzuf&uuml;gen</html>");
+        }
     }
 
     public boolean deleteSelection(boolean pAsk) {

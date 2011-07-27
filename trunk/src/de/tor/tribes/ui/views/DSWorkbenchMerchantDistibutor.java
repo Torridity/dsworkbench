@@ -350,10 +350,6 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
             showInfo(resultInfoPanel, jXResultInfoLabel, "Keine Transporte ausgewählt");
         }
 
-        if (iClickAccount == 0) {
-            iClickAccount = 1;
-        }
-
         int transferCount = 0;
         UserProfile profile = getQuickProfile();
         for (int row : selection) {
@@ -363,7 +359,9 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
             if (BrowserCommandSender.sendRes(source, target, t, profile)) {
                 transferCount++;
                 jResultsTable.setValueAt(true, row, 3);
-                iClickAccount--;
+                if (selection.length > 1 && iClickAccount > 0) {
+                    iClickAccount--;
+                }
             } else {
                 transferCount = -1;
                 break;
@@ -371,6 +369,9 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
             if (iClickAccount == 0) {
                 break;
             }
+        }
+        if (transferCount == 1) {
+            jResultsTable.getSelectionModel().setSelectionInterval(jResultsTable.getSelectedRow() + 1, jResultsTable.getSelectedRow() + 1);
         }
         updateClickAccount();
         String usedProfile = "";

@@ -929,7 +929,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_new_24x24.png"))); // NOI18N
-        jLabel10.setToolTipText("Leeren Angriffsplan erstellen");
+        jLabel10.setToolTipText("Leeres Berichtset erstellen");
         jLabel10.setMaximumSize(new java.awt.Dimension(40, 40));
         jLabel10.setMinimumSize(new java.awt.Dimension(40, 40));
         jLabel10.setOpaque(true);

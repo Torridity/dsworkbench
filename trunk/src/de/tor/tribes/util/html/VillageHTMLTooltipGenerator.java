@@ -7,7 +7,6 @@ package de.tor.tribes.util.html;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
-import de.tor.tribes.types.BarbarianAlly;
 import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Conquer;
 import de.tor.tribes.types.Marker;
@@ -30,6 +29,7 @@ import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -227,10 +227,14 @@ public class VillageHTMLTooltipGenerator {
         VillageTroopsHolder onTheWay = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.ON_THE_WAY);
 
         Village current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
-        if (inVillage == null && outside == null && onTheWay == null) {//&& (current != null && current.equals(pVillage))) {
+       /* if (inVillage == null && outside == null && onTheWay == null) {//&& (current != null && current.equals(pVillage))) {
             //we have the active user village but no troops
-            return "";
-        }
+//            return "";
+            outside = new VillageTroopsHolder(current, new Date());
+            inVillage = new VillageTroopsHolder(current, new Date());
+            onTheWay = new VillageTroopsHolder(current, new Date());
+            
+        }*/
 
         int cnt = 0;
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {

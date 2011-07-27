@@ -33,27 +33,29 @@ public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
             //setRenderedBounds(null);
             setFullRenderRequired(true);
             shouldReset = false;
-            if (mLayer != null && (MapPanel.getSingleton().getWidth() > mLayer.getWidth()
-                    || MapPanel.getSingleton().getWidth() < mLayer.getWidth() - 100
-                    || MapPanel.getSingleton().getHeight() > mLayer.getHeight()
-                    || MapPanel.getSingleton().getHeight() < mLayer.getHeight() - 100)) {
-                mLayer.flush();
-                mLayer = null;
-            }
+            /* if (mLayer != null && (MapPanel.getSingleton().getWidth() > mLayer.getWidth()
+            || MapPanel.getSingleton().getWidth() < mLayer.getWidth() - 100
+            || MapPanel.getSingleton().getHeight() > mLayer.getHeight()
+            || MapPanel.getSingleton().getHeight() < mLayer.getHeight() - 100)) {*/
+            mLayer.flush();
+            mLayer = null;
+            //}
         }
         if (!pSettings.isLayerVisible()) {
             return;
         }
         Graphics2D g2d = null;
 
+        boolean renderTempImages = false;
         if (mLayer == null) {
             if (pSettings.getVillagesInX() * pSettings.getFieldWidth() > ImageManager.ID_NOTE_ICON_13 * 32) {
-                mLayer = ImageUtils.createCompatibleBufferedImage(pSettings.getVillagesInX()* pSettings.getFieldWidth(), pSettings.getVillagesInY() * pSettings.getFieldHeight() + 100, BufferedImage.TRANSLUCENT);
+                mLayer = ImageUtils.createCompatibleBufferedImage(pSettings.getVillagesInX() * pSettings.getFieldWidth(), pSettings.getVillagesInY() * pSettings.getFieldHeight() + 100, BufferedImage.TRANSLUCENT);
             } else {
                 mLayer = ImageUtils.createCompatibleBufferedImage(ImageManager.ID_NOTE_ICON_13 * 32, pSettings.getVillagesInY() * pSettings.getFieldHeight() + 100, BufferedImage.TRANSLUCENT);
             }
 
             g2d = mLayer.createGraphics();
+            renderTempImages = true;
         } else {
             g2d = (Graphics2D) mLayer.getGraphics();
             Composite c = g2d.getComposite();
@@ -63,6 +65,12 @@ public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
         }
 
         ImageUtils.setupGraphics(g2d);
+        if (renderTempImages) {
+            for (int i = 0; i <= ImageManager.ID_NOTE_ICON_13; i++) {
+                BufferedImage icon = ImageManager.getNoteIcon(i);
+                g2d.drawImage(icon, i * 32, mLayer.getHeight() - 100 + 68, null);
+            }
+        }
 
         renderNoteRows(pSettings, mLayer.getHeight() - 100, g2d);
         g2d.dispose();
@@ -74,11 +82,8 @@ public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
     private void renderNoteRows(RenderSettings pSettings, int pCopyPosition, Graphics2D g2d) {
         //calculate first row that will be rendered
         int firstRow = 0;
-        ImageUtils.setupGraphics(g2d);
-        for (int i = 0; i <= ImageManager.ID_NOTE_ICON_13; i++) {
-            BufferedImage icon = ImageManager.getNoteIcon(i);
-            g2d.drawImage(icon, i * 32, pCopyPosition + 68, null);
-        }
+        // ImageUtils.setupGraphics(g2d);
+
         Village lastVillageToDraw = null;
         int lastVillageRow = 0;
         int lastVillageCol = 0;

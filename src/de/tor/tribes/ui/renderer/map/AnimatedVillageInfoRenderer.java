@@ -56,8 +56,8 @@ public class AnimatedVillageInfoRenderer {
         }
         mCurrentLocation = (Rectangle) pCurrentLocation.clone();
         if (pRise) {
-            if (iDiameter + 5 < 61) {
-                iDiameter += 5;
+            if (iDiameter + 10 < 61) {
+                iDiameter += 10;
             }
         } else {
             iDiameter -= 10;

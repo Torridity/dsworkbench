@@ -296,7 +296,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_new_24x24.png"))); // NOI18N
-        jLabel3.setToolTipText("Leeren Angriffsplan erstellen");
+        jLabel3.setToolTipText("Leeres Markierungsset erstellen");
         jLabel3.setMaximumSize(new java.awt.Dimension(40, 40));
         jLabel3.setMinimumSize(new java.awt.Dimension(40, 40));
         jLabel3.setOpaque(true);

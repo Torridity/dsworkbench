@@ -25,8 +25,8 @@ public class SupportParser implements SilentParserInterface {
 
     /*
     [001]PICO (453|581) K40 	im Dorf	936	178	0	0	2	0	0	98	0	0	0	0	Truppen
-    [060]PICO (454|584) K40 	1731	1565	0	1755	0	0	0	0	0	0	0	0
-    [034]PICO (453|586) K40 	3181	3285	0	2995	0	0	0	266	0	0	0	0
+    [060]PICO (463|576) K40 	1731	1565	0	1755	0	0	0	0	0	0	0	0
+    [034]PICO (446|587) K40 	3181	3285	0	2995	0	0	0	266	0	0	0	0
     
      * 
      * 
@@ -36,21 +36,22 @@ public class SupportParser implements SilentParserInterface {
      */
     public boolean parse(String pTroopsString) {
         StringTokenizer lineTok = new StringTokenizer(pTroopsString, "\n\r");
-        Village supportedVillage = null;
+        Village supportSender = null;
         int supportCount = 0;
+         TroopsManager.getSingleton().invalidate();
         while (lineTok.hasMoreElements()) {
             //parse single line for village
             String line = lineTok.nextToken();
             if (line.indexOf(ParserVariableManager.getSingleton().getProperty("troops.in.village")) > 0) {
                 try {
-                    supportedVillage = new VillageParser().parse(line).get(0);
+                    supportSender = new VillageParser().parse(line).get(0);
                 } catch (Exception e) {
-                    supportedVillage = null;
+                    supportSender = null;
                 }
 
-                if (supportedVillage != null) {
+                if (supportSender != null) {
                     //remove all supports
-                    SupportVillageTroopsHolder holder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(supportedVillage, TroopsManager.TROOP_TYPE.SUPPORT);
+                    SupportVillageTroopsHolder holder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(supportSender, TroopsManager.TROOP_TYPE.SUPPORT);
                     if (holder != null) {
                         //remove all supports if there are any to avoid old entries
                         holder.clearSupports();
@@ -92,20 +93,22 @@ public class SupportParser implements SilentParserInterface {
                 }//end troops == null
                 }//end host == null*/
             } else {
-                if (supportedVillage != null) {
+                if (supportSender != null) {
                     //might be support target village
-                    SupportVillageTroopsHolder holder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(supportedVillage, TroopsManager.TROOP_TYPE.SUPPORT, true);
-                    Village supporter = null;
+                    SupportVillageTroopsHolder holder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(supportSender, TroopsManager.TROOP_TYPE.SUPPORT, true);
+                    Village supportTarget = null;
                     try {
-                        supporter = new VillageParser().parse(line).get(0);
+                        supportTarget = new VillageParser().parse(line).get(0);
                     } catch (Exception e) {
-                        supporter = null;
+                        supportTarget = null;
                     }
 
-                    if (supporter != null) {
+                    if (supportTarget != null) {
                         //found new support
-                        Hashtable<UnitHolder, Integer> supportTroops = parseUnits(line.replaceAll(Pattern.quote(supporter.toString()), "").trim());
-                        holder.addIncomingSupport(supporter, supportTroops);
+                        Hashtable<UnitHolder, Integer> supportTroops = parseUnits(line.replaceAll(Pattern.quote(supportTarget.toString()), "").trim());
+                        holder.addOutgoingSupport(supportTarget, supportTroops);
+                        SupportVillageTroopsHolder supporterHolder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(supportTarget, TroopsManager.TROOP_TYPE.SUPPORT, true);
+                        supporterHolder.addIncomingSupport(supportSender, supportTroops);
                         supportCount++;
                     }
                     /* if ( holder != null ) {
@@ -160,15 +163,17 @@ public class SupportParser implements SilentParserInterface {
                 }
             }
         }
-
+ 
         if (supportCount > 0) {
             try {
                 DSWorkbenchMainFrame.getSingleton().showSuccess("DS Workbench hat " + ((supportCount == 1) ? "eine Unterstützung " : supportCount + " Unterstützungen ") + "eingelesen");
             } catch (Exception e) {
                 NotifierFrame.doNotification("DS Workbench hat " + ((supportCount == 1) ? "eine Unterstützung " : supportCount + " Unterstützungen ") + "eingelesen", NotifierFrame.NOTIFY_INFO);
             }
+            TroopsManager.getSingleton().revalidate(true);
             return true;
         }
+        TroopsManager.getSingleton().revalidate(false);
         return false;
     }
 

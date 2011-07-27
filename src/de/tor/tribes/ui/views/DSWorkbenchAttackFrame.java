@@ -987,9 +987,8 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-            UIManager.put("Table.showGrid", true);
-            UIManager.put("Table.gridColor", Color.RED);
-UIManager.put("Table.disabled", false);
+            
+            
         } catch (Exception e) {
         }
 

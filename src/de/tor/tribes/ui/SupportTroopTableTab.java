@@ -81,7 +81,7 @@ import org.jdesktop.swingx.painter.MattePainter;
  * @author Torridity
  */
 public class SupportTroopTableTab extends javax.swing.JPanel implements ListSelectionListener, TabInterface {
-    
+
     private static Logger logger = Logger.getLogger("TroopTableTab");
     private String sTroopSet = null;
     private final static JXTreeTable jxTroopTable = new JXTreeTable();
@@ -89,7 +89,7 @@ public class SupportTroopTableTab extends javax.swing.JPanel implements ListSele
     private PainterHighlighter highlighter = null;
     private ActionListener actionListener = null;
     private SupportRefillDialog mRefillDialog = null;
-    
+
     static {
         jxTroopTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jxTroopTable.setColumnControlVisible(true);
@@ -115,25 +115,25 @@ public class SupportTroopTableTab extends javax.swing.JPanel implements ListSele
             jxTroopTable.registerKeyboardAction(pActionListener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxTroopTable.registerKeyboardAction(pActionListener, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxTroopTable.getActionMap().put("find", new AbstractAction() {
-                
+
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     //no find for support tab
                     JOptionPaneHelper.showInformationBox(jxTroopTable, "Die Suchfunktion ist für die Unterstützungsansicht nicht verfügbar", "Information");
                 }
             });
-            
+
             KEY_LISTENER_ADDED = true;
         }
         jxTroopTable.getSelectionModel().addListSelectionListener(SupportTroopTableTab.this);
         jTroopAmountList.setCellRenderer(new TroopAmountListCellRenderer());
     }
-    
+
     @Override
     public void deregister() {
         jxTroopTable.getSelectionModel().removeListSelectionListener(this);
     }
-    
+
     @Override
     public void valueChanged(ListSelectionEvent e) {
         if (e.getValueIsAdjusting()) {
@@ -147,7 +147,7 @@ public class SupportTroopTableTab extends javax.swing.JPanel implements ListSele
             actionListener.actionPerformed(new ActionEvent(jxTroopTable, 0, "SelectionDone"));
         }
     }
-    
+
     public void updateSelectionInfo() {
         List<VillageTroopsHolder> selection = getSelectedVillages();
         HashMap<UnitHolder, Integer> amounts = new HashMap<UnitHolder, Integer>();
@@ -169,61 +169,61 @@ public class SupportTroopTableTab extends javax.swing.JPanel implements ListSele
         for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
             model.addElement(nf.format(amounts.get(u)) + " " + u.getPlainName());
         }
-        
+
         jTroopAmountList.setModel(model);
         jTroopAmountList.repaint();
     }
-    
+
     public void refillSupports() {
         List<VillageTroopsHolder> selection = getSelectedVillages();
         if (selection.isEmpty()) {
             showInfo("Keine Dörfer ausgewählt");
             return;
         }
-        
+
         mRefillDialog.pack();
         mRefillDialog.setupAndShow(selection);
     }
-    
+
     public void showSuccess(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(Color.GREEN));
         jXLabel1.setForeground(Color.BLACK);
         jXLabel1.setText(pMessage);
     }
-    
+
     public void showInfo(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(getBackground()));
         jXLabel1.setForeground(Color.BLACK);
         jXLabel1.setText(pMessage);
     }
-    
+
     public void showError(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(Color.RED));
         jXLabel1.setForeground(Color.WHITE);
         jXLabel1.setText(pMessage);
     }
-    
+
     public String getTroopSet() {
         return sTroopSet;
     }
-    
+
     public JXTable getTroopTable() {
         return jxTroopTable;
     }
-    
+
     public void updateSet() {
         jxTroopTable.setTreeTableModel(new SupportTroopsTableModel(buildTreeTableData()));
         jScrollPane1.setViewportView(jxTroopTable);
         jxTroopTable.getTableHeader().setDefaultRenderer(new SupportTroopTableHeaderRenderer());
     }
-    
+
     public DefaultMutableTreeNode buildTreeTableData() {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
         List<ManageableType> elems = TroopsManager.getSingleton().getAllElements(TroopsManager.SUPPORT_GROUP);
-        
+
         for (ManageableType elem : elems) {
             SupportVillageTroopsHolder s = (SupportVillageTroopsHolder) elem;
             DefaultMutableTreeNode villageNode = new DefaultMutableTreeNode(s);
@@ -242,9 +242,9 @@ public class SupportTroopTableTab extends javax.swing.JPanel implements ListSele
             root.add(villageNode);
         }
         return root;
-        
+
     }
-    
+
     public void updateFilter(final List<Tag> groups, final boolean pRelation, final boolean pFilterRows) {
         if (highlighter != null) {
             jxTroopTable.removeHighlighter(highlighter);
@@ -257,7 +257,7 @@ public class SupportTroopTableTab extends javax.swing.JPanel implements ListSele
             jxTroopTable.addHighlighter(highlighter);
         } else {
             jxTroopTable.setRowFilter(new RowFilter<TableModel, Integer>() {
-                
+
                 @Override
                 public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
                     Integer row = entry.getIdentifier();
@@ -366,24 +366,24 @@ public class SupportTroopTableTab extends javax.swing.JPanel implements ListSele
                 break;
         }
     }
-    
+
     private void copyBBToExternalClipboardEvent() {
         try {
             List<VillageTroopsHolder> troops = getSelectedVillages();
-            
+
             if (troops.isEmpty()) {
                 showInfo("Keine Dörfer ausgewählt");
                 return;
             }
             boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
-            
+
             StringBuilder buffer = new StringBuilder();
             if (extended) {
                 buffer.append("[u][size=12]Truppenübersicht[/size][/u]\n\n");
             } else {
                 buffer.append("[u]Truppenübersicht[/u]\n\n");
             }
-            
+
             buffer.append("Herkunft der Daten: '").append(getTroopSet()).append("'\n\n");
             buffer.append(new TroopListFormatter().formatElements(troops, extended));
             if (extended) {
@@ -397,7 +397,7 @@ public class SupportTroopTableTab extends javax.swing.JPanel implements ListSele
                 buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
                 buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url]\n");
             }
-            
+
             String b = buffer.toString();
             StringTokenizer t = new StringTokenizer(b, "[");
             int cnt = t.countTokens();
@@ -406,7 +406,7 @@ public class SupportTroopTableTab extends javax.swing.JPanel implements ListSele
                     return;
                 }
             }
-            
+
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
             String result = "Daten in Zwischenablage kopiert.";
             showSuccess(result);
@@ -417,44 +417,53 @@ public class SupportTroopTableTab extends javax.swing.JPanel implements ListSele
             showError(result);
         }
     }
-    
+
     public void centerVillage() {
-        List<VillageTroopsHolder> selection = getSelectedVillages();
-        if (selection.isEmpty()) {
+       // List<VillageTroopsHolder> selection = getSelectedVillages();
+          Village selection = getSelectedVillage();
+        //if (selection.isEmpty()) {
+            if (selection == null) {
             showInfo("Kein Dorf ausgewählt");
             return;
         }
-        DSWorkbenchMainFrame.getSingleton().centerVillage(selection.get(0).getVillage());
+        //DSWorkbenchMainFrame.getSingleton().centerVillage(selection.get(0).getVillage());
+        DSWorkbenchMainFrame.getSingleton().centerVillage(selection);
     }
-    
+
     public void centerVillageInGame() {
-        List<VillageTroopsHolder> selection = getSelectedVillages();
-        if (selection.isEmpty()) {
+       // List<VillageTroopsHolder> selection = getSelectedVillages();
+         Village selection = getSelectedVillage();
+       //if (selection.isEmpty()) {
+         if (selection == null) {
             showInfo("Kein Dorf ausgewählt");
             return;
         }
-        
-        BrowserCommandSender.centerVillage(selection.get(0).getVillage());
+
+      //  BrowserCommandSender.centerVillage(selection.get(0).getVillage());
+         BrowserCommandSender.centerVillage(selection);
     }
-    
+
     public void openPlaceInGame() {
-        List<VillageTroopsHolder> selection = getSelectedVillages();
-        if (selection.isEmpty()) {
+        //List<VillageTroopsHolder> selection = getSelectedVillages();
+        Village selection = getSelectedVillage();
+        //if (selection.isEmpty()) {
+        if (selection == null) {
             showInfo("Kein Dorf ausgewählt");
             return;
         }
-        
-        BrowserCommandSender.openPlaceTroopsView(selection.get(0).getVillage());
+
+        //BrowserCommandSender.openPlaceTroopsView(selection.get(0).getVillage());
+        BrowserCommandSender.openPlaceTroopsView(selection);
     }
-    
+
     public boolean deleteSelection(boolean pAsk) {
         List<VillageTroopsHolder> selectedVillages = getSelectedVillages();
-        
+
         if (selectedVillages.isEmpty()) {
             showInfo("Kein Dorf ausgewählt");
             return true;
         }
-        
+
         if (pAsk) {
             String message = "Alle Unterstützungen aus den gewählten Dörfern löschen?";
             int result = JOptionPaneHelper.showQuestionConfirmBox(this, message, "Truppeninformationen löschen", "Nein", "Ja");
@@ -471,24 +480,23 @@ public class SupportTroopTableTab extends javax.swing.JPanel implements ListSele
                 return true;
             }
         }
-        
+
         showSuccess(selectedVillages.size() + " Truppeninformation(en) gelöscht");
         return true;
     }
-    
+
     @Override
     public void deleteSelection() {
         deleteSelection(true);
     }
-    
+
     private List<VillageTroopsHolder> getSelectedVillages() {
         final List<VillageTroopsHolder> selectedVillages = new LinkedList<VillageTroopsHolder>();
         int[] selectedRows = jxTroopTable.getSelectedRows();
-        if (selectedRows != null && selectedRows.length < 1) {
+        if (selectedRows == null || selectedRows.length < 1) {
             return selectedVillages;
         }
-        
-        
+
         for (Integer selectedRow : selectedRows) {
             TreePath p = jxTroopTable.getPathForRow(selectedRow);
             if (p.getPathCount() >= 2) {
@@ -498,7 +506,26 @@ public class SupportTroopTableTab extends javax.swing.JPanel implements ListSele
                 }
             }
         }
-        
+
         return selectedVillages;
+    }
+
+    private Village getSelectedVillage() {
+        int selectedRow = jxTroopTable.getSelectedRow();
+        if (selectedRow == 0) {
+            return null;
+        }
+        TreePath p = jxTroopTable.getPathForRow(selectedRow);
+        Object o = p.getLastPathComponent();
+        Object uo = ((DefaultMutableTreeNode) o).getUserObject();
+        if (uo instanceof VillageTroopsHolder) {
+            return ((VillageTroopsHolder) uo).getVillage();
+        } else if (uo instanceof IncomingTroopsUserObject) {
+            return ((IncomingTroopsUserObject) uo).getTroopsHolder().getVillage();
+        } else if (uo instanceof OutgoingTroopsUserObject) {
+            return ((OutgoingTroopsUserObject) uo).getTroopsHolder().getVillage();
+        }
+        return null;
+
     }
 }

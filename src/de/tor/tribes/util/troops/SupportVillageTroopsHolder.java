@@ -68,7 +68,7 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
         String result = "<troopInfo type=\"support\">\n";
         result += "<id>" + getVillage().getId() + "</id>\n";
         result += "<state>" + getState().getTime() + "</state>\n";
-        result += "<troops>";
+        result += "<troops ";
 
         List<UnitHolder> units = DataHolder.getSingleton().getUnits();
         for (UnitHolder unit : units) {
@@ -258,15 +258,19 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
 
     @Override
     public String toString() {
-        String result = "";
+        /* String result = "";
         result += "Village: " + getVillage() + "\n";
         Enumeration<UnitHolder> keys = getTroops().keys();
         result += "Truppen\n";
         while (keys.hasMoreElements()) {
-            UnitHolder unit = keys.nextElement();
-            result += unit.getName() + " " + getTroops().get(unit) + "\n";
+        UnitHolder unit = keys.nextElement();
+        result += unit.getName() + " " + getTroops().get(unit) + "\n";
         }
-        return result;
+        return result;*/
+        if (getVillage() != null) {
+            return getVillage().toString();
+        }
+        return "Ungültiges Dorf";
     }
 
     @Override

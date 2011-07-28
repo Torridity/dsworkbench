@@ -52,6 +52,7 @@ import de.tor.tribes.util.MapShotListener;
 import de.tor.tribes.util.ScreenshotSaver;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.bb.VillageListFormatter;
 import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.note.NoteManager;
@@ -61,7 +62,6 @@ import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.HeadlessException;
 import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -88,8 +88,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.management.MBeanServer;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -172,7 +172,12 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             public void actionPerformed(ActionEvent e) {
                 if (markedVillages != null && !markedVillages.isEmpty()) {
                     try {
-                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(markedVillages.toString()), null);
+                        StringBuilder b = new StringBuilder();
+                        for (Village v : markedVillages) {
+                            b.append(v.toString()).append("\n");
+                        }
+
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b.toString()), null);
                         DSWorkbenchMainFrame.getSingleton().showSuccess(((markedVillages.size() == 1) ? "Ein Dorf " : markedVillages.size() + " Dörfer ") + "in die Zwischenablage kopiert");
                     } catch (Exception ex) {
                         logger.error("Failed to copy village from map to clipboard", ex);
@@ -181,8 +186,26 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     DSWorkbenchMainFrame.getSingleton().showSuccess("Keine Dörfer zum Kopieren markiert");
                 }
             }
-        }, "Copy", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        }, "Copy", copy, JComponent.WHEN_IN_FOCUSED_WINDOW);
+        KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
+        this.registerKeyboardAction(new ActionListener() {
 
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (markedVillages != null && !markedVillages.isEmpty()) {
+                    try {
+                        boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(MapPanel.this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
+                        String result = new VillageListFormatter().formatElements(markedVillages, extended);
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
+                        DSWorkbenchMainFrame.getSingleton().showSuccess(((markedVillages.size() == 1) ? "Ein Dorf " : markedVillages.size() + " Dörfer ") + "als BB-Codes in die Zwischenablage kopiert");
+                    } catch (Exception ex) {
+                        logger.error("Failed to copy village from map to clipboard", ex);
+                    }
+                } else {
+                    DSWorkbenchMainFrame.getSingleton().showSuccess("Keine Dörfer zum Kopieren markiert");
+                }
+            }
+        }, "BBCopy", bbCopy, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
         initListeners();
         new Timer("RepaintTimer", true).schedule(new TimerTask() {
@@ -680,7 +703,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                             if (!markedVillages.isEmpty()) {
                                 DSWorkbenchMainFrame.getSingleton().showInfo(((markedVillages.size() == 1) ? "Dorf " : markedVillages.size() + " Dörfer ") + "in die Auswahlübersicht übertragen");
                             }
-                            requestFocus();
                             selectionRect = null;
                             break;
                         }

@@ -89,7 +89,6 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         jxTroopTable.setDefaultRenderer(Float.class, new PercentCellRenderer());
         jxTroopTable.setDefaultRenderer(Boolean.class, new VisibilityCellRenderer());
         jxTroopTable.setDefaultRenderer(Number.class, new NumberFormatCellRenderer());
-
         troopModel = new TroopsTableModel(TroopsManager.getSingleton().getDefaultGroupName());
         jxTroopTable.setModel(troopModel);
 

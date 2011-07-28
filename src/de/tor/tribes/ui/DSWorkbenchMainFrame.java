@@ -102,10 +102,10 @@ import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 /**
  * @TODO Check A*Star field size for nimbus
- * @TODO Check attack import -> markers are removed?
  * @TODO allow to set manually sent to browser and draw in attack view?
  * @TODO Check problems with troop view (null-entries for villageTroopsHolder) on server change or on server change with troop info in clipboard?!
- * @TODO Add STRG+C and STRG+B capability icons to main frame, implement STRG+B for map panel
+ * @TODO Check if we can choose to hide markers only, not the villages
+ * @TODO Re-add farm fill space check in attack frame
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends JRibbonFrame implements
@@ -1105,6 +1105,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jXLabel1 = new org.jdesktop.swingx.JXLabel();
         jMinimapPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
 
         jExportDialog.setTitle("Export");
         jExportDialog.setMinimumSize(new java.awt.Dimension(520, 370));
@@ -2402,12 +2403,18 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
         jScrollPane2.setFocusTraversalPolicyProvider(true);
 
+        capabilityInfoPanel1.setDeletable(false);
+        capabilityInfoPanel1.setPastable(false);
+        capabilityInfoPanel1.setSearchable(false);
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 693, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 693, Short.MAX_VALUE)
+                    .addComponent(capabilityInfoPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 693, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -2415,11 +2422,14 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 719, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 697, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(capabilityInfoPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         getContentPane().add(jPanel4, java.awt.BorderLayout.CENTER);
@@ -3616,6 +3626,7 @@ private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Generated Variables">
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JMenuItem jAboutItem;
     private javax.swing.JButton jAddNewROIButton;

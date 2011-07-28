@@ -27,7 +27,7 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
     public void loadFromXml(Element e) {
         super.loadFromXml(e);
         try {
-            List<Element> supportElements = (List<Element>) JaxenUtils.getNodes(e, "troops/supportTargets/supportTarget");
+            List<Element> supportElements = (List<Element>) JaxenUtils.getNodes(e, "supportTargets/supportTarget");
             for (Element source : supportElements) {
                 int id = source.getAttribute("village").getIntValue();
                 Village village = DataHolder.getSingleton().getVillagesById().get(id);
@@ -38,7 +38,7 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
                 addOutgoingSupport(village, supportAmount);
             }
 
-            supportElements = (List<Element>) JaxenUtils.getNodes(e, "troops/supportSources/supportSource");
+            supportElements = (List<Element>) JaxenUtils.getNodes(e, "supportSources/supportSource");
             for (Element source : supportElements) {
                 int id = source.getAttribute("village").getIntValue();
                 Village village = DataHolder.getSingleton().getVillagesById().get(id);
@@ -81,7 +81,7 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
             Village key = keys.nextElement();
             String support = "<supportTarget village=\"" + key.getId() + "\" ";
             for (UnitHolder unit : units) {
-                support += unit.getPlainName() + "=\"" + incomingSupports.get(key).get(unit) + "\" ";
+                support += unit.getPlainName() + "=\"" + outgoingSupports.get(key).get(unit) + "\" ";
             }
             support += "/>\n";
             supportTrg += support;

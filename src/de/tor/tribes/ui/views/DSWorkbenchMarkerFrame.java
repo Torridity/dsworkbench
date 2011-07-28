@@ -254,11 +254,11 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         for (String plan : plans) {
             MarkerTableTab tab = new MarkerTableTab(plan, this);
             jMarkerTabPane.addTab(plan, tab);
-            if (cnt == 0) {
-                jMarkerTabPane.setTabClosableAt(0, false);
-            }
             cnt++;
         }
+
+        jMarkerTabPane.setTabClosableAt(0, false);
+
         jMarkerTabPane.setSelectedIndex(0);
         MarkerTableTab tab = getActiveTab();
         if (tab != null) {

@@ -84,7 +84,6 @@ public class MapRenderer {
     private boolean bMapRedrawRequired = true;
     private Village[][] mVisibleVillages = null;
     private HashMap<Village, Rectangle> mVillagePositions = null;
-    private HashMap<Integer, BufferedImage> mLayers = null;
     private int iVillagesX = 0;
     private int iVillagesY = 0;
     private double dCenterX = 500.0;
@@ -127,7 +126,6 @@ public class MapRenderer {
      */
     public MapRenderer() {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
-        mLayers = new HashMap<Integer, BufferedImage>();
         mDrawOrder = new LinkedList<Integer>();
         Vector<String> layerVector = new Vector<String>(Constants.LAYER_COUNT);
         for (int i = 0; i < Constants.LAYER_COUNT; i++) {
@@ -253,7 +251,7 @@ public class MapRenderer {
                             mMapLayer.setMarkOnTop(mapDrawn);
                             mMapLayer.performRendering(mRenderSettings, g2d);
                         } catch (Exception e) {
-                            logger.warn("Failed to render map/marker layer");
+                            logger.warn("Failed to render map/marker layer", e);
                         }
                     } else if (layer == 1) {
                         //set mapDrawn flag to indicate markOnTop rendering for layer 0
@@ -403,10 +401,10 @@ public class MapRenderer {
                     mVisibleVillages[x][y] = null;
                 } else {
                     mVisibleVillages[x][y] = DataHolder.getSingleton().getVillages()[i][j];
-                    Marker m = MarkerManager.getSingleton().getMarker(mVisibleVillages[x][y]);
+                   // Marker m = MarkerManager.getSingleton().getMarker(mVisibleVillages[x][y]);
                     if (mVisibleVillages[x][y] != null) {
-                        if ((m == null || m.isShownOnMap())) {
-
+                        
+                       // if ((m == null || m.isShownOnMap())) {
                             Point villagePos = new Point((int) Math.floor(dx + x * dCurrentFieldWidth), (int) Math.floor(dy + y * dCurrentFieldHeight));
                             mVillagePositions.put(mVisibleVillages[x][y], new Rectangle(villagePos.x, villagePos.y, (int) Math.floor(dCurrentFieldWidth), (int) Math.floor(dCurrentFieldHeight)));
                             Tribe t = mVisibleVillages[x][y].getTribe();
@@ -426,9 +424,9 @@ public class MapRenderer {
                                     mAllyCount.put(a, mAllyCount.get(a) + 1);
                                 }
                             }
-                        } else {
+                      /*  } else {
                             mVisibleVillages[x][y] = null;
-                        }
+                        }*/
                     }
                 }
                 y++;

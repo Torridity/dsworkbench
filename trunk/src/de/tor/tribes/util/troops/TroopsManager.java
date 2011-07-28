@@ -43,7 +43,7 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
     public static final String SUPPORT_GROUP = "Unterstützung";
     private static Logger logger = Logger.getLogger("TroopsManager");
     private static TroopsManager SINGLETON = null;
-    private HashMap<String, HashMap<Village, VillageTroopsHolder>> managedElementGroups = new HashMap<String, HashMap<Village, VillageTroopsHolder>>();
+    private HashMap<String, HashMap<Village, VillageTroopsHolder>> managedElementGroups = null;
     //  private Hashtable<Village, VillageTroopsHolder> mTroops = null;
     private List<Image> mTroopMarkImages = new LinkedList<Image>();
 
@@ -57,11 +57,6 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
     TroopsManager() {
         // mTroops = new Hashtable<Village, VillageTroopsHolder>();
         super(IN_VILLAGE_GROUP, true);
-        managedElementGroups.put(IN_VILLAGE_GROUP, new HashMap<Village, VillageTroopsHolder>());
-        managedElementGroups.put(OWN_GROUP, new HashMap<Village, VillageTroopsHolder>());
-        managedElementGroups.put(OUTWARDS_GROUP, new HashMap<Village, VillageTroopsHolder>());
-        managedElementGroups.put(ON_THE_WAY_GROUP, new HashMap<Village, VillageTroopsHolder>());
-        managedElementGroups.put(SUPPORT_GROUP, new HashMap<Village, VillageTroopsHolder>());
         try {
             mTroopMarkImages.add(ImageIO.read(new File("graphics/icons/off_marker.png")));
             mTroopMarkImages.add(ImageIO.read(new File("graphics/icons/def_marker.png")));
@@ -389,13 +384,29 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
     }
 
     @Override
-    public void loadElements(String pFile) {
-        if (pFile == null) {
-            logger.error("File argument is 'null'");
-            return;
+    public final void initialize() {
+        if (managedElementGroups == null) {
+            managedElementGroups = new HashMap<String, HashMap<Village, VillageTroopsHolder>>();
+        } else {
+            managedElementGroups.clear();
         }
+        managedElementGroups.put(IN_VILLAGE_GROUP, new HashMap<Village, VillageTroopsHolder>());
+        managedElementGroups.put(OWN_GROUP, new HashMap<Village, VillageTroopsHolder>());
+        managedElementGroups.put(OUTWARDS_GROUP, new HashMap<Village, VillageTroopsHolder>());
+        managedElementGroups.put(ON_THE_WAY_GROUP, new HashMap<Village, VillageTroopsHolder>());
+        managedElementGroups.put(SUPPORT_GROUP, new HashMap<Village, VillageTroopsHolder>());
+    }
+
+    @Override
+    public void loadElements(String pFile) {
         invalidate();
         initialize();
+        if (pFile == null) {
+            logger.error("File argument is 'null'");
+            revalidate();
+            return;
+        }
+
         File troopsFile = new File(pFile);
         if (troopsFile.exists()) {
             if (logger.isDebugEnabled()) {
@@ -411,15 +422,15 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
                     }
                     for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "troopInfos/troopInfo")) {
                         String type = e1.getAttributeValue("type");
-                        VillageTroopsHolder holder = null;
                         if (type != null && type.equals("support")) {
-                            holder = new SupportVillageTroopsHolder();
+                            SupportVillageTroopsHolder holder = new SupportVillageTroopsHolder();
+                            holder.loadFromXml(e1);
+                            addManagedElement(groupKey, holder);
                         } else {
-                            holder = new VillageTroopsHolder();
+                            VillageTroopsHolder holder = new VillageTroopsHolder();
+                            holder.loadFromXml(e1);
+                            addManagedElement(groupKey, holder);
                         }
-
-                        holder.loadFromXml(e1);
-                        addManagedElement(groupKey, holder);
                     }
                 }
                 logger.debug("Troops loaded successfully");
@@ -518,6 +529,7 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
             w.close();
         } catch (Exception e) {
             logger.error("Failed to store troops", e);
+            System.out.println("FAIL SAVE");
         }
     }
 }

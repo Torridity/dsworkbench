@@ -293,6 +293,8 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
 
     /**Initialize and add one tab for each marker set to jTabbedPane1*/
     public void generateTroopTabs() {
+
+        jTroopsTabPane.invalidate();
         while (jTroopsTabPane.getTabCount() > 0) {
             TabInterface tab = (TabInterface) jTroopsTabPane.getComponentAt(0);
             tab.deregister();
@@ -304,18 +306,22 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         //insert default tab to first place
         int cnt = 0;
         for (String set : sets) {
-            JPanel tab = null;
+            System.out.println("Troop frame: add tab " + set);
             if (set.equals(TroopsManager.SUPPORT_GROUP)) {
-                tab = new SupportTroopTableTab(this);
+                SupportTroopTableTab tab = new SupportTroopTableTab(this);
+                tab.updateSet();
+                jTroopsTabPane.addTab(set, tab);
             } else {
-                tab = new TroopTableTab(set, this);
+                jTroopsTabPane.addTab(set, new TroopTableTab(set, this));
             }
 
-            jTroopsTabPane.addTab(set, tab);
-            jTroopsTabPane.setTabClosableAt(cnt, false);
             cnt++;
         }
-        jTroopsTabPane.setSelectedIndex(0);
+
+        for (int i = 0; i < jTroopsTabPane.getTabCount(); i++) {
+            jTroopsTabPane.setTabClosableAt(i, false);
+        }
+        jTroopsTabPane.revalidate();
         TabInterface tab = getActiveTab();
         if (tab != null) {
             tab.updateSet();
@@ -529,6 +535,7 @@ private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST
 
     @Override
     public void resetView() {
+        System.out.println("RESET Troops frame");
         TroopsManager.getSingleton().addManagerListener(this);
         generateTroopTabs();
     }

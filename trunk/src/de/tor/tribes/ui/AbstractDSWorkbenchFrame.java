@@ -114,7 +114,7 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
             config.setProperty(prefix + ".height", getHeight());
             config.setProperty(prefix + ".x", getX());
             config.setProperty(prefix + ".y", getY());
-            config.setProperty(prefix + ".visible", isVisible());
+           // config.setProperty(prefix + ".visible", isVisible());
             config.setProperty(prefix + ".alwaysOnTop", isAlwaysOnTop());
         } catch (ConfigurationException ex) {
             logger.error("Failed to create properties", ex);
@@ -149,7 +149,7 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
             setPreferredSize(size);
             setSize(size);
             setLocation(config.getInteger(prefix + ".x", getX()), config.getInteger(prefix + ".y", getY()));
-            setVisible(config.getBoolean(prefix + ".visible", false));
+            //setVisible(config.getBoolean(prefix + ".visible", false));
             setAlwaysOnTop(config.getBoolean(prefix + ".alwaysOnTop", false));
         } catch (ConfigurationException ex) {
             logger.info("Cannot read properties", ex);

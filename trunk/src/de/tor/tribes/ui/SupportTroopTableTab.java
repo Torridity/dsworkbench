@@ -77,7 +77,7 @@ import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
- *
+ *@TODO Switch from f**king tree model to normal table tab and show supports in separate view
  * @author Torridity
  */
 public class SupportTroopTableTab extends javax.swing.JPanel implements ListSelectionListener, TabInterface {
@@ -215,7 +215,9 @@ public class SupportTroopTableTab extends javax.swing.JPanel implements ListSele
     }
 
     public void updateSet() {
+        System.out.println("Update");
         jxTroopTable.setTreeTableModel(new SupportTroopsTableModel(buildTreeTableData()));
+        
         jScrollPane1.setViewportView(jxTroopTable);
         jxTroopTable.getTableHeader().setDefaultRenderer(new SupportTroopTableHeaderRenderer());
     }
@@ -223,7 +225,6 @@ public class SupportTroopTableTab extends javax.swing.JPanel implements ListSele
     public DefaultMutableTreeNode buildTreeTableData() {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
         List<ManageableType> elems = TroopsManager.getSingleton().getAllElements(TroopsManager.SUPPORT_GROUP);
-
         for (ManageableType elem : elems) {
             SupportVillageTroopsHolder s = (SupportVillageTroopsHolder) elem;
             DefaultMutableTreeNode villageNode = new DefaultMutableTreeNode(s);

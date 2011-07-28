@@ -104,7 +104,7 @@ public class MarkerManager extends GenericManager<Marker> {
         logger.debug("Importing markers");
         boolean result = false;
         invalidate();
-        initialize();
+        //initialize();
         try {
             Document d = JaxenUtils.getDocument(pFile);
             for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//markerSets/markerSet")) {

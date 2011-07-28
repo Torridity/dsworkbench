@@ -120,22 +120,26 @@ public class PluginManager {
     }
 
     public boolean executeSupportParser(String pData) {
+        logger.info("Executing support parser");
         try {
             Object parser = loadParser("de.tor.tribes.util.parser.SupportParser");
             return ((SilentParserInterface) parser).parse(pData);
         } catch (Exception e) {
             logger.error("Failed to execute support parser", e);
         }
+        logger.info("Support parser returned no result");
         return false;
     }
 
     public boolean executeGroupParser(String pData) {
+        logger.info("Executing group parser");
         try {
             Object parser = loadParser("de.tor.tribes.util.parser.GroupParser");
             return ((SilentParserInterface) parser).parse(pData);
         } catch (Exception e) {
             logger.error("Failed to execute group parser", e);
         }
+        logger.info("Group parser returned no result");
         return false;
     }
 
@@ -150,12 +154,14 @@ public class PluginManager {
     }
 
     public boolean executeReportParser(String pData) {
+        logger.info("Executing report parser");
         try {
             Object parser = loadParser("de.tor.tribes.util.parser.ReportParser");
             return ((SilentParserInterface) parser).parse(pData);
         } catch (Exception e) {
             logger.error("Failed to execute report parser", e);
         }
+        logger.info("Report parser returned no result");
         return false;
     }
 
@@ -170,6 +176,7 @@ public class PluginManager {
     }
 
     public boolean executeTroopsParser(String pData) {
+        logger.info("Executing troops parser");
         try {
             Object parser = loadParser("de.tor.tribes.util.parser.TroopsParser70");
             if (((SilentParserInterface) parser).parse(pData)) {
@@ -188,7 +195,7 @@ public class PluginManager {
         } catch (Exception e) {
             logger.error("Failed to execute troops parser", e);
         }
-
+        logger.info("Troops troops parser");
         return false;
     }
 

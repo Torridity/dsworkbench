@@ -435,10 +435,11 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         int textureId = -1;
         BufferedImage sprite = null;
 
-        Marker villageMarker = MarkerManager.getSingleton().getMarker(v);
+       // Marker villageMarker = MarkerManager.getSingleton().getMarker(v);
         if (v != null
                 && !(v.getTribe().equals(Barbarians.getSingleton()) && !showBarbarian)
-                && !(villageMarker == null && markedOnly && !v.getTribe().getName().equals(GlobalOptions.getSelectedProfile().getTribeName()))) {
+               // && !(villageMarker == null && markedOnly && !v.getTribe().getName().equals(GlobalOptions.getSelectedProfile().getTribeName()))
+                ) {
             //village field that has to be rendered
             v.setVisibleOnMap(true);
             if (GlobalOptions.getSkin().isMinimapSkin()) {
@@ -494,11 +495,11 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         } catch (Exception e) {
             showBarbarian = true;
         }
-        boolean markedOnly = false;
-       
+     
         if (v != null
                 && !(v.getTribe().equals(Barbarians.getSingleton()) && !showBarbarian)
-                && !(MarkerManager.getSingleton().getMarker(v) == null && markedOnly && !v.getTribe().getName().equals(GlobalOptions.getSelectedProfile().getTribeName()))) {
+                //&& !(MarkerManager.getSingleton().getMarker(v) == null && !v.getTribe().getName().equals(GlobalOptions.getSelectedProfile().getTribeName()))
+                ) {
             v.setVisibleOnMap(true);
             tribeId = v.getTribeID();
             copyRect = renderedMarkerBounds.get(tribeId);
@@ -566,8 +567,16 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         } else {
             if (pVillage.getTribe() != Barbarians.getSingleton()) {
                 tribeMarker = MarkerManager.getSingleton().getMarker(pVillage.getTribe());
+                if(tribeMarker != null && !tribeMarker.isShownOnMap()){
+                    tribeMarker = null;
+                    markerColor = DEFAULT;
+                }
                 if (pVillage.getTribe().getAlly() != BarbarianAlly.getSingleton()) {
                     allyMarker = MarkerManager.getSingleton().getMarker(pVillage.getTribe().getAlly());
+                    if(allyMarker != null &&!allyMarker.isShownOnMap()){
+                        allyMarker = null;
+                        markerColor = DEFAULT;
+                    }
                 }
             }
         }
@@ -600,7 +609,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 g2d.fillRect(0, 0, w, h);
             } else {
                 //draw misc marker
-                g2d.setColor(markerColor);
+                g2d.setColor(DEFAULT);
                 g2d.fillRect(0, 0, w, h);
             }
         } else {

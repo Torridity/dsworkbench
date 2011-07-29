@@ -133,7 +133,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     private boolean bMapSHotPlaned = false;
     private MapShotListener mMapShotListener = null;
     private HashMap<Village, Rectangle> mVillagePositions = null;
-    private List<Village> exportVillageList = null;
     private Village radarVillage = null;
     private boolean spaceDown = false;
     private boolean shiftDown = false;
@@ -1694,42 +1693,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         mMapShotFile = pLocation;
         bMapSHotPlaned = true;
         mMapShotListener = pListener;
-    }
-
-    private void saveMapShot(BufferedImage pImage) {
-        /*try {
-        Point2D.Double pos = getCurrentPosition();
-        String first = "";
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-        int[] hier = DSCalculator.xyToHierarchical((int) pos.x, (int) pos.y);
-        first = "Zentrum: " + hier[0] + ":" + hier[1] + ":" + hier[2];
-        } else {
-        first = "Zentrum: " + (int) Math.floor(pos.getX()) + "|" + (int) Math.floor(pos.getY());
-        }
-        
-        BufferedImage result = ImageUtils.createCompatibleBufferedImage(pImage.getWidth(null), pImage.getHeight(null), BufferedImage.OPAQUE);
-        Graphics2D g2d = (Graphics2D) result.getGraphics();
-        g2d.drawImage(pImage, 0, 0, null);
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
-        FontMetrics fm = g2d.getFontMetrics();
-        Rectangle2D firstBounds = fm.getStringBounds(first, g2d);
-        String second = "Erstellt mit DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION;
-        Rectangle2D secondBounds = fm.getStringBounds(second, g2d);
-        g2d.setColor(Constants.DS_BACK_LIGHT);
-        g2d.fill3DRect(0, (int) (result.getHeight() - firstBounds.getHeight() - secondBounds.getHeight() - 9), (int) (secondBounds.getWidth() + 6), (int) (firstBounds.getHeight() + secondBounds.getHeight() + 9), true);
-        g2d.setColor(Color.BLACK);
-        g2d.drawString(first, 3, (int) (result.getHeight() - firstBounds.getHeight() - secondBounds.getHeight() - firstBounds.getY() - 6));
-        g2d.drawString(second, 3, (int) (result.getHeight() - secondBounds.getHeight() - secondBounds.getY() - 3));
-        g2d.dispose();
-        ImageIO.write(result, sMapShotType, mMapShotFile);
-        
-        bMapSHotPlaned = false;
-        mMapShotListener.fireMapShotDoneEvent();
-        } catch (Exception e) {
-        bMapSHotPlaned = false;
-        logger.error("Creating MapShot failed", e);
-        //  mMapShotListener.fireMapShotFailedEvent();
-        }*/
     }
 
     public synchronized void fireToolChangedEvents(int pTool) {

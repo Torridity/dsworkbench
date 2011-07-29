@@ -266,7 +266,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         });
 
         ProfileManager.getSingleton().addProfileManagerListener(DSWorkbenchAttackFrame.this);
-    jStandardAttackDialog.pack();
+        jStandardAttackDialog.pack();
         setGlassPane(jxSearchPane);
         pack();
     }
@@ -608,7 +608,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         );
 
         jClickAccountLabel.setBackground(new java.awt.Color(255, 255, 255));
-        jClickAccountLabel.setFont(new java.awt.Font("sansserif", 0, 11));
+        jClickAccountLabel.setFont(new java.awt.Font("sansserif", 0, 11)); // NOI18N
         jClickAccountLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jClickAccountLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/LeftClick.png"))); // NOI18N
         jClickAccountLabel.setText("Klick-Konto [0]");
@@ -973,7 +973,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
 
     public static void main(String[] args) {
 
-        
+
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         MouseGestures mMouseGestures = new MouseGestures();
         mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
@@ -987,8 +987,8 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-            
-            
+
+
         } catch (Exception e) {
         }
 

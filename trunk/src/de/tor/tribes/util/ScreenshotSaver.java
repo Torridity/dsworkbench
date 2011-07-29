@@ -67,9 +67,7 @@ public class ScreenshotSaver extends Thread {
                     ImageIO.write(result, mTargetType, fTargetFile);
                     DSWorkbenchMainFrame.getSingleton().fireMapShotDoneEvent();
                 } catch (Exception e) {
-                    e.printStackTrace();
                     DSWorkbenchMainFrame.getSingleton().fireMapShotFailedEvent();
-                    //  mMapShotListener.fireMapShotFailedEvent();
                 }
                 mScreen = null;
             }

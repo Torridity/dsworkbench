@@ -4,14 +4,10 @@
  */
 package de.tor.tribes.ui.renderer;
 
+import de.tor.tribes.ui.components.ColoredProgressBar;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.SystemColor;
-import javax.swing.JProgressBar;
 import javax.swing.JTable;
-import javax.swing.border.EmptyBorder;
-import javax.swing.plaf.basic.BasicProgressBarUI;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
 /**
@@ -22,20 +18,12 @@ public class WalLevellCellRenderer extends DefaultTableRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        //Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         //  JLabel label = (JLabel) c;
 
         Integer wallLevel = (Integer) value;
 
-        FarbigeProgressBar p = new FarbigeProgressBar(0, 20);
-
-        /*Color col = Color.GREEN;
-        
-        if (wallLevel > 5 && wallLevel < 15) {
-        col = Color.YELLOW;
-        } else if (wallLevel <= 5) {
-        col = Color.RED;
-        }*/
+        ColoredProgressBar p = new ColoredProgressBar(0, 20);
         p.setForeground(getColor(wallLevel));
         p.setString(Integer.toString(wallLevel));
         p.setStringPainted(true);
@@ -67,32 +55,6 @@ public class WalLevellCellRenderer extends DefaultTableRenderer {
         } else {
             //default renderer and color
             return Color.GREEN;
-        }
-    }
-
-    class FarbigeProgressBar extends JProgressBar {
-
-        public FarbigeProgressBar(int start, int end) {
-            setMinimum(start);
-            setMaximum(end);
-            setForeground(SystemColor.window);
-            setBackground(SystemColor.window);
-            setBorder(new EmptyBorder(3, 5, 3, 5));
-            Dimension size = new Dimension(300, 20);
-            setPreferredSize(size);
-            setMaximumSize(size);
-            setMinimumSize(size);
-            BasicProgressBarUI ui = new BasicProgressBarUI() {
-
-                protected Color getSelectionForeground() {
-                    return Color.BLACK;
-                }
-
-                protected Color getSelectionBackground() {
-                    return Color.BLACK;
-                }
-            };
-            setUI(ui);
         }
     }
 }

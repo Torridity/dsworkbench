@@ -17,8 +17,9 @@
         <Container class="com.jidesoft.swing.JideTabbedPane" name="jTroopsTabPane">
           <Properties>
             <Property name="scrollSelectedTabOnWheel" type="boolean" value="true"/>
-            <Property name="showCloseButtonOnTab" type="boolean" value="true"/>
+            <Property name="showCloseButton" type="boolean" value="false"/>
             <Property name="showGripper" type="boolean" value="true"/>
+            <Property name="showIconsOnTab" type="boolean" value="false"/>
             <Property name="tabEditingAllowed" type="boolean" value="true"/>
           </Properties>
           <Constraints>

@@ -1113,7 +1113,6 @@ class MinimapRepaintThread extends Thread {
         Graphics2D g2d = (Graphics2D) mBuffer.getGraphics();
         g2d.setColor(new Color(35, 125, 0));
         g2d.fillRect(0, 0, mBuffer.getWidth(null), mBuffer.getHeight(null));
-
         boolean markPlayer = false;
         try {
             markPlayer = Boolean.parseBoolean(GlobalOptions.getProperty("mark.villages.on.minimap"));
@@ -1121,8 +1120,7 @@ class MinimapRepaintThread extends Thread {
             markPlayer = false;
         }
 
-        boolean markedOnly = false;
-      
+
         if (ServerSettings.getSingleton().getMapDimension() == null) {
 //could not draw minimap if dimensions are not loaded yet
             return false;
@@ -1153,43 +1151,52 @@ class MinimapRepaintThread extends Thread {
             for (int j = visiblePart.y; j < (visiblePart.height + visiblePart.y); j++) {
                 Village v = mVisibleVillages[i][j];
                 if (v != null) {
-                    Color mark = null;
+                    Color markerColor = null;
                     boolean isLeft = false;
                     if (v.getTribe() == Barbarians.getSingleton()) {
                         isLeft = true;
                     } else {
                         Village currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                         if ((currentUserVillage != null) && (v.getTribe().toString().equals(currentUserVillage.getTribe().toString()))) {
-//village is owned by current player. mark it dependent on settings
-                            if ((markPlayer) || (markedOnly)) {
-                                mark = Color.YELLOW;
+                            //village is owned by current player. mark it dependent on settings
+                            if (markPlayer) {
+                                markerColor = Color.YELLOW;
                             }
                         } else {
                             try {
-                                Marker m = MarkerManager.getSingleton().getMarker(v.getTribe());
-                                if (m == null) {
-                                    m = MarkerManager.getSingleton().getMarker(v.getTribe().getAlly());
-                                    if (m != null) {
-                                        mark = m.getMarkerColor();
+                                Marker marker = MarkerManager.getSingleton().getMarker(v.getTribe());
+                                if (marker != null && !marker.isShownOnMap()) {
+                                    marker = null;
+                                    markerColor = DEFAULT;
+                                }
+
+                                if (marker == null) {
+                                    marker = MarkerManager.getSingleton().getMarker(v.getTribe().getAlly());
+                                    if (marker != null && marker.isShownOnMap()) {
+                                        markerColor = marker.getMarkerColor();
+                                    } else {
+                                        marker = null;
+                                        markerColor = DEFAULT;
                                     }
                                 } else {
-                                    mark = m.getMarkerColor();
+                                    if (!marker.isShownOnMap()) {
+                                        marker = null;
+                                        markerColor = DEFAULT;
+                                    } else {
+                                        markerColor = marker.getMarkerColor();
+                                    }
                                 }
                             } catch (Exception e) {
-                                mark = null;
+                                markerColor = null;
                             }
                         }
                     }
 
                     if (!isLeft) {
-                        if (mark != null) {
-                            g2d.setColor(mark);
+                        if (markerColor != null) {
+                            g2d.setColor(markerColor);
                         } else {
-                            if (!markedOnly) {
-                                g2d.setColor(DEFAULT);
-                            } else {
-                                g2d.setColor(new Color(35, 125, 0));
-                            }
+                            g2d.setColor(DEFAULT);
                         }
                         g2d.fillRect((int) Math.round((i - visiblePart.x) * wField), (int) Math.round((j - visiblePart.y) * hField), (int) Math.round(wField), (int) Math.round(hField));
                     } else {

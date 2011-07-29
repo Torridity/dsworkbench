@@ -14,9 +14,7 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.attack.AttackManager;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 import org.apache.commons.lang.time.DurationFormatUtils;
 

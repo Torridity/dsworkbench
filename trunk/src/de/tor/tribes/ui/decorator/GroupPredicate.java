@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.ui.decorator;
 
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.troops.TroopsManager;
@@ -24,7 +25,7 @@ public class GroupPredicate implements HighlightPredicate {
     private int testColumn;
     private boolean relation;
     private List<Tag> groups;
-
+    private String troopGroup = null;
     /**
      * Instantiates a Predicate with the given Pattern and testColumn index
      * (in model coordinates) highlighting all columns.
@@ -35,8 +36,8 @@ public class GroupPredicate implements HighlightPredicate {
      * @param testColumn the column index in model coordinates
      *   of the cell which contains the value to test against the pattern 
      */
-    public GroupPredicate(List<Tag> groups, int testColumn, boolean pRelation) {
-        this(groups, testColumn, ALL, pRelation);
+    public GroupPredicate(List<Tag> groups, int testColumn, boolean pRelation, String pTroopGroup) {
+        this(groups, testColumn, ALL, pRelation, pTroopGroup);
     }
 
     /**
@@ -53,11 +54,12 @@ public class GroupPredicate implements HighlightPredicate {
      *   of the cell which should be 
      *   decorated if the test against the value succeeds.
      */
-    public GroupPredicate(List<Tag> groups, int testColumn, int decorateColumn, boolean pRelation) {
+    public GroupPredicate(List<Tag> groups, int testColumn, int decorateColumn, boolean pRelation, String pTroopGroup) {
         this.groups = groups;
         this.testColumn = testColumn;
         this.highlightColumn = decorateColumn;
         this.relation = pRelation;
+        this.troopGroup = pTroopGroup;
     }
 
     @Override
@@ -101,33 +103,37 @@ public class GroupPredicate implements HighlightPredicate {
         }
 
         int rowToTest = adapter.convertRowIndexToModel(adapter.row);
-        VillageTroopsHolder h = (VillageTroopsHolder) TroopsManager.getSingleton().getAllElements().get(rowToTest);
-        Village v = h.getVillage();
-        //true == 
-        //false ||
+        VillageTroopsHolder h = (VillageTroopsHolder)TroopsManager.getSingleton().getAllElements(troopGroup).get(rowToTest);
+        
         boolean result = false;
-        if (relation) {
-            //and connection
-            boolean failure = false;
-            for (Tag t : groups) {
-                if (!t.tagsVillage(v.getId())) {
-                    failure = true;
-                    break;
+        if (h != null) {
+
+            Village v = h.getVillage();
+            //true == 
+            //false ||
+
+            if (relation) {
+                //and connection
+                boolean failure = false;
+                for (Tag t : groups) {
+                    if (!t.tagsVillage(v.getId())) {
+                        failure = true;
+                        break;
+                    }
                 }
-            }
-            if (!failure) {
-                result = true;
-            }
-        } else {
-            //or connection
-            for (Tag t : groups) {
-                if (t.tagsVillage(v.getId())) {
+                if (!failure) {
                     result = true;
-                    break;
+                }
+            } else {
+                //or connection
+                for (Tag t : groups) {
+                    if (t.tagsVillage(v.getId())) {
+                        result = true;
+                        break;
+                    }
                 }
             }
         }
-
         return result;
     }
 

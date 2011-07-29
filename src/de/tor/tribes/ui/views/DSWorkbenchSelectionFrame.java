@@ -638,7 +638,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         jSelectionPanel = new javax.swing.JPanel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
 
-        jSelectionTreePanel.setPreferredSize(new java.awt.Dimension(600, 322));
+        jSelectionTreePanel.setPreferredSize(new java.awt.Dimension(600, 400));
         jSelectionTreePanel.setLayout(new java.awt.BorderLayout());
 
         jScrollPane1.setViewportView(jSelectionTree);
@@ -749,6 +749,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         );
 
         setTitle("Auswahl");
+        setMinimumSize(new java.awt.Dimension(600, 500));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jAlwaysOnTopBox.setText("Immer im Vordergrund");

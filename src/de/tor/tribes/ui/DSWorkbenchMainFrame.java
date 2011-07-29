@@ -55,7 +55,6 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.ui.models.StandardAttackTableModel;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
-import de.tor.tribes.util.BBCodeFormatter;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MainShutdownHook;
@@ -103,9 +102,6 @@ import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 /**
  * @TODO Check A*Star field size for nimbus
  * @TODO allow to set manually sent to browser and draw in attack view?
- * @TODO Check problems with troop view (null-entries for villageTroopsHolder) on server change or on server change with troop info in clipboard?!
- * @TODO Check if we can choose to hide markers only, not the villages
- * @TODO Re-add farm fill space check in attack frame
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends JRibbonFrame implements
@@ -353,7 +349,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                         //search time shortcut
                         ClockFrame.getSingleton().setVisible(!ClockFrame.getSingleton().isVisible());
                     } else if ((e.getKeyCode() == KeyEvent.VK_S) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        fireCreateMapShotEvent(null);
+                        planMapshot();
                     } else if (e.getKeyCode() == KeyEvent.VK_F2) {
                         DSWorkbenchAttackFrame.getSingleton().setVisible(!DSWorkbenchAttackFrame.getSingleton().isVisible());
                     } else if (e.getKeyCode() == KeyEvent.VK_F3) {
@@ -2691,10 +2687,12 @@ private void fireShowMapPopupChangedEvent(javax.swing.event.ChangeEvent evt) {//
 private void fireCreateMapShotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateMapShotEvent
     Component parent = this;
 
-    if (JOptionPaneHelper.showQuestionConfirmBox(parent, "Willst du die Karte online stellen oder auf deinem Rechner speichern?", "Speichern", "Nur speichern", "Online stellen") == JOptionPane.YES_OPTION) {
+    int result = JOptionPaneHelper.showQuestionConfirmBox(parent, "Willst du die Karte online stellen oder auf deinem Rechner speichern?", "Speichern", "Nur speichern", "Online stellen");
+
+    if (result == JOptionPane.YES_OPTION) {
         putOnline = true;
         MapPanel.getSingleton().planMapShot("png", new File("tmp.png"), this);
-    } else {
+    } else if (result == JOptionPane.NO_OPTION) {
         putOnline = false;
         String dir = GlobalOptions.getProperty("screen.dir");
         if (dir == null) {
@@ -3338,11 +3336,12 @@ private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
 
     public void planMapshot() {
         Component parent = this;
-
-        if (JOptionPaneHelper.showQuestionConfirmBox(parent, "Willst du die Karte online stellen oder auf deinem Rechner speichern?", "Speichern", "Nur speichern", "Online stellen") == JOptionPane.YES_OPTION) {
+        int result = JOptionPaneHelper.showQuestionConfirmBox(parent, "Willst du die Karte online stellen oder auf deinem Rechner speichern?", "Speichern", "Nur speichern", "Online stellen");
+        
+        if (result == JOptionPane.YES_OPTION) {
             putOnline = true;
             MapPanel.getSingleton().planMapShot("png", new File("tmp.png"), this);
-        } else {
+        } else if (result == JOptionPane.NO_OPTION) {
             putOnline = false;
             String dir = GlobalOptions.getProperty("screen.dir");
             if (dir == null) {
@@ -3594,8 +3593,6 @@ private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     @Override
     public void fireMapShotDoneEvent() {
         Component parent = this;
-
-
         if (!putOnline) {
             JOptionPaneHelper.showInformationBox(parent, "Kartengrafik erfolgreich gespeichert.", "Information");
         } else {

@@ -9,7 +9,6 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractForm;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Barbarians;
-import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.NoAlly;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
@@ -21,7 +20,6 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.ServerSettings;
-import de.tor.tribes.util.mark.MarkerManager;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -50,7 +48,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Vector;
 import javax.swing.JToolTip;
 import javax.swing.Popup;
@@ -66,7 +63,6 @@ import org.apache.log4j.Logger;
  * 4: Misc. Extended Map Decoration: e.g. troop qualification or active village marker
  * 5: Live Layer: Redraw in every drawing cycle e.g. Drag line, tool popup(?), (troop movement?)
  * 6-16: Free assignable
- * @TODO Runtime is not visible in popup
  * @author Charon
  */
 public class MapRenderer {

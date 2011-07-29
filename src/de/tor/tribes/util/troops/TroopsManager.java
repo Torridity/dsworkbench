@@ -529,7 +529,6 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
             w.close();
         } catch (Exception e) {
             logger.error("Failed to store troops", e);
-            System.out.println("FAIL SAVE");
         }
     }
 }

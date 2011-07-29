@@ -609,7 +609,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 g2d.fillRect(0, 0, w, h);
             } else {
                 //draw misc marker
-                g2d.setColor(DEFAULT);
+                g2d.setColor(markerColor);
                 g2d.fillRect(0, 0, w, h);
             }
         } else {

@@ -126,12 +126,6 @@
             </Component>
             <Component class="javax.swing.JProgressBar" name="jTargetsBar">
               <Properties>
-                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="33" green="ff" red="ff" type="rgb"/>
-                </Property>
-                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="0" green="99" red="33" type="rgb"/>
-                </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Angegriffene Ziele / Gew&#xe4;hlte Ziele"/>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -154,12 +148,6 @@
             </Component>
             <Component class="javax.swing.JProgressBar" name="jFullOffsBar">
               <Properties>
-                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="33" green="ff" red="ff" type="rgb"/>
-                </Property>
-                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="0" green="99" red="33" type="rgb"/>
-                </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Angriffe mit max. Off Anzahl / Angriffe gesamt"/>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -171,12 +159,6 @@
             </Component>
             <Component class="javax.swing.JProgressBar" name="jAttacksBar">
               <Properties>
-                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="0" green="0" red="ff" type="rgb"/>
-                </Property>
-                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="0" green="99" red="33" type="rgb"/>
-                </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Angreifende D&#xf6;rfer / Gew&#xe4;hlte Herkunftsd&#xf6;rfer"/>
                 <Property name="value" type="int" value="50"/>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -826,9 +808,9 @@
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="jPanel4" alignment="0" pref="900" max="32767" attributes="0"/>
+                              <Component id="jPanel4" alignment="0" pref="683" max="32767" attributes="0"/>
                               <Component id="jPanel1" alignment="1" max="32767" attributes="1"/>
-                              <Component id="jLabel20" alignment="0" pref="900" max="32767" attributes="2"/>
+                              <Component id="jLabel20" alignment="0" pref="683" max="32767" attributes="2"/>
                           </Group>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -838,7 +820,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jPanel4" pref="225" max="32767" attributes="0"/>
+                          <Component id="jPanel4" pref="223" max="32767" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jPanel1" min="-2" max="-2" attributes="1"/>
                           <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
@@ -865,16 +847,16 @@
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jSourceGroupRelation" pref="386" max="32767" attributes="1"/>
-                                  <Component id="jScrollPane4" alignment="0" pref="386" max="32767" attributes="1"/>
+                                  <Component id="jSourceGroupRelation" pref="209" max="32767" attributes="1"/>
+                                  <Component id="jScrollPane4" alignment="0" pref="209" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                               <Component id="jScrollPane5" min="-2" pref="80" max="-2" attributes="0"/>
                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jPanel7" alignment="1" pref="374" max="32767" attributes="0"/>
+                                  <Component id="jPanel7" alignment="1" max="32767" attributes="0"/>
                                   <Group type="102" alignment="1" attributes="0">
-                                      <Component id="jMarkAsFakeBox" pref="194" max="32767" attributes="1"/>
+                                      <Component id="jMarkAsFakeBox" pref="154" max="32767" attributes="1"/>
                                       <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                                       <Component id="jSeparator2" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -882,8 +864,8 @@
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Component id="jTroopsList" min="-2" pref="110" max="-2" attributes="1"/>
                                   </Group>
-                                  <Component id="jScrollPane6" alignment="1" pref="374" max="32767" attributes="0"/>
-                                  <Component id="jPlayerSourcesOnlyBox" alignment="0" pref="374" max="32767" attributes="1"/>
+                                  <Component id="jScrollPane6" alignment="1" pref="334" max="32767" attributes="0"/>
+                                  <Component id="jPlayerSourcesOnlyBox" alignment="0" pref="334" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>

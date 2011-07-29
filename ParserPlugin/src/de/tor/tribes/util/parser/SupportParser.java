@@ -164,17 +164,17 @@ public class SupportParser implements SilentParserInterface {
             }
         }
  
+        boolean result = false;
         if (supportCount > 0) {
             try {
                 DSWorkbenchMainFrame.getSingleton().showSuccess("DS Workbench hat " + ((supportCount == 1) ? "eine Unterstützung " : supportCount + " Unterstützungen ") + "eingelesen");
             } catch (Exception e) {
                 NotifierFrame.doNotification("DS Workbench hat " + ((supportCount == 1) ? "eine Unterstützung " : supportCount + " Unterstützungen ") + "eingelesen", NotifierFrame.NOTIFY_INFO);
             }
-            TroopsManager.getSingleton().revalidate(true);
-            return true;
+            result = true;
         }
-        TroopsManager.getSingleton().revalidate(false);
-        return false;
+        TroopsManager.getSingleton().revalidate(result);
+        return result;
     }
 
     private static Village extractVillage(String pLine) {

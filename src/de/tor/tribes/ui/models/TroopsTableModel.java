@@ -14,7 +14,6 @@ import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.ImageIcon;
@@ -37,9 +36,9 @@ public class TroopsTableModel extends AbstractTableModel {
 
     public TroopsTableModel(String pSet) {
         sSet = pSet;
-        fireTableStructureChanged();
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
+        fireTableStructureChanged();
     }
 
     public void setTroopSet(String pSet) {

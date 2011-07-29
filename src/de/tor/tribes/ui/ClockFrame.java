@@ -36,10 +36,12 @@ public class ClockFrame extends javax.swing.JFrame {
         getContentPane().setBackground(Constants.DS_BACK);
         jSpinner1.setValue(new Date(System.currentTimeMillis()));
         ((DateEditor) jSpinner1.getEditor()).getFormat().applyPattern("dd.MM.yy HH:mm:ss.SSS");
-        //tThread = new TimerThread(this);
-       // tThread.start();
-           // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-       GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.clock_tool", GlobalOptions.getHelpBroker().getHelpSet());
+        tThread = new TimerThread(this);
+        tThread.start();
+        // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.clock_tool", GlobalOptions.getHelpBroker().getHelpSet());
+        }
         // </editor-fold>
     }
 
@@ -99,10 +101,10 @@ public class ClockFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
 private void fireActivateTimerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireActivateTimerEvent
-   /* if (jActivateTimerButton.isSelected()) {
-        tThread.setNotifyTime(((Date) jSpinner1.getValue()).getTime());
+    /* if (jActivateTimerButton.isSelected()) {
+    tThread.setNotifyTime(((Date) jSpinner1.getValue()).getTime());
     } else {
-        tThread.setNotifyTime(-1);
+    tThread.setNotifyTime(-1);
     }*/
 }//GEN-LAST:event_fireActivateTimerEvent
 
@@ -118,7 +120,6 @@ private void fireActivateTimerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton jActivateTimerButton;
     private javax.swing.JLabel jLabel1;
@@ -151,9 +152,11 @@ class TimerThread extends Thread {
             long currentTime = System.currentTimeMillis();
 
             if ((lNotifyTime != -1) && (currentTime >= lNotifyTime)) {
-                mParent.beep();try{
-               new TrayIcon(ImageIO.read(new File("./graphics/big/axe.png"))).displayMessage("Some Message", "ALARM!", TrayIcon.MessageType.INFO);
-                }catch(Exception e){}
+                mParent.beep();
+                try {
+                    new TrayIcon(ImageIO.read(new File("./graphics/big/axe.png"))).displayMessage("Some Message", "ALARM!", TrayIcon.MessageType.INFO);
+                } catch (Exception e) {
+                }
                 lNotifyTime = -1;
             }
             if (mParent.isVisible()) {

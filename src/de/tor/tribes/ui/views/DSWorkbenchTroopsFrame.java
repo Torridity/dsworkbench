@@ -20,6 +20,7 @@ import de.tor.tribes.ui.SupportTroopTableTab;
 import de.tor.tribes.ui.TabInterface;
 import de.tor.tribes.ui.TroopTableTab;
 import de.tor.tribes.ui.models.SupportTroopsTableModel;
+import de.tor.tribes.ui.models.TroopsTableModel;
 import de.tor.tribes.util.Constants;
 import java.awt.event.ActionEvent;
 import org.apache.log4j.Logger;
@@ -63,6 +64,7 @@ import org.jdesktop.swingx.JXTreeTable;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
+ * @TODO insert detail view for supports
  * @author  Jejkal
  */
 public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, DataHolderListener {
@@ -250,10 +252,10 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
 
         JXButton refillSupport = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/filter_off.png")));
         refillSupport.setToolTipText("<html>Auff&uuml;llen der Unterst&uuml;tzungen für die gew&auml;hlten D&ouml;rfer<br/>"
-                + "Die D&ouml;rfer werden so oft in den Angriffsplaner als Ziel eingef&uuml;gtm<br/>"
+                + "Die D&ouml;rfer werden so oft in den Angriffsplaner als Ziel eingef&uuml;gt,<br/>"
                 + "bis die Truppenanzahl im Dorf der eingestellten Menge entspricht,<br/>"
-                + "sofern entsprechend viele Unterst&uuml;zungen<br/>"
-                + "mit der eingestellten Truppenzahl zugewiesen werden k&ouml;nnen</html>");
+                + "sofern entsprechend viele Unterst&uuml;tzungen mit der eingestellten Truppenzahl<br/>"
+                + "zugewiesen werden k&ouml;nnen. Achtung: Es werden noch KEINE Herkunftsd&ouml;rfer eingef&uuml;gt!</html>");
         refillSupport.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -293,35 +295,39 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
 
     /**Initialize and add one tab for each marker set to jTabbedPane1*/
     public void generateTroopTabs() {
+        /*while (jTroopsTabPane.getTabCount() > 0) {
+        TabInterface tab = (TabInterface) jTroopsTabPane.getComponentAt(0);
+        tab.deregister();
+        jTroopsTabPane.removeTabAt(0);
+        }*/
 
-        jTroopsTabPane.invalidate();
-        while (jTroopsTabPane.getTabCount() > 0) {
-            TabInterface tab = (TabInterface) jTroopsTabPane.getComponentAt(0);
-            tab.deregister();
-            jTroopsTabPane.removeTabAt(0);
-        }
+        if (jTroopsTabPane.getTabCount() == 0) {
+            jTroopsTabPane.invalidate();
+            String[] sets = TroopsManager.getSingleton().getGroups();
 
-        String[] sets = TroopsManager.getSingleton().getGroups();
-
-        //insert default tab to first place
-        int cnt = 0;
-        for (String set : sets) {
-            System.out.println("Troop frame: add tab " + set);
-            if (set.equals(TroopsManager.SUPPORT_GROUP)) {
+            //insert default tab to first place
+            int cnt = 0;
+            for (String set : sets) {
+                /*if (set.equals(TroopsManager.SUPPORT_GROUP)) {
                 SupportTroopTableTab tab = new SupportTroopTableTab(this);
                 tab.updateSet();
                 jTroopsTabPane.addTab(set, tab);
-            } else {
-                jTroopsTabPane.addTab(set, new TroopTableTab(set, this));
+                } else {*/
+                TroopTableTab tab = new TroopTableTab(set, DSWorkbenchTroopsFrame.this);
+                if (cnt == 0) {
+                    ((TroopsTableModel) tab.getTroopTable().getModel()).fireTableStructureChanged();
+                }
+                jTroopsTabPane.addTab(set, tab);
+                // }
+
+                cnt++;
             }
 
-            cnt++;
-        }
-
-        for (int i = 0; i < jTroopsTabPane.getTabCount(); i++) {
+            /* for (int i = 0; i < jTroopsTabPane.getTabCount(); i++) {
             jTroopsTabPane.setTabClosableAt(i, false);
+            }*/
+            jTroopsTabPane.revalidate();
         }
-        jTroopsTabPane.revalidate();
         TabInterface tab = getActiveTab();
         if (tab != null) {
             tab.updateSet();
@@ -357,8 +363,9 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         jXTroopsPanel.setLayout(new java.awt.BorderLayout());
 
         jTroopsTabPane.setScrollSelectedTabOnWheel(true);
-        jTroopsTabPane.setShowCloseButtonOnTab(true);
+        jTroopsTabPane.setShowCloseButton(false);
         jTroopsTabPane.setShowGripper(true);
+        jTroopsTabPane.setShowIconsOnTab(false);
         jTroopsTabPane.setTabEditingAllowed(true);
         jXTroopsPanel.add(jTroopsTabPane, java.awt.BorderLayout.CENTER);
 
@@ -498,7 +505,7 @@ private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST
     updateFilter();
 }//GEN-LAST:event_fireRelationChangedEvent
 
-    /**Update the attack plan filter*/
+    /**Update the troop set filter*/
     private void updateFilter() {
         TabInterface tab = getActiveTab();
         if (tab != null) {
@@ -506,7 +513,9 @@ private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST
             for (Object o : jXGroupsList.getSelectedValues()) {
                 selection.add((Tag) o);
             }
-            tab.updateFilter(selection, jRelationType1.isSelected(), jFilterRows.isSelected());
+            if (!selection.isEmpty()) {
+                tab.updateFilter(selection, jRelationType1.isSelected(), jFilterRows.isSelected());
+            }
         }
     }
 
@@ -535,7 +544,6 @@ private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST
 
     @Override
     public void resetView() {
-        System.out.println("RESET Troops frame");
         TroopsManager.getSingleton().addManagerListener(this);
         generateTroopTabs();
     }

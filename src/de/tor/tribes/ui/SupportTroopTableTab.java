@@ -17,7 +17,6 @@ import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.TroopTableTab.TRANSFER_TYPE;
 import de.tor.tribes.ui.decorator.GroupPredicate;
-import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.ui.models.SupportTroopsTableModel;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.PercentCellRenderer;
@@ -30,21 +29,17 @@ import de.tor.tribes.ui.tree.OutgoingTroopsUserObject;
 import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.bb.TroopListFormatter;
 import de.tor.tribes.util.troops.SupportVillageTroopsHolder;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.geom.GeneralPath;
-import java.awt.image.BufferedImage;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -71,13 +66,9 @@ import org.jdesktop.swingx.JXTreeTable;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.decorator.PainterHighlighter;
-import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
-import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
-import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
- *@TODO Switch from f**king tree model to normal table tab and show supports in separate view
  * @author Torridity
  */
 public class SupportTroopTableTab extends javax.swing.JPanel implements ListSelectionListener, TabInterface {
@@ -252,7 +243,7 @@ public class SupportTroopTableTab extends javax.swing.JPanel implements ListSele
         }
         if (!pFilterRows) {
             jxTroopTable.setRowFilter(null);
-            GroupPredicate groupPredicate = new GroupPredicate(groups, 0, pRelation);
+            GroupPredicate groupPredicate = new GroupPredicate(groups, 0, pRelation, getTroopSet());
             MattePainter mp = new MattePainter(new Color(0, 0, 0, 120));
             highlighter = new PainterHighlighter(new HighlightPredicate.NotHighlightPredicate(groupPredicate), mp);
             jxTroopTable.addHighlighter(highlighter);

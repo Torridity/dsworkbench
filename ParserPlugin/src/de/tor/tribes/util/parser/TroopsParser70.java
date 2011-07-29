@@ -30,7 +30,7 @@ public class TroopsParser70 implements SilentParserInterface {
     private static Logger logger = Logger.getLogger("TroopsParser70");
     private static boolean IS_DEBUG = false;
     /*
-    003 | Spitfire (472|481) K44  
+    003 | Spitfire (472|480) K44  
     eigene	2500	1500	0	1964	500	0	0	1396	0	0	0	0	Befehle
     im Dorf	2500	1500	0	1964	500	0	0	1396	0	0	0	0	Truppen
     auswärts	0	0	0	0	0	0	0	0	0	0	0	0

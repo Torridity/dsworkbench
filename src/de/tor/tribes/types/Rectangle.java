@@ -4,7 +4,6 @@
  */
 package de.tor.tribes.types;
 
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.MapPanel;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
@@ -17,6 +16,7 @@ import java.awt.geom.Rectangle2D;
 import java.net.URLDecoder;
 import org.jdom.Element;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.util.bb.VillageListFormatter;
 import java.awt.Font;
 import java.awt.geom.Point2D;
 import java.awt.geom.RoundRectangle2D;
@@ -63,6 +63,38 @@ public class Rectangle extends AbstractForm {
             setDrawName(Boolean.parseBoolean(elem.getTextTrim()));
         } catch (Exception ex) {
         }
+    }
+
+    public boolean allowsBBExport() {
+        return true;
+    }
+
+    @Override
+    public String[] getReplacements(boolean pExtended) {
+        String nameVal = getFormName();
+        if (nameVal == null || nameVal.length() == 0) {
+            nameVal = "Kein Name";
+        }
+        String startXVal = Integer.toString((int) Math.rint(getXPos()));
+        String startYVal = Integer.toString((int) Math.rint(getYPos()));
+        String endXVal = Integer.toString((int) Math.rint(getXPosEnd()));
+        String endYVal = Integer.toString((int) Math.rint(getYPosEnd()));
+        String widthVal = Integer.toString((int) Math.rint(getXPosEnd() - getXPos()));
+        String heightVal = Integer.toString((int) Math.rint(getYPosEnd() - getYPos()));
+        String colorVal = "";
+        if (getDrawColor() != null) {
+            colorVal = "#" + Integer.toHexString(getDrawColor().getRGB() & 0x00ffffff);
+        } else {
+            colorVal = "#" + Integer.toHexString(Color.BLACK.getRGB() & 0x00ffffff);
+        }
+        ArrayList<Village> containedVillages = getContainedVillages();
+        String villageListVal = "";
+        if (containedVillages != null && !containedVillages.isEmpty()) {
+            villageListVal = new VillageListFormatter().formatElements(containedVillages, pExtended);
+        } else {
+            villageListVal = "Keine Dörfer enthalten";
+        }
+        return new String[]{nameVal, startXVal, startYVal, widthVal, heightVal, endXVal, endYVal, colorVal, villageListVal};
     }
 
     @Override

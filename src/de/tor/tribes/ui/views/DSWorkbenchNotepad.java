@@ -419,6 +419,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         jNoteTabbedPane.setTabEditingAllowed(true);
         jXNotePanel.add(jNoteTabbedPane, java.awt.BorderLayout.CENTER);
 
+        jNewSetPanel.setOpaque(false);
         jNewSetPanel.setLayout(new java.awt.BorderLayout());
 
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);

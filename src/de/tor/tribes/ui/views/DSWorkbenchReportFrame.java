@@ -925,24 +925,25 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jReportsTabbedPane.setTabEditingAllowed(true);
         jXReportsPanel.add(jReportsTabbedPane, java.awt.BorderLayout.CENTER);
 
+        jNewPlanPanel.setOpaque(false);
         jNewPlanPanel.setLayout(new java.awt.BorderLayout());
 
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_new_24x24.png"))); // NOI18N
         jLabel10.setToolTipText("Leeres Berichtset erstellen");
+        jLabel10.setEnabled(false);
         jLabel10.setMaximumSize(new java.awt.Dimension(40, 40));
         jLabel10.setMinimumSize(new java.awt.Dimension(40, 40));
-        jLabel10.setOpaque(true);
         jLabel10.setPreferredSize(new java.awt.Dimension(40, 40));
         jLabel10.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel10fireEnterEvent(evt);
+                fireEnterEvent(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel10fireMouseExitEvent(evt);
+                fireExitEvent(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                jLabel10fireCreateAttackPlanEvent(evt);
+                fireCreateAttackPlanEvent(evt);
             }
         });
         jNewPlanPanel.add(jLabel10, java.awt.BorderLayout.CENTER);
@@ -1246,7 +1247,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         updateFilter();
 }//GEN-LAST:event_jFilterCaseSensitivefireUpdateFilterEvent
 
-    private void jLabel10fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel10fireCreateAttackPlanEvent
+    private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateAttackPlanEvent
         int unusedId = 1;
         while (unusedId < 1000) {
             if (ReportManager.getSingleton().addGroup("Neues Set " + unusedId)) {
@@ -1258,15 +1259,15 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             JOptionPaneHelper.showErrorBox(DSWorkbenchReportFrame.this, "Du hast mehr als 1000 Berichtsets. Bitte lösche zuerst ein paar bevor du Neue erstellst.", "Fehler");
             return;
         }
-}//GEN-LAST:event_jLabel10fireCreateAttackPlanEvent
+}//GEN-LAST:event_fireCreateAttackPlanEvent
 
-    private void jLabel10fireMouseExitEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel10fireMouseExitEvent
-        jLabel10.setBackground(getBackground());
-}//GEN-LAST:event_jLabel10fireMouseExitEvent
+    private void fireExitEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireExitEvent
+        jLabel10.setEnabled(false);
+}//GEN-LAST:event_fireExitEvent
 
-    private void jLabel10fireEnterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel10fireEnterEvent
-        jLabel10.setBackground(getBackground().darker());
-}//GEN-LAST:event_jLabel10fireEnterEvent
+    private void fireEnterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireEnterEvent
+        jLabel10.setEnabled(true);
+}//GEN-LAST:event_fireEnterEvent
 
     private void fireRebuildStatsEvent() {
         Object[] selection = jList1.getSelectedValues();

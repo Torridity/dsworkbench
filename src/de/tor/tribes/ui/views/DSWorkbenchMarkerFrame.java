@@ -175,7 +175,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         editPane.setTitle("Bearbeiten");
         JXButton showButton = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/eye_large.png")));
 
-        showButton.setToolTipText("Blendet die Dörfer der gewählten Spieler/Stämme auf der Hauptkarte ein");
+        showButton.setToolTipText("Blendet gewählten Markierungen auf der Hauptkarte und der Minimap ein");
         showButton.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -189,7 +189,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         editPane.getContentPane().add(showButton);
         JXButton hideButton = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/eye_forbidden_large.png")));
 
-        hideButton.setToolTipText("Blendet die Dörfer der gewählten Spieler/Stämme auf der Hauptkarte aus");
+        hideButton.setToolTipText("Blendet gewählten Markierungen auf der Hauptkarte und der Minimap aus");
         hideButton.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -292,14 +292,15 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         jMarkerTabPane.setTabEditingAllowed(true);
         jXMarkerPanel.add(jMarkerTabPane, java.awt.BorderLayout.CENTER);
 
+        jNewPlanPanel.setOpaque(false);
         jNewPlanPanel.setLayout(new java.awt.BorderLayout());
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_new_24x24.png"))); // NOI18N
         jLabel3.setToolTipText("Leeres Markierungsset erstellen");
+        jLabel3.setEnabled(false);
         jLabel3.setMaximumSize(new java.awt.Dimension(40, 40));
         jLabel3.setMinimumSize(new java.awt.Dimension(40, 40));
-        jLabel3.setOpaque(true);
         jLabel3.setPreferredSize(new java.awt.Dimension(40, 40));
         jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -359,11 +360,11 @@ private void fireMarkerFrameOnTopEvent(java.awt.event.ItemEvent evt) {//GEN-FIRS
 }//GEN-LAST:event_fireMarkerFrameOnTopEvent
 
 private void fireEnterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireEnterEvent
-    jLabel3.setBackground(getBackground().darker());
+    jLabel3.setEnabled(true);
 }//GEN-LAST:event_fireEnterEvent
 
 private void fireMouseExitEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMouseExitEvent
-    jLabel3.setBackground(getBackground());
+        jLabel3.setEnabled(false);
 }//GEN-LAST:event_fireMouseExitEvent
 
 private void fireCreateMarkerSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateMarkerSetEvent

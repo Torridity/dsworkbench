@@ -104,7 +104,8 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
     static {
         jxAttackTable.setRowHeight(24);
-        HighlightPredicate.ColumnHighlightPredicate colu = new HighlightPredicate.ColumnHighlightPredicate(0, 1, 2, 3, 4, 5, 6, 9, 10, 11, 12);
+        HighlightPredicate.ColumnHighlightPredicate colu = new HighlightPredicate.ColumnHighlightPredicate(0, 1, 2, 3, 4, 5, 6,7, 10, 11);       
+        
         jxAttackTable.setHighlighters(new CompoundHighlighter(colu, HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B)));
         jxAttackTable.setColumnControlVisible(true);
         jxAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
@@ -135,10 +136,10 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
      * @param pAttackPlan
      * @param pActionListener
      */
-    public AttackTableTab(String pAttackPlan, final ActionListener pActionListener) {        
+    public AttackTableTab(String pAttackPlan, final ActionListener pActionListener) {
         actionListener = pActionListener;
         sAttackPlan = pAttackPlan;
-        initComponents();    
+        initComponents();
         jScrollPane1.setViewportView(jxAttackTable);
         if (!KEY_LISTENER_ADDED) {
             KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
@@ -400,15 +401,19 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
         jShowAttacksInVillageInfo.setSelected(true);
         jShowAttacksInVillageInfo.setText("Angriffe in den Dorfinformationen anzeigen");
+        jShowAttacksInVillageInfo.setOpaque(false);
 
         jShowAttacksOnConfirmPage.setSelected(true);
         jShowAttacksOnConfirmPage.setText("Angriffe auf der Angriffsbestätigungsseite anzeigen");
+        jShowAttacksOnConfirmPage.setOpaque(false);
 
         jShowAttacksInPlace.setSelected(true);
         jShowAttacksInPlace.setText("Angriffe im Versammlungsplatz anzeigen");
+        jShowAttacksInPlace.setOpaque(false);
 
         jShowAttacksInOverview.setSelected(true);
         jShowAttacksInOverview.setText("Angriffe in den Übersichten anzeigen");
+        jShowAttacksInOverview.setOpaque(false);
 
         jDoScriptExportButton.setText("Script erstellen");
         jDoScriptExportButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -641,6 +646,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
         buttonGroup2.add(jModifyArrivalOption);
         jModifyArrivalOption.setText("Ankunftzeit angleichen");
+        jModifyArrivalOption.setOpaque(false);
         jModifyArrivalOption.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireModifyTimeEvent(evt);
@@ -650,6 +656,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         buttonGroup2.add(jMoveTimeOption);
         jMoveTimeOption.setSelected(true);
         jMoveTimeOption.setText("Verschieben");
+        jMoveTimeOption.setOpaque(false);
         jMoveTimeOption.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireModifyTimeEvent(evt);
@@ -658,6 +665,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
         buttonGroup2.add(jRandomizeOption);
         jRandomizeOption.setText("Zufällig verschieben");
+        jRandomizeOption.setOpaque(false);
         jRandomizeOption.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireModifyTimeEvent(evt);
@@ -690,6 +698,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jNotRandomToNightBonus.setText("Nicht in Nachtbonus verschieben");
         jNotRandomToNightBonus.setToolTipText("DS Workbench sorgt dafür, dass Angriffe nicht im Nachtbonus landen");
         jNotRandomToNightBonus.setEnabled(false);
+        jNotRandomToNightBonus.setOpaque(false);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -725,6 +734,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
         buttonGroup2.add(jModifySendOption);
         jModifySendOption.setText("Abschickzeit angleichen");
+        jModifySendOption.setOpaque(false);
         jModifySendOption.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireModifyTimeEvent(evt);
@@ -785,34 +795,40 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         buttonGroup1.add(jNoType);
         jNoType.setSelected(true);
         jNoType.setText("Keiner");
+        jNoType.setOpaque(false);
         jPanel6.add(jNoType);
         jPanel6.add(jLabel23);
 
         buttonGroup1.add(jAttackType);
+        jAttackType.setOpaque(false);
         jPanel6.add(jAttackType);
 
         jLabel28.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/axe.png"))); // NOI18N
         jPanel6.add(jLabel28);
 
         buttonGroup1.add(jEnobleType);
+        jEnobleType.setOpaque(false);
         jPanel6.add(jEnobleType);
 
         jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/snob.png"))); // NOI18N
         jPanel6.add(jLabel24);
 
         buttonGroup1.add(jDefType);
+        jDefType.setOpaque(false);
         jPanel6.add(jDefType);
 
         jLabel25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ally.png"))); // NOI18N
         jPanel6.add(jLabel25);
 
         buttonGroup1.add(jFakeType);
+        jFakeType.setOpaque(false);
         jPanel6.add(jFakeType);
 
         jLabel26.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/fake.png"))); // NOI18N
         jPanel6.add(jLabel26);
 
         buttonGroup1.add(jFakeDefType);
+        jFakeDefType.setOpaque(false);
         jPanel6.add(jFakeDefType);
 
         jLabel27.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/def_fake.png"))); // NOI18N
@@ -855,6 +871,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
         jAdeptTypeBox.setSelected(true);
         jAdeptTypeBox.setText("Typ angleichen");
+        jAdeptTypeBox.setOpaque(false);
         jAdeptTypeBox.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jAdeptTypeBoxfireEnableDisableAdeptTypeEvent(evt);
@@ -862,6 +879,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         });
 
         jAdeptUnitBox.setText("Einheit angleichen");
+        jAdeptUnitBox.setOpaque(false);
         jAdeptUnitBox.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jAdeptUnitBoxfireEnableDisableChangeUnitEvent(evt);
@@ -1526,25 +1544,25 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         int sentAttacks = 0;
         UserProfile profile = DSWorkbenchAttackFrame.getSingleton().getQuickProfile();
 
-        
         for (Attack a : attacks) {
-           // if (attacks.size() == 1 || DSWorkbenchAttackFrame.getSingleton().getClickAccountValue() > 0) {
-                if (BrowserCommandSender.sendAttack(a, profile)) {
-                    a.setTransferredToBrowser(true);
-                    if (attacks.size() > 1) {
-                        DSWorkbenchAttackFrame.getSingleton().decreaseClickAccountValue();
-                    }
-                    sentAttacks++;
-                    if(DSWorkbenchAttackFrame.getSingleton().getClickAccountValue() == 0){
-                        break;
-                    }
+            if (BrowserCommandSender.sendAttack(a, profile)) {
+                a.setTransferredToBrowser(true);
+                if (attacks.size() > 1) {
+                    DSWorkbenchAttackFrame.getSingleton().decreaseClickAccountValue();
                 }
-            //}
-            
-            if(sentAttacks == 1){
-                jxAttackTable.getSelectionModel().setSelectionInterval(jxAttackTable.getSelectedRow()+1, jxAttackTable.getSelectedRow()+1);
+                sentAttacks++;
+                if (DSWorkbenchAttackFrame.getSingleton().getClickAccountValue() == 0) {
+                    break;
+                }
             }
         }
+
+        if (sentAttacks == 1) {
+            jxAttackTable.getSelectionModel().setSelectionInterval(jxAttackTable.getSelectedRow() + 1, jxAttackTable.getSelectedRow() + 1);
+        } else {
+            jxAttackTable.getSelectionModel().setSelectionInterval(jxAttackTable.getSelectedRow() + sentAttacks, jxAttackTable.getSelectedRow() + sentAttacks);
+        }
+
         String usedProfile = "";
         if (profile != null) {
             usedProfile = "als " + profile.toString();

@@ -33,6 +33,7 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.components.JOutlookBar;
+import de.tor.tribes.ui.components.WelcomePanel;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.ClipboardWatch;
 import de.tor.tribes.util.Constants;
@@ -100,8 +101,7 @@ import org.jdesktop.swingx.painter.MattePainter;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 /**
- * @TODO Check A*Star field size for nimbus
- * @TODO allow to set manually sent to browser and draw in attack view?
+ * @TODO Add auto-hide for notification label
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends JRibbonFrame implements
@@ -145,7 +145,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         outlookBar.addBar("ROI", jROIPanel);
         outlookBar.setVisibleBar(1);
         jScrollPane2.setViewportView(outlookBar);
-
 
         mAbout = new AboutDialog(this, true);
         mAbout.pack();
@@ -798,6 +797,14 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
             public void run() {
                 setupRibbon();
+                try {
+                    String vis = GlobalOptions.getProperty("ribbon.minimized");
+                    if (vis != null) {
+                        getRibbon().setMinimized(Boolean.parseBoolean(vis));
+                    }
+                } catch (Exception e) {
+                    DSWorkbenchMainFrame.getSingleton().getRibbon().setMinimized(false);
+                }
                 if (vis) {
                     //only if set to visible
                     MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
@@ -811,137 +818,30 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                     //draw map the first time
                     fireRefreshMapEvent(null);
                     showReminder();
-                    // <editor-fold defaultstate="collapsed" desc=" Check frames and toolbar visibility ">
-
-                    try {
-                        if (Boolean.parseBoolean(GlobalOptions.getProperty("attack.frame.visible"))) {
-                            jShowAttackFrame.setSelected(true);
-                            logger.info("Restoring attack frame");
-                            DSWorkbenchAttackFrame.getSingleton().setVisible(true);
-                        }
-                    } catch (Exception e) {
+                    if (!Boolean.parseBoolean(GlobalOptions.getProperty("no.welcome"))) {
+                        setGlassPane(new WelcomePanel());
+                        getGlassPane().setVisible(true);
                     }
-
-                    try {
-                        if (Boolean.parseBoolean(GlobalOptions.getProperty("marker.frame.visible"))) {
-                            jShowMarkerFrame.setSelected(true);
-                            logger.info("Restoring marker frame");
-                            DSWorkbenchMarkerFrame.getSingleton().setVisible(true);
-                        }
-
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        if (jShowChurchFrame.isEnabled()) {
-                            if (Boolean.parseBoolean(GlobalOptions.getProperty("church.frame.visible"))) {
-                                jShowChurchFrame.setSelected(true);
-                                logger.info("Restoring church frame");
-                                DSWorkbenchChurchFrame.getSingleton().setVisible(true);
-                            }
-                        }
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        if (jShowConquersFrame.isEnabled()) {
-                            if (Boolean.parseBoolean(GlobalOptions.getProperty("conquers.frame.visible"))) {
-                                jShowConquersFrame.setSelected(true);
-                                logger.info("Restoring conquers frame");
-                                DSWorkbenchConquersFrame.getSingleton().setVisible(true);
-                            }
-                        }
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        if (jShowNotepadFrame.isEnabled()) {
-                            if (Boolean.parseBoolean(GlobalOptions.getProperty("notepad.frame.visible"))) {
-                                jShowNotepadFrame.setSelected(true);
-                                logger.info("Restoring notepad frame");
-                                DSWorkbenchNotepad.getSingleton().setVisible(true);
-                            }
-                        }
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        if (jShowTagFrame.isEnabled()) {
-                            if (Boolean.parseBoolean(GlobalOptions.getProperty("tag.frame.visible"))) {
-                                jShowTagFrame.setSelected(true);
-                                logger.info("Restoring tag frame");
-                                DSWorkbenchTagFrame.getSingleton().setVisible(true);
-                            }
-                        }
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        if (Boolean.parseBoolean(GlobalOptions.getProperty("troops.frame.visible"))) {
-                            jShowTroopsFrame.setSelected(true);
-                            logger.info("Restoring troops frame");
-                            DSWorkbenchTroopsFrame.getSingleton().setVisible(true);
-                        }
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        if (Boolean.parseBoolean(GlobalOptions.getProperty("rank.frame.visible"))) {
-                            jShowRankFrame.setSelected(true);
-                            logger.info("Restoring rank frame");
-                            DSWorkbenchRankFrame.getSingleton().setVisible(true);
-                        }
-
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        if (Boolean.parseBoolean(GlobalOptions.getProperty("form.frame.visible"))) {
-                            jShowFormsFrame.setSelected(true);
-                            logger.info("Restoring form frame");
-                            DSWorkbenchFormFrame.getSingleton().setVisible(true);
-                        }
-
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        if (Boolean.parseBoolean(GlobalOptions.getProperty("search.frame.visible"))) {
-                            logger.info("Restoring search frame");
-                            DSWorkbenchSearchFrame.getSingleton().setVisible(true);
-                        }
-
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        if (Boolean.parseBoolean(GlobalOptions.getProperty("stats.frame.visible"))) {
-                            jShowStatsFrame.setSelected(true);
-                            logger.info("Restoring stats frame");
-                            DSWorkbenchStatsFrame.getSingleton().setVisible(true);
-                        }
-                    } catch (Exception e) {
-                    }
-
-                    try {
-                        if (Boolean.parseBoolean(GlobalOptions.getProperty("report.frame.visible"))) {
-                            jShowReportFrame.setSelected(true);
-                            logger.info("Restoring report frame");
-                            DSWorkbenchReportFrame.getSingleton().setVisible(true);
-                        }
-                    } catch (Exception e) {
-                    }
-                    // </editor-fold>
                 }
             }
         });
+    }
+
+    public void hideWelcomePage() {
+        getGlassPane().setVisible(false);
+    }
+
+    public void showAboutDialog() {
+        mAbout.setVisible(true);
     }
 
     private void setupRibbon() {
         RibbonConfigurator.addGeneralToolsTask(this);
         RibbonConfigurator.addMapToolsTask(this);
         RibbonConfigurator.addViewTask(this);
+        RibbonConfigurator.addMiscTask(this);
         RibbonConfigurator.addAppIcons(this);
+
     }
 
     private void showReminder() {
@@ -2989,6 +2889,7 @@ private void fireROISelectedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:eve
 private void fireDSWorkbenchClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireDSWorkbenchClosingEvent
     logger.debug("Shutting down DSWorkbench");
     try {
+        GlobalOptions.addProperty("ribbon.minimized", Boolean.toString(getRibbon().isMinimized()));
         GlobalOptions.getSelectedProfile().updateProperties();
         GlobalOptions.getSelectedProfile().storeProfileData();
     } catch (Exception e) {
@@ -3337,7 +3238,7 @@ private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     public void planMapshot() {
         Component parent = this;
         int result = JOptionPaneHelper.showQuestionConfirmBox(parent, "Willst du die Karte online stellen oder auf deinem Rechner speichern?", "Speichern", "Nur speichern", "Online stellen");
-        
+
         if (result == JOptionPane.YES_OPTION) {
             putOnline = true;
             MapPanel.getSingleton().planMapShot("png", new File("tmp.png"), this);

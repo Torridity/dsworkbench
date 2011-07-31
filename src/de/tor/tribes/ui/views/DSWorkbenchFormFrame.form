@@ -68,7 +68,7 @@
     </Container>
   </NonVisualComponents>
   <Properties>
-    <Property name="title" type="java.lang.String" value="Formen"/>
+    <Property name="title" type="java.lang.String" value="Zeichnungen"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -118,7 +118,6 @@
     </Component>
     <Component class="de.tor.tribes.ui.CapabilityInfoPanel" name="capabilityInfoPanel1">
       <Properties>
-        <Property name="bbSupport" type="boolean" value="false"/>
         <Property name="pastable" type="boolean" value="false"/>
         <Property name="searchable" type="boolean" value="false"/>
       </Properties>

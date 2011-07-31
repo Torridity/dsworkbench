@@ -40,6 +40,15 @@ public class Arrow extends AbstractForm {
         super();
     }
 
+    public boolean allowsBBExport() {
+        return false;
+    }
+
+    @Override
+    public String[] getReplacements(boolean pExtended) {
+        return null;
+    }
+
     public void loadFromXml(Element e) {
         try {
 

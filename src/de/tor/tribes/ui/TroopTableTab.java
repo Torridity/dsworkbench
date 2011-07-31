@@ -83,12 +83,12 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
     private PainterHighlighter highlighter = null;
     private ActionListener actionListener = null;
     private SupportRefillDialog mRefillDialog = null;
+    private SupportDetailsDialog mDetailsDialog = null;
 
     static {
         jxTroopTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jxTroopTable.setColumnControlVisible(true);
         jxTroopTable.setDefaultRenderer(Float.class, new PercentCellRenderer());
-        jxTroopTable.setDefaultRenderer(Boolean.class, new VisibilityCellRenderer());
         jxTroopTable.setDefaultRenderer(Number.class, new NumberFormatCellRenderer());
         troopModel = new TroopsTableModel(TroopsManager.getSingleton().getDefaultGroupName());
         jxTroopTable.setModel(troopModel);
@@ -116,6 +116,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         initComponents();
         jScrollPane1.setViewportView(jxTroopTable);
         mRefillDialog = new SupportRefillDialog(DSWorkbenchTroopsFrame.getSingleton(), true);
+        mDetailsDialog = new SupportDetailsDialog(DSWorkbenchTroopsFrame.getSingleton(), true);
         if (!KEY_LISTENER_ADDED) {
             KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
             KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
@@ -154,7 +155,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
 
     @Override
     public void updateSelectionInfo() {
-        List<VillageTroopsHolder> selection = getSelectedVillages();
+        List<VillageTroopsHolder> selection = getSelectedTroopHolders();
         HashMap<UnitHolder, Integer> amounts = new HashMap<UnitHolder, Integer>();
         //initialize map
         for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
@@ -185,7 +186,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
             showInfo("Diese Funktion ist nur für Unterstützungen verfügbar");
             return;
         }
-        List<VillageTroopsHolder> selection = getSelectedVillages();
+        List<VillageTroopsHolder> selection = getSelectedTroopHolders();
         if (selection.isEmpty()) {
             showInfo("Keine Dörfer ausgewählt");
             return;
@@ -193,6 +194,20 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
 
         mRefillDialog.pack();
         mRefillDialog.setupAndShow(selection);
+    }
+
+    public void showSupportDetails() {
+        if (getTroopSet() == null || !getTroopSet().equals(TroopsManager.SUPPORT_GROUP)) {
+            showInfo("Diese Funktion ist nur für Unterstützungen verfügbar");
+            return;
+        }
+        List<Village> selection = getSelectedVillages();
+        if (selection.isEmpty()) {
+            showInfo("Keine Dörfer ausgewählt");
+            return;
+        }
+        mDetailsDialog.setupAndShow(selection);
+
     }
 
     public void showSuccess(String pMessage) {
@@ -238,7 +253,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         }
         if (!pFilterRows) {
             jxTroopTable.setRowFilter(null);
-            GroupPredicate groupPredicate = new GroupPredicate(groups, 0, pRelation,getTroopSet());
+            GroupPredicate groupPredicate = new GroupPredicate(groups, 0, pRelation, getTroopSet());
             MattePainter mp = new MattePainter(new Color(0, 0, 0, 120));
             highlighter = new PainterHighlighter(new HighlightPredicate.NotHighlightPredicate(groupPredicate), mp);
             jxTroopTable.addHighlighter(highlighter);
@@ -355,7 +370,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
 
     private void copyBBToExternalClipboardEvent() {
         try {
-            List<VillageTroopsHolder> troops = getSelectedVillages();
+            List<VillageTroopsHolder> troops = getSelectedTroopHolders();
             if (troops.isEmpty()) {
                 showInfo("Keine Dörfer ausgewählt");
                 return;
@@ -407,7 +422,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
 
     @Override
     public void centerVillage() {
-        List<VillageTroopsHolder> selection = getSelectedVillages();
+        List<VillageTroopsHolder> selection = getSelectedTroopHolders();
         if (selection.isEmpty()) {
             showInfo("Kein Dorf ausgewählt");
             return;
@@ -417,7 +432,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
 
     @Override
     public void centerVillageInGame() {
-        List<VillageTroopsHolder> selection = getSelectedVillages();
+        List<VillageTroopsHolder> selection = getSelectedTroopHolders();
         if (selection.isEmpty()) {
             showInfo("Kein Dorf ausgewählt");
             return;
@@ -428,7 +443,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
 
     @Override
     public void openPlaceInGame() {
-        List<VillageTroopsHolder> selection = getSelectedVillages();
+        List<VillageTroopsHolder> selection = getSelectedTroopHolders();
         if (selection.isEmpty()) {
             showInfo("Kein Dorf ausgewählt");
             return;
@@ -438,7 +453,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
     }
 
     public boolean deleteSelection(boolean pAsk) {
-        List<VillageTroopsHolder> selectedVillages = getSelectedVillages();
+        List<VillageTroopsHolder> selectedVillages = getSelectedTroopHolders();
 
         if (selectedVillages.isEmpty()) {
             showInfo("Kein Dorf ausgewählt");
@@ -481,18 +496,28 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         deleteSelection(true);
     }
 
-    private List<VillageTroopsHolder> getSelectedVillages() {
-        final List<VillageTroopsHolder> selectedVillages = new LinkedList<VillageTroopsHolder>();
+    private List<VillageTroopsHolder> getSelectedTroopHolders() {
+        final List<VillageTroopsHolder> selectedHolders = new LinkedList<VillageTroopsHolder>();
         int[] selectedRows = jxTroopTable.getSelectedRows();
         if (selectedRows != null && selectedRows.length < 1) {
-            return selectedVillages;
+            return selectedHolders;
         }
         for (Integer selectedRow : selectedRows) {
             VillageTroopsHolder t = (VillageTroopsHolder) TroopsManager.getSingleton().getAllElements(getTroopSet()).get(jxTroopTable.convertRowIndexToModel(selectedRow));
             if (t != null) {
-                selectedVillages.add(t);
+                selectedHolders.add(t);
             }
         }
-        return selectedVillages;
+        return selectedHolders;
+    }
+
+    public List<Village> getSelectedVillages() {
+        List<VillageTroopsHolder> holders = getSelectedTroopHolders();
+
+        List<Village> villages = new LinkedList<Village>();
+        for (VillageTroopsHolder holder : holders) {
+            villages.add(holder.getVillage());
+        }
+        return villages;
     }
 }

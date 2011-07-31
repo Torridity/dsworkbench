@@ -13,11 +13,13 @@ package de.tor.tribes.ui;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.AbstractForm;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.test.DummyUnit;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.Note;
+import de.tor.tribes.types.Rectangle;
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.TribeStatsElement;
@@ -30,6 +32,7 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.bb.AttackListFormatter;
 import de.tor.tribes.util.bb.BasicFormatter;
 import de.tor.tribes.util.bb.DefStatsFormatter;
+import de.tor.tribes.util.bb.FormListFormatter;
 import de.tor.tribes.util.bb.KillStatsFormatter;
 import de.tor.tribes.util.bb.NoteListFormatter;
 import de.tor.tribes.util.bb.PointStatsFormatter;
@@ -47,6 +50,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.JDialog;
 import javax.swing.UIManager;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
@@ -65,6 +69,7 @@ public class BBCodeEditor extends javax.swing.JDialog {
     private List<Note> sampleNotes = new LinkedList<Note>();
     private List<Stats> sampleStats = new LinkedList<Stats>();
     private List<VillageTroopsHolder> sampleTroops = new LinkedList<VillageTroopsHolder>();
+    private List<AbstractForm> sampleForms = new LinkedList<AbstractForm>();
     private BasicFormatter element = null;
     private BasicFormatter<Attack> attackFormatter = new AttackListFormatter();
     private BasicFormatter<Village> villageFormatter = new VillageListFormatter();
@@ -77,6 +82,7 @@ public class BBCodeEditor extends javax.swing.JDialog {
     private BasicFormatter<Stats> defStatsFormatter = new DefStatsFormatter();
     private BasicFormatter<Stats> winnerLoserStatsFormatter = new WinnerLoserStatsFormatter();
     private BasicFormatter<VillageTroopsHolder> troopsFormatter = new TroopListFormatter();
+    private BasicFormatter<AbstractForm> formFormatter = new FormListFormatter();
     private static BBCodeEditor SINGLETON = null;
 
     public static synchronized BBCodeEditor getSingleton() {
@@ -107,12 +113,22 @@ public class BBCodeEditor extends javax.swing.JDialog {
         fireExportTypeChangedEvent(new ItemEvent(jApplyButton, 0, null, ItemEvent.SELECTED));
     }
 
-    public void reset(){
+    public void reset() {
         buildSampleData();
         updatePreview();
     }
-    
+
     private void buildSampleData() {
+
+        sampleAttacks.clear();
+        sampleVillages.clear();
+        sampleReports.clear();
+        sampleRequests.clear();
+        sampleTags.clear();
+        sampleNotes.clear();
+        sampleStats.clear();
+        sampleTroops.clear();
+        sampleForms.clear();
         //sample village
         Village sampleVillage = DataHolder.getSingleton().getRandomVillage();
         //sample attack
@@ -228,14 +244,23 @@ public class BBCodeEditor extends javax.swing.JDialog {
         h2.setTroops(troops);
         sampleTroops.add(h);
         sampleTroops.add(h2);
-
-
+//build stats
         TribeStatsElement e1 = new TribeStatsElement(DataHolder.getSingleton().getRandomVillage().getTribe());
         e1.addRandomSnapshots();
         TribeStatsElement e2 = new TribeStatsElement(DataHolder.getSingleton().getRandomVillage().getTribe());
         e2.addRandomSnapshots();
         sampleStats.add(e1.generateStats(e1.getTimestamps()[0], e1.getTimestamps()[1]));
         sampleStats.add(e2.generateStats(e2.getTimestamps()[0], e2.getTimestamps()[1]));
+
+        Rectangle r = new Rectangle();
+        r.setFormName("Beispielzeichnung");
+        r.setDrawColor(Color.BLUE);
+        r.setXPos(500);
+        r.setYPos(500);
+        r.setXPosEnd(505);
+        r.setYPosEnd(505);
+        sampleForms.add(r);
+
     }
 
     /** This method is called from within the constructor to
@@ -264,6 +289,7 @@ public class BBCodeEditor extends javax.swing.JDialog {
         jLabel3 = new javax.swing.JLabel();
 
         setTitle("BB-Code Editor");
+        setModal(true);
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Vorschau"));
@@ -351,7 +377,7 @@ public class BBCodeEditor extends javax.swing.JDialog {
 
         jPanel1.setLayout(new java.awt.BorderLayout(5, 0));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Angriffe", "Notizen", "Dorflisten", "SOS-Anfragen", "Kampfbericht", "Gruppen", "Truppen", "Statistik (Punkte)", "Statistik (Angriff)", "Statistik (Verteidigung)", "Statistik (Gewinner/Verlierer)" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Angriffe", "Notizen", "Dorflisten", "SOS-Anfragen", "Kampfbericht", "Gruppen", "Truppen", "Statistik (Punkte)", "Statistik (Angriff)", "Statistik (Verteidigung)", "Statistik (Gewinner/Verlierer)", "Zeichnungen" }));
         jComboBox1.setMinimumSize(new java.awt.Dimension(66, 20));
         jComboBox1.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -447,6 +473,11 @@ public class BBCodeEditor extends javax.swing.JDialog {
                     bBPanel2.setBBCode(element.getTemplate());
                     result = element.formatElements(sampleStats, true);
                     break;
+                case 11:
+                    element = formFormatter;
+                    bBPanel2.setBBCode(element.getTemplate());
+                    result = element.formatElements(sampleForms, true);
+                    break;
             }
         }
 
@@ -503,6 +534,9 @@ public class BBCodeEditor extends javax.swing.JDialog {
                 break;
             case 10:
                 element = winnerLoserStatsFormatter;
+                break;
+            case 11:
+                element = formFormatter;
                 break;
         }
         bBPanel2.setBBCode(element.getStandardTemplate());
@@ -567,8 +601,16 @@ public class BBCodeEditor extends javax.swing.JDialog {
                 GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
                 result = element.formatElements(sampleStats, true);
                 break;
+            case 11:
+                element = formFormatter;
+                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
+                result = element.formatElements(sampleForms, true);
+                break;
         }
-        jTextPane1.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + BBCodeFormatter.toHtml(result) + "</body></html>");
+        try {
+            jTextPane1.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + BBCodeFormatter.toHtml(result) + "</body></html>");
+        } catch (Exception e) {
+        }
     }
 
     /**
@@ -587,7 +629,9 @@ public class BBCodeEditor extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                new BBCodeEditor().setVisible(true);
+                BBCodeEditor ed = new BBCodeEditor();
+                ed.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                ed.setVisible(true);
             }
         });
     }

@@ -29,6 +29,9 @@
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="jNewSetPanel">
+      <Properties>
+        <Property name="opaque" type="boolean" value="false"/>
+      </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
       <SubComponents>

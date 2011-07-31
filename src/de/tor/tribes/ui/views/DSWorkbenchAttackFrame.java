@@ -608,7 +608,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         );
 
         jClickAccountLabel.setBackground(new java.awt.Color(255, 255, 255));
-        jClickAccountLabel.setFont(new java.awt.Font("sansserif", 0, 11)); // NOI18N
+        jClickAccountLabel.setFont(new java.awt.Font("sansserif", 0, 11));
         jClickAccountLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jClickAccountLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/LeftClick.png"))); // NOI18N
         jClickAccountLabel.setText("Klick-Konto [0]");
@@ -647,6 +647,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jLabel21.setText("Suchbegriff");
 
         jFilterRows.setText("Nur gefilterte Zeilen anzeigen");
+        jFilterRows.setOpaque(false);
         jFilterRows.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireUpdateFilterEvent(evt);
@@ -654,6 +655,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         });
 
         jFilterCaseSensitive.setText("Groß-/Kleinschreibung beachten");
+        jFilterCaseSensitive.setOpaque(false);
         jFilterCaseSensitive.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireUpdateFilterEvent(evt);
@@ -723,14 +725,15 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jAttackTabPane.setTabEditingAllowed(true);
         jXAttackPanel.add(jAttackTabPane, java.awt.BorderLayout.CENTER);
 
+        jNewPlanPanel.setOpaque(false);
         jNewPlanPanel.setLayout(new java.awt.BorderLayout());
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_new_24x24.png"))); // NOI18N
         jLabel1.setToolTipText("Leeren Angriffsplan erstellen");
+        jLabel1.setEnabled(false);
         jLabel1.setMaximumSize(new java.awt.Dimension(40, 40));
         jLabel1.setMinimumSize(new java.awt.Dimension(40, 40));
-        jLabel1.setOpaque(true);
         jLabel1.setPreferredSize(new java.awt.Dimension(40, 40));
         jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -832,11 +835,11 @@ private void fireAttackFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) 
 }//GEN-LAST:event_fireAttackFrameAlwaysOnTopEvent
 
 private void fireEnterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireEnterEvent
-    jLabel1.setBackground(getBackground().darker());
+    jLabel1.setEnabled(true);
 }//GEN-LAST:event_fireEnterEvent
 
 private void fireMouseExitEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMouseExitEvent
-    jLabel1.setBackground(getBackground());
+    jLabel1.setEnabled(false);
 }//GEN-LAST:event_fireMouseExitEvent
 
 private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateAttackPlanEvent
@@ -870,7 +873,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     }
 
     public void decreaseClickAccountValue() {
-        iClickAccount--;
+        iClickAccount = (iClickAccount == 0) ? 0 : iClickAccount--;
     }
 
     public int getClickAccountValue() {

@@ -16,10 +16,8 @@ import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.GenericTestPanel;
-import de.tor.tribes.ui.SupportTroopTableTab;
 import de.tor.tribes.ui.TabInterface;
 import de.tor.tribes.ui.TroopTableTab;
-import de.tor.tribes.ui.models.SupportTroopsTableModel;
 import de.tor.tribes.ui.models.TroopsTableModel;
 import de.tor.tribes.util.Constants;
 import java.awt.event.ActionEvent;
@@ -36,7 +34,6 @@ import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.TexturePaint;
@@ -51,7 +48,6 @@ import java.util.LinkedList;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -60,12 +56,10 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
-import org.jdesktop.swingx.JXTreeTable;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
- * @TODO insert detail view for supports
- * @author  Jejkal
+ * @author Torridity
  */
 public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, DataHolderListener {
 
@@ -200,7 +194,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
     private void buildMenu() {
         JXTaskPane transferTaskPane = new JXTaskPane();
         transferTaskPane.setTitle("Übertragen");
-        JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/center_ingame.png")));
+        JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchTroopsFrame.class.getResource("/res/ui/center_ingame.png")));
         transferVillageList.setToolTipText("Zentriert das gewählte Dorf im Spiel");
         transferVillageList.addMouseListener(new MouseAdapter() {
 
@@ -214,7 +208,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         });
         transferTaskPane.getContentPane().add(transferVillageList);
 
-        JXButton openPlace = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/place.png")));
+        JXButton openPlace = new JXButton(new ImageIcon(DSWorkbenchTroopsFrame.class.getResource("/res/ui/place.png")));
         openPlace.setToolTipText("Öffnet den Versammlungsplatz des gewählten Dorfes im Spiel");
         openPlace.addMouseListener(new MouseAdapter() {
 
@@ -231,7 +225,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         openPlace.setMaximumSize(transferVillageList.getMaximumSize());
         openPlace.setPreferredSize(transferVillageList.getPreferredSize());
         transferTaskPane.getContentPane().add(openPlace);
-        JXButton centerVillage = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
+        JXButton centerVillage = new JXButton(new ImageIcon(DSWorkbenchTroopsFrame.class.getResource("/res/center_24x24.png")));
         centerVillage.setToolTipText("Zentriert das gewählte Dorf auf der Hauptkarte");
         centerVillage.addMouseListener(new MouseAdapter() {
 
@@ -250,7 +244,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         miscPane.setTitle("Sonstiges");
 
 
-        JXButton refillSupport = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/filter_off.png")));
+        JXButton refillSupport = new JXButton(new ImageIcon(DSWorkbenchTroopsFrame.class.getResource("/res/ui/filter_off.png")));
         refillSupport.setToolTipText("<html>Auff&uuml;llen der Unterst&uuml;tzungen für die gew&auml;hlten D&ouml;rfer<br/>"
                 + "Die D&ouml;rfer werden so oft in den Angriffsplaner als Ziel eingef&uuml;gt,<br/>"
                 + "bis die Truppenanzahl im Dorf der eingestellten Menge entspricht,<br/>"
@@ -268,6 +262,25 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         });
 
         miscPane.getContentPane().add(refillSupport);
+
+        JXButton supportDetailsButton = new JXButton(new ImageIcon(DSWorkbenchTroopsFrame.class.getResource("/res/ui/information.png")));
+        supportDetailsButton.setToolTipText("Zeigt Details zu den gewählten Unterstützungen an");
+        supportDetailsButton.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                TroopTableTab tab = (TroopTableTab) getActiveTab();
+                if (tab != null) {
+                    tab.showSupportDetails();
+                }
+            }
+        });
+        supportDetailsButton.setSize(transferVillageList.getSize());
+        supportDetailsButton.setMinimumSize(transferVillageList.getMinimumSize());
+        supportDetailsButton.setMaximumSize(transferVillageList.getMaximumSize());
+        supportDetailsButton.setPreferredSize(transferVillageList.getPreferredSize());
+
+        miscPane.getContentPane().add(supportDetailsButton);
 
         centerPanel.setupTaskPane(transferTaskPane, miscPane);
     }
@@ -520,26 +533,11 @@ private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST
     }
 
     public List<Village> getSelectedSupportVillages() {
-        List<Village> targets = new LinkedList<Village>();
-
-        Component c = jTroopsTabPane.getSelectedComponent();
-        if (c instanceof SupportTroopTableTab) {
-            SupportTroopTableTab tab = (SupportTroopTableTab) c;
-            JXTreeTable table = (JXTreeTable) tab.getTroopTable();
-            int[] rows = table.getSelectedRows();
-            SupportTroopsTableModel model = (SupportTroopsTableModel) table.getTreeTableModel();
-            if (rows != null && rows.length > 0) {
-                model.setTopLevelOnly(true);
-                for (int row : rows) {
-                    Village v = (Village) table.getValueAt(row, 0);
-                    if (v != null) {
-                        targets.add(v);
-                    }
-                }
-                model.setTopLevelOnly(false);
-            }
+        TroopTableTab tab = (TroopTableTab) getActiveTab();
+        if (tab != null && tab.getTroopSet().equals(TroopsManager.SUPPORT_GROUP)) {
+            return tab.getSelectedVillages();
         }
-        return targets;
+        return new LinkedList<Village>();
     }
 
     @Override
@@ -600,6 +598,7 @@ private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST
         TagManager.getSingleton().addTag("Test1");
         TagManager.getSingleton().addTag("Test2");
         List<Village> used = new LinkedList<Village>();
+        TroopsManager.getSingleton().initialize();
         for (int i = 0; i < 1000; i++) {
             Village v = DataHolder.getSingleton().getRandomVillage();
             if (!used.contains(v)) {
@@ -619,7 +618,6 @@ private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST
                 TroopsManager.getSingleton().addManagedElement(h);
             }
         }
-
 
         for (int i = 0; i < 10; i++) {
             Village v = DataHolder.getSingleton().getRandomVillage();

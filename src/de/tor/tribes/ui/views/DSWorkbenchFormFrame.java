@@ -13,6 +13,7 @@ package de.tor.tribes.ui.views;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.types.AbstractForm;
 import de.tor.tribes.types.Circle;
+import de.tor.tribes.types.Line;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
@@ -29,6 +30,7 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PropertyHelper;
+import de.tor.tribes.util.bb.FormListFormatter;
 import de.tor.tribes.util.map.FormManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -44,9 +46,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -70,7 +75,6 @@ import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
- * @TODO BB Export for village list
  * @author Charon
  */
 public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements ListSelectionListener, GenericManagerListener {
@@ -97,6 +101,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         buildMenu();
 
         KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
+        KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         KeyStroke find = KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK, false);
 
@@ -107,6 +112,14 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
                 copySelectionToInternalClipboard();
             }
         }, "Copy", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+        jFormsTable.registerKeyboardAction(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                copySelectionToInternalClipboardAsBBCodes();
+            }
+        }, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         jFormsTable.registerKeyboardAction(new ActionListener() {
 
@@ -225,6 +238,72 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
 
     public String getPropertyPrefix() {
         return "forms.view";
+    }
+
+    private void copySelectionToInternalClipboardAsBBCodes() {
+        try {
+            List<AbstractForm> forms = getSelectedForms();
+            if (forms.isEmpty()) {
+                showInfo("Keine Zeichnungen ausgewählt");
+                return;
+            }
+            int ignoredForms = 0;
+            for (AbstractForm form : forms) {
+                if (!form.allowsBBExport()) {
+                    ignoredForms++;
+                }
+            }
+
+            boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
+
+            StringBuilder buffer = new StringBuilder();
+            if (extended) {
+                buffer.append("[u][size=12]Zeichnungen[/size][/u]\n\n");
+            } else {
+                buffer.append("[u]Zeichnungen[/u]\n\n");
+            }
+
+            buffer.append(new FormListFormatter().formatElements(forms, extended));
+
+            if (extended) {
+                buffer.append("\n[size=8]Erstellt am ");
+                buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+                buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url][/size]\n");
+            } else {
+                buffer.append("\nErstellt am ");
+                buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+                buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url]\n");
+            }
+
+            String b = buffer.toString();
+            StringTokenizer t = new StringTokenizer(b, "[");
+            int cnt = t.countTokens();
+            if (cnt > 1000) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Zeichnungen benötigen mehr als 1000 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                    return;
+                }
+            }
+
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
+            String result = null;
+            if (ignoredForms != forms.size()) {
+                result = "<html>Daten in Zwischenablage kopiert.";
+                if (ignoredForms > 0) {
+                    result += ((ignoredForms == 1) ? " Eine Zeichnung wurde" : " " + ignoredForms + " Zeichnungen wurden") + " ignoriert, da der BB-Export nur für Rechtecke, Kreise und Freihandzeichnungen verf&uuml;gbar ist.";
+                }
+                result += "</html>";
+            } else {
+                 showError("<html>Keine Zeichnungen exportiert, da der BB-Export nur für Rechtecke, Kreise und Freihandzeichnungen verf&uuml;gbar ist.</html>");
+                 return;
+            }
+            showSuccess(result);
+        } catch (Exception e) {
+            logger.error("Failed to copy data to clipboard", e);
+            String result = "Fehler beim Kopieren in die Zwischenablage.";
+            showError(result);
+        }
     }
 
     private void copySelectionToInternalClipboard() {
@@ -421,7 +500,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
 
         jFormTablePanel.add(jScrollPane4, java.awt.BorderLayout.CENTER);
 
-        setTitle("Formen");
+        setTitle("Zeichnungen");
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jFormPanel.setBackground(new java.awt.Color(239, 235, 223));
@@ -450,7 +529,6 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jAlwaysOnTop, gridBagConstraints);
 
-        capabilityInfoPanel1.setBbSupport(false);
         capabilityInfoPanel1.setPastable(false);
         capabilityInfoPanel1.setSearchable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -516,6 +594,8 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         FormManager.getSingleton().addForm(new de.tor.tribes.types.Rectangle());
         FormManager.getSingleton().addForm(new Circle());
         FormManager.getSingleton().addForm(new de.tor.tribes.types.Rectangle());
+        FormManager.getSingleton().addForm(new Line());
+        
         DSWorkbenchFormFrame.getSingleton().resetView();
         DSWorkbenchFormFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         DSWorkbenchFormFrame.getSingleton().setVisible(true);

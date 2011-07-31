@@ -117,6 +117,7 @@ public class UserProfile {
         } catch (Exception e) {
             logger.warn("Failed to set last zoom factor. Probably this is a new UserProfile with no properties set");
         }
+
     }
 
     public boolean storeProfileData() {

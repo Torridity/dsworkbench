@@ -466,7 +466,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
                 data.append(id).append(";");
             }
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(data.toString()), null);
-            showSuccess("<html>D&ouml;rfer erfolgreich in die Zwischenablage kopiert.<br/>F&uuml;ge sie nun in der Gruppen&uuml;bersicht in das entsprechende Feld unterhalb einer leeren Gruppe ein<br/>und weise sie dadurch dieser Gruppe zu.</html>");
+            showSuccess("<html>D&ouml;rfer erfolgreich in die Zwischenablage kopiert.<br/>F&uuml;ge sie nun in der Gruppen&uuml;bersicht in das entsprechende Feld unterhalb einer leeren Gruppe ein und weise sie dadurch dieser Gruppe zu.</html>");
         } catch (HeadlessException he) {
             logger.error("Failed to copy data to clipboard", he);
             showError("Fehler beim Kopieren in die Zwischenablage");

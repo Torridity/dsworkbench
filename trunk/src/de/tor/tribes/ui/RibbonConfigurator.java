@@ -24,6 +24,7 @@ import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
 import de.tor.tribes.ui.views.DSWorkbenchTagFrame;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
+import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
@@ -824,20 +825,93 @@ public class RibbonConfigurator {
         frame.getRibbon().addTask(task1);
     }
 
-    private static JCommandButton factoryButton(String pLabel, String pIconPath, boolean pShowLabel) {
-        return factoryButton(pLabel, pIconPath, null, null, pShowLabel);
+    public static void addMiscTask(JRibbonFrame frame) {
+        JRibbonBand miscBand = new JRibbonBand("Sonstiges", getResizableIconFromResource("/res/128x128/help.png"));
+
+        JCommandButton helpButton = factoryButton("Hilfe", "/res/128x128/help.png", "Die integrierte Hilfe", "DS Workbench bietet eine sehr ausführliche Hilfe, die alle Funktionen detailiert beschreibt und so Einblicke in bisher vielleicht unentdeckte Features offenbart. Sie ist jederzeit über F1, diesen Button oder den Hilfebutton in der rechten oberen Ecke des Hauptfensters zu erreichen.", true);
+        helpButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                 GlobalOptions.getHelpBroker().setDisplayed(true);
+            }
+        });
+        JCommandButton communityButton = factoryButton("Community", "/res/128x128/forum.png", "Das DS Workbench Forum", "Das DS Workbench Forum bietet einen sehr guten Anlaufpunkt für Fragen und Probleme die mit DS Workbench zusammenhängen. Hier ist jederzeit jemand anzutreffen, der anderen Benutzern gern mit Rat und Tat zur Seite steht.", true);
+        communityButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                  BrowserCommandSender.openPage("http://www.dsworkbench.de/forum/index.php");
+            }
+        });
+        JCommandButton ideaButton = factoryButton("Ideen", "/res/128x128/idea.png", "Du hast eine neue Idee?", "Falls dir an DS Workbench etwas fehlt, von dem du denkst, dass auch andere davon profitieren könnten, schreibe deine Idee einfach im entsprechenden Bereich des DS Workbench Forums nieder und man kann gern darüber diskutieren.", true);
+        ideaButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                 BrowserCommandSender.openPage("http://www.dsworkbench.de/forum/forumdisplay.php?fid=5");
+            }
+        });
+        JCommandButton facebookButton = factoryButton("Facebook", "/res/128x128/facebook.png", "DS Workbench @ Facebook", "Wie viele andere Personen und Produkte verfügt DS Workbench über eine eigene Facebook Seite. Wenn dir DS Workbench gefällt hast du so die Möglichkeit, jederzeit über neue Entwicklungen auf dem Laufenden zu sein.", true);
+        facebookButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                 BrowserCommandSender.openPage("http://www.facebook.com/pages/DS-Workbench/182068775185568");
+            }
+        });
+        JCommandButton donateButton = factoryButton("Spenden", "/res/ui/paypal.gif", "Für DS Workbench spenden", "Natürlich ist DS Workbench komplett kostenlos und wird das auch weiterhin bleiben. Dennoch sind kleine Spenden als Dank für die Arbeit die seit mehreren Jahren in DS Workbench fließt immer gern gesehen. Für alle Spenden möchte ich mich an dieser Stelle herzlich bedanken.", true);
+        donateButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                 BrowserCommandSender.openPage("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4434173");
+            }
+        });
+        JCommandButton aboutButton = factoryButton("About", "/res/ui/about.png", "Über DS Workbench", "Informationen über die Version von DS Workbench die ihr gerade verwendest.", true);
+        aboutButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                DSWorkbenchMainFrame.getSingleton().showAboutDialog();
+            }
+        });
+        miscBand.addCommandButton(helpButton, RibbonElementPriority.TOP);
+        miscBand.addCommandButton(communityButton, RibbonElementPriority.TOP);
+        miscBand.addCommandButton(ideaButton, RibbonElementPriority.TOP);
+        miscBand.addCommandButton(facebookButton, RibbonElementPriority.TOP);
+        miscBand.addCommandButton(donateButton, RibbonElementPriority.TOP);
+        miscBand.addCommandButton(aboutButton, RibbonElementPriority.TOP);
+
+
+        miscBand.setResizePolicies((List) Arrays.asList(
+                new CoreRibbonResizePolicies.None(miscBand.getControlPanel()) // new CoreRibbonResizePolicies.Mirror(miscBand.getControlPanel()),
+                //new CoreRibbonResizePolicies.Mid2Low(miscToolsBand.getControlPanel()),
+                // new IconRibbonBandResizePolicy(miscBand.getControlPanel())
+                ));
+        RibbonTask task1 = new RibbonTask("Sonstiges", miscBand);
+        frame.getRibbon().addTask(task1);
     }
 
     private static JCommandButton factoryButton(String pLabel, String pIconPath, String pTooltipText, String pSecondaryTooltipText, boolean pShowLabel) {
-        JCommandButton button = new JCommandButton((pShowLabel) ? pLabel : null, getResizableIconFromFile(pIconPath));
+        JCommandButton button = null;
+        if (!new File(pIconPath).exists()) {
+            button = new JCommandButton((pShowLabel) ? pLabel : null, getResizableIconFromResource(pIconPath));
+        } else {
+            button = new JCommandButton((pShowLabel) ? pLabel : null, getResizableIconFromFile(pIconPath));
+        }
+
+
+
         if (pTooltipText != null) {
             RichTooltip rt = new RichTooltip((pLabel != null) ? pLabel : "Info", pTooltipText);
             if (pSecondaryTooltipText != null) {
                 rt.addDescriptionSection(pSecondaryTooltipText);
             }
-            try {
-                rt.setMainImage(ImageIO.read(new File(pIconPath)));
-            } catch (Exception e) {
+            if (new File(pIconPath).exists()) {
+                try {
+                    rt.setMainImage(ImageIO.read(new File(pIconPath)));
+                } catch (Exception e) {
+                }
+            } else {
+                try {
+                    rt.setMainImage(ImageIO.read(RibbonConfigurator.class.getResource(pIconPath)));
+                } catch (Exception e) {
+                }
             }
             button.setActionRichTooltip(rt);
         }
@@ -845,7 +919,11 @@ public class RibbonConfigurator {
     }
 
     private static ResizableIcon getResizableIconFromResource(String resource) {
-        return ImageWrapperResizableIcon.getIcon(DSWorkbenchMainFrame.class.getClassLoader().getResource(resource), new Dimension(18, 18));
+        try {
+            return ImageWrapperResizableIcon.getIcon(DSWorkbenchMainFrame.class.getResource(resource), new Dimension(48, 48));
+        } catch (Exception e) {
+            return new EmptyResizableIcon(18);
+        }
     }
 
     private static ResizableIcon getResizableIconFromFile(String resource) {

@@ -121,6 +121,7 @@
             <Component class="javax.swing.JCheckBox" name="jFilterRows">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Nur gefilterte Zeilen anzeigen"/>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="jFilterRowsfireUpdateFilterEvent"/>
@@ -129,6 +130,7 @@
             <Component class="javax.swing.JCheckBox" name="jFilterCaseSensitive">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Gro&#xdf;-/Kleinschreibung beachten"/>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="jFilterCaseSensitivefireUpdateFilterEvent"/>

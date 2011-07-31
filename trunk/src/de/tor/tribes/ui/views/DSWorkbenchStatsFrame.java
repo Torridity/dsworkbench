@@ -202,46 +202,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
     private void buildMenu() {
         JXTaskPane editPane = new JXTaskPane();
         editPane.setTitle("Bearbeiten");
-        JXButton removeSelection = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/delete_region.png")));
-        removeSelection.setToolTipText("Löscht alle Datenpunkte zwischen der Start- und Endmarkierung");
-        removeSelection.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                removeSelection();
-            }
-        });
-        JXButton selectStart = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/beginning.png")));
-        selectStart.setToolTipText("Setzt eine Startmarkierung beim gewählten Datenpunkt");
-        selectStart.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                setStartAnnotation();
-            }
-        });
-        selectStart.setSize(removeSelection.getSize());
-        selectStart.setMinimumSize(removeSelection.getMinimumSize());
-        selectStart.setMaximumSize(removeSelection.getMaximumSize());
-        selectStart.setPreferredSize(removeSelection.getPreferredSize());
-        editPane.getContentPane().add(selectStart);
-        JXButton selectEnd = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/end.png")));
-        selectEnd.setToolTipText("Setzt eine Endmarkierung beim gewählten Datenpunkt");
-        selectEnd.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                setEndAnnotation();
-            }
-        });
-        selectEnd.setSize(removeSelection.getSize());
-        selectEnd.setMinimumSize(removeSelection.getMinimumSize());
-        selectEnd.setMaximumSize(removeSelection.getMaximumSize());
-        selectEnd.setPreferredSize(removeSelection.getPreferredSize());
-        editPane.getContentPane().add(selectEnd);
-        //finally add remove button
-        editPane.getContentPane().add(removeSelection);
-
         final JToggleButton createStats = new JToggleButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/medal.png")));
         createStats.setToolTipText("Umschalten zwischen dem Erzeugen von Statistiken und der Anzeige von Verlaufsgrafiken");
         createStats.addMouseListener(new MouseAdapter() {
@@ -257,10 +217,58 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
                 switchStatChartView(showChartView);
             }
         });
+
+
+        JXButton selectStart = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/beginning.png")));
+        selectStart.setToolTipText("Setzt eine Startmarkierung beim gewählten Datenpunkt");
+        selectStart.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                setStartAnnotation();
+            }
+        });
+        selectStart.setSize(createStats.getSize());
+        selectStart.setMinimumSize(createStats.getMinimumSize());
+        selectStart.setMaximumSize(createStats.getMaximumSize());
+        selectStart.setPreferredSize(createStats.getPreferredSize());
+        editPane.getContentPane().add(selectStart);
+        JXButton selectEnd = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/end.png")));
+        selectEnd.setToolTipText("Setzt eine Endmarkierung beim gewählten Datenpunkt");
+        selectEnd.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                setEndAnnotation();
+            }
+        });
+        selectEnd.setSize(createStats.getSize());
+        selectEnd.setMinimumSize(createStats.getMinimumSize());
+        selectEnd.setMaximumSize(createStats.getMaximumSize());
+        selectEnd.setPreferredSize(createStats.getPreferredSize());
+        editPane.getContentPane().add(selectEnd);
+
+        JXButton removeSelection = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/delete_region.png")));
+        removeSelection.setToolTipText("Löscht alle Datenpunkte zwischen der Start- und Endmarkierung");
+        removeSelection.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                removeSelection();
+            }
+        });
+        removeSelection.setSize(createStats.getSize());
+        removeSelection.setMinimumSize(createStats.getMinimumSize());
+        removeSelection.setMaximumSize(createStats.getMaximumSize());
+        removeSelection.setPreferredSize(createStats.getPreferredSize());
+        editPane.getContentPane().add(removeSelection);
+
+
         createStats.setSize(removeSelection.getSize());
         createStats.setMinimumSize(removeSelection.getMinimumSize());
         createStats.setMaximumSize(removeSelection.getMaximumSize());
         createStats.setPreferredSize(removeSelection.getPreferredSize());
+
         editPane.getContentPane().add(createStats);
 
 

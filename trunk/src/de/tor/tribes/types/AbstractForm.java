@@ -6,6 +6,7 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.util.BBSupport;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.net.URLEncoder;
@@ -17,7 +18,28 @@ import org.jdom.Element;
  *
  * @author Charon
  */
-public abstract class AbstractForm extends ManageableType {
+public abstract class AbstractForm extends ManageableType implements BBSupport {
+
+    private final static String[] VARIABLES = new String[]{"%Name%", "%START_X%", "%START_Y%", "%WIDTH%", "%HEIGHT%", "%END_X%", "%END_Y%", "%COLOR%", "%VILLAGE_LIST%"};
+    private final static String STANDARD_TEMPLATE = "%Name% (%START_X%|%START_Y% bis %END_X%|%END_Y%)\nEnthaltene Dörfer:\n%VILLAGE_LIST%";
+    private final static String TEMPLATE_PROPERTY = "form.bbexport.template";
+
+    public abstract boolean allowsBBExport();
+
+    @Override
+    public String[] getBBVariables() {
+        return VARIABLES;
+    }
+
+    @Override
+    public String getStandardTemplate() {
+        return STANDARD_TEMPLATE;
+    }
+
+    @Override
+    public String getTemplateProperty() {
+        return TEMPLATE_PROPERTY;
+    }
 
     public static enum FORM_TYPE {
 
@@ -139,9 +161,12 @@ public abstract class AbstractForm extends ManageableType {
         ArrayList<Village> v = new ArrayList<Village>();
         for (int x = bounds.x; x < bounds.x + bounds.width; x++) {
             for (int y = bounds.y; y < bounds.y + bounds.height; y++) {
-                Village vi = DataHolder.getSingleton().getVillages()[x][y];
-                if (vi != null) {
-                    v.add(vi);
+                try {
+                    Village vi = DataHolder.getSingleton().getVillages()[x][y];
+                    if (vi != null) {
+                        v.add(vi);
+                    }
+                } catch (ArrayIndexOutOfBoundsException e) {
                 }
             }
         }

@@ -331,6 +331,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         jLabel21.setText("Suchbegriff");
 
         jFilterRows.setText("Nur gefilterte Zeilen anzeigen");
+        jFilterRows.setOpaque(false);
         jFilterRows.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jFilterRowsfireUpdateFilterEvent(evt);
@@ -338,6 +339,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         });
 
         jFilterCaseSensitive.setText("Groß-/Kleinschreibung beachten");
+        jFilterCaseSensitive.setOpaque(false);
         jFilterCaseSensitive.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jFilterCaseSensitivefireUpdateFilterEvent(evt);

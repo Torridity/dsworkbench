@@ -69,6 +69,8 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
         String colorVal = "";
         if (getTagColor() != null) {
             colorVal = "#" + Integer.toHexString(getTagColor().getRGB() & 0x00ffffff);
+        } else {
+            colorVal = "#" + Integer.toHexString(Color.BLACK.getRGB() & 0x00ffffff);
         }
         String iconVal = "";
         if (getTagIcon() != -1) {

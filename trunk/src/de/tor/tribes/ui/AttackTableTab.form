@@ -57,6 +57,7 @@
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Angriffe in den Dorfinformationen anzeigen"/>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -66,6 +67,7 @@
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Angriffe auf der Angriffsbest&#xe4;tigungsseite anzeigen"/>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -75,6 +77,7 @@
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Angriffe im Versammlungsplatz anzeigen"/>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -84,6 +87,7 @@
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Angriffe in den &#xdc;bersichten anzeigen"/>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -529,6 +533,7 @@
               <ComponentRef name="buttonGroup2"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Ankunftzeit angleichen"/>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireModifyTimeEvent"/>
@@ -544,6 +549,7 @@
             </Property>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Verschieben"/>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireModifyTimeEvent"/>
@@ -558,6 +564,7 @@
               <ComponentRef name="buttonGroup2"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Zuf&#xe4;llig verschieben"/>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireModifyTimeEvent"/>
@@ -671,6 +678,7 @@
                 <Property name="text" type="java.lang.String" value="Nicht in Nachtbonus verschieben"/>
                 <Property name="toolTipText" type="java.lang.String" value="DS Workbench sorgt daf&#xfc;r, dass Angriffe nicht im Nachtbonus landen"/>
                 <Property name="enabled" type="boolean" value="false"/>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -684,6 +692,7 @@
               <ComponentRef name="buttonGroup2"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Abschickzeit angleichen"/>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireModifyTimeEvent"/>
@@ -772,6 +781,7 @@
                 </Property>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Keiner"/>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -784,6 +794,7 @@
                 <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                   <ComponentRef name="buttonGroup1"/>
                 </Property>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -801,6 +812,7 @@
                 <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                   <ComponentRef name="buttonGroup1"/>
                 </Property>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -818,6 +830,7 @@
                 <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                   <ComponentRef name="buttonGroup1"/>
                 </Property>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -835,6 +848,7 @@
                 <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                   <ComponentRef name="buttonGroup1"/>
                 </Property>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -852,6 +866,7 @@
                 <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                   <ComponentRef name="buttonGroup1"/>
                 </Property>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -935,6 +950,7 @@
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Typ angleichen"/>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="jAdeptTypeBoxfireEnableDisableAdeptTypeEvent"/>
@@ -946,6 +962,7 @@
         <Component class="javax.swing.JCheckBox" name="jAdeptUnitBox">
           <Properties>
             <Property name="text" type="java.lang.String" value="Einheit angleichen"/>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="jAdeptUnitBoxfireEnableDisableChangeUnitEvent"/>

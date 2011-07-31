@@ -75,7 +75,10 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
                 for (int i = 0; i < activeTab.getRankTable().getColumnCount(); i++) {
                     TableColumnExt col = activeTab.getRankTable().getColumnExt(i);
                     if (col.isVisible()) {
-                        model.addElement(col.getTitle());
+                        if (col.getTitle().equals("Name") || col.getTitle().equals("Tag") || col.getTitle().equals("Stamm")) {
+                            model.addElement(col.getTitle());
+                        }
+
                     }
                 }
                 jXColumnList.setModel(model);
@@ -296,6 +299,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         jLabel21.setText("Suchbegriff");
 
         jFilterRows.setText("Nur gefilterte Zeilen anzeigen");
+        jFilterRows.setOpaque(false);
         jFilterRows.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jFilterRowsfireUpdateFilterEvent(evt);
@@ -303,6 +307,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         });
 
         jFilterCaseSensitive.setText("Groß-/Kleinschreibung beachten");
+        jFilterCaseSensitive.setOpaque(false);
         jFilterCaseSensitive.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jFilterCaseSensitivefireUpdateFilterEvent(evt);

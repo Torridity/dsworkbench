@@ -25,8 +25,8 @@ import org.apache.commons.lang.time.DurationFormatUtils;
 public class AttackTableModel extends AbstractTableModel {
 
     private String sPlan = null;
-    private Class[] types = new Class[]{Tribe.class, Ally.class, Village.class, Tribe.class, Ally.class, Village.class, UnitHolder.class, Date.class, Date.class, Integer.class, String.class, Attack.class};
-    private String[] colNames = new String[]{"Angreifer", "Stamm (Angreifer)", "Herkunft", "Verteidiger", "Stamm (Verteidiger)", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Typ", "Verbleibend", "Sonstiges"};
+    private Class[] types = new Class[]{Tribe.class, Ally.class, Village.class, Tribe.class, Ally.class, Village.class, UnitHolder.class, Integer.class, Date.class, Date.class, String.class, Attack.class};
+    private String[] colNames = new String[]{"Angreifer", "Stamm (Angreifer)", "Herkunft", "Verteidiger", "Stamm (Verteidiger)", "Ziel", "Einheit", "Typ", "Abschickzeit", "Ankunftzeit", "Verbleibend", "Sonstiges"};
     private boolean[] editableColumns = new boolean[]{false, false, false, false, false, false, true, true, true, true, false, false};
 
     public AttackTableModel(String pPlan) {
@@ -116,14 +116,14 @@ public class AttackTableModel extends AbstractTableModel {
                     return a.getTarget();
                 case 6:
                     return a.getUnit();
-                case 7: {
-                    long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-                    return new Date(sendTime);//new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(new Date(sendTime));
-                }
-                case 8:
-                    return a.getArriveTime();//new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(a.getArriveTime());
-                case 9:
+                case 7:
                     return a.getType();
+                case 8: {
+                    long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
+                    return new Date(sendTime);
+                }
+                case 9:
+                    return a.getArriveTime();
                 case 10: {
                     long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
                     long t = sendTime - System.currentTimeMillis();
@@ -157,6 +157,14 @@ public class AttackTableModel extends AbstractTableModel {
                 }
                 case 7: {
                     if (pValue == null) {
+                        a.setType(Attack.NO_TYPE);
+                    } else {
+                        a.setType((Integer) pValue);
+                    }
+                    break;
+                }
+                case 8: {
+                    if (pValue == null) {
                         a.setArriveTime(null);
                     } else {
                         Date sendTime = (Date) pValue;
@@ -165,7 +173,7 @@ public class AttackTableModel extends AbstractTableModel {
                     }
                     break;
                 }
-                case 8: {
+                case 9: {
                     if (pValue == null) {
                         a.setArriveTime(null);
                     } else {
@@ -173,14 +181,7 @@ public class AttackTableModel extends AbstractTableModel {
                     }
                     break;
                 }
-                case 9: {
-                    if (pValue == null) {
-                        a.setType(Attack.NO_TYPE);
-                    } else {
-                        a.setType((Integer) pValue);
-                    }
-                    break;
-                }
+
                 default: {
                     //not editable
                     break;

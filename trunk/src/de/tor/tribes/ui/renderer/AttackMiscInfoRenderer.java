@@ -43,20 +43,24 @@ public class AttackMiscInfoRenderer extends DefaultTableRenderer {
             Attack a = (Attack) value;
             StringBuilder text = new StringBuilder();
             text.append("<html>");
-            if (a.isShowOnMap()) {
+            boolean shown = a.isShowOnMap();
+            boolean transfer = a.isTransferredToBrowser();
+            if (shown) {
                 text.append("<img src='").append(iconsUrls.get(2)).append("' width='16' height='16'/>");
             } else {
                 text.append("<img src='").append(iconsUrls.get(3)).append("' width='16' height='16'/>");
             }
 
             text.append("&nbsp;&nbsp;");
-            if (a.isTransferredToBrowser()) {
+            if (transfer) {
                 text.append("<img src='").append(iconsUrls.get(0)).append("' style='padding-left:10px;' width='16' height='16'/>");
             } else {
                 text.append("<img src='").append(iconsUrls.get(1)).append("' style='padding-left:10px;' width='16' height='16'/>");
             }
             text.append("</html>");
             label.setText(text.toString());
+            label.setToolTipText("<html>Der Angriff " + ((!shown) ? "<b>ist nicht</b>" : "<b>ist</b>") + " auf der Karte eingezeichnet<br/>"+
+                    "Der Angriff " + ((!transfer) ? "<b>wurde noch nicht</b>" : "<b>wurde bereits</b>") + " in den Browser &uuml;bertragen</html>");
         } catch (Exception e) {
             //cast problem
         }

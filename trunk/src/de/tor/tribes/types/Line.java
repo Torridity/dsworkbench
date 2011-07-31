@@ -65,6 +65,15 @@ public class Line extends AbstractForm {
         }
     }
 
+    public boolean allowsBBExport() {
+        return false;
+    }
+
+    @Override
+    public String[] getReplacements(boolean pExtended) {
+        return null;
+    }
+
     @Override
     public void renderForm(Graphics2D g2d) {
         Point2D.Double s = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPos(), getYPos());

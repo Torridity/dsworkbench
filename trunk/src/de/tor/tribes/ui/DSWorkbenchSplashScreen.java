@@ -19,7 +19,6 @@ import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.ProfileManager;
 import java.awt.AWTEvent;
 import java.awt.EventQueue;
-import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -182,7 +181,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 return false;
             }
             //load properties, cursors, skins, world decoration
-            GlobalOptions.initialize();
+            //  GlobalOptions.initialize();
             DataHolder.getSingleton().addDataHolderListener(this);
             DataHolder.getSingleton().addDataHolderListener(DSWorkbenchSettingsDialog.getSingleton());
             ProfileManager.getSingleton().loadProfiles();
@@ -307,7 +306,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
             logger.debug("Initializing application window");
             DSWorkbenchMainFrame.getSingleton().init();
-    
+
             logger.info("Showing application window");
             DSWorkbenchMainFrame.getSingleton().setVisible(true);
             t.stopRunning();
@@ -344,86 +343,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     public static void main(String args[]) {
         Locale.setDefault(Locale.GERMAN);
 
-        //add global ESC listener
-       /* Toolkit.getDefaultToolkit().getSystemEventQueue().push(
-                new EventQueue() {
-
-                    protected void dispatchEvent(AWTEvent event) {
-                        if (event instanceof KeyEvent) {
-                            KeyEvent keyEvent = (KeyEvent) event;
-
-                            if ((keyEvent.getID() == KeyEvent.KEY_PRESSED)
-                                    && ((keyEvent).getKeyCode() == KeyEvent.VK_ESCAPE)) {
-                                try {
-                                    JFrame source = (JFrame) keyEvent.getSource();
-                                    if (source != DSWorkbenchMainFrame.getSingleton()) {
-                                        source.setVisible(false);
-                                    }
-                                } catch (Exception e) {
-                                    try {
-                                        JDialog source = (JDialog) keyEvent.getSource();
-                                        source.setVisible(false);
-                                    } catch (Exception inner) {
-                                    }
-                                }
-                            }
-
-                        }
-                        super.dispatchEvent(event);
-                    }
-                });*/
-        try {
-          //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-              UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
-        }
-
-       /* Font f = new Font("SansSerif", Font.PLAIN, 11);
-
-        UIManager.put("Label.font", f);
-        UIManager.put("TextField.font", f);
-        UIManager.put("ComboBox.font", f);
-        UIManager.put("EditorPane.font", f);
-        UIManager.put("TextArea.font", f);
-        UIManager.put("List.font", f);
-        UIManager.put("Button.font", f);
-        UIManager.put("ToggleButton.font", f);
-        UIManager.put("CheckBox.font", f);
-        UIManager.put("CheckBoxMenuItem.font", f);
-        UIManager.put("Menu.font", f);
-        UIManager.put("MenuItem.font", f);
-        UIManager.put("OptionPane.font", f);
-        UIManager.put("Panel.font", f);
-        UIManager.put("PasswordField.font", f);
-        UIManager.put("PopupMenu.font", f);
-        UIManager.put("ProgressBar.font", f);
-        UIManager.put("RadioButton.font", f);
-        UIManager.put("ToggleButton.font", f);
-        UIManager.put("ScrollPane.font", f);
-        UIManager.put("Table.font", f);
-        UIManager.put("TableHeader.font", f);
-        UIManager.put("TextField.font", f);
-        UIManager.put("TextPane.font", f);
-        UIManager.put("ToolTip.font", f);
-        UIManager.put("Tree.font", f);
-        UIManager.put("Viewport.font", f);
-
-
-        //UIManager.put("Panel.background", Constants.DS_BACK);
-        UIManager.put("Label.background", Constants.DS_BACK);
-        UIManager.put("Panel.background", Constants.DS_BACK);
-        UIManager.put("MenuBar.background", Constants.DS_BACK);
-        UIManager.put("ScrollPane.background", Constants.DS_BACK);
-        UIManager.put("Button.background", Constants.DS_BACK_LIGHT);
-        UIManager.put("ToggleButton.background", Constants.DS_BACK_LIGHT);
-        UIManager.put("TabbedPane.background", Constants.DS_BACK);
-        UIManager.put("SplitPane.background", Constants.DS_BACK);
-        UIManager.put("Separator.background", Constants.DS_BACK);
-        UIManager.put("Menu.background", Constants.DS_BACK);
-        UIManager.put("OptionPane.background", Constants.DS_BACK);
-        UIManager.put("ToolBar.background", Constants.DS_BACK);
-*/
-        //error mode
         int mode = -1;
         if (args != null) {
             for (String arg : args) {
@@ -439,6 +358,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
         RollingFileAppender a = new org.apache.log4j.RollingFileAppender();
         a.setLayout(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n"));
+        a.setMaxFileSize("1MB");
         try {
             a.setFile("./log/dsworkbench.log", true, true, 1024);
             switch (mode) {
@@ -457,11 +377,51 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 }
             }
 
-
             Logger.getRootLogger().addAppender(a);
             Logger.getLogger("de.tor").addAppender(a);
             Logger.getLogger("dswb").addAppender(a);
         } catch (IOException ioe) {
+        }
+
+
+        //add global ESC listener
+        Toolkit.getDefaultToolkit().getSystemEventQueue().push(
+                new EventQueue() {
+
+                    protected void dispatchEvent(AWTEvent event) {
+                        if (event instanceof KeyEvent) {
+                            KeyEvent keyEvent = (KeyEvent) event;
+
+                            if ((keyEvent.getID() == KeyEvent.KEY_PRESSED)
+                                    && ((keyEvent).getKeyCode() == KeyEvent.VK_ESCAPE)) {
+                                try {
+                                    JFrame source = (JFrame) keyEvent.getSource();
+                                    if (source != DSWorkbenchMainFrame.getSingleton()) {
+                                        source.setVisible(false);
+                                    }
+                                } catch (Exception e) {
+                                    /*try {
+                                        JDialog source = (JDialog) keyEvent.getSource();
+                                        source.setVisible(false);
+                                    } catch (Exception inner) {
+                                    }*/
+                                }
+                            }
+
+                        }
+                        super.dispatchEvent(event);
+                    }
+                });
+        try {
+            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            GlobalOptions.initialize();
+            String lnf = GlobalOptions.getProperty("look.and.feel");
+            if (lnf == null) {
+                UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+            } else {
+                UIManager.setLookAndFeel(lnf);
+            }
+        } catch (Exception e) {
         }
 
         SwingUtilities.invokeLater(new Runnable() {

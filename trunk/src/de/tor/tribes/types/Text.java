@@ -43,6 +43,15 @@ public class Text extends AbstractForm {
         }
     }
 
+    public boolean allowsBBExport() {
+        return false;
+    }
+
+    @Override
+    public String[] getReplacements(boolean pExtended) {
+        return null;
+    }
+
     @Override
     public void renderForm(Graphics2D g2d) {
         Font fBefore = g2d.getFont();

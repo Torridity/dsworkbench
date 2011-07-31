@@ -821,6 +821,9 @@
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="jNewPlanPanel">
+      <Properties>
+        <Property name="opaque" type="boolean" value="false"/>
+      </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
       <SubComponents>
@@ -831,21 +834,21 @@
               <Image iconType="3" name="/res/ui/document_new_24x24.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Leeres Berichtset erstellen"/>
+            <Property name="enabled" type="boolean" value="false"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[40, 40]"/>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[40, 40]"/>
             </Property>
-            <Property name="opaque" type="boolean" value="true"/>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[40, 40]"/>
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jLabel10fireEnterEvent"/>
-            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jLabel10fireMouseExitEvent"/>
-            <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jLabel10fireCreateAttackPlanEvent"/>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireEnterEvent"/>
+            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireExitEvent"/>
+            <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireCreateAttackPlanEvent"/>
           </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">

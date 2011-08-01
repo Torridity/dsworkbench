@@ -23,6 +23,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.util.Comparator;
+import java.util.Comparator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -51,7 +52,7 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
         String fullNameVal = getFullName();
         String tribeVal = getTribe().toBBCode();
         Ally a = getTribe().getAlly();
-        if(a == null){
+        if (a == null) {
             a = NoAlly.getSingleton();
         }
         String allyVal = a.toBBCode();
@@ -74,6 +75,7 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
     }
     public static final Comparator<Village> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
     public static final Comparator<Village> ALLY_TRIBE_VILLAGE_COMPARATOR = new AllyTribeVillageComparator();
+    public static final Comparator<String> ALPHA_NUM_COMPARATOR= new IntuitiveStringComparator<String>();
     public final static int ORDER_ALPHABETICALLY = 0;
     public final static int ORDER_BY_COORDINATES = 1;
     private static int orderType = ORDER_ALPHABETICALLY;
@@ -434,7 +436,8 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
         //switch order type
 
         if (orderType == ORDER_ALPHABETICALLY) {
-            return toString().toLowerCase().compareTo(o.toString().toLowerCase());
+            return toString().compareTo(o.toString());
+         //   return ALPHA_NUM_COMPARATOR.compare(toString(), o.toString());
         } else {
             try {
                 Village v = o;
@@ -596,6 +599,104 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
             } else {
                 return s1.compareTo(s2);
             }
+        }
+    }
+
+    private static class IntuitiveStringComparator<T extends CharSequence> implements Comparator<T> {
+
+        private T str1, str2;
+        private int pos1, pos2, len1, len2;
+
+        public int compare(T s1, T s2) {
+            str1 = s1;
+            str2 = s2;
+            len1 = str1.length();
+            len2 = str2.length();
+            pos1 = pos2 = 0;
+
+            if (len1 == 0) {
+                return len2 == 0 ? 0 : -1;
+            } else if (len2 == 0) {
+                return 1;
+            }
+
+            while (pos1 < len1 && pos2 < len2) {
+                char ch1 = str1.charAt(pos1);
+                char ch2 = str2.charAt(pos2);
+                int result = 0;
+
+                if (Character.isDigit(ch1)) {
+                    result = Character.isDigit(ch2) ? compareNumbers() : -1;
+                } else if (Character.isLetter(ch1)) {
+                    result = Character.isLetter(ch2) ? compareOther(true) : 1;
+                } else {
+                    result = Character.isDigit(ch2) ? 1
+                            : Character.isLetter(ch2) ? -1
+                            : compareOther(false);
+                }
+
+                if (result != 0) {
+                    return result;
+                }
+            }
+
+            return len1 - len2;
+        }
+
+        private int compareNumbers() {
+            int delta = 0;
+            int zeroes1 = 0, zeroes2 = 0;
+            char ch1 = (char) 0, ch2 = (char) 0;
+
+            // Skip leading zeroes, but keep a count of them.  
+            while (pos1 < len1 && (ch1 = str1.charAt(pos1++)) == '0') {
+                zeroes1++;
+            }
+            while (pos2 < len2 && (ch2 = str2.charAt(pos2++)) == '0') {
+                zeroes2++;
+            }
+
+            // If one sequence contains more significant digits than the  
+            // other, it's a larger number.  In case they turn out to have  
+            // equal lengths, we compare digits at each position; the first  
+            // unequal pair determines which is the bigger number.  
+            while (true) {
+                boolean noMoreDigits1 = (ch1 == 0) || !Character.isDigit(ch1);
+                boolean noMoreDigits2 = (ch2 == 0) || !Character.isDigit(ch2);
+
+                if (noMoreDigits1 && noMoreDigits2) {
+                    return delta != 0 ? delta : zeroes1 - zeroes2;
+                } else if (noMoreDigits1) {
+                    return -1;
+                } else if (noMoreDigits2) {
+                    return 1;
+                } else if (delta == 0 && ch1 != ch2) {
+                    delta = ch1 - ch2;
+                }
+
+                ch1 = pos1 < len1 ? str1.charAt(pos1++) : (char) 0;
+                ch2 = pos2 < len2 ? str2.charAt(pos2++) : (char) 0;
+            }
+        }
+
+        private int compareOther(boolean isLetters) {
+            char ch1 = str1.charAt(pos1++);
+            char ch2 = str2.charAt(pos2++);
+
+            if (ch1 == ch2) {
+                return 0;
+            }
+
+            if (isLetters) {
+                ch1 = Character.toUpperCase(ch1);
+                ch2 = Character.toUpperCase(ch2);
+                if (ch1 != ch2) {
+                    ch1 = Character.toLowerCase(ch1);
+                    ch2 = Character.toLowerCase(ch2);
+                }
+            }
+
+            return ch1 - ch2;
         }
     }
 

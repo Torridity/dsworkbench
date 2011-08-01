@@ -102,6 +102,7 @@ import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 /**
  * @TODO Add auto-hide for notification label
+ * @TODO Check account create dialog -> looks ugly!
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends JRibbonFrame implements

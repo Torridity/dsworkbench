@@ -55,11 +55,8 @@ public class DefaultTableHeaderRenderer extends DefaultTableCellRenderer impleme
                 if (bgColor == null) {
                     bgColor = header.getBackground();
                 }
-             //   setForeground(fgColor);
-               // setBackground(bgColor);
 
                 setFont(header.getFont());
-
                 isPaintingForPrint = header.isPaintingForPrint();
             }
 

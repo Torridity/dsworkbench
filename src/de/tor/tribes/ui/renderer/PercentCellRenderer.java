@@ -32,21 +32,20 @@ public class PercentCellRenderer extends DefaultTableRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        
 
-        ColoredProgressBar p = new ColoredProgressBar(0, 20);
 
-        Float val = (Float) value;
+        ColoredProgressBar p = new ColoredProgressBar(0, 100);
 
-        if (val <= 0.1f) {
+        Float val = (Float) value * 100;
+        if (val <= 10f) {
             p.setForeground(Color.RED);
-        } else if (val <= 0.5f) {
+        } else if (val <= 50f) {
             p.setForeground(Color.YELLOW);
         } else {
             p.setForeground(Color.GREEN);
         }
 
-      //  p.setString(Integer.toString(val));
+        //  p.setString(Integer.toString(val));
         p.setStringPainted(true);
         p.setValue(Math.round(val));
 

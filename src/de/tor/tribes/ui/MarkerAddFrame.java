@@ -24,7 +24,6 @@ public class MarkerAddFrame extends javax.swing.JFrame {
     /** Creates new form MarkerAddFrame */
     public MarkerAddFrame() {
         initComponents();
-        getContentPane().setBackground(Constants.DS_BACK);
         mTribeColorChooser.setColor(Color.WHITE);
         mAllyColorChooser.setColor(Color.WHITE);
         jTribeColorPanel.add(mTribeColorChooser);
@@ -53,9 +52,8 @@ public class MarkerAddFrame extends javax.swing.JFrame {
         jBndButton = new javax.swing.JButton();
         jEnemyButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Markierung hinzufügen");
         setResizable(false);
-        setUndecorated(true);
 
         jOKButton.setBackground(new java.awt.Color(239, 235, 223));
         jOKButton.setText("OK");

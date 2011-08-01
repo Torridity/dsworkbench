@@ -87,8 +87,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         //general layout
         jCreateAccountDialog.pack();
         jChangePasswordDialog.pack();
-        getContentPane().setBackground(Constants.DS_BACK);
-        jCreateAccountDialog.getContentPane().setBackground(Constants.DS_BACK);
         jTroopDensitySelectionDialog.pack();
         // </editor-fold>
 
@@ -497,7 +495,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
                 DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
                 r.setText("<html><b>" + r.getText() + "</b></html>");
-                c.setBackground(Constants.DS_BACK);
+               // c.setBackground(Constants.DS_BACK);
                 return c;
             }
         };
@@ -739,32 +737,73 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jCreateAccountDialog.setBackground(new java.awt.Color(239, 235, 223));
         jCreateAccountDialog.setModal(true);
         jCreateAccountDialog.setModalityType(java.awt.Dialog.ModalityType.TOOLKIT_MODAL);
+        jCreateAccountDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jRegisterNameLabel.setText("Name");
-        jRegisterNameLabel.setMaximumSize(new java.awt.Dimension(150, 14));
-        jRegisterNameLabel.setMinimumSize(new java.awt.Dimension(150, 14));
-        jRegisterNameLabel.setPreferredSize(new java.awt.Dimension(150, 14));
+        jRegisterNameLabel.setMaximumSize(new java.awt.Dimension(130, 14));
+        jRegisterNameLabel.setMinimumSize(new java.awt.Dimension(130, 14));
+        jRegisterNameLabel.setPreferredSize(new java.awt.Dimension(130, 14));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jCreateAccountDialog.getContentPane().add(jRegisterNameLabel, gridBagConstraints);
 
-        jRegistrationAccountName.setMaximumSize(new java.awt.Dimension(200, 20));
-        jRegistrationAccountName.setMinimumSize(new java.awt.Dimension(200, 20));
-        jRegistrationAccountName.setPreferredSize(new java.awt.Dimension(200, 20));
+        jRegistrationAccountName.setMaximumSize(new java.awt.Dimension(250, 25));
+        jRegistrationAccountName.setMinimumSize(new java.awt.Dimension(250, 25));
+        jRegistrationAccountName.setPreferredSize(new java.awt.Dimension(200, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jCreateAccountDialog.getContentPane().add(jRegistrationAccountName, gridBagConstraints);
 
         jRegisterPasswordLabel.setText("Passwort");
-        jRegisterPasswordLabel.setMaximumSize(new java.awt.Dimension(150, 14));
-        jRegisterPasswordLabel.setMinimumSize(new java.awt.Dimension(150, 14));
-        jRegisterPasswordLabel.setPreferredSize(new java.awt.Dimension(150, 14));
+        jRegisterPasswordLabel.setMaximumSize(new java.awt.Dimension(130, 14));
+        jRegisterPasswordLabel.setMinimumSize(new java.awt.Dimension(130, 14));
+        jRegisterPasswordLabel.setPreferredSize(new java.awt.Dimension(130, 14));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jCreateAccountDialog.getContentPane().add(jRegisterPasswordLabel, gridBagConstraints);
 
-        jRegistrationPassword.setMaximumSize(new java.awt.Dimension(200, 20));
-        jRegistrationPassword.setMinimumSize(new java.awt.Dimension(200, 20));
-        jRegistrationPassword.setPreferredSize(new java.awt.Dimension(200, 20));
+        jRegistrationPassword.setMaximumSize(new java.awt.Dimension(250, 25));
+        jRegistrationPassword.setMinimumSize(new java.awt.Dimension(250, 25));
+        jRegistrationPassword.setPreferredSize(new java.awt.Dimension(200, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jCreateAccountDialog.getContentPane().add(jRegistrationPassword, gridBagConstraints);
 
         jRegisterButton.setBackground(new java.awt.Color(239, 235, 223));
         jRegisterButton.setText("Registrieren");
+        jRegisterButton.setMaximumSize(new java.awt.Dimension(100, 23));
+        jRegisterButton.setMinimumSize(new java.awt.Dimension(100, 23));
+        jRegisterButton.setPreferredSize(new java.awt.Dimension(100, 23));
         jRegisterButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireRegisterEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jCreateAccountDialog.getContentPane().add(jRegisterButton, gridBagConstraints);
 
         jCancelRegistrationButton.setBackground(new java.awt.Color(239, 235, 223));
         jCancelRegistrationButton.setText("Abbrechen");
@@ -776,73 +815,114 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 fireCancelRegistrationEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jCreateAccountDialog.getContentPane().add(jCancelRegistrationButton, gridBagConstraints);
 
         jRepeatPasswordLabel.setText("Passwort wiederholen");
-        jRepeatPasswordLabel.setMaximumSize(new java.awt.Dimension(150, 14));
-        jRepeatPasswordLabel.setMinimumSize(new java.awt.Dimension(150, 14));
-        jRepeatPasswordLabel.setPreferredSize(new java.awt.Dimension(150, 14));
+        jRepeatPasswordLabel.setMaximumSize(new java.awt.Dimension(130, 14));
+        jRepeatPasswordLabel.setMinimumSize(new java.awt.Dimension(130, 14));
+        jRepeatPasswordLabel.setPreferredSize(new java.awt.Dimension(130, 14));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jCreateAccountDialog.getContentPane().add(jRepeatPasswordLabel, gridBagConstraints);
 
-        javax.swing.GroupLayout jCreateAccountDialogLayout = new javax.swing.GroupLayout(jCreateAccountDialog.getContentPane());
-        jCreateAccountDialog.getContentPane().setLayout(jCreateAccountDialogLayout);
-        jCreateAccountDialogLayout.setHorizontalGroup(
-            jCreateAccountDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jCreateAccountDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jCreateAccountDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jRegisterPasswordLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRegisterNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRepeatPasswordLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jCreateAccountDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jRegistrationPassword2, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                    .addGroup(jCreateAccountDialogLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jCancelRegistrationButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRegisterButton, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE))
-                    .addComponent(jRegistrationAccountName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jRegistrationPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jCreateAccountDialogLayout.setVerticalGroup(
-            jCreateAccountDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jCreateAccountDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jCreateAccountDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRegisterNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRegistrationAccountName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jCreateAccountDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRegisterPasswordLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRegistrationPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jCreateAccountDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRepeatPasswordLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRegistrationPassword2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jCreateAccountDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jCancelRegistrationButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRegisterButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        jRegistrationPassword2.setMaximumSize(new java.awt.Dimension(250, 25));
+        jRegistrationPassword2.setMinimumSize(new java.awt.Dimension(250, 25));
+        jRegistrationPassword2.setPreferredSize(new java.awt.Dimension(200, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jCreateAccountDialog.getContentPane().add(jRegistrationPassword2, gridBagConstraints);
 
         jChangePasswordDialog.setTitle("Passwort ändern");
+        jChangePasswordDialog.setBackground(new java.awt.Color(239, 235, 223));
         jChangePasswordDialog.setModal(true);
+        jChangePasswordDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jLabel35.setText("Altes Passwort");
-        jLabel35.setMaximumSize(new java.awt.Dimension(150, 14));
-        jLabel35.setMinimumSize(new java.awt.Dimension(150, 14));
-        jLabel35.setPreferredSize(new java.awt.Dimension(150, 14));
+        jLabel35.setMaximumSize(new java.awt.Dimension(130, 14));
+        jLabel35.setMinimumSize(new java.awt.Dimension(130, 14));
+        jLabel35.setPreferredSize(new java.awt.Dimension(130, 14));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jChangePasswordDialog.getContentPane().add(jLabel35, gridBagConstraints);
 
         jLabel36.setText("Neues Passwort");
-        jLabel36.setMaximumSize(new java.awt.Dimension(150, 14));
-        jLabel36.setMinimumSize(new java.awt.Dimension(150, 14));
-        jLabel36.setPreferredSize(new java.awt.Dimension(150, 14));
+        jLabel36.setMaximumSize(new java.awt.Dimension(130, 14));
+        jLabel36.setMinimumSize(new java.awt.Dimension(130, 14));
+        jLabel36.setPreferredSize(new java.awt.Dimension(130, 14));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jChangePasswordDialog.getContentPane().add(jLabel36, gridBagConstraints);
 
         jLabel37.setText("Passwort wiederholen");
-        jLabel37.setMaximumSize(new java.awt.Dimension(150, 14));
-        jLabel37.setMinimumSize(new java.awt.Dimension(150, 14));
-        jLabel37.setPreferredSize(new java.awt.Dimension(150, 14));
+        jLabel37.setMaximumSize(new java.awt.Dimension(130, 14));
+        jLabel37.setMinimumSize(new java.awt.Dimension(130, 14));
+        jLabel37.setPreferredSize(new java.awt.Dimension(130, 14));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jChangePasswordDialog.getContentPane().add(jLabel37, gridBagConstraints);
+
+        jNewPassword2.setMaximumSize(new java.awt.Dimension(230, 25));
+        jNewPassword2.setMinimumSize(new java.awt.Dimension(230, 25));
+        jNewPassword2.setPreferredSize(new java.awt.Dimension(230, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jChangePasswordDialog.getContentPane().add(jNewPassword2, gridBagConstraints);
+
+        jNewPassword.setMaximumSize(new java.awt.Dimension(230, 25));
+        jNewPassword.setMinimumSize(new java.awt.Dimension(230, 25));
+        jNewPassword.setPreferredSize(new java.awt.Dimension(230, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jChangePasswordDialog.getContentPane().add(jNewPassword, gridBagConstraints);
+
+        jOldPassword.setMaximumSize(new java.awt.Dimension(230, 25));
+        jOldPassword.setMinimumSize(new java.awt.Dimension(230, 25));
+        jOldPassword.setPreferredSize(new java.awt.Dimension(230, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jChangePasswordDialog.getContentPane().add(jOldPassword, gridBagConstraints);
 
         jButton9.setText("Passwort ändern");
         jButton9.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -850,6 +930,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 fireDoChangePasswordEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jChangePasswordDialog.getContentPane().add(jButton9, gridBagConstraints);
 
         jButton10.setText("Abbrechen");
         jButton10.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -857,65 +944,42 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 fireCancelChangePasswordEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jChangePasswordDialog.getContentPane().add(jButton10, gridBagConstraints);
 
         jLabel38.setText("Accountname");
-        jLabel38.setMaximumSize(new java.awt.Dimension(150, 14));
-        jLabel38.setMinimumSize(new java.awt.Dimension(150, 14));
-        jLabel38.setPreferredSize(new java.awt.Dimension(150, 14));
+        jLabel38.setMaximumSize(new java.awt.Dimension(130, 14));
+        jLabel38.setMinimumSize(new java.awt.Dimension(130, 14));
+        jLabel38.setPreferredSize(new java.awt.Dimension(130, 14));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jChangePasswordDialog.getContentPane().add(jLabel38, gridBagConstraints);
 
         jPasswordChangeAccount.setEditable(false);
-
-        javax.swing.GroupLayout jChangePasswordDialogLayout = new javax.swing.GroupLayout(jChangePasswordDialog.getContentPane());
-        jChangePasswordDialog.getContentPane().setLayout(jChangePasswordDialogLayout);
-        jChangePasswordDialogLayout.setHorizontalGroup(
-            jChangePasswordDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jChangePasswordDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jChangePasswordDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel37, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel36, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel35, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel38, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jChangePasswordDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jChangePasswordDialogLayout.createSequentialGroup()
-                        .addComponent(jButton10)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton9))
-                    .addComponent(jOldPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
-                    .addComponent(jNewPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
-                    .addComponent(jNewPassword2, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
-                    .addComponent(jPasswordChangeAccount, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jChangePasswordDialogLayout.setVerticalGroup(
-            jChangePasswordDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jChangePasswordDialogLayout.createSequentialGroup()
-                .addContainerGap(16, Short.MAX_VALUE)
-                .addGroup(jChangePasswordDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel38, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPasswordChangeAccount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jChangePasswordDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel35, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jOldPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jChangePasswordDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel36, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jNewPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jChangePasswordDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel37, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jNewPassword2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jChangePasswordDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton10)
-                    .addComponent(jButton9))
-                .addContainerGap())
-        );
+        jPasswordChangeAccount.setMaximumSize(new java.awt.Dimension(230, 25));
+        jPasswordChangeAccount.setMinimumSize(new java.awt.Dimension(230, 25));
+        jPasswordChangeAccount.setPreferredSize(new java.awt.Dimension(230, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jChangePasswordDialog.getContentPane().add(jPasswordChangeAccount, gridBagConstraints);
 
         jTroopDensitySelectionDialog.setTitle("Deff-Anzahl angeben");
         jTroopDensitySelectionDialog.setModal(true);
+        jTroopDensitySelectionDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jDeffStrengthOKButton.setText("OK");
         jDeffStrengthOKButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -923,6 +987,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 fireAcceptDeffStrengthEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jTroopDensitySelectionDialog.getContentPane().add(jDeffStrengthOKButton, gridBagConstraints);
 
         jButton12.setText("Abbrechen");
         jButton12.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -930,53 +1000,57 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 fireAcceptDeffStrengthEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jTroopDensitySelectionDialog.getContentPane().add(jButton12, gridBagConstraints);
 
         jSpearAmount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/spear.png"))); // NOI18N
-        jSpearAmount.setLabelText("8000");
+        jSpearAmount.setLabelText("");
+        jSpearAmount.setText("8000");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jTroopDensitySelectionDialog.getContentPane().add(jSpearAmount, gridBagConstraints);
 
         jSwordAmount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/sword.png"))); // NOI18N
-        jSwordAmount.setLabelText("7000");
+        jSwordAmount.setLabelText("");
+        jSwordAmount.setText("7000");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jTroopDensitySelectionDialog.getContentPane().add(jSwordAmount, gridBagConstraints);
 
         jArcherAmount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/archer.png"))); // NOI18N
-        jArcherAmount.setLabelText("0");
+        jArcherAmount.setLabelText("");
+        jArcherAmount.setPreferredSize(new java.awt.Dimension(215, 24));
+        jArcherAmount.setText("0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jTroopDensitySelectionDialog.getContentPane().add(jArcherAmount, gridBagConstraints);
 
         jHeavyAmount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/heavy.png"))); // NOI18N
-        jHeavyAmount.setLabelText("1000");
-
-        javax.swing.GroupLayout jTroopDensitySelectionDialogLayout = new javax.swing.GroupLayout(jTroopDensitySelectionDialog.getContentPane());
-        jTroopDensitySelectionDialog.getContentPane().setLayout(jTroopDensitySelectionDialogLayout);
-        jTroopDensitySelectionDialogLayout.setHorizontalGroup(
-            jTroopDensitySelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jTroopDensitySelectionDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jTroopDensitySelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSpearAmount, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jSwordAmount, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jHeavyAmount, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jArcherAmount, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jTroopDensitySelectionDialogLayout.createSequentialGroup()
-                        .addComponent(jButton12)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jDeffStrengthOKButton)))
-                .addContainerGap())
-        );
-        jTroopDensitySelectionDialogLayout.setVerticalGroup(
-            jTroopDensitySelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jTroopDensitySelectionDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jSpearAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jSwordAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jArcherAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jHeavyAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jTroopDensitySelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jDeffStrengthOKButton)
-                    .addComponent(jButton12))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        jHeavyAmount.setLabelText("");
+        jHeavyAmount.setText("1000");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jTroopDensitySelectionDialog.getContentPane().add(jHeavyAmount, gridBagConstraints);
 
         setTitle("Einstellungen");
         setModal(true);

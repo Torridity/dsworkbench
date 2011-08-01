@@ -423,6 +423,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         if (v != null) {
                             if (v.getTribe() == Barbarians.getSingleton()) {
                                 //empty village
+                                DSWorkbenchMainFrame.getSingleton().showInfo("Barbarendörfern können keine Gruppen zugewiesen werden");
                                 return;
                             }
                             List<Village> marked = getMarkedVillages();

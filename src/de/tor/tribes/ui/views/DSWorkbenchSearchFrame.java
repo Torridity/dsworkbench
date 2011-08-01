@@ -35,6 +35,7 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
     private String sLastPlayerValue = null;
     private SearchThread mSearchThread = null;
     private static DSWorkbenchSearchFrame SINGLETON = null;
+    private MarkerAddFrame mMarkerAddFrame = null;
 
     public static synchronized DSWorkbenchSearchFrame getSingleton() {
         if (SINGLETON == null) {
@@ -46,7 +47,6 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
     /** Creates new form SearchFrame */
     DSWorkbenchSearchFrame() {
         initComponents();
-        getContentPane().setBackground(Constants.DS_BACK);
         // frameControlPanel1.setupPanel(this, true, true);
         jCenterInGameButton.setIcon(new ImageIcon("./graphics/icons/center.png"));
         jSendResButton.setIcon(new ImageIcon("./graphics/icons/booty.png"));
@@ -66,6 +66,7 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
         }
         mSearchThread = new SearchThread("", this);
         mSearchThread.start();
+        mMarkerAddFrame = new MarkerAddFrame();
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         if (!Constants.DEBUG) {
             GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.search_tool", GlobalOptions.getHelpBroker().getHelpSet());
@@ -364,14 +365,13 @@ private void fireAllySelectionChangedEvent(java.awt.event.ItemEvent evt) {//GEN-
 private void fireAddMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddMarkerEvent
     try {
         if (evt.getSource() == jMarkAllyButton) {
-            MarkerAddFrame f = new MarkerAddFrame();
             Object selection = jAllyList.getSelectedItem();
             if (selection instanceof String) {
                 //no ally selected
             } else {
-                f.setVillage(((Ally) selection).getTribes().get(0).getVillageList()[0]);
-                f.setAllyOnly();
-                f.setVisible(true);
+                mMarkerAddFrame.setVillage(((Ally) selection).getTribes().get(0).getVillageList()[0]);
+                mMarkerAddFrame.setAllyOnly();
+                mMarkerAddFrame.setVisible(true);
             }
         } else {
             MarkerAddFrame f = new MarkerAddFrame();
@@ -379,9 +379,9 @@ private void fireAddMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
             if (selection instanceof String) {
                 //no tribe selected
             } else {
-                f.setVillage(((Tribe) selection).getVillageList()[0]);
-                f.setTribeOnly();
-                f.setVisible(true);
+                mMarkerAddFrame.setVillage(((Tribe) selection).getVillageList()[0]);
+                mMarkerAddFrame.setTribeOnly();
+                mMarkerAddFrame.setVisible(true);
             }
         }
     } catch (Exception e) {

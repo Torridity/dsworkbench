@@ -99,9 +99,9 @@ public class GlobalOptions {
         logger.debug("Loading world.dat");
         WorldDecorationHolder.initialize();
         setSelectedServer(getProperty("default.server"));
-        UIManager.put("OptionPane.background", Constants.DS_BACK);
-        UIManager.put("Panel.background", Constants.DS_BACK);
-        UIManager.put("Button.background", Constants.DS_BACK_LIGHT);
+      //  UIManager.put("OptionPane.background", Constants.DS_BACK);
+      //  UIManager.put("Panel.background", Constants.DS_BACK);
+       // UIManager.put("Button.background", Constants.DS_BACK_LIGHT);
     }
 
     public static void setInternatDataDamaged(boolean pValue) {

@@ -63,7 +63,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         jProfileDialog.getContentPane().setBackground(Constants.DS_BACK_LIGHT);
         jProfileDialog.pack();
         jProfileDialog.setLocationRelativeTo(this);
-        jProfileDialog.getContentPane().setBackground(Constants.DS_BACK);
         t = new SplashRepaintThread();
         t.start();
     }

@@ -63,8 +63,6 @@ public class NotifierFrame extends javax.swing.JDialog {
     NotifierFrame(String pMessage, int pType) {
         initComponents();
         notifyType = pType;
-        getContentPane().setBackground(Constants.DS_BACK);
-        setBackground(Constants.DS_BACK);
         jTextPane1.setText(pMessage);
         pack();
 

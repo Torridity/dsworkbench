@@ -16,6 +16,7 @@ import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.test.DummyUnit;
 import de.tor.tribes.types.test.DummyVillage;
 import de.tor.tribes.ui.components.CollapseExpandTrigger;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.attack.AttackManager;
 import java.awt.BorderLayout;
@@ -93,6 +94,7 @@ public class GenericTestPanel extends javax.swing.JPanel {
         JScrollPane s = new JScrollPane(taskContainer);
         s.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         menuPanel.add(s, BorderLayout.CENTER);
+        taskContainer.setBackground(getBackground());
     }
 
     /** This method is called from within the constructor to
@@ -116,6 +118,7 @@ public class GenericTestPanel extends javax.swing.JPanel {
         menuPanel.setDirection(org.jdesktop.swingx.JXCollapsiblePane.Direction.RIGHT);
         menuPanel.setInheritAlpha(false);
 
+        jXTaskPaneContainer1.setBackground(new java.awt.Color(240, 240, 240));
         jXTaskPaneContainer1.setMinimumSize(new java.awt.Dimension(170, 10));
         jXTaskPaneContainer1.setPreferredSize(new java.awt.Dimension(170, 10));
         menuPanel.add(jXTaskPaneContainer1, java.awt.BorderLayout.CENTER);

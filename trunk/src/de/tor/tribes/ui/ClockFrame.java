@@ -33,7 +33,6 @@ public class ClockFrame extends javax.swing.JFrame {
     /** Creates new form ClockFrame */
     ClockFrame() {
         initComponents();
-        getContentPane().setBackground(Constants.DS_BACK);
         jSpinner1.setValue(new Date(System.currentTimeMillis()));
         ((DateEditor) jSpinner1.getEditor()).getFormat().applyPattern("dd.MM.yy HH:mm:ss.SSS");
         tThread = new TimerThread(this);

@@ -13,6 +13,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Tag;
+import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.GenericTestPanel;
@@ -21,10 +22,12 @@ import de.tor.tribes.ui.TroopTableTab;
 import de.tor.tribes.ui.models.TroopsTableModel;
 import de.tor.tribes.util.Constants;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
 import org.apache.log4j.Logger;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.MouseGestureHandler;
+import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.SupportVillageTroopsHolder;
@@ -38,13 +41,18 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.TexturePaint;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -147,6 +155,19 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
                 updateFilter();
             }
         });
+
+        jTroopAddTribe.addItemListener(new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    updateTroopAddVillageList();
+                }
+            }
+        });
+        jTroopsAddDialog.pack();
+
+
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         if (!Constants.DEBUG) {
             GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.troops_view", GlobalOptions.getHelpBroker().getHelpSet());
@@ -192,6 +213,29 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
     }
 
     private void buildMenu() {
+
+        JXTaskPane editTaskPane = new JXTaskPane();
+        editTaskPane.setTitle("Bearbeiten");
+
+        JXButton createTroopInfo = new JXButton(new ImageIcon(DSWorkbenchTroopsFrame.class.getResource("/res/ui/troop_info_new.png")));
+        createTroopInfo.setToolTipText("<html>Truppeninformationen für einzelne D&ouml;rfer manuell einf&uuml;gen.<br/>"
+                + "Die eingef&uuml;gten Informationen beziehen sich nur auf die aktuell gew&auml;hlte Ansicht.<br/>"
+                + "Unterst&uuml;tzungen k&ouml;nnen auf diese Weise <b>nicht</b> eingef&uuml;gt werden.</html>");
+        createTroopInfo.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                TroopTableTab tab = (TroopTableTab) getActiveTab();
+                if (tab.getTroopSet().equals(TroopsManager.SUPPORT_GROUP)) {
+                    tab.showError("Diese Funktion ist für Unterstützungen nicht verfügbar");
+                    return;
+                }
+                addTroopsManuallyEvent();
+            }
+        });
+        editTaskPane.getContentPane().add(createTroopInfo);
+
+
         JXTaskPane transferTaskPane = new JXTaskPane();
         transferTaskPane.setTitle("Übertragen");
         JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchTroopsFrame.class.getResource("/res/ui/center_ingame.png")));
@@ -282,7 +326,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
 
         miscPane.getContentPane().add(supportDetailsButton);
 
-        centerPanel.setupTaskPane(transferTaskPane, miscPane);
+        centerPanel.setupTaskPane(editTaskPane, transferTaskPane, miscPane);
     }
 
     /**Get the currently selected tab*/
@@ -367,6 +411,13 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         jXGroupsList = new org.jdesktop.swingx.JXList();
         jLabel22 = new javax.swing.JLabel();
         jRelationType1 = new javax.swing.JCheckBox();
+        jTroopsAddDialog = new javax.swing.JDialog();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jTroopAddTribe = new javax.swing.JComboBox();
+        jTroopAddVillage = new javax.swing.JComboBox();
+        jApplyTroopAddButton = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         jTroopsInformationAlwaysOnTop = new javax.swing.JCheckBox();
         jTroopsPanel = new javax.swing.JPanel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
@@ -376,7 +427,6 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         jXTroopsPanel.setLayout(new java.awt.BorderLayout());
 
         jTroopsTabPane.setScrollSelectedTabOnWheel(true);
-        jTroopsTabPane.setShowCloseButton(false);
         jTroopsTabPane.setShowGripper(true);
         jTroopsTabPane.setShowIconsOnTab(false);
         jTroopsTabPane.setTabEditingAllowed(true);
@@ -460,6 +510,86 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
 
         jxSearchPane.add(jXPanel2, new java.awt.GridBagConstraints());
 
+        jTroopsAddDialog.setTitle("Truppen hinzufügen");
+        jTroopsAddDialog.setModal(true);
+        jTroopsAddDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
+
+        jLabel1.setText("Spieler");
+        jLabel1.setMaximumSize(new java.awt.Dimension(60, 14));
+        jLabel1.setMinimumSize(new java.awt.Dimension(60, 14));
+        jLabel1.setPreferredSize(new java.awt.Dimension(60, 14));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jTroopsAddDialog.getContentPane().add(jLabel1, gridBagConstraints);
+
+        jLabel2.setText("Dorf");
+        jLabel2.setMaximumSize(new java.awt.Dimension(60, 14));
+        jLabel2.setMinimumSize(new java.awt.Dimension(60, 14));
+        jLabel2.setPreferredSize(new java.awt.Dimension(60, 14));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jTroopsAddDialog.getContentPane().add(jLabel2, gridBagConstraints);
+
+        jTroopAddTribe.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jTroopAddTribe.setMinimumSize(new java.awt.Dimension(200, 25));
+        jTroopAddTribe.setPreferredSize(new java.awt.Dimension(200, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jTroopsAddDialog.getContentPane().add(jTroopAddTribe, gridBagConstraints);
+
+        jTroopAddVillage.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jTroopAddVillage.setMinimumSize(new java.awt.Dimension(200, 20));
+        jTroopAddVillage.setPreferredSize(new java.awt.Dimension(200, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jTroopsAddDialog.getContentPane().add(jTroopAddVillage, gridBagConstraints);
+
+        jApplyTroopAddButton.setText("Hinzufügen");
+        jApplyTroopAddButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireApplyTroopAddEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jTroopsAddDialog.getContentPane().add(jApplyTroopAddButton, gridBagConstraints);
+
+        jButton2.setText("Abbrechen");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireApplyTroopAddEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jTroopsAddDialog.getContentPane().add(jButton2, gridBagConstraints);
+
         setTitle("Truppen");
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -517,6 +647,50 @@ private void jFilterRowsfireUpdateFilterEvent(javax.swing.event.ChangeEvent evt)
 private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireRelationChangedEvent
     updateFilter();
 }//GEN-LAST:event_fireRelationChangedEvent
+
+private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireApplyTroopAddEvent
+    if (evt.getSource().equals(jApplyTroopAddButton)) {
+        TroopTableTab tab = (TroopTableTab) getActiveTab();
+        if (tab != null) {
+            Village v = null;
+            try {
+                v = (Village) jTroopAddVillage.getSelectedItem();
+            } catch (Exception e) {
+                tab.showError("Kein gültiges Dorf gewählt");
+                return;
+            }
+            TroopsManager.getSingleton().addManagedElement(tab.getTroopSet(), new VillageTroopsHolder(v, new Date()));
+        }
+    }
+    jTroopsAddDialog.setVisible(false);
+}//GEN-LAST:event_fireApplyTroopAddEvent
+
+    private void addTroopsManuallyEvent() {
+        Hashtable<Integer, Tribe> tribes = DataHolder.getSingleton().getTribes();
+        Enumeration<Integer> keys = tribes.keys();
+        List<Tribe> tribesList = new LinkedList<Tribe>();
+        while (keys.hasMoreElements()) {
+            tribesList.add(tribes.get(keys.nextElement()));
+        }
+        Collections.sort(tribesList, Tribe.CASE_INSENSITIVE_ORDER);
+
+        DefaultComboBoxModel model = new DefaultComboBoxModel(tribesList.toArray(new Tribe[tribesList.size()]));
+        jTroopAddTribe.setModel(model);
+        model.setSelectedItem(GlobalOptions.getSelectedProfile().getTribe());
+        jTroopsAddDialog.setLocationRelativeTo(DSWorkbenchTroopsFrame.this);
+        jTroopsAddDialog.setVisible(true);
+    }
+
+    private void updateTroopAddVillageList() {
+        Tribe t = (Tribe) jTroopAddTribe.getSelectedItem();
+        if (t != null) {
+            Village[] villageList = t.getVillageList();
+            Arrays.sort(villageList);
+            jTroopAddVillage.setModel(new DefaultComboBoxModel(villageList));
+        } else {
+            jTroopAddVillage.setModel(new DefaultComboBoxModel(new String[]{"Bitte Spieler wählen"}));
+        }
+    }
 
     /**Update the troop set filter*/
     private void updateFilter() {
@@ -594,7 +768,8 @@ private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST
         }
         GlobalOptions.setSelectedServer("de43");
         DataHolder.getSingleton().loadData(false);
-
+        ProfileManager.getSingleton().loadProfiles();
+        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
         TagManager.getSingleton().addTag("Test1");
         TagManager.getSingleton().addTag("Test2");
         List<Village> used = new LinkedList<Village>();
@@ -652,11 +827,18 @@ private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
+    private javax.swing.JButton jApplyTroopAddButton;
     private javax.swing.JButton jButton12;
+    private javax.swing.JButton jButton2;
     private javax.swing.JCheckBox jFilterRows;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JCheckBox jRelationType1;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JComboBox jTroopAddTribe;
+    private javax.swing.JComboBox jTroopAddVillage;
+    private javax.swing.JDialog jTroopsAddDialog;
     private javax.swing.JCheckBox jTroopsInformationAlwaysOnTop;
     private javax.swing.JPanel jTroopsPanel;
     private com.jidesoft.swing.JideTabbedPane jTroopsTabPane;

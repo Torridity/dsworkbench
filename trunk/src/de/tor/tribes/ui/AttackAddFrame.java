@@ -26,6 +26,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 import javax.swing.JSpinner.DateEditor;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
@@ -49,24 +50,25 @@ public class AttackAddFrame extends javax.swing.JFrame {
         initComponents();
         nf.setMaximumFractionDigits(2);
         nf.setMinimumFractionDigits(2);
-        getContentPane().setBackground(Constants.DS_BACK);
 
-        ((DateEditor) jTimeSpinner.getEditor()).getTextField().setHorizontalAlignment(JTextField.CENTER);
+        /* ((DateEditor) jTimeSpinner.getEditor()).getTextField().setHorizontalAlignment(JTextField.CENTER);
         ((DateEditor) jTimeSpinner.getEditor()).getFormat().applyPattern("dd.MM.yy HH:mm:ss");
         jTimeSpinner.addChangeListener(new ChangeListener() {
+        
+        @Override
+        public void stateChanged(ChangeEvent e) {
+        if (skipValidation) {
+        return;
+        }
+        if (!validateTime()) {
+        ((DateEditor) jTimeSpinner.getEditor()).getTextField().setForeground(Color.RED);
+        } else {
+        ((DateEditor) jTimeSpinner.getEditor()).getTextField().setForeground(Color.BLACK);
+        }
+        }
+        });*/
 
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                if (skipValidation) {
-                    return;
-                }
-                if (!validateTime()) {
-                    ((DateEditor) jTimeSpinner.getEditor()).getTextField().setForeground(Color.RED);
-                } else {
-                    ((DateEditor) jTimeSpinner.getEditor()).getTextField().setForeground(Color.BLACK);
-                }
-            }
-        });
+
     }
 
     private boolean validateDistance() {
@@ -103,7 +105,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
                         return false;
                     }
                 }
-                long sendMillis = ((Date) jTimeSpinner.getValue()).getTime();
+                long sendMillis = dateTimeField1.getSelectedDate().getTime();
                 //check time depending selected unit
                 double speed = ((UnitHolder) jUnitBox.getSelectedItem()).getSpeed();
                 double minTime = DSCalculator.calculateMoveTimeInMinutes(source, mTarget, speed);
@@ -120,7 +122,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
                     return false;
                 }
             }
-            long sendMillis = ((Date) jTimeSpinner.getValue()).getTime();
+            long sendMillis = dateTimeField1.getSelectedDate().getTime();
             //check time depending selected unit
             double speed = ((UnitHolder) jUnitBox.getSelectedItem()).getSpeed();
             double minTime = DSCalculator.calculateMoveTimeInMinutes(mSource, mTarget, speed);
@@ -138,7 +140,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
     }
 
     public Date getTime() {
-        return (Date) jTimeSpinner.getValue();
+        return dateTimeField1.getSelectedDate();
     }
 
     public UnitHolder getSelectedUnit() {
@@ -177,7 +179,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
         jUnitBox.setSelectedIndex(initialUnit);
 
         if (pInititalTime != null) {
-            jTimeSpinner.setValue(pInititalTime);
+            dateTimeField1.setDate(pInititalTime);
         } else {
             double maxDur = 0;
             for (Village source : mSources) {
@@ -187,8 +189,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
                     maxDur = dur;
                 }
             }
-            jTimeSpinner.setValue(new Date(System.currentTimeMillis() + (long) maxDur + 60000));
-            ((DateEditor) jTimeSpinner.getEditor()).getTextField().setForeground(Color.BLACK);
+            dateTimeField1.setDate(new Date(System.currentTimeMillis() + (long) maxDur + 60000));
         }
 
         mTarget = pTarget;
@@ -244,12 +245,11 @@ public class AttackAddFrame extends javax.swing.JFrame {
         jUnitBox.setSelectedIndex(initialUnit);
 
         if (pInititalTime != null) {
-            jTimeSpinner.setValue(pInititalTime);
+            dateTimeField1.setDate(pInititalTime);
         } else {
             double dur = DSCalculator.calculateMoveTimeInMinutes(pSource, pTarget, ((UnitHolder) jUnitBox.getSelectedItem()).getSpeed());
             dur = dur * 60000;
-            jTimeSpinner.setValue(new Date(System.currentTimeMillis() + (long) dur + 60000));
-            ((DateEditor) jTimeSpinner.getEditor()).getTextField().setForeground(Color.BLACK);
+            dateTimeField1.setDate(new Date(System.currentTimeMillis() + (long) dur + 60000));
         }
         mSource = pSource;
         mTarget = pTarget;
@@ -302,6 +302,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         jOKButton = new javax.swing.JButton();
         jCancelButton = new javax.swing.JButton();
@@ -311,23 +312,31 @@ public class AttackAddFrame extends javax.swing.JFrame {
         jTargetLabel = new javax.swing.JLabel();
         jUnitLabel = new javax.swing.JLabel();
         jUnitBox = new javax.swing.JComboBox();
-        jTimeSpinner = new javax.swing.JSpinner();
         jDistanceLabel = new javax.swing.JLabel();
         jTargetVillage = new javax.swing.JLabel();
         jArriveTimeLabel = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jAttackPlanBox = new javax.swing.JComboBox();
+        dateTimeField1 = new de.tor.tribes.ui.components.DateTimeField();
 
         setTitle("Angriff hinzufügen");
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jOKButton.setBackground(new java.awt.Color(239, 235, 223));
-        jOKButton.setText("OK");
+        jOKButton.setText("Angriff erstellen");
         jOKButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireAddAttackEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jOKButton, gridBagConstraints);
 
         jCancelButton.setBackground(new java.awt.Color(239, 235, 223));
         jCancelButton.setText("Abbrechen");
@@ -336,42 +345,102 @@ public class AttackAddFrame extends javax.swing.JFrame {
                 fireCancelAddAttackEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jCancelButton, gridBagConstraints);
 
-        jDistance.setBackground(new java.awt.Color(239, 235, 223));
         jDistance.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jDistance.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jDistance.setMaximumSize(new java.awt.Dimension(2147483647, 20));
+        jDistance.setMinimumSize(new java.awt.Dimension(39, 20));
         jDistance.setOpaque(true);
+        jDistance.setPreferredSize(new java.awt.Dimension(39, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jDistance, gridBagConstraints);
 
-        jSourceVillage.setBackground(new java.awt.Color(239, 235, 223));
         jSourceVillage.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jSourceVillage.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jSourceVillage.setMaximumSize(new java.awt.Dimension(2147483647, 20));
+        jSourceVillage.setMinimumSize(new java.awt.Dimension(39, 20));
         jSourceVillage.setOpaque(true);
+        jSourceVillage.setPreferredSize(new java.awt.Dimension(39, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jSourceVillage, gridBagConstraints);
 
-        jSourceLabel.setText("<html><u>Herkunft</u></html>");
+        jSourceLabel.setText("Herkunft");
         jSourceLabel.setBorder(javax.swing.BorderFactory.createCompoundBorder());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jSourceLabel, gridBagConstraints);
 
-        jTargetLabel.setText("<html><u>Ziel</u></html>");
+        jTargetLabel.setText("Ziel");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jTargetLabel, gridBagConstraints);
 
-        jUnitLabel.setText("<html><u>Langsamste Einheit</u></html>");
+        jUnitLabel.setText("Langsamste Einheit");
         jUnitLabel.setMaximumSize(new java.awt.Dimension(120, 14));
         jUnitLabel.setMinimumSize(new java.awt.Dimension(120, 14));
         jUnitLabel.setPreferredSize(new java.awt.Dimension(120, 14));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jUnitLabel, gridBagConstraints);
 
         jUnitBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Speerträger (18)", "Adelsgeschlecht (35)", "Berittener Bogenschütze (11 Felder/min)" }));
         jUnitBox.setSelectedIndex(2);
-        jUnitBox.setMinimumSize(new java.awt.Dimension(300, 18));
-        jUnitBox.setPreferredSize(new java.awt.Dimension(300, 20));
+        jUnitBox.setMinimumSize(new java.awt.Dimension(300, 25));
+        jUnitBox.setPreferredSize(new java.awt.Dimension(300, 25));
         jUnitBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUnitChangedEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jUnitBox, gridBagConstraints);
 
-        jTimeSpinner.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.SECOND));
+        jDistanceLabel.setText("Entfernung");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jDistanceLabel, gridBagConstraints);
 
-        jDistanceLabel.setText("<html><u>Entfernung</u></html>");
-
-        jTargetVillage.setBackground(new java.awt.Color(239, 235, 223));
         jTargetVillage.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jTargetVillage.setAutoscrolls(true);
         jTargetVillage.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -379,95 +448,74 @@ public class AttackAddFrame extends javax.swing.JFrame {
         jTargetVillage.setMinimumSize(new java.awt.Dimension(39, 20));
         jTargetVillage.setOpaque(true);
         jTargetVillage.setPreferredSize(new java.awt.Dimension(39, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jTargetVillage, gridBagConstraints);
 
-        jArriveTimeLabel.setText("<html><u>Ankunftzeit</u></html>");
+        jArriveTimeLabel.setText("Ankunftzeit");
         jArriveTimeLabel.setMaximumSize(new java.awt.Dimension(120, 14));
         jArriveTimeLabel.setMinimumSize(new java.awt.Dimension(120, 14));
         jArriveTimeLabel.setPreferredSize(new java.awt.Dimension(120, 14));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jArriveTimeLabel, gridBagConstraints);
 
         jButton1.setBackground(new java.awt.Color(239, 235, 223));
         jButton1.setText("Letzter Wert");
         jButton1.setToolTipText("Setzt den zuletzt verwendeten Wert als Ankunftzeit");
+        jButton1.setMaximumSize(new java.awt.Dimension(93, 25));
+        jButton1.setMinimumSize(new java.awt.Dimension(93, 25));
+        jButton1.setPreferredSize(new java.awt.Dimension(93, 25));
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireSetLastArrivalEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jButton1, gridBagConstraints);
 
-        jLabel1.setText("<html><u>Angriffsplan</u></html>");
+        jLabel1.setText("Angriffsplan");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jLabel1, gridBagConstraints);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTargetLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
-                                    .addComponent(jSourceLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
-                                    .addComponent(jDistanceLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
-                                    .addComponent(jUnitLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jArriveTimeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(68, 68, 68)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
-                            .addComponent(jSourceVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
-                            .addComponent(jDistance, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
-                            .addComponent(jUnitBox, 0, 310, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jTimeSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1))
-                            .addComponent(jAttackPlanBox, 0, 310, Short.MAX_VALUE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jCancelButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jOKButton)))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jSourceVillage, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTargetVillage, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jDistance, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jSourceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTargetLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jDistanceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jUnitBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jUnitLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jArriveTimeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1)
-                    .addComponent(jTimeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jAttackPlanBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jOKButton)
-                    .addComponent(jCancelButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jAttackPlanBox, gridBagConstraints);
+
+        dateTimeField1.setMaximumSize(new java.awt.Dimension(32767, 25));
+        dateTimeField1.setMinimumSize(new java.awt.Dimension(250, 25));
+        dateTimeField1.setPreferredSize(new java.awt.Dimension(250, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(dateTimeField1, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -475,15 +523,14 @@ public class AttackAddFrame extends javax.swing.JFrame {
 private void fireUnitChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireUnitChangedEvent
     if (evt.getStateChange() == ItemEvent.SELECTED) {
         UnitHolder u = (UnitHolder) evt.getItem();
-        // long arriveTime = (long) (System.currentTimeMillis() + DSCalculator.calculateMoveTimeInSeconds(mSource, mTarget, u.getSpeed()) * 1000 + 1000);
 
         double maxDur = 0;
         if (mSources == null) {
             double dur = DSCalculator.calculateMoveTimeInMinutes(mSource, mTarget, u.getSpeed());
             dur = dur * 60000;
             maxDur = dur;
-            if (((Date) jTimeSpinner.getValue()).getTime() < (System.currentTimeMillis() + maxDur)) {
-                jTimeSpinner.setValue(new Date(Math.round((System.currentTimeMillis() + maxDur))));
+            if (dateTimeField1.getSelectedDate().getTime() < (System.currentTimeMillis() + maxDur)) {
+                dateTimeField1.setDate(new Date(Math.round((System.currentTimeMillis() + maxDur))));
             }
         } else {
             for (Village source : mSources) {
@@ -493,8 +540,8 @@ private void fireUnitChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:eve
                     maxDur = dur;
                 }
             }
-            if (((Date) jTimeSpinner.getValue()).getTime() < (System.currentTimeMillis() + maxDur)) {
-                jTimeSpinner.setValue(new Date(Math.round((System.currentTimeMillis() + maxDur))));
+            if (dateTimeField1.getSelectedDate().getTime() < (System.currentTimeMillis() + maxDur)) {
+                dateTimeField1.setDate(new Date(Math.round((System.currentTimeMillis() + maxDur))));
             }
         }
         /*if (((Date) jTimeSpinner.getValue()).getTime() < arriveTime) {
@@ -516,11 +563,17 @@ private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
     }
 
     if (!validateTime()) {
-        ((DateEditor) jTimeSpinner.getEditor()).getTextField().setForeground(Color.RED);
-        return;
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die angegebene Ankunftszeit kann für mindestens ein Ziel nicht eingehalten werden.\nTrotzdem fortfahren?", "Ankunftszeit", "Nein", "Ja") != JOptionPane.YES_OPTION) {
+            return;
+        }
     }
-    UnitHolder u = (UnitHolder) jUnitBox.getSelectedItem();
-    //long sendTime = getTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(mSource, mTarget, u.getSpeed()) * 1000);
+    
+     if (!validateDistance()) {
+          if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die angegebene Entfernung kann von der gewählten Einheit für mindestens ein Ziel nicht zurückgelegt werden.\nTrotzdem fortfahren?", "Ankunftszeit", "Nein", "Ja") != JOptionPane.YES_OPTION) {
+            return;
+        }
+     }
+    
     Object plan = jAttackPlanBox.getSelectedItem();
 
     if (isMultiAttack) {
@@ -537,12 +590,13 @@ private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
 private void fireSetLastArrivalEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSetLastArrivalEvent
     Date last = GlobalOptions.getLastArriveTime();
     if (last != null) {
-        jTimeSpinner.setValue(last);
+        dateTimeField1.setDate(last);
     } else {
         JOptionPaneHelper.showWarningBox(this, "Noch kein Wert gespeichert", "Warnung");
     }
 }//GEN-LAST:event_fireSetLastArrivalEvent
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private de.tor.tribes.ui.components.DateTimeField dateTimeField1;
     private javax.swing.JLabel jArriveTimeLabel;
     private javax.swing.JComboBox jAttackPlanBox;
     private javax.swing.JButton jButton1;
@@ -555,7 +609,6 @@ private void fireSetLastArrivalEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     private javax.swing.JLabel jSourceVillage;
     private javax.swing.JLabel jTargetLabel;
     private javax.swing.JLabel jTargetVillage;
-    private javax.swing.JSpinner jTimeSpinner;
     private javax.swing.JComboBox jUnitBox;
     private javax.swing.JLabel jUnitLabel;
     // End of variables declaration//GEN-END:variables

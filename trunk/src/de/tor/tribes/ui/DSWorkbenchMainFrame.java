@@ -101,8 +101,6 @@ import org.jdesktop.swingx.painter.MattePainter;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 /**
- * @TODO Add auto-hide for notification label
- * @TODO Check account create dialog -> looks ugly!
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends JRibbonFrame implements
@@ -123,6 +121,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     private MouseGestures mMouseGestures = new MouseGestures();
     private boolean bWatchClipboard = true;
     private final JFileChooser chooser = new JFileChooser();
+    private NotificationHideThread mNotificationHideThread = null;
 
     public static synchronized DSWorkbenchMainFrame getSingleton() {
         if (SINGLETON == null) {
@@ -572,6 +571,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         mMouseGestures.start();
 // </editor-fold>
 
+        mNotificationHideThread = new NotificationHideThread();
+        mNotificationHideThread.start();
         //update online state
         onlineStateChanged();
         restoreProperties();
@@ -862,14 +863,17 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     }
 
     public void showInfo(String pMessage) {
+        mNotificationHideThread.interrupt();
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(Color.YELLOW));
         jXLabel1.setIcon(new ImageIcon("./graphics/icons/warning.png"));
         jXLabel1.setForeground(Color.BLACK);
         jXLabel1.setText(pMessage);
+
     }
 
     public void showSuccess(String pMessage) {
+        mNotificationHideThread.interrupt();
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(Color.GREEN));
         jXLabel1.setIcon(new ImageIcon(DSWorkbenchMainFrame.class.getResource("/res/checkbox.png")));
@@ -3422,6 +3426,10 @@ private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         jCurrentPlayerVillages.setSelectedItem(pVillage);
     }
 
+    protected void hideNotification() {
+        infoPanel.setCollapsed(true);
+    }
+
 // <editor-fold defaultstate="collapsed" desc=" Listener EventHandlers ">
     @Override
     public void fireToolChangedEvent(int pTool) {
@@ -3644,4 +3652,26 @@ private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JButton jZoomOutButton;
     // End of variables declaration//GEN-END:variables
 //</editor-fold>
+}
+
+class NotificationHideThread extends Thread {
+
+    public NotificationHideThread() {
+        setDaemon(true);
+    }
+
+    public void run() {
+        boolean interrupted = false;
+        while (true) {
+            if (!interrupted) {
+                DSWorkbenchMainFrame.getSingleton().hideNotification();
+            }
+            try {
+                Thread.sleep(10000);
+                interrupted = false;
+            } catch (InterruptedException e) {
+                interrupted = true;
+            }
+        }
+    }
 }

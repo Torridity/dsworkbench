@@ -123,7 +123,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         ((TagTableModel) jTagsTable.getModel()).fireTableDataChanged();
         updateVillageList();
     }
-    private static Logger logger = Logger.getLogger("TagView");
+    private static Logger logger = Logger.getLogger("GroupView");
     private static DSWorkbenchTagFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
 

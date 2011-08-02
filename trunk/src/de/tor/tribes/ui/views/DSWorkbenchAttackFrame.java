@@ -868,12 +868,9 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         }
     }
 
-    public void increaseClickAccountValue() {
-        iClickAccount++;
-    }
-
     public void decreaseClickAccountValue() {
-        iClickAccount = (iClickAccount == 0) ? 0 : iClickAccount--;
+        iClickAccount = (iClickAccount == 0) ? 0 : iClickAccount-1;
+        updateClickAccount();
     }
 
     public int getClickAccountValue() {

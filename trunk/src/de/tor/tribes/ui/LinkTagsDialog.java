@@ -94,7 +94,7 @@ public class LinkTagsDialog extends javax.swing.JDialog {
         jXTable1 = new org.jdesktop.swingx.JXTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Tags verknüpfen");
+        setTitle("Gruppen kombinieren");
         setAlwaysOnTop(true);
 
         jPanel1.setBackground(new java.awt.Color(239, 235, 223));
@@ -203,11 +203,11 @@ public class LinkTagsDialog extends javax.swing.JDialog {
     private void fireAcceptEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAcceptEvent
         if (evt.getSource() == jDoCreateButton) {
             if (jTagName.getText().length() < 1) {
-                JOptionPaneHelper.showWarningBox(this, "Du musst einen Namen für den neuen Tag angeben.", "Warnung");
+                JOptionPaneHelper.showWarningBox(this, "Du musst einen Namen für den neuen Gruppe angeben.", "Warnung");
                 return;
             }
             if (jTagName.getText().equals("ODER") || jTagName.getText().equals("UND")) {
-                JOptionPaneHelper.showWarningBox(this, "Folgende Begriffe sind als Tag Namen gesperrt: UND, ODER\nGib bitte einen anderen Namen an.", "Warnung");
+                JOptionPaneHelper.showWarningBox(this, "Folgende Begriffe sind als Gruppennamen gesperrt: UND, ODER\nGib bitte einen anderen Namen an.", "Warnung");
                 return;
             }
 
@@ -248,7 +248,12 @@ public class LinkTagsDialog extends javax.swing.JDialog {
 
     private void fireShowLinkInPlainTextEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowLinkInPlainTextEvent
         String equation = ((TagLinkMatrixModel) jXTable1.getModel()).getEquationAsHtml();
-        JOptionPaneHelper.showInformationBox(this, "<html>Die verknüpfte Gruppe mit dem Namen '" + jTagName.getText() + "' befindet sich<BR/> " + equation + "</html>", "Verknüpfung");
+        
+        String name = jTagName.getText();
+        if(name.length() == 0){
+            name = "Kein Name";
+        }
+        JOptionPaneHelper.showInformationBox(this, "<html>Die Dörfer der verknüpften Gruppe mit dem Namen '" + name + "' befinden sich<BR/> " + equation + "</html>", "Verknüpfung");
     }//GEN-LAST:event_fireShowLinkInPlainTextEvent
 
     /**

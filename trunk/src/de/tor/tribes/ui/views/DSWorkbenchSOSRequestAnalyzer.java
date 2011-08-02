@@ -29,7 +29,7 @@ import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
-import de.tor.tribes.ui.renderer.WalLevellCellRenderer;
+import de.tor.tribes.ui.renderer.WallLevellCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
@@ -163,7 +163,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         jResultTable.setModel(sosTableModel);
         jResultTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jResultTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
-        jResultTable.getColumnExt("Wall").setCellRenderer(new WalLevellCellRenderer());
+        jResultTable.getColumnExt("Wall").setCellRenderer(new WallLevellCellRenderer());
         jResultTable.setColumnControlVisible(false);
         jResultTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         jResultTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());

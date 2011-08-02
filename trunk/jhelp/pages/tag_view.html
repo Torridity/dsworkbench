@@ -17,42 +17,67 @@
     <td style="background-image:url(../images/c.gif);background-repeat:repeat" width="100%">
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td colspan="2"><h2 style="color:#953333">Tagübersicht</h2></td>
+        <td colspan="2"><h2 style="color:#953333">Gruppenübersicht</h2></td>
       </tr>
       <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
       <tr>
-        <td colspan="2"><img src="../images/screens/tag_view.gif" width="539" height="518">&nbsp;</td>
+        <td colspan="2"><img src="../images/screens/tag_view.gif" width="751" height="420">&nbsp;</td>
       </tr>
       <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
       <tr>
-        <td colspan="2"><p>Die Tag-Ansicht gibt die M&ouml;glichkeit, <a href="import_ingame.html#groups"><em>importierte Gruppen</em></a>, die in <em>DS Workbench</em> als Tags bezeichnet werden, zu konfigurieren. Hier kann man die Tags umbenennen oder ihr auf der Karte eingezeichnetes Symbol ver&auml;ndern. Daf&uuml;r &auml;ndert man die Werte direkt in der Tabelle, woraufhin sie direkt auf die Karte &uuml;bertragen werden. Auf der rechten Seite findet man mehrere Button die dazu dienen, einen neuen Tag zu erstellen, Tags zu verkn&uuml;pfen (worauf sp&auml;ter eingegangen wird), einen bestehenden Tag zu l&ouml;schen, die Farbmarkierung auf der Karte zu entfernen oder gew&auml;hlte Tags auf verschiedene Arten in die Zwischenablage zu exportieren. Das Entfernen des zu zeichnenden Symbols auf der Karte kann man direkt &uuml;ber die Tabellenzelle bewerkstelligen.<br>
-          Zudem kann man in der Tag-Tabelle angeben, ob der Tag auf der Karte eingezeichnet werden soll oder nicht. Letztendlich habt ihr die M&ouml;glichkeit &uuml;ber den letzten Button im oberen Bereich die markierten Tags und ihre zugeordneten D&ouml;rfer als BB-Code in die Zwischenablage zu kopieren, um eventuell bestimmte markierte D&ouml;rfer euren Stammeskollegen zug&auml;nglich zu machen. <br>
-          <br>
-          Im unteren Bereich sieht man eine Liste der D&ouml;rfer, die dem aktuell markierten Tag/den aktuell markierten Tags zugeordnet sind. Sind mehrere Tags markiert, werden alle D&ouml;rfer aus allen Tag-Gruppen angezeigt. &Uuml;ber den oberen Button neben der Liste kann man f&uuml;r das markierte Dorf alle markierten Tags entfernen. Der untere Button dient dazu, das gew&auml;hlte Dorf auf der Hauptkarte zu zentrieren. <br>
-        </p>
+        <td colspan="2"><p>Die Gruppen&uuml;bersicht gibt die M&ouml;glichkeit, <a href="import_ingame.html#groups"><em>importierte Gruppen</em></a> zu betrachten, zu ver&auml;ndern und mit Kartenmarkierungen zu versehen. Um Kartenmarkierungen festzulegen &uuml;r &auml;ndert man die Werte direkt in der Tabelle, woraufhin sie direkt auf die Karte &uuml;bertragen werden. Im Men&uuml; auf der rechten Seite findet man die folgenden Funktionen:</p>
+          <ul>
+              <li>Bearbeiten</li>
+			  <ul>
+            <li>Neue Gruppe erstellen: Erstellt eine neue, leere Gruppe </li>
+            <li>Gruppen kombinieren: (siehe unten)</li>
+            <li>Farbmarkierung entfernen: Entfernt die Farbmarkierung auf der Karte. Das Symbol kann direkt in der Tabelle entfernt werden, wenn als Symbol das rote Kreuz gew&auml;hlt wird.</li>
+			  </ul>    
+            <li>&Uuml;bertragen</li>
+			<ul>
+            <li>Gew&auml;hltes Dorf im Spiel zentrieren: Hat man eine Gruppen gew&auml;hlt und w&auml;hlt anschlie&szlig;end in der Dorfliste auf der linke Seite ein Dorf, so kann man dieses &uuml;ber den Button im Spiel zentrieren. </li>
+            <li>Userscript-Funktion - &Uuml;bertragen von (verkn&uuml;pften) Gruppen ins Spiel: (siehe unten) </li>
+            <li>Gew&auml;hltes Dorf auf der Hauptkarte zentrieren: Zentriert das gew&auml;hlte Dorf der gew&auml;hlten Gruppe auf der <em>DS Workbench</em> Hauptkarte.          </li>
+			  </ul>  
+            </ul>          
           </td>
       </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
          <tr>
+        <td colspan="2"><h3 style="color:#953333">Shortcut-Funktionen</h3></td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2"><ul>
+          <li>Einf&uuml;gen per STRG+V: Dr&uuml;ckt man STRG+V so wird <em>DS Workbench</em> versuchen, Dorfkoordinaten in der Zwischenablage zu finden. Wurden D&ouml;rfer gefunden, so werden diese den gew&auml;hlten Gruppen zugeordnet. So ist es zum Beispiel leicht M&ouml;gliche, alle D&ouml;rfer eine Gruppe aus dem Spiel zu importieren, ohne explizit das Importfeature zu verwenden.</li>
+          <li>BB-Export per STRG+B: Erlaubt es, die markierten Gruppen als BB-Codes zu exportieren und im Spiel z.B. in den Notizen einzuf&uuml;gen.</li>
+          <li>L&ouml;schen per ENTF: Dr&uuml;ckt man ENTF, so werden alle markierten Gruppen gel&ouml;scht. </li>
+        </ul></td>
+      </tr> <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
 	     <tr>
-	  <td colspan="2"><h3 style="color:#953333">Tags verkn&uuml;pfen </h3></td>
+	  <td colspan="2"><h3 style="color:#953333">Gruppen kombinieren</h3></td>
 	  </tr>
 	    <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
 	    <tr>
-        <td colspan="2"><img src="../images/screens/link_tags.gif" width="686" height="330"></td>
+        <td colspan="2"><img src="../images/screens/link_tags.gif" width="716" height="366"></td>
       </tr>
 	    <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
 	   <tr>
-        <td colspan="2">Durch die M&ouml;glichkeit Tags zu verkn&uuml;pfen erhaltet ihr ein m&auml;chtiges Werkzeug, um eure Gruppen aus dem Spiel noch besser zu nutzen. Auf den ersten Blick schaut dieses Werkzeug recht unverst&auml;ndlich aus, allerdings werdet ihr schnell merken dass es das gar nicht ist. In den Zeilen der gezeigten Tabelle werden alle eure Tags aufgelistet, die ihr aus dem Spiel importiert habt. Die Spalten stellen die Kontinente dar, auf denen eure D&ouml;rfer liegen bzw. steht die erste Spalte f&uuml;r alle Kontinente.<br>
+        <td colspan="2">Durch die M&ouml;glichkeit Gruppen zu kombinieren erhaltet ihr ein m&auml;chtiges Werkzeug, um eure Gruppen aus dem Spiel noch besser zu nutzen. Auf den ersten Blick schaut dieses Werkzeug recht unverst&auml;ndlich aus, allerdings werdet ihr schnell merken, dass es das gar nicht ist. In den Zeilen der gezeigten Tabelle werden alle eure Gruppen aufgelistet, die ihr aus dem Spiel importiert habt. Die Spalten stellen die Kontinente dar, auf denen eure D&ouml;rfer liegen bzw. steht die erste Spalte f&uuml;r alle Kontinente.<br>
           Klickt ihr auf eine Zelle <em>doppelt</em>, so erhaltet ihr eine Auswahl von 4 Farben, die ihr einzeln anw&auml;hlten k&ouml;nnt. Dabei gilt, dass alle Verkn&uuml;pfungen derselben Farbe zusammengeh&ouml;ren, also per UND-Bedingung verkn&uuml;pft werden. Durch die 4 verschiedenen Farben habt ihr die M&ouml;glichkeit, insgesamt 4 verschiedene Gruppierungen von Verkn&uuml;pfungen zu erstellen, die anschlie&szlig;end per ODER-Bedingung verkn&uuml;pft werden. </td>
       </tr>
 	     <tr>
@@ -72,20 +97,20 @@
         <td colspan="2">&nbsp;</td>
       </tr>
 	     <tr>
-        <td colspan="2"><img src="../images/screens/link_tags_plain_text.gif" width="405" height="141"></td>
+        <td colspan="2"><img src="../images/screens/link_tags_plain_text.gif" width="546" height="208"></td>
       </tr>
 	     <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
 	    <tr>
-        <td colspan="2">Vermutlich k&ouml;nnen die Meisten von euch mit dieser Form der Beschreibung mehr anfangen. Zur Unterst&uuml;tzung sind die einzelnen Teilverkn&uuml;pfungen in den Farben der Gruppierungen dargestellt, wie sie in der Tabelle eingetragen sind. Seid ihr mit dem Ergebnis zufrieden k&ouml;nnt ihr die Verkn&uuml;pfung &uuml;ber einen Klick auf <em>Erstellen</em> abschlie&szlig;en. Es wird einer neuer Tag erstellt, der alle D&ouml;rfer enth&auml;lt die der Verkn&uuml;pfung entsprechen. Solltet ihr eure Tags aus dem Spiel neu importieren, werden alle verkn&uuml;pften Tags automatisch aktualisiert, so dass ihr immer &uuml;ber den aktuellen Stand verf&uuml;gt. </td>
+        <td colspan="2">Vermutlich k&ouml;nnen die Meisten von euch mit dieser Form der Beschreibung mehr anfangen. Zur Unterst&uuml;tzung sind die einzelnen Teilverkn&uuml;pfungen in den Farben der Gruppierungen dargestellt, wie sie in der Tabelle eingetragen sind. Seid ihr mit dem Ergebnis zufrieden k&ouml;nnt ihr die Verkn&uuml;pfung &uuml;ber einen Klick auf <em>Erstellen</em> abschlie&szlig;en. Es wird eine neue Gruppe erstellt, die alle D&ouml;rfer enth&auml;lt die der Verkn&uuml;pfung entsprechen. Solltet ihr eure Gruppen aus dem Spiel neu importieren, werden alle verkn&uuml;pften Gruppen automatisch aktualisiert, so dass ihr immer &uuml;ber den aktuellen Stand verf&uuml;gt. </td>
       </tr>
 	    <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
 	    <tr valign="middle">
         <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/information.png" width="24" height="24"></div></td>
-        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE">Beachtet bitte, dass f&uuml;r verkn&uuml;pfte Tags nur die Formel f&uuml;r die Verkn&uuml;pfung gespeichert wird und nicht die D&ouml;rfer die gerade der Formel entsprechen. Wird ein Tag/eine Gruppe gel&ouml;scht oder nicht importiert, weil in dieser Gruppe keine D&ouml;rfer enthalten sind, dann ist die Dorfliste der Verkn&uuml;pfung ebenfalls leer. </td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE">Beachtet bitte, dass f&uuml;r verkn&uuml;pfte Gruppen nur die Formel f&uuml;r die Verkn&uuml;pfung gespeichert wird und nicht die D&ouml;rfer die gerade der Formel entsprechen. Wird eine Gruppe gel&ouml;scht oder nicht importiert, weil in dieser Gruppe keine D&ouml;rfer enthalten sind, dann ist die Dorfliste der Verkn&uuml;pfung ebenfalls leer. </td>
        </tr>
 	    <tr>
         <td colspan="2">&nbsp;</td>
@@ -97,7 +122,7 @@
         <td colspan="2">&nbsp;</td>
       </tr>
 	   <tr>
-        <td colspan="2">Nat&uuml;rlich ist es sch&ouml;n, dass man in <em>DS Workbench</em> auf recht vielf&auml;ltige Weise mit Gruppen arbeiten kann. Allerdings besteht, besonders bei Verkn&uuml;pfungen von Gruppen, das Problem, dass diese Gruppen in DS nicht existieren. Um dem Abhilfe zu schaffen wurde im Hinblick auf die Tags eine weitere Integration in das Spiel eingef&uuml;hrt, f&uuml;r die das<a href="dswb_script.html"><em> DS Workbench Userscript</em></a> installiert sein muss. Der letzte Button auf der rechten Seite dient dazu, alle D&ouml;rfer die mit dem gew&auml;hlten Tag belegt sind in einem bestimmten Format in die Zwischenablage zu kopieren. Wenn ihr nun ins Spiel und in die Gruppen&uuml;bersicht (PA only) wechselt wird euch am unteren Ende der Tabelle ein neues Feld auffallen, was wie folgt aussieht: </td>
+        <td colspan="2"><p>Nat&uuml;rlich ist es sch&ouml;n, dass man in <em>DS Workbench</em> auf recht vielf&auml;ltige Weise mit Gruppen arbeiten kann. Allerdings besteht, besonders bei Verkn&uuml;pfungen von Gruppen, das Problem, dass diese Gruppen in DS nicht existieren. Um dem Abhilfe zu schaffen wurde in dieser Hinsicht eine weitere Integration in das Spiel eingef&uuml;hrt, f&uuml;r die das<a href="dswb_script.html"><em> DS Workbench Userscript</em></a> installiert sein muss. Klickt ihr den entsprechenden Button im Men&uuml;, so werden alle D&ouml;rfer die sich in der gew&auml;hlten Gruppe befinden in einem bestimmten Format in die Zwischenablage zu kopieren. Wenn ihr nun ins Spiel und in die Gruppen&uuml;bersicht (PA only) wechselt, wird euch am unteren Ende der Tabelle ein neues Feld auffallen, was wie folgt aussieht: </p>          </td>
       </tr>
 	   <tr>
         <td colspan="2">&nbsp;</td>
@@ -109,7 +134,7 @@
         <td colspan="2">&nbsp;</td>
       </tr>
 	    <tr>
-        <td colspan="2">Aber immer der Reihe nach. Legt bitte zuerst eine neue Gruppe an und nennt sie im einfachsten Fall &auml;hnlich dem Tag in <em>DS Workbench</em>  den ihr im Spiel als Gruppe einf&uuml;gen wollt. Nun f&uuml;gt ihr in das Eingabefeld per STRG + V den Inhalt der Zwischenablage ein, woraufhin alle D&ouml;rfer,  die in <em>DS Workbench</em> mit dem entsprechenden Tag versehen wurden, in der Ansicht mit Hilfe ihrer Dorf-ID ausgew&auml;hlt werden. Um auf jeden Fall alle D&ouml;rfer zu &quot;sehen&quot; w&auml;hlt bitte vorher die Gruppe <em>[Alle]</em> aus. Nun w&auml;hlt ihr im Dropdown-Feld einfach eure eben erstellte Gruppe und klickt auf <em>Hinzuf&uuml;gen</em>. Nun werden alle markierten D&ouml;rfer der neuen Gruppe hinzugef&uuml;gt und ihr seid fertig. </td>
+        <td colspan="2">Aber immer der Reihe nach. Legt bitte zuerst eine neue Gruppe an und nennt sie im einfachsten Fall wie die (verkn&uuml;pfte) Gruppe in <em>DS Workbench</em>,  die ihr im Spiel als Gruppe einf&uuml;gen wollt. Nun f&uuml;gt ihr in das Eingabefeld per STRG + V den Inhalt der Zwischenablage ein, woraufhin alle D&ouml;rfer,  die in <em>DS Workbench</em> in der entsprechenden Gruppe sind , in der Ansicht mit Hilfe ihrer Dorf-ID ausgew&auml;hlt werden. Um auf jeden Fall alle D&ouml;rfer zu &quot;sehen&quot; w&auml;hlt bitte vorher die Gruppe <em>[Alle]</em> aus. Nun w&auml;hlt ihr im Dropdown-Feld einfach eure eben erstellte Gruppe und klickt auf <em>Hinzuf&uuml;gen</em>. Nun werden alle markierten D&ouml;rfer der neuen Gruppe hinzugef&uuml;gt und ihr seid fertig. </td>
       </tr>
     </table>
 	</td>

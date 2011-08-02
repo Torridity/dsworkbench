@@ -843,6 +843,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         jRemainWood.setMaximumSize(new java.awt.Dimension(150, 25));
         jRemainWood.setMinimumSize(new java.awt.Dimension(150, 25));
         jRemainWood.setPreferredSize(new java.awt.Dimension(150, 25));
+        jRemainWood.setText("0");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
@@ -856,6 +857,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         jRemainClay.setMaximumSize(new java.awt.Dimension(150, 25));
         jRemainClay.setMinimumSize(new java.awt.Dimension(150, 25));
         jRemainClay.setPreferredSize(new java.awt.Dimension(150, 25));
+        jRemainClay.setText("0");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
@@ -869,6 +871,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         jRemainIron.setMaximumSize(new java.awt.Dimension(150, 25));
         jRemainIron.setMinimumSize(new java.awt.Dimension(150, 25));
         jRemainIron.setPreferredSize(new java.awt.Dimension(150, 25));
+        jRemainIron.setText("0");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 2;
@@ -1087,6 +1090,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jMerchantPanel, gridBagConstraints);
 
+        capabilityInfoPanel1.setBbSupport(false);
         capabilityInfoPanel1.setCopyable(false);
         capabilityInfoPanel1.setSearchable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();

@@ -54,6 +54,7 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
+import org.jdesktop.swingx.decorator.CompoundHighlighter;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.decorator.PainterHighlighter;
@@ -390,7 +391,9 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     // End of variables declaration//GEN-END:variables
 
     static {
-        jChurchTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
+        HighlightPredicate.ColumnHighlightPredicate colu = new HighlightPredicate.ColumnHighlightPredicate(0, 1, 2);
+        jChurchTable.setHighlighters(new CompoundHighlighter(colu, HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B)));
+
         jChurchTable.setColumnControlVisible(true);
         jChurchTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
         jChurchTable.setDefaultEditor(Integer.class, new ChurchLevelCellEditor());

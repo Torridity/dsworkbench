@@ -9,16 +9,14 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.xml.JaxenUtils;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import org.jdom.Element;
-import de.tor.tribes.ui.models.TroopsTableModel;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.GlobalOptions;
-import java.util.LinkedList;
+import org.jdom.Attribute;
 import org.jdom.DataConversionException;
 
 /**
@@ -31,7 +29,7 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
             + "[**]%SPEAR_ICON%[||]%SWORD_ICON%[||]%AXE_ICON%[||]%ARCHER_ICON%[||]%SPY_ICON%[||]%LIGHT_ICON%[||]%MARCHER_ICON%[||]%HEAVY_ICON%[||]%RAM_ICON%[||]%CATA_ICON%[||]%SNOB_ICON%[/**]\n";
     private final static String TEMPLATE_PROPERTY = "troop.bbexport.template";
     private Village village = null;
-    private Hashtable<UnitHolder, Integer> troops = null;
+    private Hashtable<UnitHolder, Integer> troops = new Hashtable<UnitHolder, Integer>();
     private Date state = null;
 
     @Override
@@ -46,7 +44,8 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             try {
                 hTroops.put(unit, troopsElement.getAttribute(unit.getPlainName()).getIntValue());
-            } catch (DataConversionException dce) {
+            } catch (Exception ex) {
+                hTroops.put(unit, 0);
             }
         }
         setTroops(hTroops);

@@ -337,7 +337,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
     private void buildMenu() {
         // <editor-fold defaultstate="collapsed" desc="Edit task pane">
         JXTaskPane editTaskPane = new JXTaskPane();
-        editTaskPane.setTitle("Editieren");
+        editTaskPane.setTitle("Bearbeiten");
         editTaskPane.getContentPane().add(factoryButton("/res/ui/garbage.png", "Abgelaufene Angriffe entfernen", new MouseAdapter() {
 
             @Override

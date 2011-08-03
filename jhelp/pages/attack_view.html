@@ -3,25 +3,6 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <title>DS Workbench Dokumentation</title>
-<style type="text/css">
-<!--
-.style1 {
-color: #00FF00;
-	background-color:#000000;
-	font-weight: bold;}
-.style2 {
-	color: #FFFF00;
-	background-color:#000000;
-	font-weight: bold;
-}
-.style3 {color: #FF0000;
-	background-color:#000000;
-	font-weight: bold;}
-.style4 {color: #FF9933;
-	background-color:#000000;
-	font-weight: bold;}
--->
-</style>
 </head>
 
 <body style="background-color:#E1E1E1">
@@ -42,182 +23,108 @@ color: #00FF00;
         <td colspan="2">&nbsp;</td>
       </tr>
       <tr>
-        <td colspan="2"><img src="../images/screens/attack_view.gif" width="1084" height="514"></td>
+        <td colspan="2"><img src="../images/screens/attack_view.gif" width="50%" height="50%"></td>
       </tr>
       <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
       <tr>
-        <td colspan="2"><p>Die <em>Angriffs&uuml;bersicht</em> dient der Verwaltung von und dem Umgang mit erstellten Angriffen. Sie ist somit mehr oder weniger der Dreh- und Angelpunkt von <em>DS Workbench</em>. Angriffe sind in <em>DS Workbench</em> in <em>Angriffspl&auml;nen</em> organisiert. Beim ersten Start existiert lediglich der Standardangriffsplan mit dem Namen <em>'default'. </em>Dieser Plan besitzt einen besonderen Status und kann weder umbenannt noch gel&ouml;scht werden. F&uuml;r alle selbst erstellten Pl&auml;ne kann dies &uuml;ber die drei kleineren Buttons &uuml;ber der Tabelle, neben der Liste der Angriffspl&auml;ne, durchgef&uuml;hrt werden. </p>
-          <p>F&uuml;r einzelne Angriffe besteht die M&ouml;glichkeit, die Art des Angriffs festzulegen. Dies wird dann durch ein entsprechendes Symbol in der letzten Spalte dargestellt. Hier gibt es die folgenden M&ouml;glichkeiten: AG <img src="../images/snob_type.png" width="18" height="18">, Off <img src="../images/off_type.png" width="18" height="18">, Unterst&uuml;tzung <img src="../images/support_type.png" width="16" height="16">, Fake <img src="../images/fake_type.png" width="18" height="18"><br>
-              <br>
-          Die Buttons auf der rechten Seite der Tabelle dienen Aktionen, die in einzelne Aufgabenbereiche untergliedert sind. Diese Bereiche lassen sich einzeln auf- und zuklappen. Die Aktionen der Buttons beziehen sich auf die Angriffe im momentan gew&auml;hlten Angriffsplan und haben die folgenden Aufgaben:</p></td>
+        <td colspan="2"><p>Die Angriffs&uuml;bersicht dient der Verwaltung und der Bearbeitung von erstellten Angriffen. Sie ist somit mehr oder weniger der Dreh- und Angelpunkt von <em>DS Workbench</em>. Angriffe sind in <em>DS Workbench</em> in Angriffspl&auml;nen organisiert. Beim ersten Start existiert lediglich der Standardangriffsplan mit dem Namen 'default' und ein Angriffsplan 'Manuelle Planung', der mit dem manuellen Angriffsplaner verk&uuml;pft ist. Das Men&uuml; des Angriffsplaners beinhaltet die folgenden Funktionen:</p>
+          <ul>
+		    <li>Klick-Konto: (siehe unten &quot;Sonderfunktionen&quot;)</li>
+			  <li>Bearbeiten: (siehe unten &quot;Sonderfunktionen&quot;)</li>
+              <li>Bearbeiten</li>
+			<ul>
+            <li>Abgelaufene Angriffe l&ouml;schen: Entfernt alle Angriffe die bereits abgeschickt werden mussten</li>
+            <li>Zeit &auml;ndern: &Auml;ndert die Zeiteinstellungen f&uuml;r die gew&auml;hlten Angriffe. Hier besteht die M&ouml;glichkeit, Angriffe auf bestimmte Zeitpunkte, um eine bestimmte Dauer oder zuf&auml;llig zu verschieben.</li>
+            <li>Angriffstyp und/oder Einheit &auml;ndern: Erlaubt es nachtr&auml;glich den Angriffstyp und/oder die Einheit zu ver&auml;ndern. Achtung: Wird die Einheit ver&auml;ndert, so &auml;ndert sich auch die Laufzeit. </li>
+            <li>&quot;&Uuml;bertragen&quot;-Markierung l&ouml;schen: Entfernt die &quot;In den Browser &uuml;bertragen&quot; Markierung f&uuml;r die gew&auml;hlten Angriffe.</li>
+            <li>Angriffe auf der Karte (nicht) einzeichnen: Aktiviert oder deaktiviert das Einzeichnen der gew&auml;hlten Angriffe auf der <em>DS Workbench</em> Hauptkarte. </li>
+            </ul> 
+            <li> &Uuml;bertragen </li>
+			<ul>
+            <li>Im Klartext: &Uuml;bertr&auml;gt die gew&auml;hlten Angriffe im Klartextformat in die Zwischenablage. Dieses Format eignet sich dazu, die Angriffe in z.B. Excel einzuf&uuml;gen.</li>
+            <li>Als HTML Datei exportieren: Exportiert alle gew&auml;hlten Angriffe in eine HTML Datei. Mit dieser Datei ist es dann m&ouml;glich, einen &Uuml;berblick &uuml;ber die zu verschickenden Angriffe zu haben, ohne dass <em>DS Workbench</em> ge&ouml;ffnet sein muss. Weiterhin kann aus der HTML Datei heraus direkt der Versammlungsplatz f&uuml;r einen jeden Angriff ge&ouml;ffnet werden.</li>
+            <li>Gew&auml;hlten Angriff in den ReTimer &uuml;bertragen: &Uuml;bertr&auml;gt den gew&auml;hlten Angriff in den <em>DS Workbench</em> <a href="retime_tool.html"><em>ReTimer</em></a>. So k&ouml;nnen einfach re-time Angriffe aus der Angriffs&uuml;bersicht heraus geplant werden.</li>
+            <li>Gew&auml;hlte Angriffe in den Browser &uuml;bertragen: &Uuml;bertr&auml;gt die gew&auml;hlten Angriffe in den Browser, sofern das Klick-Konto entsprechend viele Klicks aufweist. Ist dies nicht der Fall, werden soviele Angriffe &uuml;bertragen wie Klicks vorhanden sind. Einzelangriffe k&ouml;nnen immer &uuml;bertragen werden. </li>
+            <li>Gew&auml;hlte Angriffe als Userscript exportieren: (siehe unten &quot;Sonderfunktionen&quot;) </li>
+          </ul> 
+		  <li> Sonstiges </li>
+		  <ul>
+		  <li>Standardangriffe einstellen: (siehe unten &quot;Sonderfunktionen&quot;)</li>
+		            <li>Angriffsbenachrichtigung: Ist diese Funktion aktiviert, wird der Benutzer vor anstehenden Angriffen &uuml;ber ein Popup informiert. </li>
+		  </ul>
+          </ul>          </td>
       </tr>
       <tr>
-        <td colspan="2"><HR/></td>
-      </tr>
-      <tr>
-        <td width="10%"><div align="center"><img src="../images/garbage.png" width="24" height="24"></div></td>
-        <td>Alle Angriffe, deren Abschichzeit &uuml;berschritten ist, werden <u>ohne R&uuml;ckfrage</u> entfernt.</td>
-      </tr>
-	   <tr>
-        <td colspan="2"><HR/></td>
-      </tr>
-	  <tr>
-        <td width="10%"><div align="center"><img src="../images/att_remove.png" width="25" height="25"></div></td>
-        <td>Alle markierten Angriffe werden gel&ouml;scht. </td>
-      </tr>
-	   <tr>
-        <td colspan="2"><HR/></td>
-      </tr>	   <tr>
-        <td width="10%"><div align="center"><img src="../images/att_copy.png" width="25" height="25"></div></td>
-        <td>Kopieren der markierten Angriffe.</td>
-      </tr>
-	   <tr>
-        <td colspan="2"><HR/></td>
-      </tr>	  <tr>
-        <td width="10%"><div align="center"><img src="../images/replace2.png" width="24" height="24"></div></td>
-        <td>Alle markierten Angriffe werden in einen anderen Angriffsplan verschoben. </td>
-      </tr>
-	   <tr>
-        <td colspan="2"><HR/></td>
-      </tr>	    <tr>
-        <td width="10%"><div align="center"><img src="../images/att_changeTime.png" width="25" height="25"></div></td>
-        <td>Zeiten f&uuml;r die ausgew&auml;hlten Angriffe &auml;ndern. (<a href="change_attack_times.html"><em>mehr...</em></a>) </td>
-      </tr>
-		   <tr>
-        <td colspan="2"><HR/></td>
-      </tr>
-	  	   <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
-	  	   <tr>
-        <td colspan="2"><HR/></td>
-      </tr>
-	  <tr>
-        <td width="10%"><div align="center"><img src="../images/att_selectAllOrNone.gif" width="25" height="25"></div></td>
-        <td>Alle Angriffe im gew&auml;hlten Angriffsplan ausw&auml;hlen bzw. abw&auml;hlen. </td>
-      </tr>
-	  	   <tr>
-        <td colspan="2"><HR/></td>
-      </tr>
-	  <tr>
-        <td width="10%"><div align="center"><img src="../images/att_selectSome.png" width="25" height="25"></div></td>
-        <td>Angriffe nach Spielern oder D&ouml;rfern gefiltert markieren. (<a href="attack_select_filter.html"><em>mehr...</em></a>)</td>
-      </tr>
-	  	   <tr>
-        <td colspan="2"><HR/></td>
-      </tr>
-	  <tr>
-        <td width="10%"><div align="center"><img src="../images/att_selectInv.gif" width="25" height="25"></div></td>
-        <td>Die aktuelle Auswahl umkehren. </td>
-      </tr>
-	  	   <tr>
-        <td colspan="2"><HR/></td>
-      </tr>
-	  <tr>
-        <td width="10%"><div align="center"><img src="../images/att_selectDraw.png" width="25" height="25"></div></td>
-        <td>Aktiviert die <em>Einzeichnen</em> Spalte f&uuml;r alle markierten Angriffe, wodurch diese auf der Hauptkarte dargestellt werden. </td>
-      </tr>
-	  	   <tr>
-        <td colspan="2"><HR/></td>
-      </tr>
-	  <tr>
-        <td width="10%"><div align="center"><img src="../images/att_selectNoDraw.png" width="25" height="25"></div></td>
-        <td>Deaktiviert die <em>Einzeichnen</em> Spalte f&uuml;r alle markierten Angriffe. </td>
+	  	  <tr>
+	    <td colspan="2"><h3 style="color:#953333">Shortcut-Funktionen</h3></td>
       </tr>
 	    <tr>
-        <td colspan="2"><HR/></td>
+	   <td colspan="2">&nbsp;
+         </td>
       </tr>
-	  	   <tr>
+	    <tr>
+	   <td colspan="2"><ul>
+	     <li>Kopieren per STRG+C: Kopiert alle gew&auml;hlten Angriffe in einem besonderen Format die Zwischenablage. Von dort aus k&ouml;nnen die Angriffe in einem anderen Angriffsplan per STRG+V eingef&uuml;gt werden.</li>
+	     <li>Ausschneiden per STRG+X: Kopiert alle gew&auml;hlten Angriffe in einem besonderen Format die Zwischenablage und l&ouml;scht sie anschlie&szlig;end aus dem aktuellen Angriffsplan.</li>
+	     <li>Einf&uuml;gen per STRG+V: F&uuml;gt Angriffe die vorher per STRG+C oder STRG+X in die Zwischenablage &uuml;bertragen wurden in den aktuellen Angriffsplan ein. Diese Angriffe k&ouml;nnen dabei entweder aus der Angriffs&uuml;bersicht selbst oder aus der <a href="attack_planer_results.html"><em>Ergebnis&uuml;bersicht des Angriffsplaners</em></a> kommen. </li>
+	     <li>BB-Code per STRG+B in die Zwischenablage kopieren: Kopiert die gew&auml;hlten Angriffe als BB-Codes in die Zwischenablage, um sie z.B. im Spiel einzuf&uuml;gen.</li>
+	     <li>L&ouml;schen per ENTF: L&ouml;scht alle gew&auml;hlten Angriffe.</li>
+	     <li>Suchen per STRG+F: Erlaubt eine Suche nach Angriffen. Suchkriterien sind dabei z.B. der Name des Angreifers, Dorf- oder Stammesnamen.</li>
+	   </ul>         </td>
+      </tr>
+	   <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
-	  	   <tr>
-        <td colspan="2"><HR/></td>
+	    <tr>
+	  <td colspan="2"><h3 style="color:#953333">Sonderfunktionen</h3></td>
+	  </tr>
+        <tr>
+	  <td colspan="2">
+          <p>&nbsp;</p>
+          </td>
+      </tr>
+        <tr>
+          <td colspan="2"><ul>
+            <li>Klick-Konto: Das Klick-Konto dient dazu, entsprechend der DS-Regeln, f&uuml;r jede Aktion im Spiel einen Klick durchzuf&uuml;hren. Will man mehrere Angriffe auf einmal in einem Tab im Browser &ouml;ffnen, so muss man zuerst eine entsprechende Anzahl Klicks &quot;sammeln&quot;, um anschlie&szlig;end eine entsprechende Anzahl an Angriffen &uuml;bertragen zu k&ouml;nnen. Ist das Klick-Konto leer, k&ouml;nnen nur Einzelangriffe &uuml;bertragen werden.</li>
+            <li>Profil-Schnellauswahl: Verwendet man <em>DS Workbench</em> sowohl f&uuml;r seinen eigenen, als auch f&uuml;r einen UV-Account, so kann man f&uuml;r beide Accounts ein Profil in <em>DS Workbench</em> erstellen und &uuml;ber die Profil-Schnellauswahl festlegen, &uuml;ber welchen Account die Angriffe verschickt werden sollen, ohne in den Einstellungen das Profil manuell &auml;ndern zu m&uuml;ssen. Voraussetzung hier ist, dass der Angriff von einem Dorf ausgeht welches dem Account geh&ouml;rt und dass  ein UV-Profil eine korrekte UV-ID besitzt. </li>
+            <li>DS Workbench Angriffs-Info Script: </li>
+          </ul></td>
+        </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr >
+        <td style="padding-left:50px"><img src="../images/screens/info_script_overview.gif" height="190"> </td>
+        <td style="padding-left:50px"><img src="../images/screens/info_script_place.gif" width="869" height="190"></td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2" style="padding-left:50px"><em>DS Workbench</em> bietet die M&ouml;glichkeit, Angriffe als Userscript zu exportieren, um sie im Spiel darstellen zu k&ouml;nnen. M&ouml;gliche Orte f&uuml;r die Darstellung sind die &Uuml;bersichtsseiten (linker Screenshot), wo vor jedem Dorf ein Symbol anzeigt, ob Angriffe abgeschickt werden m&uuml;ssen (gr&uuml;n), alle Angriffe bereits abgeschickt sein m&uuml;ssten (rot) oder ob keine Angriffe aus diesem Dorf geplant sind (braun). An allen anderen Stellen, wie z.B. dem Versammlungsplatz (rechter Screenshot) zeigen Tabellen an, auf welches Ziel Angriffe aus diesem Dorf abgeschickt werden m&uuml;ssen und wann die geschehen muss.<br>
+          Das Userscript liegt nach der Erstellung im <em>DS Workbench</em> Verzeichnis und tr&auml;gt den Namen <em><strong>'zz_attack_info.user.js'.</strong></em> Von dort muss es im Browser installiert werden. Wie die zu geschehen hat ist <a href="dswb_script.html"><em>hier</em></a> beschrieben.</td>
+      </tr>
+	   <tr>
+        <td colspan="2"><ul>
+          <li>Standardangriffe festlegen:</li>
+        </ul></td>
       </tr>
 	  <tr>
-        <td width="10%"><div align="center"><img src="../images/att_clipboard.png" width="25" height="25"></div></td>
-        <td>Markierte Angriffe werden unformatiert bzw. durch Tabs getrennt in die Zwischenablage kopiert. Anschlie&szlig;end k&ouml;nnen sie &uuml;ber den Shortcut <em>Strg + V</em> in Tabellenkalkulationen wie z.B. <em>Excel</em> oder <em>OpenOffice Calc</em> spaltenweise eingef&uuml;gt werden.</td>
-      </tr>
-	  	   <tr>
-        <td colspan="2"><HR/></td>
-      </tr>
-	   <tr>
-        <td width="10%"><div align="center"><img src="../images/att_clipboardBB.png" width="25" height="25"></div></td>
-        <td>Markierte Angriffe werden als BB-Codes in die Zwischenablage kopiert und k&ouml;nnen in Stammesforen, IGMs und Notizen eingef&uuml;gt werden. (<a href="bb_export.html"><em>mehr...</em></a>) </td>
-      </tr>
-	  	   <tr>
-        <td colspan="2"><HR/></td>
-      </tr>
-	   <tr>
-        <td width="10%"><div align="center"><img src="../images/att_HTML.png" width="25" height="25"></div></td>
-        <td>Markierte Angriffe werden als HTML Datei gespeichert. Diese Datei enth&auml;lt neben allen Informationen zu den Angriffen Verlinkungen zum Gastzugang sowie zum Versammlungsplatz des Herkunftsdorfes eines Angriffs. Zus&auml;tzlich zeigt ein Counter live an, wieviel Zeit bis zum Abschicken des Angriffs noch bleibt. </td>
-      </tr>
-	  	   <tr>
-        <td colspan="2"><HR/></td>
-      </tr>
-      <tr>
-        <td width="10%"><div align="center"><img src="../images/atts_igm.png" width="25" height="25"></div></td>
-        <td>Die gew&auml;hlten Angriffe des aktuellen Angriffsplans werden per IGM an alle Teilnehmer verschickt. (<em><a href="attacks_as_igm.html">mehr...</a></em>)</td>
-      </tr>
-	  	   <tr>
-        <td colspan="2"><HR/></td>
-      </tr>
-      <tr>
-        <td width="10%"><div align="center"><img src="../images/re-time.png" width="25" height="25"></div></td>
-        <td>Der gew&auml;hlte Angriff wird in das Re-Time Werkzeug &uuml;bertragen. Dies macht Sinn, wenn eingehende Angriffe aus dem <a href="sos_analyzer.html"><em>SOS Analyzer</em></a> in die Angriffs&uuml;bersicht &uuml;bertragen hat und nachtr&auml;glich Re-Time Angriffe &uuml;ber das <a href="retime_tool.html"><em>Re-Time Werkzeug</em></a> berechnen m&ouml;chte.</td>
-      </tr>
-         <tr>
-        <td colspan="2"><HR/></td>
-      </tr>
-	    <tr>
-        <td width="10%"><div align="center"><img src="../images/att_browser.png" width="25" height="25"></div></td>
-        <td>F&uuml;r den gew&auml;hlten Angriff wird der Versammlungsplatz des Herkunftsdorfes im Standardbrowser des Systems ge&ouml;ffnet und die Koordinaten des Zieldorfes werden dort direkt eingetragen. Habt ihr das <a href="dswb_script.html"><em>DS Workbench Userscript</em></a> in eurem Browser installiert werden zus&auml;tzlich die Truppen, wie ihr sie f&uuml;r die <a href="standard_attacks.html"><em>Standardangriffe</em></a> definiert habt, automatisch eingetragen. <br>
-          Angriffe k&ouml;nnen auf zwei verschiedene Arten &uuml;bertragen werden. Zum einen k&ouml;nnt ihr sie einzeln &uuml;bertragen indem ihr einen Angriff aufw&auml;hlt und auf den Button mit dem nebenstehenden Symbol klickt. Ein neuer Browser-Tab wird ge&ouml;ffnet und die Koordinaten und Truppen (wenn das Userscript installiert ist) werden eingetragen. Weiterhin wird der Angriff in der Spalte &quot;<em>&Uuml;bertragen</em>&quot; abgehakt und die Auswahl springt zum n&auml;chsten Angriff in der Tabelle. Dabei wird empfohlen, dass das Feld &quot;<em>Immer im Vordergrund halten</em>&quot; in der rechten unteren Ecke der Angriffs&uuml;bersicht gew&auml;hlt ist, damit das Browserfenster selbst im Hintergrund bleibt. <br>
-          Ist euch das zu m&uuml;hsam habt ihr die M&ouml;glichkeit per Linksklick auf den Button mit der Bezeichnung &quot;Klick-Konto&quot;, welchen ihr in der rechten oberen Ecke der Angriffs&uuml;bersicht findet, Klicks zu speichern und die f&uuml;r das gleichzeitige &Uuml;bertragen mehrerer Angriffe zu verwenden. Habt ihr eine ausreichende Anzahl Klicks gesammelt k&ouml;nnt ihr mehrere Angriffe markieren und den &quot;<em>&Uuml;bertragen</em>&quot;-Button bet&auml;tigen, woraufhin soviele Angriffe &uuml;bertragen werden wie ihr Klicks gesammelt habt oder soviele Klicks abgezogen werden wie ihr Angriffe &uuml;bertragen habt. Sind beispielsweise 20 Klicks gespeichert und &uuml;bertragt ihr 10 Angriffe, so wird das Klick-Konto auf 10 reduziert und es &ouml;ffnen sich in eurem Browser 10 neue Tabs mit eingetragenen Angriffen. </td>
-      </tr>
-	  	   <tr>
-        <td colspan="2"><HR/></td>
-      </tr>
-	    <tr>
-        <td width="10%"><div align="center"><img src="../images/export_js.png" width="25" height="25"></div></td>
-        <td><a name="export_attack_info"></a>Exportiert f&uuml;r die ausgew&auml;hlten Angriffe ein Userscript, welches ihr in euren Browser (Opera oder Firefox) einf&uuml;gen k&ouml;nnt. Dieses Script dient dazu, direkt im Spiel die geplanten Angriffe darzustellen. Mehr Informationen dazu findet ihr <a href="attack_info_script.html"><em>hier</em></a>. </td>
-      </tr>
-	  	   <tr>
-        <td colspan="2"><HR/></td>
-      </tr>
-	   <tr>
-        <td width="10%"><div align="center"><img src="../images/standard_attacks.png"></div></td>
-        <td>Festlegung der Truppen (<em>Standardangriffe</em>) die bei der &Uuml;bertragung des Angriffs in den Browser f&uuml;r die einzelnen Angriffstype verwendet werden. F&uuml;r die Auswahl wird ein <a href="standard_attacks.html"><em>separater Dialog</em></a> ge&ouml;ffnet, in dem die Truppenanteile festgelegt werden k&ouml;nnen. </td>
-      </tr>
-	     <tr>
-        <td colspan="2"><HR/></td>
-      </tr>
-	  	   <tr>
+        <td colspan="2" style="padding-left:50px"><img src="../images/screens/standard_attacks.gif" width="544" height="368"></td>
+      </tr> 
+	  <tr>
         <td colspan="2">&nbsp;</td>
-      </tr>
-	  	   <tr>
-        <td colspan="2"><HR/></td>
-      </tr>
-	   <tr>
-        <td width="10%"><div align="center"><img src="../images/att_alert.png" width="25" height="25"></div></td>
-        <td><a name="attack_alert"></a>Aktiviert die <em>Benachrichtigung</em> bei anstehenden Angriffen. Ist diese Option aktiviert wird im Hintergrund &uuml;berpr&uuml;ft, ob Angriffe in den n&auml;chsten 10 Minuten abgeschickt werden m&uuml;ssen. Ist dies der Fall, erscheint ein <em>Hinweis</em> f&uuml;r eine<em> </em><a href="misc_settings.html"><em>einstellbare Dauer</em></a> und man kann dar&uuml;ber direkt in die Angriffs&uuml;bersicht wechseln. Die <em>Angriffsbenachrichtigung</em> pr&uuml;ft dabei alle Angriffe in allen Angriffspl&auml;ne und bezieht sich <u>nicht</u> auf die aktuelle Markierung. </td>
-      </tr>
-	  	   <tr>
-        <td colspan="2"><HR/></td>
-      </tr>
-	   <tr>
-        <td colspan="2">&nbsp;</td>
-      </tr>
-	   <tr>
-        <td colspan="2">Zur besseren &Uuml;bersicht werden die Abschickzeitpunkt farbig markiert, sofern sie 10 Minuten und weniger in der Zukunft liegen. Angriffe die in den n&auml;chsten 10 Minuten abgeschickt werden m&uuml;ssen sind <span class="style1">Gr&uuml;n</span> gekennzeichnet. Sind es weniger als 5 Minuten bis zum Abschickzeitpunkt f&auml;rbt sich der Angriff <span class="style2">Gelb</span>. Betr&auml;gt die verbleibende Zeit weniger als 3 Minuten wird der Angriff <span class="style4">Orange</span> gef&auml;rbt, bei weniger als einer Minute <span class="style3">Rot</span>. Die Farben werden alle 10 Sekunden aktualisiert. Ist die notwendige Abschickzeit &uuml;berschritten, ist der Eintrag in der Spalte Abschickzeit durchgestrichen. Ist der Angriff planm&auml;&szlig;ig angekommen wird der Eintrag des Ankunftzeitpunktes ebenfalls durchgestrichen. </td>
-      </tr>
-	   <tr>
-        <td colspan="2">&nbsp;</td>
-      </tr>
+      </tr> 
+	  <tr>
+        <td colspan="2" style="padding-left:50px">Das Festlegen dient einem weiteren Script-Feature von <em>DS Workbench</em>. &Uuml;bertr&auml;gt man Angriffe in den Browser so k&ouml;nnen, wenn das <a href="dswb_script.html"><em>zweite DS Workbench Userscript </em></a>im Browser installiert ist und in <em>DS Workbench </em>Truppeninformationen aus dem Spiel <a href="import_ingame.html"><em>importiert</em></a> wurden, die Einheiten ebenfalls im Spiel eingetragen werden. Hierbei kann man f&uuml;r jeden Angriffstyp separat bestimmen, welche Einheiten geschickt werden sollen. Der obere Screenshot zeigt mehr oder weniger komplexe Beispiele, auf welche Art und Weise man Standardangriffe definieren kann. In den meisten F&auml;llen sollte es gen&uuml;gen, feste Zahlen einzutragen, wie es im Beispiel beim den Angriffstypen 'AG' und 'Fake' der Fall ist. </td>
+      </tr> 
 	   <tr valign="middle">
         <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/information.png" width="24" height="24"></div></td>
-        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE">Die Tabelle kann, wie alle Tabellen in <em>DS Workbench, </em>spaltenweise sortiert werden. Klickt daf&uuml;r einfach auf den Spaltenkopf der Spalte, nach der ihr sortieren wollt. Exportfunktionen werden dann in der aktuellen Sortierung, wie etwa aufsteigend nach der Abschickzeit, vorgenommen. </td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE">Die Angriffs&uuml;bersicht ist eine sehr komplexe Darstellung und kann daher auf einigen Rechnern sehr langsam reagieren. Ist dies bei euch der Fall empfehle ich, die Spalte &quot;Verbleibend&quot;, welche den Countdown f&uuml;r jeden Angriff anzeigt, auszublenden. Wie ihr Spalten ausblendet findet ihr <a href="view_basics.html"><em>hier</em></a>. </td>
       </tr>
     </table>
 	</td>

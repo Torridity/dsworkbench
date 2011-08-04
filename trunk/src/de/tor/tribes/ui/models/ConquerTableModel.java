@@ -25,8 +25,8 @@ import javax.swing.table.AbstractTableModel;
  */
 public class ConquerTableModel extends AbstractTableModel {
 
-    private Class[] types = new Class[]{Village.class, String.class, String.class, String.class, Tribe.class, Ally.class, Tribe.class, Ally.class, Integer.class, Double.class};
-    private String[] colNames = new String[]{"Dorf", "Dorfpunkte", "Kontinent", "Geadelt am", "Verlierer", "Stamm (Gewinner)", "Gewinner", "Stamm (Verlierer)", "Zustimmung", "Entfernung"};
+    private Class[] types = new Class[]{Village.class, String.class, String.class, Date.class, Tribe.class, Ally.class, Tribe.class, Ally.class, Integer.class, Double.class};
+    private String[] colNames = new String[]{"Dorf", "Dorfpunkte", "Kontinent", "Geadelt am", "Verlierer", "Stamm (Verlierer)", "Gewinner", "Stamm (Gewinner)", "Zustimmung", "Entfernung"};
     private boolean[] editableColumns = new boolean[]{false, false, false, false, false, false, false, false, false, false};
 
     @Override
@@ -78,8 +78,8 @@ public class ConquerTableModel extends AbstractTableModel {
                 return "K" + DSCalculator.getContinent(v.getX(), v.getY());
             }
             case 3: {
-                SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-                return f.format(new Date((long) c.getTimestamp() * 1000));
+                //SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+                return new Date( c.getTimestamp() * 1000);//f.format(new Date((long) c.getTimestamp() * 1000));
             }
             case 4: {
                 Tribe t = c.getLoser();

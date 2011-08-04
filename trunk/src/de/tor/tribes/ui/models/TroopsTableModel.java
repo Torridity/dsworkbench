@@ -13,6 +13,7 @@ import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -126,7 +127,7 @@ public class TroopsTableModel extends AbstractTableModel {
             case VILLAGE:
                 return Village.class;
             case LAST_CHANGE:
-                return String.class;
+                return Date.class;
             case SPEAR:
             case SWORD:
             case AXE:
@@ -234,7 +235,6 @@ public class TroopsTableModel extends AbstractTableModel {
                 return "Bauernhofbedarf";
         }
         return null;
-        //return colNames[columnIndex];
     }
 
     public ImageIcon getColumnIcon(String pColumnName) {
@@ -266,7 +266,7 @@ public class TroopsTableModel extends AbstractTableModel {
             case VILLAGE:
                 return h.getVillage();
             case LAST_CHANGE:
-                return new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(h.getState());
+                return h.getState();//new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(h.getState());
             case SPEAR:
                 return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("spear"));
             case SWORD:

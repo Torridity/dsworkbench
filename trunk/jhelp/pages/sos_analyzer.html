@@ -23,7 +23,7 @@
         <td colspan="2">&nbsp;</td>
       </tr>
 	  	  <tr>
-        <td colspan="2"><img src="../images/screens/sos_analyzer.gif" width="912" height="620"></td>
+        <td colspan="2"><img src="../images/screens/sos_analyzer.gif" width="830" height="500"></td>
       </tr>
 	  	  <tr>
         <td colspan="2">&nbsp;</td>
@@ -31,7 +31,7 @@
 	   <tr>
         <td colspan="2"><p>Der SOS Analyzer ist ein Werkzeug was einem erlaubt, sowohl eigene als auch fremde SOS Anfragen &uuml;bersichtlich darzustellen und in <em>DS Workbench</em> weiterzuverwenden. Hierf&uuml;r kopiert man einfach eine oder mehrere SOS Anfragen, entweder als BB-Code oder bereits formatiert aus dem Forum, in das obere Textfeld. <br>
             <br>
-            <strong>Achtung:</strong>            Seit DS Version 7.0 gibt es bei der Formatierung von SOS Anfragen zwei verschiedene M&ouml;glichkeiten. Standardm&auml;&szlig;ig ist die Formatierung &quot;<em>Einfach</em>&quot; gew&auml;hlt. Um den SOS-Analyzer nutzen zu k&ouml;nnen m&uuml;sst ihr jedoch die Formatierung &quot;<em>Erweitert</em>&quot; verwenden, wie hier zu sehen ist:
+            <strong>Achtung:</strong>            Seit DS Version 7.0 gibt es bei der Formatierung von SOS Anfragen zwei verschiedene M&ouml;glichkeiten. Standardm&auml;&szlig;ig ist die Formatierung &quot;<strong><em>Einfach</em></strong>&quot; gew&auml;hlt. Um den SOS-Analyzer nutzen zu k&ouml;nnen m&uuml;sst ihr jedoch die Formatierung &quot;<strong><em>Erweitert</em></strong>&quot; verwenden, wie hier zu sehen ist:
           </p></td>
       </tr>
 	   <tr>
@@ -45,45 +45,41 @@
       </tr>
             <tr>
 	  <td colspan="2">
-         Konnten SOS Anfragen gefunden werden, tauchen sie im unteren Bereich geordnet nach Verteidiger und Ziel auf. F&uuml;r jeden gefundenen Angriff werden sowohl Verteidigungsstatus (Stufe des Walls und Truppen im Dorf) sowie dich Herkunftsspieler und -d&ouml;rfer der Angriffe aufgeschl&uuml;sselt. 
-          </td>
+         <p>Konnten SOS Anfragen gefunden werden, tauchen sie in der unteren Tabelle auf. Besonderheiten in der Tabelle bilden die Spalten <em>'Angriffe'</em> und <em>'Kampfkraft'</em>, die zum einen die Anzahl der Angriffe auf das entsprechende Ziel anzeigen, zum anderen die Kampfkraft der Verteidiger im Dorf pro Angriff. Nat&uuml;rlich ist dieser Wert nur ein grober Anhaltspunkt um &uuml;ber die Sicherheit des Dorfes Aussagen zu machen, aber er bietet doch Eindruck &uuml;ber einen m&ouml;glichen Erfolg oder Misserfolg. Weiterhin gibts es noch die Spalte 'Typ'. Diese zeigt an, welchen Angriffstyp<em> DS Workbench</em> hinter den Angriffen vermutet. Hier wird nach einem sehr einfachen Verfahren zwischen Fake und AG unterschieden, sobald mehrere Angriffe aus einem Dorf kommen. Das Men&uuml; auf der rechten Seite bietet die folgenden Funktionen:</p>
+         <ul>
+           <li>&Uuml;bertragen</li>
+		   <ul>
+           <li>Unterst&uuml;tzungswerkzeug: Erlaubt es, den gew&auml;hlten Angriff in das <em>DS Workbench</em> <a href="support_tool.html"><em>Unterst&uuml;tzungswerkzeug</em></a> zu &uuml;bertragen und weitere Unterst&uuml;tzungen zu organisieren.</li>
+           <li>ReTimer: &Uuml;bertr&auml;gt den gew&auml;hlten Angriff in den <a href="retime_tool.html"><em>ReTimer</em></a>, um einen Gegenangriff zu planen.</li>
+           </ul>
+         </ul></td>
+      <tr>
+         <td colspan="2">&nbsp;</td>
+      </tr>
+		  <tr>
+	   <tr>
+	    <td colspan="2"><h3 style="color:#953333">Shortcut-Funktionen</h3></td>
+      </tr>
+	    <tr>
+	   <td colspan="2">&nbsp;
+         </td>
+      </tr>
+	    <tr>
+	   <td colspan="2"><ul>
+	     <li>Kopieren per STRG+C: Kopiert alle gew&auml;hlten Angriffe in einem besonderen Format die Zwischenablage. Von dort aus k&ouml;nnen die Angriffe z.B. im <a href="attack_view.html"><em>Angriffsplaner</em></a> per STRG+V eingef&uuml;gt werden.</li>
+	     <li>Ausschneiden per STRG+X: Kopiert alle gew&auml;hlten Angriffe in einem besonderen Format die Zwischenablage und l&ouml;scht sie anschlie&szlig;end.</li>
+	     <li>BB-Code per STRG+B in die Zwischenablage kopieren: Kopiert die gew&auml;hlten Angriffe als BB-Codes in die Zwischenablage, um sie z.B. im Spiel einzuf&uuml;gen.</li>
+	     <li>L&ouml;schen per ENTF: L&ouml;scht alle gew&auml;hlten Angriffe.</li>
+	     </ul>         </td>
+      </tr>
+        <tr>
+	  <td colspan="2">
+          <p>&nbsp;</p>  </td>
       </tr>
 	    <tr valign="middle">
         <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/information.png" width="24" height="24"></div></td>
         <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE">DS Workbench versucht aus den gefundenen Angriffen Fakes und AGs herauszufiltern. Hierbei gilt, dass der zweite und jeder folgende Angriff aus einem Herkunftsdorf als Fake gekennzeichnet wird, sofern die Laufzeit des Angriffes nicht zu der eines AGs passt. Der Erfolg dieser Filterung h&auml;ngt nat&uuml;rlich ma&szlig;geblich davon ab, wie lange die Angriffe schon gelaufen sind bevor sich in den SOS Analyzer eingef&uuml;gt wurden. Daher sind diese Informationen eher mit Vorsicht zu genie&szlig;en. </td>
       </tr>
-	   <tr>
-	  <td colspan="2">
-          <p>&nbsp;</p>
-         </td>
-      </tr>
-           <tr>
-         <td colspan="2">Die gefundenen SOS Anfragen k&ouml;nnen nun auf verschiedene Arten weiterverwendet bzw. zu verschiedenen Werkzeugen &uuml;bertragen werden. Die erste Button auf der rechten Seite erlaubt eine Umformatierung in BB-Codes, die im Forum verwendet werden k&ouml;nnen. F&uuml;r den im oberen Screenshot markierten Angriff w&uuml;rde das wiefolgt aussehen: </td>
-      </tr>
-		  <tr>
-	  <td colspan="2">
-          <p>&nbsp;</p>
-          </td>
-      </tr>
-        <tr>
-	  <td colspan="2">
-          <p><img src="../images/screens/sos_analyzer_bbcode.gif" width="526" height="175"></p>          </td>
-      </tr>
-        <tr>
-	  <td colspan="2">
-          <p>&nbsp;</p>
-          </td>
-      </tr>
-        <tr>
-          <td colspan="2">Der obere Bereich zeigt das angegriffene Dorf sowie die Anzahl der Angriffe, gefolgt von der sich im Dorf befindlichen Truppenst&auml;rke und dem vorhandenen Wall. Der untere Bereich zeigt die Ankunft des ersten und des letzten Angriffs, sowie die Herkunftsd&ouml;rfer und -spieler der Einzelangriffe. </td>
-        </tr>
-		  <tr>
-	  <td colspan="2">&nbsp;</td>
-      </tr>
-        <tr>
-	  <td colspan="2">Die weiteren Buttons auf der rechten Seite dienen der Reihenfolge nach einer &Uuml;bertragung in das <a href="support_tool.html"><em>Unterst&uuml;tzungswerkzeug</em></a>, das <a href="retime_tool.html"><em>Re-Time Werkzeug</em></a> sowie in die <a href="attack_view.html"><em>Angriffs&uuml;bersicht</em></a>, um entsprechend auf die Angriffe reagieren zu k&ouml;nnen.</td>
-      </tr>
-
 </table>
 </body>
 </html>

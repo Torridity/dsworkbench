@@ -16,11 +16,11 @@ import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.decorator.GroupPredicate;
 import de.tor.tribes.ui.models.TroopsTableModel;
+import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.PercentCellRenderer;
 import de.tor.tribes.ui.renderer.TroopAmountListCellRenderer;
 import de.tor.tribes.ui.renderer.TroopTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.VisibilityCellRenderer;
 import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
@@ -41,6 +41,7 @@ import java.awt.image.BufferedImage;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -90,6 +91,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         jxTroopTable.setColumnControlVisible(true);
         jxTroopTable.setDefaultRenderer(Float.class, new PercentCellRenderer());
         jxTroopTable.setDefaultRenderer(Number.class, new NumberFormatCellRenderer());
+        jxTroopTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         troopModel = new TroopsTableModel(TroopsManager.getSingleton().getDefaultGroupName());
         jxTroopTable.setModel(troopModel);
 

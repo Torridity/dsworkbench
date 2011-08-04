@@ -20,6 +20,7 @@ import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.GenericTestPanel;
 import de.tor.tribes.ui.models.ConquerTableModel;
+import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
@@ -40,6 +41,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -685,6 +687,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         ColorHighlighter p = new ColorHighlighter(new PatternPredicate(Pattern.compile("Barbaren"), 4), Color.PINK, Color.BLACK);
         ColorHighlighter p1 = new ColorHighlighter(new ColumnEqualsPredicate(5, 7), Color.CYAN, Color.BLACK);
         jConquersTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B), p, p1);
+        jConquersTable.setDefaultRenderer(Date.class, new DateCellRenderer());
     }
 
     @Override

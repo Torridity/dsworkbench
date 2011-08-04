@@ -4,12 +4,9 @@
  */
 package de.tor.tribes.ui.models;
 
-import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Note;
-import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.note.NoteManager;
-import java.awt.Color;
-import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -19,7 +16,7 @@ import javax.swing.table.AbstractTableModel;
 public class NoteTableModel extends AbstractTableModel {
 
     private String sNoteSet = null;
-    private final Class[] types = new Class[]{Integer.class, String.class, Integer.class, Integer.class, String.class};
+    private final Class[] types = new Class[]{Integer.class, String.class, Integer.class, Integer.class, Date.class};
     private final String colNames[] = new String[]{"Icon", "Notiz", "Dörfer", "Kartensymbol", "Letzte Änderung"};
     private boolean[] editableColumns = new boolean[]{true, true, false, true, false};
 
@@ -85,7 +82,7 @@ public class NoteTableModel extends AbstractTableModel {
                 return n.getMapMarker();
             }
             default: {
-                return new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(n.getTimestamp());
+                return new Date(n.getTimestamp());// new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(n.getTimestamp());
             }
         }
     }

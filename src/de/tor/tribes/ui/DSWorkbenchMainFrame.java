@@ -101,6 +101,8 @@ import org.jdesktop.swingx.painter.MattePainter;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 /**
+ * @TODO Change cata symbols in A*STar
+ * @TODO Check cata@wall in auto-bomb feature of A*Star
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends JRibbonFrame implements

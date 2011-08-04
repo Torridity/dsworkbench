@@ -142,10 +142,10 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         DefaultTableModel sosTableModel = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Verteidiger", "Ziel", "Angreifer", "Herkunft", "Ankunft", "Angriffe", "Kampfkraft/Angriff", "Wall"}) {
+                    "Verteidiger", "Ziel", "Angreifer", "Herkunft", "Ankunft", "Angriffe", "Kampfkraft/Angriff", "Wall", "Typ"}) {
 
             Class[] types = new Class[]{
-                Tribe.class, Village.class, Tribe.class, Village.class, String.class, Integer.class, Double.class, Integer.class
+                Tribe.class, Village.class, Tribe.class, Village.class, String.class, Integer.class, Double.class, Integer.class, Integer.class
             };
 
             @Override
@@ -163,7 +163,9 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         jResultTable.setModel(sosTableModel);
         jResultTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jResultTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
+
         jResultTable.getColumnExt("Wall").setCellRenderer(new WallLevellCellRenderer());
+        jResultTable.getColumnExt("Typ").setCellRenderer(new AttackTypeCellRenderer());
         jResultTable.setColumnControlVisible(false);
         jResultTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         jResultTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
@@ -288,6 +290,9 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         StringBuilder b = new StringBuilder();
         int cnt = 0;
         for (Attack a : selection) {
+            if (a.getUnit() == null) {
+                a.setUnit(UnknownUnit.getSingleton());
+            }
             b.append(Attack.toInternalRepresentation(a)).append("\n");
             cnt++;
         }
@@ -353,9 +358,10 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     }
 
     private void cutSelectionToInternalClipboard() {
+        List<Attack> selection = getSelectedAttacks();
         copySelectionToInternalClipboard();
         removeSelection(false);
-        showSuccess("Einträge ausgeschnitten");
+        showSuccess(((selection.size() == 1) ? "Angriff" : selection.size() + " Angriffe") + " ausgeschnitten");
     }
 
     private void removeSelection() {
@@ -365,17 +371,17 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     private void removeSelection(boolean pAsk) {
         int[] selectedRows = jResultTable.getSelectedRows();
         if (selectedRows == null || selectedRows.length < 1) {
-            showInfo("Keine Einträge ausgewählt");
+            showInfo("Keine Angriffe ausgewählt");
             return;
         }
 
-        if (!pAsk || JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du " + ((selectedRows.length == 1) ? "den gewählten Eintrag " : "die gewählten Einträge ") + "wirklich löschen?", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+        if (!pAsk || JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du " + ((selectedRows.length == 1) ? "den gewählten Angriff " : "die gewählten Angriffe ") + "wirklich löschen?", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             DefaultTableModel model = (DefaultTableModel) jResultTable.getModel();
             int numRows = selectedRows.length;
             for (int i = 0; i < numRows; i++) {
                 model.removeRow(jResultTable.convertRowIndexToModel(jResultTable.getSelectedRow()));
             }
-            showSuccess("Einträge gelöscht");
+            showSuccess(((numRows == 1) ? "Angriff" : numRows + " Angriffe") + " gelöscht");
         }
     }
 
@@ -393,9 +399,10 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         }
 
         for (int row : rows) {
-            Village target = (Village) jResultTable.getValueAt(row, 1);
-            Village source = (Village) jResultTable.getValueAt(row, 3);
-            String arrive = (String) jResultTable.getValueAt(row,4);
+            Village target = (Village) jResultTable.getValueAt(row, 0);
+            Village source = (Village) jResultTable.getValueAt(row, 2);
+            String arrive = (String) jResultTable.getValueAt(row, 3);
+            int type = (Integer) jResultTable.getValueAt(row, 7);
             SimpleDateFormat f = null;
             if (!ServerSettings.getSingleton().isMillisArrival()) {
                 f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format"));
@@ -406,6 +413,11 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
             Attack a = new Attack();
             a.setSource(source);
             a.setTarget(target);
+            if (type == Attack.SNOB_TYPE) {
+                a.setUnit(DataHolder.getSingleton().getUnitByPlainName("snob"));
+            }else if (type == Attack.FAKE_TYPE) {
+                a.setUnit(DataHolder.getSingleton().getUnitByPlainName("ram"));
+            }
             try {
                 a.setArriveTime(f.parse(arrive));
                 attacks.add(a);
@@ -504,6 +516,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jSOSPanel, gridBagConstraints);
 
+        capabilityInfoPanel1.setPastable(false);
         capabilityInfoPanel1.setSearchable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -597,13 +610,22 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
                 int attackCount = attacks.size();
                 for (SOSRequest.TimedAttack attack : attacks) {
                     //add one table row for each attack
+                    System.out.println(attack.isPossibleFake());
+                    System.out.println(attack.isPossibleSnob());
+                    int possibleType = Attack.NO_TYPE;
+                    if (attack.isPossibleFake()) {
+                        possibleType = Attack.FAKE_TYPE;
+                    } else if (attack.isPossibleSnob()) {
+                        possibleType = Attack.SNOB_TYPE;
+                    }
+
                     sosTableModel.addRow(new Object[]{defender,
                                 target,
                                 attack.getSource().getTribe(),
                                 attack.getSource(),
                                 f.format(new Date(attack.getlArriveTime())),
                                 attackCount,
-                                defensePower / attackCount, wall});
+                                defensePower / attackCount, wall, possibleType});
                 }
             }
         }

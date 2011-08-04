@@ -1416,9 +1416,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jPanel2.add(jLabel17);
 
         jLabel4.setText("Standardmarkierung");
-        jLabel4.setMaximumSize(new java.awt.Dimension(97, 25));
-        jLabel4.setMinimumSize(new java.awt.Dimension(97, 25));
-        jLabel4.setPreferredSize(new java.awt.Dimension(97, 25));
+        jLabel4.setMaximumSize(new java.awt.Dimension(150, 25));
+        jLabel4.setMinimumSize(new java.awt.Dimension(150, 25));
+        jLabel4.setPreferredSize(new java.awt.Dimension(150, 25));
 
         jDefaultMarkBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "DS 6.0", "Rot", "Weiß" }));
         jDefaultMarkBox.setToolTipText("Standardfarbe von Dorfmarkierungen");
@@ -1474,9 +1474,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.X_AXIS));
 
         jLabel22.setText("Max. Bauernhofplätze");
-        jLabel22.setMaximumSize(new java.awt.Dimension(128, 25));
-        jLabel22.setMinimumSize(new java.awt.Dimension(128, 25));
-        jLabel22.setPreferredSize(new java.awt.Dimension(128, 25));
+        jLabel22.setMaximumSize(new java.awt.Dimension(150, 25));
+        jLabel22.setMinimumSize(new java.awt.Dimension(150, 25));
+        jLabel22.setPreferredSize(new java.awt.Dimension(150, 25));
         jPanel3.add(jLabel22);
 
         jMaxFarmSpace.setText("20000");
@@ -1495,9 +1495,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap()
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
-                    .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE))
                 .addGap(36, 36, 36)
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
@@ -1518,8 +1517,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jDefaultMarkBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(176, 176, 176))
         );
 

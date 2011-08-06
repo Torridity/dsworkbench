@@ -63,6 +63,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
@@ -479,11 +480,16 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         }));
 
-        miscTaskPane.getContentPane().add(factoryButton("/res/ui/att_alert.png", "Aktiviert eine Warnung f&uuml;r Angriffe, welche in den n&auml;chsten 10 Minuten abgeschickt werden m&uuml;ssen", new MouseAdapter() {
+        miscTaskPane.getContentPane().add(factoryButton("/res/ui/att_alert_off.png", "Aktiviert eine Warnung f&uuml;r Angriffe, welche in den n&auml;chsten 10 Minuten abgeschickt werden m&uuml;ssen", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
                 mNotifyThread.setActive(!mNotifyThread.isActive());
+                if (mNotifyThread.isActive()) {
+                    ((JXButton) e.getSource()).setIcon(new ImageIcon(DSWorkbenchAttackFrame.class.getResource("/res/ui/att_alert.png")));
+                } else {
+                    ((JXButton) e.getSource()).setIcon(new ImageIcon(DSWorkbenchAttackFrame.class.getResource("/res/ui/att_alert_off.png")));
+                }
             }
         }));
         // </editor-fold>
@@ -869,7 +875,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     }
 
     public void decreaseClickAccountValue() {
-        iClickAccount = (iClickAccount == 0) ? 0 : iClickAccount-1;
+        iClickAccount = (iClickAccount == 0) ? 0 : iClickAccount - 1;
         updateClickAccount();
     }
 

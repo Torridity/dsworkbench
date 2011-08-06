@@ -12,7 +12,6 @@ import de.tor.tribes.types.Village;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Charon
@@ -29,8 +28,8 @@ public class AttackToBBCodeFormater {
             template = STANDARD_TEMPLATE;
         }
         //bot protection
-        template = StringUtils.replace(template, "red", getRandomRed());
-        template = StringUtils.replace(template, "green", getRandomGreen());
+        template = template.replaceAll("red", getRandomRed());
+        template = template.replaceAll("green", getRandomGreen());
 
         Date aTime = pAttack.getArriveTime();
         Date sTime = new Date(aTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(pAttack.getSource(), pAttack.getTarget(), pAttack.getUnit().getSpeed()) * 1000));
@@ -54,45 +53,45 @@ public class AttackToBBCodeFormater {
 
         switch (pAttack.getType()) {
             case Attack.CLEAN_TYPE: {
-                template = StringUtils.replace(template, "%TYPE%", "Angriff (Clean-Off)");
+                template = template.replaceAll("%TYPE%", "Angriff (Clean-Off)");
                 break;
             }
             case Attack.FAKE_TYPE: {
-                template = StringUtils.replace(template, "%TYPE%", "Angriff (Fake)");
+                template = template.replaceAll("%TYPE%", "Angriff (Fake)");
                 break;
             }
             case Attack.SNOB_TYPE: {
-                template = StringUtils.replace(template, "%TYPE%", "Angriff (AG)");
+                template = template.replaceAll("%TYPE%", "Angriff (AG)");
                 break;
             }
             case Attack.SUPPORT_TYPE: {
-                template = StringUtils.replace(template, "%TYPE%", "Unterstützung");
+                template = template.replaceAll("%TYPE%", "Unterstützung");
                 break;
             }
             default: {
-                template = StringUtils.replace(template, "%TYPE%", "Angriff");
+                template = template.replaceAll("%TYPE%", "Angriff");
             }
         }
 
         if (pAttack.getSource().getTribe() != Barbarians.getSingleton()) {
-            template = StringUtils.replace(template, "%ATTACKER%", pAttack.getSource().getTribe().toBBCode());
+            template = template.replaceAll("%ATTACKER%", pAttack.getSource().getTribe().toBBCode());
         } else {
-            template = StringUtils.replace(template, "%ATTACKER%", "Barbaren");
+            template = template.replaceAll("%ATTACKER%", "Barbaren");
         }
-        template = StringUtils.replace(template, "%SOURCE%", pAttack.getSource().toBBCode());
+        template = template.replaceAll("%SOURCE%", pAttack.getSource().toBBCode());
         if (pExtended) {
-            template = StringUtils.replace(template, "%UNIT%", "[img]" + pServerURL + "/graphic/unit/unit_" + pAttack.getUnit().getPlainName() + ".png[/img]");
+            template = template.replaceAll("%UNIT%", "[img]" + pServerURL + "/graphic/unit/unit_" + pAttack.getUnit().getPlainName() + ".png[/img]");
         } else {
-            template = StringUtils.replace(template, "%UNIT%", pAttack.getUnit().getName());
+            template = template.replaceAll("%UNIT%", pAttack.getUnit().getName());
         }
         if (pAttack.getTarget().getTribe() != Barbarians.getSingleton()) {
-            template = StringUtils.replace(template, "%DEFENDER%", pAttack.getTarget().getTribe().toBBCode());
+            template = template.replaceAll("%DEFENDER%", pAttack.getTarget().getTribe().toBBCode());
         } else {
-            template = StringUtils.replace(template, "%DEFENDER%", "Barbaren");
+            template = template.replaceAll("%DEFENDER%", "Barbaren");
         }
-        template = StringUtils.replace(template, "%TARGET%", pAttack.getTarget().toBBCode());
-        template = StringUtils.replace(template, "%SEND%", sendtime);
-        template = StringUtils.replace(template, "%ARRIVE%", arrivetime);
+        template = template.replaceAll("%TARGET%", pAttack.getTarget().toBBCode());
+        template = template.replaceAll("%SEND%", sendtime);
+        template = template.replaceAll("%ARRIVE%", arrivetime);
         //replace place var
         String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer()) + "/";
         String placeURL = baseURL + "game.php?village=";
@@ -107,8 +106,8 @@ public class AttackToBBCodeFormater {
         placeURL += pAttack.getSource().getId() + "&screen=place&mode=command&target=" + pAttack.getTarget().getId();
 
         String placeLink = "[url=\"" + placeURL + "\"]Versammlungsplatz[/url]";
-        template = StringUtils.replace(template, "%PLACE%", placeLink);
-        template = StringUtils.replace(template, "%PLACE_URL%", placeURL);
+        template = template.replaceAll("%PLACE%", placeLink);
+        template = template.replaceAll("%PLACE_URL%", placeURL);
         template += "\n";
         return template;
     }
@@ -133,45 +132,45 @@ public class AttackToBBCodeFormater {
 
         switch (pType) {
             case Attack.CLEAN_TYPE: {
-                template = StringUtils.replace(template, "%TYPE%", "Angriff (Clean-Off)");
+                template = template.replaceAll("%TYPE%", "Angriff (Clean-Off)");
                 break;
             }
             case Attack.FAKE_TYPE: {
-                template = StringUtils.replace(template, "%TYPE%", "Angriff (Fake)");
+                template = template.replaceAll("%TYPE%", "Angriff (Fake)");
                 break;
             }
             case Attack.SNOB_TYPE: {
-                template = StringUtils.replace(template, "%TYPE%", "Angriff (AG)");
+                template = template.replaceAll("%TYPE%", "Angriff (AG)");
                 break;
             }
             case Attack.SUPPORT_TYPE: {
-                template = StringUtils.replace(template, "%TYPE%", "Unterstützung");
+                template = template.replaceAll("%TYPE%", "Unterstützung");
                 break;
             }
             default: {
-                template = StringUtils.replace(template, "%TYPE%", "Angriff");
+                template = template.replaceAll( "%TYPE%", "Angriff");
             }
         }
 
         if (pSource.getTribe() != Barbarians.getSingleton()) {
-            template = StringUtils.replace(template, "%ATTACKER%", pSource.getTribe().toBBCode());
+            template = template.replaceAll("%ATTACKER%", pSource.getTribe().toBBCode());
         } else {
-            template = StringUtils.replace(template, "%ATTACKER%", "Barbaren");
+            template = template.replaceAll("%ATTACKER%", "Barbaren");
         }
-        template = StringUtils.replace(template, "%SOURCE%", pSource.toBBCode());
+        template = template.replaceAll("%SOURCE%", pSource.toBBCode());
         if (pExtended) {
-            template = StringUtils.replace(template, "%UNIT%", "[img]" + pServerURL + "/graphic/unit/unit_" + pUnit.getPlainName() + ".png[/img]");
+            template = template.replaceAll("%UNIT%", "[img]" + pServerURL + "/graphic/unit/unit_" + pUnit.getPlainName() + ".png[/img]");
         } else {
-            template = StringUtils.replace(template, "%UNIT%", pUnit.getName());
+            template = template.replaceAll("%UNIT%", pUnit.getName());
         }
         if (pTarget.getTribe() != Barbarians.getSingleton()) {
-            template = StringUtils.replace(template, "%DEFENDER%", pTarget.getTribe().toBBCode());
+            template = template.replaceAll("%DEFENDER%", pTarget.getTribe().toBBCode());
         } else {
             template = template.replaceAll("%DEFENDER%", "Barbaren");
         }
-        template = StringUtils.replace(template, "%TARGET%", pTarget.toBBCode());
-        template = StringUtils.replace(template, "%SEND%", sendtime);
-        template = StringUtils.replace(template, "%ARRIVE%", arrivetime);
+        template = template.replaceAll("%TARGET%", pTarget.toBBCode());
+        template = template.replaceAll("%SEND%", sendtime);
+        template = template.replaceAll("%ARRIVE%", arrivetime);
         //replace place var
         String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer()) + "/";
         String placeURL = baseURL + "game.php?village=";
@@ -182,7 +181,7 @@ public class AttackToBBCodeFormater {
         placeURL += pSource.getId() + "&screen=place&mode=command&target=" + pTarget.getId();
 
         String placeLink = "[url=\"" + placeURL + "\"]Versammlungsplatz[/url]";
-        template = StringUtils.replace(template, "%PLACE%", placeLink);
+        template = template.replaceAll("%PLACE%", placeLink);
         template += "\n";
 
         return template;
@@ -199,5 +198,4 @@ public class AttackToBBCodeFormater {
         int randomColor = c.getRGB() + (int) Math.rint(Math.random() * 10);
         return "#" + Integer.toHexString(new Color(randomColor).getRGB()).substring(2);
     }
-
 }

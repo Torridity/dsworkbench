@@ -19,9 +19,6 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Pattern;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -178,40 +175,40 @@ public class AttackPlanHTMLExporter {
             String b = BLOCK;
             // <editor-fold defaultstate="collapsed" desc="Replace DIV-IDs">
             if (cnt % 2 == 0) {
-                b = StringUtils.replace(b,DIV_CLASS, "odd_div");
+                b = b.replaceAll(DIV_CLASS, "odd_div");
             } else {
-                b = StringUtils.replace(b,DIV_CLASS, "even_div");
+                b = b.replaceAll(DIV_CLASS, "even_div");
             }
-            b = StringUtils.replace(b,ID, Integer.toString(cnt));
+            b = b.replaceAll(ID, Integer.toString(cnt));
             // </editor-fold>
 
             // <editor-fold defaultstate="collapsed" desc="Replace Unit Icons">
             UnitHolder unit = a.getUnit();
-            b = StringUtils.replace(b,UNIT, "<img src=\"http://www.dsworkbench.de/DSWorkbench/export/" + unit.getPlainName() + ".png\">");
+            b = b.replaceAll(UNIT, "<img src=\"http://www.dsworkbench.de/DSWorkbench/export/" + unit.getPlainName() + ".png\">");
 
             switch (a.getType()) {
                 case Attack.CLEAN_TYPE: {
-                    b = StringUtils.replace(b,TYPE, "<img src=\"http://www.dsworkbench.de/DSWorkbench/export/att.png\">");
+                    b = b.replaceAll(TYPE, "<img src=\"http://www.dsworkbench.de/DSWorkbench/export/att.png\">");
                     break;
                 }
                 case Attack.SNOB_TYPE: {
-                    b = StringUtils.replace(b,TYPE, "<img src=\"http://www.dsworkbench.de/DSWorkbench/export/snob.png\">");
+                    b = b.replaceAll(TYPE, "<img src=\"http://www.dsworkbench.de/DSWorkbench/export/snob.png\">");
                     break;
                 }
                 case Attack.FAKE_TYPE: {
-                    b = StringUtils.replace(b,TYPE, "<img src=\"http://www.dsworkbench.de/DSWorkbench/export/fake.png\">");
+                    b = b.replaceAll(TYPE, "<img src=\"http://www.dsworkbench.de/DSWorkbench/export/fake.png\">");
                     break;
                 }
                 case Attack.FAKE_DEFF_TYPE: {
-                    b = StringUtils.replace(b,TYPE, "<img src=\"http://www.dsworkbench.de/DSWorkbench/export/def_fake.png\">");
+                    b = b.replaceAll(TYPE, "<img src=\"http://www.dsworkbench.de/DSWorkbench/export/def_fake.png\">");
                     break;
                 }
                 case Attack.SUPPORT_TYPE: {
-                    b =StringUtils.replace(b,TYPE, "<img src=\"http://www.dsworkbench.de/DSWorkbench/export/ally.png\">");
+                    b = b.replaceAll(TYPE, "<img src=\"http://www.dsworkbench.de/DSWorkbench/export/ally.png\">");
                     break;
                 }
                 default: {
-                    b =StringUtils.replace(b,TYPE, "-");
+                    b = b.replaceAll(TYPE, "-");
                     break;
                 }
             }
@@ -259,14 +256,14 @@ public class AttackPlanHTMLExporter {
             sourceVillageCoord = a.getSource().getCoordAsString();
 
             //replace values
-            b = StringUtils.replace(b, SOURCE_PLAYER_NAME, sourceTribeName);
-            b = StringUtils.replace(b, SOURCE_PLAYER_LINK, sourceTribeLink);
-            b = StringUtils.replace(b, SOURCE_ALLY_NAME, sourceAllyName);
-            b = StringUtils.replace(b, SOURCE_ALLY_TAG, sourceAllyTag);
-            b = StringUtils.replace(b, SOURCE_ALLY_LINK, sourceAllyLink);
-            b = StringUtils.replace(b, SOURCE_VILLAGE_NAME, sourceVillageName);
-            b = StringUtils.replace(b, SOURCE_VILLAGE_COORD, sourceVillageCoord);
-            b = StringUtils.replace(b, SOURCE_VILLAGE_LINK, sourceVillageLink);
+            b = b.replaceAll(SOURCE_PLAYER_NAME, sourceTribeName);
+            b = b.replaceAll(SOURCE_PLAYER_LINK, sourceTribeLink);
+            b = b.replaceAll(SOURCE_ALLY_NAME, sourceAllyName);
+            b = b.replaceAll(SOURCE_ALLY_TAG, sourceAllyTag);
+            b = b.replaceAll(SOURCE_ALLY_LINK, sourceAllyLink);
+            b = b.replaceAll(SOURCE_VILLAGE_NAME, sourceVillageName);
+            b = b.replaceAll(SOURCE_VILLAGE_COORD, sourceVillageCoord);
+            b = b.replaceAll(SOURCE_VILLAGE_LINK, sourceVillageLink);
 
             //</editor-fold>
 
@@ -310,24 +307,24 @@ public class AttackPlanHTMLExporter {
             targetVillageCoord = a.getTarget().getCoordAsString();
 
             //replace values
-            b = StringUtils.replace(b, TARGET_PLAYER_NAME, targetTribeName);
-            b = StringUtils.replace(b, TARGET_PLAYER_LINK, targetTribeLink);
-            b = StringUtils.replace(b, TARGET_ALLY_NAME, targetAllyName);
-            b = StringUtils.replace(b, TARGET_ALLY_TAG, targetAllyTag);
-            b = StringUtils.replace(b, TARGET_ALLY_LINK, targetAllyLink);
-            b = StringUtils.replace(b, TARGET_VILLAGE_NAME, targetVillageName);
-            b = StringUtils.replace(b, TARGET_VILLAGE_COORD, targetVillageCoord);
-            b = StringUtils.replace(b, TARGET_VILLAGE_LINK, targetVillageLink);
+            b = b.replaceAll(TARGET_PLAYER_NAME, targetTribeName);
+            b = b.replaceAll(TARGET_PLAYER_LINK, targetTribeLink);
+            b = b.replaceAll(TARGET_ALLY_NAME, targetAllyName);
+            b = b.replaceAll(TARGET_ALLY_TAG, targetAllyTag);
+            b = b.replaceAll(TARGET_ALLY_LINK, targetAllyLink);
+            b = b.replaceAll(TARGET_VILLAGE_NAME, targetVillageName);
+            b = b.replaceAll(TARGET_VILLAGE_COORD, targetVillageCoord);
+            b = b.replaceAll(TARGET_VILLAGE_LINK, targetVillageLink);
 
             //</editor-fold>
 
             // <editor-fold defaultstate="collapsed" desc="Replace times and place URL">
             //replace arrive time
             String arrive = f.format(a.getArriveTime());
-            b = StringUtils.replace(b,ARRIVE_TIME, arrive);
+            b = b.replaceAll(ARRIVE_TIME, arrive);
             //replace send time
             long send = a.getArriveTime().getTime() - ((long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-            b = StringUtils.replace(b,SEND_TIME, f.format(new Date(send)));
+            b = b.replaceAll(SEND_TIME, f.format(new Date(send)));
             //replace place link
             String placeURL = baseURL + "game.php?village=";
             int uvID = GlobalOptions.getSelectedProfile().getUVId();
@@ -337,7 +334,7 @@ public class AttackPlanHTMLExporter {
             placeURL += a.getSource().getId() + "&screen=place&mode=command&target=" + a.getTarget().getId();
 
             //b = b.replaceAll(PLACE, "<a href=\"" + placeURL + "\" target=\"_blank\">Versammlungsplatz</a>");
-            b = StringUtils.replace(b,PLACE, placeURL);
+            b = b.replaceAll(PLACE, placeURL);
             // </editor-fold>
 
             result.append(b);
@@ -361,33 +358,33 @@ public class AttackPlanHTMLExporter {
         //set creator
         Tribe user = GlobalOptions.getSelectedProfile().getTribe();
         if (user != null) {
-            result = StringUtils.replace(result,CREATOR, user.toString());
+            result = result.replaceAll(CREATOR, user.toString());
         } else {
-            result = StringUtils.replace(result,CREATOR, "-");
+            result = result.replaceAll(CREATOR, "-");
         }
         //set planname
         if (pPlanName != null) {
-            result = StringUtils.replace(result,PLANNAME, EscapeChars.forHTML(pPlanName));
+            result = result.replaceAll(PLANNAME, EscapeChars.forHTML(pPlanName));
         } else {
-            result = StringUtils.replace(result,PLANNAME, "-");
+            result = result.replaceAll(PLANNAME, "-");
         }
         //set attack count
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);
         nf.setMinimumFractionDigits(0);
-        result = StringUtils.replace(result,ATTACK_COUNT, nf.format(pAttacks.size()));
+        result = result.replaceAll(ATTACK_COUNT, nf.format(pAttacks.size()));
         //set attack count
         String server = GlobalOptions.getSelectedServer();
         if (server != null) {
-            result = StringUtils.replace(result,SERVER, server);
+            result = result.replaceAll(SERVER, server);
         } else {
-            result = StringUtils.replace(result,SERVER, "-");
+            result = result.replaceAll(SERVER, "-");
         }
         //replace version
-        result = StringUtils.replace(result,VERSION, Double.toString(Constants.VERSION) + Constants.VERSION_ADDITION);
+        result = result.replaceAll(VERSION, Double.toString(Constants.VERSION) + Constants.VERSION_ADDITION);
         //replace creation date
         SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy 'um' HH:mm:ss 'Uhr'");
-        result = StringUtils.replace(result,CREATION_DATE, f.format(new Date(System.currentTimeMillis())));
+        result = result.replaceAll(CREATION_DATE, f.format(new Date(System.currentTimeMillis())));
 
         return result;
     }

@@ -1831,6 +1831,8 @@
         </Component>
       </SubComponents>
     </Container>
+    <Component class="org.jdesktop.swingx.JXTipOfTheDay" name="jXTipOfTheDay1">
+    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>

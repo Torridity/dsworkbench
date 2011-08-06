@@ -10,10 +10,16 @@
  */
 package de.tor.tribes.ui;
 
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.util.Locale;
+import java.util.Properties;
+import javax.swing.JFrame;
+import org.jdesktop.swingx.JXTipOfTheDay;
+import org.jdesktop.swingx.plaf.TipOfTheDayUI;
+import org.jdesktop.swingx.tips.DefaultTip;
+import org.jdesktop.swingx.tips.TipLoader;
+import org.jdesktop.swingx.tips.TipOfTheDayModel;
 
 /**
  *
@@ -28,29 +34,42 @@ public class TotDFrame extends javax.swing.JFrame {
     /** Creates new form TotDFrame */
     public TotDFrame() {
         initComponents();
-        tips = new File(TIP_DIR).listFiles(new FileFilter() {
 
-            @Override
-            public boolean accept(File pathname) {
-                try {
-                    if (!pathname.isFile()) {
-                        return false;
-                    }
-                    String ext = pathname.getName();
-                    ext = ext.substring(ext.lastIndexOf(".") + 1);
-                    return (ext.equals("html"));
-
-                } catch (Exception e) {
-                    return false;
-                }
+        DefaultTip t = new DefaultTip();
+        t.setTipName("Testing");
+        t.setTip("Some tip");
+        DefaultTip t2 = new DefaultTip();
+        t2.setTipName("Testing1");
+        t2.setTip("Some tip1");
+        TipOfTheDayModel model = null;
+        /* 
+        System.out.println(model.getTipCount());
+        jXTipOfTheDay1.setCurrentTip(0);*/
+        try {
+            //@TODO Load totd from server -> integrate into DSWB
+            Properties p = new Properties();
+            p.load(new FileInputStream(new File("tip.properties")));
+            model = TipLoader.load(p);
+            if (p.getProperty("enabled").equals("0")) {
+                System.out.println("NOT");
             }
-        });
-
-        iCurrentTip = (int) Math.rint(Math.random() * tips.length);
-        if (iCurrentTip > tips.length-1) {
-            iCurrentTip = tips.length - 1;
+            jXTipOfTheDay1.setModel(model);
+            jXTipOfTheDay1.setCurrentTip(1);
+        } catch (Exception e) {
         }
-        showTip();
+
+
+        JXTipOfTheDay.ShowOnStartupChoice noshow = new JXTipOfTheDay.ShowOnStartupChoice() {
+
+            public boolean isShowingOnStartup() {
+                return true;
+            }
+
+            public void setShowingOnStartup(boolean showOnStartup) {
+            }
+        };
+        ((TipOfTheDayUI) jXTipOfTheDay1.getUI()).createDialog(this, noshow).setVisible(true);
+
     }
 
     /** This method is called from within the constructor to
@@ -62,78 +81,17 @@ public class TotDFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jEditorPane1 = new javax.swing.JEditorPane();
-        jCloseButton = new javax.swing.JButton();
-        jNextButton = new javax.swing.JButton();
-        jPrevButton = new javax.swing.JButton();
+        jXTipOfTheDay1 = new org.jdesktop.swingx.JXTipOfTheDay();
+        jXButton1 = new org.jdesktop.swingx.JXButton();
 
         setTitle("Tipp des Tages");
 
-        jPanel1.setBackground(new java.awt.Color(239, 235, 223));
-
-        jEditorPane1.setBackground(new java.awt.Color(255, 255, 204));
-        jEditorPane1.setContentType("text/html");
-        jScrollPane2.setViewportView(jEditorPane1);
-
-        jCloseButton.setBackground(new java.awt.Color(239, 235, 223));
-        jCloseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/red_x.png"))); // NOI18N
-        jCloseButton.setText("Schließen");
-        jCloseButton.setMaximumSize(new java.awt.Dimension(105, 25));
-        jCloseButton.setMinimumSize(new java.awt.Dimension(105, 25));
-        jCloseButton.setPreferredSize(new java.awt.Dimension(105, 25));
-
-        jNextButton.setBackground(new java.awt.Color(239, 235, 223));
-        jNextButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/next.png"))); // NOI18N
-        jNextButton.setText("Nächster");
-        jNextButton.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        jNextButton.setMaximumSize(new java.awt.Dimension(105, 25));
-        jNextButton.setMinimumSize(new java.awt.Dimension(105, 25));
-        jNextButton.setPreferredSize(new java.awt.Dimension(105, 25));
-        jNextButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireNewTipButtonEvent(evt);
+        jXButton1.setText("jXButton1");
+        jXButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireNext(evt);
             }
         });
-
-        jPrevButton.setBackground(new java.awt.Color(239, 235, 223));
-        jPrevButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/prev.png"))); // NOI18N
-        jPrevButton.setText("Vorheriger");
-        jPrevButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireNewTipButtonEvent(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jPrevButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jNextButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jNextButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPrevButton))
-                .addContainerGap())
-        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -141,65 +99,62 @@ public class TotDFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jXTipOfTheDay1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(39, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(309, Short.MAX_VALUE)
+                .addComponent(jXButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(81, 81, 81))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(41, 41, 41)
+                .addComponent(jXTipOfTheDay1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
+                .addComponent(jXButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(52, 52, 52))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void showTip() {
-        File tip = tips[iCurrentTip];
+        /* File tip = tips[iCurrentTip];
         try {
-            DataInputStream din = new DataInputStream(new FileInputStream(tip));
-            byte[] data = new byte[(int) tip.length()];
-            din.readFully(data);
-            jEditorPane1.setText(new String(data));
-            din.close();
+        DataInputStream din = new DataInputStream(new FileInputStream(tip));
+        byte[] data = new byte[(int) tip.length()];
+        din.readFully(data);
+        jEditorPane1.setText(new String(data));
+        din.close();
         } catch (Exception e) {
-        }
+        }*/
     }
 
-    private void fireNewTipButtonEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireNewTipButtonEvent
-        if (evt.getSource() == jNextButton) {
-            iCurrentTip++;
-        } else {
-            iCurrentTip--;
-        }
-        if (iCurrentTip < 0) {
-            iCurrentTip = tips.length - 1;
-        } else if (iCurrentTip > tips.length - 1) {
-            iCurrentTip = 0;
-        }
-        showTip();
-    }//GEN-LAST:event_fireNewTipButtonEvent
+    private void fireNext(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireNext
+        System.out.println(jXTipOfTheDay1.getCurrentTip());
+        jXTipOfTheDay1.nextTip();
+    }//GEN-LAST:event_fireNext
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        Locale.setDefault(Locale.GERMAN);
+
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                new TotDFrame().setVisible(true);
+                TotDFrame f = new TotDFrame();
+                f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                f.setVisible(true);
             }
         });
 
 
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jCloseButton;
-    private javax.swing.JEditorPane jEditorPane1;
-    private javax.swing.JButton jNextButton;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JButton jPrevButton;
-    private javax.swing.JScrollPane jScrollPane2;
+    private org.jdesktop.swingx.JXButton jXButton1;
+    private org.jdesktop.swingx.JXTipOfTheDay jXTipOfTheDay1;
     // End of variables declaration//GEN-END:variables
 }

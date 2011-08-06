@@ -83,10 +83,14 @@ import java.awt.Rectangle;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseEvent;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
@@ -97,12 +101,13 @@ import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
+import org.jdesktop.swingx.JXTipOfTheDay;
 import org.jdesktop.swingx.painter.MattePainter;
+import org.jdesktop.swingx.tips.TipLoader;
+import org.jdesktop.swingx.tips.TipOfTheDayModel;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 /**
- * @TODO Change cata symbols in A*STar
- * @TODO Check cata@wall in auto-bomb feature of A*Star
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends JRibbonFrame implements
@@ -825,6 +830,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                     if (!Boolean.parseBoolean(GlobalOptions.getProperty("no.welcome"))) {
                         setGlassPane(new WelcomePanel());
                         getGlassPane().setVisible(true);
+                    } else {
+                        showTotD();
                     }
                 }
             }
@@ -833,6 +840,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
     public void hideWelcomePage() {
         getGlassPane().setVisible(false);
+        showTotD();
     }
 
     public void showAboutDialog() {
@@ -849,19 +857,47 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     }
 
     private void showReminder() {
-        /*  long showNotBefore = 0;
-        try {
-        showNotBefore = Long.parseLong(GlobalOptions.getProperty("startup.reminder.not.before"));
-        } catch (Exception e) {
-        showNotBefore = 0;
-        }
-        if (System.currentTimeMillis() > showNotBefore) {
-        StartupReminder reminder = new StartupReminder(this);
-        // TagManager.getSingleton().addManagerListener(reminder);
-        // TroopsManager.getSingleton().addTroopsManagerListener(reminder);
-        reminder.setVisible(true);
-        }*/
         showInfo("Weltdaten aktuell? Truppen importiert? Gruppen importiert?");
+    }
+
+    private void showTotD() {
+        try {
+            URLConnection connection = new URL("http://www.dsworkbench.de/downloads/totd/totd.properties").openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
+            Properties props = new Properties();
+            props.load(connection.getInputStream());
+            TipOfTheDayModel model = TipLoader.load(props);
+            if (props.getProperty("enabled").equals("0")) {
+                logger.info("Tip of the day is disabled");
+                return;
+            }
+            jXTipOfTheDay1.setModel(model);
+            jXTipOfTheDay1.setCurrentTip(1);
+        } catch (IOException ioe) {
+            logger.error("Failed to read tip of the day file", ioe);
+            return;
+        } catch (Exception e) {
+            logger.error("Failed to read tip of the day file", e);
+            return;
+        }
+
+        JXTipOfTheDay.ShowOnStartupChoice noshow = new JXTipOfTheDay.ShowOnStartupChoice() {
+
+            @Override
+            public boolean isShowingOnStartup() {
+                String showTip = GlobalOptions.getProperty("show.tip");
+                if (showTip == null) {
+                    return true;
+                } else {
+                    return Boolean.parseBoolean(GlobalOptions.getProperty("show.tip"));
+                }
+            }
+
+            @Override
+            public void setShowingOnStartup(boolean showOnStartup) {
+                GlobalOptions.addProperty("show.tip", Boolean.toString(showOnStartup));
+            }
+        };
+        jXTipOfTheDay1.getUI().createDialog(this, noshow).setVisible(noshow.isShowingOnStartup());
     }
 
     public void showInfo(String pMessage) {
@@ -1002,6 +1038,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jCurrentToolLabel = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jEnableClipboardWatchButton = new javax.swing.JButton();
+        jXTipOfTheDay1 = new org.jdesktop.swingx.JXTipOfTheDay();
         jPanel4 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
@@ -3650,6 +3687,7 @@ private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JTable jTroopSetExportTable;
     private javax.swing.JMenuItem jUnitOverviewItem;
     private org.jdesktop.swingx.JXLabel jXLabel1;
+    private org.jdesktop.swingx.JXTipOfTheDay jXTipOfTheDay1;
     private javax.swing.JButton jZoomInButton;
     private javax.swing.JButton jZoomOutButton;
     // End of variables declaration//GEN-END:variables

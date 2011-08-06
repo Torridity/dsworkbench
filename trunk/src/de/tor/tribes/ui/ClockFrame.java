@@ -5,15 +5,22 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.ui.components.ColoredProgressBar;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
-import java.awt.Toolkit;
-import java.awt.TrayIcon;
-import java.io.File;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
-import javax.imageio.ImageIO;
+import javax.crypto.spec.PBEKeySpec;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFrame;
 import javax.swing.JSpinner.DateEditor;
+import org.apache.commons.lang.time.DateUtils;
 
 /**
  * @author  Jejkal
@@ -22,6 +29,7 @@ public class ClockFrame extends javax.swing.JFrame {
 
     private TimerThread tThread = null;
     private static ClockFrame SINGLETON = null;
+    private ColoredProgressBar cp = null;
 
     public static synchronized ClockFrame getSingleton() {
         if (SINGLETON == null) {
@@ -37,6 +45,19 @@ public class ClockFrame extends javax.swing.JFrame {
         ((DateEditor) jSpinner1.getEditor()).getFormat().applyPattern("dd.MM.yy HH:mm:ss.SSS");
         tThread = new TimerThread(this);
         tThread.start();
+
+        String val = GlobalOptions.getProperty("clock.alwaysOnTop");
+        if (val == null) {
+            jCheckBox1.setSelected(false);
+        } else {
+            jCheckBox1.setSelected(Boolean.parseBoolean(val));
+
+        }
+        setAlwaysOnTop(jCheckBox1.isSelected());
+        cp = new ColoredProgressBar(0, 1000);
+        jPanel1.add(cp, BorderLayout.CENTER);
+
+        jComboBox1.setModel(new DefaultComboBoxModel(new String[]{"Alarm", "Homer", "LetsGo", "NHL", "Roadrunner", "Schwing", "Sirene", "StarTrek1", "StarTrek2"}));
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         if (!Constants.DEBUG) {
             GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.clock_tool", GlobalOptions.getHelpBroker().getHelpSet());
@@ -44,8 +65,58 @@ public class ClockFrame extends javax.swing.JFrame {
         // </editor-fold>
     }
 
-    protected void updateTime(String time) {
+    protected void updateTime(String time, int millis) {
         jLabel1.setText(time);
+
+        double markerMin = 0;
+        double markerMax = 1000;
+        double diff = markerMax - markerMin;
+        float ratio = 0;
+        if (diff > 0) {
+            ratio = (float) ((millis - markerMin) / (markerMax - markerMin));
+        }
+
+        Color c1 = Color.GREEN;
+        if (millis >= 500) {
+            c1 = Color.YELLOW;
+        }
+        Color c2 = Color.RED;
+        if (millis < 500) {
+            c2 = Color.YELLOW;
+            ratio += .5f;
+        } else {
+            ratio -= .5f;
+        }
+        int red = (int) Math.rint(c2.getRed() * ratio + c1.getRed() * (1f - ratio));
+        int green = (int) Math.rint(c2.getGreen() * ratio + c1.getGreen() * (1f - ratio));
+        int blue = (int) Math.rint(c2.getBlue() * ratio + c1.getBlue() * (1f - ratio));
+
+        red = (red < 0) ? 0 : red;
+        green = (green < 0) ? 0 : green;
+        blue = (blue < 0) ? 0 : blue;
+        red = (red > 255) ? 255 : red;
+        green = (green > 255) ? 255 : green;
+        blue = (blue > 255) ? 255 : blue;
+        cp.setForeground(new Color(red, green, blue));
+        cp.setValue(millis);
+    }
+
+    public synchronized void playSound() {
+        final String sound = (String) jComboBox1.getSelectedItem();
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    Clip clip = AudioSystem.getClip();
+                    AudioInputStream inputStream = AudioSystem.getAudioInputStream(ClockFrame.class.getResourceAsStream("/res/" + sound + ".wav"));
+                    clip.open(inputStream);
+                    clip.start();
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                }
+            }
+        }).start();
     }
 
     /** This method is called from within the constructor to
@@ -56,10 +127,21 @@ public class ClockFrame extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         jSpinner1 = new javax.swing.JSpinner();
         jActivateTimerButton = new javax.swing.JToggleButton();
         jLabel1 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jPanel3 = new javax.swing.JPanel();
+        jComboBox1 = new javax.swing.JComboBox();
+        dateTimeField1 = new de.tor.tribes.ui.components.DateTimeField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jTestAlert = new javax.swing.JButton();
+        jActivateAlert = new javax.swing.JToggleButton();
 
         jSpinner1.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MILLISECOND));
 
@@ -72,29 +154,110 @@ public class ClockFrame extends javax.swing.JFrame {
         });
 
         setTitle("Uhr");
+        setMinimumSize(new java.awt.Dimension(280, 75));
 
         jLabel1.setBackground(new java.awt.Color(239, 235, 223));
-        jLabel1.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Verdana", 0, 36)); // NOI18N
         jLabel1.setText("jLabel1");
         jLabel1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabel1.setOpaque(true);
+        getContentPane().add(jLabel1, java.awt.BorderLayout.CENTER);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+        jPanel1.setMinimumSize(new java.awt.Dimension(100, 20));
+        jPanel1.setPreferredSize(new java.awt.Dimension(279, 20));
+        jPanel1.setLayout(new java.awt.BorderLayout());
+        getContentPane().add(jPanel1, java.awt.BorderLayout.NORTH);
+
+        jPanel2.setLayout(new java.awt.BorderLayout());
+
+        jCheckBox1.setText("Immer im Vordergrund");
+        jCheckBox1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jCheckBox1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireAlwaysOnTopChangedEvent(evt);
+            }
+        });
+        jPanel2.add(jCheckBox1, java.awt.BorderLayout.SOUTH);
+
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jComboBox1, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 5, 5, 5);
+        jPanel3.add(dateTimeField1, gridBagConstraints);
+
+        jLabel2.setText("Alarm");
+        jLabel2.setMaximumSize(new java.awt.Dimension(80, 14));
+        jLabel2.setMinimumSize(new java.awt.Dimension(80, 14));
+        jLabel2.setPreferredSize(new java.awt.Dimension(80, 14));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 5, 5, 5);
+        jPanel3.add(jLabel2, gridBagConstraints);
+
+        jLabel3.setText("Sound");
+        jLabel3.setMaximumSize(new java.awt.Dimension(80, 14));
+        jLabel3.setMinimumSize(new java.awt.Dimension(80, 14));
+        jLabel3.setPreferredSize(new java.awt.Dimension(80, 14));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jLabel3, gridBagConstraints);
+
+        jTestAlert.setText("Testen");
+        jTestAlert.setMaximumSize(new java.awt.Dimension(81, 23));
+        jTestAlert.setMinimumSize(new java.awt.Dimension(81, 23));
+        jTestAlert.setPreferredSize(new java.awt.Dimension(81, 23));
+        jTestAlert.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireTestSoundEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jTestAlert, gridBagConstraints);
+
+        jActivateAlert.setText("Aktivieren");
+        jActivateAlert.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireActivateAlertEvent(evt);
+            }
+        });
+        jActivateAlert.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireAc2(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(10, 5, 5, 5);
+        jPanel3.add(jActivateAlert, gridBagConstraints);
+
+        jPanel2.add(jPanel3, java.awt.BorderLayout.CENTER);
+
+        getContentPane().add(jPanel2, java.awt.BorderLayout.SOUTH);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -107,6 +270,28 @@ private void fireActivateTimerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     }*/
 }//GEN-LAST:event_fireActivateTimerEvent
 
+private void fireAlwaysOnTopChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireAlwaysOnTopChangedEvent
+    setAlwaysOnTop(jCheckBox1.isSelected());
+    GlobalOptions.addProperty("clock.alwaysOnTop", Boolean.toString(jCheckBox1.isSelected()));
+}//GEN-LAST:event_fireAlwaysOnTopChangedEvent
+
+private void fireActivateAlertEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireActivateAlertEvent
+    if (jActivateAlert.isSelected()) {
+        tThread.setNotifyTime(dateTimeField1.getSelectedDate().getTime());
+        dateTimeField1.setEnabled(false);
+    } else {
+        tThread.setNotifyTime(-1);
+        dateTimeField1.setEnabled(true);
+    }
+}//GEN-LAST:event_fireActivateAlertEvent
+
+private void fireAc2(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireAc2
+}//GEN-LAST:event_fireAc2
+
+private void fireTestSoundEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTestSoundEvent
+    playSound();
+}//GEN-LAST:event_fireTestSoundEvent
+
     /**
      * @param args the command line arguments
      */
@@ -115,20 +300,33 @@ private void fireActivateTimerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                new ClockFrame().setVisible(true);
+                ClockFrame cf = new ClockFrame();
+                cf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                cf.setVisible(true);
             }
         });
     }
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JToggleButton jActivateTimerButton;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JSpinner jSpinner1;
-    // End of variables declaration//GEN-END:variables
 
-    public void beep() {
-        jActivateTimerButton.setSelected(false);
-        Toolkit.getDefaultToolkit().beep();
+    protected void doNotify() {
+        playSound();
+        jActivateAlert.setSelected(false);
+        dateTimeField1.setEnabled(true);
     }
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private de.tor.tribes.ui.components.DateTimeField dateTimeField1;
+    private javax.swing.JToggleButton jActivateAlert;
+    private javax.swing.JToggleButton jActivateTimerButton;
+    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JSpinner jSpinner1;
+    private javax.swing.JButton jTestAlert;
+    // End of variables declaration//GEN-END:variables
 }
 
 class TimerThread extends Thread {
@@ -146,21 +344,23 @@ class TimerThread extends Thread {
         lNotifyTime = pTime;
     }
 
+    @Override
     public void run() {
         while (true) {
             long currentTime = System.currentTimeMillis();
 
             if ((lNotifyTime != -1) && (currentTime >= lNotifyTime)) {
-                mParent.beep();
-                try {
-                    new TrayIcon(ImageIO.read(new File("./graphics/big/axe.png"))).displayMessage("Some Message", "ALARM!", TrayIcon.MessageType.INFO);
-                } catch (Exception e) {
-                }
                 lNotifyTime = -1;
+                mParent.doNotify();
             }
             if (mParent.isVisible()) {
-                mParent.updateTime(FORMAT.format(new Date(currentTime)));
+                mParent.updateTime(FORMAT.format(new Date(currentTime)), (int) DateUtils.getFragmentInMilliseconds(new Date(), Calendar.SECOND));
                 mParent.repaint();
+            } else {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ie) {
+                }
             }
             try {
                 Thread.sleep(50);

@@ -2,7 +2,7 @@
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <Properties>
-    <Property name="title" type="java.lang.String" value="Form Einstellungen"/>
+    <Property name="title" type="java.lang.String" value="Zeichnungseinstellungen"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -113,6 +113,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="jFormName">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Der Name der Zeichnung, der ebenfalls eingezeichnet werden kann"/>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[6, 25]"/>
             </Property>

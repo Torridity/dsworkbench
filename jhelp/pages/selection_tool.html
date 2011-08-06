@@ -17,56 +17,56 @@
     <td style="background-image:url(../images/c.gif);background-repeat:repeat" width="100%">
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td colspan="2"><h2 style="color:#953333">Auswahl&uuml;bersicht</h2></td>
+        <td width="100%"><h2 style="color:#953333">Auswahl&uuml;bersicht</h2></td>
       </tr>
       <tr>
-        <td colspan="2">&nbsp;</td>
+        <td>&nbsp;</td>
       </tr>
       <tr>
-        <td colspan="2"><img src="../images/screens/selection_tool.gif" width="568" height="609"></td>
+        <td><img src="../images/screens/selection_tool.gif" width="604" height="508"></td>
       </tr>
 	   <tr>
-        <td colspan="2">&nbsp;</td>
+        <td>&nbsp;</td>
       </tr>
 	   <tr>
-        <td colspan="2">In der Auswahl&uuml;bersicht werden gew&auml;hlte D&ouml;rfer, Spieler und St&auml;mme gezeigt, die &uuml;ber das <a href="map_tools.html#selection_tool"><em>Auswahlwerkzeug</em></a> gew&auml;hlt  wurden. Gew&auml;hlte Elemente k&ouml;nnen direkt aus dem Baum per <a href="main_window_dnd.html"><em>Drag&amp;Drop</em></a> zum Beispiel in den Angriffsplaner in die Herkunft- oder Zieltabelle gezogen werden. <br>
-          Der erste Buttons auf der rechten Seite dient dazu, die markierten Elemente zu entfernen. Damit k&ouml;nnen einzelne D&ouml;rfer, Spieler, St&auml;mme oder alle Eintr&auml;ge entfernt werden, je nachdem welche Knoten gew&auml;hlt werden. Ist der <em>Auswahl-Knoten</em> markiert werden alle Elemente der aktuellen Auswahl entfernt.          &Uuml;ber den zweiten Button ist es m&ouml;glich, zwischen einer Baumdarstellung, wie sie im Screenshot zu sehen ist, und einer flachen Darstellung, die nur die ausgew&auml;hlten D&ouml;rfer zeigt, zu wechseln. Der letzte Button auf der rechten Seite dient dazu, D&ouml;rfer in der Zwischenablage zu suchen und sie der Auswahl hinzuzuf&uuml;gen. So k&ouml;nnt ihr beispielsweise D&ouml;rfer im Spiel markieren, kopieren und sie einfach nach <em>DS Workbench</em> &uuml;bertragen. <br>
-          <br>
-          Zus&auml;tzlich besteht die M&ouml;glichkeit, D&ouml;rfer unter einer bestimmten Punktzahl aus der Auswahl zu entfernen und einen Bereich manuell anzugeben, aus dem alle D&ouml;rfer gew&auml;hlt werden. Daf&uuml;r ist die entsprechende Start- und End-Position in die daf&uuml;r vorgesehenen Felder einzutragen und mit 'W&auml;hlen' zu best&auml;tigen.<br>          <br>
-          Der untere Bereich dient dem Export der markierten Elemente. Zum einen k&ouml;nnen diese als BB-Codes bzw. unformatiert in die Zwischenablage exportiert werden. Hier kann man selbst entscheiden, welche Informationen in den exportierten Daten angezeigt werden. Daf&uuml;r stehen die folgenden Variablen zur Verf&uuml;gung:</td>
+        <td><p>In der Auswahl&uuml;bersicht werden gew&auml;hlte D&ouml;rfer, Spieler und St&auml;mme gezeigt, die &uuml;ber das <a href="map_tools.html#selection_tool"><em>Auswahlwerkzeug</em></a> gew&auml;hlt  wurden. Von hier aus kann die Auswahl auf verschiedene Arten weiterverwendet werden, z.B. indem man D&ouml;rfer als BB-Codes exportiert oder sie in den <a href="attack_planer.html"><em>Angriffsplaner</em></a> &uuml;bertr&auml;gt. Das Men&uuml; auf der rechten Seite bietet die folgenden Funktionen:</p>
+          <ul>
+            <li>Bearbeiten</li>
+            <ul>
+                <li>3K: W&auml;hlt alle D&ouml;rfer aus, die weniger als 3000 Punkte haben. </li>
+                <li>5K: W&auml;hlt alle D&ouml;rfer aus, die weniger als 5000 Punkte haben. </li>
+                <li>7K: W&auml;hlt alle D&ouml;rfer aus, die weniger als 7000 Punkte haben.</li>
+                <li>9K: W&auml;hlt alle D&ouml;rfer aus, die weniger als 9000 Punkte haben.</li>
+              </ul>
+            <li> &Uuml;bertragen </li>
+            <ul>
+              <li>&Uuml;bertragen in HTML Datei: &Uuml;bertr&auml;gt den/die gew&auml;hlten D&ouml;rfer in eine HTML Datei, worin alle exportierten St&auml;mme, Spieler und D&ouml;rfer in einer ausf&uuml;hrlichen Baumstruktur aufgelistet sind. </li>
+              </ul>
+            <li> Sonstiges</li>
+			 <ul>
+              <li>Umschalten zwischen Baumstruktur und Liste: Schaltet die Ansicht der gew&auml;hlten D&ouml;rfer zwischen der Baumansicht, inkl. der St&auml;mme und Spieler, oder der Listenansicht um, in der nur die D&ouml;rfer gelistet werden.</li>
+              <li>Bereichsauswahl: Erlaubt es, einen Bereich auf der Karte ausgehend von einer Start- und einer Endkoordinate auszuw&auml;hlen und als Auswahl zu verwenden. </li>
+			 </ul>
+          </ul>          <p>&nbsp; </p></td>
         </tr>
-	    <tr>
-        <td colspan="2">&nbsp;</td>
-      </tr>
-	  <tr>
-        <td width="8%">%TRIBE%</td>
-		<td width="92%">Besitzer des Dorfes </td>
-      </tr>
-	  <tr>
-        <td>%ALLY%</td>
-		<td>Stamm des Besitzers</td>
-      </tr>
-	    <tr>
-        <td>%VILLAGE%</td>
-		<td>Ausf&uuml;hrlicher Dorfname (Name, Koordinaten, Kontinent) </td>
-      </tr>
-	    <tr>
-        <td>%X%</td>
-		<td>X-Koordinate des Dorfes </td>
-      </tr>
-	    <tr>
-        <td>%Y%</td>
-		<td>Y-Koordinate des Dorfes</td>
-      </tr>
 	   <tr>
-        <td>%POINTS%</td>
-		<td>Punkte des Dorfes </td>
-      </tr>
-	   <tr>
-        <td colspan="2">&nbsp;</td>
+        <td>&nbsp;</td>
       </tr>
 	    <tr>
-        <td colspan="2">Eine weitere M&ouml;glichkeit ist der Export als HTML. Hier werden alle Informationen, inklusive St&auml;mmen und Spielern, in einer HTML-Datei als Baumstruktur dargestellt. Zus&auml;tzlich sind in dieser HTML Datei Links zu Spielerakten und dem Gastzugang f&uuml;r St&auml;mme, Spieler und D&ouml;rfer enthalten. </td>
+	    <td colspan="2"><h3 style="color:#953333">Shortcut-Funktionen</h3></td>
+      </tr>
+	    <tr>
+	   <td colspan="2">&nbsp;
+         </td>
+      </tr>
+	    <tr>
+	   <td colspan="2"><ul>
+	     <li>Einf&uuml;gen von D&ouml;rfern per STRG+V: Um eine Dorfauswahl in die Auswahl&uuml;bersicht zu bekommen existiert, neben den oben erw&auml;hnten M&ouml;glichkeiten, noch eine weitere Variante. Dr&uuml;ckt man STRG+V sucht <em>DS Workbench</em> in der Zwischenablage nach Dorfkoodinaten. Findet es welche, so werden sie der Auswahl hinzugef&uuml;gt. </li>
+	     <li>Kopieren von D&ouml;rfern per STRG+C: Erlaubt es alle D&ouml;rfer hinter markierten Eintr&auml;gen per STRG+C in die Zwischenablage zu kopieren. Ist ein Spieler gew&auml;hlt, so werden alle D&ouml;rfer dieses Spielers die in der Auswahl&uuml;bersicht sind in die Zwischenablage kopiert. Ist ein Stamm markiert, so werden die D&ouml;rfer aller gew&auml;hlten Spieler dieses Stammes kopiert. W&auml;hlt man das oberste Element &quot;Auswahl&quot;, so werden alle D&ouml;rfer in der Auswahl&uuml;bersicht kopiert. Kopierte D&ouml;rfer k&ouml;nnen dann per STRG+V z.B. in den <a href="attack_planer.html"><em>Angriffsplaner</em></a> oder <a href="notes_view.html"><em>Notizen</em></a> eingef&uuml;gt werden.</li>
+	     <li>BB-Code kopieren per STRG+B: Verh&auml;lt sich wie das Kopieren per STRG+C, nur dass die D&ouml;rfer als BB-Codes in die Zwischenablage kopiert werden.</li>
+	     <li>L&ouml;schen per ENTF: Dr&uuml;ckt man ENTF, so werden alle markierten Eintr&auml;ge gel&ouml;scht. </li>
+	   </ul>
+         </td>
       </tr>
 	   
     </table>

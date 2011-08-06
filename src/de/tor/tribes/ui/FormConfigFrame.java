@@ -120,7 +120,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
         jToleranceSpinner = new javax.swing.JSpinner();
         jAlwaysOnTop = new javax.swing.JCheckBox();
 
-        setTitle("Form Einstellungen");
+        setTitle("Zeichnungseinstellungen");
         addWindowFocusListener(new java.awt.event.WindowFocusListener() {
             public void windowGainedFocus(java.awt.event.WindowEvent evt) {
             }
@@ -136,6 +136,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
         jLabel1.setMinimumSize(new java.awt.Dimension(60, 25));
         jLabel1.setPreferredSize(new java.awt.Dimension(60, 25));
 
+        jFormName.setToolTipText("Der Name der Zeichnung, der ebenfalls eingezeichnet werden kann");
         jFormName.setMinimumSize(new java.awt.Dimension(6, 25));
         jFormName.setPreferredSize(new java.awt.Dimension(6, 25));
         jFormName.addCaretListener(new javax.swing.event.CaretListener() {

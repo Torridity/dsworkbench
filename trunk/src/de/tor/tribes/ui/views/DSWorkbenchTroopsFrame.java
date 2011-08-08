@@ -12,6 +12,7 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.NoTag;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
@@ -343,6 +344,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
 
     private void updateTagList() {
         DefaultListModel m = new DefaultListModel();
+        m.addElement(NoTag.getSingleton());
         for (ManageableType t : TagManager.getSingleton().getAllElements()) {
             Tag ta = (Tag) t;
             m.addElement(ta);

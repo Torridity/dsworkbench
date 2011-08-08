@@ -27,8 +27,15 @@
       <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
+	    <tr valign="middle">
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/information.png" width="24" height="24"></div></td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE">Das Re-Time Werkzeug funktioniert nur, wenn ihr Truppeninformationen aus dem Spiel <a href="import_ingame.html"><em>importiert</em></a> habt. Habt ihr das nicht getan, so wird <em>DS Workbench</em> keine Re-Time Angriffe finden k&ouml;nnen. </td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
 	  <tr>
-        <td colspan="2"><h3 style="color:#953333"><img src="../images/screens/re-time_tool.gif" width="641" height="645"></h3></td>
+        <td colspan="2"><h3 style="color:#953333"><img src="../images/screens/re-time_tool.gif" width="642" height="543"></h3></td>
       </tr>
       <tr>
         <td colspan="2">&nbsp;</td>
@@ -46,24 +53,69 @@
         <td colspan="2">&nbsp;</td>
       </tr>
       <tr>
-        <td colspan="2">Markiert den gr&uuml;n markierte Teil, kopiert ihn per STRG + C und f&uuml;gt ihn &uuml;ber STRG + V in das Textfeld <em>'Angriffsbefehl'</em> ein. <em>DS Workbench</em> sollte nun den Angriffsbefehl einlesen und auswerten. Auf der rechten Seite im Bereich<em> 'Gelesene Werte' </em>findet ihr Auswahlfelder f&uuml;r die langsamste Einheit des Angriffs. Einheiten die nicht in Frage kommen k&ouml;nnen werden rot markiert, gr&uuml;n wird die ausgew&auml;hlte Einheit gekennzeichnet, grau andere, m&ouml;gliche Einheiten.<br>
-          Abh&auml;ngig von der gew&auml;hlten Einheit werden die Abschick- und R&uuml;ckkehrzeit errechnet, daher ist es sehr wichtig zu wissen, welche Einheit der Gegner geschickt hat um richtig re-timen zu k&ouml;nnen.<br>
-          <br>
-          Wisst ihr dar&uuml;ber Bescheid k&ouml;nnt ihr mit der Planung von Gegenangriffen beginnen. W&auml;hlt daf&uuml;r im unteren Bereich die Dorfgruppe(n) aus, aus denen Gegenangriffe laufen sollen. W&auml;hlt im Anschluss die langsamste Einheit aus mit der angegriffen werden soll. Zus&auml;tzlich k&ouml;nnt ihr noch Angriffspl&auml;ne ausw&auml;hlen, von denen die Herkunftsd&ouml;rfer nicht verwendet werden sollen, da sie vllt. f&uuml;r andere Angriffe ben&ouml;tigt werden. Abschlie&szlig;end klickt ihr dann auf 'Berechnen', um den Ergebnisdialog aufzurufen.</td>
+        <td colspan="2"><p>Markiert den gr&uuml;n markierte Teil, kopiert ihn per STRG + C und f&uuml;gt ihn &uuml;ber STRG + V in das obere Textfeld des Re-Time Werkzeugs ein. <em>DS Workbench</em> sollte nun den Angriffsbefehl einlesen und auswerten, woraufhin Informationen &uuml;ber den Angriff im unteren Bereich erscheinen. Was <em>DS Workbench</em> nat&uuml;rlich nicht wissen kann ist die langsamste Einheit des Angriffs. Diese k&ouml;nnt ihr auf der rechten Seite w&auml;hlen und vergleichen, wie sich die Abschickzeit &auml;ndert und ob diese plausibel ist. Das Men&uuml; auf der rechten Seite bietet die folgenden M&ouml;glichkeiten:</p>
+          <ul>
+            <li>Bearbeiten</li>
+            <ul>
+              <li>Filterung von Re-Time Angriffen: Filtert gefundene Re-Time Angriffe nach der Truppenst&auml;rke in D&ouml;rfern die f&uuml;r einen Re-Time Angriff in Frage kommen. Diese Funktion ist nur im Tab &quot;Errechnete Gegenangriffe&quot; verf&uuml;gbar. </li>
+              </ul>
+            <li> Sonstiges </li>
+            <ul>
+              <li>Re-Time Angriffe berechnen: Berechnet, ausgehend vom eingelesenen Angriffsbefehl und der gew&auml;hlten, langsamsten Einheit m&ouml;gliche Re-Time Angriffe. (siehe unten &quot;Sonderfunktionen&quot;) </li>
+              </ul>
+            </ul>          </td>
       </tr>
         <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
-        <tr>
-        <td colspan="2"><img src="../images/screens/re-time_results.gif" width="451" height="264"></td>
+       <tr>
+	    <td colspan="2"><h3 style="color:#953333">Shortcut-Funktionen</h3></td>
+      </tr>
+	    <tr>
+	   <td colspan="2">&nbsp;
+         </td>
+      </tr>
+	    <tr>
+	   <td colspan="2"><ul>
+	     <li>Re-Time Angriffe per STRG+C kopieren: Kopiert gew&auml;hlte Re-Time Angriffe in die Zwischenablage, um sie z.B. in die <a href="attack_view.html"><em>Angriffs&uuml;bersicht</em></a> einzuf&uuml;gen. Diese Funktion ist nur im Tab &quot;Errechnete Gegenangriffe&quot; verf&uuml;gbar. </li>
+	     <li>Re-Time Angriffe per STRG+X ausschneiden:  Schneidet gew&auml;hlte Re-Time Angriffe aus, um sie z.B. in die <a href="attack_view.html"><em>Angriffs&uuml;bersicht</em></a> einzuf&uuml;gen. Diese Funktion ist nur im Tab &quot;Errechnete Gegenangriffe&quot; verf&uuml;gbar. </li>
+	     <li>Re-Time Angriff als BB-Code exportieren per STRG+B: Kopiert die gew&auml;hlten Re-Time Angriffe als BB-Codes in die Zwischenablage um sie z.B. im Spiel einzuf&uuml;gen. Diese Funktion ist nur im Tab &quot;Errechnete Gegenangriffe&quot; verf&uuml;gbar. </li>
+	     <li>L&ouml;schen per ENTF: L&ouml;scht gew&auml;hlte Re-Time Angriffe per ENTF. Diese Funktion ist nur im Tab &quot;Errechnete Gegenangriffe&quot; verf&uuml;gbar. </li>
+	   </ul>         </td>
       </tr>
         <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
+	    <tr>
+	  <td colspan="2"><h3 style="color:#953333">Sonderfunktionen</h3></td>
+	  </tr>
         <tr>
-        <td colspan="2">Im Ergebnisdialog sehr ihn nun die M&ouml;glichkeiten die ihr habt, Re-Timing Angriffe zu starten. Markiert hier den oder die Angriffe die f&uuml;r euch interessant sind und klickt auf den unteren, linken Button um die Angriffe in die Angriffs&uuml;bersicht zu &uuml;bertragen und schickt sie anschlie&szlig;end wie gewohnt ab. Weiterhin k&ouml;nnt ihr die Re-Time Angriffe in die Angriffs&uuml;bersicht &uuml;bertragen, um sie vllt. zu einem sp&auml;teren Zeitpunkt abzuschicken. Zudem habt ihr hier die M&ouml;glichkeit, die gefundenen D&ouml;rfer nach ihrer Truppenst&auml;rke zu filtern, denn es macht vllt. keinen Sinn, einen Re-Time Angriff mit einem Off-Dorf zu starten, das kaum Truppen zur Verf&uuml;gung hat. </td>
+	  <td colspan="2">
+          <p>&nbsp;</p>
+          </td>
       </tr>
         <tr>
+        <td colspan="2"><img src="../images/screens/re-time_settings.gif" width="578" height="434"></td>
+      </tr>
+	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr>
+        <td colspan="2">Habt ihr auf den Button zum Berechnen von Re-Time Angriffen geklickt, erscheint dieser Dialog. Hier k&ouml;nnt ihr Gruppen ausw&auml;hlen, aus denen Re-Time Angriffe geschickt werden sollen. Weiterhin k&ouml;nnt ihr D&ouml;rfer die sich bereits in Angriffspl&auml;nen befinden von der Suche ausschlie&szlig;en. Zuletzt w&auml;hlt ihr noch die langsamste Einheit f&uuml;r eure Re-Time Angriffe aus. Normalerweise ist es hier ratsam Rammen zu w&auml;hlen, manchmal reichen die Laufzeiten aber nicht aus, so dass z.B. &Auml;xte die langsamste Einheit im Angriff sind. Habt ihr alles eingestellt startet ihr die Berechnung &uuml;ber &quot;Berechnen&quot;, woraufhin der Tab &quot;Errechnete Gegenangriffe&quot; mit gefundenen Ergebnissen angezeigt wird. </td>
+      </tr>
+	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr>
+        <td colspan="2"><img src="../images/screens/re-time_results.gif" width="747" height="543"></td>
+      </tr>
+        <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	    <tr>
+        <td colspan="2">Hier seht ihr nun die m&ouml;glichen Re-Time Angriffe, die ihr nun z.B. &uuml;ber STRG+C in die Zwischenablage und dann per STRG+V in die <a href="attack_view.html"><em>Angriffs&uuml;bersicht</em></a> in einen beliebigen Angriffsplaner oder per STRG+B als BB-Codes in die Zwischenablage kopieren k&ouml;nnt. Weiterhin kommt hier die M&ouml;glichkeit der Filterung nach Truppen im Dorf hinzu, die ihr im Men&uuml; unter der Kategorie &quot;Bearbeiten&quot; finden k&ouml;nnt. So k&ouml;nnt ihr Angriffe entfernen, f&uuml;r die sich nicht gen&uuml;gend Truppen im Dorf befinden. </td>
+      </tr>
+	    <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
        <tr valign="middle">

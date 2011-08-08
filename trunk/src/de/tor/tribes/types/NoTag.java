@@ -21,7 +21,7 @@ public class NoTag extends Tag {
 
     public static synchronized NoTag getSingleton() {
         if (SINGLETON == null) {
-            SINGLETON = new NoTag("Kein Tag", false);
+            SINGLETON = new NoTag("Keine Gruppe", false);
         }
         return SINGLETON;
     }
@@ -56,6 +56,6 @@ public class NoTag extends Tag {
 
     @Override
     public String toString() {
-        return "Kein Tag";
+        return "Keine Gruppe";
     }
 }

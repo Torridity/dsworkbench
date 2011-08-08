@@ -8,12 +8,12 @@ package de.tor.tribes.ui;
 import de.tor.tribes.ui.components.ColoredProgressBar;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
+import java.applet.Applet;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import javax.crypto.spec.PBEKeySpec;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -108,10 +108,15 @@ public class ClockFrame extends javax.swing.JFrame {
             @Override
             public void run() {
                 try {
-                    Clip clip = AudioSystem.getClip();
+                    //@TODO Check sound behavior
+                    
+                     Clip clip = AudioSystem.getClip();
                     AudioInputStream inputStream = AudioSystem.getAudioInputStream(ClockFrame.class.getResourceAsStream("/res/" + sound + ".wav"));
                     clip.open(inputStream);
                     clip.start();
+
+                   /* AudioClip ac = Applet.newAudioClip(ClockFrame.class.getResource("/res/" + sound + ".wav"));
+                    ac.play*/
                 } catch (Exception e) {
                     System.err.println(e.getMessage());
                 }

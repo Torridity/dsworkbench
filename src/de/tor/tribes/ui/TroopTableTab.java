@@ -122,8 +122,8 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         if (!KEY_LISTENER_ADDED) {
             KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
             KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
-            jxTroopTable.registerKeyboardAction(pActionListener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-            jxTroopTable.registerKeyboardAction(pActionListener, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            jxTroopTable.registerKeyboardAction(pActionListener, "Delete", delete, JComponent.WHEN_IN_FOCUSED_WINDOW);
+            jxTroopTable.registerKeyboardAction(pActionListener, "BBCopy", bbCopy, JComponent.WHEN_IN_FOCUSED_WINDOW);
             jxTroopTable.getActionMap().put("find", new AbstractAction() {
 
                 @Override

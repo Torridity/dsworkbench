@@ -18,7 +18,7 @@ import de.tor.tribes.ui.editors.NoteIconCellEditor;
 import de.tor.tribes.ui.models.NoteTableModel;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.NoteCellRenderer;
+import de.tor.tribes.ui.renderer.BBCellRenderer;
 import de.tor.tribes.ui.renderer.NoteIconCellRenderer;
 import de.tor.tribes.ui.renderer.VisibilityCellRenderer;
 import de.tor.tribes.util.BrowserCommandSender;
@@ -95,7 +95,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
         jxNoteTable.addHighlighter(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
 
         jxNoteTable.setColumnControlVisible(true);
-        jxNoteTable.setDefaultRenderer(String.class, new NoteCellRenderer());
+        jxNoteTable.setDefaultRenderer(String.class, new BBCellRenderer());
         jxNoteTable.setDefaultRenderer(Boolean.class, new VisibilityCellRenderer());
         jxNoteTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         jxNoteTable.setDefaultEditor(String.class, new BBPanelCellEditor(null));
@@ -136,11 +136,11 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
             KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
             KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK, false);
             KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
-            jxNoteTable.registerKeyboardAction(pActionListener, "Copy", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-            jxNoteTable.registerKeyboardAction(pActionListener, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-            jxNoteTable.registerKeyboardAction(pActionListener, "Cut", cut, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-            jxNoteTable.registerKeyboardAction(pActionListener, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-            jxNoteTable.registerKeyboardAction(pActionListener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            jxNoteTable.registerKeyboardAction(pActionListener, "Copy", copy, JComponent.WHEN_IN_FOCUSED_WINDOW);
+            jxNoteTable.registerKeyboardAction(pActionListener, "BBCopy", bbCopy, JComponent.WHEN_IN_FOCUSED_WINDOW);
+            jxNoteTable.registerKeyboardAction(pActionListener, "Cut", cut, JComponent.WHEN_IN_FOCUSED_WINDOW);
+            jxNoteTable.registerKeyboardAction(pActionListener, "Paste", paste, JComponent.WHEN_IN_FOCUSED_WINDOW);
+            jxNoteTable.registerKeyboardAction(pActionListener, "Delete", delete, JComponent.WHEN_IN_FOCUSED_WINDOW);
             jxVillageList.registerKeyboardAction(new ActionListener() {
 
                 @Override
@@ -435,7 +435,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
             }
 
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
-            String result = "Daten in Zwischenablage kopiert.";
+            String result = "Notizen in Zwischenablage kopiert.";
             showSuccess(result);
         } catch (Exception e) {
             logger.error("Failed to copy data to clipboard", e);

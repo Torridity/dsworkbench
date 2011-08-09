@@ -22,16 +22,21 @@ import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.FightReportCellRenderer;
+import de.tor.tribes.ui.renderer.BBCellRenderer;
 import de.tor.tribes.ui.renderer.ReportWallCataCellRenderer;
 import de.tor.tribes.ui.renderer.TribeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.VillageCellRenderer;
+import de.tor.tribes.ui.views.DSWorkbenchReportFrame;
+import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.bb.ReportListFormatter;
 import de.tor.tribes.util.report.ReportManager;
+import de.tor.tribes.util.troops.TroopsManager;
+import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.HeadlessException;
@@ -320,6 +325,57 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
     private javax.swing.JScrollPane jScrollPane1;
     private org.jdesktop.swingx.JXLabel jXLabel1;
     // End of variables declaration//GEN-END:variables
+
+    public void transferTroopInfos() {
+        List<FightReport> selectedReports = getSelectedReports();
+        if (selectedReports.isEmpty()) {
+            showInfo("Kein Bericht ausgewählt");
+            return;
+        }
+
+
+        int res = JOptionPaneHelper.showQuestionThreeChoicesBox(DSWorkbenchReportFrame.getSingleton(), "<html>Welche Truppeninformationen m&ouml;chtest du &uuml;bertragen?<br/><b>Achtung:</b> Alle vorhandene Truppeninformationen des Dorfes werden &uuml;berschrieben.</html>", "Übertragen", "Angreifer", "Verteidiger", "Beide");
+        if (res == JOptionPane.NO_OPTION) {
+            //attacker
+            TroopsManager.getSingleton().invalidate();
+            for (FightReport report : selectedReports) {
+                Village source = report.getSourceVillage();
+                Hashtable<UnitHolder, Integer> attackers = report.getSurvivingAttackers();
+                VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(source, TroopsManager.TROOP_TYPE.IN_VILLAGE, true);
+                holder.setTroops(attackers);
+            }
+            TroopsManager.getSingleton().revalidate(TroopsManager.IN_VILLAGE_GROUP, true);
+        } else if (res == JOptionPane.YES_OPTION) {
+            //defender
+            TroopsManager.getSingleton().invalidate();
+            for (FightReport report : selectedReports) {
+                Village target = report.getTargetVillage();
+                Hashtable<UnitHolder, Integer> defenders = report.getSurvivingDefenders();
+                VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(target, TroopsManager.TROOP_TYPE.IN_VILLAGE, true);
+                holder.setTroops(defenders);
+            }
+            TroopsManager.getSingleton().revalidate(TroopsManager.IN_VILLAGE_GROUP, true);
+        } else if (res == JOptionPane.CANCEL_OPTION) {
+            //both
+            TroopsManager.getSingleton().invalidate();
+            for (FightReport report : selectedReports) {
+                Village source = report.getSourceVillage();
+                Hashtable<UnitHolder, Integer> attackers = report.getSurvivingAttackers();
+                VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(source, TroopsManager.TROOP_TYPE.IN_VILLAGE, true);
+                holder.setTroops(attackers);
+            }
+            for (FightReport report : selectedReports) {
+                Village target = report.getTargetVillage();
+                Hashtable<UnitHolder, Integer> defenders = report.getSurvivingDefenders();
+                VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(target, TroopsManager.TROOP_TYPE.IN_VILLAGE, true);
+                holder.setTroops(defenders);
+            }
+            TroopsManager.getSingleton().revalidate(TroopsManager.IN_VILLAGE_GROUP, true);
+        } else {
+            return;
+        }
+        showSuccess("Truppeninformationen übertragen");
+    }
 
     public boolean deleteSelection(boolean pAsk) {
         List<FightReport> selectedReports = getSelectedReports();

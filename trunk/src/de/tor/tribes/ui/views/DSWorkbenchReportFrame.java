@@ -71,7 +71,6 @@ import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
-* @TODO Add "troops from report to troop view" feature
  * @author Torridity
  */
 public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener {
@@ -278,6 +277,22 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private void buildMenu() {
         JXTaskPane transferTaskPane = new JXTaskPane();
         transferTaskPane.setTitle("Übertragen");
+
+        JXButton transferTroopInfo = new JXButton(new ImageIcon(DSWorkbenchTroopsFrame.class.getResource("/res/ui/troop_info_add.png")));
+        transferTroopInfo.setToolTipText("<html>&Uuml;bertr&auml;gt die &uuml;berlebenden Truppen des Verteidigers<br/>"
+                + "aus den gew&auml;hlten Berichten in die Truppen&uuml;bersicht</html>");
+        transferTroopInfo.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                ReportTableTab tab = getActiveTab();
+                if (tab != null) {
+                    tab.transferTroopInfos();
+                }
+            }
+        });
+        transferTaskPane.getContentPane().add(transferTroopInfo);
+
         JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/report_toAStar.png")));
         transferVillageList.setToolTipText("Überträgt den gewählten Berichte nach A*Star");
         transferVillageList.addMouseListener(new MouseAdapter() {

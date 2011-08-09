@@ -109,13 +109,12 @@ public class ClockFrame extends javax.swing.JFrame {
             public void run() {
                 try {
                     //@TODO Check sound behavior
-                    
-                     Clip clip = AudioSystem.getClip();
+                    Clip clip = AudioSystem.getClip();
                     AudioInputStream inputStream = AudioSystem.getAudioInputStream(ClockFrame.class.getResourceAsStream("/res/" + sound + ".wav"));
                     clip.open(inputStream);
                     clip.start();
 
-                   /* AudioClip ac = Applet.newAudioClip(ClockFrame.class.getResource("/res/" + sound + ".wav"));
+                    /* AudioClip ac = Applet.newAudioClip(ClockFrame.class.getResource("/res/" + sound + ".wav"));
                     ac.play*/
                 } catch (Exception e) {
                     System.err.println(e.getMessage());

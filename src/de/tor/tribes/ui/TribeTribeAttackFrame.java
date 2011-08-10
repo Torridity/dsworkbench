@@ -2147,83 +2147,93 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
     }// </editor-fold>//GEN-END:initComponents
 
 private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateAttackEvent
-        if (!jCalculateButton.isEnabled()) {
-            logger.debug("Button disabled. Calculation is still running...");
-            return;
+    if (!jCalculateButton.isEnabled()) {
+        logger.debug("Button disabled. Calculation is still running...");
+        return;
+    }
+    //algorithm calculation
+    //pre check
+    DefaultTableModel victimModel = (DefaultTableModel) jVictimTable.getModel();
+    DefaultTableModel attackModel = (DefaultTableModel) jSourcesTable.getModel();
+    if (attackModel.getRowCount() == 0) {
+        logger.warn("Validation of attacker tab failed");
+        JOptionPaneHelper.showErrorBox(this, "Keine Herkunftsdörfer ausgewählt", "Fehler");
+        jideTabbedPane1.setSelectedIndex(0);
+        return;
+    }
+    if (victimModel.getRowCount() == 0) {
+        logger.warn("Validation of victim tab failed");
+        JOptionPaneHelper.showErrorBox(this, "Keine Ziele ausgewählt", "Fehler");
+        jideTabbedPane1.setSelectedIndex(1);
+        return;
+    }
+    if (!mSettingsPanel.validatePanel()) {
+        logger.warn("Validation of settings tab failed");
+        jideTabbedPane1.setSelectedIndex(2);
+        return;
+    }
+    //reading values
+    List<Village> victimVillages = new LinkedList<Village>();
+    List<Village> victimVillagesFaked = new LinkedList<Village>();
+    Hashtable<Village, Integer> maxAttacksTable = new Hashtable<Village, Integer>();
+    for (int i = 0; i < victimModel.getRowCount(); i++) {
+        if ((Boolean) victimModel.getValueAt(i, 2) == Boolean.TRUE) {
+            victimVillagesFaked.add((Village) victimModel.getValueAt(i, 1));
+        } else {
+            victimVillages.add((Village) victimModel.getValueAt(i, 1));
         }
-        //algorithm calculation
-        //pre check
-        DefaultTableModel victimModel = (DefaultTableModel) jVictimTable.getModel();
-        DefaultTableModel attackModel = (DefaultTableModel) jSourcesTable.getModel();
-        if (attackModel.getRowCount() == 0) {
-            logger.warn("Validation of attacker tab failed");
-            JOptionPaneHelper.showErrorBox(this, "Keine Herkunftsdörfer ausgewählt", "Fehler");
-            jideTabbedPane1.setSelectedIndex(0);
-            return;
-        }
-        if (victimModel.getRowCount() == 0) {
-            logger.warn("Validation of victim tab failed");
-            JOptionPaneHelper.showErrorBox(this, "Keine Ziele ausgewählt", "Fehler");
-            jideTabbedPane1.setSelectedIndex(1);
-            return;
-        }
-        if (!mSettingsPanel.validatePanel()) {
-            logger.warn("Validation of settings tab failed");
-            jideTabbedPane1.setSelectedIndex(2);
-            return;
-        }
-        //reading values
-        List<Village> victimVillages = new LinkedList<Village>();
-        List<Village> victimVillagesFaked = new LinkedList<Village>();
-        Hashtable<Village, Integer> maxAttacksTable = new Hashtable<Village, Integer>();
-        for (int i = 0; i < victimModel.getRowCount(); i++) {
-            if ((Boolean) victimModel.getValueAt(i, 2) == Boolean.TRUE) {
-                victimVillagesFaked.add((Village) victimModel.getValueAt(i, 1));
-            } else {
-                victimVillages.add((Village) victimModel.getValueAt(i, 1));
-            }
-            maxAttacksTable.put((Village) victimModel.getValueAt(i, 1), (Integer) victimModel.getValueAt(i, 3));
-        }
+        maxAttacksTable.put((Village) victimModel.getValueAt(i, 1), (Integer) victimModel.getValueAt(i, 3));
+    }
 //build source-unit map
-        int snobSources = 0;
-        // <editor-fold defaultstate="collapsed" desc=" Build attacks and fakes">
-        Hashtable<UnitHolder, List<Village>> sources = new Hashtable<UnitHolder, List<Village>>();
-        Hashtable<UnitHolder, List<Village>> fakes = new Hashtable<UnitHolder, List<Village>>();
-        for (int i = 0; i < attackModel.getRowCount(); i++) {
-            Village vSource = (Village) attackModel.getValueAt(i, 0);
-            UnitHolder uSource = (UnitHolder) attackModel.getValueAt(i, 1);
-            boolean fake = (Boolean) attackModel.getValueAt(i, 2);
-            if (!fake) {
-                List<Village> sourcesForUnit = sources.get(uSource);
-                if (uSource.getPlainName().equals("snob")) {
-                    if (sourcesForUnit == null) {
-                        snobSources = 0;
-                    } else {
-                        snobSources = sourcesForUnit.size();
-                    }
-                }
+    int snobSources = 0;
+    // <editor-fold defaultstate="collapsed" desc=" Build attacks and fakes">
+    Hashtable<UnitHolder, List<Village>> sources = new Hashtable<UnitHolder, List<Village>>();
+    Hashtable<UnitHolder, List<Village>> fakes = new Hashtable<UnitHolder, List<Village>>();
+    for (int i = 0; i < attackModel.getRowCount(); i++) {
+        Village vSource = (Village) attackModel.getValueAt(i, 0);
+        UnitHolder uSource = (UnitHolder) attackModel.getValueAt(i, 1);
+        boolean fake = (Boolean) attackModel.getValueAt(i, 2);
+        if (!fake) {
+            List<Village> sourcesForUnit = sources.get(uSource);
+            if (uSource.getPlainName().equals("snob")) {
                 if (sourcesForUnit == null) {
-                    sourcesForUnit = new LinkedList<Village>();
-                    sourcesForUnit.add(vSource);
-                    sources.put(uSource, sourcesForUnit);
+                    snobSources = 0;
                 } else {
-                    sourcesForUnit.add(vSource);
-                }
-            } else {
-                List<Village> fakesForUnit = fakes.get(uSource);
-                if (fakesForUnit == null) {
-                    fakesForUnit = new LinkedList<Village>();
-                    fakesForUnit.add(vSource);
-                    fakes.put(uSource, fakesForUnit);
-                } else {
-                    fakesForUnit.add(vSource);
+                    snobSources = sourcesForUnit.size();
                 }
             }
+            if (sourcesForUnit == null) {
+                sourcesForUnit = new LinkedList<Village>();
+                sourcesForUnit.add(vSource);
+                sources.put(uSource, sourcesForUnit);
+            } else {
+                sourcesForUnit.add(vSource);
+            }
+        } else {
+            List<Village> fakesForUnit = fakes.get(uSource);
+            if (fakesForUnit == null) {
+                fakesForUnit = new LinkedList<Village>();
+                fakesForUnit.add(vSource);
+                fakes.put(uSource, fakesForUnit);
+            } else {
+                fakesForUnit.add(vSource);
+            }
         }
-        // </editor-fold>
-        // <editor-fold defaultstate="collapsed" desc=" Check for units not supported by the algorithm">
-        boolean useMiscUnits = false;
-        Enumeration<UnitHolder> involvedUnits = sources.keys();
+    }
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc=" Check for units not supported by the algorithm">
+    boolean useMiscUnits = false;
+    Enumeration<UnitHolder> involvedUnits = sources.keys();
+    while (involvedUnits.hasMoreElements()) {
+        UnitHolder u = involvedUnits.nextElement();
+        //check for misc unit
+        if (!u.getPlainName().equals("ram") && !u.getPlainName().equals("catapult")) {
+            useMiscUnits = true;
+            break;
+        }
+    }
+    if (!useMiscUnits) {
+        involvedUnits = fakes.keys();
         while (involvedUnits.hasMoreElements()) {
             UnitHolder u = involvedUnits.nextElement();
             //check for misc unit
@@ -2232,443 +2242,433 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 break;
             }
         }
-        if (!useMiscUnits) {
-            involvedUnits = fakes.keys();
-            while (involvedUnits.hasMoreElements()) {
-                UnitHolder u = involvedUnits.nextElement();
-                //check for misc unit
-                if (!u.getPlainName().equals("ram") && !u.getPlainName().equals("catapult")) {
-                    useMiscUnits = true;
-                    break;
-                }
-            }
+    }
+    // </editor-fold>
+    boolean fakeOffTargets = mSettingsPanel.fakeOffTargets();
+    //mSettingsPanel.getAttacksPerVillage();
+    TimeFrame timeFrame = mSettingsPanel.getTimeFrame();
+    //start processing
+    AbstractAttackAlgorithm algo = null;
+    boolean supportMiscUnits = false;
+    if (mSettingsPanel.useBruteForce()) {
+        logger.info("Using 'BruteForce' calculation");
+        algo = new BruteForce();
+        supportMiscUnits = true;
+        logPanel.setAbortable(false);
+    } else {
+        logger.info("Using 'systematic' calculation");
+        algo = new Iterix();
+        supportMiscUnits = false;
+        logPanel.setAbortable(true);
+    }
+    //check misc-units criteria
+    if (useMiscUnits && !supportMiscUnits) {
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Der gewählte Algorithmus unterstützt nur Rammen und Katapulte als angreifende Einheiten.\n" + "Dörfer für die eine andere Einheit gewählt wurde werden ignoriert.\n" + "Trotzdem fortfahren?", "Warnung", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+            logger.debug("User aborted calculation due to algorithm");
+            return;
         }
-        // </editor-fold>
-        boolean fakeOffTargets = mSettingsPanel.fakeOffTargets();
-        //mSettingsPanel.getAttacksPerVillage();
-        TimeFrame timeFrame = mSettingsPanel.getTimeFrame();
-        //start processing
-        AbstractAttackAlgorithm algo = null;
-        boolean supportMiscUnits = false;
-        if (mSettingsPanel.useBruteForce()) {
-            logger.info("Using 'BruteForce' calculation");
-            algo = new BruteForce();
-            supportMiscUnits = true;
-            logPanel.setAbortable(false);
-        } else {
-            logger.info("Using 'systematic' calculation");
-            algo = new Iterix();
-            supportMiscUnits = false;
-            logPanel.setAbortable(true);
-        }
-        //check misc-units criteria
-        if (useMiscUnits && !supportMiscUnits) {
-            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Der gewählte Algorithmus unterstützt nur Rammen und Katapulte als angreifende Einheiten.\n" + "Dörfer für die eine andere Einheit gewählt wurde werden ignoriert.\n" + "Trotzdem fortfahren?", "Warnung", "Nein", "Ja") == JOptionPane.NO_OPTION) {
-                logger.debug("User aborted calculation due to algorithm");
-                return;
-            }
-        }
-        mSettingsPanel.storeProperties();
-        logPanel.clear();
-        algo.initialize(sources,
-                fakes,
-                victimVillages,
-                victimVillagesFaked,
-                maxAttacksTable,
-                timeFrame,
-                fakeOffTargets,
-                logPanel);
-        SwingUtilities.invokeLater(new Runnable() {
+    }
+    mSettingsPanel.storeProperties();
+    logPanel.clear();
+    algo.initialize(sources,
+            fakes,
+            victimVillages,
+            victimVillagesFaked,
+            maxAttacksTable,
+            timeFrame,
+            fakeOffTargets,
+            logPanel);
+    SwingUtilities.invokeLater(new Runnable() {
 
-            @Override
-            public void run() {
-                try {
-                    jCalculateButton.setEnabled(false);
-                    mLogFrame.setVisible(true);
-                    mLogFrame.toFront();
-                } catch (Exception e) {
-                }
+        @Override
+        public void run() {
+            try {
+                jCalculateButton.setEnabled(false);
+                mLogFrame.setVisible(true);
+                mLogFrame.toFront();
+            } catch (Exception e) {
             }
-        });
-        algo.execute(this);
+        }
+    });
+    algo.execute(this);
 }//GEN-LAST:event_fireCalculateAttackEvent
 
 private void fireHideResultsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideResultsEvent
-        jResultFrame.setVisible(false);
+    jResultFrame.setVisible(false);
 }//GEN-LAST:event_fireHideResultsEvent
 
 private void fireShowResultDetailsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowResultDetailsEvent
-        if (evt.getSource() == jAttacksBar) {
-            jAttackResultDetailsFrame.setVisible(true);
-        } else if (evt.getSource() == jTargetsBar) {
-            jTargetResultDetailsFrame.setVisible(true);
-        }
+    if (evt.getSource() == jAttacksBar) {
+        jAttackResultDetailsFrame.setVisible(true);
+    } else if (evt.getSource() == jTargetsBar) {
+        jTargetResultDetailsFrame.setVisible(true);
+    }
 }//GEN-LAST:event_fireShowResultDetailsEvent
 
 private void fireHideResultDetailsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideResultDetailsEvent
-        if (evt.getSource() == jHideAttackDetailsButton) {
-            jAttackResultDetailsFrame.setVisible(false);
-        } else if (evt.getSource() == jHideTargetDetailsButton) {
-            jTargetResultDetailsFrame.setVisible(false);
-        }
+    if (evt.getSource() == jHideAttackDetailsButton) {
+        jAttackResultDetailsFrame.setVisible(false);
+    } else if (evt.getSource() == jHideTargetDetailsButton) {
+        jTargetResultDetailsFrame.setVisible(false);
+    }
 }//GEN-LAST:event_fireHideResultDetailsEvent
 
 private void fireSynchWithAttackPlansEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSynchWithAttackPlansEvent
-        jAttackPlanSelectionDialog.setVisible(false);
-        if (evt.getSource() == jCancelSyncButton) {
-            return;
-        }
+    jAttackPlanSelectionDialog.setVisible(false);
+    if (evt.getSource() == jCancelSyncButton) {
+        return;
+    }
 
-        int idx = jideTabbedPane1.getSelectedIndex();
+    int idx = jideTabbedPane1.getSelectedIndex();
 
-        JXTable table = null;
-        int villageIndex = 0;
-        if (idx == 0) {
-            table = jSourcesTable;
-        } else if (idx == 1) {
-            table = jVictimTable;
-            villageIndex = 1;
-        } else {
-            showInfo("Diese Funktion ist nur für Herkunftsdörfer und Ziele verfügbar");
-            return;
-        }
+    JXTable table = null;
+    int villageIndex = 0;
+    if (idx == 0) {
+        table = jSourcesTable;
+    } else if (idx == 1) {
+        table = jVictimTable;
+        villageIndex = 1;
+    } else {
+        showInfo("Diese Funktion ist nur für Herkunftsdörfer und Ziele verfügbar");
+        return;
+    }
 
-        DefaultTableModel model = (DefaultTableModel) jAttackPlanTable.getModel();
-        List<String> selectedPlans = new LinkedList<String>();
-        for (int i = 0; i < jAttackPlanTable.getRowCount(); i++) {
-            int row = jAttackPlanTable.convertRowIndexToModel(i);
-            if ((Boolean) model.getValueAt(row, jAttackPlanTable.convertColumnIndexToModel(1))) {
-                selectedPlans.add((String) model.getValueAt(row, jAttackPlanTable.convertColumnIndexToModel(0)));
-            }
+    DefaultTableModel model = (DefaultTableModel) jAttackPlanTable.getModel();
+    List<String> selectedPlans = new LinkedList<String>();
+    for (int i = 0; i < jAttackPlanTable.getRowCount(); i++) {
+        int row = jAttackPlanTable.convertRowIndexToModel(i);
+        if ((Boolean) model.getValueAt(row, jAttackPlanTable.convertColumnIndexToModel(1))) {
+            selectedPlans.add((String) model.getValueAt(row, jAttackPlanTable.convertColumnIndexToModel(0)));
         }
-        List<Integer> toRemove = new LinkedList<Integer>();
-        //process all plans
-        for (String plan : selectedPlans) {
-            logger.debug("Checking plan '" + plan + "'");
-            List<ManageableType> elements = AttackManager.getSingleton().getAllElements(plan);
-            //process all attacks
-            for (ManageableType e : elements) {
-                Attack a = (Attack) e;
-                //search attack source village in all table rows
-                for (int i = 0; i < table.getRowCount(); i++) {
-                    Village v = (Village) table.getValueAt(i, villageIndex);
-                    if (villageIndex == 0 && a.getSource().equals(v)) {
-                        if (!toRemove.contains(i)) {
-                            toRemove.add(i);
-                        }
-                    }else if (villageIndex == 1 && a.getTarget().equals(v)) {
-                        if (!toRemove.contains(i)) {
-                            toRemove.add(i);
-                        }
+    }
+    List<Integer> toRemove = new LinkedList<Integer>();
+    //process all plans
+    for (String plan : selectedPlans) {
+        logger.debug("Checking plan '" + plan + "'");
+        List<ManageableType> elements = AttackManager.getSingleton().getAllElements(plan);
+        //process all attacks
+        for (ManageableType e : elements) {
+            Attack a = (Attack) e;
+            //search attack source village in all table rows
+            for (int i = 0; i < table.getRowCount(); i++) {
+                Village v = (Village) table.getValueAt(i, villageIndex);
+                if (villageIndex == 0 && a.getSource().equals(v)) {
+                    if (!toRemove.contains(i)) {
+                        toRemove.add(i);
+                    }
+                } else if (villageIndex == 1 && a.getTarget().equals(v)) {
+                    if (!toRemove.contains(i)) {
+                        toRemove.add(i);
                     }
                 }
             }
         }
-        String message = "";
-        if (toRemove.isEmpty()) {
-            showInfo("Keine Dörfer zu entfernen");
-            return;
-        } else {
-            message = (toRemove.size() == 1) ? "Ein Dorf " : toRemove.size() + " Dörfer ";
-        }
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, message + "entfernen?", "Entfernen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-            try {
-                logger.debug("Removing " + toRemove.size() + " villages");
-                Collections.sort(toRemove);
-                while (toRemove.size() > 0) {
-                    Integer row = toRemove.remove(toRemove.size() - 1);
-                    row = table.convertRowIndexToModel(row);
-                    ((DefaultTableModel) table.getModel()).removeRow(row);
-                }
-                showSuccess(message + "entfernt");
-            } catch (Exception e) {
-                logger.error("Removal failed", e);
-                showError("Fehler beim Entfernen");
+    }
+    String message = "";
+    if (toRemove.isEmpty()) {
+        showInfo("Keine Dörfer zu entfernen");
+        return;
+    } else {
+        message = (toRemove.size() == 1) ? "Ein Dorf " : toRemove.size() + " Dörfer ";
+    }
+    if (JOptionPaneHelper.showQuestionConfirmBox(this, message + "entfernen?", "Entfernen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+        try {
+            logger.debug("Removing " + toRemove.size() + " villages");
+            Collections.sort(toRemove);
+            while (toRemove.size() > 0) {
+                Integer row = toRemove.remove(toRemove.size() - 1);
+                row = table.convertRowIndexToModel(row);
+                ((DefaultTableModel) table.getModel()).removeRow(row);
             }
+            showSuccess(message + "entfernt");
+        } catch (Exception e) {
+            logger.error("Removal failed", e);
+            showError("Fehler beim Entfernen");
         }
-        updateInfo();
+    }
+    updateInfo();
 }//GEN-LAST:event_fireSynchWithAttackPlansEvent
 
 private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireTargetAllyFilterChangedEvent
-        String text = jTargetTribeFilter.getText();
-        if (text.length() > 0) {
-            text = text.toLowerCase();
-            Enumeration<Integer> allyKeys = DataHolder.getSingleton().getAllies().keys();
-            List<Ally> allies = new LinkedList<Ally>();
-            while (allyKeys.hasMoreElements()) {
-                Ally a = DataHolder.getSingleton().getAllies().get(allyKeys.nextElement());
-                if (a.getName() != null && a.getTag() != null) {
-                    if (a.getName().toLowerCase().indexOf(text) >= 0 || a.getTag().toLowerCase().indexOf(text) >= 0) {
-                        allies.add(a);
-                    }
+    String text = jTargetTribeFilter.getText();
+    if (text.length() > 0) {
+        text = text.toLowerCase();
+        Enumeration<Integer> allyKeys = DataHolder.getSingleton().getAllies().keys();
+        List<Ally> allies = new LinkedList<Ally>();
+        while (allyKeys.hasMoreElements()) {
+            Ally a = DataHolder.getSingleton().getAllies().get(allyKeys.nextElement());
+            if (a.getName() != null && a.getTag() != null) {
+                if (a.getName().toLowerCase().indexOf(text) >= 0 || a.getTag().toLowerCase().indexOf(text) >= 0) {
+                    allies.add(a);
                 }
             }
-            Ally[] aAllies = allies.toArray(new Ally[]{});
-            allies = null;
-            Arrays.sort(aAllies, Ally.CASE_INSENSITIVE_ORDER);
-            DefaultListModel targetAllyModel = new DefaultListModel();
-            for (Ally a : aAllies) {
-                targetAllyModel.addElement(a);
-            }
-            jTargetAllyList.setModel(targetAllyModel);
-            jTargetAllyList.addListSelectionListener(new ListSelectionListener() {
-
-                @Override
-                public void valueChanged(ListSelectionEvent e) {
-                    fireFilterTargetByAllyEvent();
-                }
-            });
-        } else {
-            Enumeration<Integer> allyKeys = DataHolder.getSingleton().getAllies().keys();
-            List<Ally> allies = new LinkedList<Ally>();
-            while (allyKeys.hasMoreElements()) {
-                allies.add(DataHolder.getSingleton().getAllies().get(allyKeys.nextElement()));
-            }
-            Ally[] aAllies = allies.toArray(new Ally[]{});
-            allies = null;
-            Arrays.sort(aAllies, Ally.CASE_INSENSITIVE_ORDER);
-            DefaultListModel targetAllyModel = new DefaultListModel();
-            targetAllyModel.addElement("<Kein Stamm>");
-            for (Ally a : aAllies) {
-                targetAllyModel.addElement(a);
-            }
-            jTargetAllyList.setModel(targetAllyModel);
-            jTargetAllyList.addListSelectionListener(new ListSelectionListener() {
-
-                @Override
-                public void valueChanged(ListSelectionEvent e) {
-                    fireFilterTargetByAllyEvent();
-                }
-            });
         }
+        Ally[] aAllies = allies.toArray(new Ally[]{});
+        allies = null;
+        Arrays.sort(aAllies, Ally.CASE_INSENSITIVE_ORDER);
+        DefaultListModel targetAllyModel = new DefaultListModel();
+        for (Ally a : aAllies) {
+            targetAllyModel.addElement(a);
+        }
+        jTargetAllyList.setModel(targetAllyModel);
+        jTargetAllyList.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                fireFilterTargetByAllyEvent();
+            }
+        });
+    } else {
+        Enumeration<Integer> allyKeys = DataHolder.getSingleton().getAllies().keys();
+        List<Ally> allies = new LinkedList<Ally>();
+        while (allyKeys.hasMoreElements()) {
+            allies.add(DataHolder.getSingleton().getAllies().get(allyKeys.nextElement()));
+        }
+        Ally[] aAllies = allies.toArray(new Ally[]{});
+        allies = null;
+        Arrays.sort(aAllies, Ally.CASE_INSENSITIVE_ORDER);
+        DefaultListModel targetAllyModel = new DefaultListModel();
+        targetAllyModel.addElement("<Kein Stamm>");
+        for (Ally a : aAllies) {
+            targetAllyModel.addElement(a);
+        }
+        jTargetAllyList.setModel(targetAllyModel);
+        jTargetAllyList.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                fireFilterTargetByAllyEvent();
+            }
+        });
+    }
 }//GEN-LAST:event_fireTargetAllyFilterChangedEvent
 
 private void fireAddTroopFilterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddTroopFilterEvent
-        UnitHolder unit = (UnitHolder) jFilterUnitBox.getSelectedItem();
-        DefaultListModel filterModel = (DefaultListModel) jFilterList.getModel();
-        TroopFilterElement elem = null;
-        int min = Integer.MIN_VALUE;
-        int max = Integer.MAX_VALUE;
-        try {
-            min = Integer.parseInt(jMinValue.getText());
-        } catch (Exception e) {
-            min = Integer.MIN_VALUE;
+    UnitHolder unit = (UnitHolder) jFilterUnitBox.getSelectedItem();
+    DefaultListModel filterModel = (DefaultListModel) jFilterList.getModel();
+    TroopFilterElement elem = null;
+    int min = Integer.MIN_VALUE;
+    int max = Integer.MAX_VALUE;
+    try {
+        min = Integer.parseInt(jMinValue.getText());
+    } catch (Exception e) {
+        min = Integer.MIN_VALUE;
+    }
+    try {
+        max = Integer.parseInt(jMaxValue.getText());
+    } catch (Exception e) {
+        max = Integer.MAX_VALUE;
+    }
+    if (min > max) {
+        int tmp = min;
+        min = max;
+        max = tmp;
+        jMinValue.setText("" + min);
+        jMaxValue.setText("" + max);
+    }
+    for (int i = 0; i
+            < filterModel.size(); i++) {
+        TroopFilterElement listElem = (TroopFilterElement) filterModel.get(i);
+        if (listElem.getUnit().equals(unit)) {
+            //update min and max and return
+            listElem.setMin(min);
+            listElem.setMax(max);
+            jFilterList.repaint();
+            return;
         }
-        try {
-            max = Integer.parseInt(jMaxValue.getText());
-        } catch (Exception e) {
-            max = Integer.MAX_VALUE;
-        }
-        if (min > max) {
-            int tmp = min;
-            min = max;
-            max = tmp;
-            jMinValue.setText("" + min);
-            jMaxValue.setText("" + max);
-        }
-        for (int i = 0; i
-                < filterModel.size(); i++) {
-            TroopFilterElement listElem = (TroopFilterElement) filterModel.get(i);
-            if (listElem.getUnit().equals(unit)) {
-                //update min and max and return
-                listElem.setMin(min);
-                listElem.setMax(max);
-                jFilterList.repaint();
-                return;
-            }
-        }
-        if (elem == null) {
-            elem = new TroopFilterElement(unit, min, max);
-            filterModel.addElement(elem);
-        }
+    }
+    if (elem == null) {
+        elem = new TroopFilterElement(unit, min, max);
+        filterModel.addElement(elem);
+    }
 }//GEN-LAST:event_fireAddTroopFilterEvent
 
 private void fireApplyTroopFiltersEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireApplyTroopFiltersEvent
-        if (evt.getSource() == jApplyFiltersButton) {
-            DefaultListModel filterModel = (DefaultListModel) jFilterList.getModel();
-            List<Integer> rowsToRemove = new LinkedList<Integer>();
-            int removeCount = 0;
-            for (int i = 0; i < jSourcesTable.getRowCount(); i++) {
-                boolean villageAllowed = false;
-                //go through all rows in attack table and get source village
-                Village v = (Village) jSourcesTable.getValueAt(i, 0);
-                for (int j = 0; j < filterModel.size(); j++) {
-                    //check for all filters if villag is allowed
-                    if (!((TroopFilterElement) filterModel.get(j)).allowsVillage(v)) {
-                        if (jStrictFilter.isSelected()) {
-                            //village is not allowed, add to remove list if strict filtering is enabled
-                            int row = jSourcesTable.convertRowIndexToModel(i);
-                            if (!rowsToRemove.contains(row)) {
-                                rowsToRemove.add(row);
-                                removeCount++;
-                                break;
-                            }
-                        }
-                    } else {
-                        villageAllowed = true;
-                        if (!jStrictFilter.isSelected()) {
-                            break;
-                        }
-                    }
-                }
-                if (!jStrictFilter.isSelected()) {
-                    //if strict filtering is disabled add village only if it is not allowed
-                    if (!villageAllowed) {
+    if (evt.getSource() == jApplyFiltersButton) {
+        DefaultListModel filterModel = (DefaultListModel) jFilterList.getModel();
+        List<Integer> rowsToRemove = new LinkedList<Integer>();
+        int removeCount = 0;
+        for (int i = 0; i < jSourcesTable.getRowCount(); i++) {
+            boolean villageAllowed = false;
+            //go through all rows in attack table and get source village
+            Village v = (Village) jSourcesTable.getValueAt(i, 0);
+            for (int j = 0; j < filterModel.size(); j++) {
+                //check for all filters if villag is allowed
+                if (!((TroopFilterElement) filterModel.get(j)).allowsVillage(v)) {
+                    if (jStrictFilter.isSelected()) {
+                        //village is not allowed, add to remove list if strict filtering is enabled
                         int row = jSourcesTable.convertRowIndexToModel(i);
                         if (!rowsToRemove.contains(row)) {
                             rowsToRemove.add(row);
                             removeCount++;
+                            break;
                         }
+                    }
+                } else {
+                    villageAllowed = true;
+                    if (!jStrictFilter.isSelected()) {
+                        break;
                     }
                 }
             }
-            Collections.sort(rowsToRemove);
-            for (int i = rowsToRemove.size() - 1; i >= 0; i--) {
-                int row = rowsToRemove.get(i);
-                ((DefaultTableModel) jSourcesTable.getModel()).removeRow(row);
+            if (!jStrictFilter.isSelected()) {
+                //if strict filtering is disabled add village only if it is not allowed
+                if (!villageAllowed) {
+                    int row = jSourcesTable.convertRowIndexToModel(i);
+                    if (!rowsToRemove.contains(row)) {
+                        rowsToRemove.add(row);
+                        removeCount++;
+                    }
+                }
             }
-            String message = "Es wurden keine Angriffe entfernt.";
-            if (removeCount == 1) {
-                message = "Es wurde ein Angriff entfernt.";
-            } else if (removeCount > 1) {
-                message = "Es wurden " + removeCount + " Angriffe entfernt.";
-            } else {
-                showInfo(message);
-                return;
-            }
-            showSuccess(message);
         }
-        jFilterFrame.setVisible(false);
-        updateInfo();
+        Collections.sort(rowsToRemove);
+        for (int i = rowsToRemove.size() - 1; i >= 0; i--) {
+            int row = rowsToRemove.get(i);
+            ((DefaultTableModel) jSourcesTable.getModel()).removeRow(row);
+        }
+        String message = "Es wurden keine Angriffe entfernt.";
+        if (removeCount == 1) {
+            message = "Es wurde ein Angriff entfernt.";
+        } else if (removeCount > 1) {
+            message = "Es wurden " + removeCount + " Angriffe entfernt.";
+        } else {
+            showInfo(message);
+            return;
+        }
+        showSuccess(message);
+    }
+    jFilterFrame.setVisible(false);
+    updateInfo();
 }//GEN-LAST:event_fireApplyTroopFiltersEvent
 private void fireClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireClosingEvent
-        mSettingsPanel.storeProperties();
+    mSettingsPanel.storeProperties();
 }//GEN-LAST:event_fireClosingEvent
 
 private void fireReOpenLogPanelEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireReOpenLogPanelEvent
-        mLogFrame.setVisible(true);
-        mLogFrame.toFront();
+    mLogFrame.setVisible(true);
+    mLogFrame.toFront();
 }//GEN-LAST:event_fireReOpenLogPanelEvent
 
 private void showAttackInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_showAttackInfoEvent
-        DefaultTableModel victimModel = (DefaultTableModel) jVictimTable.getModel();
-        List<Village> victimVillages = new LinkedList<Village>();
-        List<Village> victimVillagesFaked = new LinkedList<Village>();
-        for (int i = 0; i
-                < victimModel.getRowCount(); i++) {
-            if ((Boolean) victimModel.getValueAt(i, 2) == Boolean.TRUE) {
-                victimVillagesFaked.add((Village) victimModel.getValueAt(i, 1));
+    DefaultTableModel victimModel = (DefaultTableModel) jVictimTable.getModel();
+    List<Village> victimVillages = new LinkedList<Village>();
+    List<Village> victimVillagesFaked = new LinkedList<Village>();
+    for (int i = 0; i
+            < victimModel.getRowCount(); i++) {
+        if ((Boolean) victimModel.getValueAt(i, 2) == Boolean.TRUE) {
+            victimVillagesFaked.add((Village) victimModel.getValueAt(i, 1));
+        } else {
+            victimVillages.add((Village) victimModel.getValueAt(i, 1));
+        }
+    }
+    DefaultTableModel attackModel = (DefaultTableModel) jSourcesTable.getModel();
+    Hashtable<UnitHolder, List<Village>> sources = new Hashtable<UnitHolder, List<Village>>();
+    Hashtable<UnitHolder, List<Village>> fakes = new Hashtable<UnitHolder, List<Village>>();
+    for (int i = 0; i
+            < attackModel.getRowCount(); i++) {
+        Village vSource = (Village) attackModel.getValueAt(i, 0);
+        UnitHolder uSource = (UnitHolder) attackModel.getValueAt(i, 1);
+        boolean fake = (Boolean) attackModel.getValueAt(i, 2);
+        if (!fake) {
+            List<Village> sourcesForUnit = sources.get(uSource);
+            if (sourcesForUnit == null) {
+                sourcesForUnit = new LinkedList<Village>();
+                sourcesForUnit.add(vSource);
+                sources.put(uSource, sourcesForUnit);
             } else {
-                victimVillages.add((Village) victimModel.getValueAt(i, 1));
+                sourcesForUnit.add(vSource);
+            }
+        } else {
+            List<Village> fakesForUnit = fakes.get(uSource);
+            if (fakesForUnit == null) {
+                fakesForUnit = new LinkedList<Village>();
+                fakesForUnit.add(vSource);
+                fakes.put(uSource, fakesForUnit);
+            } else {
+                fakesForUnit.add(vSource);
             }
         }
-        DefaultTableModel attackModel = (DefaultTableModel) jSourcesTable.getModel();
-        Hashtable<UnitHolder, List<Village>> sources = new Hashtable<UnitHolder, List<Village>>();
-        Hashtable<UnitHolder, List<Village>> fakes = new Hashtable<UnitHolder, List<Village>>();
-        for (int i = 0; i
-                < attackModel.getRowCount(); i++) {
-            Village vSource = (Village) attackModel.getValueAt(i, 0);
-            UnitHolder uSource = (UnitHolder) attackModel.getValueAt(i, 1);
-            boolean fake = (Boolean) attackModel.getValueAt(i, 2);
-            if (!fake) {
-                List<Village> sourcesForUnit = sources.get(uSource);
-                if (sourcesForUnit == null) {
-                    sourcesForUnit = new LinkedList<Village>();
-                    sourcesForUnit.add(vSource);
-                    sources.put(uSource, sourcesForUnit);
-                } else {
-                    sourcesForUnit.add(vSource);
-                }
-            } else {
-                List<Village> fakesForUnit = fakes.get(uSource);
-                if (fakesForUnit == null) {
-                    fakesForUnit = new LinkedList<Village>();
-                    fakesForUnit.add(vSource);
-                    fakes.put(uSource, fakesForUnit);
-                } else {
-                    fakesForUnit.add(vSource);
-                }
-            }
-        }
-        DSWorkbenchAttackInfoPanel info = new DSWorkbenchAttackInfoPanel();
-        info.setVillages(sources, victimVillages, fakes, victimVillagesFaked);
-        JFrame f = new JFrame();
-        f.add(info);
-        info.refresh();
-        f.setSize(info.getWidth(), info.getHeight());
-        f.pack();
-        f.setVisible(true);
+    }
+    DSWorkbenchAttackInfoPanel info = new DSWorkbenchAttackInfoPanel();
+    info.setVillages(sources, victimVillages, fakes, victimVillagesFaked);
+    JFrame f = new JFrame();
+    f.add(info);
+    info.refresh();
+    f.setSize(info.getWidth(), info.getHeight());
+    f.pack();
+    f.setVisible(true);
 
 
 
 }//GEN-LAST:event_showAttackInfoEvent
 
 private void fireShowPlayerSourcesOnlyChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireShowPlayerSourcesOnlyChangedEvent
-        fireFilterSourceVillagesByGroupEvent();
+    fireFilterSourceVillagesByGroupEvent();
 }//GEN-LAST:event_fireShowPlayerSourcesOnlyChangedEvent
 
 private void fireUpdateSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUpdateSelectionEvent
-        int start = 1;
-        int end = 10;
-        try {
-            start = Integer.parseInt(jSelectionStart.getText());
-            end = Integer.parseInt(jSelectionEnd.getText());
-        } catch (Exception e) {
+    int start = 1;
+    int end = 10;
+    try {
+        start = Integer.parseInt(jSelectionStart.getText());
+        end = Integer.parseInt(jSelectionEnd.getText());
+    } catch (Exception e) {
+    }
+    try {
+        //switch numbers if start larger than end
+        if (start > end) {
+            int tmp = start;
+            start = end;
+            end = tmp;
         }
-        try {
-            //switch numbers if start larger than end
-            if (start > end) {
-                int tmp = start;
-                start = end;
-                end = tmp;
-            }
-            int diff = end - start + 1;
-            if (evt == null || evt.getSource() == jSelectButton) {
-                //do nothing
-            } else if (evt.getSource() == jSelectionBeginButton && jSelectionBeginButton.isEnabled()) {
+        int diff = end - start + 1;
+        if (evt == null || evt.getSource() == jSelectButton) {
+            //do nothing
+        } else if (evt.getSource() == jSelectionBeginButton && jSelectionBeginButton.isEnabled()) {
+            start = 1;
+            end = diff;
+        } else if (evt.getSource() == jPrevSelectionButton) {
+            start -= diff;
+            if (start <= 0) {
                 start = 1;
-                end = diff;
-            } else if (evt.getSource() == jPrevSelectionButton) {
-                start -= diff;
-                if (start <= 0) {
-                    start = 1;
-                }
-                end = start + diff - 1;
-            } else if (evt.getSource() == jNextSelectionButton) {
-                start = end + 1;
-                end = (start + diff - 1 > jSourceVillageList.getModel().getSize()) ? jSourceVillageList.getModel().getSize() : (start + diff - 1);
-            } else if (evt.getSource() == jSelectionEndButton && jSelectionEnd.isEnabled()) {
-                end = jSourceVillageList.getModel().getSize();
-                start = end - diff + 1;
             }
-            jSelectionEndButton.setEnabled(!(end == jSourceVillageList.getModel().getSize()));
-            jSelectionBeginButton.setEnabled(!(start == 1));
-            jSelectionStart.setText(Integer.toString(start));
-            jSelectionEnd.setText(Integer.toString(end));
-            jSourceVillageList.getSelectionModel().setSelectionInterval(start - 1, end - 1);
-            jSourceVillageList.scrollRectToVisible(jSourceVillageList.getCellBounds(start - 1, end - 1));
-        } catch (Exception e) {
-            logger.warn("Error while calculating source selection step", e);
+            end = start + diff - 1;
+        } else if (evt.getSource() == jNextSelectionButton) {
+            start = end + 1;
+            end = (start + diff - 1 > jSourceVillageList.getModel().getSize()) ? jSourceVillageList.getModel().getSize() : (start + diff - 1);
+        } else if (evt.getSource() == jSelectionEndButton && jSelectionEnd.isEnabled()) {
+            end = jSourceVillageList.getModel().getSize();
+            start = end - diff + 1;
         }
+        jSelectionEndButton.setEnabled(!(end == jSourceVillageList.getModel().getSize()));
+        jSelectionBeginButton.setEnabled(!(start == 1));
+        jSelectionStart.setText(Integer.toString(start));
+        jSelectionEnd.setText(Integer.toString(end));
+        jSourceVillageList.getSelectionModel().setSelectionInterval(start - 1, end - 1);
+        jSourceVillageList.scrollRectToVisible(jSourceVillageList.getCellBounds(start - 1, end - 1));
+    } catch (Exception e) {
+        logger.warn("Error while calculating source selection step", e);
+    }
 }//GEN-LAST:event_fireUpdateSelectionEvent
 
 private void fireSourceRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireSourceRelationChangedEvent
-        if (jSourceGroupRelation.isSelected()) {
-            jSourceGroupRelation.setText("Verknüpfung (ODER)");
-        } else {
-            jSourceGroupRelation.setText("Verknüpfung (UND)");
-        }
-        fireFilterSourceVillagesByGroupEvent();
+    if (jSourceGroupRelation.isSelected()) {
+        jSourceGroupRelation.setText("Verknüpfung (ODER)");
+    } else {
+        jSourceGroupRelation.setText("Verknüpfung (UND)");
+    }
+    fireFilterSourceVillagesByGroupEvent();
 }//GEN-LAST:event_fireSourceRelationChangedEvent
 
 private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideInfoEvent
-        if (evt.getSource().equals(jxSourceInfoLabel)) {
-            sourceInfoPanel.setCollapsed(true);
-        } else if (evt.getSource().equals(jxTargetInfoLabel)) {
-            targetInfoPanel.setCollapsed(true);
-        } else if (evt.getSource().equals(jxResultInfoLabel)) {
-            resultInfoPanel.setCollapsed(true);
-        }
+    if (evt.getSource().equals(jxSourceInfoLabel)) {
+        sourceInfoPanel.setCollapsed(true);
+    } else if (evt.getSource().equals(jxTargetInfoLabel)) {
+        targetInfoPanel.setCollapsed(true);
+    } else if (evt.getSource().equals(jxResultInfoLabel)) {
+        resultInfoPanel.setCollapsed(true);
+    }
 }//GEN-LAST:event_fireHideInfoEvent
 
     private void removeSelectedFilters() {
@@ -2838,7 +2838,6 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
                     boolean added = false;
                     for (int i = 0; i < theModel.getRowCount(); i++) {
                         if (jVictimTable.getValueAt(i, 1).equals(v)) {
-                            System.out.println("RQ");
                             Integer amount = (Integer) jVictimTable.getValueAt(i, 3);
                             jVictimTable.setValueAt(amount + 1, i, 3);
                             cnt++;
@@ -3047,9 +3046,22 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         } catch (Exception e) {
             maxAttacksPerVillage = 1;
         }
+
+        DefaultTableModel theModel = (DefaultTableModel) jVictimTable.getModel();
         for (Village v : pVillages) {
             if (v.getTribe() != null) {
-                ((DefaultTableModel) jVictimTable.getModel()).addRow(new Object[]{v.getTribe(), v, jMarkTargetAsFake.isSelected(), maxAttacksPerVillage, 0});
+                boolean added = false;
+                for (int i = 0; i < theModel.getRowCount(); i++) {
+                    if (jVictimTable.getValueAt(i, 1).equals(v)) {
+                        Integer amount = (Integer) jVictimTable.getValueAt(i, 3);
+                        jVictimTable.setValueAt(amount + 1, i, 3);
+                        added = true;
+                        break;
+                    }
+                }
+                if (!added) {
+                    ((DefaultTableModel) jVictimTable.getModel()).addRow(new Object[]{v.getTribe(), v, jMarkTargetAsFake.isSelected(), maxAttacksPerVillage, 0});
+                }
             }
         }
     }

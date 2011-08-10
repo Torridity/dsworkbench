@@ -7,14 +7,8 @@
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/AbstractDSWorkbenchFrame.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/views/DSWorkbenchTroopsFrame.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/TroopTableTab.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/models/TroopsTableModel.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/DSWorkbenchMainFrame.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/renderer/PercentCellRenderer.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/renderer/WalLevellCellRenderer.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/types/Village.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/TribeTribeAttackFrame.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/TableHelper.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/views/DSWorkbenchMerchantDistibutor.java</file>
     </open-files>
 </project-private>

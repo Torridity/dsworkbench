@@ -34,6 +34,7 @@ import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.ProfileManagerListener;
 import de.tor.tribes.util.PropertyHelper;
+import de.tor.tribes.util.TableHelper;
 import de.tor.tribes.util.algo.MerchantDestination;
 import de.tor.tribes.util.algo.MerchantDistributor;
 import de.tor.tribes.util.algo.MerchantSource;
@@ -1322,11 +1323,13 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
             }
 
             if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du " + ((selectedRows.length == 1) ? "den gewählten Eintrag " : "die gewählten Einträge ") + "wirklich löschen?", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-                DefaultTableModel model = (DefaultTableModel) jResultsTable.getModel();
+                /*DefaultTableModel model = (DefaultTableModel) jResultsTable.getModel();
                 int numRows = selectedRows.length;
                 for (int i = 0; i < numRows; i++) {
                     model.removeRow(jResultsTable.convertRowIndexToModel(jResultsTable.getSelectedRow()));
-                }
+                }*/
+                TableHelper.deleteSelectedRows(jResultsTable);
+                
             }
             showSuccess(resultInfoPanel, jXResultInfoLabel, "Einträge gelöscht");
         }

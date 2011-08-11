@@ -128,7 +128,7 @@ public class AttackTableModel extends AbstractTableModel {
                     long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
                     long t = sendTime - System.currentTimeMillis();
                     t = (t <= 0) ? 0 : t;
-                    return t;//DurationFormatUtils.formatDuration(t, "HHH:mm:ss.SSS", true);
+                    return DurationFormatUtils.formatDuration(t, "HHH:mm:ss.SSS", true);
                 }
                 default: {
                     return a;

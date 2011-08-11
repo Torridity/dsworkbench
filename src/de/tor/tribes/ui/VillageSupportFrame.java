@@ -250,7 +250,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
         jTagsList.setModel(model);
         //select all
         jTagsList.getSelectionModel().setSelectionInterval(0, TagManager.getSingleton().getElementCount() - 1);
-        jResultDialog.pack();
+        jResultFrame.pack();
         setVisible(true);
     }
 
@@ -267,7 +267,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
         //select all
         jTagsList.getSelectionModel().setSelectionInterval(0, TagManager.getSingleton().getElementCount() - 1);
         dateTimeField.setDate(dateTimeField.getSelectedDate());
-        jResultDialog.pack();
+        jResultFrame.pack();
         setVisible(true);
     }
 
@@ -275,7 +275,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
         List<Attack> selectedSupports = getSelectedSupports();
         if (pAsk) {
             String message = ((selectedSupports.size() == 1) ? "Unterstützung " : (selectedSupports.size() + " Unterstützungen ")) + "wirklich löschen?";
-            if (selectedSupports.isEmpty() || JOptionPaneHelper.showQuestionConfirmBox(jResultDialog, message, "Angriffe löschen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
+            if (selectedSupports.isEmpty() || JOptionPaneHelper.showQuestionConfirmBox(jResultFrame, message, "Angriffe löschen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
                 return false;
             }
         }
@@ -297,7 +297,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jResultDialog = new javax.swing.JDialog();
+        jResultFrame = new javax.swing.JFrame();
         jLabel5 = new javax.swing.JLabel();
         jTargetVillage = new javax.swing.JTextField();
         jButton3 = new javax.swing.JButton();
@@ -323,8 +323,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
         jMinUnitCountSpinner = new javax.swing.JSpinner();
         dateTimeField = new de.tor.tribes.ui.components.DateTimeField();
 
-        jResultDialog.setTitle("Mögliche Unterstützungen");
-        jResultDialog.setModal(true);
+        jResultFrame.setTitle("Mögliche Unterstützungen");
 
         jLabel5.setText("Zu unterstützendes Dorf");
         jLabel5.setMaximumSize(new java.awt.Dimension(118, 25));
@@ -410,51 +409,51 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
         capabilityInfoPanel1.setPastable(false);
         capabilityInfoPanel1.setSearchable(false);
 
-        javax.swing.GroupLayout jResultDialogLayout = new javax.swing.GroupLayout(jResultDialog.getContentPane());
-        jResultDialog.getContentPane().setLayout(jResultDialogLayout);
-        jResultDialogLayout.setHorizontalGroup(
-            jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jResultDialogLayout.createSequentialGroup()
+        javax.swing.GroupLayout jResultFrameLayout = new javax.swing.GroupLayout(jResultFrame.getContentPane());
+        jResultFrame.getContentPane().setLayout(jResultFrameLayout);
+        jResultFrameLayout.setHorizontalGroup(
+            jResultFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jResultFrameLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 583, Short.MAX_VALUE)
-                    .addGroup(jResultDialogLayout.createSequentialGroup()
-                        .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jResultFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE)
+                    .addGroup(jResultFrameLayout.createSequentialGroup()
+                        .addGroup(jResultFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
-                            .addComponent(jArriveTime, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jResultDialogLayout.createSequentialGroup()
+                        .addGroup(jResultFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
+                            .addComponent(jArriveTime, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jResultFrameLayout.createSequentialGroup()
                         .addComponent(capabilityInfoPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 458, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 399, Short.MAX_VALUE)
                         .addComponent(jButton3))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jResultDialogLayout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jResultFrameLayout.createSequentialGroup()
                         .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
-        jResultDialogLayout.setVerticalGroup(
-            jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jResultDialogLayout.createSequentialGroup()
+        jResultFrameLayout.setVerticalGroup(
+            jResultFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jResultFrameLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jResultFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTargetVillage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jResultFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jArriveTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jResultFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(13, 13, 13)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGroup(jResultFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(capabilityInfoPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -598,8 +597,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
             buildResults(movements);
             jTargetVillage.setText(mCurrentVillage.toString());
             jArriveTime.setText(new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(dateTimeField.getSelectedDate()));
-            jResultDialog.setLocationRelativeTo(this);
-            jResultDialog.setVisible(true);
+            jResultFrame.setVisible(true);
         }
     }//GEN-LAST:event_fireCalculateEvent
 
@@ -614,7 +612,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
     }//GEN-LAST:event_fireShowTroopListEvent
 
     private void fireCloseResultsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCloseResultsEvent
-        jResultDialog.setVisible(false);
+        jResultFrame.setVisible(false);
     }//GEN-LAST:event_fireCloseResultsEvent
 
     private void fireCalculateForceEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateForceEvent
@@ -782,7 +780,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
                 buffer.append(" " + u.getName() + "\n");
             }
         }
-        JOptionPaneHelper.showInformationBox(jResultDialog, buffer.toString(), "Maximale Kampfkraft");
+        JOptionPaneHelper.showInformationBox(jResultFrame, buffer.toString(), "Maximale Kampfkraft");
     }
 
     private List<Attack> getSelectedSupports() {
@@ -825,7 +823,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
     private javax.swing.JLabel jLabel6;
     private javax.swing.JSpinner jMinUnitCountSpinner;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JDialog jResultDialog;
+    private javax.swing.JFrame jResultFrame;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private org.jdesktop.swingx.JXTable jSupportTable;

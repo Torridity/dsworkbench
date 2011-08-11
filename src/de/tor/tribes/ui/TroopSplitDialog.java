@@ -71,7 +71,13 @@ public class TroopSplitDialog extends javax.swing.JDialog {
                 removeSplitEnty();
             }
         }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jSavedSplitsList.registerKeyboardAction(new ActionListener() {
 
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                removeSavedSplit();
+            }
+        }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         CollapseExpandTrigger trigger = new CollapseExpandTrigger();
         trigger.addMouseListener(new MouseAdapter() {
 
@@ -132,7 +138,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         sourceInfoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
+        jSavedSplitsList = new javax.swing.JList();
         jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
@@ -182,13 +188,13 @@ public class TroopSplitDialog extends javax.swing.JDialog {
 
         jScrollPane3.setBorder(javax.swing.BorderFactory.createTitledBorder("Gespeicherte Splitsätze"));
 
-        jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jList1.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+        jSavedSplitsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jSavedSplitsList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                jList1ValueChanged(evt);
+                jSavedSplitsListValueChanged(evt);
             }
         });
-        jScrollPane3.setViewportView(jList1);
+        jScrollPane3.setViewportView(jSavedSplitsList);
 
         jTextField1.setMinimumSize(new java.awt.Dimension(100, 25));
         jTextField1.setPreferredSize(new java.awt.Dimension(100, 25));
@@ -447,7 +453,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         }
         mSplitAmounts.put(unit, amount);
         updateAmountsList();
-
+        saveSplitSets();
     }//GEN-LAST:event_fireAddSplitAmountEvent
 
     private void fireSubmitEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSubmitEvent
@@ -462,9 +468,9 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         updateSplitsList();
     }//GEN-LAST:event_fireToleranceChangedEvent
 
-    private void jList1ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jList1ValueChanged
-        jTextField1.setText((String) jList1.getSelectedValue());
-    }//GEN-LAST:event_jList1ValueChanged
+    private void jSavedSplitsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jSavedSplitsListValueChanged
+        jTextField1.setText((String) jSavedSplitsList.getSelectedValue());
+    }//GEN-LAST:event_jSavedSplitsListValueChanged
 
     private void fireSaveSplitSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSaveSplitSetEvent
         String setName = jTextField1.getText();
@@ -496,12 +502,25 @@ public class TroopSplitDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_fireSaveSplitSetEvent
 
     private void fireLoadSplitSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireLoadSplitSetEvent
-        String selection = (String) jList1.getSelectedValue();
+        String selection = (String) jSavedSplitsList.getSelectedValue();
         if (selection != null) {
             mSplitAmounts = (Hashtable<UnitHolder, Integer>) splitSets.get(selection).clone();
             updateAmountsList();
         }
     }//GEN-LAST:event_fireLoadSplitSetEvent
+
+    private void removeSavedSplit() {
+        String set = (String) jSavedSplitsList.getSelectedValue();
+        if (set != null) {
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du das Split-Set '" + set + "' wirklich löschen?", "Löschen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
+                return;
+            }
+        }
+
+        splitSets.remove(set);
+        saveSplitSets();
+        updateSplitSetList();
+    }
 
     private void saveSplitSets() {
         SplitSetHelper.saveSplitSets(splitSets);
@@ -521,7 +540,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
             model.addElement(keys.nextElement());
         }
 
-        jList1.setModel(model);
+        jSavedSplitsList.setModel(model);
     }
 
     private void removeSplitEnty() {
@@ -649,7 +668,6 @@ public class TroopSplitDialog extends javax.swing.JDialog {
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JList jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -657,6 +675,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JList jSavedSplitsList;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;

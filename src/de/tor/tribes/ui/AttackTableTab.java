@@ -176,12 +176,6 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jSendAttacksIGMDialog.pack();
         jChangeAttackTypeDialog.pack();
         jScriptExportDialog.pack();
-        // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        if (!Constants.DEBUG) {
-            GlobalOptions.getHelpBroker().enableHelpKey(jTimeChangeDialog.getRootPane(), "pages.change_attack_times", GlobalOptions.getHelpBroker().getHelpSet());
-
-        }
-        // </editor-fold>
     }
 
     public void deregister() {

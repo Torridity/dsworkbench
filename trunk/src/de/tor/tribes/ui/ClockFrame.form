@@ -97,6 +97,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Immer im Vordergrund"/>
             <Property name="horizontalAlignment" type="int" value="4"/>
+            <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+              <Insets value="[5, 5, 5, 5]"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireAlwaysOnTopChangedEvent"/>

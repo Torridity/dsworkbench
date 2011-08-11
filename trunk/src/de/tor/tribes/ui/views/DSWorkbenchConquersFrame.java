@@ -110,7 +110,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
                 for (int i = 0; i < jConquersTable.getColumnCount(); i++) {
                     TableColumnExt col = jConquersTable.getColumnExt(i);
-                    if (col.isVisible()) {
+                    if (col.isVisible() && !col.getTitle().equals("Entfernung") && !col.getTitle().equals("Dorfpunkte")) {
                         model.addElement(col.getTitle());
                     }
                 }
@@ -710,6 +710,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
         jGreyConquersLabel.setText("<html><b>Grau-Adelungen:</b> " + conquerStats[0] + " von " + conquers + " (" + percGrey + "%)" + "</html>");
         jFriendlyConquersLabel.setText("<html><b>Aufadelungen:</b> " + conquerStats[1] + " von " + conquers + " (" + percFriendly + "%)" + "</html>");
+        ((ConquerTableModel) jConquersTable.getModel()).fireTableDataChanged();
     }
 }
 

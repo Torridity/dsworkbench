@@ -633,10 +633,10 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 570, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 570, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addGap(18, 18, 18)
@@ -679,7 +679,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1299,8 +1299,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         f.setMinimumFractionDigits(0);
         f.setMaximumFractionDigits(0);
 
-        StringBuffer allyBuffer = new StringBuffer();
-        StringBuffer tribeBuffer = new StringBuffer();
+        StringBuilder allyBuffer = new StringBuilder();
+        StringBuilder tribeBuffer = new StringBuilder();
         Hashtable<Ally, AllyStatResult> allyResults = new Hashtable<Ally, AllyStatResult>();
         OverallStatResult overallResult = new OverallStatResult();
         for (Object o : selection) {
@@ -1324,19 +1324,19 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                 double attacksOfTribe = 100.0 * (double) tribeResult.getAttacks() / (double) res.getAttacks();
                 f.setMinimumFractionDigits(2);
                 f.setMaximumFractionDigits(2);
-                tribeBuffer.append("[quote]" + tribeResult.getTribe().toBBCode() + "\n");
+                tribeBuffer.append("[quote]").append(tribeResult.getTribe().toBBCode()).append("\n");
                 tribeBuffer.append("[b][color=#555555][b]Angriffe (Gesamt/Off/AG");
                 if (jShowPercentsBox.isSelected()) {
                     tribeBuffer.append("/Anteil am Stamm");
                 }
-                tribeBuffer.append("):[/color] " + tribeResult.getAttacks() + "/" + tribeResult.getOffs() + "/" + tribeResult.getSnobs());
+                tribeBuffer.append("):[/color] ").append(tribeResult.getAttacks()).append("/").append(tribeResult.getOffs()).append("/").append(tribeResult.getSnobs());
                 if (jShowPercentsBox.isSelected()) {
-                    tribeBuffer.append("/" + f.format(attacksOfTribe) + "%");
+                    tribeBuffer.append("/").append(f.format(attacksOfTribe)).append("%");
                 }
                 tribeBuffer.append("[/b]\n");
 
 
-                tribeBuffer.append("[b][color=#555555]Adelungen:[/color] " + tribeResult.getEnoblements() + "[/b]\n");
+                tribeBuffer.append("[b][color=#555555]Adelungen:[/color] ").append(tribeResult.getEnoblements()).append("[/b]\n");
                 tribeBuffer.append("\n");
 
                 double killsOfTribe = 100.0 * (double) tribeResult.getKills() / (double) res.getKills();
@@ -1348,11 +1348,11 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                 }
                 tribeBuffer.append("):[/color] ");
 
-                tribeBuffer.append(f.format(tribeResult.getKills()) + "/" + f.format(tribeResult.getKillsAsFarm()));
+                tribeBuffer.append(f.format(tribeResult.getKills())).append("/").append(f.format(tribeResult.getKillsAsFarm()));
                 if (jShowPercentsBox.isSelected()) {
                     f.setMinimumFractionDigits(2);
                     f.setMaximumFractionDigits(2);
-                    tribeBuffer.append("/" + (f.format(killsOfTribe)) + "%[/b]");
+                    tribeBuffer.append("/").append(f.format(killsOfTribe)).append("%[/b]");
                 }
                 tribeBuffer.append("\n");
 
@@ -1366,19 +1366,19 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                 }
 
                 tribeBuffer.append("):[/color] ");
-                tribeBuffer.append(f.format(tribeResult.getLosses()) + "/" + f.format(tribeResult.getLossesAsFarm()));
+                tribeBuffer.append(f.format(tribeResult.getLosses())).append("/").append(f.format(tribeResult.getLossesAsFarm()));
                 if (jShowPercentsBox.isSelected()) {
                     f.setMinimumFractionDigits(2);
                     f.setMaximumFractionDigits(2);
-                    tribeBuffer.append("/" + (f.format(lossesOfTribe)) + "%[/b]");
+                    tribeBuffer.append("/").append(f.format(lossesOfTribe)).append("%[/b]");
                 }
                 tribeBuffer.append("\n\n");
-                tribeBuffer.append("[b][color=#555555]Zerstörte Wallstufen:[/color] " + tribeResult.getWallDestruction() + "[/b]\n");
-                tribeBuffer.append("[b][color=#555555]Zerstörte Gebäudestufen:[/color] " + tribeResult.getBuildingDestruction() + "[/b]\n");
+                tribeBuffer.append("[b][color=#555555]Zerstörte Wallstufen:[/color] ").append(tribeResult.getWallDestruction()).append("[/b]\n");
+                tribeBuffer.append("[b][color=#555555]Zerstörte Gebäudestufen:[/color] ").append(tribeResult.getBuildingDestruction()).append("[/b]\n");
                 tribeBuffer.append("[/quote]\n");
             }
 
-            allyBuffer.append("[quote]" + a.toBBCode() + "\n");
+            allyBuffer.append("[quote]").append(a.toBBCode()).append("\n");
             double attackers = 100.0 * (double) res.getAttackers() / (double) overallResult.getAttackers();
             f.setMinimumFractionDigits(2);
             f.setMaximumFractionDigits(2);
@@ -1386,9 +1386,9 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             if (jShowPercentsBox.isSelected()) {
                 allyBuffer.append("/Gesamtanteil");
             }
-            allyBuffer.append("):[/color] " + res.getAttackers());
+            allyBuffer.append("):[/color] ").append(res.getAttackers());
             if (jShowPercentsBox.isSelected()) {
-                allyBuffer.append("/" + f.format(attackers) + "%");
+                allyBuffer.append("/").append(f.format(attackers)).append("%");
             }
             allyBuffer.append("[/b]\n");
             double attacksOfAlly = 100.0 * (double) res.getAttacks() / (double) overallResult.getAttacks();
@@ -1399,12 +1399,12 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             if (jShowPercentsBox.isSelected()) {
                 allyBuffer.append("/Anteil");
             }
-            allyBuffer.append("):[/color] " + res.getAttacks() + "/" + res.getOffs() + "/" + res.getSnobs());
+            allyBuffer.append("):[/color] ").append(res.getAttacks()).append("/").append(res.getOffs()).append("/").append(res.getSnobs());
             if (jShowPercentsBox.isSelected()) {
-                allyBuffer.append("/" + f.format(attacksOfAlly) + "%");
+                allyBuffer.append("/").append(f.format(attacksOfAlly)).append("%");
             }
             allyBuffer.append("[/b]\n");
-            allyBuffer.append("[b][color=#555555]Adelungen:[/color] " + res.getEnoblements() + "[/b]\n");
+            allyBuffer.append("[b][color=#555555]Adelungen:[/color] ").append(res.getEnoblements()).append("[/b]\n");
             allyBuffer.append("\n");
             double killsOfAlly = 100.0 * (double) res.getKills() / (double) overallResult.getKills();
             f.setMinimumFractionDigits(0);
@@ -1414,11 +1414,11 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                 allyBuffer.append("/Gesamtanteil");
             }
             allyBuffer.append("):[/color] ");
-            allyBuffer.append(f.format(res.getKills()) + "/" + f.format(res.getKillsAsFarm()));
+            allyBuffer.append(f.format(res.getKills())).append("/").append(f.format(res.getKillsAsFarm()));
             if (jShowPercentsBox.isSelected()) {
                 f.setMinimumFractionDigits(2);
                 f.setMaximumFractionDigits(2);
-                allyBuffer.append("/" + (f.format(killsOfAlly)) + "%");
+                allyBuffer.append("/").append(f.format(killsOfAlly)).append("%");
             }
             allyBuffer.append("[/b]\n");
             double lossesOfAlly = 100.0 * (double) res.getLosses() / (double) overallResult.getLosses();
@@ -1430,34 +1430,34 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             }
 
             allyBuffer.append("):[/color] ");
-            allyBuffer.append(f.format(res.getLosses()) + "/" + f.format(res.getLossesAsFarm()));
+            allyBuffer.append(f.format(res.getLosses())).append("/").append(f.format(res.getLossesAsFarm()));
             if (jShowPercentsBox.isSelected()) {
                 f.setMinimumFractionDigits(2);
                 f.setMaximumFractionDigits(2);
-                allyBuffer.append("/" + (f.format(lossesOfAlly)) + "%");
+                allyBuffer.append("/").append(f.format(lossesOfAlly)).append("%");
             }
             allyBuffer.append("[/b]\n");
             allyBuffer.append("\n");
-            allyBuffer.append("[b][color=#555555]Zerstörte Wallstufen:[/color] " + res.getWallDestruction() + "[/b]\n");
-            allyBuffer.append("[b][color=#555555]Zerstörte Gebäudestufen:[/color] " + res.getBuildingDestruction() + "[/b]\n");
+            allyBuffer.append("[b][color=#555555]Zerstörte Wallstufen:[/color] ").append(res.getWallDestruction()).append("[/b]\n");
+            allyBuffer.append("[b][color=#555555]Zerstörte Gebäudestufen:[/color] ").append(res.getBuildingDestruction()).append("[/b]\n");
             allyBuffer.append("[/quote]\n");
         }
 
 
-        StringBuffer overallBuffer = new StringBuffer();
+        StringBuilder overallBuffer = new StringBuilder();
         SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
         overallBuffer.append("[quote]");
-        overallBuffer.append("[b][color=#555555]Start:[/color] " + df.format(lastStats.getStartDate()) + "[/b]\n");
-        overallBuffer.append("[b][color=#555555]Ende:[/color] " + df.format(lastStats.getEndDate()) + "[/b]\n");
-        overallBuffer.append("[b][color=#555555]Ausgewertete Berichte:[/color] " + lastStats.getReportCount() + "[/b]\n\n");
-        overallBuffer.append("[b][color=#888888]Ausgewertete Angreifer (Stämme):[/color] " + overallResult.getAttackers() + " (" + selection.length + ")[/b]\n");
-        overallBuffer.append("[b][color=#888888]Verteidiger (Stämme):[/color] " + overallDefTribes + " (" + overallDefAllies + ")[/b]\n\n");
-        overallBuffer.append("[b][color=#555555]Besiegte Einheiten (Bauernhofplätze):[/color] " + f.format(overallResult.getKills()) + " (" + f.format(overallResult.getKillsAsFarm()) + ")[/b]\n\n");
-        overallBuffer.append("[b][color=#555555]Verlorene Einheiten (Bauernhofplätze):[/color] " + f.format(overallResult.getLosses()) + " (" + f.format(overallResult.getLossesAsFarm()) + ")[/b]\n\n");
-        overallBuffer.append("[b][color=#888888]Verluste pro Angreifer:[/color] " + f.format((overallResult.getLosses() / overallResult.getAttackers())) + "[/b]\n");
-        overallBuffer.append("[b][color=#888888]Verluste pro Verteidiger:[/color] " + f.format((overallResult.getKills() / overallDefTribes)) + "[/b]\n\n");
-        overallBuffer.append("[b][color=#555555]Zerstörte Wallstufen:[/color] " + f.format(overallResult.getWallDestruction()) + "[/b]\n");
-        overallBuffer.append("[b][color=#555555]Zerstörte Gebäudestufen:[/color] " + f.format(overallResult.getBuildingDestruction()) + "[/b]\n");
+        overallBuffer.append("[b][color=#555555]Start:[/color] ").append(df.format(lastStats.getStartDate())).append("[/b]\n");
+        overallBuffer.append("[b][color=#555555]Ende:[/color] ").append(df.format(lastStats.getEndDate())).append("[/b]\n");
+        overallBuffer.append("[b][color=#555555]Ausgewertete Berichte:[/color] ").append(lastStats.getReportCount()).append("[/b]\n\n");
+        overallBuffer.append("[b][color=#888888]Ausgewertete Angreifer (Stämme):[/color] ").append(overallResult.getAttackers()).append(" (").append(selection.length).append(")[/b]\n");
+        overallBuffer.append("[b][color=#888888]Verteidiger (Stämme):[/color] ").append(overallDefTribes).append(" (").append(overallDefAllies).append(")[/b]\n\n");
+        overallBuffer.append("[b][color=#555555]Besiegte Einheiten (Bauernhofplätze):[/color] ").append(f.format(overallResult.getKills())).append(" (").append(f.format(overallResult.getKillsAsFarm())).append(")[/b]\n\n");
+        overallBuffer.append("[b][color=#555555]Verlorene Einheiten (Bauernhofplätze):[/color] ").append(f.format(overallResult.getLosses())).append(" (").append(f.format(overallResult.getLossesAsFarm())).append(")[/b]\n\n");
+        overallBuffer.append("[b][color=#888888]Verluste pro Angreifer:[/color] ").append(f.format((overallResult.getLosses() / overallResult.getAttackers()))).append("[/b]\n");
+        overallBuffer.append("[b][color=#888888]Verluste pro Verteidiger:[/color] ").append(f.format((overallResult.getKills() / overallDefTribes))).append("[/b]\n\n");
+        overallBuffer.append("[b][color=#555555]Zerstörte Wallstufen:[/color] ").append(f.format(overallResult.getWallDestruction())).append("[/b]\n");
+        overallBuffer.append("[b][color=#555555]Zerstörte Gebäudestufen:[/color] ").append(f.format(overallResult.getBuildingDestruction())).append("[/b]\n");
         overallBuffer.append("[/quote]\n");
 
         jOverallStatsArea.setText(overallBuffer.toString());

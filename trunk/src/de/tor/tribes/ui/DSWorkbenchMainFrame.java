@@ -1048,7 +1048,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
 
         jExportDialog.setTitle("Export");
-        jExportDialog.setMinimumSize(new java.awt.Dimension(520, 370));
+        jExportDialog.setMinimumSize(new java.awt.Dimension(560, 370));
         jExportDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jScrollPane1.setMinimumSize(new java.awt.Dimension(100, 100));
@@ -1078,7 +1078,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.3;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jExportDialog.getContentPane().add(jScrollPane1, gridBagConstraints);
@@ -1136,7 +1136,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.3;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jExportDialog.getContentPane().add(jScrollPane4, gridBagConstraints);
@@ -1168,7 +1168,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.3;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jExportDialog.getContentPane().add(jScrollPane5, gridBagConstraints);
@@ -1200,7 +1200,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.3;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jExportDialog.getContentPane().add(jScrollPane6, gridBagConstraints);
@@ -1232,7 +1232,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.3;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jExportDialog.getContentPane().add(jScrollPane7, gridBagConstraints);
@@ -1241,7 +1241,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
         jExportTags.setText("Gruppen exportieren");
 
-        jExportForms.setText("Formen exportieren");
+        jExportForms.setText("Zeichnungen exportieren");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -1250,8 +1250,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jExportForms, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
-                    .addComponent(jExportTags, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE))
+                    .addComponent(jExportForms, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
+                    .addComponent(jExportTags, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -1261,7 +1261,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                 .addComponent(jExportTags)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jExportForms)
-                .addContainerGap(47, Short.MAX_VALUE))
+                .addContainerGap(44, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1269,7 +1269,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.3;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jExportDialog.getContentPane().add(jPanel5, gridBagConstraints);

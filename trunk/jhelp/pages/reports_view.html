@@ -23,20 +23,80 @@
         <td colspan="2">&nbsp;</td>
       </tr>
       <tr>
-        <td colspan="2"><img src="../images/screens/report_view.gif" width="658" height="593"></td>
+        <td colspan="2"><img src="../images/screens/report_view.gif" width="690" height="403"></td>
       </tr>
       <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
       <tr>
-        <td colspan="2"><p>Die Berichtsdatenbank dient der Verwaltung und Auswertung von Kampfberichten. Der Import von Berichten geschieht, wie in <em>DS Workbench</em> &uuml;blich, direkt aus dem Spiel per Copy&amp;Paste. Importierte Berichte werden automatisch und ohne R&uuml;ckmeldung in das aktive Berichtset eingef&uuml;gt. In der Berichtstabelle tauchen anschlie&szlig;end der Status/die Farbe des Berichts, Angreifer, Herkunft, Verteidiget und Ziel auf. Zus&auml;tzlich wird der Typ angezeigt, der einem in <em>DS Workbench</em> verf&uuml;gbaren Angriffstypen (Off, Fake, AG) entspricht. Die Spalte 'Sonstiges' dient der genaueren Bescheibung des Kampfberichtes. Darin wird angezeigt, ob der Wall oder ein Geb&auml;ude besch&auml;digt und ob die Zustimmung gesenkt wurde. Welche Spalten angezeigt werden kann man in der Berichtsdatenbank <em><a href="tables.html">selbst bestimmen</a></em>.<br>
-          <br>
+        <td colspan="2"><p>Die Berichtsdatenbank dient der Verwaltung und Auswertung von Kampfberichten. Der Import von Berichten geschieht, wie in <em>DS Workbench</em> &uuml;blich, direkt aus dem Spiel per Copy&amp;Paste. Importierte Berichte werden automatisch und  in das  Berichtset &quot;default&quot; eingef&uuml;gt und k&ouml;nnen sp&auml;ter per STRG+C und STRG+V auf andere Berichtseits verteilt werden. In der Berichtstabelle tauchen  der Status/die Farbe des Berichts, Angreifer, Herkunft, Verteidiget und Ziel auf. Zus&auml;tzlich wird der Typ angezeigt, der einem in <em>DS Workbench</em> verf&uuml;gbaren Angriffstypen (Off, Fake, AG) entspricht. Die Spalte 'Sonstiges' dient der genaueren Bescheibung des Kampfberichtes. Darin wird angezeigt, ob der Wall oder ein Geb&auml;ude besch&auml;digt und ob die Zustimmung gesenkt wurde.
           Den kompletten Bericht bekommt man angezeigt, wenn man mit der Maus &uuml;ber die Spalte 'Status'
-f&auml;hrt und den Mauszeiger dort 1-2 Sekunden nicht bewegt. <br>
-          <br>
-          Auf der rechten Seite findet man in der Kategorie 'Verwaltung' M&ouml;glichkeiten, um Berichte zu l&ouml;schen, in ein anderes Berichtset zu verschieben, zu <em><a href="reports_view_filters.html">filtern</a></em> oder <em><a href="reports_view_stats.html">auszuwerten</a></em>. In der Kategorie '&Uuml;bertragen' kann man alle markierten Berichte als BB-Code exportieren, die enthaltenen Angreifer und Verteidiger, sofern aus dem Bericht ersichtlich, in <em><a href="astar.html">A*Star</a></em><a href="astar.html"></a> einf&uuml;gen oder die sichtbaren Verteidigertruppen in die <em><a href="troops_view.html">Truppen&uuml;bersicht</a></em> eintragen.<br>
+f&auml;hrt und den Mauszeiger dort 1-2 Sekunden nicht bewegt. Das Men&uuml; auf der rechten Seite bietet die folgenden Funktionen: <br>
           </p>
+          <ul>
+            <li>&Uuml;bertragen</li>
+            <ul>
+              <li>Truppen in Trupen&uuml;bersicht einf&uuml;gen: Erlaubt es, die &uuml;berlebenden Truppen des Angreifers und/oder des Verteidigers der gew&auml;hlten Berichte in die <a href="troops_view.html"><em>Truppen&uuml;bersicht</em></a> zu &uuml;bertragen, sofern diese bekannt und nicht verborgen oder nicht ersp&auml;ht wurden.</li>
+              <li>Bericht in A*Star  einf&uuml;gen: F&uuml;gt den gew&auml;hlten Bericht in <a href="astar.html"><em>A*Star</em></a> ein, etwa um zu pr&uuml;fen wieviele Angriffe notwendig sind um das angegriffene Dorf zu cleanen. Diese Information kann man im Anschluss daf&uuml;r verwenden, um direkt die entsprechende Anzahl Angriffe zu planen. (siehe <a href="astar.html"><em>Hilfe zu A*Star</em></a>) </li>
+            </ul>
+            <li>Sonstiges</li>
+            <ul>
+              <li>Berichte auswerten: Erlaubt es Statistiken &uuml;ber all Berichte zu erstellen (siehe unten &quot;Sonderfunktionen&quot;)</li>
+              </ul>
+            </ul>
           </td>
+	    <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr>
+	    <td colspan="2"><h3 style="color:#953333">Shortcut-Funktionen</h3></td>
+      </tr>
+	    <tr>
+	   <td colspan="2">&nbsp;
+         </td>
+      </tr>
+	    <tr>
+	   <td colspan="2"><ul>
+	     <li>Kopieren von Berichten per STRG+C: Kopiert die gew&auml;hlten Berichte in einem internen Format in die Zwischenablage, um sie per STRG+V in andere Berichtsets einf&uuml;gen zu k&ouml;nnen. </li>
+	     <li>Ausschneiden von Berichten per STRG+X: Schneidet gew&auml;hlte Berichte aus,  um sie per STRG+V in andere Berichtsets einf&uuml;gen zu k&ouml;nnen. </li>
+	     <li>Einf&uuml;gen von Berichten per STRG+V: F&uuml;r vorher kopierte oder ausgeschnittene Berichte per STRG+V in das aktuelle Berichtset ein. </li>
+	     <li>BB-Export von Berichten per STRG+B: Exportiert gew&auml;hlte Berichte per STRG+B als BB-Codes in die Zwischenablage, um sie im Spiel einf&uuml;gen zu k&ouml;nnen. </li>
+	     <li>L&ouml;schen per ENTF: L&ouml;scht gew&auml;hlte Berichte per ENTF.</li>
+	     <li>Suchen nach Berichten per STRG+F: Erlaubt es nach Berichten zu suchen die bestimmte Kriterien erf&uuml;llen.</li>
+	   </ul>         </td>
+      </tr>
+	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr> <tr>
+	    <td colspan="2"><h3 style="color:#953333">Sonderfunktionen</h3></td>
+      </tr>
+	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr>
+        <td colspan="2"><img src="../images/screens/report_view_stats.gif" width="763" height="638"></td>
+      </tr>
+	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr>
+        <td colspan="2"><em>DS Workbench</em> erlaubt es neben der Erfassung von Berichten aus, diese auszuwerten und Statistiken dazu zu erstllen. Hierf&uuml;r w&auml;hlt man zuerst die Berichtsets an, die man in die Statistiken mit aufnehmen m&ouml;chte. Anschlie&szlig;end klickt man auf &quot;Auswerten&quot; und erh&auml;lt eine Auswertung in BB-Codes im unteren Bereich. Diese kann man noch verfeinern, indem man ber&uuml;cksichtigte St&auml;mme w&auml;hlt und verschiedene Anzeigeoptionen aktiviert oder deaktiviert. Die BB-Codes kann man im Anschluss direkt in den entsprechenden Feldern markieren und per STRG+C in die Zwischenablage kopieren, um sie z.B. im Spiel einzuf&uuml;gen. </td>
+      </tr>
+	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr valign="middle">
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/information.png" width="24" height="24"></div></td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE"><p>Ist die Option <em>Gegnerische Verluste sch&auml;tzen, falls unbekannt</em> aktiviert, so wird versucht, die Verluste anhand der gesenkten Walllevel zu sch&auml;tzen. Dies geschieht in den folgenden f&uuml;nf Abstufungen:</p>
+		  <ul>
+		  <li>Keine Zerst&ouml;rung des Walls: Unbekannte Anzahl gegnerische Verluste </li>
+		  <li>Senkung um 1 Walllevel: Etwa 2.000 Einheiten verloren</li>
+		  <li>Senkung um 2 Walllevel: Etwa 4.000 Einheiten verloren</li>
+		  <li>Senkung um 3 Walllevel: Etwa 6.000 Einheiten verloren</li>
+		  <li>Senkung um 4 Walllevel: Etwa 8.000 Einheiten verloren</li>
+		  </ul>
+		  Natürlich ist diese Absch&auml;tzung sehr ungenau, besonders wenn der Wall zum Zeitpunkt des Angriffs sehr niedrig war und abh&auml;ngig von der Art der angreifenden und gegnerischen Truppen. In vielen F&auml;llen sind die angenommenen Werte aber recht gute Sch&auml;tzungen. </td>
+      </tr>
     </table>
 	</td>
 </td>

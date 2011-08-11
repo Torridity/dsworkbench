@@ -276,7 +276,8 @@ public class TroopFilterDialog extends javax.swing.JDialog {
         sourceInfoPanel.setDirection(org.jdesktop.swingx.JXCollapsiblePane.Direction.LEFT);
         sourceInfoPanel.setInheritAlpha(false);
 
-        jPanel5.setMinimumSize(new java.awt.Dimension(190, 360));
+        jPanel5.setMinimumSize(new java.awt.Dimension(200, 360));
+        jPanel5.setPreferredSize(new java.awt.Dimension(200, 491));
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png"))); // NOI18N
         jButton1.setToolTipText("Filtersatz speichern");

@@ -4,18 +4,15 @@
  */
 package de.tor.tribes.ui.models;
 
-import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.views.DSWorkbenchDoItYourselfAttackPlaner;
 import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.attack.AttackManager;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Logger;
 import javax.swing.table.AbstractTableModel;
+import org.apache.commons.lang.time.DurationFormatUtils;
 
 /**
  *
@@ -100,31 +97,33 @@ public class DoItYourselfAttackTableModel extends AbstractTableModel {
                         long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
                         long t = sendTime - System.currentTimeMillis();
                         t = (t <= 0) ? 0 : t;
+                        return DurationFormatUtils.formatDuration(t, "HHH:mm:ss.SSS", true);
+                        /* t = (t <= 0) ? 0 : t;
                         if (t != 0) {
-                            long h = (int) Math.floor((double) t / (double) (1000 * 60 * 60));
-                            t -= (h * 1000 * 60 * 60);
-                            long min = (int) Math.floor((double) t / (double) (1000 * 60));
-                            t -= (min * 1000 * 60);
-                            long s = (int) Math.floor((double) t / (double) 1000);
-                            t -= (s * 1000);
-                            long ms = t;
-                            String res = ((h < 10) ? ("0" + h) : "" + h);
-                            res += ":";
-                            res += ((min < 10) ? "0" + min : "" + min);
-                            res += ":";
-                            res += ((s < 10) ? "0" + s : "" + s);
-                            res += ".";
-                            if (ms < 100) {
-                                if (ms < 10) {
-                                    res += "00" + ms;
-                                } else {
-                                    res += "0" + ms;
-                                }
-                            } else {
-                                res += "" + ms;
-                            }
-                            return res;
+                        long h = (int) Math.floor((double) t / (double) (1000 * 60 * 60));
+                        t -= (h * 1000 * 60 * 60);
+                        long min = (int) Math.floor((double) t / (double) (1000 * 60));
+                        t -= (min * 1000 * 60);
+                        long s = (int) Math.floor((double) t / (double) 1000);
+                        t -= (s * 1000);
+                        long ms = t;
+                        String res = ((h < 10) ? ("0" + h) : "" + h);
+                        res += ":";
+                        res += ((min < 10) ? "0" + min : "" + min);
+                        res += ":";
+                        res += ((s < 10) ? "0" + s : "" + s);
+                        res += ".";
+                        if (ms < 100) {
+                        if (ms < 10) {
+                        res += "00" + ms;
+                        } else {
+                        res += "0" + ms;
                         }
+                        } else {
+                        res += "" + ms;
+                        }
+                        return res;
+                        }*/
                     } catch (Exception e) {
                     }
                     return "00:00:00.000";
@@ -141,7 +140,9 @@ public class DoItYourselfAttackTableModel extends AbstractTableModel {
     }
 
     @Override
-    public void setValueAt(Object pValue, int pRow, int pCol) {
+    public void setValueAt(Object pValue,
+            int pRow,
+            int pCol) {
         try {
             Attack a = (Attack) AttackManager.getSingleton().getAllElements(AttackManager.MANUAL_ATTACK_PLAN).get(pRow);
             switch (pCol) {

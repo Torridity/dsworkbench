@@ -10,7 +10,9 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Marker;
+import de.tor.tribes.types.Tribe;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.ui.models.MarkerTableModel;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
@@ -116,11 +118,11 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
         initComponents();
         jScrollPane1.setViewportView(jxMarkerTable);
         if (!KEY_LISTENER_ADDED) {
-            KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
+           // KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
             KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
             KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK, false);
             KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
-            jxMarkerTable.registerKeyboardAction(pActionListener, "Copy", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+         //   jxMarkerTable.registerKeyboardAction(pActionListener, "Copy", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxMarkerTable.registerKeyboardAction(pActionListener, "Cut", cut, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxMarkerTable.registerKeyboardAction(pActionListener, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxMarkerTable.registerKeyboardAction(pActionListener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
@@ -355,14 +357,25 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
 
             String[] lines = data.split("\n");
             int cnt = 0;
+            int existCount = 0;
             MarkerManager.getSingleton().invalidate();
             for (String line : lines) {
                 Marker m = Marker.fromInternalRepresentation(line);
-                if (m != null) {
+                Marker existingMarker = null;
+                if(m != null && m.getMarkerType() == Marker.ALLY_MARKER_TYPE){
+                    existingMarker = MarkerManager.getSingleton().getMarker(m.getView().getAlly());
+                }else if(m != null && m.getMarkerType() == Marker.TRIBE_MARKER_TYPE){
+                    existingMarker = MarkerManager.getSingleton().getMarker(m.getView().getTribe());
+                }
+                
+                if (m != null && existingMarker == null) {
                     MarkerManager.getSingleton().addManagedElement(getMarkerSet(), m);
                     cnt++;
+                }else if(existingMarker != null){
+                    existCount++;
                 }
             }
+
             showSuccess(cnt + ((cnt == 1) ? " Markierung eingefügt" : " Markierungen eingefügt"));
         } catch (UnsupportedFlavorException ufe) {
             logger.error("Failed to copy markers from internal clipboard", ufe);

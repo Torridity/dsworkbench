@@ -14,14 +14,19 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractForm;
+import de.tor.tribes.types.AllyStatResult;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.test.DummyUnit;
 import de.tor.tribes.types.FightReport;
+import de.tor.tribes.types.NoAlly;
 import de.tor.tribes.types.Note;
+import de.tor.tribes.types.OverallStatResult;
 import de.tor.tribes.types.Rectangle;
 import de.tor.tribes.types.SOSRequest;
+import de.tor.tribes.types.SingleAttackerStat;
 import de.tor.tribes.types.Tag;
+import de.tor.tribes.types.TribeStatResult;
 import de.tor.tribes.types.TribeStatsElement;
 import de.tor.tribes.types.TribeStatsElement.Stats;
 import de.tor.tribes.types.Village;
@@ -29,16 +34,19 @@ import de.tor.tribes.util.BBChangeListener;
 import de.tor.tribes.util.BBCodeFormatter;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.bb.AllyReportStatsFormatter;
 import de.tor.tribes.util.bb.AttackListFormatter;
 import de.tor.tribes.util.bb.BasicFormatter;
 import de.tor.tribes.util.bb.DefStatsFormatter;
 import de.tor.tribes.util.bb.FormListFormatter;
 import de.tor.tribes.util.bb.KillStatsFormatter;
 import de.tor.tribes.util.bb.NoteListFormatter;
+import de.tor.tribes.util.bb.OverallReportStatsFormatter;
 import de.tor.tribes.util.bb.PointStatsFormatter;
 import de.tor.tribes.util.bb.ReportListFormatter;
 import de.tor.tribes.util.bb.SosListFormatter;
 import de.tor.tribes.util.bb.TagListFormatter;
+import de.tor.tribes.util.bb.TribeReportStatsFormatter;
 import de.tor.tribes.util.bb.TroopListFormatter;
 import de.tor.tribes.util.bb.VillageListFormatter;
 import de.tor.tribes.util.bb.WinnerLoserStatsFormatter;
@@ -70,6 +78,9 @@ public class BBCodeEditor extends javax.swing.JDialog {
     private List<Stats> sampleStats = new LinkedList<Stats>();
     private List<VillageTroopsHolder> sampleTroops = new LinkedList<VillageTroopsHolder>();
     private List<AbstractForm> sampleForms = new LinkedList<AbstractForm>();
+    private List<OverallStatResult> sampleOverallResult = new LinkedList<OverallStatResult>();
+    private List<AllyStatResult> sampleAllyResult = new LinkedList<AllyStatResult>();
+    private List<TribeStatResult> sampleTribeResult = new LinkedList<TribeStatResult>();
     private BasicFormatter element = null;
     private BasicFormatter<Attack> attackFormatter = new AttackListFormatter();
     private BasicFormatter<Village> villageFormatter = new VillageListFormatter();
@@ -83,6 +94,9 @@ public class BBCodeEditor extends javax.swing.JDialog {
     private BasicFormatter<Stats> winnerLoserStatsFormatter = new WinnerLoserStatsFormatter();
     private BasicFormatter<VillageTroopsHolder> troopsFormatter = new TroopListFormatter();
     private BasicFormatter<AbstractForm> formFormatter = new FormListFormatter();
+    private BasicFormatter<OverallStatResult> overallStatFormatter = new OverallReportStatsFormatter();
+    private BasicFormatter<AllyStatResult> allyStatFormatter = new AllyReportStatsFormatter();
+    private BasicFormatter<TribeStatResult> tribeStatFormatter = new TribeReportStatsFormatter();
     private static BBCodeEditor SINGLETON = null;
 
     public static synchronized BBCodeEditor getSingleton() {
@@ -119,7 +133,6 @@ public class BBCodeEditor extends javax.swing.JDialog {
     }
 
     private void buildSampleData() {
-
         sampleAttacks.clear();
         sampleVillages.clear();
         sampleReports.clear();
@@ -130,25 +143,25 @@ public class BBCodeEditor extends javax.swing.JDialog {
         sampleTroops.clear();
         sampleForms.clear();
         //sample village
-        Village sampleVillage = DataHolder.getSingleton().getRandomVillage();
+        Village sampleVillage1 = DataHolder.getSingleton().getRandomVillageWithOwner();
         //sample attack
-        Village sourceVillage = DataHolder.getSingleton().getRandomVillage();
-        Village targetVillage = DataHolder.getSingleton().getRandomVillage();
-        Village noteVillage1 = DataHolder.getSingleton().getRandomVillage();
-        Village noteVillage2 = DataHolder.getSingleton().getRandomVillage();
-        sampleVillages.add(sourceVillage);
-        sampleVillages.add(targetVillage);
-        sampleVillages.add(noteVillage1);
-        sampleVillages.add(noteVillage2);
+        Village sampleVillage2 = DataHolder.getSingleton().getRandomVillageWithOwner();
+        Village sampleVillage3 = DataHolder.getSingleton().getRandomVillageWithOwner();
+        Village sampleVillage4 = DataHolder.getSingleton().getRandomVillageWithOwner();
+        Village sampleVillage5 = DataHolder.getSingleton().getRandomVillageWithOwner();
+        sampleVillages.add(sampleVillage2);
+        sampleVillages.add(sampleVillage3);
+        sampleVillages.add(sampleVillage4);
+        sampleVillages.add(sampleVillage5);
         Attack sampleAttack = new Attack();
-        sampleAttack.setSource(sourceVillage);
-        sampleAttack.setTarget(targetVillage);
+        sampleAttack.setSource(sampleVillage2);
+        sampleAttack.setTarget(sampleVillage3);
         sampleAttack.setArriveTime(new Date());
         sampleAttack.setType(Attack.CLEAN_TYPE);
         sampleAttack.setUnit(new DummyUnit());
         Attack sampleAttack2 = new Attack();
-        sampleAttack2.setSource(sourceVillage);
-        sampleAttack2.setTarget(targetVillage);
+        sampleAttack2.setSource(sampleVillage2);
+        sampleAttack2.setTarget(sampleVillage3);
         sampleAttack2.setArriveTime(new Date());
         sampleAttack2.setType(Attack.CLEAN_TYPE);
         sampleAttack2.setUnit(new DummyUnit());
@@ -158,56 +171,56 @@ public class BBCodeEditor extends javax.swing.JDialog {
         Note sampleNote = new Note();
         sampleNote.setNoteSymbol(ImageManager.NOTE_SYMBOL_BALL_BLUE);
         sampleNote.setTimestamp(System.currentTimeMillis());
-        sampleNote.addVillage(sampleVillage);
-        sampleNote.addVillage(noteVillage1);
-        sampleNote.addVillage(noteVillage2);
+        sampleNote.addVillage(sampleVillage1);
+        sampleNote.addVillage(sampleVillage4);
+        sampleNote.addVillage(sampleVillage5);
         sampleNote.setNoteText("[u]Dies[/u] ist eine [b]Beispielnotiz[/b]");
         Note sampleNote2 = new Note();
         sampleNote2.setNoteSymbol(ImageManager.NOTE_SYMBOL_BALL_RED);
         sampleNote2.setTimestamp(System.currentTimeMillis());
-        sampleNote2.addVillage(noteVillage1);
-        sampleNote2.addVillage(noteVillage2);
+        sampleNote2.addVillage(sampleVillage4);
+        sampleNote2.addVillage(sampleVillage5);
         sampleNote2.setNoteText("[u]Dies[/u] ist eine weitere [b]Beispielnotiz[/b]");
         sampleNotes.add(sampleNote);
         sampleNotes.add(sampleNote2);
         //sample SOS request
         SOSRequest sampleSOSRequest = new SOSRequest();
         sampleSOSRequest.setDefender(Barbarians.getSingleton());
-        sampleSOSRequest.addTarget(noteVillage1);
-        sampleSOSRequest.getTargetInformation(noteVillage1).setWallLevel(20);
-        sampleSOSRequest.getTargetInformation(noteVillage1).addAttack(sourceVillage, new Date());
-        sampleSOSRequest.getTargetInformation(noteVillage1).addAttack(sourceVillage, new Date());
-        sampleSOSRequest.getTargetInformation(noteVillage1).addTroopInformation(DataHolder.getSingleton().getRandomUnit(), 300);
-        sampleSOSRequest.addTarget(noteVillage2);
-        sampleSOSRequest.getTargetInformation(noteVillage2).setWallLevel(10);
-        sampleSOSRequest.getTargetInformation(noteVillage2).addAttack(sourceVillage, new Date());
-        sampleSOSRequest.getTargetInformation(noteVillage2).addAttack(sourceVillage, new Date());
-        sampleSOSRequest.getTargetInformation(noteVillage2).addTroopInformation(DataHolder.getSingleton().getRandomUnit(), 100);
+        sampleSOSRequest.addTarget(sampleVillage4);
+        sampleSOSRequest.getTargetInformation(sampleVillage4).setWallLevel(20);
+        sampleSOSRequest.getTargetInformation(sampleVillage4).addAttack(sampleVillage2, new Date());
+        sampleSOSRequest.getTargetInformation(sampleVillage4).addAttack(sampleVillage2, new Date());
+        sampleSOSRequest.getTargetInformation(sampleVillage4).addTroopInformation(DataHolder.getSingleton().getRandomUnit(), 300);
+        sampleSOSRequest.addTarget(sampleVillage5);
+        sampleSOSRequest.getTargetInformation(sampleVillage5).setWallLevel(10);
+        sampleSOSRequest.getTargetInformation(sampleVillage5).addAttack(sampleVillage2, new Date());
+        sampleSOSRequest.getTargetInformation(sampleVillage5).addAttack(sampleVillage2, new Date());
+        sampleSOSRequest.getTargetInformation(sampleVillage5).addTroopInformation(DataHolder.getSingleton().getRandomUnit(), 100);
         sampleRequests.add(sampleSOSRequest);
         //sampleRequests.add(sampleSOSRequest2);
         //sample report
         FightReport sampleReport = new FightReport();
         sampleReport.setAimedBuilding("Wall");
-        sampleReport.setAttacker(sourceVillage.getTribe());
+        sampleReport.setAttacker(sampleVillage2.getTribe());
         sampleReport.setConquered(false);
-        sampleReport.setDefender(targetVillage.getTribe());
+        sampleReport.setDefender(sampleVillage3.getTribe());
         sampleReport.setLuck(0d);
         sampleReport.setMoral(100d);
-        sampleReport.setSourceVillage(sourceVillage);
-        sampleReport.setTargetVillage(targetVillage);
+        sampleReport.setSourceVillage(sampleVillage2);
+        sampleReport.setTargetVillage(sampleVillage3);
         sampleReport.setWallAfter((byte) 15);
         sampleReport.setWallBefore((byte) 20);
         FightReport sampleReport2 = new FightReport();
         sampleReport2.setAcceptanceAfter((byte) 70);
         sampleReport2.setAcceptanceBefore((byte) 100);
         sampleReport2.setAimedBuilding("Wall");
-        sampleReport2.setAttacker(sourceVillage.getTribe());
+        sampleReport2.setAttacker(sampleVillage2.getTribe());
         sampleReport2.setConquered(false);
-        sampleReport2.setDefender(targetVillage.getTribe());
+        sampleReport2.setDefender(sampleVillage3.getTribe());
         sampleReport2.setLuck(0d);
         sampleReport2.setMoral(100d);
-        sampleReport2.setSourceVillage(sourceVillage);
-        sampleReport2.setTargetVillage(targetVillage);
+        sampleReport2.setSourceVillage(sampleVillage2);
+        sampleReport2.setTargetVillage(sampleVillage3);
         sampleReport2.setWallAfter((byte) 15);
         sampleReport2.setWallBefore((byte) 20);
         sampleReports.add(sampleReport);
@@ -224,19 +237,19 @@ public class BBCodeEditor extends javax.swing.JDialog {
         sampleTags.add(t);
         sampleTags.add(t2);
         sampleTags.add(t3);
-        t.tagVillage(sourceVillage.getId());
-        t.tagVillage(targetVillage.getId());
-        t2.tagVillage(noteVillage1.getId());
-        t3.tagVillage(noteVillage2.getId());
+        t.tagVillage(sampleVillage2.getId());
+        t.tagVillage(sampleVillage3.getId());
+        t2.tagVillage(sampleVillage4.getId());
+        t3.tagVillage(sampleVillage5.getId());
         //sample troops
-        VillageTroopsHolder h = new VillageTroopsHolder(DataHolder.getSingleton().getRandomVillage(), new Date());
+        VillageTroopsHolder h = new VillageTroopsHolder(sampleVillage1, new Date());
         Hashtable<UnitHolder, Integer> troops = new Hashtable<UnitHolder, Integer>();
         troops.put(DataHolder.getSingleton().getUnitByPlainName("axe"), 6600);
         troops.put(DataHolder.getSingleton().getUnitByPlainName("light"), 2200);
         troops.put(DataHolder.getSingleton().getUnitByPlainName("ram"), 300);
         troops.put(DataHolder.getSingleton().getUnitByPlainName("snob"), 2);
         h.setTroops(troops);
-        VillageTroopsHolder h2 = new VillageTroopsHolder(DataHolder.getSingleton().getRandomVillage(), new Date());
+        VillageTroopsHolder h2 = new VillageTroopsHolder(sampleVillage3, new Date());
         troops.put(DataHolder.getSingleton().getUnitByPlainName("axe"), 5500);
         troops.put(DataHolder.getSingleton().getUnitByPlainName("light"), 2000);
         troops.put(DataHolder.getSingleton().getUnitByPlainName("marcher"), 300);
@@ -244,14 +257,14 @@ public class BBCodeEditor extends javax.swing.JDialog {
         h2.setTroops(troops);
         sampleTroops.add(h);
         sampleTroops.add(h2);
-//build stats
-        TribeStatsElement e1 = new TribeStatsElement(DataHolder.getSingleton().getRandomVillage().getTribe());
+        //build stats
+        TribeStatsElement e1 = new TribeStatsElement(sampleVillage2.getTribe());
         e1.addRandomSnapshots();
-        TribeStatsElement e2 = new TribeStatsElement(DataHolder.getSingleton().getRandomVillage().getTribe());
+        TribeStatsElement e2 = new TribeStatsElement(sampleVillage3.getTribe());
         e2.addRandomSnapshots();
         sampleStats.add(e1.generateStats(e1.getTimestamps()[0], e1.getTimestamps()[1]));
         sampleStats.add(e2.generateStats(e2.getTimestamps()[0], e2.getTimestamps()[1]));
-
+        //build form
         Rectangle r = new Rectangle();
         r.setFormName("Beispielzeichnung");
         r.setDrawColor(Color.BLUE);
@@ -260,7 +273,53 @@ public class BBCodeEditor extends javax.swing.JDialog {
         r.setXPosEnd(505);
         r.setYPosEnd(505);
         sampleForms.add(r);
+        //build report stats
 
+        SingleAttackerStat tribeStat1 = SingleAttackerStat.createRandomElement(sampleVillage1.getTribe());
+        SingleAttackerStat tribeStat2 = SingleAttackerStat.createRandomElement(sampleVillage2.getTribe());
+        TribeStatResult tribeResult1 = new TribeStatResult();
+        tribeResult1.setTribeStats(tribeStat1, true);
+        TribeStatResult tribeResult2 = new TribeStatResult();
+        tribeResult2.setTribeStats(tribeStat2, true);
+
+        AllyStatResult allyStat1 = new AllyStatResult();
+        allyStat1.setAlly((sampleVillage1.getTribe() != null && sampleVillage1.getTribe().getAlly() != null) ? sampleVillage1.getTribe().getAlly() : NoAlly.getSingleton());
+        allyStat1.addTribeStatResult(tribeResult1);
+
+        AllyStatResult allyStat2 = new AllyStatResult();
+        allyStat2.setAlly((sampleVillage2.getTribe() != null && sampleVillage2.getTribe().getAlly() != null) ? sampleVillage2.getTribe().getAlly() : NoAlly.getSingleton());
+        allyStat2.addTribeStatResult(tribeResult2);
+
+        OverallStatResult overallResult = new OverallStatResult();
+        overallResult.addAllyStatsResult(allyStat1);
+        overallResult.addAllyStatsResult(allyStat2);
+        overallResult.setDefenders(10);
+        overallResult.setAttackerAllies(2);
+        overallResult.setDefenderAllies(1);
+        overallResult.setReportCount(100);
+        overallResult.setStartDate(new Date());
+        overallResult.setEndDate(new Date());
+
+        allyStat1.setOverallKills(overallResult.getKills());
+        allyStat1.setOverallLosses(overallResult.getLosses());
+        allyStat2.setOverallKills(overallResult.getKills());
+        allyStat2.setOverallLosses(overallResult.getLosses());
+        tribeResult1.setAllyKills(allyStat1.getKills());
+        tribeResult1.setAllyLosses(allyStat1.getLosses());
+        tribeResult1.setOverallKills(allyStat1.getOverallKills());
+        tribeResult1.setOverallLosses(allyStat1.getOverallLosses());
+
+        tribeResult2.setAllyKills(allyStat2.getKills());
+        tribeResult2.setAllyLosses(allyStat2.getLosses());
+        tribeResult2.setOverallKills(allyStat2.getOverallKills());
+        tribeResult2.setOverallLosses(allyStat2.getOverallLosses());
+
+
+        sampleTribeResult.add(tribeResult1);
+        sampleTribeResult.add(tribeResult2);
+        sampleAllyResult.add(allyStat1);
+        sampleAllyResult.add(allyStat2);
+        sampleOverallResult.add(overallResult);
     }
 
     /** This method is called from within the constructor to
@@ -377,7 +436,7 @@ public class BBCodeEditor extends javax.swing.JDialog {
 
         jPanel1.setLayout(new java.awt.BorderLayout(5, 0));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Angriffe", "Notizen", "Dorflisten", "SOS-Anfragen", "Kampfbericht", "Gruppen", "Truppen", "Statistik (Punkte)", "Statistik (Angriff)", "Statistik (Verteidigung)", "Statistik (Gewinner/Verlierer)", "Zeichnungen" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Angriffe", "Notizen", "Dorflisten", "SOS-Anfragen", "Kampfbericht", "Gruppen", "Truppen", "Statistik (Punkte)", "Statistik (Angriff)", "Statistik (Verteidigung)", "Statistik (Gewinner/Verlierer)", "Zeichnungen", "Berichtauswertung (Zusammenfassung)", "Berichtauswertung (Stämme)", "Berichtauswertung (Spieler)" }));
         jComboBox1.setMinimumSize(new java.awt.Dimension(66, 20));
         jComboBox1.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -478,6 +537,21 @@ public class BBCodeEditor extends javax.swing.JDialog {
                     bBPanel2.setBBCode(element.getTemplate());
                     result = element.formatElements(sampleForms, true);
                     break;
+                case 12:
+                    element = overallStatFormatter;
+                    bBPanel2.setBBCode(element.getTemplate());
+                    result = element.formatElements(sampleOverallResult, true);
+                    break;
+                case 13:
+                    element = allyStatFormatter;
+                    bBPanel2.setBBCode(element.getTemplate());
+                    result = element.formatElements(sampleAllyResult, true);
+                    break;
+                case 14:
+                    element = tribeStatFormatter;
+                    bBPanel2.setBBCode(element.getTemplate());
+                    result = element.formatElements(sampleTribeResult, true);
+                    break;
             }
         }
 
@@ -537,6 +611,15 @@ public class BBCodeEditor extends javax.swing.JDialog {
                 break;
             case 11:
                 element = formFormatter;
+                break;
+            case 12:
+                element = overallStatFormatter;
+                break;
+            case 13:
+                element = allyStatFormatter;
+                break;
+            case 14:
+                element = tribeStatFormatter;
                 break;
         }
         bBPanel2.setBBCode(element.getStandardTemplate());
@@ -605,6 +688,21 @@ public class BBCodeEditor extends javax.swing.JDialog {
                 element = formFormatter;
                 GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
                 result = element.formatElements(sampleForms, true);
+                break;
+            case 12:
+                element = overallStatFormatter;
+                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
+                result = element.formatElements(sampleOverallResult, true);
+                break;
+            case 13:
+                element = allyStatFormatter;
+                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
+                result = element.formatElements(sampleAllyResult, true);
+                break;
+            case 14:
+                element = tribeStatFormatter;
+                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
+                result = element.formatElements(sampleTribeResult, true);
                 break;
         }
         try {

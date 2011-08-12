@@ -31,7 +31,6 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     private final static String STANDARD_TEMPLATE = "[quote][i][b]Betreff:[/b][/i] %ATTACKER% greift %TARGET% an\n[i][b]Gesendet:[/b][/i] %SEND_TIME%\n[size=16]%RESULT%[/size]\n"
             + "[b]Glück:[/b] %LUCK%\n[b]Moral:[/b] %MORALE%\n\n[b]Angreifer:[/b] %ATTACKER%\n[b]Dorf:[/b] %SOURCE%\n%ATTACKER_TROOPS%\n\n[b]Verteidiger:[/b] %DEFENDER%\n"
             + "[b]Dorf:[/b] %TARGET%\n %DEFENDER_TROOPS%\n\n%DEFENDERS_OUTSIDE%\n%DEFENDERS_EN_ROUTE%\n%LOYALITY_CHANGE%\n%WALL_CHANGE%\n%BUILDING_CHANGE%[/quote]";
-    private final static String TEMPLATE_PROPERTY = "report.bbexport.template";
 
     @Override
     public String[] getBBVariables() {
@@ -148,10 +147,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         return STANDARD_TEMPLATE;
     }
 
-    @Override
-    public String getTemplateProperty() {
-        return TEMPLATE_PROPERTY;
-    }
+   
     private boolean won = false;
     private long timestamp = 0;
     private double luck = 0.0;

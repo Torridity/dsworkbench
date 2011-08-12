@@ -46,6 +46,44 @@ public class SingleAttackerStat {
         silentKills = new Hashtable<UnitHolder, Integer>();
     }
 
+    public static SingleAttackerStat createRandomElement(Tribe pTribe) {
+        SingleAttackerStat elem = new SingleAttackerStat(pTribe);
+        for (int i = 0; i < ((int) Math.rint(Math.random() * 50) + 1); i++) {
+            elem.addOff();
+        }
+        for (int i = 0; i < ((int) Math.rint(Math.random() * 100) + 1); i++) {
+            elem.addFake();
+        }
+
+        for (int i = 0; i < ((int) Math.rint(Math.random() * 10) + 1); i++) {
+            elem.addSnobAttack();
+        }
+
+        for (int i = 0; i < ((int) Math.rint(Math.random() * 5)); i++) {
+            elem.addEnoblement();
+        }
+
+        elem.addDestroyedBuildingLevel("Bauernhof", ((int) Math.rint(Math.random() * 30)));
+        elem.addDestroyedWallLevels(((int) Math.rint(Math.random() * 60)));
+
+        for (int i = 0; i < ((int) Math.rint(Math.random() * 5)); i++) {
+            elem.addKilledUnit(DataHolder.getSingleton().getRandomUnit(), (int) Math.rint(Math.random() * 500));
+        }
+
+        for (int i = 0; i < ((int) Math.rint(Math.random() * 10)); i++) {
+            elem.addSentUnit(DataHolder.getSingleton().getRandomUnit(), (int) Math.rint(Math.random() * 500));
+        }
+        for (int i = 0; i < ((int) Math.rint(Math.random() * 5) + 1); i++) {
+            elem.addLostUnit(DataHolder.getSingleton().getRandomUnit(), (int) Math.rint(Math.random() * 100));
+        }
+
+        for (int i = 0; i < ((int) Math.rint(Math.random() * 5)); i++) {
+            elem.addAtLeast2KDamage();
+        }
+
+        return elem;
+    }
+
     public void addSourceVillage(Village pVillage) {
         if (!usedVillages.contains(pVillage)) {
             usedVillages.add(pVillage);
@@ -213,7 +251,10 @@ public class SingleAttackerStat {
         int value = 0;
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (lostUnits != null && !lostUnits.isEmpty()) {
-                value += lostUnits.get(unit);
+                Integer val = lostUnits.get(unit);
+                if (val != null) {
+                    value += val;
+                }
             }
         }
         return value;
@@ -223,7 +264,10 @@ public class SingleAttackerStat {
         int value = 0;
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (lostUnits != null && !lostUnits.isEmpty()) {
-                value += lostUnits.get(unit) * (int) Math.rint(unit.getPop());
+                Integer val = lostUnits.get(unit);
+                if (val != null) {
+                    value += val * (int) Math.rint(unit.getPop());
+                }
             }
         }
         return value;
@@ -234,7 +278,10 @@ public class SingleAttackerStat {
 
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (killedUnits != null && !killedUnits.isEmpty()) {
-                value += killedUnits.get(unit);
+                Integer val = killedUnits.get(unit);
+                if (val != null) {
+                    value += val;
+                }
             }
         }
         return value;
@@ -245,7 +292,10 @@ public class SingleAttackerStat {
 
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (killedUnits != null && !killedUnits.isEmpty()) {
-                value += killedUnits.get(unit) * (int) Math.rint(unit.getPop());
+                Integer val = killedUnits.get(unit);
+                if (val != null) {
+                    value += val * (int) Math.rint(unit.getPop());
+                }
             }
         }
         return value;
@@ -256,7 +306,10 @@ public class SingleAttackerStat {
 
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (silentKills != null && !silentKills.isEmpty()) {
-                value += silentKills.get(unit);
+                Integer val = silentKills.get(unit);
+                if (val != null) {
+                    value += val;
+                }
             }
         }
         return value;
@@ -267,7 +320,10 @@ public class SingleAttackerStat {
 
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (silentKills != null && !silentKills.isEmpty()) {
-                value += silentKills.get(unit) * (int) Math.rint(unit.getPop());
+                Integer val = silentKills.get(unit);
+                if (val != null) {
+                    value += val * (int) Math.rint(unit.getPop());
+                }
             }
         }
         return value;

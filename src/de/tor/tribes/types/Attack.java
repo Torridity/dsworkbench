@@ -28,7 +28,6 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
 
     private final static String[] VARIABLES = new String[]{"%TYPE%", "%ATTACKER%", "%SOURCE%", "%UNIT%", "%DEFENDER%", "%TARGET%", "%SEND%", "%ARRIVE%", "%PLACE%", "%PLACE_URL%"};
     private final static String STANDARD_TEMPLATE = "%TYPE% von %ATTACKER% aus %SOURCE% mit %UNIT% auf %DEFENDER% in %TARGET% startet am [color=#ff0e0e]%SEND%[/color] und kommt am [color=#2eb92e]%ARRIVE%[/color] an (%PLACE%)";
-    private final static String TEMPLATE_PROPERTY = "attack.bbexport.template";
     public static final int NO_TYPE = 0;
     public static final int CLEAN_TYPE = 1;
     public static final int SNOB_TYPE = 2;
@@ -278,11 +277,6 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
     @Override
     public String getGroupNameAttributeIdentifier() {
         return "key";
-    }
-
-    @Override
-    public String getTemplateProperty() {
-        return TEMPLATE_PROPERTY;
     }
 
     @Override

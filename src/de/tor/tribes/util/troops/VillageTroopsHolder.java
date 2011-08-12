@@ -27,7 +27,6 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
     private final static String[] VARIABLES = new String[]{"%VILLAGE%", "%SPEAR_ICON%", "%SWORD_ICON%", "%AXE_ICON%", "%ARCHER_ICON%", "%SPY_ICON%", "%LIGHT_ICON%", "%MARCHER_ICON%", "%HEAVY_ICON%", "%RAM_ICON%", "%CATA_ICON%", "%KNIGHT_ICON%", "%SNOB_ICON%", "%MILITIA_ICON%", "%SPEAR_AMOUNT%", "%SWORD_AMOUNT%", "%AXE_AMOUNT%", "%ARCHER_AMOUNT%", "%SPY_AMOUNT%", "%LIGHT_AMOUNT%", "%MARCHER_AMOUNT%", "%HEAVY_AMOUNT%", "%RAM_AMOUNT%", "%CATA_AMOUNT%", "%KNIGHT_AMOUNT%", "%SNOB_AMOUNT%", "%MILITIA_AMOUNT%"};
     private final static String STANDARD_TEMPLATE = "[table]\n"
             + "[**]%SPEAR_ICON%[||]%SWORD_ICON%[||]%AXE_ICON%[||]%ARCHER_ICON%[||]%SPY_ICON%[||]%LIGHT_ICON%[||]%MARCHER_ICON%[||]%HEAVY_ICON%[||]%RAM_ICON%[||]%CATA_ICON%[||]%SNOB_ICON%[/**]\n";
-    private final static String TEMPLATE_PROPERTY = "troop.bbexport.template";
     private Village village = null;
     private Hashtable<UnitHolder, Integer> troops = new Hashtable<UnitHolder, Integer>();
     private Date state = null;
@@ -235,11 +234,6 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
     @Override
     public String getStandardTemplate() {
         return STANDARD_TEMPLATE;
-    }
-
-    @Override
-    public String getTemplateProperty() {
-        return TEMPLATE_PROPERTY;
     }
 
     @Override

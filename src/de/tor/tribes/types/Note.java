@@ -17,7 +17,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import org.jdom.Document;
 import org.jdom.Element;
 
 /**
@@ -262,11 +261,6 @@ public class Note extends ManageableType implements BBSupport {
     @Override
     public String getStandardTemplate() {
         return STANDARD_TEMPLATE;
-    }
-
-    @Override
-    public String getTemplateProperty() {
-        return TEMPLATE_PROPERTY;
     }
 
     @Override

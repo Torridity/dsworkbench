@@ -29,7 +29,6 @@ public class SOSRequest implements BBSupport {
 
     private final String[] VARIABLES = new String[]{"%SOS_ICON%", "%TARGET%", "%ATTACKS%", "%DEFENDERS%", "%WALL_INFO%", "%WALL_LEVEL%", "%FIRST_ATTACK%", "%LAST_ATTACK%", "%SOURCE_LIST%", "%SOURCE_DATE_TYPE_LIST%", "%SOURCE_DATE_LIST%", "%SOURCE_TYPE_LIST%", "%SUMMARY%"};
     private final static String STANDARD_TEMPLATE = "[quote]%SOS_ICON% %TARGET% (%ATTACKS%)\n[quote]%DEFENDERS%\n%WALL_INFO%[/quote]\n\n%FIRST_ATTACK%\n%SOURCE_DATE_LIST%\n%LAST_ATTACK%\n\n%SUMMARY%[/quote]";
-    private final static String TEMPLATE_PROPERTY = "sos.bbexport.template";
 
     @Override
     public String[] getBBVariables() {
@@ -170,10 +169,7 @@ public class SOSRequest implements BBSupport {
         return STANDARD_TEMPLATE;
     }
 
-    @Override
-    public String getTemplateProperty() {
-        return TEMPLATE_PROPERTY;
-    }
+   
     private Tribe mDefender = null;
     private Hashtable<Village, TargetInformation> attacks = null;
 

@@ -22,7 +22,6 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
 
     private final static String[] VARIABLES = new String[]{"%Name%", "%START_X%", "%START_Y%", "%WIDTH%", "%HEIGHT%", "%END_X%", "%END_Y%", "%COLOR%", "%VILLAGE_LIST%"};
     private final static String STANDARD_TEMPLATE = "%Name% (%START_X%|%START_Y% bis %END_X%|%END_Y%)\nEnthaltene Dörfer:\n%VILLAGE_LIST%";
-    private final static String TEMPLATE_PROPERTY = "form.bbexport.template";
 
     public abstract boolean allowsBBExport();
 
@@ -36,11 +35,7 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
         return STANDARD_TEMPLATE;
     }
 
-    @Override
-    public String getTemplateProperty() {
-        return TEMPLATE_PROPERTY;
-    }
-
+    
     public static enum FORM_TYPE {
 
         LINE, ARROW, RECTANGLE, CIRCLE, TEXT, FREEFORM

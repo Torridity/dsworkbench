@@ -42,7 +42,6 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
             + "%ICON%\n"
             + "Dörfer: %VILLAGE_COUNT%\n"
             + "[quote]%VILLAGE_LIST%[/quote]";
-    private final static String TEMPLATE_PROPERTY = "village.bbexport.template";
     private String sName = null;
     private List<Integer> mVillageIDs = new LinkedList<Integer>();
     //-1 means no icon
@@ -88,11 +87,7 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
         return STANDARD_TEMPLATE;
     }
 
-    @Override
-    public String getTemplateProperty() {
-        return TEMPLATE_PROPERTY;
-    }
-
+    
     @Override
     public void loadFromXml(Element pElement) {
         try {

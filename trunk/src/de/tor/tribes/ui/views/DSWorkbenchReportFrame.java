@@ -18,13 +18,17 @@ import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.AllyStatResult;
 import de.tor.tribes.types.FightStats;
+import de.tor.tribes.types.OverallStatResult;
 import de.tor.tribes.types.SingleAttackerStat;
 import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.TribeStatResult;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.GenericTestPanel;
 import de.tor.tribes.ui.ReportTableTab;
+import de.tor.tribes.util.BBCodeFormatter;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
@@ -32,6 +36,9 @@ import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MouseGestureHandler;
 import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.PropertyHelper;
+import de.tor.tribes.util.bb.AllyReportStatsFormatter;
+import de.tor.tribes.util.bb.OverallReportStatsFormatter;
+import de.tor.tribes.util.bb.TribeReportStatsFormatter;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.report.ReportStatBuilder;
 import java.awt.BorderLayout;
@@ -46,7 +53,8 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -404,19 +412,14 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jList1 = new javax.swing.JList();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel4 = new javax.swing.JPanel();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        jOverallStatsArea = new javax.swing.JTextArea();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jOverallStatsArea = new javax.swing.JTextPane();
         jPanel5 = new javax.swing.JPanel();
-        jScrollPane6 = new javax.swing.JScrollPane();
-        jAllyStatsArea = new javax.swing.JTextArea();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        jAllyStatsArea = new javax.swing.JTextPane();
         jPanel6 = new javax.swing.JPanel();
-        jScrollPane7 = new javax.swing.JScrollPane();
-        jTribeStatsArea = new javax.swing.JTextArea();
-        jPanel7 = new javax.swing.JPanel();
-        jGuessUnknownLosses = new javax.swing.JCheckBox();
-        jUseSilentKillsBox = new javax.swing.JCheckBox();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jShowPercentsBox = new javax.swing.JCheckBox();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        jTribeStatsArea = new javax.swing.JTextPane();
         jFilterDialog = new javax.swing.JDialog();
         jPanel8 = new javax.swing.JPanel();
         jTribeSelectionBox = new javax.swing.JComboBox();
@@ -455,6 +458,11 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jScrollPane8 = new javax.swing.JScrollPane();
         jXColumnList = new org.jdesktop.swingx.JXList();
         jLabel22 = new javax.swing.JLabel();
+        jPanel7 = new javax.swing.JPanel();
+        jGuessUnknownLosses = new javax.swing.JCheckBox();
+        jUseSilentKillsBox = new javax.swing.JCheckBox();
+        jCheckBox3 = new javax.swing.JCheckBox();
+        jShowPercentsBox = new javax.swing.JCheckBox();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
         jReportsPanel = new javax.swing.JPanel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
@@ -464,6 +472,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jPanel2.setBackground(new java.awt.Color(239, 235, 223));
 
         jLabel6.setText("Verwendete Berichtsets");
+
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(258, 100));
 
         jScrollPane2.setViewportView(jReportSetsForStatsList);
 
@@ -489,145 +499,32 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jTabbedPane1.setBackground(new java.awt.Color(239, 235, 223));
 
         jPanel4.setOpaque(false);
+        jPanel4.setLayout(new java.awt.BorderLayout());
 
-        jOverallStatsArea.setColumns(20);
-        jOverallStatsArea.setRows(5);
-        jScrollPane5.setViewportView(jOverallStatsArea);
+        jOverallStatsArea.setContentType("text/html");
+        jScrollPane1.setViewportView(jOverallStatsArea);
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+        jPanel4.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         jTabbedPane1.addTab("Gesamtübersicht", new javax.swing.ImageIcon(getClass().getResource("/res/ui/chart.png")), jPanel4); // NOI18N
 
         jPanel5.setBackground(new java.awt.Color(239, 235, 223));
+        jPanel5.setLayout(new java.awt.BorderLayout());
 
-        jAllyStatsArea.setColumns(20);
-        jAllyStatsArea.setRows(5);
-        jScrollPane6.setViewportView(jAllyStatsArea);
+        jScrollPane5.setViewportView(jAllyStatsArea);
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+        jPanel5.add(jScrollPane5, java.awt.BorderLayout.CENTER);
 
         jTabbedPane1.addTab("Stämme", new javax.swing.ImageIcon(getClass().getResource("/res/ally.png")), jPanel5); // NOI18N
 
         jPanel6.setBackground(new java.awt.Color(239, 235, 223));
+        jPanel6.setLayout(new java.awt.BorderLayout());
 
-        jTribeStatsArea.setColumns(20);
-        jTribeStatsArea.setRows(5);
-        jScrollPane7.setViewportView(jTribeStatsArea);
+        jScrollPane6.setViewportView(jTribeStatsArea);
 
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 565, Short.MAX_VALUE)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 139, Short.MAX_VALUE)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+        jPanel6.add(jScrollPane6, java.awt.BorderLayout.CENTER);
 
         jTabbedPane1.addTab("Spieler", new javax.swing.ImageIcon(getClass().getResource("/res/face.png")), jPanel6); // NOI18N
-
-        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("Optionen"));
-        jPanel7.setOpaque(false);
-
-        jGuessUnknownLosses.setSelected(true);
-        jGuessUnknownLosses.setText("Gegnerische Verluste schätzen, falls unbekannt");
-        jGuessUnknownLosses.setOpaque(false);
-        jGuessUnknownLosses.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireStatOptionsChangedEvent(evt);
-            }
-        });
-
-        jUseSilentKillsBox.setSelected(true);
-        jUseSilentKillsBox.setText("Auswärtige Einheiten bei Adelung als Verlust werten");
-        jUseSilentKillsBox.setOpaque(false);
-        jUseSilentKillsBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireStatOptionsChangedEvent(evt);
-            }
-        });
-
-        jCheckBox3.setSelected(true);
-        jCheckBox3.setText("Verluste pro Angreifer/Verteidiger anzeigen");
-        jCheckBox3.setOpaque(false);
-        jCheckBox3.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireStatOptionsChangedEvent(evt);
-            }
-        });
-
-        jShowPercentsBox.setText("Prozentuale Anteile anzeigen");
-        jShowPercentsBox.setOpaque(false);
-        jShowPercentsBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireStatOptionsChangedEvent(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jGuessUnknownLosses)
-                    .addComponent(jUseSilentKillsBox)
-                    .addComponent(jCheckBox3)
-                    .addComponent(jShowPercentsBox)))
-        );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jGuessUnknownLosses)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jUseSilentKillsBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jCheckBox3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jShowPercentsBox)
-                .addContainerGap(23, Short.MAX_VALUE))
-        );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -640,21 +537,18 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addGap(18, 18, 18)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)))
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -662,15 +556,15 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addGap(18, 18, 18)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE))
-                    .addComponent(jButton10, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jButton10))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -679,12 +573,12 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
-                    .addComponent(jScrollPane2))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton10)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(20, 20, 20))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jCreateStatsFrameLayout = new javax.swing.GroupLayout(jCreateStatsFrame.getContentPane());
@@ -1053,6 +947,70 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
         jxSearchPane.add(jXPanel2, new java.awt.GridBagConstraints());
 
+        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("Optionen"));
+        jPanel7.setOpaque(false);
+
+        jGuessUnknownLosses.setSelected(true);
+        jGuessUnknownLosses.setText("Gegnerische Verluste schätzen, falls unbekannt");
+        jGuessUnknownLosses.setOpaque(false);
+        jGuessUnknownLosses.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireStatOptionsChangedEvent(evt);
+            }
+        });
+
+        jUseSilentKillsBox.setSelected(true);
+        jUseSilentKillsBox.setText("Auswärtige Einheiten bei Adelung als Verlust werten");
+        jUseSilentKillsBox.setOpaque(false);
+        jUseSilentKillsBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireStatOptionsChangedEvent(evt);
+            }
+        });
+
+        jCheckBox3.setSelected(true);
+        jCheckBox3.setText("Verluste pro Angreifer/Verteidiger anzeigen");
+        jCheckBox3.setOpaque(false);
+        jCheckBox3.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireStatOptionsChangedEvent(evt);
+            }
+        });
+
+        jShowPercentsBox.setText("Prozentuale Anteile anzeigen");
+        jShowPercentsBox.setOpaque(false);
+        jShowPercentsBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireStatOptionsChangedEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jGuessUnknownLosses)
+                    .addComponent(jUseSilentKillsBox)
+                    .addComponent(jCheckBox3)
+                    .addComponent(jShowPercentsBox)))
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jGuessUnknownLosses)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jUseSilentKillsBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jCheckBox3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jShowPercentsBox)
+                .addContainerGap(23, Short.MAX_VALUE))
+        );
+
         setTitle("Berichtsdatenbank");
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -1287,9 +1245,9 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private void fireRebuildStatsEvent() {
         Object[] selection = jList1.getSelectedValues();
         if (selection == null || selection.length == 0) {
-            jOverallStatsArea.setText("<Kein Stamm ausgewählt>");
-            jAllyStatsArea.setText("<Kein Stamm ausgewählt>");
-            jTribeStatsArea.setText("<Kein Stamm ausgewählt>");
+            jOverallStatsArea.setText("<html>Kein Stamm ausgewählt</html>");
+            jAllyStatsArea.setText("<html>Kein Stamm ausgewählt</html>");
+            jTribeStatsArea.setText("<html>Kein Stamm ausgewählt</html>");
             return;
         }
         int overallDefAllies = lastStats.getDefendingAllies().length;
@@ -1315,135 +1273,159 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             }
             overallResult.addAllyStatsResult(result);
         }
+        overallResult.setStartDate(lastStats.getStartDate());
+        overallResult.setEndDate(lastStats.getEndDate());
+        overallResult.setReportCount(lastStats.getReportCount());
+        overallResult.setAttackerAllies(selection.length);
+        overallResult.setDefenders(overallDefTribes);
+        overallResult.setDefenderAllies(overallDefAllies);
 
         Enumeration<Ally> keys = allyResults.keys();
         while (keys.hasMoreElements()) {
             Ally a = keys.nextElement();
             AllyStatResult res = allyResults.get(a);
-            for (TribeStatResult tribeResult : res.getTribeStats()) {
-                double attacksOfTribe = 100.0 * (double) tribeResult.getAttacks() / (double) res.getAttacks();
-                f.setMinimumFractionDigits(2);
-                f.setMaximumFractionDigits(2);
-                tribeBuffer.append("[quote]").append(tribeResult.getTribe().toBBCode()).append("\n");
-                tribeBuffer.append("[b][color=#555555][b]Angriffe (Gesamt/Off/AG");
-                if (jShowPercentsBox.isSelected()) {
-                    tribeBuffer.append("/Anteil am Stamm");
-                }
-                tribeBuffer.append("):[/color] ").append(tribeResult.getAttacks()).append("/").append(tribeResult.getOffs()).append("/").append(tribeResult.getSnobs());
-                if (jShowPercentsBox.isSelected()) {
-                    tribeBuffer.append("/").append(f.format(attacksOfTribe)).append("%");
-                }
-                tribeBuffer.append("[/b]\n");
+            res.setAlly(a);
+            res.setOverallKills(overallResult.getKills());
+            res.setOverallLosses(overallResult.getLosses());
 
-
-                tribeBuffer.append("[b][color=#555555]Adelungen:[/color] ").append(tribeResult.getEnoblements()).append("[/b]\n");
-                tribeBuffer.append("\n");
-
-                double killsOfTribe = 100.0 * (double) tribeResult.getKills() / (double) res.getKills();
-                f.setMinimumFractionDigits(0);
-                f.setMaximumFractionDigits(0);
-                tribeBuffer.append("[b][color=#888888]Besiegte Einheiten (Anzahl/Bauernhofplätze");
-                if (jShowPercentsBox.isSelected()) {
-                    tribeBuffer.append("/Anteil am Stamm");
-                }
-                tribeBuffer.append("):[/color] ");
-
-                tribeBuffer.append(f.format(tribeResult.getKills())).append("/").append(f.format(tribeResult.getKillsAsFarm()));
-                if (jShowPercentsBox.isSelected()) {
-                    f.setMinimumFractionDigits(2);
-                    f.setMaximumFractionDigits(2);
-                    tribeBuffer.append("/").append(f.format(killsOfTribe)).append("%[/b]");
-                }
-                tribeBuffer.append("\n");
-
-                double lossesOfTribe = 100.0 * (double) tribeResult.getLosses() / (double) res.getLosses();
-                f.setMinimumFractionDigits(0);
-                f.setMaximumFractionDigits(0);
-                tribeBuffer.append("[b][color=#888888]Verlorene Einheiten (Anzahl/Bauernhofplätze");
-
-                if (jShowPercentsBox.isSelected()) {
-                    tribeBuffer.append("/Anteil am Stamm");
-                }
-
-                tribeBuffer.append("):[/color] ");
-                tribeBuffer.append(f.format(tribeResult.getLosses())).append("/").append(f.format(tribeResult.getLossesAsFarm()));
-                if (jShowPercentsBox.isSelected()) {
-                    f.setMinimumFractionDigits(2);
-                    f.setMaximumFractionDigits(2);
-                    tribeBuffer.append("/").append(f.format(lossesOfTribe)).append("%[/b]");
-                }
-                tribeBuffer.append("\n\n");
-                tribeBuffer.append("[b][color=#555555]Zerstörte Wallstufen:[/color] ").append(tribeResult.getWallDestruction()).append("[/b]\n");
-                tribeBuffer.append("[b][color=#555555]Zerstörte Gebäudestufen:[/color] ").append(tribeResult.getBuildingDestruction()).append("[/b]\n");
-                tribeBuffer.append("[/quote]\n");
+            for (TribeStatResult tRes : res.getTribeStats()) {
+                tRes.setOverallKills(res.getOverallKills());
+                tRes.setOverallLosses(res.getOverallLosses());
+                tRes.setAllyKills(res.getKills());
+                tRes.setAllyLosses(res.getLosses());
             }
-
-            allyBuffer.append("[quote]").append(a.toBBCode()).append("\n");
-            double attackers = 100.0 * (double) res.getAttackers() / (double) overallResult.getAttackers();
-            f.setMinimumFractionDigits(2);
-            f.setMaximumFractionDigits(2);
-            allyBuffer.append("[b][color=#555555]Angreifer (Anzahl");
-            if (jShowPercentsBox.isSelected()) {
-                allyBuffer.append("/Gesamtanteil");
-            }
-            allyBuffer.append("):[/color] ").append(res.getAttackers());
-            if (jShowPercentsBox.isSelected()) {
-                allyBuffer.append("/").append(f.format(attackers)).append("%");
-            }
-            allyBuffer.append("[/b]\n");
-            double attacksOfAlly = 100.0 * (double) res.getAttacks() / (double) overallResult.getAttacks();
-            f.setMinimumFractionDigits(2);
-            f.setMaximumFractionDigits(2);
-            allyBuffer.append("[b][color=#555555]Angriffe (Gesamt/Off/AG");
-
-            if (jShowPercentsBox.isSelected()) {
-                allyBuffer.append("/Anteil");
-            }
-            allyBuffer.append("):[/color] ").append(res.getAttacks()).append("/").append(res.getOffs()).append("/").append(res.getSnobs());
-            if (jShowPercentsBox.isSelected()) {
-                allyBuffer.append("/").append(f.format(attacksOfAlly)).append("%");
-            }
-            allyBuffer.append("[/b]\n");
-            allyBuffer.append("[b][color=#555555]Adelungen:[/color] ").append(res.getEnoblements()).append("[/b]\n");
-            allyBuffer.append("\n");
-            double killsOfAlly = 100.0 * (double) res.getKills() / (double) overallResult.getKills();
-            f.setMinimumFractionDigits(0);
-            f.setMaximumFractionDigits(0);
-            allyBuffer.append("[b][color=#888888]Besiegte Einheiten (Anzahl/Bauernhofplätze");
-            if (jShowPercentsBox.isSelected()) {
-                allyBuffer.append("/Gesamtanteil");
-            }
-            allyBuffer.append("):[/color] ");
-            allyBuffer.append(f.format(res.getKills())).append("/").append(f.format(res.getKillsAsFarm()));
-            if (jShowPercentsBox.isSelected()) {
-                f.setMinimumFractionDigits(2);
-                f.setMaximumFractionDigits(2);
-                allyBuffer.append("/").append(f.format(killsOfAlly)).append("%");
-            }
-            allyBuffer.append("[/b]\n");
-            double lossesOfAlly = 100.0 * (double) res.getLosses() / (double) overallResult.getLosses();
-            f.setMinimumFractionDigits(0);
-            f.setMaximumFractionDigits(0);
-            allyBuffer.append("[b][color=#888888]Verlorene Einheiten (Anzahl/Bauernhofplätze");
-            if (jShowPercentsBox.isSelected()) {
-                allyBuffer.append("/Gesamtanteil");
-            }
-
-            allyBuffer.append("):[/color] ");
-            allyBuffer.append(f.format(res.getLosses())).append("/").append(f.format(res.getLossesAsFarm()));
-            if (jShowPercentsBox.isSelected()) {
-                f.setMinimumFractionDigits(2);
-                f.setMaximumFractionDigits(2);
-                allyBuffer.append("/").append(f.format(lossesOfAlly)).append("%");
-            }
-            allyBuffer.append("[/b]\n");
-            allyBuffer.append("\n");
-            allyBuffer.append("[b][color=#555555]Zerstörte Wallstufen:[/color] ").append(res.getWallDestruction()).append("[/b]\n");
-            allyBuffer.append("[b][color=#555555]Zerstörte Gebäudestufen:[/color] ").append(res.getBuildingDestruction()).append("[/b]\n");
-            allyBuffer.append("[/quote]\n");
         }
 
 
+        /*
+        keys = allyResults.keys();
+        while (keys.hasMoreElements()) {
+        Ally a = keys.nextElement();
+        AllyStatResult res = allyResults.get(a);
+        for (TribeStatResult tribeResult : res.getTribeStats()) {
+        double attacksOfTribe = 100.0 * (double) tribeResult.getAttacks() / (double) res.getAttacks();
+        f.setMinimumFractionDigits(2);
+        f.setMaximumFractionDigits(2);
+        tribeBuffer.append("[quote]").append(tribeResult.getTribe().toBBCode()).append("\n");
+        tribeBuffer.append("[b][color=#555555][b]Angriffe (Gesamt/Off/AG");
+        if (jShowPercentsBox.isSelected()) {
+        tribeBuffer.append("/Anteil am Stamm");
+        }
+        tribeBuffer.append("):[/color] ").append(tribeResult.getAttacks()).append("/").append(tribeResult.getOffs()).append("/").append(tribeResult.getSnobs());
+        if (jShowPercentsBox.isSelected()) {
+        tribeBuffer.append("/").append(f.format(attacksOfTribe)).append("%");
+        }
+        tribeBuffer.append("[/b]\n");
+        
+        
+        tribeBuffer.append("[b][color=#555555]Adelungen:[/color] ").append(tribeResult.getEnoblements()).append("[/b]\n");
+        tribeBuffer.append("\n");
+        
+        double killsOfTribe = 100.0 * (double) tribeResult.getKills() / (double) res.getKills();
+        f.setMinimumFractionDigits(0);
+        f.setMaximumFractionDigits(0);
+        tribeBuffer.append("[b][color=#888888]Besiegte Einheiten (Anzahl/Bauernhofplätze");
+        if (jShowPercentsBox.isSelected()) {
+        tribeBuffer.append("/Anteil am Stamm");
+        }
+        tribeBuffer.append("):[/color] ");
+        
+        tribeBuffer.append(f.format(tribeResult.getKills())).append("/").append(f.format(tribeResult.getKillsAsFarm()));
+        if (jShowPercentsBox.isSelected()) {
+        f.setMinimumFractionDigits(2);
+        f.setMaximumFractionDigits(2);
+        tribeBuffer.append("/").append(f.format(killsOfTribe)).append("%[/b]");
+        }
+        tribeBuffer.append("\n");
+        
+        double lossesOfTribe = 100.0 * (double) tribeResult.getLosses() / (double) res.getLosses();
+        f.setMinimumFractionDigits(0);
+        f.setMaximumFractionDigits(0);
+        tribeBuffer.append("[b][color=#888888]Verlorene Einheiten (Anzahl/Bauernhofplätze");
+        
+        if (jShowPercentsBox.isSelected()) {
+        tribeBuffer.append("/Anteil am Stamm");
+        }
+        
+        tribeBuffer.append("):[/color] ");
+        tribeBuffer.append(f.format(tribeResult.getLosses())).append("/").append(f.format(tribeResult.getLossesAsFarm()));
+        if (jShowPercentsBox.isSelected()) {
+        f.setMinimumFractionDigits(2);
+        f.setMaximumFractionDigits(2);
+        tribeBuffer.append("/").append(f.format(lossesOfTribe)).append("%[/b]");
+        }
+        tribeBuffer.append("\n\n");
+        tribeBuffer.append("[b][color=#555555]Zerstörte Wallstufen:[/color] ").append(tribeResult.getWallDestruction()).append("[/b]\n");
+        tribeBuffer.append("[b][color=#555555]Zerstörte Gebäudestufen:[/color] ").append(tribeResult.getBuildingDestruction()).append("[/b]\n");
+        tribeBuffer.append("[/quote]\n");
+        }
+        
+        allyBuffer.append("[quote]").append(a.toBBCode()).append("\n");
+        double attackers = 100.0 * (double) res.getAttackers() / (double) overallResult.getAttackers();
+        f.setMinimumFractionDigits(2);
+        f.setMaximumFractionDigits(2);
+        allyBuffer.append("[b][color=#555555]Angreifer (Anzahl");
+        if (jShowPercentsBox.isSelected()) {
+        allyBuffer.append("/Gesamtanteil");
+        }
+        allyBuffer.append("):[/color] ").append(res.getAttackers());
+        if (jShowPercentsBox.isSelected()) {
+        allyBuffer.append("/").append(f.format(attackers)).append("%");
+        }
+        allyBuffer.append("[/b]\n");
+        double attacksOfAlly = 100.0 * (double) res.getAttacks() / (double) overallResult.getAttacks();
+        f.setMinimumFractionDigits(2);
+        f.setMaximumFractionDigits(2);
+        allyBuffer.append("[b][color=#555555]Angriffe (Gesamt/Off/AG");
+        
+        if (jShowPercentsBox.isSelected()) {
+        allyBuffer.append("/Anteil");
+        }
+        allyBuffer.append("):[/color] ").append(res.getAttacks()).append("/").append(res.getOffs()).append("/").append(res.getSnobs());
+        if (jShowPercentsBox.isSelected()) {
+        allyBuffer.append("/").append(f.format(attacksOfAlly)).append("%");
+        }
+        allyBuffer.append("[/b]\n");
+        allyBuffer.append("[b][color=#555555]Adelungen:[/color] ").append(res.getEnoblements()).append("[/b]\n");
+        allyBuffer.append("\n");
+        double killsOfAlly = 100.0 * (double) res.getKills() / (double) overallResult.getKills();
+        f.setMinimumFractionDigits(0);
+        f.setMaximumFractionDigits(0);
+        allyBuffer.append("[b][color=#888888]Besiegte Einheiten (Anzahl/Bauernhofplätze");
+        if (jShowPercentsBox.isSelected()) {
+        allyBuffer.append("/Gesamtanteil");
+        }
+        allyBuffer.append("):[/color] ");
+        allyBuffer.append(f.format(res.getKills())).append("/").append(f.format(res.getKillsAsFarm()));
+        if (jShowPercentsBox.isSelected()) {
+        f.setMinimumFractionDigits(2);
+        f.setMaximumFractionDigits(2);
+        allyBuffer.append("/").append(f.format(killsOfAlly)).append("%");
+        }
+        allyBuffer.append("[/b]\n");
+        double lossesOfAlly = 100.0 * (double) res.getLosses() / (double) overallResult.getLosses();
+        f.setMinimumFractionDigits(0);
+        f.setMaximumFractionDigits(0);
+        allyBuffer.append("[b][color=#888888]Verlorene Einheiten (Anzahl/Bauernhofplätze");
+        if (jShowPercentsBox.isSelected()) {
+        allyBuffer.append("/Gesamtanteil");
+        }
+        
+        allyBuffer.append("):[/color] ");
+        allyBuffer.append(f.format(res.getLosses())).append("/").append(f.format(res.getLossesAsFarm()));
+        if (jShowPercentsBox.isSelected()) {
+        f.setMinimumFractionDigits(2);
+        f.setMaximumFractionDigits(2);
+        allyBuffer.append("/").append(f.format(lossesOfAlly)).append("%");
+        }
+        allyBuffer.append("[/b]\n");
+        allyBuffer.append("\n");
+        allyBuffer.append("[b][color=#555555]Zerstörte Wallstufen:[/color] ").append(res.getWallDestruction()).append("[/b]\n");
+        allyBuffer.append("[b][color=#555555]Zerstörte Gebäudestufen:[/color] ").append(res.getBuildingDestruction()).append("[/b]\n");
+        allyBuffer.append("[/quote]\n");
+        }
+        
+        
         StringBuilder overallBuffer = new StringBuilder();
         SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
         overallBuffer.append("[quote]");
@@ -1459,10 +1441,41 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         overallBuffer.append("[b][color=#555555]Zerstörte Wallstufen:[/color] ").append(f.format(overallResult.getWallDestruction())).append("[/b]\n");
         overallBuffer.append("[b][color=#555555]Zerstörte Gebäudestufen:[/color] ").append(f.format(overallResult.getBuildingDestruction())).append("[/b]\n");
         overallBuffer.append("[/quote]\n");
+         */
 
-        jOverallStatsArea.setText(overallBuffer.toString());
-        jAllyStatsArea.setText(allyBuffer.toString());
-        jTribeStatsArea.setText(tribeBuffer.toString());
+
+        try {
+            List<OverallStatResult> list = Arrays.asList(overallResult);
+            jOverallStatsArea.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + new OverallReportStatsFormatter().formatElements(list, true) + "</body></html>");
+        } catch (Exception e) {
+            jOverallStatsArea.setText("<html>Fehler bei der Darstellung der Auswertung</html>");
+            logger.error("Failed to render overall BB representation", e);
+        }
+        try {
+            List<AllyStatResult> list = new LinkedList<AllyStatResult>();
+            Enumeration<Ally> allyKeys = allyResults.keys();
+            while (allyKeys.hasMoreElements()) {
+                list.add(allyResults.get(keys.nextElement()));
+            }
+            jAllyStatsArea.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + new AllyReportStatsFormatter().formatElements(list, true) + "</body></html>");
+        } catch (Exception e) {
+            jOverallStatsArea.setText("<html>Fehler bei der Darstellung der Auswertung</html>");
+            logger.error("Failed to render BB representation for allies", e);
+        }
+
+        try {
+            List<TribeStatResult> list = new LinkedList<TribeStatResult>();
+            Enumeration<Ally> allyKeys = allyResults.keys();
+            while (allyKeys.hasMoreElements()) {
+                AllyStatResult allyStat = allyResults.get(keys.nextElement());
+                Collections.addAll(list, allyStat.getTribeStats().toArray(new TribeStatResult[allyStat.getTribeStats().size()]));
+            }
+            jAllyStatsArea.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + new TribeReportStatsFormatter().formatElements(list, true) + "</body></html>");
+        } catch (Exception e) {
+            jOverallStatsArea.setText("<html>Fehler bei der Darstellung der Auswertung</html>");
+            logger.error("Failed to render BB representation for tribes", e);
+        }
+
     }
 
     /**Update the attack plan filter*/
@@ -1479,383 +1492,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
-    }
-
-    static class TribeStatResult {
-
-        Tribe tribe = null;
-        private int attacks = 0;
-        private int offs = 0;
-        private int snobs = 0;
-        private int fakes = 0;
-        private int enoblements = 0;
-        private int losses = 0;
-        private int lossesAsFarm = 0;
-        private int kills = 0;
-        private int killsAsFarm = 0;
-        private int wallDestruction = 0;
-        private int buildingDestruction = 0;
-
-        public TribeStatResult() {
-        }
-
-        public void setTribeStats(SingleAttackerStat pStat, boolean pUseApproxValues) {
-            tribe = pStat.getAttacker();
-            attacks = pStat.getOffCount() + pStat.getFakeCount() + pStat.getSnobAttackCount() + pStat.getSimpleSnobAttackCount();
-            offs = pStat.getOffCount();
-            snobs = pStat.getSimpleSnobAttackCount() + pStat.getSnobAttackCount();
-            fakes = pStat.getFakeCount();
-            enoblements = pStat.getEnoblementCount();
-            losses = pStat.getSummedLosses();
-            kills = pStat.getSummedKills();
-            lossesAsFarm = pStat.getSummedLossesAsFarmSpace();
-            killsAsFarm = pStat.getSummedKillsAsFarmSpace();
-            if (pUseApproxValues) {
-                kills += pStat.getAtLeast2KDamageCount() * 2000;
-                kills += pStat.getAtLeast4KDamageCount() * 4000;
-                kills += pStat.getAtLeast6KDamageCount() * 6000;
-                kills += pStat.getAtLeast8KDamageCount() * 8000;
-                killsAsFarm += pStat.getAtLeast2KDamageCount() * 2000 * 1.5;
-                killsAsFarm += pStat.getAtLeast4KDamageCount() * 4000 * 1.5;
-                killsAsFarm += pStat.getAtLeast6KDamageCount() * 6000 * 1.5;
-                killsAsFarm += pStat.getAtLeast8KDamageCount() * 8000 * 1.5;
-            }
-            wallDestruction = pStat.getDestroyedWallLevels();
-            buildingDestruction = pStat.getSummedDestroyedBuildings();
-        }
-
-        /**
-         * @return the tribeStats
-         */
-        public Tribe getTribe() {
-            return tribe;
-        }
-
-        /**
-         * @return the attacks
-         */
-        public int getAttacks() {
-            return attacks;
-        }
-
-        /**
-         * @return the offs
-         */
-        public int getOffs() {
-            return offs;
-        }
-
-        /**
-         * @return the snobs
-         */
-        public int getSnobs() {
-            return snobs;
-        }
-
-        /**
-         * @return the fakes
-         */
-        public int getFakes() {
-            return fakes;
-        }
-
-        /**
-         * @return the enoblements
-         */
-        public int getEnoblements() {
-            return enoblements;
-        }
-
-        /**
-         * @return the losses
-         */
-        public int getLosses() {
-            return losses;
-        }
-
-        /**
-         * @return the lossesAsFarm
-         */
-        public int getLossesAsFarm() {
-            return lossesAsFarm;
-        }
-
-        /**
-         * @return the kills
-         */
-        public int getKills() {
-            return kills;
-        }
-
-        /**
-         * @return the killsAsFarm
-         */
-        public int getKillsAsFarm() {
-            return killsAsFarm;
-        }
-
-        /**
-         * @return the wallDestruction
-         */
-        public int getWallDestruction() {
-            return wallDestruction;
-        }
-
-        /**
-         * @return the buildingDestruction
-         */
-        public int getBuildingDestruction() {
-            return buildingDestruction;
-        }
-    }
-
-    static class AllyStatResult {
-
-        private List<TribeStatResult> tribeStats = null;
-        private int attacks = 0;
-        private int offs = 0;
-        private int snobs = 0;
-        private int fakes = 0;
-        private int enoblements = 0;
-        private int losses = 0;
-        private int lossesAsFarm = 0;
-        private int kills = 0;
-        private int killsAsFarm = 0;
-        private int wallDestruction = 0;
-        private int buildingDestruction = 0;
-
-        public AllyStatResult() {
-            tribeStats = new LinkedList<TribeStatResult>();
-        }
-
-        public void addTribeStatResult(TribeStatResult pStat) {
-            getTribeStats().add(pStat);
-            attacks += pStat.getOffs() + pStat.getFakes() + pStat.getSnobs();
-            offs += pStat.getOffs();
-            snobs += pStat.getSnobs();
-            fakes += pStat.getFakes();
-            enoblements += pStat.getEnoblements();
-            losses += pStat.getLosses();
-            kills += pStat.getKills();
-            lossesAsFarm += pStat.getLossesAsFarm();
-            killsAsFarm += pStat.getKillsAsFarm();
-
-            wallDestruction += pStat.getWallDestruction();
-            buildingDestruction += pStat.getBuildingDestruction();
-        }
-
-        public int getAttackers() {
-            return tribeStats.size();
-        }
-
-        /**
-         * @return the tribeStats
-         */
-        public List<TribeStatResult> getTribeStats() {
-            return tribeStats;
-        }
-
-        /**
-         * @return the attacks
-         */
-        public int getAttacks() {
-            return attacks;
-        }
-
-        /**
-         * @return the offs
-         */
-        public int getOffs() {
-            return offs;
-        }
-
-        /**
-         * @return the snobs
-         */
-        public int getSnobs() {
-            return snobs;
-        }
-
-        /**
-         * @return the fakes
-         */
-        public int getFakes() {
-            return fakes;
-        }
-
-        /**
-         * @return the enoblements
-         */
-        public int getEnoblements() {
-            return enoblements;
-        }
-
-        /**
-         * @return the losses
-         */
-        public int getLosses() {
-            return losses;
-        }
-
-        /**
-         * @return the lossesAsFarm
-         */
-        public int getLossesAsFarm() {
-            return lossesAsFarm;
-        }
-
-        /**
-         * @return the kills
-         */
-        public int getKills() {
-            return kills;
-        }
-
-        /**
-         * @return the killsAsFarm
-         */
-        public int getKillsAsFarm() {
-            return killsAsFarm;
-        }
-
-        /**
-         * @return the wallDestruction
-         */
-        public int getWallDestruction() {
-            return wallDestruction;
-        }
-
-        /**
-         * @return the buildingDestruction
-         */
-        public int getBuildingDestruction() {
-            return buildingDestruction;
-        }
-    }
-
-    static class OverallStatResult {
-
-        private List<AllyStatResult> allyStats = null;
-        private int attackers = 0;
-        private int attacks = 0;
-        private int offs = 0;
-        private int snobs = 0;
-        private int fakes = 0;
-        private int enoblements = 0;
-        private int losses = 0;
-        private int lossesAsFarm = 0;
-        private int kills = 0;
-        private int killsAsFarm = 0;
-        private int wallDestruction = 0;
-        private int buildingDestruction = 0;
-
-        public OverallStatResult() {
-            allyStats = new LinkedList<AllyStatResult>();
-        }
-
-        public void addAllyStatsResult(AllyStatResult pStat) {
-            allyStats.add(pStat);
-            attackers += pStat.getAttackers();
-            attacks += pStat.getOffs() + pStat.getFakes() + pStat.getSnobs();
-            offs += pStat.getOffs();
-            snobs += pStat.getSnobs();
-            fakes += pStat.getFakes();
-            enoblements += pStat.getEnoblements();
-            losses += pStat.getLosses();
-            kills += pStat.getKills();
-            lossesAsFarm += pStat.getLossesAsFarm();
-            killsAsFarm += pStat.getKillsAsFarm();
-            wallDestruction += pStat.getWallDestruction();
-            buildingDestruction += pStat.getBuildingDestruction();
-        }
-
-        /**
-         * @return the tribeStats
-         */
-        public List<AllyStatResult> getAllyStats() {
-            return allyStats;
-        }
-
-        public int getAttackers() {
-            return attackers;
-        }
-
-        /**
-         * @return the attacks
-         */
-        public int getAttacks() {
-            return attacks;
-        }
-
-        /**
-         * @return the offs
-         */
-        public int getOffs() {
-            return offs;
-        }
-
-        /**
-         * @return the snobs
-         */
-        public int getSnobs() {
-            return snobs;
-        }
-
-        /**
-         * @return the fakes
-         */
-        public int getFakes() {
-            return fakes;
-        }
-
-        /**
-         * @return the enoblements
-         */
-        public int getEnoblements() {
-            return enoblements;
-        }
-
-        /**
-         * @return the losses
-         */
-        public int getLosses() {
-            return losses;
-        }
-
-        /**
-         * @return the lossesAsFarm
-         */
-        public int getLossesAsFarm() {
-            return lossesAsFarm;
-        }
-
-        /**
-         * @return the kills
-         */
-        public int getKills() {
-            return kills;
-        }
-
-        /**
-         * @return the killsAsFarm
-         */
-        public int getKillsAsFarm() {
-            return killsAsFarm;
-        }
-
-        /**
-         * @return the wallDestruction
-         */
-        public int getWallDestruction() {
-            return wallDestruction;
-        }
-
-        /**
-         * @return the buildingDestruction
-         */
-        public int getBuildingDestruction() {
-            return buildingDestruction;
-        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="Gesture Handling">
@@ -1945,7 +1581,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
     private javax.swing.JCheckBox jAddAsDefender;
     private javax.swing.JButton jAddTribeButton;
-    private javax.swing.JTextArea jAllyStatsArea;
+    private javax.swing.JTextPane jAllyStatsArea;
     private javax.swing.JCheckBox jAlwaysOnTopBox;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton15;
@@ -1969,7 +1605,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JLabel jLabel9;
     private javax.swing.JList jList1;
     private javax.swing.JPanel jNewPlanPanel;
-    private javax.swing.JTextArea jOverallStatsArea;
+    private javax.swing.JTextPane jOverallStatsArea;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -1982,12 +1618,12 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JList jReportSetsForStatsList;
     private javax.swing.JPanel jReportsPanel;
     private com.jidesoft.swing.JideTabbedPane jReportsTabbedPane;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
-    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JScrollPane jScrollPane8;
     private javax.swing.JCheckBox jShowBlueReports;
     private javax.swing.JCheckBox jShowGreenReports;
@@ -2002,7 +1638,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JList jTribeList;
     private javax.swing.JComboBox jTribeSelectionBox;
     private javax.swing.JTextField jTribeSelectionFilter;
-    private javax.swing.JTextArea jTribeStatsArea;
+    private javax.swing.JTextPane jTribeStatsArea;
     private javax.swing.JCheckBox jUseSilentKillsBox;
     private org.jdesktop.swingx.JXList jXColumnList;
     private org.jdesktop.swingx.JXPanel jXPanel2;

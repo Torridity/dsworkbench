@@ -12,8 +12,6 @@ public interface BBSupport {
 
     public String getStandardTemplate();
 
-    public String getTemplateProperty();
-
     public String[] getBBVariables();
 
     public String[] getReplacements(boolean pExtended);

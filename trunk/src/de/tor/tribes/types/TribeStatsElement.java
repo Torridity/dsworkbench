@@ -542,11 +542,6 @@ public class TribeStatsElement {
         }
 
         @Override
-        public String getTemplateProperty() {
-            return "";
-        }
-
-        @Override
         public String[] getBBVariables() {
             return new String[]{};
         }

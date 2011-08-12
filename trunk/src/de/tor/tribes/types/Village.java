@@ -35,7 +35,6 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
 
     private final static String[] VARIABLES = new String[]{"%NAME%", "%X%", "%Y%", "%CONTINENT%", "%FULL_NAME%", "%TRIBE%", "%ALLY%", "%POINTS%"};
     private final static String STANDARD_TEMPLATE = "[coord]%X%|%Y%[/coord]";
-    private final static String TEMPLATE_PROPERTY = "village.bbexport.template";
 
     @Override
     public String[] getBBVariables() {
@@ -68,14 +67,9 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
     public String getStandardTemplate() {
         return STANDARD_TEMPLATE;
     }
-
-    @Override
-    public String getTemplateProperty() {
-        return TEMPLATE_PROPERTY;
-    }
     public static final Comparator<Village> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
     public static final Comparator<Village> ALLY_TRIBE_VILLAGE_COMPARATOR = new AllyTribeVillageComparator();
-    public static final Comparator<String> ALPHA_NUM_COMPARATOR= new IntuitiveStringComparator<String>();
+    public static final Comparator<String> ALPHA_NUM_COMPARATOR = new IntuitiveStringComparator<String>();
     public final static int ORDER_ALPHABETICALLY = 0;
     public final static int ORDER_BY_COORDINATES = 1;
     private static int orderType = ORDER_ALPHABETICALLY;
@@ -437,7 +431,7 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
 
         if (orderType == ORDER_ALPHABETICALLY) {
             return toString().compareTo(o.toString());
-         //   return ALPHA_NUM_COMPARATOR.compare(toString(), o.toString());
+            //   return ALPHA_NUM_COMPARATOR.compare(toString(), o.toString());
         } else {
             try {
                 Village v = o;

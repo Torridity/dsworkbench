@@ -57,16 +57,17 @@ public class OverallStatResult implements BBSupport {
             StringBuilder b = new StringBuilder();
 
             b.append("[b][u]Gesamtstatistiken[/u][/b]\n\n");
-            b.append("Auswertung vom %START_DATE% bis zum %END_DATE%\n");
-            b.append("Ausgewertete Berichte: %REPORT_COUNT%\n");
-            b.append("Ausgewertete Angreifer (Stämme): %ATTACK_TRIBES% (%ATTACK_ALLIES%)\n");
-            b.append("Verteidiger (Stämme): %DEFEND_TRIBES% (%DEFEND_ALLIES%)\n");
-            b.append("Verluste der Verteidiger (Bauernhofplätze): %KILLS% (%KILLS_FARM%)\n");
-            b.append("Verluste pro Verteidiger: %LOSSES_PER_DEFENDER%\n");
-            b.append("Verluste der Angreifer: (Bauernhofplätze) %LOSSES% (%LOSSES_FARM%)\n");
-            b.append("Verluste pro Angreifer: %LOSSES_PER_ATTACKER%\n");
-            b.append("Zerstörte Wallstufen: %WALL_DESTRUCTION%\n");
-            b.append("Zerstörte Gebäudestufen: %BUILDING_DESTRUCTION%\n");
+            b.append("Auswertung vom %START_DATE% bis zum %END_DATE%\n\n");
+            b.append("[table]\n");
+            b.append("[**]Ausgewertete Berichte[||]%REPORT_COUNT%[/**]\n");
+            b.append("[*]Ausgewertete Angreifer (Stämme)[|]%ATTACK_TRIBES% (%ATTACK_ALLIES%)[/*]\n");
+            b.append("[**]Verteidiger (Stämme)[||]%DEFEND_TRIBES% (%DEFEND_ALLIES%)[/**]\n");
+            b.append("[*]Verluste der Verteidiger (Bauernhofplätze)[|] %KILLS% (%KILLS_FARM%)[/*]\n");
+            b.append("[**]Verluste pro Verteidiger[||]%LOSSES_PER_DEFENDER%[/**]\n");
+            b.append("[*]Verluste der Angreifer (Bauernhofplätze)[|]%LOSSES% (%LOSSES_FARM%)[/*]\n");
+            b.append("[**]Verluste pro Angreifer[||]%LOSSES_PER_ATTACKER%[/**]\n");
+            b.append("[*]Zerstörte Wallstufen[|]%WALL_DESTRUCTION%[/*]\n");
+            b.append("[**]Zerstörte Gebäudestufen[||]%BUILDING_DESTRUCTION%[/**]\n");
 
             STANDARD_TEMPLATE = b.toString();
         }

@@ -45,8 +45,8 @@ public class AllyStatResult implements BBSupport {
         String valBuildingDestruction = nf.format(getBuildingDestruction());
         nf.setMinimumFractionDigits(2);
         nf.setMaximumFractionDigits(2);
-        String valKillsPercent = (getOverallKills() == 0) ? "0" : nf.format(100 * getKills() / (double) getOverallKills()) + " %";
-        String valLossesPercent = (getOverallLosses() == 0) ? "0" : nf.format(100 * getLosses() / (double) getOverallLosses()) + " %";
+        String valKillsPercent = (getOverallKills() == 0) ? "0.0 %" : nf.format(100 * getKills() / (double) getOverallKills()) + " %";
+        String valLossesPercent = (getOverallLosses() == 0) ? "0.0 %" : nf.format(100 * getLosses() / (double) getOverallLosses()) + " %";
 
         return new String[]{valAllyName, valAllyTag, valAttackers, valAttacks, valOffs, valSnobs, valFakes, valEnoblements, valKills, valKillsFarm,
                     valKillsPercent, valLosses, valLossesFarm, valLossesPercent, valWallDestruction, valBuildingDestruction};

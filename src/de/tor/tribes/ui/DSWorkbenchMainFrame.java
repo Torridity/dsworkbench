@@ -594,6 +594,15 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         try {
             int width = Integer.parseInt(GlobalOptions.getProperty("main.size.width"));
             int height = Integer.parseInt(GlobalOptions.getProperty("main.size.height"));
+            int maxHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 50;
+            int maxWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() - 50;
+            if (height > maxHeight) {
+                height = maxHeight;
+            }
+            if (width > maxWidth) {
+                width = maxWidth;
+            }
+
             setSize(width, height);
         } catch (Exception e) {
         }

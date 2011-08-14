@@ -3,49 +3,57 @@
 
 <toc version="1.0">
  <tocitem text="DS Workbench Dokumentation " target="index" image="images.help_16">
-  <tocitem text="Einstellungen " target="pages.settings" image="images.tictac_orange">
-   <tocitem text="Login " target="pages.login_settings" image="images.tictac_grey"/>
+  <tocitem text="Wichtige Grundlagen " image="images.tictac_orange">
+   <tocitem text="Das Anwendungsmen&#252; " target="pages.app_menu" image="images.tictac_grey">
+    <tocitem text="Export / Import von Benutzerdaten " target="pages.export_import" image="images.tictac_grey"/>
 
-   <tocitem text="Spieler/Server " target="pages.player_server_settings" image="images.tictac_grey"/>
+    <tocitem text="Der BB-Code Editor " target="pages.bb_export" image="images.tictac_grey"/>
 
-   <tocitem text="Karten " target="pages.map_settings" image="images.tictac_grey"/>
+    <tocitem text="Einstellungen " target="pages.settings" image="images.tictac_orange">
+     <tocitem text="Login " target="pages.login_settings" image="images.tictac_grey"/>
 
-   <tocitem text="Angriffe " target="pages.attack_settings" image="images.tictac_grey"/>
+     <tocitem text="Spieler/Server " target="pages.player_server_settings" image="images.tictac_grey"/>
 
-   <tocitem text="Netzwerk " target="pages.network_settings" image="images.tictac_grey"/>
+     <tocitem text="Karten " target="pages.map_settings" image="images.tictac_grey"/>
 
-   <tocitem text="Templates " target="pages.template_settings" image="images.tictac_orange">
-    <tocitem text="HTML Template erstellen " target="pages.attack_template_settings" image="images.tictac_grey"/>
+     <tocitem text="Angriffe " target="pages.attack_settings" image="images.tictac_grey"/>
+
+     <tocitem text="Netzwerk " target="pages.network_settings" image="images.tictac_grey"/>
+
+     <tocitem text="Templates " target="pages.template_settings" image="images.tictac_orange">
+      <tocitem text="HTML Template erstellen " target="pages.attack_template_settings" image="images.tictac_grey"/>
+
+     </tocitem>
+     <tocitem text="Sonstiges " target="pages.misc_settings" image="images.tictac_grey"/>
+
+    </tocitem>
+   </tocitem>
+   <tocitem text="Das Hauptmen&#252; " target="pages.ribbon_menu" image="images.tictac_grey"/>
+
+   <tocitem text="Grundfunktionen " target="pages.view_basics" image="images.tictac_grey"/>
+
+   <tocitem text="Das Hauptfenster " target="pages.main_window" image="images.tictac_orange">
+    <tocitem text="Navigation auf der Karte " target="pages.map_navigation" image="images.tictac_orange">
+     <tocitem text="Erweiterte Kartenfunktionen " target="pages.extended_map_functions" image="images.tictac_grey"/>
+
+    </tocitem>
+    <tocitem text="Minimap " target="pages.minimap_basics" image="images.tictac_grey"/>
+
+    <tocitem text="Weitere Funktionen " target="pages.main_window_basics" image="images.tictac_grey"/>
 
    </tocitem>
-   <tocitem text="Sonstiges " target="pages.misc_settings" image="images.tictac_grey"/>
+   <tocitem text="Sonstiges " image="images.tictac_orange">
+    <tocitem text="Import von Spielinformationen " target="pages.import_ingame" image="images.tictac_grey"/>
 
+    <tocitem text="Das DS Workbench Userscript " target="pages.dswb_script" image="images.tictac_grey"/>
+
+    <tocitem text="Mausgesten " target="pages.mouse_gestures" image="images.tictac_grey"/>
+
+    <tocitem text="Truppendichte " target="pages.troop_density" image="images.tictac_grey"/>
+
+   </tocitem>
   </tocitem>
-  <tocitem text="Grundlagen " target="pages.basics" image="images.tictac_orange">
-   <tocitem text="Navigation auf der Karte " target="pages.map_navigation" image="images.tictac_grey"/>
-
-   <tocitem text="Mausgesten " target="pages.mouse_gestures" image="images.tictac_grey"/>
-
-   <tocitem text="Erweiterte Kartenfunktionen " target="pages.extended_map_functions" image="images.tictac_grey"/>
-
-   <tocitem text="Minimap " target="pages.minimap_basics" image="images.tictac_grey"/>
-
-   <tocitem text="Funktionen im Hauptfenster " target="pages.main_window_basics" image="images.tictac_grey"/>
-
-   <tocitem text="Drag&amp;Drop auf der Hauptkarte " target="pages.main_window_dnd" image="images.tictac_grey"/>
-
-   <tocitem text="Export / Import von Benutzerdaten " target="pages.export_import" image="images.tictac_grey"/>
-
-   <tocitem text="Export in die Zwischenablage " target="pages.bb_export" image="images.tictac_grey"/>
-
-   <tocitem text="Import von Spielinformationen " target="pages.import_ingame" image="images.tictac_grey"/>
-
-   <tocitem text="Truppendichte " target="pages.troop_density" image="images.tictac_grey"/>
-
-   <tocitem text="Das DS Workbench Userscript " target="pages.dswb_script" image="images.tictac_grey"/>
-
-  </tocitem>
-  <tocitem text="Werkzeuge " target="pages.tools" image="images.tictac_orange">
+  <tocitem text="Werkzeuge " image="images.tictac_orange">
    <tocitem text="Kartenwerkzeuge " target="pages.map_tools" image="images.tictac_orange">
     <tocitem text="Das Unterst&#252;tzungswerkzeug " target="pages.support_tool" image="images.tictac_grey"/>
 
@@ -54,8 +62,8 @@
    </tocitem>
    <tocitem text="Angriffswerkzeuge " target="pages.attack_tools" image="images.tictac_grey"/>
 
-   <tocitem text="Zeichenwerkzeuge " target="pages.draw_tools" image="images.tictac_orange">
-    <tocitem text="Formeinstellungen " target="pages.form_setup" image="images.tictac_grey"/>
+   <tocitem text="Zeichenwerkzeuge " image="images.tictac_orange">
+    <tocitem text="Zeichnungseinstellungen " target="pages.form_setup" image="images.tictac_grey"/>
 
    </tocitem>
    <tocitem text="Erweiterte Werkzeuge " target="pages.extended_tools" image="images.tictac_orange">
@@ -70,12 +78,8 @@
 
      <tocitem text="Einstellungen " target="pages.attack_planer_settings" image="images.tictac_grey"/>
 
-     <tocitem text="Ergebnisse " target="pages.attack_planer_results" image="images.tictac_orange">
-      <tocitem text="Details (Herkunft) " target="pages.attack_planer_results_details_sources" image="images.tictac_grey"/>
+     <tocitem text="Ergebnisse " target="pages.attack_planer_results" image="images.tictac_grey"/>
 
-      <tocitem text="Details (Ziel) " target="pages.attack_planer_results_details_targets" image="images.tictac_grey"/>
-
-     </tocitem>
     </tocitem>
     <tocitem text="Laufzeit&#252;bersicht " target="pages.runtime_tool" image="images.tictac_grey"/>
 
@@ -95,12 +99,8 @@
 
    </tocitem>
   </tocitem>
-  <tocitem text="Ansichten " target="pages.views" image="images.tictac_orange">
+  <tocitem text="Ansichten " image="images.tictac_orange">
    <tocitem text="Angriffe " target="pages.attack_view" image="images.tictac_orange">
-    <tocitem text="Gefilterte Auswahl von Angriffen " target="pages.attack_select_filter" image="images.tictac_grey"/>
-
-    <tocitem text="Angriffszeiten ver&#228;ndern " target="pages.change_attack_times" image="images.tictac_grey"/>
-
     <tocitem text="Standardangriffe " target="pages.standard_attacks" image="images.tictac_grey"/>
 
     <tocitem text="Userscript - Angriffsinformationen " target="pages.attack_info_script" image="images.tictac_grey"/>
@@ -122,16 +122,12 @@
 
    <tocitem text="Notizblock " target="pages.notes_view" image="images.tictac_grey"/>
 
-   <tocitem text="Tag&#252;bersicht " target="pages.tag_view" image="images.tictac_grey"/>
+   <tocitem text="Gruppen&#252;bersicht " target="pages.tag_view" image="images.tictac_grey"/>
 
    <tocitem text="Statistiken " target="pages.stats_view" image="images.tictac_grey"/>
 
-   <tocitem text="Berichtsdatenbank " target="pages.reports_view" image="images.tictac_orange">
-    <tocitem text="Berichte filtern " target="pages.reports_view_filters" image="images.tictac_grey"/>
+   <tocitem text="Berichtsdatenbank " target="pages.reports_view" image="images.tictac_grey"/>
 
-    <tocitem text="Berichte auswerten " target="pages.reports_view_stats" image="images.tictac_grey"/>
-
-   </tocitem>
   </tocitem>
   <tocitem text="Shortcuts " target="pages.shortcuts" image="images.tictac_orange"/>
 

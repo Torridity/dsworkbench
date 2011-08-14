@@ -17,6 +17,7 @@ import de.tor.tribes.types.Line;
 import de.tor.tribes.types.Arrow;
 import de.tor.tribes.types.Rectangle;
 import de.tor.tribes.types.Text;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.map.FormManager;
 import java.awt.Color;
@@ -73,8 +74,11 @@ public class FormConfigFrame extends javax.swing.JFrame {
         } catch (Exception e) {
             //setting not available
         }
+
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-    //    GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.form_setup", GlobalOptions.getHelpBroker().getHelpSet());
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.form_setup", GlobalOptions.getHelpBroker().getHelpSet());
+        }
         // </editor-fold>
 
     }
@@ -291,10 +295,10 @@ public class FormConfigFrame extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 0);
         jPanel3.add(jStrokeWidth, gridBagConstraints);
 
-        jFillFormLabel.setText("Form ausfüllen");
-        jFillFormLabel.setMaximumSize(new java.awt.Dimension(90, 25));
-        jFillFormLabel.setMinimumSize(new java.awt.Dimension(90, 25));
-        jFillFormLabel.setPreferredSize(new java.awt.Dimension(90, 25));
+        jFillFormLabel.setText("Zeichnung  ausfüllen");
+        jFillFormLabel.setMaximumSize(new java.awt.Dimension(130, 25));
+        jFillFormLabel.setMinimumSize(new java.awt.Dimension(130, 25));
+        jFillFormLabel.setPreferredSize(new java.awt.Dimension(130, 25));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
@@ -957,8 +961,8 @@ public class FormConfigFrame extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) throws Exception {
-       GlobalOptions.loadSkin();
-         try {
+        GlobalOptions.loadSkin();
+        try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception e) {
@@ -967,8 +971,8 @@ public class FormConfigFrame extends javax.swing.JFrame {
         FormConfigFrame.getSingleton().setSize(800, 600);
         FormConfigFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         FormConfigFrame.getSingleton().setupAndShowInEditMode(new Circle());
-        
-      
+
+
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox jAlwaysOnTop;

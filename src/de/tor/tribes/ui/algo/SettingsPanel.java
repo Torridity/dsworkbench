@@ -99,7 +99,7 @@ public class SettingsPanel extends javax.swing.JPanel {
 
             // <editor-fold defaultstate="collapsed" desc="Restore time spans">
             //restore send spans
-            String spanProp = profile.getProperty("attack.frame.start.spans");
+            String spanProp = profile.getProperty("attack.frame.spans");
             if (spanProp == null) {
                 spanProp = "";
             }
@@ -368,7 +368,6 @@ public class SettingsPanel extends javax.swing.JPanel {
 
             @Override
             public void windowDeactivated(WindowEvent e) {
-
             }
         });
         f.pack();

@@ -63,9 +63,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
-import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -252,6 +250,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         if (!Constants.DEBUG) {
             GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.attack_view", GlobalOptions.getHelpBroker().getHelpSet());
+            GlobalOptions.getHelpBroker().enableHelpKey(jStandardAttackDialog, "pages.standard_attacks", GlobalOptions.getHelpBroker().getHelpSet());
         }
         // </editor-fold>
 

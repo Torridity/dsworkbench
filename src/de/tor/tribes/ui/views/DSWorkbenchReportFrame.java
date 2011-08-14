@@ -46,8 +46,11 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.TexturePaint;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
@@ -62,8 +65,10 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -140,6 +145,9 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private static DSWorkbenchReportFrame SINGLETON = null;
     private FightStats lastStats = null;
     private GenericTestPanel centerPanel = null;
+    private String overallResultCodes = null;
+    private String allyResultCodes = null;
+    private String tribeResultCodes = null;
 
     public static synchronized DSWorkbenchReportFrame getSingleton() {
         if (SINGLETON == null) {
@@ -158,6 +166,17 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jReportsTabbedPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
         jReportsTabbedPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
         jReportsTabbedPane.setBoldActiveTab(true);
+        KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
+        jResultTabbedPane.registerKeyboardAction(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                copyResultBBToClipboardEvent();
+            }
+        }, "BBCopy", bbCopy, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+
+
         jReportsTabbedPane.setCloseAction(new AbstractAction("closeAction") {
 
             public void actionPerformed(ActionEvent e) {
@@ -232,12 +251,21 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                 updateFilter();
             }
         });
+        jList1.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    fireRebuildStatsEvent();
+                }
+            }
+        });
+
         setGlassPane(jxSearchPane);
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         if (!Constants.DEBUG) {
             GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.reports_view", GlobalOptions.getHelpBroker().getHelpSet());
-            GlobalOptions.getHelpBroker().enableHelpKey(jFilterDialog.getRootPane(), "pages.reports_view_filters", GlobalOptions.getHelpBroker().getHelpSet());
             GlobalOptions.getHelpBroker().enableHelpKey(jCreateStatsFrame.getRootPane(), "pages.reports_view_stats", GlobalOptions.getHelpBroker().getHelpSet());
         }
         // </editor-fold>
@@ -344,6 +372,12 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
     @Override
     public void resetView() {
+        overallResultCodes = null;
+        allyResultCodes = null;
+        tribeResultCodes = null;
+        jOverallStatsArea.setText("");
+        jAllyStatsArea.setText("");
+        jTribeStatsArea.setText("");
         ReportManager.getSingleton().addManagerListener(this);
         generateReportTabs();
     }
@@ -410,7 +444,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jLabel7 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jResultTabbedPane = new javax.swing.JTabbedPane();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jOverallStatsArea = new javax.swing.JTextPane();
@@ -420,30 +454,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jPanel6 = new javax.swing.JPanel();
         jScrollPane6 = new javax.swing.JScrollPane();
         jTribeStatsArea = new javax.swing.JTextPane();
-        jFilterDialog = new javax.swing.JDialog();
-        jPanel8 = new javax.swing.JPanel();
-        jTribeSelectionBox = new javax.swing.JComboBox();
-        jFilterByTribeBox = new javax.swing.JCheckBox();
-        jTribeSelectionFilter = new javax.swing.JTextField();
-        jAddTribeButton = new javax.swing.JButton();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        jTribeList = new javax.swing.JList();
-        jRemoveTribeButton = new javax.swing.JButton();
-        jAddAsDefender = new javax.swing.JCheckBox();
-        jPanel10 = new javax.swing.JPanel();
-        jShowHiddenAttackerReports = new javax.swing.JCheckBox();
-        jShowRedReports = new javax.swing.JCheckBox();
-        jShowYellowReports = new javax.swing.JCheckBox();
-        jShowGreenReports = new javax.swing.JCheckBox();
-        jShowBlueReports = new javax.swing.JCheckBox();
-        jShowSnobReports = new javax.swing.JCheckBox();
-        jLabel8 = new javax.swing.JLabel();
-        jStartDate = new javax.swing.JSpinner();
-        jLabel9 = new javax.swing.JLabel();
-        jEndDate = new javax.swing.JSpinner();
-        jFilterByDate = new javax.swing.JCheckBox();
-        jDoFilterButton = new javax.swing.JButton();
-        jButton17 = new javax.swing.JButton();
+        capabilityInfoPanel2 = new de.tor.tribes.ui.CapabilityInfoPanel();
         jXReportsPanel = new org.jdesktop.swingx.JXPanel();
         jReportsTabbedPane = new com.jidesoft.swing.JideTabbedPane();
         jNewPlanPanel = new javax.swing.JPanel();
@@ -496,35 +507,40 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
         jScrollPane3.setViewportView(jList1);
 
-        jTabbedPane1.setBackground(new java.awt.Color(239, 235, 223));
+        jResultTabbedPane.setBackground(new java.awt.Color(239, 235, 223));
 
         jPanel4.setOpaque(false);
         jPanel4.setLayout(new java.awt.BorderLayout());
 
         jOverallStatsArea.setContentType("text/html");
+        jOverallStatsArea.setEditable(false);
         jScrollPane1.setViewportView(jOverallStatsArea);
 
         jPanel4.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        jTabbedPane1.addTab("Gesamtübersicht", new javax.swing.ImageIcon(getClass().getResource("/res/ui/chart.png")), jPanel4); // NOI18N
+        jResultTabbedPane.addTab("Gesamtübersicht", new javax.swing.ImageIcon(getClass().getResource("/res/ui/chart.png")), jPanel4); // NOI18N
 
         jPanel5.setBackground(new java.awt.Color(239, 235, 223));
         jPanel5.setLayout(new java.awt.BorderLayout());
 
+        jAllyStatsArea.setContentType("text/html");
+        jAllyStatsArea.setEditable(false);
         jScrollPane5.setViewportView(jAllyStatsArea);
 
         jPanel5.add(jScrollPane5, java.awt.BorderLayout.CENTER);
 
-        jTabbedPane1.addTab("Stämme", new javax.swing.ImageIcon(getClass().getResource("/res/ally.png")), jPanel5); // NOI18N
+        jResultTabbedPane.addTab("Stämme", new javax.swing.ImageIcon(getClass().getResource("/res/ally.png")), jPanel5); // NOI18N
 
         jPanel6.setBackground(new java.awt.Color(239, 235, 223));
         jPanel6.setLayout(new java.awt.BorderLayout());
 
+        jTribeStatsArea.setContentType("text/html");
+        jTribeStatsArea.setEditable(false);
         jScrollPane6.setViewportView(jTribeStatsArea);
 
         jPanel6.add(jScrollPane6, java.awt.BorderLayout.CENTER);
 
-        jTabbedPane1.addTab("Spieler", new javax.swing.ImageIcon(getClass().getResource("/res/face.png")), jPanel6); // NOI18N
+        jResultTabbedPane.addTab("Spieler", new javax.swing.ImageIcon(getClass().getResource("/res/face.png")), jPanel6); // NOI18N
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -533,7 +549,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 570, Short.MAX_VALUE)
+                    .addComponent(jResultTabbedPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 570, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addGap(18, 18, 18)
@@ -548,7 +564,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                     .addComponent(jLabel7)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                .addComponent(jResultTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -581,13 +597,20 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap())
         );
 
+        capabilityInfoPanel2.setCopyable(false);
+        capabilityInfoPanel2.setDeletable(false);
+        capabilityInfoPanel2.setPastable(false);
+        capabilityInfoPanel2.setSearchable(false);
+
         javax.swing.GroupLayout jCreateStatsFrameLayout = new javax.swing.GroupLayout(jCreateStatsFrame.getContentPane());
         jCreateStatsFrame.getContentPane().setLayout(jCreateStatsFrameLayout);
         jCreateStatsFrameLayout.setHorizontalGroup(
             jCreateStatsFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jCreateStatsFrameLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jCreateStatsFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(capabilityInfoPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         jCreateStatsFrameLayout.setVerticalGroup(
@@ -595,234 +618,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             .addGroup(jCreateStatsFrameLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        jFilterDialog.setTitle("Berichte filtern");
-        jFilterDialog.setAlwaysOnTop(true);
-
-        jPanel8.setBackground(new java.awt.Color(239, 235, 223));
-        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder("Filtern nach Angreifer/Verteidiger"));
-
-        jTribeSelectionBox.setEnabled(false);
-        jTribeSelectionBox.setMinimumSize(new java.awt.Dimension(28, 20));
-
-        jFilterByTribeBox.setSelected(true);
-        jFilterByTribeBox.setText("Alle Berichte anzeigen");
-        jFilterByTribeBox.setOpaque(false);
-        jFilterByTribeBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireFilterByTribeChangedEvent(evt);
-            }
-        });
-
-        jTribeSelectionFilter.setEnabled(false);
-        jTribeSelectionFilter.addCaretListener(new javax.swing.event.CaretListener() {
-            public void caretUpdate(javax.swing.event.CaretEvent evt) {
-                fireFilterChangedEvent(evt);
-            }
-        });
-
-        jAddTribeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
-        jAddTribeButton.setEnabled(false);
-        jAddTribeButton.setMaximumSize(new java.awt.Dimension(25, 25));
-        jAddTribeButton.setMinimumSize(new java.awt.Dimension(25, 25));
-        jAddTribeButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireTribeFilterChangedEvent(evt);
-            }
-        });
-
-        jScrollPane4.setViewportView(jTribeList);
-
-        jRemoveTribeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/remove.gif"))); // NOI18N
-        jRemoveTribeButton.setEnabled(false);
-        jRemoveTribeButton.setMaximumSize(new java.awt.Dimension(25, 25));
-        jRemoveTribeButton.setMinimumSize(new java.awt.Dimension(25, 25));
-        jRemoveTribeButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireTribeFilterChangedEvent(evt);
-            }
-        });
-
-        jAddAsDefender.setText("Als Verteidiger einfügen");
-        jAddAsDefender.setOpaque(false);
-
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jAddAsDefender, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jFilterByTribeBox)
-                    .addComponent(jTribeSelectionBox, 0, 180, Short.MAX_VALUE)
-                    .addComponent(jTribeSelectionFilter))
-                .addGap(4, 4, 4)
-                .addComponent(jAddTribeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jRemoveTribeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jFilterByTribeBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
-                    .addComponent(jRemoveTribeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addComponent(jTribeSelectionBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTribeSelectionFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jAddAsDefender))
-                    .addComponent(jAddTribeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-
-        jPanel10.setBackground(new java.awt.Color(239, 235, 223));
-        jPanel10.setBorder(javax.swing.BorderFactory.createTitledBorder("Sonstige Filter"));
-
-        jShowHiddenAttackerReports.setSelected(true);
-        jShowHiddenAttackerReports.setText("Berichte mit verborgenen Truppeninformationen anzeigen");
-        jShowHiddenAttackerReports.setOpaque(false);
-
-        jShowRedReports.setSelected(true);
-        jShowRedReports.setText("Rote Berichte anzeigen");
-        jShowRedReports.setOpaque(false);
-
-        jShowYellowReports.setSelected(true);
-        jShowYellowReports.setText("Gelbe Berichte anzeigen");
-        jShowYellowReports.setOpaque(false);
-
-        jShowGreenReports.setSelected(true);
-        jShowGreenReports.setText("Grüne Berichte anzeigen");
-        jShowGreenReports.setOpaque(false);
-
-        jShowBlueReports.setSelected(true);
-        jShowBlueReports.setText("Blaue Berichte anzeigen");
-        jShowBlueReports.setOpaque(false);
-
-        jShowSnobReports.setSelected(true);
-        jShowSnobReports.setText("Berichte mit Zustimmungssenkung anzeigen");
-        jShowSnobReports.setOpaque(false);
-
-        jLabel8.setText("Berichte vom");
-        jLabel8.setEnabled(false);
-
-        jStartDate.setModel(new javax.swing.SpinnerDateModel());
-        jStartDate.setEnabled(false);
-
-        jLabel9.setText("bis zum");
-        jLabel9.setEnabled(false);
-
-        jEndDate.setModel(new javax.swing.SpinnerDateModel());
-        jEndDate.setEnabled(false);
-
-        jFilterByDate.setText("Nach Datum filtern");
-        jFilterByDate.setOpaque(false);
-        jFilterByDate.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireFilterByDateChangedEvent(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
-        jPanel10.setLayout(jPanel10Layout);
-        jPanel10Layout.setHorizontalGroup(
-            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel10Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jFilterByDate)
-                    .addComponent(jShowHiddenAttackerReports)
-                    .addComponent(jShowRedReports)
-                    .addComponent(jShowYellowReports)
-                    .addComponent(jShowGreenReports)
-                    .addComponent(jShowBlueReports)
-                    .addComponent(jShowSnobReports)
-                    .addGroup(jPanel10Layout.createSequentialGroup()
-                        .addComponent(jLabel8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jStartDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel9)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(160, Short.MAX_VALUE))
-        );
-        jPanel10Layout.setVerticalGroup(
-            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel10Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jShowHiddenAttackerReports)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jShowRedReports)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jShowYellowReports)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jShowGreenReports)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jShowBlueReports)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jShowSnobReports)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jFilterByDate)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(jStartDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9)
-                    .addComponent(jEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-
-        jDoFilterButton.setText("Filtern");
-        jDoFilterButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireApplyFilterEvent(evt);
-            }
-        });
-
-        jButton17.setText("Abbrechen");
-        jButton17.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireApplyFilterEvent(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jFilterDialogLayout = new javax.swing.GroupLayout(jFilterDialog.getContentPane());
-        jFilterDialog.getContentPane().setLayout(jFilterDialogLayout);
-        jFilterDialogLayout.setHorizontalGroup(
-            jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jFilterDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jFilterDialogLayout.createSequentialGroup()
-                        .addComponent(jButton17)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jDoFilterButton)))
-                .addContainerGap())
-        );
-        jFilterDialogLayout.setVerticalGroup(
-            jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jFilterDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jDoFilterButton)
-                    .addComponent(jButton17))
+                .addComponent(capabilityInfoPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -1082,127 +879,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         fireRebuildStatsEvent();
     }//GEN-LAST:event_fireStatOptionsChangedEvent
 
-    private void fireFilterByDateChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireFilterByDateChangedEvent
-        /* jLabel8.setEnabled(jFilterByDate.isSelected());
-        jLabel9.setEnabled(jFilterByDate.isSelected());
-        jStartDate.setEnabled(jFilterByDate.isSelected());
-        jEndDate.setEnabled(jFilterByDate.isSelected());*/
-    }//GEN-LAST:event_fireFilterByDateChangedEvent
-
-    private void fireFilterByTribeChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireFilterByTribeChangedEvent
-        /* jAddTribeButton.setEnabled(!jFilterByTribeBox.isSelected());
-        jRemoveTribeButton.setEnabled(!jFilterByTribeBox.isSelected());
-        jTribeList.setEnabled(!jFilterByTribeBox.isSelected());
-        jTribeSelectionFilter.setEnabled(!jFilterByTribeBox.isSelected());
-        jTribeSelectionBox.setEnabled(!jFilterByTribeBox.isSelected());*/
-    }//GEN-LAST:event_fireFilterByTribeChangedEvent
-
-    private void fireFilterChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireFilterChangedEvent
-        // buildTribesList(jTribeSelectionFilter.getText());
-    }//GEN-LAST:event_fireFilterChangedEvent
-
-    private void fireTribeFilterChangedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTribeFilterChangedEvent
-        /*  if (evt.getSource() == jAddTribeButton) {
-        //add tribe
-        jTribeSelectionBox.firePopupMenuCanceled();
-        Tribe t = (Tribe) jTribeSelectionBox.getSelectedItem();
-        if (t != Barbarians.getSingleton()) {
-        String appendix = " (Angreifer)";
-        if (jAddAsDefender.isSelected()) {
-        appendix = " (Verteidiger)";
-        }
-        String value = t.getName() + appendix;
-        if (((DefaultListModel) jTribeList.getModel()).indexOf(value) < 0) {
-        ((DefaultListModel) jTribeList.getModel()).addElement(value);
-        }
-        }
-        } else {
-        //remove tribe
-        String filter = (String) jTribeList.getSelectedValue();
-        if (filter != null) {
-        if (JOptionPaneHelper.showQuestionConfirmBox(jFilterDialog, "Gewählten Spieler entfernen?", "Spieler entfernen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-        ((DefaultListModel) jTribeList.getModel()).removeElement(filter);
-        }
-        }
-        }*/
-    }//GEN-LAST:event_fireTribeFilterChangedEvent
-
-    private void fireApplyFilterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireApplyFilterEvent
-        /* if (evt.getSource() == jDoFilterButton) {
-        List<ReportFilterInterface> filters = new LinkedList<ReportFilterInterface>();
-        if (!jFilterByTribeBox.isSelected()) {
-        DefaultListModel model = (DefaultListModel) jTribeList.getModel();
-        if (model.isEmpty()) {
-        JOptionPaneHelper.showInformationBox(jFilterDialog, "Keine Spieler ausgewählt", "Information");
-        return;
-        }
-        List<Tribe> attackers = new LinkedList<Tribe>();
-        List<Tribe> defenders = new LinkedList<Tribe>();
-        for (int i = 0; i < model.size(); i++) {
-        //tribes.add((Tribe) model.getElementAt(i));
-        String value = (String) model.getElementAt(i);
-        if (value.indexOf("(Angreifer)") > 0) {
-        attackers.add(DataHolder.getSingleton().getTribeByName(value.replaceAll("\\(Angreifer\\)", "").trim()));
-        } else {
-        defenders.add(DataHolder.getSingleton().getTribeByName(value.replaceAll("\\(Verteidiger\\)", "").trim()));
-        }
-        }
-        
-        if (attackers.size() > 0) {
-        AttackerFilter attackerFilter = new AttackerFilter();
-        attackerFilter.setup(attackers);
-        filters.add(attackerFilter);
-        }
-        if (defenders.size() > 0) {
-        DefenderFilter defenderFilter = new DefenderFilter();
-        defenderFilter.setup(defenders);
-        filters.add(defenderFilter);
-        }
-        }
-        int colorFilter = 0;
-        if (jShowHiddenAttackerReports.isSelected()) {
-        colorFilter += ColorFilter.GREY;
-        }
-        if (jShowRedReports.isSelected()) {
-        colorFilter += ColorFilter.RED;
-        }
-        if (jShowYellowReports.isSelected()) {
-        colorFilter += ColorFilter.YELLOW;
-        }
-        if (jShowGreenReports.isSelected()) {
-        colorFilter += ColorFilter.GREEN;
-        }
-        if (jShowBlueReports.isSelected()) {
-        colorFilter += ColorFilter.BLUE;
-        }
-        ColorFilter colFilter = new ColorFilter();
-        colFilter.setup(colorFilter);
-        filters.add(colFilter);
-        if (!jShowSnobReports.isSelected()) {
-        filters.add(new ConqueredFilter());
-        }
-        if (jFilterByDate.isSelected()) {
-        DateFilter dateFilter = new DateFilter();
-        List<Long> dates = new LinkedList<Long>();
-        Date start = (Date) jStartDate.getValue();
-        Date end = (Date) jEndDate.getValue();
-        if (start.getTime() > end.getTime()) {
-        jStartDate.setValue(end);
-        jEndDate.setValue(start);
-        start = (Date) jStartDate.getValue();
-        end = (Date) jEndDate.getValue();
-        }
-        dates.add(start.getTime());
-        dates.add(end.getTime());
-        dateFilter.setup(dates);
-        filters.add(dateFilter);
-        }
-        ReportManager.getSingleton().setFilters(filters);
-        }
-        jFilterDialog.setVisible(false);
-        ReportManagerTableModel.getSingleton().fireTableDataChanged();*/
-    }//GEN-LAST:event_fireApplyFilterEvent
-
     private void jButton15fireHideGlassPaneEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton15fireHideGlassPaneEvent
         jxSearchPane.setBackgroundPainter(null);
         jxSearchPane.setVisible(false);
@@ -1296,158 +972,12 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             }
         }
 
-
-        /*
-        keys = allyResults.keys();
-        while (keys.hasMoreElements()) {
-        Ally a = keys.nextElement();
-        AllyStatResult res = allyResults.get(a);
-        for (TribeStatResult tribeResult : res.getTribeStats()) {
-        double attacksOfTribe = 100.0 * (double) tribeResult.getAttacks() / (double) res.getAttacks();
-        f.setMinimumFractionDigits(2);
-        f.setMaximumFractionDigits(2);
-        tribeBuffer.append("[quote]").append(tribeResult.getTribe().toBBCode()).append("\n");
-        tribeBuffer.append("[b][color=#555555][b]Angriffe (Gesamt/Off/AG");
-        if (jShowPercentsBox.isSelected()) {
-        tribeBuffer.append("/Anteil am Stamm");
-        }
-        tribeBuffer.append("):[/color] ").append(tribeResult.getAttacks()).append("/").append(tribeResult.getOffs()).append("/").append(tribeResult.getSnobs());
-        if (jShowPercentsBox.isSelected()) {
-        tribeBuffer.append("/").append(f.format(attacksOfTribe)).append("%");
-        }
-        tribeBuffer.append("[/b]\n");
-        
-        
-        tribeBuffer.append("[b][color=#555555]Adelungen:[/color] ").append(tribeResult.getEnoblements()).append("[/b]\n");
-        tribeBuffer.append("\n");
-        
-        double killsOfTribe = 100.0 * (double) tribeResult.getKills() / (double) res.getKills();
-        f.setMinimumFractionDigits(0);
-        f.setMaximumFractionDigits(0);
-        tribeBuffer.append("[b][color=#888888]Besiegte Einheiten (Anzahl/Bauernhofplätze");
-        if (jShowPercentsBox.isSelected()) {
-        tribeBuffer.append("/Anteil am Stamm");
-        }
-        tribeBuffer.append("):[/color] ");
-        
-        tribeBuffer.append(f.format(tribeResult.getKills())).append("/").append(f.format(tribeResult.getKillsAsFarm()));
-        if (jShowPercentsBox.isSelected()) {
-        f.setMinimumFractionDigits(2);
-        f.setMaximumFractionDigits(2);
-        tribeBuffer.append("/").append(f.format(killsOfTribe)).append("%[/b]");
-        }
-        tribeBuffer.append("\n");
-        
-        double lossesOfTribe = 100.0 * (double) tribeResult.getLosses() / (double) res.getLosses();
-        f.setMinimumFractionDigits(0);
-        f.setMaximumFractionDigits(0);
-        tribeBuffer.append("[b][color=#888888]Verlorene Einheiten (Anzahl/Bauernhofplätze");
-        
-        if (jShowPercentsBox.isSelected()) {
-        tribeBuffer.append("/Anteil am Stamm");
-        }
-        
-        tribeBuffer.append("):[/color] ");
-        tribeBuffer.append(f.format(tribeResult.getLosses())).append("/").append(f.format(tribeResult.getLossesAsFarm()));
-        if (jShowPercentsBox.isSelected()) {
-        f.setMinimumFractionDigits(2);
-        f.setMaximumFractionDigits(2);
-        tribeBuffer.append("/").append(f.format(lossesOfTribe)).append("%[/b]");
-        }
-        tribeBuffer.append("\n\n");
-        tribeBuffer.append("[b][color=#555555]Zerstörte Wallstufen:[/color] ").append(tribeResult.getWallDestruction()).append("[/b]\n");
-        tribeBuffer.append("[b][color=#555555]Zerstörte Gebäudestufen:[/color] ").append(tribeResult.getBuildingDestruction()).append("[/b]\n");
-        tribeBuffer.append("[/quote]\n");
-        }
-        
-        allyBuffer.append("[quote]").append(a.toBBCode()).append("\n");
-        double attackers = 100.0 * (double) res.getAttackers() / (double) overallResult.getAttackers();
-        f.setMinimumFractionDigits(2);
-        f.setMaximumFractionDigits(2);
-        allyBuffer.append("[b][color=#555555]Angreifer (Anzahl");
-        if (jShowPercentsBox.isSelected()) {
-        allyBuffer.append("/Gesamtanteil");
-        }
-        allyBuffer.append("):[/color] ").append(res.getAttackers());
-        if (jShowPercentsBox.isSelected()) {
-        allyBuffer.append("/").append(f.format(attackers)).append("%");
-        }
-        allyBuffer.append("[/b]\n");
-        double attacksOfAlly = 100.0 * (double) res.getAttacks() / (double) overallResult.getAttacks();
-        f.setMinimumFractionDigits(2);
-        f.setMaximumFractionDigits(2);
-        allyBuffer.append("[b][color=#555555]Angriffe (Gesamt/Off/AG");
-        
-        if (jShowPercentsBox.isSelected()) {
-        allyBuffer.append("/Anteil");
-        }
-        allyBuffer.append("):[/color] ").append(res.getAttacks()).append("/").append(res.getOffs()).append("/").append(res.getSnobs());
-        if (jShowPercentsBox.isSelected()) {
-        allyBuffer.append("/").append(f.format(attacksOfAlly)).append("%");
-        }
-        allyBuffer.append("[/b]\n");
-        allyBuffer.append("[b][color=#555555]Adelungen:[/color] ").append(res.getEnoblements()).append("[/b]\n");
-        allyBuffer.append("\n");
-        double killsOfAlly = 100.0 * (double) res.getKills() / (double) overallResult.getKills();
-        f.setMinimumFractionDigits(0);
-        f.setMaximumFractionDigits(0);
-        allyBuffer.append("[b][color=#888888]Besiegte Einheiten (Anzahl/Bauernhofplätze");
-        if (jShowPercentsBox.isSelected()) {
-        allyBuffer.append("/Gesamtanteil");
-        }
-        allyBuffer.append("):[/color] ");
-        allyBuffer.append(f.format(res.getKills())).append("/").append(f.format(res.getKillsAsFarm()));
-        if (jShowPercentsBox.isSelected()) {
-        f.setMinimumFractionDigits(2);
-        f.setMaximumFractionDigits(2);
-        allyBuffer.append("/").append(f.format(killsOfAlly)).append("%");
-        }
-        allyBuffer.append("[/b]\n");
-        double lossesOfAlly = 100.0 * (double) res.getLosses() / (double) overallResult.getLosses();
-        f.setMinimumFractionDigits(0);
-        f.setMaximumFractionDigits(0);
-        allyBuffer.append("[b][color=#888888]Verlorene Einheiten (Anzahl/Bauernhofplätze");
-        if (jShowPercentsBox.isSelected()) {
-        allyBuffer.append("/Gesamtanteil");
-        }
-        
-        allyBuffer.append("):[/color] ");
-        allyBuffer.append(f.format(res.getLosses())).append("/").append(f.format(res.getLossesAsFarm()));
-        if (jShowPercentsBox.isSelected()) {
-        f.setMinimumFractionDigits(2);
-        f.setMaximumFractionDigits(2);
-        allyBuffer.append("/").append(f.format(lossesOfAlly)).append("%");
-        }
-        allyBuffer.append("[/b]\n");
-        allyBuffer.append("\n");
-        allyBuffer.append("[b][color=#555555]Zerstörte Wallstufen:[/color] ").append(res.getWallDestruction()).append("[/b]\n");
-        allyBuffer.append("[b][color=#555555]Zerstörte Gebäudestufen:[/color] ").append(res.getBuildingDestruction()).append("[/b]\n");
-        allyBuffer.append("[/quote]\n");
-        }
-        
-        
-        StringBuilder overallBuffer = new StringBuilder();
-        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
-        overallBuffer.append("[quote]");
-        overallBuffer.append("[b][color=#555555]Start:[/color] ").append(df.format(lastStats.getStartDate())).append("[/b]\n");
-        overallBuffer.append("[b][color=#555555]Ende:[/color] ").append(df.format(lastStats.getEndDate())).append("[/b]\n");
-        overallBuffer.append("[b][color=#555555]Ausgewertete Berichte:[/color] ").append(lastStats.getReportCount()).append("[/b]\n\n");
-        overallBuffer.append("[b][color=#888888]Ausgewertete Angreifer (Stämme):[/color] ").append(overallResult.getAttackers()).append(" (").append(selection.length).append(")[/b]\n");
-        overallBuffer.append("[b][color=#888888]Verteidiger (Stämme):[/color] ").append(overallDefTribes).append(" (").append(overallDefAllies).append(")[/b]\n\n");
-        overallBuffer.append("[b][color=#555555]Besiegte Einheiten (Bauernhofplätze):[/color] ").append(f.format(overallResult.getKills())).append(" (").append(f.format(overallResult.getKillsAsFarm())).append(")[/b]\n\n");
-        overallBuffer.append("[b][color=#555555]Verlorene Einheiten (Bauernhofplätze):[/color] ").append(f.format(overallResult.getLosses())).append(" (").append(f.format(overallResult.getLossesAsFarm())).append(")[/b]\n\n");
-        overallBuffer.append("[b][color=#888888]Verluste pro Angreifer:[/color] ").append(f.format((overallResult.getLosses() / overallResult.getAttackers()))).append("[/b]\n");
-        overallBuffer.append("[b][color=#888888]Verluste pro Verteidiger:[/color] ").append(f.format((overallResult.getKills() / overallDefTribes))).append("[/b]\n\n");
-        overallBuffer.append("[b][color=#555555]Zerstörte Wallstufen:[/color] ").append(f.format(overallResult.getWallDestruction())).append("[/b]\n");
-        overallBuffer.append("[b][color=#555555]Zerstörte Gebäudestufen:[/color] ").append(f.format(overallResult.getBuildingDestruction())).append("[/b]\n");
-        overallBuffer.append("[/quote]\n");
-         */
-
-
         try {
             List<OverallStatResult> list = Arrays.asList(overallResult);
-            jOverallStatsArea.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + new OverallReportStatsFormatter().formatElements(list, true) + "</body></html>");
+            overallResultCodes = new OverallReportStatsFormatter().formatElements(list, true);
+            jOverallStatsArea.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + BBCodeFormatter.toHtml(overallResultCodes) + "</body></html>");
         } catch (Exception e) {
+            overallResultCodes = null;
             jOverallStatsArea.setText("<html>Fehler bei der Darstellung der Auswertung</html>");
             logger.error("Failed to render overall BB representation", e);
         }
@@ -1455,11 +985,14 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             List<AllyStatResult> list = new LinkedList<AllyStatResult>();
             Enumeration<Ally> allyKeys = allyResults.keys();
             while (allyKeys.hasMoreElements()) {
-                list.add(allyResults.get(keys.nextElement()));
+                Ally a = allyKeys.nextElement();
+                list.add(allyResults.get(a));
             }
-            jAllyStatsArea.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + new AllyReportStatsFormatter().formatElements(list, true) + "</body></html>");
+            allyResultCodes = new AllyReportStatsFormatter().formatElements(list, true);
+            jAllyStatsArea.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + BBCodeFormatter.toHtml(allyResultCodes) + "</body></html>");
         } catch (Exception e) {
-            jOverallStatsArea.setText("<html>Fehler bei der Darstellung der Auswertung</html>");
+            allyResultCodes = null;
+            jAllyStatsArea.setText("<html>Fehler bei der Darstellung der Auswertung</html>");
             logger.error("Failed to render BB representation for allies", e);
         }
 
@@ -1467,15 +1000,47 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             List<TribeStatResult> list = new LinkedList<TribeStatResult>();
             Enumeration<Ally> allyKeys = allyResults.keys();
             while (allyKeys.hasMoreElements()) {
-                AllyStatResult allyStat = allyResults.get(keys.nextElement());
+                AllyStatResult allyStat = allyResults.get(allyKeys.nextElement());
                 Collections.addAll(list, allyStat.getTribeStats().toArray(new TribeStatResult[allyStat.getTribeStats().size()]));
             }
-            jAllyStatsArea.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + new TribeReportStatsFormatter().formatElements(list, true) + "</body></html>");
+            tribeResultCodes = new TribeReportStatsFormatter().formatElements(list, true);
+            jTribeStatsArea.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + BBCodeFormatter.toHtml(tribeResultCodes) + "</body></html>");
         } catch (Exception e) {
-            jOverallStatsArea.setText("<html>Fehler bei der Darstellung der Auswertung</html>");
+            tribeResultCodes = null;
+            jTribeStatsArea.setText("<html>Fehler bei der Darstellung der Auswertung</html>");
             logger.error("Failed to render BB representation for tribes", e);
         }
+        jResultTabbedPane.setSelectedIndex(0);
+    }
 
+    private void copyResultBBToClipboardEvent() {
+        StringSelection toCopy = null;
+        String dataName = null;
+        switch (jResultTabbedPane.getSelectedIndex()) {
+            case 0:
+                toCopy = new StringSelection(overallResultCodes);
+                dataName = "Gesamtübersicht";
+                break;
+            case 1:
+                toCopy = new StringSelection(allyResultCodes);
+                dataName = "Stämme";
+                break;
+            case 2:
+                toCopy = new StringSelection(tribeResultCodes);
+                dataName = "Spieler";
+                break;
+        }
+        if (toCopy == null) {
+            JOptionPaneHelper.showInformationBox(jCreateStatsFrame, "Bitte zuerst einen Tab mit einer Auswertung wählen.", "Information");
+            return;
+        }
+        try {
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(toCopy, null);
+            JOptionPaneHelper.showInformationBox(jCreateStatsFrame, "Auswertung '" + dataName + "' in Zwischenablage kopiert.", "Information");
+        } catch (Exception e) {
+            logger.error("Failed to copy data to clipboard", e);
+            JOptionPaneHelper.showErrorBox(jCreateStatsFrame, "Fehler beim Kopieren in die Zwischenablage.", "Fehler");
+        }
     }
 
     /**Update the attack plan filter*/
@@ -1579,21 +1144,14 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
-    private javax.swing.JCheckBox jAddAsDefender;
-    private javax.swing.JButton jAddTribeButton;
+    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel2;
     private javax.swing.JTextPane jAllyStatsArea;
     private javax.swing.JCheckBox jAlwaysOnTopBox;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton15;
-    private javax.swing.JButton jButton17;
     private javax.swing.JCheckBox jCheckBox3;
     private javax.swing.JFrame jCreateStatsFrame;
-    private javax.swing.JButton jDoFilterButton;
-    private javax.swing.JSpinner jEndDate;
-    private javax.swing.JCheckBox jFilterByDate;
-    private javax.swing.JCheckBox jFilterByTribeBox;
     private javax.swing.JCheckBox jFilterCaseSensitive;
-    private javax.swing.JDialog jFilterDialog;
     private javax.swing.JCheckBox jFilterRows;
     private javax.swing.JCheckBox jGuessUnknownLosses;
     private javax.swing.JLabel jLabel10;
@@ -1601,43 +1159,27 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JList jList1;
     private javax.swing.JPanel jNewPlanPanel;
     private javax.swing.JTextPane jOverallStatsArea;
-    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
-    private javax.swing.JButton jRemoveTribeButton;
     private javax.swing.JList jReportSetsForStatsList;
     private javax.swing.JPanel jReportsPanel;
     private com.jidesoft.swing.JideTabbedPane jReportsTabbedPane;
+    private javax.swing.JTabbedPane jResultTabbedPane;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane8;
-    private javax.swing.JCheckBox jShowBlueReports;
-    private javax.swing.JCheckBox jShowGreenReports;
-    private javax.swing.JCheckBox jShowHiddenAttackerReports;
     private javax.swing.JCheckBox jShowPercentsBox;
-    private javax.swing.JCheckBox jShowRedReports;
-    private javax.swing.JCheckBox jShowSnobReports;
-    private javax.swing.JCheckBox jShowYellowReports;
-    private javax.swing.JSpinner jStartDate;
-    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JList jTribeList;
-    private javax.swing.JComboBox jTribeSelectionBox;
-    private javax.swing.JTextField jTribeSelectionFilter;
     private javax.swing.JTextPane jTribeStatsArea;
     private javax.swing.JCheckBox jUseSilentKillsBox;
     private org.jdesktop.swingx.JXList jXColumnList;

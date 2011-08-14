@@ -161,8 +161,8 @@ public class ClockFrame extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(280, 75));
 
         jLabel1.setBackground(new java.awt.Color(239, 235, 223));
-        jLabel1.setFont(new java.awt.Font("Verdana", 0, 36));
-        jLabel1.setText("jLabel1");
+        jLabel1.setFont(new java.awt.Font("Verdana", 0, 36)); // NOI18N
+        jLabel1.setText("Lade...");
         jLabel1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabel1.setOpaque(true);
         getContentPane().add(jLabel1, java.awt.BorderLayout.CENTER);

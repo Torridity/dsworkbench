@@ -367,7 +367,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 }
                 case 1: {
                     Logger.getRootLogger().setLevel(Level.DEBUG);
-
                     break;
                 }
                 default: {

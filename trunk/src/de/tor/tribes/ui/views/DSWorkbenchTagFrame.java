@@ -548,7 +548,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
 
         jTagsPanel.add(villageListPanel, java.awt.BorderLayout.WEST);
 
-        setTitle("Tags");
+        setTitle("Gruppen");
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jAlwaysOnTopBox.setText("Immer im Vordergrund");

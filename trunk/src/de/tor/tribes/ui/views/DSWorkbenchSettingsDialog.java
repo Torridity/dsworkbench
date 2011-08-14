@@ -735,7 +735,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jCreateAccountDialog.setTitle("Registrierung");
         jCreateAccountDialog.setBackground(new java.awt.Color(239, 235, 223));
         jCreateAccountDialog.setModal(true);
-        jCreateAccountDialog.setModalityType(java.awt.Dialog.ModalityType.TOOLKIT_MODAL);
         jCreateAccountDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jRegisterNameLabel.setText("Name");
@@ -788,9 +787,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
         jRegisterButton.setBackground(new java.awt.Color(239, 235, 223));
         jRegisterButton.setText("Registrieren");
-        jRegisterButton.setMaximumSize(new java.awt.Dimension(100, 23));
-        jRegisterButton.setMinimumSize(new java.awt.Dimension(100, 23));
-        jRegisterButton.setPreferredSize(new java.awt.Dimension(100, 23));
+        jRegisterButton.setMaximumSize(new java.awt.Dimension(150, 23));
+        jRegisterButton.setMinimumSize(new java.awt.Dimension(150, 23));
+        jRegisterButton.setPreferredSize(new java.awt.Dimension(150, 23));
         jRegisterButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireRegisterEvent(evt);
@@ -1008,22 +1007,26 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
         jSpearAmount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/spear.png"))); // NOI18N
         jSpearAmount.setLabelText("");
+        jSpearAmount.setPreferredSize(new java.awt.Dimension(215, 24));
         jSpearAmount.setText("8000");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jTroopDensitySelectionDialog.getContentPane().add(jSpearAmount, gridBagConstraints);
 
         jSwordAmount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/sword.png"))); // NOI18N
         jSwordAmount.setLabelText("");
+        jSwordAmount.setPreferredSize(new java.awt.Dimension(215, 24));
         jSwordAmount.setText("7000");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jTroopDensitySelectionDialog.getContentPane().add(jSwordAmount, gridBagConstraints);
@@ -1036,17 +1039,20 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jTroopDensitySelectionDialog.getContentPane().add(jArcherAmount, gridBagConstraints);
 
         jHeavyAmount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/heavy.png"))); // NOI18N
         jHeavyAmount.setLabelText("");
+        jHeavyAmount.setPreferredSize(new java.awt.Dimension(215, 24));
         jHeavyAmount.setText("1000");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jTroopDensitySelectionDialog.getContentPane().add(jHeavyAmount, gridBagConstraints);
@@ -2382,9 +2388,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jCreateAccountButton.setBackground(new java.awt.Color(239, 235, 223));
         jCreateAccountButton.setText("Neuen Account erstellen");
         jCreateAccountButton.setToolTipText("Einen neuen DS Workbench Account erstellen");
-        jCreateAccountButton.setMaximumSize(new java.awt.Dimension(180, 25));
-        jCreateAccountButton.setMinimumSize(new java.awt.Dimension(180, 25));
-        jCreateAccountButton.setPreferredSize(new java.awt.Dimension(180, 25));
+        jCreateAccountButton.setMaximumSize(new java.awt.Dimension(200, 25));
+        jCreateAccountButton.setMinimumSize(new java.awt.Dimension(200, 25));
+        jCreateAccountButton.setPreferredSize(new java.awt.Dimension(200, 25));
         jCreateAccountButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCreateAccountEvent(evt);
@@ -2415,7 +2421,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                         .addComponent(jCreateAccountButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jChangePasswordButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 108, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
                         .addComponent(jCancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOKButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))

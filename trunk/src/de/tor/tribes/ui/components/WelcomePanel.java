@@ -40,7 +40,7 @@ public class WelcomePanel extends JXPanel {
     public WelcomePanel() {
         initComponents();
         setOpaque(true);
-        welcomeTooltipMap.put(jxHelpLabel, "<html> <h2 style='color:#953333; font-weight: bold;'>Integrierte Hilfe</h2> DS Workbench bietet eine umfangreiche Hilfe, die du im Programm jederzeit &uuml;ber <strong>F1</strong> aufrufen kannst. Dabei wird versucht, das passende Hilfethema f&uuml;r die Ansicht, in der du dich gerade befindest, auszuw&auml;hlen.  Es schadet aber auch nicht, einfach mal so in der Hilfe zu st&ouml;bern um neue Funktionen zu entdecken.</html>");
+        welcomeTooltipMap.put(jxHelpLabel, "<html> <h2 style='color:#953333; font-weight: bold;'>Integrierte Hilfe</h2> DS Workbench bietet eine umfangreiche Hilfe, die du im Programm jederzeit &uuml;ber <strong>F1</strong> aufrufen kannst. Dabei wird versucht, das passende Hilfethema f&uuml;r die Ansicht, in der du dich gerade befindest, auszuw&auml;hlen. Es schadet aber auch nicht, einfach mal so in der Hilfe zu st&ouml;bern um neue Funktionen zu entdecken. Einsteiger sollten in jedem Fall die ersten drei Kapitel der Wichtigen Grundlagen gelesen haben.</html>");
         welcomeTooltipMap.put(jxCommunityLabel, "<html> <h2 style='color:#953333; font-weight: bold;'>Die DS Workbench Community</h2> Nat&uuml;rlich gibt es neben dir noch eine Vielzahl anderer Spieler, die DS Workbench regelm&auml;&szlig;ig und intensiv benutzen. Einen perfekten Anlaufpunkt f&uuml;r alle Benutzer bietet das DS Workbench Forum, wo man immer jemanden trifft mit dem man Erfahrungen austauschen und wo man Fragen stellen kann.</html>");
         welcomeTooltipMap.put(jxIdeaLabel, "<html> <h2 style='color:#953333; font-weight: bold;'>Verbesserungen und Ideen </h2> Gibt es irgendwas wo du meinst, dass es in DS Workbench fehlt und was anderen Benutzern auch helfen k&ouml;nnte? Hast du eine Idee, wie man DS Workbench verbessern oder die Handhabung vereinfachen k&ouml;nnte? Dann bietet dieser Bereich im DS Workbench Forum die perfekte Anlaufstelle f&uuml;r dich. Trau dich und hilf mit, DS Workbench  zu verbessern. </html>");
         welcomeTooltipMap.put(jxFacebookLabel, "<html> <h2 style='color:#953333; font-weight: bold;'>DS Workbench @ Facebook</h2> Nat&uuml;rlich geh&ouml;rt es heutzutage fast zum guten Ton, bei Facebook in irgendeiner Art und Weise vertreten zu sein. Auch DS Workbench hat eine eigene Facebook Seite, mit deren Hilfe ihr euch jederzeit &uuml;ber aktuelle News oder Geschehnisse im Zusammenhang mit DS Workbench informieren k&ouml;nnt.</html>");
@@ -170,6 +170,7 @@ public class WelcomePanel extends JXPanel {
         jWelcomePane.add(jxFacebookLabel, gridBagConstraints);
 
         jDisableWelcome.setText("Willkommensseite beim nächsten Start nicht mehr anzeigen");
+        jDisableWelcome.setOpaque(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
@@ -180,7 +181,7 @@ public class WelcomePanel extends JXPanel {
         jxCloseLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jxCloseLabel.setText("Danke, ich möchte DS Workbench nun verwenden.");
         jxCloseLabel.setEnabled(false);
-        jxCloseLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jxCloseLabel.setFont(new java.awt.Font("Tahoma", 0, 14));
         jxCloseLabel.setMaximumSize(new java.awt.Dimension(319, 40));
         jxCloseLabel.setMinimumSize(new java.awt.Dimension(319, 40));
         jxCloseLabel.setPreferredSize(new java.awt.Dimension(319, 40));

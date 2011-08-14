@@ -41,10 +41,10 @@ public class TribeStatResult implements BBSupport {
         String valBuildingDestruction = nf.format(getBuildingDestruction());
         nf.setMinimumFractionDigits(2);
         nf.setMaximumFractionDigits(2);
-        String valKillsPercentAlly = (getAllyKills() == 0) ? "0" : nf.format(100 * getKills() / (double) getAllyKills()) + " %";
-        String valLossesPercentAlly = (getAllyLosses() == 0) ? "0" : nf.format(100 * getLosses() / (double) getAllyLosses()) + " %";
-        String valKillsPercentAll = (getOverallKills() == 0) ? "0" : nf.format(100 * getKills() / (double) getOverallKills()) + " %";
-        String valLossesPercentAll = (getOverallLosses() == 0) ? "0" : nf.format(100 * getLosses() / (double) getOverallLosses()) + " %";
+        String valKillsPercentAlly = (getAllyKills() == 0) ? "0.0 %" : nf.format(100 * getKills() / (double) getAllyKills()) + " %";
+        String valLossesPercentAlly = (getAllyLosses() == 0) ? "0.0 %" : nf.format(100 * getLosses() / (double) getAllyLosses()) + " %";
+        String valKillsPercentAll = (getOverallKills() == 0) ? "0.0 %" : nf.format(100 * getKills() / (double) getOverallKills()) + " %";
+        String valLossesPercentAll = (getOverallLosses() == 0) ? "0.0 %" : nf.format(100 * getLosses() / (double) getOverallLosses()) + " %";
 
         return new String[]{valName, valAttacks, valOffs, valSnobs, valFakes, valEnoblements, valKills, valKillsAsFarm, valKillsPercentAlly, valKillsPercentAll, valLosses, valLossesAsFarm, valLossesPercentAlly, valLossesPercentAll, valWallDestruction, valBuildingDestruction};
     }

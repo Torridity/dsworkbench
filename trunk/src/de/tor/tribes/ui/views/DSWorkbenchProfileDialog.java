@@ -122,6 +122,7 @@ public class DSWorkbenchProfileDialog extends javax.swing.JDialog {
 
         setTitle("Profile");
         setModal(true);
+        setModalExclusionType(java.awt.Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
 
         jLabel2.setText("Server");
 

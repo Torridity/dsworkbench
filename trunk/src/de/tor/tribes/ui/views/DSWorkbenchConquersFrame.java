@@ -128,7 +128,9 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
             }
         });
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-//        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.conquers_view", GlobalOptions.getHelpBroker().getHelpSet());
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.conquers_view", GlobalOptions.getHelpBroker().getHelpSet());
+        }
         // </editor-fold>
         setGlassPane(jxFilterPane);
         pack();

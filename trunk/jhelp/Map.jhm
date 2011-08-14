@@ -10,27 +10,25 @@
 
 <mapID target="pages.map_settings" url="pages/map_settings.html"/>
 
-<mapID target="pages.change_attack_times" url="pages/change_attack_times.html"/>
-
 <mapID target="pages.church_view" url="pages/church_view.html"/>
 
 <mapID target="pages.settings" url="pages/settings.html"/>
 
 <mapID target="pages.map_tools_zoom_minimap" url="pages/map_tools.html#zoom_minimap"/>
 
-<mapID target="pages.map_tools_selection_tool" url="pages/map_tools.html#selection_tool"/>
-
 <mapID target="pages.attack_info_script" url="pages/attack_info_script.html"/>
 
 <mapID target="pages.main_window_basics_layers" url="pages/main_window_basics.html#layers"/>
+
+<mapID target="pages.map_tools_selection_tool" url="pages/map_tools.html#selection_tool"/>
 
 <mapID target="pages.bb_export" url="pages/bb_export.html"/>
 
 <mapID target="pages.map_tools_distance_tool" url="pages/map_tools.html#distance_tool"/>
 
-<mapID target="pages.attack_planer_settings_not_assigned" url="pages/attack_planer_settings.html#not_assigned"/>
-
 <mapID target="pages.dswb_script" url="pages/dswb_script.html"/>
+
+<mapID target="pages.attack_planer_settings_not_assigned" url="pages/attack_planer_settings.html#not_assigned"/>
 
 <mapID target="pages.template_settings" url="pages/template_settings.html"/>
 
@@ -44,10 +42,6 @@
 
 <mapID target="pages.map_tools_create_note" url="pages/map_tools.html#create_note"/>
 
-<mapID target="pages.attack_planer_type" url="pages/attack_planer_type.html"/>
-
-<mapID target="pages.tools" url="pages/tools.html"/>
-
 <mapID target="pages.sos_analyzer" url="pages/sos_analyzer.html"/>
 
 <mapID target="pages.notes_view" url="pages/notes_view.html"/>
@@ -60,21 +54,15 @@
 
 <mapID target="pages.network_settings" url="pages/network_settings.html"/>
 
-<mapID target="pages.attack_planer_time" url="pages/attack_planer_time.html"/>
-
 <mapID target="pages.misc_settings" url="pages/misc_settings.html"/>
 
 <mapID target="pages.attacks_as_igm" url="pages/attacks_as_igm.html"/>
 
 <mapID target="pages.attack_planer_target" url="pages/attack_planer_target.html"/>
 
-<mapID target="pages.attack_view_attack_alert" url="pages/attack_view.html#attack_alert"/>
-
 <mapID target="pages.player_server_settings" url="pages/player_server_settings.html"/>
 
 <mapID target="pages.attack_planer_source" url="pages/attack_planer_source.html"/>
-
-<mapID target="pages.attack_view_export_attack_info" url="pages/attack_view.html#export_attack_info"/>
 
 <mapID target="pages.search_tool" url="pages/search_tool.html"/>
 
@@ -82,21 +70,13 @@
 
 <mapID target="pages.mouse_gestures" url="pages/mouse_gestures.html"/>
 
-<mapID target="pages.views" url="pages/views.html"/>
-
 <mapID target="pages.export_import" url="pages/export_import.html"/>
-
-<mapID target="pages.attack_select_filter" url="pages/attack_select_filter.html"/>
-
-<mapID target="pages.attack_planer_allinone" url="pages/attack_planer_allinone.html"/>
 
 <mapID target="pages.form_setup" url="pages/form_setup.html"/>
 
 <mapID target="pages.extended_map_functions" url="pages/extended_map_functions.html"/>
 
 <mapID target="pages.manual_attack_planer" url="pages/manual_attack_planer.html"/>
-
-<mapID target="pages.main_window_dnd" url="pages/main_window_dnd.html"/>
 
 <mapID target="pages.main_window_basics" url="pages/main_window_basics.html"/>
 
@@ -106,9 +86,13 @@
 
 <mapID target="pages.astar" url="pages/astar.html"/>
 
+<mapID target="pages.troop_filtering" url="pages/troop_filtering.html"/>
+
 <mapID target="pages.troop_density" url="pages/troop_density.html"/>
 
 <mapID target="pages.map_tools_marker" url="pages/map_tools.html#marker"/>
+
+<mapID target="pages.app_menu" url="pages/app_menu.html"/>
 
 <mapID target="pages.login_settings" url="pages/login_settings.html"/>
 
@@ -120,21 +104,19 @@
 
 <mapID target="pages.form_view" url="pages/form_view.html"/>
 
-<mapID target="pages.reports_view_stats" url="pages/reports_view_stats.html"/>
-
 <mapID target="pages.reports_view" url="pages/reports_view.html"/>
 
 <mapID target="pages.attack_planer_settings" url="pages/attack_planer_settings.html"/>
 
 <mapID target="pages.map_tools_move_minimap" url="pages/map_tools.html#move_minimap"/>
 
+<mapID target="pages.ribbon_menu" url="pages/ribbon_menu.html"/>
+
 <mapID target="pages.mapshot_tool" url="pages/mapshot_tool.html"/>
 
 <mapID target="pages.ranking_view" url="pages/ranking_view.html"/>
 
 <mapID target="pages.markers_view" url="pages/markers_view.html"/>
-
-<mapID target="pages.attack_planer_results_details_targets" url="pages/attack_planer_results_details_targets.html"/>
 
 <mapID target="pages.import_ingame" url="pages/import_ingame.html"/>
 
@@ -148,9 +130,9 @@
 
 <mapID target="pages.stats_view" url="pages/stats_view.html"/>
 
-<mapID target="pages.draw_tools" url="pages/draw_tools.html"/>
-
 <mapID target="pages.basics" url="pages/basics.html"/>
+
+<mapID target="pages.main_window" url="pages/main_window.html"/>
 
 <mapID target="pages.attack_settings" url="pages/attack_settings.html"/>
 
@@ -166,6 +148,8 @@
 
 <mapID target="pages.attack_planer" url="pages/attack_planer.html"/>
 
+<mapID target="pages.view_basics" url="pages/view_basics.html"/>
+
 <mapID target="pages.map_tools_ingame_troops" url="pages/map_tools.html#ingame_troops"/>
 
 <mapID target="pages.tag_view" url="pages/tag_view.html"/>
@@ -179,10 +163,6 @@
 <mapID target="pages.template" url="pages/template.html"/>
 
 <mapID target="pages.support_tool" url="pages/support_tool.html"/>
-
-<mapID target="pages.reports_view_filters" url="pages/reports_view_filters.html"/>
-
-<mapID target="pages.attack_planer_results_details_sources" url="pages/attack_planer_results_details_sources.html"/>
 
 <mapID target="images.help" url="images/help.png"/>
 
@@ -403,6 +383,8 @@
 <mapID target="images.att_copy" url="images/att_copy.png"/>
 
 <mapID target="images.tools.measure" url="images/tools/measure.png"/>
+
+<mapID target="images.information_small" url="images/information_small.png"/>
 
 <mapID target="images.att_remove" url="images/att_remove.png"/>
 

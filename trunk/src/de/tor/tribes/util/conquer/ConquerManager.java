@@ -264,7 +264,7 @@ public class ConquerManager extends GenericManager<Conquer> {
                     boolean exists = false;
                     for (ManageableType t : getAllElements()) {
                         Conquer c = (Conquer) t;
-                        if (c.getVillage().getId() == villageID) {
+                        if (c != null && c.getVillage() != null && c.getVillage().getId() == villageID) {
                             //already exists
                             c.setWinner(DataHolder.getSingleton().getTribes().get(newOwner));
                             c.setLoser(DataHolder.getSingleton().getTribes().get(oldOwner));

@@ -58,6 +58,7 @@ public class Note extends ManageableType implements BBSupport {
     public static Note fromInternalRepresentation(String pLine) {
         Note m = new Note();
         try {
+
             String[] split = pLine.trim().split("&");
             m.setNoteSymbol(Integer.parseInt(split[0]));
             m.setNoteText(URLDecoder.decode(split[1], "UTF-8"));

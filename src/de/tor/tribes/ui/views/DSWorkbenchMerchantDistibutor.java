@@ -350,7 +350,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         if (selection == null || selection.length == 0) {
             showInfo(resultInfoPanel, jXResultInfoLabel, "Keine Transporte ausgewählt");
         }
-
+        DefaultTableModel model = ((DefaultTableModel) jResultsTable.getModel());
         int transferCount = 0;
         UserProfile profile = getQuickProfile();
         for (int row : selection) {
@@ -359,7 +359,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
             Village target = (Village) jResultsTable.getValueAt(row, 2);
             if (BrowserCommandSender.sendRes(source, target, t, profile)) {
                 transferCount++;
-                jResultsTable.setValueAt(true, row, 3);
+                model.setValueAt(true, jResultsTable.convertRowIndexToModel(row), 3);
                 if (selection.length > 1 && iClickAccount > 0) {
                     iClickAccount--;
                 }
@@ -371,6 +371,8 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
                 break;
             }
         }
+
+
         if (transferCount == 1) {
             jResultsTable.getSelectionModel().setSelectionInterval(jResultsTable.getSelectedRow() + 1, jResultsTable.getSelectedRow() + 1);
         }
@@ -421,9 +423,6 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         if (merchantTabbedPane.getSelectedIndex() != 1) {
             merchantTabbedPane.setSelectedIndex(1);
         }
-        //Village.class, Transport.class, Village.class, Boolean.class
-        //DefaultTableModel model = (DefaultTableModel) jResultsTable.getModel();
-
         if (jResultsTable.getRowCount() == 0) {
             showInfo(resultInfoPanel, jXResultInfoLabel, "Keine errechneten Transporte vorhanden");
             return;
@@ -1326,10 +1325,10 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
                 /*DefaultTableModel model = (DefaultTableModel) jResultsTable.getModel();
                 int numRows = selectedRows.length;
                 for (int i = 0; i < numRows; i++) {
-                    model.removeRow(jResultsTable.convertRowIndexToModel(jResultsTable.getSelectedRow()));
+                model.removeRow(jResultsTable.convertRowIndexToModel(jResultsTable.getSelectedRow()));
                 }*/
                 TableHelper.deleteSelectedRows(jResultsTable);
-                
+
             }
             showSuccess(resultInfoPanel, jXResultInfoLabel, "Einträge gelöscht");
         }

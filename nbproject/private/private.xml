@@ -6,4 +6,18 @@
             <line>45</line>
         </file>
     </editor-bookmarks>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/TableHelper.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/bb/OverallReportStatsFormatter.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/types/OverallStatResult.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/types/AllyStatResult.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/bb/AllyReportStatsFormatter.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/bb/TribeReportStatsFormatter.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/types/TribeStatResult.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/views/DSWorkbenchReportFrame.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/TribeTribeAttackFrame.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/NoteTableTab.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/views/DSWorkbenchNotepad.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/types/Note.java</file>
+    </open-files>
 </project-private>

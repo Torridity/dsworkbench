@@ -27,6 +27,7 @@ import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.bb.NoteListFormatter;
+import de.tor.tribes.util.bb.VillageListFormatter;
 import de.tor.tribes.util.note.NoteManager;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -136,11 +137,20 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
             KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
             KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK, false);
             KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
-            jxNoteTable.registerKeyboardAction(pActionListener, "Copy", copy, JComponent.WHEN_IN_FOCUSED_WINDOW);
-            jxNoteTable.registerKeyboardAction(pActionListener, "BBCopy", bbCopy, JComponent.WHEN_IN_FOCUSED_WINDOW);
-            jxNoteTable.registerKeyboardAction(pActionListener, "Cut", cut, JComponent.WHEN_IN_FOCUSED_WINDOW);
-            jxNoteTable.registerKeyboardAction(pActionListener, "Paste", paste, JComponent.WHEN_IN_FOCUSED_WINDOW);
-            jxNoteTable.registerKeyboardAction(pActionListener, "Delete", delete, JComponent.WHEN_IN_FOCUSED_WINDOW);
+            jxNoteTable.registerKeyboardAction(pActionListener, "Copy", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            jxNoteTable.registerKeyboardAction(pActionListener, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            jxNoteTable.registerKeyboardAction(pActionListener, "Cut", cut, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            jxNoteTable.registerKeyboardAction(pActionListener, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            jxNoteTable.registerKeyboardAction(pActionListener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+            jxVillageList.registerKeyboardAction(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    copyVillagesAsBBCodes();
+                }
+            }, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
             jxVillageList.registerKeyboardAction(new ActionListener() {
 
                 @Override
@@ -373,12 +383,11 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
     private org.jdesktop.swingx.JXLabel jXLabel1;
     // End of variables declaration//GEN-END:variables
 
-    
-    public void createNote(){
+    public void createNote() {
         NoteManager.getSingleton().addManagedElement(sNoteSet, new Note());
         showInfo("Notiz erstellt");
     }
-    
+
     public void transferSelection(TRANSFER_TYPE pType) {
         switch (pType) {
             case COPY_TO_INTERNAL_CLIPBOARD:
@@ -525,6 +534,60 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
         } else {
             showInfo("<html>Keine Notizen in der Zwischenablage gefunden bzw.<br/>keine Notizen markiert, um D&ouml;rfer hinzuzuf&uuml;gen</html>");
         }
+    }
+
+    private void copyVillagesAsBBCodes() {
+        Object[] selection = jxVillageList.getSelectedValues();
+        if (selection == null || selection.length == 0) {
+            showInfo("Keine Dörfer gewählt");
+            return;
+        }
+
+        try {
+            List<Village> villages = new LinkedList<Village>();
+            for (Object o : selection) {
+                villages.add((Village) o);
+            }
+            boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
+
+            StringBuilder buffer = new StringBuilder();
+            if (extended) {
+                buffer.append("[u][size=12]Dorfliste[/size][/u]\n\n");
+            } else {
+                buffer.append("[u]Dorfliste[/u]\n\n");
+            }
+            buffer.append(new VillageListFormatter().formatElements(villages, extended));
+
+            if (extended) {
+                buffer.append("\n[size=8]Erstellt am ");
+                buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+                buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url][/size]\n");
+            } else {
+                buffer.append("\nErstellt am ");
+                buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+                buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url]\n");
+            }
+
+            String b = buffer.toString();
+            StringTokenizer t = new StringTokenizer(b, "[");
+            int cnt = t.countTokens();
+            if (cnt > 1000) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Dörfer benötigen mehr als 1000 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                    return;
+                }
+            }
+
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
+            String result = "Dörfer in Zwischenablage kopiert.";
+            showSuccess(result);
+        } catch (Exception e) {
+            logger.error("Failed to copy data to clipboard", e);
+            String result = "Fehler beim Kopieren in die Zwischenablage.";
+            showError(result);
+        }
+
     }
 
     public boolean deleteSelection(boolean pAsk) {

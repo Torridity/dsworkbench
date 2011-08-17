@@ -4,6 +4,8 @@
  */
 package de.tor.tribes.ui.renderer;
 
+import com.jidesoft.swing.StyledLabel;
+import com.jidesoft.swing.StyledLabelBuilder;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.ServerSettings;
 import java.awt.Color;
@@ -12,7 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
 /**
@@ -62,8 +63,18 @@ public class ColoredDateCellRenderer extends DefaultTableRenderer {
 
             if (t <= now) {
                 //value is expired, stroke result
-                renderComponent.setText(specialFormat.format(d));
-                renderComponent.setForeground(Color.RED);
+                //renderComponent.setText(specialFormat.format(d));
+                //renderComponent.setForeground(Color.RED);
+                String text = renderComponent.getText();
+                text = text.replaceAll(":", "\\\\:");
+                StyledLabel l = StyledLabelBuilder.createStyledLabel("{" + text + ":s}");
+                if (isSelected) {
+                    color = c.getBackground();
+                }
+                l.setOpaque(true);
+                l.setBackground(color);
+                return l;
+
             } else if (diff <= ten_minutes && diff > five_minutes) {
                 float ratio = (float) (diff - five_minutes) / (float) five_minutes;
                 Color c1 = Color.YELLOW;
@@ -93,6 +104,7 @@ public class ColoredDateCellRenderer extends DefaultTableRenderer {
             renderComponent.setBackground(color);
             return renderComponent;
         } catch (Exception e) {
+            e.printStackTrace();
             return c;
         }
     }

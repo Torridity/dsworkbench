@@ -34,8 +34,8 @@ public class NoteIconListCellRenderer extends DefaultListCellRenderer {
             label.setText("");
             label.setHorizontalAlignment(SwingConstants.CENTER);
             if (type.equals(ICON_TYPE.NOTE) && ((Integer) value) == -1) {
-                label.setIcon(null);
-                label.setText("-");
+                BufferedImage symbol = ImageManager.getNoteIcon(-1);
+                label.setIcon(new ImageIcon(symbol.getScaledInstance(18, 18, BufferedImage.SCALE_FAST)));
             } else {
                 BufferedImage symbol = (type.equals(ICON_TYPE.NOTE)) ? ImageManager.getNoteSymbol((Integer) value) : ImageManager.getNoteIcon((Integer) value);
                 label.setIcon(new ImageIcon(symbol.getScaledInstance(18, 18, BufferedImage.SCALE_FAST)));

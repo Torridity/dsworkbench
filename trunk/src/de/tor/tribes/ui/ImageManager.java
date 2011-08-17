@@ -86,6 +86,7 @@ public class ImageManager {
     public final static int CURSOR_DRAW_ARROW = 29;
     //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Note map icon IDs">
+    public static final int ID_NO_NOTE_ICON = -1;
     public static final int ID_NOTE_ICON_0 = 0;
     public static final int ID_NOTE_ICON_1 = 1;
     public static final int ID_NOTE_ICON_2 = 2;
@@ -153,52 +154,52 @@ public class ImageManager {
     static {
         try {
             NOTE_URLS = new URL[]{
-                        new File("graphics/icons/spear.png").toURI().toURL(),
-                        new File("graphics/icons/sword.png").toURI().toURL(),
-                        new File("graphics/icons/axe.png").toURI().toURL(),
-                        new File("graphics/icons/archer.png").toURI().toURL(),
-                        new File("graphics/icons/spy.png").toURI().toURL(),
-                        new File("graphics/icons/light.png").toURI().toURL(),
-                        new File("graphics/icons/marcher.png").toURI().toURL(),
-                        new File("graphics/icons/heavy.png").toURI().toURL(),
-                        new File("graphics/icons/ram.png").toURI().toURL(),
-                        new File("graphics/icons/cata.png").toURI().toURL(),
-                        new File("graphics/icons/knight.png").toURI().toURL(),
-                        new File("graphics/icons/snob.png").toURI().toURL(),
-                        new File("graphics/icons/def_cav.png").toURI().toURL(),
-                        new File("graphics/icons/def_archer.png").toURI().toURL(),
-                        ImageManager.class.getResource("/res/ui/fake.png"),
-                        ImageManager.class.getResource("/res/ally.png"),
-                        new File("graphics/icons/move_out.png").toURI().toURL(),
-                        new File("graphics/icons/move_in.png").toURI().toURL(),
-                        ImageManager.class.getResource("/res/ui/bullet_ball_blue.png"),
-                        ImageManager.class.getResource("/res/ui/bullet_ball_green.png"),
-                        ImageManager.class.getResource("/res/ui/bullet_ball_yellow.png"),
-                        ImageManager.class.getResource("/res/ui/bullet_ball_red.png"),
-                        ImageManager.class.getResource("/res/ui/bullet_ball_grey.png"),
-                        new File("graphics/icons/warning.png").toURI().toURL(),
-                        ImageManager.class.getResource("/res/die.png"),
-                        ImageManager.class.getResource("/res/add.gif"),
-                        ImageManager.class.getResource("/res/remove.gif"),
-                        ImageManager.class.getResource("/res/checkbox.png"),
-                        ImageManager.class.getResource("/res/ui/eye.png"),
-                        ImageManager.class.getResource("/res/ui/eye_forbidden.png"),
-                        new File("graphics/icons/main.png").toURI().toURL(),
-                        new File("graphics/icons/barracks.png").toURI().toURL(),
-                        new File("graphics/icons/stable.png").toURI().toURL(),
-                        new File("graphics/icons/garage.png").toURI().toURL(),
-                        new File("graphics/icons/church.png").toURI().toURL(),
-                        new File("graphics/icons/ah.png").toURI().toURL(),
-                        new File("graphics/icons/smith.png").toURI().toURL(),
-                        new File("graphics/icons/place.png").toURI().toURL(),
-                        new File("graphics/icons/statue.png").toURI().toURL(),
-                        new File("graphics/icons/market.png").toURI().toURL(),
-                        new File("graphics/icons/wood.png").toURI().toURL(),
-                        new File("graphics/icons/stone.png").toURI().toURL(),
-                        new File("graphics/icons/iron.png").toURI().toURL(),
-                        new File("graphics/icons/farm.png").toURI().toURL(),
-                        new File("graphics/icons/storage.png").toURI().toURL(),
-                        new File("graphics/icons/wall.png").toURI().toURL()};
+                new File("graphics/icons/spear.png").toURI().toURL(),
+                new File("graphics/icons/sword.png").toURI().toURL(),
+                new File("graphics/icons/axe.png").toURI().toURL(),
+                new File("graphics/icons/archer.png").toURI().toURL(),
+                new File("graphics/icons/spy.png").toURI().toURL(),
+                new File("graphics/icons/light.png").toURI().toURL(),
+                new File("graphics/icons/marcher.png").toURI().toURL(),
+                new File("graphics/icons/heavy.png").toURI().toURL(),
+                new File("graphics/icons/ram.png").toURI().toURL(),
+                new File("graphics/icons/cata.png").toURI().toURL(),
+                new File("graphics/icons/knight.png").toURI().toURL(),
+                new File("graphics/icons/snob.png").toURI().toURL(),
+                new File("graphics/icons/def_cav.png").toURI().toURL(),
+                new File("graphics/icons/def_archer.png").toURI().toURL(),
+                ImageManager.class.getResource("/res/ui/fake.png"),
+                ImageManager.class.getResource("/res/ally.png"),
+                new File("graphics/icons/move_out.png").toURI().toURL(),
+                new File("graphics/icons/move_in.png").toURI().toURL(),
+                ImageManager.class.getResource("/res/ui/bullet_ball_blue.png"),
+                ImageManager.class.getResource("/res/ui/bullet_ball_green.png"),
+                ImageManager.class.getResource("/res/ui/bullet_ball_yellow.png"),
+                ImageManager.class.getResource("/res/ui/bullet_ball_red.png"),
+                ImageManager.class.getResource("/res/ui/bullet_ball_grey.png"),
+                new File("graphics/icons/warning.png").toURI().toURL(),
+                ImageManager.class.getResource("/res/die.png"),
+                ImageManager.class.getResource("/res/add.gif"),
+                ImageManager.class.getResource("/res/remove.gif"),
+                ImageManager.class.getResource("/res/checkbox.png"),
+                ImageManager.class.getResource("/res/ui/eye.png"),
+                ImageManager.class.getResource("/res/ui/eye_forbidden.png"),
+                new File("graphics/icons/main.png").toURI().toURL(),
+                new File("graphics/icons/barracks.png").toURI().toURL(),
+                new File("graphics/icons/stable.png").toURI().toURL(),
+                new File("graphics/icons/garage.png").toURI().toURL(),
+                new File("graphics/icons/church.png").toURI().toURL(),
+                new File("graphics/icons/ah.png").toURI().toURL(),
+                new File("graphics/icons/smith.png").toURI().toURL(),
+                new File("graphics/icons/place.png").toURI().toURL(),
+                new File("graphics/icons/statue.png").toURI().toURL(),
+                new File("graphics/icons/market.png").toURI().toURL(),
+                new File("graphics/icons/wood.png").toURI().toURL(),
+                new File("graphics/icons/stone.png").toURI().toURL(),
+                new File("graphics/icons/iron.png").toURI().toURL(),
+                new File("graphics/icons/farm.png").toURI().toURL(),
+                new File("graphics/icons/storage.png").toURI().toURL(),
+                new File("graphics/icons/wall.png").toURI().toURL()};
         } catch (Exception e) {
             NOTE_URLS = null;
         }
@@ -211,6 +212,7 @@ public class ImageManager {
     private static final List<BufferedImage> NOTE_ICONS = new LinkedList<BufferedImage>();
     private static final List<BufferedImage> NOTE_SYMBOLS = new LinkedList<BufferedImage>();
     private static boolean cursorSupported = true;
+    private static BufferedImage noNoteIcon = null;
 
     static {
         try {
@@ -282,6 +284,7 @@ public class ImageManager {
 
     public static void loadNoteIcons() throws Exception {
         try {
+            noNoteIcon = ImageIO.read(ImageManager.class.getResource("/res/remove.gif"));
             NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/pin_blue.png")));//0
             NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/pin_green.png")));//1
             NOTE_ICONS.add(ImageUtils.loadImage(new File("graphics/icons/pin_grey.png")));//2
@@ -324,6 +327,9 @@ public class ImageManager {
     }
 
     public static BufferedImage getNoteIcon(int v) {
+        if (v == -1) {
+            return noNoteIcon;
+        }
         return NOTE_ICONS.get(v);
     }
 
@@ -565,5 +571,4 @@ public class ImageManager {
         }
 
     }
-
 }

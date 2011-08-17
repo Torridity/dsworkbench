@@ -9,6 +9,7 @@ import de.tor.tribes.ui.components.ColoredProgressBar;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import java.applet.Applet;
+import java.applet.AudioClip;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
@@ -103,24 +104,40 @@ public class ClockFrame extends javax.swing.JFrame {
 
     public synchronized void playSound() {
         final String sound = (String) jComboBox1.getSelectedItem();
-        new Thread(new Runnable() {
 
-            @Override
-            public void run() {
-                try {
-                    //@TODO Check sound behavior
-                    Clip clip = AudioSystem.getClip();
-                    AudioInputStream inputStream = AudioSystem.getAudioInputStream(ClockFrame.class.getResourceAsStream("/res/" + sound + ".wav"));
-                    clip.open(inputStream);
-                    clip.start();
-
-                    /* AudioClip ac = Applet.newAudioClip(ClockFrame.class.getResource("/res/" + sound + ".wav"));
-                    ac.play*/
-                } catch (Exception e) {
-                    System.err.println(e.getMessage());
-                }
+        Clip clip = null;
+        AudioClip ac = null;
+        try {
+            if (org.apache.commons.lang.SystemUtils.IS_OS_WINDOWS) {
+                clip = AudioSystem.getClip();
+                AudioInputStream inputStream = AudioSystem.getAudioInputStream(ClockFrame.class.getResourceAsStream("/res/" + sound + ".wav"));
+                clip.open(inputStream);
+                clip.start();
+            } else {
+                ac = Applet.newAudioClip(ClockFrame.class.getResource("/res/" + sound + ".wav"));
+                ac.play();
             }
-        }).start();
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+        try {
+            Thread.sleep(2500);
+        } catch (Exception e) {
+        }
+
+        try {
+            if (clip != null) {
+                clip.stop();
+                clip.flush();
+                clip = null;
+            }
+
+            if (ac != null) {
+                ac.stop();
+                ac = null;
+            }
+        } catch (Exception e) {
+        }
     }
 
     /** This method is called from within the constructor to

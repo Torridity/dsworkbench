@@ -352,23 +352,29 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         }
         DefaultTableModel model = ((DefaultTableModel) jResultsTable.getModel());
         int transferCount = 0;
+        int ignoredTransfers = 0;
         UserProfile profile = getQuickProfile();
         for (int row : selection) {
             Village source = (Village) jResultsTable.getValueAt(row, 0);
             Transport t = (Transport) jResultsTable.getValueAt(row, 1);
             Village target = (Village) jResultsTable.getValueAt(row, 2);
-            if (BrowserCommandSender.sendRes(source, target, t, profile)) {
-                transferCount++;
-                model.setValueAt(true, jResultsTable.convertRowIndexToModel(row), 3);
-                if (selection.length > 1 && iClickAccount > 0) {
-                    iClickAccount--;
+            boolean sent = (Boolean) jResultsTable.getValueAt(row, 3);
+            if (!sent) {
+                if (BrowserCommandSender.sendRes(source, target, t, profile)) {
+                    transferCount++;
+                    model.setValueAt(true, jResultsTable.convertRowIndexToModel(row), 3);
+                    if (selection.length > 1 && iClickAccount > 0) {
+                        iClickAccount--;
+                    }
+                } else {
+                    transferCount = -1;
+                    break;
+                }
+                if (iClickAccount == 0) {
+                    break;
                 }
             } else {
-                transferCount = -1;
-                break;
-            }
-            if (iClickAccount == 0) {
-                break;
+                ignoredTransfers++;
             }
         }
 
@@ -381,8 +387,13 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         if (profile != null) {
             usedProfile = "als " + profile.toString();
         }
-        if (transferCount > 0) {
-            showSuccess(resultInfoPanel, jXResultInfoLabel, ((transferCount == 1) ? "Transport" : "Transporte") + usedProfile + " in den Browser übertragen");
+        if (transferCount > 0 || ignoredTransfers > 0) {
+            String message = "<html>" + ((transferCount == 1) ? "Transport" : "Transporte") + usedProfile + " in den Browser übertragen";
+            if (ignoredTransfers > 0) {
+                message += "<br/>" + ignoredTransfers + " Transport(e) ignoriert, da sie bereits übertragen wurden";
+            }
+            message += "</html>";
+            showSuccess(resultInfoPanel, jXResultInfoLabel, message);
         } else {
             showError(resultInfoPanel, jXResultInfoLabel, "Einer oder mehrere Transporte konnten nicht in den Browser übertragen werden");
         }

@@ -42,7 +42,7 @@ public class NoteIconCellEditor extends AbstractCellEditor implements TableCellE
                 break;
             }
             case MAP: {
-                for (int i = 0; i <= ImageManager.ID_NOTE_ICON_13; i++) {
+                for (int i = -1; i <= ImageManager.ID_NOTE_ICON_13; i++) {
                     model.addElement(i);
                 }
                 break;

@@ -11,8 +11,6 @@ import de.tor.tribes.types.Tag;
 import java.util.List;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.MapPanel;
-import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;

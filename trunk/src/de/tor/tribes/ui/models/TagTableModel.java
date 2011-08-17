@@ -71,16 +71,19 @@ public class TagTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
+        boolean completeUpdateNeeded = true;
         try {
             Tag t = (Tag) TagManager.getSingleton().getAllElements().get(rowIndex);
 
             switch (columnIndex) {
                 case 0: {
                     t.setName((String) value);
+                    completeUpdateNeeded = false;
                     break;
                 }
                 case 1: {
                     //do nothing
+                    completeUpdateNeeded = false;
                     break;
                 }
                 case 2: {
@@ -96,6 +99,6 @@ public class TagTableModel extends AbstractTableModel {
         } catch (Exception e) {
         }
         //repaint map
-        TagManager.getSingleton().revalidate(true);
+        TagManager.getSingleton().revalidate(completeUpdateNeeded);
     }
 }

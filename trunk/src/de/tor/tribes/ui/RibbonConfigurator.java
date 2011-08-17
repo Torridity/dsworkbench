@@ -218,7 +218,7 @@ public class RibbonConfigurator {
                 DSWorkbenchFormFrame.getSingleton().setVisible(true);
             }
         });
-        JCommandButton churchViewButton = factoryButton("Kirchen", "graphics/big/church1.png", "Öffnet die Kirchenübersicht", "Die Kirchenübersicht zeigt alle in DS Workbench eingetragenen Kirchen an. Diese Ansicht ist nur auf Kirchenwelten verfügbar.", true);
+        JCommandButton churchViewButton = factoryButton("Kirchen", "graphics/big/Church1.png", "Öffnet die Kirchenübersicht", "Die Kirchenübersicht zeigt alle in DS Workbench eingetragenen Kirchen an. Diese Ansicht ist nur auf Kirchenwelten verfügbar.", true);
         churchViewButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -317,7 +317,7 @@ public class RibbonConfigurator {
                 DSWorkbenchFormFrame.getSingleton().setVisible(true);
             }
         });
-        JCommandButton churchViewButton = factoryButton("Kirchen", "graphics/big/church1.png", "Öffnet die Kirchenübersicht", "Die Kirchenübersicht zeigt alle in DS Workbench eingetragenen Kirchen an. Diese Ansicht ist nur auf Kirchenwelten verfügbar.", true);
+        JCommandButton churchViewButton = factoryButton("Kirchen", "graphics/big/Church1.png", "Öffnet die Kirchenübersicht", "Die Kirchenübersicht zeigt alle in DS Workbench eingetragenen Kirchen an. Diese Ansicht ist nur auf Kirchenwelten verfügbar.", true);
         churchViewButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -701,8 +701,8 @@ public class RibbonConfigurator {
             }
         });
 //
-        JCommandButton createChurchToolButton = factoryButton(null, "graphics/big/church1.png", "Kirche in einem Dorf auf der Hauptkarte erstellen", "Dieses Werkzeug ist nur auf Kirchenwelten aktiv", true);
-        JCommandButton createChurch1ToolButton = factoryButton(null, "graphics/big/church1.png", "Kirche Stufe 1 erstellen", "Mit gewähltem Werkzeug auf ein Dorf der Hauptkarte klicken, um eine Kirche Stufe 1 im Dorf zu platzieren", true);
+        JCommandButton createChurchToolButton = factoryButton(null, "graphics/big/Church1.png", "Kirche in einem Dorf auf der Hauptkarte erstellen", "Dieses Werkzeug ist nur auf Kirchenwelten aktiv", true);
+        JCommandButton createChurch1ToolButton = factoryButton(null, "graphics/big/Church1.png", "Kirche Stufe 1 erstellen", "Mit gewähltem Werkzeug auf ein Dorf der Hauptkarte klicken, um eine Kirche Stufe 1 im Dorf zu platzieren", true);
         createChurch1ToolButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -711,7 +711,7 @@ public class RibbonConfigurator {
                 }
             }
         });
-        JCommandButton createChurch2ToolButton = factoryButton(null, "graphics/big/church2.png", "Kirche Stufe 2 erstellen", "Mit gewähltem Werkzeug auf ein Dorf der Hauptkarte klicken, um eine Kirche Stufe 2 im Dorf zu platzieren", true);
+        JCommandButton createChurch2ToolButton = factoryButton(null, "graphics/big/Church2.png", "Kirche Stufe 2 erstellen", "Mit gewähltem Werkzeug auf ein Dorf der Hauptkarte klicken, um eine Kirche Stufe 2 im Dorf zu platzieren", true);
         createChurch2ToolButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -720,7 +720,7 @@ public class RibbonConfigurator {
                 }
             }
         });
-        JCommandButton createChurch3ToolButton = factoryButton(null, "graphics/big/church3.png", "Kirche Stufe 3 erstellen", "Mit gewähltem Werkzeug auf ein Dorf der Hauptkarte klicken, um eine Kirche Stufe 3 im Dorf zu platzieren", true);
+        JCommandButton createChurch3ToolButton = factoryButton(null, "graphics/big/Church3.png", "Kirche Stufe 3 erstellen", "Mit gewähltem Werkzeug auf ein Dorf der Hauptkarte klicken, um eine Kirche Stufe 3 im Dorf zu platzieren", true);
         createChurch3ToolButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -832,35 +832,35 @@ public class RibbonConfigurator {
         helpButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                 GlobalOptions.getHelpBroker().setDisplayed(true);
+                GlobalOptions.getHelpBroker().setDisplayed(true);
             }
         });
         JCommandButton communityButton = factoryButton("Community", "/res/128x128/forum.png", "Das DS Workbench Forum", "Das DS Workbench Forum bietet einen sehr guten Anlaufpunkt für Fragen und Probleme die mit DS Workbench zusammenhängen. Hier ist jederzeit jemand anzutreffen, der anderen Benutzern gern mit Rat und Tat zur Seite steht.", true);
         communityButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                  BrowserCommandSender.openPage("http://www.dsworkbench.de/forum/index.php");
+                BrowserCommandSender.openPage("http://www.dsworkbench.de/forum/index.php");
             }
         });
         JCommandButton ideaButton = factoryButton("Ideen", "/res/128x128/idea.png", "Du hast eine neue Idee?", "Falls dir an DS Workbench etwas fehlt, von dem du denkst, dass auch andere davon profitieren könnten, schreibe deine Idee einfach im entsprechenden Bereich des DS Workbench Forums nieder und man kann gern darüber diskutieren.", true);
         ideaButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                 BrowserCommandSender.openPage("http://www.dsworkbench.de/forum/forumdisplay.php?fid=5");
+                BrowserCommandSender.openPage("http://www.dsworkbench.de/forum/forumdisplay.php?fid=5");
             }
         });
         JCommandButton facebookButton = factoryButton("Facebook", "/res/128x128/facebook.png", "DS Workbench @ Facebook", "Wie viele andere Personen und Produkte verfügt DS Workbench über eine eigene Facebook Seite. Wenn dir DS Workbench gefällt hast du so die Möglichkeit, jederzeit über neue Entwicklungen auf dem Laufenden zu sein.", true);
         facebookButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                 BrowserCommandSender.openPage("http://www.facebook.com/pages/DS-Workbench/182068775185568");
+                BrowserCommandSender.openPage("http://www.facebook.com/pages/DS-Workbench/182068775185568");
             }
         });
         JCommandButton donateButton = factoryButton("Spenden", "/res/ui/paypal.gif", "Für DS Workbench spenden", "Natürlich ist DS Workbench komplett kostenlos und wird das auch weiterhin bleiben. Dennoch sind kleine Spenden als Dank für die Arbeit die seit mehreren Jahren in DS Workbench fließt immer gern gesehen. Für alle Spenden möchte ich mich an dieser Stelle herzlich bedanken.", true);
         donateButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                 BrowserCommandSender.openPage("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4434173");
+                BrowserCommandSender.openPage("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4434173");
             }
         });
         JCommandButton aboutButton = factoryButton("About", "/res/ui/about.png", "Über DS Workbench", "Informationen über die Version von DS Workbench die ihr gerade verwendest.", true);

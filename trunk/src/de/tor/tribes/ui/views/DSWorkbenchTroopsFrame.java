@@ -238,7 +238,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
 
 
         JXTaskPane transferTaskPane = new JXTaskPane();
-        transferTaskPane.setTitle("Übertragen");       
+        transferTaskPane.setTitle("Übertragen");
         JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchTroopsFrame.class.getResource("/res/ui/center_ingame.png")));
         transferVillageList.setToolTipText("Zentriert das gewählte Dorf im Spiel");
         transferVillageList.addMouseListener(new MouseAdapter() {

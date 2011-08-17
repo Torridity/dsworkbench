@@ -270,7 +270,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         // </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc=" Add global KeyListener ">
-        jMenuBar1.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, 0), "none");
         Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
 
             @Override

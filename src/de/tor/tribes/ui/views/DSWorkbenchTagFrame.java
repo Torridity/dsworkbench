@@ -148,10 +148,10 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
         KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
-        jTagsTable.registerKeyboardAction(DSWorkbenchTagFrame.this, "Delete", delete, JComponent.WHEN_IN_FOCUSED_WINDOW);
-        jTagsTable.registerKeyboardAction(DSWorkbenchTagFrame.this, "BBCopy", bbCopy, JComponent.WHEN_IN_FOCUSED_WINDOW);
-        jVillageList.registerKeyboardAction(DSWorkbenchTagFrame.this, "Delete", delete, JComponent.WHEN_IN_FOCUSED_WINDOW);
-        jTagsTable.registerKeyboardAction(DSWorkbenchTagFrame.this, "Paste", paste, JComponent.WHEN_IN_FOCUSED_WINDOW);
+        jTagsTable.registerKeyboardAction(DSWorkbenchTagFrame.this, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jTagsTable.registerKeyboardAction(DSWorkbenchTagFrame.this, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jVillageList.registerKeyboardAction(DSWorkbenchTagFrame.this, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jTagsTable.registerKeyboardAction(DSWorkbenchTagFrame.this, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         if (!Constants.DEBUG) {

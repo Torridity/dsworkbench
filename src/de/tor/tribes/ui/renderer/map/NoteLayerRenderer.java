@@ -125,9 +125,11 @@ public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
                 int noteX = (int) Math.floor((double) col * pFieldWidth + pFieldWidth / 2.0 - 10);
                 int noteY = (int) Math.floor((double) row * pFieldHeight + pFieldHeight / 2.0 - 23);
                 int noteIcon = n.getMapMarker();
-                g2d.copyArea(noteIcon * 32, pCopyPosition + 68, 32, 32, noteX + dx - noteIcon * 32, noteY + dy - pCopyPosition - 68);
-                dx += 2;
-                dy += 2;
+                if (noteIcon != -1) {
+                    g2d.copyArea(noteIcon * 32, pCopyPosition + 68, 32, 32, noteX + dx - noteIcon * 32, noteY + dy - pCopyPosition - 68);
+                    dx += 2;
+                    dy += 2;
+                }
             }
         }
     }

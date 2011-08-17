@@ -104,8 +104,8 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
     static {
         jxAttackTable.setRowHeight(24);
-        HighlightPredicate.ColumnHighlightPredicate colu = new HighlightPredicate.ColumnHighlightPredicate(0, 1, 2, 3, 4, 5, 6,7, 10, 11);       
-        
+        HighlightPredicate.ColumnHighlightPredicate colu = new HighlightPredicate.ColumnHighlightPredicate(0, 1, 2, 3, 4, 5, 6, 7, 10, 11);
+
         jxAttackTable.setHighlighters(new CompoundHighlighter(colu, HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B)));
         jxAttackTable.setColumnControlVisible(true);
         jxAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
@@ -1536,18 +1536,23 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             return;
         }
         int sentAttacks = 0;
+        int ignoredAttacks = 0;
         UserProfile profile = DSWorkbenchAttackFrame.getSingleton().getQuickProfile();
 
         for (Attack a : attacks) {
-            if (BrowserCommandSender.sendAttack(a, profile)) {
-                a.setTransferredToBrowser(true);
-                if (attacks.size() > 1) {
-                    DSWorkbenchAttackFrame.getSingleton().decreaseClickAccountValue();
+            if (!a.isTransferredToBrowser()) {
+                if (BrowserCommandSender.sendAttack(a, profile)) {
+                    a.setTransferredToBrowser(true);
+                    if (attacks.size() > 1) {
+                        DSWorkbenchAttackFrame.getSingleton().decreaseClickAccountValue();
+                    }
+                    sentAttacks++;
+                    if (DSWorkbenchAttackFrame.getSingleton().getClickAccountValue() == 0) {
+                        break;
+                    }
                 }
-                sentAttacks++;
-                if (DSWorkbenchAttackFrame.getSingleton().getClickAccountValue() == 0) {
-                    break;
-                }
+            } else {
+                ignoredAttacks++;
             }
         }
 
@@ -1561,7 +1566,12 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         if (profile != null) {
             usedProfile = "als " + profile.toString();
         }
-        showInfo(sentAttacks + " von " + attacks.size() + " Angriffe(n) " + usedProfile + " in den Browser übertragen");
+        String message = "<html>" + sentAttacks + " von " + attacks.size() + " Angriffe(n) " + usedProfile + " in den Browser &uuml;bertragen";
+        if (ignoredAttacks != 0) {
+            message += "<br/>" + ignoredAttacks + " Angriff(e) ignoriert, da sie bereits &uuml;bertragen wurden";
+        }
+        message+= "</html>";
+        showInfo(message);
     }
 
     private boolean copyToInternalClipboard() {

@@ -250,9 +250,9 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
             public void mouseReleased(MouseEvent e) {
                 for (Tag t : getSelectedTags()) {
                     t.setTagColor(null);
-                }
-                ((TagTableModel) jTagsTable.getModel()).fireTableDataChanged();
 
+                }
+                TagManager.getSingleton().fireDataChangedEvents();
             }
         });
         editPane.getContentPane().add(colorRemoveButton);

@@ -17,6 +17,7 @@ import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.ServerSettings;
@@ -1071,7 +1072,7 @@ class MinimapRepaintThread extends Thread {
             } else {
                 mapDim.setSize(currentDim);
             }
-            mBuffer = new BufferedImage(mapDim.width, mapDim.height, BufferedImage.TYPE_INT_RGB);
+            mBuffer = ImageUtils.createCompatibleBufferedImage(mapDim.width, mapDim.height, BufferedImage.OPAQUE);
         }
         drawn = false;
     }
@@ -1144,11 +1145,13 @@ class MinimapRepaintThread extends Thread {
             DEFAULT = Constants.DS_DEFAULT_MARKER;
         }
 
+
         double wField = ServerSettings.getSingleton().getMapDimension().getWidth() / (double) visiblePart.width;
         double hField = ServerSettings.getSingleton().getMapDimension().getHeight() / (double) visiblePart.height;
+        Village currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
 
-        for (int i = visiblePart.x; i < (visiblePart.width + visiblePart.x); i++) {
-            for (int j = visiblePart.y; j < (visiblePart.height + visiblePart.y); j++) {
+        for (int i = visiblePart.x; i < (visiblePart.width + visiblePart.x); i += 3) {
+            for (int j = visiblePart.y; j < (visiblePart.height + visiblePart.y); j += 3) {
                 Village v = mVisibleVillages[i][j];
                 if (v != null) {
                     Color markerColor = null;
@@ -1156,7 +1159,6 @@ class MinimapRepaintThread extends Thread {
                     if (v.getTribe() == Barbarians.getSingleton()) {
                         isLeft = true;
                     } else {
-                        Village currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                         if ((currentUserVillage != null) && (v.getTribe().toString().equals(currentUserVillage.getTribe().toString()))) {
                             //village is owned by current player. mark it dependent on settings
                             if (markPlayer) {
@@ -1198,11 +1200,11 @@ class MinimapRepaintThread extends Thread {
                         } else {
                             g2d.setColor(DEFAULT);
                         }
-                        g2d.fillRect((int) Math.round((i - visiblePart.x) * wField), (int) Math.round((j - visiblePart.y) * hField), (int) Math.round(wField), (int) Math.round(hField));
+                        g2d.fillRect((int) Math.round((i - visiblePart.x) * wField), (int) Math.round((j - visiblePart.y) * hField), 3, 3);
                     } else {
                         if (showBarbarian) {
-                            g2d.setColor(Color.BLACK);
-                            g2d.fillRect((int) Math.round((i - visiblePart.x) * wField), (int) Math.round((j - visiblePart.y) * hField), (int) Math.round(wField), (int) Math.round(hField));
+                            g2d.setColor(Color.LIGHT_GRAY);
+                            g2d.fillRect((int) Math.round((i - visiblePart.x) * wField), (int) Math.round((j - visiblePart.y) * hField), 3, 3);
                         }
                     }
                 }

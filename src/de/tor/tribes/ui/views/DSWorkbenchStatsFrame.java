@@ -120,8 +120,8 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
 
         KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
-        jTabbedPane1.registerKeyboardAction(DSWorkbenchStatsFrame.this, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        jTribeList.registerKeyboardAction(DSWorkbenchStatsFrame.this, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jTabbedPane1.registerKeyboardAction(DSWorkbenchStatsFrame.this, "BBCopy", bbCopy, JComponent.WHEN_IN_FOCUSED_WINDOW);
+        jTribeList.registerKeyboardAction(DSWorkbenchStatsFrame.this, "Delete", delete, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
         try {
             jAlwaysOnTopBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("stats.frame.alwaysOnTop")));

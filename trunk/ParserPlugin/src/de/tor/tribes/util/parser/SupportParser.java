@@ -14,6 +14,7 @@ import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.troops.SupportVillageTroopsHolder;
 import de.tor.tribes.util.troops.TroopsManager;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
@@ -38,7 +39,8 @@ public class SupportParser implements SilentParserInterface {
         StringTokenizer lineTok = new StringTokenizer(pTroopsString, "\n\r");
         Village supportSender = null;
         int supportCount = 0;
-         TroopsManager.getSingleton().invalidate();
+        List<Village> touchedVillages = new LinkedList<Village>();
+        TroopsManager.getSingleton().invalidate();
         while (lineTok.hasMoreElements()) {
             //parse single line for village
             String line = lineTok.nextToken();
@@ -49,49 +51,15 @@ public class SupportParser implements SilentParserInterface {
                     supportSender = null;
                 }
 
-                if (supportSender != null) {
+                if (supportSender != null && !touchedVillages.contains(supportSender)) {
                     //remove all supports
                     SupportVillageTroopsHolder holder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(supportSender, TroopsManager.TROOP_TYPE.SUPPORT);
                     if (holder != null) {
                         //remove all supports if there are any to avoid old entries
                         holder.clearSupports();
+                        touchedVillages.add(supportSender);
                     }
                 }
-                /*//might be troop hosting village
-                Village before = v;
-                try {
-                v = new VillageParser().parse(line).get(0);
-                } catch ( Exception e ) {
-                v = null;
-                }
-                if ( before != null ) {
-                //one village has finished, update troops outside values!
-                VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(before);
-                if ( holder != null ) {
-                holder.updateSupportValues();
-                }
-                }
-                
-                if ( v != null ) {
-                //Hashtable<UnitHolder, Integer> own = parseUnits(line.substring(line.indexOf(ParserVariableManager.getSingleton().getProperty("troops.own"))).trim());
-                Hashtable<UnitHolder, Integer> own = parseUnits(line.substring(line.indexOf(ParserVariableManager.getSingleton().getProperty("troops.in.village"))).trim());
-                
-                if ( own != null ) {
-                //only add valid troop information
-                VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
-                if ( holder == null ) {
-                TroopsManager.getSingleton().addTroopsForVillageFast(v, new LinkedList<Integer>());
-                holder = TroopsManager.getSingleton().getTroopsForVillage(v);
-                } else {
-                holder.clearSupportTargets();
-                }
-                holder.setOwnTroops(own);
-                //one valid information parsed
-                retValue = true;
-                
-                
-                }//end troops == null
-                }//end host == null*/
             } else {
                 if (supportSender != null) {
                     //might be support target village
@@ -106,64 +74,24 @@ public class SupportParser implements SilentParserInterface {
                     if (supportTarget != null) {
                         //found new support
                         Hashtable<UnitHolder, Integer> supportTroops = parseUnits(line.replaceAll(Pattern.quote(supportTarget.toString()), "").trim());
-                        holder.addOutgoingSupport(supportTarget, supportTroops);
-                        SupportVillageTroopsHolder supporterHolder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(supportTarget, TroopsManager.TROOP_TYPE.SUPPORT, true);
-                        supporterHolder.addIncomingSupport(supportSender, supportTroops);
-                        supportCount++;
+                        if (supportTroops != null) {
+                            holder.addOutgoingSupport(supportTarget, supportTroops);
+
+                            SupportVillageTroopsHolder supporterHolder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(supportTarget, TroopsManager.TROOP_TYPE.SUPPORT);
+                            if (holder != null && !touchedVillages.contains(supportTarget)) {
+                                //remove all supports if there are any to avoid old entries
+                                holder.clearSupports();
+                                touchedVillages.add(supportTarget);
+                            }
+                            supporterHolder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(supportTarget, TroopsManager.TROOP_TYPE.SUPPORT, true);
+                            supporterHolder.addIncomingSupport(supportSender, supportTroops);
+                            supportCount++;
+                        }
                     }
-                    /* if ( holder != null ) {
-                    //remove existing supports
-                    holder.clearSupportTargets();
-                    }*/
-                    /*	    Village supportTarget = null;
-                    try {
-                    supportTarget = new VillageParser().parse(line).get(0);
-                    } catch ( Exception e ) {
-                    supportTarget = null;
-                    }
-                    
-                    if ( supportTarget != null ) {
-                    Hashtable<UnitHolder, Integer> support = parseUnits(line.replaceAll(Pattern.quote(supportTarget.toString()), "").trim());
-                    if ( support != null ) {
-                    //only add valid troop information
-                    if ( holder == null ) {
-                    TroopsManager.getSingleton().addTroopsForVillageFast(v, new LinkedList<Integer>());
-                    holder = TroopsManager.getSingleton().getTroopsForVillage(v);
-                    }
-                    
-                    //add support target for source village
-                    holder.addSupportTarget(supportTarget);
-                    //add suppporting troops to target
-                    holder = TroopsManager.getSingleton().getTroopsForVillage(supportTarget);
-                    if ( holder == null ) {
-                    TroopsManager.getSingleton().addTroopsForVillageFast(supportTarget, new LinkedList<Integer>());
-                    holder = TroopsManager.getSingleton().getTroopsForVillage(supportTarget);
-                    holder.addSupport(v, support);
-                    } else {
-                    holder.addSupport(v, support);
-                    }
-                    holder.updateSupportValues();
-                    }
-                    }//end parsed troops == null
-                    }//end host == null
-                    }//end support target check
-                    }
-                    
-                    //update troops for last found village
-                    if ( v != null ) {
-                    //one village has finished, update troops outside values!
-                    VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
-                    if ( holder != null ) {
-                    holder.updateSupportValues();
-                    }
-                    }
-                    if ( retValue ) {
-                    TroopsManager.getSingleton().forceUpdate();
-                    }*/
                 }
             }
         }
- 
+
         boolean result = false;
         if (supportCount > 0) {
             try {
@@ -177,32 +105,25 @@ public class SupportParser implements SilentParserInterface {
         return result;
     }
 
-    private static Village extractVillage(String pLine) {
-        List<Village> villages = new VillageParser().parse(pLine);
-        switch (villages.size()) {
-            case 0:
-                return null;
-            case 2:
-                return villages.get(1);
-            default:
-                return villages.get(0);
-        }
-    }
-
     private static Hashtable<UnitHolder, Integer> parseUnits(String pLine) {
         String line = pLine.replaceAll(ParserVariableManager.getSingleton().getProperty("troops.own"), "").replaceAll(ParserVariableManager.getSingleton().getProperty("troops.commands"), "").replaceAll(ParserVariableManager.getSingleton().getProperty("troops"), "");
+        // System.out.println("Line after: " + line);
         StringTokenizer t = new StringTokenizer(line, " \t");
-        int uCount = DataHolder.getSingleton().getUnits().size();
+        //get unit count (decrease due  to militia which cannot support
+        int uCount = DataHolder.getSingleton().getUnits().size() - 1;
         Hashtable<UnitHolder, Integer> units = new Hashtable<UnitHolder, Integer>();
         int cnt = 0;
         while (t.hasMoreTokens()) {
+            String next = t.nextToken();
             try {
-                int amount = Integer.parseInt(t.nextToken());
+                int amount = Integer.parseInt(next);
                 UnitHolder u = DataHolder.getSingleton().getUnits().get(cnt);
+                //  System.out.println("Put " + u + " - " + amount);
                 units.put(u, amount);
                 cnt++;
             } catch (Exception e) {
                 //token with no troops
+                //  System.out.println("Invalid token: " + next);
             }
         }
         if (cnt != uCount) {

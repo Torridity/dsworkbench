@@ -95,9 +95,7 @@ import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
@@ -108,6 +106,8 @@ import org.jdesktop.swingx.tips.TipOfTheDayModel;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 /**
+ * @TODO allow to add concrete time in attack planer
+ * @TODO Limit transport amount to 0 in merchant distributor
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends JRibbonFrame implements

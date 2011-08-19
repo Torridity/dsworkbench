@@ -354,10 +354,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     //second button might show village menu
                     Village v = getVillageAtMousePos();
                     if (v != null) {
-                        //show menu
-                      /*  MenuRenderer.getSingleton().setMenuLocation(e.getX(), e.getY());
-                        MenuRenderer.getSingleton().switchVisibility();
-                        } else {*/
                         //show village menu
                         actionMenuVillage = v;
                         jVillageActionsMenu.show(MapPanel.getSingleton(), e.getX(), e.getY());

@@ -1270,31 +1270,34 @@ public class DataHolder {
     }
 
     public Village getRandomVillage() {
-        Iterator<Integer> it = mVillagesTable.keySet().iterator();
-        while (it.hasNext()) {
-            Integer id = it.next();
-            if ((int) Math.rint(Math.random() * 20) == 10) {
-                return mVillagesTable.get(id);
+        try {
+            Iterator<Integer> it = mVillagesTable.keySet().iterator();
+            while (it.hasNext()) {
+                Integer id = it.next();
+                if ((int) Math.rint(Math.random() * 20) == 10) {
+                    return mVillagesTable.get(id);
+                }
             }
-        }
-        it = mVillagesTable.keySet().iterator();
-        while (it.hasNext()) {
-            Integer id = it.next();
-            if ((int) Math.rint(Math.random() * 10) == 5) {
-                return mVillagesTable.get(id);
+            it = mVillagesTable.keySet().iterator();
+            while (it.hasNext()) {
+                Integer id = it.next();
+                if ((int) Math.rint(Math.random() * 10) == 5) {
+                    return mVillagesTable.get(id);
+                }
             }
-        }
-        it = mVillagesTable.keySet().iterator();
-        while (it.hasNext()) {
-            Integer id = it.next();
-            if ((int) Math.rint(Math.random() * 5) == 2) {
-                return mVillagesTable.get(id);
+            it = mVillagesTable.keySet().iterator();
+            while (it.hasNext()) {
+                Integer id = it.next();
+                if ((int) Math.rint(Math.random() * 5) == 2) {
+                    return mVillagesTable.get(id);
+                }
             }
+            it = mVillagesTable.keySet().iterator();
+            Integer id = it.next();
+            return mVillagesTable.get(id);
+        } catch (Exception e) {
+            return null;
         }
-        it = mVillagesTable.keySet().iterator();
-        Integer id = it.next();
-        return mVillagesTable.get(id);
-
         /*Iterator<Integer> it = mVillagesTable.keySet().iterator();
         int id = -1;
         int cnt = (int) Math.rint(100.0 * Math.random());

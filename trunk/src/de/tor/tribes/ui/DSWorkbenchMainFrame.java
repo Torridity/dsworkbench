@@ -106,8 +106,6 @@ import org.jdesktop.swingx.tips.TipOfTheDayModel;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 /**
- * @TODO allow to add concrete time in attack planer
- * @TODO Limit transport amount to 0 in merchant distributor
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends JRibbonFrame implements

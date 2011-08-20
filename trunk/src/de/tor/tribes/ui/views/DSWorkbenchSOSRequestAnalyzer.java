@@ -501,16 +501,17 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         jSOSInputPanel.add(jResultPanel, java.awt.BorderLayout.CENTER);
 
         setTitle("SOS Analyzer");
-        setMinimumSize(new java.awt.Dimension(830, 500));
+        setMinimumSize(new java.awt.Dimension(500, 400));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jSOSPanel.setBackground(new java.awt.Color(239, 235, 223));
-        jSOSPanel.setMinimumSize(new java.awt.Dimension(500, 400));
-        jSOSPanel.setPreferredSize(new java.awt.Dimension(600, 500));
+        jSOSPanel.setMinimumSize(new java.awt.Dimension(0, 0));
+        jSOSPanel.setPreferredSize(new java.awt.Dimension(500, 300));
         jSOSPanel.setLayout(new java.awt.BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
@@ -533,7 +534,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);

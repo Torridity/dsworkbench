@@ -109,7 +109,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
     private final static JXTable jxReportTable = new JXTable();
     private static ReportManagerTableModel reportModel = null;
     private static boolean KEY_LISTENER_ADDED = false;
-    private PainterHighlighter highlighter = null;
+    private static PainterHighlighter highlighter = null;
 
     static {
         jxReportTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));

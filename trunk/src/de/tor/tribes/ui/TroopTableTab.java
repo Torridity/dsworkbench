@@ -54,6 +54,10 @@ import javax.swing.KeyStroke;
 import javax.swing.RowFilter;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
@@ -90,11 +94,10 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         jxTroopTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jxTroopTable.setColumnControlVisible(true);
         jxTroopTable.setDefaultRenderer(Float.class, new PercentCellRenderer());
-        jxTroopTable.setDefaultRenderer(Number.class, new NumberFormatCellRenderer());
+        jxTroopTable.setDefaultRenderer(Integer.class, new NumberFormatCellRenderer());
         jxTroopTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         troopModel = new TroopsTableModel(TroopsManager.getSingleton().getDefaultGroupName());
         jxTroopTable.setModel(troopModel);
-
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
         Graphics2D g = back.createGraphics();
         GeneralPath p = new GeneralPath();

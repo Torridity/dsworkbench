@@ -21,7 +21,7 @@ public class DummyVillage extends Village {
         super();
         setX(pX);
         setY(pY);
-        setTribe(Barbarians.getSingleton());
+        setTribe(new DummyTribe());
     }
 
     @Override

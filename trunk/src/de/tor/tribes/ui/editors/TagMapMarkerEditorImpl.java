@@ -38,7 +38,8 @@ public class TagMapMarkerEditorImpl extends javax.swing.JPanel {
 
         //setup note symbol box
         jComboBox1.addItem(-1);
-        for (int i = 0; i <= ImageManager.ICON_SNOB; i++) {
+        //ICON_SNOB
+        for (int i = 0; i <= ImageManager.NOTE_SYMBOL_WALL; i++) {
             jComboBox1.addItem(i);
         }
 
@@ -55,7 +56,7 @@ public class TagMapMarkerEditorImpl extends javax.swing.JPanel {
                     int v = (Integer) value;
                     label.setHorizontalAlignment(SwingConstants.CENTER);
                     if (v != -1) {
-                        BufferedImage symbol = ImageManager.getUnitImage(v, false);
+                        BufferedImage symbol = ImageManager.getNoteSymbol(v);//ImageManager.getUnitImage(v, false);
                         label.setIcon(new ImageIcon(symbol.getScaledInstance(16, 16, BufferedImage.SCALE_FAST)));
                     } else {
                         label.setIcon(no_tag);

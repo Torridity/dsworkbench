@@ -403,7 +403,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         jPanel2.add(infoPanel, java.awt.BorderLayout.SOUTH);
 
         setTitle("Entfernungsübersicht");
-        setMinimumSize(new java.awt.Dimension(600, 500));
+        setMinimumSize(new java.awt.Dimension(500, 400));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jAlwaysOnTop.setText("Immer im Vordergrund");
@@ -416,7 +416,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         getContentPane().add(jAlwaysOnTop, gridBagConstraints);
 
         jDistancePanel.setBackground(new java.awt.Color(239, 235, 223));
-        jDistancePanel.setMinimumSize(new java.awt.Dimension(300, 400));
+        jDistancePanel.setMinimumSize(new java.awt.Dimension(300, 100));
         jDistancePanel.setPreferredSize(new java.awt.Dimension(300, 400));
         jDistancePanel.setLayout(new java.awt.BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();

@@ -78,7 +78,7 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
     private final static JXTable jxMarkerTable = new JXTable();
     private static MarkerTableModel markerModel = null;
     private static boolean KEY_LISTENER_ADDED = false;
-    private PainterHighlighter highlighter = null;
+    private static PainterHighlighter highlighter = null;
 
     static {
         HighlightPredicate.ColumnHighlightPredicate colu = new HighlightPredicate.ColumnHighlightPredicate(0, 2);

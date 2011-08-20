@@ -12,6 +12,7 @@ import de.tor.tribes.util.attack.AttackManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 
@@ -128,14 +129,22 @@ public class UserProfile {
                 return false;
             }
         }
+        FileOutputStream fout = null;
         try {
-            FileOutputStream fout = new FileOutputStream(getProfileDirectory() + "/profile.properties");
+            fout = new FileOutputStream(getProfileDirectory() + "/profile.properties");
             mProperties.store(fout, "");
             fout.flush();
-            fout.close();
         } catch (Exception e) {
             logger.error("Failed to store profile properties");
             return false;
+        } finally {
+            try {
+                if (fout != null) {
+                    fout.close();
+                    fout = null;
+                }
+            } catch (IOException ex) {
+            }
         }
         return true;
     }
@@ -188,6 +197,7 @@ public class UserProfile {
 
     public boolean delete() {
         boolean success = true;
+        System.gc();
         for (File f : new File(getProfileDirectory()).listFiles()) {
             if (!f.delete()) {
                 success = false;

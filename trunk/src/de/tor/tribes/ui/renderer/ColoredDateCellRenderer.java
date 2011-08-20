@@ -65,15 +65,22 @@ public class ColoredDateCellRenderer extends DefaultTableRenderer {
                 //value is expired, stroke result
                 //renderComponent.setText(specialFormat.format(d));
                 //renderComponent.setForeground(Color.RED);
-                String text = renderComponent.getText();
+               /* String text = renderComponent.getText();
                 text = text.replaceAll(":", "\\\\:");
-                StyledLabel l = StyledLabelBuilder.createStyledLabel("{" + text + ":s}");
-                if (isSelected) {
+                StyledLabel l = StyledLabelBuilder.createStyledLabel("{" + text + ":s}");*/
+                renderComponent.setText("<html><nobr><s>" + renderComponent.getText() + "</s></nobr></html>");
+                //l.setOpaque(false);
+                
+                
+              /*  if (isSelected) {
                     color = c.getBackground();
-                }
-                l.setOpaque(true);
-                l.setBackground(color);
-                return l;
+                }*/
+               // l.setOpaque(true);
+               // l.setBackground(color);
+                /*renderComponent.setText(l.getText());
+                l.paint(renderComponent.getGraphics());
+
+                return renderComponent;*/
 
             } else if (diff <= ten_minutes && diff > five_minutes) {
                 float ratio = (float) (diff - five_minutes) / (float) five_minutes;
@@ -104,7 +111,6 @@ public class ColoredDateCellRenderer extends DefaultTableRenderer {
             renderComponent.setBackground(color);
             return renderComponent;
         } catch (Exception e) {
-            e.printStackTrace();
             return c;
         }
     }

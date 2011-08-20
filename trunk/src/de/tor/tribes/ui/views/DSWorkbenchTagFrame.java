@@ -34,6 +34,7 @@ import de.tor.tribes.util.MouseGestureHandler;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.bb.TagListFormatter;
+import de.tor.tribes.util.bb.VillageListFormatter;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -51,9 +52,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -90,6 +94,8 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
             pasteVillagesFromClipboard();
         } else if (e.getActionCommand().equals("BBCopy")) {
             transferSelectedTagsAsBBCodesToClipboard();
+        } else if (e.getActionCommand().equals("BBCopy_Village")) {
+            copyVillageAsBBCode();
         } else if (e.getActionCommand().equals("Delete")) {
             if (e.getSource() != null) {
                 if (e.getSource().equals(jTagsTable)) {
@@ -151,6 +157,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         jTagsTable.registerKeyboardAction(DSWorkbenchTagFrame.this, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jTagsTable.registerKeyboardAction(DSWorkbenchTagFrame.this, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jVillageList.registerKeyboardAction(DSWorkbenchTagFrame.this, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jVillageList.registerKeyboardAction(DSWorkbenchTagFrame.this, "BBCopy_Village", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jTagsTable.registerKeyboardAction(DSWorkbenchTagFrame.this, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
@@ -406,6 +413,57 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         }
     }
 
+    private void copyVillageAsBBCode() {
+        Object[] villageSelection = jVillageList.getSelectedValues();
+        if (villageSelection == null || villageSelection.length == 0) {
+            showInfo("Keine Dörfer ausgewählt");
+            return;
+        }
+        try {
+            List<Village> villages = new LinkedList<Village>();
+            for (Object o : villageSelection) {
+                villages.add((Village) o);
+            }
+            boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
+
+            StringBuilder buffer = new StringBuilder();
+            if (extended) {
+                buffer.append("[u][size=12]Dorfliste[/size][/u]\n\n");
+            } else {
+                buffer.append("[u]Dorfliste[/u]\n\n");
+            }
+            buffer.append(new VillageListFormatter().formatElements(villages, extended));
+
+            if (extended) {
+                buffer.append("\n[size=8]Erstellt am ");
+                buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+                buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url][/size]\n");
+            } else {
+                buffer.append("\nErstellt am ");
+                buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+                buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url]\n");
+            }
+
+            String b = buffer.toString();
+            StringTokenizer t = new StringTokenizer(b, "[");
+            int cnt = t.countTokens();
+            if (cnt > 1000) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Dörfer benötigen mehr als 1000 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                    return;
+                }
+            }
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
+            String result = "Dörfer in Zwischenablage kopiert.";
+            showSuccess(result);
+        } catch (Exception e) {
+            logger.error("Failed to copy data to clipboard", e);
+            String result = "Fehler beim Kopieren in die Zwischenablage.";
+            showError(result);
+        }
+    }
+
     private void pasteVillagesFromClipboard() {
         List<Village> villages = null;
         try {
@@ -429,9 +487,19 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
             showInfo("Keine Gruppe ausgewählt");
             return;
         }
+        boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
 
         try {
-            String formatted = new TagListFormatter().formatElements(selection, true);
+            String formatted = new TagListFormatter().formatElements(selection, extended);
+            String b = formatted;
+            StringTokenizer t = new StringTokenizer(b, "[");
+            int cnt = t.countTokens();
+            if (cnt > 1000) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Gruppen benötigen mehr als 1000 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                    return;
+                }
+            }
+
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(formatted), null);
             showSuccess("BB-Codes in die Zwischenablage kopiert");
         } catch (HeadlessException he) {
@@ -566,14 +634,13 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         getContentPane().add(jAlwaysOnTopBox, gridBagConstraints);
 
         jTagPanel.setBackground(new java.awt.Color(239, 235, 223));
+        jTagPanel.setPreferredSize(new java.awt.Dimension(500, 300));
         jTagPanel.setLayout(new java.awt.BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 500;
-        gridBagConstraints.ipady = 361;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jTagPanel, gridBagConstraints);

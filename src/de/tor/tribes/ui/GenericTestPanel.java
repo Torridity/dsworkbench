@@ -125,6 +125,7 @@ public class GenericTestPanel extends javax.swing.JPanel {
 
         add(menuPanel, java.awt.BorderLayout.EAST);
 
+        centerPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         centerPanel.setLayout(new java.awt.BorderLayout());
 
         menuCollapsePanel.setBackground(new java.awt.Color(204, 204, 204));

@@ -1396,7 +1396,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
 
             WOOD, CLAY, IRON
         }
-        private int amount;
+        private int amount = 0;
         private Type type;
 
         public Resource(int pAmount, Type pType) {
@@ -1415,7 +1415,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
          * @param amount the amount to set
          */
         public void setAmount(int amount) {
-            this.amount = amount;
+            this.amount = (amount > 0) ? amount : 0;
         }
 
         /**

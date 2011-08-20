@@ -30,6 +30,7 @@ import de.tor.tribes.types.TribeStatResult;
 import de.tor.tribes.types.TribeStatsElement;
 import de.tor.tribes.types.TribeStatsElement.Stats;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.types.test.DummyVillage;
 import de.tor.tribes.util.BBChangeListener;
 import de.tor.tribes.util.BBCodeFormatter;
 import de.tor.tribes.util.Constants;
@@ -149,6 +150,21 @@ public class BBCodeEditor extends javax.swing.JDialog {
         Village sampleVillage3 = DataHolder.getSingleton().getRandomVillageWithOwner();
         Village sampleVillage4 = DataHolder.getSingleton().getRandomVillageWithOwner();
         Village sampleVillage5 = DataHolder.getSingleton().getRandomVillageWithOwner();
+        if (sampleVillage1 == null) {
+            sampleVillage1 = new DummyVillage((short) 500, (short) 500);
+        }
+         if (sampleVillage2 == null) {
+            sampleVillage2 = new DummyVillage((short) 500, (short) 500);
+        }
+          if (sampleVillage3 == null) {
+            sampleVillage3 = new DummyVillage((short) 500, (short) 500);
+        }
+           if (sampleVillage4 == null) {
+            sampleVillage4 = new DummyVillage((short) 500, (short) 500);
+        }
+            if (sampleVillage5 == null) {
+            sampleVillage5 = new DummyVillage((short) 500, (short) 500);
+        }
         sampleVillages.add(sampleVillage2);
         sampleVillages.add(sampleVillage3);
         sampleVillages.add(sampleVillage4);

@@ -494,7 +494,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
                 DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
                 r.setText("<html><b>" + r.getText() + "</b></html>");
-               // c.setBackground(Constants.DS_BACK);
+                // c.setBackground(Constants.DS_BACK);
                 return c;
             }
         };
@@ -3243,8 +3243,12 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         DSWorkbenchProfileDialog.getSingleton().showModifyDialog(profile);
     } else if (evt.getSource() == jDeleteProfileButton) {
         UserProfile profile = (UserProfile) jProfileBox.getSelectedItem();
+        boolean success = false;
         if (JOptionPaneHelper.showWarningConfirmBox(this, "Mit dem Profil werden alle Angriffe, Markierungen usw. gelöscht.\nSoll das Profil " + profile + " wirklich gelöscht werden?", "Warnung", "Nein", "Ja") == JOptionPane.OK_OPTION) {
-            profile.delete();
+            success = profile.delete();
+        }
+        if (!success) {
+            JOptionPaneHelper.showWarningBox(this, "Das Profil konnte nicht gelöscht werden.\nVersuch es bitte später oder nach einem Neustart von DS Workbench noch einmal.", "Löschen fehlgeschlagen");
         }
     }
     updateProfileList();

@@ -293,6 +293,9 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         if (jAlwaysButton.isSelected()) {
             start = new TimeSpan(range);
         } else {
+            if(jExactTimeButton.isEnabled()){
+                range = null;
+            }
             start = new TimeSpan(dateTimeField.getSelectedDate(), range);
         }
         if (start != null) {
@@ -347,7 +350,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
     /**Try to add a new timespan. Before it is checked for intersection
     @param s The new timespan*/
     private void addTimeSpan(TimeSpan s) {
-        if (s.getSpan() != null && s.getSpan().getMinimumInteger() == s.getSpan().getMaximumInteger()) {
+        if (s.getSpan() != null && !s.isValidAtExactTime() && s.getSpan().getMinimumInteger() == s.getSpan().getMaximumInteger()) {
             JOptionPaneHelper.showWarningBox(this, "Der angegebene Zeitrahmen ist ungültig. Der Zeitraum muss mindestens eine Stunde betragen.", "Warnung");
             return;
         }
@@ -686,11 +689,14 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         if (evt.getSource() == jDayButton) {
             dateTimeField.setEnabled(true);
             dateTimeField.setTimeEnabled(false);
+            jSendTimeFrame.setEnabled(true);
         } else if (evt.getSource() == jAlwaysButton) {
             dateTimeField.setEnabled(false);
+            jSendTimeFrame.setEnabled(true);
         } else if (evt.getSource() == jExactTimeButton) {
             dateTimeField.setEnabled(true);
             dateTimeField.setTimeEnabled(true);
+            jSendTimeFrame.setEnabled(false);
         }
         updatePreview();
     }//GEN-LAST:event_fireValidityStateChangedEvent
@@ -783,9 +789,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
                 if (s == null) {
                     throw new UnsupportedFlavorException(DataFlavor.stringFlavor);
                 }
-
                 addTimeSpan(s);
-
             } catch (UnsupportedFlavorException usfe) {
                 //invalid data
             } catch (IOException ioe) {

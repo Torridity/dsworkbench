@@ -6,10 +6,8 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.io.ServerManager;
-import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.BBSupport;
-import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.bb.VillageListFormatter;
 import org.jdom.Element;
 import de.tor.tribes.util.xml.JaxenUtils;
@@ -67,16 +65,20 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
         String villageCountVal = Integer.toString(getVillageIDs().size());
         String colorVal = "";
         if (getTagColor() != null) {
-            colorVal = "#" + Integer.toHexString(getTagColor().getRGB() & 0x00ffffff);
+            colorVal = Integer.toHexString(getTagColor().getRGB());
+            colorVal = "#" + colorVal.substring(2, colorVal.length());
         } else {
-            colorVal = "#" + Integer.toHexString(Color.BLACK.getRGB() & 0x00ffffff);
+            colorVal = Integer.toHexString(Color.BLACK.getRGB());
+            colorVal = "#" + colorVal.substring(2, colorVal.length());
         }
         String iconVal = "";
         if (getTagIcon() != -1) {
-            UnitHolder u = DataHolder.getSingleton().getUnits().get(getTagIcon());
+            /*  UnitHolder u = DataHolder.getSingleton().getUnits().get(getTagIcon());
             if (u != null) {
-                iconVal = "[unit]" + u.getPlainName() + "[/unit]";
-            }
+            iconVal = "[unit]" + u.getPlainName() + "[/unit]";
+            }*/
+            iconVal = "[img]" + ImageManager.getNoteImageURLOnServer(getTagIcon()) + "[/img]";
+
         }
 
         return new String[]{nameVal, villageListVal, villageCountVal, colorVal, iconVal};
@@ -87,7 +89,6 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
         return STANDARD_TEMPLATE;
     }
 
-    
     @Override
     public void loadFromXml(Element pElement) {
         try {
@@ -234,12 +235,10 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
     }
 
     public static void main(String[] args) throws Exception {
-        String tag = "<tags><tag shownOnMap=\"true\"><name><![CDATA[Mein Tag]]></name><villages><village>4711</village></villages></tag></tags>";
-        Document d = JaxenUtils.getDocument(tag);
-        for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//tags/tag")) {
-            Tag t = new Tag();
-            t.loadFromXml(e);
-        }
+        Color c = Color.BLUE;
+        String rgb = Integer.toHexString(c.getRGB());
+        rgb = rgb.substring(2, rgb.length());
+        System.out.println(rgb);
     }
 
     /**Get the color of the associated TagMapMarker

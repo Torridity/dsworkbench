@@ -26,7 +26,7 @@ public class TimeSpan implements Comparable<TimeSpan> {
         if (getDirection().equals(DIRECTION.NONE)) {
             throw new CloneNotSupportedException("Divider cannot be cloned");
         }
-        TimeSpan s = new TimeSpan(getAtDate(), getSpan(), isValidFor());
+        TimeSpan s = new TimeSpan(date, span, validFor);
         s.setDirection(getDirection());
         return s;
     }
@@ -280,86 +280,84 @@ public class TimeSpan implements Comparable<TimeSpan> {
     }
 
     public static TimeSpan fromPropertyString(String pString) {
-        String[] elems = pString.split(",");
+        String[] split = pString.split(",");
+        TimeSpan t = new TimeSpan();
+        try {
+            int type = Integer.parseInt(split[0]);
+            switch (type) {
+                case 0: { //every day
+                    int start = Integer.parseInt(split[1]);
+                    int end = Integer.parseInt(split[2]);
+                    int dir = Integer.parseInt(split[3]);
+                    t.setDate(null);
+                    t.setSpan(new IntRange(start, end));
+                    switch (dir) {
+                        case 0:
+                            t.setDirection(DIRECTION.SEND);
+                            break;
+                        case 1:
+                            t.setDirection(DIRECTION.ARRIVE);
+                            break;
+                    }
+                    break;
+                }
+                case 1: { //specific day
+                    long date = Long.parseLong(split[1]);
+                    int start = Integer.parseInt(split[2]);
+                    int end = Integer.parseInt(split[3]);
+                    int dir = Integer.parseInt(split[4]);
+                    t.setDate(new Date(date));
+                    t.setSpan(new IntRange(start, end));
+                    switch (dir) {
+                        case 0:
+                            t.setDirection(DIRECTION.SEND);
+                            break;
+                        case 1:
+                            t.setDirection(DIRECTION.ARRIVE);
+                            break;
+                    }
+                    break;
+                }
+                case 2: {
+                    //exact time
+                    long date = Long.parseLong(split[1]);
+                    int dir = Integer.parseInt(split[2]);
+                    t.setDate(new Date(date));
+                    t.setSpan(null);
+                    switch (dir) {
+                        case 0:
+                            t.setDirection(DIRECTION.SEND);
+                            break;
+                        case 1:
+                            t.setDirection(DIRECTION.ARRIVE);
+                            break;
+                    }
+                    break;
+                }
+            }
 
-        Date date = null;
-        SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy");
-        boolean noSpan = false;
-        try {
-            date = f.parse(elems[0]);
         } catch (Exception e) {
-            try {
-                f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss 'Uhr'");
-                date = f.parse(elems[0]);
-                noSpan = true;
-            } catch (Exception e1) {
-                date = null;
-            }
-        }
-        int spanStart = 0;
-        int spanEnd = 0;
-        try {
-            spanStart = Integer.parseInt(elems[1]);
-            spanEnd = Integer.parseInt(elems[2]);
-        } catch (Exception e) {
-            //invalid!?
-            if (!noSpan) {
-                return null;
-            }
-        }
-        Tribe t = null;
-        try {
-            if (elems[3].equals("*")) {
-                t = null;
-            } else {
-                t = DataHolder.getSingleton().getTribeByName(elems[3]);
-            }
-        } catch (Exception e) {
+            return null;
         }
 
-        DIRECTION dir = DIRECTION.NONE;
-        try {
-            dir = (elems[4].equals("0") ? DIRECTION.SEND : DIRECTION.ARRIVE);
-        } catch (IndexOutOfBoundsException iobe) {
-            //old format
-        }
-        TimeSpan result = null;
-        if (!noSpan) {
-            result = new TimeSpan(date, new IntRange(spanStart, spanEnd), t);
-        } else {
-            result = new TimeSpan(date, null, t);
-        }
-        result.setDirection(dir);
-        return result;
+        return t;
     }
 
     public String toPropertyString() {
         String res = "";
 
-        if (getDate() != null && span != null) {
-            SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy");
-            res = f.format(getDate()) + "," + getSpan().getMinimumInteger() + "," + getSpan().getMaximumInteger() + ",";
-            if (validFor != null) {
-                res += validFor;
-            } else {
-                res += "*";
-            }
-        } else if (getDate() == null && span != null) {
-            res = "*," + getSpan().getMinimumInteger() + "," + getSpan().getMaximumInteger() + ",";
-            if (validFor != null) {
-                res += validFor;
-            } else {
-                res += "*";
-            }
-        } else {
-            SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss 'Uhr'");
-            res = f.format(getDate()) + "," + getSpan().getMinimumInteger() + "," + getSpan().getMaximumInteger() + ",";
-            if (validFor != null) {
-                res += validFor;
-            } else {
-                res += "*";
-            }
+        if (isValidAtEveryDay()) {
+            res += "0,";
+            res += getSpan().getMinimumInteger() + "," + getSpan().getMaximumInteger();
+        } else if (isValidAtSpecificDay()) {
+            res += "1,";
+            res += getDate().getTime() + ",";
+            res += getSpan().getMinimumInteger() + "," + getSpan().getMaximumInteger();
+        } else if (isValidAtExactTime()) {
+            res += "2,";
+            res += getDate().getTime();
         }
+
         res += getDirection().equals(DIRECTION.SEND) ? ",0" : ",1";
         return res;
     }
@@ -399,7 +397,15 @@ public class TimeSpan implements Comparable<TimeSpan> {
 
     public static void main(String[] args) throws Exception {
         SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
-        System.out.println(new TimeSpan(f.parse("29.10.2010 23:59:59")).intersectsWithNightBonus());
+
+        TimeSpan t = new TimeSpan(new Date());
+        String tt = t.toPropertyString();
+        System.out.println(tt);
+        TimeSpan t2 = TimeSpan.fromPropertyString(tt);
+        String tt2 = t2.toPropertyString();
+        System.out.println(tt2);
+
+        //System.out.println(new TimeSpan(f.parse("29.10.2010 23:59:59")).intersectsWithNightBonus());
 
     }
 }

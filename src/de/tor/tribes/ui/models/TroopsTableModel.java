@@ -12,10 +12,9 @@ import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
@@ -49,12 +48,11 @@ public class TroopsTableModel extends AbstractTableModel {
 
     public String getTroopSet() {
         return sSet;
-
     }
 
     @Override
     public final void fireTableStructureChanged() {
-        content = new LinkedList<COL_CONTENT>();
+        content = new ArrayList<COL_CONTENT>();
         content.add(COL_CONTENT.TRIBE);
         content.add(COL_CONTENT.VILLAGE);
         content.add(COL_CONTENT.LAST_CHANGE);
@@ -147,7 +145,7 @@ public class TroopsTableModel extends AbstractTableModel {
             case DEF_ARCH:
             case OUTSIDE:
             case INSIDE:
-                return Number.class;
+                return Integer.class;
             case FARM:
                 return Float.class;
         }

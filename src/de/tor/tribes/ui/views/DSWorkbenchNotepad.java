@@ -74,13 +74,17 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
                 activeTab.transferSelection(NoteTableTab.TRANSFER_TYPE.COPY_TO_INTERNAL_CLIPBOARD);
             } else if (e.getActionCommand().equals("BBCopy")) {
                 activeTab.transferSelection(NoteTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
+            } else if (e.getActionCommand().equals("BBCopy_Village")) {
+                activeTab.copyVillagesAsBBCodes();
             } else if (e.getActionCommand().equals("Cut")) {
                 activeTab.transferSelection(NoteTableTab.TRANSFER_TYPE.CUT_TO_INTERNAL_CLIPBOARD);
             } else if (e.getActionCommand().equals("Paste")) {
                 activeTab.transferSelection(NoteTableTab.TRANSFER_TYPE.FROM_INTERNAL_CLIPBOARD);
             } else if (e.getActionCommand().equals("Delete")) {
                 activeTab.deleteSelection(true);
-            } else if (e.getActionCommand().equals("Find")) {
+            } else if (e.getActionCommand().equals("Delete_Village")) {
+                activeTab.deleteVillagesFromNotes();
+            }else if (e.getActionCommand().equals("Find")) {
                 BufferedImage back = ImageUtils.createCompatibleBufferedImage(3, 3, BufferedImage.TRANSLUCENT);
                 Graphics g = back.getGraphics();
                 g.setColor(new Color(120, 120, 120, 120));

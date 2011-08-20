@@ -99,7 +99,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private final static JXTable jxAttackTable = new JXTable();
     private static AttackTableModel attackModel = null;
     private static boolean KEY_LISTENER_ADDED = false;
-    private PainterHighlighter highlighter = null;
+    private static PainterHighlighter highlighter = null;
     private ActionListener actionListener = null;
 
     static {

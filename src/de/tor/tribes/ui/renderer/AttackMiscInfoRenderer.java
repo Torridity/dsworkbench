@@ -42,7 +42,8 @@ public class AttackMiscInfoRenderer extends DefaultTableRenderer {
             label.setHorizontalAlignment(SwingConstants.CENTER);
             Attack a = (Attack) value;
             StringBuilder text = new StringBuilder();
-            text.append("<html>");
+            //@TODO Check nobr
+            text.append("<html><nobr>");
             boolean shown = a.isShowOnMap();
             boolean transfer = a.isTransferredToBrowser();
             if (shown) {
@@ -57,7 +58,7 @@ public class AttackMiscInfoRenderer extends DefaultTableRenderer {
             } else {
                 text.append("<img src='").append(iconsUrls.get(1)).append("' style='padding-left:10px;' width='16' height='16'/>");
             }
-            text.append("</html>");
+            text.append("</nobr></html>");
             label.setText(text.toString());
             label.setToolTipText("<html>Der Angriff " + ((!shown) ? "<b>ist nicht</b>" : "<b>ist</b>") + " auf der Karte eingezeichnet<br/>"+
                     "Der Angriff " + ((!transfer) ? "<b>wurde noch nicht</b>" : "<b>wurde bereits</b>") + " in den Browser &uuml;bertragen</html>");

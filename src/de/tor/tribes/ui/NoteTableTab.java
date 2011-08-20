@@ -90,7 +90,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
     private final static JList jxVillageList = new JList();
     private static NoteTableModel noteModel = null;
     private static boolean KEY_LISTENER_ADDED = false;
-    private PainterHighlighter highlighter = null;
+    private static PainterHighlighter highlighter = null;
 
     static {
         jxNoteTable.addHighlighter(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
@@ -143,21 +143,8 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
             jxNoteTable.registerKeyboardAction(pActionListener, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxNoteTable.registerKeyboardAction(pActionListener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-            jxVillageList.registerKeyboardAction(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    copyVillagesAsBBCodes();
-                }
-            }, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
-            jxVillageList.registerKeyboardAction(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    deleteVillagesFromNotes();
-                }
-            }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            jxVillageList.registerKeyboardAction(pActionListener, "BBCopy_Village", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            jxVillageList.registerKeyboardAction(pActionListener, "Delete_Village", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxNoteTable.getActionMap().put("find", new AbstractAction() {
 
                 @Override
@@ -536,7 +523,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
         }
     }
 
-    private void copyVillagesAsBBCodes() {
+    public void copyVillagesAsBBCodes() {
         Object[] selection = jxVillageList.getSelectedValues();
         if (selection == null || selection.length == 0) {
             showInfo("Keine Dörfer gewählt");
@@ -578,7 +565,6 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
                     return;
                 }
             }
-
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
             String result = "Dörfer in Zwischenablage kopiert.";
             showSuccess(result);
@@ -610,7 +596,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
         deleteSelection(true);
     }
 
-    private void deleteVillagesFromNotes() {
+    public void deleteVillagesFromNotes() {
         Object[] selection = jxVillageList.getSelectedValues();
 
         if (selection == null || selection.length == 0) {

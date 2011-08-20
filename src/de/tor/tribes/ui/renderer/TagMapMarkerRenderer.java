@@ -14,7 +14,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
 /**
@@ -49,7 +48,7 @@ public class TagMapMarkerRenderer extends DefaultTableRenderer {
         ((JLabel) c).setText("");
         ((JLabel) c).setHorizontalAlignment(SwingConstants.CENTER);
         if (tagMarker.getTagIcon() >= 0) {
-            ((JLabel) c).setIcon(ImageManager.getUnitIcon(tagMarker.getTagIcon(), false));
+            ((JLabel) c).setIcon(new ImageIcon(ImageManager.getNoteSymbol(tagMarker.getTagIcon())));//ImageManager.getUnitIcon(tagMarker.getTagIcon(), false));
         } else {
             ((JLabel) c).setIcon(no_tag);
         }

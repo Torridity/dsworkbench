@@ -221,7 +221,7 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
 
                                 if (iconType != -1) {
                                     //drawing
-                                    BufferedImage tagImage = ImageManager.getUnitImage(iconType);//mage(iconType, false).getScaledInstance(tagsize, tagsize, Image.SCALE_FAST);
+                                    BufferedImage tagImage = ImageManager.getNoteSymbol(iconType);//ImageManager.getUnitImage(iconType);
                                     AffineTransform trans = AffineTransform.getTranslateInstance(tagX, tagY);
                                     trans.scale(1.0 / zoom, 1.0 / zoom);
                                     g2d.drawRenderedImage(tagImage, trans);

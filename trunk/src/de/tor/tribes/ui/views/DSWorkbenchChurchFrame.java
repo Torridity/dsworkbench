@@ -49,6 +49,7 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
@@ -275,8 +276,20 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         centerPanel.setupTaskPane(transferPane);
     }
 
+    private Village getSelectedCurch() {
+        int row = jChurchTable.getSelectedRow();
+        if (row >= 0) {
+            try {
+                Village v = (Village) ((ChurchTableModel) jChurchTable.getModel()).getValueAt(jChurchTable.convertRowIndexToModel(row), 1);
+                return v;
+            } catch (Exception e) {
+            }
+        }
+        return null;
+    }
+
     private void centerChurchVillage() {
-        Village v = (Village) jChurchTable.getValueAt(jChurchTable.getSelectedRow(), 1);
+        Village v = getSelectedCurch();
         if (v != null) {
             DSWorkbenchMainFrame.getSingleton().centerVillage(v);
         } else {
@@ -285,7 +298,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     }
 
     private void centerChurchInGame() {
-        Village v = (Village) jChurchTable.getValueAt(jChurchTable.getSelectedRow(), 1);
+        Village v = getSelectedCurch();
         if (v != null) {
             BrowserCommandSender.centerVillage(v);
         } else {

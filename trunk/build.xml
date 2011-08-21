@@ -13,7 +13,7 @@
 
      <target name="package-for-store" depends="jar">
 
-        <property name="store.jar.name" value="DSWorkbench"/>
+        <property name="store.jar.name" value="core"/>
 
 
         <!-- don't edit below this line -->

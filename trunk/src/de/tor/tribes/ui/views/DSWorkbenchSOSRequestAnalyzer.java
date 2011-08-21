@@ -10,7 +10,6 @@
  */
 package de.tor.tribes.ui.views;
 
-import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
@@ -23,11 +22,9 @@ import de.tor.tribes.types.test.DummyProfile;
 import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.GenericTestPanel;
 import de.tor.tribes.ui.VillageSupportFrame;
-import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.WallLevellCellRenderer;
 import de.tor.tribes.util.Constants;
@@ -37,7 +34,6 @@ import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.ServerSettings;
-import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.bb.SosListFormatter;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -60,18 +56,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import javax.swing.AbstractAction;
-import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
@@ -210,6 +201,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
 
             @Override
             public void mouseReleased(MouseEvent e) {
+                System.out.println("CLICK");
                 transferToSupportTool();
             }
         });
@@ -221,6 +213,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
 
             @Override
             public void mouseReleased(MouseEvent e) {
+                System.out.println("CLICK2");
                 transferToRetimeTool();
             }
         });
@@ -252,10 +245,13 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     }
 
     private void transferToSupportTool() {
+        System.out.println("HERE!!!");
         List<Attack> attacks = getSelectedAttacks();
         if (attacks.isEmpty()) {
+            System.out.println("NONE!!!");
             return;
         }
+        System.out.println(attacks);
         VillageSupportFrame.getSingleton().showSupportFrame(attacks.get(0).getTarget(), attacks.get(0).getArriveTime().getTime());
     }
 
@@ -399,10 +395,10 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         }
 
         for (int row : rows) {
-            Village target = (Village) jResultTable.getValueAt(row, 0);
-            Village source = (Village) jResultTable.getValueAt(row, 2);
-            String arrive = (String) jResultTable.getValueAt(row, 3);
-            int type = (Integer) jResultTable.getValueAt(row, 7);
+            Village target = (Village) jResultTable.getValueAt(row, 1);
+            Village source = (Village) jResultTable.getValueAt(row, 3);
+            String arrive = (String) jResultTable.getValueAt(row, 4);
+            int type = (Integer) jResultTable.getValueAt(row, 8);
             SimpleDateFormat f = null;
             if (!ServerSettings.getSingleton().isMillisArrival()) {
                 f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format"));

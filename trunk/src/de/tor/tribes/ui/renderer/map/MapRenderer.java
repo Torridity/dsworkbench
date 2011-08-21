@@ -397,31 +397,31 @@ public class MapRenderer {
                     mVisibleVillages[x][y] = null;
                 } else {
                     mVisibleVillages[x][y] = DataHolder.getSingleton().getVillages()[i][j];
-                   // Marker m = MarkerManager.getSingleton().getMarker(mVisibleVillages[x][y]);
+                    // Marker m = MarkerManager.getSingleton().getMarker(mVisibleVillages[x][y]);
                     if (mVisibleVillages[x][y] != null) {
-                        
-                       // if ((m == null || m.isShownOnMap())) {
-                            Point villagePos = new Point((int) Math.floor(dx + x * dCurrentFieldWidth), (int) Math.floor(dy + y * dCurrentFieldHeight));
-                            mVillagePositions.put(mVisibleVillages[x][y], new Rectangle(villagePos.x, villagePos.y, (int) Math.floor(dCurrentFieldWidth), (int) Math.floor(dCurrentFieldHeight)));
-                            Tribe t = mVisibleVillages[x][y].getTribe();
-                            if (t != Barbarians.getSingleton()) {
-                                if (mTribeCount.get(t) == null) {
-                                    mTribeCount.put(t, 1);
-                                } else {
-                                    mTribeCount.put(t, mTribeCount.get(t) + 1);
-                                }
-                                Ally a = t.getAlly();
-                                if (a == null) {
-                                    a = NoAlly.getSingleton();
-                                }
-                                if (mAllyCount.get(a) == null) {
-                                    mAllyCount.put(a, 1);
-                                } else {
-                                    mAllyCount.put(a, mAllyCount.get(a) + 1);
-                                }
+
+                        // if ((m == null || m.isShownOnMap())) {
+                        Point villagePos = new Point((int) Math.floor(dx + x * dCurrentFieldWidth), (int) Math.floor(dy + y * dCurrentFieldHeight));
+                        mVillagePositions.put(mVisibleVillages[x][y], new Rectangle(villagePos.x, villagePos.y, (int) Math.floor(dCurrentFieldWidth), (int) Math.floor(dCurrentFieldHeight)));
+                        Tribe t = mVisibleVillages[x][y].getTribe();
+                        if (t != Barbarians.getSingleton()) {
+                            if (mTribeCount.get(t) == null) {
+                                mTribeCount.put(t, 1);
+                            } else {
+                                mTribeCount.put(t, mTribeCount.get(t) + 1);
                             }
-                      /*  } else {
-                            mVisibleVillages[x][y] = null;
+                            Ally a = t.getAlly();
+                            if (a == null) {
+                                a = NoAlly.getSingleton();
+                            }
+                            if (mAllyCount.get(a) == null) {
+                                mAllyCount.put(a, 1);
+                            } else {
+                                mAllyCount.put(a, mAllyCount.get(a) + 1);
+                            }
+                        }
+                        /*  } else {
+                        mVisibleVillages[x][y] = null;
                         }*/
                     }
                 }
@@ -714,7 +714,7 @@ public class MapRenderer {
             }
 
             g2d.setComposite(com);
-            
+
             //draw font
             g2d.setColor(Color.BLACK);
             for (int i = 0; i < mVisibleVillages.length; i++) {
@@ -763,7 +763,7 @@ public class MapRenderer {
             g2d.setColor(c);
         }
 
-        if (!MapPanel.getSingleton().isMouseDown() && Boolean.parseBoolean(GlobalOptions.getProperty("show.map.popup"))) {
+        if (!MapPanel.getSingleton().isMouseDown() && Boolean.parseBoolean(GlobalOptions.getProperty("show.map.popup")) && !DSWorkbenchMainFrame.getSingleton().isGlasspaneVisible()) {
             try {
                 if (DSWorkbenchMainFrame.getSingleton().isActive() && MapPanel.getSingleton().getMousePosition() != null) {
                     if (mouseVillage == null) {

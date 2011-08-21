@@ -84,7 +84,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
                 activeTab.deleteSelection(true);
             } else if (e.getActionCommand().equals("Delete_Village")) {
                 activeTab.deleteVillagesFromNotes();
-            }else if (e.getActionCommand().equals("Find")) {
+            } else if (e.getActionCommand().equals("Find")) {
                 BufferedImage back = ImageUtils.createCompatibleBufferedImage(3, 3, BufferedImage.TRANSLUCENT);
                 Graphics g = back.getGraphics();
                 g.setColor(new Color(120, 120, 120, 120));
@@ -113,7 +113,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
     }
     private static Logger logger = Logger.getLogger("Notepad");
     private static DSWorkbenchNotepad SINGLETON = null;
-    private BBPanel jNotePane = null;
     private GenericTestPanel centerPanel = null;
 
     public static synchronized DSWorkbenchNotepad getSingleton() {
@@ -213,6 +212,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
 
     }
 
+    @Override
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
@@ -227,6 +227,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         PropertyHelper.storeTableProperties(tab.getNoteTable(), pConfig, getPropertyPrefix());
     }
 
+    @Override
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
         try {

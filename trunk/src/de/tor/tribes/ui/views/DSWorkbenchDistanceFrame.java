@@ -238,13 +238,25 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         ((DistanceTableModel) jDistanceTable.getModel()).fireTableDataChanged();
     }
 
+     private Village getSelectedOwnVillage() {
+        int row = jDistanceTable.getSelectedRow();
+        if (row >= 0) {
+            try {
+                Village v = (Village) ((DistanceTableModel) jDistanceTable.getModel()).getValueAt(jDistanceTable.convertRowIndexToModel(row), 0);
+                return v;
+            } catch (Exception e) {
+            }
+        }
+        return null;
+    }
+     
     private void centerSelectionInGame() {
         int row = jDistanceTable.getSelectedRow();
         if (row < 0) {
             showInfo("Kein Dorf gewählt");
             return;
         }
-        Village v = (Village) jDistanceTable.getValueAt(row, 0);
+        Village v = getSelectedOwnVillage();
         if (v != null) {
             BrowserCommandSender.centerVillage(v);
         } else {
@@ -258,7 +270,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
             showInfo("Kein Dorf gewählt");
             return;
         }
-        Village v = (Village) jDistanceTable.getValueAt(row, 0);
+        Village v = getSelectedOwnVillage();
         if (v != null) {
             BrowserCommandSender.openPlaceTroopsView(v);
         } else {
@@ -272,7 +284,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
             showInfo("Kein Dorf gewählt");
             return;
         }
-        Village v = (Village) jDistanceTable.getValueAt(row, 0);
+        Village v = getSelectedOwnVillage();
         if (v != null) {
             DSWorkbenchMainFrame.getSingleton().centerVillage(v);
         } else {

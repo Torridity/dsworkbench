@@ -127,6 +127,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     private boolean bWatchClipboard = true;
     private final JFileChooser chooser = new JFileChooser();
     private NotificationHideThread mNotificationHideThread = null;
+    private boolean glasspaneVisible = true;
 
     public static synchronized DSWorkbenchMainFrame getSingleton() {
         if (SINGLETON == null) {
@@ -838,13 +839,19 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                         getGlassPane().setVisible(true);
                     } else {
                         showTotD();
+                        glasspaneVisible = false;
                     }
                 }
             }
         });
     }
 
+    public boolean isGlasspaneVisible() {
+        return glasspaneVisible;
+    }
+
     public void hideWelcomePage() {
+        glasspaneVisible = false;
         getGlassPane().setVisible(false);
         showTotD();
     }
@@ -3377,8 +3384,8 @@ private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         if (dZoomFactor <= 0.4) {
             dZoomFactor = 0.4;
             jZoomOutButton.setEnabled(false);
-        } else if (dZoomFactor >= 2.5) {
-            dZoomFactor = 2.5;
+        } else if (dZoomFactor >= 3) {
+            dZoomFactor = 3;
             jZoomInButton.setEnabled(false);
         } else {
             jZoomInButton.setEnabled(true);

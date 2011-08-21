@@ -47,6 +47,10 @@ public class MerchantDistributor {
                 }
                 int targetValue = targetRes[i];
                 int maxAvailable = (int) (Math.round((double) (res - minRemainRes[i]) / 1000.0 + .5));
+                if(maxAvailable * 1000 > res){
+                    //reduce availability if there would be a negative amount of resources
+                    maxAvailable--;
+                }
                 int maxDelivery = info.getAvailableMerchants();
                 //try to add receiver
                 if (maxAvailable < 0 || res < targetValue) {
@@ -63,7 +67,6 @@ public class MerchantDistributor {
                     }
 
                     if (need > 0 && !pOutgoingOnly.contains(info.getVillage())) {
-
                         //add to destination list
                         MerchantDestination d = new MerchantDestination(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), need);
                         destinations.add(d);
@@ -73,9 +76,7 @@ public class MerchantDistributor {
                 //try to add sender
 
                 if (maxAvailable > maxDelivery) {
-
                     if (!pIncomingOnly.contains(info.getVillage()) && maxAvailable > 0) {
-
                         MerchantSource s = new MerchantSource(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), maxDelivery);
                         sources.add(s);
                     }

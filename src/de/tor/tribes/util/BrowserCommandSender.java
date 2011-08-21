@@ -14,6 +14,7 @@ import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor.Transport;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import java.awt.Desktop;
 import java.net.URI;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -63,7 +64,7 @@ public class BrowserCommandSender {
             if (browser == null || browser.length() < 1) {
                 Desktop.getDesktop().browse(new URI(url));
             } else {
-                Process p = Runtime.getRuntime().exec(new String[]{browser, url});
+                 Process p = Runtime.getRuntime().exec(new String[]{browser, url});
                 p.waitFor();
             }
 
@@ -101,7 +102,7 @@ public class BrowserCommandSender {
             String browser = GlobalOptions.getProperty("default.browser");
             if (browser == null || browser.length() < 1) {
                 Desktop.getDesktop().browse(new URI(url));
-            } else {
+            } else {              
                 Process p = Runtime.getRuntime().exec(new String[]{browser, url});
                 p.waitFor();
             }

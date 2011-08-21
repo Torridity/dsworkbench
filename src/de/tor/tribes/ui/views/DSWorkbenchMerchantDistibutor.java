@@ -21,7 +21,6 @@ import de.tor.tribes.ui.GenericTestPanel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.SentNotSentCellRenderer;
-import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.TradeDirectionCellRenderer;
 import de.tor.tribes.ui.renderer.TransportCellRenderer;
 import de.tor.tribes.ui.renderer.VillageCellRenderer;
@@ -1587,10 +1586,12 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         jResultsTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jResultsTable.setDefaultRenderer(Transport.class, new TransportCellRenderer());
         jResultsTable.setDefaultRenderer(Boolean.class, new SentNotSentCellRenderer());
-        SortableTableHeaderRenderer mHeaderRenderer = new SortableTableHeaderRenderer();
+        /* SortableTableHeaderRenderer mHeaderRenderer = new SortableTableHeaderRenderer();
         for (int i = 0; i < jResultsTable.getColumnCount(); i++) {
-            jResultsTable.getColumn(jResultsTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderer);
-        }
+        jResultsTable.getColumn(jResultsTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderer);
+        }*/
+        jResultsTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
+        jResultsDataTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         rebuildTable(jResultsDataTable, pInfos);
         if (!pResults.isEmpty()) {
             merchantTabbedPane.setSelectedIndex(1);

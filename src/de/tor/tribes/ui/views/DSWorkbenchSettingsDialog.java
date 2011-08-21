@@ -51,10 +51,12 @@ import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.SocketAddress;
 import java.util.Comparator;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.ConsoleAppender;
 
 /**
@@ -519,6 +521,19 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             super.setVisible(pValue);
         } catch (Exception e) {
             logger.debug("IGNORE: Exception while changing visibility", e);
+        }
+    }
+    private boolean isBlocked = false;
+
+    public void setBlocking(boolean pValue) {
+        isBlocked = pValue;
+
+        if (pValue) {
+            setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+            jCancelButton.setEnabled(false);
+        } else {
+            setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+            jCancelButton.setEnabled(true);
         }
     }
 
@@ -2667,6 +2682,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         if (!checkSettings()) {
             return;
         }
+        setBlocking(false);
         setVisible(false);
         DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
         DSWorkbenchAttackFrame.getSingleton().getCountdownThread().updateSettings();
@@ -3044,7 +3060,9 @@ private void fireSelectBrowserEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     int ret = chooser.showSaveDialog(this);
     if (ret == JFileChooser.APPROVE_OPTION) {
         File f = chooser.getSelectedFile();
-        if (f != null && f.isFile() && f.canExecute()) {
+
+
+        if (f != null && f.canExecute()) {
             try {
                 jBrowserPath.setText(f.getCanonicalPath());
             } catch (Exception e) {
@@ -3526,12 +3544,15 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
         }
 
         updating = false;
-        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+
         jSelectServerButton.setEnabled(true);
         jDownloadDataButton.setEnabled(true);
         jCreateAccountButton.setEnabled(true);
         jOKButton.setEnabled(true);
-        jCancelButton.setEnabled(true);
+        if (!isBlocked) {
+            setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            jCancelButton.setEnabled(true);
+        }
         jChangePasswordButton.setEnabled(true);
         jDownloadLiveDataButton.setEnabled(true);
         jNewProfileButton.setEnabled(true);

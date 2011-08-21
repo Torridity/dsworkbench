@@ -34,6 +34,7 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.RollingFileAppender;
 
@@ -256,6 +257,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             //check settings
             if (!DSWorkbenchSettingsDialog.getSingleton().checkSettings()) {
                 logger.info("Reading user settings returned error(s)");
+                DSWorkbenchSettingsDialog.getSingleton().setBlocking(true);
                 DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
             }
         } catch (Exception e) {
@@ -381,38 +383,14 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         } catch (IOException ioe) {
         }
 
-
-        //add global ESC listener
-      /*  Toolkit.getDefaultToolkit().getSystemEventQueue().push(
-        new EventQueue() {
-        
-        protected void dispatchEvent(AWTEvent event) {
-        if (event instanceof KeyEvent) {
-        KeyEvent keyEvent = (KeyEvent) event;
-        
-        if ((keyEvent.getID() == KeyEvent.KEY_PRESSED)
-        && ((keyEvent).getKeyCode() == KeyEvent.VK_ESCAPE)) {
-        try {
-        JFrame source = (JFrame) keyEvent.getSource();
-        if (source != DSWorkbenchMainFrame.getSingleton()) {
-        source.setVisible(false);
-        }
-        } catch (Exception e) {
-        /*try {
-        JDialog source = (JDialog) keyEvent.getSource();
-        source.setVisible(false);
-        } catch (Exception inner) {
-        }*/
-        /*                         }
-        }
-        
-        }
-        super.dispatchEvent(event);
-        }
-        });*/
         try {
             GlobalOptions.initialize();
             String lnf = GlobalOptions.getProperty("look.and.feel");
+
+            if (SystemUtils.IS_OS_MAC || SystemUtils.IS_OS_MAC_OSX) {
+                //no nimbus for mac users
+                lnf = UIManager.getSystemLookAndFeelClassName();
+            }
             if (lnf == null) {
                 UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
             } else {

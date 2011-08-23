@@ -178,6 +178,13 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         pack();
     }
 
+    @Override
+    public void toBack() {
+        jAlwaysOnTopBox.setSelected(false);
+        fireAlwaysOnTopEvent(null);
+        super.toBack();
+    }
+
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
@@ -845,6 +852,11 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
 
         jAlwaysOnTopBox.setText("Immer im Vordergrund");
         jAlwaysOnTopBox.setOpaque(false);
+        jAlwaysOnTopBox.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireAlwaysOnTopEvent(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -993,6 +1005,10 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
             jStartDate.setDate(new Date(end.getTime() - oneMonth));
         }
     }//GEN-LAST:event_fireChangeStatTimeEvent
+
+private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireAlwaysOnTopEvent
+    setAlwaysOnTop(!isAlwaysOnTop());
+}//GEN-LAST:event_fireAlwaysOnTopEvent
 
     private void transferBBCodeToClipboard() {
         int idx = jTabbedPane1.getSelectedIndex();

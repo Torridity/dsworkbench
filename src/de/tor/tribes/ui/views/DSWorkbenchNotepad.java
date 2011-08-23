@@ -213,6 +213,13 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
     }
 
     @Override
+    public void toBack() {
+        jAlwaysOnTopBox.setSelected(false);
+        fireAlwaysOnTopChangedEvent(null);
+        super.toBack();
+    }
+
+    @Override
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());

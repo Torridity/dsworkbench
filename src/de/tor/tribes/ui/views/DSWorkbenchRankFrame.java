@@ -136,6 +136,13 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         // updateRankTable();
     }
 
+    @Override
+    public void toBack() {
+        jAlwaysOnTop.setSelected(false);
+        fireRankFrameAlwaysOnTopEvent(null);
+        super.toBack();
+    }
+
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTop.isSelected());

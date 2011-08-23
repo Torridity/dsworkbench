@@ -178,6 +178,13 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         pack();
     }
 
+    @Override
+    public void toBack() {
+        jTroopsInformationAlwaysOnTop.setSelected(false);
+        fireTroopsFrameOnTopEvent(null);
+        super.toBack();
+    }
+
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jTroopsInformationAlwaysOnTop.isSelected());

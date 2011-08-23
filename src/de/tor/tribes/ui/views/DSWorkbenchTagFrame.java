@@ -212,6 +212,13 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         }
     }
 
+    @Override
+    public void toBack() {
+        jAlwaysOnTopBox.setSelected(false);
+        fireAlwaysOnTopEvent(null);
+        super.toBack();
+    }
+
     private void buildMenu() {
         JXTaskPane editPane = new JXTaskPane();
         editPane.setTitle("Bearbeiten");

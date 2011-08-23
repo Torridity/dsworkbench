@@ -136,6 +136,13 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         pack();
     }
 
+    @Override
+    public void toBack() {
+        jConquersFrameAlwaysOnTop.setSelected(false);
+        fireConquersFrameAlwaysOnTopEvent(null);
+        super.toBack();
+    }
+
     public static synchronized DSWorkbenchConquersFrame getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchConquersFrame();

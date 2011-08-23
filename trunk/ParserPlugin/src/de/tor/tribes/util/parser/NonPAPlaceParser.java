@@ -130,21 +130,21 @@ public class NonPAPlaceParser implements SilentParserInterface {
                     && (ownTroops.size() == troopsCount)
                     && (troopsInVillage.size() == troopsCount)) {
                 TroopsManager.getSingleton().invalidate();
-                VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
-                VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(v, TROOP_TYPE.OWN);
+               // VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
+                VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(v, TROOP_TYPE.OWN, true);
                 if (own == null) {
                     own = new VillageTroopsHolder(v, new Date());
                     own.setTroops(ownTroops);
-                    TroopsManager.getSingleton().addManagedElement(TroopsManager.OWN_GROUP, holder);
+                    TroopsManager.getSingleton().addManagedElement(TroopsManager.OWN_GROUP, own);
                 } else {
                     own.setState(new Date());
                     own.setTroops(ownTroops);
                 }
-                VillageTroopsHolder inVillage = TroopsManager.getSingleton().getTroopsForVillage(v, TROOP_TYPE.IN_VILLAGE);
+                VillageTroopsHolder inVillage = TroopsManager.getSingleton().getTroopsForVillage(v, TROOP_TYPE.IN_VILLAGE, true);
                 if (inVillage == null) {
                     inVillage = new VillageTroopsHolder(v, new Date());
                     inVillage.setTroops(troopsInVillage);
-                    TroopsManager.getSingleton().addManagedElement(TroopsManager.IN_VILLAGE_GROUP, holder);
+                    TroopsManager.getSingleton().addManagedElement(TroopsManager.IN_VILLAGE_GROUP, inVillage);
 
                 } else {
                     inVillage.setState(new Date());

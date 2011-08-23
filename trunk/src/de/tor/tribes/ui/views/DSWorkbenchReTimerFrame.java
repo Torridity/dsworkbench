@@ -284,7 +284,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         /*
         Herkunft: Rattennest (-42|35) (444|868) K84
         Ziel: Rattennest (-43|38) (443|871) K84
-        Ankunft: 09.08.11 18:44:00:931
+        Ankunft: 23.08.11 17:15:00:931
          */
         StringBuilder b = new StringBuilder();
         int cnt = 0;
@@ -1007,16 +1007,18 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 String arrive = null;
                 String arriveLine = null;
                 if (text.indexOf(PluginManager.getSingleton().getVariableValue("attack.arrive.time")) > -1) {
-                    arriveLine = text.substring(text.indexOf(PluginManager.getSingleton().getVariableValue("attack.arrive.time")));
+                    String searchString = PluginManager.getSingleton().getVariableValue("attack.arrive.time");
+                    arriveLine = text.substring(text.indexOf(PluginManager.getSingleton().getVariableValue("attack.arrive.time")) + searchString.length());
                 } else {
-                    arriveLine = text.substring(text.indexOf(PluginManager.getSingleton().getVariableValue("sos.arrive.time")));
+                    String searchString = PluginManager.getSingleton().getVariableValue("sos.arrive.time");
+                    arriveLine = text.substring(text.indexOf(PluginManager.getSingleton().getVariableValue("sos.arrive.time")) + searchString.length());
                 }
 
-                StringTokenizer tokenizer = new StringTokenizer(arriveLine, " \t");
-                tokenizer.nextToken();
+                StringTokenizer tokenizer = new StringTokenizer(arriveLine, "\n");
+                // tokenizer.nextToken();
                 String date = tokenizer.nextToken();
-                String time = tokenizer.nextToken();
-                arrive = date.trim() + " " + time.trim();
+                // String time = tokenizer.nextToken();
+                arrive = date.trim();//arriveLine.trim();//date.trim() + " " + time.trim();
                 SimpleDateFormat f = null;
                 if (!ServerSettings.getSingleton().isMillisArrival()) {
                     f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format"));

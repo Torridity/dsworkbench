@@ -162,6 +162,13 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         //</editor-fold>
     }
 
+    @Override
+    public void toBack() {
+        jAlwaysOnTopBox.setSelected(false);
+        fireAlwaysOnTopChangedEvent(null);
+        super.toBack();
+    }
+
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());

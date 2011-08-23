@@ -168,6 +168,13 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         // </editor-fold>
     }
 
+    @Override
+    public void toBack() {
+        jAlwaysOnTopBox.setSelected(false);
+        fireAlwaysOnTopEvent(null);
+        super.toBack();
+    }
+
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
@@ -411,7 +418,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
             a.setTarget(target);
             if (type == Attack.SNOB_TYPE) {
                 a.setUnit(DataHolder.getSingleton().getUnitByPlainName("snob"));
-            }else if (type == Attack.FAKE_TYPE) {
+            } else if (type == Attack.FAKE_TYPE) {
                 a.setUnit(DataHolder.getSingleton().getUnitByPlainName("ram"));
             }
             try {
@@ -524,9 +531,9 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
 
         jAlwaysOnTopBox.setText("Immer im Vordergrund");
         jAlwaysOnTopBox.setOpaque(false);
-        jAlwaysOnTopBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                jAlwaysOnTopBoxfireAlwaysOnTopChangedEvent(evt);
+        jAlwaysOnTopBox.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireAlwaysOnTopEvent(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -538,10 +545,6 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jAlwaysOnTopBoxfireAlwaysOnTopChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jAlwaysOnTopBoxfireAlwaysOnTopChangedEvent
-        setAlwaysOnTop(!isAlwaysOnTop());
-}//GEN-LAST:event_jAlwaysOnTopBoxfireAlwaysOnTopChangedEvent
 
     private void jXInfoLabelfireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXInfoLabelfireHideInfoEvent
         infoPanel.setCollapsed(true);
@@ -567,6 +570,10 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         updateView();
 
     }//GEN-LAST:event_fireSosRequestUpdateEvent
+
+private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireAlwaysOnTopEvent
+    setAlwaysOnTop(!isAlwaysOnTop());
+}//GEN-LAST:event_fireAlwaysOnTopEvent
 
     private void updateView() {
         if (currentRequests == null || currentRequests.isEmpty()) {

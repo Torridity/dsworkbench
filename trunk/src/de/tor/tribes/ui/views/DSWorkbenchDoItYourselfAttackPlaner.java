@@ -168,7 +168,12 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         // </editor-fold>
         pack();
     }
-
+    @Override
+    public void toBack() {
+        jAlwaysOnTopBox.setSelected(false);
+        fireAttackFrameOnTopEvent(null);
+        super.toBack();
+    }
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
         PropertyHelper.storeTableProperties(jAttackTable, pConfig, getPropertyPrefix());

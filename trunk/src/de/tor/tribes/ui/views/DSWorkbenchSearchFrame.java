@@ -74,6 +74,13 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
         // </editor-fold>
     }
 
+    @Override
+    public void toBack() {
+        jSearchFrameAlwaysOnTop.setSelected(false);
+        fireSearchFrameAlwaysOnTopEvent(null);
+        super.toBack();
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

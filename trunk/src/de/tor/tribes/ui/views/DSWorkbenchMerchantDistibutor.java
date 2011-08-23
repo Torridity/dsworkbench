@@ -181,6 +181,13 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         // </editor-fold>
     }
 
+    @Override
+    public void toBack() {
+        jAlwaysOnTop.setSelected(false);
+        fireAlwaysOnTopEvent(null);
+        super.toBack();
+    }
+
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTop.isSelected());

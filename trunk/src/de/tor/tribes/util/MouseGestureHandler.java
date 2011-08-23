@@ -11,13 +11,11 @@ import de.tor.tribes.ui.views.DSWorkbenchFormFrame;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.views.DSWorkbenchMarkerFrame;
 import de.tor.tribes.ui.views.DSWorkbenchNotepad;
+import de.tor.tribes.ui.views.DSWorkbenchRankFrame;
 import de.tor.tribes.ui.views.DSWorkbenchReportFrame;
 import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
 import de.tor.tribes.ui.views.DSWorkbenchTagFrame;
 import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
-import de.tor.tribes.ui.TribeTribeAttackFrame;
-import java.awt.MouseInfo;
-import javax.swing.SwingUtilities;
 
 /**
  *
@@ -48,6 +46,8 @@ public class MouseGestureHandler implements MouseGesturesListener {
             DSWorkbenchReportFrame.getSingleton().handleGesture(string);
         } else if (DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isActive()) {
             DSWorkbenchMainFrame.getSingleton().getAttackPlaner().handleGesture(string);
+        } else if (DSWorkbenchRankFrame.getSingleton().isActive()) {
+            DSWorkbenchRankFrame.getSingleton().handleGesture(string);
         }
     }
 

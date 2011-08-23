@@ -145,6 +145,13 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
     }
 
     @Override
+    public void toBack() {
+        jAlwaysOnTop.setSelected(false);
+        fireFormFrameAlwaysOnTopEvent(null);
+        super.toBack();
+    }
+
+    @Override
     public void resetView() {
         //update view
         FormManager.getSingleton().addManagerListener(DSWorkbenchFormFrame.this);
@@ -295,8 +302,8 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
                 }
                 result += "</html>";
             } else {
-                 showError("<html>Keine Zeichnungen exportiert, da der BB-Export nur für Rechtecke, Kreise und Freihandzeichnungen verf&uuml;gbar ist.</html>");
-                 return;
+                showError("<html>Keine Zeichnungen exportiert, da der BB-Export nur für Rechtecke, Kreise und Freihandzeichnungen verf&uuml;gbar ist.</html>");
+                return;
             }
             showSuccess(result);
         } catch (Exception e) {
@@ -595,7 +602,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         FormManager.getSingleton().addForm(new Circle());
         FormManager.getSingleton().addForm(new de.tor.tribes.types.Rectangle());
         FormManager.getSingleton().addForm(new Line());
-        
+
         DSWorkbenchFormFrame.getSingleton().resetView();
         DSWorkbenchFormFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         DSWorkbenchFormFrame.getSingleton().setVisible(true);

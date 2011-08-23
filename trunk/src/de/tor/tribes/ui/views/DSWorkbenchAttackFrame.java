@@ -80,15 +80,19 @@ import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
 
 // -Dsun.java2d.d3d=true -Dsun.java2d.translaccel=true -Dsun.java2d.ddforcevram=true
+// <editor-fold defaultstate="collapsed" desc=" NOTIFY THREAD ">
+// <editor-fold defaultstate="collapsed" desc=" NOTIFY THREAD ">
+// <editor-fold defaultstate="collapsed" desc=" NOTIFY THREAD ">
+// <editor-fold defaultstate="collapsed" desc=" NOTIFY THREAD ">
 /**
  * @author  Charon
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, ProfileManagerListener, Serializable {
-
+    
     @Override
     public void fireProfilesLoadedEvent() {
         UserProfile[] profiles = ProfileManager.getSingleton().getProfiles(GlobalOptions.getSelectedServer());
-
+        
         DefaultComboBoxModel model = new DefaultComboBoxModel(new Object[]{"Standard"});
         if (profiles != null && profiles.length > 0) {
             for (UserProfile profile : profiles) {
@@ -97,7 +101,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         }
         jProfileBox.setModel(model);
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         AttackTableTab activeTab = getActiveTab();
@@ -132,10 +136,10 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 g.drawLine(0, 0, 3, 3);
                 g.dispose();
                 TexturePaint paint = new TexturePaint(back, new Rectangle2D.Double(0, 0, back.getWidth(), back.getHeight()));
-
+                
                 jxSearchPane.setBackgroundPainter(new MattePainter(paint));
                 DefaultListModel model = new DefaultListModel();
-
+                
                 for (int i = 0; i < activeTab.getAttackTable().getColumnCount(); i++) {
                     TableColumnExt col = activeTab.getAttackTable().getColumnExt(i);
                     if (col.isVisible()) {
@@ -157,7 +161,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
     private CountdownThread mCountdownThread = null;
     private int iClickAccount = 0;
     private GenericTestPanel centerPanel = null;
-
+    
     public static synchronized DSWorkbenchAttackFrame getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchAttackFrame();
@@ -173,9 +177,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         centerPanel.setChildComponent(jXAttackPanel);
         fireProfilesLoadedEvent();
         buildMenu();
-
+        
         jAttackTabPane.setCloseAction(new AbstractAction("closeAction") {
-
+            
             public void actionPerformed(ActionEvent e) {
                 AttackTableTab tab = (AttackTableTab) e.getSource();
                 if (JOptionPaneHelper.showQuestionConfirmBox(jAttackTabPane, "Angriffsplan '" + tab.getAttackPlan() + "' und alle darin enthaltenen Angriffe wirklich löschen? ", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
@@ -184,16 +188,16 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         jAttackTabPane.addTabEditingListener(new TabEditingListener() {
-
+            
             @Override
             public void editingStarted(TabEditingEvent tee) {
             }
-
+            
             @Override
             public void editingStopped(TabEditingEvent tee) {
                 AttackManager.getSingleton().renameGroup(tee.getOldTitle(), tee.getNewTitle());
             }
-
+            
             @Override
             public void editingCanceled(TabEditingEvent tee) {
             }
@@ -202,46 +206,46 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jAttackTabPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
         jAttackTabPane.setBoldActiveTab(true);
         jAttackTabPane.setTabEditingValidator(new TabEditingValidator() {
-
+            
             @Override
             public boolean alertIfInvalid(int tabIndex, String tabText) {
                 if (tabText.trim().length() == 0) {
                     JOptionPaneHelper.showWarningBox(jAttackTabPane, "'" + tabText + "' ist ein ungültiger Planname", "Fehler");
                     return false;
                 }
-
+                
                 if (AttackManager.getSingleton().groupExists(tabText)) {
                     JOptionPaneHelper.showWarningBox(jAttackTabPane, "Es existiert bereits ein Plan mit dem Namen '" + tabText + "'", "Fehler");
                     return false;
                 }
                 return true;
             }
-
+            
             @Override
             public boolean isValid(int tabIndex, String tabText) {
                 if (tabText.trim().length() == 0) {
                     return false;
                 }
-
+                
                 if (AttackManager.getSingleton().groupExists(tabText)) {
                     return false;
                 }
                 return true;
             }
-
+            
             @Override
             public boolean shouldStartEdit(int tabIndex, MouseEvent event) {
                 return !(tabIndex == 0 || tabIndex == 1);
             }
         });
-
+        
         mNotifyThread = new NotifyThread();
         new ColorUpdateThread().start();
         mNotifyThread.start();
         mCountdownThread = new CountdownThread();
         mCountdownThread.start();
         jXColumnList.addListSelectionListener(new ListSelectionListener() {
-
+            
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 updateFilter();
@@ -255,7 +259,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         // </editor-fold>
 
         jAttackTabPane.getModel().addChangeListener(new ChangeListener() {
-
+            
             @Override
             public void stateChanged(ChangeEvent e) {
                 AttackTableTab activeTab = getActiveTab();
@@ -264,27 +268,27 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         });
-
+        
         ProfileManager.getSingleton().addProfileManagerListener(DSWorkbenchAttackFrame.this);
         jStandardAttackDialog.pack();
         setGlassPane(jxSearchPane);
         pack();
     }
-
+    
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAttackFrameAlwaysOnTop.isSelected());
-
+        
         int selectedIndex = jAttackTabPane.getModel().getSelectedIndex();
         if (selectedIndex >= 0) {
             pConfig.setProperty(getPropertyPrefix() + ".tab.selection", selectedIndex);
         }
-
-
+        
+        
         AttackTableTab tab = ((AttackTableTab) jAttackTabPane.getComponentAt(0));
         PropertyHelper.storeTableProperties(tab.getAttackTable(), pConfig, getPropertyPrefix());
     }
-
+    
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
         try {
@@ -295,17 +299,17 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             jAttackFrameAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
         } catch (Exception e) {
         }
-
+        
         setAlwaysOnTop(jAttackFrameAlwaysOnTop.isSelected());
-
+        
         AttackTableTab tab = ((AttackTableTab) jAttackTabPane.getComponentAt(0));
         PropertyHelper.restoreTableProperties(tab.getAttackTable(), pConfig, getPropertyPrefix());
     }
-
+    
     public String getPropertyPrefix() {
         return "attack.view";
     }
-
+    
     public JDialog getStandardAttackDialog() {
         return jStandardAttackDialog;
     }
@@ -339,7 +343,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         JXTaskPane editTaskPane = new JXTaskPane();
         editTaskPane.setTitle("Bearbeiten");
         editTaskPane.getContentPane().add(factoryButton("/res/ui/garbage.png", "Abgelaufene Angriffe entfernen", new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 AttackTableTab activeTab = getActiveTab();
@@ -349,7 +353,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         }));
         editTaskPane.getContentPane().add(factoryButton("/res/ui/att_changeTime.png", "Ankunftszeit für markierte Angriffe &auml;ndern. Die Startzeit der Angriffe wird dabei entsprechend der Laufzeit angepasst", new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 AttackTableTab activeTab = getActiveTab();
@@ -359,7 +363,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         }));
         editTaskPane.getContentPane().add(factoryButton("/res/ui/standard_attacks.png", "Einheit und Angriffstyp für markierte Angriffe &auml;ndern. Bitte beachte, dass sich beim &Auml;ndern der Einheit auch die Startzeit der Angriffe &auml;ndern kann", new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 AttackTableTab activeTab = getActiveTab();
@@ -369,7 +373,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         }));
         editTaskPane.getContentPane().add(factoryButton("/res/ui/att_browser_unsent.png", "'&Uuml;bertragen' Feld für markierte Angriffe l&ouml;schen", new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 AttackTableTab activeTab = getActiveTab();
@@ -379,7 +383,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         }));
         editTaskPane.getContentPane().add(factoryButton("/res/ui/pencil2.png", "Markierte Angriffe auf der Karte einzeichen. Ist ein gewählter Angriff bereits eingezeichnet, so wird er nach Bet&auml;tigung dieses Buttons nicht mehr eingezeichnet", new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 AttackTableTab activeTab = getActiveTab();
@@ -393,7 +397,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         JXTaskPane transferTaskPane = new JXTaskPane();
         transferTaskPane.setTitle("Übertragen");
         transferTaskPane.getContentPane().add(factoryButton("/res/ui/att_clipboard.png", "Markierte Angriffe im Klartext in die Zwischenablage kopieren. Der Inhalt der Zwischenablage kann dann z.B. in Excel oder OpenOffice eingef&uuml;gt werden", new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 AttackTableTab activeTab = getActiveTab();
@@ -402,9 +406,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         }));
-
+        
         transferTaskPane.getContentPane().add(factoryButton("/res/ui/att_HTML.png", "Markierte Angriffe in eine HTML Datei kopieren.<br/>Die erstellte Datei kann dann per eMail verschickt oder zum Abschicken von Angriffen ohne ge&ouml;ffnetesDS Workbench verwendet werden", new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 AttackTableTab activeTab = getActiveTab();
@@ -414,7 +418,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         }));
         transferTaskPane.getContentPane().add(factoryButton("/res/ui/atts_igm.png", "Markierte Angriffe als IGM verschicken. (PA notwendig) Der/die Empf&auml;nger der IGMs sind die Besitzer der Herkunftsd&ouml;rfer der geplanten Angriffe.", new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 AttackTableTab activeTab = getActiveTab();
@@ -424,7 +428,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         }));
         transferTaskPane.getContentPane().add(factoryButton("/res/ui/re-time.png", "Markierten Angriff in das Werkzeug 'Retimer' einfügen", new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 AttackTableTab activeTab = getActiveTab();
@@ -434,7 +438,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         }));
         transferTaskPane.getContentPane().add(factoryButton("/res/ui/att_browser.png", "Markierte Angriffe in den Browser &uuml;bertragen. Im Normalfall werden nur einzelne Angriffe &uuml;bertragen. F&uuml;r das &Uuml;bertragen mehrerer Angriffe ist zuerst das Klickkonto entsprechend zu f&uuml;llen", new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 AttackTableTab activeTab = getActiveTab();
@@ -444,7 +448,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         }));
         transferTaskPane.getContentPane().add(factoryButton("/res/ui/export_js.png", "Markierte Angriffe in ein Userscript schreiben.Das erstellte Userscript muss im Anschluss manuell im Browser installiert werden. Als Ergebnis bekommt man an verschiedenen Stellen im Spiel Informationen &uuml;ber geplante Angriffe angezeigt.", new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 AttackTableTab activeTab = getActiveTab();
@@ -459,14 +463,14 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         JXTaskPane miscTaskPane = new JXTaskPane();
         miscTaskPane.setTitle("Sonstiges");
         miscTaskPane.getContentPane().add(factoryButton("/res/ui/standard_attacks.png", "Truppenst&auml;rke von Standardangriffen definieren. Diese Einstellungen werden verwendet, wenn man Angriffe in den Browser &uuml;bertr&auml;gt und das entsprechende Userscript 'dswb.user.js' installiert hat, um im ge&ouml;ffneten Versammlungsplatz Truppen bereits einzutragen", new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 //build table
                 jStandardAttackTable.invalidate();
                 jStandardAttackTable.setModel(new DefaultTableModel());
                 jStandardAttackTable.revalidate();
-
+                
                 jStandardAttackTable.setModel(StandardAttackTableModel.getSingleton());
                 for (int i = 0; i < StandardAttackTableModel.getSingleton().getColumnCount(); i++) {
                     jStandardAttackTable.getColumnModel().getColumn(i).setHeaderRenderer(new UnitTableHeaderRenderer());
@@ -478,9 +482,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 jStandardAttackDialog.setVisible(true);
             }
         }));
-
+        
         miscTaskPane.getContentPane().add(factoryButton("/res/ui/att_alert_off.png", "Aktiviert eine Warnung f&uuml;r Angriffe, welche in den n&auml;chsten 10 Minuten abgeschickt werden m&uuml;ssen", new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 mNotifyThread.setActive(!mNotifyThread.isActive());
@@ -494,7 +498,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         // </editor-fold>
         centerPanel.setupTaskPane(jClickAccountLabel, jProfileQuickChange, editTaskPane, transferTaskPane, miscTaskPane);
     }
-
+    
     public UserProfile getQuickProfile() {
         Object o = jProfileBox.getSelectedItem();
         if (o instanceof UserProfile) {
@@ -818,7 +822,7 @@ private void fireFillClickAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     iClickAccount++;
     updateClickAccount();
 }//GEN-LAST:event_fireFillClickAccountEvent
-
+    
 private void fireHideGlassPaneEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideGlassPaneEvent
     jxSearchPane.setBackgroundPainter(null);
     jxSearchPane.setVisible(false);
@@ -826,27 +830,27 @@ private void fireHideGlassPaneEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 private void fireHighlightEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireHighlightEvent
     updateFilter();
 }//GEN-LAST:event_fireHighlightEvent
-
+    
 private void fireUpdateFilterEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireUpdateFilterEvent
     updateFilter();
 }//GEN-LAST:event_fireUpdateFilterEvent
-
+    
 private void fireApplyStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireApplyStandardAttacksEvent
     jStandardAttackDialog.setVisible(false);
 }//GEN-LAST:event_fireApplyStandardAttacksEvent
-
+    
 private void fireAttackFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireAttackFrameAlwaysOnTopEvent
     setAlwaysOnTop(!isAlwaysOnTop());
 }//GEN-LAST:event_fireAttackFrameAlwaysOnTopEvent
-
+    
 private void fireEnterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireEnterEvent
     jLabel1.setEnabled(true);
 }//GEN-LAST:event_fireEnterEvent
-
+    
 private void fireMouseExitEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMouseExitEvent
     jLabel1.setEnabled(false);
 }//GEN-LAST:event_fireMouseExitEvent
-
+    
 private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateAttackPlanEvent
     int unusedId = 1;
     while (unusedId < 1000) {
@@ -872,21 +876,28 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             tab.updateFilter(jTextField1.getText(), selection, jFilterCaseSensitive.isSelected(), jFilterRows.isSelected());
         }
     }
-
+    
+    @Override
+    public void toBack() {
+        jAttackFrameAlwaysOnTop.setSelected(false);
+        fireAttackFrameAlwaysOnTopEvent(null);
+        super.toBack();
+    }
+    
     public void decreaseClickAccountValue() {
         iClickAccount = (iClickAccount == 0) ? 0 : iClickAccount - 1;
         updateClickAccount();
     }
-
+    
     public int getClickAccountValue() {
         return iClickAccount;
     }
-
+    
     private void updateClickAccount() {
         jClickAccountLabel.setToolTipText(iClickAccount + " Klick(s) aufgeladen");
         jClickAccountLabel.setText("Klick-Konto [" + iClickAccount + "]");
     }
-
+    
     @Override
     public void resetView() {
         AttackManager.getSingleton().addManagerListener(this);
@@ -909,13 +920,13 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
 
         //insert default tab to first place
         int cnt = 0;
-
+        
         for (String plan : plans) {
             AttackTableTab tab = new AttackTableTab(plan, this);
             jAttackTabPane.addTab(plan, tab);
             cnt++;
         }
-
+        
         jAttackTabPane.setTabClosableAt(0, false);
         jAttackTabPane.setTabClosableAt(1, false);
         jAttackTabPane.revalidate();
@@ -924,12 +935,12 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             tab.updatePlan();
         }
     }
-
+    
     @Override
     public void dataChangedEvent() {
         generateAttackTabs();
     }
-
+    
     @Override
     public void dataChangedEvent(String pGroup) {
         AttackTableTab tab = getActiveTab();
@@ -937,11 +948,11 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             tab.updatePlan();
         }
     }
-
+    
     public CountdownThread getCountdownThread() {
         return mCountdownThread;
     }
-
+    
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
@@ -949,7 +960,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     /**Redraw the countdown col*/
     protected void updateCountdown() {
         SwingUtilities.invokeLater(new Runnable() {
-
+            
             @Override
             public void run() {
                 try {
@@ -958,13 +969,13 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
                 }
             }
         });
-
+        
     }
 
     /**Redraw the time col*/
     protected void updateTime() {
         SwingUtilities.invokeLater(new Runnable() {
-
+            
             @Override
             public void run() {
                 try {
@@ -973,12 +984,12 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
                 }
             }
         });
-
+        
     }
-
+    
     public static void main(String[] args) {
-
-
+        
+        
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         MouseGestures mMouseGestures = new MouseGestures();
         mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
@@ -987,7 +998,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         GlobalOptions.setSelectedServer("de43");
         ProfileManager.getSingleton().loadProfiles();
         GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-
+        
         DataHolder.getSingleton().loadData(false);
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -1033,7 +1044,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             tab.transferSelection(AttackTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
         }
     }
-
+    
     @Override
     public void firePlainExportGestureEvent() {
         AttackTableTab tab = getActiveTab();
@@ -1041,7 +1052,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             tab.transferSelection(AttackTableTab.TRANSFER_TYPE.CLIPBOARD_PLAIN);
         }
     }
-
+    
     @Override
     public void fireNextPageGestureEvent() {
         int current = jAttackTabPane.getSelectedIndex();
@@ -1053,7 +1064,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         }
         jAttackTabPane.setSelectedIndex(current);
     }
-
+    
     @Override
     public void firePreviousPageGestureEvent() {
         int current = jAttackTabPane.getSelectedIndex();
@@ -1065,7 +1076,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         }
         jAttackTabPane.setSelectedIndex(current);
     }
-
+    
     @Override
     public void fireRenameGestureEvent() {
         int idx = jAttackTabPane.getSelectedIndex();
@@ -1105,19 +1116,18 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     // End of variables declaration//GEN-END:variables
 }
 
-// <editor-fold defaultstate="collapsed" desc=" NOTIFY THREAD ">
 class NotifyThread extends Thread {
-
+    
     private static Logger logger = Logger.getLogger("AttackNotificationHelper");
     private boolean active = false;
     private long nextCheck = 0;
     private final int TEN_MINUTES = 10 * 60 * 1000;
-
+    
     public NotifyThread() {
         setDaemon(true);
         setPriority(MIN_PRIORITY);
     }
-
+    
     public void setActive(boolean pValue) {
         active = pValue;
         if (active) {
@@ -1125,13 +1135,13 @@ class NotifyThread extends Thread {
             nextCheck = System.currentTimeMillis();
         }
     }
-
+    
     public boolean isActive() {
         return active;
     }
-
+    
     public void run() {
-
+        
         while (true) {
             if (active) {
                 long now = System.currentTimeMillis();
@@ -1156,7 +1166,7 @@ class NotifyThread extends Thread {
                             outstandingAttacks.put(plan, attackCount);
                         }
                     }
-
+                    
                     if (outstandingAttacks.size() > 0) {
                         // if (attackCount > 0) {
                         String message = "In den kommenden 10 Minuten müssen Angriffe aus den folgenden Plänen abgeschickt werden:\n";
@@ -1187,11 +1197,11 @@ class NotifyThread extends Thread {
 }
 
 class ColorUpdateThread extends Thread {
-
+    
     public ColorUpdateThread() {
         setDaemon(true);
     }
-
+    
     public void run() {
         while (true) {
             try {
@@ -1208,17 +1218,17 @@ class ColorUpdateThread extends Thread {
 
 //</editor-fold>
 class CountdownThread extends Thread {
-
+    
     private boolean showCountdown = true;
-
+    
     public CountdownThread() {
         setDaemon(true);
     }
-
+    
     public void updateSettings() {
         showCountdown = Boolean.parseBoolean(GlobalOptions.getProperty("show.live.countdown"));
     }
-
+    
     @Override
     public void run() {
         while (true) {
@@ -1238,7 +1248,7 @@ class CountdownThread extends Thread {
 }
 
 class LabelUIResource extends JPanel implements UIResource {
-
+    
     public LabelUIResource() {
         super();
     }

@@ -85,18 +85,18 @@ import org.jdesktop.swingx.painter.MattePainter;
  * @author Jejkal
  */
 public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements ListSelectionListener, ActionListener {
-    
+
     @Override
     public void valueChanged(ListSelectionEvent e) {
         if (e.getValueIsAdjusting()) {
             int selectionCount = jResultTable.getSelectedRowCount();
-            
+
             if (selectionCount != 0) {
                 showInfo(selectionCount + ((selectionCount == 1) ? " Angriff gewählt" : " Angriffe gewählt"));
             }
         }
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("Copy")) {
@@ -112,7 +112,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     private static Logger logger = Logger.getLogger("ReTimeTool");
     private static DSWorkbenchReTimerFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
-    
+
     public static synchronized DSWorkbenchReTimerFrame getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchReTimerFrame();
@@ -124,7 +124,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     /** Creates new form DSWorkbenchReTimerFrame */
     DSWorkbenchReTimerFrame() {
         initComponents();
-        
+
         centerPanel = new GenericTestPanel(true);
         jReTimePanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildComponent(jideRetimeTabbedPane);
@@ -134,7 +134,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jideRetimeTabbedPane.addTab("Festlegen des Angriffs", jInputPanel);
         jideRetimeTabbedPane.addTab("Errechnete Gegenangriffe", jResultPanel);
         buildMenu();
-        
+
         KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
         KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
@@ -144,7 +144,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jResultTable.registerKeyboardAction(DSWorkbenchReTimerFrame.this, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jResultTable.registerKeyboardAction(DSWorkbenchReTimerFrame.this, "Cut", cut, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jResultTable.getActionMap().put("find", new AbstractAction() {
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 //ignore find
@@ -154,7 +154,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jResultTable.getSelectionModel().addListSelectionListener(DSWorkbenchReTimerFrame.this);
         jPossibleUnits.setCellRenderer(new UnitListCellRenderer());
         jPossibleUnits.addListSelectionListener(new ListSelectionListener() {
-            
+
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
@@ -169,31 +169,38 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         }
         // </editor-fold>
     }
-    
+
+    @Override
+    public void toBack() {
+        jAlwaysOnTopBox.setSelected(false);
+        fireAlwaysOnTopChangedEvent(null);
+        super.toBack();
+    }
+
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
-        
+
         PropertyHelper.storeTableProperties(jResultTable, pConfig, getPropertyPrefix());
     }
-    
+
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
-        
+
         try {
             jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
         } catch (Exception e) {
         }
-        
+
         setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
-        
+
         PropertyHelper.restoreTableProperties(jResultTable, pConfig, getPropertyPrefix());
     }
-    
+
     public String getPropertyPrefix() {
         return "retime.view";
     }
-    
+
     private void buildMenu() {
         JXTaskPane editPane = new JXTaskPane();
         editPane.setTitle("Bearbeiten");
@@ -203,21 +210,21 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 + "Truppeninformationen aktuell sind. Nach der Filterung sind die Eintr&auml;ge markiert, welche die eingestellten<br/>"
                 + "Filterbedingungen <b>NICHT</b> erf&uuml;llen, um sie direkt l&ouml;schen zu k&ouml;nnen.</html>");
         filterRetimes.addMouseListener(new MouseAdapter() {
-            
+
             @Override
             public void mouseReleased(MouseEvent e) {
                 showFilterDialog();
             }
         });
-        
+
         editPane.getContentPane().add(filterRetimes);
-        
+
         JXTaskPane miscPane = new JXTaskPane();
         miscPane.setTitle("Sonstiges");
         JXButton calculate = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/att_validate.png")));
         calculate.setToolTipText("ReTime Angriffe für den eingestellten Angriff berechnen");
         calculate.addMouseListener(new MouseAdapter() {
-            
+
             @Override
             public void mouseReleased(MouseEvent e) {
                 startCalculation();
@@ -266,7 +273,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     public void resetView() {
         buildResults(null, null, null);
     }
-    
+
     private void copySelectionToInternalClipboard() {
         jideRetimeTabbedPane.setSelectedIndex(1);
         List<Attack> selection = getSelectedAttacks();
@@ -292,13 +299,13 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             showError("Fehler beim Kopieren der Angriffe");
         }
     }
-    
+
     private void cutSelectionToInternalClipboard() {
         copySelectionToInternalClipboard();
         removeSelection(false);
         showSuccess("Einträge ausgeschnitten");
     }
-    
+
     private void copyAttacksToClipboardAsBBCode() {
         jideRetimeTabbedPane.setSelectedIndex(1);
         try {
@@ -308,16 +315,16 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 return;
             }
             boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
-            
+
             StringBuilder buffer = new StringBuilder();
             if (extended) {
                 buffer.append("[u][size=12]Angriffsplan[/size][/u]\n\n");
             } else {
                 buffer.append("[u]Angriffsplan[/u]\n\n");
             }
-            
+
             buffer.append(new AttackListFormatter().formatElements(attacks, extended));
-            
+
             if (extended) {
                 buffer.append("\n[size=8]Erstellt am ");
                 buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
@@ -329,7 +336,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
                 buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url]\n");
             }
-            
+
             String b = buffer.toString();
             StringTokenizer t = new StringTokenizer(b, "[");
             int cnt = t.countTokens();
@@ -338,7 +345,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                     return;
                 }
             }
-            
+
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
             String result = "Daten in Zwischenablage kopiert.";
             showSuccess(result);
@@ -348,11 +355,11 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             showError(result);
         }
     }
-    
+
     private void removeSelection() {
         removeSelection(true);
     }
-    
+
     private void removeSelection(boolean ask) {
         jideRetimeTabbedPane.setSelectedIndex(1);
         int[] selectedRows = jResultTable.getSelectedRows();
@@ -360,7 +367,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             showInfo("Keine Einträge ausgewählt");
             return;
         }
-        
+
         if (!ask || JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du " + ((selectedRows.length == 1) ? "den gewählten Eintrag " : "die gewählten Einträge ") + "wirklich löschen?", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             DefaultTableModel model = (DefaultTableModel) jResultTable.getModel();
             int numRows = selectedRows.length;
@@ -370,7 +377,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             showSuccess("Einträge gelöscht");
         }
     }
-    
+
     private List<Attack> getSelectedAttacks() {
         List<Attack> attacks = new LinkedList<Attack>();
         int[] selectedRows = jResultTable.getSelectedRows();
@@ -378,7 +385,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             showInfo("Keine Einträge ausgewählt");
             return attacks;
         }
-        
+
         for (Integer row : selectedRows) {
             Village source = (Village) jResultTable.getValueAt(row, 0);
             UnitHolder unit = (UnitHolder) jResultTable.getValueAt(row, 1);
@@ -395,10 +402,10 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             a.setType(Attack.CLEAN_TYPE);
             attacks.add(a);
         }
-        
+
         return attacks;
     }
-    
+
     private void startCalculation() {
         jideRetimeTabbedPane.setSelectedIndex(0);
         if (parsedAttack == null
@@ -406,11 +413,11 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 || parsedAttack.getTarget() == null
                 || parsedAttack.getUnit() == null
                 || parsedAttack.getArriveTime() == null) {
-            
+
             JOptionPaneHelper.showInformationBox(this, "Bitte füge zuerst einen gültigen Angriff ein und wähle eine Einheit", "Information");
             return;
         }
-        
+
         jCalculationSettingsDialog.pack();
         jCalculationSettingsDialog.setLocationRelativeTo(DSWorkbenchReTimerFrame.this);
         DefaultListModel tagModel = new DefaultListModel();
@@ -431,16 +438,16 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 new Object[][]{},
                 new String[]{
                     "Angriffsplan", "Abgleichen"}) {
-            
+
             Class[] types = new Class[]{
                 String.class, Boolean.class
             };
-            
+
             @Override
             public Class getColumnClass(int columnIndex) {
                 return types[columnIndex];
             }
-            
+
             @Override
             public boolean isCellEditable(int row, int col) {
                 if (col == 0) {
@@ -449,12 +456,12 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 return true;
             }
         };
-        
+
         String[] plans = AttackManager.getSingleton().getGroups();
         for (String plan : plans) {
             attackPlanTableModel.addRow(new Object[]{plan, false});
         }
-        
+
         jAttackPlanTable.setModel(attackPlanTableModel);
         DefaultTableCellRenderer headerRenderer = new SortableTableHeaderRenderer();
         for (int i = 0; i < jAttackPlanTable.getColumnCount(); i++) {
@@ -463,21 +470,21 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         // </editor-fold>
         jCalculationSettingsDialog.setVisible(true);
     }
-    
+
     public void showInfo(String pMessage) {
         infoPanel.setCollapsed(false);
         jXInfoLabel.setBackgroundPainter(new MattePainter(getBackground()));
         jXInfoLabel.setForeground(Color.BLACK);
         jXInfoLabel.setText(pMessage);
     }
-    
+
     public void showSuccess(String pMessage) {
         infoPanel.setCollapsed(false);
         jXInfoLabel.setBackgroundPainter(new MattePainter(Color.GREEN));
         jXInfoLabel.setForeground(Color.BLACK);
         jXInfoLabel.setText(pMessage);
     }
-    
+
     public void showError(String pMessage) {
         infoPanel.setCollapsed(false);
         jXInfoLabel.setBackgroundPainter(new MattePainter(Color.RED));
@@ -993,7 +1000,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             }
             parsedAttack.setSource(source);
             parsedAttack.setTarget(target);
-            
+
             Date arriveDate = null;
             try {
                 String text = jCommandArea.getText();
@@ -1004,7 +1011,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 } else {
                     arriveLine = text.substring(text.indexOf(PluginManager.getSingleton().getVariableValue("sos.arrive.time")));
                 }
-                
+
                 StringTokenizer tokenizer = new StringTokenizer(arriveLine, " \t");
                 tokenizer.nextToken();
                 String date = tokenizer.nextToken();
@@ -1037,13 +1044,13 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                     }
                 }
             }
-            
+
             if (model.isEmpty()) {
                 //no element 
                 parsedAttack = null;
             }
             jPossibleUnits.setModel(model);
-            
+
             UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
             UnitHolder axe = DataHolder.getSingleton().getUnitByPlainName("axe");
             UnitHolder spy = DataHolder.getSingleton().getUnitByPlainName("spy");
@@ -1057,12 +1064,12 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         }
         updateAttackBBView();
     }//GEN-LAST:event_fireComandDataChangedEvent
-    
+
     private void fireCalculateReTimingsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateReTimingsEvent
         jCalculationSettingsDialog.setVisible(false);
         if (evt.getSource() == jDoCalculateButton) {
             DefaultTableModel model = (DefaultTableModel) jAttackPlanTable.getModel();
-            
+
             List<String> selectedPlans = new LinkedList<String>();
             for (int i = 0; i < jAttackPlanTable.getRowCount(); i++) {
                 int row = jAttackPlanTable.convertRowIndexToModel(i);
@@ -1070,7 +1077,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                     selectedPlans.add((String) model.getValueAt(row, 0));
                 }
             }
-            
+
             List<Village> ignore = new LinkedList<Village>();
             //process all plans
             for (String plan : selectedPlans) {
@@ -1084,13 +1091,13 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                     }
                 }
             }
-            
+
             Object[] tags = jTagList.getSelectedValues();
             if (tags == null || tags.length == 0) {
                 JOptionPaneHelper.showInformationBox(DSWorkbenchReTimerFrame.this, "Keine Dorfgruppe ausgewählt", "Information");
                 return;
             }
-            
+
             List<Village> candidates = new LinkedList<Village>();
             for (Object o : tags) {
                 Tag t = (Tag) o;
@@ -1103,7 +1110,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                     }
                 }
             }
-            
+
             if (jRelationBox.isSelected()) {
                 //remove all villages that are not tagges by the current tag
                 boolean oneFailed = false;
@@ -1123,11 +1130,11 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                     }
                 }
             }
-            
+
             Village target = parsedAttack.getTarget();
             UnitHolder unit = (UnitHolder) jUnitBox.getSelectedItem();
             Hashtable<Village, Date> timings = new Hashtable<Village, Date>();
-            
+
             for (Village candidate : candidates) {
                 double dist = DSCalculator.calculateDistance(candidate, target);
                 long runtime = Math.round(dist * unit.getSpeed() * 60000.0);
@@ -1145,7 +1152,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                         ret /= 1000;
                         ret = Math.round(ret + .5);
                         ret *= 1000;
-                        
+
                         long sendTime = (long) ret - runtime;
                         if (sendTime > System.currentTimeMillis() + 60000) {
                             timings.put(candidate, new Date(sendTime));
@@ -1156,9 +1163,9 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             }
             buildResults(timings, target, unit);
         }
-        
+
     }//GEN-LAST:event_fireCalculateReTimingsEvent
-    
+
     private void fireTransferAttacksToAttackViewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferAttacksToAttackViewEvent
         if (evt.getSource() == jInsertButton) {
             String planName = jNewAttackPlanField.getText();
@@ -1182,11 +1189,11 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         }
         jAttackPlanSelectionDialog.setVisible(false);
     }//GEN-LAST:event_fireTransferAttacksToAttackViewEvent
-    
+
     private void fireAlwaysOnTopChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireAlwaysOnTopChangedEvent
         setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
     }//GEN-LAST:event_fireAlwaysOnTopChangedEvent
-    
+
     private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireRelationChangedEvent
         if (jRelationBox.isSelected()) {
             jRelationBox.setText("Verknüpfung (UND)");
@@ -1194,7 +1201,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             jRelationBox.setText("Verknüpfung (ODER)");
         }
     }//GEN-LAST:event_fireRelationChangedEvent
-    
+
     private void fireAddTroopFilterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddTroopFilterEvent
         UnitHolder unit = (UnitHolder) jFilterUnitBox.getSelectedItem();
         DefaultListModel filterModel = (DefaultListModel) jFilterList.getModel();
@@ -1218,7 +1225,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             jMinValue.setText("" + min);
             jMaxValue.setText("" + max);
         }
-        
+
         for (int i = 0; i < filterModel.size(); i++) {
             TroopFilterElement listElem = (TroopFilterElement) filterModel.get(i);
             if (listElem.getUnit().equals(unit)) {
@@ -1234,7 +1241,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             filterModel.addElement(elem);
         }
 }//GEN-LAST:event_fireAddTroopFilterEvent
-    
+
     private void fireApplyTroopFiltersEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireApplyTroopFiltersEvent
         if (evt.getSource() == jApplyFiltersButton) {
             DefaultListModel filterModel = (DefaultListModel) jFilterList.getModel();
@@ -1261,7 +1268,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         }
         jFilterDialog.setVisible(false);
 }//GEN-LAST:event_fireApplyTroopFiltersEvent
-    
+
     private void fireRemoveTroopFilterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveTroopFilterEvent
         Object[] selection = jFilterList.getSelectedValues();
         if (selection == null || selection.length == 0) {
@@ -1277,20 +1284,20 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         }
         jFilterList.repaint();
 }//GEN-LAST:event_fireRemoveTroopFilterEvent
-    
+
     private void jXInfoLabelfireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXInfoLabelfireHideInfoEvent
         infoPanel.setCollapsed(true);
 }//GEN-LAST:event_jXInfoLabelfireHideInfoEvent
-    
+
     private void showFilterDialog() {
         jideRetimeTabbedPane.setSelectedIndex(1);
         if (jResultTable.getRowCount() == 0) {
             showInfo("Keine ReTime Angriffe zur Filterung vorhanden");
             return;
         }
-        
+
         TroopFilterDialog filterDialog = new TroopFilterDialog(this, true);
-        
+
         List<Village> sources = new LinkedList<Village>();
         for (int i = 0; i < jResultTable.getRowCount(); i++) {
             //go through all rows in attack table and get source village
@@ -1298,7 +1305,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         }
         int sizeBefore = sources.size();
         filterDialog.show(sources);
-        
+
         for (int i = jResultTable.getRowCount() - 1; i >= 0; i--) {
             //go through all rows in attack table and get source village
             Village v = (Village) jResultTable.getValueAt(i, 0);
@@ -1306,7 +1313,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 ((DefaultTableModel) jResultTable.getModel()).removeRow(jResultTable.convertRowIndexToModel(i));
             }
         }
-        
+
         int diff = sizeBefore - sources.size();
         if (diff == 0) {
             showSuccess("Keine Angriffe entfernt");
@@ -1314,10 +1321,10 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             showSuccess(((diff == 1) ? "Ein Angriff entfernt" : diff + " Angriffe entfernt"));
         }
     }
-    
+
     private void updateAttackBBView() {
         StringBuilder bbBuilder = new StringBuilder();
-       
+
         if (parsedAttack != null
                 && parsedAttack.getSource() != null
                 && parsedAttack.getTarget() != null
@@ -1329,22 +1336,22 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             } else {
                 f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss");
             }
-            
+
             bbBuilder.append("[table][**]Ziel[||]").append(parsedAttack.getTarget().toBBCode()).append("[/**]\n");
             bbBuilder.append("[*]Herkunft[|]").append(parsedAttack.getSource().toBBCode()).append("[/*]\n");
-            
+
             bbBuilder.append("[*]Ankunft[|]").append(f.format(parsedAttack.getArriveTime())).append("[/*]\n");
             UnitHolder u = (UnitHolder) jPossibleUnits.getSelectedValue();
             parsedAttack.setUnit(u);
             bbBuilder.append("[*]Vermutete Einheit[|]" + "[unit]").append(u.getPlainName()).append("[/unit][/*]\n");
-            
+
             double dur = DSCalculator.calculateMoveTimeInSeconds(parsedAttack.getSource(), parsedAttack.getTarget(), u.getSpeed()) * 1000.0;
             long send = parsedAttack.getArriveTime().getTime() - (long) dur;
             double ret = (double) parsedAttack.getArriveTime().getTime() + dur;
             ret /= 1000;
             ret = Math.round(ret + .5);
             ret *= 1000;
-            
+
             bbBuilder.append("[*]Errechnete Abschickzeit[|]").append(f.format(new Date(send))).append("[/*]\n");
             bbBuilder.append("[*]Errechnete Rückkehr[|]").append(f.format(new Date((long) ret))).append("[/*][/table]\n");
         } else {
@@ -1352,27 +1359,27 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         }
         jBBTextPane.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + BBCodeFormatter.toHtml(bbBuilder.toString()) + "</body></html>");
     }
-    
+
     public void setCustomAttack(String pAttack) {
         jCommandArea.setText(pAttack);
         fireComandDataChangedEvent(null);
     }
-    
+
     private void buildResults(Hashtable<Village, Date> pTimings, Village pTarget, UnitHolder pUnit) {
         DefaultTableModel resultModel = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
                     "Herkunft", "Einheit", "Ziel", "Startzeit"}) {
-            
+
             Class[] types = new Class[]{
                 Village.class, UnitHolder.class, Village.class, Date.class
             };
-            
+
             @Override
             public Class getColumnClass(int columnIndex) {
                 return types[columnIndex];
             }
-            
+
             @Override
             public boolean isCellEditable(int row, int col) {
                 return false;
@@ -1384,21 +1391,21 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jResultTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
         jResultTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         jResultTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
-        
+
         if (pTimings == null || pTarget == null || pUnit == null) {
             return;
         }
-        
+
         Enumeration<Village> keys = pTimings.keys();
         while (keys.hasMoreElements()) {
             Village key = keys.nextElement();
             resultModel.addRow(new Object[]{key, pUnit, pTarget, pTimings.get(key)});
         }
 
-        
+
         jideRetimeTabbedPane.setSelectedIndex(1);
     }
-    
+
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
@@ -1416,7 +1423,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception e) {
         }
-        
+
         DSWorkbenchReTimerFrame.getSingleton().resetView();
         DSWorkbenchReTimerFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         DSWorkbenchReTimerFrame.getSingleton().setVisible(true);

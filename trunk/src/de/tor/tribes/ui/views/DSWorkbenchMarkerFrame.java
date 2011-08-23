@@ -58,7 +58,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         MarkerTableTab activeTab = getActiveTab();
         if (e.getActionCommand() != null && activeTab != null) {
             if (e.getActionCommand().equals("Copy")) {
-               // activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.COPY_TO_INTERNAL_CLIPBOARD);
+                // activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.COPY_TO_INTERNAL_CLIPBOARD);
             } else if (e.getActionCommand().equals("Cut")) {
                 activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.CUT_TO_INTERNAL_CLIPBOARD);
             } else if (e.getActionCommand().equals("Paste")) {
@@ -204,6 +204,13 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
 
 
         centerPanel.setupTaskPane(editPane);
+    }
+
+    @Override
+    public void toBack() {
+        jMarkerFrameAlwaysOnTop.setSelected(false);
+        fireMarkerFrameOnTopEvent(null);
+        super.toBack();
     }
 
     public void storeCustomProperties(Configuration pCconfig) {
@@ -365,7 +372,7 @@ private void fireEnterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fi
 }//GEN-LAST:event_fireEnterEvent
 
 private void fireMouseExitEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMouseExitEvent
-        jLabel3.setEnabled(false);
+    jLabel3.setEnabled(false);
 }//GEN-LAST:event_fireMouseExitEvent
 
 private void fireCreateMarkerSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateMarkerSetEvent

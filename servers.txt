@@ -1,1 +1,1 @@
-de99;http://zz1.beta.tribalwars.net;3;0
+en0;http://zz1.beta.tribalwars.net;3;0

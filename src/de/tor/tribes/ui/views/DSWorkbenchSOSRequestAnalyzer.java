@@ -208,7 +208,6 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                System.out.println("CLICK");
                 transferToSupportTool();
             }
         });
@@ -220,7 +219,6 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                System.out.println("CLICK2");
                 transferToRetimeTool();
             }
         });
@@ -252,13 +250,10 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     }
 
     private void transferToSupportTool() {
-        System.out.println("HERE!!!");
         List<Attack> attacks = getSelectedAttacks();
         if (attacks.isEmpty()) {
-            System.out.println("NONE!!!");
             return;
         }
-        System.out.println(attacks);
         VillageSupportFrame.getSingleton().showSupportFrame(attacks.get(0).getTarget(), attacks.get(0).getArriveTime().getTime());
     }
 
@@ -614,8 +609,6 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
                 int attackCount = attacks.size();
                 for (SOSRequest.TimedAttack attack : attacks) {
                     //add one table row for each attack
-                    System.out.println(attack.isPossibleFake());
-                    System.out.println(attack.isPossibleSnob());
                     int possibleType = Attack.NO_TYPE;
                     if (attack.isPossibleFake()) {
                         possibleType = Attack.FAKE_TYPE;

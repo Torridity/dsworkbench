@@ -6,6 +6,7 @@ package de.tor.tribes.util.parser;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.NotifierFrame;
@@ -74,9 +75,9 @@ public class SupportParser implements SilentParserInterface {
                     if (supportTarget != null) {
                         //found new support
                         Hashtable<UnitHolder, Integer> supportTroops = parseUnits(line.replaceAll(Pattern.quote(supportTarget.toString()), "").trim());
+
                         if (supportTroops != null) {
                             holder.addOutgoingSupport(supportTarget, supportTroops);
-
                             SupportVillageTroopsHolder supporterHolder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(supportTarget, TroopsManager.TROOP_TYPE.SUPPORT);
                             if (holder != null && !touchedVillages.contains(supportTarget)) {
                                 //remove all supports if there are any to avoid old entries
@@ -86,7 +87,7 @@ public class SupportParser implements SilentParserInterface {
                             supporterHolder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(supportTarget, TroopsManager.TROOP_TYPE.SUPPORT, true);
                             supporterHolder.addIncomingSupport(supportSender, supportTroops);
                             supportCount++;
-                        }
+                        } 
                     }
                 }
             }
@@ -109,8 +110,12 @@ public class SupportParser implements SilentParserInterface {
         String line = pLine.replaceAll(ParserVariableManager.getSingleton().getProperty("troops.own"), "").replaceAll(ParserVariableManager.getSingleton().getProperty("troops.commands"), "").replaceAll(ParserVariableManager.getSingleton().getProperty("troops"), "");
         // System.out.println("Line after: " + line);
         StringTokenizer t = new StringTokenizer(line, " \t");
-        //get unit count (decrease due  to militia which cannot support
-        int uCount = DataHolder.getSingleton().getUnits().size() - 1;
+
+        int uCount = DataHolder.getSingleton().getUnits().size();
+        if (!DataHolder.getSingleton().getUnitByPlainName("militia").equals(UnknownUnit.getSingleton())) {
+            //get unit count (decrease due  to militia which cannot support
+            uCount -= 1;
+        }
         Hashtable<UnitHolder, Integer> units = new Hashtable<UnitHolder, Integer>();
         int cnt = 0;
         while (t.hasMoreTokens()) {

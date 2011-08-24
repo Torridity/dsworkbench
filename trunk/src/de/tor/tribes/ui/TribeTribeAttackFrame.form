@@ -823,7 +823,7 @@
     <Container class="javax.swing.JPanel" name="jxAttackPlanerPanel">
       <Properties>
         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[900, 600]"/>
+          <Dimension value="[970, 600]"/>
         </Property>
       </Properties>
 
@@ -864,9 +864,9 @@
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="jPanel4" alignment="0" pref="874" max="32767" attributes="0"/>
+                              <Component id="jPanel4" alignment="0" pref="945" max="32767" attributes="0"/>
                               <Component id="jPanel1" alignment="1" max="32767" attributes="1"/>
-                              <Component id="jLabel20" alignment="0" pref="874" max="32767" attributes="2"/>
+                              <Component id="jLabel20" alignment="0" pref="945" max="32767" attributes="2"/>
                           </Group>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -876,7 +876,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jPanel4" pref="264" max="32767" attributes="0"/>
+                          <Component id="jPanel4" pref="269" max="32767" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jPanel1" min="-2" max="-2" attributes="1"/>
                           <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
@@ -904,18 +904,18 @@
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
-                                      <Component id="jSourceGroupRelation" pref="213" max="32767" attributes="1"/>
+                                      <Component id="jSourceGroupRelation" pref="249" max="32767" attributes="1"/>
                                       <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" attributes="0">
-                                      <Component id="jScrollPane4" pref="242" max="32767" attributes="1"/>
+                                      <Component id="jScrollPane4" pref="278" max="32767" attributes="1"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <Component id="jScrollPane5" min="-2" pref="117" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="jSourceListScrollPane" pref="471" max="32767" attributes="1"/>
+                                  <Component id="jSourceListScrollPane" pref="506" max="32767" attributes="1"/>
                                   <Group type="103" alignment="1" groupAlignment="1" max="-2" attributes="0">
                                       <Group type="102" alignment="1" attributes="1">
                                           <Component id="jMarkAsFakeBox" max="32767" attributes="1"/>
@@ -929,7 +929,7 @@
                                       <Component id="jPlayerSourcesOnlyBox" alignment="1" max="32767" attributes="1"/>
                                       <Component id="jPanel7" alignment="1" pref="388" max="32767" attributes="1"/>
                                   </Group>
-                                  <Component id="jLabel2" alignment="0" pref="471" max="32767" attributes="0"/>
+                                  <Component id="jLabel2" alignment="0" pref="506" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -1387,7 +1387,7 @@
                       <Group type="102" attributes="0">
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jPanel5" alignment="0" pref="874" max="32767" attributes="0"/>
+                              <Component id="jPanel5" alignment="0" pref="945" max="32767" attributes="0"/>
                               <Component id="jPanel6" alignment="0" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -1398,7 +1398,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jPanel5" pref="326" max="32767" attributes="0"/>
+                          <Component id="jPanel5" pref="331" max="32767" attributes="0"/>
                           <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                           <Component id="jPanel6" min="-2" max="-2" attributes="1"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -1426,21 +1426,21 @@
                                   <Group type="102" attributes="0">
                                       <Component id="jLabel11" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                                      <Component id="jTargetTribeFilter" pref="145" max="32767" attributes="1"/>
+                                      <Component id="jTargetTribeFilter" pref="168" max="32767" attributes="1"/>
                                   </Group>
-                                  <Component id="jScrollPane7" pref="181" max="32767" attributes="1"/>
+                                  <Component id="jScrollPane7" pref="204" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="jScrollPane8" pref="155" max="32767" attributes="0"/>
+                              <Component id="jScrollPane8" pref="180" max="32767" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="jScrollPane9" min="-2" pref="80" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jScrollPane10" pref="380" max="32767" attributes="0"/>
+                                  <Component id="jScrollPane10" pref="403" max="32767" attributes="0"/>
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jLabel7" pref="161" max="32767" attributes="0"/>
-                                          <Component id="jMarkTargetAsFake" alignment="1" pref="161" max="32767" attributes="0"/>
+                                          <Component id="jLabel7" pref="184" max="32767" attributes="0"/>
+                                          <Component id="jMarkTargetAsFake" alignment="1" pref="184" max="32767" attributes="0"/>
                                       </Group>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Component id="jSeparator1" min="-2" max="-2" attributes="0"/>
@@ -1454,7 +1454,7 @@
                                           <Component id="jMaxAttacksPerVillage" alignment="1" min="-2" pref="197" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
-                                  <Component id="jLabel3" pref="380" max="32767" attributes="0"/>
+                                  <Component id="jLabel3" pref="403" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -1833,6 +1833,9 @@
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
       <Color blue="df" green="eb" red="ef" type="rgb"/>
     </Property>
+    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[350, 226]"/>
+    </Property>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -1850,7 +1853,7 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,2,62,0,0,3,117"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,2,66,0,0,3,117"/>
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
@@ -1876,10 +1879,10 @@
           <Color blue="df" green="eb" red="ef" type="rgb"/>
         </Property>
         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[300, 200]"/>
+          <Dimension value="[350, 200]"/>
         </Property>
         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[900, 650]"/>
+          <Dimension value="[1000, 650]"/>
         </Property>
       </Properties>
       <Constraints>

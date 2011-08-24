@@ -57,14 +57,13 @@ public class BruteForce extends AbstractAttackAlgorithm {
                     currentRun++;
                     updateStatus(maxRuns - currentRun, maxRuns);
                     //time when the attacks should arrive
-                    // long arrive = pTimeFrame.getEnd();
                     Village vTarget = null;
 
                     //distribute targets randomly
                     Collections.shuffle(pTargets);
                     //search all targets
                     logInfo(" - Teste " + pTargets.size() + " mögliche Ziele");
-                    for (Village v : pTargets.toArray(new Village[]{})) {
+                    for (Village v : pTargets.toArray(new Village[pTargets.size()])) {
                         int maxAttacksPerVillage = pMaxAttacksTable.get(v);
                         double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
                         if (unit.getPlainName().equals("snob")) {
@@ -84,7 +83,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                 //create new table of attacks
                                 attacksForVillage = new Hashtable<UnitHolder, List<Village>>();
                                 List<Village> sourceList = new LinkedList<Village>();
-                                logInfo("   * Neuer Angriffe: " + source + " > " + v);
+                                logInfo("   * Neuer Angriff: " + source + " -> " + v);
                                 sourceList.add(source);
                                 attacksForVillage.put(unit, sourceList);
                                 attacks.put(v, attacksForVillage);
@@ -98,7 +97,6 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                 //there are already attacks on this village
                                 if (currentAttacks < maxAttacksPerVillage) {
                                     //more attacks on this village are allowed
-
                                     boolean added = false;
                                     //max number of attacks neither for villages nor for player reached
                                     List<Village> attsPerUnit = attacksForVillage.get(unit);
@@ -106,25 +104,28 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                         if (!attsPerUnit.contains(source)) {
                                             //only add source if it does not attack current target yet
                                             added = true;
-                                            logInfo("   * Neuer Angriffe: " + source + " -> " + v);
+                                            logInfo("   * Neuer Angriff: " + source + " -> " + v);
                                             attsPerUnit.add(source);
                                         }
                                     } else {
                                         attsPerUnit = new LinkedList<Village>();
                                         //only add source if it does not attack current target yet
                                         added = true;
-                                        logInfo("   * Neuer Angriffe: " + source + " -> " + v);
+                                        logInfo("   * Neuer Angriff: " + source + " -> " + v);
                                         attsPerUnit.add(source);
                                         attacksForVillage.put(unit, attsPerUnit);
                                     }
                                     if (added) {
                                         //only increment attack count if source was added
                                         vTarget = v;
+                                    }else{
+                                        vTarget = null;
                                     }
                                 } else {
                                     //max number of attacks per village reached, continue search
                                     logInfo("   * Entferne vollständiges Ziel " + v);
                                     pTargets.remove(v);
+                                    vTarget = null;
                                 }
                             }
                         }
@@ -251,12 +252,15 @@ public class BruteForce extends AbstractAttackAlgorithm {
         }
 
         // </editor-fold>
+       
+              
         logText(" - Erstelle Ergebnisliste");
         //convert to result list
         List<AbstractTroopMovement> movements = new LinkedList<AbstractTroopMovement>();
         Enumeration<Village> targetKeys = attacks.keys();
         int fullMovements = 0;
         logger.debug(" - adding offs");
+        int off = 0;
         while (targetKeys.hasMoreElements()) {
             Village target = targetKeys.nextElement();
             Enumeration<UnitHolder> sourceKeys = attacks.get(target).keys();
@@ -265,6 +269,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
                 UnitHolder sourceUnit = sourceKeys.nextElement();
                 List<Village> unitVillages = attacks.get(target).get(sourceUnit);
                 for (Village source : unitVillages) {
+                    off++;
                     f.addOff(sourceUnit, source);
                 }
             }
@@ -273,6 +278,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
             }
             movements.add(f);
         }
+        
         logger.debug(" - adding fakes");
         Enumeration<Village> fakeKeys = fakes.keys();
         while (fakeKeys.hasMoreElements()) {

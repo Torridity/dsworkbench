@@ -23,5 +23,10 @@
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/models/TroopsTableModel.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/models/SupportTableModel.java</file>
         <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/troops/SupportVillageTroopsHolder.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/algo/BruteForce.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/TribeTribeAttackFrame.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/algo/SettingsPanel.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/algo/AttackTimePanel.java</file>
+        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/types/TimeSpan.java</file>
     </open-files>
 </project-private>

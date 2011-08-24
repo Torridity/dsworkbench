@@ -82,13 +82,14 @@ public abstract class BasicFormatter<C extends BBSupport> implements BBFormatter
         f.setMinimumFractionDigits(0);
         if (pDigits < 10) {
             f.setMaximumIntegerDigits(1);
-            f.setMaximumIntegerDigits(1);
         } else if (pDigits < 100) {
             f.setMaximumIntegerDigits(2);
-            f.setMaximumIntegerDigits(2);
+        } else if (pDigits < 1000) {
+            f.setMaximumIntegerDigits(3);
+        } else if (pDigits < 10000) {
+            f.setMaximumIntegerDigits(4);
         } else {
-            f.setMaximumIntegerDigits(3);
-            f.setMaximumIntegerDigits(3);
+            f.setMaximumIntegerDigits(5);
         }
         return f;
     }

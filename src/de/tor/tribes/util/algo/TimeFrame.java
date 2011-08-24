@@ -23,7 +23,8 @@ import org.apache.commons.lang.time.DateUtils;
  *
  * @author Torridity
  */
-public class TimeFrame{
+public class TimeFrame {
+
     private long startNotBefore = 0;
     private long startNotAfter = 0;
     private long arriveNotBefore = 0;
@@ -192,6 +193,9 @@ public class TimeFrame{
                     if (onlyAtDay == null || DateUtils.isSameDay(thisDate, onlyAtDay)) {
                         //span is valid for every day or this day equals the only valid day
                         Date spanStartDate = DateUtils.setHours(thisDate, span.getSpan().getMinimumInteger());
+
+
+
                         Date spanEndDate = DateUtils.setHours(thisDate, span.getSpan().getMaximumInteger() - 1);
                         spanEndDate = DateUtils.setMinutes(spanEndDate, 59);
                         spanEndDate = DateUtils.setSeconds(spanEndDate, 59);
@@ -432,7 +436,7 @@ public class TimeFrame{
         long runtimeMillis = pRuntime - (runtimeSeconds * DateUtils.MILLIS_PER_SECOND);
         Date startDate = new Date(System.currentTimeMillis());
         startDate = DateUtils.truncate(startDate, Calendar.DAY_OF_MONTH);
-
+        
         SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
         System.out.println(f.format(startDate));*/
         // System.out.println(runtimeDays + " " + runtimeHours + " " + runtimeMinutes + " " + runtimeSeconds + " " + runtimeMillis);
@@ -468,7 +472,7 @@ public class TimeFrame{
         System.out.println("Possible: " + frame.isMovementPossible(pRuntime, null));
         List<Long> sendDates = new LinkedList<Long>();
         /* for (int i = 0; i < 10; i++) {
-
+        
         long time = pRuntime + (long) Math.round(10 * Math.random()) * 1000l;
         System.out.println("Possible: " + frame.isMovementPossible(time, null));
         System.out.println("Runtime: " + time);
@@ -489,7 +493,7 @@ public class TimeFrame{
 
     public String toString() {
         StringBuilder builder = new StringBuilder(200);
-         SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+        SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
         builder.append("Start: " + f.format(new Date(getStartRange().getMinimumLong())) + "-" + f.format(new Date(getStartRange().getMaximumLong()))).append("\n");
         builder.append("Arrive: " + f.format(new Date(getArriveRange().getMinimumLong())) + "-" + f.format(new Date(getArriveRange().getMaximumLong()))).append("\n");
         builder.append("SendSpans: ").append(sendTimeSpans).append("\n");
@@ -504,8 +508,8 @@ public class TimeFrame{
     Date arrive1 = f.parse("16.02.11 08:00:00");
     Date arrive2 = f.parse("16.02.11 14:00:00");
     TimeFrame frame = new TimeFrame(start1, arrive1, start2, arrive2);
-
-
-
+    
+    
+    
     }*/
 }

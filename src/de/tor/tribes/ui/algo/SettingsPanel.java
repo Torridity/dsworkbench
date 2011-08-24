@@ -33,12 +33,10 @@ import org.apache.log4j.Logger;
 public class SettingsPanel extends javax.swing.JPanel {
 
     private static Logger logger = Logger.getLogger("AttackPlannerSettings");
-    private SettingsChangedListener mListener;
     private AttackTimePanel timeSettingsPanel = null;
 
     /** Creates new form TimePanel */
     public SettingsPanel(SettingsChangedListener pListener) {
-        mListener = pListener;
         initComponents();
         // setBackground(Constants.DS_BACK_LIGHT);
         // jSendTimeSettingsPanel.setSettingsChangedListener(this);
@@ -254,7 +252,7 @@ public class SettingsPanel extends javax.swing.JPanel {
         timeFrameVisualizer1.setLayout(timeFrameVisualizer1Layout);
         timeFrameVisualizer1Layout.setHorizontalGroup(
             timeFrameVisualizer1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 657, Short.MAX_VALUE)
+            .addGap(0, 643, Short.MAX_VALUE)
         );
         timeFrameVisualizer1Layout.setVerticalGroup(
             timeFrameVisualizer1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -269,7 +267,7 @@ public class SettingsPanel extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 659, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 645, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -296,7 +294,7 @@ public class SettingsPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())

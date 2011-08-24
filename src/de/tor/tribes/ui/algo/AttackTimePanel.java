@@ -41,6 +41,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -251,7 +252,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
             throw new RuntimeException("Es muss mindestens ein Ankunftszeitrahmen angegeben werden.");
         }
 
-        if (maxArriveTimeField.getSelectedDate().getTime() < System.currentTimeMillis()) {
+        if (getTimeFrame().getArriveRange().getMaximumLong() < System.currentTimeMillis()) {
             throw new RuntimeException("Das Enddatum liegt in der Vergangenheit. Eine Planung von Angriffen ist nicht möglich.");
         }
 
@@ -293,7 +294,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         if (jAlwaysButton.isSelected()) {
             start = new TimeSpan(range);
         } else {
-            if(jExactTimeButton.isEnabled()){
+            if (jExactTimeButton.isSelected()) {
                 range = null;
             }
             start = new TimeSpan(dateTimeField.getSelectedDate(), range);
@@ -331,7 +332,6 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
     /**Get the entire timeframe based on the panel settings
     @return TimeFrame The timeframe*/
     public TimeFrame getTimeFrame() {
-
         Date correctedArrive = DateUtils.addDays(maxArriveTimeField.getSelectedDate(), 1);
         correctedArrive = DateUtils.addSeconds(correctedArrive, -1);
         TimeFrame frame = new TimeFrame(minSendTimeField.getSelectedDate(), minSendTimeField.getSelectedDate(), correctedArrive, correctedArrive);
@@ -384,6 +384,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
                 spans.add((TimeSpan) model.getElementAt(i));
             }
 
+           
             Collections.sort(spans);
             model = new DefaultListModel();
             for (TimeSpan span : spans) {

@@ -69,7 +69,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -119,9 +118,11 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableCellRenderer;
 import org.apache.log4j.ConsoleAppender;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXCollapsiblePane;
@@ -130,6 +131,7 @@ import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
+import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
@@ -2724,6 +2726,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
                 deleteAction(jResultsTable);
                 break;
         }
+        updateInfo();
     }
 
     private void sourceToInternalClipboardAction(TRANSFER_TYPE pType) {
@@ -2795,13 +2798,16 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
             for (String line : lines) {
                 String[] split = line.split(";");
                 Village v = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(split[0]));
-                UnitHolder unit = DataHolder.getSingleton().getUnitByPlainName(split[1]);
-                Boolean fake = Boolean.parseBoolean(split[2]);
-                if (v != null && unit != null) {
-                    theModel.addRow(new Object[]{v, unit, fake, 0});
-                    cnt++;
+                if (v.getTribe() != Barbarians.getSingleton()) {
+                    UnitHolder unit = DataHolder.getSingleton().getUnitByPlainName(split[1]);
+                    Boolean fake = Boolean.parseBoolean(split[2]);
+                    if (v != null && unit != null) {
+                        theModel.addRow(new Object[]{v, unit, fake, 0});
+                        cnt++;
+                    }
                 }
             }
+
             showSuccess(cnt + ((cnt == 1) ? " Eintrag eingefügt" : " Einträge eingefügt"));
         } catch (UnsupportedFlavorException ufe) {
             logger.error("Failed to copy data from internal clipboard", ufe);
@@ -2897,7 +2903,6 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         } else {
             showInfo(message, isResult);
         }
-        updateInfo();
     }
 
     private void attackToInternalFormatAction() {
@@ -3035,7 +3040,6 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         for (Village pSource : pSourceVillages) {
             if (!(ignoreSmallTroopCountVillages && villagesWithSmallTroopCount.contains(pSource))) {
                 ((DefaultTableModel) jSourcesTable.getModel()).addRow(new Object[]{pSource, pUnit, pAsFake, 0});
-                mSettingsPanel.addTribe(pSource.getTribe());
             }
         }
     }
@@ -3302,32 +3306,23 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
                 return false;
             }
         };
-        //renderer, which hides the boolean table column
-        /*DefaultTableCellRenderer invis = new DefaultTableCellRenderer() {
-        
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        Component c = new AlternatingColorCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        c.setForeground(Color.WHITE);
-        return c;
-        }
-        };*/
+
         //renderer, which marks send times red if attack is impossible to send
-        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
+        DefaultTableRenderer renderer = new DefaultTableRenderer() {
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DateCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                JLabel l = (JLabel) c;
                 Boolean impossible = (Boolean) table.getModel().getValueAt(row, 5);
                 if (impossible.booleanValue()) {
-                    c.setBackground(Color.RED);
+                    l.setText("<html><nobr><font color='#FF0000'>" + l.getText() + "</font></nobr></html>");
                 }
                 return c;
             }
         };
 
         jResultsTable.setDefaultRenderer(Date.class, renderer);
-        //jResultsTable.setDefaultRenderer(Boolean.class, invis);
         jResultsTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
         jResultsTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
         jResultsTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
@@ -3361,9 +3356,9 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         if (impossibleAttacks > 0) {
             String message = "";
             if (impossibleAttacks == 1) {
-                message = "<html>Ein berechneter Angriff kann vermutlich nicht abgeschickt werden.<br/>Der entsprechende Angriff ist in der Tabelle rot markiert</html>";
+                message = "<html>Ein berechneter Angriff hat einen bereits verwendeten Abschickzeitpunkt.<br/>Der entsprechende Angriff ist in der Tabelle rot markiert</html>";
             } else {
-                message = "<html>" + impossibleAttacks + " berechnete Angriffe k&ouml;nnen vermutlich nicht abgeschickt werden.<br/>Die entsprechenden Angriffe sind in der Tabelle rot markiert</html>";
+                message = "<html>" + impossibleAttacks + " berechnete Angriffe haben identische Abschickzeitpunkte.<br/>Die entsprechenden Angriffe sind in der Tabelle rot markiert</html>";
             }
             showInfo(message, true);
         }
@@ -3802,19 +3797,23 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         logger.debug("Transferring calculated attacks and its targets to separate lists");
         List<Long> usedSendTimes = new LinkedList<Long>();
         int fullOffs = 0;
+        System.out.println(pParent.getResults().size());
+        int cnt = 0;
         for (AbstractTroopMovement movement : pParent.getResults()) {
             List<Attack> atts = null;
-            atts = movement.getAttacks(pParent.getTimeFrame(), usedSendTimes);
-            if (atts != null && atts.size() == movement.getMaxOffs()) {
+            atts = movement.getAttacks(pParent.getTimeFrame(), new LinkedList<Long>());
+            if (atts.size() == movement.getMaxOffs()) {
                 fullOffs++;
             }
             for (Attack attack : atts) {
+                cnt++;
                 attackList.add(attack);
                 if (!targets.contains(attack.getTarget())) {
                     targets.add(attack.getTarget());
                 }
             }
         }
+
         logger.debug("Adding input targets to map");
         HashMap<Village, String> attackMappings = new HashMap<Village, String>();
         //get targets and attack count
@@ -3881,9 +3880,9 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
 
             @Override
             public int compare(Tag o1, Tag o2) {
-                try{
-                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-                }catch(Exception e){
+                try {
+                    return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+                } catch (Exception e) {
                     return 0;
                 }
             }

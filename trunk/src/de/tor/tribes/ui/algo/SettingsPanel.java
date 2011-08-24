@@ -122,16 +122,6 @@ public class SettingsPanel extends javax.swing.JPanel {
         }
     }
 
-    /**Add tribe to timeframe list*/
-    public void addTribe(Tribe t) {
-        timeSettingsPanel.addTribe(t);
-    }
-
-    /**Remove tribe from  timeframe list (not used yet)*/
-    public void removeTribe(Tribe pTribe) {
-        timeSettingsPanel.removeTribe(pTribe);
-    }
-
     /**Return selected send time frames
      */
     public TimeFrame getTimeFrame() {

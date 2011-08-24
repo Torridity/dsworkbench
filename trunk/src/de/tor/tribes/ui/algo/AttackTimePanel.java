@@ -127,7 +127,6 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         model.addElement(new TimeSpanDivider());
         jTimeFrameList.setModel(model);
         jTimeFrameList.setCellRenderer(new TimeFrameListCellRenderer());
-        jTribeOnlyBox.setModel(new DefaultComboBoxModel(new Object[]{"Alle"}));
         Calendar c = Calendar.getInstance();
         minSendTimeField.setDate(c.getTime());
         c.setTimeInMillis(System.currentTimeMillis() + DateUtils.MILLIS_PER_HOUR);
@@ -152,46 +151,6 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
                 }
             }
         }
-    }
-
-    public void addTribe(Tribe t) {
-        DefaultComboBoxModel model = (DefaultComboBoxModel) jTribeOnlyBox.getModel();
-        List<Tribe> tribes = new LinkedList<Tribe>();
-        for (int i = 0; i < model.getSize(); i++) {
-            try {
-                tribes.add((Tribe) model.getElementAt(i));
-            } catch (Exception e) {
-            }
-        }
-        if (!tribes.contains(t)) {
-            tribes.add(t);
-            Collections.sort(tribes);
-            model = new DefaultComboBoxModel();
-            model.addElement("Alle");
-            for (Tribe tribe : tribes) {
-                model.addElement(tribe);
-            }
-            jTribeOnlyBox.setModel(model);
-        }
-    }
-
-    public void removeTribe(Tribe pTribe) {
-        DefaultComboBoxModel model = (DefaultComboBoxModel) jTribeOnlyBox.getModel();
-        List<Tribe> tribes = new LinkedList<Tribe>();
-        for (int i = 0; i < model.getSize(); i++) {
-            try {
-                tribes.add((Tribe) model.getElementAt(i));
-            } catch (Exception e) {
-            }
-        }
-        tribes.remove(pTribe);
-        Collections.sort(tribes);
-        model = new DefaultComboBoxModel();
-        model.addElement("Alle");
-        for (Tribe tribe : tribes) {
-            model.addElement(tribe);
-        }
-        jTribeOnlyBox.setModel(model);
     }
 
     public List<TimeSpan> getTimeSpans() {
@@ -311,11 +270,8 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
     private TimeSpan getArriveSpan() {
         TimeSpan arrive = null;
         IntRange range = new IntRange(Math.round(jSendTimeFrame.getMinimumColoredValue()), Math.round(jSendTimeFrame.getMaximumColoredValue()));
-        Object o = jTribeOnlyBox.getSelectedItem();
+
         Tribe t = null;
-        if (o != null && o instanceof Tribe) {
-            t = (Tribe) o;
-        }
         if (jDayButton.isSelected()) {
             arrive = new TimeSpan(dateTimeField.getSelectedDate(), range, t);
         } else if (jAlwaysButton.isSelected()) {
@@ -384,7 +340,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
                 spans.add((TimeSpan) model.getElementAt(i));
             }
 
-           
+
             Collections.sort(spans);
             model = new DefaultListModel();
             for (TimeSpan span : spans) {
@@ -420,8 +376,6 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         jPanel3 = new javax.swing.JPanel();
         jSendTimeFrame = new com.visutools.nav.bislider.BiSlider();
         dateTimeField = new de.tor.tribes.ui.components.DateTimeField();
-        jLabel4 = new javax.swing.JLabel();
-        jTribeOnlyBox = new javax.swing.JComboBox();
         jPanel4 = new javax.swing.JPanel();
         jAlwaysButton = new javax.swing.JRadioButton();
         jDayButton = new javax.swing.JRadioButton();
@@ -455,7 +409,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addComponent(minSendTimeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 172, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 218, Short.MAX_VALUE)
                 .addComponent(jLabel2)
                 .addGap(18, 18, 18)
                 .addComponent(maxArriveTimeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -480,11 +434,6 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         dateTimeField.setToolTipText("Datum und Uhrzeit des Zeitrahmens");
         dateTimeField.setEnabled(false);
         dateTimeField.setTimeEnabled(false);
-
-        jLabel4.setText("Angreifer");
-
-        jTribeOnlyBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Alle" }));
-        jTribeOnlyBox.setToolTipText("Zeitrahmen nur für gewählten Angreifer verwenden");
 
         jPanel4.setLayout(new java.awt.GridBagLayout());
 
@@ -563,16 +512,17 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)))
-                .addGap(18, 18, 18)
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE))
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(dateTimeField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 305, Short.MAX_VALUE)
-                    .addComponent(jTribeOnlyBox, 0, 305, Short.MAX_VALUE)
-                    .addComponent(jSendTimeFrame, javax.swing.GroupLayout.DEFAULT_SIZE, 305, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(dateTimeField, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(23, 23, 23)
+                        .addComponent(jSendTimeFrame, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -581,19 +531,17 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(dateTimeField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jSendTimeFrame, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(jTribeOnlyBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 4, Short.MAX_VALUE)
+                                .addComponent(dateTimeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE))
+                        .addGap(37, 37, 37)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
+                            .addComponent(jSendTimeFrame, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
 
@@ -632,10 +580,10 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE))
-                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 474, Short.MAX_VALUE))
+                        .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE))
+                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 520, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -660,7 +608,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 552, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -675,7 +623,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -710,7 +658,6 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -724,7 +671,6 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
     private com.visutools.nav.bislider.BiSlider jSendTimeFrame;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JList jTimeFrameList;
-    private javax.swing.JComboBox jTribeOnlyBox;
     private de.tor.tribes.ui.components.DateTimeField maxArriveTimeField;
     private de.tor.tribes.ui.components.DateTimeField minSendTimeField;
     // End of variables declaration//GEN-END:variables

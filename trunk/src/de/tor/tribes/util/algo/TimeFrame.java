@@ -97,12 +97,14 @@ public class TimeFrame {
      * @return boolean TRUE=Runtime might be fitted if not all send times are already used
      */
     public boolean isMovementPossible(long pRuntime, Tribe pTribe) {
+
         if (startRanges == null) {
             startRanges = startTimespansToRanges(pTribe);
         }
         if (arriveRanges == null) {
             arriveRanges = arriveTimespansToRanges(pTribe);
         }
+
         for (LongRange currentStartRange : startRanges) {
             LongRange arriveRangeForStartRange = new LongRange(currentStartRange.getMinimumLong() + pRuntime, currentStartRange.getMaximumLong() + pRuntime);
             for (LongRange currentArriveRange : arriveRanges) {
@@ -112,7 +114,6 @@ public class TimeFrame {
                 }
             }
         }
-
         //no overlapping range was found
         return false;
     }
@@ -249,46 +250,46 @@ public class TimeFrame {
             Date onlyAtDay = span.getAtDate();
             Date thisDate = new Date(startDate.getTime());
             //check if span is valid for provided tribe
-            if (pTribe == null || pTribe.equals(AnyTribe.getSingleton()) || span.isValidForTribe(pTribe)) {
-                //go through all days from start to end
+            // if (pTribe == null || pTribe.equals(AnyTribe.getSingleton()) || span.isValidForTribe(pTribe)) {
+            //go through all days from start to end
 
-                while (thisDate.getTime() < startNotAfter) {
-                    if (onlyAtDay == null || DateUtils.isSameDay(thisDate, onlyAtDay)) {
-                        //span is valid for every day or this day equals the only valid day
-                        Date spanStartDate = DateUtils.setHours(thisDate, span.getSpan().getMinimumInteger());
-                        Date spanEndDate = DateUtils.setHours(thisDate, span.getSpan().getMaximumInteger() - 1);
-                        spanEndDate = DateUtils.setMinutes(spanEndDate, 59);
-                        spanEndDate = DateUtils.setSeconds(spanEndDate, 59);
-                        //check span location relative to start frame
-                        if (spanStartDate.getTime() >= startNotBefore && spanEndDate.getTime() > startNotBefore
-                                && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() <= startNotAfter) {
-                            //|----------| (startNotBefore - startNotAfter)
-                            //  |----| (SpanStart - SpanEnd)
-                            rangesMap.put(new LongRange(spanStartDate.getTime(), spanEndDate.getTime()), span);
-                        } else if (spanStartDate.getTime() < startNotBefore && spanEndDate.getTime() > startNotBefore
-                                && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() <= startNotAfter) {
-                            //  |----------| (startNotBefore - startNotAfter)
-                            //|----| (SpanStart - SpanEnd)
-                            //set span start to 'startNotBefore'
-                            rangesMap.put(new LongRange(startNotBefore, spanEndDate.getTime()), span);
-                        } else if (spanStartDate.getTime() <= startNotBefore && spanEndDate.getTime() > startNotBefore
-                                && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() >= startNotAfter) {
-                            //  |----------| (startNotBefore - startNotAfter)
-                            //|--------------| (SpanStart - SpanEnd)
-                            //set span start to 'startNotBefore'
-                            rangesMap.put(new LongRange(startNotBefore, startNotAfter), span);
-                        } else if (spanStartDate.getTime() >= startNotBefore && spanEndDate.getTime() > startNotBefore
-                                && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() >= startNotAfter) {
-                            //|----------| (startNotBefore - startNotAfter)
-                            //    |---------| (SpanStart - SpanEnd)
-                            //set span start to 'startNotBefore'
-                            rangesMap.put(new LongRange(spanStartDate.getTime(), startNotAfter), span);
-                        }
+            while (thisDate.getTime() < startNotAfter) {
+                if (onlyAtDay == null || DateUtils.isSameDay(thisDate, onlyAtDay)) {
+                    //span is valid for every day or this day equals the only valid day
+                    Date spanStartDate = DateUtils.setHours(thisDate, span.getSpan().getMinimumInteger());
+                    Date spanEndDate = DateUtils.setHours(thisDate, span.getSpan().getMaximumInteger() - 1);
+                    spanEndDate = DateUtils.setMinutes(spanEndDate, 59);
+                    spanEndDate = DateUtils.setSeconds(spanEndDate, 59);
+                    //check span location relative to start frame
+                    if (spanStartDate.getTime() >= startNotBefore && spanEndDate.getTime() > startNotBefore
+                            && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() <= startNotAfter) {
+                        //|----------| (startNotBefore - startNotAfter)
+                        //  |----| (SpanStart - SpanEnd)
+                        rangesMap.put(new LongRange(spanStartDate.getTime(), spanEndDate.getTime()), span);
+                    } else if (spanStartDate.getTime() < startNotBefore && spanEndDate.getTime() > startNotBefore
+                            && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() <= startNotAfter) {
+                        //  |----------| (startNotBefore - startNotAfter)
+                        //|----| (SpanStart - SpanEnd)
+                        //set span start to 'startNotBefore'
+                        rangesMap.put(new LongRange(startNotBefore, spanEndDate.getTime()), span);
+                    } else if (spanStartDate.getTime() <= startNotBefore && spanEndDate.getTime() > startNotBefore
+                            && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() >= startNotAfter) {
+                        //  |----------| (startNotBefore - startNotAfter)
+                        //|--------------| (SpanStart - SpanEnd)
+                        //set span start to 'startNotBefore'
+                        rangesMap.put(new LongRange(startNotBefore, startNotAfter), span);
+                    } else if (spanStartDate.getTime() >= startNotBefore && spanEndDate.getTime() > startNotBefore
+                            && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() >= startNotAfter) {
+                        //|----------| (startNotBefore - startNotAfter)
+                        //    |---------| (SpanStart - SpanEnd)
+                        //set span start to 'startNotBefore'
+                        rangesMap.put(new LongRange(spanStartDate.getTime(), startNotAfter), span);
                     }
-                    //increment current date by one day
-                    thisDate = DateUtils.addDays(thisDate, 1);
                 }
+                //increment current date by one day
+                thisDate = DateUtils.addDays(thisDate, 1);
             }
+            // }
         }
 
         return rangesMap;
@@ -301,57 +302,57 @@ public class TimeFrame {
         for (TimeSpan span : arriveTimeSpans) {
             Date thisDate = new Date(arriveDate.getTime());
             //check if span is valid for provided tribe
-            if (pTribe == null || pTribe.equals(AnyTribe.getSingleton()) || span.isValidForTribe(pTribe)) {
-                //go through all days from start to end
-                while (thisDate.getTime() < arriveNotAfter) {
-                    Date onlyValidAtDay = span.getAtDate();
-                    //check if span is valid on every day or if we check the span's day of validity
-                    //(if we do so, the span should not be valid for an exact date because then we don't have a timespan)
-                    if (span.isValidAtEveryDay() || (DateUtils.isSameDay(thisDate, onlyValidAtDay) && !span.isValidAtExactTime())) {
-                        //span is valid for every day or this day equals the only valid day
-                        Date spanStartDate = DateUtils.setHours(thisDate, span.getSpan().getMinimumInteger());
-                        //set end date to last second in end hour
-                        Date spanEndDate = DateUtils.setHours(thisDate, span.getSpan().getMaximumInteger() - 1);
-                        spanEndDate = DateUtils.setMinutes(spanEndDate, 59);
-                        spanEndDate = DateUtils.setSeconds(spanEndDate, 59);
+            // if (pTribe == null || pTribe.equals(AnyTribe.getSingleton()) || span.isValidForTribe(pTribe)) {
+            //go through all days from start to end
+            while (thisDate.getTime() < arriveNotAfter) {
+                Date onlyValidAtDay = span.getAtDate();
+                //check if span is valid on every day or if we check the span's day of validity
+                //(if we do so, the span should not be valid for an exact date because then we don't have a timespan)
+                if (span.isValidAtEveryDay() || (DateUtils.isSameDay(thisDate, onlyValidAtDay) && !span.isValidAtExactTime())) {
+                    //span is valid for every day or this day equals the only valid day
+                    Date spanStartDate = DateUtils.setHours(thisDate, span.getSpan().getMinimumInteger());
+                    //set end date to last second in end hour
+                    Date spanEndDate = DateUtils.setHours(thisDate, span.getSpan().getMaximumInteger() - 1);
+                    spanEndDate = DateUtils.setMinutes(spanEndDate, 59);
+                    spanEndDate = DateUtils.setSeconds(spanEndDate, 59);
 
 
-                        if (spanStartDate.getTime() >= arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
-                                && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() <= arriveNotAfter) {
-                            //|----------| (arriveNotBefore - arriveNotAfter)
-                            //  |----| (SpanStart - SpanEnd)
-                            ranges.add(new LongRange(spanStartDate.getTime(), spanEndDate.getTime()));
-                        } else if (spanStartDate.getTime() < arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
-                                && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() <= arriveNotAfter) {
-                            //  |----------| (arriveNotBefore - arriveNotAfter)
-                            //|----| (SpanStart - SpanEnd)
-                            ranges.add(new LongRange(arriveNotBefore, spanEndDate.getTime()));
-                        } else if (spanStartDate.getTime() < arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
-                                && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() > arriveNotAfter) {
-                            //  |----------| (arriveNotBefore - arriveNotAfter)
-                            //|--------------| (SpanStart - SpanEnd)
-                            ranges.add(new LongRange(arriveNotBefore, arriveNotAfter));
-                        } else if (spanStartDate.getTime() >= arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
-                                && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() > arriveNotAfter) {
-                            //|----------| (arriveNotBefore - arriveNotAfter)
-                            //    |---------| (SpanStart - SpanEnd)
-                            ranges.add(new LongRange(spanStartDate.getTime(), arriveNotAfter));
-                        } else {
-                            //ignore span because it is located completely outside
-                        }
-                    } else if (span.isValidAtExactTime()) {
-                        //time span is only valid at a specific date, so check if this date is located withing arriveStart and arriveEnd
-                        if (span.getAtDate().getTime() >= arriveNotBefore && span.getAtDate().getTime() <= arriveNotAfter) {
-                            //add specific date range
-                            ranges.add(new LongRange(span.getAtDate().getTime(), span.getAtDate().getTime()));
-                            //for exact arrival we do not increment further
-                            break;
-                        }
+                    if (spanStartDate.getTime() >= arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
+                            && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() <= arriveNotAfter) {
+                        //|----------| (arriveNotBefore - arriveNotAfter)
+                        //  |----| (SpanStart - SpanEnd)
+                        ranges.add(new LongRange(spanStartDate.getTime(), spanEndDate.getTime()));
+                    } else if (spanStartDate.getTime() < arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
+                            && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() <= arriveNotAfter) {
+                        //  |----------| (arriveNotBefore - arriveNotAfter)
+                        //|----| (SpanStart - SpanEnd)
+                        ranges.add(new LongRange(arriveNotBefore, spanEndDate.getTime()));
+                    } else if (spanStartDate.getTime() < arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
+                            && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() > arriveNotAfter) {
+                        //  |----------| (arriveNotBefore - arriveNotAfter)
+                        //|--------------| (SpanStart - SpanEnd)
+                        ranges.add(new LongRange(arriveNotBefore, arriveNotAfter));
+                    } else if (spanStartDate.getTime() >= arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
+                            && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() > arriveNotAfter) {
+                        //|----------| (arriveNotBefore - arriveNotAfter)
+                        //    |---------| (SpanStart - SpanEnd)
+                        ranges.add(new LongRange(spanStartDate.getTime(), arriveNotAfter));
+                    } else {
+                        //ignore span because it is located completely outside
                     }
-                    //increment current date by one day
-                    thisDate = DateUtils.addDays(thisDate, 1);
+                } else if (span.isValidAtExactTime()) {
+                    //time span is only valid at a specific date, so check if this date is located withing arriveStart and arriveEnd
+                    if (span.getAtDate().getTime() >= arriveNotBefore && span.getAtDate().getTime() <= arriveNotAfter) {
+                        //add specific date range
+                        ranges.add(new LongRange(span.getAtDate().getTime(), span.getAtDate().getTime()));
+                        //for exact arrival we do not increment further
+                        break;
+                    }
                 }
+                //increment current date by one day
+                thisDate = DateUtils.addDays(thisDate, 1);
             }
+            // }
         }
         Collections.sort(ranges, new Comparator<LongRange>() {
 
@@ -370,54 +371,54 @@ public class TimeFrame {
         for (TimeSpan span : arriveTimeSpans) {
             Date thisDate = new Date(arriveDate.getTime());
             //check if span is valid for provided tribe
-            if (pTribe == null || pTribe.equals(AnyTribe.getSingleton()) || span.isValidForTribe(pTribe)) {
-                //go through all days from start to end
-                while (thisDate.getTime() < arriveNotAfter) {
-                    Date onlyValidAtDay = span.getAtDate();
-                    //check if span is valid on every day or if we check the span's day of validity
-                    //(if we do so, the span should not be valid for an exact date because then we don't have a timespan)
-                    if (span.isValidAtEveryDay() || (DateUtils.isSameDay(thisDate, onlyValidAtDay) && !span.isValidAtExactTime())) {
-                        //span is valid for every day or this day equals the only valid day
-                        Date spanStartDate = DateUtils.setHours(thisDate, span.getSpan().getMinimumInteger());
-                        //set end date to last second in end hour
-                        Date spanEndDate = DateUtils.setHours(thisDate, span.getSpan().getMaximumInteger() - 1);
-                        spanEndDate = DateUtils.setMinutes(spanEndDate, 59);
-                        spanEndDate = DateUtils.setSeconds(spanEndDate, 59);
-                        if (spanStartDate.getTime() >= arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
-                                && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() <= arriveNotAfter) {
-                            //|----------| (arriveNotBefore - arriveNotAfter)
-                            //  |----| (SpanStart - SpanEnd)
-                            rangesMap.put(new LongRange(spanStartDate.getTime(), spanEndDate.getTime()), span);
-                        } else if (spanStartDate.getTime() < arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
-                                && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() <= arriveNotAfter) {
-                            //  |----------| (arriveNotBefore - arriveNotAfter)
-                            //|----| (SpanStart - SpanEnd)
-                            rangesMap.put(new LongRange(arriveNotBefore, spanEndDate.getTime()), span);
-                        } else if (spanStartDate.getTime() < arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
-                                && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() > arriveNotAfter) {
-                            //  |----------| (arriveNotBefore - arriveNotAfter)
-                            //|--------------| (SpanStart - SpanEnd)
-                            rangesMap.put(new LongRange(arriveNotBefore, arriveNotAfter), span);
-                        } else if (spanStartDate.getTime() >= arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
-                                && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() > arriveNotAfter) {
-                            //|----------| (arriveNotBefore - arriveNotAfter)
-                            //    |---------| (SpanStart - SpanEnd)
-                            rangesMap.put(new LongRange(spanStartDate.getTime(), arriveNotAfter), span);
-                        } else {
-                            //ignore span because it is located completely outside
-                        }
-                    } else if (span.isValidAtExactTime()) {
-                        //time span is only valid at a specific date, so check if this date is located withing arriveStart and arriveEnd
-                        if (span.getAtDate().getTime() >= arriveNotBefore && span.getAtDate().getTime() <= arriveNotAfter) {
-                            //add specific date range
-                            rangesMap.put(new LongRange(span.getAtDate().getTime(), span.getAtDate().getTime()), span);
-                            //for exact arrival we do not increment further
-                            break;
-                        }
+            // if (pTribe == null || pTribe.equals(AnyTribe.getSingleton()) || span.isValidForTribe(pTribe)) {
+            //go through all days from start to end
+            while (thisDate.getTime() < arriveNotAfter) {
+                Date onlyValidAtDay = span.getAtDate();
+                //check if span is valid on every day or if we check the span's day of validity
+                //(if we do so, the span should not be valid for an exact date because then we don't have a timespan)
+                if (span.isValidAtEveryDay() || (DateUtils.isSameDay(thisDate, onlyValidAtDay) && !span.isValidAtExactTime())) {
+                    //span is valid for every day or this day equals the only valid day
+                    Date spanStartDate = DateUtils.setHours(thisDate, span.getSpan().getMinimumInteger());
+                    //set end date to last second in end hour
+                    Date spanEndDate = DateUtils.setHours(thisDate, span.getSpan().getMaximumInteger() - 1);
+                    spanEndDate = DateUtils.setMinutes(spanEndDate, 59);
+                    spanEndDate = DateUtils.setSeconds(spanEndDate, 59);
+                    if (spanStartDate.getTime() >= arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
+                            && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() <= arriveNotAfter) {
+                        //|----------| (arriveNotBefore - arriveNotAfter)
+                        //  |----| (SpanStart - SpanEnd)
+                        rangesMap.put(new LongRange(spanStartDate.getTime(), spanEndDate.getTime()), span);
+                    } else if (spanStartDate.getTime() < arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
+                            && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() <= arriveNotAfter) {
+                        //  |----------| (arriveNotBefore - arriveNotAfter)
+                        //|----| (SpanStart - SpanEnd)
+                        rangesMap.put(new LongRange(arriveNotBefore, spanEndDate.getTime()), span);
+                    } else if (spanStartDate.getTime() < arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
+                            && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() > arriveNotAfter) {
+                        //  |----------| (arriveNotBefore - arriveNotAfter)
+                        //|--------------| (SpanStart - SpanEnd)
+                        rangesMap.put(new LongRange(arriveNotBefore, arriveNotAfter), span);
+                    } else if (spanStartDate.getTime() >= arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
+                            && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() > arriveNotAfter) {
+                        //|----------| (arriveNotBefore - arriveNotAfter)
+                        //    |---------| (SpanStart - SpanEnd)
+                        rangesMap.put(new LongRange(spanStartDate.getTime(), arriveNotAfter), span);
+                    } else {
+                        //ignore span because it is located completely outside
                     }
-                    //increment current date by one day
-                    thisDate = DateUtils.addDays(thisDate, 1);
+                } else if (span.isValidAtExactTime()) {
+                    //time span is only valid at a specific date, so check if this date is located withing arriveStart and arriveEnd
+                    if (span.getAtDate().getTime() >= arriveNotBefore && span.getAtDate().getTime() <= arriveNotAfter) {
+                        //add specific date range
+                        rangesMap.put(new LongRange(span.getAtDate().getTime(), span.getAtDate().getTime()), span);
+                        //for exact arrival we do not increment further
+                        break;
+                    }
                 }
+                //increment current date by one day
+                thisDate = DateUtils.addDays(thisDate, 1);
+                // }
             }
         }
 
@@ -425,6 +426,30 @@ public class TimeFrame {
     }
 
     public static void main(String[] args) throws Exception {
+
+
+        SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+        Date start1 = f.parse("07.09.11 01:44:38");
+        Date start2 = f.parse("08.09.11 01:44:37");
+        Date arrive1 = f.parse("07.09.11 16:00:00");
+        Date arrive2 = f.parse("07.09.11 16:00:00");
+
+        LongRange r1 = new LongRange(start1.getTime(), start2.getTime());
+        LongRange r2 = new LongRange(arrive1.getTime(), arrive2.getTime());
+        System.out.println(r1.overlapsRange(r2));
+        //TimeFrame frame = new TimeFrame(start1, arrive1, start2, arrive2);
+
+
+        if (true) {
+            return;
+        }
+
+
+
+
+
+
+
         /* long pRuntime = DateUtils.MILLIS_PER_DAY + 2 * DateUtils.MILLIS_PER_HOUR + 30 * DateUtils.MILLIS_PER_MINUTE + 10 * DateUtils.MILLIS_PER_SECOND + 100;
         long runtimeDays = pRuntime / DateUtils.MILLIS_PER_DAY;
         pRuntime -= (runtimeDays * DateUtils.MILLIS_PER_DAY);
@@ -440,7 +465,7 @@ public class TimeFrame {
         SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
         System.out.println(f.format(startDate));*/
         // System.out.println(runtimeDays + " " + runtimeHours + " " + runtimeMinutes + " " + runtimeSeconds + " " + runtimeMillis);
-        SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+        //SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
 
         /* end = DateUtils.setHours(end, 0);
         end = DateUtils.setMinutes(end, 0);
@@ -500,16 +525,4 @@ public class TimeFrame {
         builder.append("ArriveSpans: ").append(arriveTimeSpans).append("\n");
         return builder.toString().trim();
     }
-
-    /* public static void main( String[] args ) throws Exception {
-    SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
-    Date start1 = f.parse("15.02.11 08:00:00");
-    Date start2 = f.parse("15.02.11 14:00:00");
-    Date arrive1 = f.parse("16.02.11 08:00:00");
-    Date arrive2 = f.parse("16.02.11 14:00:00");
-    TimeFrame frame = new TimeFrame(start1, arrive1, start2, arrive2);
-    
-    
-    
-    }*/
 }

@@ -11,6 +11,9 @@
 // @include        http://de*.die-staemme.de/game.php?*screen=info_village*
 // ==/UserScript==
 
+var api = typeof unsafeWindow != 'undefined' ? unsafeWindow.ScriptAPI : window.ScriptAPI;
+api.register( 'DS Workbench Attack Info', 7.4, 'Torridity', 'nospam@dsworkbench.de' );
+
 /**Action event, executed if DOM has loaded*/
 
 (function(){

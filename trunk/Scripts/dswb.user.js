@@ -12,6 +12,8 @@
 // @exclude        http://de*.die-staemme.de/game.php?*screen=place&try=confirm
 // ==/UserScript==
 
+var api = typeof unsafeWindow != 'undefined' ? unsafeWindow.ScriptAPI : window.ScriptAPI;
+api.register( 'DS Workbench Userscript', 7.4, 'Torridity', 'nospam@dsworkbench.de' );
 
 var $x = function(p, context) {
 	if(!context){

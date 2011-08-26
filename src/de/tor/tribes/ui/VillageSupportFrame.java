@@ -14,6 +14,7 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.NoTag;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
@@ -241,34 +242,34 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
     }
 
     public void showSupportFrame(Village pCurrent) {
-        mCurrentVillage = pCurrent;
+        /*mCurrentVillage = pCurrent;
         setTitle("Unterstützung für " + mCurrentVillage);
-        jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         DefaultListModel model = new DefaultListModel();
+        model.addElement(NoTag.getSingleton());
         for (ManageableType e : TagManager.getSingleton().getAllElements()) {
-            Tag t = (Tag) e;
-            model.addElement(t);
+            model.addElement((Tag) e);
         }
         jTagsList.setModel(model);
         //select all
         jTagsList.getSelectionModel().setSelectionInterval(0, TagManager.getSingleton().getElementCount() - 1);
         jResultFrame.pack();
-        setVisible(true);
+        setVisible(true);*/
+        showSupportFrame(pCurrent, System.currentTimeMillis());
+        
     }
 
     public void showSupportFrame(Village pTarget, long pArriveTime) {
         mCurrentVillage = pTarget;
         setTitle("Unterstützung für " + mCurrentVillage);
-        jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         DefaultListModel model = new DefaultListModel();
+        model.addElement(NoTag.getSingleton());
         for (ManageableType e : TagManager.getSingleton().getAllElements()) {
-            Tag t = (Tag) e;
-            model.addElement(t);
+            model.addElement((Tag) e);
         }
         jTagsList.setModel(model);
         //select all
         jTagsList.getSelectionModel().setSelectionInterval(0, TagManager.getSingleton().getElementCount() - 1);
-        dateTimeField.setDate(dateTimeField.getSelectedDate());
+        dateTimeField.setDate(new Date(pArriveTime));
         jResultFrame.pack();
         setVisible(true);
     }

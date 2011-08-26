@@ -6,27 +6,4 @@
             <line>45</line>
         </file>
     </editor-bookmarks>
-    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/TableHelper.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/bb/OverallReportStatsFormatter.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/types/OverallStatResult.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/types/AllyStatResult.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/bb/AllyReportStatsFormatter.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/bb/TribeReportStatsFormatter.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/types/TribeStatResult.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/types/Note.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/models/TagTableModel.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/tag/TagManager.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/report/ReportManager.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/control/GenericManager.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/DSWorkbenchMainFrame.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/models/TroopsTableModel.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/models/SupportTableModel.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/troops/SupportVillageTroopsHolder.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/util/algo/BruteForce.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/TribeTribeAttackFrame.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/algo/SettingsPanel.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/ui/algo/AttackTimePanel.java</file>
-        <file>file:/D:/GRID/src/DSWorkbench/src/de/tor/tribes/types/TimeSpan.java</file>
-    </open-files>
 </project-private>

@@ -561,7 +561,6 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         } else {
             showSuccess("SOS Anfragen erfolgreich gelesen");
         }
-
         updateView();
 
     }//GEN-LAST:event_fireSosRequestUpdateEvent
@@ -587,12 +586,14 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format.ms"));
         }
         while (defenders.hasMoreElements()) {
+
             //go through all defenders
             Tribe defender = defenders.nextElement();
             SOSRequest request = currentRequests.get(defender);
             Enumeration<Village> targets = request.getTargets();
             //go through all targets
             while (targets.hasMoreElements()) {
+
                 Village target = targets.nextElement();
                 TargetInformation info = request.getTargetInformation(target);
                 //get general info for each target (wall and defPower)

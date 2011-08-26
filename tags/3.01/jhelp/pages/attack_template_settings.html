@@ -1,0 +1,223 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>DS Workbench Dokumentation</title>
+</head>
+
+<body style="background-color:#E1E1E1">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><img src="../images/ul.gif"></td>
+    <td style="background-image:url(../images/t.gif);background-repeat:repeat" width="100%"/>
+    <td><img src="../images/ur.gif"></td>
+  </tr>
+   <tr height="600px" valign="top">
+    <td style="background-image:url(../images/l.gif);background-repeat:repeat-y">&nbsp;</td>
+    <td style="background-image:url(../images/c.gif);background-repeat:repeat" width="100%"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td colspan="2"><h2 style="color:#953333">Exporttemplate f&uuml;r Angriffe erstellen </h2></td>
+      </tr>
+      <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+      <tr>
+        <td colspan="2">Mittels Templates kann man das Aussehen der als HTML exportierte Angriffs&uuml;bersichten anpassen. In dem Ordner <em>'templates'</em> im <em>DS Workbench</em> Verzeichnis findet ihr die Standardtemplates die euch als Beispiel f&uuml;r die Erstellung eigener Templates dienen sollen. Diese drei Dateien werden sp&auml;ter von der DS Workbench zusammengef&uuml;gt als eine zusammenh&auml;ngende HTML Datei exportiert und m&uuml;ssen daher, wenn man sie aneinanderh&auml;ngt, validen HTML Code ergeben. <br>
+          <br>
+          Der Header ist dabei der Kopfbereich des exportierten HTML Dokuments in dem allgemeine Informationen wie z.B. Server oder Spieler enthalten sein k&ouml;nnen. <br>
+Der Angriffsblock taucht sp&auml;ter im fertigen Dokument einmal f&uuml;r jeden Angriff auf. Er enth&auml;lt die Angriffsdetails wie Abschickzeit oder angegriffener Spieler. <br>
+Der Footer ist der abschlie&szlig;ende Teil des Dokumentes. Er schlie&szlig;t Tags die im Header ge&ouml;ffnet wurden, um das HTML Dokument zu vervollst&auml;ndigen, kann aber zus&auml;tzliche Informationen enthalten, die auch f&uuml;r den Header verf&uuml;gbar sind. Im folgenden werden die verf&uuml;gbaren Variablen f&uuml;r die einzelnen Bl&ouml;cke erkl&auml;rt:</td>
+      </tr>
+	        <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	        <tr>
+        <td colspan="2"><table width="100%"  border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td colspan="2"><em><strong>Header und Footer </strong></em></td>
+          </tr>
+          <tr>
+            <td width="23%">&nbsp;</td>
+            <td width="77%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td>$CREATOR</td>
+            <td>Der in den Einstellungen ausgew&auml;hlte Spieler/Ersteller des Angriffsplans </td>
+          </tr>
+          <tr>
+            <td>$SERVER</td>
+            <td>ServerID z.b. de50</td>
+          </tr>
+          <tr>
+            <td>$PLANNAME</td>
+            <td>Name des exportierten Angriffsplans</td>
+          </tr>
+          <tr>
+            <td>$ATTACK_COUNT</td>
+            <td>Anzahl der exportierten Angriffe</td>
+          </tr>
+          <tr>
+            <td>$VERSION</td>
+            <td>DS Workbench Version</td>
+          </tr>
+          <tr>
+            <td>$CREATION_DATE</td>
+            <td>Datum und Uhrzeit des Exports</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="2"><em><strong>Angriffsblock</strong></em></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>$TYPE</td>
+            <td>Der Angriffstyp (wird durch das entsprechende Angriffsicon f&uuml;r AG, Off, Fake, Unterst&uuml;tzung ersetzt)</td>
+          </tr>
+          <tr>
+            <td>$UNIT</td>
+            <td>Die Einheit (wird durch das Einheitenicon ersetzt)</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>$SOURCE_PLAYER_NAME</td>
+            <td>Name des Angreifers</td>
+          </tr>
+          <tr>
+            <td>$SOURCE_PLAYER_LINK</td>
+            <td>Linkadresse zum Gastzugang des angreifenden Spielers im http://... Format</td>
+          </tr>
+          <tr>
+            <td>$SOURCE_ALLY_NAME</td>
+            <td>Stammesname des angreifenden Stammes</td>
+          </tr>
+          <tr>
+            <td>$SOURCE_ALLY_TAG</td>
+            <td>Stammesk&uuml;rzel des angreifenden Stammes</td>
+          </tr>
+          <tr>
+            <td>$SOURCE_ALLY_LINK</td>
+            <td>Linkadresse zum Gastzugang des angreifenden Stammes im http://... Format </td>
+          </tr>
+          <tr>
+            <td>$SOURCE_VILLAGE_NAME</td>
+            <td>Name des angreifenden Dorfes im Format NAME (XXX|YYY) K45 bzw. NAME (CON:SEC:SUB) K45</td>
+          </tr>
+          <tr>
+            <td>$SOURCE_VILLAGE_COORD</td>
+            <td>Koordinaten des angreifenden Dorfes im Format (XXX|YYY) bzw. (CON:SEC:SUB)</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>$TARGET_PLAYER_NAME</td>
+            <td>Name des Angegriffenen </td>
+          </tr>
+          <tr>
+            <td>$TARGET_PLAYER_LINK</td>
+            <td>Linkadresse zum Gastzugang des angegriffenen Spielers im http://... Format </td>
+          </tr>
+          <tr>
+            <td>$TARGET_ALLY_NAME</td>
+            <td>Stammesname des angegriffenen Stammes</td>
+          </tr>
+          <tr>
+            <td>$TARGET_ALLY_TAG</td>
+            <td>Stammesk&uuml;rzel des angegriffenen Stammes</td>
+          </tr>
+          <tr>
+            <td>$TARGET_ALLY_LINK</td>
+            <td>Linkadresse zum Gastzugang des angegriffenen Stammes im http://... Format </td>
+          </tr>
+          <tr>
+            <td>$TARGET_VILLAGE_NAME</td>
+            <td>Name des angegriffenen Dorfes im Format NAME (XXX|YYY) K45 bzw. NAME (CON:SEC:SUB) K45</td>
+          </tr>
+          <tr>
+            <td>$TARGET_VILLAGE_COORD</td>
+            <td>Koordinaten des angegriffenen Dorfes im Format (XXX|YYY) bzw. (CON:SEC:SUB)</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>$SEND_TIME</td>
+            <td>Abschickzeit des Angriffs</td>
+          </tr>
+          <tr>
+            <td>$ARRIVE_TIME</td>
+            <td>Ankunftszeit des Angriffs</td>
+          </tr>
+          <tr>
+            <td>$PLACE</td>
+            <td>Linkadresse zum Versammlungsplatz im http://... Format </td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="2"><em><strong>Sonstige Felder (f&uuml;r Scripte und Formatierung im Standardtemplate verwendet)</strong></em></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>$ID</td>
+            <td>Fortlaufende Nummer der exportierten Angriffe, die f&uuml;r das Einklapp-Script zwingend ben&ouml;tigt wird</td>
+          </tr>
+          <tr>
+            <td>$DIV_CLASS</td>
+            <td>F&uuml;r die Formatierung eines Angriffsblocks notwendig. &Uuml;ber die zwei Klassen &quot;odd_div&quot; und &quot;even_div&quot; werden im Standard-CSS wechselnde F&auml;rbungen f&uuml;r zusammenliegende Angriffsbl&ouml;cke erzielt, die einer besseren Erkennbarkeit dient. </td>
+          </tr>
+        </table></td>
+      </tr>
+	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2">Somit solltet ihr alles wissen was ihr f&uuml;r die Erstellung eines eigenen Export-Templates ben&ouml;tigt. Schaut euch einfach das Standard-Template an um zu sehen, wie welche Variablen verwendet werden k&ouml;nnen. Viel Spa&szlig; bei der Erstellung eigener Templates! </td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr>
+       <td colspan="2"><h3 style="color:#953333">CSS</h3></td>
+      </tr>
+	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr>
+        <td colspan="2">Die Standard-CSS Datei findet ihr unter der Adresse <em>http://www.dsworkbench.de/DSWorkbench/export/attack.css</em> und kann nach belieben erg&auml;nzt oder ver&auml;ndert werden.</td>
+      </tr>
+	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr valign="middle">
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/information.png" width="24" height="24"></div></td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE">Solltet ihr ein Template erstellt haben, welches ihr der Community zur Verf&uuml;gung stellen wollt, oder wollt ihr existierende Templates von anderen Benutzern herunterladen und verwenden, so schaut doch einfach mal im <em>DS Workbench</em> Forum vorbei (<em>http://www.dsworkbench.de/forum/index.php</em>).</td>
+      </tr>
+    </table></td>
+</td>
+    <td style="background-image:url(../images/r.gif);background-repeat:repeat-y">&nbsp;</td>
+  </tr>
+  <tr>
+    <td><img src="../images/ll.gif" width="20" height="20"></td>
+    <td style="background-image:url(../images/b.gif);background-repeat:repeat-x" width="100%">&nbsp;</td>
+    <td><img src="../images/lr.gif" width="20" height="20"></td>
+  </tr>
+</table>
+</body>
+</html>

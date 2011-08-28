@@ -570,7 +570,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             if ((selection != null) && (selection.length() > 1)) {
                 //set current server to default
                 GlobalOptions.setSelectedServer(selection);
-                GlobalOptions.addProperty("default.server", (String) selection);
+                GlobalOptions.addProperty("default.server", selection);
                 defaultServer = selection;
             } else {
                 //no server selected
@@ -578,24 +578,56 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         }
 
+        boolean result = false;
         String serverUser = GlobalOptions.getProperty("player." + defaultServer);
         if (serverUser == null) {
             logger.warn("Default user for server '" + defaultServer + "' is not set");
             UserProfile selection = null;
             try {
                 selection = (UserProfile) jProfileBox.getSelectedItem();
+                result = true;
             } catch (Exception e) {
+                logger.error("Failed to get selected profile", e);
             }
             //check if selection is valid
             if (selection != null) {
                 //set default user for server
                 GlobalOptions.addProperty("player." + defaultServer, Long.toString(selection.getProfileId()));
+                result = true;
             } else {
                 //no default user selected
-                return false;
+                logger.error("No profile selected");
+            }
+        } else {
+            //check if profile is valid
+            UserProfile[] profiles = ProfileManager.getSingleton().getProfiles(defaultServer);
+            for (UserProfile profile : profiles) {
+                try {
+                    if (profile.getProfileId() == Long.parseLong(serverUser)) {
+                        result = true;
+                        break;
+                    }
+                } catch (NumberFormatException nfe) {
+                    logger.error("Failed to get profile for id '" + serverUser + "'");
+                }
+            }
+
+            if (!result) {
+                //profile was probably removed. Get selected entry
+                UserProfile selection = null;
+                try {
+                    selection = (UserProfile) jProfileBox.getSelectedItem();
+                    if (selection != null) {
+                        //set default user for server
+                        GlobalOptions.addProperty("player." + defaultServer, Long.toString(selection.getProfileId()));
+                        result = true;
+                    }
+                } catch (Exception e) {
+                    logger.error("Failed to get selected profile", e);
+                }
             }
         }
-        return true;
+        return result;
     }
 
     /** This method is called from within the constructor to
@@ -2649,8 +2681,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 GlobalOptions.addProperty("selected.profile", Long.toString(selectedProfile.getProfileId()));
                 GlobalOptions.setSelectedProfile(selectedProfile);
             }
-        } else if (GlobalOptions.getSelectedProfile().equals(DummyUserProfile.getSingleton())) {
-            JOptionPaneHelper.showWarningBox(this, "Du musst ein Profil auswählen um fortzufahren", "Warnung");
+        } else if (GlobalOptions.getSelectedProfile() == null || GlobalOptions.getSelectedProfile().equals(DummyUserProfile.getSingleton())) {
+            JOptionPaneHelper.showWarningBox(DSWorkbenchSettingsDialog.this, "Du musst ein Profil auswählen um fortzufahren", "Warnung");
             return;
         }
 
@@ -3264,9 +3296,12 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         boolean success = false;
         if (JOptionPaneHelper.showWarningConfirmBox(this, "Mit dem Profil werden alle Angriffe, Markierungen usw. gelöscht.\nSoll das Profil " + profile + " wirklich gelöscht werden?", "Warnung", "Nein", "Ja") == JOptionPane.OK_OPTION) {
             success = profile.delete();
-        }
-        if (!success) {
-            JOptionPaneHelper.showWarningBox(this, "Das Profil konnte nicht gelöscht werden.\nVersuch es bitte später oder nach einem Neustart von DS Workbench noch einmal.", "Löschen fehlgeschlagen");
+            if (!success) {
+                JOptionPaneHelper.showWarningBox(this, "Das Profil konnte nicht gelöscht werden.\nVersuch es bitte später oder nach einem Neustart von DS Workbench noch einmal.", "Löschen fehlgeschlagen");
+            }
+        } else {
+            //delete canceled
+            return;
         }
     }
     updateProfileList();

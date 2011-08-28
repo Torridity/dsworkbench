@@ -172,6 +172,24 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
                 //ignore find
             }
         });
+        jResultsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (e.getValueIsAdjusting()) {
+                    updateSelectionInfo();
+                }
+            }
+        });
+        jMerchantTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (e.getValueIsAdjusting()) {
+                    updateSelectionInfo();
+                }
+            }
+        });
 
         ProfileManager.getSingleton().addProfileManagerListener(DSWorkbenchMerchantDistibutor.this);
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
@@ -186,6 +204,23 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         jAlwaysOnTop.setSelected(false);
         fireAlwaysOnTopEvent(null);
         super.toBack();
+    }
+
+    private void updateSelectionInfo() {
+        if (merchantTabbedPane.getSelectedIndex() == 0) {
+            int selectionCount = jMerchantTable.getSelectedRowCount();
+            if (selectionCount != 0) {
+                showInfo(infoPanel, jXInfoLabel, selectionCount + ((selectionCount == 1) ? " Dorf gewählt" : " Dörfer gewählt"));
+            }
+
+        } else if (merchantTabbedPane.getSelectedIndex() == 1) {
+            int selectionCount = jResultsTable.getSelectedRowCount();
+            if (selectionCount != 0) {
+                showInfo(resultInfoPanel, jXResultInfoLabel, selectionCount + ((selectionCount == 1) ? " Transport gewählt" : " Transporte gewählt"));
+            }
+        }
+
+
     }
 
     public void storeCustomProperties(Configuration pConfig) {
@@ -237,6 +272,35 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         });
         transferPane.getContentPane().add(toBrowser);
 
+        JXButton saveTransports = new JXButton(new ImageIcon("graphics/icons/24x24/save.png"));
+        saveTransports.setPreferredSize(toBrowser.getPreferredSize());
+        saveTransports.setMinimumSize(toBrowser.getMinimumSize());
+        saveTransports.setMaximumSize(toBrowser.getMaximumSize());
+        saveTransports.setToolTipText("Speichert die aktuell errechneten Transporte, um sie zu einem späteren Zeitpunkt zu verschicken");
+        saveTransports.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                saveTransports();
+            }
+        });
+        transferPane.getContentPane().add(saveTransports);
+        JXButton loadTransports = new JXButton(new ImageIcon("graphics/icons/24x24/load.png"));
+        loadTransports.setPreferredSize(toBrowser.getPreferredSize());
+        loadTransports.setMinimumSize(toBrowser.getMinimumSize());
+        loadTransports.setMaximumSize(toBrowser.getMaximumSize());
+        loadTransports.setToolTipText("Laden der vorher gespeicherten Transporte");
+        loadTransports.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                loadTransports();
+            }
+        });
+        transferPane.getContentPane().add(loadTransports);
+
+
+
         JXTaskPane editPane = new JXTaskPane();
         editPane.setTitle("Bearbeiten");
         JXButton bothButton = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/trade_both.png")));
@@ -280,32 +344,20 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         });
         editPane.getContentPane().add(outButton);
 
-        JXButton saveTransports = new JXButton(new ImageIcon("graphics/icons/24x24/save.png"));
-        saveTransports.setPreferredSize(toBrowser.getPreferredSize());
-        saveTransports.setMinimumSize(toBrowser.getMinimumSize());
-        saveTransports.setMaximumSize(toBrowser.getMaximumSize());
-        saveTransports.setToolTipText("Speichert die aktuell errechneten Transporte, um sie zu einem späteren Zeitpunkt zu verschicken");
-        saveTransports.addMouseListener(new MouseAdapter() {
+
+        JXButton unsend = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/att_browser_unsent.png")));
+        unsend.setPreferredSize(toBrowser.getPreferredSize());
+        unsend.setMinimumSize(toBrowser.getMinimumSize());
+        unsend.setMaximumSize(toBrowser.getMaximumSize());
+        unsend.setToolTipText("'Übertragen' Feld für markierte Transporte löschen");
+        unsend.addMouseListener(new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                saveTransports();
+                setSelectedTransportUnsent();
             }
         });
-        transferPane.getContentPane().add(saveTransports);
-        JXButton loadTransports = new JXButton(new ImageIcon("graphics/icons/24x24/load.png"));
-        loadTransports.setPreferredSize(toBrowser.getPreferredSize());
-        loadTransports.setMinimumSize(toBrowser.getMinimumSize());
-        loadTransports.setMaximumSize(toBrowser.getMaximumSize());
-        loadTransports.setToolTipText("Laden der vorher gespeicherten Transporte");
-        loadTransports.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                loadTransports();
-            }
-        });
-        transferPane.getContentPane().add(loadTransports);
+        editPane.getContentPane().add(unsend);
 
         JXButton calculateButton = new JXButton("<html><p align=\"center\">Berechnung<br/>starten</p></html>");//new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/att_validate.png")));
         calculateButton.setToolTipText("Startet die Berechnung möglicher Transporte");
@@ -344,6 +396,23 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         }
         rebuildTable(jMerchantTable, merchantInfos);
         showSuccess(infoPanel, jXInfoLabel, "Handelsrichtung angepasst");
+    }
+
+    private void setSelectedTransportUnsent() {
+        if (merchantTabbedPane.getSelectedIndex() != 1) {
+            merchantTabbedPane.setSelectedIndex(1);
+        }
+        int[] selection = jResultsTable.getSelectedRows();
+        if (selection == null || selection.length == 0) {
+            showInfo(resultInfoPanel, jXResultInfoLabel, "Keine Transporte ausgewählt");
+        }
+        DefaultTableModel model = ((DefaultTableModel) jResultsTable.getModel());
+
+        for (int row : selection) {
+            model.setValueAt(false, jResultsTable.convertRowIndexToModel(row), 3);
+        }
+
+        showInfo(resultInfoPanel, jXResultInfoLabel, "Transport(e) zurückgesetzt");
     }
 
     private void transferSelectionToBrowser() {

@@ -8,7 +8,6 @@ import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.dnd.VillageTransferable;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Image;
 import java.io.File;
@@ -16,6 +15,7 @@ import java.io.FileWriter;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,7 +43,7 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
     public static final String SUPPORT_GROUP = "Unterstützung";
     private static Logger logger = Logger.getLogger("TroopsManager");
     private static TroopsManager SINGLETON = null;
-    private HashMap<String, HashMap<Village, VillageTroopsHolder>> managedElementGroups = null;
+    private HashMap<String, HashMap<Village, VillageTroopsHolder>> managedElementGroups = new HashMap<String, HashMap<Village, VillageTroopsHolder>>();
     //  private Hashtable<Village, VillageTroopsHolder> mTroops = null;
     private List<Image> mTroopMarkImages = new LinkedList<Image>();
 
@@ -130,6 +130,10 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
     @Override
     public List<ManageableType> getAllElements(String pGroup) {
         HashMap<Village, VillageTroopsHolder> set = managedElementGroups.get(pGroup);
+        Collection<VillageTroopsHolder> values = set.values();
+        if(values == null){
+            return new LinkedList<ManageableType>();
+        }
         return Collections.unmodifiableList(Arrays.asList(set.values().toArray(new ManageableType[set.size()])));
     }
 

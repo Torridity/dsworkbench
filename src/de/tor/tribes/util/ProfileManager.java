@@ -9,11 +9,13 @@ import de.tor.tribes.types.UserProfile;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -102,19 +104,30 @@ public class ProfileManager {
                     }
                     for (File profileDir : profiles) {
                         logger.debug("Got profile directory '" + profileDir.getPath() + "'");
-                        if (profileDir.isDirectory()) {
-                            //profile directory
-                            String profileId = profileDir.getName();
-                            String serverName = f.getName();
-                            logger.debug("Found profile #'" + profileId + "' on server '" + serverName + "'");
-                            try {
-                                UserProfile profile = UserProfile.loadProfile(serverName, Long.parseLong(profileId));
-                                if (profile != null) {
-                                    logger.info("Adding loaded profile #" + profileId);
-                                    mProfiles.add(profile);
+                        if (new File(profileDir.getPath() + File.separator + ".deleted").exists()) {
+                            logger.debug("Profile dir " + profileDir.getName() + " is sheduled for deletion");
+                        } else {
+                            if (profileDir.isDirectory() && profileDir.list().length != 0) {
+                                //profile directory
+                                String profileId = profileDir.getName();
+                                String serverName = f.getName();
+                                logger.debug("Found profile #'" + profileId + "' on server '" + serverName + "'");
+                                try {
+                                    UserProfile profile = UserProfile.loadProfile(serverName, Long.parseLong(profileId));
+                                    if (profile != null) {
+                                        logger.info("Adding loaded profile #" + profileId);
+                                        mProfiles.add(profile);
+                                    }
+                                } catch (Exception e) {
+                                    logger.error("Failed to load profile", e);
                                 }
-                            } catch (Exception e) {
-                                logger.error("Failed to load profile", e);
+                            } else {
+                                if (profileDir.list().length == 0) {
+                                    try {
+                                        FileUtils.deleteDirectory(profileDir);
+                                    } catch (IOException ioe) {
+                                    }
+                                }
                             }
                         }
                     }

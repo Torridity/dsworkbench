@@ -247,7 +247,11 @@ public class TroopsTableModel extends AbstractTableModel {
         if (sSet == null) {
             return 0;
         }
-        return TroopsManager.getSingleton().getAllElements(sSet).size();
+        try {
+            return TroopsManager.getSingleton().getAllElements(sSet).size();
+        } catch (NullPointerException npe) {
+            return 0;
+        }
     }
 
     @Override

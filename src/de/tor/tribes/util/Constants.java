@@ -34,7 +34,7 @@ public class Constants {
         LAYERS.put("Notizmarkierungen", 4);
         LAYERS.put("Angriffe", 5);
         LAYERS.put("Unterstützungen", 6);
-        LAYERS.put("Formen", 7);
+        LAYERS.put("Zeichnungen", 7);
         LAYERS.put("Kirchenradien", 8);
         if (DEBUG) {
             System.err.println("DEBUG MODE ENABLED!");

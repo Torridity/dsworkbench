@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class SOSRequest implements BBSupport {
 
-    private final String[] VARIABLES = new String[]{"%SOS_ICON%", "%TARGET%", "%ATTACKS%", "%DEFENDERS%", "%WALL_INFO%", "%WALL_LEVEL%", "%FIRST_ATTACK%", "%LAST_ATTACK%", "%SOURCE_LIST%", "%SOURCE_DATE_TYPE_LIST%", "%SOURCE_DATE_LIST%", "%SOURCE_TYPE_LIST%", "%SUMMARY%"};
+    private final String[] VARIABLES = new String[]{"%SOS_ICON%", "%TARGET%", "%ATTACKS%", "%DEFENDERS%", "%WALL_INFO%", "%WALL_LEVEL%", "%FIRST_ATTACK%", "%LAST_ATTACK%", "%SOURCE_LIST%", "%SOURCE_DATE_TYPE_LIST%", "%TRIBE_SOURCE_DATE_LIST%", "%SOURCE_DATE_LIST%", "%SOURCE_TYPE_LIST%", "%SUMMARY%"};
     private final static String STANDARD_TEMPLATE = "[quote]%SOS_ICON% %TARGET% (%ATTACKS%)\n[quote]%DEFENDERS%\n%WALL_INFO%[/quote]\n\n%FIRST_ATTACK%\n%SOURCE_DATE_LIST%\n%LAST_ATTACK%\n\n%SUMMARY%[/quote]";
 
     @Override
@@ -71,6 +71,7 @@ public class SOSRequest implements BBSupport {
         String sourceVal = "";
         String sourceDateVal = "";
         String sourceDateTypeVal = "";
+        String tribeSourceDateVal = "";
         String sourceTypeVal = "";
         for (int i = 0; i < atts.size(); i++) {
             try {
@@ -82,21 +83,22 @@ public class SOSRequest implements BBSupport {
                 }
 
                 sourceVal += attack.getSource().toBBCode() + "\n";
-
                 if (attack.isPossibleFake()) {
                     sourceDateTypeVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + " [b](Fake)[/b]" + "\n";
                     sourceDateVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
                     sourceTypeVal += attack.getSource().toBBCode() + " [b](Fake)[/b]" + "\n";
+                    tribeSourceDateVal += "[player]" + attack.getSource().getTribe() + "[/player]" + " " + attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
                 } else if (attack.isPossibleSnob()) {
                     sourceDateTypeVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + " [b](AG)[/b]" + "\n";
                     sourceDateVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
                     sourceTypeVal += attack.getSource().toBBCode() + " [b](AG)[/b]" + "\n";
+                    tribeSourceDateVal += "[player]" + attack.getSource().getTribe() + "[/player]" + " " + attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
                 } else {
                     sourceDateTypeVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
                     sourceDateVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
                     sourceTypeVal += attack.getSource().toBBCode() + "\n";
+                    tribeSourceDateVal += "[player]" + attack.getSource().getTribe() + "[/player]" + " " + attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
                 }
-
             } catch (Exception e) {
             }
         }
@@ -108,7 +110,7 @@ public class SOSRequest implements BBSupport {
         String lastAttackVal = "[img]" + serverURL + "/graphic/map/return.png[/img] " + dateFormat.format(new Date(atts.get(atts.size() - 1).getlArriveTime()));
         String summaryVal = "[u]Mögliche Fakes:[/u] " + fakeCount + "\n" + "[u]Mögliche AGs:[/u] " + snobCount;
 
-        return new String[]{sosImageVal, targetVal, attackCountVal, unitVal, wallInfoVal, wallLevelVal, firstAttackVal, lastAttackVal, sourceVal, sourceDateTypeVal, sourceDateVal, sourceTypeVal, summaryVal};
+        return new String[]{sosImageVal, targetVal, attackCountVal, unitVal, wallInfoVal, wallLevelVal, firstAttackVal, lastAttackVal, sourceVal, sourceDateTypeVal, tribeSourceDateVal, sourceDateVal, sourceTypeVal, summaryVal};
     }
 
     private String buildUnitInfo(TargetInformation pTargetInfo) {
@@ -168,8 +170,6 @@ public class SOSRequest implements BBSupport {
     public String getStandardTemplate() {
         return STANDARD_TEMPLATE;
     }
-
-   
     private Tribe mDefender = null;
     private Hashtable<Village, TargetInformation> attacks = null;
 

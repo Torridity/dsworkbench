@@ -11,6 +11,7 @@ import de.tor.tribes.util.Constants;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
+import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -48,6 +49,10 @@ public class DatabaseInterface {
     private static String sValidatedPassword = null;
 
     private static Object callWebInterface(String pFunction, Hashtable<String, String> pArguments) {
+        return callWebInterface(pFunction, pArguments, DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
+    }
+
+    private static Object callWebInterface(String pFunction, Hashtable<String, String> pArguments, Proxy pWebProxy) {
         List<String> lines = new LinkedList<String>();
         URL url;
         URLConnection urlConn = null;
@@ -63,7 +68,7 @@ public class DatabaseInterface {
             // URL of CGI-Bin script.
             url = new URL(INTERFACE_URL);
             // URL connection channel.
-            urlConn = url.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
+            urlConn = url.openConnection(pWebProxy);
             // urlConn = url.openConnection();
             // Let the run-time system (RTS) know that we want input.
             urlConn.setDoInput(true);
@@ -200,9 +205,14 @@ public class DatabaseInterface {
     }
 
     public static List<DatabaseServerEntry> getServerInfo() {
+        return getServerInfo(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
+
+    }
+
+    public static List<DatabaseServerEntry> getServerInfo(Proxy pProxy) {
         Object result = null;
         try {
-            result = callWebInterface("getServerInfo", null);
+            result = callWebInterface("getServerInfo", null, pProxy);
             String[] lines = (String[]) result;
             List<DatabaseServerEntry> entries = new LinkedList<DatabaseServerEntry>();
             try {
@@ -246,92 +256,11 @@ public class DatabaseInterface {
         return null;
     }
 
-    /*   public static List<DatabaseServerEntry> listServers() {
-    Object result = null;
-    try {
-    result = callWebInterface("listServers", null);
-    String[] lines = (String[]) result;
-    List<DatabaseServerEntry> entries = new LinkedList<DatabaseServerEntry>();
-    try {
-    for (String line : lines) {
-    StringTokenizer t = new StringTokenizer(line, "[,]");
-    if (t.countTokens() != 2) {
-    //invalid entry, probably a status code!?
-    try {
-    int status = Integer.parseInt(line);
-    processStatus("list servers", status);
-    return null;
-    } catch (Exception noStatus) {
-    throw new Exception("Invalid entry '" + line + "'");
-    }
-
-    }
-    DatabaseServerEntry entry = new DatabaseServerEntry();
-    entry.setServerID(t.nextToken());
-    entry.setServerURL(t.nextToken());
-    entries.add(entry);
-    }
-    logger.debug("Merging acceptance increments");
-    Hashtable<String, Double> riseSpeeds = getAcceptanceRiseSpeed();
-    if (riseSpeeds != null) {
-    for (DatabaseServerEntry e : entries) {
-    Double speed = riseSpeeds.get(e.getServerID());
-    if (speed != null) {
-    e.setAcceptanceRiseSpeed(speed);
-    }
-    }
-    }
-
-    } catch (Exception e) {
-    logger.error("Server entry in invalid format? Dropping.", e);
-    }
-
-    return entries;
-    } catch (Exception outer) {
-    //typecast or connection failed
-    logger.error("Failed getting list of servers. Result is " + result);
-    }
-
-    return null;
-    }
-
-    public static Hashtable<String, Double> getAcceptanceRiseSpeed() {
-    Object result = null;
-    try {
-    result = callWebInterface("getAcceptanceRiseSpeed", null);
-    String[] lines = (String[]) result;
-    Hashtable<String, Double> entries = new Hashtable<String, Double>();
-    try {
-    for (String line : lines) {
-    StringTokenizer t = new StringTokenizer(line, "[,]");
-    if (t.countTokens() != 2) {
-    //invalid entry, probably a status code!?
-    try {
-    int status = Integer.parseInt(line);
-    processStatus("get acceptance rise speed", status);
-    return null;
-    } catch (Exception noStatus) {
-    throw new Exception("Invalid entry '" + line + "'");
-    }
-
-    }
-
-    entries.put(t.nextToken(), Double.parseDouble(t.nextToken()));
-    }
-
-    } catch (Exception e) {
-    logger.error("Server entry in invalid format? Dropping.", e);
-    }
-
-    return entries;
-    } catch (Exception outer) {
-    //typecast or connection failed
-    logger.error("Failed getting list of servers. Result is " + result);
-    }
-    return null;
-    }
-     */
     public static int checkUser(String pUser, String pPassword) {
+        return checkUser(pUser, pPassword, DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
+    }
+
+    public static int checkUser(String pUser, String pPassword, Proxy pWebProxy) {
         Hashtable<String, String> arguments = new Hashtable<String, String>();
         String password = SecurityAdapter.hashStringMD5(pPassword);
 
@@ -352,7 +281,7 @@ public class DatabaseInterface {
         //validate account
         arguments.put("user", pUser);
         arguments.put("pass", password);
-        Object result = callWebInterface("checkUser", arguments);
+        Object result = callWebInterface("checkUser", arguments, pWebProxy);
         try {
             String[] lines = (String[]) result;
             int status = Integer.parseInt(lines[0]);
@@ -406,10 +335,14 @@ public class DatabaseInterface {
     }
 
     public static int addUser(String pUser, String pPassword) {
+        return addUser(pUser, pPassword, DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
+    }
+
+    public static int addUser(String pUser, String pPassword, Proxy pWebProxy) {
         Hashtable<String, String> arguments = new Hashtable<String, String>();
         arguments.put("user", pUser);
         arguments.put("pass", SecurityAdapter.hashStringMD5(pPassword));
-        Object result = callWebInterface("addUser", arguments);
+        Object result = callWebInterface("addUser", arguments, pWebProxy);
         try {
             String[] lines = (String[]) result;
             int status = Integer.parseInt(lines[0]);
@@ -447,9 +380,13 @@ public class DatabaseInterface {
     }
 
     public static String getDownloadURL(String pServer) {
+        return getDownloadURL(pServer, DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
+    }
+
+    public static String getDownloadURL(String pServer, Proxy pWebProxy) {
         Hashtable<String, String> arguments = new Hashtable<String, String>();
         arguments.put("sid", pServer);
-        Object result = callWebInterface("getDownloadURL", arguments);
+        Object result = callWebInterface("getDownloadURL", arguments, pWebProxy);
         try {
             String[] lines = (String[]) result;
             try {
@@ -557,16 +494,16 @@ public class DatabaseInterface {
 
         DOMConfigurator.configure("log4j.xml");
         /* System.setProperty("proxyUse", "true");
-
+        
         ConsoleAppender a = new ConsoleAppender();
         a.setLayout(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c - %m%n"));
         Logger.getRootLogger().removeAllAppenders();
         Logger.getRootLogger().addAppender(a);
         Logger.getRootLogger().setLevel(Level.DEBUG);
-
-
+        
+        
         /* System.setProperty("proxyUse", "true");
-
+        
         System.setProperty("proxyHost", "proxy.fzk.de");
         System.setProperty("proxyPort", "8000");*/
 
@@ -581,11 +518,11 @@ public class DatabaseInterface {
 
 
         /* List<DatabaseServerEntry> info = DatabaseInterface.getServerInfo();
-
+        
         /* List<DatabaseServerEntry> info = DatabaseInterface.getServerInfo();
-
+        
         for (DatabaseServerEntry in : info) {
-
+        
         System.out.println("ID: " + in.getServerID());
         System.out.println("URL: " + in.getServerURL());
         System.out.println("Rise: " + in.getAcceptanceRiseSpeed());

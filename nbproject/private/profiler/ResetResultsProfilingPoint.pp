@@ -14,6 +14,6 @@
 <entry key="2_p_enabled">true</entry>
 <entry key="1_p_location_line">692</entry>
 <entry key="1_p_name">Reset Results at DSWorkbenchConquersFrame:599</entry>
-<entry key="0_p_location_line">93</entry>
+<entry key="0_p_location_line">79</entry>
 <entry key="0_p_location_offset">-2147483648</entry>
 </properties>

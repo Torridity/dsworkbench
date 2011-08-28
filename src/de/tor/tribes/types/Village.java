@@ -23,7 +23,6 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.util.Comparator;
-import java.util.Comparator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -85,6 +84,14 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
     private boolean visibleOnMap = true;
     private int continent = -1;
     //$id, $name, $x, $y, $tribe, $points, $type
+
+    public Village() {
+    }
+
+    public Village(int x, int y) {
+        setX((short) x);
+        setY((short) y);
+    }
 
     public static Village parseFromPlainData(String pLine) {
         StringTokenizer tokenizer = new StringTokenizer(pLine, ",");

@@ -212,7 +212,12 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                 //layer sizes are equal, so set layers in stored order
                 int cnt = 0;
                 for (String layer : layers) {
-                    v.set(cnt, layer);
+                    if (layer.equals("Formen")) {
+                        //disable old forms id
+                        v.set(cnt, "Zeichnungen");
+                    } else {
+                        v.set(cnt, layer);
+                    }
                     cnt++;
                 }
             } else {

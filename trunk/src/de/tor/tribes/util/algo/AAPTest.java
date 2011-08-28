@@ -28,9 +28,9 @@ public class AAPTest {
         for (String coord : input_offs) {
             String coords[] = coord.split("\\|");
             int wares = 1;
-            if (Integer.parseInt(coords[1]) == 200) {
+            /*if (Integer.parseInt(coords[1]) == 200) {
                 wares = 8;
-            }
+            }*/
             offs.add(new OffVillage(new Coordinate(Integer.parseInt(coords[0]), Integer.parseInt(coords[1])), wares));
         }
 
@@ -39,9 +39,9 @@ public class AAPTest {
         for (String coord : input_targets) {
             String coords[] = coord.split("\\|");
              int wares = 1;
-            if (Integer.parseInt(coords[0]) == 100) {
+           /* if (Integer.parseInt(coords[0]) == 100) {
                 wares = 5;
-            }
+            }*/
             targets.add(new TargetVillage(new Coordinate(Integer.parseInt(coords[0]), Integer.parseInt(coords[1])), wares));
         }
 
@@ -53,8 +53,6 @@ public class AAPTest {
                 
                 
                 costs[i].put(targets.get(j), offs.get(i).distanceTo(targets.get(j)));
-
-
                 System.out.println(targets.get(j).getC().getX() + "|" + (targets.get(j)).getC().getY());
                 System.out.println(offs.get(i).distanceTo(targets.get(j)));
             }

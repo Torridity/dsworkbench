@@ -152,7 +152,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 }
                 trans = AffineTransform.getTranslateInstance(0, 0);
                 if (pSettings.getColumnsToRender() < 0) {
-                    trans.setToTranslation((pSettings.getVillagesInX()+ pSettings.getColumnsToRender()) * pSettings.getFieldWidth(), 0);
+                    trans.setToTranslation((pSettings.getVillagesInX() + pSettings.getColumnsToRender()) * pSettings.getFieldWidth(), 0);
                 }
                 g2d.drawRenderedImage(img, trans);
             }
@@ -280,7 +280,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         }
 
         boolean markedOnly = false;
-        
+
         //iterate through entire row
         int cnt = 0;
         boolean useDecoration = true;
@@ -356,7 +356,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         }
 
         boolean markedOnly = false;
-      
+
         //iterate through entire row
         int cnt = 0;
         boolean useDecoration = true;
@@ -392,7 +392,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         }
 
         //calculate first row that will be rendered
-        int firstCol = (pSettings.getColumnsToRender() > 0) ? 0 : pSettings.getVillagesInX()- Math.abs(pSettings.getColumnsToRender());
+        int firstCol = (pSettings.getColumnsToRender() > 0) ? 0 : pSettings.getVillagesInX() - Math.abs(pSettings.getColumnsToRender());
         Graphics2D g2d = (Graphics2D) newColumns.getGraphics();
         ImageUtils.setupGraphics(g2d);
 
@@ -435,10 +435,9 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         int textureId = -1;
         BufferedImage sprite = null;
 
-       // Marker villageMarker = MarkerManager.getSingleton().getMarker(v);
+        // Marker villageMarker = MarkerManager.getSingleton().getMarker(v);
         if (v != null
-                && !(v.getTribe().equals(Barbarians.getSingleton()) && !showBarbarian)
-               // && !(villageMarker == null && markedOnly && !v.getTribe().getName().equals(GlobalOptions.getSelectedProfile().getTribeName()))
+                && !(v.getTribe().equals(Barbarians.getSingleton()) && !showBarbarian) // && !(villageMarker == null && markedOnly && !v.getTribe().getName().equals(GlobalOptions.getSelectedProfile().getTribeName()))
                 ) {
             //village field that has to be rendered
             v.setVisibleOnMap(true);
@@ -490,15 +489,15 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         BufferedImage sprite = null;
         Rectangle copyRect = null;
         boolean showBarbarian = true;
+        Village currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
         try {
             showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
         } catch (Exception e) {
             showBarbarian = true;
         }
-     
+
         if (v != null
-                && !(v.getTribe().equals(Barbarians.getSingleton()) && !showBarbarian)
-                //&& !(MarkerManager.getSingleton().getMarker(v) == null && !v.getTribe().getName().equals(GlobalOptions.getSelectedProfile().getTribeName()))
+                && !(v.getTribe().equals(Barbarians.getSingleton()) && !showBarbarian) //&& !(MarkerManager.getSingleton().getMarker(v) == null && !v.getTribe().getName().equals(GlobalOptions.getSelectedProfile().getTribeName()))
                 ) {
             v.setVisibleOnMap(true);
             tribeId = v.getTribeID();
@@ -519,7 +518,9 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             AffineTransform t = AffineTransform.getTranslateInstance(col * pFieldWidth, row * pFieldHeight);
             t.scale(1.0 / zoom, 1.0 / zoom);
             g2d.drawRenderedImage(sprite, t);
-            renderedMarkerBounds.put(tribeId, new Rectangle(col * pFieldWidth, row * pFieldHeight, pFieldWidth, pFieldHeight));
+            if (currentUserVillage == null || !v.equals(currentUserVillage)) {
+                renderedMarkerBounds.put(tribeId, new Rectangle(col * pFieldWidth, row * pFieldHeight, pFieldWidth, pFieldHeight));
+            }
             sprite.flush();
         } else if (copyRect != null) {
             g2d.copyArea(copyRect.x, copyRect.y, copyRect.width, copyRect.height, col * pFieldWidth - copyRect.x, row * pFieldHeight - copyRect.y);
@@ -567,13 +568,13 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         } else {
             if (pVillage.getTribe() != Barbarians.getSingleton()) {
                 tribeMarker = MarkerManager.getSingleton().getMarker(pVillage.getTribe());
-                if(tribeMarker != null && !tribeMarker.isShownOnMap()){
+                if (tribeMarker != null && !tribeMarker.isShownOnMap()) {
                     tribeMarker = null;
                     markerColor = DEFAULT;
                 }
                 if (pVillage.getTribe().getAlly() != BarbarianAlly.getSingleton()) {
                     allyMarker = MarkerManager.getSingleton().getMarker(pVillage.getTribe().getAlly());
-                    if(allyMarker != null &&!allyMarker.isShownOnMap()){
+                    if (allyMarker != null && !allyMarker.isShownOnMap()) {
                         allyMarker = null;
                         markerColor = DEFAULT;
                     }

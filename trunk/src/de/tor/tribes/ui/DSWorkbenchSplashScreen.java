@@ -13,14 +13,11 @@ import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.ui.renderer.ProfileTreeNodeRenderer;
+import de.tor.tribes.ui.wiz.FirstStartWizard;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.ProfileManager;
-import java.awt.AWTEvent;
-import java.awt.EventQueue;
-import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -28,15 +25,20 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.RollingFileAppender;
+import org.netbeans.api.wizard.WizardDisplayer;
+import org.netbeans.spi.wizard.Wizard;
+import org.netbeans.spi.wizard.WizardPanelProvider;
 
 /**
  * @author  Jejkal
@@ -180,11 +182,47 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 JOptionPaneHelper.showErrorBox(self, "Fehler bei der Initialisierung.\nDas Serververzeichnis konnte nicht erstellt werden.", "Fehler");
                 return false;
             }
+            ProfileManager.getSingleton().loadProfiles();
+            if (ProfileManager.getSingleton().getProfiles().length == 0 || new File("./sfs").exists()) {
+                if (new File("./sfs").exists()) {
+                    if (new File("./.hfsw").exists()) {
+                        FileUtils.forceDelete(new File("./.hfsw"));
+                    }
+                    FileUtils.forceDelete(new File("./sfs"));
+
+                }
+
+                //first start wizard
+                if (!new File("./.hfsw").exists()) {
+                    WizardPanelProvider provider = new FirstStartWizard();
+                    Wizard wizard = provider.createWizard();
+                    Map result = (Map) WizardDisplayer.showWizard(wizard);
+                    if (result == null) {
+                        JOptionPaneHelper.showWarningBox(self, "Du musst die grundlegenden Einstellungen zumindest einmalig durchführen,\n"
+                                + "um DS Workbench verwenden zu können. Bitte starte DS Workbench neu.", "Abbruch");
+                        return false;
+                    }
+                    GlobalOptions.addProperty("proxySet", (String) result.get("proxySet"));
+                    GlobalOptions.addProperty("proxyHost", (String) result.get("proxyHost"));
+                    GlobalOptions.addProperty("proxyPort", (String) result.get("proxyPort"));
+                    GlobalOptions.addProperty("proxyType", (String) result.get("proxyType"));
+                    GlobalOptions.addProperty("proxyUser", (String) result.get("proxyUser"));
+                    GlobalOptions.addProperty("proxyPassword", (String) result.get("proxyPassword"));
+                    GlobalOptions.addProperty("account.name", (String) result.get("account.name"));
+                    GlobalOptions.addProperty("account.password", (String) result.get("account.password"));
+                    GlobalOptions.addProperty("default.server", (String) result.get("server"));
+                    GlobalOptions.addProperty("player." + (String) result.get("server"), (String) result.get("tribe"));
+                    UserProfile p = UserProfile.create(GlobalOptions.getProperty("default.server"), GlobalOptions.getProperty("player." + GlobalOptions.getProperty("default.server")));
+                    GlobalOptions.setSelectedProfile(p);
+                    GlobalOptions.addProperty("selected.profile", Long.toString(p.getProfileId()));
+                    FileUtils.touch(new File("./.hfsw"));
+                    GlobalOptions.saveProperties();
+                }
+            }
             //load properties, cursors, skins, world decoration
-            //  GlobalOptions.initialize();
             DataHolder.getSingleton().addDataHolderListener(this);
             DataHolder.getSingleton().addDataHolderListener(DSWorkbenchSettingsDialog.getSingleton());
-            ProfileManager.getSingleton().loadProfiles();
+
         } catch (Exception e) {
             logger.error("Failed to initialize global options", e);
             JOptionPaneHelper.showErrorBox(self, "Fehler bei der Initialisierung.\nMöglicherweise ist deine DS Workbench Installation defekt.", "Fehler");
@@ -343,7 +381,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
      */
     public static void main(String args[]) {
         Locale.setDefault(Locale.GERMAN);
-
         int mode = -1;
         if (args != null) {
             for (String arg : args) {

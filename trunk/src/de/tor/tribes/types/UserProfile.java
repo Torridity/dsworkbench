@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -196,17 +197,30 @@ public class UserProfile {
     }
 
     public boolean delete() {
-        boolean success = true;
-        System.gc();
-        for (File f : new File(getProfileDirectory()).listFiles()) {
-            if (!f.delete()) {
-                success = false;
-                break;
+        boolean success = false;
+        try {
+            FileUtils.deleteDirectory(new File(getProfileDirectory()));
+            success = true;
+        } catch (IOException ioe) {
+
+            try {
+                FileUtils.touch(new File(getProfileDirectory() + File.separator + ".deleted"));
+                FileUtils.forceDeleteOnExit(new File(getProfileDirectory()));
+                success = true;
+            } catch (IOException ioe2) {
             }
         }
-        if (success) {
-            success = new File(getProfileDirectory()).delete();
+
+
+        /*for (File f : new File(getProfileDirectory()).listFiles()) {
+        if (!f.delete()) {
+        success = false;
+        break;
         }
+        }
+        if (success) {
+        success = new File(getProfileDirectory()).delete();
+        }*/
         ProfileManager.getSingleton().loadProfiles();
         return success;
     }

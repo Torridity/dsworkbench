@@ -8,7 +8,7 @@ package de.tor.tribes.db;
  *
  * @author Jejkal
  */
-public class DatabaseServerEntry {
+public class DatabaseServerEntry implements Comparable<DatabaseServerEntry> {
 
     public final static byte NO_NIGHT_BONUS = 0;
     public final static byte NIGHT_BONUS_0to7 = 1;
@@ -90,5 +90,21 @@ public class DatabaseServerEntry {
      */
     public void setDecoration(int decoration) {
         this.decoration = decoration;
+    }
+
+    public String toString() {
+        return getServerID();
+    }
+
+    @Override
+    public int compareTo(DatabaseServerEntry o) {
+        String o1 = getServerID();
+        String o2 = o.getServerID();
+        if (o1.length() < o2.length()) {
+            return -1;
+        } else if (o1.length() > o2.length()) {
+            return 1;
+        }
+        return o1.compareTo(o2);
     }
 }

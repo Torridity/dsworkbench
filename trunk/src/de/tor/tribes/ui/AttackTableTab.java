@@ -13,6 +13,7 @@ package de.tor.tribes.ui;
 import de.tor.tribes.ui.views.DSWorkbenchReTimerFrame;
 import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.control.ManageableType;
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.UserProfile;
@@ -25,6 +26,7 @@ import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
+import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import de.tor.tribes.util.AttackIGMSender;
 import de.tor.tribes.util.AttackToPlainTextFormatter;
 import de.tor.tribes.util.BrowserCommandSender;
@@ -60,6 +62,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -141,6 +144,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         sAttackPlan = pAttackPlan;
         initComponents();
         jScrollPane1.setViewportView(jxAttackTable);
+        jUnitBox.setRenderer(new UnitListCellRenderer());
         if (!KEY_LISTENER_ADDED) {
             KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
             KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
@@ -1309,6 +1313,9 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
     public void changeSelectionType() {
         if (!getSelectedAttacks().isEmpty()) {
+            
+            jUnitBox.setModel(new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{})));
+            
             jChangeAttackTypeDialog.setLocationRelativeTo(this);
             jChangeAttackTypeDialog.pack();
             jChangeAttackTypeDialog.setVisible(true);

@@ -12,7 +12,6 @@ import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.test.DummyUnit;
-import de.tor.tribes.types.test.DummyVillage;
 import de.tor.tribes.types.InvalidTribe;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.UnknownUnit;
@@ -28,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -40,6 +40,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPInputStream;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -592,8 +593,7 @@ public class DataHolder {
             }
             r.close();
         } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("Failed to read tribes for server '" + pServer + "'");
+            logger.error("Failed to read tribes for server '" + pServer + "'", e);
         }
         return pTribes;
     }
@@ -1059,8 +1059,8 @@ public class DataHolder {
 
     /**Merge all data into the village data structure to ease searching*/
     private void mergeData() {
-        for (int i = 0; i < 1000; i++) {
-            for (int j = 0; j < 1000; j++) {
+        for (int i = 0; i < ServerSettings.getSingleton().getMapDimension().width; i++) {
+            for (int j = 0; j < ServerSettings.getSingleton().getMapDimension().height; j++) {
                 Village current = mVillages[i][j];
 
                 if (current != null) {
@@ -1107,7 +1107,6 @@ public class DataHolder {
         ucon.setReadTimeout(20000);
         FileOutputStream tempWriter = new FileOutputStream(pLocalName);
         InputStream isr = ucon.getInputStream();
-
         int bytes = 0;
         byte[] data = new byte[1024];
         ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -1184,34 +1183,39 @@ public class DataHolder {
     }
 
     public void copyFile(File pSource, File pDestination) {
-        FileInputStream fin = null;
+        try {
+            FileUtils.copyFile(pSource, pDestination);
+        } catch (IOException ioe) {
+            logger.error("Failed to copy file '" + pSource.getPath() + "' to '" + pDestination.getPath() + "'");
+        }
+        /*  FileInputStream fin = null;
         FileOutputStream fout = null;
         try {
-            fin = new FileInputStream(pSource);
-            fout = new FileOutputStream(pDestination);
-            byte[] data = new byte[1024];
-
-            int bytesRead = 0;
-            while (bytesRead >= 0) {
-                bytesRead = fin.read(data);
-                if (bytesRead != -1) {
-                    fout.write(data, 0, bytesRead);
-                }
-
-            }
-            fout.flush();
-        } catch (Exception e) {
-            logger.error("Failed to copy file '" + pSource.getPath() + "' to '" + pDestination.getPath() + "'");
-        } finally {
-            try {
-                fin.close();
-            } catch (Exception ignored) {
-            }
-            try {
-                fout.close();
-            } catch (Exception ignored) {
-            }
+        fin = new FileInputStream(pSource);
+        fout = new FileOutputStream(pDestination);
+        byte[] data = new byte[1024];
+        
+        int bytesRead = 0;
+        while (bytesRead >= 0) {
+        bytesRead = fin.read(data);
+        if (bytesRead != -1) {
+        fout.write(data, 0, bytesRead);
         }
+        
+        }
+        fout.flush();
+        } catch (Exception e) {
+        logger.error("Failed to copy file '" + pSource.getPath() + "' to '" + pDestination.getPath() + "'");
+        } finally {
+        try {
+        fin.close();
+        } catch (Exception ignored) {
+        }
+        try {
+        fout.close();
+        } catch (Exception ignored) {
+        }
+        }*/
     }
 
     /**Get all villages<BR>

@@ -10,9 +10,11 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.bb.AttackListFormatter;
 import de.tor.tribes.util.support.SOSFormater;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -27,7 +29,7 @@ import java.util.List;
  */
 public class SOSRequest implements BBSupport {
 
-    private final String[] VARIABLES = new String[]{"%SOS_ICON%", "%TARGET%", "%ATTACKS%", "%DEFENDERS%", "%WALL_INFO%", "%WALL_LEVEL%", "%FIRST_ATTACK%", "%LAST_ATTACK%", "%SOURCE_LIST%", "%SOURCE_DATE_TYPE_LIST%", "%TRIBE_SOURCE_DATE_LIST%", "%SOURCE_DATE_LIST%", "%SOURCE_TYPE_LIST%", "%SUMMARY%"};
+    private final String[] VARIABLES = new String[]{"%SOS_ICON%", "%TARGET%", "%ATTACKS%", "%DEFENDERS%", "%WALL_INFO%", "%WALL_LEVEL%", "%FIRST_ATTACK%", "%LAST_ATTACK%", "%SOURCE_LIST%", "%SOURCE_DATE_TYPE_LIST%", "%ATTACK_LIST%", "%SOURCE_DATE_LIST%", "%SOURCE_TYPE_LIST%", "%SUMMARY%"};
     private final static String STANDARD_TEMPLATE = "[quote]%SOS_ICON% %TARGET% (%ATTACKS%)\n[quote]%DEFENDERS%\n%WALL_INFO%[/quote]\n\n%FIRST_ATTACK%\n%SOURCE_DATE_LIST%\n%LAST_ATTACK%\n\n%SUMMARY%[/quote]";
 
     @Override
@@ -71,33 +73,50 @@ public class SOSRequest implements BBSupport {
         String sourceVal = "";
         String sourceDateVal = "";
         String sourceDateTypeVal = "";
-        String tribeSourceDateVal = "";
+        String attackList = "";
         String sourceTypeVal = "";
+        List<Attack> attacks = new ArrayList<Attack>();
         for (int i = 0; i < atts.size(); i++) {
             try {
                 TimedAttack attack = atts.get(i);
+                Attack a = new Attack();
+                a.setSource(attack.getSource());
+                a.setTarget(pTarget);
+                a.setArriveTime(new Date(attack.getlArriveTime()));
                 if (attack.isPossibleFake()) {
                     fakeCount++;
+                    a.setType(Attack.FAKE_TYPE);
                 } else if (attack.isPossibleSnob()) {
                     snobCount++;
+                    a.setType(Attack.SNOB_TYPE);
+                    a.setUnit(DataHolder.getSingleton().getUnitByPlainName("snob"));
                 }
+                if (a.getUnit() == null) {
+                    a.setUnit(UnknownUnit.getSingleton());
+                }
+                attacks.add(a);
+            } catch (Exception e) {
+            }
+        }
 
+        attackList = new AttackListFormatter().formatElements(attacks, pExtended);
+
+        for (int i = 0; i < atts.size(); i++) {
+            try {
+                TimedAttack attack = atts.get(i);
                 sourceVal += attack.getSource().toBBCode() + "\n";
                 if (attack.isPossibleFake()) {
                     sourceDateTypeVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + " [b](Fake)[/b]" + "\n";
                     sourceDateVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
                     sourceTypeVal += attack.getSource().toBBCode() + " [b](Fake)[/b]" + "\n";
-                    tribeSourceDateVal += "[player]" + attack.getSource().getTribe() + "[/player]" + " " + attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
                 } else if (attack.isPossibleSnob()) {
                     sourceDateTypeVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + " [b](AG)[/b]" + "\n";
                     sourceDateVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
                     sourceTypeVal += attack.getSource().toBBCode() + " [b](AG)[/b]" + "\n";
-                    tribeSourceDateVal += "[player]" + attack.getSource().getTribe() + "[/player]" + " " + attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
                 } else {
                     sourceDateTypeVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
                     sourceDateVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
                     sourceTypeVal += attack.getSource().toBBCode() + "\n";
-                    tribeSourceDateVal += "[player]" + attack.getSource().getTribe() + "[/player]" + " " + attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
                 }
             } catch (Exception e) {
             }
@@ -110,7 +129,7 @@ public class SOSRequest implements BBSupport {
         String lastAttackVal = "[img]" + serverURL + "/graphic/map/return.png[/img] " + dateFormat.format(new Date(atts.get(atts.size() - 1).getlArriveTime()));
         String summaryVal = "[u]Mögliche Fakes:[/u] " + fakeCount + "\n" + "[u]Mögliche AGs:[/u] " + snobCount;
 
-        return new String[]{sosImageVal, targetVal, attackCountVal, unitVal, wallInfoVal, wallLevelVal, firstAttackVal, lastAttackVal, sourceVal, sourceDateTypeVal, tribeSourceDateVal, sourceDateVal, sourceTypeVal, summaryVal};
+        return new String[]{sosImageVal, targetVal, attackCountVal, unitVal, wallInfoVal, wallLevelVal, firstAttackVal, lastAttackVal, sourceVal, sourceDateTypeVal, attackList, sourceDateVal, sourceTypeVal, summaryVal};
     }
 
     private String buildUnitInfo(TargetInformation pTargetInfo) {

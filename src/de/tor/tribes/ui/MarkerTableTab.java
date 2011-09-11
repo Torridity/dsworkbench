@@ -10,10 +10,9 @@
  */
 package de.tor.tribes.ui;
 
-import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Marker;
-import de.tor.tribes.types.Tribe;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
+import de.tor.tribes.ui.editors.VisibleInvisibleEditor;
 import de.tor.tribes.ui.models.MarkerTableModel;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
@@ -86,7 +85,6 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
         jxMarkerTable.setColumnControlVisible(true);
         jxMarkerTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
         jxMarkerTable.setDefaultRenderer(MarkerCell.class, new MarkerPanelCellRenderer());
-        jxMarkerTable.setDefaultRenderer(Boolean.class, new VisibilityCellRenderer());
         ColorChooserCellEditor editor = new ColorChooserCellEditor(new ActionListener() {
 
             @Override
@@ -96,6 +94,11 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
         jxMarkerTable.setDefaultEditor(Color.class, editor);
         markerModel = new MarkerTableModel(MarkerManager.DEFAULT_GROUP);
         jxMarkerTable.setModel(markerModel);
+        TableColumnExt visibilityCol = jxMarkerTable.getColumnExt("Sichtbar");
+        visibilityCol.setCellRenderer(new VisibilityCellRenderer());
+        visibilityCol.setCellEditor(new VisibleInvisibleEditor());
+
+
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
         Graphics2D g = back.createGraphics();
         GeneralPath p = new GeneralPath();
@@ -118,11 +121,11 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
         initComponents();
         jScrollPane1.setViewportView(jxMarkerTable);
         if (!KEY_LISTENER_ADDED) {
-           // KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
+            // KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
             KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
             KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK, false);
             KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
-         //   jxMarkerTable.registerKeyboardAction(pActionListener, "Copy", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            //   jxMarkerTable.registerKeyboardAction(pActionListener, "Copy", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxMarkerTable.registerKeyboardAction(pActionListener, "Cut", cut, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxMarkerTable.registerKeyboardAction(pActionListener, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxMarkerTable.registerKeyboardAction(pActionListener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
@@ -362,16 +365,16 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
             for (String line : lines) {
                 Marker m = Marker.fromInternalRepresentation(line);
                 Marker existingMarker = null;
-                if(m != null && m.getMarkerType() == Marker.ALLY_MARKER_TYPE){
+                if (m != null && m.getMarkerType() == Marker.ALLY_MARKER_TYPE) {
                     existingMarker = MarkerManager.getSingleton().getMarker(m.getView().getAlly());
-                }else if(m != null && m.getMarkerType() == Marker.TRIBE_MARKER_TYPE){
+                } else if (m != null && m.getMarkerType() == Marker.TRIBE_MARKER_TYPE) {
                     existingMarker = MarkerManager.getSingleton().getMarker(m.getView().getTribe());
                 }
-                
+
                 if (m != null && existingMarker == null) {
                     MarkerManager.getSingleton().addManagedElement(getMarkerSet(), m);
                     cnt++;
-                }else if(existingMarker != null){
+                } else if (existingMarker != null) {
                     existCount++;
                 }
             }

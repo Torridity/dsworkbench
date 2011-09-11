@@ -80,10 +80,6 @@ import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
 
 // -Dsun.java2d.d3d=true -Dsun.java2d.translaccel=true -Dsun.java2d.ddforcevram=true
-// <editor-fold defaultstate="collapsed" desc=" NOTIFY THREAD ">
-// <editor-fold defaultstate="collapsed" desc=" NOTIFY THREAD ">
-// <editor-fold defaultstate="collapsed" desc=" NOTIFY THREAD ">
-// <editor-fold defaultstate="collapsed" desc=" NOTIFY THREAD ">
 /**
  * @author  Charon
  */
@@ -1116,6 +1112,9 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     // End of variables declaration//GEN-END:variables
 }
 
+
+// <editor-fold defaultstate="collapsed" desc=" NOTIFY THREAD ">
+
 class NotifyThread extends Thread {
 
     private static Logger logger = Logger.getLogger("AttackNotificationHelper");
@@ -1195,6 +1194,7 @@ class NotifyThread extends Thread {
         }
     }
 }
+//</editor-fold>
 
 class ColorUpdateThread extends Thread {
 
@@ -1216,7 +1216,6 @@ class ColorUpdateThread extends Thread {
     }
 }
 
-//</editor-fold>
 class CountdownThread extends Thread {
 
     private boolean showCountdown = true;

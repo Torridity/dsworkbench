@@ -207,6 +207,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         }, "BBCopy", bbCopy, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
         initListeners();
+        if(!GlobalOptions.isMinimal()){
         new Timer("RepaintTimer", true).schedule(new TimerTask() {
 
             @Override
@@ -219,6 +220,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 });
             }
         }, 0, 100);
+        }
         mScreenSaver = new ScreenshotSaver();
         mScreenSaver.start();
 
@@ -1533,12 +1535,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             g2d.setColor(c0);
             g2d.setClip(cl0);
             g2d.setStroke(s0);
-            /* if(bMapSHotPlaned){
-            BufferedImage result = ImageUtils.createCompatibleBufferedImage(getWidth(), getHeight(), BufferedImage.OPAQUE);
-            mMapRenderer.renderAll((Graphics2D) result.getGraphics());
-            ImageIO.write(result, "png", new File("map.png"));
-            bMapSHotPlaned = false;
-            }*/
         } catch (Exception e) {
             logger.error("Failed to paint", e);
         }

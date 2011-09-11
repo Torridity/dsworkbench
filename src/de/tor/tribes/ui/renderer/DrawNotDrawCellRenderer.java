@@ -15,16 +15,16 @@ import org.jdesktop.swingx.renderer.DefaultTableRenderer;
  *
  * @author Torridity
  */
-public class SentNotSentCellRenderer extends DefaultTableRenderer {
+public class DrawNotDrawCellRenderer extends DefaultTableRenderer {
 
-    private ImageIcon sent = null;
-    private ImageIcon notSent = null;
+    private ImageIcon draw = null;
+    private ImageIcon notDraw = null;
 
-    public SentNotSentCellRenderer() {
+    public DrawNotDrawCellRenderer() {
         super();
         try {
-            sent = new ImageIcon(SentNotSentCellRenderer.class.getResource("/res/ui/sent_small.gif"));
-            notSent = new ImageIcon(SentNotSentCellRenderer.class.getResource("/res/ui/unsent_small.gif"));
+            draw = new ImageIcon(SentNotSentCellRenderer.class.getResource("/res/ui/draw_small.gif"));
+            notDraw = new ImageIcon(SentNotSentCellRenderer.class.getResource("/res/ui/not_draw_small.gif"));
         } catch (Exception e) {
         }
     }
@@ -35,20 +35,10 @@ public class SentNotSentCellRenderer extends DefaultTableRenderer {
         JLabel label = (JLabel) c;
         label.setText(null);
         if ((Boolean) value) {
-            label.setIcon(sent);
+            label.setIcon(draw);
         } else {
-            label.setIcon(notSent);
+            label.setIcon(notDraw);
         }
-        /* StringBuilder text = new StringBuilder();
-        text.append("<html>");
-        if ((Boolean) value) {
-        text.append("<img src='").append(sent).append("' width='16' height='16'/>");
-        } else {
-        text.append("<img src='").append(notSent).append("' width='16' height='16'/>");
-        }
-        text.append("</html>");
-        
-        label.setText(text.toString());*/
         label.setHorizontalAlignment(SwingConstants.CENTER);
         return label;
     }

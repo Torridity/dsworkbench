@@ -4,13 +4,11 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.types.Attack;
 import java.awt.Component;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
 /**
@@ -38,8 +36,9 @@ public class AttackMiscInfoRenderer extends DefaultTableRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         JLabel label = (JLabel) c;
+        
         try {
-            label.setHorizontalAlignment(SwingConstants.CENTER);
+           /* label.setHorizontalAlignment(SwingConstants.CENTER);
             Attack a = (Attack) value;
             StringBuilder text = new StringBuilder();
             text.append("<html>");
@@ -61,7 +60,7 @@ public class AttackMiscInfoRenderer extends DefaultTableRenderer {
             label.setText(text.toString());
             label.setToolTipText("<html>Der Angriff " + ((!shown) ? "<b>ist nicht</b>" : "<b>ist</b>") + " auf der Karte eingezeichnet<br/>"
                     + "Der Angriff " + ((!transfer) ? "<b>wurde noch nicht</b>" : "<b>wurde bereits</b>") + " in den Browser &uuml;bertragen</html>");
-        } catch (Exception e) {
+      */ } catch (Exception e) {
             //cast problem
         }
         return label;

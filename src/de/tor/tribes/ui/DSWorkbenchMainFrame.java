@@ -79,6 +79,7 @@ import de.tor.tribes.util.troops.TroopsManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseEvent;
@@ -140,7 +141,11 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     DSWorkbenchMainFrame() {
         initComponents();
         setAlwaysOnTop(false);
-        setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
+        if (!GlobalOptions.isMinimal()) {
+            setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
+        } else {
+            setTitle("DS Workbench Mini " + Constants.VERSION + Constants.VERSION_ADDITION);
+        }
         jExportDialog.pack();
         jAddROIDialog.pack();
 
@@ -589,25 +594,29 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     }
 
     public void storeProperties() {
-        GlobalOptions.addProperty("main.size.width", Integer.toString(getWidth()));
-        GlobalOptions.addProperty("main.size.height", Integer.toString(getHeight()));
+        if (!GlobalOptions.isMinimal()) {
+            GlobalOptions.addProperty("main.size.width", Integer.toString(getWidth()));
+            GlobalOptions.addProperty("main.size.height", Integer.toString(getHeight()));
+        }
     }
 
     public final void restoreProperties() {
-        try {
-            int width = Integer.parseInt(GlobalOptions.getProperty("main.size.width"));
-            int height = Integer.parseInt(GlobalOptions.getProperty("main.size.height"));
-            int maxHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 50;
-            int maxWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() - 50;
-            if (height > maxHeight) {
-                height = maxHeight;
-            }
-            if (width > maxWidth) {
-                width = maxWidth;
-            }
+        if (!GlobalOptions.isMinimal()) {
+            try {
+                int width = Integer.parseInt(GlobalOptions.getProperty("main.size.width"));
+                int height = Integer.parseInt(GlobalOptions.getProperty("main.size.height"));
+                int maxHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 50;
+                int maxWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() - 50;
+                if (height > maxHeight) {
+                    height = maxHeight;
+                }
+                if (width > maxWidth) {
+                    width = maxWidth;
+                }
 
-            setSize(width, height);
-        } catch (Exception e) {
+                setSize(width, height);
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -812,6 +821,14 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     @Override
     public void setVisible(boolean v) {
         logger.info("Setting MainWindow visible");
+        if (GlobalOptions.isMinimal()) {
+            getContentPane().remove(jPanel4);
+            setSize(390, 185);
+            setPreferredSize(new Dimension(390, 185));
+            setMinimumSize(new Dimension(390, 185));
+            setMaximumSize(new Dimension(1900, 185));
+
+        }
         super.setVisible(v);
         final boolean vis = v;
         SwingUtilities.invokeLater(new Runnable() {
@@ -867,15 +884,18 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
     private void setupRibbon() {
         RibbonConfigurator.addGeneralToolsTask(this);
-        RibbonConfigurator.addMapToolsTask(this);
+        if (!GlobalOptions.isMinimal()) {
+            RibbonConfigurator.addMapToolsTask(this);
+        }
         RibbonConfigurator.addViewTask(this);
         RibbonConfigurator.addMiscTask(this);
         RibbonConfigurator.addAppIcons(this);
-
     }
 
     private void showReminder() {
-        showInfo("Weltdaten aktuell? Truppen importiert? Gruppen importiert?");
+        if (!GlobalOptions.isMinimal()) {
+            showInfo("Weltdaten aktuell? Truppen importiert? Gruppen importiert?");
+        }
     }
 
     private void showTotD() {

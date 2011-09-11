@@ -4,9 +4,6 @@ package de.tor.tribes.ui.components;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3)
 import java.awt.*;
 import java.awt.event.*;
 import java.text.DateFormat;

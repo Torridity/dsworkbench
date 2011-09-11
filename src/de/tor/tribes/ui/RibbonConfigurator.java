@@ -877,7 +877,6 @@ public class RibbonConfigurator {
         miscBand.addCommandButton(donateButton, RibbonElementPriority.TOP);
         miscBand.addCommandButton(aboutButton, RibbonElementPriority.TOP);
 
-
         miscBand.setResizePolicies((List) Arrays.asList(
                 new CoreRibbonResizePolicies.None(miscBand.getControlPanel()) // new CoreRibbonResizePolicies.Mirror(miscBand.getControlPanel()),
                 //new CoreRibbonResizePolicies.Mid2Low(miscToolsBand.getControlPanel()),

@@ -50,25 +50,6 @@ public class AttackAddFrame extends javax.swing.JFrame {
         initComponents();
         nf.setMaximumFractionDigits(2);
         nf.setMinimumFractionDigits(2);
-
-        /* ((DateEditor) jTimeSpinner.getEditor()).getTextField().setHorizontalAlignment(JTextField.CENTER);
-        ((DateEditor) jTimeSpinner.getEditor()).getFormat().applyPattern("dd.MM.yy HH:mm:ss");
-        jTimeSpinner.addChangeListener(new ChangeListener() {
-        
-        @Override
-        public void stateChanged(ChangeEvent e) {
-        if (skipValidation) {
-        return;
-        }
-        if (!validateTime()) {
-        ((DateEditor) jTimeSpinner.getEditor()).getTextField().setForeground(Color.RED);
-        } else {
-        ((DateEditor) jTimeSpinner.getEditor()).getTextField().setForeground(Color.BLACK);
-        }
-        }
-        });*/
-
-
     }
 
     private boolean validateDistance() {

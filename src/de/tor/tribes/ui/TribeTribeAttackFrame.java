@@ -2294,6 +2294,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         if (mSettingsPanel.useBruteForce()) {
             logger.info("Using 'BruteForce' calculation");
             algo = new BruteForce();
+            //algo = new Recurrection();
             supportMiscUnits = true;
             logPanel.setAbortable(false);
         } else {

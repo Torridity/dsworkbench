@@ -11,6 +11,7 @@
 package de.tor.tribes.ui.components;
 
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -21,8 +22,6 @@ import java.util.Date;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 
 /**
  *
@@ -227,7 +226,6 @@ public class DateTimeField extends javax.swing.JPanel {
             JPanel p = new JPanel();
             p.add(dp);
             dlg.getContentPane().add(p);
-
         } else {
             if (!timeEnabled) {
                 return;
@@ -252,6 +250,15 @@ public class DateTimeField extends javax.swing.JPanel {
         }
 
         dlg.pack();
+        //check for outer bounds
+        double deltax = Toolkit.getDefaultToolkit().getScreenSize().getWidth() - (dlg.getBounds().getX() + dlg.getBounds().getWidth());
+        double deltay = Toolkit.getDefaultToolkit().getScreenSize().getHeight() - (dlg.getBounds().getY() + dlg.getBounds().getHeight());
+        if (deltax < 0) {
+            dlg.setLocation((int) (dlg.getX() + deltax), dlg.getY());
+        }
+        if (deltay < 0) {
+            dlg.setLocation(dlg.getX(), (int) (dlg.getY() + deltay));
+        }
         dlg.setVisible(true);
     }//GEN-LAST:event_fireChangeDateTimeEvent
     // Variables declaration - do not modify//GEN-BEGIN:variables

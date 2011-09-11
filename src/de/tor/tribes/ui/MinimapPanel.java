@@ -139,9 +139,9 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
         MarkerManager.getSingleton().addManagerListener(this);
         TagManager.getSingleton().addManagerListener(this);
         MinimapRepaintThread.getSingleton().setVisiblePart(rVisiblePart);
-        MinimapRepaintThread.getSingleton().start();
-
-
+        if (!GlobalOptions.isMinimal()) {
+            MinimapRepaintThread.getSingleton().start();
+        }
         addMouseListener(new MouseListener() {
 
             @Override

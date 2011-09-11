@@ -85,10 +85,16 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
     /** Creates new form DSWorkbenchMarkerFrame */
     DSWorkbenchMarkerFrame() {
         initComponents();
-        centerPanel = new GenericTestPanel(true);
+        if (!GlobalOptions.isMinimal()) {
+            centerPanel = new GenericTestPanel(true);
+        } else {
+            centerPanel = new GenericTestPanel(false);
+        }
         jMarkersPanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildComponent(jXMarkerPanel);
-        buildMenu();
+        if (!GlobalOptions.isMinimal()) {
+            buildMenu();
+        }
 
         jMarkerTabPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
         jMarkerTabPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);

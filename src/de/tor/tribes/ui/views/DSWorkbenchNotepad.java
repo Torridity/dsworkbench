@@ -291,24 +291,26 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         });
         transferTaskPane.getContentPane().add(transferVillageList);
 
-        JXButton centerVillage = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
-        centerVillage.setToolTipText("Zentriert das gewählte Notizdorf auf der Hauptkarte");
-        centerVillage.setSize(transferVillageList.getSize());
-        centerVillage.setMinimumSize(transferVillageList.getMinimumSize());
-        centerVillage.setMaximumSize(transferVillageList.getMaximumSize());
-        centerVillage.setPreferredSize(transferVillageList.getPreferredSize());
-        centerVillage.addMouseListener(new MouseAdapter() {
+        if (!GlobalOptions.isMinimal()) {
+            JXButton centerVillage = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
+            centerVillage.setToolTipText("Zentriert das gewählte Notizdorf auf der Hauptkarte");
+            centerVillage.setSize(transferVillageList.getSize());
+            centerVillage.setMinimumSize(transferVillageList.getMinimumSize());
+            centerVillage.setMaximumSize(transferVillageList.getMaximumSize());
+            centerVillage.setPreferredSize(transferVillageList.getPreferredSize());
+            centerVillage.addMouseListener(new MouseAdapter() {
 
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                NoteTableTab tab = getActiveTab();
-                if (tab != null) {
-                    tab.centerNoteVillage();
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    NoteTableTab tab = getActiveTab();
+                    if (tab != null) {
+                        tab.centerNoteVillage();
+                    }
                 }
-            }
-        });
+            });
 
-        transferTaskPane.getContentPane().add(centerVillage);
+            transferTaskPane.getContentPane().add(centerVillage);
+        }
         centerPanel.setupTaskPane(editTaskPane, transferTaskPane);
     }
 

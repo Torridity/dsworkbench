@@ -42,9 +42,7 @@ public class AttackScriptWriter {
             BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream("./scripts/show.tmpl")));
             String line = "";
             while ((line = r.readLine()) != null) {
-                //  if (line != null && !line.trim().startsWith("//") && !line.trim().startsWith("*") && !line.trim().startsWith("/*") && !line.trim().startsWith("*/")) {
                 tmpl += line + "\n";
-                //  }
             }
             r.close();
         } catch (Exception e) {
@@ -53,7 +51,7 @@ public class AttackScriptWriter {
         }
 
         logger.debug(" - building data array");
-        String data = "var attacks = new Array(";
+        String data = "win.attacks = new Array(";
         for (Attack a : pAttacks) {
             //set type
             String block = "{\n";
@@ -110,15 +108,10 @@ public class AttackScriptWriter {
 
 
         String param = "";
-        param += "var drawAttacks = " + ((pDrawAttacks) ? 1 : 0) + ";\n";
-        param += "var attackLineWidth = " + pLineWidth + ";\n";
-        param += "var straightLine = " + ((pStraightLine) ? 1 : 0) + ";\n";
-        param += "var gradientStartColor = 'rgb(" + pStartColor.getRed() + "," + pStartColor.getGreen() + "," + pStartColor.getBlue() + ")';\n";
-        param += "var gradientEndColor = 'rgb(" + pEndColor.getRed() + "," + pEndColor.getGreen() + "," + pEndColor.getBlue() + ")';\n";
-        param += "var showAttacksInVillageInfo = " + ((pShowAttacksInVillageInfo) ? 1 : 0) + ";\n";
-        param += "var showAttacksOnConfirmPage = " + ((pShowAttacksOnConfirmPage) ? 1 : 0) + ";\n";
-        param += "var showAttackOnCommandPage = " + ((pShowAttacksOnCommandPage) ? 1 : 0) + ";\n";
-        param += "var showAttacksInOverview = " + ((pShowAttacksInOverview) ? 1 : 0) + ";\n";
+        param += "win.showAttacksInVillageInfo = " + ((pShowAttacksInVillageInfo) ? 1 : 0) + ";\n";
+        param += "win.showAttacksOnConfirmPage = " + ((pShowAttacksOnConfirmPage) ? 1 : 0) + ";\n";
+        param += "win.showAttackOnCommandPage = " + ((pShowAttacksOnCommandPage) ? 1 : 0) + ";\n";
+        param += "win.showAttacksInOverview = " + ((pShowAttacksInOverview) ? 1 : 0) + ";\n";
 
         tmpl = tmpl.replaceAll("\\$\\$DATA_LOCATION", data);
         tmpl = tmpl.replaceAll("\\$\\$PARAMETER_LOCATION", param);

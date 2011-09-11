@@ -194,33 +194,39 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
             }
         });
         transferPane.getContentPane().add(transferVillageList);
-        JXButton centerButton = new JXButton(new ImageIcon(DSWorkbenchFormFrame.class.getResource("/res/center_24x24.png")));
-        centerButton.setToolTipText("Zentriert die Zeichnung auf der Hauptkarte");
-        centerButton.addMouseListener(new MouseAdapter() {
+        if (!GlobalOptions.isMinimal()) {
+            JXButton centerButton = new JXButton(new ImageIcon(DSWorkbenchFormFrame.class.getResource("/res/center_24x24.png")));
+            centerButton.setToolTipText("Zentriert die Zeichnung auf der Hauptkarte");
+            centerButton.addMouseListener(new MouseAdapter() {
 
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                centerFormOnMap();
-            }
-        });
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    centerFormOnMap();
+                }
+            });
 
-        transferPane.getContentPane().add(centerButton);
-
+            transferPane.getContentPane().add(centerButton);
+        }
 
         JXTaskPane miscPane = new JXTaskPane();
-        miscPane.setTitle("Sonstiges");
-        JXButton searchButton = new JXButton(new ImageIcon("./graphics/icons/search.png"));
-        searchButton.setToolTipText("Lässt die gewählten Zeichnungen auf der Hauptkarte kurz aufblinken");
-        searchButton.addMouseListener(new MouseAdapter() {
+        if (!GlobalOptions.isMinimal()) {
+            miscPane.setTitle("Sonstiges");
+            JXButton searchButton = new JXButton(new ImageIcon("./graphics/icons/search.png"));
+            searchButton.setToolTipText("Lässt die gewählten Zeichnungen auf der Hauptkarte kurz aufblinken");
+            searchButton.addMouseListener(new MouseAdapter() {
 
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                showFormOnMap();
-            }
-        });
-        miscPane.getContentPane().add(searchButton);
-
-        centerPanel.setupTaskPane(editPane, miscPane);
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    showFormOnMap();
+                }
+            });
+            miscPane.getContentPane().add(searchButton);
+        }
+        if (!GlobalOptions.isMinimal()) {
+            centerPanel.setupTaskPane(editPane, transferPane, miscPane);
+        } else {
+            centerPanel.setupTaskPane(editPane, transferPane);
+        }
     }
 
     public void storeCustomProperties(Configuration pConfig) {

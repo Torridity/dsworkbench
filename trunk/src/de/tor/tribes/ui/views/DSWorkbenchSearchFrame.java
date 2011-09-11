@@ -67,6 +67,9 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
         mSearchThread = new SearchThread("", this);
         mSearchThread.start();
         mMarkerAddFrame = new MarkerAddFrame();
+        jCenterButton.setEnabled(GlobalOptions.isMinimal());
+
+
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         if (!Constants.DEBUG) {
             GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.search_tool", GlobalOptions.getHelpBroker().getHelpSet());
@@ -397,7 +400,9 @@ private void fireAddMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
 }//GEN-LAST:event_fireAddMarkerEvent
 
 private void fireCenterMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterMapEvent
-    DSWorkbenchMainFrame.getSingleton().centerVillage(((Village) jVillageList.getSelectedItem()));
+    if (jCenterButton.isEnabled()) {
+        DSWorkbenchMainFrame.getSingleton().centerVillage(((Village) jVillageList.getSelectedItem()));
+    }
 }//GEN-LAST:event_fireCenterMapEvent
 
 private void fireCenterMapInGameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterMapInGameEvent

@@ -269,17 +269,19 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         });
         transferPane.getContentPane().add(transferVillageList);
 
-        JXButton button = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
-        button.setToolTipText("Zentriert das Kirchendorf auf der Hauptkarte");
-        button.addMouseListener(new MouseAdapter() {
+        if (!GlobalOptions.isMinimal()) {
+            JXButton button = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
+            button.setToolTipText("Zentriert das Kirchendorf auf der Hauptkarte");
+            button.addMouseListener(new MouseAdapter() {
 
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                centerChurchVillage();
-            }
-        });
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    centerChurchVillage();
+                }
+            });
 
-        transferPane.getContentPane().add(button);
+            transferPane.getContentPane().add(button);
+        }
         centerPanel.setupTaskPane(transferPane);
     }
 

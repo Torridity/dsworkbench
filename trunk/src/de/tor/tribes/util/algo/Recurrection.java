@@ -46,8 +46,7 @@ public class Recurrection extends AbstractAttackAlgorithm {
                 if (pTimeFrame.isMovementPossible(Math.round(dist * 30.0), null)) {
                     costs[i].put(targets.get(j), sources.get(i).distanceTo(targets.get(j)));
                 } else {
-                    System.out.println("MAX");
-                    costs[i].put(targets.get(j), Double.MAX_VALUE);
+                    costs[i].put(targets.get(j), 99999.0);
                 }
             }
         }

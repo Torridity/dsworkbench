@@ -187,6 +187,9 @@ public class MapRenderer {
     }
 
     public void renderAll(Graphics2D pG2d) {
+        if (GlobalOptions.isMinimal()) {
+            return;
+        }
         try {
             int w = MapPanel.getSingleton().getWidth();
             int h = MapPanel.getSingleton().getHeight();

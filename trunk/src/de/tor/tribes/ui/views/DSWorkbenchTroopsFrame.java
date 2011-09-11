@@ -277,21 +277,22 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         openPlace.setMaximumSize(transferVillageList.getMaximumSize());
         openPlace.setPreferredSize(transferVillageList.getPreferredSize());
         transferTaskPane.getContentPane().add(openPlace);
-        JXButton centerVillage = new JXButton(new ImageIcon(DSWorkbenchTroopsFrame.class.getResource("/res/center_24x24.png")));
-        centerVillage.setToolTipText("Zentriert das gewählte Dorf auf der Hauptkarte");
-        centerVillage.addMouseListener(new MouseAdapter() {
+        if (!GlobalOptions.isMinimal()) {
+            JXButton centerVillage = new JXButton(new ImageIcon(DSWorkbenchTroopsFrame.class.getResource("/res/center_24x24.png")));
+            centerVillage.setToolTipText("Zentriert das gewählte Dorf auf der Hauptkarte");
+            centerVillage.addMouseListener(new MouseAdapter() {
 
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                TabInterface tab = getActiveTab();
-                if (tab != null) {
-                    tab.centerVillage();
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    TabInterface tab = getActiveTab();
+                    if (tab != null) {
+                        tab.centerVillage();
+                    }
                 }
-            }
-        });
+            });
 
-        transferTaskPane.getContentPane().add(centerVillage);
-
+            transferTaskPane.getContentPane().add(centerVillage);
+        }
         JXTaskPane miscPane = new JXTaskPane();
         miscPane.setTitle("Sonstiges");
 

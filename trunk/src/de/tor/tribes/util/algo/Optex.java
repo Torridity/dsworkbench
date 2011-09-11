@@ -4,6 +4,11 @@
  */
 package de.tor.tribes.util.algo;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -129,7 +134,7 @@ public class Optex<S extends Source, D extends Destination> {
      * @throws Exception
      */
     protected void vam() throws Exception {
-        if (this.sources.size() == 0 || this.destinations.size() == 0) {
+        if (this.sources.isEmpty() || this.destinations.isEmpty()) {
             throw new Exception("Either sources or destinations are missing!");
         }
 
@@ -142,7 +147,7 @@ public class Optex<S extends Source, D extends Destination> {
         ArrayList<Destination> _destinations = new ArrayList<Destination>(this.destinations.size());
         _destinations.addAll(this.destinations);
 
-        while (_sources.size() > 0 && _destinations.size() > 0) {
+        while (!_sources.isEmpty() && !_destinations.isEmpty()) {
             /*
              * For each source calculate the difference of the distance to
              * the closest and the second closest destination.
@@ -198,25 +203,25 @@ public class Optex<S extends Source, D extends Destination> {
                     }
                 }
             }
-
             int amountOrdered = Math.min(biggest_s.waresAvailable(), biggest_s_d.remainingNeeds());
+            //@TODO Own Modification..keep eye on it!
+          /*  if (this._getCosts(biggest_s, biggest_s_d) == 99999.0) {
+            //remove on max cost
+            amountOrdered = 0;
+            _sources.remove(biggest_s);
+            }*/
+
             // double fact = Math.pow(Math.E, (((double)amountOrdered - 5) / -2)) + 1;// (e^-((x-5) / 2) + 1)
             if (amountOrdered > 0) {
                 biggest_s.addOrder(biggest_s_d, amountOrdered);
                 biggest_s_d.addOrdered(amountOrdered);
             }
 
-            //  System.out.println("BIGGES SRC " + biggest_s.toString() + " (" + biggest_s.waresAvailable() + ")");
             if (biggest_s.waresAvailable() <= 0) {
-                if (_sources.remove(biggest_s)) {
-                    //   System.out.println("Removed source " + biggest_s.toString());
-                }
+                _sources.remove(biggest_s);
             }
-            // System.out.println("BIGGES DEST " + biggest_s_d.toString() + " (" + biggest_s_d.remainingNeeds() + ")");
             if (biggest_s_d.remainingNeeds() == 0) {
-                if (_destinations.remove(biggest_s_d)) {
-                    //      System.out.println("Removed destination " + biggest_s_d.toString());
-                }
+                _destinations.remove(biggest_s_d);
             }
         }
     }
@@ -237,5 +242,18 @@ public class Optex<S extends Source, D extends Destination> {
 
     protected double _getCosts(int source_index, Destination d) {
         return this.costs[source_index].get(d);
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        URL url = new URL("file://H:/Peggle Nights from PopCap Games/Sãolicense.txt");
+        System.out.println(url.getAuthority());
+        URI u = new URI(url.getProtocol(), url.getAuthority(), url.getPath(), null, null);
+        System.out.println(u);
+        
+        File f = new File(u.toASCIIString());
+        System.out.println(f);
+        System.out.println(new File(u.toString()));
+
     }
 }

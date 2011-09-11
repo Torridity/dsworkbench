@@ -91,13 +91,11 @@ public class MerchantDistributor {
             }
             //calculate
             if (sources.isEmpty() || destinations.isEmpty()) {
-                // System.out.println("Nothing todo in round " + i);
                 results.add(new LinkedList<MerchantSource>());
             } else {
                 new MerchantDistributor().calculate(sources, destinations);
                 List<MerchantSource> sourcesCopy = new LinkedList<MerchantSource>(sources);
                 results.add(sourcesCopy);
-                //Collections.copy(sources, sources);
 
                 // <editor-fold defaultstate="collapsed" desc=" Result building">
                 for (MerchantSource source : sources) {
@@ -164,8 +162,9 @@ public class MerchantDistributor {
             costs[i] = new Hashtable<Destination, Double>();
             for (int j = 0; j < pDestinations.size(); j++) {
                 double cost = pSources.get(i).distanceTo(pDestinations.get(j));
-                if (cost == 0) {
-                    cost = Double.MAX_VALUE;
+                //@TODO CHeck cost max.
+                if (cost == 0){// || cost > 19) {
+                    cost = 99999.0;
                 }
                 costs[i].put(pDestinations.get(j), cost);
             }

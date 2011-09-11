@@ -79,6 +79,7 @@ public class GlobalOptions {
     private static final String mainHelpSetName = "DS Workbench Dokumentation.hs";
     private static boolean internalDataDamaged = false;
     private static UserProfile mSelectedProfile = null;
+    public static boolean MINIMAL = false;
 
     /**Init all managed objects
      * @param pDownloadData TRUE=download the WorldData from the tribes server
@@ -101,6 +102,14 @@ public class GlobalOptions {
         //  UIManager.put("OptionPane.background", Constants.DS_BACK);
         //  UIManager.put("Panel.background", Constants.DS_BACK);
         // UIManager.put("Button.background", Constants.DS_BACK_LIGHT);
+    }
+
+    public static void setMinimalVersion(boolean pValue) {
+        MINIMAL = pValue;
+    }
+
+    public static boolean isMinimal() {
+        return MINIMAL;
     }
 
     public static void setInternatDataDamaged(boolean pValue) {

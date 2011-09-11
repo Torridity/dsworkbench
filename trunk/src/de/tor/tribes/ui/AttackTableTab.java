@@ -19,12 +19,16 @@ import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.ui.editors.AttackTypeCellEditor;
 import de.tor.tribes.ui.editors.DateSpinEditor;
+import de.tor.tribes.ui.editors.DrawNotDrawEditor;
+import de.tor.tribes.ui.editors.SentNotSentEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.models.AttackTableModel;
 import de.tor.tribes.ui.renderer.AttackMiscInfoRenderer;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
+import de.tor.tribes.ui.renderer.DrawNotDrawCellRenderer;
+import de.tor.tribes.ui.renderer.SentNotSentCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import de.tor.tribes.util.AttackIGMSender;
@@ -107,7 +111,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
     static {
         jxAttackTable.setRowHeight(24);
-        HighlightPredicate.ColumnHighlightPredicate colu = new HighlightPredicate.ColumnHighlightPredicate(0, 1, 2, 3, 4, 5, 6, 7, 10, 11);
+        HighlightPredicate.ColumnHighlightPredicate colu = new HighlightPredicate.ColumnHighlightPredicate(0, 1, 2, 3, 4, 5, 6, 7, 10, 11, 12);
 
         jxAttackTable.setHighlighters(new CompoundHighlighter(colu, HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B)));
         jxAttackTable.setColumnControlVisible(true);
@@ -117,10 +121,17 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jxAttackTable.setDefaultRenderer(Date.class, new ColoredDateCellRenderer());
         jxAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jxAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
-        jxAttackTable.setDefaultRenderer(Attack.class, new AttackMiscInfoRenderer());
+
         attackModel = new AttackTableModel(AttackManager.DEFAULT_GROUP);
 
         jxAttackTable.setModel(attackModel);
+        TableColumnExt drawCol = jxAttackTable.getColumnExt("Einzeichnen");
+        drawCol.setCellRenderer(new DrawNotDrawCellRenderer());
+        drawCol.setCellEditor(new DrawNotDrawEditor());
+        TableColumnExt transferCol = jxAttackTable.getColumnExt("Übertragen");
+        transferCol.setCellRenderer(new SentNotSentCellRenderer());
+        transferCol.setCellEditor(new SentNotSentEditor());
+
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
         Graphics2D g = back.createGraphics();
         GeneralPath p = new GeneralPath();
@@ -235,7 +246,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 }
                 startX += (jxAttackTable.getColumnExt(i).isVisible()) ? jxAttackTable.getColumnExt(i).getWidth() : 0;
             }
-            jxAttackTable.repaint(startX, 0, startX + col.getWidth(), jxAttackTable.getHeight());
+            jxAttackTable.repaint(startX, (int) jxAttackTable.getVisibleRect().getY(), startX + col.getWidth(), (int) jxAttackTable.getVisibleRect().getHeight());
         }
     }
 
@@ -255,7 +266,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
     public void updatePlan() {
         attackModel.setPlan(sAttackPlan);
-        String[] cols = new String[]{"Einheit", "Typ", "Sonstiges"};
+        String[] cols = new String[]{"Einheit", "Typ", "Übertragen", "Einzeichnen"};
         for (String col : cols) {
             TableColumnExt columns = jxAttackTable.getColumnExt(col);
             columns.setPreferredWidth(80);
@@ -1313,9 +1324,9 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
     public void changeSelectionType() {
         if (!getSelectedAttacks().isEmpty()) {
-            
+
             jUnitBox.setModel(new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{})));
-            
+
             jChangeAttackTypeDialog.setLocationRelativeTo(this);
             jChangeAttackTypeDialog.pack();
             jChangeAttackTypeDialog.setVisible(true);
@@ -1577,7 +1588,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         if (ignoredAttacks != 0) {
             message += "<br/>" + ignoredAttacks + " Angriff(e) ignoriert, da sie bereits &uuml;bertragen wurden";
         }
-        message+= "</html>";
+        message += "</html>";
         showInfo(message);
     }
 

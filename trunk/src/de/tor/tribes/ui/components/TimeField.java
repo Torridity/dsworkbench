@@ -103,11 +103,7 @@ public class TimeField extends JPanel {
             dlg = new JDialog(new JFrame(), true);
             dp.setParent(dlg);
             dlg.setLocation(point);
-            // dlg.setResizable(false);
             dlg.setUndecorated(true);
-            //JPanel p = new JPanel();
-            // p.add(dp);
-
             dlg.getContentPane().add(dp);
             dlg.pack();
             dlg.setVisible(true);

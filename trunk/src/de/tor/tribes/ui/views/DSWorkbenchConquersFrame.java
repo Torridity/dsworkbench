@@ -189,17 +189,19 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         });
 
         transferPane.getContentPane().add(button2);
-        JXButton button1 = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
-        button1.setToolTipText("Zentriert die markierte Eroberung auf der Hauptkarte");
-        button1.addMouseListener(new MouseAdapter() {
+        if (!GlobalOptions.isMinimal()) {
+            JXButton centerOnMap = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
+            centerOnMap.setToolTipText("Zentriert die markierte Eroberung auf der Hauptkarte");
+            centerOnMap.addMouseListener(new MouseAdapter() {
 
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                centerVillageOnMap();
-            }
-        });
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    centerVillageOnMap();
+                }
+            });
 
-        transferPane.getContentPane().add(button1);
+            transferPane.getContentPane().add(centerOnMap);
+        }
         centerPanel.setupTaskPane(transferPane);
     }
 

@@ -15,6 +15,7 @@
 <entry key="1_profiler.settings.instrumentation.root.methods.size">0</entry>
 <entry key="3_profiler.settings.obj.alloc.stack.sampling.depth">0</entry>
 <entry key="2_profiler.settings.override">false</entry>
+<entry key="1_profiler.settings.threads.sampling.enabled">true</entry>
 <entry key="profiler.settings.lastselected">2</entry>
 <entry key="2_profiler.settings.instrument.spawned.threads">false</entry>
 <entry key="0_profiler.settings.threads.monitoring.enabled">false</entry>
@@ -49,6 +50,7 @@
 <entry key="3_profiler.settings.instrumentation.filter.selectedprofiler.simple.filter.name"/>
 <entry key="2_profiler.settings.override.working.dir"/>
 <entry key="0_profiler.settings.cpu.quick.filterprofiler.simple.filter.type">1</entry>
+<entry key="0_profiler.settings.threads.sampling.enabled">true</entry>
 <entry key="2_profiler.settings.cpu.quick.filterprofiler.simple.filter.value"/>
 <entry key="2_profiler.settings.override.jvm.args"/>
 <entry key="0_profiler.settings.profile.underlying.framework">false</entry>
@@ -65,6 +67,7 @@
 <entry key="3_profiler.settings.cpu.profiling.type">0</entry>
 <entry key="1_profiler.settings.instrumentation.filter.selectedprofiler.simple.filter.value">{$project.classes.only}</entry>
 <entry key="3_profiler.settings.cpu.quick.filterprofiler.filter.type">profiler.simple.filter</entry>
+<entry key="3_profiler.settings.threads.sampling.enabled">true</entry>
 <entry key="1_profiler.settings.sampling.interval">10</entry>
 <entry key="2_profiler.settings.cpu.profiling.type">0</entry>
 <entry key="0_profiler.settings.run.gc.on.get.results.in.memory.profiling">true</entry>
@@ -96,6 +99,7 @@
 <entry key="2_profiler.settigns.ispreset">true</entry>
 <entry key="1_profiler.settings.threads.monitoring.enabled">false</entry>
 <entry key="0_profiler.settings.instrumentation.root.methods.size">0</entry>
+<entry key="2_profiler.settings.threads.sampling.enabled">true</entry>
 <entry key="3_profiler.settings.instrumentation.filter.selectedprofiler.simple.filter.value"/>
 <entry key="1_profiler.settings.override.working.dir"/>
 <entry key="3_profiler.settings.istrument.getter.setter.methods">false</entry>

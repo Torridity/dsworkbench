@@ -25,9 +25,9 @@ import org.apache.commons.lang.time.DurationFormatUtils;
 public class AttackTableModel extends AbstractTableModel {
 
     private String sPlan = null;
-    private Class[] types = new Class[]{Tribe.class, Ally.class, Village.class, Tribe.class, Ally.class, Village.class, UnitHolder.class, Integer.class, Date.class, Date.class, String.class, Attack.class};
-    private String[] colNames = new String[]{"Angreifer", "Stamm (Angreifer)", "Herkunft", "Verteidiger", "Stamm (Verteidiger)", "Ziel", "Einheit", "Typ", "Abschickzeit", "Ankunftzeit", "Verbleibend", "Sonstiges"};
-    private boolean[] editableColumns = new boolean[]{false, false, false, false, false, false, true, true, true, true, false, false};
+    private Class[] types = new Class[]{Tribe.class, Ally.class, Village.class, Tribe.class, Ally.class, Village.class, UnitHolder.class, Integer.class, Date.class, Date.class, String.class, Boolean.class, Boolean.class};
+    private String[] colNames = new String[]{"Angreifer", "Stamm (Angreifer)", "Herkunft", "Verteidiger", "Stamm (Verteidiger)", "Ziel", "Einheit", "Typ", "Abschickzeit", "Ankunftzeit", "Verbleibend", "Einzeichnen", "Übertragen"};
+    private boolean[] editableColumns = new boolean[]{false, false, false, false, false, false, true, true, true, true, false, true, true};
 
     public AttackTableModel(String pPlan) {
         sPlan = pPlan;
@@ -130,8 +130,11 @@ public class AttackTableModel extends AbstractTableModel {
                     t = (t <= 0) ? 0 : t;
                     return DurationFormatUtils.formatDuration(t, "HHH:mm:ss.SSS", true);
                 }
+                case 11: {
+                    return a.isShowOnMap();
+                }
                 default: {
-                    return a;
+                    return a.isTransferredToBrowser();
                 }
             }
         } catch (Exception e) {
@@ -179,6 +182,13 @@ public class AttackTableModel extends AbstractTableModel {
                     } else {
                         a.setArriveTime((Date) pValue);
                     }
+                    break;
+                }
+                case 11: {
+                    a.setShowOnMap((Boolean) pValue);
+                    break;
+                }case 12: {
+                    a.setTransferredToBrowser((Boolean) pValue);
                     break;
                 }
 

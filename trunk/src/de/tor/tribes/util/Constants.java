@@ -24,7 +24,6 @@ public class Constants {
     public static Hashtable<String, Integer> LAYERS = null;
     public final static int LAYER_COUNT = 9;
     public final static boolean DEBUG = false;
-
     static {
         LAYERS = new Hashtable<String, Integer>();
         LAYERS.put("Markierungen", 0);

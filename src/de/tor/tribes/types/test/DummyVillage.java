@@ -4,7 +4,7 @@
  */
 package de.tor.tribes.types.test;
 
-import de.tor.tribes.types.Barbarians;
+import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 
 /**
@@ -21,7 +21,9 @@ public class DummyVillage extends Village {
         super();
         setX(pX);
         setY(pY);
-        setTribe(new DummyTribe());
+        Tribe t = new DummyTribe();
+        t.addVillage(this);
+        setTribe(t);
     }
 
     @Override

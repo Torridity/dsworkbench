@@ -262,8 +262,8 @@ public class RibbonConfigurator {
                 DSWorkbenchReportFrame.getSingleton().setVisible(true);
             }
         });
-
         frame.getRibbon().setApplicationMenu(appmen);
+
         frame.getRibbon().configureHelp(getResizableIconFromFile("graphics/big/help2.png"),
                 new ActionListener() {
 

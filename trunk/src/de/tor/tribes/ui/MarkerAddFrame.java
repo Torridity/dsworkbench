@@ -259,6 +259,8 @@ private void fireAddMarkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     } catch (NullPointerException npe) {
         //ignore
     }
+    MarkerManager.getSingleton().revalidate(true);
+    
 }//GEN-LAST:event_fireAddMarkEvent
 
 private void jCancelButtonfireAbortMarkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jCancelButtonfireAbortMarkEvent

@@ -20,12 +20,9 @@ public class DummyTribe extends Tribe {
 
     public DummyTribe() {
         super();
-        for (int i = 0; i < 100; i++) {
-            DummyVillage vi = new DummyVillage((short) (i - 5), (short) (i + 5));
-            v.add(vi);
-        }
     }
 
+    
     @Override
     public String getName() {
         return "Dummy";

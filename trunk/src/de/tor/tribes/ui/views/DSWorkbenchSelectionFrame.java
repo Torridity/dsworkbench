@@ -365,6 +365,19 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
 
         editPane.getContentPane().add(filter9k);
 
+        jApplyCustomFilter.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                try {
+                    filterByPoints(Integer.parseInt(jCustomPointsField.getText()));
+                } catch (NumberFormatException nfe) {
+                    jCustomPointsField.setText(null);
+                }
+            }
+        });
+
+        editPane.getContentPane().add(jCustomPointsPanel);
 
         JXTaskPane transferPane = new JXTaskPane();
         transferPane.setTitle("Übertragen");
@@ -641,6 +654,9 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         jEndX = new javax.swing.JSpinner();
         jLabel9 = new javax.swing.JLabel();
         jEndY = new javax.swing.JSpinner();
+        jCustomPointsPanel = new javax.swing.JPanel();
+        jCustomPointsField = new org.jdesktop.swingx.JXTextField();
+        jApplyCustomFilter = new javax.swing.JButton();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
         jSelectionPanel = new javax.swing.JPanel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
@@ -754,6 +770,25 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                     .addComponent(jButton3))
                 .addContainerGap())
         );
+
+        jCustomPointsPanel.setMaximumSize(new java.awt.Dimension(100, 50));
+        jCustomPointsPanel.setMinimumSize(new java.awt.Dimension(100, 50));
+        jCustomPointsPanel.setPreferredSize(new java.awt.Dimension(100, 50));
+        jCustomPointsPanel.setLayout(new java.awt.BorderLayout());
+
+        jCustomPointsField.setToolTipText("Punktezahl manuell angeben");
+        jCustomPointsField.setMaximumSize(new java.awt.Dimension(30, 30));
+        jCustomPointsField.setMinimumSize(new java.awt.Dimension(30, 30));
+        jCustomPointsField.setPreferredSize(new java.awt.Dimension(30, 30));
+        jCustomPointsField.setPrompt("Punkte");
+        jCustomPointsPanel.add(jCustomPointsField, java.awt.BorderLayout.CENTER);
+
+        jApplyCustomFilter.setText("Auswählen");
+        jApplyCustomFilter.setToolTipText("Dörfer mit weniger als den angegebenen Punkte wählen");
+        jApplyCustomFilter.setMaximumSize(new java.awt.Dimension(30, 20));
+        jApplyCustomFilter.setMinimumSize(new java.awt.Dimension(30, 20));
+        jApplyCustomFilter.setPreferredSize(new java.awt.Dimension(30, 20));
+        jCustomPointsPanel.add(jApplyCustomFilter, java.awt.BorderLayout.PAGE_END);
 
         setTitle("Auswahl");
         setMinimumSize(new java.awt.Dimension(500, 400));
@@ -918,7 +953,10 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
     private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JCheckBox jAlwaysOnTopBox;
+    private javax.swing.JButton jApplyCustomFilter;
     private javax.swing.JButton jButton3;
+    private org.jdesktop.swingx.JXTextField jCustomPointsField;
+    private javax.swing.JPanel jCustomPointsPanel;
     private javax.swing.JSpinner jEndX;
     private javax.swing.JSpinner jEndY;
     private javax.swing.JLabel jLabel1;

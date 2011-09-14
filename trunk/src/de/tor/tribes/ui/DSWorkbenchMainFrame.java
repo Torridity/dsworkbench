@@ -1078,12 +1078,13 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jEnableClipboardWatchButton = new javax.swing.JButton();
         jXTipOfTheDay1 = new org.jdesktop.swingx.JXTipOfTheDay();
         jPanel4 = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
         infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
         jXLabel1 = new org.jdesktop.swingx.JXLabel();
+        jPanel1 = new javax.swing.JPanel();
         jMinimapPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
 
         jExportDialog.setTitle("Export");
         jExportDialog.setMinimumSize(new java.awt.Dimension(560, 370));
@@ -2355,14 +2356,18 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             }
         });
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2));
-        jPanel1.setForeground(new java.awt.Color(240, 240, 240));
-        jPanel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jPanel1.setDoubleBuffered(false);
-        jPanel1.setLayout(new java.awt.BorderLayout());
+        jPanel2.setMaximumSize(new java.awt.Dimension(32, 30));
+        jPanel2.setLayout(new java.awt.BorderLayout());
+
+        capabilityInfoPanel1.setDeletable(false);
+        capabilityInfoPanel1.setPastable(false);
+        capabilityInfoPanel1.setSearchable(false);
+        jPanel2.add(capabilityInfoPanel1, java.awt.BorderLayout.WEST);
 
         infoPanel.setCollapsed(true);
+        infoPanel.setDirection(org.jdesktop.swingx.JXCollapsiblePane.Direction.LEFT);
         infoPanel.setInheritAlpha(false);
+        infoPanel.setMaximumSize(new java.awt.Dimension(2147483647, 30));
 
         jXLabel1.setText("Keine Meldung");
         jXLabel1.setOpaque(true);
@@ -2373,7 +2378,13 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         });
         infoPanel.add(jXLabel1, java.awt.BorderLayout.CENTER);
 
-        jPanel1.add(infoPanel, java.awt.BorderLayout.SOUTH);
+        jPanel2.add(infoPanel, java.awt.BorderLayout.LINE_END);
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2));
+        jPanel1.setForeground(new java.awt.Color(240, 240, 240));
+        jPanel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jPanel1.setDoubleBuffered(false);
+        jPanel1.setLayout(new java.awt.BorderLayout());
 
         jMinimapPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2));
         jMinimapPanel.setDoubleBuffered(false);
@@ -2381,18 +2392,14 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
         jScrollPane2.setFocusTraversalPolicyProvider(true);
 
-        capabilityInfoPanel1.setDeletable(false);
-        capabilityInfoPanel1.setPastable(false);
-        capabilityInfoPanel1.setSearchable(false);
-
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 693, Short.MAX_VALUE)
-                    .addComponent(capabilityInfoPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 693, Short.MAX_VALUE))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 725, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 725, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -2403,11 +2410,12 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 697, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 689, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(capabilityInfoPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
         );
 
         getContentPane().add(jPanel4, java.awt.BorderLayout.CENTER);
@@ -3683,6 +3691,7 @@ private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JTable jNoteSetExportTable;
     private javax.swing.JLabel jOnlineLabel;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JComboBox jROIBox;

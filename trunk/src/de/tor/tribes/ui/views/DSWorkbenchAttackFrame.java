@@ -348,7 +348,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         }));
-        editTaskPane.getContentPane().add(factoryButton("/res/ui/att_changeTime.png", "Ankunftszeit für markierte Angriffe &auml;ndern. Die Startzeit der Angriffe wird dabei entsprechend der Laufzeit angepasst", new MouseAdapter() {
+        editTaskPane.getContentPane().add(factoryButton("/res/ui/att_changeTime.png", "Ankunfts-/Abschickzeit für markierte Angriffe &auml;ndern. Die Startzeit der Angriffe wird dabei entsprechend der Laufzeit angepasst", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {

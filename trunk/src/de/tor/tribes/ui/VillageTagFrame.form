@@ -214,7 +214,7 @@
         <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireVillageSelectionChangedEvent"/>
       </Events>
     </Component>
-    <Component class="de.tor.tribes.ui.CapabilityInfoPanel" name="capabilityInfoPanel1">
+    <Component class="de.tor.tribes.ui.components.CapabilityInfoPanel" name="capabilityInfoPanel1">
       <Properties>
         <Property name="bbSupport" type="boolean" value="false"/>
         <Property name="copyable" type="boolean" value="false"/>

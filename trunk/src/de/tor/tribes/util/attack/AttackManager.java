@@ -178,7 +178,8 @@ public class AttackManager extends GenericManager<Attack> {
         for (String plan : plansToExport) {
             try {
                 b.append("<plan key=\"").append(URLEncoder.encode(plan, "UTF-8")).append("\">\n");
-                List<ManageableType> elements = getAllElements(plan);
+
+                ManageableType[] elements = getAllElements(plan).toArray(new ManageableType[getAllElements(plan).size()]);
                 b.append("<attacks>\n");
 
                 for (ManageableType elem : elements) {

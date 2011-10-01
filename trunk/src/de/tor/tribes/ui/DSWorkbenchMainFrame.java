@@ -51,7 +51,6 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.ui.models.StandardAttackTableModel;
@@ -64,6 +63,7 @@ import de.tor.tribes.util.MouseGestureHandler;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.dist.DistanceManager;
 import de.tor.tribes.util.dsreal.DSRealManager;
@@ -80,33 +80,35 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Enumeration;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.Vector;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
-import javax.swing.JLabel;
-import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
+import org.apache.commons.io.FileUtils;
 import org.jdesktop.swingx.JXTipOfTheDay;
 import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.tips.TipLoader;
 import org.jdesktop.swingx.tips.TipOfTheDayModel;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
+import org.pushingpixels.flamingo.internal.ui.ribbon.BasicRibbonUI;
 
 /**
+ * @TODO set views explicitly to front if app menu is hidden
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends JRibbonFrame implements
@@ -146,6 +148,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         } else {
             setTitle("DS Workbench Mini " + Constants.VERSION + Constants.VERSION_ADDITION);
         }
+
         jExportDialog.pack();
         jAddROIDialog.pack();
 
@@ -194,89 +197,23 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         // <editor-fold defaultstate="collapsed" desc=" Register ShutdownHook ">
 
         Runtime.getRuntime().addShutdownHook(new MainShutdownHook());
-
+        new Timer("BackupTimer", true).schedule(new BackupTask(), 60 * 10000, 60 * 10000);
         // </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc=" General UI setup ">
-        Vector<String> v = new Vector<String>(Constants.LAYERS.size());
-        for (int i = 0; i < Constants.LAYERS.size(); i++) {
-            v.add("");
-        }
 
-        String layerOrder = GlobalOptions.getProperty("layer.order");
-        if (layerOrder == null) {
-            Enumeration<String> values = Constants.LAYERS.keys();
-            while (values.hasMoreElements()) {
-                String layer = values.nextElement();
-                v.set(Constants.LAYERS.get(layer), layer);
-            }
-        } else {
-            //try to use stored layers
-            String[] layers = layerOrder.split(";");
-            if (layers.length == Constants.LAYER_COUNT) {
-                //layer sizes are equal, so set layers in stored order
-                int cnt = 0;
-                for (String layer : layers) {
-                    if (layer.equals("Formen")) {
-                        //disable old forms id
-                        v.set(cnt, "Zeichnungen");
-                    } else {
-                        v.set(cnt, layer);
-                    }
-                    cnt++;
-                }
-            } else {
-                //layer number has changed since value was stored, so rebuild
-                Enumeration<String> values = Constants.LAYERS.keys();
-                while (values.hasMoreElements()) {
-                    String layer = values.nextElement();
-                    v.set(Constants.LAYERS.get(layer), layer);
-                }
-            }
-        }
-
-        DefaultListModel model = new DefaultListModel();
-        for (String s : v) {
-            model.addElement(s);
-        }
-
-        jLayerList.setModel(model);
-
-        jLayerList.setCellRenderer(new ListCellRenderer() {
+        //give focus to map panel if mouse enters map
+        jPanel1.addMouseListener(new MouseAdapter() {
 
             @Override
-            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                Component c = new DefaultListCellRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                try {
-                    JLabel label = ((JLabel) c);
-                    if (value.equals("Dörfer")) {
-                        //map layer is red
-                        if (!isSelected) {
-                            label.setBackground(Color.RED);
-                        }
-                    } else if (value.equals("Markierungen")) {
-                        //marker layer is not influenced by map layer
-                        //so it gets a special color
-                        if (!isSelected) {
-                            label.setBackground(Color.LIGHT_GRAY);
-                        }
-                    } else {
-                        //layers which are "behind" map are disabled
-                        int villageIndex = ((DefaultListModel) list.getModel()).indexOf("Dörfer");
-                        if (index < villageIndex && !isSelected) {
-                            label.setForeground(Color.LIGHT_GRAY);
-                        }
-                    }
-                } catch (Exception e) {
-                }
-                return c;
+            public void mouseEntered(MouseEvent e) {
+                jPanel1.requestFocusInWindow();
             }
         });
 
         getContentPane().setBackground(Constants.DS_BACK);
         pack();
+        capabilityInfoPanel1.addActionListener(MapPanel.getSingleton());
 
-        // </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc=" Add global KeyListener ">
         Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
@@ -419,10 +356,10 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                         //ROI 10
                         centerROI(9);
                     } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                        MapPanel.getSingleton().requestFocusInWindow();
+                        jPanel1.requestFocusInWindow();
                         MapPanel.getSingleton().setSpaceDown(true);
                     } else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-                        MapPanel.getSingleton().requestFocusInWindow();
+                        jPanel1.requestFocusInWindow();
                         MapPanel.getSingleton().setShiftDown(true);
                     }
                 } else if (((KeyEvent) event).getID() == KeyEvent.KEY_RELEASED) {
@@ -506,8 +443,21 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         } catch (Exception e) {
             jShowMouseOverInfo.setSelected(false);
             GlobalOptions.addProperty("show.mouseover.info", Boolean.toString(jShowMouseOverInfo.isSelected()));
-
         }
+
+        try {
+            String val = GlobalOptions.getProperty("include.support");
+            if (val == null) {
+                jIncludeSupport.setSelected(false);
+                GlobalOptions.addProperty("include.support", Boolean.toString(jIncludeSupport.isSelected()));
+            } else {
+                jIncludeSupport.setSelected(Boolean.parseBoolean(val));
+            }
+        } catch (Exception e) {
+            jIncludeSupport.setSelected(true);
+            GlobalOptions.addProperty("include.support", Boolean.toString(jIncludeSupport.isSelected()));
+        }
+
         try {
             String val = GlobalOptions.getProperty("highlight.tribes.villages");
             if (val == null) {
@@ -577,7 +527,9 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         // </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc=" Init A*Star HelpSystem ">
-//        GlobalOptions.getHelpBroker().enableHelpKey(DSWorkbenchSimulatorFrame.getSingleton().getRootPane(), "pages.astar", GlobalOptions.getHelpBroker().getHelpSet());
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(DSWorkbenchSimulatorFrame.getSingleton().getRootPane(), "pages.astar", GlobalOptions.getHelpBroker().getHelpSet());
+        }
         // </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Init mouse gesture listener">
@@ -660,6 +612,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             DSWorkbenchChurchFrame.getSingleton().restoreProperties();
             DSWorkbenchAttackFrame.getSingleton().resetView();
             DSWorkbenchAttackFrame.getSingleton().restoreProperties();
+            DSWorkbenchMerchantDistibutor.getSingleton().resetView();
+            DSWorkbenchMerchantDistibutor.getSingleton().restoreProperties();
             DSWorkbenchTagFrame.getSingleton().resetView();
             DSWorkbenchTagFrame.getSingleton().restoreProperties();
             DSWorkbenchConquersFrame.getSingleton().resetView();
@@ -682,8 +636,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             DSWorkbenchReportFrame.getSingleton().restoreProperties();
             DSWorkbenchSOSRequestAnalyzer.getSingleton().resetView();
             DSWorkbenchSOSRequestAnalyzer.getSingleton().restoreProperties();
-            DSWorkbenchMerchantDistibutor.getSingleton().resetView();
-            DSWorkbenchMerchantDistibutor.getSingleton().restoreProperties();
+
             BBCodeEditor.getSingleton().reset();
             //update attack planner
             if (mTribeTribeAttackFrame != null) {
@@ -714,7 +667,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             }
             ConquerManager.getSingleton().revalidate(true);
             //relevant for first start
-            propagateLayerOrder();
+            LayerOrderConfigurationFrame.getSingleton();
             MinimapPanel.getSingleton().redraw(true);
 
             DSWorkbenchFormFrame.getSingleton().resetView();
@@ -833,16 +786,10 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         final boolean vis = v;
         SwingUtilities.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 setupRibbon();
-                try {
-                    String vis = GlobalOptions.getProperty("ribbon.minimized");
-                    if (vis != null) {
-                        getRibbon().setMinimized(Boolean.parseBoolean(vis));
-                    }
-                } catch (Exception e) {
-                    DSWorkbenchMainFrame.getSingleton().getRibbon().setMinimized(false);
-                }
+
                 if (vis) {
                     //only if set to visible
                     MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
@@ -856,7 +803,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                     //draw map the first time
                     fireRefreshMapEvent(null);
                     showReminder();
-                    if (!Boolean.parseBoolean(GlobalOptions.getProperty("no.welcome"))) {
+                    if (!GlobalOptions.isMinimal() && !Boolean.parseBoolean(GlobalOptions.getProperty("no.welcome"))) {
                         setGlassPane(new WelcomePanel());
                         getGlassPane().setVisible(true);
                     } else {
@@ -866,6 +813,43 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                 }
             }
         });
+
+        File runningIndicator = new File(".running");
+
+        if (runningIndicator.exists()) {
+            showRestoreOption();
+        } else {
+            try {
+                FileUtils.touch(new File(".running"));
+            } catch (IOException ioe) {
+                logger.error("Failed to touch file '.running'", ioe);
+            }
+        }
+    }
+
+    private void showRestoreOption() {
+        File backupFile = new File(GlobalOptions.getSelectedProfile().getProfileDirectory() + "/backup.xml");
+        String lastBackup = null;
+        if (backupFile.exists()) {
+            lastBackup = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(new Date(backupFile.lastModified()));
+        }
+
+        if (lastBackup != null) {
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Offenbar wurde DS Workbench nicht korrekt beendet, daher kann es möglicherweise zu Datenverlust gekommen sein.\n"
+                    + "Für das aktuelle Profil existiert ein Backup (Erstellt: " + lastBackup + "). Möchtest du dieses wiederherstellen?", "Absturz?", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                showInfo("Wiederherstellung läuft, bitte warten...");
+                if (performImport(backupFile, "backup").equals("Import beendet.\n")) {
+                    showSuccess("Wiederherstellung abgeschlossen.");
+                    JOptionPaneHelper.showInformationBox(this, "Das Backup wurde erfolgreich eingespielt. Wiederhergestellte Pläne und Sets tragen die Erweiterung '_backup'.", "Backup wiederhergestellt");
+                } else {
+                    showInfo("Wiederherstellung abgeschlossen.");
+                    JOptionPaneHelper.showInformationBox(this, "Bei der Wiederherstellung des Backups gab es Probleme. Möglicherweise sind einige Daten verloren."
+                            + " Wiederhergestellte Pläne und Sets tragen die Erweiterung '_backup'.", "Backup wiederhergestellt");
+                }
+            }
+        } else {
+            logger.debug("There is no backup. Restoring skipped.");
+        }
     }
 
     public boolean isGlasspaneVisible() {
@@ -890,6 +874,14 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         RibbonConfigurator.addViewTask(this);
         RibbonConfigurator.addMiscTask(this);
         RibbonConfigurator.addAppIcons(this);
+
+        try {
+            String vis = GlobalOptions.getProperty("ribbon.minimized");
+            if (vis != null && Boolean.parseBoolean(vis)) {
+                getRibbon().setMinimized(true);
+            }
+        } catch (Exception e) {
+        }
     }
 
     private void showReminder() {
@@ -945,7 +937,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jXLabel1.setIcon(new ImageIcon("./graphics/icons/warning.png"));
         jXLabel1.setForeground(Color.BLACK);
         jXLabel1.setText(pMessage);
-
     }
 
     public void showSuccess(String pMessage) {
@@ -982,6 +973,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jPanel5 = new javax.swing.JPanel();
         jExportTags = new javax.swing.JCheckBox();
         jExportForms = new javax.swing.JCheckBox();
+        jExportChurches = new javax.swing.JCheckBox();
         jAddROIDialog = new javax.swing.JDialog();
         jLabel7 = new javax.swing.JLabel();
         jROIRegion = new javax.swing.JTextField();
@@ -1049,11 +1041,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMapPanel = new javax.swing.JPanel();
         jShowMapPopup = new javax.swing.JCheckBox();
         jLabel5 = new javax.swing.JLabel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        jLayerList = new javax.swing.JList();
-        jLabel10 = new javax.swing.JLabel();
-        jLayerUpButton = new javax.swing.JButton();
-        jLayerDownButton = new javax.swing.JButton();
         jLabel12 = new javax.swing.JLabel();
         jGraphicPacks = new javax.swing.JComboBox();
         jHighlightTribeVillages = new javax.swing.JCheckBox();
@@ -1063,6 +1050,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jLabel11 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         jShowMouseOverInfo = new javax.swing.JCheckBox();
+        jIncludeSupport = new javax.swing.JCheckBox();
         jROIPanel = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jROIBox = new javax.swing.JComboBox();
@@ -1079,7 +1067,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jXTipOfTheDay1 = new org.jdesktop.swingx.JXTipOfTheDay();
         jPanel4 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
         infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
         jXLabel1 = new org.jdesktop.swingx.JXLabel();
         jPanel1 = new javax.swing.JPanel();
@@ -1282,6 +1270,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
         jExportForms.setText("Zeichnungen exportieren");
 
+        jExportChurches.setText("Kirchen exportieren");
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -1289,8 +1279,9 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jExportForms, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
-                    .addComponent(jExportTags, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE))
+                    .addComponent(jExportForms, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
+                    .addComponent(jExportTags, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
+                    .addComponent(jExportChurches, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -1300,7 +1291,9 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                 .addComponent(jExportTags)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jExportForms)
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jExportChurches)
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1937,8 +1930,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         );
 
         jMapPanel.setBackground(new java.awt.Color(239, 235, 223));
-        jMapPanel.setMinimumSize(new java.awt.Dimension(193, 312));
-        jMapPanel.setPreferredSize(new java.awt.Dimension(193, 312));
+        jMapPanel.setMinimumSize(new java.awt.Dimension(193, 250));
+        jMapPanel.setPreferredSize(new java.awt.Dimension(193, 250));
         jMapPanel.setLayout(new java.awt.GridBagLayout());
 
         jShowMapPopup.setText("Kartenpopup anzeigen");
@@ -1962,74 +1955,11 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jLabel5.setText("Laufzeitradius");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jMapPanel.add(jLabel5, gridBagConstraints);
-
-        jLayerList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { " " };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane3.setViewportView(jLayerList);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.gridheight = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jMapPanel.add(jScrollPane3, gridBagConstraints);
-
-        jLabel10.setText("Ebenen");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jMapPanel.add(jLabel10, gridBagConstraints);
-
-        jLayerUpButton.setBackground(new java.awt.Color(239, 235, 223));
-        jLayerUpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/arrow_up.png"))); // NOI18N
-        jLayerUpButton.setToolTipText("Ebene nach oben verschieben");
-        jLayerUpButton.setMaximumSize(new java.awt.Dimension(20, 20));
-        jLayerUpButton.setMinimumSize(new java.awt.Dimension(20, 20));
-        jLayerUpButton.setPreferredSize(new java.awt.Dimension(20, 20));
-        jLayerUpButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireChangeDrawOrderEvent(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jMapPanel.add(jLayerUpButton, gridBagConstraints);
-
-        jLayerDownButton.setBackground(new java.awt.Color(239, 235, 223));
-        jLayerDownButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/arrow_down.png"))); // NOI18N
-        jLayerDownButton.setToolTipText("Ebene nach unten verschieben");
-        jLayerDownButton.setMaximumSize(new java.awt.Dimension(20, 20));
-        jLayerDownButton.setMinimumSize(new java.awt.Dimension(20, 20));
-        jLayerDownButton.setPreferredSize(new java.awt.Dimension(20, 20));
-        jLayerDownButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireChangeDrawOrderEvent(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jMapPanel.add(jLayerDownButton, gridBagConstraints);
 
         jLabel12.setText("Grafikpaket");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -2066,7 +1996,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
@@ -2084,7 +2014,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
@@ -2103,7 +2033,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 0.5;
@@ -2122,7 +2052,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 0.5;
@@ -2132,7 +2062,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jLabel11.setText("h");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -2141,7 +2071,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jLabel13.setText("min");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -2164,6 +2094,23 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jMapPanel.add(jShowMouseOverInfo, gridBagConstraints);
+
+        jIncludeSupport.setText("Unterstützungen einbeziehen");
+        jIncludeSupport.setToolTipText(" Unterstützungen bei den MouseOver Infos und bei der Anzeige der Truppendichte mit einbeziehen");
+        jIncludeSupport.setOpaque(false);
+        jIncludeSupport.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireShowHideSupportsEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jMapPanel.add(jIncludeSupport, gridBagConstraints);
 
         jROIPanel.setBackground(new java.awt.Color(239, 235, 223));
         jROIPanel.setMaximumSize(new java.awt.Dimension(293, 70));
@@ -2364,16 +2311,16 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         capabilityInfoPanel1.setSearchable(false);
         jPanel2.add(capabilityInfoPanel1, java.awt.BorderLayout.WEST);
 
+        infoPanel.setAnimated(false);
         infoPanel.setCollapsed(true);
         infoPanel.setDirection(org.jdesktop.swingx.JXCollapsiblePane.Direction.LEFT);
         infoPanel.setInheritAlpha(false);
         infoPanel.setMaximumSize(new java.awt.Dimension(2147483647, 30));
 
-        jXLabel1.setText("Keine Meldung");
-        jXLabel1.setOpaque(true);
+        jXLabel1.setText("jXLabel1");
         jXLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                jXLabel1fireHideInfoEvent(evt);
+                fireHideNotificationEvent(evt);
             }
         });
         infoPanel.add(jXLabel1, java.awt.BorderLayout.CENTER);
@@ -2790,6 +2737,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
         needExport |= !troopSetsToExport.isEmpty();
         needExport |= jExportForms.isSelected();
         needExport |= !noteSetsToExport.isEmpty();
+        needExport |= jExportChurches.isSelected();
 
         if (!needExport) {
             JOptionPaneHelper.showWarningBox(jExportDialog, "Keine Daten für den Export gewählt", "Export");
@@ -2866,6 +2814,10 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
 
                 if (!noteSetsToExport.isEmpty()) {
                     exportString += NoteManager.getSingleton().getExportData(noteSetsToExport);
+                }
+
+                if (jExportChurches.isSelected()) {
+                    exportString += ChurchManager.getSingleton().getExportData(null);
                 }
 
                 exportString += "</export>";
@@ -3002,60 +2954,6 @@ private void fireShowNotepadEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
     }
 }//GEN-LAST:event_fireShowNotepadEvent
 
-private void fireChangeDrawOrderEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeDrawOrderEvent
-    try {
-        int idx = jLayerList.getSelectedIndex();
-        DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
-        if (evt.getSource() == jLayerUpButton) {
-            if (idx == 0) {
-                //already on first position
-                return;
-            }
-            jLayerList.invalidate();
-            String elem = (String) model.remove(idx);
-            jLayerList.revalidate();
-            idx -= 1;
-            jLayerList.invalidate();
-            model.add(idx, elem);
-            jLayerList.setSelectedIndex(idx);
-            try {
-                //scroll element to be visible
-                Rectangle g = jLayerList.getCellBounds(idx, idx);
-                jLayerList.scrollRectToVisible(g);
-            } catch (Exception e) {
-            }
-            jLayerList.revalidate();
-        } else {
-            if (idx == model.getSize() - 1) {
-                //already on last position
-                return;
-            }
-
-            jLayerList.invalidate();
-            String elem = (String) model.remove(idx);
-            idx += 1;
-            model.add(idx, elem);
-            jLayerList.setSelectedIndex(idx);
-            try {
-                //scroll element to be visible
-                Rectangle g = jLayerList.getCellBounds(idx, idx);
-                jLayerList.scrollRectToVisible(g);
-            } catch (Exception e) {
-            }
-            jLayerList.revalidate();
-        }
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                jLayerList.updateUI();
-                propagateLayerOrder();
-            }
-        });
-
-    } catch (Exception outer) {
-    }
-}//GEN-LAST:event_fireChangeDrawOrderEvent
-
 private void fireShowTagFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowTagFrameEvent
     if (jShowTagFrame.isEnabled()) {
         DSWorkbenchTagFrame.getSingleton().setVisible(!DSWorkbenchTagFrame.getSingleton().isVisible());
@@ -3155,9 +3053,15 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     }
 }//GEN-LAST:event_fireChangeClipboardWatchEvent
 
-private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXLabel1fireHideInfoEvent
-    infoPanel.setCollapsed(true);
-}//GEN-LAST:event_jXLabel1fireHideInfoEvent
+    private void fireHideNotificationEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideNotificationEvent
+        mNotificationHideThread.interrupt();
+        infoPanel.setCollapsed(true);
+    }//GEN-LAST:event_fireHideNotificationEvent
+
+    private void fireShowHideSupportsEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireShowHideSupportsEvent
+        GlobalOptions.addProperty("include.support", Boolean.toString(jIncludeSupport.isSelected()));
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TROOP_LAYER);
+    }//GEN-LAST:event_fireShowHideSupportsEvent
 
     public void doExit() {
         fireDSWorkbenchClosingEvent(null);
@@ -3280,39 +3184,7 @@ private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
 
                 if (target.exists()) {
                     //do import
-                    boolean attackImported = AttackManager.getSingleton().importData(target, extension);
-                    boolean markersImported = MarkerManager.getSingleton().importData(target, extension);
-                    boolean reportsImported = ReportManager.getSingleton().importData(target, extension);
-                    boolean tagImported = TagManager.getSingleton().importData(target, extension);
-                    boolean troopsImported = TroopsManager.getSingleton().importData(target, null);
-                    boolean formsImported = FormManager.getSingleton().importData(target, extension);
-                    boolean notesImported = NoteManager.getSingleton().importData(target, extension);
-
-                    String message = "Import beendet.\n";
-                    if (!attackImported) {
-                        message += "  * Fehler beim Import der Angriffe\n";
-                    }
-
-                    if (!markersImported) {
-                        message += "  * Fehler beim Import der Markierungen\n";
-                    }
-                    if (!reportsImported) {
-                        message += "  * Fehler beim Import der Berichte\n";
-                    }
-                    if (!tagImported) {
-                        message += "  * Fehler beim Import der Tags\n";
-                    }
-
-                    if (!troopsImported) {
-                        message += "  * Fehler beim Import der Truppen\n";
-                    }
-
-                    if (!formsImported) {
-                        message += "  * Fehler beim Import der Formen\n";
-                    }
-                    if (!notesImported) {
-                        message += "  * Fehler beim Import der Notizen\n";
-                    }
+                    String message = performImport(target, extension);
                     JOptionPaneHelper.showInformationBox(this, message, "Import");
                 }
 
@@ -3323,6 +3195,43 @@ private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             }
 
         }
+    }
+
+    private String performImport(File pSource, String pExtension) {
+        boolean attackImported = AttackManager.getSingleton().importData(pSource, pExtension);
+        boolean markersImported = MarkerManager.getSingleton().importData(pSource, pExtension);
+        boolean reportsImported = ReportManager.getSingleton().importData(pSource, pExtension);
+        boolean tagImported = TagManager.getSingleton().importData(pSource, pExtension);
+        boolean troopsImported = TroopsManager.getSingleton().importData(pSource, null);
+        boolean formsImported = FormManager.getSingleton().importData(pSource, pExtension);
+        boolean notesImported = NoteManager.getSingleton().importData(pSource, pExtension);
+
+        String message = "Import beendet.\n";
+        if (!attackImported) {
+            message += "  * Fehler beim Import der Angriffe\n";
+        }
+
+        if (!markersImported) {
+            message += "  * Fehler beim Import der Markierungen\n";
+        }
+        if (!reportsImported) {
+            message += "  * Fehler beim Import der Berichte\n";
+        }
+        if (!tagImported) {
+            message += "  * Fehler beim Import der Tags\n";
+        }
+
+        if (!troopsImported) {
+            message += "  * Fehler beim Import der Truppen\n";
+        }
+
+        if (!formsImported) {
+            message += "  * Fehler beim Import der Formen\n";
+        }
+        if (!notesImported) {
+            message += "  * Fehler beim Import der Notizen\n";
+        }
+        return message;
     }
 
     public void planMapshot() {
@@ -3379,27 +3288,18 @@ private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         return bWatchClipboard;
     }
 
-    private void propagateLayerOrder() {
-        DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
-
-        List<Integer> layerOrder = new LinkedList<Integer>();
-        for (int i = 0; i < model.size(); i++) {
-            String value = (String) model.get(i);
-            layerOrder.add(Constants.LAYERS.get(value));
-        }
-        MapPanel.getSingleton().getMapRenderer().setDrawOrder(layerOrder);
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
+    /*private void propagateLayerOrder() {
+    DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
+    
+    List<Integer> layerOrder = new LinkedList<Integer>();
+    for (int i = 0; i < model.size(); i++) {
+    String value = (String) model.get(i);
+    layerOrder.add(Constants.LAYERS.get(value));
     }
-
-    public String getLayerOrder() {
-        DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
-        String res = "";
-        for (int i = 0; i < model.size(); i++) {
-            res += (String) model.get(i) + ";";
-        }
-        return res;
+    MapPanel.getSingleton().getMapRenderer().setDrawOrder(layerOrder);
+    MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
     }
-
+     */
     private void centerROI(int pId) {
         try {
             String item = (String) jROIBox.getItemAt(pId);
@@ -3618,7 +3518,7 @@ private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Generated Variables">
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JMenuItem jAboutItem;
     private javax.swing.JButton jAddNewROIButton;
@@ -3642,6 +3542,7 @@ private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JMenuItem jDonateButton;
     private javax.swing.JButton jEnableClipboardWatchButton;
     private javax.swing.JButton jExportButton;
+    private javax.swing.JCheckBox jExportChurches;
     private javax.swing.JDialog jExportDialog;
     private javax.swing.JCheckBox jExportForms;
     private javax.swing.JCheckBox jExportTags;
@@ -3649,9 +3550,9 @@ private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JMenuItem jHelpItem;
     private javax.swing.JCheckBox jHighlightTribeVillages;
     private javax.swing.JTextField jHourField;
+    private javax.swing.JCheckBox jIncludeSupport;
     private javax.swing.JPanel jInformationPanel;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -3661,9 +3562,6 @@ private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JButton jLayerDownButton;
-    private javax.swing.JList jLayerList;
-    private javax.swing.JButton jLayerUpButton;
     private javax.swing.JPanel jMapPanel;
     private javax.swing.JTable jMarkerSetExportTable;
     private javax.swing.JMenu jMenu1;
@@ -3706,7 +3604,6 @@ private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JMenuItem jSOSAnalyzerItem;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
@@ -3760,5 +3657,44 @@ class NotificationHideThread extends Thread {
                 interrupted = true;
             }
         }
+    }
+}
+
+class BackupTask extends TimerTask {
+
+    private static Logger logger = Logger.getLogger("BackupTask");
+
+    @Override
+    public void run() {
+        try {
+            logger.debug("Starting backup");
+            String exportString = "<export>\n";
+            logger.debug(" - Backing up attacks");
+            exportString += AttackManager.getSingleton().getExportData(Arrays.asList(AttackManager.getSingleton().getGroups()));
+            logger.debug(" - Backing up markers");
+            exportString += MarkerManager.getSingleton().getExportData(Arrays.asList(MarkerManager.getSingleton().getGroups()));
+            logger.debug(" - Backing up reports");
+            exportString += ReportManager.getSingleton().getExportData(Arrays.asList(ReportManager.getSingleton().getGroups()));
+            logger.debug(" - Backing up tags");
+            exportString += TagManager.getSingleton().getExportData(null);
+            logger.debug(" - Backing up troops");
+            exportString += TroopsManager.getSingleton().getExportData(Arrays.asList(TroopsManager.getSingleton().getGroups()));
+            logger.debug(" - Backing up forms");
+            exportString += FormManager.getSingleton().getExportData(null);
+            logger.debug(" - Backing up notes");
+            exportString += NoteManager.getSingleton().getExportData(Arrays.asList(NoteManager.getSingleton().getGroups()));
+            logger.debug(" - Backing up churches");
+            exportString += ChurchManager.getSingleton().getExportData(null);
+            exportString += "</export>";
+            logger.debug("Writing backup data to disk");
+            FileWriter w = new FileWriter(GlobalOptions.getSelectedProfile().getProfileDirectory() + "/backup.xml");
+            w.write(exportString);
+            w.flush();
+            w.close();
+            logger.debug("Backup finished successfully");
+        } catch (Exception e) {
+            logger.error("Failed to create backup", e);
+        }
+
     }
 }

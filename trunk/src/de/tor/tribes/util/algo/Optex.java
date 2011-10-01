@@ -204,7 +204,6 @@ public class Optex<S extends Source, D extends Destination> {
                 }
             }
             int amountOrdered = Math.min(biggest_s.waresAvailable(), biggest_s_d.remainingNeeds());
-            //@TODO Own Modification..keep eye on it!
           /*  if (this._getCosts(biggest_s, biggest_s_d) == 99999.0) {
             //remove on max cost
             amountOrdered = 0;

@@ -98,9 +98,9 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
             copyVillageAsBBCode();
         } else if (e.getActionCommand().equals("Delete")) {
             if (e.getSource() != null) {
-                if (e.getSource().equals(jTagsTable)) {
+                if (jTagsTable.hasFocus()) {
                     removeSelectedTags();
-                } else if (e.getSource().equals(jVillageList)) {
+                } else {
                     untagSelectedVillages();
                 }
             }
@@ -140,7 +140,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         jTagPanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildComponent(jTagsPanel);
         buildMenu();
-
+        capabilityInfoPanel1.addActionListener(this);
         jTagsTable.setModel(new TagTableModel());
         jTagsTable.getSelectionModel().addListSelectionListener(DSWorkbenchTagFrame.this);
         jTagsTable.getActionMap().put("find", new AbstractAction() {
@@ -577,7 +577,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         jVillageList = new javax.swing.JList();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
         jTagPanel = new org.jdesktop.swingx.JXPanel();
-        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         jTagsPanel.setLayout(new java.awt.BorderLayout(10, 0));
 
@@ -744,7 +744,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
 
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JCheckBox jAlwaysOnTopBox;
     private javax.swing.JScrollPane jScrollPane4;

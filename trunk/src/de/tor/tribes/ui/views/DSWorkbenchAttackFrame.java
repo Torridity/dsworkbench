@@ -173,7 +173,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         centerPanel.setChildComponent(jXAttackPanel);
         fireProfilesLoadedEvent();
         buildMenu();
-
+        capabilityInfoPanel1.addActionListener(this);
         jAttackTabPane.setCloseAction(new AbstractAction("closeAction") {
 
             public void actionPerformed(ActionEvent e) {
@@ -549,7 +549,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jProfileBox = new javax.swing.JComboBox();
         jAttackPanel = new javax.swing.JPanel();
         jAttackFrameAlwaysOnTop = new javax.swing.JCheckBox();
-        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         jStandardAttackDialog.setTitle("Standardangriffe");
         jStandardAttackDialog.setModal(true);
@@ -1082,7 +1082,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     }
 // </editor-fold>
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private javax.swing.JCheckBox jAttackFrameAlwaysOnTop;
     private javax.swing.JPanel jAttackPanel;
     private com.jidesoft.swing.JideTabbedPane jAttackTabPane;
@@ -1112,9 +1112,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     // End of variables declaration//GEN-END:variables
 }
 
-
 // <editor-fold defaultstate="collapsed" desc=" NOTIFY THREAD ">
-
 class NotifyThread extends Thread {
 
     private static Logger logger = Logger.getLogger("AttackNotificationHelper");

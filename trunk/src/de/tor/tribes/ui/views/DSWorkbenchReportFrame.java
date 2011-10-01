@@ -163,17 +163,23 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jReportsPanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildComponent(jXReportsPanel);
         buildMenu();
+        capabilityInfoPanel1.addActionListener(this);
+
         jReportsTabbedPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
         jReportsTabbedPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
         jReportsTabbedPane.setBoldActiveTab(true);
         KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
-        jResultTabbedPane.registerKeyboardAction(new ActionListener() {
+
+        ActionListener resultListener = new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 copyResultBBToClipboardEvent();
             }
-        }, "BBCopy", bbCopy, JComponent.WHEN_IN_FOCUSED_WINDOW);
+        };
+
+        capabilityInfoPanel2.addActionListener(resultListener);
+        jResultTabbedPane.registerKeyboardAction(resultListener, "BBCopy", bbCopy, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
 
 
@@ -461,7 +467,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jPanel6 = new javax.swing.JPanel();
         jScrollPane6 = new javax.swing.JScrollPane();
         jTribeStatsArea = new javax.swing.JTextPane();
-        capabilityInfoPanel2 = new de.tor.tribes.ui.CapabilityInfoPanel();
+        capabilityInfoPanel2 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
         jXReportsPanel = new org.jdesktop.swingx.JXPanel();
         jReportsTabbedPane = new com.jidesoft.swing.JideTabbedPane();
         jNewPlanPanel = new javax.swing.JPanel();
@@ -483,7 +489,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jShowPercentsBox = new javax.swing.JCheckBox();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
         jReportsPanel = new javax.swing.JPanel();
-        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         jCreateStatsFrame.setTitle("Kampfstatistiken");
 
@@ -1150,8 +1156,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         DSWorkbenchReportFrame.getSingleton().setVisible(true);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
-    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel2;
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel2;
     private javax.swing.JTextPane jAllyStatsArea;
     private javax.swing.JCheckBox jAlwaysOnTopBox;
     private javax.swing.JButton jButton10;

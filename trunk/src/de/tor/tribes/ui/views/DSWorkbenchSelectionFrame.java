@@ -130,7 +130,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         jSelectionPanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildComponent(jSelectionTreePanel);
         buildMenu();
-
+capabilityInfoPanel1.addActionListener(this);
         treeData = new LinkedList<Village>();
         jSelectionTree.setCellRenderer(new NodeCellRenderer());
 
@@ -659,7 +659,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         jApplyCustomFilter = new javax.swing.JButton();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
         jSelectionPanel = new javax.swing.JPanel();
-        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         jSelectionTreePanel.setPreferredSize(new java.awt.Dimension(600, 400));
         jSelectionTreePanel.setLayout(new java.awt.BorderLayout());
@@ -950,7 +950,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
 
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JCheckBox jAlwaysOnTopBox;
     private javax.swing.JButton jApplyCustomFilter;

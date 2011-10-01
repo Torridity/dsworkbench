@@ -84,7 +84,7 @@ import org.jfree.ui.RectangleInsets;
  * @author Torridity
  */
 public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements ActionListener {
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("BBCopy")) {
@@ -103,26 +103,26 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
     private String sBashOffStats = null;
     private String sBashDefStats = null;
     private String sWinnerLoserStats = null;
-
+    
     public static synchronized DSWorkbenchStatsFrame getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchStatsFrame();
         }
         return SINGLETON;
     }
-
+    
     DSWorkbenchStatsFrame() {
         initComponents();
         centerPanel = new GenericTestPanel();
         jStatsPanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildComponent(jMainStatPanel);
         buildMenu();
-
+        capabilityInfoPanel1.addActionListener(this);
         KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         jTabbedPane1.registerKeyboardAction(DSWorkbenchStatsFrame.this, "BBCopy", bbCopy, JComponent.WHEN_IN_FOCUSED_WINDOW);
         jTribeList.registerKeyboardAction(DSWorkbenchStatsFrame.this, "Delete", delete, JComponent.WHEN_IN_FOCUSED_WINDOW);
-
+        
         try {
             jAlwaysOnTopBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("stats.frame.alwaysOnTop")));
             setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
@@ -130,7 +130,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
             //setting not available
         }
         jAllyList.addListSelectionListener(new ListSelectionListener() {
-
+            
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 Object[] allySelection = jAllyList.getSelectedValues();
@@ -152,15 +152,15 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
                 }
             }
         });
-
+        
         jTribeList.addListSelectionListener(new ListSelectionListener() {
-
+            
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 fireUpdateChartEvent(null);
             }
         });
-
+        
         Calendar c = Calendar.getInstance();
         c.set(Calendar.HOUR_OF_DAY, 0);
         c.set(Calendar.MINUTE, 0);
@@ -177,42 +177,42 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
 
         pack();
     }
-
+    
     @Override
     public void toBack() {
         jAlwaysOnTopBox.setSelected(false);
         fireAlwaysOnTopEvent(null);
         super.toBack();
     }
-
+    
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
     }
-
+    
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
-
+        
         try {
             jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
         } catch (Exception e) {
         }
-
+        
         setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
-
+        
     }
-
+    
     public String getPropertyPrefix() {
         return "stats.view";
     }
-
+    
     private void buildMenu() {
         JXTaskPane editPane = new JXTaskPane();
         editPane.setTitle("Bearbeiten");
         final JToggleButton createStats = new JToggleButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/medal.png")));
         createStats.setToolTipText("Umschalten zwischen dem Erzeugen von Statistiken und der Anzeige von Verlaufsgrafiken");
         createStats.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 boolean showChartView = !createStats.isSelected();
@@ -224,12 +224,12 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
                 switchStatChartView(showChartView);
             }
         });
-
-
+        
+        
         JXButton selectStart = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/beginning.png")));
         selectStart.setToolTipText("Setzt eine Startmarkierung beim gewählten Datenpunkt");
         selectStart.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 setStartAnnotation();
@@ -243,7 +243,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         JXButton selectEnd = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/end.png")));
         selectEnd.setToolTipText("Setzt eine Endmarkierung beim gewählten Datenpunkt");
         selectEnd.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 setEndAnnotation();
@@ -254,11 +254,11 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         selectEnd.setMaximumSize(createStats.getMaximumSize());
         selectEnd.setPreferredSize(createStats.getPreferredSize());
         editPane.getContentPane().add(selectEnd);
-
+        
         JXButton removeSelection = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/delete_region.png")));
         removeSelection.setToolTipText("Löscht alle Datenpunkte zwischen der Start- und Endmarkierung");
         removeSelection.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 removeSelection();
@@ -269,31 +269,31 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         removeSelection.setMaximumSize(createStats.getMaximumSize());
         removeSelection.setPreferredSize(createStats.getPreferredSize());
         editPane.getContentPane().add(removeSelection);
-
-
+        
+        
         createStats.setSize(removeSelection.getSize());
         createStats.setMinimumSize(removeSelection.getMinimumSize());
         createStats.setMaximumSize(removeSelection.getMaximumSize());
         createStats.setPreferredSize(removeSelection.getPreferredSize());
-
+        
         editPane.getContentPane().add(createStats);
-
-
+        
+        
         JXTaskPane viewPane = new JXTaskPane();
         viewPane.setTitle("Anzeige");
         viewPane.getContentPane().add(jViewSelectionBox);
-
+        
         JXTaskPane settingsPane = new JXTaskPane();
         settingsPane.setTitle("Einstellungen");
-
+        
         settingsPane.getContentPane().add(jShowItemValues);
         settingsPane.getContentPane().add(jShowLegend);
         settingsPane.getContentPane().add(jShowLines);
         settingsPane.getContentPane().add(jShowDataPoints);
-
+        
         centerPanel.setupTaskPane(editPane, viewPane, settingsPane);
     }
-
+    
     @Override
     public void resetView() {
         Ally[] allies = StatManager.getSingleton().getMonitoredAllies();
@@ -305,7 +305,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         jAllyList.setModel(model);
         jTribeList.setModel(new DefaultListModel());
     }
-
+    
     public void updateChart(List<TribeStatsElement> pElems) {
         chart = null;
         startPointer = null;
@@ -397,22 +397,22 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
             }
             addDataset("Rang (Def)", rankDefDataset);
         }
-
+        
         jChartPanel.removeAll();
         theChartPanel = new ChartPanel(chart);
         theChartPanel.setDisplayToolTips(true);
         theChartPanel.setMouseWheelEnabled(true);
         jChartPanel.add(theChartPanel);
-
+        
         SwingUtilities.invokeLater(new Runnable() {
-
+            
             public void run() {
                 jChartPanel.updateUI();
             }
         });
-
+        
     }
-
+    
     private void setupChart(String pInitialId, XYDataset pInitialDataset) {
         chart = ChartFactory.createTimeSeriesChart(
                 "Spielerstatistiken", // title
@@ -423,7 +423,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
                 true, // generate tooltips?
                 false // generate URLs?
                 );
-
+        
         chart.setBackgroundPaint(Constants.DS_BACK);
         XYPlot plot = (XYPlot) chart.getPlot();
         setupPlotDrawing(plot);
@@ -433,7 +433,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
             renderer.setSeriesShapesVisible(i, jShowDataPoints.isSelected());
             plot.setRenderer(i, renderer);
         }
-
+        
         renderer.setBaseItemLabelsVisible(jShowItemValues.isSelected());
         renderer.setBaseItemLabelGenerator(new org.jfree.chart.labels.StandardXYItemLabelGenerator());
         renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator(StandardXYToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT, new SimpleDateFormat("dd.MM.yyyy HH:mm:ss"), NumberFormat.getInstance()));
@@ -452,7 +452,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
             na.setNumberFormatOverride(nf);
         }
     }
-
+    
     private void addDataset(String pId, XYDataset pDataset) {
         if (chart == null) {
             setupChart(pId, pDataset);
@@ -480,7 +480,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
             axis.setTickMarkPaint(plot.getLegendItems().get(plot.getDatasetCount() - 1).getLinePaint());
         }
     }
-
+    
     private void setupPlotDrawing(XYPlot pPlot) {
         pPlot.setBackgroundPaint(Constants.DS_BACK_LIGHT);
         pPlot.setDomainGridlinePaint(Color.DARK_GRAY);
@@ -488,7 +488,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         pPlot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
         pPlot.setDomainCrosshairVisible(true);
         pPlot.setRangeCrosshairVisible(true);
-
+        
         DateAxis axis = (DateAxis) pPlot.getDomainAxis();
         axis.setDateFormatOverride(new SimpleDateFormat("dd.MM.yyyy HH:mm:ss"));
     }
@@ -545,7 +545,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         jUseTop10Box = new javax.swing.JCheckBox();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
         jStatsPanel = new org.jdesktop.swingx.JXPanel();
-        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         jMainStatPanel.setMinimumSize(new java.awt.Dimension(516, 300));
         jMainStatPanel.setLayout(new java.awt.BorderLayout());
@@ -895,16 +895,16 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
             if (tribeSelection == null) {
                 jChartPanel.removeAll();
                 SwingUtilities.invokeLater(new Runnable() {
-
+                    
                     public void run() {
                         jChartPanel.updateUI();
                     }
                 });
-
+                
                 return;
             }
             List<TribeStatsElement> elems = new LinkedList<TribeStatsElement>();
-
+            
             for (Object o : tribeSelection) {
                 TribeStatsElement elem = StatManager.getSingleton().getStatsForTribe((Tribe) o);
                 if (elem != null) {
@@ -914,23 +914,23 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
             updateChart(elems);
         }
     }//GEN-LAST:event_fireUpdateChartEvent
-
+    
     private void fireViewChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireViewChangedEvent
         if ((evt == null || evt.getStateChange() == ItemEvent.SELECTED) && (theChartPanel != null && theChartPanel.isVisible())) {
             Object[] tribeSelection = jTribeList.getSelectedValues();
             if (tribeSelection == null || tribeSelection.length == 0) {
                 jChartPanel.removeAll();
                 SwingUtilities.invokeLater(new Runnable() {
-
+                    
                     public void run() {
                         jChartPanel.updateUI();
                     }
                 });
-
+                
                 return;
             }
             List<TribeStatsElement> elems = new LinkedList<TribeStatsElement>();
-
+            
             for (Object o : tribeSelection) {
                 TribeStatsElement elem = StatManager.getSingleton().getStatsForTribe((Tribe) o);
                 if (elem != null) {
@@ -940,7 +940,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
             updateChart(elems);
         }
     }//GEN-LAST:event_fireViewChangedEvent
-
+    
     private void fireGenerateStatsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireGenerateStatsEvent
         long start = jStartDate.getSelectedDate().getTime();
         long end = jEndDate.getSelectedDate().getTime();
@@ -970,14 +970,14 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         for (Object o : tribes) {
             usedTribes.add((Tribe) o);
         }
-
+        
         List<Stats> stats = new LinkedList<Stats>();
         for (Tribe t : usedTribes) {
             TribeStatsElement elem = StatManager.getSingleton().getStatsForTribe(t);
             Stats elemStat = elem.generateStats(start, end);
             stats.add(elemStat);
         }
-
+        
         sPointStats = new PointStatsFormatter().formatElements(stats, !jUseTop10Box.isSelected());
         jPointsPane.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + BBCodeFormatter.toHtml(sPointStats) + "</body></html>");
         sBashOffStats = new KillStatsFormatter().formatElements(stats, !jUseTop10Box.isSelected());
@@ -987,7 +987,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         sWinnerLoserStats = new WinnerLoserStatsFormatter().formatElements(stats, !jUseTop10Box.isSelected());
         jWinnerLoserPane.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + BBCodeFormatter.toHtml(sWinnerLoserStats) + "</body></html>");
 }//GEN-LAST:event_fireGenerateStatsEvent
-
+    
     private void fireChangeStatTimeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeStatTimeEvent
         if (evt.getSource() == jWeeklyStats) {
             //remove one week from end date
@@ -1005,11 +1005,11 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
             jStartDate.setDate(new Date(end.getTime() - oneMonth));
         }
     }//GEN-LAST:event_fireChangeStatTimeEvent
-
+    
 private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireAlwaysOnTopEvent
     setAlwaysOnTop(!isAlwaysOnTop());
 }//GEN-LAST:event_fireAlwaysOnTopEvent
-
+    
     private void transferBBCodeToClipboard() {
         int idx = jTabbedPane1.getSelectedIndex();
         if (idx == 0) {
@@ -1024,7 +1024,7 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             JOptionPaneHelper.showInformationBox(DSWorkbenchStatsFrame.this, "Bitte wähle den Abschnitt der Auswertung den du kopieren möchtest", "Information");
         }
     }
-
+    
     private void copyStatsToClipboard(String pType, String pStatText) {
         if (pStatText == null) {
             JOptionPaneHelper.showInformationBox(DSWorkbenchStatsFrame.this, "Bitte erstelle erst eine Auswertung bevor du die Daten kopierst", "Information");
@@ -1037,16 +1037,16 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             JOptionPaneHelper.showErrorBox(DSWorkbenchStatsFrame.this, "Fehler beim Kopieren in die Zwischenablage", "Fehler");
         }
     }
-
+    
     private void setStartAnnotation() {
         XYPlot plot = ((XYPlot) chart.getPlot());
-
+        
         double x = plot.getDomainCrosshairValue();
-
+        
         if (startPointer != null) {
             plot.removeDomainMarker(startPointer);
         }
-
+        
         if (startPointer != null && startPointer.getValue() == x) {
             plot.removeDomainMarker(startPointer);
             startPointer = null;
@@ -1076,17 +1076,17 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
                 plot.addDomainMarker(startPointer);
             }
         }
-
+        
         jChartPanel.repaint();
     }
-
+    
     private void setEndAnnotation() {
         XYPlot plot = ((XYPlot) chart.getPlot());
         double x = plot.getDomainCrosshairValue();
         if (endPointer != null) {
             plot.removeDomainMarker(endPointer);
         }
-
+        
         if (endPointer != null && endPointer.getValue() == x) {
             plot.removeDomainMarker(endPointer);
             endPointer = null;
@@ -1116,10 +1116,10 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
                 plot.addDomainMarker(endPointer);
             }
         }
-
+        
         jChartPanel.repaint();
     }
-
+    
     private void removeSelection() {
         if (startPointer == null && endPointer == null) {
             JOptionPaneHelper.showInformationBox(this, "Es wurde kein Bereich ausgewählt.", "Information");
@@ -1129,7 +1129,7 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
         if (tribeSelection == null) {
             return;
         }
-
+        
         if (startPointer == null) {
             //remove before end
             long v = (long) endPointer.getValue();
@@ -1152,16 +1152,16 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             long vend = (long) endPointer.getValue();
             String startDate = new SimpleDateFormat("dd.MM.yyyy 'um' HH:mm:ss").format(new Date(vstart));
             String endDate = new SimpleDateFormat("dd.MM.yyyy 'um' HH:mm:ss").format(new Date(vend));
-
+            
             if (JOptionPaneHelper.showQuestionConfirmBox(this, "Alle Werte zwischen dem " + startDate + " und dem " + endDate + " löschen?", "Werte löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
                 StatManager.getSingleton().removeDataBetween((Tribe) tribeSelection, new Date(vstart).getTime(), new Date(vend).getTime());
                 fireUpdateChartEvent(null);
             }
         }
-
+        
         fireUpdateChartEvent(null);
     }
-
+    
     private void switchStatChartView(boolean pShowChart) {
         jChartPanel.invalidate();
         if (pShowChart) {
@@ -1183,7 +1183,7 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
         jChartPanel.revalidate();
         jChartPanel.repaint();
     }
-
+    
     private void removeMonitoredElements() {
         //remove tribe element(s)
         Object[] tribesToRemove = jTribeList.getSelectedValues();
@@ -1206,13 +1206,13 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
         }
         resetView();
     }
-
+    
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
-
+    
     public static void main(String args[]) {
-
+        
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -1224,15 +1224,15 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
         GlobalOptions.setSelectedServer("de68");
         DataHolder.getSingleton().loadData(false);
         StatManager.getSingleton().setup();
-
+        
         DSWorkbenchStatsFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        
         DSWorkbenchStatsFrame.getSingleton().resetView();
         DSWorkbenchStatsFrame.getSingleton().setVisible(true);
-
+        
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private javax.swing.JList jAllyList;
     private javax.swing.JCheckBox jAlwaysOnTopBox;
     private javax.swing.JEditorPane jBashDefPane;

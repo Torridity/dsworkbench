@@ -32,6 +32,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -58,6 +60,7 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
 import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
 import org.pushingpixels.flamingo.api.ribbon.resize.IconRibbonBandResizePolicy;
+import org.pushingpixels.flamingo.internal.ui.ribbon.BasicRibbonUI;
 
 /**
  * @author Torridity
@@ -69,15 +72,6 @@ public class RibbonConfigurator {
 
         frame.setApplicationIcon(getResizableIconFromFile("graphics/big/axe.png"));
 
-        /*RibbonApplicationMenuEntrySecondary exportSubmenu = new RibbonApplicationMenuEntrySecondary(
-        new document_save_as(), "Export", null,
-        CommandButtonKind.ACTION_ONLY);
-        exportSubmenu.setDescriptionText("Exportieren von eigenen Angriffsplänen, Markierungen, Berichten usw.");
-        RibbonApplicationMenuEntrySecondary importSubmenu = new RibbonApplicationMenuEntrySecondary(
-        new document_save_as(), "Import", null,
-        CommandButtonKind.ACTION_ONLY);
-        importSubmenu.setDescriptionText("Importieren von Angriffsplänen, Markierungen, Berichten usw.");
-         */
         RibbonApplicationMenuEntryPrimary importEntry = new RibbonApplicationMenuEntryPrimary(getResizableIconFromFile("graphics/icons/24x24/load.png"), "Import", new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -132,8 +126,30 @@ public class RibbonConfigurator {
         });
 
         appmen.addMenuEntry(bbEditorEntry);
+        
+        if (!GlobalOptions.isMinimal()) {
+            RibbonApplicationMenuEntryPrimary layerEditor = new RibbonApplicationMenuEntryPrimary(getResizableIconFromFile("graphics/icons/24x24/layer_settings.gif"), "Ebeneneinstellungen", new ActionListener() {
 
+                public void actionPerformed(ActionEvent e) {
+                    LayerOrderConfigurationFrame.getSingleton().setAlwaysOnTop(true);
+                    LayerOrderConfigurationFrame.getSingleton().setVisible(true);
+                }
+            }, JCommandButton.CommandButtonKind.ACTION_ONLY);
 
+            layerEditor.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
+
+                public void menuEntryActivated(JPanel targetPanel) {
+                    targetPanel.removeAll();
+                    targetPanel.setLayout(new BorderLayout());
+                    targetPanel.add(new JLabel("<html>Mit den Ebneneinstellungen kann bestimmt werden, welche Elemente auf der Hauptkarte sichtbar sind. Dies kann z.B. hilfreich sein, wenn "
+                            + "DS Workbench langsam reagiert. In diesem Fall wird empfohlen, nicht ben&ouml;tigte Ebenen auszublenden.</html>"), BorderLayout.CENTER);
+                    targetPanel.revalidate();
+                }
+            });
+
+            appmen.addMenuEntry(layerEditor);
+        }
+        
         RibbonApplicationMenuEntryPrimary settingsEntry = new RibbonApplicationMenuEntryPrimary(getResizableIconFromFile("graphics/icons/settings.png"), "Einstellungen", new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -187,6 +203,7 @@ public class RibbonConfigurator {
 
             public void actionPerformed(ActionEvent e) {
                 DSWorkbenchAttackFrame.getSingleton().setVisible(true);
+                DSWorkbenchAttackFrame.getSingleton().requestFocus();
             }
         });
 

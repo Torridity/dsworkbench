@@ -62,8 +62,18 @@ import org.jdesktop.swingx.table.TableColumnExt;
 /**
  * @author Jejkal
  */
-public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implements ListSelectionListener {
+public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implements ListSelectionListener, ActionListener {
     
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        
+        if (e.getActionCommand().equals("Delete")) {
+            deleteSelectedColumns();
+        } else if (e.getActionCommand().equals("Paste")) {
+            pasteFromClipboard();
+        }
+        
+    }
     private static Logger logger = Logger.getLogger("DistanceFrame");
     private static DSWorkbenchDistanceFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
@@ -86,18 +96,19 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         jDistanceTable.setModel(new DistanceTableModel());
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
+        capabilityInfoPanel1.addActionListener(this);
         jDistanceTable.registerKeyboardAction(new ActionListener() {
             
             @Override
             public void actionPerformed(ActionEvent e) {
-                deleteSelectedColumns();
+                actionPerformed(new ActionEvent(jDistanceTable, 0, "Delete"));
             }
         }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jDistanceTable.registerKeyboardAction(new ActionListener() {
             
             @Override
             public void actionPerformed(ActionEvent e) {
-                pasteFromClipboard();
+                actionPerformed(new ActionEvent(jDistanceTable, 0, "Paste"));
             }
         }, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jDistanceTable.getActionMap().put("find", new AbstractAction() {
@@ -114,14 +125,14 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         }
         // </editor-fold>
     }
-
+    
     @Override
     public void toBack() {
         jAlwaysOnTop.setSelected(false);
         fireDistanceFrameAlwaysOnTopEvent(null);
         super.toBack();
     }
-
+    
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTop.isSelected());
@@ -378,7 +389,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         jXLabel1 = new org.jdesktop.swingx.JXLabel();
         jAlwaysOnTop = new javax.swing.JCheckBox();
         jDistancePanel = new javax.swing.JPanel();
-        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         jPanel2.setMinimumSize(new java.awt.Dimension(300, 360));
         jPanel2.setPreferredSize(new java.awt.Dimension(300, 360));
@@ -509,7 +520,7 @@ private void fireDistanceFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt
         
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JCheckBox jAlwaysOnTop;
     private javax.swing.JPanel jDistancePanel;

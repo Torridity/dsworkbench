@@ -77,12 +77,23 @@ import org.jdesktop.swingx.table.TableColumnExt;
 /**
  * @author Charon
  */
-public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements ListSelectionListener, GenericManagerListener {
-
+public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements ListSelectionListener, GenericManagerListener, ActionListener {
+    
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        
+        if (e.getActionCommand().equals("Copy")) {
+            copySelectionToInternalClipboard();
+        } else if (e.getActionCommand().equals("BBCopy")) {
+            copySelectionToInternalClipboardAsBBCodes();
+        } else if (e.getActionCommand().equals("Delete")) {
+            deleteSelection();
+        }
+    }
     private static Logger logger = Logger.getLogger("FormFrame");
     private static DSWorkbenchFormFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
-
+    
     public static synchronized DSWorkbenchFormFrame getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchFormFrame();
@@ -99,38 +110,38 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         jFormsTable.setModel(new FormTableModel());
         jFormsTable.getSelectionModel().addListSelectionListener(DSWorkbenchFormFrame.this);
         buildMenu();
-
+        
         KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
         KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         KeyStroke find = KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK, false);
-
+        capabilityInfoPanel1.addActionListener(this);
         jFormsTable.registerKeyboardAction(new ActionListener() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
-                copySelectionToInternalClipboard();
+                DSWorkbenchFormFrame.getSingleton().actionPerformed(new ActionEvent(jFormsTable, 0, "Copy"));
             }
         }, "Copy", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
+        
         jFormsTable.registerKeyboardAction(new ActionListener() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
-                copySelectionToInternalClipboardAsBBCodes();
+                DSWorkbenchFormFrame.getSingleton().actionPerformed(new ActionEvent(jFormsTable, 0, "BBCopy"));
             }
         }, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
+        
         jFormsTable.registerKeyboardAction(new ActionListener() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
-                deleteSelection();
+                DSWorkbenchFormFrame.getSingleton().actionPerformed(new ActionEvent(jFormsTable, 0, "Delete"));
             }
         }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
+        
         jFormsTable.registerKeyboardAction(new ActionListener() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 //no find
@@ -143,14 +154,14 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         }
         // </editor-fold>
     }
-
+    
     @Override
     public void toBack() {
         jAlwaysOnTop.setSelected(false);
         fireFormFrameAlwaysOnTopEvent(null);
         super.toBack();
     }
-
+    
     @Override
     public void resetView() {
         //update view
@@ -163,31 +174,31 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
             columns.setMaxWidth(80);
             columns.setWidth(80);
         }
-
+        
         ((FormTableModel) jFormsTable.getModel()).fireTableDataChanged();
     }
-
+    
     private void buildMenu() {
         JXTaskPane editPane = new JXTaskPane();
         editPane.setTitle("Bearbeiten");
         JXButton editButton = new JXButton(new ImageIcon("./graphics/icons/replace2.png"));
         editButton.setToolTipText("Die ausgewählte Zeichnung bearbeiten");
         editButton.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 showEditFrame();
             }
         });
-
+        
         editPane.getContentPane().add(editButton);
-
+        
         JXTaskPane transferPane = new JXTaskPane();
         transferPane.setTitle("Übertragen");
         JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/center_ingame.png")));
         transferVillageList.setToolTipText("Zentriert den Mittelpunkt der gewählten Zeichnung im Spiel");
         transferVillageList.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 centerFormInGame();
@@ -198,23 +209,23 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
             JXButton centerButton = new JXButton(new ImageIcon(DSWorkbenchFormFrame.class.getResource("/res/center_24x24.png")));
             centerButton.setToolTipText("Zentriert die Zeichnung auf der Hauptkarte");
             centerButton.addMouseListener(new MouseAdapter() {
-
+                
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     centerFormOnMap();
                 }
             });
-
+            
             transferPane.getContentPane().add(centerButton);
         }
-
+        
         JXTaskPane miscPane = new JXTaskPane();
         if (!GlobalOptions.isMinimal()) {
             miscPane.setTitle("Sonstiges");
             JXButton searchButton = new JXButton(new ImageIcon("./graphics/icons/search.png"));
             searchButton.setToolTipText("Lässt die gewählten Zeichnungen auf der Hauptkarte kurz aufblinken");
             searchButton.addMouseListener(new MouseAdapter() {
-
+                
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     showFormOnMap();
@@ -228,31 +239,31 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
             centerPanel.setupTaskPane(editPane, transferPane);
         }
     }
-
+    
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTop.isSelected());
-
+        
         PropertyHelper.storeTableProperties(jFormsTable, pConfig, getPropertyPrefix());
     }
-
+    
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
-
+        
         try {
             jAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
         } catch (Exception e) {
         }
-
+        
         setAlwaysOnTop(jAlwaysOnTop.isSelected());
-
+        
         PropertyHelper.restoreTableProperties(jFormsTable, pConfig, getPropertyPrefix());
     }
-
+    
     public String getPropertyPrefix() {
         return "forms.view";
     }
-
+    
     private void copySelectionToInternalClipboardAsBBCodes() {
         try {
             List<AbstractForm> forms = getSelectedForms();
@@ -266,18 +277,18 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
                     ignoredForms++;
                 }
             }
-
+            
             boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
-
+            
             StringBuilder buffer = new StringBuilder();
             if (extended) {
                 buffer.append("[u][size=12]Zeichnungen[/size][/u]\n\n");
             } else {
                 buffer.append("[u]Zeichnungen[/u]\n\n");
             }
-
+            
             buffer.append(new FormListFormatter().formatElements(forms, extended));
-
+            
             if (extended) {
                 buffer.append("\n[size=8]Erstellt am ");
                 buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
@@ -289,7 +300,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
                 buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
                 buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url]\n");
             }
-
+            
             String b = buffer.toString();
             StringTokenizer t = new StringTokenizer(b, "[");
             int cnt = t.countTokens();
@@ -298,7 +309,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
                     return;
                 }
             }
-
+            
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
             String result = null;
             if (ignoredForms != forms.size()) {
@@ -318,12 +329,12 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
             showError(result);
         }
     }
-
+    
     private void copySelectionToInternalClipboard() {
         try {
             List<AbstractForm> selection = getSelectedForms();
             if (selection.isEmpty()) {
-                showInfo("Keine Formen gewählt");
+                showInfo("Keine Zeichnung gewählt");
                 return;
             }
             ArrayList<Village> villages = new ArrayList<Village>();
@@ -338,7 +349,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
             for (Village v : villages) {
                 builder.append(v.toString()).append("\n");
             }
-
+            
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(builder.toString()), null);
             showSuccess(villages.size() + ((villages.size() == 1) ? " Dorf " : " Dörfer ") + "in die Zwischenablage kopiert");
         } catch (Exception e) {
@@ -347,27 +358,27 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
             showError(result);
         }
     }
-
+    
     private void deleteSelection() {
         List<AbstractForm> selection = getSelectedForms();
         if (selection.isEmpty()) {
-            showInfo("Keine Formen gewählt");
+            showInfo("Keine Zeichnung gewählt");
             return;
         }
-
-        String message = ((selection.size() == 1) ? "Form " : (selection.size() + " Formen")) + "wirklich löschen?";
-
+        
+        String message = ((selection.size() == 1) ? "Zeichnung " : (selection.size() + " Zeichnungen")) + "wirklich löschen?";
+        
         if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             FormManager.getSingleton().invalidate();
             for (AbstractForm f : selection) {
                 FormManager.getSingleton().removeElement(f);
             }
-
-            showSuccess(((selection.size() == 1) ? "Form " : (selection.size() + " Formen ")) + "gelöscht");
+            
+            showSuccess(((selection.size() == 1) ? "Zeichnung " : (selection.size() + " Zeichnungen ")) + "gelöscht");
             FormManager.getSingleton().revalidate(true);
         }
     }
-
+    
     @Override
     public void valueChanged(ListSelectionEvent e) {
         if (e.getValueIsAdjusting()) {
@@ -377,32 +388,32 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
             }
         }
     }
-
+    
     public void showInfo(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(getBackground()));
         jXLabel1.setForeground(Color.BLACK);
         jXLabel1.setText(pMessage);
     }
-
+    
     public void showSuccess(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(Color.GREEN));
         jXLabel1.setForeground(Color.BLACK);
         jXLabel1.setText(pMessage);
     }
-
+    
     public void showError(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(Color.RED));
         jXLabel1.setForeground(Color.WHITE);
         jXLabel1.setText(pMessage);
     }
-
+    
     public void updateVisibility() {
         ((FormTableModel) jFormsTable.getModel()).fireTableDataChanged();
     }
-
+    
     private void centerFormOnMap() {
         List<AbstractForm> selection = getSelectedForms();
         if (selection.isEmpty()) {
@@ -410,14 +421,14 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
             return;
         }
         Rectangle r = selection.get(0).getBounds();
-
+        
         if (r != null) {
             DSWorkbenchMainFrame.getSingleton().centerPosition((int) Math.rint(r.getCenterX()), (int) Math.rint(r.getCenterY()));
         } else {
             showInfo("Ein Mittelpunkt kann für diese Zeichnung nicht bestimmt werden");
         }
     }
-
+    
     private void centerFormInGame() {
         List<AbstractForm> selection = getSelectedForms();
         if (selection.isEmpty()) {
@@ -425,21 +436,21 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
             return;
         }
         Rectangle r = selection.get(0).getBounds();
-
+        
         if (r != null) {
             BrowserCommandSender.centerCoordinate((int) Math.rint(r.getCenterX()), (int) Math.rint(r.getCenterY()));
         } else {
             showInfo("Ein Mittelpunkt kann für diese Zeichnung nicht bestimmt werden");
         }
     }
-
+    
     private void showEditFrame() {
         List<AbstractForm> selection = getSelectedForms();
         if (selection.isEmpty()) {
             showError("Keine Zeichnung gewählt");
             return;
         }
-
+        
         AbstractForm toEdit = selection.get(0);
         if (toEdit != null) {
             if ((MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_DRAW_CIRCLE)
@@ -452,7 +463,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
             FormConfigFrame.getSingleton().setupAndShowInEditMode(toEdit);
         }
     }
-
+    
     private void showFormOnMap() {
         List<AbstractForm> selection = getSelectedForms();
         if (selection.isEmpty()) {
@@ -480,7 +491,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         jScrollPane4 = new javax.swing.JScrollPane();
         jFormPanel = new javax.swing.JPanel();
         jAlwaysOnTop = new javax.swing.JCheckBox();
-        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         jFormTablePanel.setLayout(new java.awt.BorderLayout());
 
@@ -557,11 +568,11 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
     private void fireFormFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireFormFrameAlwaysOnTopEvent
         setAlwaysOnTop(!isAlwaysOnTop());
     }//GEN-LAST:event_fireFormFrameAlwaysOnTopEvent
-
+    
     private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideInfoEvent
         infoPanel.setCollapsed(true);
 }//GEN-LAST:event_fireHideInfoEvent
-
+    
     private List<AbstractForm> getSelectedForms() {
         final List<AbstractForm> selectedForms = new LinkedList<AbstractForm>();
         int[] selectedRows = jFormsTable.getSelectedRows();
@@ -576,21 +587,21 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         }
         return selectedForms;
     }
-
+    
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
-
+    
     @Override
     public void dataChangedEvent() {
         dataChangedEvent(null);
     }
-
+    
     @Override
     public void dataChangedEvent(String pGroup) {
         ((FormTableModel) jFormsTable.getModel()).fireTableDataChanged();
     }
-
+    
     public static void main(String[] args) {
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -608,13 +619,13 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         FormManager.getSingleton().addForm(new Circle());
         FormManager.getSingleton().addForm(new de.tor.tribes.types.Rectangle());
         FormManager.getSingleton().addForm(new Line());
-
+        
         DSWorkbenchFormFrame.getSingleton().resetView();
         DSWorkbenchFormFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         DSWorkbenchFormFrame.getSingleton().setVisible(true);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JCheckBox jAlwaysOnTop;
     private javax.swing.JPanel jFormPanel;

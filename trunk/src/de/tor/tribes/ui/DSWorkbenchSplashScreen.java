@@ -44,12 +44,12 @@ import org.netbeans.spi.wizard.WizardPanelProvider;
  * @author  Jejkal
  */
 public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataHolderListener {
-    
+
     private static Logger logger = Logger.getLogger("Launcher");
     private final DSWorkbenchSplashScreen self = this;
     private final SplashRepaintThread t;
     private static DSWorkbenchSplashScreen SINGLETON = null;
-    
+
     public static synchronized DSWorkbenchSplashScreen getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchSplashScreen();
@@ -60,12 +60,12 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     /** Creates new form DSWorkbenchSplashScreen */
     DSWorkbenchSplashScreen() {
         initComponents();
-        if(GlobalOptions.isMinimal()){
+        if (GlobalOptions.isMinimal()) {
             jLabel1.setIcon(new ImageIcon("./graphics/splash_mini.gif"));
-        }else{
+        } else {
             jLabel1.setIcon(new ImageIcon("./graphics/splash.gif"));
         }
-        
+
         setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
         new Timer("StartupTimer", true).schedule(new HideSplashTask(), 1000);
         jProfileDialog.getContentPane().setBackground(Constants.DS_BACK_LIGHT);
@@ -88,8 +88,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         jScrollPane2 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
         jButton1 = new javax.swing.JButton();
-        jStatusOutput = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        jStatusOutput = new javax.swing.JProgressBar();
 
         jProfileDialog.setTitle("Profile");
         jProfileDialog.setModal(true);
@@ -129,28 +129,17 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
 
-        jStatusOutput.setFont(new java.awt.Font("Comic Sans MS", 0, 14));
-        jStatusOutput.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jStatusOutput.setText("Lade Einstellungen...");
+        jLabel1.setMaximumSize(new java.awt.Dimension(516, 250));
+        jLabel1.setMinimumSize(new java.awt.Dimension(516, 250));
+        jLabel1.setPreferredSize(new java.awt.Dimension(516, 250));
+        getContentPane().add(jLabel1, java.awt.BorderLayout.CENTER);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jStatusOutput, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 516, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(jStatusOutput)
-                .addGap(0, 0, 0))
-        );
+        jStatusOutput.setIndeterminate(true);
+        jStatusOutput.setMinimumSize(new java.awt.Dimension(10, 20));
+        jStatusOutput.setPreferredSize(new java.awt.Dimension(146, 20));
+        jStatusOutput.setString("Lade Einstellungen...");
+        jStatusOutput.setStringPainted(true);
+        getContentPane().add(jStatusOutput, java.awt.BorderLayout.SOUTH);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -175,7 +164,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             jProfileDialog.setVisible(false);
         }
     }//GEN-LAST:event_fireSelectAccountEvent
-    
+
     protected boolean hideSplash() {
         try {
             if (!new File(".").canWrite()) {
@@ -194,7 +183,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                         FileUtils.forceDelete(new File("./.hfsw"));
                     }
                     FileUtils.forceDelete(new File("./sfs"));
-                    
                 }
 
                 //first start wizard
@@ -227,13 +215,13 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             //load properties, cursors, skins, world decoration
             DataHolder.getSingleton().addDataHolderListener(this);
             DataHolder.getSingleton().addDataHolderListener(DSWorkbenchSettingsDialog.getSingleton());
-            
+            GlobalOptions.addDataHolderListener(this);
         } catch (Exception e) {
             logger.error("Failed to initialize global options", e);
             JOptionPaneHelper.showErrorBox(self, "Fehler bei der Initialisierung.\nMöglicherweise ist deine DS Workbench Installation defekt.", "Fehler");
             return false;
         }
-        
+
         try {
             //open profile selection
             if (ProfileManager.getSingleton().getProfiles().length == 0) {
@@ -254,7 +242,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 }
                 //sort server names
                 Collections.sort(servers, new Comparator<String>() {
-                    
+
                     @Override
                     public int compare(String o1, String o2) {
                         if (o1.length() < o2.length()) {
@@ -289,7 +277,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                         root.add(serverNode);
                     }
                 }
-                
+
                 jTree1.setModel(new DefaultTreeModel(root));
                 jTree1.setSelectionPath(new TreePath(path.toArray()));
                 jTree1.scrollPathToVisible(new TreePath(path.toArray()));
@@ -333,7 +321,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 }
             }
         }
-        
+
         try {
             if (!DataHolder.getSingleton().loadData(checkForUpdates)) {
                 throw new Exception("loadData() returned 'false'. See log for more details.");
@@ -347,16 +335,17 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         try {
             logger.debug("Checking for plugin updates");
             PluginManager.getSingleton().checkForUpdates();
-            
+
             logger.debug("Initializing application window");
             DSWorkbenchMainFrame.getSingleton().init();
-            
+
             logger.info("Showing application window");
             DSWorkbenchMainFrame.getSingleton().setVisible(true);
             t.stopRunning();
             setVisible(false);
+            GlobalOptions.removeDataHolderListener(this);
             boolean informOnUpdate = true;
-            
+
             try {
                 String val = GlobalOptions.getProperty("inform.on.updates");
                 if (val != null) {
@@ -368,7 +357,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             if (informOnUpdate) {
                 //check version
                 double version = DatabaseInterface.getCurrentVersion();
-                
+
                 if (version > 0 && version > Constants.VERSION) {
                     NotifierFrame.doNotification("Eine neue Version (" + version + ") von DS Workbench ist verfügbar.\n" + "Klicke auf das Update Icon um \'http://www.dsworkbench.de\' im Browser zu öffnen.", NotifierFrame.NOTIFY_UPDATE);
                 }
@@ -401,7 +390,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 }
             }
         }
-        
+
         RollingFileAppender a = new org.apache.log4j.RollingFileAppender();
         a.setLayout(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n"));
         a.setMaxFileSize("1MB");
@@ -421,18 +410,18 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                     break;
                 }
             }
-            
+
             Logger.getRootLogger().addAppender(a);
             Logger.getLogger("de.tor").addAppender(a);
             Logger.getLogger("dswb").addAppender(a);
             GlobalOptions.setMinimalVersion(minimal == 1);
         } catch (IOException ioe) {
         }
-        
+
         try {
             GlobalOptions.initialize();
             String lnf = GlobalOptions.getProperty("look.and.feel");
-            
+
             if (SystemUtils.IS_OS_MAC || SystemUtils.IS_OS_MAC_OSX) {
                 //no nimbus for mac users
                 lnf = UIManager.getSystemLookAndFeelClassName();
@@ -444,9 +433,9 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             }
         } catch (Exception e) {
         }
-        
+
         SwingUtilities.invokeLater(new Runnable() {
-            
+
             @Override
             public void run() {
                 DSWorkbenchSplashScreen.getSingleton().setLocationRelativeTo(null);
@@ -459,34 +448,34 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     private javax.swing.JLabel jLabel1;
     private javax.swing.JDialog jProfileDialog;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JLabel jStatusOutput;
+    private javax.swing.JProgressBar jStatusOutput;
     private javax.swing.JTree jTree1;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void fireDataHolderEvent(String pText) {
-        jStatusOutput.setText(pText);
+        jStatusOutput.setString(pText);
     }
-    
+
     public void updateStatus() {
         jStatusOutput.repaint();
     }
-    
+
     @Override
     public void fireDataLoadedEvent(boolean pSuccess) {
         if (pSuccess) {
-            jStatusOutput.setText("Daten geladen");
+            jStatusOutput.setString("Daten geladen");
         } else {
-            jStatusOutput.setText("Download fehlgeschlagen");
+            jStatusOutput.setString("Download fehlgeschlagen");
         }
     }
 }
 
 class HideSplashTask extends TimerTask {
-    
+
     public HideSplashTask() {
     }
-    
+
     public void run() {
         if (!DSWorkbenchSplashScreen.getSingleton().hideSplash()) {
             System.exit(1);
@@ -495,13 +484,13 @@ class HideSplashTask extends TimerTask {
 }
 
 class SplashRepaintThread extends Thread {
-    
+
     private boolean running = true;
-    
+
     public SplashRepaintThread() {
         setDaemon(true);
     }
-    
+
     public void run() {
         while (running) {
             DSWorkbenchSplashScreen.getSingleton().updateStatus();
@@ -511,7 +500,7 @@ class SplashRepaintThread extends Thread {
             }
         }
     }
-    
+
     public void stopRunning() {
         running = false;
     }

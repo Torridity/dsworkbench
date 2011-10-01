@@ -110,7 +110,7 @@ public class MarkerManager extends GenericManager<Marker> {
             for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//markerSets/markerSet")) {
                 String setKey = e.getAttributeValue("name");
                 setKey = URLDecoder.decode(setKey, "UTF-8");
-                setKey += pExtension;
+                setKey += "_" + pExtension;
                 if (logger.isDebugEnabled()) {
                     logger.debug("Loading marker set '" + setKey + "'");
                 }
@@ -144,7 +144,9 @@ public class MarkerManager extends GenericManager<Marker> {
             try {
                 b.append("<markerSet name=\"").append(URLEncoder.encode(set, "UTF-8")).append("\">\n");
                 b.append("<markers>\n");
-                for (ManageableType t : getAllElements(set)) {
+                ManageableType[] elements = getAllElements(set).toArray(new ManageableType[getAllElements(set).size()]);
+
+                for (ManageableType t : elements) {
                     Marker m = (Marker) t;
                     b.append(m.toXml()).append("\n");
                 }

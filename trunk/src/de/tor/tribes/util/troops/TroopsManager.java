@@ -131,7 +131,7 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
     public List<ManageableType> getAllElements(String pGroup) {
         HashMap<Village, VillageTroopsHolder> set = managedElementGroups.get(pGroup);
         Collection<VillageTroopsHolder> values = set.values();
-        if(values == null){
+        if (values == null) {
             return new LinkedList<ManageableType>();
         }
         return Collections.unmodifiableList(Arrays.asList(set.values().toArray(new ManageableType[set.size()])));
@@ -497,7 +497,9 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
                 result.append("<troopGroup name=\"").append(URLEncoder.encode(group, "UTF-8")).append("\">\n");
                 result.append("<troopInfos>\n");
 
-                for (ManageableType t : getAllElements(group)) {
+                ManageableType[] elements = getAllElements(group).toArray(new ManageableType[getAllElements(group).size()]);
+
+                for (ManageableType t : elements) {
                     result.append(t.toXml()).append("\n");
                 }
                 result.append("</troopInfos>\n");

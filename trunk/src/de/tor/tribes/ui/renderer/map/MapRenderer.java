@@ -112,7 +112,7 @@ public class MapRenderer {
     private AttackLayerRenderer mAttackLayer = new AttackLayerRenderer();
     private SupportLayerRenderer mSupportLayer = new SupportLayerRenderer();
     private NoteLayerRenderer mNoteLayer = new NoteLayerRenderer();
-    /**RenderSettings used within the last rendering cyle*/
+    /**RenderSettings used within the last rendering cycle*/
     private RenderSettings mRenderSettings = null;
     /* private Canvas mCanvas = null;
     BufferStrategy strategy;*/
@@ -186,6 +186,10 @@ public class MapRenderer {
         return bMapRedrawRequired;
     }
 
+    public RenderSettings getRenderSettings() {
+        return mRenderSettings;
+    }
+
     public void renderAll(Graphics2D pG2d) {
         if (GlobalOptions.isMinimal()) {
             return;
@@ -243,19 +247,36 @@ public class MapRenderer {
                 mRenderSettings.setVisibleVillages(mVisibleVillages);
                 //get the movement of the map relative to a) the last reset or b) the last rendering cycle
                 mRenderSettings.calculateSettings(MapPanel.getSingleton().getVirtualBounds());
-                boolean mapDrawn = false;
+
+                boolean markOnTop = false;
+                if (mDrawOrder.indexOf(new Integer(0)) > mDrawOrder.indexOf(new Integer(1))) {
+                    markOnTop = true;
+                }
+                boolean gotMap = false;
+                boolean gotMarkers = false;
+
                 for (Integer layer : mDrawOrder) {
+                    //check for marker and map layer
                     if (layer == 0) {
+                        gotMarkers = true;
+                    } else if (layer == 1) {
+                        gotMap = true;
+                    }
+
+                    if (gotMap && gotMarkers) {
+                        //we can now draw the map layer and draw all following layers
                         try {
-                            mMapLayer.setMarkOnTop(mapDrawn);
+                            mMapLayer.setMarkOnTop(markOnTop);
                             mMapLayer.performRendering(mRenderSettings, g2d);
                         } catch (Exception e) {
                             logger.warn("Failed to render map/marker layer", e);
                         }
-                    } else if (layer == 1) {
-                        //set mapDrawn flag to indicate markOnTop rendering for layer 0
-                        mapDrawn = true;
-                    } else if (layer == 2) {
+                        gotMap = false;
+                        gotMarkers = false;
+                    }
+
+                    //check for all other layers
+                    if (layer == 2) {
                         try {
                             mTagLayer.performRendering(mRenderSettings, g2d);
                         } catch (Exception e) {
@@ -272,7 +293,7 @@ public class MapRenderer {
                         try {
                             mNoteLayer.performRendering(mRenderSettings, g2d);
                         } catch (Exception e) {
-                            logger.warn("Failed to render note layer");
+                            logger.warn("Failed to render note layer", e);
                         }
                     } else if (layer == 5) {
                         try {

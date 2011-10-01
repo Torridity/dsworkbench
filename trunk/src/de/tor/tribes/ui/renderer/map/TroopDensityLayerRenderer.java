@@ -69,12 +69,12 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
             }
             pSettings.setRowsToRender(pSettings.getVillagesInY());
         } else {
-//copy existing data to new location
+            //copy existing data to new location
             g2d = (Graphics2D) mLayer.getGraphics();
             performCopy(pSettings, g2d);
         }
         ImageUtils.setupGraphics(g2d);
-//Set new bounds
+        //Set new bounds
         BufferedImage img = renderTroopRows(pSettings);
         AffineTransform trans = AffineTransform.getTranslateInstance(0, 0);
         if (pSettings.getRowsToRender() < 0) {
@@ -82,7 +82,7 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
         }
         g2d.drawRenderedImage(img, trans);
         if (isFullRenderRequired()) {
-//everything was rendered, skip col rendering
+            //everything was rendered, skip col rendering
             setFullRenderRequired(false);
         } else {
             img = renderTroopColumns(pSettings);
@@ -108,15 +108,13 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
         int fieldsX = newMapPos.x - mapPos.x;
         int fieldsY = newMapPos.y - mapPos.y;
 
-//set new map position
+        //set new map position
         if (newMapPos.distance(mapPos) != 0.0) {
             mapPos.x = newMapPos.x;
             mapPos.y = newMapPos.y;
         }
-//  Composite comp = pG2D.getComposite();
         pG2D.setComposite(AlphaComposite.Src);
         pG2D.copyArea(0, 0, mLayer.getWidth(), mLayer.getHeight(), -fieldsX * pSettings.getFieldWidth(), -fieldsY * pSettings.getFieldHeight());
-//  pG2D.setComposite(comp);
     }
 
     private BufferedImage renderTroopColumns(RenderSettings pSettings) {
@@ -130,7 +128,13 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
         ImageUtils.setupGraphics(g2d);
         //iterate through entire row
         int cnt = 0;
-
+        boolean includeSupport = false;
+        String val = GlobalOptions.getProperty("include.support");
+        if (val == null || Boolean.parseBoolean(val)) {
+            includeSupport = true;
+        } else {
+            includeSupport = false;
+        }
         for (int x = firstCol; x < firstCol + Math.abs(pSettings.getColumnsToRender()); x++) {
             for (int y = 0; y < pSettings.getVillagesInY(); y++) {
                 cnt++;
@@ -138,7 +142,7 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
                 Village v = pSettings.getVisibleVillage(x, y);
                 int row = y;
                 int col = x - firstCol;
-                renderField(v, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), dx, dy, pSettings.getZoom(), g2d);
+                renderField(v, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), dx, dy, pSettings.getZoom(), includeSupport, g2d);
             }
         }
         g2d.dispose();
@@ -160,7 +164,16 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
         Village lastVillageToDraw = null;
         int lastVillageRow = 0;
         int lastVillageCol = 0;
+
         Village currentMouseVillage = MapPanel.getSingleton().getVillageAtMousePos();
+        boolean includeSupport = false;
+        String val = GlobalOptions.getProperty("include.support");
+        if (val == null || Boolean.parseBoolean(val)) {
+            includeSupport = true;
+        } else {
+            includeSupport = false;
+        }
+
         for (int x = 0; x < pSettings.getVillagesInX(); x++) {
             //iterate from first row for 'pRows' times
             for (int y = firstRow; y < firstRow + Math.abs(pSettings.getRowsToRender()); y++) {
@@ -173,17 +186,25 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
                     lastVillageRow = row;
                     lastVillageCol = col;
                 } else {
-                    renderField(v, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), dx, dy, pSettings.getZoom(), g2d);
+                    renderField(v, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), dx, dy, pSettings.getZoom(), includeSupport, g2d);
                 }
             }
         }
-        renderField(lastVillageToDraw, lastVillageRow, lastVillageCol, pSettings.getFieldWidth(), pSettings.getFieldHeight(), dx, dy, pSettings.getZoom(), g2d);
+        renderField(lastVillageToDraw, lastVillageRow, lastVillageCol, pSettings.getFieldWidth(), pSettings.getFieldHeight(), dx, dy, pSettings.getZoom(), includeSupport, g2d);
         return newRows;
     }
 
-    private void renderField(Village v, int row, int colu, int pFieldWidth, int pFieldHeight, int pDx, int pDy, double pZoom, Graphics2D g2d) {
+    private void renderField(Village v, int row, int colu, int pFieldWidth, int pFieldHeight, int pDx, int pDy, double pZoom, boolean pIncludeSupport, Graphics2D g2d) {
         VillageTroopsHolder holder = null;
-        if (v != null && v.isVisibleOnMap() && (holder = TroopsManager.getSingleton().getTroopsForVillage(v)) != null) {
+
+
+        if (pIncludeSupport) {
+            holder = TroopsManager.getSingleton().getTroopsForVillage(v);
+        } else {
+            holder = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN);
+        }
+
+        if (v != null && v.isVisibleOnMap() && holder != null) {
             int maxDef = 650000;
             try {
                 maxDef = Integer.parseInt(GlobalOptions.getProperty("max.density.troops"));

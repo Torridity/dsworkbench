@@ -64,10 +64,10 @@ import org.jdesktop.swingx.painter.MattePainter;
  * @author Charon
  */
 public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener {
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        
         NoteTableTab activeTab = getActiveTab();
         if (e.getActionCommand() != null && activeTab != null) {
             if (e.getActionCommand().equals("Copy")) {
@@ -98,12 +98,12 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             }
         }
     }
-
+    
     @Override
     public void dataChangedEvent() {
         generateNoteTabs();
     }
-
+    
     @Override
     public void dataChangedEvent(String pGroup) {
         NoteTableTab tab = getActiveTab();
@@ -114,7 +114,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
     private static Logger logger = Logger.getLogger("Notepad");
     private static DSWorkbenchNotepad SINGLETON = null;
     private GenericTestPanel centerPanel = null;
-
+    
     public static synchronized DSWorkbenchNotepad getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchNotepad();
@@ -129,60 +129,60 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         jNotesPanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildComponent(jXNotePanel);
         buildMenu();
-
+        capabilityInfoPanel1.addActionListener(this);
         jNoteTabbedPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
         jNoteTabbedPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
         jNoteTabbedPane.setBoldActiveTab(true);
         jNoteTabbedPane.addTabEditingListener(new TabEditingListener() {
-
+            
             @Override
             public void editingStarted(TabEditingEvent tee) {
             }
-
+            
             @Override
             public void editingStopped(TabEditingEvent tee) {
                 NoteManager.getSingleton().renameGroup(tee.getOldTitle(), tee.getNewTitle());
             }
-
+            
             @Override
             public void editingCanceled(TabEditingEvent tee) {
             }
         });
         jNoteTabbedPane.setTabEditingValidator(new TabEditingValidator() {
-
+            
             @Override
             public boolean alertIfInvalid(int tabIndex, String tabText) {
                 if (tabText.trim().length() == 0) {
                     JOptionPaneHelper.showWarningBox(jNoteTabbedPane, "'" + tabText + "' ist ein ungültiger Name für ein Notizset", "Fehler");
                     return false;
                 }
-
+                
                 if (NoteManager.getSingleton().groupExists(tabText)) {
                     JOptionPaneHelper.showWarningBox(jNoteTabbedPane, "Es existiert bereits ein Notizset mit dem Namen '" + tabText + "'", "Fehler");
                     return false;
                 }
                 return true;
             }
-
+            
             @Override
             public boolean isValid(int tabIndex, String tabText) {
                 if (tabText.trim().length() == 0) {
                     return false;
                 }
-
+                
                 if (NoteManager.getSingleton().groupExists(tabText)) {
                     return false;
                 }
                 return true;
             }
-
+            
             @Override
             public boolean shouldStartEdit(int tabIndex, MouseEvent event) {
                 return !(tabIndex == 0);
             }
         });
         jNoteTabbedPane.setCloseAction(new AbstractAction("closeAction") {
-
+            
             public void actionPerformed(ActionEvent e) {
                 NoteTableTab tab = (NoteTableTab) e.getSource();
                 if (JOptionPaneHelper.showQuestionConfirmBox(jNoteTabbedPane, "Das Notizset '" + tab.getNoteSet() + "' und alle darin enthaltenen Notizen wirklich löschen? ", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
@@ -190,9 +190,9 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
                 }
             }
         });
-
+        
         jNoteTabbedPane.getModel().addChangeListener(new ChangeListener() {
-
+            
             @Override
             public void stateChanged(ChangeEvent e) {
                 NoteTableTab activeTab = getActiveTab();
@@ -201,7 +201,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
                 }
             }
         });
-
+        
         setGlassPane(jxSearchPane);
 
         //<editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
@@ -211,29 +211,29 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         //</editor-fold>
 
     }
-
+    
     @Override
     public void toBack() {
         jAlwaysOnTopBox.setSelected(false);
         fireAlwaysOnTopChangedEvent(null);
         super.toBack();
     }
-
+    
     @Override
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
-
+        
         int selectedIndex = jNoteTabbedPane.getModel().getSelectedIndex();
         if (selectedIndex >= 0) {
             pConfig.setProperty(getPropertyPrefix() + ".tab.selection", selectedIndex);
         }
-
-
+        
+        
         NoteTableTab tab = ((NoteTableTab) jNoteTabbedPane.getComponentAt(0));
         PropertyHelper.storeTableProperties(tab.getNoteTable(), pConfig, getPropertyPrefix());
     }
-
+    
     @Override
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
@@ -245,25 +245,25 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
         } catch (Exception e) {
         }
-
+        
         setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
-
+        
         NoteTableTab tab = ((NoteTableTab) jNoteTabbedPane.getComponentAt(0));
         PropertyHelper.restoreTableProperties(tab.getNoteTable(), pConfig, getPropertyPrefix());
     }
-
+    
     public String getPropertyPrefix() {
         return "notes.view";
     }
-
+    
     private void buildMenu() {
         JXTaskPane editTaskPane = new JXTaskPane();
         editTaskPane.setTitle("Bearbeiten");
-
+        
         JXButton newNote = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/document_new_24x24.png")));
         newNote.setToolTipText("Erstellt eine leere Notiz");
         newNote.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 NoteTableTab tab = getActiveTab();
@@ -273,14 +273,14 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             }
         });
         editTaskPane.getContentPane().add(newNote);
-
-
+        
+        
         JXTaskPane transferTaskPane = new JXTaskPane();
         transferTaskPane.setTitle("Übertragen");
         JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/center_ingame.png")));
         transferVillageList.setToolTipText("Zentriert das gewählte Notizdorf im Spiel");
         transferVillageList.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 NoteTableTab tab = getActiveTab();
@@ -290,7 +290,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             }
         });
         transferTaskPane.getContentPane().add(transferVillageList);
-
+        
         if (!GlobalOptions.isMinimal()) {
             JXButton centerVillage = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
             centerVillage.setToolTipText("Zentriert das gewählte Notizdorf auf der Hauptkarte");
@@ -299,7 +299,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             centerVillage.setMaximumSize(transferVillageList.getMaximumSize());
             centerVillage.setPreferredSize(transferVillageList.getPreferredSize());
             centerVillage.addMouseListener(new MouseAdapter() {
-
+                
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     NoteTableTab tab = getActiveTab();
@@ -308,7 +308,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
                     }
                 }
             });
-
+            
             transferTaskPane.getContentPane().add(centerVillage);
         }
         centerPanel.setupTaskPane(editTaskPane, transferTaskPane);
@@ -334,7 +334,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             tab.deregister();
             jNoteTabbedPane.removeTabAt(0);
         }
-
+        
         LabelUIResource lr = new LabelUIResource();
         lr.setLayout(new BorderLayout());
         lr.add(jNewSetPanel, BorderLayout.CENTER);
@@ -356,18 +356,18 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             tab.updateSet();
         }
     }
-
+    
     @Override
     public void resetView() {
         NoteManager.getSingleton().addManagerListener(this);
         generateNoteTabs();
     }
-
+    
     public void addNoteForVillage(Village pVillage) {
         NoteTableTab tab = getActiveTab();
         if (tab != null) {
             String set = getActiveTab().getNoteSet();
-
+            
             Note n = new Note();
             n.addVillage(pVillage);
             n.setNoteText("(kein Text)");
@@ -375,12 +375,12 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             NoteManager.getSingleton().addManagedElement(set, n);
         }
     }
-
+    
     public void addNoteForVillages(List<Village> pVillages) {
         NoteTableTab tab = getActiveTab();
         if (tab != null) {
             String set = getActiveTab().getNoteSet();
-
+            
             Note n = new Note();
             for (Village v : pVillages) {
                 n.addVillage(v);
@@ -422,7 +422,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         jButton5 = new javax.swing.JButton();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
         jNotesPanel = new javax.swing.JPanel();
-        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         jXNotePanel.setPreferredSize(new java.awt.Dimension(500, 400));
         jXNotePanel.setLayout(new java.awt.BorderLayout());
@@ -626,15 +626,15 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
     private void fireAlwaysOnTopChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireAlwaysOnTopChangedEvent
         setAlwaysOnTop(!isAlwaysOnTop());
     }//GEN-LAST:event_fireAlwaysOnTopChangedEvent
-
+    
     private void fireEnterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireEnterEvent
         jLabel4.setBackground(getBackground().darker());
 }//GEN-LAST:event_fireEnterEvent
-
+    
     private void fireMouseExitEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMouseExitEvent
         jLabel4.setBackground(getBackground());
 }//GEN-LAST:event_fireMouseExitEvent
-
+    
     private void fireCreateNoteSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateNoteSetEvent
         int unusedId = 1;
         while (unusedId < 1000) {
@@ -648,20 +648,20 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             return;
         }
 }//GEN-LAST:event_fireCreateNoteSetEvent
-
+    
     private void jButton16fireHideGlassPaneEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton16fireHideGlassPaneEvent
         jxSearchPane.setBackgroundPainter(null);
         jxSearchPane.setVisible(false);
 }//GEN-LAST:event_jButton16fireHideGlassPaneEvent
-
+    
     private void jTextField1fireHighlightEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_jTextField1fireHighlightEvent
         updateFilter();
 }//GEN-LAST:event_jTextField1fireHighlightEvent
-
+    
     private void jFilterRowsfireUpdateFilterEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jFilterRowsfireUpdateFilterEvent
         updateFilter();
 }//GEN-LAST:event_jFilterRowsfireUpdateFilterEvent
-
+    
     private void jFilterCaseSensitivefireUpdateFilterEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jFilterCaseSensitivefireUpdateFilterEvent
         updateFilter();
 }//GEN-LAST:event_jFilterCaseSensitivefireUpdateFilterEvent
@@ -673,7 +673,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             tab.updateFilter(jTextField1.getText(), jFilterCaseSensitive.isSelected(), jFilterRows.isSelected());
         }
     }
-
+    
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
@@ -703,7 +703,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
-
+            
             public void run() {
                 Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
                 GlobalOptions.setSelectedServer("de43");
@@ -723,9 +723,9 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
                     //  UIManager.put(SubstanceLookAndFeel.FOCUS_KIND, FocusKind.NONE);
                 } catch (Exception e) {
                 }
-
+                
                 DSWorkbenchNotepad.getSingleton().setSize(600, 400);
-
+                
                 NoteManager.getSingleton().addGroup("test1");
                 NoteManager.getSingleton().addGroup("asd2");
                 NoteManager.getSingleton().addGroup("awe3");
@@ -754,7 +754,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
                     n3.addVillage(new DummyVillage());
                     n3.addVillage(new DummyVillage());
                     n3.addVillage(new DummyVillage());
-
+                    
                     NoteManager.getSingleton().addManagedElement(n);
                     NoteManager.getSingleton().addManagedElement("test1", n2);
                     NoteManager.getSingleton().addManagedElement("asd2", n3);
@@ -805,7 +805,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             tab.transferSelection(NoteTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
         }
     }
-
+    
     @Override
     public void fireNextPageGestureEvent() {
         int current = jNoteTabbedPane.getSelectedIndex();
@@ -817,11 +817,11 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         }
         jNoteTabbedPane.setSelectedIndex(current);
     }
-
+    
     @Override
     public void firePlainExportGestureEvent() {
     }
-
+    
     @Override
     public void firePreviousPageGestureEvent() {
         int current = jNoteTabbedPane.getSelectedIndex();
@@ -836,7 +836,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
 // </editor-fold>
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.BBPanel bBPanel1;
-    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private javax.swing.JCheckBox jAlwaysOnTopBox;
     private javax.swing.JButton jButton16;
     private javax.swing.JButton jButton4;

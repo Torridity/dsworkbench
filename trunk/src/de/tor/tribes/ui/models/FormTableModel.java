@@ -120,7 +120,11 @@ public class FormTableModel extends AbstractTableModel {
         AbstractForm.FORM_TYPE type = f.getFormType();
         Integer v = null;
         try {
-            v = (Integer) o;
+            if (o == null) {
+                v = 0;
+            } else {
+                v = (Integer) o;
+            }
             if (v <= 0) {
                 throw new NumberFormatException();
             }

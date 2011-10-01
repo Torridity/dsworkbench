@@ -37,7 +37,10 @@ public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
             || MapPanel.getSingleton().getWidth() < mLayer.getWidth() - 100
             || MapPanel.getSingleton().getHeight() > mLayer.getHeight()
             || MapPanel.getSingleton().getHeight() < mLayer.getHeight() - 100)) {*/
-            mLayer.flush();
+            if (mLayer != null) {
+                mLayer.flush();
+            }
+
             mLayer = null;
             //}
         }

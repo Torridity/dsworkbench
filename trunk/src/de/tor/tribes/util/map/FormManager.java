@@ -89,7 +89,7 @@ public class FormManager extends GenericManager<AbstractForm> {
                     if (form.getFormName() == null) {
                         form.setFormName(pExtension);
                     } else {
-                        form.setFormName(form.getFormName() + pExtension);
+                        form.setFormName(form.getFormName() + "_" + pExtension);
                     }
                     addManagedElement(form);
                 }
@@ -113,7 +113,9 @@ public class FormManager extends GenericManager<AbstractForm> {
             logger.debug("Generating forms export data");
             String result = "<forms>\n";
 
-            for (ManageableType t : getAllElements()) {
+            ManageableType[] elements = getAllElements().toArray(new ManageableType[getAllElements().size()]);
+
+            for (ManageableType t : elements) {
                 AbstractForm form = (AbstractForm) t;
                 result += form.toXml();
             }

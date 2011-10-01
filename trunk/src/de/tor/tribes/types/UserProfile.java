@@ -202,25 +202,13 @@ public class UserProfile {
             FileUtils.deleteDirectory(new File(getProfileDirectory()));
             success = true;
         } catch (IOException ioe) {
-
             try {
+                logger.info("Failed to delete profile. Added '.deleted' marker for next startup");
                 FileUtils.touch(new File(getProfileDirectory() + File.separator + ".deleted"));
-                FileUtils.forceDeleteOnExit(new File(getProfileDirectory()));
                 success = true;
             } catch (IOException ioe2) {
             }
         }
-
-
-        /*for (File f : new File(getProfileDirectory()).listFiles()) {
-        if (!f.delete()) {
-        success = false;
-        break;
-        }
-        }
-        if (success) {
-        success = new File(getProfileDirectory()).delete();
-        }*/
         ProfileManager.getSingleton().loadProfiles();
         return success;
     }

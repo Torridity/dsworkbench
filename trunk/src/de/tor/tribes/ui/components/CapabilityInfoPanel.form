@@ -26,6 +26,9 @@
         </Property>
         <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&lt;b&gt;Kopieren/Ausschneiden von Eintr&amp;auml;gen per STRG+C bzw. STRG+X&lt;/b&gt;&lt;br/&gt;In einigen Ansichten werden Eintr&amp;auml;ge so kopiert,&lt;br/&gt;dass sie in genau diese oder eine vergleichbare Ansicht wieder eingef&amp;uuml;gt werden k&amp;ouml;nnen.&lt;br/&gt;&#xa;In anderen Ansichten werden Dorfkoordinaten kopiert,&lt;br/&gt;die an verschiedenen anderen Stellen aus der Zwischenablage gelesen werden k&amp;ouml;nnen&lt;/html&gt;"/>
       </Properties>
+      <Events>
+        <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireCopyAction"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jPaste">
       <Properties>
@@ -34,6 +37,9 @@
         </Property>
         <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&lt;b&gt;Einf&amp;uuml;gen von Eintr&amp;auml;gen per STRG+V&lt;/b&gt;&lt;br/&gt;In eigenen Ansichten k&amp;ouml;nnen nur spezielle Eintr&amp;auml;ge eingef&amp;uuml;gt werden,&lt;br/&gt;die vorher aus derselben Ansicht kopiert wurden.&lt;br/&gt;In anderen Ansichten k&amp;ouml;nnen Dorfkoordinaten aus beliebigen Quellen eingef&amp;uuml;gt werden&lt;/html&gt;"/>
       </Properties>
+      <Events>
+        <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="firePasteAction"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jBBSupport">
       <Properties>
@@ -42,6 +48,9 @@
         </Property>
         <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&lt;b&gt;Kopieren von Eintr&amp;auml;gen als BB-Codes per STRG+B&lt;/b&gt;&lt;br/&gt;In dieser Ansicht k&amp;ouml;nnen Eintr&amp;auml;ge als BB-Codes in die Zwischenablage kopiert werden.&lt;br/&gt;Von dort aus kann man sie dann per STRG+V im Spiel in Notizen, IGMs oder das Forum einf&amp;uuml;gen.&lt;/html&gt;"/>
       </Properties>
+      <Events>
+        <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireBBCopyAction"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jDelete">
       <Properties>
@@ -50,6 +59,9 @@
         </Property>
         <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&lt;b&gt;L&amp;ouml;schen von Eintr&amp;auml;gen per ENTF&lt;/b&gt;&lt;/html&gt;"/>
       </Properties>
+      <Events>
+        <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireDeleteAction"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jFind">
       <Properties>
@@ -58,6 +70,9 @@
         </Property>
         <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&lt;b&gt;Suchen nach Eintr&amp;auml;gen per STRG+F&lt;/b&gt;&lt;/html&gt;"/>
       </Properties>
+      <Events>
+        <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireFindAction"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

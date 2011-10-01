@@ -137,7 +137,9 @@ public class TagManager extends GenericManager<Tag> {
             logger.debug("Generating tag export data");
 
             String result = "<tags>\n";
-            for (ManageableType e : getAllElements()) {
+            ManageableType[] elements = getAllElements().toArray(new ManageableType[getAllElements().size()]);
+
+            for (ManageableType e : elements) {
                 Tag t = (Tag) e;
                 result += t.toXml();
             }

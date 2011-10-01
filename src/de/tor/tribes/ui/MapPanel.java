@@ -99,9 +99,47 @@ import javax.swing.SwingUtilities;
  */
 public class MapPanel extends JPanel implements DragGestureListener, // For recognizing the start of drags
         DragSourceListener, // For processing drag source events
-        DropTargetListener// For processing drop target events
+        DropTargetListener,
+        ActionListener// For processing drop target events
 {
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e == null || e.getActionCommand() == null) {
+            return;
+        }
+        if (e.getActionCommand().equals("Copy")) {
+            if (markedVillages
+                    != null && !markedVillages.isEmpty()) {
+                try {
+                    StringBuilder b = new StringBuilder();
+                    for (Village v : markedVillages) {
+                        b.append(v.toString()).append("\n");
+                    }
+
+                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b.toString()), null);
+                    DSWorkbenchMainFrame.getSingleton().showSuccess(((markedVillages.size() == 1) ? "Ein Dorf " : markedVillages.size() + " Dörfer ") + "in die Zwischenablage kopiert");
+                } catch (Exception ex) {
+                    logger.error("Failed to copy village from map to clipboard", ex);
+                }
+            } else {
+                DSWorkbenchMainFrame.getSingleton().showSuccess("Keine Dörfer zum Kopieren markiert");
+            }
+        } else if (e.getActionCommand().equals("BBCopy")) {
+            if (markedVillages != null && !markedVillages.isEmpty()) {
+                try {
+                    boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(MapPanel.this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
+                    String result = new VillageListFormatter().formatElements(markedVillages, extended);
+                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
+                    DSWorkbenchMainFrame.getSingleton().showSuccess(((markedVillages.size() == 1) ? "Ein Dorf " : markedVillages.size() + " Dörfer ") + "als BB-Codes in die Zwischenablage kopiert");
+                } catch (Exception ex) {
+                    logger.error("Failed to copy village from map to clipboard", ex);
+                }
+            } else {
+                DSWorkbenchMainFrame.getSingleton().showSuccess("Keine Dörfer zum Kopieren markiert");
+            }
+        }
+    }
     // <editor-fold defaultstate="collapsed" desc=" Member variables ">
     private static Logger logger = Logger.getLogger("MapCanvas");
     private BufferedImage mBuffer = null;
@@ -165,61 +203,24 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         mVirtualBounds = new Rectangle2D.Double(0.0, 0.0, 0.0, 0.0);
         markedVillages = new LinkedList<Village>();
         KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
-        this.registerKeyboardAction(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (markedVillages != null && !markedVillages.isEmpty()) {
-                    try {
-                        StringBuilder b = new StringBuilder();
-                        for (Village v : markedVillages) {
-                            b.append(v.toString()).append("\n");
-                        }
-
-                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b.toString()), null);
-                        DSWorkbenchMainFrame.getSingleton().showSuccess(((markedVillages.size() == 1) ? "Ein Dorf " : markedVillages.size() + " Dörfer ") + "in die Zwischenablage kopiert");
-                    } catch (Exception ex) {
-                        logger.error("Failed to copy village from map to clipboard", ex);
-                    }
-                } else {
-                    DSWorkbenchMainFrame.getSingleton().showSuccess("Keine Dörfer zum Kopieren markiert");
-                }
-            }
-        }, "Copy", copy, JComponent.WHEN_IN_FOCUSED_WINDOW);
+        this.registerKeyboardAction(this, "Copy", copy, JComponent.WHEN_IN_FOCUSED_WINDOW);
         KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
-        this.registerKeyboardAction(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (markedVillages != null && !markedVillages.isEmpty()) {
-                    try {
-                        boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(MapPanel.this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
-                        String result = new VillageListFormatter().formatElements(markedVillages, extended);
-                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
-                        DSWorkbenchMainFrame.getSingleton().showSuccess(((markedVillages.size() == 1) ? "Ein Dorf " : markedVillages.size() + " Dörfer ") + "als BB-Codes in die Zwischenablage kopiert");
-                    } catch (Exception ex) {
-                        logger.error("Failed to copy village from map to clipboard", ex);
-                    }
-                } else {
-                    DSWorkbenchMainFrame.getSingleton().showSuccess("Keine Dörfer zum Kopieren markiert");
-                }
-            }
-        }, "BBCopy", bbCopy, JComponent.WHEN_IN_FOCUSED_WINDOW);
+        this.registerKeyboardAction(this, "BBCopy", bbCopy, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
         initListeners();
-        if(!GlobalOptions.isMinimal()){
-        new Timer("RepaintTimer", true).schedule(new TimerTask() {
+        if (!GlobalOptions.isMinimal()) {
+            new Timer("RepaintTimer", true).schedule(new TimerTask() {
 
-            @Override
-            public void run() {
-                SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    SwingUtilities.invokeLater(new Runnable() {
 
-                    public void run() {
-                        repaint();
-                    }
-                });
-            }
-        }, 0, 100);
+                        public void run() {
+                            repaint();
+                        }
+                    });
+                }
+            }, 0, 100);
         }
         mScreenSaver = new ScreenshotSaver();
         mScreenSaver.start();
@@ -294,6 +295,26 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
     public void setShiftDown(boolean pValue) {
         shiftDown = pValue;
+
+        if (!shiftDown) {
+            int cursor = getCurrentCursor();
+            if (cursor == ImageManager.CURSOR_TAG) {
+                //tag selected villages
+                if (markedVillages != null || !markedVillages.isEmpty()) {
+                    VillageTagFrame.getSingleton().setLocationRelativeTo(this);
+                    VillageTagFrame.getSingleton().showTagsFrame(markedVillages);
+                }
+            } else if (cursor == ImageManager.CURSOR_NOTE) {
+                //add note for selected villages
+                if (markedVillages != null || !markedVillages.isEmpty()) {
+                    DSWorkbenchNotepad.getSingleton().addNoteForVillages(markedVillages);
+                }
+            }
+            if (markedVillages != null) {
+                markedVillages.clear();
+            }
+        }
+
     }
 
     public List<Village> getMarkedVillages() {
@@ -372,7 +393,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     //DSWorkbenchSelectionFrame.getSingleton().resetView();
                 }
 
-                if (shiftDown && tmpCursor == ImageManager.CURSOR_SELECTION) {
+                if (shiftDown && (tmpCursor == ImageManager.CURSOR_SELECTION || tmpCursor == ImageManager.CURSOR_TAG || tmpCursor == ImageManager.CURSOR_NOTE)) {
                     //add current mouse village if there is one
                     if (v != null) {
                         if (!markedVillages.contains(v)) {
@@ -1345,19 +1366,16 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
         } else if (evt.getSource() == jCurrentToAStarAsAttacker || evt.getSource() == jCurrentToAStarAsDefender) {
             VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(actionMenuVillage, TroopsManager.TROOP_TYPE.OWN);
-            if (own == null) {
-                JOptionPaneHelper.showInformationBox(this, "Keine Truppeninformationen (Eigene) vorhanden", "Information");
-                return;
-            }
+
             Hashtable<String, Double> values = new Hashtable<String, Double>();
             if (evt.getSource() == jCurrentToAStarAsAttacker && own == null) {
-                JOptionPaneHelper.showInformationBox(this, "Keine Truppeninformationen vorhanden", "Information");
+                JOptionPaneHelper.showInformationBox(this, "Keine Truppeninformationen (Eigene) vorhanden", "Information");
                 return;
             }
 
             VillageTroopsHolder inVillage = TroopsManager.getSingleton().getTroopsForVillage(actionMenuVillage, TroopsManager.TROOP_TYPE.IN_VILLAGE);
             if (evt.getSource() == jCurrentToAStarAsDefender && inVillage == null) {
-                JOptionPaneHelper.showInformationBox(this, "Keine Truppeninformationen (im Dorf= vorhanden", "Information");
+                JOptionPaneHelper.showInformationBox(this, "Keine Truppeninformationen (im Dorf) vorhanden", "Information");
                 return;
             }
 

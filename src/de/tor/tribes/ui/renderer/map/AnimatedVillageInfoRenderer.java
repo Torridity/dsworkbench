@@ -7,8 +7,8 @@ package de.tor.tribes.ui.renderer.map;
 import de.tor.tribes.types.Note;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.ImageManager;
-import de.tor.tribes.ui.models.TroopsTableModel;
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.note.NoteManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
@@ -81,7 +81,15 @@ public class AnimatedVillageInfoRenderer {
         int centerX = (int) Math.floor(mCurrentLocation.getCenterX());
         int centerY = (int) Math.floor(mCurrentLocation.getCenterY());
         int halfDiameter = (int) Math.floor(iDiameter / 2.0);
-        if (mVillage != null && (holder = TroopsManager.getSingleton().getTroopsForVillage(mVillage)) != null) {
+
+        String val = GlobalOptions.getProperty("include.support");
+        if (val == null || Boolean.parseBoolean(val)) {
+            holder = TroopsManager.getSingleton().getTroopsForVillage(mVillage);
+        } else {
+            holder = TroopsManager.getSingleton().getTroopsForVillage(mVillage, TroopsManager.TROOP_TYPE.OWN);
+        }
+
+        if (mVillage != null && holder != null) {
             double offValue = holder.getOffValue();
             double defArchValue = holder.getDefArcherValue();
             double defCavValue = holder.getDefCavalryValue();

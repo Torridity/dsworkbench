@@ -14,6 +14,7 @@ import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
@@ -40,6 +41,7 @@ public class FreeForm extends AbstractForm {
     private float toler = 0.5f;
     private boolean closed = false;
 
+    @Override
     public void loadFromXml(Element e) {
         try {
             Element elem = e.getChild("name");
@@ -77,6 +79,7 @@ public class FreeForm extends AbstractForm {
         points = new LinkedList<Point2D.Double>();
     }
 
+    @Override
     public boolean allowsBBExport() {
         return true;
     }
@@ -209,6 +212,7 @@ public class FreeForm extends AbstractForm {
         for (int i = 1; i < points.size(); i++) {
             p.lineTo(points.get(i).x, points.get(i).y);
         }
+
         Rectangle2D r2d = p.getBounds2D();
         return new java.awt.Rectangle((int) r2d.getX(), (int) r2d.getY(), (int) r2d.getWidth(), (int) r2d.getHeight());
     }
@@ -444,6 +448,6 @@ public class FreeForm extends AbstractForm {
      * @param bClosed the bClosed to set
      */
     public void setBClosed(boolean bClosed) {
-        this.closed = closed;
+        this.closed = bClosed;
     }
 }

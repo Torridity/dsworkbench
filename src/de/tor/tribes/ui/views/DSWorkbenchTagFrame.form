@@ -176,7 +176,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
     </Container>
-    <Component class="de.tor.tribes.ui.CapabilityInfoPanel" name="capabilityInfoPanel1">
+    <Component class="de.tor.tribes.ui.components.CapabilityInfoPanel" name="capabilityInfoPanel1">
       <Properties>
         <Property name="copyable" type="boolean" value="false"/>
         <Property name="searchable" type="boolean" value="false"/>

@@ -94,7 +94,7 @@ public class VillageHTMLTooltipGenerator {
         Conquer c = ConquerManager.getSingleton().getConquer(pVillage);
         if (c != null) {
             SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-            res += buildInfoRow("Erobert am:", f.format((long) c.getTimestamp() * 1000), false);
+            res += buildInfoRow("Erobert am:", f.format(c.getTimestamp() * 1000l), false);
             res += buildInfoRow("Zustimmung:", c.getCurrentAcceptance(), false);
         }
 
@@ -227,13 +227,13 @@ public class VillageHTMLTooltipGenerator {
         VillageTroopsHolder onTheWay = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.ON_THE_WAY);
 
         Village current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
-       /* if (inVillage == null && outside == null && onTheWay == null) {//&& (current != null && current.equals(pVillage))) {
-            //we have the active user village but no troops
-//            return "";
-            outside = new VillageTroopsHolder(current, new Date());
-            inVillage = new VillageTroopsHolder(current, new Date());
-            onTheWay = new VillageTroopsHolder(current, new Date());
-            
+        /* if (inVillage == null && outside == null && onTheWay == null) {//&& (current != null && current.equals(pVillage))) {
+        //we have the active user village but no troops
+        //            return "";
+        outside = new VillageTroopsHolder(current, new Date());
+        inVillage = new VillageTroopsHolder(current, new Date());
+        onTheWay = new VillageTroopsHolder(current, new Date());
+        
         }*/
 
         int cnt = 0;

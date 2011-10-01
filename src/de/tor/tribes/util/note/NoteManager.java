@@ -180,12 +180,13 @@ public class NoteManager extends GenericManager<Note> {
         }
         logger.debug("Generating notes export data");
         StringBuilder b = new StringBuilder();
+        b.append("<noteData>\n");
         b.append("<noteSets>\n");
 
         for (String set : pGroupsToExport) {
             try {
                 b.append("<noteSet name=\"").append(URLEncoder.encode(set, "UTF-8")).append("\">\n");
-                List<ManageableType> elements = getAllElements(set);
+                ManageableType[] elements = getAllElements(set).toArray(new ManageableType[getAllElements(set).size()]);
                 b.append("<notes>\n");
 
                 for (ManageableType elem : elements) {
@@ -198,6 +199,7 @@ public class NoteManager extends GenericManager<Note> {
             }
         }
         b.append("</noteSets>\n");
+        b.append("</noteData>\n");
         logger.debug("Export data generated successfully");
         return b.toString();
     }
@@ -225,7 +227,6 @@ public class NoteManager extends GenericManager<Note> {
                 }
             } else {
                 Element dataNode = data.get(0);
-                double version = Double.parseDouble(dataNode.getAttributeValue("version"));
                 for (Element e : (List<Element>) JaxenUtils.getNodes(dataNode, "noteSets/noteSet")) {
                     String setKey = e.getAttributeValue("name");
                     setKey = URLDecoder.decode(setKey, "UTF-8");

@@ -26,6 +26,7 @@ import de.tor.tribes.ui.renderer.TransportCellRenderer;
 import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MouseGestureHandler;
@@ -83,6 +84,7 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
+ * @TODO add "remove transports with too long distance" feature
  * @author Jejkal
  */
 public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame implements ListSelectionListener, ActionListener, ProfileManagerListener {
@@ -90,6 +92,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
     @Override
     public void fireProfilesLoadedEvent() {
         UserProfile[] profiles = ProfileManager.getSingleton().getProfiles(GlobalOptions.getSelectedServer());
+
         DefaultComboBoxModel model = new DefaultComboBoxModel(new Object[]{"Standard"});
         if (profiles != null && profiles.length > 0) {
             for (UserProfile profile : profiles) {
@@ -136,8 +139,9 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         centerPanel = new GenericTestPanel(true);
         jMerchantPanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildComponent(merchantTabbedPane);
+        fireProfilesLoadedEvent();
         buildMenu();
-
+        capabilityInfoPanel1.addActionListener(this);
         merchantTabbedPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
         merchantTabbedPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
         merchantTabbedPane.setBoldActiveTab(true);
@@ -262,7 +266,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         JXTaskPane transferPane = new JXTaskPane();
         transferPane.setTitle("Übertragen");
         JXButton toBrowser = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/att_browser.png")));
-        toBrowser.setToolTipText("<html>Markierte Transporte in den Browser &uuml;bertragen. Im Normalfall werden nur einzelne Transporte &uuml;bertragen. F&uuml;r das &Uuml;bertragen mehrerer Transporte ist zuerst das Klickkonto entsprechend zu f&uuml;llen</html>");
+        toBrowser.setToolTipText("<html>Markierte Transporte in den Browser &uuml;bertragen. Im Normalfall werden nur einzelne Transporte &uuml;bertragen.<br/>F&uuml;r das &Uuml;bertragen mehrerer Transporte ist zuerst das Klickkonto entsprechend zu f&uuml;llen</html>");
         toBrowser.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -298,8 +302,6 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
             }
         });
         transferPane.getContentPane().add(loadTransports);
-
-
 
         JXTaskPane editPane = new JXTaskPane();
         editPane.setTitle("Bearbeiten");
@@ -344,6 +346,19 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         });
         editPane.getContentPane().add(outButton);
 
+        JXButton farmButton = new JXButton(new ImageIcon("./graphics/icons/24x24/res_farm.gif"));
+        farmButton.setPreferredSize(toBrowser.getPreferredSize());
+        farmButton.setMinimumSize(toBrowser.getMinimumSize());
+        farmButton.setMaximumSize(toBrowser.getMaximumSize());
+        farmButton.setToolTipText("Setzt gewählte Einträge mit zu vielen freien Bauenhofplätzen auf 'Empfänger'");
+        farmButton.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                changeDirection(null);
+            }
+        });
+        editPane.getContentPane().add(farmButton);
 
         JXButton unsend = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/att_browser_unsent.png")));
         unsend.setPreferredSize(toBrowser.getPreferredSize());
@@ -358,6 +373,21 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
             }
         });
         editPane.getContentPane().add(unsend);
+
+        JXButton removeByDistance = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/res_remove.png")));
+        removeByDistance.setPreferredSize(toBrowser.getPreferredSize());
+        removeByDistance.setMinimumSize(toBrowser.getMinimumSize());
+        removeByDistance.setMaximumSize(toBrowser.getMaximumSize());
+        removeByDistance.setToolTipText("Transporte mit zu großer Entfernung löschen");
+        removeByDistance.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                removeByDistance();
+            }
+        });
+        editPane.getContentPane().add(removeByDistance);
+
 
         JXButton calculateButton = new JXButton("<html><p align=\"center\">Berechnung<br/>starten</p></html>");//new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/att_validate.png")));
         calculateButton.setToolTipText("Startet die Berechnung möglicher Transporte");
@@ -389,10 +419,32 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
             showInfo(infoPanel, jXInfoLabel, "Keine Einträge ausgewählt");
             return;
         }
+        int maxDiff = -1;
+        if (pDirection == null) {
+            //farm dependent setting
+            String result = JOptionPane.showInputDialog(this, "Ab wieviel freien Bauernhofplätzen soll das Dorf 'Empfänger' werden?", "1000");
+            if (result == null) {
+                return;
+            }
+
+            maxDiff = 1000;
+            try {
+                maxDiff = Integer.parseInt(result);
+            } catch (Exception e) {
+                showInfo(infoPanel, jXInfoLabel, "Kein gültiger Wert eingetragen");
+            }
+        }
 
         for (Integer selectedRow : selectedRows) {
             int row = jMerchantTable.convertRowIndexToModel(selectedRow);
-            merchantInfos.get(row).setDirection(pDirection);
+            VillageMerchantInfo info = merchantInfos.get(row);
+            if (maxDiff == -1) {
+                info.setDirection(pDirection);
+            } else {
+                if (info.getOverallFarm() - info.getAvailableFarm() > maxDiff) {
+                    info.setDirection(VillageMerchantInfo.Direction.INCOMING);
+                }
+            }
         }
         rebuildTable(jMerchantTable, merchantInfos);
         showSuccess(infoPanel, jXInfoLabel, "Handelsrichtung angepasst");
@@ -413,6 +465,49 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         }
 
         showInfo(resultInfoPanel, jXResultInfoLabel, "Transport(e) zurückgesetzt");
+    }
+
+    private void removeByDistance() {
+        if (merchantTabbedPane.getSelectedIndex() != 1) {
+            merchantTabbedPane.setSelectedIndex(1);
+        }
+        if (jResultsTable.getRowCount() == 0) {
+            showInfo(resultInfoPanel, jXResultInfoLabel, "Keine Transporte vorhanden");
+            return;
+        }
+
+
+        DefaultTableModel model = ((DefaultTableModel) jResultsTable.getModel());
+        int maxDist = 0;
+        String result = JOptionPane.showInputDialog(this, "Bitte gib die maximale Entfernung (Felder) für einen Transport ein.", 50);
+        if (result == null) {
+            showInfo(resultInfoPanel, jXResultInfoLabel, "Keine Transporte entfernt");
+            return;
+        } else {
+            try {
+                maxDist = Integer.parseInt(result);
+            } catch (Exception e) {
+                showInfo(resultInfoPanel, jXResultInfoLabel, "Entfernungsangabe ungültig");
+                return;
+            }
+        }
+
+        List<Integer> toRemove = new ArrayList<Integer>();
+        for (int row = 0; row < jResultsTable.getRowCount(); row++) {
+            Village source = (Village) model.getValueAt(jResultsTable.convertRowIndexToModel(row), 0);
+            Village target = (Village) jResultsTable.getValueAt(jResultsTable.convertRowIndexToModel(row), 2);
+            if (DSCalculator.calculateDistance(source, target) > maxDist) {
+                toRemove.add(jResultsTable.convertRowIndexToModel(row));
+            }
+        }
+
+        Collections.sort(toRemove);
+
+        for (int i = toRemove.size() - 1; i >= 0; i--) {
+            ((DefaultTableModel) jResultsTable.getModel()).removeRow(toRemove.get(i));
+        }
+
+        showInfo(resultInfoPanel, jXResultInfoLabel, toRemove.size() + ((toRemove.size() == 1) ? " Transport " : " Transporte ") + "entfernt");
     }
 
     private void transferSelectionToBrowser() {
@@ -499,6 +594,23 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
             showError(infoPanel, jXInfoLabel, "Keine Rohstofflieferanten angegeben");
             return;
         }
+
+        //pre-fill fields with equal distribution
+        int woodSum = 0;
+        int claySum = 0;
+        int ironSum = 0;
+        for (VillageMerchantInfo info : merchantInfos) {
+            woodSum += info.getWoodStock();
+            claySum += info.getClayStock();
+            ironSum += info.getIronStock();
+        }
+        int[] equalRes = new int[]{(int) Math.rint(woodSum / merchantInfos.size()), (int) Math.rint(claySum / merchantInfos.size()), (int) Math.rint(ironSum / merchantInfos.size())};
+        jTargetWood.setText(Integer.toString(equalRes[0]));
+        jTargetClay.setText(Integer.toString(equalRes[1]));
+        jTargetIron.setText(Integer.toString(equalRes[2]));
+        jRemainWood.setText(Integer.toString(equalRes[0]));
+        jRemainClay.setText(Integer.toString(equalRes[1]));
+        jRemainIron.setText(Integer.toString(equalRes[2]));
 
         jCalculationSettingsDialog.pack();
         jCalculationSettingsDialog.setLocationRelativeTo(DSWorkbenchMerchantDistibutor.this);
@@ -682,7 +794,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
         jLabel11 = new javax.swing.JLabel();
         jProfileBox = new javax.swing.JComboBox();
         jMerchantPanel = new javax.swing.JPanel();
-        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
         jAlwaysOnTop = new javax.swing.JCheckBox();
 
         jxMerchantTablePanel.setLayout(new java.awt.BorderLayout());
@@ -1241,7 +1353,10 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
                 jTargetWood.setText(Integer.toString(targetRes[0]));
                 jTargetClay.setText(Integer.toString(targetRes[1]));
                 jTargetIron.setText(Integer.toString(targetRes[2]));
-                remainRes = targetRes;
+                jRemainWood.setText(Integer.toString(targetRes[0]));
+                jRemainClay.setText(Integer.toString(targetRes[1]));
+                jRemainIron.setText(Integer.toString(targetRes[2]));
+                remainRes = new int[]{targetRes[0], targetRes[1], targetRes[2]};
             }
 
             int maxFilling = 95;
@@ -1510,7 +1625,13 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
 
     public static class Transport {
 
+        private Village target = null;
         private List<Resource> resourceTransports;
+
+        public Transport(Village pTarget, List<Resource> pResourceTransports) {
+            target = pTarget;
+            setSingleTransports(pResourceTransports);
+        }
 
         public Transport(List<Resource> pResourceTransports) {
             setSingleTransports(pResourceTransports);
@@ -1701,7 +1822,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
-    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JRadioButton jAdjustingDistribution;
     private javax.swing.JCheckBox jAlwaysOnTop;

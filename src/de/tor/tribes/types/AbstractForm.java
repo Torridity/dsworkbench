@@ -6,9 +6,12 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.ui.MapPanel;
+import de.tor.tribes.ui.renderer.map.RenderSettings;
 import de.tor.tribes.util.BBSupport;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import org.apache.log4j.Logger;
@@ -35,7 +38,6 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
         return STANDARD_TEMPLATE;
     }
 
-    
     public static enum FORM_TYPE {
 
         LINE, ARROW, RECTANGLE, CIRCLE, TEXT, FREEFORM
@@ -151,7 +153,10 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
 
     public abstract java.awt.Rectangle getBounds();
 
+    //@TODO do more accurate selection based on map layer!?
     public ArrayList<Village> getContainedVillages() {
+        RenderSettings r = MapPanel.getSingleton().getMapRenderer().getRenderSettings();
+
         java.awt.Rectangle bounds = getBounds();
         ArrayList<Village> v = new ArrayList<Village>();
         for (int x = bounds.x; x < bounds.x + bounds.width; x++) {

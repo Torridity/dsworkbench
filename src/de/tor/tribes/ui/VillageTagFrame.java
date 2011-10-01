@@ -152,7 +152,7 @@ public class VillageTagFrame extends javax.swing.JFrame implements GenericManage
         jOKButton = new javax.swing.JButton();
         jCancelButton = new javax.swing.JButton();
         jVillageList = new javax.swing.JComboBox();
-        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         setTitle("In Gruppe einfügen");
 
@@ -365,7 +365,7 @@ private void fireVillageSelectionChangedEvent(java.awt.event.ItemEvent evt) {//G
      * @param args the command line arguments
      */
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jCancelButton;
     private javax.swing.JLabel jLabel3;

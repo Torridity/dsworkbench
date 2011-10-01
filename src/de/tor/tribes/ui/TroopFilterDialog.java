@@ -58,15 +58,17 @@ public class TroopFilterDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
 
-
-        KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
-        jFilterList.registerKeyboardAction(new ActionListener() {
+        ActionListener listener = new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 removeSelectedFilters();
             }
-        }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        };
+        capabilityInfoPanel3.addActionListener(listener);
+
+        KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
+        jFilterList.registerKeyboardAction(listener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         jList1.registerKeyboardAction(new ActionListener() {
 
@@ -75,6 +77,7 @@ public class TroopFilterDialog extends javax.swing.JDialog {
                 removeFilterSet();
             }
         }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
         CollapseExpandTrigger trigger = new CollapseExpandTrigger();
         trigger.addMouseListener(new MouseAdapter() {
 
@@ -83,6 +86,10 @@ public class TroopFilterDialog extends javax.swing.JDialog {
                 sourceInfoPanel.setCollapsed(!sourceInfoPanel.isCollapsed());
             }
         });
+
+
+
+
         jPanel7.setBorder(BorderFactory.createLineBorder(Color.lightGray));
         jPanel7.add(trigger, BorderLayout.CENTER);
         reset();
@@ -136,7 +143,7 @@ public class TroopFilterDialog extends javax.swing.JDialog {
         jTextField1 = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList();
-        capabilityInfoPanel3 = new de.tor.tribes.ui.CapabilityInfoPanel();
+        capabilityInfoPanel3 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
         jApplyFiltersButton = new javax.swing.JButton();
         jButton20 = new javax.swing.JButton();
 
@@ -424,16 +431,16 @@ public class TroopFilterDialog extends javax.swing.JDialog {
             jMinValue.setText("" + min);
             jMaxValue.setText("" + max);
         }
-        
-        if(min < 0 && max < 0){
+
+        if (min < 0 && max < 0) {
             jMinValue.setBackground(Color.RED);
             jMaxValue.setBackground(Color.RED);
             return;
-        }else{
+        } else {
             jMinValue.setBackground(Color.WHITE);
             jMaxValue.setBackground(Color.WHITE);
         }
-        
+
         for (int i = 0; i < filterModel.size(); i++) {
             TroopFilterElement listElem = (TroopFilterElement) filterModel.get(i);
             if (listElem.getUnit().equals(unit)) {
@@ -668,7 +675,7 @@ public class TroopFilterDialog extends javax.swing.JDialog {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel3;
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel3;
     private javax.swing.JButton jApplyFiltersButton;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton17;

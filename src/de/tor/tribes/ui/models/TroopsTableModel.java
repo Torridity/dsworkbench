@@ -9,6 +9,8 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.ImageManager;
+import de.tor.tribes.ui.MapPanel;
+import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.text.NumberFormat;
@@ -18,12 +20,15 @@ import java.util.HashMap;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author Jejkal
  */
 public class TroopsTableModel extends AbstractTableModel {
+
+    private static Logger logger = Logger.getLogger("TroopTable");
 
     public enum COL_CONTENT {
 
@@ -320,7 +325,22 @@ public class TroopsTableModel extends AbstractTableModel {
         }
         COL_CONTENT colContent = content.get(pCol);
         VillageTroopsHolder h = TroopsManager.getSingleton().getManagedElement(sSet, pRow);
-        Long val = (Long) pValue;
+        Integer val = null;
+        try {
+            if (pValue == null) {
+                //value was deleted
+                val = 0;
+            } else {
+                val = (Integer) pValue;
+            }
+        } catch (Exception e) {
+            val = null;
+        }
+
+        if (val == null) {
+            logger.error("Failed to set troop amount (Value class is '" + pValue.getClass() + "')");
+            return;
+        }
         switch (colContent) {
             case SPEAR:
                 h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("spear"), val.intValue());
@@ -362,6 +382,7 @@ public class TroopsTableModel extends AbstractTableModel {
                 h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("snob"), val.intValue());
                 break;
         }
-
+        //update troops layer
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TROOP_LAYER);
     }
 }

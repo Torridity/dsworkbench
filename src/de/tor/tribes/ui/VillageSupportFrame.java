@@ -313,7 +313,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
         jSupportTable = new org.jdesktop.swingx.JXTable();
         infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
         jXLabel1 = new org.jdesktop.swingx.JXLabel();
-        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
         jLabel1 = new javax.swing.JLabel();
         jDefOnlyBox = new javax.swing.JCheckBox();
         jLabel2 = new javax.swing.JLabel();
@@ -808,7 +808,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
         return selectedSupports;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private de.tor.tribes.ui.components.DateTimeField dateTimeField;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JTextField jArriveTime;

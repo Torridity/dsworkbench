@@ -35,6 +35,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.TexturePaint;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
@@ -72,13 +73,38 @@ import org.jdesktop.swingx.table.TableColumnExt;
 /**
  * @author Charon
  */
-public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ListSelectionListener {
-
+public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ListSelectionListener, ActionListener {
+    
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getActionCommand().equals("Find")) {
+            BufferedImage back = ImageUtils.createCompatibleBufferedImage(3, 3, BufferedImage.TRANSLUCENT);
+            Graphics g = back.getGraphics();
+            g.setColor(new Color(120, 120, 120, 120));
+            g.fillRect(0, 0, back.getWidth(), back.getHeight());
+            g.setColor(new Color(120, 120, 120));
+            g.drawLine(0, 0, 3, 3);
+            g.dispose();
+            TexturePaint paint = new TexturePaint(back, new Rectangle2D.Double(0, 0, back.getWidth(), back.getHeight()));
+            jxFilterPane.setBackgroundPainter(new MattePainter(paint));
+            DefaultListModel model = new DefaultListModel();
+            
+            for (int i = 0; i < jConquersTable.getColumnCount(); i++) {
+                TableColumnExt col = jConquersTable.getColumnExt(i);
+                if (col.isVisible() && !col.getTitle().equals("Entfernung") && !col.getTitle().equals("Dorfpunkte")) {
+                    model.addElement(col.getTitle());
+                }
+            }
+            jXColumnList.setModel(model);
+            jXColumnList.setSelectedIndex(0);
+            jxFilterPane.setVisible(true);
+        }
+    }
     private static Logger logger = Logger.getLogger("ConquerView");
     private static DSWorkbenchConquersFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
     private PainterHighlighter highlighter = null;
-
+    
     DSWorkbenchConquersFrame() {
         initComponents();
         centerPanel = new GenericTestPanel();
@@ -93,35 +119,17 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         }
         jConquersTable.setModel(new ConquerTableModel());
         jConquersTable.getSelectionModel().addListSelectionListener(DSWorkbenchConquersFrame.this);
+        capabilityInfoPanel1.addActionListener(this);
         jConquersTable.getActionMap().put("find", new AbstractAction() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
-                BufferedImage back = ImageUtils.createCompatibleBufferedImage(3, 3, BufferedImage.TRANSLUCENT);
-                Graphics g = back.getGraphics();
-                g.setColor(new Color(120, 120, 120, 120));
-                g.fillRect(0, 0, back.getWidth(), back.getHeight());
-                g.setColor(new Color(120, 120, 120));
-                g.drawLine(0, 0, 3, 3);
-                g.dispose();
-                TexturePaint paint = new TexturePaint(back, new Rectangle2D.Double(0, 0, back.getWidth(), back.getHeight()));
-                jxFilterPane.setBackgroundPainter(new MattePainter(paint));
-                DefaultListModel model = new DefaultListModel();
-
-                for (int i = 0; i < jConquersTable.getColumnCount(); i++) {
-                    TableColumnExt col = jConquersTable.getColumnExt(i);
-                    if (col.isVisible() && !col.getTitle().equals("Entfernung") && !col.getTitle().equals("Dorfpunkte")) {
-                        model.addElement(col.getTitle());
-                    }
-                }
-                jXColumnList.setModel(model);
-                jXColumnList.setSelectedIndex(0);
-                jxFilterPane.setVisible(true);
+                actionPerformed(new ActionEvent(jConquersTable, 0, "Find"));
             }
         });
-
+        
         jXColumnList.addListSelectionListener(new ListSelectionListener() {
-
+            
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 updateFilter();
@@ -135,71 +143,71 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         setGlassPane(jxFilterPane);
         pack();
     }
-
+    
     @Override
     public void toBack() {
         jConquersFrameAlwaysOnTop.setSelected(false);
         fireConquersFrameAlwaysOnTopEvent(null);
         super.toBack();
     }
-
+    
     public static synchronized DSWorkbenchConquersFrame getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchConquersFrame();
         }
         return SINGLETON;
     }
-
+    
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jConquersFrameAlwaysOnTop.isSelected());
         PropertyHelper.storeTableProperties(jConquersTable, pConfig, getPropertyPrefix());
-
+        
     }
-
+    
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
-
+        
         try {
             jConquersFrameAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
         } catch (Exception e) {
         }
-
+        
         setAlwaysOnTop(jConquersFrameAlwaysOnTop.isSelected());
-
+        
         PropertyHelper.restoreTableProperties(jConquersTable, pConfig, getPropertyPrefix());
     }
-
+    
     public String getPropertyPrefix() {
         return "conquers.view";
     }
-
+    
     private void buildMenu() {
         JXTaskPane transferPane = new JXTaskPane();
         transferPane.setTitle("Übertragen");
-
+        
         JXButton button2 = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/att_browser.png")));
         button2.setToolTipText("Zentriert die markierte Eroberungen im Spiel");
         button2.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 centerVillageInGame();
             }
         });
-
+        
         transferPane.getContentPane().add(button2);
         if (!GlobalOptions.isMinimal()) {
             JXButton centerOnMap = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
             centerOnMap.setToolTipText("Zentriert die markierte Eroberung auf der Hauptkarte");
             centerOnMap.addMouseListener(new MouseAdapter() {
-
+                
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     centerVillageOnMap();
                 }
             });
-
+            
             transferPane.getContentPane().add(centerOnMap);
         }
         centerPanel.setupTaskPane(transferPane);
@@ -237,7 +245,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         jLabel22 = new javax.swing.JLabel();
         jConquersFrameAlwaysOnTop = new javax.swing.JCheckBox();
         jConquerPanel = new org.jdesktop.swingx.JXPanel();
-        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         jConquersPanel.setBackground(new java.awt.Color(239, 235, 223));
         jConquersPanel.setLayout(new java.awt.BorderLayout());
@@ -460,24 +468,24 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
     private void fireConquersFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireConquersFrameAlwaysOnTopEvent
         setAlwaysOnTop(!isAlwaysOnTop());
     }//GEN-LAST:event_fireConquersFrameAlwaysOnTopEvent
-
+    
     private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideInfoEvent
         infoPanel.setCollapsed(true);
 }//GEN-LAST:event_fireHideInfoEvent
-
+    
     private void jButton12fireHideGlassPaneEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton12fireHideGlassPaneEvent
         jxFilterPane.setBackgroundPainter(null);
         jxFilterPane.setVisible(false);
 }//GEN-LAST:event_jButton12fireHideGlassPaneEvent
-
+    
     private void jTextField1fireHighlightEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_jTextField1fireHighlightEvent
         updateFilter();
 }//GEN-LAST:event_jTextField1fireHighlightEvent
-
+    
     private void jFilterRowsfireUpdateFilterEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jFilterRowsfireUpdateFilterEvent
         updateFilter();
 }//GEN-LAST:event_jFilterRowsfireUpdateFilterEvent
-
+    
     private void jFilterCaseSensitivefireUpdateFilterEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jFilterCaseSensitivefireUpdateFilterEvent
         updateFilter();
 }//GEN-LAST:event_jFilterCaseSensitivefireUpdateFilterEvent
@@ -490,7 +498,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
             }
         }
     }
-
+    
     private void updateFilter() {
         if (highlighter != null) {
             jConquersTable.removeHighlighter(highlighter);
@@ -517,7 +525,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
             }
         } else {
             jConquersTable.setRowFilter(new RowFilter<TableModel, Integer>() {
-
+                
                 @Override
                 public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
                     final List<Integer> relevantCols = new LinkedList<Integer>();
@@ -528,7 +536,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                             relevantCols.add(cols.indexOf(col));
                         }
                     }
-
+                    
                     for (Integer col : relevantCols) {
                         if (jFilterCaseSensitive.isSelected()) {
                             if (entry.getStringValue(col).indexOf(jTextField1.getText()) > -1) {
@@ -545,14 +553,14 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
             });
         }
     }
-
+    
     public void showInfo(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(getBackground()));
         jXLabel1.setForeground(Color.BLACK);
         jXLabel1.setText(pMessage);
     }
-
+    
     public void showSuccess(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(Color.GREEN));
@@ -570,7 +578,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         jXLabel1.setForeground(Color.WHITE);
         jXLabel1.setText(pMessage);
     }
-
+    
     private void centerVillageOnMap() {
         List<Conquer> selection = getSelectedConquers();
         if (selection.isEmpty()) {
@@ -578,9 +586,9 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
             return;
         }
         DSWorkbenchMainFrame.getSingleton().centerVillage(selection.get(0).getVillage());
-
+        
     }
-
+    
     private void centerVillageInGame() {
         List<Conquer> selection = getSelectedConquers();
         if (selection.isEmpty()) {
@@ -589,7 +597,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         }
         BrowserCommandSender.centerVillage(selection.get(0).getVillage());
     }
-
+    
     @Override
     public void resetView() {
         ConquerManager.getSingleton().addManagerListener(this);
@@ -611,11 +619,11 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         }
         ((ConquerTableModel) jConquersTable.getModel()).fireTableDataChanged();
     }
-
+    
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
-
+    
     private List<Conquer> getSelectedConquers() {
         final List<Conquer> elements = new LinkedList<Conquer>();
         int[] selectedRows = jConquersTable.getSelectedRows();
@@ -635,7 +643,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-
+        
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -664,10 +672,10 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         DSWorkbenchConquersFrame.getSingleton().resetView();
         DSWorkbenchConquersFrame.getSingleton().dataChangedEvent();
         DSWorkbenchConquersFrame.getSingleton().setVisible(true);
-
+        
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JButton jButton12;
     private org.jdesktop.swingx.JXPanel jConquerPanel;
@@ -700,25 +708,25 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         jConquersTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B), p, p1);
         jConquersTable.setDefaultRenderer(Date.class, new DateCellRenderer());
     }
-
+    
     @Override
     public void dataChangedEvent() {
         dataChangedEvent(null);
     }
-
+    
     @Override
     public void dataChangedEvent(String pGroup) {
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(ConquerManager.getSingleton().getLastUpdate());
         SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-
+        
         jLastUpdateLabel.setText("<html><b>Letzte Aktualisierung:</b> " + f.format(c.getTime()) + "</html>");
-
+        
         int[] conquerStats = ConquerManager.getSingleton().getConquersStats();
         int conquers = ConquerManager.getSingleton().getConquerCount();
         int percGrey = (int) Math.rint(100.0 * (double) conquerStats[0] / (double) conquers);
         int percFriendly = (int) Math.rint(100.0 * (double) conquerStats[1] / (double) conquers);
-
+        
         jGreyConquersLabel.setText("<html><b>Grau-Adelungen:</b> " + conquerStats[0] + " von " + conquers + " (" + percGrey + "%)" + "</html>");
         jFriendlyConquersLabel.setText("<html><b>Aufadelungen:</b> " + conquerStats[1] + " von " + conquers + " (" + percFriendly + "%)" + "</html>");
         ((ConquerTableModel) jConquersTable.getModel()).fireTableDataChanged();
@@ -726,7 +734,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 }
 
 class ColumnEqualsPredicate implements HighlightPredicate {
-
+    
     public static final int ALL = -1;
     private int highlightColumn;
     private int[] testColumn;

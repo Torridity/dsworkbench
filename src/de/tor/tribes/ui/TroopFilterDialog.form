@@ -417,7 +417,7 @@
         </Container>
       </SubComponents>
     </Container>
-    <Component class="de.tor.tribes.ui.CapabilityInfoPanel" name="capabilityInfoPanel3">
+    <Component class="de.tor.tribes.ui.components.CapabilityInfoPanel" name="capabilityInfoPanel3">
       <Properties>
         <Property name="bbSupport" type="boolean" value="false"/>
         <Property name="copyable" type="boolean" value="false"/>

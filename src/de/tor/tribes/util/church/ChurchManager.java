@@ -110,7 +110,9 @@ public class ChurchManager extends GenericManager<Church> {
         logger.debug("Generating churches export data");
 
         String result = "<churches>\n";
-        for (ManageableType t : getAllElements()) {
+        ManageableType[] elements = getAllElements().toArray(new ManageableType[getAllElements().size()]);
+
+        for (ManageableType t : elements) {
             Church c = (Church) t;
             result += c.toXml() + "\n";
         }

@@ -9,6 +9,7 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.test.DummyUserProfile;
 import de.tor.tribes.types.UserProfile;
@@ -45,6 +46,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -54,7 +56,6 @@ import javax.help.CSH;
 import javax.help.HelpBroker;
 import javax.help.HelpSet;
 import javax.help.HelpSetException;
-import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 
 /**Global settings used by almost all components. e.g. WorldData or UI specific objects
@@ -80,6 +81,7 @@ public class GlobalOptions {
     private static boolean internalDataDamaged = false;
     private static UserProfile mSelectedProfile = null;
     public static boolean MINIMAL = false;
+    private static List<DataHolderListener> dataHolderListeners = new ArrayList<DataHolderListener>();
 
     /**Init all managed objects
      * @param pDownloadData TRUE=download the WorldData from the tribes server
@@ -106,6 +108,16 @@ public class GlobalOptions {
 
     public static void setMinimalVersion(boolean pValue) {
         MINIMAL = pValue;
+    }
+
+    public static synchronized void addDataHolderListener(DataHolderListener pListener) {
+        if (!dataHolderListeners.contains(pListener)) {
+            dataHolderListeners.add(pListener);
+        }
+    }
+
+    public static synchronized void removeDataHolderListener(DataHolderListener pListener) {
+        dataHolderListeners.add(pListener);
     }
 
     public static boolean isMinimal() {
@@ -256,6 +268,13 @@ public class GlobalOptions {
         return GLOBAL_PROPERTIES.getProperty(pKey);
     }
 
+    public static void main(String[] args) {
+        if((Boolean)null){
+            System.out.println("OK");
+        }
+    }
+    
+    
     /**Load the default skin
      * @throws Exception If there was an error while loading the default skin
      */
@@ -269,29 +288,46 @@ public class GlobalOptions {
                 && getSelectedProfile() != null
                 && !getSelectedProfile().equals(DummyUserProfile.getSingleton())) {
             logger.debug("Loading markers");
+            fireDataHolderEvent("Lade Markierungen");
             MarkerManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/markers.xml");
             logger.debug("Loading attacks");
+            fireDataHolderEvent("Lade Angriffe");
             AttackManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/attacks.xml");
             logger.debug("Loading tags");
+            fireDataHolderEvent("Lade Gruppen");
             TagManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/tags.xml");
             logger.debug("Loading troops");
+            fireDataHolderEvent("Lade Truppeninformationen");
             TroopsManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/troops.xml");
             logger.debug("Loading forms");
+            fireDataHolderEvent("Lade Zeichnungen");
             FormManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/forms.xml");
             logger.debug("Loading churches");
+            fireDataHolderEvent("Lade Kirchen");
             ChurchManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/churches.xml");
             logger.debug("Loading rois");
+            fireDataHolderEvent("Lade ROIs");
             ROIManager.getSingleton().loadROIsFromFile(getSelectedProfile().getProfileDirectory() + "/rois.xml");
             logger.debug("Loading conquers");
+            fireDataHolderEvent("Lade Eroberungen");
             ConquerManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/conquers.xml");
             logger.debug("Loading notes");
+            fireDataHolderEvent("Lade Notizen");
             NoteManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/notes.xml");
             logger.debug("Loading standard attacks");
+            fireDataHolderEvent("Lade Standardangriffe");
             StandardAttackManager.getSingleton().loadStandardAttacksFromDisk(getSelectedProfile().getProfileDirectory() + "/stdAttacks.xml");
             logger.debug("Loading reports");
+            fireDataHolderEvent("Lade Berichte");
             ReportManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/reports.xml");
             logger.debug("Removing temporary data");
             DataHolder.getSingleton().removeTempData();
+        }
+    }
+
+    private static void fireDataHolderEvent(String pText) {
+        for (DataHolderListener listener : dataHolderListeners.toArray(new DataHolderListener[]{})) {
+            listener.fireDataHolderEvent(pText);
         }
     }
 

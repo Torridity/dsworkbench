@@ -52,7 +52,7 @@ import org.apache.log4j.Logger;
  * @author Jejkal
  */
 public class TroopSplitDialog extends javax.swing.JDialog {
-
+    
     private static Logger logger = Logger.getLogger("TroopSplitDialog");
     private boolean isInitialized = false;
     private Hashtable<UnitHolder, Integer> mSplitAmounts = new Hashtable<UnitHolder, Integer>();
@@ -63,16 +63,20 @@ public class TroopSplitDialog extends javax.swing.JDialog {
     public TroopSplitDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
-        jTroopsPerSplitList.registerKeyboardAction(new ActionListener() {
-
+        
+        ActionListener listener = new ActionListener() {
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 removeSplitEnty();
             }
-        }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        };
+        capabilityInfoPanel3.addActionListener(listener);
+        KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
+        jTroopsPerSplitList.registerKeyboardAction(listener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+     
         jSavedSplitsList.registerKeyboardAction(new ActionListener() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 removeSavedSplit();
@@ -80,7 +84,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         CollapseExpandTrigger trigger = new CollapseExpandTrigger();
         trigger.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 sourceInfoPanel.setCollapsed(!sourceInfoPanel.isCollapsed());
@@ -88,7 +92,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         });
         jPanel7.setBorder(BorderFactory.createLineBorder(Color.lightGray));
         jPanel7.add(trigger, BorderLayout.CENTER);
-
+        
     }
 
     /**Initialize all entries, renderers and reset the entire view*/
@@ -110,7 +114,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
             initialize();
         }
         mSplits.clear();
-
+        
         for (Village v : pVillageList) {
             mSplits.add(new TroopSplit(v));
         }
@@ -118,7 +122,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         updateSplitsList();
         setVisible(true);
     }
-
+    
     public TroopSplit[] getSplits() {
         return mSplits.toArray(new TroopSplit[]{});
     }
@@ -156,7 +160,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         jToleranceSlider = new javax.swing.JSlider();
         jLabel3 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
-        capabilityInfoPanel3 = new de.tor.tribes.ui.CapabilityInfoPanel();
+        capabilityInfoPanel3 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
         jButton2 = new javax.swing.JButton();
         jAcceptButton = new javax.swing.JButton();
 
@@ -440,7 +444,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
             JOptionPaneHelper.showWarningBox(this, "Ungültige Truppenzahl", "Fehler");
             return;
         }
-
+        
         try {
             unit = (UnitHolder) jUnitSelectionBox.getSelectedItem();
             if (unit == null) {
@@ -455,7 +459,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         updateAmountsList();
         saveSplitSets();
     }//GEN-LAST:event_fireAddSplitAmountEvent
-
+    
     private void fireSubmitEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSubmitEvent
         if (evt.getSource() != jAcceptButton) {
             mSplits.clear();
@@ -463,44 +467,44 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         saveSplitSets();
         setVisible(false);
     }//GEN-LAST:event_fireSubmitEvent
-
+    
     private void fireToleranceChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireToleranceChangedEvent
         updateSplitsList();
     }//GEN-LAST:event_fireToleranceChangedEvent
-
+    
     private void jSavedSplitsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jSavedSplitsListValueChanged
         jTextField1.setText((String) jSavedSplitsList.getSelectedValue());
     }//GEN-LAST:event_jSavedSplitsListValueChanged
-
+    
     private void fireSaveSplitSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSaveSplitSetEvent
         String setName = jTextField1.getText();
         DefaultListModel filterModel = (DefaultListModel) jTroopsPerSplitList.getModel();
-
+        
         if (setName == null || setName.length() == 0) {
             JOptionPaneHelper.showInformationBox(this, "Bitte einen Namen für das neue Splitset angeben", "Information");
             return;
         }
-
+        
         if (filterModel.getSize() == 0) {
             JOptionPaneHelper.showInformationBox(this, "Ein Splitset muss mindestens einen Eintrag enthalten", "Information");
             return;
         }
-
+        
         if (splitSets.get(setName) != null) {
             if (JOptionPaneHelper.showQuestionConfirmBox(this, "Das Splitset '" + setName + "' existiert bereits.\nMöchtest du es überschreiben?", "Bestätigung", "Nein", "Ja") != JOptionPane.OK_OPTION) {
                 return;
             }
         }
-
+        
         StringBuilder b = new StringBuilder();
         b.append(setName).append(",");
         Hashtable<UnitHolder, Integer> splits = (Hashtable<UnitHolder, Integer>) mSplitAmounts.clone();
-
+        
         splitSets.put(setName, splits);
         updateSplitSetList();
-
+        
     }//GEN-LAST:event_fireSaveSplitSetEvent
-
+    
     private void fireLoadSplitSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireLoadSplitSetEvent
         String selection = (String) jSavedSplitsList.getSelectedValue();
         if (selection != null) {
@@ -508,7 +512,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
             updateAmountsList();
         }
     }//GEN-LAST:event_fireLoadSplitSetEvent
-
+    
     private void removeSavedSplit() {
         String set = (String) jSavedSplitsList.getSelectedValue();
         if (set != null) {
@@ -516,33 +520,33 @@ public class TroopSplitDialog extends javax.swing.JDialog {
                 return;
             }
         }
-
+        
         splitSets.remove(set);
         saveSplitSets();
         updateSplitSetList();
     }
-
+    
     private void saveSplitSets() {
         SplitSetHelper.saveSplitSets(splitSets);
     }
-
+    
     private void loadSplitSets() {
         splitSets.clear();
         SplitSetHelper.loadSplitSets(splitSets);
         updateSplitSetList();
     }
-
+    
     private void updateSplitSetList() {
         DefaultListModel model = new DefaultListModel();
-
+        
         Enumeration<String> keys = splitSets.keys();
         while (keys.hasMoreElements()) {
             model.addElement(keys.nextElement());
         }
-
+        
         jSavedSplitsList.setModel(model);
     }
-
+    
     private void removeSplitEnty() {
         Object[] selection = jTroopsPerSplitList.getSelectedValues();
         List<UnitHolder> units = new LinkedList<UnitHolder>();
@@ -584,14 +588,14 @@ public class TroopSplitDialog extends javax.swing.JDialog {
 
     /**Internal class for data holding*/
     public static class TroopSplit {
-
+        
         private Village mVillage = null;
         private int iSplitCount = 1;
-
+        
         public TroopSplit(Village pVillage) {
             mVillage = pVillage;
         }
-
+        
         public void update(Hashtable<UnitHolder, Integer> pSplitValues, int pTolerance) {
             if (pSplitValues.isEmpty()) {
                 iSplitCount = 1;
@@ -603,13 +607,13 @@ public class TroopSplitDialog extends javax.swing.JDialog {
                 UnitHolder unitKey = unitKeys.nextElement();
                 Integer splitAmount = pSplitValues.get(unitKey);
                 VillageTroopsHolder ownTroops = TroopsManager.getSingleton().getTroopsForVillage(mVillage, TroopsManager.TROOP_TYPE.OWN);
-
+                
                 if (ownTroops == null) {
                     //do nothing if there are no own troops in the village
                     iSplitCount = 0;
                     return;
                 }
-
+                
                 int amountInVillage = ownTroops.getTroopsOfUnitInVillage(unitKey);
                 int split = amountInVillage / splitAmount;
                 int currentSplitCount = split;
@@ -623,43 +627,43 @@ public class TroopSplitDialog extends javax.swing.JDialog {
             }
             iSplitCount = maxSplitCount;
         }
-
+        
         public Village getVillage() {
             return mVillage;
         }
-
+        
         public int getSplitCount() {
             return iSplitCount;
         }
-
+        
         public String toString() {
             StringBuilder builder = new StringBuilder();
             builder.append(mVillage.toString()).append(" (").append(iSplitCount).append("x)");
             return builder.toString();
         }
     }
-
+    
     public static void main(String[] args) {
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         GlobalOptions.setSelectedServer("de43");
         ProfileManager.getSingleton().loadProfiles();
         GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
         DataHolder.getSingleton().loadData(false);
-
+        
         final TroopSplitDialog dialog = new TroopSplitDialog(null, false);
-
+        
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-
+        
         java.awt.EventQueue.invokeLater(new Runnable() {
-
+            
             public void run() {
                 dialog.setupAndShow(new LinkedList<Village>());
             }
         });
-
+        
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel3;
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel3;
     private javax.swing.JButton jAcceptButton;
     private javax.swing.JTextField jAmountField;
     private javax.swing.JButton jButton1;

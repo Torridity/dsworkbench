@@ -64,24 +64,25 @@ import org.apache.log4j.ConsoleAppender;
  */
 public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         DataHolderListener {
-
+    
     private static Logger logger = Logger.getLogger("SettingsDialog");
     private static DSWorkbenchSettingsDialog SINGLETON = null;
     private boolean updating = false;
     private Proxy webProxy;
     private boolean INITIALIZED = false;
-
+    
     public static synchronized DSWorkbenchSettingsDialog getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchSettingsDialog();
         }
-
+        
         return SINGLETON;
     }
 
     /** Creates new form TribesPlannerStartFrame */
     DSWorkbenchSettingsDialog() {
         initComponents();
+        GlobalOptions.addDataHolderListener(this);
 
         // <editor-fold defaultstate="collapsed" desc=" General Layout ">
 
@@ -93,16 +94,16 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
         // <editor-fold defaultstate="collapsed" desc="Network Setup">
         boolean useProxy = false;
-
+        
         try {
             useProxy = Boolean.parseBoolean(GlobalOptions.getProperty("proxySet"));
         } catch (Exception e) {
             useProxy = false;
         }
-
+        
         jDirectConnectOption.setSelected(!useProxy);
         jProxyConnectOption.setSelected(useProxy);
-
+        
         if (GlobalOptions.getProperty("proxyHost") != null) {
             //System.setProperty("proxyHost", GlobalOptions.getProperty("proxyHost"));
             jProxyHost.setText(GlobalOptions.getProperty("proxyHost"));
@@ -119,12 +120,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 jProxyTypeChooser.setSelectedIndex(0);
             }
         }
-
+        
         if (GlobalOptions.getProperty("proxyUser") != null) {
             //System.setProperty("proxyPort", GlobalOptions.getProperty("proxyPort"));
             jProxyUser.setText(GlobalOptions.getProperty("proxyUser"));
         }
-
+        
         if (GlobalOptions.getProperty("proxyPassword") != null) {
             //System.setProperty("proxyPort", GlobalOptions.getProperty("proxyPort"));
             jProxyPassword.setText(GlobalOptions.getProperty("proxyPassword"));
@@ -143,7 +144,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
             if ((jProxyUser.getText().length() >= 1) && (jProxyPassword.getPassword().length > 1)) {
                 Authenticator.setDefault(new Authenticator() {
-
+                    
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(jProxyUser.getText(), jProxyPassword.getPassword());
@@ -159,7 +160,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         // <editor-fold defaultstate="collapsed" desc="Account Setup">
         String name = GlobalOptions.getProperty("account.name");
         String password = GlobalOptions.getProperty("account.password");
-
+        
         if ((name != null) && (password != null)) {
             jAccountName.setText(name);
             jAccountPassword.setText(password);
@@ -382,7 +383,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             jMaxTroopDensity.setText("650000");
             GlobalOptions.addProperty("max.density.troops", "650000");
         }
-
+        
         try {
             String val = GlobalOptions.getProperty("max.farm.space");
             if (val != null) {
@@ -423,14 +424,14 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.settings", GlobalOptions.getHelpBroker().getHelpSet());
          */ // </editor-fold>
     }
-
+    
     public Proxy getWebProxy() {
         if (webProxy == null) {
             return Proxy.NO_PROXY;
         }
         return webProxy;
     }
-
+    
     public void setupAttackColorTable() {
         jAttackColorTable.invalidate();
         DefaultTableModel model = new javax.swing.table.DefaultTableModel(
@@ -438,19 +439,19 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 new String[]{
                     "Einheit", "Farbe"
                 }) {
-
+            
             Class[] types = new Class[]{
                 String.class, Color.class
             };
             boolean[] canEdit = new boolean[]{
                 false, true
             };
-
+            
             @Override
             public Class getColumnClass(int columnIndex) {
                 return types[columnIndex];
             }
-
+            
             @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit[columnIndex];
@@ -458,13 +459,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         };
         jAttackColorTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
         jAttackColorTable.setDefaultEditor(Color.class, new ColorChooserCellEditor(new ActionListener() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 //not needed
             }
         }));
-
+        
         jAttackColorTable.setModel(model);
         jAttackColorTable.getColumnModel().getColumn(1).setMaxWidth(75);
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
@@ -488,9 +489,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 }
             }
         }
-
+        
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
-
+            
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
@@ -500,13 +501,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 return c;
             }
         };
-
+        
         for (int i = 0; i < jAttackColorTable.getColumnCount(); i++) {
             jAttackColorTable.getColumn(jAttackColorTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
         jAttackColorTable.revalidate();
     }
-
+    
     @Override
     public void setVisible(boolean pValue) {
         if (!INITIALIZED) {
@@ -524,10 +525,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         }
     }
     private boolean isBlocked = false;
-
+    
     public void setBlocking(boolean pValue) {
         isBlocked = pValue;
-
+        
         if (pValue) {
             setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
             jCancelButton.setEnabled(false);
@@ -536,7 +537,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             jCancelButton.setEnabled(true);
         }
     }
-
+    
     public boolean checkSettings() {
         logger.debug("Checking settings");
         checkConnectivity();
@@ -550,11 +551,11 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             JOptionPaneHelper.showWarningBox(this, message, "Warnung");
             return false;
         }
-
+        
         if (!checkAccountSettings()) {
             return false;
         }
-
+        
         return checkTribesAccountSettings();
     }
 
@@ -577,7 +578,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 return false;
             }
         }
-
+        
         boolean result = false;
         String serverUser = GlobalOptions.getProperty("player." + defaultServer);
         if (serverUser == null) {
@@ -611,7 +612,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     logger.error("Failed to get profile for id '" + serverUser + "'");
                 }
             }
-
+            
             if (!result) {
                 //profile was probably removed. Get selected entry
                 UserProfile selection = null;
@@ -2491,7 +2492,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         pack();
     }// </editor-fold>//GEN-END:initComponents
     private void fireUpdateProxySettingsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUpdateProxySettingsEvent
-
+        
         if (jProxyConnectOption.isSelected()) {
             //store properties
             GlobalOptions.addProperty("proxySet", Boolean.toString(true));
@@ -2514,7 +2515,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
             if ((jProxyUser.getText().length() >= 1) && (jProxyPassword.getPassword().length > 1)) {
                 Authenticator.setDefault(new Authenticator() {
-
+                    
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(jProxyUser.getText(), jProxyPassword.getPassword());
@@ -2533,13 +2534,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             Authenticator.setDefault(null);
             webProxy = Proxy.NO_PROXY;
         }
-
+        
         GlobalOptions.saveProperties();
-
+        
         checkConnectivity();
-
+        
         boolean offlineBefore = GlobalOptions.isOfflineMode();
-
+        
         if (!updateServerList()) {
             //fully failed --> remote update failed and no local servers found
             String message = "Serverliste konnte nicht geladen werden.\n"
@@ -2575,12 +2576,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             } else {
                 JOptionPaneHelper.showErrorBox(this, message, title);
             }
-
+            
         }
-
+        
         DSWorkbenchMainFrame.getSingleton().onlineStateChanged();
     }//GEN-LAST:event_fireUpdateProxySettingsEvent
-
+    
     private void fireChangeConnectTypeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeConnectTypeEvent
         jProxyHost.setEnabled(jProxyConnectOption.isSelected());
         jProxyPort.setEnabled(jProxyConnectOption.isSelected());
@@ -2588,7 +2589,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jProxyPassword.setEnabled(jProxyConnectOption.isSelected());
         jProxyTypeChooser.setEnabled(jProxyConnectOption.isSelected());
     }//GEN-LAST:event_fireChangeConnectTypeEvent
-
+    
     private void fireSelectServerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectServerEvent
         if (!jSelectServerButton.isEnabled() || jServerList.getSelectedItem() == null) {
             return;
@@ -2599,7 +2600,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         String selectedServer = (String) jServerList.getSelectedItem();
         GlobalOptions.addProperty("default.server", selectedServer);
         GlobalOptions.saveProperties();
-
+        
         GlobalOptions.setSelectedServer(selectedServer);
         updating = true;
         jSelectServerButton.setEnabled(false);
@@ -2612,13 +2613,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jNewProfileButton.setEnabled(false);
         jModifyProfileButton.setEnabled(false);
         jDeleteProfileButton.setEnabled(false);
-
+        
         jProfileBox.setModel(new DefaultComboBoxModel(new Object[]{"Lade..."}));
         jStatusArea.setText("");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
+        
         Thread t = new Thread(new Runnable() {
-
+            
             @Override
             public void run() {
                 try {
@@ -2634,20 +2635,20 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         t.setDaemon(true);
         t.start();
 }//GEN-LAST:event_fireSelectServerEvent
-
+    
     private void fireCloseEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCloseEvent
         if (!jCancelButton.isEnabled()) {
             return;
         }
-
+        
         if (!checkTribesAccountSettings()) {
             return;
         }
-
+        
         DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
         setVisible(false);
     }//GEN-LAST:event_fireCloseEvent
-
+    
     private void fireOkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireOkEvent
         if (!jOKButton.isEnabled()) {
             return;
@@ -2664,10 +2665,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 JOptionPaneHelper.showWarningBox(this, "Der Spieler des gewählten Profils existiert nicht mehr.\nBitte ein anderes Profil wählen. ", "Warnung");
                 return;
             }
-
+            
             logger.debug("Setting default profile for server '" + GlobalOptions.getSelectedServer() + "' to " + selectedProfile.getTribeName());
             UserProfile formerProfile = GlobalOptions.getSelectedProfile();
-
+            
             if (formerProfile.getProfileId() != selectedProfile.getProfileId()) {
                 logger.info("Writing user data for former profile");
                 GlobalOptions.saveUserData();
@@ -2721,14 +2722,14 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
         MinimapPanel.getSingleton().redraw();
     }//GEN-LAST:event_fireOkEvent
-
+    
 private void fireCreateAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateAccountEvent
     if (!jCreateAccountButton.isEnabled()) {
         return;
     }
     jCreateAccountDialog.setVisible(true);
 }//GEN-LAST:event_fireCreateAccountEvent
-
+    
 private void fireLoginIntoAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireLoginIntoAccountEvent
     if (GlobalOptions.isOfflineMode()) {
         JOptionPaneHelper.showInformationBox(this, "Du befindest dich im Offline Modus.\n"
@@ -2757,7 +2758,7 @@ private void fireLoginIntoAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         }
     }
 }//GEN-LAST:event_fireLoginIntoAccountEvent
-
+    
 private void fireClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireClosingEvent
     fireCloseEvent(null);
 }//GEN-LAST:event_fireClosingEvent
@@ -2767,33 +2768,33 @@ private void fireRegisterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     String user = jRegistrationAccountName.getText();
     String password = new String(jRegistrationPassword.getPassword());
     String password2 = new String(jRegistrationPassword2.getPassword());
-
+    
     if ((user.length() < 3) || (password.length() < 3)) {
         JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Accountname und Passwort müssen mindestens 3 Zeichen lang sein.", "Fehler");
         return;
     }
-
+    
     if (user.length() > 20) {
         JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Der Accountname darf höchstens 20 Zeichen lang sein.", "Fehler");
         return;
     }
-
+    
     if (!password.equals(password2)) {
         JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Die eingegebenen Passwörter unterscheiden sich.\nBitte überprüfe deine Eingabe.", "Fehler");
         return;
     }
-
+    
     int ret = DatabaseInterface.addUser(user, password);
     switch (ret) {
         case DatabaseInterface.ID_DATABASE_CONNECTION_FAILED: {
             JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Fehler beim Verbinden mit der Datenbank.\nBitte versuch es in Kürze noch einmal.", "Fehler");
             break;
-
+            
         }
         case DatabaseInterface.ID_WEB_CONNECTION_FAILED: {
             JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Es konnte keine Verbindung mit dem Server hergestellt werden.\nBitte überprüfe die Netzwerkeinstellungen und versuch es in Kürze noch einmal.", "Fehler");
             break;
-
+            
         }
         case DatabaseInterface.ID_USER_ALREADY_EXIST: {
             JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Es existiert bereits ein Benutzer mit dem angegebenen Namen.\nBitte wähle einen anderen Namen.", "Fehler");
@@ -2817,7 +2818,7 @@ private void fireRegisterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         }
     }
 }//GEN-LAST:event_fireRegisterEvent
-
+    
 private void fireCancelRegistrationEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCancelRegistrationEvent
     jCreateAccountDialog.setVisible(false);
 }//GEN-LAST:event_fireCancelRegistrationEvent
@@ -2834,7 +2835,7 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     if (!jSelectServerButton.isEnabled()) {
         return;
     }
-
+    
     if (jServerList.getSelectedItem() == null) {
         return;
     }
@@ -2884,7 +2885,7 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     GlobalOptions.setSelectedServer(selectedServer);
     GlobalOptions.addProperty("default.server", selectedServer);
     GlobalOptions.saveProperties();
-
+    
     updating = true;
     jSelectServerButton.setEnabled(false);
     jDownloadDataButton.setEnabled(false);
@@ -2902,7 +2903,7 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 
     //clear tribes model due to data is cleared at reload
     Thread t = new Thread(new Runnable() {
-
+        
         @Override
         public void run() {
             try {
@@ -2914,7 +2915,7 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
             }
         }
     });
-
+    
     logger.debug("Starting update thread");
     t.setDaemon(true);
     t.start();
@@ -2924,13 +2925,13 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 private void fireChangeShowAttackMovementEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireChangeShowAttackMovementEvent
     GlobalOptions.addProperty("attack.movement", Boolean.toString(jShowAttackMovementBox.isSelected()));
 }//GEN-LAST:event_fireChangeShowAttackMovementEvent
-
+    
 private void fireChangeMarkOwnVillagesOnMinimapEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireChangeMarkOwnVillagesOnMinimapEvent
     GlobalOptions.addProperty("mark.villages.on.minimap", Boolean.toString(jMarkOwnVillagesOnMinimapBox.isSelected()));
     MinimapPanel.getSingleton().resetBuffer();
     MinimapPanel.getSingleton().redraw();
 }//GEN-LAST:event_fireChangeMarkOwnVillagesOnMinimapEvent
-
+    
 private void fireStandardMarkChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireStandardMarkChangedEvent
     if (evt.getStateChange() == ItemEvent.SELECTED) {
         int idx = jDefaultMarkBox.getSelectedIndex();
@@ -2940,23 +2941,23 @@ private void fireStandardMarkChangedEvent(java.awt.event.ItemEvent evt) {//GEN-F
         GlobalOptions.addProperty("default.mark", Integer.toString(idx));
     }
 }//GEN-LAST:event_fireStandardMarkChangedEvent
-
+    
 private void fireDrawAttacksByDefaultChangedEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireDrawAttacksByDefaultChangedEvent
     GlobalOptions.addProperty("draw.attacks.by.default", Boolean.toString(jDrawAttacksByDefaultBox.isSelected()));
 }//GEN-LAST:event_fireDrawAttacksByDefaultChangedEvent
-
+    
 private void fireCheckForUpdatesEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireCheckForUpdatesEvent
     GlobalOptions.addProperty("check.updates.on.startup", Boolean.toString(jCheckForUpdatesBox.isSelected()));
 }//GEN-LAST:event_fireCheckForUpdatesEvent
-
+    
 private void fireChangeShowSectorsEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireChangeShowSectorsEvent
     GlobalOptions.addProperty("show.sectors", Boolean.toString(jShowSectorsBox.isSelected()));
 }//GEN-LAST:event_fireChangeShowSectorsEvent
-
+    
 private void fireShowBarbarianChangedEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowBarbarianChangedEvent
     GlobalOptions.addProperty("show.barbarian", Boolean.toString(jShowBarbarianBox.isSelected()));
 }//GEN-LAST:event_fireShowBarbarianChangedEvent
-
+    
 private void fireChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangePasswordEvent
     if (!jChangePasswordButton.isEnabled()) {
         return;
@@ -2967,7 +2968,7 @@ private void fireChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     jNewPassword2.setText("");
     jChangePasswordDialog.setVisible(true);
 }//GEN-LAST:event_fireChangePasswordEvent
-
+    
 private void fireDoChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDoChangePasswordEvent
     String oldPass = new String(jOldPassword.getPassword());
     String newPass = new String(jNewPassword.getPassword());
@@ -2977,24 +2978,24 @@ private void fireDoChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         JOptionPaneHelper.showInformationBox(jCreateAccountDialog, "Das neue Passwort muss mindestens 3 Zeichen lang sein.", "Fehler");
         return;
     }
-
+    
     if (!newPass.equals(newPass2)) {
         JOptionPaneHelper.showWarningBox(jCreateAccountDialog, "Die eingegebenen Passwörter unterscheiden sich.\nBitte überprüfe deine Eingabe.", "Warnung");
         return;
     }
-
+    
     int ret = DatabaseInterface.changePassword(user, oldPass, newPass);
-
+    
     switch (ret) {
         case DatabaseInterface.ID_DATABASE_CONNECTION_FAILED: {
             JOptionPaneHelper.showErrorBox(jChangePasswordDialog, "Fehler beim Verbinden mit der Datenbank.\nBitte versuch es in Kürze noch einmal.", "Fehler");
             break;
-
+            
         }
         case DatabaseInterface.ID_WEB_CONNECTION_FAILED: {
             JOptionPaneHelper.showErrorBox(jChangePasswordDialog, "Es konnte keine Verbindung mit dem Server hergestellt werden.\nBitte überprüfe die Netzwerkeinstellungen und versuch es in Kürze noch einmal.", "Fehler");
             break;
-
+            
         }
         case DatabaseInterface.ID_QUERY_RETURNED_UNEXPECTED_RESULT: {
             JOptionPaneHelper.showErrorBox(jChangePasswordDialog, "Das Passwort konnte nicht geändert werden.\nBitte wende dich an den Entwickler.", "Fehler");
@@ -3016,13 +3017,13 @@ private void fireDoChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             jChangePasswordDialog.setVisible(false);
         }
     }
-
+    
 }//GEN-LAST:event_fireDoChangePasswordEvent
-
+    
 private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCancelChangePasswordEvent
     jChangePasswordDialog.setVisible(false);
 }//GEN-LAST:event_fireCancelChangePasswordEvent
-
+    
 private void fireAcceptDeffStrengthEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAcceptDeffStrengthEvent
     if (evt.getSource() == jDeffStrengthOKButton) {
         try {
@@ -3049,15 +3050,15 @@ private void fireAcceptDeffStrengthEvent(java.awt.event.MouseEvent evt) {//GEN-F
             return;
         }
     }
-
+    
     jTroopDensitySelectionDialog.setVisible(false);
 }//GEN-LAST:event_fireAcceptDeffStrengthEvent
-
+    
 private void fireSelectTroopsDensityEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectTroopsDensityEvent
     jTroopDensitySelectionDialog.setLocationRelativeTo(this);
     jTroopDensitySelectionDialog.setVisible(true);
 }//GEN-LAST:event_fireSelectTroopsDensityEvent
-
+    
 private void fireSelectBrowserEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectBrowserEvent
     if (!jButton1.isEnabled()) {
         return;
@@ -3066,7 +3067,7 @@ private void fireSelectBrowserEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     if (dir == null) {
         dir = ".";
     }
-
+    
     JFileChooser chooser = null;
     try {
         chooser = new JFileChooser(dir);
@@ -3076,14 +3077,14 @@ private void fireSelectBrowserEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         return;
     }
     chooser.setDialogTitle("Browser auswählen...");
-
+    
     chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
-
+        
         @Override
         public boolean accept(File f) {
             return true;
         }
-
+        
         @Override
         public String getDescription() {
             return "*.*";
@@ -3092,8 +3093,8 @@ private void fireSelectBrowserEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     int ret = chooser.showSaveDialog(this);
     if (ret == JFileChooser.APPROVE_OPTION) {
         File f = chooser.getSelectedFile();
-
-
+        
+        
         if (f != null && f.canExecute()) {
             try {
                 jBrowserPath.setText(f.getCanonicalPath());
@@ -3110,9 +3111,9 @@ private void fireSelectBrowserEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             JOptionPaneHelper.showErrorBox(this, "Die ausgewählte Datei scheint kein gültiges Programm zu sein.", "Fehler");
         }
     }
-
+    
 }//GEN-LAST:event_fireSelectBrowserEvent
-
+    
 private void fireChangeDefaultBrowserEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeDefaultBrowserEvent
     boolean value = jUseStandardBrowser.isSelected();
     GlobalOptions.addProperty("default.browser", (value) ? "" : jBrowserPath.getText());
@@ -3120,7 +3121,7 @@ private void fireChangeDefaultBrowserEvent(java.awt.event.ItemEvent evt) {//GEN-
     jBrowserPath.setEnabled(!value);
     jButton1.setEnabled(!value);
 }//GEN-LAST:event_fireChangeDefaultBrowserEvent
-
+    
 private void fireSelectTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectTemplateEvent
     String dir = null;
     int templateID = -1;
@@ -3141,7 +3142,7 @@ private void fireSelectTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     if (dir == null) {
         dir = ".";
     }
-
+    
     JFileChooser chooser = null;
     try {
         chooser = new JFileChooser(dir);
@@ -3151,14 +3152,14 @@ private void fireSelectTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
         return;
     }
     chooser.setDialogTitle("Template auswählen...");
-
+    
     chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
-
+        
         @Override
         public boolean accept(File f) {
             return true;
         }
-
+        
         @Override
         public String getDescription() {
             return "*.tmpl";
@@ -3191,9 +3192,9 @@ private void fireSelectTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
         AttackPlanHTMLExporter.loadCustomTemplate();
     }
 }//GEN-LAST:event_fireSelectTemplateEvent
-
+    
 private void fireRestoreTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRestoreTemplateEvent
-
+    
     if (evt.getSource() == jRestoreHeaderButton) {
         jHeaderPath.setText("<Standard>");
         GlobalOptions.removeProperty("attack.template.header");
@@ -3206,13 +3207,13 @@ private void fireRestoreTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     }
     AttackPlanHTMLExporter.loadCustomTemplate();
 }//GEN-LAST:event_fireRestoreTemplateEvent
-
+    
 private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDownloadLiveDataEvent
-
+    
     if (!jDownloadLiveDataButton.isEnabled()) {
         return;
     }
-
+    
     if (jServerList.getSelectedItem() == null) {
         return;
     }
@@ -3244,7 +3245,7 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     GlobalOptions.setSelectedServer(selectedServer);
     GlobalOptions.addProperty("default.server", selectedServer);
     GlobalOptions.saveProperties();
-
+    
     updating = true;
     jSelectServerButton.setEnabled(false);
     jDownloadDataButton.setEnabled(false);
@@ -3259,9 +3260,9 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     jProfileBox.setModel(new DefaultComboBoxModel(new Object[]{"Lade..."}));
     jStatusArea.setText("");
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
+    
     Thread t = new Thread(new Runnable() {
-
+        
         @Override
         public void run() {
             try {
@@ -3273,14 +3274,13 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             }
         }
     });
-
+    
     logger.debug("Starting update thread");
     t.setDaemon(true);
     t.start();
 }//GEN-LAST:event_fireDownloadLiveDataEvent
-
+    
 private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireProfileActionEvent
-
     if (evt.getSource() == jNewProfileButton) {
         DSWorkbenchProfileDialog.getSingleton().setLocationRelativeTo(this);
         DSWorkbenchProfileDialog.getSingleton().showAddProfileDialog();
@@ -3306,16 +3306,16 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     }
     updateProfileList();
 }//GEN-LAST:event_fireProfileActionEvent
-
+    
 private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeLookAndFeelEvent
     if (jLnFBox.getSelectedIndex() == 0) {
         GlobalOptions.addProperty("look.and.feel", "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
     } else {
         GlobalOptions.addProperty("look.and.feel", UIManager.getSystemLookAndFeelClassName());
     }
-
+    
     JOptionPaneHelper.showInformationBox(DSWorkbenchSettingsDialog.this, "Für die Änderung des Look&Feel ist ein Neustart von DS Workbench erforderlich.", "Neustart erforderlich");
-
+    
 }//GEN-LAST:event_fireChangeLookAndFeelEvent
 
     // </editor-fold>
@@ -3339,16 +3339,16 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
             //get local list in offline mode
             servers = ServerManager.getLocalServers();
         }
-
+        
         if (servers.length < 1) {
             logger.error("Failed to get server list and no locally stored server found");
             jServerList.setModel(new DefaultComboBoxModel(new Object[]{"Keine Server gefunden"}));
             jProfileBox.setModel(new DefaultComboBoxModel(new Object[]{"Keine Profile gefunden"}));
             return false;
         }
-
+        
         Arrays.sort(servers, new Comparator<String>() {
-
+            
             @Override
             public int compare(String o1, String o2) {
                 if (o1.length() < o2.length()) {
@@ -3359,10 +3359,10 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
                 return o1.compareTo(o2);
             }
         });
-
+        
         DefaultComboBoxModel model = new DefaultComboBoxModel(servers);
         jServerList.setModel(model);
-
+        
         if (GlobalOptions.getProperty("default.server") != null) {
             if (model.getIndexOf(GlobalOptions.getProperty("default.server")) != -1) {
                 jServerList.setSelectedItem(GlobalOptions.getProperty("default.server"));
@@ -3375,7 +3375,7 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
         }
         return true;
     }
-
+    
     private void updateProfileList() {
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         UserProfile[] profiles = ProfileManager.getSingleton().getProfiles(GlobalOptions.getProperty("default.server"));
@@ -3384,16 +3384,19 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
         } else {
             model = new DefaultComboBoxModel(new Object[]{"Kein Profil vorhanden"});
         }
-
+        
         long profileId = -1;
-        try {
-            profileId = Long.parseLong(GlobalOptions.getProperty("player." + GlobalOptions.getProperty("default.server")));
-        } catch (Exception e) {
+        if (GlobalOptions.getSelectedProfile() != null) {
+            profileId = GlobalOptions.getSelectedProfile().getProfileId();
+        } else {
+            try {
+                profileId = Long.parseLong(GlobalOptions.getProperty("player." + GlobalOptions.getProperty("default.server")));
+            } catch (Exception e) {
+            }
         }
         jProfileBox.setModel(model);
         if (profileId != -1) {
-            //model.addElement(GlobalOptions.getProperty("player." + GlobalOptions.getProperty("default.server")));
-
+            
             for (UserProfile profile : profiles) {
                 if (profile.getProfileId() == profileId) {
                     jProfileBox.setSelectedItem(profile);
@@ -3429,7 +3432,7 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
             String message = "Bitte überprüfe die Spieler-/Servereinstellungen und schließe die Einstellungen mit OK.\n";
             message += "Möglicherweise wurde noch kein Server oder kein Spieler ausgewählt.\n";
             message += "Diese Einstellungen sind für einen korrekten Ablauf zwingend notwendig.";
-
+            
             if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Warnung", "Beenden", "Korrigieren") == JOptionPane.NO_OPTION) {
                 logger.error("Player/Server settings incorrect. User requested application to terminate");
                 System.exit(1);
@@ -3445,7 +3448,7 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
         if (!GlobalOptions.isOfflineMode()) {
             String name = GlobalOptions.getProperty("account.name");
             String password = GlobalOptions.getProperty("account.password");
-
+            
             boolean noValues = false;
             if (name == null) {
                 name = jAccountName.getText();
@@ -3500,7 +3503,7 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
             }
         } else {
             logger.warn("DS Workbench is in offline mode. Account checking not possible.");
-
+            
             if (JOptionPaneHelper.showWarningConfirmBox(this, "Du befindest dich im Offline-Modus.\n"
                     + "Eine Accountüberprüfung ist daher nicht möglich. Solange dein Account nicht überprüft ist, "
                     + "stehen dir Online-Funktionen nicht zur Verfügung.\n"
@@ -3511,7 +3514,7 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
         }
         return true;
     }
-
+    
     @Override
     public void fireDataHolderEvent(String pMessage) {
         SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");
@@ -3526,7 +3529,7 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
         } catch (Throwable t) {
         }
     }
-
+    
     @Override
     public void fireDataLoadedEvent(boolean pSuccess) {
         if (pSuccess) {
@@ -3539,7 +3542,7 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
                 UserProfile active = null;
                 if (profiles != null && profiles.length > 0) {
                     model = new DefaultComboBoxModel(profiles);
-
+                    
                     jProfileBox.setModel(model);
                     long profileId = -1;
                     try {
@@ -3577,9 +3580,9 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
             logger.info("Loading user data");
             GlobalOptions.loadUserData();
         }
-
+        
         updating = false;
-
+        
         jSelectServerButton.setEnabled(true);
         jDownloadDataButton.setEnabled(true);
         jCreateAccountButton.setEnabled(true);
@@ -3594,7 +3597,7 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
         jModifyProfileButton.setEnabled(true);
         jDeleteProfileButton.setEnabled(true);
     }
-
+    
     public static void main(String[] args) {
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         try {

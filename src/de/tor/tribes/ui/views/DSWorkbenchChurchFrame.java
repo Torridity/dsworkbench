@@ -69,12 +69,12 @@ import org.jdesktop.swingx.table.TableColumnExt;
  * @author Charon
  */
 public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ListSelectionListener {
-
+    
     @Override
     public void dataChangedEvent() {
         dataChangedEvent(null);
     }
-
+    
     @Override
     public void dataChangedEvent(String pGroup) {
         ((ChurchTableModel) jChurchTable.getModel()).fireTableDataChanged();
@@ -82,7 +82,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     private static Logger logger = Logger.getLogger("ChurchView");
     private static DSWorkbenchChurchFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
-
+    
     public static DSWorkbenchChurchFrame getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchChurchFrame();
@@ -97,22 +97,24 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         jChurchPanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildComponent(jXPanel1);
         buildMenu();
-
+        
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
-        jChurchTable.registerKeyboardAction(new ActionListener() {
-
+        ActionListener listener = new ActionListener() {
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 deleteSelection();
             }
-        }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        };
+        capabilityInfoPanel1.addActionListener(listener);
+        jChurchTable.registerKeyboardAction(listener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         try {
             jChurchFrameAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("church.frame.alwaysOnTop")));
             setAlwaysOnTop(jChurchFrameAlwaysOnTop.isSelected());
         } catch (Exception e) {
             //setting not available
         }
-
+        
         jChurchTable.setModel(new ChurchTableModel());
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         if (!Constants.DEBUG) {
@@ -122,35 +124,35 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         jChurchTable.getSelectionModel().addListSelectionListener(DSWorkbenchChurchFrame.this);
         pack();
     }
-
+    
     @Override
     public void toBack() {
         jChurchFrameAlwaysOnTop.setSelected(false);
         fireChurchFrameOnTopEvent(null);
         super.toBack();
     }
-
+    
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jChurchFrameAlwaysOnTop.isSelected());
-
+        
         PropertyHelper.storeTableProperties(jChurchTable, pConfig, getPropertyPrefix());
-
+        
     }
-
+    
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
-
+        
         try {
             jChurchFrameAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
         } catch (Exception e) {
         }
-
+        
         setAlwaysOnTop(jChurchFrameAlwaysOnTop.isSelected());
-
+        
         PropertyHelper.restoreTableProperties(jChurchTable, pConfig, getPropertyPrefix());
     }
-
+    
     public String getPropertyPrefix() {
         return "church.view";
     }
@@ -171,7 +173,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         jScrollPane2 = new javax.swing.JScrollPane();
         jChurchPanel = new org.jdesktop.swingx.JXPanel();
         jChurchFrameAlwaysOnTop = new javax.swing.JCheckBox();
-        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         jXPanel1.setLayout(new java.awt.BorderLayout());
 
@@ -250,41 +252,41 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     private void fireChurchFrameOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireChurchFrameOnTopEvent
         setAlwaysOnTop(!isAlwaysOnTop());
     }//GEN-LAST:event_fireChurchFrameOnTopEvent
-
+    
     private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXLabel1fireHideInfoEvent
         infoPanel.setCollapsed(true);
 }//GEN-LAST:event_jXLabel1fireHideInfoEvent
-
+    
     private void buildMenu() {
         JXTaskPane transferPane = new JXTaskPane();
         transferPane.setTitle("Übertragen");
         JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/center_ingame.png")));
         transferVillageList.setToolTipText("Zentriert das Kirchendorf im Spiel");
         transferVillageList.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 centerChurchInGame();
             }
         });
         transferPane.getContentPane().add(transferVillageList);
-
+        
         if (!GlobalOptions.isMinimal()) {
             JXButton button = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
             button.setToolTipText("Zentriert das Kirchendorf auf der Hauptkarte");
             button.addMouseListener(new MouseAdapter() {
-
+                
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     centerChurchVillage();
                 }
             });
-
+            
             transferPane.getContentPane().add(button);
         }
         centerPanel.setupTaskPane(transferPane);
     }
-
+    
     private Village getSelectedCurch() {
         int row = jChurchTable.getSelectedRow();
         if (row >= 0) {
@@ -296,7 +298,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         }
         return null;
     }
-
+    
     private void centerChurchVillage() {
         Village v = getSelectedCurch();
         if (v != null) {
@@ -305,7 +307,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             showInfo("Keine Kirche gewählt");
         }
     }
-
+    
     private void centerChurchInGame() {
         Village v = getSelectedCurch();
         if (v != null) {
@@ -314,7 +316,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             showInfo("Keine Kirche gewählt");
         }
     }
-
+    
     @Override
     public void valueChanged(ListSelectionEvent e) {
         if (e.getValueIsAdjusting()) {
@@ -324,21 +326,21 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             }
         }
     }
-
+    
     public void showInfo(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(getBackground()));
         jXLabel1.setForeground(Color.BLACK);
         jXLabel1.setText(pMessage);
     }
-
+    
     public void showSuccess(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(Color.GREEN));
         jXLabel1.setForeground(Color.BLACK);
         jXLabel1.setText(pMessage);
     }
-
+    
     private void deleteSelection() {
         int[] rows = jChurchTable.getSelectedRows();
         if (rows.length == 0) {
@@ -361,7 +363,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             showSuccess(toRemove.size() + ((toRemove.size() == 1) ? " Kirche gelöscht" : " Kirchen gelöscht"));
         }
     }
-
+    
     @Override
     public void resetView() {
         ChurchManager.getSingleton().addManagerListener(this);
@@ -374,10 +376,10 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             columns.setMaxWidth(80);
             columns.setWidth(80);
         }
-
+        
         ((ChurchTableModel) jChurchTable.getModel()).fireTableDataChanged();
     }
-
+    
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
@@ -396,13 +398,13 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         for (int i = 0; i < 50; i++) {
             ChurchManager.getSingleton().addChurch(new DummyVillage((short) i, (short) i), 2);
         }
-
+        
         DSWorkbenchChurchFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         DSWorkbenchChurchFrame.getSingleton().setVisible(true);
-
+        
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JCheckBox jChurchFrameAlwaysOnTop;
     private org.jdesktop.swingx.JXPanel jChurchPanel;
@@ -415,7 +417,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     static {
         HighlightPredicate.ColumnHighlightPredicate colu = new HighlightPredicate.ColumnHighlightPredicate(0, 1, 2);
         jChurchTable.setHighlighters(new CompoundHighlighter(colu, HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B)));
-
+        
         jChurchTable.setColumnControlVisible(true);
         jChurchTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
         jChurchTable.setDefaultEditor(Integer.class, new ChurchLevelCellEditor());

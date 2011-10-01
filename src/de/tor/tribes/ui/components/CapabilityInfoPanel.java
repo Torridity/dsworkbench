@@ -8,7 +8,11 @@
  *
  * Created on Apr 23, 2011, 11:04:01 PM
  */
-package de.tor.tribes.ui;
+package de.tor.tribes.ui.components;
+
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  *
@@ -21,10 +25,21 @@ public class CapabilityInfoPanel extends javax.swing.JPanel {
     private boolean pastable = true;
     private boolean deletable = true;
     private boolean bbSupport = true;
+    private ActionListener actionListener = null;
+    private Component source = null;
 
     /** Creates new form CapabilityInfoPanel */
     public CapabilityInfoPanel() {
         initComponents();
+    }
+
+    public void addActionListener(ActionListener pActionListener) {
+        addActionListener(pActionListener, null);
+    }
+
+    public void addActionListener(ActionListener pActionListener, Component pSource) {
+        actionListener = pActionListener;
+        source = pSource;
     }
 
     /** This method is called from within the constructor to
@@ -47,24 +62,79 @@ public class CapabilityInfoPanel extends javax.swing.JPanel {
 
         jCopy.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_copy.png"))); // NOI18N
         jCopy.setToolTipText("<html><b>Kopieren/Ausschneiden von Eintr&auml;gen per STRG+C bzw. STRG+X</b><br/>In einigen Ansichten werden Eintr&auml;ge so kopiert,<br/>dass sie in genau diese oder eine vergleichbare Ansicht wieder eingef&uuml;gt werden k&ouml;nnen.<br/>\nIn anderen Ansichten werden Dorfkoordinaten kopiert,<br/>die an verschiedenen anderen Stellen aus der Zwischenablage gelesen werden k&ouml;nnen</html>");
+        jCopy.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireCopyAction(evt);
+            }
+        });
         add(jCopy);
 
         jPaste.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/clipboard_empty.png"))); // NOI18N
         jPaste.setToolTipText("<html><b>Einf&uuml;gen von Eintr&auml;gen per STRG+V</b><br/>In eigenen Ansichten k&ouml;nnen nur spezielle Eintr&auml;ge eingef&uuml;gt werden,<br/>die vorher aus derselben Ansicht kopiert wurden.<br/>In anderen Ansichten k&ouml;nnen Dorfkoordinaten aus beliebigen Quellen eingef&uuml;gt werden</html>");
+        jPaste.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                firePasteAction(evt);
+            }
+        });
         add(jPaste);
 
         jBBSupport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/bb_to_clipboard.png"))); // NOI18N
         jBBSupport.setToolTipText("<html><b>Kopieren von Eintr&auml;gen als BB-Codes per STRG+B</b><br/>In dieser Ansicht k&ouml;nnen Eintr&auml;ge als BB-Codes in die Zwischenablage kopiert werden.<br/>Von dort aus kann man sie dann per STRG+V im Spiel in Notizen, IGMs oder das Forum einf&uuml;gen.</html>");
+        jBBSupport.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireBBCopyAction(evt);
+            }
+        });
         add(jBBSupport);
 
         jDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_delete.png"))); // NOI18N
         jDelete.setToolTipText("<html><b>L&ouml;schen von Eintr&auml;gen per ENTF</b></html>");
+        jDelete.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireDeleteAction(evt);
+            }
+        });
         add(jDelete);
 
         jFind.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_find.png"))); // NOI18N
         jFind.setToolTipText("<html><b>Suchen nach Eintr&auml;gen per STRG+F</b></html>");
+        jFind.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireFindAction(evt);
+            }
+        });
         add(jFind);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void fireCopyAction(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyAction
+        fireEvent("Copy");
+    }//GEN-LAST:event_fireCopyAction
+
+    private void firePasteAction(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_firePasteAction
+        fireEvent("Paste");
+    }//GEN-LAST:event_firePasteAction
+
+    private void fireBBCopyAction(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireBBCopyAction
+        fireEvent("BBCopy");
+    }//GEN-LAST:event_fireBBCopyAction
+
+    private void fireDeleteAction(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDeleteAction
+        fireEvent("Delete");
+    }//GEN-LAST:event_fireDeleteAction
+
+    private void fireFindAction(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireFindAction
+        fireEvent("Find");
+    }//GEN-LAST:event_fireFindAction
+
+    private void fireEvent(String pEvent) {
+        if (actionListener != null) {
+            if (source != null) {
+                actionListener.actionPerformed(new ActionEvent(source, 0, pEvent));
+            } else {
+                actionListener.actionPerformed(new ActionEvent(this, 0, pEvent));
+            }
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jBBSupport;
     private javax.swing.JLabel jCopy;
@@ -145,6 +215,6 @@ public class CapabilityInfoPanel extends javax.swing.JPanel {
      */
     public void setBbSupport(boolean bbSupport) {
         this.bbSupport = bbSupport;
-          jBBSupport.setVisible(bbSupport);
+        jBBSupport.setVisible(bbSupport);
     }
 }

@@ -6,16 +6,10 @@ package de.tor.tribes.util;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.LayerOrderConfigurationFrame;
+import java.io.File;
 import org.apache.log4j.Logger;
-import de.tor.tribes.ui.views.DSWorkbenchFormFrame;
-import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor;
-import de.tor.tribes.ui.views.DSWorkbenchNotepad;
-import de.tor.tribes.ui.views.DSWorkbenchReTimerFrame;
-import de.tor.tribes.ui.views.DSWorkbenchReportFrame;
-import de.tor.tribes.ui.views.DSWorkbenchSOSRequestAnalyzer;
-import de.tor.tribes.ui.views.DSWorkbenchSelectionFrame;
-import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
-import de.tor.tribes.ui.views.DSWorkbenchTagFrame;
+import org.apache.commons.io.FileUtils;
 
 /**
  * @author Charon
@@ -37,10 +31,13 @@ public class MainShutdownHook extends Thread {
                 return;
             }
             GlobalOptions.saveUserData();
-            GlobalOptions.addProperty("layer.order", DSWorkbenchMainFrame.getSingleton().getLayerOrder());
+            GlobalOptions.addProperty("layer.order", LayerOrderConfigurationFrame.getSingleton().getLayerOrder());
             DSWorkbenchMainFrame.getSingleton().storeProperties();
             GlobalOptions.saveProperties();
             GlobalOptions.storeViewStates();
+            if (!FileUtils.deleteQuietly(new File(".running"))) {
+                logger.warn("Failed to remove file '.running'");
+            }
             logger.debug("Shutdown finished");
         } catch (Throwable t) {
             logger.error("Shutdown failed", t);

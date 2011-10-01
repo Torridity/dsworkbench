@@ -57,13 +57,14 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
     public void actionPerformed(ActionEvent e) {
         MarkerTableTab activeTab = getActiveTab();
         if (e.getActionCommand() != null && activeTab != null) {
-            if (e.getActionCommand().equals("Copy")) {
-                // activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.COPY_TO_INTERNAL_CLIPBOARD);
+            /*if (e.getActionCommand().equals("Copy")) {
+                activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.COPY_TO_INTERNAL_CLIPBOARD);
             } else if (e.getActionCommand().equals("Cut")) {
                 activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.CUT_TO_INTERNAL_CLIPBOARD);
             } else if (e.getActionCommand().equals("Paste")) {
                 activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.FROM_INTERNAL_CLIPBOARD);
-            } else if (e.getActionCommand().equals("Delete")) {
+            }*/
+            if (e.getActionCommand().equals("Delete")) {
                 activeTab.deleteSelection(true);
             }
         }
@@ -95,7 +96,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         if (!GlobalOptions.isMinimal()) {
             buildMenu();
         }
-
+        capabilityInfoPanel1.addActionListener(this);
         jMarkerTabPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
         jMarkerTabPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
         jMarkerTabPane.setBoldActiveTab(true);
@@ -295,7 +296,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         jLabel3 = new javax.swing.JLabel();
         jMarkerFrameAlwaysOnTop = new javax.swing.JCheckBox();
         jMarkersPanel = new javax.swing.JPanel();
-        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         jXMarkerPanel.setLayout(new java.awt.BorderLayout());
 
@@ -358,6 +359,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
 
         capabilityInfoPanel1.setBbSupport(false);
         capabilityInfoPanel1.setCopyable(false);
+        capabilityInfoPanel1.setPastable(false);
         capabilityInfoPanel1.setSearchable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -482,7 +484,7 @@ private void fireCreateMarkerSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     }
 // </editor-fold>
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JCheckBox jMarkerFrameAlwaysOnTop;
     private com.jidesoft.swing.JideTabbedPane jMarkerTabPane;

@@ -38,6 +38,7 @@ import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.bb.AttackListFormatter;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.HeadlessException;
@@ -53,10 +54,12 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
@@ -100,7 +103,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
 
     public static enum TRANSFER_TYPE {
 
-        CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD
+        CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD, BB_TO_CLIPBOARD
     }
 
     @Override
@@ -124,6 +127,8 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 transferSelection(TRANSFER_TYPE.FROM_INTERNAL_CLIPBOARD);
             } else if (e.getActionCommand().equals("Delete")) {
                 deleteSelection(true);
+            } else if (e.getActionCommand().equals("BBCopy")) {
+                transferSelection(TRANSFER_TYPE.BB_TO_CLIPBOARD);
             }
         }
     }
@@ -139,7 +144,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
 
         jArriveTime.setDate(Calendar.getInstance().getTime());
         jNewArriveSpinner.setDate(Calendar.getInstance().getTime());
-
+        capabilityInfoPanel1.addActionListener(this);
         KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
         KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
         KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
@@ -168,12 +173,14 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         // </editor-fold>
         pack();
     }
+
     @Override
     public void toBack() {
         jAlwaysOnTopBox.setSelected(false);
         fireAttackFrameOnTopEvent(null);
         super.toBack();
     }
+
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
         PropertyHelper.storeTableProperties(jAttackTable, pConfig, getPropertyPrefix());
@@ -352,7 +359,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jAttackTable = new org.jdesktop.swingx.JXTable();
         infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
         jXLabel1 = new org.jdesktop.swingx.JXLabel();
-        capabilityInfoPanel1 = new de.tor.tribes.ui.CapabilityInfoPanel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         setTitle("Manueller Angriffsplaner");
         getContentPane().setLayout(new java.awt.GridBagLayout());
@@ -645,7 +652,6 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jPanel4, gridBagConstraints);
 
-        capabilityInfoPanel1.setBbSupport(false);
         capabilityInfoPanel1.setSearchable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -751,6 +757,9 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             case FROM_INTERNAL_CLIPBOARD:
                 copyFromInternalClipboard();
                 break;
+            case BB_TO_CLIPBOARD:
+                copyBBToExternalClipboardEvent();
+                break;
         }
     }
 
@@ -828,6 +837,55 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         AttackManager.getSingleton().revalidate();
     }
 
+    private void copyBBToExternalClipboardEvent() {
+        try {
+            List<Attack> attacks = getSelectedAttacks();
+            if (attacks.isEmpty()) {
+                showInfo("Keine Angriffe ausgewählt");
+                return;
+            }
+            boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
+
+            StringBuilder buffer = new StringBuilder();
+            if (extended) {
+                buffer.append("[u][size=12]Angriffsplan[/size][/u]\n\n");
+            } else {
+                buffer.append("[u]Angriffsplan[/u]\n\n");
+            }
+
+            buffer.append(new AttackListFormatter().formatElements(attacks, extended));
+
+            if (extended) {
+                buffer.append("\n[size=8]Erstellt am ");
+                buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+                buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url][/size]\n");
+            } else {
+                buffer.append("\nErstellt am ");
+                buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+                buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url]\n");
+            }
+
+            String b = buffer.toString();
+            StringTokenizer t = new StringTokenizer(b, "[");
+            int cnt = t.countTokens();
+            if (cnt > 1000) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Angriffe benötigen mehr als 1000 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                    return;
+                }
+            }
+
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
+            String result = "Daten in Zwischenablage kopiert.";
+            showSuccess(result);
+        } catch (Exception e) {
+            logger.error("Failed to copy data to clipboard", e);
+            String result = "Fehler beim Kopieren in die Zwischenablage.";
+            showError(result);
+        }
+    }
+
     private List<Attack> getSelectedAttacks() {
         final List<Attack> selectedAttacks = new LinkedList<Attack>();
         int[] selectedRows = jAttackTable.getSelectedRows();
@@ -872,7 +930,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setVisible(true);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private de.tor.tribes.ui.CapabilityInfoPanel capabilityInfoPanel1;
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JButton jAdeptTimeButton;
     private javax.swing.JButton jAdeptTypeButton;

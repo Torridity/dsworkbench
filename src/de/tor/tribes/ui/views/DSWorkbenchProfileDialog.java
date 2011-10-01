@@ -229,9 +229,12 @@ public class DSWorkbenchProfileDialog extends javax.swing.JDialog {
                         return;
                     }
                 }
-                if (UserProfile.create(server, tribe.getName(), uvId, true) == null) {
+                UserProfile newProfile = UserProfile.create(server, tribe.getName(), uvId, true);
+                if (newProfile == null) {
                     JOptionPaneHelper.showErrorBox(this, "Fehler bei der Profilerstellung.", "Fehler");
                     return;
+                } else {
+                    GlobalOptions.setSelectedProfile(newProfile);
                 }
             } else {
                 //modify existing profile
@@ -253,6 +256,8 @@ public class DSWorkbenchProfileDialog extends javax.swing.JDialog {
                 if (!currentProfile.storeProfileData()) {
                     JOptionPaneHelper.showErrorBox(this, "Fehler bei der Aktualisierung der Profildaten.", "Fehler");
                     return;
+                } else {
+                    GlobalOptions.setSelectedProfile(currentProfile);
                 }
             }
         }

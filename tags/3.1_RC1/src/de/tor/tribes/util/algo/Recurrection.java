@@ -1,0 +1,80 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.tor.tribes.util.algo;
+
+import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.AbstractTroopMovement;
+import de.tor.tribes.types.Off;
+import de.tor.tribes.types.Village;
+import de.tor.tribes.util.DSCalculator;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ *
+ * @author Torridity
+ */
+public class Recurrection extends AbstractAttackAlgorithm {
+
+    @Override
+    public List<AbstractTroopMovement> calculateAttacks(Hashtable<UnitHolder, List<Village>> pSources, Hashtable<UnitHolder, List<Village>> pFakes, List<Village> pTargets, List<Village> pFakeTargets, Hashtable<Village, Integer> pMaxAttacksTable, TimeFrame pTimeFrame, boolean pFakeOffTargets) {
+
+
+        List<Village> snobSources = pSources.get(DataHolder.getSingleton().getUnitByPlainName("snob"));
+
+        ArrayList<OffVillage> sources = new ArrayList<OffVillage>();
+        ArrayList<TargetVillage> targets = new ArrayList<TargetVillage>();
+        List<Village> ramSources = pSources.get(DataHolder.getSingleton().getUnitByPlainName("ram"));
+
+        for (Village ramSource : ramSources) {
+            sources.add(new OffVillage(new Coordinate(ramSource.getX(), ramSource.getY()), 1));
+        }
+        for (Village target : pTargets) {
+            targets.add(new TargetVillage(new Coordinate(target.getX(), target.getY()), 1));
+
+        }
+        Hashtable<Destination, Double> costs[] = new Hashtable[sources.size()];
+        for (int i = 0; i < sources.size(); i++) {
+            costs[i] = new Hashtable<Destination, Double>();
+            for (int j = 0; j < targets.size(); j++) {
+                double dist = sources.get(i).distanceTo(targets.get(j));
+                if (pTimeFrame.isMovementPossible(Math.round(dist * 30.0), null)) {
+                    costs[i].put(targets.get(j), sources.get(i).distanceTo(targets.get(j)));
+                } else {
+                    costs[i].put(targets.get(j), 99999.0);
+                }
+            }
+        }
+
+
+        Optex<OffVillage, TargetVillage> optex = new Optex<OffVillage, TargetVillage>(sources, targets, costs);
+        try {
+            optex.run();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new LinkedList<AbstractTroopMovement>();
+        }
+
+        List<AbstractTroopMovement> moves = new LinkedList<AbstractTroopMovement>();
+        for (OffVillage v : sources) {
+            for (Order o : v.getOrders()) {
+                if (o.getAmount() > 0) {
+                    TargetVillage d = (TargetVillage) o.getDestination();
+                    Off off = new Off(DataHolder.getSingleton().getVillages()[d.getC().x][d.getC().y], o.getAmount());
+                    off.addOff(DataHolder.getSingleton().getUnitByPlainName("ram"), DataHolder.getSingleton().getVillages()[v.getC().x][v.getC().y]);
+                    moves.add(off);
+                }
+            }
+        }
+
+        return moves;
+    }
+
+    public static void main(String[] args) {
+    }
+}

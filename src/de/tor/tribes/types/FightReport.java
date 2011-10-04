@@ -399,7 +399,6 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             xml += "</report>";
             return xml;
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }

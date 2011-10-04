@@ -6,6 +6,7 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.MapPanel;
+import de.tor.tribes.util.bb.VillageListFormatter;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -18,7 +19,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.net.URLDecoder;
-import java.util.ArrayList;
+import java.util.List;
 import org.jdom.Element;
 
 /**
@@ -40,18 +41,44 @@ public class Arrow extends AbstractForm {
         super();
     }
 
+    @Override
     public boolean allowsBBExport() {
-        return false;
+        return true;
     }
 
     @Override
     public String[] getReplacements(boolean pExtended) {
-        return null;
+        String nameVal = getFormName();
+        if (nameVal == null || nameVal.length() == 0) {
+            nameVal = "Kein Name";
+        }
+        String startXVal = Integer.toString((int) Math.rint(getXPos()));
+        String startYVal = Integer.toString((int) Math.rint(getYPos()));
+        String endXVal = Integer.toString((int) Math.rint(getXPosEnd()));
+        String endYVal = Integer.toString((int) Math.rint(getYPosEnd()));
+        String widthVal = Integer.toString((int) Math.rint(getXPosEnd() - getXPos()));
+        String heightVal = Integer.toString((int) Math.rint(getYPosEnd() - getYPos()));
+        String colorVal = "";
+        if (getDrawColor() != null) {
+            colorVal = "#" + Integer.toHexString(getDrawColor().getRGB() & 0x00ffffff);
+        } else {
+            colorVal = "#" + Integer.toHexString(Color.BLACK.getRGB() & 0x00ffffff);
+        }
+
+        List<Village> containedVillages = getContainedVillages();
+        String villageListVal = "";
+        if (containedVillages != null && !containedVillages.isEmpty()) {
+            villageListVal = new VillageListFormatter().formatElements(containedVillages, pExtended);
+        } else {
+            villageListVal = "Keine Dörfer enthalten";
+        }
+
+        return new String[]{nameVal, startXVal, startYVal, widthVal, heightVal, endXVal, endYVal, colorVal, villageListVal};
     }
 
+    @Override
     public void loadFromXml(Element e) {
         try {
-
             Element elem = e.getChild("name");
             setFormName(URLDecoder.decode(elem.getTextTrim(), "UTF-8"));
             elem = e.getChild("pos");
@@ -76,11 +103,6 @@ public class Arrow extends AbstractForm {
             setDrawName(Boolean.parseBoolean(elem.getTextTrim()));
         } catch (Exception ex) {
         }
-    }
-
-    @Override
-    public ArrayList<Village> getContainedVillages() {
-        return new ArrayList<Village>();
     }
 
     @Override
@@ -229,14 +251,66 @@ public class Arrow extends AbstractForm {
         g2d.setTransform(tb);
     }
 
+    @Override
+    public List<Village> getContainedVillages() {
+        Point2D.Double s = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPos(), getYPos());
+        Point2D.Double e = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPosEnd(), getYPosEnd());
+        if (xPosEnd == -1 && yPosEnd == -1) {
+            e = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPos(), getYPos());
+        }
+        double h = Math.abs(s.y - e.y);
+        double c = s.distance(e);
+        double a = Math.asin(h / c);
+
+        /*
+         * x > 0, y > 0: quadrant I.
+        x < 0, y > 0: quadrant II.
+        x < 0, y < 0: quadrant III
+        x > 0, y < 0: quadrant IV
+         */
+        path = new GeneralPath();
+        path.moveTo(0, -10);
+        path.lineTo(80, -10);
+        path.lineTo(80, -20);
+        path.lineTo(100, 0);
+        path.lineTo(80, 20);
+        path.lineTo(80, 10);
+        path.lineTo(0, 10);
+        path.closePath();
+
+        double rot = 0;
+
+        if (e.x > s.x && e.y >= s.y) {
+            rot = Math.toDegrees(a);
+        } else if (e.x <= s.x && e.y >= s.y) {
+            rot = 180 - Math.toDegrees(a);
+        } else if (e.x >= s.x && e.y <= s.y) {
+            rot = 360 - Math.toDegrees(a);
+        } else {
+            rot = 180 + Math.toDegrees(a);
+        }
+
+        a = Math.toRadians(rot);
+        AffineTransform trans = AffineTransform.getScaleInstance(c / 100.0, c / 210.0);
+        path.transform(trans);
+        trans = AffineTransform.getTranslateInstance(path.getBounds2D().getX(), 0);
+        path.transform(trans);
+        trans = AffineTransform.getRotateInstance(a, 0, 0);
+        path.transform(trans);
+        trans = AffineTransform.getTranslateInstance(s.x, s.y);
+        path.transform(trans);
+
+
+
+        List<Village> result = MapPanel.getSingleton().getVillagesInShape(path);
+        if (result == null) {
+            return super.getContainedVillages();
+        }
+        return result;
+    }
+
     private void drawDecoration(Point2D.Double s, Point2D.Double e, Graphics2D g2d) {
         if (isDrawName()) {
-            /* Point2D.Double center = new Point2D.Double((e.getX() - s.getX()) / 2, (e.getY() - s.getY()) / 2);
-            AffineTransform t = AffineTransform.getRotateInstance(theta, s.x + center.getX(), s.y + center.getY());
-            g2d.setTransform(t);
-            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT);
-            g2d.drawString(getFormName(), (int) Math.rint(s.x + center.getX()), (int) Math.rint(s.y + center.getY()));
-             */
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
             g2d.setColor(getTextColor());
             g2d.drawString(getFormName(), (int) s.x, (int) s.y);

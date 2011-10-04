@@ -35,6 +35,7 @@ public class DateTimeField extends javax.swing.JPanel {
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
     private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
     private boolean timeEnabled = true;
+    private boolean dateEnabled = true;
     private ActionListener mListener = null;
 
     /** Creates new form DateTimeField */
@@ -46,6 +47,8 @@ public class DateTimeField extends javax.swing.JPanel {
         //jTimeField.setEditable(false);
         jChangeTime.setEnabled(timeEnabled);
         jTimeField.setEnabled(timeEnabled);
+        jChangeDate.setEnabled(dateEnabled);
+        jDateField.setEnabled(dateEnabled);
     }
 
     public void setActionListener(ActionListener pListener) {
@@ -144,8 +147,8 @@ public class DateTimeField extends javax.swing.JPanel {
     @Override
     public void setEnabled(boolean pValue) {
         super.setEnabled(pValue);
-        jDateField.setEnabled(pValue);
-        jChangeDate.setEnabled(pValue);
+        /*jDateField.setEnabled(pValue);
+        jChangeDate.setEnabled(pValue);*/
         if (timeEnabled) {
             jChangeTime.setEnabled(pValue);
             jTimeField.setEnabled(pValue);
@@ -153,21 +156,38 @@ public class DateTimeField extends javax.swing.JPanel {
             jChangeTime.setEnabled(false);
             jTimeField.setEnabled(false);
         }
+
+        if (dateEnabled) {
+            jChangeDate.setEnabled(pValue);
+            jDateField.setEnabled(pValue);
+        } else {
+            jChangeDate.setEnabled(false);
+            jDateField.setEnabled(false);
+        }
     }
 
     public void setTimeEnabled(boolean pValue) {
         timeEnabled = pValue;
         jChangeTime.setVisible(timeEnabled);
         jTimeField.setVisible(timeEnabled);
-        /* if (!timeEnabled) {
-        jTimeField.setEnabled(false);
-        } else {
+        jChangeTime.setEnabled(timeEnabled);
         jTimeField.setEnabled(timeEnabled);
-        }*/
+    }
+
+    public void setDateEnabled(boolean pValue) {
+        dateEnabled = pValue;
+        jChangeDate.setVisible(dateEnabled);
+        jDateField.setVisible(dateEnabled);
+        jChangeDate.setEnabled(dateEnabled);
+        jDateField.setEnabled(dateEnabled);
     }
 
     public boolean isTimeEnabled() {
         return timeEnabled;
+    }
+
+    public boolean isDateEnabled() {
+        return dateEnabled;
     }
 
     public Date getSelectedDate() {
@@ -193,6 +213,13 @@ public class DateTimeField extends javax.swing.JPanel {
                 result.set(Calendar.SECOND, 0);
                 result.set(Calendar.MILLISECOND, 0);
             }
+
+            if (!isDateEnabled()) {
+                result.set(Calendar.DAY_OF_MONTH, 0);
+                result.set(Calendar.MONTH, 0);
+                result.set(Calendar.YEAR, 0);
+            }
+
             return result.getTime();
         } catch (Exception e) {
             Date now = Calendar.getInstance().getTime();
@@ -211,6 +238,9 @@ public class DateTimeField extends javax.swing.JPanel {
             return;
         }
         if (evt.getSource() == jChangeDate) {
+            if (!dateEnabled) {
+                return;
+            }
             try {
                 dp = new DatePicker(dateFormat.parse(jDateField.getText()));
             } catch (Exception e) {

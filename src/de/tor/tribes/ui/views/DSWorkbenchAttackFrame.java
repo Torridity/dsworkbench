@@ -443,7 +443,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         }));
-        transferTaskPane.getContentPane().add(factoryButton("/res/ui/export_js.png", "Markierte Angriffe in ein Userscript schreiben.Das erstellte Userscript muss im Anschluss manuell im Browser installiert werden. Als Ergebnis bekommt man an verschiedenen Stellen im Spiel Informationen &uuml;ber geplante Angriffe angezeigt.", new MouseAdapter() {
+        transferTaskPane.getContentPane().add(factoryButton("/res/ui/export_js.png", "Markierte Angriffe in ein Userscript schreiben. Das erstellte Userscript muss im Anschluss manuell im Browser installiert werden. Als Ergebnis bekommt man an verschiedenen Stellen im Spiel Informationen &uuml;ber geplante Angriffe angezeigt.", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -453,6 +453,18 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         }));
+        
+         transferTaskPane.getContentPane().add(factoryButton("/res/ui/to_selection.png", "Herkunfts- oder Zield&ouml;rfer markierter Angriffe in die Auswahl&uuml;bersicht übertragen.", new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                AttackTableTab activeTab = getActiveTab();
+                if (activeTab != null) {
+                   activeTab.transferSelection(AttackTableTab.TRANSFER_TYPE.SELECTION_TOOL);
+                }
+            }
+        }));
+        
         // </editor-fold>
         // <editor-fold defaultstate="collapsed" desc="Misc task pane">
 

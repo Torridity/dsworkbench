@@ -21,6 +21,7 @@ import java.awt.Font;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -36,6 +37,7 @@ public class Circle extends AbstractForm {
     private Color drawColor = Color.WHITE;
     private float drawAlpha = 1.0f;
 
+    @Override
     public void loadFromXml(Element e) {
         try {
             Element elem = e.getChild("name");
@@ -64,6 +66,23 @@ public class Circle extends AbstractForm {
         }
     }
 
+    @Override
+    public List<Village> getContainedVillages() {
+        Point2D.Double s = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPos(), getYPos());
+        Point.Double e = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPosEnd(), getYPosEnd());
+        int x = (int) Math.rint((s.getX() < e.getX()) ? s.getX() : e.getX());
+        int y = (int) Math.rint((s.getY() < e.getY()) ? s.getY() : e.getY());
+        int w = (int) Math.rint(Math.abs(s.getX() - e.getX()));
+        int h = (int) Math.rint(Math.abs(s.getY() - e.getY()));
+
+        List<Village> result = MapPanel.getSingleton().getVillagesInShape(new Ellipse2D.Double(x, y, w, h));
+        if (result == null) {
+            return super.getContainedVillages();
+        }
+        return result;
+    }
+
+    @Override
     public boolean allowsBBExport() {
         return true;
     }
@@ -87,7 +106,7 @@ public class Circle extends AbstractForm {
             colorVal = "#" + Integer.toHexString(Color.BLACK.getRGB() & 0x00ffffff);
         }
 
-        ArrayList<Village> containedVillages = getContainedVillages();
+        List<Village> containedVillages = getContainedVillages();
         String villageListVal = "";
         if (containedVillages != null && !containedVillages.isEmpty()) {
             villageListVal = new VillageListFormatter().formatElements(containedVillages, pExtended);

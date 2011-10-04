@@ -45,6 +45,7 @@ public class PropertyHelper {
                 sortOrder = 0;
         }
         pConfig.setProperty(pPrefix + ".table.sort.order", sortOrder);
+        pConfig.setProperty(pPrefix + ".table.horizontal.scroll", pTable.isHorizontalScrollEnabled());
     }
 
     public static void restoreTableProperties(JXTable pTable, Configuration pConfig, String pPrefix) {
@@ -67,6 +68,9 @@ public class PropertyHelper {
                 sortOrder = SortOrder.UNSORTED;
         }
 
+
+        Boolean scroll = pConfig.getBoolean(pPrefix + ".table.horizontal.scroll", false);
+        pTable.setHorizontalScrollEnabled(scroll);
         Integer orderCol = pConfig.getInteger(pPrefix + ".table.sort.col", 0);
         try {
             pTable.setSortOrder(orderCol.intValue(), sortOrder);

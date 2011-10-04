@@ -32,7 +32,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -57,8 +58,12 @@ public class DataHolder {
     private Hashtable<Integer, Village> mVillagesTable = null;
     private Hashtable<Integer, Ally> mAllies = null;
     private Hashtable<Integer, Tribe> mTribes = null;
+    private Hashtable<String, Ally> mAlliesByName = null;
+    private Hashtable<String, Ally> mAlliesByTagName = null;
+    private Hashtable<String, Tribe> mTribesByName = null;
     private List<BuildingHolder> mBuildings = null;
     private List<UnitHolder> mUnits = null;
+    private Hashtable<String, UnitHolder> mUnitsByName = null;
     private List<DataHolderListener> mListeners = null;
     private boolean bAborted = false;
     private static DataHolder SINGLETON = null;
@@ -86,14 +91,16 @@ public class DataHolder {
         mTribes = null;
         mBuildings = null;
         mUnits = null;
-        System.gc();
-        System.gc();
+        removeTempData();
 
         mVillages = new Village[1000][1000];
         mVillagesTable = new Hashtable<Integer, Village>();
         mAllies = new Hashtable<Integer, Ally>();
         mTribes = new Hashtable<Integer, Tribe>();
-
+        mTribesByName = new Hashtable<String, Tribe>();
+        mAlliesByName = new Hashtable<String, Ally>();
+        mAlliesByTagName = new Hashtable<String, Ally>();
+        mUnitsByName = new Hashtable<String, UnitHolder>();
         mBuildings = new LinkedList<BuildingHolder>();
         mUnits = new LinkedList<UnitHolder>();
         DATA_VALID = false;
@@ -559,7 +566,24 @@ public class DataHolder {
             r.close();
 
             getTribesForServer(GlobalOptions.getSelectedServer(), mTribes);
+
+            Collection<Tribe> tribes = mTribes.values();
+            for (Tribe t : tribes) {
+                if (t != null && t.getName() != null) {
+                    mTribesByName.put(t.getName(), t);
+                }
+            }
+
             getAlliesForServer(pServerDir, mAllies);
+
+            Collection<Ally> allies = mAllies.values();
+            for (Ally a : allies) {
+                if (a != null && a.getName() != null && a.getTag() != null) {
+                    mAlliesByName.put(a.getName(), a);
+                    mAlliesByTagName.put(a.getTag(), a);
+                }
+            }
+
         } catch (Exception e) {
             logger.error("Failed to read local data copy", e);
             return false;
@@ -579,18 +603,17 @@ public class DataHolder {
                 pTribes = new Hashtable<Integer, Tribe>();
             }
             String line = "";
-            try {
-                while ((line = r.readLine()) != null) {
-                    line = line.replaceAll(",,", ", ,");
-                    Tribe t = Tribe.parseFromPlainData(line);
-                    try {
-                        pTribes.put(t.getId(), t);
-                    } catch (Exception e) {
-                        //ignore invalid tribe
-                    }
+
+            while ((line = r.readLine()) != null) {
+                line = line.replaceAll(",,", ", ,");
+                Tribe t = Tribe.parseFromPlainData(line);
+                try {
+                    pTribes.put(t.getId(), t);
+                } catch (Exception e) {
+                    //ignore invalid tribe
                 }
-            } catch (Throwable t) {
             }
+
             r.close();
         } catch (Exception e) {
             logger.error("Failed to read tribes for server '" + pServer + "'", e);
@@ -610,18 +633,17 @@ public class DataHolder {
                 pAllies = new Hashtable<Integer, Ally>();
             }
             String line = "";
-            try {
-                while ((line = r.readLine()) != null) {
-                    line = line.replaceAll(",,", ", ,");
-                    Ally a = Ally.parseFromPlainData(line);
-                    try {
-                        pAllies.put(a.getId(), a);
-                    } catch (Exception e) {
-                        //ignore invalid tribe
-                    }
+
+            while ((line = r.readLine()) != null) {
+                line = line.replaceAll(",,", ", ,");
+                Ally a = Ally.parseFromPlainData(line);
+                try {
+                    pAllies.put(a.getId(), a);
+                } catch (Exception e) {
+                    //ignore invalid tribe
                 }
-            } catch (Throwable t) {
             }
+
             r.close();
         } catch (Exception e) {
             logger.error("Failed to read allies for server '" + pServer + "'");
@@ -742,18 +764,17 @@ public class DataHolder {
 
                 line = "";
                 logger.debug(" + Start parsing tribes");
-                try {
-                    while ((line = r.readLine()) != null) {
-                        line = line.replaceAll(",,", ", ,");
-                        Tribe t = Tribe.parseFromPlainData(line);
-                        try {
-                            mTribes.put(t.getId(), t);
-                        } catch (Exception e) {
-                            //ignore invalid tribe
-                        }
+
+                while ((line = r.readLine()) != null) {
+                    line = line.replaceAll(",,", ", ,");
+                    Tribe t = Tribe.parseFromPlainData(line);
+                    if (t != null && t.getName() != null) {
+                        mTribes.put(t.getId(), t);
+                        System.out.println(t);
+                        mTribesByName.put(t.getName(), t);
                     }
-                } catch (Throwable t) {
                 }
+
                 r.close();
                 logger.debug(" - Finished parsing tribes");
                 // </editor-fold>
@@ -771,10 +792,10 @@ public class DataHolder {
                 while ((line = r.readLine()) != null) {
                     line = line.replaceAll(",,", ", ,");
                     Ally a = Ally.parseFromPlainData(line);
-                    try {
+                    if (a != null && a.getName() != null && a.getTag() != null) {
                         mAllies.put(a.getId(), a);
-                    } catch (Exception e) {
-                        //ignore invalid ally
+                        mAlliesByName.put(a.getName(), a);
+                        mAlliesByTagName.put(a.getTag(), a);
                     }
                 }
                 logger.debug(" - Finished parsing allies");
@@ -918,7 +939,7 @@ public class DataHolder {
             // <editor-fold defaultstate="collapsed" desc=" Load villages ">
 
             fireDataHolderEvents("Lade Dörferliste");
-            file = new URL(sURL + "/map//village.txt.gz");
+            file = new URL(sURL + "/map/village.txt.gz");
 
             logger.debug(" + Start reading villages");
             downloadDataFile(file, "village.tmp");
@@ -927,6 +948,7 @@ public class DataHolder {
             BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("village.tmp"))));
             String line = "";
             logger.debug(" + Start parsing villages");
+
             while ((line = r.readLine()) != null) {
                 line = line.replaceAll(",,", ", ,");
                 Village v = Village.parseFromPlainData(line);
@@ -953,17 +975,13 @@ public class DataHolder {
 
             line = "";
             logger.debug(" + Start parsing tribes");
-            try {
-                while ((line = r.readLine()) != null) {
-                    line = line.replaceAll(",,", ", ,");
-                    Tribe t = Tribe.parseFromPlainData(line);
-                    try {
-                        mTribes.put(t.getId(), t);
-                    } catch (Exception e) {
-                        //ignore invalid tribe
-                    }
+            while ((line = r.readLine()) != null) {
+                line = line.replaceAll(",,", ", ,");
+                Tribe t = Tribe.parseFromPlainData(line);
+                if (t != null && t.getName() != null) {
+                    mTribes.put(t.getId(), t);
+                    mTribesByName.put(t.getName(), t);
                 }
-            } catch (Throwable t) {
             }
             r.close();
             logger.debug(" - Finished parsing tribes");
@@ -982,10 +1000,10 @@ public class DataHolder {
             while ((line = r.readLine()) != null) {
                 line = line.replaceAll(",,", ", ,");
                 Ally a = Ally.parseFromPlainData(line);
-                try {
+                if (a != null && a.getName() != null && a.getTag() != null) {
                     mAllies.put(a.getId(), a);
-                } catch (Exception e) {
-                    //ignore invalid ally
+                    mAlliesByName.put(a.getName(), a);
+                    mAlliesByTagName.put(a.getTag(), a);
                 }
             }
             logger.debug(" - Finished parsing allies");
@@ -1020,7 +1038,6 @@ public class DataHolder {
             copyFile(new File("kill_def.tmp"), target);
             logger.debug(" - Finished downloading conquers (def)");
             // </editor-fold>
-
 
             // <editor-fold defaultstate="collapsed" desc="Direct download from DS-Servers">
             //download unit information, but only once
@@ -1083,6 +1100,7 @@ public class DataHolder {
                 }
             }
         }
+
         logger.debug("Removing empty allies");
         Enumeration<Integer> allyKeys = mAllies.keys();
         List<Ally> toRemove = new LinkedList<Ally>();
@@ -1094,8 +1112,9 @@ public class DataHolder {
         }
         for (Ally a : toRemove) {
             mAllies.remove(a.getId());
+            mAlliesByName.remove(a.getName());
+            mAlliesByTagName.remove(a.getTag());
         }
-
         logger.debug("Removed " + toRemove.size() + " empty allies");
         DATA_VALID = true;
     }
@@ -1162,6 +1181,7 @@ public class DataHolder {
     /**Parse the list of units*/
     private void parseUnits() {
         mUnits.clear();
+        mUnitsByName.clear();
         String unitFile = getDataDirectory() + "/units.xml";
         //buildingsFile += "/units.xml";
         logger.debug("Loading units");
@@ -1171,7 +1191,11 @@ public class DataHolder {
             List<Element> l = (List<Element>) JaxenUtils.getNodes(d, "/config/*");
             for (Element e : l) {
                 try {
-                    mUnits.add(new UnitHolder(e));
+                    UnitHolder unit = new UnitHolder(e);
+                    if (unit != null && unit.getPlainName() != null) {
+                        mUnits.add(unit);
+                        mUnitsByName.put(unit.getPlainName(), unit);
+                    }
                 } catch (Exception inner) {
                     logger.error("Failed loading unit", inner);
                 }
@@ -1188,34 +1212,6 @@ public class DataHolder {
         } catch (IOException ioe) {
             logger.error("Failed to copy file '" + pSource.getPath() + "' to '" + pDestination.getPath() + "'");
         }
-        /*  FileInputStream fin = null;
-        FileOutputStream fout = null;
-        try {
-        fin = new FileInputStream(pSource);
-        fout = new FileOutputStream(pDestination);
-        byte[] data = new byte[1024];
-        
-        int bytesRead = 0;
-        while (bytesRead >= 0) {
-        bytesRead = fin.read(data);
-        if (bytesRead != -1) {
-        fout.write(data, 0, bytesRead);
-        }
-        
-        }
-        fout.flush();
-        } catch (Exception e) {
-        logger.error("Failed to copy file '" + pSource.getPath() + "' to '" + pDestination.getPath() + "'");
-        } finally {
-        try {
-        fin.close();
-        } catch (Exception ignored) {
-        }
-        try {
-        fout.close();
-        } catch (Exception ignored) {
-        }
-        }*/
     }
 
     /**Get all villages<BR>
@@ -1346,7 +1342,7 @@ public class DataHolder {
     }
 
     public List<Village> getVillagesInRegion(Point pStart, Point pEnd) {
-        List<Village> marked = new LinkedList<Village>();
+        List<Village> marked = new ArrayList<Village>();
         try {
             int xStart = (pStart.x < pEnd.x) ? pStart.x : pEnd.x;
             int xEnd = (pEnd.x > pStart.x) ? pEnd.x : pStart.x;
@@ -1371,7 +1367,7 @@ public class DataHolder {
                     }
                 }
             }
-            Collections.sort(marked, Village.ALLY_TRIBE_VILLAGE_COMPARATOR);
+            //Collections.sort(marked, Village.ALLY_TRIBE_VILLAGE_COMPARATOR);
         } catch (Exception e) {
             //occurs if no rect was opened by selection tool -> ignore
         }
@@ -1397,36 +1393,20 @@ public class DataHolder {
 
     /**Search the ally list for the ally with the provided name*/
     public Ally getAllyByName(String pName) {
-        Enumeration<Integer> ids = mAllies.keys();
-        while (ids.hasMoreElements()) {
-            Ally a = mAllies.get(ids.nextElement());
-            if (a != null) {
-                if (a.getName() != null) {
-                    if (a.getName().equals(pName)) {
-                        return a;
-                    }
-
-                }
-            }
+        Ally result = null;
+        if (pName != null) {
+            result = mAlliesByName.get(pName);
         }
-        return null;
+        return result;
     }
 
     /**Search the ally list for the ally with the provided tag name*/
     public Ally getAllyByTagName(String pTagName) {
-        Enumeration<Integer> ids = mAllies.keys();
-        while (ids.hasMoreElements()) {
-            Ally a = mAllies.get(ids.nextElement());
-            if (a != null) {
-                if (a.getName() != null) {
-                    if (a.getTag().equals(pTagName)) {
-                        return a;
-                    }
-
-                }
-            }
+        Ally result = null;
+        if (pTagName != null) {
+            result = mAlliesByTagName.get(pTagName);
         }
-        return null;
+        return result;
     }
 
     /**Get all tribes*/
@@ -1436,18 +1416,17 @@ public class DataHolder {
 
     /**Search the tribes list for the tribe with the provided name*/
     public Tribe getTribeByName(String pName) {
-        Enumeration<Integer> ids = getTribes().keys();
-        while (ids.hasMoreElements()) {
-            Tribe t = getTribes().get(ids.nextElement());
-            if (t != null) {
-                if (t.getName() != null) {
-                    if (t.getName().equals(pName)) {
-                        return t;
-                    }
-                }
-            }
+        Tribe result = null;
+        if (logger.isDebugEnabled()) {
+            logger.debug("Getting tribe by name '" + pName + "'");
         }
-        return InvalidTribe.getSingleton();
+        if (pName != null) {
+            result = mTribesByName.get(pName.trim());
+        }
+        if (result == null) {
+            result = InvalidTribe.getSingleton();
+        }
+        return result;
     }
 
     /**Get all units*/
@@ -1465,12 +1444,14 @@ public class DataHolder {
 
     /**Get a unit by its name*/
     public UnitHolder getUnitByPlainName(String pName) {
-        for (UnitHolder u : getUnits()) {
-            if (u.getPlainName().equals(pName)) {
-                return u;
-            }
+        UnitHolder result = null;
+        if (pName != null) {
+            result = mUnitsByName.get(pName);
         }
-        return UnknownUnit.getSingleton();
+        if (result == null) {
+            result = UnknownUnit.getSingleton();
+        }
+        return result;
     }
 
     /**Get the ID of a unit*/

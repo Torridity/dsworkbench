@@ -66,7 +66,7 @@ public class FormTableModel extends AbstractTableModel {
                     case CIRCLE:
                         return "Kreis";
                     case FREEFORM:
-                        return "Freiform";
+                        return "Freihandzeichnung";
                     case LINE:
                         return "Linie";
                     case RECTANGLE:

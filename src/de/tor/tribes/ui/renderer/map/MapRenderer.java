@@ -412,19 +412,16 @@ public class MapRenderer {
 
         int x = 0;
         int y = 0;
+        int mapW = ServerSettings.getSingleton().getMapDimension().width;
+        int mapH = ServerSettings.getSingleton().getMapDimension().height;
         for (int i = xStartVillage; i <= xEndVillage; i++) {
             for (int j = yStartVillage; j <= yEndVillage; j++) {
-                int mapW = ServerSettings.getSingleton().getMapDimension().width;
-                int mapH = ServerSettings.getSingleton().getMapDimension().height;
                 if ((i < 0) || (i > mapW - 1) || (j < 0) || (j > mapH - 1)) {
                     //handle villages outside map
                     mVisibleVillages[x][y] = null;
                 } else {
                     mVisibleVillages[x][y] = DataHolder.getSingleton().getVillages()[i][j];
-                    // Marker m = MarkerManager.getSingleton().getMarker(mVisibleVillages[x][y]);
                     if (mVisibleVillages[x][y] != null) {
-
-                        // if ((m == null || m.isShownOnMap())) {
                         Point villagePos = new Point((int) Math.floor(dx + x * dCurrentFieldWidth), (int) Math.floor(dy + y * dCurrentFieldHeight));
                         mVillagePositions.put(mVisibleVillages[x][y], new Rectangle(villagePos.x, villagePos.y, (int) Math.floor(dCurrentFieldWidth), (int) Math.floor(dCurrentFieldHeight)));
                         Tribe t = mVisibleVillages[x][y].getTribe();
@@ -444,9 +441,6 @@ public class MapRenderer {
                                 mAllyCount.put(a, mAllyCount.get(a) + 1);
                             }
                         }
-                        /*  } else {
-                        mVisibleVillages[x][y] = null;
-                        }*/
                     }
                 }
                 y++;
@@ -551,7 +545,6 @@ public class MapRenderer {
                     Village v = keys.next();
                     if ((v.getTribe() == null && mouseTribe.equals(Barbarians.getSingleton())) || (v.getTribe() != null && mouseTribe.equals(v.getTribe()))) {
                         Rectangle r = mVillagePositions.get(v);
-                        // if (copy == null) {
                         Ellipse2D ellipse = new Ellipse2D.Float(r.x, r.y, r.height, r.height);
                         g2d.setPaint(new RoundGradientPaint(r.getCenterX(), r.getCenterY(), Color.yellow, new Point2D.Double(0, r.height / 2), new Color(0, 0, 0, 0)));
                         g2d.fill(ellipse);

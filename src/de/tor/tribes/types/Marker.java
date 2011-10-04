@@ -7,6 +7,7 @@ package de.tor.tribes.types;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.MarkerCell;
+import de.tor.tribes.util.BBSupport;
 import java.awt.Color;
 import org.jdom.Element;
 
@@ -14,8 +15,50 @@ import org.jdom.Element;
  *
  * @author Charon
  */
-public class Marker extends ManageableType {
+public class Marker extends ManageableType implements BBSupport {
 
+    private final static String[] VARIABLES = new String[]{"%NAME%", "%BB_CODE%", "%MARKER_COLOR%"};
+    private final static String STANDARD_TEMPLATE = "Anzahl der Markierungen: %ELEMENT_COUNT%\n\n"
+            + "%LIST_START% [color=%MARKER_COLOR%]▓▓▓[/color] %NAME% %LIST_END%\n";
+
+    @Override
+    public String[] getBBVariables() {
+        return VARIABLES;
+    }
+
+    @Override
+    public String[] getReplacements(boolean pExtended) {
+        String nameVal = null;
+        String bbCodeVal = null;
+        if (getMarkerType() == Marker.ALLY_MARKER_TYPE) {
+            Ally a = DataHolder.getSingleton().getAllies().get(getMarkerID());
+            if (a != null) {
+                bbCodeVal = a.toBBCode();
+                nameVal = a.getName();
+            } else {
+                bbCodeVal = "Ungültiger Stamm";
+                nameVal = "Ungültiger Stamm";
+            }
+        } else {
+            Tribe t = DataHolder.getSingleton().getTribes().get(getMarkerID());
+            if (t != null) {
+                bbCodeVal = t.toBBCode();
+                nameVal = t.getName();
+            } else {
+                nameVal = "Ungültiger Spieler";
+                bbCodeVal = "Ungültiger Spieler";
+            }
+        }
+        String colorVal = Integer.toHexString(getMarkerColor().getRGB());
+        colorVal = "#" + colorVal.substring(2, colorVal.length());
+
+        return new String[]{nameVal, bbCodeVal, colorVal};
+    }
+
+    @Override
+    public String getStandardTemplate() {
+        return STANDARD_TEMPLATE;
+    }
     public final static int TRIBE_MARKER_TYPE = 0;
     public final static int ALLY_MARKER_TYPE = 1;
     private int markerType = 0;

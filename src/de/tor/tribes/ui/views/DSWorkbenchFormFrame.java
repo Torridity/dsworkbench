@@ -337,7 +337,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
                 showInfo("Keine Zeichnung gewählt");
                 return;
             }
-            ArrayList<Village> villages = new ArrayList<Village>();
+            List<Village> villages = new ArrayList<Village>();
             for (AbstractForm f : selection) {
                 for (Village v : f.getContainedVillages()) {
                     if (!villages.contains(v)) {

@@ -57,14 +57,11 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
     public void actionPerformed(ActionEvent e) {
         MarkerTableTab activeTab = getActiveTab();
         if (e.getActionCommand() != null && activeTab != null) {
-            /*if (e.getActionCommand().equals("Copy")) {
-                activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.COPY_TO_INTERNAL_CLIPBOARD);
-            } else if (e.getActionCommand().equals("Cut")) {
-                activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.CUT_TO_INTERNAL_CLIPBOARD);
+            if (e.getActionCommand().equals("BBCopy")) {
+                activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
             } else if (e.getActionCommand().equals("Paste")) {
-                activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.FROM_INTERNAL_CLIPBOARD);
-            }*/
-            if (e.getActionCommand().equals("Delete")) {
+                activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.FROM_EXTERNAL_CLIPBOARD);
+            } else if (e.getActionCommand().equals("Delete")) {
                 activeTab.deleteSelection(true);
             }
         }
@@ -357,9 +354,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jMarkersPanel, gridBagConstraints);
 
-        capabilityInfoPanel1.setBbSupport(false);
         capabilityInfoPanel1.setCopyable(false);
-        capabilityInfoPanel1.setPastable(false);
         capabilityInfoPanel1.setSearchable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

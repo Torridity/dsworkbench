@@ -27,7 +27,6 @@ public class Note extends ManageableType implements BBSupport {
 
     private final static String[] VARIABLES = new String[]{"%LAST_CHANGE%", "%NOTE_TEXT%", "%VILLAGE_LIST%", "%NOTE_ICON%"};
     private final static String STANDARD_TEMPLATE = "[quote][b]Notiz vom:[/b] %LAST_CHANGE%\n\n[b]Zugeordnete Dörfer:[/b]\n%VILLAGE_LIST%\n\n[b]Notizsymbol:[/b] %NOTE_ICON%\n\n[b]Notiztext:[/b]\n\n%NOTE_TEXT%[/quote]";
-    private final static String TEMPLATE_PROPERTY = "note.bbexport.template";
     private String sNoteText = null;
     private List<Integer> villageIds = null;
     private long timestamp = -1;

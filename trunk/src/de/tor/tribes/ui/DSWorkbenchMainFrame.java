@@ -108,7 +108,6 @@ import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.pushingpixels.flamingo.internal.ui.ribbon.BasicRibbonUI;
 
 /**
- * @TODO set views explicitly to front if app menu is hidden
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends JRibbonFrame implements
@@ -1051,6 +1050,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jLabel13 = new javax.swing.JLabel();
         jShowMouseOverInfo = new javax.swing.JCheckBox();
         jIncludeSupport = new javax.swing.JCheckBox();
+        jLabel3 = new javax.swing.JLabel();
         jROIPanel = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jROIBox = new javax.swing.JComboBox();
@@ -1970,7 +1970,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jMapPanel.add(jLabel12, gridBagConstraints);
 
-        jGraphicPacks.setMinimumSize(new java.awt.Dimension(23, 20));
+        jGraphicPacks.setMaximumSize(new java.awt.Dimension(28, 20));
+        jGraphicPacks.setMinimumSize(new java.awt.Dimension(28, 20));
         jGraphicPacks.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireGraphicPackChangedEvent(evt);
@@ -2111,6 +2112,13 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jMapPanel.add(jIncludeSupport, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weighty = 1.0;
+        jMapPanel.add(jLabel3, gridBagConstraints);
 
         jROIPanel.setBackground(new java.awt.Color(239, 235, 223));
         jROIPanel.setMaximumSize(new java.awt.Dimension(293, 70));
@@ -3557,6 +3565,7 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;

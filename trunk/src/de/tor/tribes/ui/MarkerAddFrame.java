@@ -260,7 +260,7 @@ private void fireAddMarkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         //ignore
     }
     MarkerManager.getSingleton().revalidate(true);
-    
+
 }//GEN-LAST:event_fireAddMarkEvent
 
 private void jCancelButtonfireAbortMarkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jCancelButtonfireAbortMarkEvent
@@ -269,11 +269,11 @@ private void jCancelButtonfireAbortMarkEvent(java.awt.event.MouseEvent evt) {//G
 
 private void fireSetDiplomacyColorEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSetDiplomacyColorEvent
     if (evt.getSource() == jNapButton) {
-        mAllyColorChooser.setColor(new Color(127, 0, 127));
+        mAllyColorChooser.setColor(Constants.NAP_MARKER);
     } else if (evt.getSource() == jBndButton) {
-        mAllyColorChooser.setColor(new Color(0, 160, 244));
+        mAllyColorChooser.setColor(Constants.ALLY_MARKER);
     } else {
-        mAllyColorChooser.setColor(Color.RED);
+        mAllyColorChooser.setColor(Constants.ENEMY_MARKER);
     }
 }//GEN-LAST:event_fireSetDiplomacyColorEvent
     // Variables declaration - do not modify//GEN-BEGIN:variables

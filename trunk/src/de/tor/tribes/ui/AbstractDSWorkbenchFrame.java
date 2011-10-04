@@ -4,10 +4,10 @@
  */
 package de.tor.tribes.ui;
 
+import com.jidesoft.plaf.basic.BasicJideTabbedPaneUI.PropertyChangeHandler;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.dnd.VillageTransferable;
-import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSWorkbenchFrameListener;
 import de.tor.tribes.util.DSWorkbenchGesturedFrame;
 import java.awt.Dimension;
@@ -27,9 +27,15 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -77,7 +83,7 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
 
     public AbstractDSWorkbenchFrame() {
         mFrameListeners = new LinkedList<DSWorkbenchFrameListener>();
-       // getContentPane().setBackground(Constants.DS_BACK);
+        // getContentPane().setBackground(Constants.DS_BACK);
         dragSource = DragSource.getDefaultDragSource();
         dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY_OR_MOVE, this);
         DropTarget dropTarget = new DropTarget(this, this);
@@ -114,7 +120,7 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
             config.setProperty(prefix + ".height", getHeight());
             config.setProperty(prefix + ".x", getX());
             config.setProperty(prefix + ".y", getY());
-           // config.setProperty(prefix + ".visible", isVisible());
+            // config.setProperty(prefix + ".visible", isVisible());
             config.setProperty(prefix + ".alwaysOnTop", isAlwaysOnTop());
         } catch (ConfigurationException ex) {
             logger.error("Failed to create properties", ex);
@@ -134,6 +140,7 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
             return;
         }
     }
+
     public void restoreProperties() {
         String dataDir = DataHolder.getSingleton().getDataDirectory();
         if (!new File(dataDir).exists()) {
@@ -166,8 +173,8 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
         if (!mFrameListeners.contains(pListener)) {
             mFrameListeners.add(pListener);
         }
-    } 
-    
+    }
+
     public synchronized void removeFrameListener(DSWorkbenchFrameListener pListener) {
         mFrameListeners.remove(pListener);
     }

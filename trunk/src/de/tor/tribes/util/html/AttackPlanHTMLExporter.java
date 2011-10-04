@@ -4,12 +4,14 @@
  */
 package de.tor.tribes.util.html;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.util.*;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Tribe;
+import de.tor.tribes.util.attack.StandardAttackManager;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -333,7 +335,12 @@ public class AttackPlanHTMLExporter {
             }
             placeURL += a.getSource().getId() + "&screen=place&mode=command&target=" + a.getTarget().getId();
 
-            //b = b.replaceAll(PLACE, "<a href=\"" + placeURL + "\" target=\"_blank\">Versammlungsplatz</a>");
+            placeURL += "&type=0";
+            for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
+                int amount = StandardAttackManager.getSingleton().getAmountForVillage(a.getType(), u, a.getSource());
+                placeURL += "&" + u.getPlainName() + "=" + amount;
+            }
+
             b = b.replaceAll(PLACE, placeURL);
             // </editor-fold>
 

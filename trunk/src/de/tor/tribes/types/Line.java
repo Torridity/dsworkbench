@@ -12,6 +12,7 @@ import java.awt.Stroke;
 import java.net.URLDecoder;
 import org.jdom.Element;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.util.bb.VillageListFormatter;
 import java.awt.AlphaComposite;
 import java.awt.Composite;
 import java.awt.Font;
@@ -19,7 +20,7 @@ import java.awt.Polygon;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -36,6 +37,7 @@ public class Line extends AbstractForm {
     private boolean startArrow = false;
     private boolean endArrow = false;
 
+    @Override
     public void loadFromXml(Element e) {
         try {
             Element elem = e.getChild("name");
@@ -65,13 +67,39 @@ public class Line extends AbstractForm {
         }
     }
 
+    @Override
     public boolean allowsBBExport() {
-        return false;
+        return true;
     }
 
     @Override
     public String[] getReplacements(boolean pExtended) {
-        return null;
+         String nameVal = getFormName();
+        if (nameVal == null || nameVal.length() == 0) {
+            nameVal = "Kein Name";
+        }
+        String startXVal = Integer.toString((int) Math.rint(getXPos()));
+        String startYVal = Integer.toString((int) Math.rint(getYPos()));
+        String endXVal = Integer.toString((int) Math.rint(getXPosEnd()));
+        String endYVal = Integer.toString((int) Math.rint(getYPosEnd()));
+        String widthVal = Integer.toString((int) Math.rint(getXPosEnd() - getXPos()));
+        String heightVal = Integer.toString((int) Math.rint(getYPosEnd() - getYPos()));
+        String colorVal = "";
+        if (getDrawColor() != null) {
+            colorVal = "#" + Integer.toHexString(getDrawColor().getRGB() & 0x00ffffff);
+        } else {
+            colorVal = "#" + Integer.toHexString(Color.BLACK.getRGB() & 0x00ffffff);
+        }
+
+        List<Village> containedVillages = getContainedVillages();
+        String villageListVal = "";
+        if (containedVillages != null && !containedVillages.isEmpty()) {
+            villageListVal = new VillageListFormatter().formatElements(containedVillages, pExtended);
+        } else {
+            villageListVal = "Keine Dörfer enthalten";
+        }
+
+        return new String[]{nameVal, startXVal, startYVal, widthVal, heightVal, endXVal, endYVal, colorVal, villageListVal};
     }
 
     @Override
@@ -149,8 +177,15 @@ public class Line extends AbstractForm {
     }
 
     @Override
-    public ArrayList<Village> getContainedVillages() {
-        return new ArrayList<Village>();
+    public List<Village> getContainedVillages() {
+        Point2D.Double s = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPos(), getYPos());
+        Point2D.Double e = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPosEnd(), getYPosEnd());
+
+        List<Village> result = MapPanel.getSingleton().getVillagesOnLine(new Line2D.Double((int) Math.rint(s.getX()), (int) Math.rint(s.getY()), (int) Math.rint(e.getX()), (int) Math.rint(e.getY())));
+        if (result == null) {
+            return super.getContainedVillages();
+        }
+        return result;
     }
 
     @Override

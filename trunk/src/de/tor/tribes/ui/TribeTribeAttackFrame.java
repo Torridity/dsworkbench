@@ -177,7 +177,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("Copy")) {
-            if (e.getSource() != null && e.getSource().equals(jSourcesTable)) {
+            if (e.getSource() != null && (e.getSource().equals(jSourcesTable) || e.getSource().equals(jVictimTable))) {
                 if (jideTabbedPane1.getSelectedIndex() == 0) {
                     fireTransferEvent(TRANSFER_TYPE.COPY_SOURCE_TO_INTERNAL_CLIPBOARD);
                 } else if (jideTabbedPane1.getSelectedIndex() == 1) {
@@ -187,7 +187,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
                 fireTransferEvent(TRANSFER_TYPE.COPY_ATTACK_TO_INTERNAL_CLIPBOARD);
             }
         } else if (e.getActionCommand().equals("Paste")) {
-            if (e.getSource() != null && e.getSource().equals(jSourcesTable)) {
+            if (e.getSource() != null && (e.getSource().equals(jSourcesTable) || e.getSource().equals(jVictimTable))) {
                 if (jideTabbedPane1.getSelectedIndex() == 0) {
                     fireTransferEvent(TRANSFER_TYPE.PASTE_SOURCE_FROM_INTERNAL_CLIPBOARD);
                 } else if (jideTabbedPane1.getSelectedIndex() == 1) {
@@ -195,7 +195,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
                 }
             }
         } else if (e.getActionCommand().equals("Cut")) {
-            if (e.getSource() != null && e.getSource().equals(jSourcesTable)) {
+            if (e.getSource() != null && (e.getSource().equals(jSourcesTable) || e.getSource().equals(jVictimTable))) {
                 if (jideTabbedPane1.getSelectedIndex() == 0) {
                     fireTransferEvent(TRANSFER_TYPE.CUT_SOURCE_TO_INTERNAL_CLIPBOARD);
                 } else if (jideTabbedPane1.getSelectedIndex() == 1) {
@@ -203,7 +203,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
                 }
             }
         } else if (e.getActionCommand().equals("Delete")) {
-            if (e.getSource() != null && e.getSource().equals(jSourcesTable)) {
+            if (e.getSource() != null && (e.getSource().equals(jSourcesTable) || e.getSource().equals(jVictimTable))) {
                 if (jideTabbedPane1.getSelectedIndex() == 0) {
                     fireTransferEvent(TRANSFER_TYPE.DELETE_SOURCE);
                 } else if (jideTabbedPane1.getSelectedIndex() == 1) {
@@ -2020,7 +2020,8 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
                             .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jAllTargetsComboBox, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addComponent(jMarkTargetAsFake, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -3113,6 +3114,10 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     }
 
     private void updateInfo() {
+        if(jVictimTable.getModel().getColumnCount() < 5){
+            //not set up yet
+            return;
+        }
         // <editor-fold defaultstate="collapsed" desc="Update status bar info">
         StringBuilder builder = new StringBuilder();
         builder.append("<html><nobr><b>Herkunft: </b>");
@@ -3154,9 +3159,13 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         int targetAttacks = 0;
         int targetFake = 0;
         for (int i = 0; i < targets; i++) {
-            int attacksOnVillage = (Integer) jVictimTable.getValueAt(i, 3);
+            Object val = jVictimTable.getValueAt(i, 3);
+            int attacksOnVillage = 0;
+            if (val != null) {
+                attacksOnVillage = (Integer) val;
+            }
             targetAttacks += attacksOnVillage;
-            Object val = jVictimTable.getValueAt(i, 2);
+            val = jVictimTable.getValueAt(i, 2);
             if (val != null) {
                 targetFake += ((Boolean) val) ? attacksOnVillage : 0;
             } else {

@@ -102,7 +102,7 @@ public class FreeForm extends AbstractForm {
         } else {
             colorVal = "#" + Integer.toHexString(Color.BLACK.getRGB() & 0x00ffffff);
         }
-        ArrayList<Village> containedVillages = getContainedVillages();
+        List<Village> containedVillages = getContainedVillages();
         String villageListVal = "";
         if (containedVillages != null && !containedVillages.isEmpty()) {
             villageListVal = new VillageListFormatter().formatElements(containedVillages, pExtended);
@@ -161,6 +161,23 @@ public class FreeForm extends AbstractForm {
         g2d.setColor(cBefore);
         g2d.setComposite(coBefore);
         g2d.setFont(fBefore);
+    }
+
+    @Override
+    public List<Village> getContainedVillages() {
+        Point2D.Double pp = MapPanel.getSingleton().virtualPosToSceenPosDouble(points.get(0).getX(), points.get(0).getY());
+        GeneralPath p = new GeneralPath();
+        p.moveTo(pp.x, pp.y);
+        for (int i = 1; i < points.size(); i++) {
+            pp = MapPanel.getSingleton().virtualPosToSceenPosDouble(points.get(i).getX(), points.get(i).getY());
+            p.lineTo(pp.x, pp.y);
+        }
+        p.closePath();
+        List<Village> result = MapPanel.getSingleton().getVillagesInShape(p);
+        if (result == null) {
+            return super.getContainedVillages();
+        }
+        return result;
     }
 
     public void renderPreview(Graphics2D g2d) {

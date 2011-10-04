@@ -27,6 +27,7 @@ public class Text extends AbstractForm {
 
     private java.awt.Rectangle mBounds = null;
 
+    @Override
     public void loadFromXml(Element e) {
         try {
             Element elem = e.getChild("name");
@@ -43,6 +44,7 @@ public class Text extends AbstractForm {
         }
     }
 
+    @Override
     public boolean allowsBBExport() {
         return false;
     }
@@ -64,7 +66,6 @@ public class Text extends AbstractForm {
         java.awt.Rectangle virtBounds = new java.awt.Rectangle((int) (bounds.getX() + s.x), (int) (bounds.getY() + s.y), (int) (bounds.getWidth()), (int) (bounds.getHeight()));
 
         //calculate bounds
-        double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
         int w = GlobalOptions.getSkin().getCurrentFieldWidth();//getImage(Skin.ID_DEFAULT_UNDERGROUND, zoom).getWidth(null);
         int h = GlobalOptions.getSkin().getCurrentFieldHeight();//getImage(Skin.ID_DEFAULT_UNDERGROUND, zoom).getHeight(null);
         mBounds = new java.awt.Rectangle((int) (getXPos()), (int) (getYPos()), (int) Math.rint(bounds.getWidth() / (double) w), (int) Math.rint(bounds.getHeight() / (double) h));

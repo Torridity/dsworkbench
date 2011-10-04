@@ -79,9 +79,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -109,8 +111,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             return;
         }
         if (e.getActionCommand().equals("Copy")) {
-            if (markedVillages
-                    != null && !markedVillages.isEmpty()) {
+            if (markedVillages != null && !markedVillages.isEmpty()) {
                 try {
                     StringBuilder b = new StringBuilder();
                     for (Village v : markedVillages) {
@@ -298,23 +299,25 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
         if (!shiftDown) {
             int cursor = getCurrentCursor();
+            boolean villagesHandled = false;
             if (cursor == ImageManager.CURSOR_TAG) {
                 //tag selected villages
                 if (markedVillages != null || !markedVillages.isEmpty()) {
                     VillageTagFrame.getSingleton().setLocationRelativeTo(this);
                     VillageTagFrame.getSingleton().showTagsFrame(markedVillages);
+                    villagesHandled = true;
                 }
             } else if (cursor == ImageManager.CURSOR_NOTE) {
                 //add note for selected villages
                 if (markedVillages != null || !markedVillages.isEmpty()) {
                     DSWorkbenchNotepad.getSingleton().addNoteForVillages(markedVillages);
+                    villagesHandled = true;
                 }
             }
-            if (markedVillages != null) {
+            if (villagesHandled) {
                 markedVillages.clear();
             }
         }
-
     }
 
     public List<Village> getMarkedVillages() {
@@ -1675,6 +1678,59 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     return current;
                 }
             }
+        } catch (Exception e) {
+            //failed getting village (probably getting mousepos failed)
+        }
+
+        return null;
+    }
+
+    public List<Village> getVillagesInShape(Shape pShape) {
+        if (MenuRenderer.getSingleton().isVisible()) {
+            return null;
+        }
+
+        if (mVillagePositions == null) {
+            return null;
+        }
+        try {
+            List<Village> result = new ArrayList<Village>();
+            Iterator<Village> villages = mVillagePositions.keySet().iterator();
+
+            while (villages.hasNext()) {
+                Village currentVillage = villages.next();
+                Rectangle current = mVillagePositions.get(currentVillage);
+                if (pShape.intersects(current)) {
+                    result.add(currentVillage);
+                }
+            }
+            return result;
+        } catch (Exception e) {
+            //failed getting village (probably getting mousepos failed)
+        }
+        return null;
+    }
+
+    public List<Village> getVillagesOnLine(Line2D.Double pShape) {
+        if (MenuRenderer.getSingleton().isVisible()) {
+            return null;
+        }
+
+        if (mVillagePositions == null) {
+            return null;
+        }
+        try {
+            List<Village> result = new ArrayList<Village>();
+            Iterator<Village> villages = mVillagePositions.keySet().iterator();
+
+            while (villages.hasNext()) {
+                Village currentVillage = villages.next();
+                Rectangle current = mVillagePositions.get(currentVillage);
+                if (current.intersectsLine(pShape)) {
+                    result.add(currentVillage);
+                }
+            }
+            return result;
         } catch (Exception e) {
             //failed getting village (probably getting mousepos failed)
         }

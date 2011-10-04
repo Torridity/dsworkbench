@@ -17,13 +17,13 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.UserProfile;
+import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.editors.AttackTypeCellEditor;
 import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.editors.DrawNotDrawEditor;
 import de.tor.tribes.ui.editors.SentNotSentEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.models.AttackTableModel;
-import de.tor.tribes.ui.renderer.AttackMiscInfoRenderer;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
@@ -31,6 +31,7 @@ import de.tor.tribes.ui.renderer.DrawNotDrawCellRenderer;
 import de.tor.tribes.ui.renderer.SentNotSentCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
+import de.tor.tribes.ui.views.DSWorkbenchSelectionFrame;
 import de.tor.tribes.util.AttackIGMSender;
 import de.tor.tribes.util.AttackToPlainTextFormatter;
 import de.tor.tribes.util.BrowserCommandSender;
@@ -53,12 +54,14 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -77,6 +80,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.CompoundHighlighter;
@@ -89,6 +93,7 @@ import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
 import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
+import org.jfree.date.DateUtilities;
 
 /**
  *
@@ -100,7 +105,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
     public static enum TRANSFER_TYPE {
 
-        CLIPBOARD_PLAIN, CLIPBOARD_BB, FILE_HTML, FILE_GM, BROWSER_IGM, DSWB_RETIME, BROWSER_LINK, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD
+        CLIPBOARD_PLAIN, CLIPBOARD_BB, FILE_HTML, FILE_GM, BROWSER_IGM, DSWB_RETIME, SELECTION_TOOL, BROWSER_LINK, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD
     }
     private String sAttackPlan = null;
     private final static JXTable jxAttackTable = new JXTable();
@@ -337,6 +342,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         jScriptExportDialog = new javax.swing.JDialog();
         jShowAttacksInVillageInfo = new javax.swing.JCheckBox();
@@ -367,6 +373,8 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jPanel4 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         jDateField = new de.tor.tribes.ui.components.DateTimeField();
+        jAdaptTypeBox = new javax.swing.JComboBox();
+        jLabel1 = new javax.swing.JLabel();
         jModifyArrivalOption = new javax.swing.JRadioButton();
         jMoveTimeOption = new javax.swing.JRadioButton();
         jRandomizeOption = new javax.swing.JRadioButton();
@@ -548,110 +556,152 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         });
 
         jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel3.setLayout(new java.awt.GridBagLayout());
 
         jLabel7.setText("Tage");
-        jLabel7.setMaximumSize(new java.awt.Dimension(24, 25));
-        jLabel7.setMinimumSize(new java.awt.Dimension(24, 25));
-        jLabel7.setPreferredSize(new java.awt.Dimension(24, 25));
+        jLabel7.setMaximumSize(new java.awt.Dimension(80, 25));
+        jLabel7.setMinimumSize(new java.awt.Dimension(80, 25));
+        jLabel7.setPreferredSize(new java.awt.Dimension(80, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jLabel7, gridBagConstraints);
 
         jLabel5.setText("Minuten");
-        jLabel5.setMaximumSize(new java.awt.Dimension(38, 25));
-        jLabel5.setMinimumSize(new java.awt.Dimension(38, 25));
-        jLabel5.setPreferredSize(new java.awt.Dimension(38, 25));
+        jLabel5.setMaximumSize(new java.awt.Dimension(80, 25));
+        jLabel5.setMinimumSize(new java.awt.Dimension(80, 25));
+        jLabel5.setPreferredSize(new java.awt.Dimension(80, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jLabel5, gridBagConstraints);
 
         jDayField.setMinimumSize(new java.awt.Dimension(60, 25));
         jDayField.setPreferredSize(new java.awt.Dimension(60, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jDayField, gridBagConstraints);
 
         jMinuteField.setMinimumSize(new java.awt.Dimension(60, 25));
         jMinuteField.setPreferredSize(new java.awt.Dimension(60, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jMinuteField, gridBagConstraints);
 
         jLabel6.setText("Stunden");
-        jLabel6.setMaximumSize(new java.awt.Dimension(40, 25));
-        jLabel6.setMinimumSize(new java.awt.Dimension(40, 25));
-        jLabel6.setPreferredSize(new java.awt.Dimension(40, 25));
+        jLabel6.setMaximumSize(new java.awt.Dimension(80, 25));
+        jLabel6.setMinimumSize(new java.awt.Dimension(80, 25));
+        jLabel6.setPreferredSize(new java.awt.Dimension(80, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jLabel6, gridBagConstraints);
 
         jHourField.setMinimumSize(new java.awt.Dimension(60, 25));
         jHourField.setPreferredSize(new java.awt.Dimension(60, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jHourField, gridBagConstraints);
 
         jLabel14.setText("Sekunden");
-        jLabel14.setMaximumSize(new java.awt.Dimension(47, 25));
-        jLabel14.setMinimumSize(new java.awt.Dimension(47, 25));
-        jLabel14.setPreferredSize(new java.awt.Dimension(47, 25));
+        jLabel14.setMaximumSize(new java.awt.Dimension(80, 25));
+        jLabel14.setMinimumSize(new java.awt.Dimension(80, 25));
+        jLabel14.setPreferredSize(new java.awt.Dimension(80, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jLabel14, gridBagConstraints);
 
         jSecondsField.setMinimumSize(new java.awt.Dimension(60, 20));
         jSecondsField.setPreferredSize(new java.awt.Dimension(60, 25));
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jMinuteField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSecondsField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(10, 10, 10)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jHourField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jDayField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jHourField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSecondsField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jDayField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jMinuteField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jSecondsField, gridBagConstraints);
 
         jPanel4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel4.setLayout(new java.awt.GridBagLayout());
 
         jLabel8.setText("Neue Ankunftzeit");
         jLabel8.setToolTipText("");
         jLabel8.setEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel4.add(jLabel8, gridBagConstraints);
 
         jDateField.setEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel4.add(jDateField, gridBagConstraints);
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jDateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jDateField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
+        jAdaptTypeBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Datum und Zeit", "Nur Datum", "Nur Zeit" }));
+        jAdaptTypeBox.setEnabled(false);
+        jAdaptTypeBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireChangeAdeptTypeEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel4.add(jAdaptTypeBox, gridBagConstraints);
+
+        jLabel1.setText("Angleichung");
+        jLabel1.setEnabled(false);
+        jLabel1.setMaximumSize(new java.awt.Dimension(34, 20));
+        jLabel1.setMinimumSize(new java.awt.Dimension(34, 20));
+        jLabel1.setPreferredSize(new java.awt.Dimension(34, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel4.add(jLabel1, gridBagConstraints);
 
         buttonGroup2.add(jModifyArrivalOption);
         jModifyArrivalOption.setText("Ankunftzeit angleichen");
@@ -682,64 +732,70 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         });
 
         jPanel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel5.setLayout(new java.awt.GridBagLayout());
 
         jLabel17.setText("Zeitfenster");
         jLabel17.setEnabled(false);
         jLabel17.setMaximumSize(new java.awt.Dimension(80, 25));
         jLabel17.setMinimumSize(new java.awt.Dimension(80, 25));
         jLabel17.setPreferredSize(new java.awt.Dimension(80, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel5.add(jLabel17, gridBagConstraints);
 
         jLabel18.setText("+/-");
         jLabel18.setEnabled(false);
         jLabel18.setMaximumSize(new java.awt.Dimension(16, 25));
         jLabel18.setMinimumSize(new java.awt.Dimension(16, 25));
         jLabel18.setPreferredSize(new java.awt.Dimension(16, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 0);
+        jPanel5.add(jLabel18, gridBagConstraints);
 
         jRandomField.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         jRandomField.setToolTipText("<html>Zeitfenster in Stunden<br/>Wird hier 2 eingegeben, so werden alle Angriffe um einen zufälligen Wert<br/>\n in einem Bereich von -2 bis +2 Stunden,<br/> ausgehend von ihrer aktuellen Zeit, verschoben.</html>");
         jRandomField.setEnabled(false);
         jRandomField.setMinimumSize(new java.awt.Dimension(6, 25));
         jRandomField.setPreferredSize(new java.awt.Dimension(6, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel5.add(jRandomField, gridBagConstraints);
 
         jLabel19.setEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
+        jPanel5.add(jLabel19, gridBagConstraints);
 
         jNotRandomToNightBonus.setSelected(true);
         jNotRandomToNightBonus.setText("Nicht in Nachtbonus verschieben");
         jNotRandomToNightBonus.setToolTipText("DS Workbench sorgt dafür, dass Angriffe nicht im Nachtbonus landen");
         jNotRandomToNightBonus.setEnabled(false);
         jNotRandomToNightBonus.setOpaque(false);
-
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jNotRandomToNightBonus, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRandomField, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel19)))
-                .addContainerGap())
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRandomField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel19))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jNotRandomToNightBonus)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel5.add(jNotRandomToNightBonus, gridBagConstraints);
 
         buttonGroup2.add(jModifySendOption);
         jModifySendOption.setText("Abschickzeit angleichen");
@@ -754,22 +810,22 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jTimeChangeDialog.getContentPane().setLayout(jTimeChangeDialogLayout);
         jTimeChangeDialogLayout.setHorizontalGroup(
             jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jTimeChangeDialogLayout.createSequentialGroup()
+            .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jRandomizeOption, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jTimeChangeDialogLayout.createSequentialGroup()
+                .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 373, Short.MAX_VALUE)
+                    .addComponent(jRandomizeOption)
+                    .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
                         .addComponent(jModifyArrivalOption)
                         .addGap(18, 18, 18)
                         .addComponent(jModifySendOption))
-                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jMoveTimeOption, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
+                    .addComponent(jMoveTimeOption)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jTimeChangeDialogLayout.createSequentialGroup()
                         .addComponent(jCancelButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOKButton))
-                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 373, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 373, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jTimeChangeDialogLayout.setVerticalGroup(
@@ -778,18 +834,18 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 .addContainerGap()
                 .addComponent(jMoveTimeOption)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jModifyArrivalOption)
                     .addComponent(jModifySendOption))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jRandomizeOption)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jOKButton)
                     .addComponent(jCancelButton))
@@ -1004,7 +1060,6 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         if (evt.getSource() == jOKButton) {
             actionListener.actionPerformed(new ActionEvent(this, 0, "TimeChange"));
         }
-
         jTimeChangeDialog.setVisible(false);
 }//GEN-LAST:event_fireCloseTimeChangeDialogEvent
 
@@ -1029,6 +1084,8 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         //set arrive options
         jLabel8.setEnabled(arriveMode);
         jDateField.setEnabled(arriveMode);
+        jLabel1.setEnabled(arriveMode);
+        jAdaptTypeBox.setEnabled(arriveMode);
         //random options
         jLabel17.setEnabled(randomMode);
         jLabel18.setEnabled(randomMode);
@@ -1060,12 +1117,28 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideInfoEvent
         infoPanel.setCollapsed(true);
     }//GEN-LAST:event_fireHideInfoEvent
+
+    private void fireChangeAdeptTypeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeAdeptTypeEvent
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            if (jAdaptTypeBox.getSelectedIndex() == 0) {//adapt both
+                jDateField.setTimeEnabled(true);
+                jDateField.setDateEnabled(true);
+            } else if (jAdaptTypeBox.getSelectedIndex() == 1) {//adapt date
+                jDateField.setTimeEnabled(false);
+                jDateField.setDateEnabled(true);
+            } else if (jAdaptTypeBox.getSelectedIndex() == 2) {//adapt time
+                jDateField.setTimeEnabled(true);
+                jDateField.setDateEnabled(false);
+            }
+        }
+    }//GEN-LAST:event_fireChangeAdeptTypeEvent
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private static javax.swing.JTextField jAPIKey;
     private static javax.swing.JButton jAcceptChangeUnitTypeButton;
+    private static javax.swing.JComboBox jAdaptTypeBox;
     private static javax.swing.JCheckBox jAdeptTypeBox;
     private static javax.swing.JCheckBox jAdeptUnitBox;
     private javax.swing.JPanel jAdeptUnitPanel;
@@ -1083,6 +1156,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private static javax.swing.JRadioButton jFakeDefType;
     private static javax.swing.JRadioButton jFakeType;
     private static javax.swing.JSpinner jHourField;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
@@ -1148,17 +1222,63 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             }
 
         } else if (jModifyArrivalOption.isSelected()) {
-            Date arrive = jDateField.getSelectedDate();
-            for (Attack attack : attacksToModify) {
-                attack.setArriveTime(arrive);
+            Calendar arrive = Calendar.getInstance();
+            arrive.setTime(jDateField.getSelectedDate());
+            if (jAdaptTypeBox.getSelectedIndex() == 0) {
+                for (Attack attack : attacksToModify) {
+                    attack.setArriveTime(arrive.getTime());
+                }
+            } else if (jAdaptTypeBox.getSelectedIndex() == 1) {//adapt date
+                for (Attack attack : attacksToModify) {
+                    Date d = attack.getArriveTime();
+                    Calendar dc = Calendar.getInstance();
+                    dc.setTime(d);
+                    dc.set(Calendar.DAY_OF_MONTH, arrive.get(Calendar.DAY_OF_MONTH));
+                    dc.set(Calendar.MONTH, arrive.get(Calendar.MONTH));
+                    dc.set(Calendar.YEAR, arrive.get(Calendar.YEAR));
+                    attack.setArriveTime(dc.getTime());
+                }
+            } else if (jAdaptTypeBox.getSelectedIndex() == 2) {//adapt time
+                for (Attack attack : attacksToModify) {
+                    Date d = attack.getArriveTime();
+                    Calendar dc = Calendar.getInstance();
+                    dc.setTime(d);
+                    dc.set(Calendar.HOUR_OF_DAY, arrive.get(Calendar.HOUR_OF_DAY));
+                    dc.set(Calendar.MINUTE, arrive.get(Calendar.MINUTE));
+                    dc.set(Calendar.SECOND, arrive.get(Calendar.SECOND));
+                    dc.set(Calendar.MILLISECOND, arrive.get(Calendar.MILLISECOND));
+                    attack.setArriveTime(dc.getTime());
+                }
             }
-
         } else if (jModifySendOption.isSelected()) {
-            Date arrive = jDateField.getSelectedDate();
-            for (Attack attack : attacksToModify) {
-                attack.setSendTime(arrive);
+            Calendar send = Calendar.getInstance();
+            send.setTime(jDateField.getSelectedDate());
+            if (jAdaptTypeBox.getSelectedIndex() == 0) {
+                for (Attack attack : attacksToModify) {
+                    attack.setSendTime(send.getTime());
+                }
+            } else if (jAdaptTypeBox.getSelectedIndex() == 1) {//adapt date
+                for (Attack attack : attacksToModify) {
+                    Date d = attack.getSendTime();
+                    Calendar dc = Calendar.getInstance();
+                    dc.setTime(d);
+                    dc.set(Calendar.DAY_OF_MONTH, send.get(Calendar.DAY_OF_MONTH));
+                    dc.set(Calendar.MONTH, send.get(Calendar.MONTH));
+                    dc.set(Calendar.YEAR, send.get(Calendar.YEAR));
+                    attack.setSendTime(dc.getTime());
+                }
+            } else if (jAdaptTypeBox.getSelectedIndex() == 2) {//adapt time
+                for (Attack attack : attacksToModify) {
+                    Date d = attack.getSendTime();
+                    Calendar dc = Calendar.getInstance();
+                    dc.setTime(d);
+                    dc.set(Calendar.HOUR_OF_DAY, send.get(Calendar.HOUR_OF_DAY));
+                    dc.set(Calendar.MINUTE, send.get(Calendar.MINUTE));
+                    dc.set(Calendar.SECOND, send.get(Calendar.SECOND));
+                    dc.set(Calendar.MILLISECOND, send.get(Calendar.MILLISECOND));
+                    attack.setSendTime(dc.getTime());
+                }
             }
-
         } else if (jRandomizeOption.isSelected()) {
             long rand = (Long) jRandomField.getValue() * 60 * 60 * 1000;
             for (Attack attack : attacksToModify) {
@@ -1367,6 +1487,36 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jScriptExportDialog.setVisible(true);
     }
 
+    private void transferToSelectionTool() {
+        List<Attack> selection = getSelectedAttacks();
+        if (selection.isEmpty()) {
+            showInfo("Keine Angriffe gewählt");
+            return;
+        }
+        List<Village> villages = new ArrayList<Village>();
+        int result = JOptionPaneHelper.showQuestionThreeChoicesBox(this, "Herkunft oder Zieldörfer übertragen?", "Übertragen", "Herkunft", "Ziele", "Abbrechen");
+        if (result == JOptionPane.YES_OPTION) {
+            //target   
+            for (Attack a : selection) {
+                if (!villages.contains(a.getTarget())) {
+                    villages.add(a.getTarget());
+                }
+            }
+        } else if (result == JOptionPane.NO_OPTION) {
+            //source
+            for (Attack a : selection) {
+                if (!villages.contains(a.getSource())) {
+                    villages.add(a.getSource());
+                }
+            }
+        } else {
+            //none
+            return;
+        }
+        DSWorkbenchSelectionFrame.getSingleton().addVillages(villages);
+        showInfo(villages.size() + ((villages.size() == 1) ? " Dorf" : " Dörfer") + " in die Auswahlübersicht übertragen");
+    }
+
     public void transferSelection(TRANSFER_TYPE pType) {
         switch (pType) {
             case COPY_TO_INTERNAL_CLIPBOARD:
@@ -1398,6 +1548,9 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 break;
             case FILE_GM:
                 transferToScript();
+                break;
+            case SELECTION_TOOL:
+                transferToSelectionTool();
                 break;
         }
     }

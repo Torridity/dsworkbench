@@ -130,7 +130,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         jSelectionPanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildComponent(jSelectionTreePanel);
         buildMenu();
-capabilityInfoPanel1.addActionListener(this);
+        capabilityInfoPanel1.addActionListener(this);
         treeData = new LinkedList<Village>();
         jSelectionTree.setCellRenderer(new NodeCellRenderer());
 
@@ -417,6 +417,20 @@ capabilityInfoPanel1.addActionListener(this);
             }
         });
         miscPane.getContentPane().add(region);
+
+        JXButton substract = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/branch_remove.png")));
+
+        substract.setToolTipText("Abziehen aller Dörfer aus der Zwischenablage von der Liste der ausgewählten Dörfer");
+        substract.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                substractVillagesFromClipboard();
+            }
+        });
+        miscPane.getContentPane().add(substract);
+
+
         centerPanel.setupTaskPane(editPane, transferPane, miscPane);
     }
 
@@ -626,6 +640,24 @@ capabilityInfoPanel1.addActionListener(this);
         jRegionSelectDialog.pack();
         jRegionSelectDialog.setLocationRelativeTo(DSWorkbenchSelectionFrame.this);
         jRegionSelectDialog.setVisible(true);
+    }
+
+    private void substractVillagesFromClipboard() {
+        List<Village> villages = null;
+        try {
+            Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+            villages = PluginManager.getSingleton().executeVillageParser((String) t.getTransferData(DataFlavor.stringFlavor));
+        } catch (Exception e) {
+            logger.error("Failed to read village data from clipboard", e);
+            showError("Fehler beim Lesen aus der Zwischenablage");
+        }
+
+        if (villages == null || villages.isEmpty()) {
+            showInfo("Keine Dörfer in der Zwischenablage gefunden");
+        } else {
+            substractVillages(villages);
+            showSuccess(((villages.size() == 1) ? "Dorf" : villages.size() + " Dörfer") + " entfernt");
+        }
     }
 
     /** This method is called from within the constructor to
@@ -996,6 +1028,15 @@ capabilityInfoPanel1.addActionListener(this);
             }
         }
         Collections.sort(treeData, Village.ALLY_TRIBE_VILLAGE_COMPARATOR);
+        buildTree();
+    }
+
+    public void substractVillages(List<Village> pVillages) {
+        for (Village v : pVillages.toArray(new Village[]{})) {
+            if (v != null) {
+                treeData.remove(v);
+            }
+        }
         buildTree();
     }
 }

@@ -84,7 +84,6 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
- * @TODO add "remove transports with too long distance" feature
  * @author Jejkal
  */
 public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame implements ListSelectionListener, ActionListener, ProfileManagerListener {

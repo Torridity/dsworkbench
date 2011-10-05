@@ -107,6 +107,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 activeTab.fireChangeTimeEvent();
             } else if (e.getActionCommand().equals("UnitChange")) {
                 activeTab.fireChangeUnitEvent();
+            } else if (e.getActionCommand().equals("Recolor")) {
+                activeTab.updateSortHighlighter();
             } else if (e.getActionCommand().equals("SendIGM")) {
                 activeTab.fireSendIGMEvent();
             } else if (e.getActionCommand().equals("ExportScript")) {
@@ -453,18 +455,18 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         }));
-        
-         transferTaskPane.getContentPane().add(factoryButton("/res/ui/to_selection.png", "Herkunfts- oder Zield&ouml;rfer markierter Angriffe in die Auswahl&uuml;bersicht übertragen.", new MouseAdapter() {
+
+        transferTaskPane.getContentPane().add(factoryButton("/res/ui/to_selection.png", "Herkunfts- oder Zield&ouml;rfer markierter Angriffe in die Auswahl&uuml;bersicht übertragen.", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
                 AttackTableTab activeTab = getActiveTab();
                 if (activeTab != null) {
-                   activeTab.transferSelection(AttackTableTab.TRANSFER_TYPE.SELECTION_TOOL);
+                    activeTab.transferSelection(AttackTableTab.TRANSFER_TYPE.SELECTION_TOOL);
                 }
             }
         }));
-        
+
         // </editor-fold>
         // <editor-fold defaultstate="collapsed" desc="Misc task pane">
 
@@ -488,6 +490,17 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 jStandardAttackTable.setRowHeight(20);
                 jStandardAttackDialog.setLocationRelativeTo(DSWorkbenchAttackFrame.getSingleton());
                 jStandardAttackDialog.setVisible(true);
+            }
+        }));
+
+        miscTaskPane.getContentPane().add(factoryButton("/res/ui/colorize.gif", "F&auml;rbt zusammengeh&ouml;rigen Angriffe entsprechend der aktuellen Tabellensortierung ein<br/><i>Farbalgorithmus &copy;bodhiBrute</i>", new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                AttackTableTab tab = getActiveTab();
+                if (tab != null) {
+                    tab.setUseSortColoring();
+                }
             }
         }));
 

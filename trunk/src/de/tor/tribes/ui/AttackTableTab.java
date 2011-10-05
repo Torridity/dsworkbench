@@ -41,6 +41,7 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.TableHelper;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.bb.AttackListFormatter;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
@@ -64,6 +65,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -78,13 +81,15 @@ import javax.swing.RowFilter;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
-import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.CompoundHighlighter;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
+import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.decorator.PainterHighlighter;
 import org.jdesktop.swingx.decorator.PatternPredicate;
@@ -93,7 +98,6 @@ import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
 import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
-import org.jfree.date.DateUtilities;
 
 /**
  *
@@ -113,6 +117,8 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private static boolean KEY_LISTENER_ADDED = false;
     private static PainterHighlighter highlighter = null;
     private ActionListener actionListener = null;
+    private static List<Highlighter> highlighters = new ArrayList<Highlighter>();
+    private static boolean useSortColoring = false;
 
     static {
         jxAttackTable.setRowHeight(24);
@@ -180,6 +186,14 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 }
             });
 
+            jxAttackTable.getRowSorter().addRowSorterListener(new RowSorterListener() {
+
+                @Override
+                public void sorterChanged(RowSorterEvent e) {
+                    actionListener.actionPerformed(new ActionEvent(this, 0, "Recolor"));
+                }
+            });
+
             KEY_LISTENER_ADDED = true;
         }
         jxAttackTable.getSelectionModel().addListSelectionListener(AttackTableTab.this);
@@ -200,6 +214,18 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
     public void deregister() {
         jxAttackTable.getSelectionModel().removeListSelectionListener(this);
+    }
+
+    public void setUseSortColoring() {
+        useSortColoring = !useSortColoring;
+        if (!useSortColoring) {
+            for (Highlighter h : highlighters) {
+                jxAttackTable.removeHighlighter(h);
+            }
+            highlighters.clear();
+        }else{
+            updateSortHighlighter();
+        }
     }
 
     @Override
@@ -281,6 +307,13 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
         jScrollPane1.setViewportView(jxAttackTable);
         jxAttackTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
+        updateSortHighlighter();
+    }
+
+    public void updateSortHighlighter() {
+        if (useSortColoring) {
+            TableHelper.applyTableColoring(jxAttackTable, getAttackPlan(), highlighters);
+        }
     }
 
     public void updateFilter(final String pValue, final List<String> columns, final boolean pCaseSensitive, final boolean pFilterRows) {

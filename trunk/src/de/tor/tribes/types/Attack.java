@@ -139,18 +139,19 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
 
     @Override
     public String toXml() {
-        String xml = "<attack>\n";
-        xml += "<source>" + getSource().getId() + "</source>\n";
-        xml += "<target>" + getTarget().getId() + "</target>\n";
-        xml += "<arrive>" + getArriveTime().getTime() + "</arrive>\n";
-        xml += "<unit>" + getUnit().getPlainName() + "</unit>\n";
-        xml += "<extensions>\n";
-        xml += "\t<showOnMap>" + isShowOnMap() + "</showOnMap>\n";
-        xml += "\t<type>" + getType() + "</type>\n";
-        xml += "\t<transferredToBrowser>" + isTransferredToBrowser() + "</transferredToBrowser>\n";
-        xml += "</extensions>\n";
-        xml += "</attack>";
-        return xml;
+        StringBuilder b = new StringBuilder();
+        b.append("<attack>\n");
+        b.append("<source>").append(getSource().getId()).append("</source>\n");
+        b.append("<target>").append(getTarget().getId()).append("</target>\n");
+        b.append("<arrive>").append(getArriveTime().getTime()).append("</arrive>\n");
+        b.append("<unit>").append(getUnit().getPlainName()).append("</unit>\n");
+        b.append("<extensions>\n");
+        b.append("\t<showOnMap>").append(isShowOnMap()).append("</showOnMap>\n");
+        b.append("\t<type>").append(getType()).append("</type>\n");
+        b.append("\t<transferredToBrowser>").append(isTransferredToBrowser()).append("</transferredToBrowser>\n");
+        b.append("</extensions>\n");
+        b.append("</attack>");
+        return b.toString();
     }
 
     /**

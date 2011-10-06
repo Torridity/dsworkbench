@@ -107,12 +107,13 @@ public class Arrow extends AbstractForm {
 
     @Override
     protected String getFormXml() {
-        String xml = "<end x=\"" + getXPosEnd() + "\" y=\"" + getYPosEnd() + "\"/>\n";
-        xml += "<filled>" + isFilled() + "</filled>\n";
-        xml += "<drawColor r=\"" + getDrawColor().getRed() + "\" g=\"" + getDrawColor().getGreen() + "\" b=\"" + getDrawColor().getBlue() + "\" a=\"" + getDrawAlpha() + "\"/>\n";
-        xml += "<stroke width=\"" + getStrokeWidth() + "\"/>\n";
-        xml += "<drawName>" + isDrawName() + "</drawName>\n";
-        return xml;
+        StringBuilder b = new StringBuilder();
+        b.append("<end x=\"").append(getXPosEnd()).append("\" y=\"").append(getYPosEnd()).append("\"/>\n");
+        b.append("<filled>").append(isFilled()).append("</filled>\n");
+        b.append("<drawColor r=\"").append(getDrawColor().getRed()).append("\" g=\"").append(getDrawColor().getGreen()).append("\" b=\"").append(getDrawColor().getBlue()).append("\" a=\"").append(getDrawAlpha()).append("\"/>\n");
+        b.append("<stroke width=\"").append(getStrokeWidth()).append("\"/>\n");
+        b.append("<drawName>").append(isDrawName()).append("</drawName>\n");
+        return b.toString();
     }
 
     @Override

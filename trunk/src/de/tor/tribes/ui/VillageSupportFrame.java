@@ -512,7 +512,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
         });
 
         jMinUnitCountSpinner.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(0), Integer.valueOf(0), null, Integer.valueOf(1)));
-        jMinUnitCountSpinner.setToolTipText("Minimale Anzahl der Einheiten aus einem Dorf, die als Unterstützung berücksichtigt werden");
+        jMinUnitCountSpinner.setToolTipText("<html>Minimale Anzahl der Einheiten von einem Typ aus einem Dorf, die als Unterst&uuml;tzung ber&uuml;cksichtigt werden.<br/>Es wird empfohlen, diesen Wert auf 0 zu lassen, um die maximal m&ouml;glichen Unterst&uuml;tzungen zu erzielen.</html> ");
         jMinUnitCountSpinner.setEditor(new javax.swing.JSpinner.NumberEditor(jMinUnitCountSpinner, ""));
         jMinUnitCountSpinner.setMinimumSize(new java.awt.Dimension(31, 25));
         jMinUnitCountSpinner.setPreferredSize(new java.awt.Dimension(31, 25));

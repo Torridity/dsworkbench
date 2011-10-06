@@ -58,21 +58,21 @@ public class LinkedTag extends Tag {
     @Override
     public String toXml() {
         try {
-            String ret = "<tag shownOnMap=\"" + isShowOnMap() + "\">\n";
-            ret += "<name><![CDATA[" + URLEncoder.encode(getName(), "UTF-8") + "]]></name>\n";
+            StringBuilder b = new StringBuilder();
+            b.append("<tag shownOnMap=\"").append(isShowOnMap()).append("\">\n");
+            b.append("<name><![CDATA[").append(URLEncoder.encode(getName(), "UTF-8")).append("]]></name>\n");
             Color c = getTagColor();
             if (c != null) {
-                ret += "<color r=\"" + c.getRed() + "\" g=\"" + c.getGreen() + "\" b=\"" + c.getBlue() + "\"/>\n";
+                b.append("<color r=\"").append(c.getRed()).append("\" g=\"").append(c.getGreen()).append("\" b=\"").append(c.getBlue()).append("\"/>\n");
             }
-            ret += "<icon>" + getTagIcon() + "</icon>\n";
-            ret += "<villages/>\n";
-            ret += "<equation>\n";
-            ret += URLEncoder.encode(getEquation(), "UTF-8") + "\n";
-            ret += "</equation>\n";
-            ret += "</tag>\n";
-            return ret;
+            b.append("<icon>").append(getTagIcon()).append("</icon>\n");
+            b.append("<villages/>\n");
+            b.append("<equation>\n");
+            b.append(URLEncoder.encode(getEquation(), "UTF-8")).append("\n");
+            b.append("</equation>\n");
+            b.append("</tag>\n");
+            return b.toString();
         } catch (Exception e) {
-            e.printStackTrace();
             return "\n";
         }
     }

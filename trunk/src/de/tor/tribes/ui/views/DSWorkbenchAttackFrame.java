@@ -273,6 +273,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         }       // </editor-fold>
     }
 
+    @Override
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAttackFrameAlwaysOnTop.isSelected());
@@ -287,6 +288,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         PropertyHelper.storeTableProperties(tab.getAttackTable(), pConfig, getPropertyPrefix());
     }
 
+    @Override
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
         try {
@@ -304,6 +306,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         PropertyHelper.restoreTableProperties(tab.getAttackTable(), pConfig, getPropertyPrefix());
     }
 
+    @Override
     public String getPropertyPrefix() {
         return "attack.view";
     }

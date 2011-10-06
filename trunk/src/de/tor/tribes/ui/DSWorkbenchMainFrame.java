@@ -779,7 +779,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             setPreferredSize(new Dimension(390, 185));
             setMinimumSize(new Dimension(390, 185));
             setMaximumSize(new Dimension(1900, 185));
-
         }
         super.setVisible(v);
         final boolean vis = v;

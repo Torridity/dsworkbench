@@ -203,8 +203,8 @@ public class UserProfile {
             success = true;
         } catch (IOException ioe) {
             try {
-                logger.info("Failed to delete profile. Added '.deleted' marker for next startup");
-                FileUtils.touch(new File(getProfileDirectory() + File.separator + ".deleted"));
+                logger.info("Failed to delete profile. Added 'deleted' marker for next startup");
+                FileUtils.touch(new File(getProfileDirectory() + File.separator + "deleted"));
                 success = true;
             } catch (IOException ioe2) {
             }

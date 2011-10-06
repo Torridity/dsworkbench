@@ -278,17 +278,18 @@ public class FreeForm extends AbstractForm {
 
     @Override
     protected String getFormXml() {
-        String xml = "<drawColor r=\"" + getDrawColor().getRed() + "\" g=\"" + getDrawColor().getGreen() + "\" b=\"" + getDrawColor().getBlue() + "\" a=\"" + getDrawAlpha() + "\"/>\n";
-        xml += "<filled>" + isFilled() + "</filled>\n";
-        xml += "<stroke width=\"" + getStrokeWidth() + "\"/>\n";
-        xml += "<drawName>" + isDrawName() + "</drawName>\n";
-        xml += "<tolerance>" + getTolerance() + "</tolerance>\n";
-        xml += "<points>\n";
+        StringBuilder b = new StringBuilder();
+        b.append("<drawColor r=\"").append(getDrawColor().getRed()).append("\" g=\"").append(getDrawColor().getGreen()).append("\" b=\"").append(getDrawColor().getBlue()).append("\" a=\"").append(getDrawAlpha()).append( "\"/>\n");
+        b.append("<filled>").append(isFilled()).append("</filled>\n");
+        b.append("<stroke width=\"").append(getStrokeWidth()).append( "\"/>\n");
+        b.append("<drawName>").append(isDrawName()).append( "</drawName>\n");
+        b.append("<tolerance>").append(getTolerance()).append( "</tolerance>\n");
+        b.append( "<points>\n");
         for (Point2D.Double p : points) {
-            xml += "<point x=\"" + p.getX() + "\" y=\"" + p.getY() + "\"/>\n";
+            b.append("<point x=\"").append(p.getX()).append("\" y=\"").append(p.getY()).append("\"/>\n");
         }
-        xml += "</points>\n";
-        return xml;
+        b.append( "</points>\n");
+        return b.toString();
     }
 
     @Override

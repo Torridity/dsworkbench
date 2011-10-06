@@ -98,30 +98,6 @@ public class StandardAttackManager {
         } else {
             logger.info("No standard attacks found under '" + pFile + "'");
             checkValues();
-            /* standardAttacks.put("Keiner", new LinkedList<StandardAttackElement>());
-            standardAttacks.put("Fake", new LinkedList<StandardAttackElement>());
-            standardAttacks.put("Off", new LinkedList<StandardAttackElement>());
-            standardAttacks.put("AG", new LinkedList<StandardAttackElement>());
-            standardAttacks.put("Unterstützung", new LinkedList<StandardAttackElement>());
-            for (int type = NO_TYPE_ROW; type <= FAKE_TYPE_ROW; type++) {
-            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            String typeName = "";
-            if (type == NO_TYPE_ROW) {
-            typeName = "Keiner";
-            } else if (type == FAKE_TYPE_ROW) {
-            typeName = "Fake";
-            } else if (type == OFF_TYPE_ROW) {
-            typeName = "Off";
-            } else if (type == SNOB_TYPE_ROW) {
-            typeName = "AG";
-            } else if (type == SUPPORT_TYPE_ROW) {
-            typeName = "Unterstützung";
-            }
-            if (!containsElementForUnit(typeName, unit)) {
-            standardAttacks.get(typeName).add(new StandardAttackElement(unit, 0));
-            }
-            }
-            }*/
         }
     }
 

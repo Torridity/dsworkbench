@@ -203,7 +203,6 @@ private void fireCheckAccount(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         case DatabaseInterface.ID_WEB_CONNECTION_FAILED: {
             wizCtrl.setProblem("Es konnte keine Verbindung mit dem Server hergestellt werden.\nBitte versuch es in Kürze noch einmal.");
             break;
-
         }
         case DatabaseInterface.ID_USER_ALREADY_EXIST: {
             if (!(DatabaseInterface.checkUser(user, password, proxy) == DatabaseInterface.ID_SUCCESS)) {

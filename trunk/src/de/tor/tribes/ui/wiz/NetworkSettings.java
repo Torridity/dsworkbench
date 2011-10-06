@@ -306,8 +306,6 @@ private void jProxyConnectOptionfireChangeConnectTypeEvent(java.awt.event.ItemEv
 }//GEN-LAST:event_jProxyConnectOptionfireChangeConnectTypeEvent
 
 private void jRefeshNetworkButtonfireUpdateProxySettingsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jRefeshNetworkButtonfireUpdateProxySettingsEvent
-
-
     if (jProxyConnectOption.isSelected()) {
         try {
             Integer.parseInt(jProxyPort.getText());
@@ -325,57 +323,6 @@ private void jRefeshNetworkButtonfireUpdateProxySettingsEvent(java.awt.event.Mou
     tempSettings.put("proxyUser", (jProxyConnectOption.isSelected()) ? jProxyUser.getText() : "");
     tempSettings.put("proxyPassword", (jProxyConnectOption.isSelected()) ? new String(jProxyPassword.getPassword()) : "");
 
-
-
-    /* if (jProxyConnectOption.isSelected()) {
-    //store properties
-    SocketAddress addr = null;
-    try {
-    addr = new InetSocketAddress(jProxyHost.getText(), Integer.parseInt(jProxyPort.getText()));
-    } catch (NumberFormatException nfe) {
-    wizCtrl.setProblem("Der Wert für den Port ist ungültig");
-    return;
-    }
-    currentSettings.put("proxySet", Boolean.toString(true));
-    currentSettings.put("proxyHost", jProxyHost.getText());
-    currentSettings.put("proxyPort", jProxyPort.getText());
-    currentSettings.put("proxyType", Integer.toString(jProxyTypeChooser.getSelectedIndex()));
-    currentSettings.put("proxyUser", jProxyUser.getText());
-    currentSettings.put("proxyPassword", new String(jProxyPassword.getPassword()));
-    
-    //create proxy object
-    switch (jProxyTypeChooser.getSelectedIndex()) {
-    case 1: {
-    webProxy = new Proxy(Proxy.Type.SOCKS, addr);
-    break;
-    }
-    default: {
-    webProxy = new Proxy(Proxy.Type.HTTP, addr);
-    break;
-    }
-    }
-    if ((jProxyUser.getText().length() >= 1) && (jProxyPassword.getPassword().length > 1)) {
-    Authenticator.setDefault(new Authenticator() {
-    
-    @Override
-    protected PasswordAuthentication getPasswordAuthentication() {
-    return new PasswordAuthentication(jProxyUser.getText(), jProxyPassword.getPassword());
-    }
-    });
-    }
-    } else {
-    currentSettings.put("proxySet", Boolean.toString(jProxyConnectOption.isSelected()));
-    currentSettings.put("proxyHost", "");
-    currentSettings.put("proxyPort", "");
-    currentSettings.put("proxyType", "");
-    currentSettings.put("proxyUser", "");
-    currentSettings.put("proxyPassword", "");
-    Authenticator.setDefault(null);
-    
-    webProxy = Proxy.NO_PROXY;
-    }
-    
-     */
     if (checkConnectivity(ProxyHelper.getProxyFromProperties(tempSettings))) {
         currentSettings.put("proxySet", Boolean.toString(jProxyConnectOption.isSelected()));
         currentSettings.put("proxyHost", (jProxyConnectOption.isSelected()) ? jProxyHost.getText() : "");
@@ -398,7 +345,7 @@ private void jRefeshNetworkButtonfireUpdateProxySettingsEvent(java.awt.event.Mou
             } else {
                 wizCtrl.setProblem("Verbindung fehlgeschlagen. Bitte überprüfe deine Einstellungen");
             }
-        } catch (Exception in) {
+        } catch (Throwable t) {
             wizCtrl.setProblem("Verbindung fehlgeschlagen. Bitte überprüfe deine Einstellungen");
         }
         return result;

@@ -179,15 +179,18 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
     }
 
     public String getFullName() {
-        String res = getName();
-        res += " " + getCoordAsString();
-        int cont = getContinent();
-        if (cont < 10 && cont > 0) {
-            res += " K0" + cont;
-        } else {
-            res += " K" + cont;
+        if (stringRepresentation == null) {
+            String res = getName();
+            res += " " + getCoordAsString();
+            int cont = getContinent();
+            if (cont < 10 && cont > 0) {
+                res += " K0" + cont;
+            } else {
+                res += " K" + cont;
+            }
+            stringRepresentation = res;
         }
-        return res;
+        return stringRepresentation;
     }
 
     public void setName(String name) {
@@ -257,141 +260,6 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
         this.tribe = tribe;
     }
 
-    public String getHTMLInfo() {
-        StringBuffer b = new StringBuffer();
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-            b.append("<html><p><b>Name (C:S:S):</b> ");
-            b.append(getName().replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
-            b.append(" (");
-            int[] hier = DSCalculator.xyToHierarchical(getX(), getY());
-            b.append(hier[0]);
-            b.append(":");
-            b.append(hier[1]);
-            b.append(":");
-            b.append(hier[2]);
-        } else {
-            b.append("<html><p><b>Name (X|Y):</b> ");
-            b.append(getName().replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
-            b.append(" (");
-            b.append(getX());
-            b.append("|");
-            b.append(getY());
-        }
-        b.append("), <b>Punkte:</b> ");
-        b.append(getPoints());
-        b.append(",");
-        List<Tag> tags = TagManager.getSingleton().getTags(this);
-        b.append("<b>Tags:</b> ");
-        if ((tags == null) || (tags.isEmpty())) {
-            b.append("keine, ");
-        } else {
-            for (int i = 0; i < tags.size(); i++) {
-                b.append(tags.get(i));
-                if (i < tags.size() - 1) {
-                    b.append("|");
-                } else {
-                    b.append(",");
-                }
-            }
-        }
-        b.append("<b>Bonus:</b> ");
-        int bonusType = DataHolder.getSingleton().getCurrentBonusType();
-        if (bonusType == 0) {
-            switch (getType()) {
-                case 1: {
-                    //holz
-                    b.append("+ 10% </p></html>");
-                    break;
-                }
-                case 2: {
-                    //lehm
-                    b.append("+ 10% </html>");
-                    break;
-                }
-                case 3: {
-                    //eisen
-                    b.append("+ 10% </p></html>");
-                    break;
-                }
-                case 4: {
-                    //bevölkerung
-                    b.append("+ 10% </p></html>");
-                    break;
-                }
-                case 5: {
-                    //kaserne
-                    b.append("+ 10% </p></html>");
-                    break;
-                }
-                case 6: {
-                    //stall
-                    b.append("+ 10% </p></html>");
-                    break;
-                }
-                case 7: {
-                    //werkstatt
-                    b.append("+ 10% </p></html>");
-                    break;
-                }
-                case 8: {
-                    //alle ressourcen
-                    b.append("+ 3% </p></html>");
-                    break;
-                }
-            }
-        } else {
-            switch (getType()) {
-                case 1: {
-                    //holz
-                    b.append("+ 100% </p></html>");
-                    break;
-                }
-                case 2: {
-                    //lehm
-                    b.append("+ 100% </html>");
-                    break;
-                }
-                case 3: {
-                    //eisen
-                    b.append("+ 100% </p></html>");
-                    break;
-                }
-                case 4: {
-                    //bevölkerung
-                    b.append("+ 10% </p></html>");
-                    break;
-                }
-                case 5: {
-                    //kaserne
-                    b.append("+ 50% </p></html>");
-                    break;
-                }
-                case 6: {
-                    //stall
-                    b.append("+ 50% </p></html>");
-                    break;
-                }
-                case 7: {
-                    //werkstatt
-                    b.append("+ 100% </p></html>");
-                    break;
-                }
-                case 8: {
-                    //alle rohstoffe
-                    b.append("+ 30% </p></html>");
-                    break;
-                }
-                case 9: {
-                    //speicher + markt
-                    b.append("+ 50% </p></html>");
-                    break;
-                }
-            }
-        }
-
-        return b.toString();
-    }
-
     public Rectangle2D.Double getVirtualBounds() {
         int w = GlobalOptions.getSkin().getBasicFieldHeight();
         int h = GlobalOptions.getSkin().getBasicFieldHeight();
@@ -401,15 +269,6 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
 
     @Override
     public String toString() {
-        /*if (stringRepresentation == null) {
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-        int[] hier = DSCalculator.xyToHierarchical(getX(), getY());
-        stringRepresentation = getName() + " (" + ((hier[0] < 10) ? "0" + hier[0] : hier[0]) + ":" + ((hier[1] < 10) ? "0" + hier[1] : hier[1]) + ":" + ((hier[2] < 10) ? "0" + hier[2] : hier[2]) + ")";
-        } else {
-        stringRepresentation = getName() + " (" + getX() + "|" + getY() + ")";
-        }
-        }
-        return stringRepresentation;*/
         return getFullName();
     }
 

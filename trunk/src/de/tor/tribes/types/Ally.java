@@ -209,12 +209,13 @@ public class Ally implements Comparable<Ally>, Serializable {
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
-        String res = "<html><table style='border: solid 1px black; cellspacing:0px;cellpadding: 0px;background-color:#EFEBDF;'>";
-        res += "<tr><td><b>Stamm:</b> </td><td>" + toString() + "</td></tr>";
-        res += "<tr><td>&nbsp;&nbsp;&nbsp;Mitglieder: </td><td>" + nf.format(getMembers()) + "</td></tr>";
-        res += "<tr><td>&nbsp;&nbsp;&nbsp;Punkte: </td><td>" + nf.format(getPoints()) + "(" + nf.format(getRank()) + ")</td></tr>";
-        res += "</table></html>";
-        return res;
+        StringBuilder b = new StringBuilder();
+        b.append("<html><table style='border: solid 1px black; cellspacing:0px;cellpadding: 0px;background-color:#EFEBDF;'>");
+        b.append("<tr><td><b>Stamm:</b> </td><td>").append(toString()).append("</td></tr>");
+        b.append("<tr><td>&nbsp;&nbsp;&nbsp;Mitglieder: </td><td>").append(nf.format(getMembers())).append("</td></tr>");
+        b.append("<tr><td>&nbsp;&nbsp;&nbsp;Punkte: </td><td>").append(nf.format(getPoints())).append("(").append(nf.format(getRank())).append(")</td></tr>");
+        b.append("</table></html>");
+        return b.toString();
     }
 
     public String toBBCode() {

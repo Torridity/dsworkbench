@@ -120,19 +120,11 @@ public class StandardAttackElement {
 
     public int getTroopsAmount(Village pVillage) {
         VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.OWN);
-        boolean haveTroopInfo = true;
         if (own == null) {
             //no info available
-            //haveTroopInfo = false;
             if (logger.isDebugEnabled()) {
                 logger.debug("No troop information found for village '" + pVillage + "'");
             }
-            return 0;
-        }
-
-        if (own == null) {
-            //no troops in village
-            logger.debug("No own troops found for village '" + pVillage + "'");
             return 0;
         }
 
@@ -165,22 +157,12 @@ public class StandardAttackElement {
                 //return all minus X
                 String v = dynamicAmount.replaceAll(ALL_TROOPS + " - ", "").trim();
                 int substract = Integer.parseInt(v);
-                if (availableAmount - substract > 0) {
-                    //enough troops avail
-                    return availableAmount - substract;
-                } else {
-                    //substract larger than avail. count
-                    return 0;
-                }
+                return Math.max(availableAmount - substract, 0);
             } else if (dynamicAmount.indexOf("%") > -1) {
                 String v = dynamicAmount.replaceAll("%", "").trim();
                 double perc = (double) Integer.parseInt(v);
                 perc /= 100;
-                if (Math.rint(perc * availableAmount) > 0) {
-                    return (int) Math.rint(perc * availableAmount);
-                } else {
-                    return 0;
-                }
+                return Math.max((int) Math.rint(perc * availableAmount), 0);
             }
         }
         return 0;

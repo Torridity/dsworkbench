@@ -107,13 +107,14 @@ public class Conquer extends ManageableType {
     @Override
     public String toXml() {
         try {
-            String result = "<conquer>\n";
-            result += "<villageID>" + getVillage().getId() + "</villageID>\n";
-            result += "<timestamp>" + getTimestamp() + "</timestamp>\n";
-            result += "<winner>" + getWinner().getId() + "</winner>\n";
-            result += "<loser>" + getLoser().getId() + "</loser>\n";
-            result += "</conquer>";
-            return result;
+            StringBuilder b = new StringBuilder();
+            b.append("<conquer>\n");
+            b.append("<villageID>").append(getVillage().getId()).append("</villageID>\n");
+            b.append("<timestamp>").append(getTimestamp()).append("</timestamp>\n");
+            b.append("<winner>").append(getWinner().getId()).append("</winner>\n");
+            b.append("<loser>").append(getLoser().getId()).append("</loser>\n");
+            b.append("</conquer>");
+            return b.toString();
         } catch (Throwable t) {
             //getting xml data failed
         }

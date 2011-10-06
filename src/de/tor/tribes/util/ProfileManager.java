@@ -104,7 +104,7 @@ public class ProfileManager {
                     }
                     for (File profileDir : profiles) {
                         logger.debug("Got profile directory '" + profileDir.getPath() + "'");
-                        if (new File(profileDir.getPath() + File.separator + ".deleted").exists()) {
+                        if (new File(profileDir.getPath() + File.separator + "deleted").exists()) {
                             logger.debug("Profile dir " + profileDir.getName() + " is sheduled for deletion");
                             if (FileUtils.deleteQuietly(new File(profileDir.getPath()))) {
                                 logger.debug("Profile dir deleted");

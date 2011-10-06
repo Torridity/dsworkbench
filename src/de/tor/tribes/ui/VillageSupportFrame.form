@@ -450,7 +450,7 @@
         <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
           <SpinnerModel initial="0" minimum="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
         </Property>
-        <Property name="toolTipText" type="java.lang.String" value="Minimale Anzahl der Einheiten aus einem Dorf, die als Unterst&#xfc;tzung ber&#xfc;cksichtigt werden"/>
+        <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Minimale Anzahl der Einheiten von einem Typ aus einem Dorf, die als Unterst&amp;uuml;tzung ber&amp;uuml;cksichtigt werden.&lt;br/&gt;Es wird empfohlen, diesen Wert auf 0 zu lassen, um die maximal m&amp;ouml;glichen Unterst&amp;uuml;tzungen zu erzielen.&lt;/html&gt; "/>
         <Property name="editor" type="javax.swing.JComponent" editor="org.netbeans.modules.form.editors.SpinnerEditorEditor">
           <SpinnerEditor format="" type="3"/>
         </Property>

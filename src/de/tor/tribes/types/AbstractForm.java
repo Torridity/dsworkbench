@@ -134,14 +134,15 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
     @Override
     public String toXml() {
         try {
-            String xml = "<form type=\"" + getTypeAsString(getFormType()) + "\">\n";
-            xml += "<name><![CDATA[" + URLEncoder.encode(getFormName(), "UTF-8") + "]]></name>\n";
-            xml += "<pos x=\"" + getXPos() + "\" y=\"" + getYPos() + "\"/>\n";// rot=\"" + getRotation() + "\"/>\n";
-            xml += "<textColor r=\"" + getTextColor().getRed() + "\" g=\"" + getTextColor().getGreen() + "\" b=\"" + getTextColor().getBlue() + "\" a=\"" + getTextAlpha() + "\"/>\n";
-            xml += "<textSize>" + getTextSize() + "</textSize>\n";
-            xml += getFormXml();
-            xml += "</form>\n";
-            return xml;
+            StringBuilder b = new StringBuilder();
+            b.append("<form type=\"").append(getTypeAsString(getFormType())).append("\">\n");
+            b.append("<name><![CDATA[").append(URLEncoder.encode(getFormName(), "UTF-8")).append("]]></name>\n");
+            b.append("<pos x=\"").append(getXPos()).append("\" y=\"").append(getYPos()).append("\"/>\n");// rot=\"" + getRotation() + "\"/>\n");
+            b.append("<textColor r=\"").append(getTextColor().getRed()).append("\" g=\"").append(getTextColor().getGreen()).append("\" b=\"").append(getTextColor().getBlue()).append("\" a=\"").append(getTextAlpha()).append("\"/>\n");
+            b.append("<textSize>").append(getTextSize()).append("</textSize>\n");
+            b.append(getFormXml());
+            b.append("</form>\n");
+            return b.toString();
         } catch (Exception e) {
             return "\n";
         }

@@ -101,7 +101,7 @@ public class PluginManager {
             Object parser = loadParser("de.tor.tribes.util.parser.VillageParser");
             return ((GenericParserInterface<Village>) parser).parse(pData);
         } catch (Exception e) {
-            logger.error("Failed to execute merchant parser", e);
+            logger.error("Failed to execute village parser", e);
         }
         return new LinkedList<Village>();
     }

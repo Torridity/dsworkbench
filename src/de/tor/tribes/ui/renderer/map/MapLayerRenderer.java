@@ -41,7 +41,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
     private Point mapPos = null;
     private boolean bMarkOnTop = false;
     private boolean shouldReset = true;
-    boolean moved = true;
+    private boolean moved = true;
 
     public void setMarkOnTop(boolean pValue) {
         bMarkOnTop = pValue;

@@ -484,7 +484,7 @@ public class RibbonConfigurator {
                 new IconRibbonBandResizePolicy(attackViewBand.getControlPanel())));
         ingameInfoViewBand.setResizePolicies((List) Arrays.asList(
                 new CoreRibbonResizePolicies.None(ingameInfoViewBand.getControlPanel()),
-                new CoreRibbonResizePolicies.Mirror(ingameInfoViewBand.getControlPanel()),
+               // new CoreRibbonResizePolicies.Mirror(ingameInfoViewBand.getControlPanel()),
                 // new CoreRibbonResizePolicies.High2Low(ingameInfoViewBand.getControlPanel()),
                 new IconRibbonBandResizePolicy(ingameInfoViewBand.getControlPanel())));
         RibbonTask task2 = new RibbonTask("Ansicht", attackViewBand, ingameInfoViewBand, infoViewBand);

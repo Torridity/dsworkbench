@@ -118,7 +118,6 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
             }
         } catch (Exception e) {
         }
-
     }
 
     public Tag() {

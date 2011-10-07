@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.CompoundHighlighter;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
@@ -22,6 +23,7 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.decorator.PainterHighlighter;
 import org.jdesktop.swingx.decorator.PatternPredicate;
 import org.jdesktop.swingx.painter.MattePainter;
+import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
  *
@@ -176,13 +178,13 @@ public class TableHelper {
             cnt++;
         }
         pHighlighters.clear();
-        int idx = pTable.getSortedColumnIndex();
+        int modelIdx = pTable.convertColumnIndexToModel(pTable.getSortedColumnIndex());
         List<ManageableType> attacks = AttackManager.getSingleton().getAllElements(pPlan);
         List<Object> sortedOjs = new ArrayList<Object>();
         for (ManageableType t : attacks) {
             Attack a = (Attack) t;
             Object idxElem = null;
-            switch (idx) {
+            switch (modelIdx) {
                 case 0:
                     idxElem = a.getSource().getTribe();
                     break;
@@ -243,17 +245,13 @@ public class TableHelper {
         cnt = 0;
 
         for (Object o : sortedOjs) {
-            PatternPredicate patternPredicate0 = new PatternPredicate(Pattern.quote(o.toString()), idx);
-            //highlightColors.get(v)
+            PatternPredicate patternPredicate0 = new PatternPredicate(Pattern.quote(o.toString()), modelIdx);
             MattePainter mp = new MattePainter(getColorCode(v));
             PainterHighlighter h = new PainterHighlighter(patternPredicate0, mp);
             pHighlighters.add(h);
             cnt++;
             pTable.addHighlighter(h);
             v++;
-            /* if (v == highlightColors.size() - 1) {
-            v = 0;
-            }*/
         }
     }
 }

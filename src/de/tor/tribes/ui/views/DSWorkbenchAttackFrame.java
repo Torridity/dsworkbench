@@ -283,7 +283,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             pConfig.setProperty(getPropertyPrefix() + ".tab.selection", selectedIndex);
         }
 
-
         AttackTableTab tab = ((AttackTableTab) jAttackTabPane.getComponentAt(0));
         PropertyHelper.storeTableProperties(tab.getAttackTable(), pConfig, getPropertyPrefix());
     }

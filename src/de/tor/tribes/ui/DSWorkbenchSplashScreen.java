@@ -179,27 +179,29 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 return false;
             }
             ProfileManager.getSingleton().loadProfiles();
-            if (ProfileManager.getSingleton().getProfiles().length == 0){// || new File("./sfs").exists()) {
+            if (ProfileManager.getSingleton().getProfiles().length == 0) {// || new File("./sfs").exists()) {
                 logger.debug("Starting first start wizard");
-              //  if (new File("./sfs").exists()) {
+                //  if (new File("./sfs").exists()) {
                 //    if (new File("./hfsw").exists()) {
                 //        FileUtils.forceDelete(new File("./hfsw"));
                 //    }
                 //    FileUtils.forceDelete(new File("./sfs"));
-              //  }
+                //  }
 
                 //first start wizard
                 if (!new File("./hfsw").exists()) {
                     logger.debug(" - Initializing first start wizard");
                     Map result = new HashMap<String, String>();
+
                     try {
                         WizardPanelProvider provider = new FirstStartWizard();
                         Wizard wizard = provider.createWizard();
                         logger.debug(" - Showing wizard");
-                        result = (Map) WizardDisplayer.showWizard(wizard, new Rectangle(0, 0, 600, 400), null, result);
+                        result = (Map) WizardDisplayer.showWizard(wizard);
                         logger.debug("Wizard finished with result " + result);
                     } catch (Throwable t) {
                         logger.error("Wizard exception", t);
+                        result = null;
                     }
                     logger.debug(" - Wizard has finished");
                     if (result == null) {

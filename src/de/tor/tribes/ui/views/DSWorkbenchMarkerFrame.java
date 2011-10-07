@@ -23,6 +23,7 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MouseGestureHandler;
 import de.tor.tribes.util.ProfileManager;
+import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.mark.MarkerManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -59,6 +60,8 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         if (e.getActionCommand() != null && activeTab != null) {
             if (e.getActionCommand().equals("BBCopy")) {
                 activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
+            } else if (e.getActionCommand().equals("Cut")) {
+                activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.CUT_TO_INTERNAL_CLIPBOARD);
             } else if (e.getActionCommand().equals("Paste")) {
                 activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.FROM_EXTERNAL_CLIPBOARD);
             } else if (e.getActionCommand().equals("Delete")) {
@@ -217,10 +220,34 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         super.toBack();
     }
 
-    public void storeCustomProperties(Configuration pCconfig) {
+    public void storeCustomProperties(Configuration pConfig) {
+        pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
+        pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jMarkerFrameAlwaysOnTop.isSelected());
+
+        int selectedIndex = jMarkerTabPane.getModel().getSelectedIndex();
+        if (selectedIndex >= 0) {
+            pConfig.setProperty(getPropertyPrefix() + ".tab.selection", selectedIndex);
+        }
+
+        MarkerTableTab tab = ((MarkerTableTab) jMarkerTabPane.getComponentAt(0));
+        PropertyHelper.storeTableProperties(tab.getMarkerTable(), pConfig, getPropertyPrefix());
     }
 
     public void restoreCustomProperties(Configuration pConfig) {
+        centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
+        try {
+            jMarkerTabPane.setSelectedIndex(pConfig.getInteger(getPropertyPrefix() + ".tab.selection", 0));
+        } catch (Exception e) {
+        }
+        try {
+            jMarkerFrameAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
+        } catch (Exception e) {
+        }
+
+        setAlwaysOnTop(jMarkerFrameAlwaysOnTop.isSelected());
+
+        MarkerTableTab tab = ((MarkerTableTab) jMarkerTabPane.getComponentAt(0));
+        PropertyHelper.restoreTableProperties(tab.getMarkerTable(), pConfig, getPropertyPrefix());
     }
 
     public String getPropertyPrefix() {
@@ -354,7 +381,6 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jMarkersPanel, gridBagConstraints);
 
-        capabilityInfoPanel1.setCopyable(false);
         capabilityInfoPanel1.setSearchable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

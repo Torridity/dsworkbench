@@ -18,8 +18,6 @@
 
 <mapID target="pages.attack_info_script" url="pages/attack_info_script.html"/>
 
-<mapID target="pages.main_window_basics_layers" url="pages/main_window_basics.html#layers"/>
-
 <mapID target="pages.map_tools_selection_tool" url="pages/map_tools.html#selection_tool"/>
 
 <mapID target="pages.bb_export" url="pages/bb_export.html"/>
@@ -130,7 +128,7 @@
 
 <mapID target="pages.stats_view" url="pages/stats_view.html"/>
 
-<mapID target="pages.basics" url="pages/basics.html"/>
+<mapID target="pages.dswb-mini" url="pages/dswb-mini.html"/>
 
 <mapID target="pages.main_window" url="pages/main_window.html"/>
 

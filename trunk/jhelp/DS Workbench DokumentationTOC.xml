@@ -32,6 +32,8 @@
 
    <tocitem text="Grundfunktionen " target="pages.view_basics" image="images.tictac_grey"/>
 
+   <tocitem text="DS Workbench - Mini " target="pages.dswb-mini" image="images.tictac_grey"/>
+
    <tocitem text="Das Hauptfenster " target="pages.main_window" image="images.tictac_orange">
     <tocitem text="Navigation auf der Karte " target="pages.map_navigation" image="images.tictac_orange">
      <tocitem text="Erweiterte Kartenfunktionen " target="pages.extended_map_functions" image="images.tictac_grey"/>

@@ -26,6 +26,7 @@ import de.tor.tribes.util.bb.MarkerListFormatter;
 import de.tor.tribes.util.mark.MarkerManager;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -126,11 +127,16 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
         jScrollPane1.setViewportView(jxMarkerTable);
         if (!KEY_LISTENER_ADDED) {
             KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
+            KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
+            KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK, false);
             KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
             KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
+            jxMarkerTable.registerKeyboardAction(pActionListener, "Cut", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            jxMarkerTable.registerKeyboardAction(pActionListener, "Cut", cut, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxMarkerTable.registerKeyboardAction(pActionListener, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxMarkerTable.registerKeyboardAction(pActionListener, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxMarkerTable.registerKeyboardAction(pActionListener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
             jxMarkerTable.getActionMap().put("find", new AbstractAction() {
 
                 @Override
@@ -312,6 +318,9 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
 
     public void transferSelection(TRANSFER_TYPE pType) {
         switch (pType) {
+            case CUT_TO_INTERNAL_CLIPBOARD:
+                cutToClipboard();
+                break;
             case FROM_EXTERNAL_CLIPBOARD:
                 pasteFromExternalClipboard();
                 break;
@@ -321,12 +330,48 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
         }
     }
 
+    private boolean copyToInternalClipboard() {
+        List<Marker> selection = getSelectedMarkers();
+        if (selection.isEmpty()) {
+            showInfo("Keine Markierung gewählt");
+            return false;
+        }
+        StringBuilder b = new StringBuilder();
+        int cnt = 0;
+        for (Marker a : selection) {
+            b.append(Marker.toInternalRepresentation(a)).append("\n");
+            cnt++;
+        }
+        try {
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b.toString()), null);
+            showSuccess(cnt + ((cnt == 1) ? " Markierung kopiert" : " Markierungen kopiert"));
+            return true;
+        } catch (HeadlessException hex) {
+            showError("Fehler beim Kopieren der Markierungen");
+            return false;
+        }
+    }
+
+    private void cutToClipboard() {
+        int size = getSelectedMarkers().size();
+        if (size == 0) {
+            showInfo("Keine Markierung gewählt");
+            return;
+        }
+        if (copyToInternalClipboard() && deleteSelection(false)) {
+            showSuccess(size + ((size == 1) ? " Markierung ausgeschnitten" : " Markierungen ausgeschnitten"));
+        } else {
+            showError("Fehler beim Ausschneiden der Markierungen");
+        }
+    }
+
     private void pasteFromExternalClipboard() {
         try {
             String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
             List<Marker> markers = PluginManager.getSingleton().executeDiplomacyParser(data);
             if (markers.isEmpty()) {
-                showInfo("Keine Markierungen in der Zwischenablage gefunden");
+                //do internal paste
+                copyFromInternalClipboard();
                 return;
             }
             for (Marker m : markers) {
@@ -343,6 +388,30 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
         }
         markerModel.fireTableDataChanged();
         MarkerManager.getSingleton().revalidate(getMarkerSet(), true);
+    }
+
+    private void copyFromInternalClipboard() {
+        try {
+            String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
+
+            String[] lines = data.split("\n");
+            int cnt = 0;
+            for (String line : lines) {
+                Marker a = Marker.fromInternalRepresentation(line);
+                if (a != null) {
+                    MarkerManager.getSingleton().addManagedElement(getMarkerSet(), a);
+                    cnt++;
+                }
+            }
+            showSuccess(cnt + ((cnt == 1) ? " Markierung eingefügt" : " Markierungen eingefügt"));
+        } catch (UnsupportedFlavorException ufe) {
+            logger.error("Failed to copy markers from internal clipboard", ufe);
+            showError("Fehler beim Einfügen der Markierungen");
+        } catch (IOException ioe) {
+            logger.error("Failed to copy markersfrom internal clipboard", ioe);
+            showError("Fehler beim Einfügen der Markierungen");
+        }
+        markerModel.fireTableDataChanged();
     }
 
     private void copyBBToExternalClipboardEvent() {

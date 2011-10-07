@@ -1486,6 +1486,11 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
             rebuildTable(jMerchantTable, merchantInfos);
             showSuccess(infoPanel, jXInfoLabel, "<html>" + ((infos.size() == 1) ? "1 neuen Eintrag " : infos.size() + " neue Eintr&auml;ge") + " hinzugef&uuml;gt<br/>"
                     + ((changesToBoth + dirChanges == 1) ? "1 Eintrag " : (changesToBoth + dirChanges) + " Eintr&auml;ge") + " ver&auml;ndert</html>");
+            if (merchantInfos.size() > 500) {
+                JOptionPaneHelper.showWarningBox(this, "Es wurden mehr als 500 Einträge eingefügt, die Berechnung der Transporte kann daher sehr lange dauern.\n"
+                        + "Während die Berechnung läuft wird DS Workbench nicht reagieren.\n"
+                        + "Es wird dringend empfohlen, die Berechnung in kleineren Einzelschritten durchzuführen.", "Warnung");
+            }
         } catch (Exception e) {
             logger.error("Failed to read merchant data", e);
             showError(infoPanel, jXInfoLabel, "Fehler beim Lesen aus der Zwischenablage");

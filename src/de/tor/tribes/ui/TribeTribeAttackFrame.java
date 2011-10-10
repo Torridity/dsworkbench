@@ -1168,6 +1168,13 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
         jSettingsContentPanel = new javax.swing.JPanel();
         settingsInfoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
         jxSettingsInfoLabel = new org.jdesktop.swingx.JXLabel();
+        jResultTransferDialog = new javax.swing.JDialog();
+        jLabel14 = new javax.swing.JLabel();
+        jExistingPlanBox = new javax.swing.JComboBox();
+        jLabel15 = new javax.swing.JLabel();
+        jNewPlanName = new org.jdesktop.swingx.JXTextField();
+        jCancelTransferButton = new javax.swing.JButton();
+        jDoTransferButton = new javax.swing.JButton();
         jInfoLabel = new javax.swing.JLabel();
         jMainPanel = new javax.swing.JPanel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
@@ -2020,8 +2027,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
                             .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jAllTargetsComboBox, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jMarkTargetAsFake, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -2108,6 +2114,84 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
         jideTabbedPane1.addTab("Einstellungen", new javax.swing.ImageIcon(getClass().getResource("/res/settings.png")), jSettingsPanel); // NOI18N
 
         jxAttackPlanerPanel.add(jideTabbedPane1, java.awt.BorderLayout.CENTER);
+
+        jResultTransferDialog.setTitle("Angriffe übertragen");
+        jResultTransferDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
+
+        jLabel14.setText("Angriffsplan");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jResultTransferDialog.getContentPane().add(jLabel14, gridBagConstraints);
+
+        jExistingPlanBox.setMinimumSize(new java.awt.Dimension(200, 20));
+        jExistingPlanBox.setPreferredSize(new java.awt.Dimension(200, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jResultTransferDialog.getContentPane().add(jExistingPlanBox, gridBagConstraints);
+
+        jLabel15.setText("Neuer Plan");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jResultTransferDialog.getContentPane().add(jLabel15, gridBagConstraints);
+
+        jNewPlanName.setMinimumSize(new java.awt.Dimension(200, 20));
+        jNewPlanName.setPreferredSize(new java.awt.Dimension(200, 20));
+        jNewPlanName.setPrompt("Bei Bedarf Name eingeben");
+        jNewPlanName.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                fireNewResultTargetPlanChangedEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jResultTransferDialog.getContentPane().add(jNewPlanName, gridBagConstraints);
+
+        jCancelTransferButton.setText("Abbrechen");
+        jCancelTransferButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireTransferResultsEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jResultTransferDialog.getContentPane().add(jCancelTransferButton, gridBagConstraints);
+
+        jDoTransferButton.setText("OK");
+        jDoTransferButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireTransferResultsEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jResultTransferDialog.getContentPane().add(jDoTransferButton, gridBagConstraints);
 
         setTitle("Angriffsplaner");
         setBackground(new java.awt.Color(239, 235, 223));
@@ -2582,19 +2666,24 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
             return;
         }
 
-        String result = (String) JOptionPane.showInputDialog(jResultFrame, "In welchen Angriffsplan sollen die Angriffe übertragen werden?", "Übertragen", JOptionPane.QUESTION_MESSAGE, null, AttackManager.getSingleton().getGroups(), AttackManager.DEFAULT_GROUP);
+        jExistingPlanBox.setModel(new DefaultComboBoxModel(AttackManager.getSingleton().getGroups()));
+        jNewPlanName.setText(null);
+        jResultTransferDialog.setLocationRelativeTo(jResultFrame);
+        jResultTransferDialog.pack();
+        jResultTransferDialog.setVisible(true);
+        /*String result = (String) JOptionPane.showInputDialog(jResultFrame, "In welchen Angriffsplan sollen die Angriffe übertragen werden?", "Übertragen", JOptionPane.QUESTION_MESSAGE, null, AttackManager.getSingleton().getGroups(), AttackManager.DEFAULT_GROUP);
         if (result == null) {
-            showInfo("Keine Angriffe übertragen", true);
-            return;
+        showInfo("Keine Angriffe übertragen", true);
+        return;
         }
-
+        
         AttackManager.getSingleton().invalidate();
         for (Attack a : results) {
-            AttackManager.getSingleton().addManagedElement(result, a);
+        AttackManager.getSingleton().addManagedElement(result, a);
         }
         AttackManager.getSingleton().revalidate(result, true);
-
-        showInfo(((results.size() == 1) ? "Angriff " : results.size() + " Angriffe ") + "in Angriffsplan '" + result + "' übertragen", true);
+        
+        showInfo(((results.size() == 1) ? "Angriff " : results.size() + " Angriffe ") + "in Angriffsplan '" + result + "' übertragen", true);*/
     }//GEN-LAST:event_fireTransferAttacksToAttackViewEvent
 
     private void fireEnableWarningEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireEnableWarningEvent
@@ -2643,6 +2732,40 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         showInfo(villages.size() + ((villages.size() == 1) ? " Dorf " : " Dörfer ") + "eingefügt");
 
     }//GEN-LAST:event_fireAddVillagesEvent
+
+    private void fireTransferResultsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferResultsEvent
+
+        if (evt.getSource() == jDoTransferButton) {
+            List<Attack> results = getAllResults();
+            if (results == null || results.isEmpty()) {
+                showInfo("Keine Angriffe verfügbar", true);
+                return;
+            } else {
+                String plan = null;
+                if (jExistingPlanBox.isEnabled()) {
+                    plan = (String) jExistingPlanBox.getSelectedItem();
+                } else {
+                    plan = jNewPlanName.getText();
+                    AttackManager.getSingleton().addGroup(plan);
+                }
+
+                AttackManager.getSingleton().invalidate();
+                for (Attack a : results) {
+                    AttackManager.getSingleton().addManagedElement(plan, a);
+                }
+                AttackManager.getSingleton().revalidate(plan, true);
+
+                showInfo(((results.size() == 1) ? "Angriff " : results.size() + " Angriffe ") + "in Angriffsplan '" + plan + "' übertragen", true);
+            }
+        }
+        jResultTransferDialog.setVisible(false);
+    }//GEN-LAST:event_fireTransferResultsEvent
+
+    private void fireNewResultTargetPlanChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireNewResultTargetPlanChangedEvent
+        boolean enableExisting = !(jNewPlanName.getText() != null && !jNewPlanName.getText().equals(""));
+        jExistingPlanBox.setEnabled(enableExisting);
+        jLabel14.setEnabled(enableExisting);
+    }//GEN-LAST:event_fireNewResultTargetPlanChangedEvent
 
     private void fireTransferEvent(TRANSFER_TYPE pType) {
         switch (pType) {
@@ -3114,7 +3237,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     }
 
     private void updateInfo() {
-        if(jVictimTable.getModel().getColumnCount() < 5){
+        if (jVictimTable.getModel().getColumnCount() < 5) {
             //not set up yet
             return;
         }
@@ -4095,9 +4218,12 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     private javax.swing.JProgressBar jAttacksBar;
     private javax.swing.JButton jCalculateButton;
     private javax.swing.JButton jCancelSyncButton;
+    private javax.swing.JButton jCancelTransferButton;
     private javax.swing.JButton jCloseResultsButton;
     private javax.swing.JButton jDoSyncButton;
+    private javax.swing.JButton jDoTransferButton;
     private javax.swing.JCheckBox jEnableWarnBox;
+    private javax.swing.JComboBox jExistingPlanBox;
     private javax.swing.JProgressBar jFullOffsBar;
     private javax.swing.JCheckBox jFullTargetsOnly;
     private javax.swing.JButton jHideAttackDetailsButton;
@@ -4108,6 +4234,8 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel22;
@@ -4122,6 +4250,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     private javax.swing.JCheckBox jMarkAsFakeBox;
     private javax.swing.JCheckBox jMarkTargetAsFake;
     private javax.swing.JSpinner jMaxAttacksPerVillage;
+    private org.jdesktop.swingx.JXTextField jNewPlanName;
     private javax.swing.JButton jNextSelectionButton;
     private javax.swing.JTable jNotAssignedSourcesTable;
     private javax.swing.JPanel jPanel1;
@@ -4136,6 +4265,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     private final javax.swing.JProgressBar jProgressBar1 = new javax.swing.JProgressBar();
     private javax.swing.JDialog jRefreshProgressDialog;
     private javax.swing.JFrame jResultFrame;
+    private javax.swing.JDialog jResultTransferDialog;
     private org.jdesktop.swingx.JXTable jResultsTable;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane10;

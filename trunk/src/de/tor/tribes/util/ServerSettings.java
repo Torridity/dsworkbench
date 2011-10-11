@@ -44,9 +44,9 @@ public class ServerSettings {
             Document d = JaxenUtils.getDocument(new File(serverPath));
             logger.debug(" - reading map system");
             try {
-                setCoordType(Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/sector")));
+                setCoordType(Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/map_size")));
             } catch (Exception inner) {
-                setCoordType(2);
+                setCoordType(1000);
             }
             logger.debug(" - reading map type");
             try {
@@ -76,7 +76,8 @@ public class ServerSettings {
             try {
                 setMillisArrival(Integer.parseInt(JaxenUtils.getNodeValue(d, "//misc/millis_arrival")) == 1);
             } catch (Exception inner) {
-                setMillisArrival(true);
+                //empty or invalid value...use no millis
+                setMillisArrival(false);
             }
         } catch (Exception e) {
             logger.error("Failed to load server settings", e);
@@ -94,15 +95,21 @@ public class ServerSettings {
         return SERVER_ID;
     }
 
-    public void setCoordType(int pCoordType) {
-        COORD = pCoordType;
+    public void setCoordType(int pMapSize) {
+        if (pMapSize == 1000) {
+            COORD = 2;
+        } else if (pMapSize == 500) {
+            COORD = 1;
+        } else {
+            throw new IllegalArgumentException("Invalid map size (" + pMapSize + "). Falling back to 1000x1000.");
+        }
         switch (COORD) {
             case 1: {
-                mapSize = new Dimension(500, 500);
+                mapSize = new Dimension(pMapSize, pMapSize);
                 break;
             }
             default: {
-                mapSize = new Dimension(1000, 1000);
+                mapSize = new Dimension(pMapSize, pMapSize);
             }
         }
     }

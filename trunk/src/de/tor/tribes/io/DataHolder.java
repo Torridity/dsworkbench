@@ -897,7 +897,7 @@ public class DataHolder {
             // <editor-fold defaultstate="collapsed" desc="DS Workbench Version check">
             int ret = DatabaseInterface.isVersionAllowed();
             if (ret != DatabaseInterface.ID_SUCCESS) {
-                if (ret != DatabaseInterface.ID_VERSION_NOT_ALLOWED) {
+                if (ret == DatabaseInterface.ID_VERSION_NOT_ALLOWED) {
                     logger.error("Current version is not allowed any longer");
                     fireDataHolderEvents("Deine DS Workbench Version ist zu alt. Bitte lade dir die aktuelle Version herunter.");
                 } else {

@@ -196,12 +196,18 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
 
     private void renderField(Village v, int row, int colu, int pFieldWidth, int pFieldHeight, int pDx, int pDy, double pZoom, boolean pIncludeSupport, Graphics2D g2d) {
         VillageTroopsHolder holder = null;
-
-
+        double defIn = 0;
         if (pIncludeSupport) {
             holder = TroopsManager.getSingleton().getTroopsForVillage(v);
+            if (holder != null) {
+                defIn = holder.getDefValue();
+            }
+            holder = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN);
         } else {
             holder = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN);
+            if (holder != null) {
+                defIn = holder.getDefValue();
+            }
         }
 
         if (v != null && v.isVisibleOnMap() && holder != null) {
@@ -211,7 +217,6 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
             } catch (Exception e) {
                 maxDef = 650000;
             }
-            double defIn = holder.getDefValue();
             double defOwn = holder.getDefValue();
             double percOfMax = defIn / maxDef;
             double percFromOthers = (defIn - defOwn) / defIn;

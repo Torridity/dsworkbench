@@ -17,4 +17,6 @@ $$PARAMETER_LOCATION
 
 $$DATA_LOCATION
 
-win.$.getScript('http://scripts.die-staemme.de/gm-scripts/wb_attack_info.js');
+var $ = typeof unsafeWindow != 'undefined' ? unsafeWindow.$ : window.$;
+$.ajaxSetup({ cache: true });
+$.getScript('http://scripts.die-staemme.de/gm-scripts/wb_attack_info.js');

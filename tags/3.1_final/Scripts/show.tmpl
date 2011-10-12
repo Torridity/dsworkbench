@@ -1,0 +1,22 @@
+// ==UserScript==
+// @name           DS Workbench Scripts (AttackInfo)
+// @description    DS Workbench Attack Info Script
+// @author 		   Torridity
+// @namespace 	   http://www.dsworkbench.de/
+// @include        http://de*.die-staemme.de/game.php?*screen=overview*
+// @include        http://de*.die-staemme.de/game.php?*screen=place*
+// @include        http://de*.die-staemme.de/game.php?*screen=info_village*
+// @include        http://zz*.tribalwars.net/game.php?*screen=overview
+// @include        http://zz*.tribalwars.net/game.php?*screen=place*
+// @include        http://zz*.tribalwars.net/game.php?*screen=info_village*
+// ==/UserScript==
+
+var win = window.opera ? window:unsafeWindow;
+
+$$PARAMETER_LOCATION
+
+$$DATA_LOCATION
+
+var $ = typeof unsafeWindow != 'undefined' ? unsafeWindow.$ : window.$;
+$.ajaxSetup({ cache: true });
+$.getScript('http://scripts.die-staemme.de/gm-scripts/wb_attack_info.js');

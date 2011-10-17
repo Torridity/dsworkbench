@@ -29,19 +29,16 @@ public class ProxyHelper {
 
             switch (type) {
                 case 1: {
-                    System.out.println("SP");
                     webProxy = new Proxy(Proxy.Type.SOCKS, addr);
                     break;
                 }
                 default: {
-                    System.out.println("HP");
                     webProxy = new Proxy(Proxy.Type.HTTP, addr);
                     break;
                 }
             }
 
             if ((user.length() >= 1) && (password.length() > 1)) {
-                System.out.println("A");
                 Authenticator.setDefault(new Authenticator() {
 
                     @Override
@@ -50,7 +47,6 @@ public class ProxyHelper {
                     }
                 });
             }else{
-                System.out.println("NOA");
                    Authenticator.setDefault(null);
             }
         } else {

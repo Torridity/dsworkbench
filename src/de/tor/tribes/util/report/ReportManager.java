@@ -7,6 +7,7 @@ package de.tor.tribes.util.report;
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.FightReport;
+import de.tor.tribes.types.Village;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;
@@ -22,6 +23,7 @@ import org.jdom.Element;
 /**
  *
  * @author Torridity
+ * @TODO Check if report exists before adding it
  */
 public class ReportManager extends GenericManager<FightReport> {
 
@@ -200,5 +202,39 @@ public class ReportManager extends GenericManager<FightReport> {
 
     public boolean createReportSet(String pName) {
         return addGroup(pName);
+    }
+
+    /**Return the most current report for source pVillage
+     * @param pVillage
+     * @return  
+     */
+    public FightReport findLastReportForSource(Village pVillage) {
+        FightReport current = null;
+        for (ManageableType element : getAllElementsFromAllGroups()) {
+            FightReport report = (FightReport) element;
+            if (report.getSourceVillage() != null && report.getSourceVillage().equals(pVillage)) {
+                if (current == null || report.getTimestamp() > current.getTimestamp()) {
+                    current = report;
+                }
+            }
+        }
+        return current;
+    }
+
+    /**Return the most current report for target pVillage
+     * @param pVillage
+     * @return  
+     */
+    public FightReport findLastReportForTarget(Village pVillage) {
+        FightReport current = null;
+        for (ManageableType element : getAllElementsFromAllGroups()) {
+            FightReport report = (FightReport) element;
+            if (report.getSourceVillage() != null && report.getTargetVillage().equals(pVillage)) {
+                if (current == null || report.getTimestamp() > current.getTimestamp()) {
+                    current = report;
+                }
+            }
+        }
+        return current;
     }
 }

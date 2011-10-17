@@ -45,7 +45,7 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
     private double yPos = 0;
     private Color textColor = Color.BLACK;
     private float textAlpha = 1.0f;
-    private String formName = "";
+    private String formName = "Kein Name";
     private boolean visibleOnMap = false;
     private int textSize = 14;
     private boolean showMode = false;
@@ -275,6 +275,9 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
      * @param formName the formName to set
      */
     public void setFormName(String formName) {
+        if (formName == null || formName.length() < 1) {
+            this.formName = "Kein Name";
+        }
         this.formName = formName;
     }
 
@@ -294,9 +297,7 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
 
     @Override
     public String toString() {
-        String s = getFormName();
-        s += " (" + getFormType() + ")";
-        return s;
+        return getFormName() + " (" + getTypeAsString(getFormType()) + ")";
     }
 
     /**

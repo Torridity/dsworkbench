@@ -8,7 +8,7 @@
  *
  * Created on Oct 14, 2011, 5:47:34 PM
  */
-package de.tor.tribes.ui.wiz.wap;
+package de.tor.tribes.ui.wiz.tap;
 
 import java.util.Map;
 import org.netbeans.spi.wizard.Wizard;

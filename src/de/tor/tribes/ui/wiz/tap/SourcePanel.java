@@ -8,7 +8,7 @@
  *
  * Created on Oct 14, 2011, 5:47:34 PM
  */
-package de.tor.tribes.ui.wiz.wap;
+package de.tor.tribes.ui.wiz.tap;
 
 import java.awt.BorderLayout;
 import java.util.Map;
@@ -62,7 +62,7 @@ public class SourcePanel extends javax.swing.JPanel implements WizardPanel {
 
     @Override
     public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
-        return WizardPanelNavResult.REMAIN_ON_PAGE;
+        return WizardPanelNavResult.PROCEED;
     }
 
     @Override

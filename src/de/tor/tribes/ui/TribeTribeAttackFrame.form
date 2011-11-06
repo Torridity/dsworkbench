@@ -628,7 +628,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jPanel4" pref="262" max="32767" attributes="0"/>
+                          <Component id="jPanel4" pref="264" max="32767" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jPanel1" min="-2" max="-2" attributes="1"/>
                           <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
@@ -658,11 +658,11 @@
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" attributes="0">
-                                              <Component id="jSourceGroupRelation" pref="287" max="32767" attributes="1"/>
+                                              <Component id="jSourceGroupRelation" pref="305" max="32767" attributes="1"/>
                                               <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
                                           </Group>
                                           <Group type="102" attributes="0">
-                                              <Component id="jScrollPane4" pref="316" max="32767" attributes="1"/>
+                                              <Component id="jScrollPane4" pref="334" max="32767" attributes="1"/>
                                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
@@ -692,9 +692,9 @@
                                       <Component id="jPlayerSourcesOnlyBox" alignment="1" max="32767" attributes="1"/>
                                       <Component id="jPanel7" alignment="1" pref="388" max="32767" attributes="1"/>
                                   </Group>
-                                  <Component id="jLabel2" alignment="0" pref="467" max="32767" attributes="0"/>
+                                  <Component id="jLabel2" alignment="0" pref="449" max="32767" attributes="0"/>
                                   <Group type="102" alignment="1" attributes="0">
-                                      <Component id="jSourceListScrollPane" pref="380" max="32767" attributes="1"/>
+                                      <Component id="jSourceListScrollPane" pref="362" max="32767" attributes="1"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
                                           <Component id="jAllSources" max="32767" attributes="1"/>
@@ -1255,7 +1255,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jPanel5" pref="324" max="32767" attributes="0"/>
+                          <Component id="jPanel5" pref="326" max="32767" attributes="0"/>
                           <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                           <Component id="jPanel6" min="-2" max="-2" attributes="1"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -1283,20 +1283,20 @@
                                   <Group type="102" attributes="0">
                                       <Component id="jLabel11" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                                      <Component id="jTargetTribeFilter" pref="159" max="32767" attributes="1"/>
+                                      <Component id="jTargetTribeFilter" pref="169" max="32767" attributes="1"/>
                                   </Group>
-                                  <Component id="jScrollPane7" pref="195" max="32767" attributes="1"/>
+                                  <Component id="jScrollPane7" pref="205" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="jScrollPane8" pref="169" max="32767" attributes="0"/>
+                              <Component id="jScrollPane8" pref="177" max="32767" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="jScrollPane9" min="-2" pref="80" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jLabel7" pref="203" max="32767" attributes="0"/>
-                                          <Component id="jMarkTargetAsFake" alignment="1" pref="203" max="32767" attributes="0"/>
+                                          <Component id="jLabel7" pref="185" max="32767" attributes="0"/>
+                                          <Component id="jMarkTargetAsFake" alignment="1" pref="185" max="32767" attributes="0"/>
                                       </Group>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Component id="jSeparator1" min="-2" max="-2" attributes="0"/>
@@ -1310,9 +1310,9 @@
                                           <Component id="jMaxAttacksPerVillage" alignment="1" min="-2" pref="197" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
-                                  <Component id="jLabel3" pref="422" max="32767" attributes="0"/>
+                                  <Component id="jLabel3" pref="404" max="32767" attributes="0"/>
                                   <Group type="102" alignment="1" attributes="0">
-                                      <Component id="jScrollPane10" pref="335" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane10" pref="317" max="32767" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
                                           <Component id="jAllTargets" max="32767" attributes="1"/>

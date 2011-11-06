@@ -45,7 +45,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
-import de.tor.tribes.ui.renderer.map.MenuRenderer;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MapShotListener;
@@ -390,7 +389,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 int tmpCursor = (spaceDown) ? ImageManager.CURSOR_DEFAULT : iCurrentCursor;
 
                 Village v = getVillageAtMousePos();
-                if (!shiftDown && !MenuRenderer.getSingleton().isVisible()) {
+                if (!shiftDown) {
                     //left click, no shift and no opened menu clears selected villages
                     markedVillages.clear();
                     //DSWorkbenchSelectionFrame.getSingleton().resetView();
@@ -406,9 +405,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         }
                     }
                     DSWorkbenchSelectionFrame.getSingleton().addVillages(markedVillages);
-                    return;
-                }
-                if (MenuRenderer.getSingleton().isVisible()) {
                     return;
                 }
 
@@ -682,10 +678,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     return;
                 }
 
-                if (MenuRenderer.getSingleton().isVisible()) {
-                    dragMove = false;
-                    return;
-                }
                 dragMove = false;
                 int unit = -1;
                 xDir = 0;
@@ -799,7 +791,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
         });
 
-        addMouseListener(MenuRenderer.getSingleton());
         //</editor-fold>
 
 
@@ -808,9 +799,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
             @Override
             public void mouseDragged(MouseEvent e) {
-                if (MenuRenderer.getSingleton().isVisible()) {
-                    return;
-                }
 
                 boolean isAttack = false;
                 if (!spaceDown) {
@@ -924,13 +912,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 if (isOutside) {
                     mousePos = e.getLocationOnScreen();
                 }
-                if (MenuRenderer.getSingleton().isVisible()) {
-                    return;
-                }
             }
         });
-
-        addMouseMotionListener(MenuRenderer.getSingleton());
 
         //<editor-fold>
     }
@@ -1630,10 +1613,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
     /**Get village at current mouse position, null if there is no village*/
     public Village getVillageAtMousePos() {
-        if (MenuRenderer.getSingleton().isVisible()) {
-            return null;
-        }
-
         if (mVillagePositions == null) {
             return null;
         }
@@ -1661,10 +1640,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     }
 
     public Village getVillageAtPoint(Point pPos) {
-        if (MenuRenderer.getSingleton().isVisible()) {
-            return null;
-        }
-
         if (mVillagePositions == null) {
             return null;
         }
@@ -1686,10 +1661,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     }
 
     public List<Village> getVillagesInShape(Shape pShape) {
-        if (MenuRenderer.getSingleton().isVisible()) {
-            return null;
-        }
-
         if (mVillagePositions == null) {
             return null;
         }
@@ -1712,10 +1683,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     }
 
     public List<Village> getVillagesOnLine(Line2D.Double pShape) {
-        if (MenuRenderer.getSingleton().isVisible()) {
-            return null;
-        }
-
         if (mVillagePositions == null) {
             return null;
         }

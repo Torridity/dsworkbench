@@ -8,10 +8,11 @@
  *
  * Created on Oct 15, 2011, 9:54:36 AM
  */
-package de.tor.tribes.ui.wiz.wap;
+package de.tor.tribes.ui.wiz.tap;
 
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractForm;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.FightReport;
@@ -19,6 +20,7 @@ import de.tor.tribes.types.NoAlly;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import de.tor.tribes.ui.views.DSWorkbenchSOSRequestAnalyzer;
 import de.tor.tribes.ui.views.DSWorkbenchSelectionFrame;
 import de.tor.tribes.util.GlobalOptions;
@@ -45,35 +47,25 @@ import javax.swing.event.ListSelectionListener;
  *
  * @author Torridity
  */
-public class AttackSourcePanel extends javax.swing.JPanel {
-
-    private static AttackSourcePanel singleton = null;
-    private static final String GENERAL_INFO = "Du befindest dich im <b>Angriffsmodus</b>. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, die f&uuml;r Angriffe verwendet werden d&uuml;rfen. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten: <ul> <li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li> <li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus der Gruppen&uuml;bersicht</li> <li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus dem SOS-Analyzer</li> <li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Berichten</li> <li>Einf&uuml;gen aus der Auswahlübersicht</li> <li>Manuelle Eingabe</li> </ul> </html>";
-    private static final String GROUP_INFO = "<html><h2>Datenquelle Gruppenübersicht</h2><br/>Hier k&ouml;nnen gezielt D&ouml;rfer verwendet werden, die sich in bestimmten Gruppen befinden. Die Auswahl der zu verwendenden Gruppe ist im Feld Set/Gruppe/Zeichnung durchzuf&uuml;hren.</html>";
-    private static final String SOS_INFO = "<html><h2>Datenquelle SOS-Analyzer</h2><br/>Hier k&ouml;nnen die <b>Herkunftsd&ouml;rfer</b> der Angriffe verwendet werden, die momentan im SOS-Analyzer eingetragen sind.</html>";
-    private static final String REPORT_INFO = "<html><h2>Datenquelle Berichtdatenbank</h2><br/>Hier k&ouml;nnen die <b>Zield&ouml;rfer</b> der Berichte verwendet werden, die sich in einem bestimmten Berichtset befinden. Die Auswahl des zu verwendenden Berichtsets ist im Feld Set/Gruppe/Zeichnung durchzuf&uuml;hren.</html>";
-    private static final String SELECTION_INFO = "<html><h2>Datenquelle Auswahlübersicht</h2><br/>Hier k&ouml;nnen die D&ouml;rfer verwendet werden, die sich momentan in der Auswahl&uuml;bersicht befinden.</html>";
-    private static final String DRAWING_INFO = "<html><h2>Datenquelle Zeichnungen</h2><br/>Hier k&ouml;nnen die D&ouml;rfer verwendet werden, die sich innerhalb einer bestimmten Zeichnung auf der Hauptkarte befinden. Die Auswahl der zu verwendenden Zeichnung ist im Feld Set/Gruppe/Zeichnung durchzuf&uuml;hren.</html>";
-    private static final String WORLDDATA_INFO = "<html><h2>Datenquelle Weltdaten</h2><br/>Mit dieser Option k&ouml;nnen D&ouml;rfer ausgehend von den kompletten Weltdaten gewählt werden.</html>";
-    private static final String NO_DATA_AVAILABLE = "Keine Daten vorhanden";
-    private static final String ALL_DATA = "Alle";
-    private List<Village> villages = new LinkedList<Village>();
+public abstract class AbstractAttackPanel extends javax.swing.JPanel {
+    
+    protected static final String NO_DATA_AVAILABLE = "Keine Daten vorhanden";
+    protected static final String ALL_DATA = "Alle";
     private Map<Ally, List<Tribe>> allyTribeMappings = new TreeMap<Ally, List<Tribe>>(Ally.CASE_INSENSITIVE_ORDER);
 
-    public static synchronized AttackSourcePanel getSingleton() {
-        if (singleton == null) {
-            singleton = new AttackSourcePanel();
-        }
-        return singleton;
-    }
-
     /** Creates new form AttackSourcePanel */
-    AttackSourcePanel() {
+    AbstractAttackPanel() {
         initComponents();
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jXCollapsiblePane1.add(jInfoScrollPane, BorderLayout.CENTER);
         jXCollapsiblePane2.setLayout(new BorderLayout());
         jXCollapsiblePane2.add(jDateSourcesPanel, BorderLayout.CENTER);
+        DefaultListModel model = new DefaultListModel();
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            model.addElement(unit);
+        }
+        jUnitList.setModel(model);
+        jUnitList.setCellRenderer(new UnitListCellRenderer());
     }
 
     /** This method is called from within the constructor to
@@ -103,24 +95,35 @@ public class AttackSourcePanel extends javax.swing.JPanel {
         jXCollapsiblePane2 = new org.jdesktop.swingx.JXCollapsiblePane();
         jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        jTableScrollPane = new javax.swing.JScrollPane();
         jXTable1 = new org.jdesktop.swingx.JXTable();
-        jPanel3 = new javax.swing.JPanel();
-        jScrollPane3 = new javax.swing.JScrollPane();
+        jDataPanel = new javax.swing.JPanel();
+        jAllyScrollPane = new javax.swing.JScrollPane();
         jAllyList = new org.jdesktop.swingx.JXList();
-        jScrollPane4 = new javax.swing.JScrollPane();
+        jTribeScrollPane = new javax.swing.JScrollPane();
         jTribeList = new org.jdesktop.swingx.JXList();
-        jScrollPane5 = new javax.swing.JScrollPane();
+        jContinentScrollPane = new javax.swing.JScrollPane();
         jContinentList = new org.jdesktop.swingx.JXList();
-        jScrollPane6 = new javax.swing.JScrollPane();
+        jVillageScrollPane = new javax.swing.JScrollPane();
         jVillageList = new org.jdesktop.swingx.JXList();
-        jScrollPane7 = new javax.swing.JScrollPane();
+        jUnitScrollPane = new javax.swing.JScrollPane();
         jUnitList = new org.jdesktop.swingx.JXList();
-        jPanel4 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        jXTextField1 = new org.jdesktop.swingx.JXTextField();
+        jAdaptUnit = new javax.swing.JButton();
+        jUsageAmount = new org.jdesktop.swingx.JXTextField();
+        jSeparator1 = new javax.swing.JSeparator();
+        jMenuPanel = new javax.swing.JPanel();
+        jValidateByTroops = new javax.swing.JButton();
+        jValidateWithAttackPlans = new javax.swing.JButton();
+        jSetToFake = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        jAddUsage = new javax.swing.JButton();
+        jRemoveUsage = new javax.swing.JButton();
+        jRestoreUsage = new javax.swing.JButton();
+        jSetToNoFake = new javax.swing.JButton();
 
         jDateSourcesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Datenquelle"));
         jDateSourcesPanel.setMinimumSize(new java.awt.Dimension(810, 155));
@@ -302,16 +305,17 @@ public class AttackSourcePanel extends javax.swing.JPanel {
 
         setLayout(new java.awt.GridBagLayout());
 
-        jXCollapsiblePane1.setPreferredSize(new java.awt.Dimension(19, 200));
+        jXCollapsiblePane1.setCollapsed(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jXCollapsiblePane1, gridBagConstraints);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10));
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Informationen ausblenden");
+        jLabel1.setToolTipText("Blendet Informationen zu dieser Ansicht und zu den Datenquellen ein/aus");
         jLabel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -324,7 +328,7 @@ public class AttackSourcePanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jLabel1, gridBagConstraints);
 
-        jXCollapsiblePane2.setPreferredSize(new java.awt.Dimension(19, 155));
+        jXCollapsiblePane2.setCollapsed(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -333,9 +337,10 @@ public class AttackSourcePanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
         add(jXCollapsiblePane2, gridBagConstraints);
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 10));
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Datenquellen ausblenden");
+        jLabel2.setToolTipText("Blendet die Auswahl möglicher Datenquellen für Stämme, Spieler und Dörfer ein/aus");
         jLabel2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -351,8 +356,8 @@ public class AttackSourcePanel extends javax.swing.JPanel {
 
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
-        jScrollPane2.setMinimumSize(new java.awt.Dimension(23, 100));
-        jScrollPane2.setPreferredSize(new java.awt.Dimension(0, 100));
+        jTableScrollPane.setMinimumSize(new java.awt.Dimension(23, 100));
+        jTableScrollPane.setPreferredSize(new java.awt.Dimension(23, 100));
 
         jXTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -365,31 +370,32 @@ public class AttackSourcePanel extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane2.setViewportView(jXTable1);
+        jTableScrollPane.setViewportView(jXTable1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.3;
-        jPanel2.add(jScrollPane2, gridBagConstraints);
+        gridBagConstraints.weighty = 0.7;
+        jPanel2.add(jTableScrollPane, gridBagConstraints);
 
-        jPanel3.setMinimumSize(new java.awt.Dimension(0, 100));
-        jPanel3.setPreferredSize(new java.awt.Dimension(0, 100));
-        jPanel3.setLayout(new java.awt.GridBagLayout());
+        jDataPanel.setMinimumSize(new java.awt.Dimension(0, 130));
+        jDataPanel.setPreferredSize(new java.awt.Dimension(0, 130));
+        jDataPanel.setLayout(new java.awt.GridBagLayout());
 
-        jScrollPane3.setBorder(javax.swing.BorderFactory.createTitledBorder("Stamm"));
-        jScrollPane3.setMinimumSize(new java.awt.Dimension(150, 48));
-        jScrollPane3.setPreferredSize(new java.awt.Dimension(150, 48));
+        jAllyScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Stamm"));
+        jAllyScrollPane.setMinimumSize(new java.awt.Dimension(150, 48));
+        jAllyScrollPane.setPreferredSize(new java.awt.Dimension(150, 48));
 
         jAllyList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 fireAllySelectionChangedEvent(evt);
             }
         });
-        jScrollPane3.setViewportView(jAllyList);
+        jAllyScrollPane.setViewportView(jAllyList);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -399,128 +405,282 @@ public class AttackSourcePanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 0.2;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 0);
-        jPanel3.add(jScrollPane3, gridBagConstraints);
+        jDataPanel.add(jAllyScrollPane, gridBagConstraints);
 
-        jScrollPane4.setBorder(javax.swing.BorderFactory.createTitledBorder("Spieler"));
-        jScrollPane4.setMinimumSize(new java.awt.Dimension(150, 44));
-        jScrollPane4.setPreferredSize(new java.awt.Dimension(150, 44));
+        jTribeScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Spieler"));
+        jTribeScrollPane.setMinimumSize(new java.awt.Dimension(150, 44));
+        jTribeScrollPane.setPreferredSize(new java.awt.Dimension(150, 44));
 
         jTribeList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 fireTribeSelectionEvent(evt);
             }
         });
-        jScrollPane4.setViewportView(jTribeList);
+        jTribeScrollPane.setViewportView(jTribeList);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 0.2;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 0);
-        jPanel3.add(jScrollPane4, gridBagConstraints);
+        jDataPanel.add(jTribeScrollPane, gridBagConstraints);
 
-        jScrollPane5.setBorder(javax.swing.BorderFactory.createTitledBorder("Kontinent"));
-        jScrollPane5.setMinimumSize(new java.awt.Dimension(80, 60));
-        jScrollPane5.setPreferredSize(new java.awt.Dimension(80, 60));
+        jContinentScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Kontinent"));
+        jContinentScrollPane.setMinimumSize(new java.awt.Dimension(80, 60));
+        jContinentScrollPane.setPreferredSize(new java.awt.Dimension(80, 60));
 
         jContinentList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 fireContinentSelectionEvent(evt);
             }
         });
-        jScrollPane5.setViewportView(jContinentList);
+        jContinentScrollPane.setViewportView(jContinentList);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 0);
-        jPanel3.add(jScrollPane5, gridBagConstraints);
+        jDataPanel.add(jContinentScrollPane, gridBagConstraints);
 
-        jScrollPane6.setBorder(javax.swing.BorderFactory.createTitledBorder("Dörfer"));
-        jScrollPane6.setMinimumSize(new java.awt.Dimension(150, 44));
-        jScrollPane6.setPreferredSize(new java.awt.Dimension(150, 44));
+        jVillageScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Dörfer"));
+        jVillageScrollPane.setMinimumSize(new java.awt.Dimension(150, 44));
+        jVillageScrollPane.setPreferredSize(new java.awt.Dimension(150, 44));
 
-        jScrollPane6.setViewportView(jVillageList);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 0.6;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 0);
-        jPanel3.add(jScrollPane6, gridBagConstraints);
-
-        jScrollPane7.setBorder(javax.swing.BorderFactory.createTitledBorder("Einheit"));
-        jScrollPane7.setMinimumSize(new java.awt.Dimension(80, 44));
-        jScrollPane7.setPreferredSize(new java.awt.Dimension(80, 44));
-
-        jScrollPane7.setViewportView(jUnitList);
+        jVillageScrollPane.setViewportView(jVillageList);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 0.6;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 0);
-        jPanel3.add(jScrollPane7, gridBagConstraints);
+        jDataPanel.add(jVillageScrollPane, gridBagConstraints);
+
+        jUnitScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Einheit"));
+        jUnitScrollPane.setMinimumSize(new java.awt.Dimension(80, 44));
+        jUnitScrollPane.setPreferredSize(new java.awt.Dimension(80, 44));
+
+        jUnitScrollPane.setViewportView(jUnitList);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 0);
+        jDataPanel.add(jUnitScrollPane, gridBagConstraints);
+
+        jXTextField1.setToolTipText("Erlaubt eine Filterung der Stammesnamen");
+        jXTextField1.setPrompt("Filter angeben");
+        jXTextField1.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                fireAllyFilterEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 0.2;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jDataPanel.add(jXTextField1, gridBagConstraints);
+
+        jAdaptUnit.setText("Angleichen");
+        jAdaptUnit.setToolTipText("Setzt die langsamste Einheit der in der Tabelle markierten Dörfer auf die gewählte Einheit");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jDataPanel.add(jAdaptUnit, gridBagConstraints);
+
+        jUsageAmount.setToolTipText("<html>Gibt die Anzahl der zu planenden Angriffe auf die Ziele an,<br/>\ndie im Folgenden eingef&uuml;gt werden.</html>");
+        jUsageAmount.setPrompt("Anzahl Verwendungen");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jDataPanel.add(jUsageAmount, gridBagConstraints);
+
+        jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 2, 0, 2);
+        jDataPanel.add(jSeparator1, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weighty = 0.7;
-        jPanel2.add(jPanel3, gridBagConstraints);
+        gridBagConstraints.weightx = 0.7;
+        gridBagConstraints.weighty = 0.3;
+        jPanel2.add(jDataPanel, gridBagConstraints);
 
-        jPanel4.setMinimumSize(new java.awt.Dimension(100, 0));
-        jPanel4.setPreferredSize(new java.awt.Dimension(100, 0));
-        jPanel4.setLayout(new java.awt.GridBagLayout());
+        jMenuPanel.setMinimumSize(new java.awt.Dimension(150, 130));
+        jMenuPanel.setPreferredSize(new java.awt.Dimension(150, 130));
+        jMenuPanel.setLayout(new java.awt.GridBagLayout());
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/fake.png"))); // NOI18N
+        jValidateByTroops.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/filter_strength.png"))); // NOI18N
+        jValidateByTroops.setToolTipText("<html>Filtert alle D&ouml;rfer in der Tabelle nach der Truppenst&auml;rke, die DS Workbench bekannt ist.<br/>\nUm diese Funktion sinnvoll nutzen zu k&ouml;nnen, sollten vorher Truppen aus dem Spiel nach DS Workbench<br/>\nimportiert worden sein.</html>");
+        jValidateByTroops.setMaximumSize(new java.awt.Dimension(48, 33));
+        jValidateByTroops.setMinimumSize(new java.awt.Dimension(48, 33));
+        jValidateByTroops.setPreferredSize(new java.awt.Dimension(48, 33));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 0);
-        jPanel4.add(jButton1, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        jMenuPanel.add(jValidateByTroops, gridBagConstraints);
 
-        jButton2.setText("jButton1");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 0);
-        jPanel4.add(jButton2, gridBagConstraints);
-
-        jButton4.setText("jButton1");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 0);
-        jPanel4.add(jButton4, gridBagConstraints);
-
-        jButton3.setText("jButton1");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 0);
-        jPanel4.add(jButton3, gridBagConstraints);
-
+        jValidateWithAttackPlans.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/filter_off.png"))); // NOI18N
+        jValidateWithAttackPlans.setToolTipText("<html>Filtert alle D&ouml;rfer in der Tabelle nach ihrem Vorkommen in vorhandenen Angriffspl&auml;nen.<br/>\nSo kann verhindert werden, dass ein Dorf mehrfach verwendet wird.</html>");
+        jValidateWithAttackPlans.setMaximumSize(new java.awt.Dimension(48, 33));
+        jValidateWithAttackPlans.setMinimumSize(new java.awt.Dimension(48, 33));
+        jValidateWithAttackPlans.setPreferredSize(new java.awt.Dimension(48, 33));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        jMenuPanel.add(jValidateWithAttackPlans, gridBagConstraints);
+
+        jSetToFake.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/fake.png"))); // NOI18N
+        jSetToFake.setToolTipText("Setzt die markierten Dörfer der Tabelle auf Herkunft/Ziel für Fakes.");
+        jSetToFake.setMaximumSize(new java.awt.Dimension(48, 33));
+        jSetToFake.setMinimumSize(new java.awt.Dimension(48, 33));
+        jSetToFake.setPreferredSize(new java.awt.Dimension(48, 33));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        jMenuPanel.add(jSetToFake, gridBagConstraints);
+
+        jPanel1.setMinimumSize(new java.awt.Dimension(123, 70));
+        jPanel1.setPreferredSize(new java.awt.Dimension(123, 70));
+        jPanel1.setLayout(new java.awt.GridBagLayout());
+
+        jButton5.setText("Alle einfügen");
+        jButton5.setToolTipText("<html>F&uuml;gt alle D&ouml;rfer die sich aktuell in der D&ouml;rfer-Liste befinden<br/>\nin die Tabelle der zu verwendenden D&ouml;rfer ein</html>");
+        jButton5.setMaximumSize(new java.awt.Dimension(123, 23));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 5, 5, 5);
+        jPanel1.add(jButton5, gridBagConstraints);
+
+        jButton6.setText("Markierte einfügen");
+        jButton6.setToolTipText("<html>F&uuml;gt alle markierten D&ouml;rfer aus der D&ouml;rfer-Liste<br/>\nin die Tabelle der zu verwendenden D&ouml;rfer ein</html>");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
+        jPanel1.add(jButton6, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weighty = 1.0;
-        jPanel2.add(jPanel4, gridBagConstraints);
+        jPanel1.add(jLabel3, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jMenuPanel.add(jPanel1, gridBagConstraints);
+
+        jAddUsage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/add_attack.png"))); // NOI18N
+        jAddUsage.setToolTipText("Erhöht die Anzahl der zu planenden Angriffe für die in der Tabelle markierten Ziele");
+        jAddUsage.setMaximumSize(new java.awt.Dimension(48, 33));
+        jAddUsage.setMinimumSize(new java.awt.Dimension(48, 33));
+        jAddUsage.setPreferredSize(new java.awt.Dimension(48, 33));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        jMenuPanel.add(jAddUsage, gridBagConstraints);
+
+        jRemoveUsage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/remove_attack.png"))); // NOI18N
+        jRemoveUsage.setToolTipText("Verringert die Anzahl der zu planenden Angriffe für die in der Tabelle markierten Ziele");
+        jRemoveUsage.setMaximumSize(new java.awt.Dimension(48, 33));
+        jRemoveUsage.setMinimumSize(new java.awt.Dimension(48, 33));
+        jRemoveUsage.setPreferredSize(new java.awt.Dimension(48, 33));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        jMenuPanel.add(jRemoveUsage, gridBagConstraints);
+
+        jRestoreUsage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/reset_attacks.png"))); // NOI18N
+        jRestoreUsage.setToolTipText("<html>Setzt die Anzahl der zu planenden Angriffe f&uuml;r die in der Tabelle markierten Ziele auf den Wert,<br/>\nder in dem Feld unterhalb der D&ouml;rfer-Liste eingetragen ist</html>");
+        jRestoreUsage.setMaximumSize(new java.awt.Dimension(48, 33));
+        jRestoreUsage.setMinimumSize(new java.awt.Dimension(48, 33));
+        jRestoreUsage.setPreferredSize(new java.awt.Dimension(48, 33));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        jMenuPanel.add(jRestoreUsage, gridBagConstraints);
+
+        jSetToNoFake.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/no_fake.png"))); // NOI18N
+        jSetToNoFake.setToolTipText("Setzt die markierten Dörfer der Tabelle auf Herkunft/Ziel für Offs.");
+        jSetToNoFake.setMaximumSize(new java.awt.Dimension(48, 33));
+        jSetToNoFake.setMinimumSize(new java.awt.Dimension(48, 33));
+        jSetToNoFake.setPreferredSize(new java.awt.Dimension(48, 33));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        jMenuPanel.add(jSetToNoFake, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weighty = 0.3;
+        jPanel2.add(jMenuPanel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -541,7 +701,7 @@ public class AttackSourcePanel extends javax.swing.JPanel {
             jLabel1.setText("Informationen einblenden");
         }
     }//GEN-LAST:event_fireHideInfoEvent
-
+    
     private void fireHideDateSourcesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideDateSourcesEvent
         if (jXCollapsiblePane2.isCollapsed()) {
             jXCollapsiblePane2.setCollapsed(false);
@@ -551,7 +711,7 @@ public class AttackSourcePanel extends javax.swing.JPanel {
             jLabel2.setText("Datenquellen einblenden");
         }
     }//GEN-LAST:event_fireHideDateSourcesEvent
-
+    
     private void fireDataSourceChangeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireDataSourceChangeEvent
         if (evt.getSource() == jGroupSource) {
             List<ManageableType> tags = TagManager.getSingleton().getAllElements();
@@ -569,27 +729,27 @@ public class AttackSourcePanel extends javax.swing.JPanel {
             updateSetSelection(null);
         }
     }//GEN-LAST:event_fireDataSourceChangeEvent
-
+    
     private void fireShowDataSourceInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowDataSourceInfoEvent
         if (evt.getSource() == jGroupSource) {
-            jInfoTextPane.setText(GROUP_INFO);
+            jInfoTextPane.setText(getGroupInfo());
         } else if (evt.getSource() == jSosSource) {
-            jInfoTextPane.setText(SOS_INFO);
+            jInfoTextPane.setText(getSosInfo());
         } else if (evt.getSource() == jReportSource) {
-            jInfoTextPane.setText(REPORT_INFO);
+            jInfoTextPane.setText(getReportInfo());
         } else if (evt.getSource() == jSelectionSource) {
-            jInfoTextPane.setText(SELECTION_INFO);
+            jInfoTextPane.setText(getSelectionInfo());
         } else if (evt.getSource() == jDrawingSource) {
-            jInfoTextPane.setText(DRAWING_INFO);
+            jInfoTextPane.setText(getDrawingInfo());
         } else if (evt.getSource() == jWorlddataSource) {
-            jInfoTextPane.setText(WORLDDATA_INFO);
+            jInfoTextPane.setText(getWorldDataInfo());
         }
     }//GEN-LAST:event_fireShowDataSourceInfoEvent
-
+    
     private void fireHideDataSourceInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideDataSourceInfoEvent
-        jInfoTextPane.setText(GENERAL_INFO);
+        jInfoTextPane.setText(getGeneralInfo());
     }//GEN-LAST:event_fireHideDataSourceInfoEvent
-
+    
     private void fireSetSelectionChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireSetSelectionChangedEvent
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             if (jGroupSource.isSelected()) {
@@ -601,168 +761,97 @@ public class AttackSourcePanel extends javax.swing.JPanel {
             }
         }
     }//GEN-LAST:event_fireSetSelectionChangedEvent
-
+    
     private void fireAllySelectionChangedEvent(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_fireAllySelectionChangedEvent
         if (!evt.getValueIsAdjusting()) {
             updateTribeBox();
         }
     }//GEN-LAST:event_fireAllySelectionChangedEvent
-
+    
     private void fireTribeSelectionEvent(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_fireTribeSelectionEvent
         if (!evt.getValueIsAdjusting()) {
             updateContinentBox();
         }
     }//GEN-LAST:event_fireTribeSelectionEvent
-
+    
     private void fireContinentSelectionEvent(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_fireContinentSelectionEvent
         if (!evt.getValueIsAdjusting()) {
             updateVillageBox();
         }
     }//GEN-LAST:event_fireContinentSelectionEvent
+    
+    private void fireAllyFilterEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireAllyFilterEvent
+        rebuildDataBoxes();
+    }//GEN-LAST:event_fireAllyFilterEvent
+    
+    public abstract String getGeneralInfo();
+    
+    public abstract String getGroupInfo();
+    
+    public abstract String getSosInfo();
+    
+    public abstract String getReportInfo();
+    
+    public abstract String getSelectionInfo();
+    
+    public abstract String getDrawingInfo();
+    
+    public abstract String getWorldDataInfo();
 
     // <editor-fold defaultstate="collapsed" desc=" Update methods for data area ">
-    private void updateSetSelection(Object[] pElements) {
-        if (pElements == null) {
-            jSetLabel.setEnabled(false);
-            jSetBox.setEnabled(false);
-            villages.clear();
-            if (jSosSource.isSelected()) {
-                System.out.println("Not yet implemented");
-            } else if (jSelectionSource.isSelected()) {
-                for (Village v : DSWorkbenchSelectionFrame.getSingleton().getSelectedElements()) {
-                    villages.add(v);
-                }
-            } else if (jWorlddataSource.isSelected()) {
-                for (Integer id : DataHolder.getSingleton().getVillagesById().keySet()) {
-                    Village v = DataHolder.getSingleton().getVillagesById().get(id);
-                    if (v.getTribe() != null) {
-                        villages.add(v);
-                    }
-                }
-                rebuildDataBoxes();
-            } else {
-                //should be drawing selected but no drawing available
-                jSetBox.setModel(new DefaultComboBoxModel(new Object[]{"Nicht verfügbar"}));
-            }
-        } else {
-            jSetLabel.setEnabled(true);
-            jSetBox.setEnabled(true);
-            DefaultComboBoxModel model = new DefaultComboBoxModel();
-            if (pElements.length == 0) {
-                jSetLabel.setEnabled(false);
-                jSetBox.setEnabled(false);
-                model.addElement(NO_DATA_AVAILABLE);
-            } else {
-                jSetLabel.setEnabled(true);
-                jSetBox.setEnabled(true);
-                model.addElement(ALL_DATA);
-                for (Object set : pElements) {
-                    model.addElement(set);
-                }
-            }
-
-            jSetBox.setModel(model);
-            jSetBox.setSelectedIndex(0);
-        }
-    }
-
-    private void updateDataForGroupSource(Object pTag) {
-        villages.clear();
-        if (pTag != null) {
-            if (pTag instanceof String) {
-                for (ManageableType element : TagManager.getSingleton().getAllElements()) {
-                    for (Integer id : ((Tag) element).getVillageIDs()) {
-                        Village village = DataHolder.getSingleton().getVillagesById().get(id);
-                        if (!villages.contains(village)) {
-                            villages.add(village);
-                        }
-                    }
-                }
-            } else if (pTag instanceof Tag) {
-                Tag tag = (Tag) pTag;
-                for (Integer id : tag.getVillageIDs()) {
-                    Village village = DataHolder.getSingleton().getVillagesById().get(id);
-                    if (!villages.contains(village)) {
-                        villages.add(village);
-                    }
-                }
-            }
-        }
-        rebuildDataBoxes();
-    }
-
-    private void updateDataForReportSource(String pSet) {
-        villages.clear();
-        if (pSet != null) {
-            List<ManageableType> relevantReports = null;
-
-            if (pSet.equals(ALL_DATA)) {
-                relevantReports = ReportManager.getSingleton().getAllElements();
-            } else {
-                relevantReports = ReportManager.getSingleton().getAllElements(pSet);
-            }
-
-            for (ManageableType element : relevantReports) {
-                FightReport report = (FightReport) element;
-                Village target = report.getTargetVillage();
-                if (!villages.contains(target)) {
-                    villages.add(target);
-                }
-            }
-        }
-        rebuildDataBoxes();
-    }
-
-    private void updateDataForDrawingSource(Object pDrawing) {
-        villages.clear();
-        if (pDrawing != null) {
-            if (pDrawing instanceof String) {
-                for (ManageableType element : FormManager.getSingleton().getAllElements()) {
-                    for (Village village : ((AbstractForm) element).getContainedVillages()) {
-                        if (!villages.contains(village)) {
-                            villages.add(village);
-                        }
-                    }
-                }
-            } else if (pDrawing instanceof AbstractForm) {
-                AbstractForm drawing = (AbstractForm) pDrawing;
-                for (Village village : drawing.getContainedVillages()) {
-                    if (!villages.contains(village)) {
-                        villages.add(village);
-                    }
-                }
-            }
-        }
-        rebuildDataBoxes();
-    }
-
-    private void rebuildDataBoxes() {
+    protected abstract void updateSetSelection(Object[] pElements);
+    
+    protected abstract void updateDataForGroupSource(Object pTag);
+    
+    protected abstract void updateDataForReportSource(String pSet);
+    
+    protected abstract void updateDataForDrawingSource(Object pDrawing);
+    
+    protected abstract List<Village> getVillages();
+    
+    protected void rebuildDataBoxes() {
         allyTribeMappings.clear();
-        for (Village v : villages) {
+        String filter = null;
+        if (jXTextField1.getText() != null && jXTextField1.getText().length() > 0) {
+            filter = jXTextField1.getText();
+        }
+        
+        for (Village v : getVillages()) {
             Tribe t = v.getTribe();
             Ally a = t.getAlly();
+            boolean noAlly = false;
             if (a == null) {
                 a = NoAlly.getSingleton();
+                noAlly = true;
             }
             List<Tribe> tribesForAlly = allyTribeMappings.get(a);
             if (tribesForAlly == null) {
-                tribesForAlly = new LinkedList<Tribe>();
-                allyTribeMappings.put(a, tribesForAlly);
+                if (filter != null) {
+                    if (noAlly || a.getName().toLowerCase().indexOf(filter.toLowerCase()) > -1) {
+                        tribesForAlly = new LinkedList<Tribe>();
+                        allyTribeMappings.put(a, tribesForAlly);
+                    }
+                } else {//no filter
+                    tribesForAlly = new LinkedList<Tribe>();
+                    allyTribeMappings.put(a, tribesForAlly);
+                }
             }
-            if (!tribesForAlly.contains(t)) {
+            if (tribesForAlly != null && !tribesForAlly.contains(t)) {
                 tribesForAlly.add(t);
             }
         }
-
+        
         DefaultListModel allyModel = new DefaultListModel();
         allyModel.addElement(NoAlly.getSingleton());
         for (Ally a : allyTribeMappings.keySet()) {
-            allyModel.addElement(a);
+            if (!a.equals(NoAlly.getSingleton())) {
+                allyModel.addElement(a);
+            }
         }
         jAllyList.setModel(allyModel);
         jAllyList.setSelectedIndex(0);
     }
-
+    
     private void updateTribeBox() {
         Object[] selection = jAllyList.getSelectedValues();
         if (selection == null || selection.length == 0) {
@@ -772,8 +861,12 @@ public class AttackSourcePanel extends javax.swing.JPanel {
         for (Object item : selection) {
             Ally a = (Ally) item;
             List<Tribe> tribeList = allyTribeMappings.get(a);
+            if (tribeList == null) {
+                //probably just removed
+                return;
+            }
             Collections.sort(tribeList);
-
+            
             for (Tribe t : tribeList) {
                 tribeModel.addElement(t);
             }
@@ -781,7 +874,7 @@ public class AttackSourcePanel extends javax.swing.JPanel {
         jTribeList.setModel(tribeModel);
         jTribeList.setSelectedIndex(0);
     }
-
+    
     private void updateContinentBox() {
         Object[] selection = jTribeList.getSelectedValues();
         if (selection == null || selection.length == 0) {
@@ -791,7 +884,7 @@ public class AttackSourcePanel extends javax.swing.JPanel {
         for (Object item : selection) {
             Tribe t = (Tribe) item;
             Village[] villages = t.getVillageList();
-
+            
             List<String> continentList = new LinkedList<String>();
             for (Village v : villages) {
                 int iCont = v.getContinent();
@@ -801,7 +894,7 @@ public class AttackSourcePanel extends javax.swing.JPanel {
                 }
             }
             Collections.sort(continentList, String.CASE_INSENSITIVE_ORDER);
-
+            
             for (String cont : continentList) {
                 continentModel.addElement(cont);
             }
@@ -809,7 +902,7 @@ public class AttackSourcePanel extends javax.swing.JPanel {
         jContinentList.setModel(continentModel);
         jContinentList.setSelectionInterval(0, continentModel.size() - 1);
     }
-
+    
     private void updateVillageBox() {
         int[] continents = jContinentList.getSelectedIndices();
         if (continents == null) {
@@ -832,7 +925,7 @@ public class AttackSourcePanel extends javax.swing.JPanel {
             }
         }
         Collections.sort(villageList, Village.CASE_INSENSITIVE_ORDER);
-
+        
         DefaultListModel villageModel = new DefaultListModel();
         for (Village village : villageList) {
             villageModel.addElement(village);
@@ -840,63 +933,52 @@ public class AttackSourcePanel extends javax.swing.JPanel {
         jVillageList.setModel(villageModel);
     }
     // </editor-fold>
-    
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
+    protected javax.swing.JButton jAdaptUnit;
+    protected javax.swing.JButton jAddUsage;
     private org.jdesktop.swingx.JXList jAllyList;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JScrollPane jAllyScrollPane;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private org.jdesktop.swingx.JXList jContinentList;
+    private javax.swing.JScrollPane jContinentScrollPane;
+    private javax.swing.JPanel jDataPanel;
     private javax.swing.JPanel jDateSourcesPanel;
-    private javax.swing.JRadioButton jDrawingSource;
-    private javax.swing.JRadioButton jGroupSource;
+    protected javax.swing.JRadioButton jDrawingSource;
+    protected javax.swing.JRadioButton jGroupSource;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jMenuPanel;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JRadioButton jReportSource;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JScrollPane jScrollPane6;
-    private javax.swing.JScrollPane jScrollPane7;
-    private javax.swing.JRadioButton jSelectionSource;
-    private javax.swing.JComboBox jSetBox;
-    private javax.swing.JLabel jSetLabel;
-    private javax.swing.JRadioButton jSosSource;
+    protected javax.swing.JButton jRemoveUsage;
+    protected javax.swing.JRadioButton jReportSource;
+    protected javax.swing.JButton jRestoreUsage;
+    protected javax.swing.JRadioButton jSelectionSource;
+    private javax.swing.JSeparator jSeparator1;
+    protected javax.swing.JComboBox jSetBox;
+    protected javax.swing.JLabel jSetLabel;
+    protected javax.swing.JButton jSetToFake;
+    protected javax.swing.JButton jSetToNoFake;
+    protected javax.swing.JRadioButton jSosSource;
+    private javax.swing.JScrollPane jTableScrollPane;
     private org.jdesktop.swingx.JXList jTribeList;
-    private org.jdesktop.swingx.JXList jUnitList;
+    private javax.swing.JScrollPane jTribeScrollPane;
+    protected org.jdesktop.swingx.JXList jUnitList;
+    private javax.swing.JScrollPane jUnitScrollPane;
+    protected org.jdesktop.swingx.JXTextField jUsageAmount;
+    protected javax.swing.JButton jValidateByTroops;
+    protected javax.swing.JButton jValidateWithAttackPlans;
     private org.jdesktop.swingx.JXList jVillageList;
-    private javax.swing.JRadioButton jWorlddataSource;
+    private javax.swing.JScrollPane jVillageScrollPane;
+    protected javax.swing.JRadioButton jWorlddataSource;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane2;
     private org.jdesktop.swingx.JXTable jXTable1;
+    private org.jdesktop.swingx.JXTextField jXTextField1;
     // End of variables declaration//GEN-END:variables
-
-    public static void main(String[] args) {
-        GlobalOptions.setSelectedServer("de43");
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-
-        DataHolder.getSingleton().loadData(false);
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
-        }
-
-        JFrame f = new JFrame("Test");
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setSize(500, 400);
-        f.getContentPane().add(new AttackSourcePanel());
-        f.pack();
-        f.setVisible(true);
-    }
 }

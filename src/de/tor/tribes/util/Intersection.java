@@ -9,7 +9,7 @@ package de.tor.tribes.util;
  */
 import java.awt.*;
 import java.awt.geom.*;
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  * The Intersection class provides methods for determining
@@ -24,11 +24,7 @@ public class Intersection {
      * Log4J Category. The name of the category is the fully qualified name of the
      * enclosing class.
      */
-    static Category logger;
-
-    static {
-        logger = Category.getInstance(Intersection.class.getName());
-    }
+    static Logger logger = Logger.getLogger(Intersection.class);
 
     /**
      * Returns the intersection point of two lines.
@@ -54,15 +50,15 @@ public class Intersection {
         /* first, check to see if the segments intersect by parameterization
         on s and t; if s and t are both between [0,1], then the
         segments intersect */
-        x1line1 = (double) line1.getX1();
-        y1line1 = (double) line1.getY1();
-        x2line1 = (double) line1.getX2();
-        y2line1 = (double) line1.getY2();
+        x1line1 =  line1.getX1();
+        y1line1 =  line1.getY1();
+        x2line1 =  line1.getX2();
+        y2line1 =  line1.getY2();
 
-        x1line2 = (double) line2.getX1();
-        y1line2 = (double) line2.getY1();
-        x2line2 = (double) line2.getX2();
-        y2line2 = (double) line2.getY2();
+        x1line2 =  line2.getX1();
+        y1line2 =  line2.getY1();
+        x2line2 =  line2.getX2();
+        y2line2 =  line2.getY2();
 
         /* check to see if the segments have any endpoints in common. If they do,
         then return the endpoints as the intersection point */
@@ -90,7 +86,7 @@ public class Intersection {
 
         /* compute the intersection point using
         ax+by+e = 0 and cx+dy+f = 0
-
+        
         If there is more than 1 intersection point between two lines,
          */
         if ((dyline1 * dxline2 - dyline2 * dxline1) == 0) {

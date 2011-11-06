@@ -23,6 +23,9 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.text.NumberFormat;
 
+/**
+ * @TODO (DIFF) Fixed rendering of troop density from reports
+ */
 public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
 
     private BufferedImage mLayer = null;
@@ -197,27 +200,32 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
     private void renderField(Village v, int row, int colu, int pFieldWidth, int pFieldHeight, int pDx, int pDy, double pZoom, boolean pIncludeSupport, Graphics2D g2d) {
         VillageTroopsHolder holder = null;
         double defIn = 0;
+        double defOwn = 0;
         if (pIncludeSupport) {
             holder = TroopsManager.getSingleton().getTroopsForVillage(v);
             if (holder != null) {
                 defIn = holder.getDefValue();
             }
             holder = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN);
+            if (holder != null) {
+                defOwn = holder.getDefValue();
+            }
         } else {
             holder = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN);
             if (holder != null) {
                 defIn = holder.getDefValue();
+                defOwn = defIn;
             }
         }
 
-        if (v != null && v.isVisibleOnMap() && holder != null) {
+        if (v != null && v.isVisibleOnMap() && (defIn != 0 || defOwn != 0)) {
             int maxDef = 650000;
             try {
                 maxDef = Integer.parseInt(GlobalOptions.getProperty("max.density.troops"));
             } catch (Exception e) {
                 maxDef = 650000;
             }
-            double defOwn = holder.getDefValue();
+
             double percOfMax = defIn / maxDef;
             double percFromOthers = (defIn - defOwn) / defIn;
             double half = (double) maxDef / 2.0;

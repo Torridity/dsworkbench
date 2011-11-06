@@ -178,15 +178,10 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 JOptionPaneHelper.showErrorBox(self, "Fehler bei der Initialisierung.\nDas Serververzeichnis konnte nicht erstellt werden.", "Fehler");
                 return false;
             }
+
             ProfileManager.getSingleton().loadProfiles();
-            if (ProfileManager.getSingleton().getProfiles().length == 0) {// || new File("./sfs").exists()) {
+            if (ProfileManager.getSingleton().getProfiles().length == 0) {
                 logger.debug("Starting first start wizard");
-                //  if (new File("./sfs").exists()) {
-                //    if (new File("./hfsw").exists()) {
-                //        FileUtils.forceDelete(new File("./hfsw"));
-                //    }
-                //    FileUtils.forceDelete(new File("./sfs"));
-                //  }
 
                 //first start wizard
                 if (!new File("./hfsw").exists()) {
@@ -232,6 +227,35 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                     GlobalOptions.saveProperties();
                 }
             }
+
+            jStatusOutput.setString("Prüfe auf Updates");
+
+            //check updates
+            DSWorkbenchUpdateDialog updateDialog = new DSWorkbenchUpdateDialog(this, true);
+            DSWorkbenchUpdateDialog.UPDATE_RESULT result = DSWorkbenchUpdateDialog.UPDATE_RESULT.READY;
+            if (updateDialog.getResult() == DSWorkbenchUpdateDialog.UPDATE_RESULT.READY) {
+                updateDialog.setLocationRelativeTo(this);
+                updateDialog.setVisible(true);
+            }
+
+            result = updateDialog.getResult();
+            switch (result) {
+                case CANCELED:
+                    jStatusOutput.setString("Update abgebrochen");
+                    break;
+                case ERROR:
+                    jStatusOutput.setString("Updates momentan nicht möglich");
+                    break;
+                case SUCCESS:
+                    jStatusOutput.setString("Update erfolgreich. Neustart notwendig!");
+                    break;
+                case NOT_NEEDED:
+                    jStatusOutput.setString("Kein Update notwendig");
+                    break;
+                default:
+                    jStatusOutput.setString("Unbekannter Fehler beim Update");
+            }
+
             //load properties, cursors, skins, world decoration
             logger.debug("Adding startup listeners");
             DataHolder.getSingleton().addDataHolderListener(this);

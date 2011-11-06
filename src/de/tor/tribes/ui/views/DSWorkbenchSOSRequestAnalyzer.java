@@ -54,6 +54,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -175,6 +176,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         super.toBack();
     }
     
+    @Override
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
@@ -182,6 +184,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         PropertyHelper.storeTableProperties(jResultTable, pConfig, getPropertyPrefix());
     }
     
+    @Override
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
         
@@ -195,6 +198,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         PropertyHelper.restoreTableProperties(jResultTable, pConfig, getPropertyPrefix());
     }
     
+    @Override
     public String getPropertyPrefix() {
         return "sos.view";
     }
@@ -208,7 +212,14 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
             
             @Override
             public void mouseReleased(MouseEvent e) {
-                transferToSupportTool();
+                //  transferToSupportTool();
+                Enumeration<Tribe> tribes = currentRequests.keys();
+                List<SOSRequest> requests = new LinkedList<SOSRequest>();
+                while (tribes.hasMoreElements()) {
+                    requests.add(currentRequests.get(tribes.nextElement()));
+                }
+                DSWorkbenchDefenseTool.getSingleton().setData(requests);
+                DSWorkbenchDefenseTool.getSingleton().setVisible(true);
             }
         });
         
@@ -550,7 +561,12 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         List<SOSRequest> requests = PluginManager.getSingleton().executeSOSParserParser(jXInputArea.getText());
         if (requests != null && !requests.isEmpty()) {
             for (SOSRequest request : requests) {
-                currentRequests.put(request.getDefender(), request);
+                if (currentRequests.get(request.getDefender()) != null) {
+                    SOSRequest merged = currentRequests.get(request.getDefender()).merge(request);
+                    currentRequests.put(request.getDefender(), merged);
+                } else {
+                    currentRequests.put(request.getDefender(), request);
+                }
             }
         } else {
             currentRequests = new Hashtable<Tribe, SOSRequest>();

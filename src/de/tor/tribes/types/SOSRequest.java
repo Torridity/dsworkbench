@@ -75,7 +75,7 @@ public class SOSRequest implements BBSupport {
         String sourceDateTypeVal = "";
         String attackList = "";
         String sourceTypeVal = "";
-        List<Attack> attacks = new ArrayList<Attack>();
+        List<Attack> thisAttacks = new ArrayList<Attack>();
         for (int i = 0; i < atts.size(); i++) {
             try {
                 TimedAttack attack = atts.get(i);
@@ -94,12 +94,12 @@ public class SOSRequest implements BBSupport {
                 if (a.getUnit() == null) {
                     a.setUnit(UnknownUnit.getSingleton());
                 }
-                attacks.add(a);
+                thisAttacks.add(a);
             } catch (Exception e) {
             }
         }
 
-        attackList = new AttackListFormatter().formatElements(attacks, pExtended);
+        attackList = new AttackListFormatter().formatElements(thisAttacks, pExtended);
 
         for (int i = 0; i < atts.size(); i++) {
             try {
@@ -133,7 +133,7 @@ public class SOSRequest implements BBSupport {
     }
 
     private String buildUnitInfo(TargetInformation pTargetInfo) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
@@ -160,7 +160,7 @@ public class SOSRequest implements BBSupport {
     }
 
     private String buildWallInfo(TargetInformation pTargetInfo) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         double perc = pTargetInfo.getWallLevel() / 20.0;
         int filledFields = (int) Math.rint(perc * 15.0);
         buffer.append("[color=#00FF00]");
@@ -230,7 +230,7 @@ public class SOSRequest implements BBSupport {
     }
 
     public String toBBCode(boolean pDetailed) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         Enumeration<Village> targets = getTargets();
         while (targets.hasMoreElements()) {
             Village target = targets.nextElement();
@@ -242,7 +242,7 @@ public class SOSRequest implements BBSupport {
     }
 
     public String toBBCode(Village pTarget, boolean pDetailed) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         Village target = pTarget;
         TargetInformation targetInfo = getTargetInformation(target);
         if (targetInfo == null) {
@@ -250,6 +250,48 @@ public class SOSRequest implements BBSupport {
         }
         buffer.append(SOSFormater.format(target, targetInfo, pDetailed));
         return buffer.toString();
+    }
+
+    public SOSRequest merge(SOSRequest pNewRequest) {
+        SOSRequest newRequest = new SOSRequest(getDefender());
+        Enumeration<Village> targets = getTargets();
+        boolean millis = ServerSettings.getSingleton().isMillisArrival();
+        while (targets.hasMoreElements()) {
+            Village target = targets.nextElement();
+            TargetInformation thisInfo = getTargetInformation(target);
+            TargetInformation theOtherInfo = pNewRequest.getTargetInformation(target);
+            newRequest.addTarget(target);
+            TargetInformation theNewInfo = newRequest.getTargetInformation(target);
+            for (TimedAttack thisAttack : thisInfo.getAttacks()) {
+                theNewInfo.addAttack(thisAttack.getSource(), new Date(thisAttack.getlArriveTime()));
+            }
+            for (TimedAttack theOtherAttack : theOtherInfo.getAttacks()) {
+                boolean add = true;
+                if (millis) {//only check if millis are enabled...otherwise we should keep all attacks, as we cannot separate them clearly
+                    for (TimedAttack theNewAttack : theNewInfo.getAttacks()) {//go through all attacks and check if one is equal
+                        if (theNewAttack.getSource().equals(theOtherAttack.getSource()) && theNewAttack.getlArriveTime().equals(theOtherAttack.getlArriveTime())) {
+                            //attack seems to be the same...skip adding
+                            add = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (add) {//attack seems not to exist...add it
+                    theNewInfo.addAttack(theOtherAttack.getSource(), new Date(theOtherAttack.getlArriveTime()));
+                }
+            }
+            //set the wall level and troop information to the most current value
+            theNewInfo.setWallLevel(theOtherInfo.getWallLevel());
+            Hashtable<UnitHolder, Integer> theOtherTroopInfo = theOtherInfo.getTroops();
+            Enumeration<UnitHolder> units = theOtherTroopInfo.keys();
+            while (units.hasMoreElements()) {
+                UnitHolder unit = units.nextElement();
+                theNewInfo.addTroopInformation(unit, theOtherTroopInfo.get(unit));
+            }
+        }
+
+        return newRequest;
     }
 
     @Override

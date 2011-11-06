@@ -8,7 +8,7 @@
  *
  * Created on Oct 14, 2011, 5:23:41 PM
  */
-package de.tor.tribes.ui.wiz.wap;
+package de.tor.tribes.ui.wiz.tap;
 
 import java.util.Map;
 import org.netbeans.spi.wizard.Wizard;
@@ -108,6 +108,7 @@ public class WelcomePanel extends javax.swing.JPanel implements WizardPanel {
     @Override
     public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
         SourcePanel.getSingleton().setupForAttack(jAttackType.isSelected());
+        TargetPanel.getSingleton().setupForAttack(jAttackType.isSelected());
         return WizardPanelNavResult.PROCEED;
     }
 

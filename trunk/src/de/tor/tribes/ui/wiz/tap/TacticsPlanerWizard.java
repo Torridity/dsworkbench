@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.tor.tribes.ui.wiz.wap;
+package de.tor.tribes.ui.wiz.tap;
 
 import java.util.Map;
 import javax.swing.JComponent;
@@ -19,11 +19,12 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
 
     private static final String ID_WELCOME = "welcome-id";
     private static final String ID_SOURCE = "source-id";
+    private static final String ID_TARGET = "target-id";
 
     public TacticsPlanerWizard() {
         super("DS Workbench - Taktikplaner",
-                new String[]{ID_WELCOME, ID_SOURCE},
-                new String[]{"Willkommen", "Herkunft"});
+                new String[]{ID_WELCOME, ID_SOURCE, ID_TARGET},
+                new String[]{"Willkommen", "Herkunft", "Ziel"});
     }
 
     @Override
@@ -32,6 +33,8 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
             return WelcomePanel.getSingleton();
         } else if (string.equals(ID_SOURCE)) {
             return SourcePanel.getSingleton();
+        } else if (string.equals(ID_TARGET)) {
+            return TargetPanel.getSingleton();
         }
         return null;
     }

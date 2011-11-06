@@ -45,7 +45,7 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
     
     
     [b]Anwesende Truppen[/b]
-    [unit]axe[/unit] 5
+    [unit]axe[/unit] 8000
     [unit]spy[/unit] 6
     
     [b]1. Angriff[/b]
@@ -70,6 +70,13 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
     Stamm: [ally][KdS][/ally]
     Punkte: 1887516
     Herkunft: [coord]444|868[/coord]
+    Ankunftszeit: 17.04.10 18:44:00:931
+     
+     [b]2. Angriff[/b]
+    Angreifer: [player]Rattenfutter[/player]
+    Stamm: [ally][KdS][/ally]
+    Punkte: 1887516
+    Herkunft: [coord]444|867[/coord]
     Ankunftszeit: 17.04.10 18:44:00:931
      */
 

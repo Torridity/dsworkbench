@@ -163,12 +163,12 @@ public class Iterix extends AbstractAttackAlgorithm {
         if (cataFakes != null && !cataFakes.isEmpty()) {
             ramAndCataFakes.addAll(cataFakes);
         }
-        System.out.println("Copy " + copy);
+       /* System.out.println("Copy " + copy);
         System.out.println("Map " + map);
         System.out.println("SMap " + sMap);
         System.out.println("TMap " + tMap);
         System.out.println("Swap " + swap);
-        System.out.println("Solve " + solve);
+        System.out.println("Solve " + solve);*/
         if (ramAndCataFakes == null || ramAndCataFakes.isEmpty()) {
             logText("Keine gültigen Fakes gefunden. Berechnung abgeschlossen.");
             return movementList;
@@ -281,7 +281,6 @@ public class Iterix extends AbstractAttackAlgorithm {
         double[][] tMappings = new double[pSources.size()][pTargets.size()];
         UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
         int cnt = 0;
-        List<Long> usedDates = new LinkedList<Long>();
         for (int i = 0; i < pSources.size(); i++) {
             if (isAborted()) {
                 break;

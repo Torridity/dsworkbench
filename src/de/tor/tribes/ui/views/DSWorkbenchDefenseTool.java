@@ -20,6 +20,8 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.SOSRequest.TimedAttack;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.types.Village;
+import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.ServerSettings;
@@ -27,9 +29,13 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +43,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.apache.commons.lang.math.LongRange;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 
@@ -52,6 +59,7 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
 
     private static DSWorkbenchDefenseTool SINGLETON = null;
     private Hashtable<Village, SOSRequest.TargetInformation> infos = new Hashtable<Village, SOSRequest.TargetInformation>();
+    private final NumberFormat numFormat = NumberFormat.getInstance();
 
     public static synchronized DSWorkbenchDefenseTool getSingleton() {
         if (SINGLETON == null) {
@@ -72,21 +80,52 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
                 }
             }
         });
-
+        numFormat.setMaximumFractionDigits(0);
+        numFormat.setMinimumFractionDigits(0);
         jPanel1.add(jMainPanel, BorderLayout.CENTER);
 
     }
 
     public void setData(List<SOSRequest> pRequests) {
         DefaultListModel model = new DefaultListModel();
-        infos.clear();
+        ///infos.clear();
+        List<Village> targetList = new LinkedList<Village>();
+        final HashMap<Village, Integer> attackCount = new HashMap<Village, Integer>();
+        Enumeration<Village> existingKeys = infos.keys();
+        while (existingKeys.hasMoreElements()) {
+            Village target = existingKeys.nextElement();
+            targetList.add(target);
+            attackCount.put(target, infos.get(target).getAttacks().size());
+        }
+
         for (SOSRequest request : pRequests) {
             Enumeration<Village> targets = request.getTargets();
             while (targets.hasMoreElements()) {
                 Village target = targets.nextElement();
-                model.addElement(target);
-                infos.put(target, request.getTargetInformation(target));
+                if (!targetList.contains(target)) {
+                    //model.addElement(target);
+                    targetList.add(target);
+                    infos.put(target, request.getTargetInformation(target));
+                    attackCount.put(target, request.getTargetInformation(target).getAttacks().size());
+                } else {
+                    SOSRequest.TargetInformation existingInfo = infos.get(target);
+                    SOSRequest.TargetInformation newInfo = request.getTargetInformation(target);
+                    existingInfo.merge(newInfo, existingInfo);
+                    attackCount.put(target, existingInfo.getAttacks().size());
+                }
             }
+        }
+
+        Collections.sort(targetList, new Comparator<Village>() {
+
+            @Override
+            public int compare(Village o1, Village o2) {
+                return attackCount.get(o2).compareTo(attackCount.get(o1));
+            }
+        });
+
+        for (Village v : targetList) {
+            model.addElement(v);
         }
         jList1.setModel(model);
     }
@@ -100,15 +139,12 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
         }
         //sim off and def
         Hashtable<UnitHolder, AbstractUnitElement> def = new Hashtable<UnitHolder, AbstractUnitElement>();
-        Hashtable<UnitHolder, AbstractUnitElement> off = new Hashtable<UnitHolder, AbstractUnitElement>();
+        Hashtable<UnitHolder, AbstractUnitElement> off = getStandardOff();
         //pre-fill tables
         for (de.tor.tribes.io.UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            off.put(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), 0, 10));
             def.put(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), 0, 10));
         }
-        NumberFormat nf = NumberFormat.getInstance();
-        nf.setMaximumFractionDigits(0);
-        nf.setMinimumFractionDigits(0);
+
         int attCount = 0;
         int fakeCount = 0;
         long first = Long.MAX_VALUE;
@@ -145,10 +181,11 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
             defArchForce += unit.getDefenseArcher() * amount;
         }
 
-        jDefenseValue.setText(nf.format(defForce) + " | " + nf.format(defCavForce) + " | " + nf.format(defArchForce));
+        jDefenseValue.setText(numFormat.format(defForce) + " | " + numFormat.format(defCavForce) + " | " + numFormat.format(defArchForce));
         jDefenseValue.setToolTipText("<html>" + info.getTroopInformationAsHTML() + "</html>");
-        jAttackCount.setText(nf.format(attCount));
-        jFakeCount.setText(nf.format(fakeCount));
+        jAttackCount.setText(numFormat.format(attCount) + " (" + ((info.getDelta() > 0) ? "+" : "") + info.getDelta() + ")");
+        jFakeCount.setText(numFormat.format(fakeCount));
+
         if (ServerSettings.getSingleton().isMillisArrival()) {
             jFirstAttack.setText(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS").format(new Date(first)));
             jLastAttack.setText(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS").format(new Date(last)));
@@ -156,14 +193,11 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
             jFirstAttack.setText(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(new Date(first)));
             jLastAttack.setText(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(new Date(last)));
         }
+
         jWallLevel.setValue(info.getWallLevel());
 
         NewSimulator sim = new NewSimulator();
         boolean noAttack = (attCount == 0);
-        off.put(UnitManager.getSingleton().getUnitByPlainName("axe"), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName("axe"), (noAttack) ? 0 : 7000, 10));
-        off.put(UnitManager.getSingleton().getUnitByPlainName("light"), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName("light"), (noAttack) ? 0 : 2300, 10));
-        off.put(UnitManager.getSingleton().getUnitByPlainName("ram"), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName("ram"), (noAttack) ? 0 : 270, 10));
-
 
         SimulatorResult result = sim.calculate(off, def, KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM), Arrays.asList(KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM)), false, 0, 100.0, jWallLevel.getValue(), 0, 30, true, true, false, false, false);
         int cleanAfter = 0;
@@ -186,11 +220,11 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
                 survive += (double) amount * key.getPop();
             }
             lossPercent = 100 - (100.0 * survive / (double) pop);
-            jSecuredStatus.setText("Sicher (Verluste etwa: " + nf.format(lossPercent) + "%)");
+            jSecuredStatus.setText("Sicher (Verluste etwa: " + numFormat.format(lossPercent) + "%)");
         } else {
             jSecuredStatus.setBackground(Color.RED);
             jSecuredStatus.setForeground(Color.WHITE);
-            jSecuredStatus.setText("Dorf clean nach " + cleanAfter + "/" + attCount + " Angriffen");
+            jSecuredStatus.setText("Dorf leer nach " + cleanAfter + "/" + attCount + " Angriffen");
         }
 
         if (!noAttack || result.isWin() || (lossPercent > 30)) {
@@ -212,22 +246,11 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
     }
 
     private boolean calculateNeededSupports() {
-        NumberFormat nf = NumberFormat.getInstance();
-        nf.setMaximumFractionDigits(0);
-        nf.setMinimumFractionDigits(0);
         Village selection = (Village) jList1.getSelectedValue();
         SOSRequest.TargetInformation info = infos.get(selection);
         try {
             UnitManager.getSingleton().parseUnits(GlobalOptions.getSelectedServer());
         } catch (Exception e) {
-        }
-        //sim off and def
-        Hashtable<UnitHolder, AbstractUnitElement> def = new Hashtable<UnitHolder, AbstractUnitElement>();
-        Hashtable<UnitHolder, AbstractUnitElement> off = new Hashtable<UnitHolder, AbstractUnitElement>();
-        //pre-fill tables
-        for (de.tor.tribes.io.UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            off.put(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), 0, 10));
-            def.put(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), 0, 10));
         }
 
         NewSimulator sim = new NewSimulator();
@@ -240,17 +263,12 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
         int factor = 1;
         SimulatorResult result = null;
         while (true) {
-            off.put(UnitManager.getSingleton().getUnitByPlainName("axe"), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName("axe"), 7000, 10));
-            off.put(UnitManager.getSingleton().getUnitByPlainName("light"), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName("light"), 2300, 10));
-            off.put(UnitManager.getSingleton().getUnitByPlainName("ram"), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName("ram"), 270, 10));
+            Hashtable<UnitHolder, AbstractUnitElement> off = getStandardOff();
+            Hashtable<UnitHolder, AbstractUnitElement> def = getStandardDef(factor);
 
-            def.put(UnitManager.getSingleton().getUnitByPlainName("spear"), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName("spear"), factor * 500, 10));
-            def.put(UnitManager.getSingleton().getUnitByPlainName("sword"), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName("sword"), factor * 500, 10));
-            def.put(UnitManager.getSingleton().getUnitByPlainName("heavy"), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName("heavy"), factor * 110, 10));
-
-            double troops = UnitManager.getSingleton().getUnitByPlainName("spear").getPop() * factor * 500;
-            troops += UnitManager.getSingleton().getUnitByPlainName("sword").getPop() * factor * 500;
-            troops += UnitManager.getSingleton().getUnitByPlainName("heavy").getPop() * factor * 110;
+            double troops = UnitManager.getSingleton().getUnitByPlainName("spear").getPop() * def.get(UnitManager.getSingleton().getUnitByPlainName("spear")).getCount();
+            troops += UnitManager.getSingleton().getUnitByPlainName("sword").getPop() * def.get(UnitManager.getSingleton().getUnitByPlainName("sword")).getCount();
+            troops += UnitManager.getSingleton().getUnitByPlainName("heavy").getPop() * def.get(UnitManager.getSingleton().getUnitByPlainName("heavy")).getCount();
             result = sim.calculate(off, def, KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM), Arrays.asList(KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM)), false, 0, 100.0, info.getWallLevel(), 0, 30, true, true, false, false, false);
             for (int i = 1; i < attCount; i++) {
                 if (result.isWin()) {
@@ -278,17 +296,82 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
                     jNeededSupports.setText("> 500");
                     jSecuredStatus.setBackground(Color.YELLOW);
                     jSecuredStatus.setForeground(Color.BLACK);
-                    jSecuredStatus.setText("Unsicher (Verluste etwa " + nf.format(lossesPercent) + "%)");
+                    jSecuredStatus.setText("Unsicher (Verluste etwa " + numFormat.format(lossesPercent) + "%)");
                 } else {
                     jNeededSupports.setText("> 500");
                     jSecuredStatus.setBackground(Color.RED);
                     jSecuredStatus.setForeground(Color.WHITE);
-                    jSecuredStatus.setText("Unsicher (Verluste " + nf.format(lossesPercent) + "%)");
+                    jSecuredStatus.setText("Unsicher (Verluste 100%)");
                 }
                 return false;
             }
         }
         return true;
+    }
+
+    private void calculatePossibilities() {
+        Enumeration<Village> targets = infos.keys();
+        HashMap<Village, LongRange> arrivals = new HashMap<Village, LongRange>();
+        List<Village> targetList = new ArrayList<Village>();
+        while (targets.hasMoreElements()) {
+            Village target = targets.nextElement();
+            targetList.add(target);
+            SOSRequest.TargetInformation info = infos.get(target);
+            long first = Long.MAX_VALUE;
+            long last = Long.MIN_VALUE;
+
+            for (TimedAttack a : info.getAttacks()) {
+                if (a.getlArriveTime() < first) {
+                    first = a.getlArriveTime();
+                }
+
+                if (a.getlArriveTime() > last) {
+                    last = a.getlArriveTime();
+                }
+            }
+            arrivals.put(target, new LongRange(first, last));
+        }
+
+        Village[] villageList = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
+        int[][] data = new int[targetList.size()][villageList.length];
+
+        for (int i = 0; i < targetList.size(); i++) {
+            for (int j = 0; j < villageList.length; j++) {
+                if (DSCalculator.calculateDistance(targetList.get(i), villageList[j]) < 50) {
+                    data[i][j] += 1;
+                }
+            }
+        }
+
+        for (int i = 0; i < targetList.size(); i++) {
+            StringBuilder b = new StringBuilder();
+            for (int j = 0; j < villageList.length; j++) {
+                b.append(data[i][j] + ",");
+            }
+            System.out.println(b.toString());
+        }
+    }
+
+    private Hashtable<UnitHolder, AbstractUnitElement> getStandardOff() {
+        Hashtable<UnitHolder, AbstractUnitElement> off = new Hashtable<UnitHolder, AbstractUnitElement>();
+        for (de.tor.tribes.io.UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            off.put(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), 0, 10));
+        }
+        off.put(UnitManager.getSingleton().getUnitByPlainName("axe"), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName("axe"), 7000, 10));
+        off.put(UnitManager.getSingleton().getUnitByPlainName("light"), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName("light"), 2300, 10));
+        off.put(UnitManager.getSingleton().getUnitByPlainName("ram"), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName("ram"), 270, 10));
+        return off;
+    }
+
+    private Hashtable<UnitHolder, AbstractUnitElement> getStandardDef(int pFactor) {
+        Hashtable<UnitHolder, AbstractUnitElement> def = new Hashtable<UnitHolder, AbstractUnitElement>();
+        for (de.tor.tribes.io.UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            def.put(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), 0, 10));
+        }
+        def.put(UnitManager.getSingleton().getUnitByPlainName("spear"), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName("spear"), 500 * pFactor, 10));
+        def.put(UnitManager.getSingleton().getUnitByPlainName("sword"), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName("sword"), 500 * pFactor, 10));
+        def.put(UnitManager.getSingleton().getUnitByPlainName("heavy"), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName("heavy"), 100 * pFactor, 10));
+        return def;
     }
 
     /** This method is called from within the constructor to
@@ -323,6 +406,7 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
         jLastAttack = new javax.swing.JLabel();
         jDefenseValue = new javax.swing.JLabel();
         jNeededSupports = new javax.swing.JLabel();
+        jButton3 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
@@ -547,16 +631,28 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(jNeededSupports, gridBagConstraints);
 
+        jButton3.setText("jButton3");
+        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireCalc(evt);
+            }
+        });
+
         javax.swing.GroupLayout jMainPanelLayout = new javax.swing.GroupLayout(jMainPanel);
         jMainPanel.setLayout(jMainPanelLayout);
         jMainPanelLayout.setHorizontalGroup(
             jMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jMainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(jMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jMainPanelLayout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jMainPanelLayout.createSequentialGroup()
+                        .addComponent(jButton3)
+                        .addGap(293, 293, 293))))
         );
         jMainPanelLayout.setVerticalGroup(
             jMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -565,7 +661,9 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
                 .addGroup(jMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE))
-                .addContainerGap(150, Short.MAX_VALUE))
+                .addGap(59, 59, 59)
+                .addComponent(jButton3)
+                .addContainerGap(68, Short.MAX_VALUE))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -577,6 +675,10 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void fireCalc(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalc
+        calculatePossibilities();
+    }//GEN-LAST:event_fireCalc
 
     /**
      * @param args the command line arguments
@@ -613,6 +715,8 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
         GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
 
         DataHolder.getSingleton().loadData(false);
+        long s = System.currentTimeMillis();
+        DSWorkbenchDefenseTool.getSingleton().setData(createSampleRequests());
         DSWorkbenchDefenseTool.getSingleton().setData(createSampleRequests());
         DSWorkbenchDefenseTool.getSingleton().pack();
         DSWorkbenchDefenseTool.getSingleton().setVisible(true);
@@ -621,21 +725,26 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
 
     private static List<SOSRequest> createSampleRequests() {
 
-        int wallLevel = 10;
-        int supportCount = 20;
-        int maxAttackCount = 1000;
+        int wallLevel = 20;
+        int supportCount = 50;
+        int maxAttackCount = 5;
         int maxFakeCount = 0;
 
         List<SOSRequest> result = new LinkedList<SOSRequest>();
+        Village[] villages = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
         for (int i = 0; i < supportCount; i++) {
-            Village target = DataHolder.getSingleton().getRandomVillageWithOwner();
+            int id = (int) Math.rint(Math.random() * villages.length);
+            Village target = villages[id];
+
+
             SOSRequest r = new SOSRequest(target.getTribe());
             r.addTarget(target);
             SOSRequest.TargetInformation info = r.getTargetInformation(target);
             info.setWallLevel(wallLevel);
-            for (de.tor.tribes.io.UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                info.addTroopInformation(unit, (int) Math.rint(1000 * Math.random()));
-            }
+
+            info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("spear"), 7000);
+            info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("sword"), 7000);
+            info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("heavy"), 1500);
 
             int cnt = (int) Math.rint(maxAttackCount * Math.random());
             for (int j = 0; j < cnt; j++) {
@@ -646,6 +755,7 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
             }
             result.add(r);
         }
+
         return result;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -653,6 +763,7 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
     private javax.swing.JLabel jAttackCount;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jDefenseValue;
     private javax.swing.JLabel jFakeCount;
     private javax.swing.JLabel jFirstAttack;

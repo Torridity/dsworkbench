@@ -134,6 +134,7 @@ import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
+ * @TODO (Diff) Arrive time in result table visible
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
@@ -2025,7 +2026,8 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
                             .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jAllTargetsComboBox, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addComponent(jMarkTargetAsFake, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -3058,7 +3060,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
                 Date d = (Date) jResultsTable.getValueAt(row, 3);
                 long arriveTime = d.getTime() + (long) (DSCalculator.calculateMoveTimeInSeconds(s, t, unit.getSpeed()) * 1000);
 
-                int type = (Integer) jResultsTable.getValueAt(row, 4);
+                int type = (Integer) jResultsTable.getValueAt(row, 5);
                 Attack a = new Attack();
                 a.setSource(s);
                 a.setTarget(t);
@@ -3095,7 +3097,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
                 Date d = (Date) jResultsTable.getValueAt(row, 3);
                 long arriveTime = d.getTime() + (long) (DSCalculator.calculateMoveTimeInSeconds(s, t, unit.getSpeed()) * 1000);
 
-                int type = (Integer) jResultsTable.getValueAt(row, 4);
+                int type = (Integer) jResultsTable.getValueAt(row, 5);
                 Attack a = new Attack();
                 a.setSource(s);
                 a.setTarget(t);
@@ -3401,10 +3403,10 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         DefaultTableModel resultModel = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Herkunft", "Einheit", "Ziel", "Startzeit", "Typ", ""}) {
+                    "Herkunft", "Einheit", "Ziel", "Start","Ankunft", "Typ", ""}) {
 
             Class[] types = new Class[]{
-                Village.class, UnitHolder.class, Village.class, Date.class, Integer.class, Boolean.class
+                Village.class, UnitHolder.class, Village.class, Date.class, Date.class, Integer.class, Boolean.class
             };
 
             @Override
@@ -3453,7 +3455,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
                 impossibleAttacks++;
                 impossible = true;
             }
-            resultModel.addRow(new Object[]{a.getSource(), a.getUnit(), a.getTarget(), new Date(startTime), a.getType(), impossible});
+            resultModel.addRow(new Object[]{a.getSource(), a.getUnit(), a.getTarget(), new Date(startTime), a.getArriveTime(), a.getType(), impossible});
         }
 
         jResultsTable.setModel(resultModel);

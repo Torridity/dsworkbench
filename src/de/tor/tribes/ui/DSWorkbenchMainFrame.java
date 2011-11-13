@@ -83,7 +83,6 @@ import java.awt.Dimension;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
@@ -105,9 +104,9 @@ import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.tips.TipLoader;
 import org.jdesktop.swingx.tips.TipOfTheDayModel;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
-import org.pushingpixels.flamingo.internal.ui.ribbon.BasicRibbonUI;
 
 /**
+ * @TODO (Diff) Parser info in mini version visible
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends JRibbonFrame implements
@@ -775,10 +774,11 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         logger.info("Setting MainWindow visible");
         if (GlobalOptions.isMinimal()) {
             getContentPane().remove(jPanel4);
-            setSize(390, 185);
-            setPreferredSize(new Dimension(390, 185));
-            setMinimumSize(new Dimension(390, 185));
-            setMaximumSize(new Dimension(1900, 185));
+            getContentPane().add(infoPanel, BorderLayout.SOUTH);
+            setSize(530, 200);
+            setPreferredSize(new Dimension(530, 200));
+            setMinimumSize(new Dimension(530, 200));
+            setMaximumSize(new Dimension(1900, 200));
         }
         super.setVisible(v);
         final boolean vis = v;

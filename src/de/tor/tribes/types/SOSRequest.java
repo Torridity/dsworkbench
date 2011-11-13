@@ -176,7 +176,7 @@ public class SOSRequest implements BBSupport {
             buffer.append("[/color]");
         }
 
-        buffer.append(" (" + pTargetInfo.getWallLevel() + ")");
+        buffer.append(" (").append(pTargetInfo.getWallLevel()).append(")");
         return buffer.toString();
     }
 
@@ -201,7 +201,7 @@ public class SOSRequest implements BBSupport {
         attacks = new Hashtable<Village, TargetInformation>();
     }
 
-    public void setDefender(Tribe pDefender) {
+    public final void setDefender(Tribe pDefender) {
         mDefender = pDefender;
     }
 
@@ -255,40 +255,24 @@ public class SOSRequest implements BBSupport {
     public SOSRequest merge(SOSRequest pNewRequest) {
         SOSRequest newRequest = new SOSRequest(getDefender());
         Enumeration<Village> targets = getTargets();
-        boolean millis = ServerSettings.getSingleton().isMillisArrival();
         while (targets.hasMoreElements()) {
             Village target = targets.nextElement();
             TargetInformation thisInfo = getTargetInformation(target);
             TargetInformation theOtherInfo = pNewRequest.getTargetInformation(target);
             newRequest.addTarget(target);
             TargetInformation theNewInfo = newRequest.getTargetInformation(target);
-            for (TimedAttack thisAttack : thisInfo.getAttacks()) {
-                theNewInfo.addAttack(thisAttack.getSource(), new Date(thisAttack.getlArriveTime()));
-            }
-            for (TimedAttack theOtherAttack : theOtherInfo.getAttacks()) {
-                boolean add = true;
-                if (millis) {//only check if millis are enabled...otherwise we should keep all attacks, as we cannot separate them clearly
-                    for (TimedAttack theNewAttack : theNewInfo.getAttacks()) {//go through all attacks and check if one is equal
-                        if (theNewAttack.getSource().equals(theOtherAttack.getSource()) && theNewAttack.getlArriveTime().equals(theOtherAttack.getlArriveTime())) {
-                            //attack seems to be the same...skip adding
-                            add = false;
-                            break;
-                        }
-                    }
-                }
+            thisInfo.merge(theOtherInfo, theNewInfo);
+        }
 
-                if (add) {//attack seems not to exist...add it
-                    theNewInfo.addAttack(theOtherAttack.getSource(), new Date(theOtherAttack.getlArriveTime()));
-                }
-            }
-            //set the wall level and troop information to the most current value
-            theNewInfo.setWallLevel(theOtherInfo.getWallLevel());
-            Hashtable<UnitHolder, Integer> theOtherTroopInfo = theOtherInfo.getTroops();
-            Enumeration<UnitHolder> units = theOtherTroopInfo.keys();
-            while (units.hasMoreElements()) {
-                UnitHolder unit = units.nextElement();
-                theNewInfo.addTroopInformation(unit, theOtherTroopInfo.get(unit));
-            }
+        Enumeration<Village> newTargets = pNewRequest.getTargets();
+        while (newTargets.hasMoreElements()) {
+            Village target = newTargets.nextElement();
+            TargetInformation theOtherInfo = pNewRequest.getTargetInformation(target);
+            TargetInformation thisInfo = getTargetInformation(target);
+
+            newRequest.addTarget(target);
+            TargetInformation theNewInfo = newRequest.getTargetInformation(target);
+            theOtherInfo.merge(thisInfo, theNewInfo);
         }
 
         return newRequest;
@@ -314,10 +298,19 @@ public class SOSRequest implements BBSupport {
         private List<TimedAttack> attacks = null;
         private int iWallLevel = 20;
         private Hashtable<UnitHolder, Integer> troops = null;
+        private int delta = 0;
 
         public TargetInformation() {
             attacks = new LinkedList<TimedAttack>();
             troops = new Hashtable<UnitHolder, Integer>();
+        }
+
+        public int getDelta() {
+            return delta;
+        }
+
+        public void setDelta(int pDelta) {
+            delta = pDelta;
         }
 
         /**
@@ -364,16 +357,61 @@ public class SOSRequest implements BBSupport {
         }
 
         public String getTroopInformationAsHTML() {
-            StringBuffer b = new StringBuffer();
+            StringBuilder b = new StringBuilder();
 
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
                 Integer amount = troops.get(unit);
                 if (amount != null) {
-                    b.append("<img src=\"" + SOSRequest.class.getResource("/res/ui/" + unit.getPlainName() + ".png") + "\"/>&nbsp;" + amount + "\n");
+                    b.append("<img src=\"").append(SOSRequest.class.getResource("/res/ui/" + unit.getPlainName() + ".png")).append("\"/>&nbsp;").append(amount).append("\n");
                 }
             }
 
             return b.toString();
+        }
+
+        public TargetInformation merge(TargetInformation pInfo, TargetInformation pNewInfo) {
+            boolean millis = ServerSettings.getSingleton().isMillisArrival();
+            List<TimedAttack> thisAttacks = getAttacks();
+            int attCount = thisAttacks.size();
+            List<TimedAttack> theOtherAttacks = null;
+            if (pInfo != null) {
+                theOtherAttacks = pInfo.getAttacks();
+            }
+            TargetInformation theNewInfo = (pNewInfo == null) ? new TargetInformation() : pNewInfo;
+            theNewInfo.setWallLevel(getWallLevel());
+            Hashtable<UnitHolder, Integer> theOtherTroopInfo = getTroops();
+            Enumeration<UnitHolder> units = theOtherTroopInfo.keys();
+            while (units.hasMoreElements()) {
+                UnitHolder unit = units.nextElement();
+                theNewInfo.addTroopInformation(unit, theOtherTroopInfo.get(unit));
+            }
+
+            for (TimedAttack thisAttack : thisAttacks.toArray(new TimedAttack[]{})) {
+                theNewInfo.addAttack(thisAttack.getSource(), new Date(thisAttack.getlArriveTime()));
+            }
+
+            if (theOtherAttacks != null) {
+                for (TimedAttack theOtherAttack : theOtherAttacks) {
+                    boolean add = true;
+                    if (millis) {//only check if millis are enabled...otherwise we should keep all attacks, as we cannot separate them clearly
+                        for (TimedAttack theNewAttack : theNewInfo.getAttacks()) {//go through all attacks and check if one is equal
+                            if (theNewAttack.getSource().equals(theOtherAttack.getSource()) && theNewAttack.getlArriveTime().equals(theOtherAttack.getlArriveTime())) {
+                                //attack seems to be the same...skip adding
+                                add = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (add) {//attack seems not to exist...add it
+                        theNewInfo.addAttack(theOtherAttack.getSource(), new Date(theOtherAttack.getlArriveTime()));
+                    }
+                }
+            }
+
+            theNewInfo.setDelta(theNewInfo.getAttacks().size() - attCount);
+
+            return theNewInfo;
         }
 
         @Override

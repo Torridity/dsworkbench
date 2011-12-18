@@ -21,18 +21,22 @@ public class NoAlly extends Ally {
         return SINGLETON;
     }
 
+    @Override
     public int getId() {
         return -1;
     }
 
+    @Override
     public String getName() {
         return "Kein Stamm";
     }
 
+    @Override
     public String getTag() {
         return "-";
     }
 
+    @Override
     public short getMembers() {
         return 0;
     }
@@ -52,6 +56,7 @@ public class NoAlly extends Ally {
         return "Kein Stamm";
     }
 
+    @Override
     public String getToolTipText() {
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);

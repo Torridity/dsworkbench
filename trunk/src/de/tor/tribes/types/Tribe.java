@@ -104,7 +104,11 @@ public class Tribe implements Comparable<Tribe>, Serializable {
     }
 
     public void setName(String name) {
-        this.name = name;
+        if (name == null) {
+            this.name = "";
+        } else {
+            this.name = name;
+        }
     }
 
     public int getAllyID() {
@@ -320,6 +324,17 @@ public class Tribe implements Comparable<Tribe>, Serializable {
 
         @Override
         public int compare(Tribe s1, Tribe s2) {
+            if (s1 == null) {
+                return 1;
+            }
+            if (s2 == null) {
+                return -1;
+            }
+
+            if (s1 == null && s2 == null) {
+                return 0;
+            }
+
             int n1 = s1.toString().length(), n2 = s2.toString().length();
             for (int i1 = 0, i2 = 0; i1 < n1 && i2 < n2; i1++, i2++) {
                 char c1 = s1.toString().charAt(i1);

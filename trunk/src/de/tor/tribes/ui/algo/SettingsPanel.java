@@ -9,6 +9,7 @@
  */
 package de.tor.tribes.ui.algo;
 
+import de.tor.tribes.types.DefenseTimeSpan;
 import de.tor.tribes.types.TimeSpan;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.util.GlobalOptions;
@@ -30,7 +31,7 @@ import org.apache.log4j.Logger;
  * @author Jejkal
  */
 public class SettingsPanel extends javax.swing.JPanel {
-
+    
     private static Logger logger = Logger.getLogger("AttackPlannerSettings");
     private AttackTimePanel timeSettingsPanel = null;
 
@@ -44,7 +45,7 @@ public class SettingsPanel extends javax.swing.JPanel {
         jPanel2.add(timeSettingsPanel, BorderLayout.CENTER);
         reset();
     }
-
+    
     public void reset() {
         // jSendTimeSettingsPanel.reset();
         // jArriveTimeSettingsPanel.reset();
@@ -52,25 +53,25 @@ public class SettingsPanel extends javax.swing.JPanel {
         timeFrameVisualizer1.setScrollPane(jScrollPane1);
         restoreProperties();
     }
-
+    
     public void storeProperties() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
-
-
+        
+        
         profile.addProperty("attack.frame.start", Long.toString(timeSettingsPanel.getStartTime().getTime()));
         profile.addProperty("attack.frame.arrive", Long.toString(timeSettingsPanel.getArriveTime().getTime()));
-
-
+        
+        
         String spanProp = "";
         for (TimeSpan span : timeSettingsPanel.getTimeSpans()) {
             spanProp += span.toPropertyString() + ";";
         }
         profile.addProperty("attack.frame.spans", spanProp);
-
+        
         profile.addProperty("attack.frame.algo.type", Integer.toString(jAlgoBox.getSelectedIndex()));
         profile.addProperty("attack.frame.fake.off.targets", Boolean.toString(jFakeOffTargetsBox.isSelected()));
     }
-
+    
     public void restoreProperties() {
         try {
             UserProfile profile = GlobalOptions.getSelectedProfile();
@@ -78,16 +79,16 @@ public class SettingsPanel extends javax.swing.JPanel {
             long start = (val != null) ? Long.parseLong(val) : System.currentTimeMillis();
             val = profile.getProperty("attack.frame.arrive");
             long arrive = (val != null) ? Long.parseLong(val) : System.currentTimeMillis();
-
+            
             if (start < System.currentTimeMillis()) {
                 start = System.currentTimeMillis();
             }
-
+            
             if (arrive < System.currentTimeMillis()) {
                 arrive = System.currentTimeMillis() + DateUtils.MILLIS_PER_HOUR;
             }
-
-
+            
+            
             timeSettingsPanel.setStartTime(new Date(start));
             timeSettingsPanel.setArriveTime(new Date(arrive));
             val = profile.getProperty("attack.frame.algo.type");
@@ -101,7 +102,7 @@ public class SettingsPanel extends javax.swing.JPanel {
                 spanProp = "";
             }
             String[] spans = spanProp.split(";");
-
+            
             List<TimeSpan> spanList = new LinkedList<TimeSpan>();
             for (String span : spans) {
                 try {
@@ -112,7 +113,7 @@ public class SettingsPanel extends javax.swing.JPanel {
                 } catch (Exception invalid) {
                 }
             }
-
+            
             timeSettingsPanel.setTimeSpans(spanList);
             // </editor-fold>
         } catch (Exception e) {
@@ -126,7 +127,11 @@ public class SettingsPanel extends javax.swing.JPanel {
     public TimeFrame getTimeFrame() {
         return timeSettingsPanel.getTimeFrame();
     }
-
+    
+    public void addTimeSpanExternally(DefenseTimeSpan pSpan) {
+        timeSettingsPanel.addDefenseTimeSpan(pSpan);
+    }
+    
     public boolean validatePanel() {
         boolean result = true;
         try {
@@ -148,7 +153,7 @@ public class SettingsPanel extends javax.swing.JPanel {
                 result = false;
             }
         }
-
+        
         return result;
     }
 
@@ -156,7 +161,7 @@ public class SettingsPanel extends javax.swing.JPanel {
     public boolean useBruteForce() {
         return (jAlgoBox.getSelectedIndex() == 0);
     }
-
+    
     public boolean fakeOffTargets() {
         return jFakeOffTargetsBox.isSelected();
     }
@@ -327,32 +332,32 @@ public class SettingsPanel extends javax.swing.JPanel {
         final SettingsPanel sp = new SettingsPanel(null);
         f.add(sp);
         f.addWindowListener(new WindowListener() {
-
+            
             @Override
             public void windowOpened(WindowEvent e) {
             }
-
+            
             @Override
             public void windowClosing(WindowEvent e) {
                 System.out.println(sp.getTimeFrame());
             }
-
+            
             @Override
             public void windowClosed(WindowEvent e) {
             }
-
+            
             @Override
             public void windowIconified(WindowEvent e) {
             }
-
+            
             @Override
             public void windowDeiconified(WindowEvent e) {
             }
-
+            
             @Override
             public void windowActivated(WindowEvent e) {
             }
-
+            
             @Override
             public void windowDeactivated(WindowEvent e) {
             }

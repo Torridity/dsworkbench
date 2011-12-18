@@ -108,7 +108,11 @@ public class TimeSpan implements Comparable<TimeSpan> {
             } else if (getAtDate() == null && o.getAtDate() != null) {
                 return 1;
             } else if (getAtDate() == null && o.getAtDate() == null) {
-                return new Integer(getSpan().getMinimumInteger()).compareTo(o.getSpan().getMinimumInteger());
+                if (getSpan() != null && o.getSpan() != null) {
+                    return new Integer(getSpan().getMinimumInteger()).compareTo(o.getSpan().getMinimumInteger());
+                } else {
+                    return 0;
+                }
             }
         }
         return 0;

@@ -53,7 +53,7 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
     Stamm: [ally][KdS][/ally]
     Punkte: 1887516
     Herkunft: [coord]444|868[/coord]
-    Ankunftszeit: 17.04.10 18:30:10:935
+    Ankunftszeit: 24.12.11 18:30:10:935
     [b]Angegriffenes Dorf[/b]
     [coord]443|871[/coord]
     Punkte: 10014
@@ -70,14 +70,14 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
     Stamm: [ally][KdS][/ally]
     Punkte: 1887516
     Herkunft: [coord]444|868[/coord]
-    Ankunftszeit: 17.04.10 18:44:00:931
+    Ankunftszeit: 23.12.11 18:44:00:931
      
      [b]2. Angriff[/b]
     Angreifer: [player]Rattenfutter[/player]
     Stamm: [ally][KdS][/ally]
     Punkte: 1887516
     Herkunft: [coord]444|867[/coord]
-    Ankunftszeit: 17.04.10 18:44:00:931
+    Ankunftszeit: 23.12.11 18:44:15:931
      */
 
     public List<SOSRequest> parse(String pData) {

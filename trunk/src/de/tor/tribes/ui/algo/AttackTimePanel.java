@@ -12,6 +12,7 @@ package de.tor.tribes.ui.algo;
 
 import com.visutools.nav.bislider.ColorisationEvent;
 import com.visutools.nav.bislider.ColorisationListener;
+import de.tor.tribes.types.DefenseTimeSpan;
 import de.tor.tribes.types.TimeSpan;
 import de.tor.tribes.types.TimeSpanDivider;
 import de.tor.tribes.types.Tribe;
@@ -41,13 +42,11 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -60,7 +59,7 @@ import org.apache.commons.lang.time.DateUtils;
  * @author Torridity
  */
 public class AttackTimePanel extends javax.swing.JPanel implements DragGestureListener, DropTargetListener, DragSourceListener {
-    
+
     private DragSource dragSource = null;
     private SettingsChangedListener mListener;
 
@@ -75,24 +74,24 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         dragSource.createDefaultDragGestureRecognizer(jLabel6, DnDConstants.ACTION_COPY_OR_MOVE, AttackTimePanel.this);
         DropTarget dropTarget = new DropTarget(this, this);
         jTimeFrameList.setDropTarget(dropTarget);
-        
+
         jSendTimeFrame.addColorisationListener(new ColorisationListener() {
-            
+
             @Override
             public void newColors(ColorisationEvent ColorisationEvent_Arg) {
                 updatePreview();
             }
         });
         dateTimeField.setActionListener(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 updatePreview();
             }
         });
-        
+
         jTimeFrameList.addKeyListener(new KeyAdapter() {
-            
+
             @Override
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_DELETE) {
@@ -103,17 +102,17 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         reset();
         updatePreview();
     }
-    
+
     public void setSettingsChangedListener(SettingsChangedListener pListener) {
         mListener = pListener;
     }
-    
+
     public void fireTimeFrameChangedEvent() {
         if (mListener != null) {
             mListener.fireTimeFrameChangedEvent();
         }
     }
-    
+
     public final void reset() {
         jSendTimeFrame.setMinimumValue(0);
         jSendTimeFrame.setMaximumColor(Constants.DS_BACK_LIGHT);
@@ -133,7 +132,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         maxArriveTimeField.setDate(c.getTime());
         dateTimeField.setDate(c.getTime());
     }
-    
+
     private void deleteSelectedTimeSpan() {
         if (jTimeFrameList.getSelectedValues() == null || jTimeFrameList.getSelectedValues().length == 0) {
             return;
@@ -152,7 +151,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
             }
         }
     }
-    
+
     public List<TimeSpan> getTimeSpans() {
         List<TimeSpan> timeSpans = new LinkedList<TimeSpan>();
 
@@ -168,23 +167,23 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         }
         return timeSpans;
     }
-    
+
     public Date getStartTime() {
         return minSendTimeField.getSelectedDate();
     }
-    
+
     public void setStartTime(Date pDate) {
         minSendTimeField.setDate(pDate);
     }
-    
+
     public Date getArriveTime() {
         return maxArriveTimeField.getSelectedDate();
     }
-    
+
     public void setArriveTime(Date pDate) {
         maxArriveTimeField.setDate(pDate);
     }
-    
+
     public void validateSettings() throws RuntimeException {
         if (getTimeSpans().isEmpty()) {
             throw new RuntimeException("Es muss mindestens ein Abschick- und ein Ankunftszeitrahmen angegeben werden.");
@@ -204,26 +203,26 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
                 intersectsWithNightBonus = true;
             }
         }
-        
+
         if (!haveStart) {
             throw new RuntimeException("Es muss mindestens ein Abschickzeitrahmen angegeben werden.");
         } else if (!haveArrive) {
             throw new RuntimeException("Es muss mindestens ein Ankunftszeitrahmen angegeben werden.");
         }
-        
+
         TimeFrame currentFrame = getTimeFrame();
         if (minSendTimeField.getSelectedDate().getTime() > maxArriveTimeField.getSelectedDate().getTime()) {
             throw new RuntimeException("Das Startdatum befindet sich nach dem Ankunftsdatum. Eine Berechnung ist nicht möglich.");
         }
-        
-        
+
+
         String warnings = "Warnungen:\n";
         boolean gotWarning = false;
         if (currentFrame.getArriveRange().getMaximumLong() < System.currentTimeMillis()) {
             warnings += "* Das Enddatum liegt in der Vergangenheit";
             gotWarning = true;
         }
-        
+
         if (intersectsWithNightBonus) {
             if (gotWarning) {
                 warnings += "\n";
@@ -234,7 +233,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         if (gotWarning) {
             throw new RuntimeException(warnings);
         }
-        
+
     }
 
     /**Set the timespans manually e.g. while loading a stored state
@@ -248,7 +247,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
             addTimeSpan(span);
         }
     }
-    
+
     private void updatePreview() {
         TimeSpan start = getSendSpan();
         TimeSpan arrive = getArriveSpan();
@@ -286,7 +285,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
     private TimeSpan getArriveSpan() {
         TimeSpan arrive = null;
         IntRange range = new IntRange(Math.round(jSendTimeFrame.getMinimumColoredValue()), Math.round(jSendTimeFrame.getMaximumColoredValue()));
-        
+
         Tribe t = null;
         if (jDayButton.isSelected()) {
             arrive = new TimeSpan(dateTimeField.getSelectedDate(), range, t);
@@ -320,16 +319,41 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         return frame;
     }
 
+    protected void addDefenseTimeSpan(DefenseTimeSpan s) {
+        //add span
+        DefaultListModel model = (DefaultListModel) jTimeFrameList.getModel();
+        if (s.getDirection().equals(TimeSpan.DIRECTION.SEND)) {
+            ((DefaultListModel) jTimeFrameList.getModel()).add(0, s);
+        } else {
+            ((DefaultListModel) jTimeFrameList.getModel()).add(jTimeFrameList.getModel().getSize(), s);
+        }
+
+        List<TimeSpan> spans = new LinkedList<TimeSpan>();
+        for (int i = 0; i < model.getSize(); i++) {
+            spans.add((TimeSpan) model.getElementAt(i));
+        }
+
+
+        Collections.sort(spans);
+        model = new DefaultListModel();
+        for (TimeSpan span : spans) {
+            model.addElement(span);
+        }
+        jTimeFrameList.setModel(model);
+        fireTimeFrameChangedEvent();
+
+    }
+
     /**Try to add a new timespan. Before it is checked for intersection
     @param s The new timespan*/
-    private void addTimeSpan(TimeSpan s) {
+    protected void addTimeSpan(TimeSpan s) {
         if (s.getSpan() != null && !s.isValidAtExactTime() && s.getSpan().getMinimumInteger() == s.getSpan().getMaximumInteger()) {
             JOptionPaneHelper.showWarningBox(this, "Der angegebene Zeitrahmen ist ungültig. Der Zeitraum muss mindestens eine Stunde betragen.", "Warnung");
             return;
         }
         //check if timeframe exists or intersects with other existing frame
         int intersection = -1;
-        
+
         DefaultListModel model = (DefaultListModel) jTimeFrameList.getModel();
         int entryId = 0;
         for (int i = 0; i < model.getSize(); i++) {
@@ -343,7 +367,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
                 entryId++;
             }
         }
-        
+
         if (intersection == -1) {
             //add span
             if (s.getDirection().equals(TimeSpan.DIRECTION.SEND)) {
@@ -351,13 +375,13 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
             } else {
                 ((DefaultListModel) jTimeFrameList.getModel()).add(jTimeFrameList.getModel().getSize(), s);
             }
-            
+
             List<TimeSpan> spans = new LinkedList<TimeSpan>();
             for (int i = 0; i < model.getSize(); i++) {
                 spans.add((TimeSpan) model.getElementAt(i));
             }
-            
-            
+
+
             Collections.sort(spans);
             model = new DefaultListModel();
             for (TimeSpan span : spans) {
@@ -695,23 +719,23 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
     @Override
     public void dragDropEnd(DragSourceDropEvent dsde) {
     }
-    
+
     @Override
     public void dragEnter(DragSourceDragEvent dsde) {
     }
-    
+
     @Override
     public void dragExit(DragSourceEvent dse) {
     }
-    
+
     @Override
     public void dragOver(DragSourceDragEvent dsde) {
     }
-    
+
     @Override
     public void dropActionChanged(DragSourceDragEvent dsde) {
     }
-    
+
     @Override
     public void dragGestureRecognized(DragGestureEvent dge) {
         TimeSpan span = null;
@@ -724,25 +748,25 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
             dge.startDrag(null, new StringSelection(span.toPropertyString()), this);
         }
     }
-    
+
     @Override
     public void dragEnter(DropTargetDragEvent dtde) {
         if (dtde.getDropTargetContext().getComponent().equals(jTimeFrameList)) {
             dtde.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
         }
     }
-    
+
     @Override
     public void dragExit(DropTargetEvent dte) {
     }
-    
+
     @Override
     public void dragOver(DropTargetDragEvent dtde) {
         if (dtde.getDropTargetContext().getComponent().equals(jTimeFrameList)) {
             dtde.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
         }
     }
-    
+
     @Override
     public void drop(DropTargetDropEvent dtde) {
         if (dtde.getDropTargetContext().getComponent().equals(jTimeFrameList)) {
@@ -761,11 +785,11 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
             }
         }
     }
-    
+
     @Override
     public void dropActionChanged(DropTargetDragEvent dtde) {
     }
-    
+
     public static void main(String[] args) {
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

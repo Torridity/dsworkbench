@@ -18,9 +18,9 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.ProfileManager;
-import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -36,8 +36,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.log4j.Appender;
 import org.apache.log4j.Level;
-import org.apache.log4j.RollingFileAppender;
 import org.netbeans.api.wizard.WizardDisplayer;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPanelProvider;
@@ -441,11 +441,20 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             }
         }
 
-        RollingFileAppender a = new org.apache.log4j.RollingFileAppender();
+        Appender a = null;
+
+        if (!Constants.DEBUG) {
+            a = new org.apache.log4j.RollingFileAppender();
+            ((org.apache.log4j.RollingFileAppender) a).setMaxFileSize("1MB");
+        } else {
+            a = new org.apache.log4j.ConsoleAppender();
+            ((org.apache.log4j.ConsoleAppender)a).setWriter(new PrintWriter(System.out));
+        }
         a.setLayout(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n"));
-        a.setMaxFileSize("1MB");
         try {
-            a.setFile("./log/dsworkbench.log", true, true, 1024);
+            if (!Constants.DEBUG) {
+                ((org.apache.log4j.RollingFileAppender) a).setFile("./log/dsworkbench.log", true, true, 1024);
+            }
             switch (mode) {
                 case 0: {
                     Logger.getRootLogger().setLevel(Level.INFO);

@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.util.algo;
 
+import de.tor.tribes.types.DefenseTimeSpan;
 import de.tor.tribes.types.test.AnyTribe;
 import de.tor.tribes.types.TimeSpan;
 import de.tor.tribes.types.Tribe;
@@ -72,6 +73,12 @@ public class TimeFrame {
         return true;
     }
 
+    public boolean addArriveTimeSpan(DefenseTimeSpan pSpan) {
+        arriveTimeSpans.add(pSpan);
+        arriveRanges = null;
+        return true;
+    }
+
     public boolean addArriveTimeSpan(TimeSpan pSpan) {
         for (TimeSpan span : arriveTimeSpans) {
             if (span.intersects(pSpan)) {
@@ -96,13 +103,12 @@ public class TimeFrame {
      * @param pTribe Tribe for which the runtime is valid
      * @return boolean TRUE=Runtime might be fitted if not all send times are already used
      */
-    public boolean isMovementPossible(long pRuntime, Tribe pTribe) {
-
+    public boolean isMovementPossible(long pRuntime, de.tor.tribes.types.Village pVillage) {
         if (startRanges == null) {
-            startRanges = startTimespansToRanges(pTribe);
+            startRanges = startTimespansToRanges(pVillage.getTribe());
         }
         if (arriveRanges == null) {
-            arriveRanges = arriveTimespansToRanges(pTribe);
+            arriveRanges = arriveTimespansToRanges(pVillage);
         }
 
         for (LongRange currentStartRange : startRanges) {
@@ -124,9 +130,9 @@ public class TimeFrame {
      * @param pUsedSendTimes Already used send times (possible times are checked in steps of 10 seconds)
      * @return Date Fitted arrive time
      */
-    public Date getFittedArriveTime(long pRuntime, Tribe pTribe, List<Long> pUsedSendTimes) {
-        List<LongRange> startRanges = startTimespansToRanges(pTribe);
-        List<LongRange> arriveRanges = arriveTimespansToRanges(pTribe);
+    public Date getFittedArriveTime(long pRuntime, de.tor.tribes.types.Village pVillage, List<Long> pUsedSendTimes) {
+        List<LongRange> startRanges = startTimespansToRanges(pVillage.getTribe());
+        List<LongRange> arriveRanges = arriveTimespansToRanges(pVillage);
         for (LongRange currentStartRange : startRanges) {
             LongRange arriveRangeForStartRange = new LongRange(currentStartRange.getMinimumLong() + pRuntime, currentStartRange.getMaximumLong() + pRuntime);
             for (LongRange currentArriveRange : arriveRanges) {
@@ -138,13 +144,11 @@ public class TimeFrame {
                     long minArriveForStartRange = arriveRangeForStartRange.getMinimumLong();
                     long checkStart = 0;
                     if (minArrive < minArriveForStartRange) {
-
                         //|----------- (Arrive)
                         //   |-------------- (ArriveForStart)
                         //check everything beginning with 'minArriveForStartRange'
                         checkStart = minArriveForStartRange;
                     } else if (minArriveForStartRange <= minArrive) {
-
                         //     |----------- (Arrive)
                         //|-------------- (ArriveForStart)
                         //check everything beginning with 'minArrive'
@@ -295,27 +299,24 @@ public class TimeFrame {
         return rangesMap;
     }
 
-    public List<LongRange> arriveTimespansToRanges(Tribe pTribe) {
+    public List<LongRange> arriveTimespansToRanges(de.tor.tribes.types.Village pVillage) {
         List<LongRange> ranges = new LinkedList<LongRange>();
         Date arriveDate = DateUtils.truncate(new Date(arriveNotBefore), Calendar.DAY_OF_MONTH);
 
         for (TimeSpan span : arriveTimeSpans) {
             Date thisDate = new Date(arriveDate.getTime());
-            //check if span is valid for provided tribe
-            // if (pTribe == null || pTribe.equals(AnyTribe.getSingleton()) || span.isValidForTribe(pTribe)) {
             //go through all days from start to end
             while (thisDate.getTime() < arriveNotAfter) {
                 Date onlyValidAtDay = span.getAtDate();
                 //check if span is valid on every day or if we check the span's day of validity
                 //(if we do so, the span should not be valid for an exact date because then we don't have a timespan)
-                if (span.isValidAtEveryDay() || (DateUtils.isSameDay(thisDate, onlyValidAtDay) && !span.isValidAtExactTime())) {
+                if (span.isValidAtEveryDay() || (onlyValidAtDay != null && DateUtils.isSameDay(thisDate, onlyValidAtDay) && !span.isValidAtExactTime())) {
                     //span is valid for every day or this day equals the only valid day
                     Date spanStartDate = DateUtils.setHours(thisDate, span.getSpan().getMinimumInteger());
                     //set end date to last second in end hour
                     Date spanEndDate = DateUtils.setHours(thisDate, span.getSpan().getMaximumInteger() - 1);
                     spanEndDate = DateUtils.setMinutes(spanEndDate, 59);
                     spanEndDate = DateUtils.setSeconds(spanEndDate, 59);
-
 
                     if (spanStartDate.getTime() >= arriveNotBefore && spanEndDate.getTime() > arriveNotBefore
                             && spanStartDate.getTime() < arriveNotAfter && spanEndDate.getTime() <= arriveNotAfter) {
@@ -348,11 +349,12 @@ public class TimeFrame {
                         //for exact arrival we do not increment further
                         break;
                     }
+                } else if (span.isValid() && span instanceof DefenseTimeSpan && ((DefenseTimeSpan) span).isValidForVillage(pVillage)) {
+                    ranges.add(((DefenseTimeSpan) span).getDefenseSpan());
                 }
                 //increment current date by one day
                 thisDate = DateUtils.addDays(thisDate, 1);
             }
-            // }
         }
         Collections.sort(ranges, new Comparator<LongRange>() {
 
@@ -364,14 +366,12 @@ public class TimeFrame {
         return ranges;
     }
 
-    public HashMap<LongRange, TimeSpan> arriveTimespansToRangesMap(Tribe pTribe) {
+    public HashMap<LongRange, TimeSpan> arriveTimespansToRangesMap(de.tor.tribes.types.Village pVillage) {
         HashMap<LongRange, TimeSpan> rangesMap = new HashMap<LongRange, TimeSpan>();
         Date arriveDate = DateUtils.truncate(new Date(arriveNotBefore), Calendar.DAY_OF_MONTH);
 
         for (TimeSpan span : arriveTimeSpans) {
             Date thisDate = new Date(arriveDate.getTime());
-            //check if span is valid for provided tribe
-            // if (pTribe == null || pTribe.equals(AnyTribe.getSingleton()) || span.isValidForTribe(pTribe)) {
             //go through all days from start to end
             while (thisDate.getTime() < arriveNotAfter) {
                 Date onlyValidAtDay = span.getAtDate();
@@ -415,10 +415,11 @@ public class TimeFrame {
                         //for exact arrival we do not increment further
                         break;
                     }
+                } else if (span.isValid() && span instanceof DefenseTimeSpan && ((DefenseTimeSpan) span).isValidForVillage(pVillage)) {
+                    rangesMap.put(((DefenseTimeSpan) span).getDefenseSpan(), span);
                 }
                 //increment current date by one day
                 thisDate = DateUtils.addDays(thisDate, 1);
-                // }
             }
         }
 

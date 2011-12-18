@@ -161,6 +161,7 @@ public class TimeFrameVisualizer extends javax.swing.JPanel {
         repaint();
     }
 
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
@@ -171,7 +172,7 @@ public class TimeFrameVisualizer extends javax.swing.JPanel {
             LongRange startRange = mTimeFrame.getStartRange();
             LongRange arriveRange = mTimeFrame.getArriveRange();
             HashMap<LongRange, TimeSpan> startRanges = mTimeFrame.startTimespansToRangesMap(AnyTribe.getSingleton());
-            HashMap<LongRange, TimeSpan> arriveRanges = mTimeFrame.arriveTimespansToRangesMap(AnyTribe.getSingleton());
+            HashMap<LongRange, TimeSpan> arriveRanges = mTimeFrame.arriveTimespansToRangesMap(null);
             long minValue = startRange.getMinimumLong();
             long maxValue = arriveRange.getMaximumLong();
             Graphics2D g2d = (Graphics2D) g;

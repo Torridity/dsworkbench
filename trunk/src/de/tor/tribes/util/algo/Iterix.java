@@ -163,7 +163,7 @@ public class Iterix extends AbstractAttackAlgorithm {
         if (cataFakes != null && !cataFakes.isEmpty()) {
             ramAndCataFakes.addAll(cataFakes);
         }
-       /* System.out.println("Copy " + copy);
+        /* System.out.println("Copy " + copy);
         System.out.println("Map " + map);
         System.out.println("SMap " + sMap);
         System.out.println("TMap " + tMap);
@@ -261,7 +261,7 @@ public class Iterix extends AbstractAttackAlgorithm {
                 // long send = pTimeFrame.getEnd() - (long) runtime * 1000;
                 //if (pTimeFrame.inside(new Date(send), s.getTribe())) {
                 long lRuntime = (long) runtime * 1000;
-                if (pTimeFrame.isMovementPossible(lRuntime, s.getTribe())) {
+                if (pTimeFrame.isMovementPossible(lRuntime, s)) {
                     fail = false;
                     break;
                 }
@@ -292,7 +292,7 @@ public class Iterix extends AbstractAttackAlgorithm {
                 double dist = DSCalculator.calculateDistance(pSources.get(i), pTargets.get(j));
                 long runtime = Math.round(dist * ram.getSpeed() * 60000);
 
-                if (pTimeFrame.isMovementPossible(runtime, pSources.get(i).getTribe())) {
+                if (pTimeFrame.isMovementPossible(runtime, pSources.get(i))) {
                     tMappings[i][j] = pMaxAttacksTable.get(pTargets.get(j));
                     cnt++;
                 } else {
@@ -644,10 +644,10 @@ public class Iterix extends AbstractAttackAlgorithm {
         int sum = sum(data);
         System.out.println("Added " + data[x][y]);
         System.out.println("Sum: " + sum);
-      //  print(data);
+        //  print(data);
         System.out.println("===============");
 
-        if (sum < 100 && sum%2==0) {
+        if (sum < 100 && sum % 2 == 0) {
             System.out.println("Taking sum " + sum + " and going to next level...");
             boolean res = test(data);
             if (res) {

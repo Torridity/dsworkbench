@@ -147,10 +147,11 @@ public class ReportManager extends GenericManager<FightReport> {
         for (String set : pGroupsToExport) {
             b.append("<reportSet name=\"").append(set).append("\">\n");
             ManageableType[] elements = getAllElements(set).toArray(new ManageableType[getAllElements(set).size()]);
-
+            b.append("<reports>\n");
             for (ManageableType t : elements) {
                 b.append(t.toXml()).append("\n");
             }
+            b.append("</reports>\n");
             b.append("</reportSet>\n");
         }
         b.append("</reportSets>\n");

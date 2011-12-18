@@ -21,7 +21,6 @@ import de.tor.tribes.ui.editors.AttackTypeCellEditor;
 import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.models.DoItYourselfAttackTableModel;
-import de.tor.tribes.ui.renderer.AttackMiscInfoRenderer;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.AttackTypeListCellRenderer;
 import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
@@ -226,7 +225,6 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jAttackTable.setDefaultRenderer(Date.class, new ColoredDateCellRenderer());
         jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
-        jAttackTable.setDefaultRenderer(Attack.class, new AttackMiscInfoRenderer());
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
         Graphics2D g = back.createGraphics();
         GeneralPath p = new GeneralPath();

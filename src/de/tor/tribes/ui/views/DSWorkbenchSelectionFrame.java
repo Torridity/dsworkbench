@@ -33,6 +33,7 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.UIHelper;
 import de.tor.tribes.util.VillageSelectionListener;
 import de.tor.tribes.util.bb.VillageListFormatter;
 import de.tor.tribes.util.html.SelectionHTMLExporter;
@@ -370,7 +371,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
             @Override
             public void mouseReleased(MouseEvent e) {
                 try {
-                    filterByPoints(Integer.parseInt(jCustomPointsField.getText()));
+                    filterByPoints(UIHelper.parseIntFromField(jCustomPointsField, 1500));
                 } catch (NumberFormatException nfe) {
                     jCustomPointsField.setText(null);
                 }

@@ -71,7 +71,7 @@ public class Enoblement extends AbstractTroopMovement {
                 a.setTarget(target);
                 a.setSource(offSource);
                 long runtime = Math.round(DSCalculator.calculateMoveTimeInSeconds(offSource, target, unit.getSpeed()) * 1000);
-                Date fittedTime = pTimeFrame.getFittedArriveTime(runtime, offSource.getTribe(), pUsedSendTimes);
+                Date fittedTime = pTimeFrame.getFittedArriveTime(runtime, offSource, pUsedSendTimes);
                 if (fittedTime != null) {
                     a.setArriveTime(fittedTime);
                     a.setUnit(unit);
@@ -96,7 +96,7 @@ public class Enoblement extends AbstractTroopMovement {
             a.setSource(snobSource);
             long runtime = Math.round(DSCalculator.calculateMoveTimeInSeconds(snobSource, target, snob.getSpeed()) * 1000);
 
-            Date fittedTime = pTimeFrame.getFittedArriveTime(runtime, snobSource.getTribe(), pUsedSendTimes);
+            Date fittedTime = pTimeFrame.getFittedArriveTime(runtime, snobSource, pUsedSendTimes);
             if (fittedTime != null) {
                 a.setArriveTime(fittedTime);
                 a.setUnit(snob);

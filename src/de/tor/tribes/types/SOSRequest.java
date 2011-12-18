@@ -299,10 +299,38 @@ public class SOSRequest implements BBSupport {
         private int iWallLevel = 20;
         private Hashtable<UnitHolder, Integer> troops = null;
         private int delta = 0;
+        private int snobs = 0;
+        private int fakes = 0;
+        private long first = Long.MAX_VALUE;
+        private long last = Long.MIN_VALUE;
+        private boolean updating = false;
 
         public TargetInformation() {
             attacks = new LinkedList<TimedAttack>();
             troops = new Hashtable<UnitHolder, Integer>();
+        }
+
+        private void updateAttackInfo() {
+            if (updating) {
+                return;
+            }
+            snobs = 0;
+            fakes = 0;
+            first = Long.MAX_VALUE;
+            last = Long.MIN_VALUE;
+            for (TimedAttack a : getAttacks()) {
+                if (a.isPossibleFake()) {
+                    fakes++;
+                } else if (a.isPossibleSnob()) {
+                    snobs++;
+                }
+                if (a.getlArriveTime() < first) {
+                    first = a.getlArriveTime();
+                }
+                if (a.getlArriveTime() > last) {
+                    last = a.getlArriveTime();
+                }
+            }
         }
 
         public int getDelta() {
@@ -326,6 +354,27 @@ public class SOSRequest implements BBSupport {
         public void addAttack(Village pSource, Date pArrive) {
             attacks.add(new TimedAttack(pSource, pArrive));
             Collections.sort(attacks, SOSRequest.ARRIVE_TIME_COMPARATOR);
+            updateAttackInfo();
+        }
+
+        public int getFakes() {
+            return fakes;
+        }
+
+        public int getSnobs() {
+            return snobs;
+        }
+
+        public int getOffs() {
+            return getAttacks().size() - fakes;
+        }
+
+        public long getFirstAttack() {
+            return first;
+        }
+
+        public long getLastAttack() {
+            return last;
         }
 
         /**
@@ -408,9 +457,7 @@ public class SOSRequest implements BBSupport {
                     }
                 }
             }
-
             theNewInfo.setDelta(theNewInfo.getAttacks().size() - attCount);
-
             return theNewInfo;
         }
 

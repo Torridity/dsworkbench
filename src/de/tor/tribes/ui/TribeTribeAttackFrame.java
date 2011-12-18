@@ -15,9 +15,11 @@ import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Barbarians;
+import de.tor.tribes.types.DefenseElement;
+import de.tor.tribes.types.DefenseTimeSpan;
+import de.tor.tribes.types.NoTag;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
-import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.TroopSplitDialog.TroopSplit;
 import de.tor.tribes.ui.algo.AlgorithmLogPanel;
@@ -37,6 +39,7 @@ import de.tor.tribes.ui.renderer.TribeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import de.tor.tribes.ui.renderer.VillageCellRenderer;
+import de.tor.tribes.util.AllyUtils;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.DSWorkbenchGesturedFrame;
@@ -45,8 +48,9 @@ import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MouseGestureHandler;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.ProfileManager;
-import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.TableHelper;
+import de.tor.tribes.util.UIHelper;
+import de.tor.tribes.util.VillageUtils;
 import de.tor.tribes.util.algo.AbstractAttackAlgorithm;
 import de.tor.tribes.util.algo.AlgorithmListener;
 import de.tor.tribes.util.algo.BruteForce;
@@ -122,6 +126,7 @@ import javax.swing.JProgressBar;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
+import org.apache.commons.lang.math.LongRange;
 import org.apache.log4j.ConsoleAppender;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXCollapsiblePane;
@@ -383,7 +388,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
         filterPane.getContentPane().add(filterTroopsByStrength);
         //filter by attack plan
         JXButton filterByAttackPlan = new JXButton(new ImageIcon(TribeTribeAttackFrame.class.getResource("/res/ui/filter_off.png")));
-        filterByAttackPlan.setToolTipText("Entfernt aller Herkunfts- oder Zieldörfer, die bereits in einem vorhandenen Angriffsplan auftauchen");
+        filterByAttackPlan.setToolTipText("Entfernt alle Herkunfts- oder Zieldörfer, die bereits in einem vorhandenen Angriffsplan auftauchen");
         filterByAttackPlan.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -904,7 +909,6 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
     }
 
     private void miscRefreshPossibleAttacks() {
-
         jRefreshProgressDialog.pack();
         jRefreshProgressDialog.setLocationRelativeTo(TribeTribeAttackFrame.this);
         jProgressBar1.setString("Aktualisiere mögliche Angriffe");
@@ -914,70 +918,6 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
         jideTabbedPane1.setSelectedIndex(0);
         new RefreshThread(jRefreshProgressDialog, jProgressBar1, mSettingsPanel, jSourcesTable, jVictimTable).start();
         jRefreshProgressDialog.setVisible(true);
-    }
-
-    static class RefreshThread extends Thread {
-
-        private SettingsPanel mSettingsPanel;
-        private JXTable jSourcesTable;
-        private JXTable jVictimTable;
-        private JDialog jDialog;
-        private JProgressBar mBar;
-
-        public RefreshThread(JDialog dialog, JProgressBar bar, SettingsPanel pPanel, JXTable source, JXTable target) {
-            jDialog = dialog;
-            mSettingsPanel = pPanel;
-            jSourcesTable = source;
-            jVictimTable = target;
-            mBar = bar;
-            setDaemon(true);
-        }
-
-        public void run() {
-            if (mSettingsPanel != null) {
-                TimeFrame f = mSettingsPanel.getTimeFrame();
-                DefaultTableModel sourceModel = (DefaultTableModel) jSourcesTable.getModel();
-                DefaultTableModel victimModel = (DefaultTableModel) jVictimTable.getModel();
-                if (f.isValid()) {
-                    int victimAmountCol = jVictimTable.convertColumnIndexToModel(4);
-                    for (int j = 0; j < victimModel.getRowCount(); j++) {
-                        victimModel.setValueAt(0, j, victimAmountCol);
-                    }
-
-                    int sourceVillageCol = jSourcesTable.convertColumnIndexToModel(0);
-                    int victimVillageCol = jVictimTable.convertColumnIndexToModel(1);
-                    int sourceUnitCol = jSourcesTable.convertColumnIndexToModel(1);
-                    int sourceAmountCol = jSourcesTable.convertColumnIndexToModel(3);
-
-                    for (int i = 0; i < sourceModel.getRowCount(); i++) {
-                        int targets = 0;
-                        for (int j = 0; j < victimModel.getRowCount(); j++) {
-                            Village source = (Village) sourceModel.getValueAt(i, sourceVillageCol);
-                            Village target = (Village) victimModel.getValueAt(j, victimVillageCol);
-                            UnitHolder unit = (UnitHolder) sourceModel.getValueAt(i, sourceUnitCol);
-                            long run = (long) DSCalculator.calculateMoveTimeInSeconds(source, target, unit.getSpeed()) * 1000;
-                            if (f.isMovementPossible(run, source.getTribe())) {
-                                targets++;
-                                victimModel.setValueAt((Integer) victimModel.getValueAt(j, victimAmountCol) + 1, j, victimAmountCol);
-                            }
-                        }
-                        if (i % 10 == 0) {
-                            mBar.setValue(i * victimModel.getRowCount());
-                        }
-
-                        sourceModel.setValueAt(targets, i, sourceAmountCol);
-                    }
-                }
-                //showSuccess("Mögliche Angriffe aktualisiert");
-                mBar.setString("Mögliche Angriffe aktualisiert");
-                try {
-                    Thread.sleep(100);
-                } catch (Exception e) {
-                }
-                // jideTabbedPane1.setSelectedIndex(0);
-                jDialog.setVisible(false);
-            }
-        }
     }
 
     public void showSuccess(String pMessage) {
@@ -1083,7 +1023,6 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
         resultInfoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
         jxResultInfoLabel = new org.jdesktop.swingx.JXLabel();
         jAddToAttacksButton2 = new javax.swing.JButton();
-        attackTypeGroup = new javax.swing.ButtonGroup();
         jAttackResultDetailsFrame = new javax.swing.JFrame();
         jHideAttackDetailsButton = new javax.swing.JButton();
         jScrollPane11 = new javax.swing.JScrollPane();
@@ -1148,7 +1087,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
         jScrollPane10 = new javax.swing.JScrollPane();
         jTargetVillageList = new javax.swing.JList();
         jLabel11 = new javax.swing.JLabel();
-        jTargetTribeFilter = new javax.swing.JTextField();
+        jTargetAllyFilter = new javax.swing.JTextField();
         jMarkTargetAsFake = new javax.swing.JCheckBox();
         jLabel7 = new javax.swing.JLabel();
         jMaxAttacksPerVillage = new javax.swing.JSpinner();
@@ -1917,7 +1856,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
 
         jLabel11.setText("Filter");
 
-        jTargetTribeFilter.addCaretListener(new javax.swing.event.CaretListener() {
+        jTargetAllyFilter.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {
                 fireTargetAllyFilterChangedEvent(evt);
             }
@@ -1969,7 +1908,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(jLabel11)
                         .addGap(12, 12, 12)
-                        .addComponent(jTargetTribeFilter, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE))
+                        .addComponent(jTargetAllyFilter, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE))
                     .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
@@ -2011,7 +1950,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel11)
-                            .addComponent(jTargetTribeFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jTargetAllyFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel6Layout.createSequentialGroup()
@@ -2488,45 +2427,12 @@ private void fireSynchWithAttackPlansEvent(java.awt.event.MouseEvent evt) {//GEN
 }//GEN-LAST:event_fireSynchWithAttackPlansEvent
 
 private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireTargetAllyFilterChangedEvent
-    String text = jTargetTribeFilter.getText();
-    if (text.length() > 0) {
-        text = text.toLowerCase();
-        Enumeration<Integer> allyKeys = DataHolder.getSingleton().getAllies().keys();
-        List<Ally> allies = new LinkedList<Ally>();
-        while (allyKeys.hasMoreElements()) {
-            Ally a = DataHolder.getSingleton().getAllies().get(allyKeys.nextElement());
-            if (a.getName() != null && a.getTag() != null) {
-                if (a.getName().toLowerCase().indexOf(text) >= 0 || a.getTag().toLowerCase().indexOf(text) >= 0) {
-                    allies.add(a);
-                }
-            }
-        }
-        Ally[] aAllies = allies.toArray(new Ally[]{});
-        allies = null;
-        Arrays.sort(aAllies, Ally.CASE_INSENSITIVE_ORDER);
-        DefaultListModel targetAllyModel = new DefaultListModel();
-        for (Ally a : aAllies) {
-            targetAllyModel.addElement(a);
-        }
-        jTargetAllyList.setModel(targetAllyModel);
-
-    } else {
-        Enumeration<Integer> allyKeys = DataHolder.getSingleton().getAllies().keys();
-        List<Ally> allies = new LinkedList<Ally>();
-        while (allyKeys.hasMoreElements()) {
-            allies.add(DataHolder.getSingleton().getAllies().get(allyKeys.nextElement()));
-        }
-        Ally[] aAllies = allies.toArray(new Ally[]{});
-        allies = null;
-        Arrays.sort(aAllies, Ally.CASE_INSENSITIVE_ORDER);
-        DefaultListModel targetAllyModel = new DefaultListModel();
-        targetAllyModel.addElement("<Kein Stamm>");
-        for (Ally a : aAllies) {
-            targetAllyModel.addElement(a);
-        }
-        jTargetAllyList.setModel(targetAllyModel);
-
+    Ally[] allies = AllyUtils.getAlliesByFilter(jTargetAllyFilter.getText(), Ally.CASE_INSENSITIVE_ORDER);
+    DefaultListModel targetAllyModel = new DefaultListModel();
+    for (Ally a : allies) {
+        targetAllyModel.addElement(a);
     }
+    jTargetAllyList.setModel(targetAllyModel);
 }//GEN-LAST:event_fireTargetAllyFilterChangedEvent
 
 private void fireClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireClosingEvent
@@ -2598,11 +2504,10 @@ private void fireShowPlayerSourcesOnlyChangedEvent(java.awt.event.ItemEvent evt)
 private void fireUpdateSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUpdateSelectionEvent
     int start = 1;
     int end = 10;
-    try {
-        start = Integer.parseInt(jSelectionStart.getText());
-        end = Integer.parseInt(jSelectionEnd.getText());
-    } catch (Exception e) {
-    }
+
+    start = UIHelper.parseIntFromField(jSelectionStart, 1);
+    end = UIHelper.parseIntFromField(jSelectionEnd, 10);
+
     try {
         //switch numbers if start larger than end
         if (start > end) {
@@ -2721,7 +2626,6 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     }//GEN-LAST:event_fireAddVillagesEvent
 
     private void fireTransferResultsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferResultsEvent
-
         if (evt.getSource() == jDoTransferButton) {
             List<Attack> results = getAllResults();
             if (results == null || results.isEmpty()) {
@@ -2763,7 +2667,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
                 sourceToInternalClipboardAction(pType);
                 break;
             case PASTE_SOURCE_FROM_INTERNAL_CLIPBOARD:
-                sourceFromInternalClipboardAction(pType);
+                sourceFromInternalClipboardAction();
                 break;
             case DELETE_SOURCE:
                 deleteAction(jSourcesTable);
@@ -2775,7 +2679,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
                 targetToInternalClipboardAction(pType);
                 break;
             case PASTE_TARGET_FROM_INTERNAL_CLIPBOARD:
-                targetFromInternalClipboardAction(pType);
+                targetFromInternalClipboardAction();
                 break;
             case DELETE_TARGET:
                 deleteAction(jVictimTable);
@@ -2851,7 +2755,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         }
     }
 
-    private void sourceFromInternalClipboardAction(TRANSFER_TYPE pType) {
+    private void sourceFromInternalClipboardAction() {
         String data = "";
         try {
             data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
@@ -2894,7 +2798,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         }
     }
 
-    private void targetFromInternalClipboardAction(TRANSFER_TYPE pType) {
+    private void targetFromInternalClipboardAction() {
         String data = "";
         try {
             data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
@@ -3185,6 +3089,13 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         }
     }
 
+    public void prepareForDefense(DefenseElement[] pElements) {
+        for (DefenseElement elem : pElements) {
+            fireAddTargetEvent(elem.getTarget(), elem.getNeededSupports());
+            mSettingsPanel.addTimeSpanExternally(new DefenseTimeSpan(elem.getTarget(), new LongRange(elem.getFirstAttack().getTime(), elem.getLastAttack().getTime())));
+        }
+    }
+
     /**Add selected target villages filtered by points*/
     private void fireAddFilteredTargetVillages() {
         Tribe target = (Tribe) jTargetTribeList.getSelectedValue();
@@ -3403,7 +3314,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         DefaultTableModel resultModel = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Herkunft", "Einheit", "Ziel", "Start","Ankunft", "Typ", ""}) {
+                    "Herkunft", "Einheit", "Ziel", "Start", "Ankunft", "Typ", ""}) {
 
             Class[] types = new Class[]{
                 Village.class, UnitHolder.class, Village.class, Date.class, Date.class, Integer.class, Boolean.class
@@ -3427,7 +3338,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DateCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 JLabel l = (JLabel) c;
-                Boolean impossible = (Boolean) table.getModel().getValueAt(row, 5);
+                Boolean impossible = (Boolean) table.getModel().getValueAt(row, 6);
                 if (impossible.booleanValue()) {
                     l.setText("<html><nobr><font color='#FF0000'>" + l.getText() + "</font></nobr></html>");
                 }
@@ -3617,285 +3528,102 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     /**Filter source lists by selected groups*/
     private void fireFilterSourceVillagesByGroupEvent() {
         List<Village> villageList = getGroupFilteredSourceVillages();
-        //build continents list
-        List<String> continentList = new LinkedList<String>();
-        for (Village v : villageList) {
-            int iCont = v.getContinent();
-            String cont = "K" + ((iCont < 10) ? "0" + iCont : iCont);
-            if (!continentList.contains(cont)) {
-                continentList.add(cont);
-            }
-        }
-        Collections.sort(continentList, String.CASE_INSENSITIVE_ORDER);
+        String[] continents = VillageUtils.getContinents(villageList.toArray(new Village[villageList.size()]));
         DefaultListModel contModel = new DefaultListModel();
-        for (String cont : continentList) {
+        for (String cont : continents) {
             contModel.addElement(cont);
         }
         //set continents list -> village list updates automatically via continent list listener
         jSourceContinentList.setModel(contModel);
-        jSourceContinentList.getSelectionModel().setSelectionInterval(0, continentList.size() - 1);
+        if (continents.length > 0) {
+            jSourceContinentList.getSelectionModel().setSelectionInterval(0, continents.length - 1);
+        }
     }
 
     /**Get source villages filtered by selected groups*/
     private List<Village> getGroupFilteredSourceVillages() {
         Object[] values = jVillageGroupList.getSelectedValues();
-        List<Village> villageList = new LinkedList<Village>();
-        if (jVillageGroupList.isEnabled()) {
-            List<Tag> tags = new LinkedList<Tag>();
-            boolean useNoTag = false;
-            for (Object o : values) {
-                try {
-                    tags.add((Tag) o);
-                } catch (Exception e) {
-                    //no-tag villages contained
-                    useNoTag = true;
-                }
-            }
-            boolean onlyPlayerVillages = jPlayerSourcesOnlyBox.isSelected();
-            Tribe current = GlobalOptions.getSelectedProfile().getTribe();
-            if (jSourceGroupRelation.isSelected()) {
-                //default OR relation
-                //tags available, use them
-                for (Tag t : tags) {
-                    for (Integer vId : t.getVillageIDs()) {
-                        Village v = DataHolder.getSingleton().getVillagesById().get(vId);
-                        if (v != null && v.getTribe() != Barbarians.getSingleton() && !villageList.contains(v)) {
-                            //add only if a players villages is tagged
-                            if (!onlyPlayerVillages || (onlyPlayerVillages && v.getTribe().equals(current))) {
-                                //use village if all villages are allowed or if owner is current player
-                                villageList.add(v);
-                            }
-                        }
-                    }
-                }
-                if (useNoTag) {
-                    //use villages of current user which are not tagged
-                    Village[] villages = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
-                    for (Village v : villages) {
-                        List<Tag> vtags = TagManager.getSingleton().getTags(v);
-                        if (vtags == null || vtags.isEmpty() && !villageList.contains(v)) {
-                            if (!onlyPlayerVillages || (onlyPlayerVillages && v.getTribe().equals(current))) {
-                                //use village if all villages are allowed or if owner is current player
-                                villageList.add(v);
-                            }
-                        }
-                    }
-                }
-            } else {
-                //AND relation
-                if (tags.isEmpty() && useNoTag) {
-                    //only use non tagges villages
-                    //-> if one tag is selected for AND relation, ignore non-tagged due to logical error
-                    if (useNoTag) {
-                        //use villages of current user which are not tagged
-                        Village[] villages = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
-                        for (Village v : villages) {
-                            List<Tag> vtags = TagManager.getSingleton().getTags(v);
-                            if (vtags == null || vtags.isEmpty() && !villageList.contains(v)) {
-                                if (!onlyPlayerVillages || (onlyPlayerVillages && v.getTribe().equals(current))) {
-                                    //use village if all villages are allowed or if owner is current player
-                                    villageList.add(v);
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    //perform AND relation
-                    List<Integer> villageIds = new LinkedList<Integer>();
-                    //get all villages tagged by any tag
-                    for (ManageableType e : TagManager.getSingleton().getAllElements()) {
-                        Tag t = (Tag) e;
-                        for (Integer i : t.getVillageIDs()) {
-                            if (!villageIds.contains(i)) {
-                                villageIds.add(i);
-                            }
-                        }
-                    }
-                    //check for all villages, if they are tagged by all selected tags
-                    for (Integer i : villageIds) {
-                        boolean use = true;
-                        for (Tag t : tags) {
-                            if (!t.tagsVillage(i)) {
-                                //at least one tag does not tag current village
-                                use = false;
-                                break;
-                            }
-                        }
-                        if (use) {
-                            //all tags tag current village, so use them
-                            Village v = DataHolder.getSingleton().getVillagesById().get(i);
-                            if (!villageList.contains(v)) {
-                                if (!onlyPlayerVillages || (onlyPlayerVillages && v.getTribe().equals(current))) {
-                                    //use village if all villages are allowed or if owner is current player
-                                    villageList.add(v);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            //no tags available, take current users villages
-            UserProfile profile = GlobalOptions.getSelectedProfile();
-            Village[] villages = profile.getTribe().getVillageList();
-            villageList.addAll(Arrays.asList(villages));
+
+        List<Tag> tags = new LinkedList<Tag>();
+        for (Object o : values) {
+            tags.add((Tag) o);
         }
-        return villageList;
+        Village[] villages = VillageUtils.getVillagesByTag(tags.toArray(new Tag[tags.size()]), (jPlayerSourcesOnlyBox.isSelected()) ? GlobalOptions.getSelectedProfile().getTribe() : null,
+                (jSourceGroupRelation.isSelected()) ? VillageUtils.RELATION.OR : VillageUtils.RELATION.AND, false, null);
+        return Arrays.asList(villages);
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Target selection handlers">
 
     /**Filter target lists by selected allies*/
     private void fireFilterTargetByAllyEvent() {
-        Ally a = null;
-        try {
-            a = (Ally) jTargetAllyList.getSelectedValue();
-        } catch (Exception e) {
+        Ally a = (Ally) jTargetAllyList.getSelectedValue();
+        Tribe[] tribes = AllyUtils.getTribes(a, Tribe.CASE_INSENSITIVE_ORDER);
+        DefaultListModel model = new DefaultListModel();
+        for (Tribe t : tribes) {
+            model.addElement(t);
         }
-        if (a != null) {
-            //ally selected
-            Tribe[] tribes = a.getTribes().toArray(new Tribe[]{});
-            if ((tribes != null) && (tribes.length != 0)) {
-                Arrays.sort(tribes, Tribe.CASE_INSENSITIVE_ORDER);
-                jTargetTribeList.setModel(new DefaultComboBoxModel(tribes));
-                jTargetTribeList.setSelectedIndex(0);
-            } else {
-                //not tribes in ally -> should never happen
-                jTargetTribeList.setModel(new DefaultListModel());
-                jTargetContinentList.setModel(new DefaultListModel());
-                jTargetVillageList.setModel(new DefaultListModel());
-            }
-        } else {
-            //no ally selected, show no-ally tribes
-            Enumeration<Integer> tribeIDs = DataHolder.getSingleton().getTribes().keys();
-            List<Tribe> noAlly = new LinkedList<Tribe>();
-            while (tribeIDs.hasMoreElements()) {
-                Tribe t = DataHolder.getSingleton().getTribes().get(tribeIDs.nextElement());
-                if (t.getAlly() == null && t.getVillageList() != null && t.getVillageList().length > 0) {
-                    //only add tribes which are attackable
-                    noAlly.add(t);
-                }
-            }
-            Tribe[] noAllyTribes = noAlly.toArray(new Tribe[]{});
-            Arrays.sort(noAllyTribes, Tribe.CASE_INSENSITIVE_ORDER);
-            jTargetTribeList.setModel(new DefaultComboBoxModel(noAllyTribes));
-            jTargetTribeList.setSelectedIndex(0);
-        }
+        jTargetTribeList.setModel(model);
+        jTargetTribeList.setSelectedIndex(0);
     }
 
     /**Filter target lists by selected tribes*/
     private void fireFilterTargetByTribeEvent() {
-        try {
-            Tribe t = (Tribe) jTargetTribeList.getSelectedValue();
-            if (t != Barbarians.getSingleton() && t.getVillageList() != null && t.getVillageList().length > 0) {
-                Village[] villages = t.getVillageList();
-                List<String> continents = new LinkedList<String>();
-                for (Village v : villages) {
-                    int cont = 0;
-                    if (ServerSettings.getSingleton().getCoordType() != 2) {
-                        cont = DSCalculator.xyToHierarchical(v.getX(), v.getY())[0];
-                    } else {
-                        cont = DSCalculator.getContinent(v.getX(), v.getY());
-                    }
-                    String contString = "K" + cont;
-                    if (!continents.contains(contString)) {
-                        continents.add(contString);
-                    }
-                }
-                Collections.sort(continents, String.CASE_INSENSITIVE_ORDER);
-                DefaultListModel contModel = new DefaultListModel();
-                for (String cont : continents) {
-                    contModel.addElement(cont);
-                }
-                jTargetContinentList.setModel(contModel);
-                jTargetContinentList.getSelectionModel().setSelectionInterval(0, continents.size() - 1);
-            } else {
-                //no tribe selected -> should never happen!
-                jTargetContinentList.setModel(new DefaultListModel());
-                jTargetVillageList.setModel(new DefaultListModel());
-            }
-        } catch (Exception e) {
-            jTargetContinentList.setModel(new DefaultListModel());
-            jTargetVillageList.setModel(new DefaultListModel());
+        Tribe t = (Tribe) jTargetTribeList.getSelectedValue();
+        String[] continents = VillageUtils.getContinents(t);
+        DefaultListModel contModel = new DefaultListModel();
+        for (String cont : continents) {
+            contModel.addElement(cont);
+        }
+        jTargetContinentList.setModel(contModel);
+        if (continents.length > 0) {
+            jTargetContinentList.getSelectionModel().setSelectionInterval(0, continents.length - 1);
         }
     }
 
     /**Filter source list by selected continents*/
     private void fireFilterSourceContinentEvent() {
-        int[] conts = jSourceContinentList.getSelectedIndices();
-        if (conts == null) {
-            return;
-        }
+        Object[] conts = jSourceContinentList.getSelectedValues();
         //build list of allowed continents
         List<Integer> allowedContinents = new LinkedList<Integer>();
-        for (Integer cont : conts) {
-            int contId = Integer.parseInt(((String) jSourceContinentList.getModel().getElementAt(cont)).replaceAll("K", ""));
+        for (Object cont : conts) {
+            int contId = Integer.parseInt(((String) cont).replaceAll("K", ""));
             allowedContinents.add(contId);
         }
         List<Village> villageList = getGroupFilteredSourceVillages();
-        try {
-            List<Village> toRemove = new LinkedList<Village>();
-            for (Village v : villageList) {
-                int vCont = 0;
-                if (ServerSettings.getSingleton().getCoordType() != 2) {
-                    vCont = DSCalculator.xyToHierarchical(v.getX(), v.getY())[0];
-                } else {
-                    vCont = DSCalculator.getContinent(v.getX(), v.getY());
-                }
-                if (!allowedContinents.contains(vCont)) {
-                    toRemove.add(v);
-                }
-            }
-            //remove villages with wrong continent
-            for (Village v : toRemove) {
-                villageList.remove(v);
-            }
-            Collections.sort(villageList, Village.CASE_INSENSITIVE_ORDER);
-            //build village list
-            DefaultListModel villageModel = new DefaultListModel();
-            for (Village v : villageList) {
-                villageModel.addElement(v);
-            }
-            jSourceVillageList.setModel(villageModel);
-            jSourceVillageList.repaint();
-        } catch (Exception e) {
+        Village[] filtered = VillageUtils.getVillagesByContinent(villageList.toArray(new Village[villageList.size()]),
+                allowedContinents.toArray(new Integer[allowedContinents.size()]), Village.CASE_INSENSITIVE_ORDER);
+
+        DefaultListModel villageModel = new DefaultListModel();
+        for (Village v : filtered) {
+            villageModel.addElement(v);
         }
+        jSourceVillageList.setModel(villageModel);
     }
 
     /**Filter target lists by selected continents*/
     private void fireFilterTargetByContinentEvent() {
-        //build list of selected/valid continents
         Object[] conts = jTargetContinentList.getSelectedValues();
-        List<Integer> validConts = new LinkedList<Integer>();
+        //build list of allowed continents
+        List<Integer> allowedContinents = new LinkedList<Integer>();
         for (Object cont : conts) {
-            String c = (String) cont;
-            c = c.replaceAll("K", "").trim();
-            validConts.add(Integer.parseInt(c));
+            int contId = Integer.parseInt(((String) cont).replaceAll("K", ""));
+            allowedContinents.add(contId);
         }
-        Tribe t = (Tribe) jTargetTribeList.getSelectedValue();
-        if (t == null) {
-            return;
-        }
-        Village[] villages = t.getVillageList();
 
-        List<Village> usedVillages = new ArrayList<Village>();
-        for (Village v : villages) {
-            int cont = 0;
-            if (ServerSettings.getSingleton().getCoordType() != 2) {
-                cont = DSCalculator.xyToHierarchical(v.getX(), v.getY())[0];
-            } else {
-                cont = DSCalculator.getContinent(v.getX(), v.getY());
-            }
-            if (validConts.contains(cont)) {
-                usedVillages.add(v);
-            }
+        List<Tribe> tribes = new ArrayList<Tribe>();
+        for (Object tribe : jTargetTribeList.getSelectedValues()) {
+            tribes.add((Tribe) tribe);
         }
-        Collections.sort(usedVillages, Village.CASE_INSENSITIVE_ORDER);
+
+        Village[] filtered = VillageUtils.getVillagesByContinent(VillageUtils.getVillages(tribes.toArray(new Tribe[tribes.size()])),
+                allowedContinents.toArray(new Integer[allowedContinents.size()]),
+                Village.CASE_INSENSITIVE_ORDER);
+
         DefaultListModel villageModel = new DefaultListModel();
-        for (Village v : usedVillages) {
+        for (Village v : filtered) {
             villageModel.addElement(v);
         }
-
         jTargetVillageList.setModel(villageModel);
     }
     // </editor-fold>
@@ -4005,17 +3733,11 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         });
 
         DefaultListModel tagModel = new DefaultListModel();
-        tagModel.addElement("Keinen Tag");
+        tagModel.addElement(NoTag.getSingleton());
         for (Tag t : tags) {
             tagModel.addElement(t);
         }
         jVillageGroupList.setModel(tagModel);
-
-        if (elements.isEmpty()) {
-            jVillageGroupList.setEnabled(false);
-        } else {
-            jVillageGroupList.setEnabled(true);
-        }
         //select all groups and initialize lists
         jVillageGroupList.getSelectionModel().setSelectionInterval(0, (elements.size() > 0) ? elements.size() : 0);
 
@@ -4191,7 +3913,6 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.ButtonGroup attackTypeGroup;
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel2;
     private javax.swing.JButton jAddToAttacksButton1;
@@ -4283,12 +4004,12 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     private javax.swing.JPanel jSourcePanel;
     private javax.swing.JList jSourceVillageList;
     private org.jdesktop.swingx.JXTable jSourcesTable;
+    private javax.swing.JTextField jTargetAllyFilter;
     private javax.swing.JList jTargetAllyList;
     private javax.swing.JList jTargetContinentList;
     private javax.swing.JTable jTargetDetailsTable;
     private javax.swing.JPanel jTargetPanel;
     private javax.swing.JFrame jTargetResultDetailsFrame;
-    private javax.swing.JTextField jTargetTribeFilter;
     private javax.swing.JList jTargetTribeList;
     private javax.swing.JList jTargetVillageList;
     private javax.swing.JProgressBar jTargetsBar;
@@ -4307,4 +4028,68 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     private org.jdesktop.swingx.JXCollapsiblePane sourceInfoPanel;
     private org.jdesktop.swingx.JXCollapsiblePane targetInfoPanel;
     // End of variables declaration//GEN-END:variables
+
+    static class RefreshThread extends Thread {
+
+        private SettingsPanel mSettingsPanel;
+        private JXTable jSourcesTable;
+        private JXTable jVictimTable;
+        private JDialog jDialog;
+        private JProgressBar mBar;
+
+        public RefreshThread(JDialog dialog, JProgressBar bar, SettingsPanel pPanel, JXTable source, JXTable target) {
+            jDialog = dialog;
+            mSettingsPanel = pPanel;
+            jSourcesTable = source;
+            jVictimTable = target;
+            mBar = bar;
+            setDaemon(true);
+        }
+
+        public void run() {
+            if (mSettingsPanel != null) {
+                TimeFrame f = mSettingsPanel.getTimeFrame();
+                DefaultTableModel sourceModel = (DefaultTableModel) jSourcesTable.getModel();
+                DefaultTableModel victimModel = (DefaultTableModel) jVictimTable.getModel();
+                if (f.isValid()) {
+                    int victimAmountCol = jVictimTable.convertColumnIndexToModel(4);
+                    for (int j = 0; j < victimModel.getRowCount(); j++) {
+                        victimModel.setValueAt(0, j, victimAmountCol);
+                    }
+
+                    int sourceVillageCol = jSourcesTable.convertColumnIndexToModel(0);
+                    int victimVillageCol = jVictimTable.convertColumnIndexToModel(1);
+                    int sourceUnitCol = jSourcesTable.convertColumnIndexToModel(1);
+                    int sourceAmountCol = jSourcesTable.convertColumnIndexToModel(3);
+
+                    for (int i = 0; i < sourceModel.getRowCount(); i++) {
+                        int targets = 0;
+                        for (int j = 0; j < victimModel.getRowCount(); j++) {
+                            Village source = (Village) sourceModel.getValueAt(i, sourceVillageCol);
+                            Village target = (Village) victimModel.getValueAt(j, victimVillageCol);
+                            UnitHolder unit = (UnitHolder) sourceModel.getValueAt(i, sourceUnitCol);
+                            long run = (long) DSCalculator.calculateMoveTimeInSeconds(source, target, unit.getSpeed()) * 1000;
+                            if (f.isMovementPossible(run, source)) {
+                                targets++;
+                                victimModel.setValueAt((Integer) victimModel.getValueAt(j, victimAmountCol) + 1, j, victimAmountCol);
+                            }
+                        }
+                        if (i % 10 == 0) {
+                            mBar.setValue(i * victimModel.getRowCount());
+                        }
+
+                        sourceModel.setValueAt(targets, i, sourceAmountCol);
+                    }
+                }
+                //showSuccess("Mögliche Angriffe aktualisiert");
+                mBar.setString("Mögliche Angriffe aktualisiert");
+                try {
+                    Thread.sleep(100);
+                } catch (Exception e) {
+                }
+                // jideTabbedPane1.setSelectedIndex(0);
+                jDialog.setVisible(false);
+            }
+        }
+    }
 }

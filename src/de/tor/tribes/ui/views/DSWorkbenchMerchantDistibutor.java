@@ -35,6 +35,7 @@ import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.ProfileManagerListener;
 import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.TableHelper;
+import de.tor.tribes.util.UIHelper;
 import de.tor.tribes.util.algo.MerchantDestination;
 import de.tor.tribes.util.algo.MerchantDistributor;
 import de.tor.tribes.util.algo.MerchantSource;
@@ -1332,13 +1333,12 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
             int[] targetRes = null;
             int[] remainRes = null;
             if (jAdjustingDistribution.isSelected()) {
-                try {
-                    targetRes = new int[]{Integer.parseInt(jTargetWood.getText()), Integer.parseInt(jTargetClay.getText()), Integer.parseInt(jTargetIron.getText())};
-                    remainRes = new int[]{Integer.parseInt(jRemainWood.getText()), Integer.parseInt(jRemainClay.getText()), Integer.parseInt(jRemainIron.getText())};
-                } catch (Exception e) {
-                    JOptionPaneHelper.showWarningBox(this, "Ressourcenangaben fehlerhaft", "Fehler");
-                    return;
-                }
+                targetRes = new int[]{UIHelper.parseIntFromField(jTargetWood, 0),
+                    UIHelper.parseIntFromField(jTargetClay, 0),
+                    UIHelper.parseIntFromField(jTargetIron, 0)};
+                remainRes = new int[]{UIHelper.parseIntFromField(jRemainWood, 0),
+                    UIHelper.parseIntFromField(jRemainClay, 0),
+                    UIHelper.parseIntFromField(jRemainIron, 0)};
             } else {
                 int woodSum = 0;
                 int claySum = 0;
@@ -1358,13 +1358,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
                 remainRes = new int[]{targetRes[0], targetRes[1], targetRes[2]};
             }
 
-            int maxFilling = 95;
-            try {
-                maxFilling = Integer.parseInt(jMaxFilling.getText());
-            } catch (Exception e) {
-                maxFilling = 95;
-                jMaxFilling.setText("95");
-            }
+            int maxFilling = UIHelper.parseIntFromField(jMaxFilling, 95);
 
             List<VillageMerchantInfo> copy = new LinkedList<VillageMerchantInfo>();
             for (int i = 0; i < merchantInfos.size(); i++) {
@@ -1697,11 +1691,11 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
 
         int usedMerchants = 0;
         int usedTransports = 0;
-        int minAmount = 0;
+        int minAmount = 1;
 
         try {
             if (jIgnoreTransportsButton.isSelected()) {
-                minAmount = Integer.parseInt(jMinTransportAmount.getText()) / 1000;
+                minAmount = UIHelper.parseIntFromField(jMinTransportAmount, 1000);
             } else {
                 minAmount = 1;
             }

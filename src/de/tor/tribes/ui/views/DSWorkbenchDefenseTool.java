@@ -17,35 +17,38 @@ import de.tor.tribes.dssim.types.SimulatorResult;
 import de.tor.tribes.dssim.types.UnitHolder;
 import de.tor.tribes.dssim.util.UnitManager;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.DefenseElement;
 import de.tor.tribes.types.SOSRequest;
-import de.tor.tribes.types.SOSRequest.TimedAttack;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.models.DefenseToolModel;
+import de.tor.tribes.ui.renderer.DateCellRenderer;
+import de.tor.tribes.ui.renderer.DefenseStatusTableCellRenderer;
+import de.tor.tribes.ui.renderer.LossRatioTableCellRenderer;
+import de.tor.tribes.ui.renderer.TendencyTableCellRenderer;
+import de.tor.tribes.ui.renderer.WallLevellCellRenderer;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.ProfileManager;
-import de.tor.tribes.util.ServerSettings;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.TexturePaint;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.DefaultListModel;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import org.apache.commons.lang.math.LongRange;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
+import org.jdesktop.swingx.painter.MattePainter;
 
 /**
  *
@@ -60,6 +63,7 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
     private static DSWorkbenchDefenseTool SINGLETON = null;
     private Hashtable<Village, SOSRequest.TargetInformation> infos = new Hashtable<Village, SOSRequest.TargetInformation>();
     private final NumberFormat numFormat = NumberFormat.getInstance();
+    private boolean aborted = false;
 
     public static synchronized DSWorkbenchDefenseTool getSingleton() {
         if (SINGLETON == null) {
@@ -71,242 +75,197 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
     /** Creates new form DSWorkbenchDefenseTool */
     DSWorkbenchDefenseTool() {
         initComponents();
-        jList1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    fireUpdateTargetSelectionEvent();
-                }
-            }
-        });
         numFormat.setMaximumFractionDigits(0);
         numFormat.setMinimumFractionDigits(0);
         jPanel1.add(jMainPanel, BorderLayout.CENTER);
+        jXTable1.setModel(new DefenseToolModel());
+        BufferedImage back = ImageUtils.createCompatibleBufferedImage(3, 3, BufferedImage.TRANSLUCENT);
+        Graphics g = back.getGraphics();
+        g.setColor(new Color(120, 120, 120, 120));
+        g.fillRect(0, 0, back.getWidth(), back.getHeight());
+        g.setColor(new Color(120, 120, 120));
+        g.drawLine(0, 0, 3, 3);
+        g.dispose();
+        TexturePaint paint = new TexturePaint(back, new Rectangle2D.Double(0, 0, back.getWidth(), back.getHeight()));
+        jxWaitPane.setBackgroundPainter(new MattePainter(paint));
+        setGlassPane(jxWaitPane);
+        jXTable1.getColumnExt("Tendenz").setCellRenderer(new TendencyTableCellRenderer());
+        jXTable1.getColumnExt("Status").setCellRenderer(new DefenseStatusTableCellRenderer());
+        jXTable1.getColumnExt("Wall").setCellRenderer(new WallLevellCellRenderer());
+        jXTable1.getColumnExt("Verlustrate").setCellRenderer(new LossRatioTableCellRenderer());
+        jXTable1.setDefaultRenderer(Date.class, new DateCellRenderer());
+    }
 
+    public DefenseToolModel getModel() {
+        return (DefenseToolModel) jXTable1.getModel();
     }
 
     public void setData(List<SOSRequest> pRequests) {
-        DefaultListModel model = new DefaultListModel();
-        ///infos.clear();
-        List<Village> targetList = new LinkedList<Village>();
-        final HashMap<Village, Integer> attackCount = new HashMap<Village, Integer>();
-        Enumeration<Village> existingKeys = infos.keys();
-        while (existingKeys.hasMoreElements()) {
-            Village target = existingKeys.nextElement();
-            targetList.add(target);
-            attackCount.put(target, infos.get(target).getAttacks().size());
-        }
 
         for (SOSRequest request : pRequests) {
             Enumeration<Village> targets = request.getTargets();
             while (targets.hasMoreElements()) {
                 Village target = targets.nextElement();
-                if (!targetList.contains(target)) {
-                    //model.addElement(target);
-                    targetList.add(target);
-                    infos.put(target, request.getTargetInformation(target));
-                    attackCount.put(target, request.getTargetInformation(target).getAttacks().size());
+                DefenseElement elem = getModel().findElement(target);
+                if (elem != null) {
+                    SOSRequest.TargetInformation newInfo = elem.getTargetInformation().merge(request.getTargetInformation(target), null);
+                    elem.setTargetInformation(newInfo);
                 } else {
-                    SOSRequest.TargetInformation existingInfo = infos.get(target);
-                    SOSRequest.TargetInformation newInfo = request.getTargetInformation(target);
-                    existingInfo.merge(newInfo, existingInfo);
-                    attackCount.put(target, existingInfo.getAttacks().size());
+                    elem = new DefenseElement();
+                    elem.setTarget(target);
+                    elem.setTargetInformation(request.getTargetInformation(target));
+                    getModel().addRow(elem);
                 }
             }
         }
-
-        Collections.sort(targetList, new Comparator<Village>() {
-
-            @Override
-            public int compare(Village o1, Village o2) {
-                return attackCount.get(o2).compareTo(attackCount.get(o1));
-            }
-        });
-
-        for (Village v : targetList) {
-            model.addElement(v);
-        }
-        jList1.setModel(model);
+        getModel().fireTableDataChanged();
     }
 
-    private void fireUpdateTargetSelectionEvent() {
-        Village selection = (Village) jList1.getSelectedValue();
-        SOSRequest.TargetInformation info = infos.get(selection);
-        try {
-            UnitManager.getSingleton().parseUnits(GlobalOptions.getSelectedServer());
-        } catch (Exception e) {
-        }
-        //sim off and def
-        Hashtable<UnitHolder, AbstractUnitElement> def = new Hashtable<UnitHolder, AbstractUnitElement>();
-        Hashtable<UnitHolder, AbstractUnitElement> off = getStandardOff();
-        //pre-fill tables
-        for (de.tor.tribes.io.UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            def.put(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), 0, 10));
-        }
-
-        int attCount = 0;
-        int fakeCount = 0;
-        long first = Long.MAX_VALUE;
-        long last = Long.MIN_VALUE;
-
-        for (TimedAttack a : info.getAttacks()) {
-            if (a.isPossibleFake()) {
-                fakeCount++;
-            } else {
-                attCount++;
-            }
-            if (a.getlArriveTime() < first) {
-                first = a.getlArriveTime();
-            }
-
-            if (a.getlArriveTime() > last) {
-                last = a.getlArriveTime();
-            }
-        }
-        Hashtable<de.tor.tribes.io.UnitHolder, Integer> troops = info.getTroops();
-        Enumeration<de.tor.tribes.io.UnitHolder> units = troops.keys();
-
-        int pop = 0;
-        long defForce = 0;
-        long defCavForce = 0;
-        long defArchForce = 0;
-        while (units.hasMoreElements()) {
-            de.tor.tribes.io.UnitHolder unit = units.nextElement();
-            int amount = troops.get(unit);
-            def.put(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), amount, 10));
-            pop += unit.getPop() * amount;
-            defForce += unit.getDefense() * amount;
-            defCavForce += unit.getDefenseCavalry() * amount;
-            defArchForce += unit.getDefenseArcher() * amount;
-        }
-
-        jDefenseValue.setText(numFormat.format(defForce) + " | " + numFormat.format(defCavForce) + " | " + numFormat.format(defArchForce));
-        jDefenseValue.setToolTipText("<html>" + info.getTroopInformationAsHTML() + "</html>");
-        jAttackCount.setText(numFormat.format(attCount) + " (" + ((info.getDelta() > 0) ? "+" : "") + info.getDelta() + ")");
-        jFakeCount.setText(numFormat.format(fakeCount));
-
-        if (ServerSettings.getSingleton().isMillisArrival()) {
-            jFirstAttack.setText(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS").format(new Date(first)));
-            jLastAttack.setText(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS").format(new Date(last)));
-        } else {
-            jFirstAttack.setText(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(new Date(first)));
-            jLastAttack.setText(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(new Date(last)));
-        }
-
-        jWallLevel.setValue(info.getWallLevel());
-
-        NewSimulator sim = new NewSimulator();
-        boolean noAttack = (attCount == 0);
-
-        SimulatorResult result = sim.calculate(off, def, KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM), Arrays.asList(KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM)), false, 0, 100.0, jWallLevel.getValue(), 0, 30, true, true, false, false, false);
-        int cleanAfter = 0;
-        for (int i = 1; i < attCount; i++) {
-            if (result.isWin()) {
-                cleanAfter = i + 1;
+    private void updateStatus() {
+        jLabel8.setText("Aktualisiere Verteidigungsstatus");
+        for (DefenseElement element : getModel().getRows()) {
+            if (aborted) {
                 break;
             }
-            result = sim.calculate(off, result.getSurvivingDef(), KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM), Arrays.asList(KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM)), false, 0, 100.0, result.getWallLevel(), 0, 30, true, true, false, false, false);
-        }
-        double lossPercent = 0;
-        if (!result.isWin()) {
-            jSecuredStatus.setBackground(Color.GREEN);
-            jSecuredStatus.setForeground(Color.BLACK);
-            double survive = 0;
-            Enumeration<UnitHolder> keys = result.getSurvivingDef().keys();
-            while (keys.hasMoreElements()) {
-                UnitHolder key = keys.nextElement();
-                int amount = result.getSurvivingDef().get(key).getCount();
-                survive += (double) amount * key.getPop();
+            SOSRequest.TargetInformation info = element.getTargetInformation();
+            try {
+                UnitManager.getSingleton().parseUnits(GlobalOptions.getSelectedServer());
+            } catch (Exception e) {
             }
-            lossPercent = 100 - (100.0 * survive / (double) pop);
-            jSecuredStatus.setText("Sicher (Verluste etwa: " + numFormat.format(lossPercent) + "%)");
-        } else {
-            jSecuredStatus.setBackground(Color.RED);
-            jSecuredStatus.setForeground(Color.WHITE);
-            jSecuredStatus.setText("Dorf leer nach " + cleanAfter + "/" + attCount + " Angriffen");
-        }
-
-        if (!noAttack || result.isWin() || (lossPercent > 30)) {
-            jSecuredStatus.setBackground(Color.YELLOW);
-            jSecuredStatus.setForeground(Color.BLACK);
-            jSecuredStatus.setText("Berechne...");
-            SwingUtilities.invokeLater(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (calculateNeededSupports()) {
-                        jSecuredStatus.setBackground(Color.GREEN);
-                        jSecuredStatus.setForeground(Color.BLACK);
-                        jSecuredStatus.setText("Sicher (Verluste etwa: 30%)");
-                    }
-                }
-            });
-        }
-    }
-
-    private boolean calculateNeededSupports() {
-        Village selection = (Village) jList1.getSelectedValue();
-        SOSRequest.TargetInformation info = infos.get(selection);
-        try {
-            UnitManager.getSingleton().parseUnits(GlobalOptions.getSelectedServer());
-        } catch (Exception e) {
-        }
-
-        NewSimulator sim = new NewSimulator();
-        int attCount = 0;
-        for (TimedAttack a : info.getAttacks()) {
-            if (!a.isPossibleFake()) {
-                attCount++;
-            }
-        }
-        int factor = 1;
-        SimulatorResult result = null;
-        while (true) {
+            //sim off and def
+            Hashtable<UnitHolder, AbstractUnitElement> def = new Hashtable<UnitHolder, AbstractUnitElement>();
             Hashtable<UnitHolder, AbstractUnitElement> off = getStandardOff();
-            Hashtable<UnitHolder, AbstractUnitElement> def = getStandardDef(factor);
+            //pre-fill tables
+            for (de.tor.tribes.io.UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                def.put(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), 0, 10));
+            }
 
-            double troops = UnitManager.getSingleton().getUnitByPlainName("spear").getPop() * def.get(UnitManager.getSingleton().getUnitByPlainName("spear")).getCount();
-            troops += UnitManager.getSingleton().getUnitByPlainName("sword").getPop() * def.get(UnitManager.getSingleton().getUnitByPlainName("sword")).getCount();
-            troops += UnitManager.getSingleton().getUnitByPlainName("heavy").getPop() * def.get(UnitManager.getSingleton().getUnitByPlainName("heavy")).getCount();
-            result = sim.calculate(off, def, KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM), Arrays.asList(KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM)), false, 0, 100.0, info.getWallLevel(), 0, 30, true, true, false, false, false);
+            int attCount = info.getOffs();
+
+            Hashtable<de.tor.tribes.io.UnitHolder, Integer> troops = info.getTroops();
+            Enumeration<de.tor.tribes.io.UnitHolder> units = troops.keys();
+
+            int pop = 0;
+            while (units.hasMoreElements()) {
+                de.tor.tribes.io.UnitHolder unit = units.nextElement();
+                int amount = troops.get(unit);
+                def.put(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), amount, 10));
+                pop += unit.getPop() * amount;
+            }
+
+            NewSimulator sim = new NewSimulator();
+            boolean noAttack = (attCount == 0);
+
+            SimulatorResult result = sim.calculate(off, def, KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM), Arrays.asList(KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM)), false, 0, 100.0, jWallLevel.getValue(), 0, 30, true, true, false, false, false);
+            int cleanAfter = 0;
             for (int i = 1; i < attCount; i++) {
                 if (result.isWin()) {
+                    cleanAfter = i + 1;
                     break;
                 }
                 result = sim.calculate(off, result.getSurvivingDef(), KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM), Arrays.asList(KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM)), false, 0, 100.0, result.getWallLevel(), 0, 30, true, true, false, false, false);
             }
-
-            double survive = 0;
-            Enumeration<UnitHolder> keys = result.getSurvivingDef().keys();
-            while (keys.hasMoreElements()) {
-                UnitHolder key = keys.nextElement();
-                int amount = result.getSurvivingDef().get(key).getCount();
-                survive += (double) amount * key.getPop();
-            }
-            double lossesPercent = 100 - (100.0 * survive / troops);
-            if (!result.isWin() && lossesPercent < 30) {
-                jNeededSupports.setText(Integer.toString(factor));
-                break;
-            } else {
-                factor++;
-            }
-            if (factor > 500) {
-                if (lossesPercent < 100) {
-                    jNeededSupports.setText("> 500");
-                    jSecuredStatus.setBackground(Color.YELLOW);
+            double lossPercent = 0;
+            if (!noAttack) {
+                if (!result.isWin()) {
+                    jSecuredStatus.setBackground(Color.GREEN);
                     jSecuredStatus.setForeground(Color.BLACK);
-                    jSecuredStatus.setText("Unsicher (Verluste etwa " + numFormat.format(lossesPercent) + "%)");
+                    double survive = 0;
+                    Enumeration<UnitHolder> keys = result.getSurvivingDef().keys();
+                    while (keys.hasMoreElements()) {
+                        UnitHolder key = keys.nextElement();
+                        int amount = result.getSurvivingDef().get(key).getCount();
+                        survive += (double) amount * key.getPop();
+                    }
+                    lossPercent = 100 - (100.0 * survive / (double) pop);
+                    if (Math.max(75.0, lossPercent) == lossPercent) {
+                        element.setDefenseStatus(DefenseElement.DEFENSE_STATUS.DANGEROUS);
+                        element.setLossRation(lossPercent);
+                    } else if (Math.max(25.0, lossPercent) == 25.0) {
+                        element.setDefenseStatus(DefenseElement.DEFENSE_STATUS.SAVE);
+                        element.setLossRation(lossPercent);
+                    } else {
+                        element.setDefenseStatus(DefenseElement.DEFENSE_STATUS.FINE);
+                        element.setLossRation(lossPercent);
+                    }
                 } else {
-                    jNeededSupports.setText("> 500");
-                    jSecuredStatus.setBackground(Color.RED);
-                    jSecuredStatus.setForeground(Color.WHITE);
-                    jSecuredStatus.setText("Unsicher (Verluste 100%)");
+                    element.setDefenseStatus(DefenseElement.DEFENSE_STATUS.DANGEROUS);
+                    element.setLossRation(100.0);
+                    element.setCleanAfter(cleanAfter);
                 }
-                return false;
+            } else {
+                element.setDefenseStatus(DefenseElement.DEFENSE_STATUS.SAVE);
+                element.setLossRation(0.0);
             }
         }
-        return true;
+        getModel().fireTableDataChanged();
+    }
+
+    private void calculateNeededSupports() {
+        int cnt = 1;
+        for (DefenseElement element : getModel().getRows()) {
+            if (aborted) {
+                break;
+            }
+            jLabel8.setText("Berechne Angriffe " + cnt + "/" + getModel().getRowCount());
+            cnt++;
+            SOSRequest.TargetInformation info = element.getTargetInformation();
+            try {
+                UnitManager.getSingleton().parseUnits(GlobalOptions.getSelectedServer());
+            } catch (Exception e) {
+            }
+
+            NewSimulator sim = new NewSimulator();
+            int attCount = info.getOffs();
+
+            //no atts for this target...don't know why...
+            if (attCount == 0) {
+                continue;
+            }
+
+            int factor = 1;
+            SimulatorResult result = null;
+            while (true) {
+                Hashtable<UnitHolder, AbstractUnitElement> off = getStandardOff();
+                Hashtable<UnitHolder, AbstractUnitElement> def = getStandardDef(factor);
+
+                double troops = UnitManager.getSingleton().getUnitByPlainName("spear").getPop() * def.get(UnitManager.getSingleton().getUnitByPlainName("spear")).getCount();
+                troops += UnitManager.getSingleton().getUnitByPlainName("sword").getPop() * def.get(UnitManager.getSingleton().getUnitByPlainName("sword")).getCount();
+                troops += UnitManager.getSingleton().getUnitByPlainName("heavy").getPop() * def.get(UnitManager.getSingleton().getUnitByPlainName("heavy")).getCount();
+                result = sim.calculate(off, def, KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM), Arrays.asList(KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM)), false, 0, 100.0, info.getWallLevel(), 0, 30, true, true, false, false, false);
+                for (int i = 1; i < attCount; i++) {
+                    if (result.isWin()) {
+                        break;
+                    }
+                    result = sim.calculate(off, result.getSurvivingDef(), KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM), Arrays.asList(KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM)), false, 0, 100.0, result.getWallLevel(), 0, 30, true, true, false, false, false);
+                }
+
+                double survive = 0;
+                Enumeration<UnitHolder> keys = result.getSurvivingDef().keys();
+                while (keys.hasMoreElements()) {
+                    UnitHolder key = keys.nextElement();
+                    int amount = result.getSurvivingDef().get(key).getCount();
+                    survive += (double) amount * key.getPop();
+                }
+                double lossesPercent = 100 - (100.0 * survive / troops);
+                if (!result.isWin() && lossesPercent < 30) {
+                    element.setNeededSupports(factor);
+                    break;
+                } else {
+                    factor++;
+                }
+                if (factor > 500) {
+                    if (lossesPercent < 100) {
+                        element.setDefenseStatus(DefenseElement.DEFENSE_STATUS.FINE);
+                        element.setLossRation(lossesPercent);
+                    } else {
+                        element.setDefenseStatus(DefenseElement.DEFENSE_STATUS.DANGEROUS);
+                        element.setLossRation(100.0);
+                    }
+                }
+            }
+        }
+        getModel().fireTableDataChanged();
     }
 
     private void calculatePossibilities() {
@@ -317,19 +276,7 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
             Village target = targets.nextElement();
             targetList.add(target);
             SOSRequest.TargetInformation info = infos.get(target);
-            long first = Long.MAX_VALUE;
-            long last = Long.MIN_VALUE;
-
-            for (TimedAttack a : info.getAttacks()) {
-                if (a.getlArriveTime() < first) {
-                    first = a.getlArriveTime();
-                }
-
-                if (a.getlArriveTime() > last) {
-                    last = a.getlArriveTime();
-                }
-            }
-            arrivals.put(target, new LongRange(first, last));
+            arrivals.put(target, new LongRange(info.getFirstAttack(), info.getLastAttack()));
         }
 
         Village[] villageList = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
@@ -346,7 +293,7 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
         for (int i = 0; i < targetList.size(); i++) {
             StringBuilder b = new StringBuilder();
             for (int j = 0; j < villageList.length; j++) {
-                b.append(data[i][j] + ",");
+                b.append(data[i][j]).append(",");
             }
             System.out.println(b.toString());
         }
@@ -385,6 +332,10 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
         java.awt.GridBagConstraints gridBagConstraints;
 
         jMainPanel = new javax.swing.JPanel();
+        jButton3 = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jXTable1 = new org.jdesktop.swingx.JXTable();
+        jButton5 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList();
         jPanel2 = new javax.swing.JPanel();
@@ -406,9 +357,64 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
         jLastAttack = new javax.swing.JLabel();
         jDefenseValue = new javax.swing.JLabel();
         jNeededSupports = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
+        jxWaitPane = new org.jdesktop.swingx.JXPanel();
+        jLabel8 = new javax.swing.JLabel();
+        jButton6 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
+
+        jButton3.setText("Dummy");
+        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireCalc(evt);
+            }
+        });
+
+        jXTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(jXTable1);
+
+        jButton5.setText("Update");
+        jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                updateDef(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jMainPanelLayout = new javax.swing.GroupLayout(jMainPanel);
+        jMainPanel.setLayout(jMainPanelLayout);
+        jMainPanelLayout.setHorizontalGroup(
+            jMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jMainPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 689, Short.MAX_VALUE)
+                    .addGroup(jMainPanelLayout.createSequentialGroup()
+                        .addComponent(jButton3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 555, Short.MAX_VALUE)
+                        .addComponent(jButton5)))
+                .addContainerGap())
+        );
+        jMainPanelLayout.setVerticalGroup(
+            jMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jMainPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 227, Short.MAX_VALUE)
+                .addGroup(jMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton3)
+                    .addComponent(jButton5))
+                .addContainerGap())
+        );
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Ziele"));
 
@@ -631,40 +637,22 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(jNeededSupports, gridBagConstraints);
 
-        jButton3.setText("jButton3");
-        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+        jxWaitPane.setOpaque(false);
+        jxWaitPane.setLayout(new java.awt.BorderLayout());
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 18));
+        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel8.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jxWaitPane.add(jLabel8, java.awt.BorderLayout.CENTER);
+
+        jButton6.setText("Abbrechen");
+        jButton6.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                fireCalc(evt);
+                fireAbortAnalysisEvent(evt);
             }
         });
-
-        javax.swing.GroupLayout jMainPanelLayout = new javax.swing.GroupLayout(jMainPanel);
-        jMainPanel.setLayout(jMainPanelLayout);
-        jMainPanelLayout.setHorizontalGroup(
-            jMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jMainPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jMainPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jMainPanelLayout.createSequentialGroup()
-                        .addComponent(jButton3)
-                        .addGap(293, 293, 293))))
-        );
-        jMainPanelLayout.setVerticalGroup(
-            jMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jMainPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE))
-                .addGap(59, 59, 59)
-                .addComponent(jButton3)
-                .addContainerGap(68, Short.MAX_VALUE))
-        );
+        jxWaitPane.add(jButton6, java.awt.BorderLayout.PAGE_END);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -680,6 +668,25 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
         calculatePossibilities();
     }//GEN-LAST:event_fireCalc
 
+    private void updateDef(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_updateDef
+        aborted = false;
+        getGlassPane().setVisible(true);
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                updateStatus();
+                calculateNeededSupports();
+                getGlassPane().setVisible(false);
+            }
+        }).start();
+
+    }//GEN-LAST:event_updateDef
+
+    private void fireAbortAnalysisEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAbortAnalysisEvent
+        aborted = true;
+    }//GEN-LAST:event_fireAbortAnalysisEvent
+
     /**
      * @param args the command line arguments
      */
@@ -694,6 +701,8 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
+
                 }
             }
         } catch (ClassNotFoundException ex) {
@@ -710,41 +719,37 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
 
         /* Create and display the form */
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de43");
+        GlobalOptions.setSelectedServer("de47");
         ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-
+        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de47")[0]);
         DataHolder.getSingleton().loadData(false);
-        long s = System.currentTimeMillis();
+        //  GlobalOptions.loadUserData();
         DSWorkbenchDefenseTool.getSingleton().setData(createSampleRequests());
         DSWorkbenchDefenseTool.getSingleton().setData(createSampleRequests());
         DSWorkbenchDefenseTool.getSingleton().pack();
         DSWorkbenchDefenseTool.getSingleton().setVisible(true);
-
     }
 
     private static List<SOSRequest> createSampleRequests() {
-
         int wallLevel = 20;
         int supportCount = 50;
-        int maxAttackCount = 5;
+        int maxAttackCount = 10;
         int maxFakeCount = 0;
 
         List<SOSRequest> result = new LinkedList<SOSRequest>();
         Village[] villages = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
+
         for (int i = 0; i < supportCount; i++) {
-            int id = (int) Math.rint(Math.random() * villages.length);
+            int id = (int) Math.rint(Math.random() * (villages.length - 1));
             Village target = villages[id];
-
-
             SOSRequest r = new SOSRequest(target.getTribe());
             r.addTarget(target);
             SOSRequest.TargetInformation info = r.getTargetInformation(target);
             info.setWallLevel(wallLevel);
 
-            info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("spear"), 7000);
-            info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("sword"), 7000);
-            info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("heavy"), 1500);
+            info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("spear"), (int) Math.rint(Math.random() * 14000));
+            info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("sword"), (int) Math.rint(Math.random() * 14000));
+            info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("heavy"), (int) Math.rint(Math.random() * 5000));
 
             int cnt = (int) Math.rint(maxAttackCount * Math.random());
             for (int j = 0; j < cnt; j++) {
@@ -764,6 +769,8 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jDefenseValue;
     private javax.swing.JLabel jFakeCount;
     private javax.swing.JLabel jFirstAttack;
@@ -774,6 +781,7 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JLabel jLastAttack;
     private javax.swing.JList jList1;
@@ -782,7 +790,10 @@ public class DSWorkbenchDefenseTool extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel jSecuredStatus;
     private javax.swing.JProgressBar jWallLevel;
+    private org.jdesktop.swingx.JXTable jXTable1;
+    private org.jdesktop.swingx.JXPanel jxWaitPane;
     // End of variables declaration//GEN-END:variables
 }

@@ -308,8 +308,6 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.ButtonGroup" name="attackTypeGroup">
-    </Component>
     <Container class="javax.swing.JFrame" name="jAttackResultDetailsFrame">
       <Properties>
         <Property name="title" type="java.lang.String" value="Nicht zugewiesene Herkunftsd&#xf6;rfer"/>
@@ -1283,7 +1281,7 @@
                                   <Group type="102" attributes="0">
                                       <Component id="jLabel11" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                                      <Component id="jTargetTribeFilter" pref="169" max="32767" attributes="1"/>
+                                      <Component id="jTargetAllyFilter" pref="169" max="32767" attributes="1"/>
                                   </Group>
                                   <Component id="jScrollPane7" pref="205" max="32767" attributes="1"/>
                               </Group>
@@ -1336,7 +1334,7 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="3" attributes="0">
                                           <Component id="jLabel11" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jTargetTribeFilter" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jTargetAllyFilter" alignment="3" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                                   <Group type="102" alignment="1" attributes="0">
@@ -1502,7 +1500,7 @@
                         <Property name="text" type="java.lang.String" value="Filter"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JTextField" name="jTargetTribeFilter">
+                    <Component class="javax.swing.JTextField" name="jTargetAllyFilter">
                       <Events>
                         <EventHandler event="caretUpdate" listener="javax.swing.event.CaretListener" parameters="javax.swing.event.CaretEvent" handler="fireTargetAllyFilterChangedEvent"/>
                       </Events>

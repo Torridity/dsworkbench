@@ -10,7 +10,6 @@
  */
 package de.tor.tribes.ui.wiz.dep;
 
-import de.tor.tribes.ui.wiz.tap.*;
 import java.util.Map;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPanel;

@@ -583,6 +583,25 @@ public class AnalysePanel extends javax.swing.JPanel implements WizardPanel {
         }
         return new int[]{targets, offs, fakes, needed};
     }
+
+    public de.tor.tribes.io.UnitHolder getSlowestUnit() {
+        Hashtable<de.tor.tribes.io.UnitHolder, Integer> units = defensePanel.getAmounts();
+        Enumeration<de.tor.tribes.io.UnitHolder> keys = units.keys();
+        de.tor.tribes.io.UnitHolder slowest = null;
+        while (keys.hasMoreElements()) {
+            de.tor.tribes.io.UnitHolder key = keys.nextElement();
+            if (units.get(key) != null && units.get(key) != 0) {
+                if (slowest == null) {
+                    slowest = key;
+                } else {
+                    if (key.getSpeed() > slowest.getSpeed()) {
+                        slowest = key;
+                    }
+                }
+            }
+        }
+        return slowest;
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;

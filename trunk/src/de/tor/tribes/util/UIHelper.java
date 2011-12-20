@@ -30,7 +30,7 @@ public class UIHelper {
     }
 
     public static int parseIntFromLabel(JLabel jLabel) {
-        return parseIntFromField(jLabel, 0);
+        return parseIntFromLabel(jLabel, 0);
     }
 
     public static int parseIntFromLabel(JLabel jLabel, int pDefault) {

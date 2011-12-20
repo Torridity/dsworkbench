@@ -110,6 +110,7 @@ public class VillagePanel extends javax.swing.JPanel implements WizardPanel {
                 deleteSelection();
             }
         }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jGroupSource.setSelected(true);
     }
 
     /** This method is called from within the constructor to
@@ -814,9 +815,11 @@ public class VillagePanel extends javax.swing.JPanel implements WizardPanel {
     }//GEN-LAST:event_fireAddVillagesEvent
     
     private int getSupportsForVillage(Village pVillage) {
-        TroopSplit split = new TroopSplit(pVillage);
+        /*TroopSplit split = new TroopSplit(pVillage);
         split.update(AnalysePanel.getSingleton().getDefenseAmount(), 10);
         return split.getSplitCount();
+         */
+        return 10;
     }
     
     private void pasteFromClipboard() {
@@ -880,7 +883,9 @@ public class VillagePanel extends javax.swing.JPanel implements WizardPanel {
         for (Village village : usedVillages) {
             model.addRow(new Object[]{village.getTribe(), village, supportsPerVillage.get(village)});
         }
-        
+        if (model.getRowCount() > 0) {
+            controller.setProblem(null);
+        }
         jVillageTable.setModel(model);
     }
     
@@ -889,7 +894,7 @@ public class VillagePanel extends javax.swing.JPanel implements WizardPanel {
     }
     
     public Hashtable<Village, Integer> getSplits() {
-        return supportsPerVillage;
+        return (Hashtable<Village, Integer>) supportsPerVillage.clone();
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;

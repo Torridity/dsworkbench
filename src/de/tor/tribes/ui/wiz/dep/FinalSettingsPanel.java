@@ -10,12 +10,25 @@
  */
 package de.tor.tribes.ui.wiz.dep;
 
+import de.tor.tribes.types.Defense;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.UIHelper;
+import de.tor.tribes.util.algo.DefenseCalculator;
 import java.awt.BorderLayout;
+import java.awt.Point;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import javax.swing.JOptionPane;
+import javax.swing.JViewport;
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardController;
 import org.netbeans.spi.wizard.WizardPanel;
@@ -38,6 +51,8 @@ public class FinalSettingsPanel extends javax.swing.JPanel implements WizardPane
             + "</html>";
     private static FinalSettingsPanel singleton = null;
     private WizardController controller = null;
+    private DefenseCalculator calculator = null;
+    private SimpleDateFormat dateFormat = null;
 
     public static synchronized FinalSettingsPanel getSingleton() {
         if (singleton == null) {
@@ -52,6 +67,11 @@ public class FinalSettingsPanel extends javax.swing.JPanel implements WizardPane
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jXCollapsiblePane1.add(jInfoScrollPane, BorderLayout.CENTER);
         jInfoTextPane.setText(GENERAL_INFO);
+        StyledDocument doc = (StyledDocument) jTextPane1.getDocument();
+        Style defaultStyle = doc.addStyle("Default", null);
+        StyleConstants.setItalic(defaultStyle, true);
+        StyleConstants.setFontFamily(defaultStyle, "SansSerif");
+        dateFormat = new SimpleDateFormat("HH:mm:ss");
     }
 
     public void setController(WizardController pWizCtrl) {
@@ -73,6 +93,11 @@ public class FinalSettingsPanel extends javax.swing.JPanel implements WizardPane
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jAllowMultiSupport = new javax.swing.JCheckBox();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextPane1 = new javax.swing.JTextPane();
+        jCalculateButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jOverallTargets = new javax.swing.JLabel();
@@ -121,6 +146,45 @@ public class FinalSettingsPanel extends javax.swing.JPanel implements WizardPane
         add(jLabel1, gridBagConstraints);
 
         jPanel2.setLayout(new java.awt.GridBagLayout());
+
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Einstellungen"));
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
+        jAllowMultiSupport.setText("Mehrfachunterstützungen erlauben");
+        jAllowMultiSupport.setToolTipText("<html>Erlaubt das Zuweisen mehrerer Unterst&uuml;tzungen zwischen einem Herkunftsdorf und einem Ziel.<br/>Aktiviere diese Option, falls nicht alle Unterst&uuml;tzungen zugewiesen werden k&ouml;nnen.</html>");
+        jPanel3.add(jAllowMultiSupport, new java.awt.GridBagConstraints());
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jPanel2.add(jPanel3, gridBagConstraints);
+
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Informationen zur Berechnung"));
+        jScrollPane1.setViewportView(jTextPane1);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jScrollPane1, gridBagConstraints);
+
+        jCalculateButton.setText("Unterstützungen berechnen");
+        jCalculateButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireCalculateSupportsEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jCalculateButton, gridBagConstraints);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Zusammenfassung"));
         jPanel1.setLayout(new java.awt.GridBagLayout());
@@ -228,9 +292,8 @@ public class FinalSettingsPanel extends javax.swing.JPanel implements WizardPane
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(jPanel1, gridBagConstraints);
 
@@ -254,6 +317,42 @@ public class FinalSettingsPanel extends javax.swing.JPanel implements WizardPane
         }
     }//GEN-LAST:event_fireHideInfoEvent
 
+    private void fireCalculateSupportsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateSupportsEvent
+        int avail = UIHelper.parseIntFromLabel(jAvailableSupports);
+        if (avail == 0) {
+            controller.setProblem("Keine Einzelunterstützungen verfügbar");
+            return;
+        }
+
+        if (calculator == null) {//not used yet
+            calculator = new DefenseCalculator();
+        } else {//in use or finished
+            if (calculator.isRunning()) {//in use...abort
+                calculator.abort();
+                return;
+            } else {//not in use...recalculate
+                if (calculator.hasResults() && JOptionPaneHelper.showQuestionConfirmBox(this, "Vorherige Berechnung verwerfen?", "Berechnung verwerfen", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                    //not recalculate
+                    return;
+                } else {
+                    //recalculate
+                    calculator = new DefenseCalculator();
+                }
+            }
+        }
+
+        controller.setProblem("Berechnung läuft...");
+        jCalculateButton.setText("Abbrechen");
+        calculator.setAllowMultiSupport(jAllowMultiSupport.isSelected());
+        calculator.start();
+        //wait until calculation is running
+        try {
+            Thread.sleep(20);
+        } catch (Exception e) {
+        }
+
+    }//GEN-LAST:event_fireCalculateSupportsEvent
+
     public void update() {
         jOverallDefendingVillages.setText(Integer.toString(VillagePanel.getSingleton().getUsedVillages().length));
         Set<Entry<Village, Integer>> entries = VillagePanel.getSingleton().getSplits().entrySet();
@@ -270,8 +369,46 @@ public class FinalSettingsPanel extends javax.swing.JPanel implements WizardPane
         jOverallFakes.setText(Integer.toString(defenseInfo[2]));
         jNeededSupports.setText(Integer.toString(defenseInfo[3]));
     }
+
+    public void notifyCalculationFinished() {
+        if (calculator.hasResults()) {
+            controller.setProblem(null);
+        } else {
+            controller.setProblem("Berechnung erzielte keine Ergebnisse");
+        }
+        jCalculateButton.setText("Unterstützungen berechnen");
+    }
+
+    public void notifyStatusUpdate(String pMessage) {
+        try {
+            StyledDocument doc = jTextPane1.getStyledDocument();
+            doc.insertString(doc.getLength(), "(" + dateFormat.format(new Date(System.currentTimeMillis())) + ") " + pMessage + "\n", doc.getStyle("Info"));
+            SwingUtilities.invokeLater(new Runnable() {
+
+                public void run() {
+                    scroll();
+                }
+            });
+        } catch (BadLocationException ble) {
+        }
+    }
+
+    private void scroll() {
+        Point point = new Point(0, (int) (jTextPane1.getSize().getHeight()));
+        JViewport vp = jScrollPane1.getViewport();
+        if ((vp == null) || (point == null)) {
+            return;
+        }
+        vp.setViewPosition(point);
+    }
+
+    public Defense[] getResults() {
+        return calculator.getResults();
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox jAllowMultiSupport;
     private javax.swing.JLabel jAvailableSupports;
+    private javax.swing.JButton jCalculateButton;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;
@@ -288,28 +425,35 @@ public class FinalSettingsPanel extends javax.swing.JPanel implements WizardPane
     private javax.swing.JLabel jOverallTargets;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextPane jTextPane1;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
-        int avail = UIHelper.parseIntFromLabel(jAvailableSupports);
-        if (avail == 0) {
-            controller.setProblem("Keine Einzelunterstützungen verfügbar");
+        if (calculator != null && calculator.isRunning()) {
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
-        controller.setProblem(null);
+        FinishPanel.getSingleton().update();
         return WizardPanelNavResult.PROCEED;
     }
 
     @Override
     public WizardPanelNavResult allowBack(String string, Map map, Wizard wizard) {
+        if (calculator != null && calculator.isRunning()) {
+            return WizardPanelNavResult.REMAIN_ON_PAGE;
+        }
         return WizardPanelNavResult.PROCEED;
 
     }
 
     @Override
     public WizardPanelNavResult allowFinish(String string, Map map, Wizard wizard) {
+        if (calculator != null && calculator.isRunning()) {
+            return WizardPanelNavResult.REMAIN_ON_PAGE;
+        }
         return WizardPanelNavResult.PROCEED;
     }
 }

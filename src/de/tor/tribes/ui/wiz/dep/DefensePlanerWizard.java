@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JComponent;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.netbeans.api.wizard.WizardDisplayer;
@@ -26,19 +27,20 @@ import org.netbeans.spi.wizard.WizardPanelProvider;
  * @author Torridity
  */
 public class DefensePlanerWizard extends WizardPanelProvider {
-    
+
     private static final String ID_WELCOME = "welcome-id";
     private static final String ID_ANALYSE = "analyse-id";
     private static final String ID_VILLAGES = "villages-id";
     private static final String ID_FILTER = "filter-id";
-    private static final String ID_TIME = "time-id";
-    
+    private static final String ID_CALCULATION = "calculation-id";
+    private static final String ID_FINISH = "finish-id";
+
     public DefensePlanerWizard() {
         super("DS Workbench - Verteidigungsplaner",
-                new String[]{ID_WELCOME, ID_ANALYSE, ID_VILLAGES, ID_FILTER, ID_TIME},
-                new String[]{"Willkommen", "Angriffe analysieren", "Verwendete Dörfer", "Filter", "Zeiteinstellungen"});
+                new String[]{ID_WELCOME, ID_ANALYSE, ID_VILLAGES, ID_FILTER, ID_CALCULATION, ID_FINISH},
+                new String[]{"Willkommen", "Angriffe analysieren", "Verwendete Dörfer", "Filter", "Berechnung", "Fertigstellung"});
     }
-    
+
     @Override
     protected JComponent createPanel(WizardController wc, String string, Map map) {
         if (string.equals(ID_WELCOME)) {
@@ -52,22 +54,25 @@ public class DefensePlanerWizard extends WizardPanelProvider {
         } else if (string.equals(ID_FILTER)) {
             FilterPanel.getSingleton().setController(wc);
             return FilterPanel.getSingleton();
-        } else if (string.equals(ID_TIME)) {
+        } else if (string.equals(ID_CALCULATION)) {
             FinalSettingsPanel.getSingleton().setController(wc);
             return FinalSettingsPanel.getSingleton();
+        } else if (string.equals(ID_FINISH)) {
+            FinishPanel.getSingleton().setController(wc);
+            return FinishPanel.getSingleton();
         }
         return null;
     }
-    
+
     private static List<SOSRequest> createSampleRequests() {
         int wallLevel = 20;
         int supportCount = 50;
         int maxAttackCount = 10;
         int maxFakeCount = 0;
-        
+
         List<SOSRequest> result = new LinkedList<SOSRequest>();
         Village[] villages = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
-        
+
         for (int i = 0; i < supportCount; i++) {
             int id = (int) Math.rint(Math.random() * (villages.length - 1));
             Village target = villages[id];
@@ -75,26 +80,26 @@ public class DefensePlanerWizard extends WizardPanelProvider {
             r.addTarget(target);
             SOSRequest.TargetInformation info = r.getTargetInformation(target);
             info.setWallLevel(wallLevel);
-            
+
             info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("spear"), (int) Math.rint(Math.random() * 14000));
             info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("sword"), (int) Math.rint(Math.random() * 14000));
             info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("heavy"), (int) Math.rint(Math.random() * 5000));
-            
+
             int cnt = (int) Math.rint(maxAttackCount * Math.random());
             for (int j = 0; j < cnt; j++) {
-                info.addAttack(DataHolder.getSingleton().getRandomVillageWithOwner(), new Date(System.currentTimeMillis() + Math.round(3600 * Math.random())));
+                info.addAttack(DataHolder.getSingleton().getRandomVillageWithOwner(), new Date(System.currentTimeMillis() + Math.round(DateUtils.MILLIS_PER_DAY * 7 * Math.random())));
                 for (int k = 0; k < (int) Math.rint(maxFakeCount * Math.random()); k++) {
                     info.addAttack(DataHolder.getSingleton().getRandomVillageWithOwner(), new Date(System.currentTimeMillis() + Math.round(3600 * Math.random())));
                 }
             }
             result.add(r);
         }
-        
+
         return result;
     }
-    
+
     public static void main(String[] args) {
-        
+
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         GlobalOptions.setSelectedServer("de47");
         ProfileManager.getSingleton().loadProfiles();
@@ -124,7 +129,7 @@ public class DefensePlanerWizard extends WizardPanelProvider {
         f.getContentPane().add(p);
         f.pack();
         f.setVisible(true);*/
-        
+
         WizardDisplayer.showWizard(wizard);
     }
 }

@@ -4,18 +4,13 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.TroopSplitDialog.TroopSplit;
 import de.tor.tribes.util.Constants;
 import java.awt.Color;
 import java.awt.Component;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
-import javax.swing.SwingConstants;
 
 /**
  *

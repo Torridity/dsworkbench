@@ -72,7 +72,7 @@ public class TagManager extends GenericManager<Tag> {
                 logger.info("No tags found under '" + pFile + "'");
             }
         }
-        revalidate();
+        revalidate(true);
     }
 
     public void updateLinkedTags() {

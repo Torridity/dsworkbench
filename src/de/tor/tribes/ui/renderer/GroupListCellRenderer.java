@@ -10,16 +10,20 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import java.awt.Color;
+import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.ui.components.GroupSelectionList;
+import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.ProfileManager;
 import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
+import javax.swing.UIManager;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -31,99 +35,59 @@ public class GroupListCellRenderer extends javax.swing.JPanel implements ListCel
     public GroupListCellRenderer() {
         initComponents();
     }
-
+    
     @Override
     public Component getListCellRendererComponent(JList list, Object pValue, int pIndex, boolean pSelected, boolean pHasFocus) {
         if (pSelected) {
             setForeground(list.getSelectionForeground());
             super.setBackground(list.getSelectionBackground());
+            jLabel2.setForeground(list.getSelectionForeground());
         } else {
             setForeground(list.getBackground());
             super.setBackground(list.getBackground());
+            jLabel2.setForeground(new java.awt.Color(0, 153, 255));
         }
-        ListItem item = (ListItem) pValue;
-        jLabel1.setText(item.getName());
+        GroupSelectionList.ListItem item = (GroupSelectionList.ListItem) pValue;
+        jLabel1.setText(item.getTag().toString());
         if (item.isSpecial()) {
             if (item.getState() == 0) {
-                jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_grey.png")));
+                jLabel2.setText("NICHT");
             } else {
-                jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_green.png")));
+                jLabel2.setText("->");
             }
         } else {
-            if (pIndex == list.getModel().getSize() - 1) {
-                jLabel2.setIcon(null);
-            } else {
-                switch (item.getState()) {
-                    case 0:
-                        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png")));
-                        break;
-                    case 1:
-                        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_green.png")));
-                        break;
-                    case 2:
-                        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_yellow.png")));
-                        break;
-                }
+            switch (item.getState()) {
+                case 1:
+                    jLabel2.setText("NICHT");
+                    break;
+                case 2:
+                    jLabel2.setText("UND");
+                    break;
+                case 3:
+                    jLabel2.setText("ODER");
+                    break;
+                default:
+                    jLabel2.setText("OHNE");
             }
         }
         return this;
-
     }
-
+    
     public void view() {
         JFrame f = new JFrame();
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        DefaultListModel model = new DefaultListModel();
-        model.addElement(new ListItem("Keine Gruppe"));
-        model.addElement(new ListItem("Test1"));
-        model.addElement(new ListItem("Test2"));
-        model.addElement(new ListItem("Test3"));
-        model.addElement(new ListItem("Test4"));
-        model.addElement(new ListItem("Test5"));
-        jList1.setModel(model);
-        jList1.setCellRenderer(this);
-        jList1.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    if (e.getButton() == MouseEvent.BUTTON1) {
-                        fireClickedEvent();
-                    } else {
-                        fireResetEvent();
-                    }
-                }
-            }
-        });
-        f.getContentPane().add(jScrollPane1);
+        JScrollPane p = new JScrollPane();
+        p.setViewportView(new GroupSelectionList());
+        f.getContentPane().add(p);
         f.pack();
         f.addWindowListener(new WindowAdapter() {
-
+            
             @Override
             public void windowClosing(WindowEvent e) {
             }
         });
+        
         f.setVisible(true);
-    }
-
-    private void fireClickedEvent() {
-        ListItem item = ((ListItem) jList1.getSelectedValue());
-        if (item.isSpecial()) {
-            item.switchState();
-            for (int i = 1; i < jList1.getModel().getSize(); i++) {
-                ListItem item1 = ((ListItem) jList1.getModel().getElementAt(i));
-                item1.resetState();
-            }
-        } else {
-            item.switchState();
-            ((ListItem) jList1.getModel().getElementAt(0)).resetState();
-        }
-        jList1.repaint();
-    }
-
-    private void fireResetEvent() {
-        ((ListItem) jList1.getSelectedValue()).resetState();
-        jList1.repaint();
     }
 
     /** This method is called from within the constructor to
@@ -152,13 +116,24 @@ public class GroupListCellRenderer extends javax.swing.JPanel implements ListCel
 
         jLabel1.setText("jLabel1");
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         add(jLabel1, gridBagConstraints);
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_grey.png"))); // NOI18N
-        add(jLabel2, new java.awt.GridBagConstraints());
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 8)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(0, 153, 255));
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("oder");
+        jLabel2.setMaximumSize(new java.awt.Dimension(30, 16));
+        jLabel2.setMinimumSize(new java.awt.Dimension(30, 16));
+        jLabel2.setPreferredSize(new java.awt.Dimension(30, 16));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        add(jLabel2, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
@@ -168,39 +143,18 @@ public class GroupListCellRenderer extends javax.swing.JPanel implements ListCel
     // End of variables declaration//GEN-END:variables
 
     public static void main(String[] args) {
-        new GroupListCellRenderer().view();
-    }
-}
-
-class ListItem {
-
-    private String name = null;
-    private int state = 0;
-
-    public ListItem(String pName) {
-        name = pName;
-    }
-
-    public void resetState() {
-        state = 0;
-    }
-
-    public void switchState() {
-        state++;
-        if (state == 3) {
-            state = 0;
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            // UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (Exception e) {
         }
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getState() {
-        return state;
-    }
-
-    public boolean isSpecial() {
-        return name.equals("Keine Gruppe");
+        
+        new GroupListCellRenderer().view();
+        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
+        GlobalOptions.setSelectedServer("de43");
+        DataHolder.getSingleton().loadData(false);
+        ProfileManager.getSingleton().loadProfiles();
+        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
+        GlobalOptions.loadUserData();
     }
 }

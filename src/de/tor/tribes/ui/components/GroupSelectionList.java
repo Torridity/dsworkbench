@@ -11,6 +11,7 @@ import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.renderer.GroupListCellRenderer;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.Point;
 import java.awt.event.KeyAdapter;
@@ -24,15 +25,18 @@ import java.util.regex.Pattern;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.swing.DefaultListModel;
-import javax.swing.JList;
+import javax.swing.UIManager;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author Torridity
  */
-public class GroupSelectionList extends JList implements GenericManagerListener {
+public class GroupSelectionList extends IconizedList implements GenericManagerListener {
 
-    public GroupSelectionList() {
+    public GroupSelectionList(String pResourceURL) {
+        super(pResourceURL);
         setCellRenderer(new GroupListCellRenderer());
 
         addKeyListener(new KeyAdapter() {
@@ -311,5 +315,21 @@ public class GroupSelectionList extends JList implements GenericManagerListener 
         public boolean isSpecial() {
             return tag.equals(NoTag.getSingleton());
         }
+    }
+
+    public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            // UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (Exception e) {
+        }
+
+        new GroupListCellRenderer().view();
+        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
+        GlobalOptions.setSelectedServer("de43");
+        DataHolder.getSingleton().loadData(false);
+        ProfileManager.getSingleton().loadProfiles();
+        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
+        GlobalOptions.loadUserData();
     }
 }

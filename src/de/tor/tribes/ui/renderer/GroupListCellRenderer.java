@@ -10,20 +10,16 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.components.GroupSelectionList;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.ProfileManager;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
-import javax.swing.UIManager;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -35,17 +31,22 @@ public class GroupListCellRenderer extends javax.swing.JPanel implements ListCel
     public GroupListCellRenderer() {
         initComponents();
     }
-    
+
     @Override
     public Component getListCellRendererComponent(JList list, Object pValue, int pIndex, boolean pSelected, boolean pHasFocus) {
         if (pSelected) {
-            setForeground(list.getSelectionForeground());
-            super.setBackground(list.getSelectionBackground());
+            setBackground(list.getSelectionForeground());
+            jLabel1.setBackground(list.getSelectionBackground());
+            jLabel2.setBackground(list.getSelectionBackground());
+            jLabel1.setForeground(list.getSelectionForeground());
             jLabel2.setForeground(list.getSelectionForeground());
         } else {
-            setForeground(list.getBackground());
-            super.setBackground(list.getBackground());
+            // setForeground(list.getBackground());
+            jLabel1.setBackground(Color.WHITE);
+            jLabel2.setBackground(Color.WHITE);
+            setOpaque(false);
             jLabel2.setForeground(new java.awt.Color(0, 153, 255));
+            jLabel1.setForeground(list.getForeground());
         }
         GroupSelectionList.ListItem item = (GroupSelectionList.ListItem) pValue;
         jLabel1.setText(item.getTag().toString());
@@ -72,21 +73,21 @@ public class GroupListCellRenderer extends javax.swing.JPanel implements ListCel
         }
         return this;
     }
-    
+
     public void view() {
         JFrame f = new JFrame();
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JScrollPane p = new JScrollPane();
-        p.setViewportView(new GroupSelectionList());
+        p.setViewportView(new GroupSelectionList(""));
         f.getContentPane().add(p);
         f.pack();
         f.addWindowListener(new WindowAdapter() {
-            
+
             @Override
             public void windowClosing(WindowEvent e) {
             }
         });
-        
+
         f.setVisible(true);
     }
 
@@ -112,9 +113,13 @@ public class GroupListCellRenderer extends javax.swing.JPanel implements ListCel
         });
         jScrollPane1.setViewportView(jList1);
 
+        setBackground(new java.awt.Color(255, 255, 255));
+        setOpaque(false);
         setLayout(new java.awt.GridBagLayout());
 
+        jLabel1.setBackground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("jLabel1");
+        jLabel1.setOpaque(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -123,12 +128,14 @@ public class GroupListCellRenderer extends javax.swing.JPanel implements ListCel
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         add(jLabel1, gridBagConstraints);
 
+        jLabel2.setBackground(new java.awt.Color(255, 255, 255));
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 8)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 153, 255));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("oder");
         jLabel2.setMaximumSize(new java.awt.Dimension(30, 16));
         jLabel2.setMinimumSize(new java.awt.Dimension(30, 16));
+        jLabel2.setOpaque(true);
         jLabel2.setPreferredSize(new java.awt.Dimension(30, 16));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -141,20 +148,4 @@ public class GroupListCellRenderer extends javax.swing.JPanel implements ListCel
     private javax.swing.JList jList1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
-
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            // UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
-        }
-        
-        new GroupListCellRenderer().view();
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de43");
-        DataHolder.getSingleton().loadData(false);
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-        GlobalOptions.loadUserData();
-    }
 }

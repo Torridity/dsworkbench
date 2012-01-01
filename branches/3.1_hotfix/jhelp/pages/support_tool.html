@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>DS Workbench Dokumentation</title>
+</head>
+
+<body style="background-color:#E1E1E1">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><img src="../images/ul.gif"></td>
+    <td style="background-image:url(../images/t.gif);background-repeat:repeat" width="100%"/>
+    <td><img src="../images/ur.gif"></td>
+  </tr>
+   <tr height="600px" valign="top">
+    <td style="background-image:url(../images/l.gif);background-repeat:repeat-y">&nbsp;</td>
+    <td style="background-image:url(../images/c.gif);background-repeat:repeat" width="100%"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td colspan="2"><h2 style="color:#953333">Das Unterstützungswerkzeug</h2></td>
+      </tr>
+      <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+      <tr>
+        <td colspan="2"><img src="../images/screens/support_tool.gif" width="229" height="198"></td>
+      </tr>
+	        <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	        <tr>
+        <td colspan="2"><p>Voraussetzung f&uuml;r die Verwendung des Unterst&uuml;tzungswerkzeugs sind vorhandene Truppeninformationen in der <a href="troops_view.html"><em>Truppen&uuml;bersicht</em></a>. Diese k&ouml;nnen entweder aus dem Spiel <a href="import_ingame.html"><em>importiert</em></a> oder manuell in der <a href="troops_view.html"><em>Truppen&uuml;bersicht</em></a> eingetragen werden. Relevant sind hier nur die <strong>Eigenen Truppen</strong>, da dies die einzigen Truppen sind &uuml;ber die der Spieler verf&uuml;gen kann.</p>
+          <p>Die Anzahl der Einstellungen des Unterst&uuml;tzungswerkzeuges ist recht &uuml;berschaubar. Nat&uuml;rlich muss zuerst die gew&uuml;nschte Ankunftzeit angegebene werden. Die Option &quot;Nur Deff ber&uuml;cksichtigen&quot; hat den Hintergrund, dass man im Notfall durchaus mal mit LKav oder sonstiger Off ein AG blocken kann, daher ist es f&uuml;r diese F&auml;lle m&ouml;glich, auch Off-Einheiten als potentielle Unterst&uuml;tzung zu ber&uuml;cksichtigen, indem man den Haken entfernt.<br>          
+              <br>
+              Soll nur Deff verwendet werden, ignoriert der Unterst&uuml;tzungsrechner alle Einheiten au&szlig;er <em>Speertr&auml;ger</em>, <em>Schwertk&auml;mpfer</em>, <em>Bogensch&uuml;tze</em>, <em>Schwere Kavallerie</em> und den <em>Paladin</em>. Ansonsten werden nur <em>Sp&auml;her</em>, <em>Rammen</em> und <em>AGs</em> ignoriert, da sie entweder keine oder kaum Verteidigungswirkung haben. &Auml;hnlich verh&auml;lt es sich mit der Liste der ber&uuml;cksichtigten Gruppen. Hier kann man D&ouml;rfer mit bestimmten Gruppen von Anfang an ausklammern. So k&ouml;nnen etwa Sp&auml;hd&ouml;rfer abgew&auml;hlt werden, da der Unterst&uuml;tzungsrechner ihre Einheiten ohnehin ignoriert. <br>          
+              <br>
+              Letztendlich gibt das Feld &quot;Min. Anzahl Einheiten&quot; die Mindestanzahl der <u>langsamsten, m&ouml;glichen Einheit</u> an. Dies dient dazu, dass man nicht Unmengen an Truppenbewegungen aufgelistet bekommt, die am Ende f&uuml;r nur 500 Einheiten im Zieldorf sorgen. Klickt man auf &quot;Berechnen&quot; wird <em>DS Workbench</em> versuchen, m&ouml;gliche Unterst&uuml;tzungen zu bestimmen. (siehe unten) </p></td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr valign="middle">
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/help.png" width="24" height="24"></div></td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE"> Wie bereits im Text hervorgehoben, bezieht sich der Wert der minimalen Anzahl Einheiten auf die langsamste, m&ouml;gliche Einheit. Nehmen wir beispielsweise ein Dorf, in dem 300 Speertr&auml;ger und 9000 Schwertk&auml;mpfer stehen. Die Unterst&uuml;tzung muss in 20 Minuten am Ziel sein, die minimale Anzahl Einheiten ist auf 500 eingestellt. Demnach wird das eben genannte Dorf f&uuml;r eine m&ouml;gliche Unterst&uuml;tzung komplett ignoriert, da die 9000 Schwertk&auml;mpfer nicht rechtzeitig ankommen w&uuml;rden und  die 300 Speertr&auml;ger die 500 Einheiten Grenze nicht &uuml;bersteigen.
+          </td>
+       </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr>
+        <td colspan="2"><h3 style="color:#953333">Mögliche Unterstützungen</h3></td>
+      </tr>
+	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr>
+        <td colspan="2"><img src="../images/screens/support_tool_results.gif" width="280" height="201"></td>
+      </tr>
+	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2">Das Ergebnisfenster zeigt die m&ouml;glichen Unterst&uuml;tzungen f&uuml;r die gew&auml;hlten Einstellungen. Die zwei Buttons im oberen Bereich dienen dazu, die gesamte Verteidigungskraft aller Unterst&uuml;tzungen anzuzeigen, bzw. die Laufzeiten f&uuml;r die gew&auml;hlte Unterst&uuml;tzung. Gew&auml;hlte Unterst&uuml;tzungen k&ouml;nnen direkt aus der Tabelle &uuml;ber die entsprechenden Shortcut-Funktionen in einen Angriffsplan kopiert oder als BB-Code exportiert werden.</td>
+      </tr>
+	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <td colspan="2"><h3 style="color:#953333">Shortcut-Funktionen</h3></td>
+      </tr>
+	    <tr>
+	   <td colspan="2">&nbsp;
+         </td>
+      </tr>
+	    <tr>
+	   <td colspan="2"><ul>
+	     <li>Kopieren von Unterst&uuml;tzungen per STRG+C: Kopiert gew&auml;hlte Unterst&uuml;tzungen in die Zwischenablage. Von dort k&ouml;nnen sie z.B. in die <a href="attack_view.html"><em>Angriffs&uuml;bersicht</em></a> per STRG+V eingef&uuml;gt werden. </li>
+	     <li>BB-Code per STRG+B kopieren: Kopiert gew&auml;hlte Unterst&uuml;tzungen als BB-Codes in die Zwischenablage. </li>
+	     <li>L&ouml;schen per ENTF: L&ouml;scht gew&auml;hlte Unterst&uuml;tzungen per ENTF.</li>
+	     </ul>         </td>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  
+	  <tr valign="middle">
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/forbidden.png" width="24" height="24"></div></td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE"> Der Sonderfall der Unterst&uuml;tzung mit Paladin ist momentan <u>nicht</u> ber&uuml;cksichtigt. Der Paladin z&auml;hlt als eine normale Einheit mit der Laufzeit von 10 Minuten pro Feld. Daher w&uuml;rde das oben erw&auml;hnte Dorf mit den verwendeten Einstellungen auch wegfallen, wenn dort ein Paladin stationiert w&auml;re.</td>
+       </tr>
+    </table>
+	</td>
+</td>
+    <td style="background-image:url(../images/r.gif);background-repeat:repeat-y">&nbsp;</td>
+  </tr>
+  <tr>
+    <td><img src="../images/ll.gif" width="20" height="20"></td>
+    <td style="background-image:url(../images/b.gif);background-repeat:repeat-x" width="100%">&nbsp;</td>
+    <td><img src="../images/lr.gif" width="20" height="20"></td>
+  </tr>
+</table>
+</body>
+</html>

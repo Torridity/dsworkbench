@@ -54,7 +54,7 @@ public class TroopFilterElement {
     }
     
     public boolean allowsVillage(Village pVillage) {
-        VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage);
+        VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.OWN);
         if (holder == null) {
             return false;
         }

@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.types.ext.Village;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.apache.commons.lang.math.IntRange;

@@ -11,14 +11,14 @@
 package de.tor.tribes.ui.views;
 
 import de.tor.tribes.control.GenericManagerListener;
-import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.Conquer;
 import de.tor.tribes.types.test.DummyVillage;
-import de.tor.tribes.types.Tribe;
-import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
-import de.tor.tribes.ui.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.GenericTestPanel;
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.models.ConquerTableModel;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;

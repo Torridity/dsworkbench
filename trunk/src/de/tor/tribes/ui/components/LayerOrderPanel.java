@@ -10,12 +10,12 @@
  */
 package de.tor.tribes.ui.components;
 
-import de.tor.tribes.ui.MapPanel;
+import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
-import de.tor.tribes.util.LayerOrderTooltipListener;
+import de.tor.tribes.util.interfaces.LayerOrderTooltipListener;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;

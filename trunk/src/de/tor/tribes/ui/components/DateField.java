@@ -90,7 +90,6 @@ public final class DateField extends JPanel {
             dlg = new JDialog(new JFrame(), true);
             dlg.setLocation(point);
             dlg.setResizable(false);
-            dlg.setUndecorated(true);
             JPanel p = new JPanel();
             p.add(dp);
             dlg.getContentPane().add(p);

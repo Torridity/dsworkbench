@@ -4,9 +4,9 @@
  */
 package de.tor.tribes.util;
 
-import de.tor.tribes.types.Barbarians;
-import de.tor.tribes.types.Tribe;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Barbarians;
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;

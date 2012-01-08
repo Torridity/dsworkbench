@@ -6,11 +6,11 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.Ally;
-import de.tor.tribes.types.BarbarianAlly;
-import de.tor.tribes.types.Barbarians;
+import de.tor.tribes.types.ext.Ally;
+import de.tor.tribes.types.ext.BarbarianAlly;
+import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.Marker;
-import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.ext.Tribe;
 import javax.swing.ImageIcon;
 
 /**

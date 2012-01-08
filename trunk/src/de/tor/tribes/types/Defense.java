@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.util.DSCalculator;
 import java.util.LinkedList;
@@ -15,51 +16,60 @@ import java.util.List;
  */
 public class Defense {
 
-    private DefenseElement defense = null;
-    private List<Village> supporters = null;
+    private DefenseInformation parent = null;
+    private Village supporter = null;
     private UnitHolder unit = null;
+    private boolean transferredToBrowser = false;
 
-    public Defense(DefenseElement pElement, UnitHolder pUnit) {
-        defense = pElement;
+    public Defense(DefenseInformation pParent, Village pSupporter, UnitHolder pUnit) {
+        parent = pParent;
+        supporter = pSupporter;
         unit = pUnit;
-        supporters = new LinkedList<Village>();
     }
 
-    public boolean addSupport(Village pSource, boolean pPrimary, boolean pMultiUse) {
-        long runtime = Math.round(DSCalculator.calculateDistance(pSource, defense.getTarget()) * unit.getSpeed()) * 1000l;
-        if (defense.getFirstAttack().getTime() - runtime > System.currentTimeMillis()) {
-            //high priority
-            if (pMultiUse || !supporters.contains(pSource)) {
-                supporters.add(pSource);
-                return true;
-            }
-        } else if (defense.getLastAttack().getTime() - runtime > System.currentTimeMillis()) {
-            //low priority
-            if (!pPrimary) {
-                if (pMultiUse || !supporters.contains(pSource)) {
-                    supporters.add(pSource);
-                    return true;
-                }
-            }
-        } else if (defense.getLastAttack().getTime() - runtime < System.currentTimeMillis()) {
-            //impossible
-        }
-        return false;
+    public UnitHolder getUnit() {
+        return unit;
     }
 
-    public boolean isFinished() {
-        return supporters.size() == defense.getNeededSupports();
+    public Village getSupporter() {
+        return supporter;
     }
 
-    public Village getTarget() {
-        return defense.getTarget();
+    public void setUnit(UnitHolder unit) {
+        this.unit = unit;
+    }
+
+    public void setTransferredToBrowser(boolean transferredToBrowser) {
+        this.transferredToBrowser = transferredToBrowser;
+    }
+
+    public boolean isTransferredToBrowser() {
+        return transferredToBrowser;
     }
 
     public int getSupports() {
-        return supporters.size();
+        return parent.getSupports().length;
     }
 
     public int getNeededSupports() {
-        return defense.getNeededSupports();
+        return parent.getNeededSupports();
+    }
+
+    public Village getTarget() {
+        return parent.getTarget();
+    }
+
+    public long getBestSendTime() {
+        long first = parent.getFirstAttack().getTime();
+        long moveTime = DSCalculator.calculateMoveTimeInMillis(supporter, parent.getTarget(), unit.getSpeed());
+        return first - moveTime;
+
+    }
+
+    public long getWorstSendTime() {
+        long first = parent.getLastAttack().getTime();
+        long moveTime = DSCalculator.calculateMoveTimeInMillis(supporter, parent.getTarget(), unit.getSpeed());
+        return first - moveTime;
+
     }
 }

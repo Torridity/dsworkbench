@@ -4,8 +4,8 @@
  */
 package de.tor.tribes.ui.models;
 
-import de.tor.tribes.types.Tribe;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.church.ChurchManager;
 import java.awt.Color;
 import javax.swing.table.AbstractTableModel;

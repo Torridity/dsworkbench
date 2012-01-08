@@ -7,21 +7,14 @@ package de.tor.tribes.util.troops;
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.Tag;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Image;
 import java.io.File;
 import java.io.FileWriter;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import javax.imageio.ImageIO;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
@@ -164,7 +157,6 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
     }
 
     public int getElementCount(TROOP_TYPE pType) {
-
         return getElementCount(getGroupForType(pType));
     }
 

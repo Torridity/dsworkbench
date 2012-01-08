@@ -20,6 +20,8 @@ public class Constants {
     public final static Color DS_ROW_A = new Color(246, 235, 202);
     public final static Color DS_ROW_B = new Color(251, 244, 221);
     public final static Color DS_DEFAULT_MARKER = new Color(130, 60, 10);
+    public final static Color DS_DEFAULT_BACKGROUND = new Color(35, 125, 0);
+    
     public final static Color ENEMY_MARKER = Color.RED;
     public final static Color NAP_MARKER = new Color(127, 0, 127);
     public final static Color ALLY_MARKER = new Color(0, 160, 244);

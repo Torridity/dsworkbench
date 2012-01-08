@@ -4,9 +4,9 @@
  */
 package de.tor.tribes.ui.editors;
 
-import de.tor.tribes.ui.BBPanel;
+import de.tor.tribes.ui.panels.BBPanel;
 import de.tor.tribes.ui.views.DSWorkbenchNotepad;
-import de.tor.tribes.util.BBChangeListener;
+import de.tor.tribes.util.interfaces.BBChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;

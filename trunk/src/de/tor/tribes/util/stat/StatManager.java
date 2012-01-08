@@ -5,9 +5,9 @@
 package de.tor.tribes.util.stat;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.Ally;
-import de.tor.tribes.types.NoAlly;
-import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.ext.Ally;
+import de.tor.tribes.types.ext.NoAlly;
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.TribeStatsElement;
 import de.tor.tribes.util.GlobalOptions;
 import java.io.File;

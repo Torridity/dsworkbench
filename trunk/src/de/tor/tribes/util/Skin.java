@@ -9,24 +9,20 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.io.WorldDecorationHolder;
-import de.tor.tribes.ui.SkinPreviewFrame;
+import de.tor.tribes.ui.windows.SkinPreviewFrame;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import javax.imageio.ImageIO;
 import org.apache.log4j.Logger;
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
-import de.tor.tribes.ui.MapPanel;
-import java.awt.Color;
+import de.tor.tribes.ui.panels.MapPanel;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Transparency;
-import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -160,7 +156,7 @@ public class Skin {
             Graphics2D g2d = image.createGraphics();
             ImageUtils.setupGraphics(g2d);
             if (i == 0) {
-                g2d.setColor(new Color(35, 125, 0));
+                g2d.setColor(Constants.DS_DEFAULT_BACKGROUND);
                 g2d.fillRect(0, 0, 10, 10);
             }
             g2d.dispose();

@@ -4,8 +4,8 @@
  */
 package de.tor.tribes.util.bb;
 
-import de.tor.tribes.types.AbstractForm;
-import de.tor.tribes.types.Circle;
+import de.tor.tribes.types.drawing.AbstractForm;
+import de.tor.tribes.types.drawing.Circle;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;

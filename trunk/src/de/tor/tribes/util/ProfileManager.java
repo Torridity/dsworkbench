@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.util;
 
+import de.tor.tribes.util.interfaces.ProfileManagerListener;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.UserProfile;
 import java.io.File;

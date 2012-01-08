@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Calendar;
@@ -47,10 +48,10 @@ public class TimePicker extends javax.swing.JPanel {
     private int pMinute = 55;
     private CrossedLabel selectedHour = null;
     private CrossedLabel selectedMinute = null;
-    JPanel hourPanel = new JPanel();
-    CrossedLabel[][] hourLabels = new CrossedLabel[12][2];
-    CrossedLabel[][] minuteLabels = null;
-    JDialog pParent;
+    private JPanel hourPanel = new JPanel();
+    private CrossedLabel[][] hourLabels = new CrossedLabel[12][2];
+    private CrossedLabel[][] minuteLabels = null;
+    private JDialog pParent;
 
     /** Creates new form TimePicker */
     public TimePicker(Date pDate) {
@@ -127,7 +128,7 @@ public class TimePicker extends javax.swing.JPanel {
             label.setOpaque(true);
             label.setBackground(Constants.DS_BACK_LIGHT);
             label.setFont(smallFont);
-            label.addMouseListener(new MouseListener() {
+            label.addMouseListener(new MouseAdapter() {
 
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -138,12 +139,6 @@ public class TimePicker extends javax.swing.JPanel {
                     selectedHour = ((CrossedLabel) e.getSource());
                     selectedHour.cross();
                     pHour = Integer.parseInt(selectedHour.getText());
-                }
-
-                public void mousePressed(MouseEvent e) {
-                }
-
-                public void mouseReleased(MouseEvent e) {
                 }
 
                 public void mouseEntered(MouseEvent e) {

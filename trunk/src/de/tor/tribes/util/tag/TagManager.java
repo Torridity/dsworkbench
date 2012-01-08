@@ -10,7 +10,7 @@ import de.tor.tribes.types.LinkedTag;
 import de.tor.tribes.types.Tag;
 import java.util.List;
 import org.apache.log4j.Logger;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;

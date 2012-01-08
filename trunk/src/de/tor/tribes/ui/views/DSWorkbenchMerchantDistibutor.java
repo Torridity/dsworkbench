@@ -14,10 +14,10 @@ import com.jidesoft.swing.JideTabbedPane;
 import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.UserProfile;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.types.VillageMerchantInfo;
-import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
-import de.tor.tribes.ui.GenericTestPanel;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
+import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.SentNotSentCellRenderer;
@@ -32,14 +32,14 @@ import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MouseGestureHandler;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.ProfileManager;
-import de.tor.tribes.util.ProfileManagerListener;
+import de.tor.tribes.util.interfaces.ProfileManagerListener;
 import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.TableHelper;
 import de.tor.tribes.util.UIHelper;
-import de.tor.tribes.util.algo.MerchantDestination;
+import de.tor.tribes.util.algo.types.MerchantDestination;
 import de.tor.tribes.util.algo.MerchantDistributor;
-import de.tor.tribes.util.algo.MerchantSource;
-import de.tor.tribes.util.algo.Order;
+import de.tor.tribes.util.algo.types.MerchantSource;
+import de.tor.tribes.util.algo.types.Order;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Point;
@@ -1663,6 +1663,10 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame impl
 
         public boolean hasGoods() {
             return resourceTransports.get(0).getAmount() > 0 || resourceTransports.get(1).getAmount() > 0 || resourceTransports.get(2).getAmount() > 0;
+        }
+        
+        public Village getTarget(){
+            return target;
         }
     }
 

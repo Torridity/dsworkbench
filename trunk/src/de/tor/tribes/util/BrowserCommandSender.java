@@ -9,17 +9,19 @@ import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.UserProfile;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor.Transport;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import java.awt.Desktop;
 import java.net.URI;
+import java.util.Hashtable;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 
 /**
  * http://de8.die-staemme.de/game.php?t=743256&village=269739&screen=place
  * http://de8.die-staemme.de/game.php?t=743256&village=273090&screen=place&mode=command&target=285904
+ *
  * @author Charon
  */
 public class BrowserCommandSender {
@@ -64,7 +66,7 @@ public class BrowserCommandSender {
             if (browser == null || browser.length() < 1) {
                 Desktop.getDesktop().browse(new URI(url));
             } else {
-                 Process p = Runtime.getRuntime().exec(new String[]{browser, url});
+                Process p = Runtime.getRuntime().exec(new String[]{browser, url});
                 p.waitFor();
             }
 
@@ -102,7 +104,7 @@ public class BrowserCommandSender {
             String browser = GlobalOptions.getProperty("default.browser");
             if (browser == null || browser.length() < 1) {
                 Desktop.getDesktop().browse(new URI(url));
-            } else {              
+            } else {
                 Process p = Runtime.getRuntime().exec(new String[]{browser, url});
                 p.waitFor();
             }
@@ -120,13 +122,51 @@ public class BrowserCommandSender {
     public static boolean sendTroops(Village pSource, Village pTarget) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
-            logger.debug("Transfer troops to browser for ville '" + pSource + "' to '" + pTarget + "'");
+            logger.debug("Transfer troops to browser for village '" + pSource + "' to '" + pTarget + "'");
             String url = baseURL + "/game.php?village=";
             int uvID = GlobalOptions.getSelectedProfile().getUVId();
             if (uvID >= 0) {
                 url = baseURL + "/game.php?t=" + uvID + "&village=";
             }
             url += pSource.getId() + "&screen=place&mode=command&target=" + pTarget.getId();
+            url += "&ts=" + System.currentTimeMillis();
+            String browser = GlobalOptions.getProperty("default.browser");
+            if (browser == null || browser.length() < 1) {
+                Desktop.getDesktop().browse(new URI(url));
+            } else {
+                Process p = Runtime.getRuntime().exec(new String[]{browser, url});
+                p.waitFor();
+            }
+
+            try {
+                Thread.sleep(100);
+            } catch (Exception ignored) {
+            }
+        } catch (Throwable t) {
+            logger.error("Failed to open browser window", t);
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean sendTroops(Village pSource, Village pTarget, Hashtable<UnitHolder, Integer> pTroops) {
+        try {
+            String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+            logger.debug("Transfer troops to browser for village '" + pSource + "' to '" + pTarget + "'");
+            String url = baseURL + "/game.php?village=";
+            int uvID = GlobalOptions.getSelectedProfile().getUVId();
+            if (uvID >= 0) {
+                url = baseURL + "/game.php?t=" + uvID + "&village=";
+            }
+            url += pSource.getId() + "&screen=place&mode=command&target=" + pTarget.getId();
+            url += "&type=0";
+            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                Integer amount = pTroops.get(unit);
+                if (amount == null) {
+                    amount = 0;
+                }
+                url += "&" + unit.getPlainName() + "=" + amount;
+            }
             url += "&ts=" + System.currentTimeMillis();
             String browser = GlobalOptions.getProperty("default.browser");
             if (browser == null || browser.length() < 1) {

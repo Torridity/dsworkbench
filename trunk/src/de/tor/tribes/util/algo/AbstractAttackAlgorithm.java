@@ -4,9 +4,11 @@
  */
 package de.tor.tribes.util.algo;
 
+import de.tor.tribes.util.algo.types.DistanceMapping;
+import de.tor.tribes.util.algo.types.TimeFrame;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractTroopMovement;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.algo.AlgorithmLogPanel;
 import de.tor.tribes.util.ServerSettings;
 import java.util.Collections;
@@ -20,7 +22,7 @@ import org.apache.log4j.Logger;
  * @author Jejkal
  */
 public abstract class AbstractAttackAlgorithm extends Thread {
-
+    
     private static Logger logger = Logger.getLogger("AttackAlgorithm");
     private List<AbstractTroopMovement> results = null;
     private Hashtable<UnitHolder, List<Village>> sources = null;
@@ -32,7 +34,10 @@ public abstract class AbstractAttackAlgorithm extends Thread {
     boolean fakeOffTargets = false;
     private AlgorithmListener mListener = null;
     private AlgorithmLogPanel mLogPanel = null;
-
+    private boolean running = false;
+    private boolean aborted = false;
+    private LogListener listener = null;
+    
     public void initialize(
             Hashtable<UnitHolder, List<Village>> pSources,
             Hashtable<UnitHolder, List<Village>> pFakes,
@@ -51,7 +56,15 @@ public abstract class AbstractAttackAlgorithm extends Thread {
         fakeOffTargets = pFakeOffTargets;
         mLogPanel = pLogPanel;
     }
-
+    
+    public void setLogListener(LogListener pListener) {
+        listener = pListener;
+    }
+    
+    public LogListener getLogListener() {
+        return listener;
+    }
+    
     public abstract List<AbstractTroopMovement> calculateAttacks(
             Hashtable<UnitHolder, List<Village>> pSources,
             Hashtable<UnitHolder, List<Village>> pFakes,
@@ -60,46 +73,62 @@ public abstract class AbstractAttackAlgorithm extends Thread {
             Hashtable<Village, Integer> pMaxAttacksTable,
             TimeFrame pTimeFrame,
             boolean pFakeOffTargets);
-
+    
     public void logText(String pText) {
         if (mLogPanel != null) {
             mLogPanel.addText(pText);
         }
+        if (listener != null) {
+            listener.logMessage(pText);
+        }
     }
-
+    
     public void logInfo(String pText) {
         if (mLogPanel != null) {
             mLogPanel.addInfo(pText);
         }
+        if (listener != null) {
+            listener.logMessage(pText);
+        }
     }
-
+    
     public void logError(String pText) {
         if (mLogPanel != null) {
             mLogPanel.addError(pText);
         }
+        
+        if (listener != null) {
+            listener.logMessage(pText);
+        }
     }
-
+    
     public void updateStatus(int pCurrentStatus, int pMaxStatus) {
         if (mLogPanel != null) {
             mLogPanel.updateStatus(pCurrentStatus, pMaxStatus);
         }
-    }
-
-    public boolean isAborted() {
-        if (mLogPanel != null) {
-            return mLogPanel.isAborted();
+        
+        if (listener != null) {
+            listener.updateProgress(100.0 * (double) pCurrentStatus / (double) pMaxStatus);
         }
-        return false;
+        
     }
-
+    
+    public boolean isAborted() {
+        return aborted;
+    }
+    
+    public void abort() {
+        aborted = true;
+    }
+    
     public TimeFrame getTimeFrame() {
         return timeFrame;
     }
-
+    
     public List<AbstractTroopMovement> getResults() {
         return results;
     }
-
+    
     public void execute(AlgorithmListener pListener) {
         mListener = pListener;
         start();
@@ -115,10 +144,10 @@ public abstract class AbstractAttackAlgorithm extends Thread {
         }
         return cnt;
     }
-
+    
     public static List<DistanceMapping> buildSourceTargetsMapping(Village pSource, List<Village> pTargets, boolean pIsSnob) {
         List<DistanceMapping> mappings = new LinkedList<DistanceMapping>();
-
+        
         for (Village target : pTargets) {
             DistanceMapping mapping = new DistanceMapping(pSource, target);
             if (pIsSnob) {
@@ -130,13 +159,14 @@ public abstract class AbstractAttackAlgorithm extends Thread {
                 mappings.add(mapping);
             }
         }
-
+        
         Collections.sort(mappings);
         return mappings;
     }
-
+    
     @Override
     public void run() {
+        running = true;
         try {
             results = calculateAttacks(sources, fakes, targets, fakeTargets, maxAttacksTable, timeFrame, fakeOffTargets);
         } catch (Exception e) {
@@ -144,6 +174,29 @@ public abstract class AbstractAttackAlgorithm extends Thread {
             logger.error("An error occured during calculation", e);
             results = new LinkedList<AbstractTroopMovement>();
         }
-        mListener.fireCalculationFinishedEvent(this);
+        running = false;
+        if (listener != null) {
+            listener.calculationFinished();
+        }
+        if (mListener != null) {
+            mListener.fireCalculationFinishedEvent(this);
+        }
+    }
+    
+    public boolean hasResults() {
+        return results != null && !results.isEmpty();
+    }
+    
+    public boolean isRunning() {
+        return running;
+    }
+    
+    public static interface LogListener {
+        
+        public void logMessage(String pMessage);
+        
+        public void updateProgress(double pPercent);
+        
+        public void calculationFinished();
     }
 }

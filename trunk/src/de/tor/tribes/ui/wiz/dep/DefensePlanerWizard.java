@@ -6,14 +6,19 @@ package de.tor.tribes.ui.wiz.dep;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.SOSRequest;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.TargetInformation;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ProfileManager;
+import de.tor.tribes.util.sos.SOSManager;
+import java.awt.BorderLayout;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.UIManager;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
@@ -38,7 +43,7 @@ public class DefensePlanerWizard extends WizardPanelProvider {
     public DefensePlanerWizard() {
         super("DS Workbench - Verteidigungsplaner",
                 new String[]{ID_WELCOME, ID_ANALYSE, ID_VILLAGES, ID_FILTER, ID_CALCULATION, ID_FINISH},
-                new String[]{"Willkommen", "Angriffe analysieren", "Verwendete Dörfer", "Filter", "Berechnung", "Fertigstellung"});
+                new String[]{"Willkommen", "Angriffe analysieren", "Unterstützende Dörfer", "Filter", "Berechnung", "Fertigstellung"});
     }
 
     @Override
@@ -46,39 +51,39 @@ public class DefensePlanerWizard extends WizardPanelProvider {
         if (string.equals(ID_WELCOME)) {
             return WelcomePanel.getSingleton();
         } else if (string.equals(ID_ANALYSE)) {
-            AnalysePanel.getSingleton().setController(wc);
-            return AnalysePanel.getSingleton();
+            DefenseAnalysePanel.getSingleton().setController(wc);
+            return DefenseAnalysePanel.getSingleton();
         } else if (string.equals(ID_VILLAGES)) {
-            VillagePanel.getSingleton().setController(wc);
-            return VillagePanel.getSingleton();
+            DefenseSourcePanel.getSingleton().setController(wc);
+            return DefenseSourcePanel.getSingleton();
         } else if (string.equals(ID_FILTER)) {
-            FilterPanel.getSingleton().setController(wc);
-            return FilterPanel.getSingleton();
+            DefenseFilterPanel.getSingleton().setController(wc);
+            return DefenseFilterPanel.getSingleton();
         } else if (string.equals(ID_CALCULATION)) {
-            FinalSettingsPanel.getSingleton().setController(wc);
-            return FinalSettingsPanel.getSingleton();
+            DefenseCalculationSettingsPanel.getSingleton().setController(wc);
+            return DefenseCalculationSettingsPanel.getSingleton();
         } else if (string.equals(ID_FINISH)) {
-            FinishPanel.getSingleton().setController(wc);
-            return FinishPanel.getSingleton();
+            return DefenseFinishPanel.getSingleton();
         }
         return null;
     }
 
     private static List<SOSRequest> createSampleRequests() {
         int wallLevel = 20;
-        int supportCount = 50;
-        int maxAttackCount = 10;
+        int supportCount = 100;
+        int maxAttackCount = 50;
         int maxFakeCount = 0;
 
         List<SOSRequest> result = new LinkedList<SOSRequest>();
         Village[] villages = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
+        Village[] attackerVillages = DataHolder.getSingleton().getTribeByName("Alexander25").getVillageList();
 
         for (int i = 0; i < supportCount; i++) {
             int id = (int) Math.rint(Math.random() * (villages.length - 1));
             Village target = villages[id];
             SOSRequest r = new SOSRequest(target.getTribe());
             r.addTarget(target);
-            SOSRequest.TargetInformation info = r.getTargetInformation(target);
+            TargetInformation info = r.getTargetInformation(target);
             info.setWallLevel(wallLevel);
 
             info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("spear"), (int) Math.rint(Math.random() * 14000));
@@ -87,9 +92,13 @@ public class DefensePlanerWizard extends WizardPanelProvider {
 
             int cnt = (int) Math.rint(maxAttackCount * Math.random());
             for (int j = 0; j < cnt; j++) {
-                info.addAttack(DataHolder.getSingleton().getRandomVillageWithOwner(), new Date(System.currentTimeMillis() + Math.round(DateUtils.MILLIS_PER_DAY * 7 * Math.random())));
+                int idx = (int) Math.rint(Math.random() * (attackerVillages.length - 2));
+                Village v = attackerVillages[idx];
+                info.addAttack(v, new Date(System.currentTimeMillis() + Math.round(DateUtils.MILLIS_PER_DAY * 7 * Math.random())));
                 for (int k = 0; k < (int) Math.rint(maxFakeCount * Math.random()); k++) {
-                    info.addAttack(DataHolder.getSingleton().getRandomVillageWithOwner(), new Date(System.currentTimeMillis() + Math.round(3600 * Math.random())));
+                    idx = (int) Math.rint(Math.random() * (attackerVillages.length - 2));
+                    v = attackerVillages[idx];
+                    info.addAttack(v, new Date(System.currentTimeMillis() + Math.round(3600 * Math.random())));
                 }
             }
             result.add(r);
@@ -98,18 +107,39 @@ public class DefensePlanerWizard extends WizardPanelProvider {
         return result;
     }
 
-    public static void main(String[] args) {
-
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de47");
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de47")[0]);
-        DataHolder.getSingleton().loadData(false);
-        GlobalOptions.loadUserData();
+    public static void show(JFrame pParent) {
         WizardPanelProvider provider = new DefensePlanerWizard();
         Wizard wizard = provider.createWizard();
-        AnalysePanel.getSingleton().setData(createSampleRequests());
-        /* final JFrame f = new JFrame();
+        pParent.getContentPane().setLayout(new BorderLayout());
+        WizardDisplayer.installInContainer(pParent, BorderLayout.CENTER, wizard, null, null, null);
+        pParent.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        pParent.pack();
+        pParent.setVisible(true);
+    }
+
+    public static void main(String[] args) throws Exception {
+        try {
+            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (Exception e) {
+        }
+
+        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
+        GlobalOptions.setSelectedServer("de43");
+        ProfileManager.getSingleton().loadProfiles();
+        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
+        DataHolder.getSingleton().loadData(false);
+        GlobalOptions.loadUserData();
+
+        for (SOSRequest r : createSampleRequests()) {
+            SOSManager.getSingleton().addManagedElement(r);
+        }
+
+
+        WizardPanelProvider provider = new DefensePlanerWizard();
+        Wizard wizard = provider.createWizard();
+        // DefenseAnalysePanel.getSingleton().setData(createSampleRequests());
+       /*  final JFrame f = new JFrame();
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JPanel p = new JPanel();
         p.setLayout(new BorderLayout());

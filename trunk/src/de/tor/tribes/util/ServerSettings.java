@@ -26,6 +26,7 @@ public class ServerSettings {
     private int SNOB_RANGE = 70;
     private boolean church = false;
     private boolean millisArrival = true;
+    private double speed = 1.0;
     private static ServerSettings SINGLETON = null;
 
     public static synchronized ServerSettings getSingleton() {
@@ -79,6 +80,13 @@ public class ServerSettings {
                 //empty or invalid value...use no millis
                 setMillisArrival(false);
             }
+            logger.debug(" - reading server speed");
+            try {
+                setSpeed(Double.parseDouble(JaxenUtils.getNodeValue(d, "//speed")));
+            } catch (Exception inner) {
+                setSpeed(1.0);
+            }
+
         } catch (Exception e) {
             logger.error("Failed to load server settings", e);
             return false;
@@ -160,5 +168,13 @@ public class ServerSettings {
 
     public boolean isMillisArrival() {
         return millisArrival;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
+    public double getSpeed() {
+        return speed;
     }
 }

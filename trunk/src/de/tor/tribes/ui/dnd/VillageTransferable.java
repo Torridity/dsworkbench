@@ -4,7 +4,7 @@
  */
 package de.tor.tribes.ui.dnd;
 
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
 import java.awt.datatransfer.DataFlavor;

@@ -4,9 +4,10 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.algo.TimeFrame;
+import de.tor.tribes.util.algo.types.TimeFrame;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -53,25 +54,6 @@ public class Off extends AbstractTroopMovement {
                 }
             }
         }
-
-        /*    //sort result by start time
-        Collections.sort(result, RUNTIME_SORT);
-        //apply min distance calculation
-        long last = 0;
-        for (Attack a : result) {
-        long startTime = a.getArriveTime().getTime() - (long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000;
-        if (last != 0) {
-        double diff = pTimeBetweenAttacks - Math.abs(startTime - last);
-        if (diff < 0) {
-        //diff is smaller than zero, so also smaller than min difference
-        //so move the attack to future by this value
-        a.setArriveTime(new Date(a.getArriveTime().getTime() - (long) diff));
-        //correct the start time
-        startTime = startTime - (long) diff;
-        }
-        }
-        last = startTime;
-        }*/
         return result;
     }
 }

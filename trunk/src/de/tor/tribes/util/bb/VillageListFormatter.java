@@ -5,7 +5,7 @@
 package de.tor.tribes.util.bb;
 
 import de.tor.tribes.types.Attack;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;

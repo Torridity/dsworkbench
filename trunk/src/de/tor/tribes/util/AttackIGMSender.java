@@ -6,7 +6,7 @@ package de.tor.tribes.util;
 
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.types.Attack;
-import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.ext.Tribe;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;

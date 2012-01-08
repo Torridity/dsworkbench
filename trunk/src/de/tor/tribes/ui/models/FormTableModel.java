@@ -4,11 +4,11 @@
  */
 package de.tor.tribes.ui.models;
 
-import de.tor.tribes.types.AbstractForm;
-import de.tor.tribes.types.Arrow;
-import de.tor.tribes.types.Circle;
-import de.tor.tribes.types.Line;
-import de.tor.tribes.types.Rectangle;
+import de.tor.tribes.types.drawing.AbstractForm;
+import de.tor.tribes.types.drawing.Arrow;
+import de.tor.tribes.types.drawing.Circle;
+import de.tor.tribes.types.drawing.Line;
+import de.tor.tribes.types.drawing.Rectangle;
 import de.tor.tribes.util.map.FormManager;
 import javax.swing.table.AbstractTableModel;
 

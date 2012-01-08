@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.util.BBSupport;
 import java.text.NumberFormat;
 import java.util.LinkedList;

@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.test.AnyTribe;
 import de.tor.tribes.db.DatabaseServerEntry;
 import de.tor.tribes.io.DataHolder;

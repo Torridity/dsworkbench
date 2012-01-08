@@ -4,6 +4,12 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.ui.windows.BBCodeEditor;
+import de.tor.tribes.ui.windows.FormConfigFrame;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.windows.ClockFrame;
+import de.tor.tribes.ui.panels.MapPanel;
+import de.tor.tribes.ui.panels.MinimapPanel;
 import de.tor.tribes.ui.views.DSWorkbenchDoItYourselfAttackPlaner;
 import de.tor.tribes.ui.views.DSWorkbenchReTimerFrame;
 import de.tor.tribes.ui.views.DSWorkbenchDistanceFrame;
@@ -32,8 +38,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -61,7 +65,6 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
 import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
 import org.pushingpixels.flamingo.api.ribbon.resize.IconRibbonBandResizePolicy;
-import org.pushingpixels.flamingo.internal.ui.ribbon.BasicRibbonUI;
 
 /**
  * @author Torridity
@@ -507,9 +510,10 @@ public class RibbonConfigurator {
 
                     @Override
                     public void run() {
-                        TribeTribeAttackFrame frame = DSWorkbenchMainFrame.getSingleton().getAttackPlaner();
+                        //@TODO show attack planer by ribbon
+                     /*   TribeTribeAttackFrame frame = DSWorkbenchMainFrame.getSingleton().getAttackPlaner();
                         frame.setVisible(true);
-                        frame.requestFocus();
+                        frame.requestFocus();*/
                     }
                 });
             }
@@ -837,7 +841,7 @@ public class RibbonConfigurator {
                     @Override
                     public void run() {
                         MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DRAW_LINE);
-                        FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.Line.class);
+                        FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.drawing.Line.class);
                         FormConfigFrame.getSingleton().requestFocus();
                     }
                 });
@@ -852,7 +856,7 @@ public class RibbonConfigurator {
                     @Override
                     public void run() {
                         MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DRAW_ARROW);
-                        FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.Arrow.class);
+                        FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.drawing.Arrow.class);
                         FormConfigFrame.getSingleton().requestFocus();
                     }
                 });
@@ -867,7 +871,7 @@ public class RibbonConfigurator {
                     @Override
                     public void run() {
                         MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DRAW_CIRCLE);
-                        FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.Circle.class);
+                        FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.drawing.Circle.class);
                         FormConfigFrame.getSingleton().requestFocus();
                     }
                 });
@@ -882,7 +886,7 @@ public class RibbonConfigurator {
                     @Override
                     public void run() {
                         MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DRAW_RECT);
-                        FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.Rectangle.class);
+                        FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.drawing.Rectangle.class);
                         FormConfigFrame.getSingleton().requestFocus();
                     }
                 });
@@ -897,7 +901,7 @@ public class RibbonConfigurator {
                     @Override
                     public void run() {
                         MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DRAW_TEXT);
-                        FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.Text.class);
+                        FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.drawing.Text.class);
                         FormConfigFrame.getSingleton().requestFocus();
                     }
                 });
@@ -912,7 +916,7 @@ public class RibbonConfigurator {
                     @Override
                     public void run() {
                         MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DRAW_FREEFORM);
-                        FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.FreeForm.class);
+                        FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.drawing.FreeForm.class);
                         FormConfigFrame.getSingleton().requestFocus();
                     }
                 });

@@ -6,14 +6,15 @@ package de.tor.tribes.util.algo;
 
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Defense;
-import de.tor.tribes.types.DefenseElement;
-import de.tor.tribes.ui.wiz.dep.AnalysePanel;
-import de.tor.tribes.ui.wiz.dep.FilterPanel;
-import de.tor.tribes.ui.wiz.dep.FinalSettingsPanel;
-import de.tor.tribes.ui.wiz.dep.VillagePanel;
-import java.util.Arrays;
+import de.tor.tribes.types.DefenseInformation;
+import de.tor.tribes.ui.views.DSWorkbenchSOSRequestAnalyzer;
+import de.tor.tribes.ui.wiz.dep.DefenseAnalysePanel;
+import de.tor.tribes.ui.wiz.dep.DefenseFilterPanel;
+import de.tor.tribes.ui.wiz.dep.DefenseCalculationSettingsPanel;
+import de.tor.tribes.ui.wiz.dep.DefenseSourcePanel.SupportSourceElement;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -24,7 +25,6 @@ public class DefenseCalculator extends Thread {
 
     private boolean isRunning = false;
     private boolean aborted = false;
-    private List<Defense> results = null;
     private boolean multiSupport = false;
 
     public DefenseCalculator() {
@@ -37,36 +37,29 @@ public class DefenseCalculator extends Thread {
 
     @Override
     public void run() {
-        results = null;
         isRunning = true;
-        DefenseElement[] defenses = AnalysePanel.getSingleton().getModel().getRows();
-        Hashtable<de.tor.tribes.types.Village, Integer> splits = VillagePanel.getSingleton().getSplits();
-        List<de.tor.tribes.types.Village> usedVillages = Arrays.asList(FilterPanel.getSingleton().getFilteredVillages());
-        UnitHolder unit = AnalysePanel.getSingleton().getSlowestUnit();
-        Enumeration<de.tor.tribes.types.Village> villageKeys = splits.keys();
+        DefenseInformation[] defenses = DefenseAnalysePanel.getSingleton().getAllElements();
+        Hashtable<de.tor.tribes.types.ext.Village, Integer> splits = new Hashtable<de.tor.tribes.types.ext.Village, Integer>();
+        List<de.tor.tribes.types.ext.Village> usedVillages = new LinkedList<de.tor.tribes.types.ext.Village>();
+
+        for (SupportSourceElement element : DefenseFilterPanel.getSingleton().getFilteredElements()) {
+            splits.put(element.getVillage(), element.getSupports());
+            usedVillages.add(element.getVillage());
+        }
+
+        UnitHolder unit = DSWorkbenchSOSRequestAnalyzer.getSingleton().getSlowestUnit();
+        Enumeration<de.tor.tribes.types.ext.Village> villageKeys = splits.keys();
         while (villageKeys.hasMoreElements()) {
-            de.tor.tribes.types.Village v = villageKeys.nextElement();
+            de.tor.tribes.types.ext.Village v = villageKeys.nextElement();
             if (!usedVillages.contains(v)) {
                 splits.remove(v);
             }
         }
 
         DefenseBruteForce algo = new DefenseBruteForce(multiSupport);
-        results = algo.calculateAttacks(splits, defenses, unit, this);
+        algo.calculateDefenses(splits, defenses, unit, this);
         isRunning = false;
-        FinalSettingsPanel.getSingleton().notifyCalculationFinished();
-    }
-
-    public Defense[] getResults() {
-        if (hasResults()) {
-            return results.toArray(new Defense[results.size()]);
-        } else {
-            return new Defense[0];
-        }
-    }
-
-    public boolean hasResults() {
-        return results != null && !results.isEmpty();
+        DefenseCalculationSettingsPanel.getSingleton().notifyCalculationFinished();
     }
 
     public void abort() {
@@ -82,6 +75,6 @@ public class DefenseCalculator extends Thread {
     }
 
     public void logMessage(String pMessage) {
-        FinalSettingsPanel.getSingleton().notifyStatusUpdate(pMessage);
+        DefenseCalculationSettingsPanel.getSingleton().notifyStatusUpdate(pMessage);
     }
 }

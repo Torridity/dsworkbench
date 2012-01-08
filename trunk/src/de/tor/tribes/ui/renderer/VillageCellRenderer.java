@@ -4,7 +4,7 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import java.awt.Component;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -21,8 +21,13 @@ public class VillageCellRenderer extends DefaultTableRenderer {
         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         JLabel label = (JLabel) c;
         Village vil = (Village) value;
-        label.setText(vil.toString());
-        label.setToolTipText(vil.getToolTipText());
+        if (vil != null) {
+            label.setText(vil.toString());
+            label.setToolTipText(vil.getToolTipText());
+        } else {
+            label.setText("Unbekanntes Dorf");
+            label.setToolTipText("Unbekanntes Dorf");
+        }
         return label;
     }
 }

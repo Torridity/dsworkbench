@@ -5,8 +5,8 @@
 package de.tor.tribes.ui.models;
 
 import de.tor.tribes.types.FightReport;
-import de.tor.tribes.types.Tribe;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.report.ReportManager;
 import java.text.SimpleDateFormat;
 import java.util.Date;

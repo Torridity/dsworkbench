@@ -12,7 +12,7 @@ import de.tor.tribes.util.GlobalOptions;
 import java.util.List;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Attack;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;

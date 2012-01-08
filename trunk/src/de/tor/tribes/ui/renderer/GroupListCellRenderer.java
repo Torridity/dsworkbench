@@ -48,23 +48,24 @@ public class GroupListCellRenderer extends javax.swing.JPanel implements ListCel
             jLabel2.setForeground(new java.awt.Color(0, 153, 255));
             jLabel1.setForeground(list.getForeground());
         }
+
         GroupSelectionList.ListItem item = (GroupSelectionList.ListItem) pValue;
         jLabel1.setText(item.getTag().toString());
         if (item.isSpecial()) {
-            if (item.getState() == 0) {
-                jLabel2.setText("NICHT");
+            if (item.getState() == GroupSelectionList.ListItem.RELATION_TYPE.DISABLED) {
+                jLabel2.setText("OHNE");
             } else {
                 jLabel2.setText("->");
             }
         } else {
             switch (item.getState()) {
-                case 1:
+                case NOT:
                     jLabel2.setText("NICHT");
                     break;
-                case 2:
+                case AND:
                     jLabel2.setText("UND");
                     break;
-                case 3:
+                case OR:
                     jLabel2.setText("ODER");
                     break;
                 default:

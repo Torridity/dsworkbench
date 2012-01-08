@@ -6,16 +6,16 @@ package de.tor.tribes.ui.renderer.map;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.AbstractForm;
-import de.tor.tribes.types.Ally;
-import de.tor.tribes.types.Barbarians;
-import de.tor.tribes.types.NoAlly;
-import de.tor.tribes.types.Tribe;
-import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.FormConfigFrame;
+import de.tor.tribes.types.drawing.AbstractForm;
+import de.tor.tribes.types.ext.Ally;
+import de.tor.tribes.types.ext.Barbarians;
+import de.tor.tribes.types.ext.NoAlly;
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.windows.FormConfigFrame;
 import de.tor.tribes.ui.ImageManager;
-import de.tor.tribes.ui.MapPanel;
+import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
@@ -329,7 +329,7 @@ public class MapRenderer {
                     logger.warn("Failed to render live layer");
                 }
                 //render selection
-                de.tor.tribes.types.Rectangle selection = MapPanel.getSingleton().getSelectionRect();
+                de.tor.tribes.types.drawing.Rectangle selection = MapPanel.getSingleton().getSelectionRect();
                 if (selection != null) {
                     selection.renderForm(g2d);
                 }
@@ -575,7 +575,7 @@ public class MapRenderer {
             try {
                 int cnt = 0;
                 for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-                    de.tor.tribes.types.Circle c = new de.tor.tribes.types.Circle();
+                    de.tor.tribes.types.drawing.Circle c = new de.tor.tribes.types.drawing.Circle();
                     int r = Integer.parseInt(GlobalOptions.getProperty("radar.size"));
                     double diam = 2 * (double) r / u.getSpeed();
                     double xp = v.getX() + 0.5 - diam / 2;

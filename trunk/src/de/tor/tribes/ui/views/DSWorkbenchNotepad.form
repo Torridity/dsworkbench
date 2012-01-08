@@ -226,7 +226,7 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="de.tor.tribes.ui.BBPanel" name="bBPanel1">
+        <Component class="de.tor.tribes.ui.panels.BBPanel" name="bBPanel1">
         </Component>
         <Component class="javax.swing.JComboBox" name="jComboBox1">
           <Properties>

@@ -37,7 +37,7 @@
           <Properties>
             <Property name="contentType" type="java.lang.String" value="text/html"/>
             <Property name="editable" type="boolean" value="false"/>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;b&gt;Willkommen beim DS Workbench Verteidigungsplaner.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&#xa;In den folgenden Schritten kannst du dir einen Verteidigungsplan f&amp;uuml;r die vorher analysierten Angriffe auf dich erstellen lassen. Hierf&amp;uuml;r stehen dir eine Vielzahl von Einstellungsm&amp;oouml;glichkeiten zur Verf&amp;uuml;gung. F&amp;uuml;r den Anfang wird jedoch empfohlen, die eingestellten Standardwerte zu verwenden um schnell zu einem Ergebnis zu kommen.&lt;/html&gt;"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;b&gt;Willkommen beim DS Workbench Verteidigungsplaner.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&#xa;In den folgenden Schritten kannst du dir einen Verteidigungsplan f&amp;uuml;r die vorher analysierten Angriffe auf dich erstellen lassen. Hierf&amp;uuml;r stehen dir eine Vielzahl von Einstellungsm&amp;ouml;glichkeiten zur Verf&amp;uuml;gung. F&amp;uuml;r den Anfang wird jedoch empfohlen, die eingestellten Standardwerte zu verwenden um schnell zu einem Ergebnis zu kommen.&lt;/html&gt;"/>
           </Properties>
         </Component>
       </SubComponents>

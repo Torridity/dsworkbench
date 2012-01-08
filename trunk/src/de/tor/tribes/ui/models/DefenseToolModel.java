@@ -4,9 +4,9 @@
  */
 package de.tor.tribes.ui.models;
 
-import de.tor.tribes.types.DefenseElement;
-import de.tor.tribes.types.Tribe;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.DefenseInformation;
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,13 +20,17 @@ import org.apache.commons.collections.Predicate;
  */
 public class DefenseToolModel extends AbstractTableModel {
 
-    private List<DefenseElement> entries = null;
-    private Class[] types = new Class[]{Integer.class, Village.class, Integer.class, Integer.class, Date.class, Date.class, Integer.class, DefenseElement.DEFENSE_STATUS.class, Double.class, Integer.class};
-    private String[] colNames = new String[]{"Tendenz", "Ziel", "Angriffe", "Fakes", "Erster Angriff", "Letzter Angriff", "Wall", "Status", "Verlustrate", "Unterstützungen"};
-    private boolean[] editableColumns = new boolean[]{false, false, false, false, false, false, false, false, false, false};
+    private List<DefenseInformation> entries = null;
+    private Class[] types = new Class[]{Integer.class, Village.class, Integer.class, Integer.class, Date.class, Date.class, DefenseInformation.DEFENSE_STATUS.class, Double.class, Integer.class, Boolean.class, Boolean.class};
+    private String[] colNames = new String[]{"Tendenz", "Ziel", "Angriffe", "Fakes", "Erster Angriff", "Letzter Angriff", "Status", "Verlustrate", "Unterstützungen", "Analysiert", "Verteidigt"};
 
     public DefenseToolModel() {
-        entries = new ArrayList<DefenseElement>();
+        entries = new ArrayList<DefenseInformation>();
+    }
+
+    public void clear() {
+        entries.clear();
+        fireTableDataChanged();
     }
 
     @Override
@@ -34,8 +38,8 @@ public class DefenseToolModel extends AbstractTableModel {
         return entries.size();
     }
 
-    public DefenseElement[] getRows() {
-        return entries.toArray(new DefenseElement[entries.size()]);
+    public DefenseInformation[] getRows() {
+        return entries.toArray(new DefenseInformation[entries.size()]);
     }
 
     @Override
@@ -50,7 +54,7 @@ public class DefenseToolModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return editableColumns[columnIndex];
+        return false;
     }
 
     @Override
@@ -58,45 +62,46 @@ public class DefenseToolModel extends AbstractTableModel {
         return colNames.length;
     }
 
-    public DefenseElement findElement(final Village pTarget) {
-        return (DefenseElement) CollectionUtils.find(entries, new Predicate() {
+    public DefenseInformation findElement(final Village pTarget) {
+        return (DefenseInformation) CollectionUtils.find(entries, new Predicate() {
 
             @Override
             public boolean evaluate(Object o) {
-                return ((DefenseElement) o).getTarget().equals(pTarget);
+                return ((DefenseInformation) o).getTarget().equals(pTarget);
             }
         });
     }
 
-    public void addRow(DefenseElement pElement) {
+    public void addRow(DefenseInformation pElement) {
         entries.add(pElement);
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
+        DefenseInformation info = entries.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                return entries.get(rowIndex).getDelta();
+                return info.getDelta();
             case 1:
-                return entries.get(rowIndex).getTarget();
+                return info.getTarget();
             case 2:
-                return entries.get(rowIndex).getAttackCount();
+                return info.getAttackCount();
             case 3:
-                return entries.get(rowIndex).getFakeCount();
+                return info.getFakeCount();
             case 4:
-                return entries.get(rowIndex).getFirstAttack();
+                return info.getFirstAttack();
             case 5:
-                return entries.get(rowIndex).getLastAttack();
+                return info.getLastAttack();
             case 6:
-                return entries.get(rowIndex).getWallLevel();
+                return info.getStatus();
             case 7:
-                return entries.get(rowIndex).getStatus();
+                return info.getLossRatio();
             case 8:
-                return entries.get(rowIndex).getLossRatio();
+                return info.getNeededSupports();
             case 9:
-                return entries.get(rowIndex).getNeededSupports();
-
+                return info.isAnalyzed();
+            default:
+                return info.isSave();
         }
-        return null;
     }
 }

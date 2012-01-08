@@ -4,7 +4,7 @@
  */
 package de.tor.tribes.ui.algo;
 
-import de.tor.tribes.util.algo.TimeFrame;
+import de.tor.tribes.util.algo.types.TimeFrame;
 
 /**
  *

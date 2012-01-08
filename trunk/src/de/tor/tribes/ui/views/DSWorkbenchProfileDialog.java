@@ -12,7 +12,7 @@ package de.tor.tribes.ui.views;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
-import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -68,12 +68,8 @@ public class DSWorkbenchProfileDialog extends javax.swing.JDialog {
         jAccountTribeBox.setSelectedItem(selection);
         if (pProfile.isUVAccount()) {
             jIsUvAccount.setSelected(pProfile.isUVAccount());
-            jUvIdField.setText(Integer.toString(pProfile.getUVId()));
-            jUvIdField.setEnabled(true);
         } else {
             jIsUvAccount.setSelected(pProfile.isUVAccount());
-            jUvIdField.setText("UV-ID");
-            jUvIdField.setEnabled(false);
         }
         jDoCreateModifyAccountButton.setText("Aktualisieren");
         currentProfile = pProfile;
@@ -110,41 +106,78 @@ public class DSWorkbenchProfileDialog extends javax.swing.JDialog {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         jLabel2 = new javax.swing.JLabel();
         jAccountServerBox = new javax.swing.JComboBox();
         jAccountTribeBox = new javax.swing.JComboBox();
         jLabel3 = new javax.swing.JLabel();
         jIsUvAccount = new javax.swing.JCheckBox();
-        jUvIdField = new javax.swing.JTextField();
         jDoCreateModifyAccountButton = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
 
         setTitle("Profile");
         setModal(true);
         setModalExclusionType(java.awt.Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jLabel2.setText("Server");
+        jLabel2.setMaximumSize(new java.awt.Dimension(60, 14));
+        jLabel2.setMinimumSize(new java.awt.Dimension(60, 14));
+        jLabel2.setPreferredSize(new java.awt.Dimension(60, 14));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jLabel2, gridBagConstraints);
 
         jAccountServerBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireServerChangedEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jAccountServerBox, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jAccountTribeBox, gridBagConstraints);
 
         jLabel3.setText("Spieler");
+        jLabel3.setMaximumSize(new java.awt.Dimension(60, 14));
+        jLabel3.setMinimumSize(new java.awt.Dimension(60, 14));
+        jLabel3.setPreferredSize(new java.awt.Dimension(60, 14));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jLabel3, gridBagConstraints);
 
         jIsUvAccount.setText("UV-Account");
         jIsUvAccount.setOpaque(false);
-        jIsUvAccount.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                fireChangeUVStateEvent(evt);
-            }
-        });
-
-        jUvIdField.setText("UV-ID");
-        jUvIdField.setEnabled(false);
-        jUvIdField.setOpaque(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jIsUvAccount, gridBagConstraints);
 
         jDoCreateModifyAccountButton.setText("Erstellen");
         jDoCreateModifyAccountButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -152,6 +185,12 @@ public class DSWorkbenchProfileDialog extends javax.swing.JDialog {
                 fireDoCreateProfileEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jDoCreateModifyAccountButton, gridBagConstraints);
 
         jButton5.setText("Abbrechen");
         jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -159,60 +198,14 @@ public class DSWorkbenchProfileDialog extends javax.swing.JDialog {
                 fireDoCreateProfileEvent(evt);
             }
         });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jIsUvAccount)
-                        .addGap(18, 18, 18)
-                        .addComponent(jUvIdField, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jAccountTribeBox, 0, 330, Short.MAX_VALUE)
-                            .addComponent(jAccountServerBox, 0, 330, Short.MAX_VALUE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jButton5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jDoCreateModifyAccountButton)))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jAccountServerBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jAccountTribeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jIsUvAccount)
-                    .addComponent(jUvIdField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jDoCreateModifyAccountButton)
-                    .addComponent(jButton5))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        getContentPane().add(jButton5, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void fireChangeUVStateEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireChangeUVStateEvent
-        jUvIdField.setEnabled(jIsUvAccount.isSelected());
-    }//GEN-LAST:event_fireChangeUVStateEvent
 
     private void fireDoCreateProfileEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDoCreateProfileEvent
         if (evt.getSource() == jDoCreateModifyAccountButton) {
@@ -222,12 +215,7 @@ public class DSWorkbenchProfileDialog extends javax.swing.JDialog {
                 Tribe tribe = (Tribe) jAccountTribeBox.getSelectedItem();
                 Integer uvId = -1;
                 if (jIsUvAccount.isSelected()) {
-                    try {
-                        uvId = Integer.parseInt(jUvIdField.getText());
-                    } catch (Exception e) {
-                        JOptionPaneHelper.showErrorBox(this, "Die UV-ID ist ungültig, da eine Zahl erwartet wird.", "Fehler");
-                        return;
-                    }
+                    uvId = tribe.getId();
                 }
                 UserProfile newProfile = UserProfile.create(server, tribe.getName(), uvId, true);
                 if (newProfile == null) {
@@ -243,13 +231,7 @@ public class DSWorkbenchProfileDialog extends javax.swing.JDialog {
                     currentProfile.setTribeName(tribe.getName());
                 }
                 if (jIsUvAccount.isSelected()) {
-                    try {
-                        Integer uvId = Integer.parseInt(jUvIdField.getText());
-                        currentProfile.setUVId(uvId);
-                    } catch (Exception e) {
-                        JOptionPaneHelper.showErrorBox(this, "Die UV-ID ist ungültig, da eine Zahl erwartet wird.", "Fehler");
-                        return;
-                    }
+                    currentProfile.setUVId(tribe.getId());
                 } else {
                     currentProfile.setUVId(-1);
                 }
@@ -296,6 +278,5 @@ public class DSWorkbenchProfileDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox jIsUvAccount;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JTextField jUvIdField;
     // End of variables declaration//GEN-END:variables
 }

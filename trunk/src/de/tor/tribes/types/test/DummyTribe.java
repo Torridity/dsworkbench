@@ -4,9 +4,9 @@
  */
 package de.tor.tribes.types.test;
 
-import de.tor.tribes.types.Ally;
-import de.tor.tribes.types.Tribe;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Ally;
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
 import java.util.LinkedList;
 import java.util.List;
 

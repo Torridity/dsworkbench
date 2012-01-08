@@ -5,7 +5,7 @@
 package de.tor.tribes.io;
 
 import java.io.Serializable;
-import javax.lang.model.element.UnknownElementException;
+import java.util.Comparator;
 import org.jdom.Element;
 
 /**
@@ -14,6 +14,7 @@ import org.jdom.Element;
  */
 public class UnitHolder implements Serializable {
 
+    public static final Comparator<UnitHolder> RUNTIME_COMPARATOR = new RuntimeComparator();
     private static final long serialVersionUID = 10L;
     private String plainName = null;
     private String name = null;
@@ -232,5 +233,16 @@ public class UnitHolder implements Serializable {
     @Override
     public String toString() {
         return getName();// + "(" + getSpeed() + " Minuten/Feld)";
+    }
+
+    private static class RuntimeComparator implements Comparator<UnitHolder>, java.io.Serializable {
+        // use serialVersionUID from JDK 1.2.2 for interoperability
+
+        private static final long serialVersionUID = 8575799808933029326L;
+
+        @Override
+        public int compare(UnitHolder s1, UnitHolder s2) {
+            return new Double(s1.getSpeed()).compareTo(new Double(s2.getSpeed()));
+        }
     }
 }

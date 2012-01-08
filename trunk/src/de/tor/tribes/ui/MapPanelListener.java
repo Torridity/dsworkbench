@@ -5,7 +5,7 @@
 
 package de.tor.tribes.ui;
 
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 
 /**
  *

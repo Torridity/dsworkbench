@@ -6,7 +6,7 @@ package de.tor.tribes.util.troops;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.util.Date;
 import java.util.Enumeration;

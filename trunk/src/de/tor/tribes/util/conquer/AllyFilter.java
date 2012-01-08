@@ -5,10 +5,10 @@
 package de.tor.tribes.util.conquer;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.Conquer;
-import de.tor.tribes.types.NoAlly;
-import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.ext.NoAlly;
+import de.tor.tribes.types.ext.Tribe;
 import java.util.List;
 
 /**

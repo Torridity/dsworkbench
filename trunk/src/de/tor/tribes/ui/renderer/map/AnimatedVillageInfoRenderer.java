@@ -5,7 +5,7 @@
 package de.tor.tribes.ui.renderer.map;
 
 import de.tor.tribes.types.Note;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;

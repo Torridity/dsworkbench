@@ -4,6 +4,9 @@
  */
 package de.tor.tribes.util.algo;
 
+import de.tor.tribes.util.algo.types.Source;
+import de.tor.tribes.util.algo.types.Destination;
+import de.tor.tribes.util.algo.types.Order;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
@@ -112,7 +115,7 @@ public class Optex<S extends Source, D extends Destination> {
                                     double c2 = this._getCosts(s2, o_d) * fact;
                                     if (c1 < c2) {
                                         int swap_amount = 0;
-                                        swap_amount = Math.min(s1.waresAvailable(), o.amount);
+                                        swap_amount = Math.min(s1.waresAvailable(), o.getAmount());
                                         s2.removeOrder(o_d, swap_amount);
                                         s1.addOrder(o_d, swap_amount);
                                         improvement = true;

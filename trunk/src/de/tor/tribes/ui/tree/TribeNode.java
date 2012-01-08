@@ -4,7 +4,7 @@
  */
 package de.tor.tribes.ui.tree;
 
-import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.ext.Tribe;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;

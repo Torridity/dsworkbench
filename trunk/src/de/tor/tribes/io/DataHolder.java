@@ -9,13 +9,13 @@
 package de.tor.tribes.io;
 
 import de.tor.tribes.php.DatabaseInterface;
-import de.tor.tribes.types.Ally;
-import de.tor.tribes.types.Barbarians;
+import de.tor.tribes.types.ext.Ally;
+import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.test.DummyUnit;
-import de.tor.tribes.types.InvalidTribe;
-import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.ext.InvalidTribe;
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.UnknownUnit;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;

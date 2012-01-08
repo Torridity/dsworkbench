@@ -5,6 +5,7 @@
 package de.tor.tribes.ui.components;
 
 import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -18,9 +19,9 @@ import org.jdesktop.swingx.JXList;
  * @author jejkal
  */
 public class IconizedList extends JXList {
-
+    
     private Image iconImage = null;
-
+    
     public IconizedList(String pResourcePath) {
         try {
             BufferedImage b = ImageIO.read(IconizedList.class.getResource(pResourcePath));
@@ -28,7 +29,7 @@ public class IconizedList extends JXList {
         } catch (Exception e) {
         }
     }
-
+    
     @Override
     protected void paintChildren(Graphics g) {
         super.paintChildren(g);
@@ -37,6 +38,15 @@ public class IconizedList extends JXList {
             Composite c = g2d.getComposite();
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .4f));
             g2d.drawImage(iconImage, getWidth() - 80, 0, null);
+            g2d.setComposite(c);
+        }
+        
+        if (!isEnabled()) {
+            Graphics2D g2d = (Graphics2D) g;
+            Composite c = g2d.getComposite();
+            g2d.setColor(Color.DARK_GRAY);
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .5f));
+            g2d.fillRect(0, 0, getWidth(), getHeight());
             g2d.setComposite(c);
         }
     }

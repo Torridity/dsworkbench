@@ -4,9 +4,10 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.algo.TimeFrame;
+import de.tor.tribes.util.algo.types.TimeFrame;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
@@ -44,36 +45,9 @@ public class Fake extends AbstractTroopMovement {
                     a.setType(type);
                     result.add(a);
                 }
-
-
-                /*  if (!pTimeFrame.isVariableArriveTime()) {
-                a.setArriveTime(new Date(pTimeFrame.getEnd()));
-                } else {
-                long runtime = Math.round(DSCalculator.calculateMoveTimeInSeconds(offSource, target, unit.getSpeed()) * 1000);
-                a.setArriveTime(pTimeFrame.getRandomArriveTime(runtime, offSource.getTribe(), new LinkedList<Long>()));
-                }*/
-
             }
         }
 
-        /*    //sort result by start time
-        Collections.sort(result, RUNTIME_SORT);
-        //apply min distance calculation
-        long last = 0;
-        for (Attack a : result) {
-        long startTime = a.getArriveTime().getTime() - (long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000;
-        if (last != 0) {
-        double diff = pTimeBetweenAttacks - Math.abs(startTime - last);
-        if (diff < 0) {
-        //diff is smaller than zero, so also smaller than min difference
-        //so move the attack to future by this value
-        a.setArriveTime(new Date(a.getArriveTime().getTime() - (long) diff));
-        //correct the start time
-        startTime = startTime - (long) diff;
-        }
-        }
-        last = startTime;
-        }*/
         return result;
     }
 }

@@ -1,7 +1,7 @@
 package de.tor.tribes.ui.renderer.map;
 
-import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.geom.Rectangle2D;
 

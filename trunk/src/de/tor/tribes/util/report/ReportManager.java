@@ -7,7 +7,8 @@ package de.tor.tribes.util.report;
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.FightReport;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;
@@ -16,6 +17,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -23,7 +26,6 @@ import org.jdom.Element;
 /**
  *
  * @author Torridity
- * @TODO Check if report exists before adding it
  */
 public class ReportManager extends GenericManager<FightReport> {
 
@@ -39,6 +41,22 @@ public class ReportManager extends GenericManager<FightReport> {
 
     ReportManager() {
         super(true);
+    }
+
+    @Override
+    public void addManagedElement(final FightReport pElement) {
+        Object result = CollectionUtils.find(getAllElements(), new Predicate() {
+
+            @Override
+            public boolean evaluate(Object o) {
+                return ((FightReport) o).equals(pElement);
+            }
+        });
+
+        if (result == null) {
+            super.addManagedElement(pElement);
+            FarmManager.getSingleton().updateFarmInfoFromReport(pElement);
+        }
     }
 
     @Override
@@ -205,9 +223,11 @@ public class ReportManager extends GenericManager<FightReport> {
         return addGroup(pName);
     }
 
-    /**Return the most current report for source pVillage
+    /**
+     * Return the most current report for source pVillage
+     *
      * @param pVillage
-     * @return  
+     * @return
      */
     public FightReport findLastReportForSource(Village pVillage) {
         FightReport current = null;
@@ -222,15 +242,17 @@ public class ReportManager extends GenericManager<FightReport> {
         return current;
     }
 
-    /**Return the most current report for target pVillage
+    /**
+     * Return the most current report for target pVillage
+     *
      * @param pVillage
-     * @return  
+     * @return
      */
     public FightReport findLastReportForTarget(Village pVillage) {
         FightReport current = null;
         for (ManageableType element : getAllElementsFromAllGroups()) {
             FightReport report = (FightReport) element;
-            if (report.getSourceVillage() != null && report.getTargetVillage().equals(pVillage)) {
+            if (report.getTargetVillage() != null && report.getTargetVillage().equals(pVillage)) {
                 if (current == null || report.getTimestamp() > current.getTimestamp()) {
                     current = report;
                 }

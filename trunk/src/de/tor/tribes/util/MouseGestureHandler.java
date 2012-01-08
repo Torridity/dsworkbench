@@ -8,7 +8,7 @@ import com.smardec.mousegestures.MouseGesturesListener;
 import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.ui.views.DSWorkbenchConquersFrame;
 import de.tor.tribes.ui.views.DSWorkbenchFormFrame;
-import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.views.DSWorkbenchMarkerFrame;
 import de.tor.tribes.ui.views.DSWorkbenchNotepad;
 import de.tor.tribes.ui.views.DSWorkbenchRankFrame;
@@ -44,9 +44,9 @@ public class MouseGestureHandler implements MouseGesturesListener {
             DSWorkbenchStatsFrame.getSingleton().handleGesture(string);
         } else if (DSWorkbenchReportFrame.getSingleton().isActive()) {
             DSWorkbenchReportFrame.getSingleton().handleGesture(string);
-        } else if (DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isActive()) {
+        } /*else if (DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isActive()) {
             DSWorkbenchMainFrame.getSingleton().getAttackPlaner().handleGesture(string);
-        } else if (DSWorkbenchRankFrame.getSingleton().isActive()) {
+        }*/ else if (DSWorkbenchRankFrame.getSingleton().isActive()) {
             DSWorkbenchRankFrame.getSingleton().handleGesture(string);
         }
     }

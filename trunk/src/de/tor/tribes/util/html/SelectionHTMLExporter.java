@@ -5,12 +5,12 @@
 package de.tor.tribes.util.html;
 
 import de.tor.tribes.io.ServerManager;
-import de.tor.tribes.types.Ally;
-import de.tor.tribes.types.BarbarianAlly;
-import de.tor.tribes.types.Barbarians;
-import de.tor.tribes.types.NoAlly;
-import de.tor.tribes.types.Tribe;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Ally;
+import de.tor.tribes.types.ext.BarbarianAlly;
+import de.tor.tribes.types.ext.Barbarians;
+import de.tor.tribes.types.ext.NoAlly;
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.EscapeChars;
 import de.tor.tribes.util.GlobalOptions;

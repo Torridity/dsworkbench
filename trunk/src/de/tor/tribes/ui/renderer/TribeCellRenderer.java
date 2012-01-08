@@ -4,7 +4,7 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.ext.Tribe;
 import java.awt.Component;
 import javax.swing.JLabel;
 import javax.swing.JTable;

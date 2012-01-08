@@ -13,7 +13,7 @@ package de.tor.tribes.ui.algo;
 import de.tor.tribes.types.test.AnyTribe;
 import de.tor.tribes.types.TimeSpan;
 import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.algo.TimeFrame;
+import de.tor.tribes.util.algo.types.TimeFrame;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;

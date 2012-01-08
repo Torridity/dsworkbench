@@ -4,11 +4,17 @@
  */
 package de.tor.tribes.util.algo;
 
+import de.tor.tribes.util.algo.types.Order;
+import de.tor.tribes.util.algo.types.TimeFrame;
+import de.tor.tribes.util.algo.types.TargetVillage;
+import de.tor.tribes.util.algo.types.Destination;
+import de.tor.tribes.util.algo.types.Coordinate;
+import de.tor.tribes.util.algo.types.OffVillage;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Off;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.DSCalculator;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -65,8 +71,8 @@ public class Recurrection extends AbstractAttackAlgorithm {
             for (Order o : v.getOrders()) {
                 if (o.getAmount() > 0) {
                     TargetVillage d = (TargetVillage) o.getDestination();
-                    Off off = new Off(DataHolder.getSingleton().getVillages()[d.getC().x][d.getC().y], o.getAmount());
-                    off.addOff(DataHolder.getSingleton().getUnitByPlainName("ram"), DataHolder.getSingleton().getVillages()[v.getC().x][v.getC().y]);
+                    Off off = new Off(DataHolder.getSingleton().getVillages()[d.getC().getX()][d.getC().getY()], o.getAmount());
+                    off.addOff(DataHolder.getSingleton().getUnitByPlainName("ram"), DataHolder.getSingleton().getVillages()[v.getC().getX()][v.getC().getY()]);
                     moves.add(off);
                 }
             }

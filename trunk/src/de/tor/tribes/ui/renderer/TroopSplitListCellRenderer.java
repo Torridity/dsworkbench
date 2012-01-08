@@ -4,7 +4,7 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.ui.TroopSplitDialog.TroopSplit;
+import de.tor.tribes.ui.windows.TroopSplitDialog.TroopSplit;
 import de.tor.tribes.util.Constants;
 import java.awt.Color;
 import java.awt.Component;

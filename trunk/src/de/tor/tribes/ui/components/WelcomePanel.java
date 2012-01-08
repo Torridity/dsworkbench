@@ -10,7 +10,7 @@
  */
 package de.tor.tribes.ui.components;
 
-import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.BorderLayout;

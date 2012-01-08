@@ -6,10 +6,10 @@ package de.tor.tribes.util;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
-import de.tor.tribes.types.Ally;
-import de.tor.tribes.types.InvalidTribe;
-import de.tor.tribes.types.Tribe;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Ally;
+import de.tor.tribes.types.ext.InvalidTribe;
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -82,6 +82,7 @@ public class BBCodeFormatter {
                 String key = entry.getKey().toString();
                 Pattern p = Pattern.compile(key);
                 Matcher m = p.matcher(html);
+                
                 //replace special items by links
                 while (m.find()) {
                     String newValue = null;

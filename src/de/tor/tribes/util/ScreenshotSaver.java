@@ -4,8 +4,8 @@
  */
 package de.tor.tribes.util;
 
-import de.tor.tribes.ui.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.MapPanel;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.panels.MapPanel;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.FontMetrics;
@@ -31,7 +31,7 @@ public class ScreenshotSaver extends Thread {
         setPriority(MIN_PRIORITY);
     }
 
-    public void planMapShow(File pTargetFile, String pTargetType, BufferedImage pScreen) {
+    public void planMapShot(File pTargetFile, String pTargetType, BufferedImage pScreen) {
         fTargetFile = pTargetFile;
         mTargetType = pTargetType;
         mScreen = pScreen;

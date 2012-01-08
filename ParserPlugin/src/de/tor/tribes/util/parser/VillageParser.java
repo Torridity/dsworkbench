@@ -5,9 +5,9 @@
 package de.tor.tribes.util.parser;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.GenericParserInterface;
+import de.tor.tribes.util.interfaces.GenericParserInterface;
 import de.tor.tribes.util.ServerSettings;
 import java.util.LinkedList;
 import java.util.List;

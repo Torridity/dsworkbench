@@ -5,7 +5,7 @@
 package de.tor.tribes.ui.renderer.map;
 
 import de.tor.tribes.control.ManageableType;
-import de.tor.tribes.types.AbstractForm;
+import de.tor.tribes.types.drawing.AbstractForm;
 import de.tor.tribes.util.map.FormManager;
 import java.awt.Graphics2D;
 import java.util.List;

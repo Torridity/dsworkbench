@@ -11,7 +11,7 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.ui.components.LayerOrderPanel;
-import de.tor.tribes.util.LayerOrderTooltipListener;
+import de.tor.tribes.util.interfaces.LayerOrderTooltipListener;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.net.MalformedURLException;

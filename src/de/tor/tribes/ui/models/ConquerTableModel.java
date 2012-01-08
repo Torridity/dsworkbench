@@ -4,14 +4,14 @@
  */
 package de.tor.tribes.ui.models;
 
-import de.tor.tribes.types.Ally;
-import de.tor.tribes.types.BarbarianAlly;
-import de.tor.tribes.types.Barbarians;
+import de.tor.tribes.types.ext.Ally;
+import de.tor.tribes.types.ext.BarbarianAlly;
+import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.Conquer;
-import de.tor.tribes.types.NoAlly;
-import de.tor.tribes.types.Tribe;
-import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.types.ext.NoAlly;
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.conquer.ConquerManager;
 import java.text.NumberFormat;

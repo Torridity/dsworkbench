@@ -5,6 +5,11 @@
 
 package de.tor.tribes.util.algo;
 
+import de.tor.tribes.util.algo.types.Source;
+import de.tor.tribes.util.algo.types.OffVillage;
+import de.tor.tribes.util.algo.types.Order;
+import de.tor.tribes.util.algo.types.Destination;
+import de.tor.tribes.util.algo.types.TargetVillage;
 import java.awt.Color;
 import java.awt.Graphics;
 import javax.swing.*;

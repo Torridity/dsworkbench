@@ -53,7 +53,7 @@ public class WelcomePanel extends javax.swing.JPanel implements WizardPanel {
 
         jTextPane1.setContentType("text/html");
         jTextPane1.setEditable(false);
-        jTextPane1.setText("<html><b>Willkommen beim DS Workbench Verteidigungsplaner.</b><br/><br/>\nIn den folgenden Schritten kannst du dir einen Verteidigungsplan f&uuml;r die vorher analysierten Angriffe auf dich erstellen lassen. Hierf&uuml;r stehen dir eine Vielzahl von Einstellungsm&oouml;glichkeiten zur Verf&uuml;gung. F&uuml;r den Anfang wird jedoch empfohlen, die eingestellten Standardwerte zu verwenden um schnell zu einem Ergebnis zu kommen.</html>");
+        jTextPane1.setText("<html><b>Willkommen beim DS Workbench Verteidigungsplaner.</b><br/><br/>\nIn den folgenden Schritten kannst du dir einen Verteidigungsplan f&uuml;r die vorher analysierten Angriffe auf dich erstellen lassen. Hierf&uuml;r stehen dir eine Vielzahl von Einstellungsm&ouml;glichkeiten zur Verf&uuml;gung. F&uuml;r den Anfang wird jedoch empfohlen, die eingestellten Standardwerte zu verwenden um schnell zu einem Ergebnis zu kommen.</html>");
         jScrollPane1.setViewportView(jTextPane1);
 
         add(jScrollPane1, java.awt.BorderLayout.CENTER);

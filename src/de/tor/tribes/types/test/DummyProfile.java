@@ -4,7 +4,7 @@
  */
 package de.tor.tribes.types.test;
 
-import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.UserProfile;
 
 /**

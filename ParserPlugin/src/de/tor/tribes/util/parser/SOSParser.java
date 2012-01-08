@@ -8,21 +8,25 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.SOSRequest;
-import de.tor.tribes.types.Tribe;
-import de.tor.tribes.types.Village;
-import de.tor.tribes.util.GenericParserInterface;
+import de.tor.tribes.types.TargetInformation;
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.util.interfaces.GenericParserInterface;
 import de.tor.tribes.util.ServerSettings;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
+import org.jfree.date.DateUtilities;
 
 /**
  *
@@ -71,8 +75,8 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
     Punkte: 1887516
     Herkunft: [coord]444|868[/coord]
     Ankunftszeit: 23.12.11 18:44:00:931
-     
-     [b]2. Angriff[/b]
+    
+    [b]2. Angriff[/b]
     Angreifer: [player]Rattenfutter[/player]
     Stamm: [ally][KdS][/ally]
     Punkte: 1887516
@@ -110,7 +114,8 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
         Village target = null;
 
         SimpleDateFormat dateFormat = null;
-        if (!ServerSettings.getSingleton().isMillisArrival()) {
+        boolean useMillis = ServerSettings.getSingleton().isMillisArrival();
+        if (!useMillis) {
             dateFormat = new SimpleDateFormat(ParserVariableManager.getSingleton().getProperty("sos.date.format"));
         } else {
             dateFormat = new SimpleDateFormat(ParserVariableManager.getSingleton().getProperty("sos.date.format.ms"));
@@ -153,6 +158,9 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
                     String arrive = line.replaceAll(ParserVariableManager.getSingleton().getProperty("sos.arrive.time"), "").trim();
                     Date arriveDate = dateFormat.parse(arrive);
                     // System.out.println("Got arrive");
+                    if (!useMillis) {//add current millis to be able to compare times
+                        arriveDate = new Date(arriveDate.getTime() + Calendar.getInstance().get(Calendar.MILLISECOND));
+                    }
                     currentRequest.getTargetInformation(target).addAttack(source, arriveDate);
                 } catch (Exception e) {
                     //  System.out.println("NO ARRIVE!!");
@@ -249,7 +257,9 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
         Village destination = null;
         SOSRequest request = null;
         SimpleDateFormat dateFormat = null;
-        if (!ServerSettings.getSingleton().isMillisArrival()) {
+
+        boolean useMillis = ServerSettings.getSingleton().isMillisArrival();
+        if (!useMillis) {
             dateFormat = new SimpleDateFormat(ParserVariableManager.getSingleton().getProperty("sos.date.format"));
         } else {
             dateFormat = new SimpleDateFormat(ParserVariableManager.getSingleton().getProperty("sos.date.format.ms"));
@@ -332,6 +342,9 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
                                     print("Try to check arrive time");
                                     String arriveValue = arriveSplit[1] + " " + arriveSplit[2];
                                     arrive = dateFormat.parse(arriveValue);
+                                    if (!useMillis) {//add current millis to be able to compare times
+                                        arrive = new Date(arrive.getTime() + Calendar.getInstance().get(Calendar.MILLISECOND));
+                                    }
                                 } else {
                                     print("Invalid arrive '" + attackSplit[1]);
                                 }
@@ -397,13 +410,13 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
                 requests.put(defender, requestForDefender);
             }
             requestForDefender.addTarget(attack.getTarget());
-            SOSRequest.TargetInformation targetInfo = requestForDefender.getTargetInformation(attack.getTarget());
+            TargetInformation targetInfo = requestForDefender.getTargetInformation(attack.getTarget());
             targetInfo.addAttack(attack.getSource(), attack.getArriveTime());
         }
         return requests;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         try {
             Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
             String data = (String) t.getTransferData(DataFlavor.stringFlavor);

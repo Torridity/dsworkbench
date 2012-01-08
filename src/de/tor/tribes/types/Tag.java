@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.ImageManager;
@@ -175,7 +176,7 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
     public List<Integer> getVillageIDs() {
         return mVillageIDs;
     }
-
+  
     /**Check whether this tag tags the village with the ID 'pVillageID' or not
      * @param pVillageID ID of the village to check
      * @return boolean TRUE=Tag tags the village

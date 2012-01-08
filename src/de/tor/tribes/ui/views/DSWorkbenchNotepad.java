@@ -19,12 +19,12 @@ import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.test.DummyVillage;
 import de.tor.tribes.types.Note;
-import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
-import de.tor.tribes.ui.BBPanel;
-import de.tor.tribes.ui.GenericTestPanel;
+import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
+import de.tor.tribes.ui.panels.BBPanel;
+import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.ImageManager;
-import de.tor.tribes.ui.NoteTableTab;
+import de.tor.tribes.ui.panels.NoteTableTab;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.note.NoteManager;
@@ -413,7 +413,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         jFilterRows = new javax.swing.JCheckBox();
         jFilterCaseSensitive = new javax.swing.JCheckBox();
         jExportFormatDialog = new javax.swing.JDialog();
-        bBPanel1 = new de.tor.tribes.ui.BBPanel();
+        bBPanel1 = new de.tor.tribes.ui.panels.BBPanel();
         jComboBox1 = new javax.swing.JComboBox();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
@@ -835,7 +835,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
     }
 // </editor-fold>
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private de.tor.tribes.ui.BBPanel bBPanel1;
+    private de.tor.tribes.ui.panels.BBPanel bBPanel1;
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private javax.swing.JCheckBox jAlwaysOnTopBox;
     private javax.swing.JButton jButton16;

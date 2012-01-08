@@ -7,7 +7,7 @@ package de.tor.tribes.util.troops;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.util.Date;
 import java.util.Enumeration;
@@ -100,7 +100,17 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
     }
 
     public int getTroopsOfUnitInVillage(UnitHolder pUnit) {
-        return troops.get(pUnit);
+        Integer result = troops.get(pUnit);
+        return (result == null) ? 0 : result;
+    }
+
+    public int getAmountForUnit(UnitHolder pUnit) {
+        Integer result = troops.get(pUnit);
+        return (result == null) ? 0 : result;
+    }
+
+    public void setAmountForUnit(UnitHolder pUnit, int pAmount) {
+        troops.put(pUnit, (pAmount < 0) ? 0 : pAmount);
     }
 
     public float getFarmSpace() {

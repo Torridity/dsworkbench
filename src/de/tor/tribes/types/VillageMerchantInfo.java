@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.io.DataHolder;
 
 /**

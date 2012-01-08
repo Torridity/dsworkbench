@@ -6,7 +6,7 @@ package de.tor.tribes.util.conquer;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Conquer;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import java.awt.Point;
 
 /**

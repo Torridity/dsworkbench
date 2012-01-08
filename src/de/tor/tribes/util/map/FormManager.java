@@ -6,10 +6,10 @@ package de.tor.tribes.util.map;
 
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
-import de.tor.tribes.types.AbstractForm;
-import de.tor.tribes.types.Line;
+import de.tor.tribes.types.drawing.AbstractForm;
+import de.tor.tribes.types.drawing.Line;
 import de.tor.tribes.ui.views.DSWorkbenchFormFrame;
-import de.tor.tribes.ui.MapPanel;
+import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Color;
 import java.io.File;

@@ -5,7 +5,7 @@
 package de.tor.tribes.util.report;
 
 import de.tor.tribes.types.FightReport;
-import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.ext.Tribe;
 import java.util.List;
 
 /**

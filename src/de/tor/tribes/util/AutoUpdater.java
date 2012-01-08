@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.util;
 
+import de.tor.tribes.util.interfaces.UpdateListener;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;

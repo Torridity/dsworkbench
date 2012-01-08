@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.util.DSCalculator;
 import java.util.Comparator;
@@ -12,7 +13,7 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.util.algo.TimeFrame;
+import de.tor.tribes.util.algo.types.TimeFrame;
 
 /**
  *

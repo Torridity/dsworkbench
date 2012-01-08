@@ -5,10 +5,13 @@
 package de.tor.tribes.ui.renderer;
 
 import de.tor.tribes.ui.components.ColoredProgressBar;
+import de.tor.tribes.ui.util.ColorGradientHelper;
+import de.tor.tribes.util.Constants;
 import java.awt.Color;
 import java.awt.Component;
 import java.text.NumberFormat;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
 /**
@@ -32,19 +35,22 @@ public class PercentCellRenderer extends DefaultTableRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-
-
         ColoredProgressBar p = new ColoredProgressBar(0, 100);
 
         Float val = (Float) value * 100;
-        if (val <= 10f) {
-            p.setForeground(Color.RED);
-        } else if (val <= 50f) {
-            p.setForeground(Color.YELLOW);
-        } else {
-            p.setForeground(Color.GREEN);
-        }
 
+        Color color = null;
+
+        if (row % 2 == 0) {
+            color = Constants.DS_ROW_A;
+        } else {
+            color = Constants.DS_ROW_B;
+        }
+        p.setBackground(color);
+        p.setForeground(ColorGradientHelper.getGradientColor(val, Color.RED, color));
+        if (isSelected) {
+            p.setBackground(table.getSelectionBackground());
+        }
         p.setStringPainted(true);
         p.setValue(Math.round(val));
 

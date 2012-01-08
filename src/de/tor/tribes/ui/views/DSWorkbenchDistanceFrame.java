@@ -12,13 +12,16 @@ package de.tor.tribes.ui.views;
 
 import com.jidesoft.swing.RangeSlider;
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
-import de.tor.tribes.ui.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.GenericTestPanel;
+import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.UnknownUnit;
+import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.models.DistanceTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.DistanceTableCellRenderer;
+import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
@@ -33,13 +36,17 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.AbstractAction;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JTable;
@@ -60,25 +67,27 @@ import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
- * @author Jejkal
+ * @TODO integrated runtime
+ * @author Torridity
  */
 public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implements ListSelectionListener, ActionListener {
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        
+
         if (e.getActionCommand().equals("Delete")) {
             deleteSelectedColumns();
         } else if (e.getActionCommand().equals("Paste")) {
             pasteFromClipboard();
         }
-        
+
     }
     private static Logger logger = Logger.getLogger("DistanceFrame");
     private static DSWorkbenchDistanceFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
     private static final DistanceTableCellRenderer cellRenderer = new DistanceTableCellRenderer();
-    
+    private JComboBox unitBox = null;
+
     public static synchronized DSWorkbenchDistanceFrame getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchDistanceFrame();
@@ -92,68 +101,80 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         centerPanel = new GenericTestPanel(true);
         jDistancePanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildComponent(jPanel2);
+        unitBox = new JComboBox();
+        unitBox.setRenderer(new UnitListCellRenderer());
+        unitBox.addItemListener(new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                cellRenderer.setUnit((UnitHolder) unitBox.getSelectedItem());
+                jDistanceTable.repaint();
+            }
+        });
         buildMenu();
         jDistanceTable.setModel(new DistanceTableModel());
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
         capabilityInfoPanel1.addActionListener(this);
         jDistanceTable.registerKeyboardAction(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 actionPerformed(new ActionEvent(jDistanceTable, 0, "Delete"));
             }
         }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jDistanceTable.registerKeyboardAction(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 actionPerformed(new ActionEvent(jDistanceTable, 0, "Paste"));
             }
         }, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jDistanceTable.getActionMap().put("find", new AbstractAction() {
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 //disable find
             }
         });
         jDistanceTable.getSelectionModel().addListSelectionListener(DSWorkbenchDistanceFrame.this);
+        cellRenderer.setUnit(DataHolder.getSingleton().getUnitByPlainName("snob"));
+
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         if (!Constants.DEBUG) {
             GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.distance_overview", GlobalOptions.getHelpBroker().getHelpSet());
         }
         // </editor-fold>
     }
-    
+
     @Override
     public void toBack() {
         jAlwaysOnTop.setSelected(false);
         fireDistanceFrameAlwaysOnTopEvent(null);
         super.toBack();
     }
-    
+
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTop.isSelected());
-        
+
     }
-    
+
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
-        
+
         try {
             jAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
         } catch (Exception e) {
         }
-        
+
         setAlwaysOnTop(jAlwaysOnTop.isSelected());
     }
-    
+
     public String getPropertyPrefix() {
         return "distance.view";
     }
-    
+
     private void buildMenu() {
         JXTaskPane editPane = new JXTaskPane();
         editPane.setTitle("Bereichsfärbung");
@@ -166,22 +187,26 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         slider.setValue(10);
         slider.setExtent(10);
         slider.addMouseListener(new java.awt.event.MouseAdapter() {
-            
+
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 cellRenderer.setMarkerMin(slider.getLowValue());
                 cellRenderer.setMarkerMax(slider.getHighValue());
                 jDistanceTable.repaint();
             }
         });
-        
+
         editPane.getContentPane().add(slider);
-        
+
+        JXTaskPane unitPane = new JXTaskPane();
+        unitPane.setTitle("Einheitsauswahl");
+        unitPane.getContentPane().add(unitBox);
+
         JXTaskPane transferTaskPane = new JXTaskPane();
         transferTaskPane.setTitle("Übertragen");
         JXButton centerVillageInGame = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/center_ingame.png")));
         centerVillageInGame.setToolTipText("Zentriert das gewählte Dorf im Spiel");
         centerVillageInGame.addMouseListener(new MouseAdapter() {
-            
+
             @Override
             public void mouseReleased(MouseEvent e) {
                 centerSelectionInGame();
@@ -191,7 +216,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         JXButton openPlace = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/place.png")));
         openPlace.setToolTipText("Öffnet den Versammlungsplatz des gewählten Dorfes im Spiel");
         openPlace.addMouseListener(new MouseAdapter() {
-            
+
             @Override
             public void mouseReleased(MouseEvent e) {
                 openPlaceOfSelectionInGame();
@@ -202,21 +227,21 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         openPlace.setMaximumSize(centerVillageInGame.getMaximumSize());
         openPlace.setPreferredSize(centerVillageInGame.getPreferredSize());
         transferTaskPane.getContentPane().add(openPlace);
-        
+
         JXButton centerVillage = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
         centerVillage.setToolTipText("Zentriert das gewählte Dorf auf der Hauptkarte");
         centerVillage.addMouseListener(new MouseAdapter() {
-            
+
             @Override
             public void mouseReleased(MouseEvent e) {
                 centerSelectionOnMap();
             }
         });
         transferTaskPane.getContentPane().add(centerVillage);
-        
-        centerPanel.setupTaskPane(editPane, transferTaskPane);
+
+        centerPanel.setupTaskPane(editPane, unitPane, transferTaskPane);
     }
-    
+
     @Override
     public void valueChanged(ListSelectionEvent e) {
         int selectionCount = jDistanceTable.getColumnModel().getSelectedColumns().length;
@@ -224,11 +249,11 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
             showInfo(selectionCount + ((selectionCount == 1) ? " Spalte gewählt" : " Spalten gewählt"));
         }
     }
-    
+
     @Override
     public void resetView() {
         jDistanceTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        
+
         int w0 = 100;
         for (Village v : GlobalOptions.getSelectedProfile().getTribe().getVillageList()) {
             int w = jDistanceTable.getGraphics().getFontMetrics().stringWidth(v.getFullName());
@@ -251,11 +276,19 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
                 column.setPreferredWidth(w);
             }
         }
-        
+
         jDistanceTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         ((DistanceTableModel) jDistanceTable.getModel()).fireTableDataChanged();
+
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        model.addElement(UnknownUnit.getSingleton());
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            model.addElement(unit);
+        }
+        unitBox.setModel(model);
+
     }
-    
+
     private Village getSelectedOwnVillage() {
         int row = jDistanceTable.getSelectedRow();
         if (row >= 0) {
@@ -267,7 +300,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         }
         return null;
     }
-    
+
     private void centerSelectionInGame() {
         int row = jDistanceTable.getSelectedRow();
         if (row < 0) {
@@ -281,7 +314,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
             showInfo("Kein Dorf gewählt");
         }
     }
-    
+
     private void openPlaceOfSelectionInGame() {
         int row = jDistanceTable.getSelectedRow();
         if (row < 0) {
@@ -295,7 +328,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
             showInfo("Kein Dorf gewählt");
         }
     }
-    
+
     private void centerSelectionOnMap() {
         int row = jDistanceTable.getSelectedRow();
         if (row < 0) {
@@ -309,7 +342,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
             showInfo("Kein Dorf gewählt");
         }
     }
-    
+
     private void deleteSelectedColumns() {
         List<TableColumn> colsToRemove = new LinkedList<TableColumn>();
         int[] selection = jDistanceTable.getSelectedColumns();
@@ -318,7 +351,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
             colsToRemove.add(jDistanceTable.getColumnModel().getColumn(selection[i]));
             realCols[i] = jDistanceTable.convertColumnIndexToModel(selection[i]);
         }
-        
+
         colsToRemove.remove(jDistanceTable.getColumn("Eigene"));
         for (TableColumn colu : colsToRemove) {
             jDistanceTable.getColumnModel().removeColumn(colu);
@@ -328,7 +361,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         resetView();
         showSuccess(colsToRemove.size() + ((colsToRemove.size() == 1) ? " Spalte " : " Spalten ") + "gelöscht");
     }
-    
+
     private void pasteFromClipboard() {
         try {
             Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
@@ -350,27 +383,27 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
             showError("Fehler beim Einfügen aus der Zwischenablage");
         }
     }
-    
+
     public void showSuccess(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(Color.GREEN));
         jXLabel1.setForeground(Color.BLACK);
         jXLabel1.setText(pMessage);
     }
-    
+
     public void showInfo(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(getBackground()));
         jXLabel1.setForeground(Color.BLACK);
         jXLabel1.setText(pMessage);
     }
-    
+
     public void showError(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(Color.RED));
         jXLabel1.setForeground(Color.WHITE);
         jXLabel1.setText(pMessage);
-        
+
     }
 
     /** This method is called from within the constructor to
@@ -478,11 +511,11 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
     private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXLabel1fireHideInfoEvent
         infoPanel.setCollapsed(true);
 }//GEN-LAST:event_jXLabel1fireHideInfoEvent
-    
+
 private void fireDistanceFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireDistanceFrameAlwaysOnTopEvent
     setAlwaysOnTop(!isAlwaysOnTop());
 }//GEN-LAST:event_fireDistanceFrameAlwaysOnTopEvent
-    
+
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
         try {
@@ -495,14 +528,14 @@ private void fireDistanceFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt
             logger.error("Failed to received dropped villages", e);
         }
     }
-    
+
     public static void main(String args[]) {
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        
+
         GlobalOptions.setSelectedServer("de43");
         DataHolder.getSingleton().loadData(false);
         ProfileManager.getSingleton().loadProfiles();
-        
+
         GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -510,14 +543,14 @@ private void fireDistanceFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt
         } catch (Exception e) {
         }
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        
+
         for (int i = 0; i < 10; i++) {
-            DistanceManager.getSingleton().addVillage(DataHolder.getSingleton().getRandomVillage());
+            DistanceManager.getSingleton().addVillage(GlobalOptions.getSelectedProfile().getTribe().getVillageList()[i]);
         }
         DSWorkbenchDistanceFrame.getSingleton().resetView();
         DSWorkbenchDistanceFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         DSWorkbenchDistanceFrame.getSingleton().setVisible(true);
-        
+
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;

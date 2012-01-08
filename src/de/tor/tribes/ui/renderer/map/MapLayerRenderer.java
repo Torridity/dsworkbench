@@ -5,12 +5,12 @@
 package de.tor.tribes.ui.renderer.map;
 
 import de.tor.tribes.io.WorldDecorationHolder;
-import de.tor.tribes.types.BarbarianAlly;
-import de.tor.tribes.types.Barbarians;
+import de.tor.tribes.types.ext.BarbarianAlly;
+import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.Marker;
-import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.MapPanel;
+import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
@@ -32,7 +32,6 @@ import java.util.HashMap;
 
 /**
  * @author Torridity
- * @TODO Check alpha for mark on top for better visibility
  */
 public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
 
@@ -117,7 +116,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             Graphics2D ig2d = (Graphics2D) img.getGraphics();
             if (isMarkOnTop()) {
                 Composite c = ig2d.getComposite();
-                ig2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .6f));
+                ig2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .8f));
                 ig2d.drawImage(renderMarkerRows(pSettings), 0, 0, null);
                 ig2d.setComposite(c);
             } else {
@@ -145,7 +144,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
 
                 if (isMarkOnTop()) {
                     Composite c = ig2d.getComposite();
-                    ig2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .6f));
+                    ig2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .8f));
                     ig2d.drawImage(renderMarkerColumns(pSettings), 0, 0, null);
                     ig2d.setComposite(c);
                 } else {

@@ -4,7 +4,7 @@
  */
 package de.tor.tribes.ui.tree;
 
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import java.util.Enumeration;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;

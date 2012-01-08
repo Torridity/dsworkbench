@@ -4,7 +4,7 @@
  */
 package de.tor.tribes.util.troops;
 
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 
 /**
  *

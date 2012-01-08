@@ -1,0 +1,62 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.tor.tribes.ui.components;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+/**
+ *
+ * @author Torridity
+ */
+public class FillingLabel extends JLabel {
+
+    private double[] fillings = null;
+    private Color[] colors = null;
+
+    public void setData(double[] fillings) {
+        this.fillings = fillings;
+    }
+
+    public void setColors(Color[] colors) {
+        this.colors = colors;
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+        Graphics2D g2d = (Graphics2D) g;
+        if (fillings == null || colors == null || fillings.length != colors.length) {
+            return;
+        }
+        int h = getHeight() / fillings.length;
+        if (h == 0) {
+            return;
+        }
+        for (int i = 0; i < fillings.length; i++) {
+            g2d.setColor(colors[i]);
+            g2d.fill3DRect(0, i * h, (int) Math.rint(getWidth() * fillings[i]), h, true);
+        }
+        g2d.setColor(Color.LIGHT_GRAY);
+        g2d.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+    }
+
+    public static void main(String[] args) {
+        JFrame f = new JFrame();
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        FillingLabel l = new FillingLabel();
+        l.setPreferredSize(new Dimension(100, 24));
+        l.setData(new double[]{134644.0 / 400000.0, 180000.0 / 400000.0, 161743.0 / 400000.0});
+        l.setColors(new Color[]{new Color(187, 148, 70), new Color(242, 131, 30), new Color(224, 211, 209)});
+        f.getContentPane().add(l);
+        f.pack();
+        f.setVisible(true);
+    }
+}

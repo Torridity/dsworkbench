@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.util.BBSupport;
 import java.io.BufferedReader;

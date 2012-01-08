@@ -4,7 +4,7 @@
  */
 package de.tor.tribes.ui.renderer.map;
 
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;

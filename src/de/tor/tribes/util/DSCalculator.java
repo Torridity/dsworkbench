@@ -4,7 +4,7 @@
  */
 package de.tor.tribes.util;
 
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import java.awt.Point;
 import java.util.List;
 

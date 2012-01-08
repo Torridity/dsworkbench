@@ -4,7 +4,7 @@
  */
 package de.tor.tribes.util.dist;
 
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import java.util.LinkedList;
 import java.util.List;
 

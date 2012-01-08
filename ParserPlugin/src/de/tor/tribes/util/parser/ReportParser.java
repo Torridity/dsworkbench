@@ -7,10 +7,12 @@ package de.tor.tribes.util.parser;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FightReport;
-import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.NotifierFrame;
-import de.tor.tribes.util.SilentParserInterface;
+import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.windows.NotifierFrame;
+import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.ProfileManager;
+import de.tor.tribes.util.interfaces.SilentParserInterface;
 import de.tor.tribes.util.report.ReportManager;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
@@ -19,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 
 /**
@@ -43,6 +46,7 @@ public class ReportParser implements SilentParserInterface {
             }
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             //no valid report data found
         }
         return false;
@@ -188,6 +192,79 @@ public class ReportParser implements SilentParserInterface {
                 line = line.replaceAll("Verteidiger:", "").trim();
                 debug("Found defender line: '" + line + "'");
                 result.setDefender(DataHolder.getSingleton().getTribeByName(line));
+            } else if (line.indexOf("Erspähte Rohstoffe:") > -1) {
+                debug("Found spyed resources");
+                String resources = line.substring(line.lastIndexOf(":") + 1).trim();
+                String[] spyedResources = resources.split(" ");
+                try {
+                    int wood = Integer.parseInt(spyedResources[0].replaceAll("\\.", ""));
+                    int clay = Integer.parseInt(spyedResources[1].replaceAll("\\.", ""));
+                    int iron = Integer.parseInt(spyedResources[2].replaceAll("\\.", ""));
+                    result.setSpyedResources(wood, clay, iron);
+                    debug("Successfully set spyed resources");
+                } catch (Exception e) {
+                    debug("Failed to set spyed resources from " + resources);
+                    //no spyed resources
+                }
+            } else if (line.indexOf("Beute:") > -1) {
+                debug("Found haul");
+                String haul = line.substring(line.lastIndexOf(":") + 1).trim();
+                String[] hauledResource = haul.split(" ");
+                try {
+                    int wood = Integer.parseInt(hauledResource[0].replaceAll("\\.", ""));
+                    int clay = Integer.parseInt(hauledResource[1].replaceAll("\\.", ""));
+                    int iron = Integer.parseInt(hauledResource[2].replaceAll("\\.", ""));
+                    result.setHaul(wood, clay, iron);
+                    debug("Successfully set haul");
+                } catch (Exception e) {
+                    debug("Failed to set haul from " + haul);
+                    //no haul
+                }
+            } else if (line.indexOf("Holzfäller") > -1) {
+                debug("Parse wood mine");
+                int val = parseIntFromPattern(line, "Holzfäller(.*)\\(Stufe(.*?)\\)", 2);
+                if (val != -1) {
+                    debug("Got wood mine level " + val);
+                    result.setWoodLevel(val);
+                } else {
+                    debug("No valid wood mine level from " + line);
+                }
+            } else if (line.indexOf("Lehmgrube") > -1) {
+                debug("Parse clay mine");
+                int val = parseIntFromPattern(line, "Lehmgrube(.*)\\(Stufe(.*?)\\)", 2);
+                if (val != -1) {
+                    debug("Got clay mine level " + val);
+                    result.setClayLevel(val);
+                } else {
+                    debug("No valid clay mine level from " + line);
+                }
+            } else if (line.indexOf("Eisenmine") > -1) {
+                debug("Parse clay mine");
+                int val = parseIntFromPattern(line, "Eisenmine(.*)\\(Stufe(.*?)\\)", 2);
+                if (val != -1) {
+                    debug("Got iron mine level " + val);
+                    result.setIronLevel(val);
+                } else {
+                    debug("No valid iron mine level from " + line);
+                }
+            } else if (line.indexOf("Speicher") > -1) {
+                debug("Parse storage");
+                int val = parseIntFromPattern(line, "Speicher(.*)\\(Stufe(.*?)\\)", 2);
+                if (val != -1) {
+                    debug("Got storage level " + val);
+                    result.setStorageLevel(val);
+                } else {
+                    debug("No valid storage level from " + line);
+                }
+            } else if (line.indexOf("Versteck") > -1) {
+                debug("Parse hide");
+                int val = parseIntFromPattern(line, "Versteck(.*)\\(Stufe(.*?)\\)", 2);
+                if (val != -1) {
+                    debug("Got hide level " + val);
+                    result.setHideLevel(val);
+                } else {
+                    debug("No valid hide level from " + line);
+                }
             } else if (line.startsWith("Schaden durch Rammböcke")) {
                 line = line.replaceAll("Schaden durch Rammböcke:", "").trim();
                 line = line.replaceAll("Wall beschädigt von Level", "").trim().replaceAll("auf Level", "");
@@ -336,17 +413,34 @@ public class ReportParser implements SilentParserInterface {
         return units;
     }
 
-    public static void main(String[] args) {
-        //  ReportParser.parseReport();
-        /*  String test = "1\t2\t3\t4\t5";
-        String[] split = test.split("\t");
-        for(String t : split){
-        System.out.println(t);
-        }*/ try {
-            Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-            String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-            new ReportParser().parse(data);
+    public static int parseIntFromPattern(String pLine, String pPattern, int pGroupIndex) {
+        try {
+            String val = pLine.replaceAll(pPattern, "$" + pGroupIndex).trim();
+            return Integer.parseInt(val);
         } catch (Exception e) {
+            return -1;
         }
+    }
+
+    public static void main(String[] args) throws Exception {
+        //  ReportParser.parseReport();
+        /*
+         * String test = "1\t2\t3\t4\t5"; String[] split = test.split("\t"); for(String t : split){ System.out.println(t); }
+         */
+
+
+        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) -  %m%n")));
+        GlobalOptions.setSelectedServer("de77");
+        //ProfileManager.getSingleton().loadProfiles(); //
+       // GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de77")[0]);
+        DataHolder.getSingleton().loadData(false); // GlobalOptions.loadUserData(); 
+        Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        String data = (String) t.getTransferData(DataFlavor.stringFlavor);
+        new ReportParser().parse(data);
+
+
+
+
+        //System.out.println(Integer.parseInt("4.344".replaceAll("\\.", "")));
     }
 }

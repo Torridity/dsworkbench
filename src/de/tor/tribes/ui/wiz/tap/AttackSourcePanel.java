@@ -2,233 +2,601 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+
+/*
+ * AttackSourcePanel.java
+ *
+ * Created on Oct 15, 2011, 9:54:36 AM
+ */
 package de.tor.tribes.ui.wiz.tap;
 
-import de.tor.tribes.control.ManageableType;
-import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.AbstractForm;
-import de.tor.tribes.types.FightReport;
-import de.tor.tribes.types.Tag;
-import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.views.DSWorkbenchSelectionFrame;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.ProfileManager;
-import de.tor.tribes.util.map.FormManager;
-import de.tor.tribes.util.report.ReportManager;
-import de.tor.tribes.util.tag.TagManager;
+import com.jidesoft.swing.JideBoxLayout;
+import com.jidesoft.swing.JideSplitPane;
+import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.components.VillageOverviewMapPanel;
+import de.tor.tribes.ui.components.VillageSelectionPanel;
+import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
+import de.tor.tribes.ui.renderer.FakeCellRenderer;
+import de.tor.tribes.ui.renderer.UnitCellRenderer;
+import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.PluginManager;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.HeadlessException;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JFrame;
-import javax.swing.UIManager;
+import java.util.Map;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.jdesktop.swingx.decorator.HighlighterFactory;
+import org.netbeans.spi.wizard.Wizard;
+import org.netbeans.spi.wizard.WizardController;
+import org.netbeans.spi.wizard.WizardPanel;
+import org.netbeans.spi.wizard.WizardPanelNavResult;
 
 /**
  *
  * @author Torridity
  */
-public class AttackSourcePanel extends AbstractAttackPanel {
-
-    private static final String GENERAL_INFO = "Du befindest dich im <b>Angriffsmodus</b>. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, die f&uuml;r Angriffe verwendet werden d&uuml;rfen. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten: <ul> <li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li> <li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus der Gruppen&uuml;bersicht</li> <li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus dem SOS-Analyzer</li> <li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Berichten</li> <li>Einf&uuml;gen aus der Auswahlübersicht</li> <li>Manuelle Eingabe</li> </ul> </html>";
-    private static final String GROUP_INFO = "<html><h2>Datenquelle Gruppenübersicht</h2><br/>Hier k&ouml;nnen gezielt D&ouml;rfer verwendet werden, die sich in bestimmten Gruppen befinden. Die Auswahl der zu verwendenden Gruppe ist im Feld Set/Gruppe/Zeichnung durchzuf&uuml;hren.</html>";
-    private static final String SOS_INFO = "<html><h2>Datenquelle SOS-Analyzer</h2><br/>Hier k&ouml;nnen die <b>Zield&ouml;rfer</b> der Angriffe verwendet werden, die momentan im SOS-Analyzer eingetragen sind.</html>";
-    private static final String REPORT_INFO = "<html><h2>Datenquelle Berichtdatenbank</h2><br/>Hier k&ouml;nnen die <b>Zield&ouml;rfer</b> der Berichte verwendet werden, die sich in einem bestimmten Berichtset befinden. Die Auswahl des zu verwendenden Berichtsets ist im Feld Set/Gruppe/Zeichnung durchzuf&uuml;hren.</html>";
-    private static final String SELECTION_INFO = "<html><h2>Datenquelle Auswahlübersicht</h2><br/>Hier k&ouml;nnen die D&ouml;rfer verwendet werden, die sich momentan in der Auswahl&uuml;bersicht befinden.</html>";
-    private static final String DRAWING_INFO = "<html><h2>Datenquelle Zeichnungen</h2><br/>Hier k&ouml;nnen die D&ouml;rfer verwendet werden, die sich innerhalb einer bestimmten Zeichnung auf der Hauptkarte befinden. Die Auswahl der zu verwendenden Zeichnung ist im Feld Set/Gruppe/Zeichnung durchzuf&uuml;hren.</html>";
-    private static final String WORLDDATA_INFO = "<html><h2>Datenquelle Weltdaten</h2><br/>Mit dieser Option k&ouml;nnen D&ouml;rfer ausgehend von den kompletten Weltdaten gewählt werden.</html>";
-    private List<Village> villages = new LinkedList<Village>();
+public class AttackSourcePanel extends javax.swing.JPanel implements WizardPanel {
+    
+    private static final String GENERAL_INFO = "Du befindest dich in der Dorfauswahl. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, "
+            + "mit denen du angreifen m&ouml;chtest. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:"
+            + "<ul> <li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>"
+            + "<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Gruppen der Gruppen&uuml;bersicht</li>"
+            + "</ul></html>";
     private static AttackSourcePanel singleton = null;
-
-    public static synchronized AbstractAttackPanel getSingleton() {
+    private WizardController controller = null;
+    private VillageSelectionPanel villageSelectionPanel = null;
+    private VillageOverviewMapPanel overviewPanel = null;
+    
+    public static synchronized AttackSourcePanel getSingleton() {
         if (singleton == null) {
             singleton = new AttackSourcePanel();
         }
         return singleton;
     }
+    
+    public void setController(WizardController pWizCtrl) {
+        controller = pWizCtrl;
+    }
 
+    /** Creates new form AttackSourcePanel */
     AttackSourcePanel() {
-        super();
-        jAddUsage.setEnabled(false);
-        jRemoveUsage.setEnabled(false);
-        jRestoreUsage.setEnabled(false);
-        jUsageAmount.setEnabled(false);
-    }
-
-    @Override
-    public List<Village> getVillages() {
-        return villages;
-    }
-
-    @Override
-    protected void updateSetSelection(Object[] pElements) {
-        if (pElements == null) {
-            jSetLabel.setEnabled(false);
-            jSetBox.setEnabled(false);
-            villages.clear();
-            if (jSosSource.isSelected()) {
-                System.out.println("Not yet implemented");
-            } else if (jSelectionSource.isSelected()) {
-                for (Village v : DSWorkbenchSelectionFrame.getSingleton().getSelectedElements()) {
-                    villages.add(v);
-                }
-            } else if (jWorlddataSource.isSelected()) {
-                for (Integer id : DataHolder.getSingleton().getVillagesById().keySet()) {
-                    Village v = DataHolder.getSingleton().getVillagesById().get(id);
-                    if (v.getTribe() != null) {
-                        villages.add(v);
-                    }
-                }
-                rebuildDataBoxes();
-            } else {
-                //should be drawing selected but no drawing available
-                jSetBox.setModel(new DefaultComboBoxModel(new Object[]{"Nicht verfügbar"}));
+        initComponents();
+        jVillageTable.setModel(new SourceTableModel());
+        jVillageTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
+        jVillageTable.setDefaultRenderer(Boolean.class, new FakeCellRenderer());
+        jXCollapsiblePane1.setLayout(new BorderLayout());
+        jXCollapsiblePane1.add(jInfoScrollPane, BorderLayout.CENTER);
+        villageSelectionPanel = new VillageSelectionPanel(new VillageSelectionPanel.VillageSelectionPanelListener() {
+            
+            @Override
+            public void fireVillageSelectionEvent(Village[] pSelection) {
+                addVillages(pSelection);
             }
+        });
+        
+        jVillageTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
+        jVillageTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
+        
+        villageSelectionPanel.enableSelectionElement(VillageSelectionPanel.SELECTION_ELEMENT.ALLY, false);
+        villageSelectionPanel.enableSelectionElement(VillageSelectionPanel.SELECTION_ELEMENT.TRIBE, false);
+        villageSelectionPanel.setUnitSelectionEnabled(true);
+        villageSelectionPanel.setFakeSelectionEnabled(true);
+        villageSelectionPanel.setup();
+        jPanel1.add(villageSelectionPanel, BorderLayout.CENTER);
+        jideSplitPane1.setOrientation(JideSplitPane.VERTICAL_SPLIT);
+        jideSplitPane1.setProportionalLayout(true);
+        jideSplitPane1.setDividerSize(5);
+        jideSplitPane1.setShowGripper(true);
+        jideSplitPane1.setOneTouchExpandable(true);
+        jideSplitPane1.setDividerStepSize(10);
+        jideSplitPane1.setInitiallyEven(true);
+        jideSplitPane1.add(jDataPanel, JideBoxLayout.FLEXIBLE);
+        jideSplitPane1.add(jVillageTablePanel, JideBoxLayout.VARY);
+        jideSplitPane1.getDividerAt(0).addMouseListener(new MouseAdapter() {
+            
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    jideSplitPane1.setProportions(new double[]{0.5});
+                }
+            }
+        });
+        
+        KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
+        KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
+        ActionListener panelListener = new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getActionCommand().equals("Paste")) {
+                    pasteFromClipboard();
+                } else if (e.getActionCommand().equals("Delete")) {
+                    deleteSelection();
+                }
+            }
+        };
+        jVillageTable.registerKeyboardAction(panelListener, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jVillageTable.registerKeyboardAction(panelListener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        capabilityInfoPanel1.addActionListener(panelListener);
+        
+        jVillageTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int selectedRows = jVillageTable.getSelectedRowCount();
+                if (selectedRows != 0) {
+                    jStatusLabel.setText(selectedRows + " Dorf/Dörfer gewählt");
+                }
+            }
+        });
+        
+        
+        jInfoTextPane.setText(GENERAL_INFO);
+        overviewPanel = new VillageOverviewMapPanel();
+        jPanel2.add(overviewPanel, BorderLayout.CENTER);
+    }
+
+    /** This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
+
+        jInfoScrollPane = new javax.swing.JScrollPane();
+        jInfoTextPane = new javax.swing.JTextPane();
+        jDataPanel = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        jVillageTablePanel = new javax.swing.JPanel();
+        jTableScrollPane = new javax.swing.JScrollPane();
+        jVillageTable = new org.jdesktop.swingx.JXTable();
+        jPanel2 = new javax.swing.JPanel();
+        jToggleButton1 = new javax.swing.JToggleButton();
+        jStatusLabel = new javax.swing.JLabel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
+        jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
+        jLabel1 = new javax.swing.JLabel();
+        jideSplitPane1 = new com.jidesoft.swing.JideSplitPane();
+
+        jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
+        jInfoScrollPane.setPreferredSize(new java.awt.Dimension(19, 180));
+
+        jInfoTextPane.setContentType("text/html");
+        jInfoTextPane.setEditable(false);
+        jInfoTextPane.setText("<html>Du befindest dich im <b>Angriffsmodus</b>. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, die f&uuml;r Angriffe verwendet werden d&uuml;rfen. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:\n<ul>\n<li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus der Gruppen&uuml;bersicht</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus dem SOS-Analyzer</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Berichten</li>\n<li>Einf&uuml;gen aus der Auswahlübersicht</li>\n<li>Manuelle Eingabe</li>\n</ul>\n</html>\n");
+        jInfoScrollPane.setViewportView(jInfoTextPane);
+
+        jDataPanel.setMinimumSize(new java.awt.Dimension(0, 130));
+        jDataPanel.setPreferredSize(new java.awt.Dimension(0, 130));
+        jDataPanel.setLayout(new java.awt.GridBagLayout());
+
+        jPanel1.setLayout(new java.awt.BorderLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jDataPanel.add(jPanel1, gridBagConstraints);
+
+        jVillageTablePanel.setLayout(new java.awt.GridBagLayout());
+
+        jTableScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Verwendete Dörfer"));
+        jTableScrollPane.setMinimumSize(new java.awt.Dimension(23, 100));
+        jTableScrollPane.setPreferredSize(new java.awt.Dimension(23, 100));
+
+        jVillageTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jTableScrollPane.setViewportView(jVillageTable);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridheight = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jVillageTablePanel.add(jTableScrollPane, gridBagConstraints);
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel2.setMinimumSize(new java.awt.Dimension(100, 100));
+        jPanel2.setPreferredSize(new java.awt.Dimension(100, 100));
+        jPanel2.setLayout(new java.awt.BorderLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(12, 5, 5, 5);
+        jVillageTablePanel.add(jPanel2, gridBagConstraints);
+
+        jToggleButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/search.png"))); // NOI18N
+        jToggleButton1.setMaximumSize(new java.awt.Dimension(100, 23));
+        jToggleButton1.setMinimumSize(new java.awt.Dimension(100, 23));
+        jToggleButton1.setPreferredSize(new java.awt.Dimension(100, 23));
+        jToggleButton1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireViewStateChangeEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jVillageTablePanel.add(jToggleButton1, gridBagConstraints);
+
+        jStatusLabel.setMaximumSize(new java.awt.Dimension(0, 16));
+        jStatusLabel.setMinimumSize(new java.awt.Dimension(0, 16));
+        jStatusLabel.setPreferredSize(new java.awt.Dimension(0, 16));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jVillageTablePanel.add(jStatusLabel, gridBagConstraints);
+
+        capabilityInfoPanel1.setBbSupport(false);
+        capabilityInfoPanel1.setCopyable(false);
+        capabilityInfoPanel1.setSearchable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jVillageTablePanel.add(capabilityInfoPanel1, gridBagConstraints);
+
+        setLayout(new java.awt.GridBagLayout());
+
+        jXCollapsiblePane1.setCollapsed(true);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jXCollapsiblePane1, gridBagConstraints);
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Informationen einblenden");
+        jLabel1.setToolTipText("Blendet Informationen zu dieser Ansicht und zu den Datenquellen ein/aus");
+        jLabel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireHideInfoEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jLabel1, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        add(jideSplitPane1, gridBagConstraints);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideInfoEvent
+        if (jXCollapsiblePane1.isCollapsed()) {
+            jXCollapsiblePane1.setCollapsed(false);
+            jLabel1.setText("Informationen ausblenden");
         } else {
-            jSetLabel.setEnabled(true);
-            jSetBox.setEnabled(true);
-            DefaultComboBoxModel model = new DefaultComboBoxModel();
-            if (pElements.length == 0) {
-                jSetLabel.setEnabled(false);
-                jSetBox.setEnabled(false);
-                model.addElement(NO_DATA_AVAILABLE);
-            } else {
-                jSetLabel.setEnabled(true);
-                jSetBox.setEnabled(true);
-                model.addElement(ALL_DATA);
-                for (Object set : pElements) {
-                    model.addElement(set);
-                }
-            }
-
-            jSetBox.setModel(model);
-            jSetBox.setSelectedIndex(0);
+            jXCollapsiblePane1.setCollapsed(true);
+            jLabel1.setText("Informationen einblenden");
         }
-    }
-
-    @Override
-    protected void updateDataForGroupSource(Object pTag) {
-        villages.clear();
-        if (pTag != null) {
-            if (pTag instanceof String) {
-                for (ManageableType element : TagManager.getSingleton().getAllElements()) {
-                    for (Integer id : ((Tag) element).getVillageIDs()) {
-                        Village village = DataHolder.getSingleton().getVillagesById().get(id);
-                        if (!villages.contains(village)) {
-                            villages.add(village);
-                        }
-                    }
+    }//GEN-LAST:event_fireHideInfoEvent
+    
+    private void fireViewStateChangeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireViewStateChangeEvent
+        if (jToggleButton1.isSelected()) {
+            overviewPanel.setOptimalSize();
+            jTableScrollPane.setViewportView(overviewPanel);
+            jPanel2.remove(overviewPanel);
+        } else {
+            jTableScrollPane.setViewportView(jVillageTable);
+            jPanel2.add(overviewPanel, BorderLayout.CENTER);
+            SwingUtilities.invokeLater(new Runnable() {
+                
+                public void run() {
+                    jPanel2.updateUI();
                 }
-            } else if (pTag instanceof Tag) {
-                Tag tag = (Tag) pTag;
-                for (Integer id : tag.getVillageIDs()) {
-                    Village village = DataHolder.getSingleton().getVillagesById().get(id);
-                    if (!villages.contains(village)) {
-                        villages.add(village);
-                    }
-                }
-            }
+            });
         }
-        rebuildDataBoxes();
+    }//GEN-LAST:event_fireViewStateChangeEvent
+    
+    private SourceTableModel getModel() {
+        return (SourceTableModel) jVillageTable.getModel();
     }
-
-    @Override
-    protected void updateDataForReportSource(String pSet) {
-        villages.clear();
-        if (pSet != null) {
-            List<ManageableType> relevantReports = null;
-
-            if (pSet.equals(ALL_DATA)) {
-                relevantReports = ReportManager.getSingleton().getAllElements();
-            } else {
-                relevantReports = ReportManager.getSingleton().getAllElements(pSet);
-            }
-
-            for (ManageableType element : relevantReports) {
-                FightReport report = (FightReport) element;
-                Village target = report.getTargetVillage();
-                if (!villages.contains(target)) {
-                    villages.add(target);
-                }
-            }
+    
+    private void addVillages(Village[] pVillages) {
+        SourceTableModel model = getModel();
+        for (Village v : pVillages) {
+            model.addRow(v, villageSelectionPanel.getSelectedUnit(), villageSelectionPanel.isFake());
         }
-        rebuildDataBoxes();
-    }
-
-    @Override
-    protected void updateDataForDrawingSource(Object pDrawing) {
-        villages.clear();
-        if (pDrawing != null) {
-            if (pDrawing instanceof String) {
-                for (ManageableType element : FormManager.getSingleton().getAllElements()) {
-                    for (Village village : ((AbstractForm) element).getContainedVillages()) {
-                        if (!villages.contains(village)) {
-                            villages.add(village);
-                        }
-                    }
-                }
-            } else if (pDrawing instanceof AbstractForm) {
-                AbstractForm drawing = (AbstractForm) pDrawing;
-                for (Village village : drawing.getContainedVillages()) {
-                    if (!villages.contains(village)) {
-                        villages.add(village);
-                    }
-                }
-            }
+        if (model.getRowCount() > 0) {
+            controller.setProblem(null);
         }
-        rebuildDataBoxes();
+        jStatusLabel.setText(pVillages.length + " Dorf/Dörfer eingefügt");
+        updateOverview(false);
     }
-
-    @Override
-    public String getGeneralInfo() {
-        return GENERAL_INFO;
-    }
-
-    @Override
-    public String getGroupInfo() {
-        return GROUP_INFO;
-    }
-
-    @Override
-    public String getSosInfo() {
-        return SOS_INFO;
-    }
-
-    @Override
-    public String getReportInfo() {
-        return REPORT_INFO;
-    }
-
-    @Override
-    public String getSelectionInfo() {
-        return SELECTION_INFO;
-    }
-
-    @Override
-    public String getDrawingInfo() {
-        return DRAWING_INFO;
-    }
-
-    @Override
-    public String getWorldDataInfo() {
-        return WORLDDATA_INFO;
-    }
-
-    public static void main(String[] args) {
-        GlobalOptions.setSelectedServer("de43");
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-
-        DataHolder.getSingleton().loadData(false);
+    
+    private void pasteFromClipboard() {
+        String data = "";
         try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+            data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
+            List<Village> villages = PluginManager.getSingleton().executeVillageParser(data);
+            if (!villages.isEmpty()) {
+                addVillages(villages.toArray(new Village[villages.size()]));
+            }
+        } catch (HeadlessException he) {
+        } catch (UnsupportedFlavorException ufe) {
+        } catch (IOException ioe) {
         }
+    }
+    
+    private void deleteSelection() {
+        int[] selection = jVillageTable.getSelectedRows();
+        if (selection.length > 0) {
+            List<Integer> rows = new LinkedList<Integer>();
+            for (int i : selection) {
+                rows.add(jVillageTable.convertRowIndexToModel(i));
+            }
+            Collections.sort(rows);
+            for (int i = rows.size() - 1; i >= 0; i--) {
+                getModel().removeRow(rows.get(i));
+            }
+            jStatusLabel.setText(selection.length + " Dorf/Dörfer entfernt");
+            updateOverview(true);
+            if (getModel().getRowCount() == 0) {
+                controller.setProblem("Keine Dörfer gewählt");
+            }
+        }
+    }
+    
+    private void updateOverview(boolean pReset) {
+        if (pReset) {
+            overviewPanel.reset();
+        }
+        for (Village v : getVillages()) {
+            overviewPanel.addVillage(new Point(v.getX(), v.getY()), Color.yellow);
+        }
+        overviewPanel.repaint();
+    }
+    
+    public Village[] getVillages() {
+        List<Village> result = new LinkedList<Village>();
+        SourceTableModel model = getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            result.add(model.getRow(i).getVillage());
+        }
+        return result.toArray(new Village[result.size()]);
+    }
+    
+    public AttackSourceElement[] getAllElements() {
+        List<AttackSourceElement> result = new LinkedList<AttackSourceElement>();
+        SourceTableModel model = getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            result.add(model.getRow(i));
+        }
+        return result.toArray(new AttackSourceElement[result.size()]);
+    }
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
+    private javax.swing.JPanel jDataPanel;
+    private javax.swing.JScrollPane jInfoScrollPane;
+    private javax.swing.JTextPane jInfoTextPane;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JLabel jStatusLabel;
+    private javax.swing.JScrollPane jTableScrollPane;
+    private javax.swing.JToggleButton jToggleButton1;
+    private org.jdesktop.swingx.JXTable jVillageTable;
+    private javax.swing.JPanel jVillageTablePanel;
+    private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
+    private com.jidesoft.swing.JideSplitPane jideSplitPane1;
+    // End of variables declaration//GEN-END:variables
 
-        JFrame f = new JFrame("Test");
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setSize(500, 400);
-        f.getContentPane().add(new AttackSourcePanel());
-        f.pack();
-        f.setVisible(true);
+    @Override
+    public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
+        if (getAllElements().length == 0) {
+            controller.setProblem("Keine Dörfer gewählt");
+            return WizardPanelNavResult.PROCEED;
+        }
+        AttackSourceFilterPanel.getSingleton().setup();
+        return WizardPanelNavResult.PROCEED;
+    }
+    
+    @Override
+    public WizardPanelNavResult allowBack(String string, Map map, Wizard wizard) {
+        return WizardPanelNavResult.PROCEED;
+        
+    }
+    
+    @Override
+    public WizardPanelNavResult allowFinish(String string, Map map, Wizard wizard) {
+        return WizardPanelNavResult.PROCEED;
+    }
+}
+
+class SourceTableModel extends AbstractTableModel {
+    
+    private String[] columnNames = new String[]{
+        "Spieler", "Dorf", "Einheit", "Fake"
+    };
+    private Class[] types = new Class[]{
+        Tribe.class, Village.class, UnitHolder.class, Boolean.class
+    };
+    private final List<AttackSourceElement> elements = new LinkedList<AttackSourceElement>();
+    
+    public SourceTableModel() {
+        super();
+    }
+    
+    public void addRow(final Village pVillage, UnitHolder pUnit, boolean pFake) {
+        Object result = CollectionUtils.find(elements, new Predicate() {
+            
+            @Override
+            public boolean evaluate(Object o) {
+                return ((AttackSourceElement) o).getVillage().equals(pVillage);
+            }
+        });
+        
+        if (result == null) {
+            elements.add(new AttackSourceElement(pVillage, pUnit, pFake));
+        } else {
+            AttackSourceElement resultElem = (AttackSourceElement) result;
+            resultElem.setUnit(pUnit);
+            resultElem.setFake(pFake);
+        }
+        fireTableDataChanged();
+    }
+    
+    @Override
+    public int getRowCount() {
+        if (elements == null) {
+            return 0;
+        }
+        return elements.size();
+    }
+    
+    @Override
+    public Class getColumnClass(int columnIndex) {
+        return types[columnIndex];
+    }
+    
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return false;
+    }
+    
+    @Override
+    public String getColumnName(int column) {
+        return columnNames[column];
+    }
+    
+    public void removeRow(int row) {
+        elements.remove(row);
+        fireTableDataChanged();
+    }
+    
+    public AttackSourceElement getRow(int row) {
+        return elements.get(row);
+    }
+    
+    @Override
+    public Object getValueAt(int row, int column) {
+        if (elements == null || elements.size() - 1 < row) {
+            return null;
+        }
+        AttackSourceElement element = elements.get(row);
+        switch (column) {
+            case 0:
+                return element.getVillage().getTribe();
+            case 1:
+                return element.getVillage();
+            case 2:
+                return element.getUnit();
+            default:
+                return element.isFake();
+        }
+    }
+    
+    @Override
+    public int getColumnCount() {
+        return columnNames.length;
+    }
+}
+
+class AttackSourceElement {
+    
+    private Village village = null;
+    private UnitHolder unit = null;
+    private boolean fake = false;
+    private boolean ignored = false;
+    
+    public AttackSourceElement(Village pVillage, UnitHolder pUnit) {
+        village = pVillage;
+        unit = pUnit;
+    }
+    
+    public AttackSourceElement(Village pVillage, UnitHolder pUnit, boolean pFake) {
+        this(pVillage, pUnit);
+        fake = pFake;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof AttackSourceElement) {
+            return ((AttackSourceElement) obj).getVillage().equals(getVillage());
+        }
+        return false;
+    }
+    
+    public Village getVillage() {
+        return village;
+    }
+    
+    public UnitHolder getUnit() {
+        return unit;
+    }
+    
+    public void setUnit(UnitHolder pUnit) {
+        unit = pUnit;
+    }
+    
+    public boolean isFake() {
+        return fake;
+    }
+    
+    public void setFake(boolean pValue) {
+        fake = pValue;
+    }
+    
+    public boolean isIgnored() {
+        return ignored;
+    }
+    
+    public void setIgnored(boolean pValue) {
+        ignored = pValue;
     }
 }

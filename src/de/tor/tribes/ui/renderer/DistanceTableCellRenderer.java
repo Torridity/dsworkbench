@@ -4,6 +4,10 @@
  */
 package de.tor.tribes.ui.renderer;
 
+import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.UnknownUnit;
+import de.tor.tribes.ui.util.ColorGradientHelper;
+import de.tor.tribes.util.DSCalculator;
 import java.awt.Color;
 import java.awt.Component;
 import java.text.NumberFormat;
@@ -18,6 +22,7 @@ import javax.swing.table.TableCellRenderer;
  */
 public class DistanceTableCellRenderer implements TableCellRenderer {
 
+    private UnitHolder unit = UnknownUnit.getSingleton();
     private NumberFormat nf = NumberFormat.getInstance();
     private double markerMin = Double.MIN_VALUE;
     private double markerMax = Double.MAX_VALUE;
@@ -38,40 +43,34 @@ public class DistanceTableCellRenderer implements TableCellRenderer {
         markerMax = pValue;
     }
 
+    public void setUnit(UnitHolder unit) {
+        this.unit = unit;
+    }
+
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
         Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         JLabel l = (JLabel) c;
-        l.setText(nf.format(value));
         double v = (Double) value;
-
-        if (!isSelected) {
-            if (v <= markerMin) {
-                c.setBackground(Color.GREEN);
-            } else if (v >= markerMax) {
-                c.setBackground(Color.RED);
-            } else if ((v > markerMin) && (v < markerMax)) {
-                double diff = markerMax - markerMin;
-                float ratio = 0;
-                if (diff > 0) {
-                    ratio = (float) ((v - markerMin) / (markerMax - markerMin));
-                }
-                Color c1 = Color.YELLOW;
-                Color c2 = Color.RED;
-                int red = (int) Math.rint(c2.getRed() * ratio + c1.getRed() * (1f - ratio));
-                int green = (int) Math.rint(c2.getGreen() * ratio + c1.getGreen() * (1f - ratio));
-                int blue = (int) Math.rint(c2.getBlue() * ratio + c1.getBlue() * (1f - ratio));
-
-                red = (red < 0) ? 0 : red;
-                green = (green < 0) ? 0 : green;
-                blue = (blue < 0) ? 0 : blue;
-                red = (red > 255) ? 255 : red;
-                green = (green > 255) ? 255 : green;
-                blue = (blue > 255) ? 255 : blue;
-                c.setBackground(new Color(red, green, blue));
-            }
+        if (unit.equals(UnknownUnit.getSingleton())) {
+            l.setText(nf.format(value));
+        } else {
+            double speedInMinutes = v * unit.getSpeed();
+            l.setText(DSCalculator.formatTimeInMinutes(speedInMinutes));
         }
+
+        Color col = null;
+        if (v <= markerMin) {
+            col = ColorGradientHelper.getGradientColor(100f, Color.RED, Color.GREEN);
+        } else if ((v > markerMin) && (v < markerMax)) {
+            double range = markerMax - markerMin;
+            double val = v - markerMin;
+            col = ColorGradientHelper.getGradientColor((float) (100.0 - (100.0 * val / range)), Color.RED, Color.GREEN);
+        } else if (v >= markerMax) {
+            col = ColorGradientHelper.getGradientColor(0f, Color.RED, Color.GREEN);
+        }
+        c.setBackground(col);
         return c;
     }
 }

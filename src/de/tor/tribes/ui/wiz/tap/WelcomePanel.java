@@ -43,15 +43,13 @@ public class WelcomePanel extends javax.swing.JPanel implements WizardPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane();
-        jPanel1 = new javax.swing.JPanel();
-        jAttackType = new javax.swing.JRadioButton();
-        jDefendType = new javax.swing.JRadioButton();
 
+        setMinimumSize(new java.awt.Dimension(600, 600));
+        setPreferredSize(new java.awt.Dimension(600, 600));
         setLayout(new java.awt.BorderLayout());
 
         jTextPane1.setContentType("text/html");
@@ -60,55 +58,15 @@ public class WelcomePanel extends javax.swing.JPanel implements WizardPanel {
         jScrollPane1.setViewportView(jTextPane1);
 
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
-
-        jPanel1.setLayout(new java.awt.GridBagLayout());
-
-        buttonGroup1.add(jAttackType);
-        jAttackType.setSelected(true);
-        jAttackType.setText("Angriff");
-        jAttackType.setMaximumSize(new java.awt.Dimension(59, 30));
-        jAttackType.setMinimumSize(new java.awt.Dimension(59, 30));
-        jAttackType.setPreferredSize(new java.awt.Dimension(59, 30));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 50, 5, 5);
-        jPanel1.add(jAttackType, gridBagConstraints);
-
-        buttonGroup1.add(jDefendType);
-        jDefendType.setText("Verteidigung");
-        jDefendType.setMaximumSize(new java.awt.Dimension(59, 30));
-        jDefendType.setMinimumSize(new java.awt.Dimension(59, 30));
-        jDefendType.setPreferredSize(new java.awt.Dimension(59, 30));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 50, 5, 5);
-        jPanel1.add(jDefendType, gridBagConstraints);
-
-        add(jPanel1, java.awt.BorderLayout.SOUTH);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JRadioButton jAttackType;
-    private javax.swing.JRadioButton jDefendType;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextPane jTextPane1;
     // End of variables declaration//GEN-END:variables
 
-    public boolean isAttackMode() {
-        return jAttackType.isSelected();
-    }
-
     @Override
     public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
-        SourcePanel.getSingleton().setupForAttack(jAttackType.isSelected());
-        TargetPanel.getSingleton().setupForAttack(jAttackType.isSelected());
         return WizardPanelNavResult.PROCEED;
     }
 

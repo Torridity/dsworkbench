@@ -4,12 +4,13 @@
  */
 package de.tor.tribes.util.algo;
 
+import de.tor.tribes.util.algo.types.TimeFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Fake;
 import de.tor.tribes.types.Off;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import java.awt.Color;
@@ -67,11 +68,9 @@ public class Iterix extends AbstractAttackAlgorithm {
         List<AbstractTroopMovement> movementList = new LinkedList<AbstractTroopMovement>();
         if (!ramAndCataSources.isEmpty()) {
             //off sources are available
-            //   if (!pTimeFrame.isVariableArriveTime()) {
             logText(" - Entferne Herkunftsdörfer, die keins der Ziel erreichen können");
             //remove non-working sources if we use a fixed arrive time
             removeImpossibleSources(ramAndCataSources, pTargets, pTimeFrame);
-            //   }
             if (ramAndCataSources.isEmpty()) {
                 logError("Keine Dörfer übrig, Berechnung wird abgebrochen.");
                 return new LinkedList<AbstractTroopMovement>();
@@ -91,7 +90,7 @@ public class Iterix extends AbstractAttackAlgorithm {
                 while (!solve(ramAndCataSources, pTargets, mappings, result)) {
                     Thread.sleep(10);
                     int currentMappings = countMappings(mappings);
-                    updateStatus(currentMappings, maxMappings);
+                    updateStatus(maxMappings - currentMappings, maxMappings);
                     logInfo("   * " + currentMappings + " von " + maxMappings + " verbleibende Kombinationen");
                     if (isAborted()) {
                         break;
@@ -111,7 +110,6 @@ public class Iterix extends AbstractAttackAlgorithm {
 
             logText(" - Erstelle Ergebnisliste");
             //store results
-
             for (int i = 0; i < ramAndCataSources.size(); i++) {
                 for (int j = 0; j < pTargets.size(); j++) {
                     if (result[i][j] != 0) {
@@ -123,6 +121,13 @@ public class Iterix extends AbstractAttackAlgorithm {
                             movements.put(target, movementForTarget);
                         }
                         movementForTarget.addOff(ram, source);
+                    } else {
+                        Village target = pTargets.get(j);
+                        Off movementForTarget = movements.get(target);
+                        if (movementForTarget == null) {
+                            movementForTarget = new Off(target, pMaxAttacksTable.get(target));
+                            movements.put(target, movementForTarget);
+                        }
                     }
                 }
             }
@@ -201,7 +206,7 @@ public class Iterix extends AbstractAttackAlgorithm {
             while (!solve(ramAndCataFakes, pTargets, mappings, result)) {
                 Thread.sleep(10);
                 int currentMappings = countMappings(mappings);
-                updateStatus(currentMappings, maxMappings);
+                updateStatus(maxMappings - currentMappings, maxMappings);
                 logInfo("   * " + currentMappings + " von " + maxMappings + " verbleibende Kombinationen");
                 if (isAborted()) {
                     break;
@@ -230,6 +235,13 @@ public class Iterix extends AbstractAttackAlgorithm {
                         fakeMovements.put(target, movementForTarget);
                     }
                     movementForTarget.addOff(ram, source);
+                } else {
+                    Village target = pTargets.get(j);
+                    Fake movementForTarget = fakeMovements.get(target);
+                    if (movementForTarget == null) {
+                        movementForTarget = new Fake(target, pMaxAttacksTable.get(target));
+                        fakeMovements.put(target, movementForTarget);
+                    }
                 }
             }
         }
@@ -243,7 +255,6 @@ public class Iterix extends AbstractAttackAlgorithm {
         jf.add(f);
         jf.pack();
         jf.setVisible(true);*/
-
 
         return movementList;
     }

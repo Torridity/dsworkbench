@@ -11,13 +11,13 @@
 package de.tor.tribes.ui.views;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.Ally;
-import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.ext.Ally;
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.TribeStatsElement;
 import de.tor.tribes.types.TribeStatsElement.Stats;
-import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
-import de.tor.tribes.ui.GenericTestPanel;
+import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
+import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.util.BBCodeFormatter;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;

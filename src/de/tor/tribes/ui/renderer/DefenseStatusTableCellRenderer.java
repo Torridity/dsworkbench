@@ -4,7 +4,7 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.types.DefenseElement.DEFENSE_STATUS;
+import de.tor.tribes.types.DefenseInformation.DEFENSE_STATUS;
 import java.awt.Component;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;

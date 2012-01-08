@@ -11,16 +11,16 @@
 package de.tor.tribes.ui.views;
 
 import de.tor.tribes.control.GenericManagerListener;
-import de.tor.tribes.types.AbstractForm;
-import de.tor.tribes.types.Circle;
-import de.tor.tribes.types.Line;
-import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
-import de.tor.tribes.ui.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.FormConfigFrame;
-import de.tor.tribes.ui.GenericTestPanel;
+import de.tor.tribes.types.drawing.AbstractForm;
+import de.tor.tribes.types.drawing.Circle;
+import de.tor.tribes.types.drawing.Line;
+import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.windows.FormConfigFrame;
+import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.ImageManager;
-import de.tor.tribes.ui.MapPanel;
+import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.models.FormTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.VisibilityCellRenderer;
@@ -611,13 +611,13 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         DSWorkbenchFormFrame.getSingleton().setSize(800, 600);
         FormManager.getSingleton().addForm(new Circle());
-        FormManager.getSingleton().addForm(new de.tor.tribes.types.Rectangle());
+        FormManager.getSingleton().addForm(new de.tor.tribes.types.drawing.Rectangle());
         FormManager.getSingleton().addForm(new Circle());
-        FormManager.getSingleton().addForm(new de.tor.tribes.types.Rectangle());
+        FormManager.getSingleton().addForm(new de.tor.tribes.types.drawing.Rectangle());
         FormManager.getSingleton().addForm(new Circle());
-        FormManager.getSingleton().addForm(new de.tor.tribes.types.Rectangle());
+        FormManager.getSingleton().addForm(new de.tor.tribes.types.drawing.Rectangle());
         FormManager.getSingleton().addForm(new Circle());
-        FormManager.getSingleton().addForm(new de.tor.tribes.types.Rectangle());
+        FormManager.getSingleton().addForm(new de.tor.tribes.types.drawing.Rectangle());
         FormManager.getSingleton().addForm(new Line());
         
         DSWorkbenchFormFrame.getSingleton().resetView();

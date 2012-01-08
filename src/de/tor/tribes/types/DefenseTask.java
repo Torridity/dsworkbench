@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.types.ext.Village;
 import org.apache.commons.lang.math.LongRange;
 
 /**

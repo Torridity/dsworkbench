@@ -17,11 +17,11 @@ import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.test.DummyUnit;
 import de.tor.tribes.types.StandardAttackElement;
 import de.tor.tribes.types.UserProfile;
-import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.AbstractDSWorkbenchFrame;
-import de.tor.tribes.ui.AttackTableTab;
-import de.tor.tribes.ui.GenericTestPanel;
-import de.tor.tribes.ui.NotifierFrame;
+import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
+import de.tor.tribes.ui.panels.AttackTableTab;
+import de.tor.tribes.ui.panels.GenericTestPanel;
+import de.tor.tribes.ui.windows.NotifierFrame;
 import de.tor.tribes.ui.editors.StandardAttackElementEditor;
 import de.tor.tribes.ui.models.StandardAttackTableModel;
 import java.util.Enumeration;
@@ -36,7 +36,7 @@ import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MouseGestureHandler;
 import de.tor.tribes.util.ProfileManager;
-import de.tor.tribes.util.ProfileManagerListener;
+import de.tor.tribes.util.interfaces.ProfileManagerListener;
 import de.tor.tribes.util.PropertyHelper;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -81,6 +81,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
 
 // -Dsun.java2d.d3d=true -Dsun.java2d.translaccel=true -Dsun.java2d.ddforcevram=true
 /**
+ * @TODO Add "add-alert" option together with clock frame for single attacks
  * @author  Charon
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, ProfileManagerListener, Serializable {

@@ -12,7 +12,7 @@ package de.tor.tribes.ui.wiz;
 
 import de.tor.tribes.db.DatabaseServerEntry;
 import de.tor.tribes.php.DatabaseInterface;
-import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import java.awt.event.ItemEvent;
 import java.io.BufferedReader;

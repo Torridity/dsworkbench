@@ -7,7 +7,7 @@ package de.tor.tribes.util.html;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FightReport;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;

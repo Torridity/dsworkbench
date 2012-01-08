@@ -4,15 +4,15 @@
  */
 package de.tor.tribes.ui.tree;
 
-import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.Tag;
 import java.awt.Component;
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.MutableTreeNode;
-import de.tor.tribes.types.Tribe;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
 
 /**
  *

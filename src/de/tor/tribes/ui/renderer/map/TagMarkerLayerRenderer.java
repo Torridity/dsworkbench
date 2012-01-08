@@ -6,9 +6,9 @@ package de.tor.tribes.ui.renderer.map;
 
 import de.tor.tribes.types.Conquer;
 import de.tor.tribes.types.Tag;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.ImageManager;
-import de.tor.tribes.ui.MapPanel;
+import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.tag.TagManager;

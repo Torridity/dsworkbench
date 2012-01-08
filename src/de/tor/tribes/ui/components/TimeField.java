@@ -7,6 +7,7 @@ package de.tor.tribes.ui.components;
 import java.awt.Color;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -101,15 +102,20 @@ public class TimeField extends JPanel {
             Point point = timeText.getLocationOnScreen();
             point.setLocation(point.getX(), (point.getY() - 1.0D) + timeText.getSize().getHeight());
             dlg = new JDialog(new JFrame(), true);
-            dp.setParent(dlg);
             dlg.setLocation(point);
-            dlg.setUndecorated(true);
+            dp.setParent(dlg);
+            dlg.setResizable(false);
             dlg.getContentPane().add(dp);
             dlg.pack();
             dlg.setVisible(true);
         }
     }
 
+    /*  private void fitDialogPositionOnScreen(JDialog pDialog, Point pDialogLocation){
+    
+    dlg.setLocationRelativeTo(point);
+    
+    }*/
     private static String dateToTimeString(Date date) {
         if (null != date) {
             return format.format(date);

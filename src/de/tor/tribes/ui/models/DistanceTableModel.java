@@ -4,9 +4,9 @@
  */
 package de.tor.tribes.ui.models;
 
-import de.tor.tribes.types.Tribe;
-import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.dist.DistanceManager;

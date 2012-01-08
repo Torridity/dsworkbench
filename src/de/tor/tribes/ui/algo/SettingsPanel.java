@@ -14,7 +14,7 @@ import de.tor.tribes.types.TimeSpan;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.algo.TimeFrame;
+import de.tor.tribes.util.algo.types.TimeFrame;
 import java.awt.BorderLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;

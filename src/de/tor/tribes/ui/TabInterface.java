@@ -5,7 +5,7 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.types.Tag;
-import de.tor.tribes.ui.TroopTableTab.TRANSFER_TYPE;
+import de.tor.tribes.ui.panels.TroopTableTab.TRANSFER_TYPE;
 import java.util.List;
 
 /**

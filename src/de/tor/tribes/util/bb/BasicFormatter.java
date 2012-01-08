@@ -4,7 +4,7 @@
  */
 package de.tor.tribes.util.bb;
 
-import de.tor.tribes.util.BBFormatterInterface;
+import de.tor.tribes.util.interfaces.BBFormatterInterface;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.GlobalOptions;
 import java.text.NumberFormat;

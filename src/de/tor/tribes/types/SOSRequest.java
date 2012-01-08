@@ -4,6 +4,9 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
@@ -12,6 +15,7 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.bb.AttackListFormatter;
 import de.tor.tribes.util.support.SOSFormater;
+import de.tor.tribes.util.xml.JaxenUtils;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,23 +24,26 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.List;
+import org.jdom.Element;
 
 /**
  *
  * @author Torridity
  */
-public class SOSRequest implements BBSupport {
-
+public class SOSRequest extends ManageableType implements BBSupport {
+    
     private final String[] VARIABLES = new String[]{"%SOS_ICON%", "%TARGET%", "%ATTACKS%", "%DEFENDERS%", "%WALL_INFO%", "%WALL_LEVEL%", "%FIRST_ATTACK%", "%LAST_ATTACK%", "%SOURCE_LIST%", "%SOURCE_DATE_TYPE_LIST%", "%ATTACK_LIST%", "%SOURCE_DATE_LIST%", "%SOURCE_TYPE_LIST%", "%SUMMARY%"};
     private final static String STANDARD_TEMPLATE = "[quote]%SOS_ICON% %TARGET% (%ATTACKS%)\n[quote]%DEFENDERS%\n%WALL_INFO%[/quote]\n\n%FIRST_ATTACK%\n%SOURCE_DATE_LIST%\n%LAST_ATTACK%\n\n%SUMMARY%[/quote]";
-
+    private Tribe mDefender = null;
+    private Hashtable<Village, TargetInformation> targetInformations = null;
+    private Hashtable<Village, DefenseInformation> defenseInformations = null;
+    
     @Override
     public String[] getBBVariables() {
         return VARIABLES;
     }
-
+    
     public String[] getReplacementsForTarget(Village pTarget, boolean pExtended) {
         String serverURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
         //main quote
@@ -44,18 +51,18 @@ public class SOSRequest implements BBSupport {
         //village info size
         String sosImageVal = "[img]" + serverURL + "/graphic/reqdef.png[/img]";
         String targetVal = pTarget.toBBCode();
-        String attackCountVal = "[img]" + serverURL + "/graphic/unit/att.png[/img] " + attacks.get(pTarget).getAttacks().size();
+        String attackCountVal = "[img]" + serverURL + "/graphic/unit/att.png[/img] " + targetInformations.get(pTarget).getAttacks().size();
         //village details quote
 
         //add units and wall
-        String unitVal = buildUnitInfo(attacks.get(pTarget));
-        String wallInfoVal = "[img]" + serverURL + "/graphic/buildings/wall.png[/img] " + buildWallInfo(attacks.get(pTarget));
-        String wallLevelVal = Integer.toString(attacks.get(pTarget).getWallLevel());
+        String unitVal = buildUnitInfo(targetInformations.get(pTarget));
+        String wallInfoVal = "[img]" + serverURL + "/graphic/buildings/wall.png[/img] " + buildWallInfo(targetInformations.get(pTarget));
+        String wallLevelVal = Integer.toString(targetInformations.get(pTarget).getWallLevel());
 
         //build first-last-attack
 
-        List<TimedAttack> atts = attacks.get(pTarget).getAttacks();
-
+        List<TimedAttack> atts = targetInformations.get(pTarget).getAttacks();
+        
         Collections.sort(atts, SOSRequest.ARRIVE_TIME_COMPARATOR);
 
         //add first and last attack information
@@ -98,9 +105,9 @@ public class SOSRequest implements BBSupport {
             } catch (Exception e) {
             }
         }
-
+        
         attackList = new AttackListFormatter().formatElements(thisAttacks, pExtended);
-
+        
         for (int i = 0; i < atts.size(); i++) {
             try {
                 TimedAttack attack = atts.get(i);
@@ -121,17 +128,17 @@ public class SOSRequest implements BBSupport {
             } catch (Exception e) {
             }
         }
-
+        
         sourceVal = sourceVal.trim();
         sourceTypeVal = sourceTypeVal.trim();
         sourceDateVal = sourceDateVal.trim();
         sourceDateTypeVal = sourceDateTypeVal.trim();
         String lastAttackVal = "[img]" + serverURL + "/graphic/map/return.png[/img] " + dateFormat.format(new Date(atts.get(atts.size() - 1).getlArriveTime()));
         String summaryVal = "[u]Mögliche Fakes:[/u] " + fakeCount + "\n" + "[u]Mögliche AGs:[/u] " + snobCount;
-
+        
         return new String[]{sosImageVal, targetVal, attackCountVal, unitVal, wallInfoVal, wallLevelVal, firstAttackVal, lastAttackVal, sourceVal, sourceDateTypeVal, attackList, sourceDateVal, sourceTypeVal, summaryVal};
     }
-
+    
     private String buildUnitInfo(TargetInformation pTargetInfo) {
         StringBuilder buffer = new StringBuilder();
         NumberFormat nf = NumberFormat.getInstance();
@@ -139,7 +146,7 @@ public class SOSRequest implements BBSupport {
         nf.setMaximumFractionDigits(0);
         String defRow = "";
         String offRow = "";
-
+        
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             Integer amount = pTargetInfo.getTroops().get(unit);
             if (amount != null && amount != 0) {
@@ -158,7 +165,7 @@ public class SOSRequest implements BBSupport {
         }
         return buffer.toString();
     }
-
+    
     private String buildWallInfo(TargetInformation pTargetInfo) {
         StringBuilder buffer = new StringBuilder();
         double perc = pTargetInfo.getWallLevel() / 20.0;
@@ -175,60 +182,85 @@ public class SOSRequest implements BBSupport {
             }
             buffer.append("[/color]");
         }
-
+        
         buffer.append(" (").append(pTargetInfo.getWallLevel()).append(")");
         return buffer.toString();
     }
-
+    
     @Override
     public String[] getReplacements(boolean pExtended) {
-        return getReplacementsForTarget(attacks.keys().nextElement(), pExtended);
+        return getReplacementsForTarget(targetInformations.keys().nextElement(), pExtended);
     }
-
+    
     @Override
     public String getStandardTemplate() {
         return STANDARD_TEMPLATE;
     }
-    private Tribe mDefender = null;
-    private Hashtable<Village, TargetInformation> attacks = null;
-
+    
     public SOSRequest() {
-        attacks = new Hashtable<Village, TargetInformation>();
+        targetInformations = new Hashtable<Village, TargetInformation>();
+        defenseInformations = new Hashtable<Village, DefenseInformation>();
     }
-
+    
     public SOSRequest(Tribe pDefender) {
+        this();
         setDefender(pDefender);
-        attacks = new Hashtable<Village, TargetInformation>();
     }
-
+    
     public final void setDefender(Tribe pDefender) {
         mDefender = pDefender;
     }
-
+    
     public Tribe getDefender() {
         return mDefender;
     }
-
-    public void addTarget(Village pTarget) {
-        TargetInformation targetInfo = attacks.get(pTarget);
+    
+    public TargetInformation addTarget(Village pTarget) {
+        TargetInformation targetInfo = targetInformations.get(pTarget);
         if (targetInfo == null) {
-            targetInfo = new TargetInformation();
-            attacks.put(pTarget, targetInfo);
+            targetInfo = new TargetInformation(this, pTarget);
+            targetInformations.put(pTarget, targetInfo);
+            addDefense(pTarget);
         }
+        return targetInfo;
     }
-
+    
+    private DefenseInformation addDefense(Village pTarget) {
+        DefenseInformation defenseInfo = defenseInformations.get(pTarget);
+        if (defenseInfo == null) {
+            defenseInfo = new DefenseInformation(getTargetInformation(pTarget));
+            defenseInfo.setAnalyzed(false);
+            defenseInformations.put(pTarget, defenseInfo);
+        }
+        return defenseInfo;
+    }
+    
+    public void resetDefenses() {
+        Enumeration<Village> targets = getTargets();
+        while (targets.hasMoreElements()) {
+            Village target = targets.nextElement();
+            DefenseInformation info = getDefenseInformation(target);
+            info.reset();
+        }
+        
+    }
+    
     public TargetInformation getTargetInformation(Village pTarget) {
-        return attacks.get(pTarget);
+        return targetInformations.get(pTarget);
     }
-
+    
+    public DefenseInformation getDefenseInformation(Village pTarget) {
+        return defenseInformations.get(pTarget);
+    }
+    
     public Enumeration<Village> getTargets() {
-        return attacks.keys();
+        return targetInformations.keys();
     }
-
+    
     public String toBBCode() {
         return toBBCode(true);
     }
-
+    
     public String toBBCode(boolean pDetailed) {
         StringBuilder buffer = new StringBuilder();
         Enumeration<Village> targets = getTargets();
@@ -240,7 +272,7 @@ public class SOSRequest implements BBSupport {
         }
         return buffer.toString();
     }
-
+    
     public String toBBCode(Village pTarget, boolean pDetailed) {
         StringBuilder buffer = new StringBuilder();
         Village target = pTarget;
@@ -251,314 +283,122 @@ public class SOSRequest implements BBSupport {
         buffer.append(SOSFormater.format(target, targetInfo, pDetailed));
         return buffer.toString();
     }
-
-    public SOSRequest merge(SOSRequest pNewRequest) {
-        SOSRequest newRequest = new SOSRequest(getDefender());
-        Enumeration<Village> targets = getTargets();
-        while (targets.hasMoreElements()) {
-            Village target = targets.nextElement();
-            TargetInformation thisInfo = getTargetInformation(target);
-            TargetInformation theOtherInfo = pNewRequest.getTargetInformation(target);
-            newRequest.addTarget(target);
-            TargetInformation theNewInfo = newRequest.getTargetInformation(target);
-            thisInfo.merge(theOtherInfo, theNewInfo);
+    
+    public void merge(SOSRequest pOther) {
+        if (!getDefender().equals(pOther.getDefender())) {
+            throw new IllegalArgumentException("Cannot merge with unequal defender");
         }
-
-        Enumeration<Village> newTargets = pNewRequest.getTargets();
-        while (newTargets.hasMoreElements()) {
-            Village target = newTargets.nextElement();
-            TargetInformation theOtherInfo = pNewRequest.getTargetInformation(target);
-            TargetInformation thisInfo = getTargetInformation(target);
-
-            newRequest.addTarget(target);
-            TargetInformation theNewInfo = newRequest.getTargetInformation(target);
-            theOtherInfo.merge(thisInfo, theNewInfo);
+        Enumeration<Village> otherTargets = pOther.getTargets();
+        while (otherTargets.hasMoreElements()) {
+            Village otherTarget = otherTargets.nextElement();
+            TargetInformation otherInfo = pOther.getTargetInformation(otherTarget);
+            TargetInformation thisInfo = addTarget(otherTarget);
+            thisInfo.setWallLevel(otherInfo.getWallLevel());
+            int addCount = 0;
+            for (TimedAttack att : otherInfo.getAttacks()) {
+                if (thisInfo.addAttack(att.getSource(), new Date(att.getlArriveTime()))) {
+                    addCount++;
+                    getDefenseInformation(otherTarget).setAnalyzed(false);
+                }
+            }
+            thisInfo.setDelta(addCount);
         }
-
-        return newRequest;
     }
-
+    
     @Override
     public String toString() {
         String result = "Verteidiger: " + getDefender() + "\n";
         Enumeration<Village> targets = getTargets();
-
+        
         while (targets.hasMoreElements()) {
             Village target = targets.nextElement();
             result += " Ziel: " + target + "\n";
             result += getTargetInformation(target);
             //result += "\n";
         }
-
+        
         return result;
     }
-
-    public class TargetInformation {
-
-        private List<TimedAttack> attacks = null;
-        private int iWallLevel = 20;
-        private Hashtable<UnitHolder, Integer> troops = null;
-        private int delta = 0;
-        private int snobs = 0;
-        private int fakes = 0;
-        private long first = Long.MAX_VALUE;
-        private long last = Long.MIN_VALUE;
-        private boolean updating = false;
-
-        public TargetInformation() {
-            attacks = new LinkedList<TimedAttack>();
-            troops = new Hashtable<UnitHolder, Integer>();
-        }
-
-        private void updateAttackInfo() {
-            if (updating) {
-                return;
-            }
-            snobs = 0;
-            fakes = 0;
-            first = Long.MAX_VALUE;
-            last = Long.MIN_VALUE;
-            for (TimedAttack a : getAttacks()) {
-                if (a.isPossibleFake()) {
-                    fakes++;
-                } else if (a.isPossibleSnob()) {
-                    snobs++;
-                }
-                if (a.getlArriveTime() < first) {
-                    first = a.getlArriveTime();
-                }
-                if (a.getlArriveTime() > last) {
-                    last = a.getlArriveTime();
-                }
-            }
-        }
-
-        public int getDelta() {
-            return delta;
-        }
-
-        public void setDelta(int pDelta) {
-            delta = pDelta;
-        }
-
-        /**
-         * @return the attacks
-         */
-        public List<TimedAttack> getAttacks() {
-            return attacks;
-        }
-
-        /**
-         * @param attacks the attacks to set
-         */
-        public void addAttack(Village pSource, Date pArrive) {
-            attacks.add(new TimedAttack(pSource, pArrive));
-            Collections.sort(attacks, SOSRequest.ARRIVE_TIME_COMPARATOR);
-            updateAttackInfo();
-        }
-
-        public int getFakes() {
-            return fakes;
-        }
-
-        public int getSnobs() {
-            return snobs;
-        }
-
-        public int getOffs() {
-            return getAttacks().size() - fakes;
-        }
-
-        public long getFirstAttack() {
-            return first;
-        }
-
-        public long getLastAttack() {
-            return last;
-        }
-
-        /**
-         * @return the iWallLevel
-         */
-        public int getWallLevel() {
-            return iWallLevel;
-        }
-
-        /**
-         * @param iWallLevel the iWallLevel to set
-         */
-        public void setWallLevel(int iWallLevel) {
-            this.iWallLevel = iWallLevel;
-        }
-
-        /**
-         * @return the troops
-         */
-        public Hashtable<UnitHolder, Integer> getTroops() {
-            return troops;
-        }
-
-        /**
-         * @param troops the troops to set
-         */
-        public void addTroopInformation(UnitHolder pUnit, Integer pAmount) {
-            troops.put(pUnit, pAmount);
-        }
-
-        public String getTroopInformationAsHTML() {
+    
+    @Override
+    public String getElementIdentifier() {
+        return "sosRequest";
+    }
+    
+    @Override
+    public String getElementGroupIdentifier() {
+        return "sosRequests";
+    }
+    
+    @Override
+    public String getGroupNameAttributeIdentifier() {
+        return "";
+    }
+    
+    @Override
+    public String toXml() {
+        try {
             StringBuilder b = new StringBuilder();
-
-            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                Integer amount = troops.get(unit);
-                if (amount != null) {
-                    b.append("<img src=\"").append(SOSRequest.class.getResource("/res/ui/" + unit.getPlainName() + ".png")).append("\"/>&nbsp;").append(amount).append("\n");
+            b.append("<").append(getElementIdentifier()).append(" defender=\"").append(getDefender().getId()).append("\">\n");
+            b.append("<targetInformations>\n");
+            Enumeration<Village> targetKeys = getTargets();
+            while (targetKeys.hasMoreElements()) {
+                Village target = targetKeys.nextElement();
+                TargetInformation targetInfo = getTargetInformation(target);
+                if (targetInfo != null) {
+                    b.append("<targetInformation target=\"").append(target.getId()).append("\">\n");
+                    b.append(targetInfo.toXml());
+                    b.append("</targetInformation>\n");
                 }
             }
-
+            b.append("</targetInformations>\n");
+            b.append("<defenseInformations>\n");
+            targetKeys = getTargets();
+            while (targetKeys.hasMoreElements()) {
+                Village target = targetKeys.nextElement();
+                DefenseInformation defense = getDefenseInformation(target);
+                if (defense != null) {
+                    b.append("<defenseInformation target=\"").append(target.getId()).append("\" analyzed=\"").append(defense.isAnalyzed()).append("\">\n");
+                    b.append(defense.toXml());
+                    b.append("</defenseInformation>\n");
+                }
+            }
+            b.append("</defenseInformations>\n");
+            b.append("</").append(getElementIdentifier()).append(">");
             return b.toString();
+        } catch (Throwable t) {
+            //getting xml data failed
         }
-
-        public TargetInformation merge(TargetInformation pInfo, TargetInformation pNewInfo) {
-            boolean millis = ServerSettings.getSingleton().isMillisArrival();
-            List<TimedAttack> thisAttacks = getAttacks();
-            int attCount = thisAttacks.size();
-            List<TimedAttack> theOtherAttacks = null;
-            if (pInfo != null) {
-                theOtherAttacks = pInfo.getAttacks();
-            }
-            TargetInformation theNewInfo = (pNewInfo == null) ? new TargetInformation() : pNewInfo;
-            theNewInfo.setWallLevel(getWallLevel());
-            Hashtable<UnitHolder, Integer> theOtherTroopInfo = getTroops();
-            Enumeration<UnitHolder> units = theOtherTroopInfo.keys();
-            while (units.hasMoreElements()) {
-                UnitHolder unit = units.nextElement();
-                theNewInfo.addTroopInformation(unit, theOtherTroopInfo.get(unit));
-            }
-
-            for (TimedAttack thisAttack : thisAttacks.toArray(new TimedAttack[]{})) {
-                theNewInfo.addAttack(thisAttack.getSource(), new Date(thisAttack.getlArriveTime()));
-            }
-
-            if (theOtherAttacks != null) {
-                for (TimedAttack theOtherAttack : theOtherAttacks) {
-                    boolean add = true;
-                    if (millis) {//only check if millis are enabled...otherwise we should keep all attacks, as we cannot separate them clearly
-                        for (TimedAttack theNewAttack : theNewInfo.getAttacks()) {//go through all attacks and check if one is equal
-                            if (theNewAttack.getSource().equals(theOtherAttack.getSource()) && theNewAttack.getlArriveTime().equals(theOtherAttack.getlArriveTime())) {
-                                //attack seems to be the same...skip adding
-                                add = false;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (add) {//attack seems not to exist...add it
-                        theNewInfo.addAttack(theOtherAttack.getSource(), new Date(theOtherAttack.getlArriveTime()));
-                    }
-                }
-            }
-            theNewInfo.setDelta(theNewInfo.getAttacks().size() - attCount);
-            return theNewInfo;
+        return null;
+    }
+    
+    @Override
+    public void loadFromXml(Element e) {
+        int defenderId = Integer.parseInt(e.getAttributeValue("defender"));
+        setDefender(DataHolder.getSingleton().getTribes().get(defenderId));
+        for (Element targetInfo : (List<Element>) JaxenUtils.getNodes(e, "targetInformations/targetInformation")) {
+            int targetId = Integer.parseInt(targetInfo.getAttributeValue("target"));
+            Village target = DataHolder.getSingleton().getVillagesById().get(targetId);
+            addTarget(target);
+            getTargetInformation(target).loadFromXml(targetInfo);
         }
-
-        @Override
-        public String toString() {
-            String result = " Stufe des Walls: " + getWallLevel() + "\n";
-            Enumeration<UnitHolder> units = troops.keys();
-            if (troops.isEmpty()) {
-                result += " Truppen im Dorf: -Keine Informationen-\n\n";
-            } else {
-                result += " Truppen im Dorf:\n";
-                while (units.hasMoreElements()) {
-                    UnitHolder unit = units.nextElement();
-                    result += "  " + troops.get(unit) + " " + unit + "\n";
-                }
-            }
-            result += "\n";
-            SimpleDateFormat format = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
-            for (TimedAttack attack : attacks) {
-                result += " * " + attack.getSource() + "(" + format.format(new Date(attack.getlArriveTime())) + ")\n";
-            }
-            result += "\n";
-            return result;
+        for (Element defenseInfo : (List<Element>) JaxenUtils.getNodes(e, "defenseInformations/defenseInformation")) {
+            int targetId = Integer.parseInt(defenseInfo.getAttributeValue("target"));
+            boolean analyzed = Boolean.parseBoolean(defenseInfo.getAttributeValue("analyzed"));
+            Village target = DataHolder.getSingleton().getVillagesById().get(targetId);
+            addDefense(target);
+            DefenseInformation info = getDefenseInformation(target);
+            info.loadFromXml(defenseInfo);
+            info.setAnalyzed(analyzed);
         }
     }
     public static final Comparator<TimedAttack> ARRIVE_TIME_COMPARATOR = new ArriveTimeComparator();
-
+    
     private static class ArriveTimeComparator implements Comparator<TimedAttack>, java.io.Serializable {
-
+        
         @Override
         public int compare(TimedAttack s1, TimedAttack s2) {
             return s1.getlArriveTime().compareTo(s2.getlArriveTime());
-        }
-    }
-
-    public class TimedAttack {
-
-        private Village mSource = null;
-        private long lArriveTime = 0;
-        private boolean possibleFake = false;
-        private boolean possibleSnob = false;
-
-        public TimedAttack(Village pSource, Date pArriveTime) {
-            mSource = pSource;
-            lArriveTime = pArriveTime.getTime();
-        }
-
-        /**
-         * @return the mSource
-         */
-        public Village getSource() {
-            return mSource;
-        }
-
-        /**
-         * @param mSource the mSource to set
-         */
-        public void setSource(Village mSource) {
-            this.mSource = mSource;
-        }
-
-        /**
-         * @return the lArriveTime
-         */
-        public Long getlArriveTime() {
-            return lArriveTime;
-        }
-
-        /**
-         * @param lArriveTime the lArriveTime to set
-         */
-        public void setlArriveTime(long lArriveTime) {
-            this.lArriveTime = lArriveTime;
-        }
-
-        /**
-         * @return the possibleFake
-         */
-        public boolean isPossibleFake() {
-            return possibleFake;
-        }
-
-        /**
-         * @param possibleFake the possibleFake to set
-         */
-        public void setPossibleFake(boolean possibleFake) {
-            this.possibleFake = possibleFake;
-        }
-
-        /**
-         * @return the possibleSnob
-         */
-        public boolean isPossibleSnob() {
-            return possibleSnob;
-        }
-
-        /**
-         * @param possibleSnob the possibleSnob to set
-         */
-        public void setPossibleSnob(boolean possibleSnob) {
-            this.possibleSnob = possibleSnob;
         }
     }
 }

@@ -4,6 +4,10 @@
  */
 package de.tor.tribes.util.algo;
 
+import de.tor.tribes.util.algo.types.OffVillage;
+import de.tor.tribes.util.algo.types.TargetVillage;
+import de.tor.tribes.util.algo.types.Destination;
+import de.tor.tribes.util.algo.types.Coordinate;
 import java.util.ArrayList;
 import java.util.Hashtable;
 

@@ -5,9 +5,9 @@
 package de.tor.tribes.ui.renderer.map;
 
 import de.tor.tribes.types.Church;
-import de.tor.tribes.types.Tribe;
-import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.MapPanel;
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.util.algo.ChurchRangeCalculator;
 import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.tag.TagManager;

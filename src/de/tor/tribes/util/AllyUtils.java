@@ -5,11 +5,11 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.Ally;
-import de.tor.tribes.types.Barbarians;
-import de.tor.tribes.types.NoAlly;
-import de.tor.tribes.types.Tribe;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.types.ext.Ally;
+import de.tor.tribes.types.ext.Barbarians;
+import de.tor.tribes.types.ext.NoAlly;
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;

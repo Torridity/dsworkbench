@@ -10,8 +10,8 @@
  */
 package de.tor.tribes.util.dsreal.ui;
 
-import de.tor.tribes.types.Ally;
-import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.ext.Ally;
+import de.tor.tribes.types.ext.Tribe;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;

@@ -66,6 +66,8 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         jFarmTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jFarmTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jFarmTable.setDefaultRenderer(Date.class, new DateCellRenderer());
+        jFarmTable.setDefaultRenderer(Float.class, new PercentCellRenderer());
+        jFarmTable.setDefaultRenderer(FarmInformation.FARM_STATUS.class, new FarmStatusCellRenderer());
         jFarmTable.setDefaultRenderer(new double[3].getClass(), new StashStatusCellRenderer());
     }
 
@@ -213,7 +215,9 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de77")[0]);
         DataHolder.getSingleton().loadData(false);
         GlobalOptions.loadUserData();
-        FarmManager.getSingleton().addFromReports();
+        FarmManager.getSingleton().loadElements("test.xml");
+        //FarmManager.getSingleton().addFromReports();
+
         /*
          * Create and display the form
          */

@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.util.farm;
 
+import com.thoughtworks.xstream.XStream;
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
@@ -15,9 +16,13 @@ import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.report.ReportManager;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -25,6 +30,7 @@ import java.util.List;
  */
 public class FarmManager extends GenericManager<FarmInformation> {
 
+    private static Logger logger = Logger.getLogger("FarmManager");
     private static FarmManager SINGLETON = null;
     private Hashtable<Village, FarmInformation> infoMap = null;
 
@@ -97,10 +103,54 @@ public class FarmManager extends GenericManager<FarmInformation> {
 
     @Override
     public void loadElements(String pFile) {
+        XStream x = new XStream();
+        x.alias("farmInfo", FarmInformation.class);
+        FileReader r = null;
+        logger.debug("Reading farm information from file " + pFile);
+        try {
+            r = new FileReader(pFile);
+            List<ManageableType> el = (List<ManageableType>) x.fromXML(r);
+            invalidate();
+            for (ManageableType t : el) {
+                FarmInformation info = (FarmInformation) t;
+                info.revalidate();
+                addManagedElement(info);
+            }
+            r.close();
+            logger.debug("Farm information successfully read");
+        } catch (IOException ioe) {
+            logger.error("Failed to read farm information", ioe);
+        } finally {
+            try {
+                if (r != null) {
+                    r.close();
+                }
+            } catch (IOException ignored) {
+            }
+        }
+        revalidate();
     }
 
     @Override
     public void saveElements(String pFile) {
+        XStream x = new XStream();
+        x.alias("farmInfo", FarmInformation.class);
+        logger.debug("Writing farm information to file " + pFile);
+        FileWriter w = null;
+        try {
+            w = new FileWriter(pFile);
+            x.toXML(getAllElements(), w);
+            w.flush();
+        } catch (IOException ioe) {
+            logger.error("Failed to write farm information", ioe);
+        } finally {
+            try {
+                if (w != null) {
+                    w.close();
+                }
+            } catch (IOException ignored) {
+            }
+        }
     }
 
     @Override

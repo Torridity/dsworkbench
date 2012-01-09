@@ -48,7 +48,6 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
     }
 
     TroopsManager() {
-        // mTroops = new Hashtable<Village, VillageTroopsHolder>();
         super(IN_VILLAGE_GROUP, true);
         try {
             mTroopMarkImages.add(ImageIO.read(new File("graphics/icons/off_marker.png")));
@@ -128,6 +127,11 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
             return new LinkedList<ManageableType>();
         }
         return Collections.unmodifiableList(Arrays.asList(set.values().toArray(new ManageableType[set.size()])));
+    }
+
+    public boolean hasInformation(TROOP_TYPE pType) {
+        HashMap<Village, VillageTroopsHolder> info = managedElementGroups.get(getGroupForType(pType));
+        return info != null && !info.isEmpty();
     }
 
     public boolean groupExists(String pGroup) {

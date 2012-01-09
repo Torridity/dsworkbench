@@ -16,8 +16,8 @@ import javax.swing.table.AbstractTableModel;
  */
 public class FarmTableModel extends AbstractTableModel {
 
-    private Class[] types = new Class[]{FarmInformation.FARM_STATUS.class, Village.class, new double[3].getClass(), Date.class};
-    private String[] colNames = new String[]{"Status", "Dorf", "Rohstoffe", "Letzter Bericht"};
+    private Class[] types = new Class[]{FarmInformation.FARM_STATUS.class, Village.class, new double[3].getClass(), Date.class, Boolean.class, Float.class};
+    private String[] colNames = new String[]{"Status", "Dorf", "Rohstoffe", "Letzter Bericht", "Bericht erwartet", "Erfolgsquote"};
 
     public FarmTableModel() {
     }
@@ -61,8 +61,10 @@ public class FarmTableModel extends AbstractTableModel {
                             (double) elem.getIronInStorage() / (double) elem.getStorageCapacity()};
             case 3:
                 return new Date(elem.getLastReport());
+            case 4:
+                return elem.isReportExpected();
             default:
-                return 0;
+                return elem.getCorrectionFactor();
         }
     }
 }

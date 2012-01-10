@@ -21,18 +21,20 @@ import org.jdesktop.swingx.renderer.DefaultTableRenderer;
  */
 public class FarmStatusCellRenderer extends DefaultTableRenderer {
 
-    private ImageIcon okIcon = null;
+    private ImageIcon readyIcon = null;
     private ImageIcon notSpyedIcon = null;
     private ImageIcon troopsFoundIcon = null;
     private ImageIcon conqueredIcon = null;
+    private ImageIcon farmingIcon = null;
 
     public FarmStatusCellRenderer() {
         super();
         try {
-            okIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/checkbox.png"));
+            readyIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/checkbox.png"));
             notSpyedIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/spy.png"));
             troopsFoundIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/skull.png"));
             conqueredIcon = new ImageIcon("./graphics/icon/warning.png");
+            farmingIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/axe.png"));
         } catch (Exception e) {
         }
     }
@@ -56,8 +58,11 @@ public class FarmStatusCellRenderer extends DefaultTableRenderer {
                 case CONQUERED:
                     label.setIcon(conqueredIcon);
                     break;
+                case FARMING:
+                    label.setIcon(farmingIcon);
+                    break;
                 default:
-                    label.setIcon(okIcon);
+                    label.setIcon(readyIcon);
             }
         } catch (Exception e) {
             label.setText("?");

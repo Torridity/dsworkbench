@@ -11,18 +11,14 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchFarmManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  *
  * @author Torridity
  */
 public class TroopHelper {
-    
+
     public static Village[] getOwnVillagesByOwnTroops(Hashtable<UnitHolder, Integer> pTroops) {
         Village[] villages = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
         List<Village> result = new LinkedList<Village>();
@@ -40,14 +36,34 @@ public class TroopHelper {
                 result.add(v);
             }
         }
-        
+
         return result.toArray(new Village[result.size()]);
     }
-    
+
+    private static class CapacityInfo {
+
+        private Village village = null;
+        private Integer carriage = 0;
+
+        public CapacityInfo(Village pVillage, int pCarriage) {
+            village = pVillage;
+            carriage = pCarriage;
+        }
+
+        public Village getVillage() {
+            return village;
+        }
+
+        public Integer getCarriage() {
+            return carriage;
+        }
+    }
+
     public static Village[] getOwnVillagesByCarryCapacity(int pMinCapacity) {
         Village[] villages = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
-        List<Village> result = new LinkedList<Village>();
+        List<CapacityInfo> result = new LinkedList<CapacityInfo>();
         UnitHolder[] allowedUnits = DSWorkbenchFarmManager.getSingleton().getAllowedFarmUnits();
+
         for (Village v : villages) {
             VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN);
             if (holder != null) {
@@ -55,17 +71,31 @@ public class TroopHelper {
                 for (UnitHolder unit : allowedUnits) {
                     capacity += unit.getCarry() * holder.getTroopsOfUnitInVillage(unit);
                 }
-                
+
                 if (capacity >= pMinCapacity) {
                     //village is valid
-                    result.add(v);
+                    result.add(new CapacityInfo(v, capacity));
                 }
             }
         }
-        
-        return result.toArray(new Village[result.size()]);
+
+        Collections.sort(result, new Comparator<CapacityInfo>() {
+
+            @Override
+            public int compare(CapacityInfo o1, CapacityInfo o2) {
+                return o1.getCarriage().compareTo(o2.getCarriage());
+            }
+        });
+
+
+        List<Village> finalList = new LinkedList<Village>();
+        for (CapacityInfo v : result) {
+            finalList.add(v.getVillage());
+        }
+
+        return finalList.toArray(new Village[finalList.size()]);
     }
-    
+
     public static Village[] getOwnVillagesWithMaxCarryCapacity() {
         Village[] villages = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
         int max = 0;
@@ -78,7 +108,7 @@ public class TroopHelper {
                 for (UnitHolder unit : allowedUnits) {
                     capacity += unit.getCarry() * holder.getTroopsOfUnitInVillage(unit);
                 }
-                
+
                 if (capacity > max) {
                     //new max
                     result.clear();
@@ -90,15 +120,15 @@ public class TroopHelper {
                 }
             }
         }
-        
+
         return result.toArray(new Village[result.size()]);
     }
-    
+
     public static Hashtable<UnitHolder, Integer> getTroopsForCarriage(Village pSource, Village pTarget, FarmInformation pInfo) {
         Hashtable<UnitHolder, Integer> units = new Hashtable<UnitHolder, Integer>();
         VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pSource, TroopsManager.TROOP_TYPE.OWN);
         double unitSpeed = 0;
-        
+
         if (holder != null) {
             List<UnitHolder> neededUnits = new LinkedList<UnitHolder>();
             UnitHolder[] allowed = DSWorkbenchFarmManager.getSingleton().getAllowedFarmUnits();
@@ -112,14 +142,14 @@ public class TroopHelper {
                     for (UnitHolder neededUnit : neededUnits) {
                         resources -= (int) (holder.getTroopsOfUnitInVillage(neededUnit) * neededUnit.getCarry());
                     }
-                    
+
                     if (resources <= 0) {
                         //can carry all
                         break;
                     }
                 }
             }
-            
+
             int resources = pInfo.getResourcesInStorage(System.currentTimeMillis() + DSCalculator.calculateMoveTimeInMillis(pSource, pTarget, unitSpeed));
             for (UnitHolder unit : neededUnits) {
                 int amount = holder.getTroopsOfUnitInVillage(unit);
@@ -141,16 +171,16 @@ public class TroopHelper {
         }
         return units;
     }
-    
+
     public static void sendTroops(Village pVillage, Hashtable<UnitHolder, Integer> pTroops) {
         VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.OWN);
         VillageTroopsHolder inVillage = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.IN_VILLAGE);
         VillageTroopsHolder onTheWay = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.ON_THE_WAY);
-        
+
         if (own == null || inVillage == null || onTheWay == null) {
             return;
         }
-        
+
         Enumeration<UnitHolder> keys = pTroops.keys();
         while (keys.hasMoreElements()) {
             UnitHolder unit = keys.nextElement();
@@ -159,16 +189,16 @@ public class TroopHelper {
             onTheWay.setAmountForUnit(unit, onTheWay.getAmountForUnit(unit) + pTroops.get(unit));
         }
     }
-    
+
     public static void returnTroops(Village pVillage, Hashtable<UnitHolder, Integer> pTroops) {
         VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.OWN);
         VillageTroopsHolder inVillage = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.IN_VILLAGE);
         VillageTroopsHolder onTheWay = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.ON_THE_WAY);
-        
+
         if (own == null || inVillage == null || onTheWay == null) {
             return;
         }
-        
+
         Enumeration<UnitHolder> keys = pTroops.keys();
         while (keys.hasMoreElements()) {
             UnitHolder unit = keys.nextElement();
@@ -177,7 +207,7 @@ public class TroopHelper {
             onTheWay.setAmountForUnit(unit, onTheWay.getAmountForUnit(unit) - pTroops.get(unit));
         }
     }
-    
+
     public static double getTroopSpeed(Hashtable<UnitHolder, Integer> pTroops) {
         double speed = 0;
         Enumeration<UnitHolder> keys = pTroops.keys();
@@ -186,7 +216,7 @@ public class TroopHelper {
         }
         return speed;
     }
-    
+
     public static int getPopulation(Hashtable<UnitHolder, Integer> pTroops) {
         int pop = 0;
         Enumeration<UnitHolder> keys = pTroops.keys();
@@ -196,7 +226,7 @@ public class TroopHelper {
         }
         return pop;
     }
-    
+
     public static boolean isEmpty(Hashtable<UnitHolder, Integer> pTroops) {
         int pop = 0;
         Enumeration<UnitHolder> keys = pTroops.keys();
@@ -206,7 +236,7 @@ public class TroopHelper {
         }
         return pop == 0;
     }
-    
+
     public static Hashtable<String, Integer> unitTableToSerializableFormat(Hashtable<UnitHolder, Integer> pTroops) {
         Hashtable<String, Integer> result = new Hashtable<String, Integer>();
         Enumeration<UnitHolder> keys = pTroops.keys();
@@ -216,7 +246,7 @@ public class TroopHelper {
         }
         return result;
     }
-    
+
     public static Hashtable<UnitHolder, Integer> unitTableFromSerializableFormat(Hashtable<String, Integer> pTroops) {
         Hashtable<UnitHolder, Integer> result = new Hashtable<UnitHolder, Integer>();
         Enumeration<String> keys = pTroops.keys();

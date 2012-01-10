@@ -34,6 +34,7 @@ import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.conquer.ConquerManager;
+import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.map.FormManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.note.NoteManager;
@@ -58,16 +59,22 @@ import javax.help.HelpSet;
 import javax.help.HelpSetException;
 import org.apache.log4j.Logger;
 
-/**Global settings used by almost all components. e.g. WorldData or UI specific objects
+/**
+ * Global settings used by almost all components. e.g. WorldData or UI specific objects
+ *
  * @author Charon
  */
 public class GlobalOptions {
 
     private static Logger logger = Logger.getLogger("GlobalSettings");
     private static boolean INITIALIZED = false;
-    /**Active skin used by the MapPanel*/
+    /**
+     * Active skin used by the MapPanel
+     */
     private static Skin mSkin;
-    /**DataHolder which holds and manages the WorldData*/
+    /**
+     * DataHolder which holds and manages the WorldData
+     */
     private static WorldDecorationHolder mDecorationHolder = null;
     private static String SELECTED_SERVER = null;
     private static Properties GLOBAL_PROPERTIES = new Properties();
@@ -83,7 +90,9 @@ public class GlobalOptions {
     public static boolean MINIMAL = false;
     private static List<DataHolderListener> dataHolderListeners = new ArrayList<DataHolderListener>();
 
-    /**Init all managed objects
+    /**
+     * Init all managed objects
+     *
      * @param pDownloadData TRUE=download the WorldData from the tribes server
      * @throws Exception If an Error occurs while initializing the objects
      */
@@ -133,17 +142,23 @@ public class GlobalOptions {
         return internalDataDamaged;
     }
 
-    /**Tells if a network connection is established or not*/
+    /**
+     * Tells if a network connection is established or not
+     */
     public static boolean isOfflineMode() {
         return isOfflineMode;
     }
 
-    /**Set the network status*/
+    /**
+     * Set the network status
+     */
     public static void setOfflineMode(boolean pValue) {
         isOfflineMode = pValue;
     }
 
-    /**Get the list of available skins*/
+    /**
+     * Get the list of available skins
+     */
     public static String[] getAvailableSkins() {
         List<String> skins = new LinkedList<String>();
         skins.add(Skin.MINIMAP_SKIN_ID);
@@ -202,7 +217,9 @@ public class GlobalOptions {
         mSelectedProfile = pProfile;
     }
 
-    /**Load the global properties*/
+    /**
+     * Load the global properties
+     */
     private static void loadProperties() throws Exception {
         GLOBAL_PROPERTIES = new Properties();
         if (new File("global.properties").exists()) {
@@ -216,7 +233,9 @@ public class GlobalOptions {
         }
     }
 
-    /**Store the global properties*/
+    /**
+     * Store the global properties
+     */
     public static void saveProperties() {
         logger.debug("Saving global properties");
         try {
@@ -250,17 +269,23 @@ public class GlobalOptions {
         DSWorkbenchReportFrame.getSingleton().storeProperties();
     }
 
-    /**Add a property*/
+    /**
+     * Add a property
+     */
     public static void addProperty(String pKey, String pValue) {
         GLOBAL_PROPERTIES.put(pKey, pValue);
     }
 
-    /**Remove a property*/
+    /**
+     * Remove a property
+     */
     public static void removeProperty(String pKey) {
         GLOBAL_PROPERTIES.remove(pKey);
     }
 
-    /**Get the value of a property*/
+    /**
+     * Get the value of a property
+     */
     public static String getProperty(String pKey) {
         if (pKey == null) {
             return null;
@@ -269,20 +294,23 @@ public class GlobalOptions {
     }
 
     public static void main(String[] args) {
-        if((Boolean)null){
+        if ((Boolean) null) {
             System.out.println("OK");
         }
     }
-    
-    
-    /**Load the default skin
+
+    /**
+     * Load the default skin
+     *
      * @throws Exception If there was an error while loading the default skin
      */
     public static void loadSkin() throws Exception {
         mSkin = new Skin(GLOBAL_PROPERTIES.getProperty("default.skin"));
     }
 
-    /**Load user data (attacks, markers...)*/
+    /**
+     * Load user data (attacks, markers...)
+     */
     public static void loadUserData() {
         if (getSelectedServer() != null
                 && getSelectedProfile() != null
@@ -320,6 +348,8 @@ public class GlobalOptions {
             logger.debug("Loading reports");
             fireDataHolderEvent("Lade Berichte");
             ReportManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/reports.xml");
+            fireDataHolderEvent("Lade Farminformationen");
+            FarmManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/farms.xml");
             logger.debug("Removing temporary data");
             DataHolder.getSingleton().removeTempData();
         }
@@ -331,7 +361,9 @@ public class GlobalOptions {
         }
     }
 
-    /**Load user data (attacks, markers...)*/
+    /**
+     * Load user data (attacks, markers...)
+     */
     public static void saveUserData() {
         if (getSelectedServer() != null
                 && getSelectedProfile() != null
@@ -361,6 +393,8 @@ public class GlobalOptions {
             StatManager.getSingleton().storeStats();
             logger.debug("Saving resports");
             ReportManager.getSingleton().saveElements(getSelectedProfile().getProfileDirectory() + "/reports.xml");
+            logger.debug("Saving farms");
+            FarmManager.getSingleton().saveElements(getSelectedProfile().getProfileDirectory() + "/farms.xml");
             logger.debug("User data saved");
         } else {
             if (isInternalDataDamaged()) {
@@ -373,7 +407,9 @@ public class GlobalOptions {
         return mSkin;
     }
 
-    /**Get the DecorationHolder
+    /**
+     * Get the DecorationHolder
+     *
      * @return WorldDecorationHolder Object which contains the WorldData
      */
     public static WorldDecorationHolder getWorldDecorationHolder() {

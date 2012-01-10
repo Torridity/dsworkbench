@@ -17,7 +17,7 @@ import javax.swing.table.AbstractTableModel;
 public class FarmTableModel extends AbstractTableModel {
 
     private Class[] types = new Class[]{FarmInformation.FARM_STATUS.class, Village.class, new double[3].getClass(), Date.class, Boolean.class, Float.class};
-    private String[] colNames = new String[]{"Status", "Dorf", "Rohstoffe", "Letzter Bericht", "Bericht erwartet", "Erfolgsquote"};
+    private String[] colNames = new String[]{"Status", "Dorf", "Rohstoffe", "Letzter Bericht", "Ergebnisbericht erwartet", "Erfolgsquote"};
 
     public FarmTableModel() {
     }
@@ -55,7 +55,7 @@ public class FarmTableModel extends AbstractTableModel {
                 return elem.getStatus();
             case 1:
                 return elem.getVillage();
-            case 2:
+            case 2:               
                 return new double[]{(double) elem.getWoodInStorage() / (double) elem.getStorageCapacity(),
                             (double) elem.getClayInStorage() / (double) elem.getStorageCapacity(),
                             (double) elem.getIronInStorage() / (double) elem.getStorageCapacity()};

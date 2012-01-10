@@ -62,6 +62,7 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.ui.models.StandardAttackTableModel;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
+import de.tor.tribes.ui.views.*;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MainShutdownHook;
@@ -114,7 +115,7 @@ import org.jdesktop.swingx.tips.TipOfTheDayModel;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 /**
- * @author  Charon
+ * @author Charon
  */
 public class DSWorkbenchMainFrame extends JRibbonFrame implements
         MapPanelListener,
@@ -126,7 +127,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     private double dCenterX = 500.0;
     private double dCenterY = 500.0;
     private double dZoomFactor = 1.0;
-  //  private TribeTribeAttackFrame mTribeTribeAttackFrame = null;
+    //  private TribeTribeAttackFrame mTribeTribeAttackFrame = null;
     private AboutDialog mAbout = null;
     private static DSWorkbenchMainFrame SINGLETON = null;
     private boolean initialized = false;
@@ -144,7 +145,9 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         return SINGLETON;
     }
 
-    /** Creates new form MapFrame */
+    /**
+     * Creates new form MapFrame
+     */
     DSWorkbenchMainFrame() {
         initComponents();
         setAlwaysOnTop(false);
@@ -581,7 +584,9 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         return new String[]{jCenterX.getText(), jCenterY.getText()};
     }
 
-    /**Update on server change*/
+    /**
+     * Update on server change
+     */
     public void serverSettingsChangedEvent() {
         try {
             logger.info("Updating server settings");
@@ -641,12 +646,13 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             DSWorkbenchReportFrame.getSingleton().restoreProperties();
             DSWorkbenchSOSRequestAnalyzer.getSingleton().resetView();
             DSWorkbenchSOSRequestAnalyzer.getSingleton().restoreProperties();
-
+            DSWorkbenchFarmManager.getSingleton().resetView();
+            DSWorkbenchFarmManager.getSingleton().restoreProperties();
             BBCodeEditor.getSingleton().reset();
             //update attack planner
-           /* if (mTribeTribeAttackFrame != null) {
-                mTribeTribeAttackFrame.setup();
-            }*/
+           /*
+             * if (mTribeTribeAttackFrame != null) { mTribeTribeAttackFrame.setup(); }
+             */
 
             DSWorkbenchSettingsDialog.getSingleton().setupAttackColorTable();
             DSWorkbenchRankFrame.getSingleton().resetView();
@@ -689,7 +695,9 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         }
     }
 
-    /**Update UI depending on online state*/
+    /**
+     * Update UI depending on online state
+     */
     public final void onlineStateChanged() {
         jOnlineLabel.setEnabled(!GlobalOptions.isOfflineMode());
         if (GlobalOptions.isOfflineMode()) {
@@ -699,20 +707,24 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         }
     }
 
-    /**Get current zoom factor
+    /**
+     * Get current zoom factor
+     *
      * @return
      */
     public synchronized double getZoomFactor() {
         return dZoomFactor;
     }
 
-    /**Called at startup*/
+    /**
+     * Called at startup
+     */
     protected void init() {
         logger.info("Starting initialization");
-       /* logger.info(" * Setting up attack planner");
-        //setup frames
-        mTribeTribeAttackFrame = new TribeTribeAttackFrame();
-        mTribeTribeAttackFrame.pack();*/
+        /*
+         * logger.info(" * Setting up attack planner"); //setup frames mTribeTribeAttackFrame = new TribeTribeAttackFrame();
+         * mTribeTribeAttackFrame.pack();
+         */
         logger.info(" * Updating server settings");
         //setup everything
         serverSettingsChangedEvent();
@@ -731,11 +743,12 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         return initialized;
     }
 
-  /*  public TribeTribeAttackFrame getAttackPlaner() {
-        return mTribeTribeAttackFrame;
-    }*/
-
-    /**Setup of all frames*/
+    /*
+     * public TribeTribeAttackFrame getAttackPlaner() { return mTribeTribeAttackFrame; }
+     */
+    /**
+     * Setup of all frames
+     */
     private void setupFrames() {
         DSWorkbenchAttackFrame.getSingleton().addFrameListener(this);
         DSWorkbenchMarkerFrame.getSingleton().addFrameListener(this);
@@ -751,7 +764,9 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         DSWorkbenchReportFrame.getSingleton().addFrameListener(this);
     }
 
-    /**Setup main map and mini map*/
+    /**
+     * Setup main map and mini map
+     */
     private void setupMaps() {
         try {
             dZoomFactor = Double.parseDouble(GlobalOptions.getSelectedProfile().getProperty("zoom"));
@@ -953,10 +968,9 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jXLabel1.setText(pMessage);
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this
+     * method is always regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -2381,7 +2395,9 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         getContentPane().add(jPanel4, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-    /**Update map position*/
+    /**
+     * Update map position
+     */
 private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRefreshMapEvent
     double cx = UIHelper.parseIntFromField(jCenterX, (int) dCenterX);
     double cy = UIHelper.parseIntFromField(jCenterY, (int) dCenterY);
@@ -2401,7 +2417,9 @@ private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY, true);
 }//GEN-LAST:event_fireRefreshMapEvent
 
-    /**Update map movement*/
+    /**
+     * Update map movement
+     */
 private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMoveMapEvent
     double cx = UIHelper.parseIntFromField(jCenterX, (int) dCenterX);
     double cy = UIHelper.parseIntFromField(jCenterY, (int) dCenterY);
@@ -2454,7 +2472,9 @@ private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     MinimapPanel.getSingleton().setSelection((int) Math.floor(cx), (int) Math.floor(cy), (int) Math.rint(w), (int) Math.rint(h));
 }//GEN-LAST:event_fireMoveMapEvent
 
-    /**React on resize events*/
+    /**
+     * React on resize events
+     */
 private void fireFrameResizedEvent(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_fireFrameResizedEvent
     try {
         MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
@@ -2463,7 +2483,9 @@ private void fireFrameResizedEvent(java.awt.event.ComponentEvent evt) {//GEN-FIR
     }
 }//GEN-LAST:event_fireFrameResizedEvent
 
-    /**Zoom main map*/
+    /**
+     * Zoom main map
+     */
 private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireZoomEvent
     if (evt.getSource() == jZoomInButton) {
         zoomIn();
@@ -2514,20 +2536,30 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
         MapPanel.getSingleton().updateMapPosition(xPos, yPos, true);
     }
 
-    /**Change active player village*/
-    /**Show settings dialog*/
+    /**
+     * Change active player village
+     */
+    /**
+     * Show settings dialog
+     */
 private void fireShowSettingsEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowSettingsEvent
     DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
 }//GEN-LAST:event_fireShowSettingsEvent
 
-    /**Exit the application*/
+    /**
+     * Exit the application
+     */
 private void fireExitEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireExitEvent
     // GlobalOptions.saveProperties();
     fireDSWorkbenchClosingEvent(null);
 }//GEN-LAST:event_fireExitEvent
 
-    /**Show the toolbar*/
-    /**Center village Ingame*/
+    /**
+     * Show the toolbar
+     */
+    /**
+     * Center village Ingame
+     */
 private void fireCenterVillageIngameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterVillageIngameEvent
     if (!jCenterIngameButton.isEnabled()) {
         return;
@@ -2539,7 +2571,9 @@ private void fireCenterVillageIngameEvent(java.awt.event.MouseEvent evt) {//GEN-
     }
 }//GEN-LAST:event_fireCenterVillageIngameEvent
 
-    /**Center pos Ingame*/
+    /**
+     * Center pos Ingame
+     */
 private void fireCenterCurrentPosInGameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterCurrentPosInGameEvent
     if (!jCenterCoordinateIngame.isEnabled()) {
         return;
@@ -2549,15 +2583,17 @@ private void fireCenterCurrentPosInGameEvent(java.awt.event.MouseEvent evt) {//G
             UIHelper.parseIntFromField(jCenterY, (int) dCenterY));
 }//GEN-LAST:event_fireCenterCurrentPosInGameEvent
 
-    /**Do tool action*/
+    /**
+     * Do tool action
+     */
 private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireToolsActionEvent
     if (evt.getSource() == jSearchItem) {
         DSWorkbenchSearchFrame.getSingleton().setVisible(true);
     } else if (evt.getSource() == jClockItem) {
         ClockFrame.getSingleton().setVisible(true);
-    } /*else if (evt.getSource() == jTribeTribeAttackItem) {
-        mTribeTribeAttackFrame.setVisible(true);
-    }*/ else if (evt.getSource() == jUnitOverviewItem) {
+    } /*
+     * else if (evt.getSource() == jTribeTribeAttackItem) { mTribeTribeAttackFrame.setVisible(true); }
+     */ else if (evt.getSource() == jUnitOverviewItem) {
         UnitOrderBuilder.showUnitOrder(null, null);
     } else if (evt.getSource() == jSelectionOverviewItem) {
         DSWorkbenchSelectionFrame.getSingleton().setVisible(true);
@@ -3265,17 +3301,12 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
         return bWatchClipboard;
     }
 
-    /*private void propagateLayerOrder() {
-    DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
-    
-    List<Integer> layerOrder = new LinkedList<Integer>();
-    for (int i = 0; i < model.size(); i++) {
-    String value = (String) model.get(i);
-    layerOrder.add(Constants.LAYERS.get(value));
-    }
-    MapPanel.getSingleton().getMapRenderer().setDrawOrder(layerOrder);
-    MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
-    }
+    /*
+     * private void propagateLayerOrder() { DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
+     *
+     * List<Integer> layerOrder = new LinkedList<Integer>(); for (int i = 0; i < model.size(); i++) { String value = (String) model.get(i);
+     * layerOrder.add(Constants.LAYERS.get(value)); } MapPanel.getSingleton().getMapRenderer().setDrawOrder(layerOrder);
+     * MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS); }
      */
     private void centerROI(int pId) {
         try {
@@ -3289,7 +3320,9 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
         }
     }
 
-    /**Check if zoom factor is valid and correct if needed*/
+    /**
+     * Check if zoom factor is valid and correct if needed
+     */
     private void checkZoomRange() {
         if (dZoomFactor <= 0.4) {
             dZoomFactor = 0.4;
@@ -3303,7 +3336,9 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
         }
     }
 
-    /**Scroll the map*/
+    /**
+     * Scroll the map
+     */
     public void scroll(double pXDir, double pYDir) {
         dCenterX += pXDir;
         dCenterY += pYDir;
@@ -3324,7 +3359,9 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
         MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
     }
 
-    /**Center a village*/
+    /**
+     * Center a village
+     */
     public void centerVillage(Village pVillage) {
         if (pVillage == null) {
             return;
@@ -3361,7 +3398,9 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
         fireRefreshMapEvent(null);
     }
 
-    /**Get active user village*/
+    /**
+     * Get active user village
+     */
     public Village getCurrentUserVillage() {
         try {
             if (jCurrentPlayerVillages.getSelectedIndex() < 0) {

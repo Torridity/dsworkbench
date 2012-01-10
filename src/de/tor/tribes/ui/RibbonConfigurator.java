@@ -29,7 +29,7 @@ import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor;
 import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
 import de.tor.tribes.ui.views.DSWorkbenchTagFrame;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
-import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
+import de.tor.tribes.ui.views.*;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
@@ -487,7 +487,7 @@ public class RibbonConfigurator {
                 new IconRibbonBandResizePolicy(attackViewBand.getControlPanel())));
         ingameInfoViewBand.setResizePolicies((List) Arrays.asList(
                 new CoreRibbonResizePolicies.None(ingameInfoViewBand.getControlPanel()),
-               // new CoreRibbonResizePolicies.Mirror(ingameInfoViewBand.getControlPanel()),
+                // new CoreRibbonResizePolicies.Mirror(ingameInfoViewBand.getControlPanel()),
                 // new CoreRibbonResizePolicies.High2Low(ingameInfoViewBand.getControlPanel()),
                 new IconRibbonBandResizePolicy(ingameInfoViewBand.getControlPanel())));
         RibbonTask task2 = new RibbonTask("Ansicht", attackViewBand, ingameInfoViewBand, infoViewBand);
@@ -511,9 +511,10 @@ public class RibbonConfigurator {
                     @Override
                     public void run() {
                         //@TODO show attack planer by ribbon
-                     /*   TribeTribeAttackFrame frame = DSWorkbenchMainFrame.getSingleton().getAttackPlaner();
-                        frame.setVisible(true);
-                        frame.requestFocus();*/
+                     /*
+                         * TribeTribeAttackFrame frame = DSWorkbenchMainFrame.getSingleton().getAttackPlaner(); frame.setVisible(true);
+                         * frame.requestFocus();
+                         */
                     }
                 });
             }
@@ -632,6 +633,22 @@ public class RibbonConfigurator {
                 });
             }
         });
+
+        JCommandButton farmManagerButton = factoryButton("Farmmanager", "graphics/big/storage.png", "Öffnet den Farmmanager", "Der Farmmanager erlaubt das einfache Farmen von Dörfern. Farmen können auf verschiedene Wege gesucht werden, der Farmmanager kümmert sich dann um deren Verwaltung. Zum eigentlichen Farmen muss man nur noch die entsprechenden Tabs im Browser öffnen lassen und den Farmangriff abschicken. Nach dem Farmlauf liest man den entsprechenden Bericht ein und verfügt sofort wieder über aktuelle Informationen.", true);
+        farmManagerButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        DSWorkbenchFarmManager.getSingleton().setVisible(true);
+                        DSWorkbenchFarmManager.getSingleton().requestFocus();
+                    }
+                });
+            }
+        });
+
         JCommandButton mapshotToolButton = factoryButton("Screenshot erstellen", "graphics/big/camera.png", "Erstellt einen Screenshot der Hauptkarte", "Dieses Werkzeug erlaubt es, einen Screenshot der aktuellen Ansicht der Hauptkarte zu erstellen. Screenshots können im Anschluss auf der Festplatte oder dem DS Workbench Server gespeichert werden, um sie anderen Spielern zugänglich zu machen. Die Speicherung auf dem DS Workbench Server ist allerdings nur bis zu einer bestimmten Bildgröße möglich, die resultierende Bildgröße hängt von der Fenstergröße und dem gewählten Grafikpaket ab.", true);
         mapshotToolButton.addActionListener(new ActionListener() {
 
@@ -681,6 +698,7 @@ public class RibbonConfigurator {
         infoToolBand.addCommandButton(distanceToolButton, RibbonElementPriority.LOW);
 
         miscToolsBand.addCommandButton(resourceDistributorToolButton, RibbonElementPriority.TOP);
+        miscToolsBand.addCommandButton(farmManagerButton, RibbonElementPriority.TOP);
         miscToolsBand.addCommandButton(mapshotToolButton, RibbonElementPriority.MEDIUM);
         miscToolsBand.addCommandButton(runtimeToolButton, RibbonElementPriority.MEDIUM);
         miscToolsBand.addCommandButton(clockToolButton, RibbonElementPriority.MEDIUM);

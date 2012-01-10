@@ -11,7 +11,8 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.windows.NotifierFrame;
 import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.ProfileManager;
+import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.interfaces.SilentParserInterface;
 import de.tor.tribes.util.report.ReportManager;
 import java.awt.Toolkit;
@@ -66,6 +67,8 @@ public class ReportParser implements SilentParserInterface {
         boolean troopsOnTheWayPart = false;
         boolean troopsOutside = false;
         boolean haveTime = false;
+
+        boolean searchChurch = ServerSettings.getSingleton().isChurch();
         int serverTroopCount = DataHolder.getSingleton().getUnits().size();
         FightReport result = new FightReport();
         while (t.hasMoreTokens()) {
@@ -265,6 +268,32 @@ public class ReportParser implements SilentParserInterface {
                 } else {
                     debug("No valid hide level from " + line);
                 }
+            } else if (searchChurch && line.indexOf("Erste Kirche") > -1) {
+                debug("Try adding first church");
+                try {
+                    ChurchManager.getSingleton().addChurch(result.getTargetVillage(), 6);
+                } catch (Exception e) {
+                    debug("Failed to add first church");
+                }
+            } else if (searchChurch && line.indexOf("Kirche") > -1) {
+                debug("Parse church");
+                int val = parseIntFromPattern(line, "Kirche(.*)\\(Stufe(.*?)\\)", 2);
+                switch (val) {
+                    case 1:
+                        ChurchManager.getSingleton().addChurch(result.getTargetVillage(), 4);
+                        debug("Church level 1 added");
+                        break;
+                    case 2:
+                        ChurchManager.getSingleton().addChurch(result.getTargetVillage(), 6);
+                        debug("Church level 2 added");
+                        break;
+                    case 3:
+                        ChurchManager.getSingleton().addChurch(result.getTargetVillage(), 8);
+                        debug("Church level 3 added");
+                        break;
+                    default:
+                        debug("Failed to add curch");
+                }
             } else if (line.startsWith("Schaden durch Rammböcke")) {
                 line = line.replaceAll("Schaden durch Rammböcke:", "").trim();
                 line = line.replaceAll("Wall beschädigt von Level", "").trim().replaceAll("auf Level", "");
@@ -432,7 +461,7 @@ public class ReportParser implements SilentParserInterface {
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) -  %m%n")));
         GlobalOptions.setSelectedServer("de77");
         //ProfileManager.getSingleton().loadProfiles(); //
-       // GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de77")[0]);
+        // GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de77")[0]);
         DataHolder.getSingleton().loadData(false); // GlobalOptions.loadUserData(); 
         Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         String data = (String) t.getTransferData(DataFlavor.stringFlavor);

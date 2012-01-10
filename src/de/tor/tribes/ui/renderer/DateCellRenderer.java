@@ -9,6 +9,7 @@ import java.awt.Component;
 import java.text.SimpleDateFormat;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import org.apache.commons.lang.time.DateUtils;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
 /**
@@ -37,7 +38,17 @@ public class DateCellRenderer extends DefaultTableRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         JLabel label = (JLabel) c;
-        label.setText((value == null) ? "" : specialFormat.format(value));
+        try {
+            Long val = (Long) value;
+            if (val < System.currentTimeMillis() - DateUtils.MILLIS_PER_DAY * 365) {//more than one year ago...invalid!
+                label.setText((value == null) ? "" : specialFormat.format(value));
+            } else {
+                label.setText("-");
+            }
+        } catch (Exception e) {
+            label.setText("-");
+        }
+
         return label;
     }
 }

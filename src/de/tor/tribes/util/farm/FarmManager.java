@@ -11,14 +11,19 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.FarmInformation;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.Barbarians;
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.report.ReportManager;
+import java.awt.Point;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,41 +51,15 @@ public class FarmManager extends GenericManager<FarmInformation> {
         infoMap = new Hashtable<Village, FarmInformation>();
     }
 
-    public void addBarbarian(Village pVillage, int pRadius) {
-        for (int i = pVillage.getX() - pRadius; i < pVillage.getX() + pRadius; i++) {
-            for (int j = pVillage.getY() - pRadius; j < pVillage.getY() + pRadius; j++) {
-                if (i < ServerSettings.getSingleton().getMapDimension().width && j < ServerSettings.getSingleton().getMapDimension().height) {
-                    Village farm = DataHolder.getSingleton().getVillages()[i][j];
-                    if (farm != null && farm.getTribe().equals(Barbarians.getSingleton())) {
-                        FarmInformation info = addFarm(farm);
-                        info.updateFromReport(ReportManager.getSingleton().findLastReportForTarget(pVillage));
-                    }
-                }
-            }
-        }
-    }
-
-    public void addFromReports() {
-        List<Village> handled = new LinkedList<Village>();
-        for (ManageableType t : ReportManager.getSingleton().getAllElements()) {
-            FightReport r = (FightReport) t;
-            if (!handled.contains(r.getTargetVillage())) {
-                if (TroopHelper.isEmpty(r.getSurvivingDefenders())) {
-                    FarmInformation info = addFarm(r.getTargetVillage());
-                    info.updateFromReport(ReportManager.getSingleton().findLastReportForTarget(r.getTargetVillage()));
-                    handled.add(r.getTargetVillage());
-                }
-            }
-        }
-    }
-
     public FarmInformation addFarm(Village pVillage) {
-        FarmInformation info = null;
-        if (!infoMap.containsKey(pVillage)) {
+        FarmInformation info = infoMap.get(pVillage);
+        if (info == null) {
             info = new FarmInformation(pVillage);
+            infoMap.put(pVillage, info);
+            info.setJustCreated(true);
             addManagedElement(info);
         } else {
-            infoMap.get(pVillage);
+            info.setJustCreated(false);
         }
         return info;
     }
@@ -101,6 +80,72 @@ public class FarmManager extends GenericManager<FarmInformation> {
         }
     }
 
+    public int findFarmsInReports(int pRadius) {
+
+        int addCount = 0;
+        List<Village> handled = new LinkedList<Village>();
+        Tribe yourTribe = GlobalOptions.getSelectedProfile().getTribe();
+        Point center = DSCalculator.calculateCenterOfMass(Arrays.asList(yourTribe.getVillageList()));
+        invalidate();
+        for (ManageableType t : ReportManager.getSingleton().getAllElements()) {
+            FightReport report = (FightReport) t;
+            Village target = report.getTargetVillage();
+            if (report.isWon()) {
+                if (DSCalculator.calculateDistance(new Village(center.x, center.y), report.getTargetVillage()) <= pRadius) {//in radius
+                    if (!report.getTargetVillage().getTribe().equals(t)
+                            && (report.getTargetVillage().getTribe().getAlly() == null
+                            || !report.getTargetVillage().getTribe().getAlly().equals(yourTribe.getAlly()))) {
+                        if (!handled.contains(target)) {//add farm
+                            FarmInformation info = addFarm(target);
+                            info.updateFromReport(report);
+                            handled.add(target);
+                            addCount++;
+                        } else {//update to newer report
+                            FarmInformation info = getFarmInformation(target);
+                            if (info != null && info.getLastReport() < report.getTimestamp()) {
+                                info.updateFromReport(report);
+                                if (info.getStatus().equals(FarmInformation.FARM_STATUS.CONQUERED)
+                                        || info.getStatus().equals(FarmInformation.FARM_STATUS.TROOPS_FOUND)) {
+                                    removeFarm(target);
+                                    addCount--;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        revalidate(true);
+        return addCount;
+    }
+
+    public int findFarmsFromBarbarians(int pRadius) {
+        int addCount = 0;
+        Tribe yourTribe = GlobalOptions.getSelectedProfile().getTribe();
+        Point center = DSCalculator.calculateCenterOfMass(Arrays.asList(yourTribe.getVillageList()));
+        invalidate();
+        for (int i = center.x - pRadius; i < center.x + pRadius; i++) {
+            for (int j = center.y - pRadius; j < center.y + pRadius; j++) {
+                if (i > 0 && i < ServerSettings.getSingleton().getMapDimension().width
+                        && j > 0 && j < ServerSettings.getSingleton().getMapDimension().height) {
+                    Village v = DataHolder.getSingleton().getVillages()[i][j];
+                    if (v != null && v.getTribe().equals(Barbarians.getSingleton())) {
+                        FarmInformation info = addFarm(v);
+                        if (info.isJustCreated()) {
+                            FightReport r = ReportManager.getSingleton().findLastReportForSource(v);
+                            if (r != null) {
+                                info.updateFromReport(r);
+                            }
+                            addCount++;
+                        }
+                    }
+                }
+            }
+        }
+        revalidate(true);
+        return addCount;
+    }
+
     @Override
     public void loadElements(String pFile) {
         XStream x = new XStream();
@@ -115,6 +160,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
                 FarmInformation info = (FarmInformation) t;
                 info.revalidate();
                 addManagedElement(info);
+                infoMap.put(info.getVillage(), info);
             }
             r.close();
             logger.debug("Farm information successfully read");

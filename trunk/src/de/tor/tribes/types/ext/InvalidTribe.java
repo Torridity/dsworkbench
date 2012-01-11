@@ -25,6 +25,11 @@ public class InvalidTribe extends Tribe {
     }
 
     @Override
+    public int getId() {
+        return -666;
+    }
+
+    @Override
     public String getName() {
         return "gelöscht";
     }

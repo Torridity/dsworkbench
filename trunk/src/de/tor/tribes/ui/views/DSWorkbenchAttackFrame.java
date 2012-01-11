@@ -11,7 +11,6 @@ import com.jidesoft.swing.TabEditingListener;
 import com.jidesoft.swing.TabEditingValidator;
 import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.control.GenericManagerListener;
-import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.test.DummyUnit;
@@ -21,17 +20,13 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.panels.AttackTableTab;
 import de.tor.tribes.ui.panels.GenericTestPanel;
-import de.tor.tribes.ui.windows.NotifierFrame;
 import de.tor.tribes.ui.editors.StandardAttackElementEditor;
 import de.tor.tribes.ui.models.StandardAttackTableModel;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.ui.renderer.StandardAttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitTableHeaderRenderer;
 import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MouseGestureHandler;
@@ -52,7 +47,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -81,8 +75,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
 
 // -Dsun.java2d.d3d=true -Dsun.java2d.translaccel=true -Dsun.java2d.ddforcevram=true
 /**
- * @TODO Add "add-alert" option together with clock frame for single attacks
- * @author  Charon
+ * @author Charon
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, ProfileManagerListener, Serializable {
 
@@ -156,7 +149,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
     }
     private static Logger logger = Logger.getLogger("AttackView");
     private static DSWorkbenchAttackFrame SINGLETON = null;
-    private NotifyThread mNotifyThread = null;
     private CountdownThread mCountdownThread = null;
     private int iClickAccount = 0;
     private GenericTestPanel centerPanel = null;
@@ -168,7 +160,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         return SINGLETON;
     }
 
-    /** Creates new form DSWorkbenchAttackFrame */
+    /**
+     * Creates new form DSWorkbenchAttackFrame
+     */
     DSWorkbenchAttackFrame() {
         initComponents();
         centerPanel = new GenericTestPanel();
@@ -238,9 +232,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
-        mNotifyThread = new NotifyThread();
         new ColorUpdateThread().start();
-        mNotifyThread.start();
         mCountdownThread = new CountdownThread();
         mCountdownThread.start();
         jXColumnList.addListSelectionListener(new ListSelectionListener() {
@@ -315,7 +307,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         return jStandardAttackDialog;
     }
 
-    /**Get the currently selected tab*/
+    /**
+     * Get the currently selected tab
+     */
     private AttackTableTab getActiveTab() {
         try {
             if (jAttackTabPane.getModel().getSelectedIndex() < 0) {
@@ -327,7 +321,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         }
     }
 
-    /**Get the currently active attack plan
+    /**
+     * Get the currently active attack plan
+     *
      * @return
      */
     public String getActivePlan() {
@@ -338,7 +334,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         return tab.getAttackPlan();
     }
 
-    /**Build the main menu for this frame*/
+    /**
+     * Build the main menu for this frame
+     */
     private void buildMenu() {
         // <editor-fold defaultstate="collapsed" desc="Edit task pane">
         JXTaskPane editTaskPane = new JXTaskPane();
@@ -507,16 +505,21 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         }));
 
-        miscTaskPane.getContentPane().add(factoryButton("/res/ui/att_alert_off.png", "Aktiviert eine Warnung f&uuml;r Angriffe, welche in den n&auml;chsten 10 Minuten abgeschickt werden m&uuml;ssen", new MouseAdapter() {
+        miscTaskPane.getContentPane().add(factoryButton("/res/ui/att_alert_off.png", "Einen Alarm für den gewählten Angriff erstellen", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                mNotifyThread.setActive(!mNotifyThread.isActive());
-                if (mNotifyThread.isActive()) {
-                    ((JXButton) e.getSource()).setIcon(new ImageIcon(DSWorkbenchAttackFrame.class.getResource("/res/ui/att_alert.png")));
-                } else {
-                    ((JXButton) e.getSource()).setIcon(new ImageIcon(DSWorkbenchAttackFrame.class.getResource("/res/ui/att_alert_off.png")));
+                AttackTableTab tab = getActiveTab();
+                if (tab != null) {
+                    tab.addAttackTimer();
                 }
+
+                /*
+                 * mNotifyThread.setActive(!mNotifyThread.isActive()); if (mNotifyThread.isActive()) { ((JXButton)
+                 * e.getSource()).setIcon(new ImageIcon(DSWorkbenchAttackFrame.class.getResource("/res/ui/att_alert.png"))); } else {
+                 * ((JXButton) e.getSource()).setIcon(new ImageIcon(DSWorkbenchAttackFrame.class.getResource("/res/ui/att_alert_off.png")));
+                 * }
+                 */
             }
         }));
         // </editor-fold>
@@ -531,7 +534,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         return null;
     }
 
-    /**Factory a new button*/
+    /**
+     * Factory a new button
+     */
     private JXButton factoryButton(String pIconResource, String pTooltip, MouseListener pListener) {
         JXButton button = new JXButton(new ImageIcon(DSWorkbenchAttackFrame.class.getResource(pIconResource)));
         if (pTooltip != null) {
@@ -541,10 +546,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         return button;
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this
+     * method is always regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -889,7 +893,9 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     }
 }//GEN-LAST:event_fireCreateAttackPlanEvent
 
-    /**Update the attack plan filter*/
+    /**
+     * Update the attack plan filter
+     */
     private void updateFilter() {
         AttackTableTab tab = getActiveTab();
         if (tab != null) {
@@ -928,7 +934,9 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         generateAttackTabs();
     }
 
-    /**Initialize and add one tab for each attack plan to jTabbedPane1*/
+    /**
+     * Initialize and add one tab for each attack plan to jTabbedPane1
+     */
     public void generateAttackTabs() {
         jAttackTabPane.invalidate();
         while (jAttackTabPane.getTabCount() > 0) {
@@ -981,7 +989,9 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
 
-    /**Redraw the countdown col*/
+    /**
+     * Redraw the countdown col
+     */
     protected void updateCountdown() {
         SwingUtilities.invokeLater(new Runnable() {
 
@@ -996,7 +1006,9 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
 
     }
 
-    /**Redraw the time col*/
+    /**
+     * Redraw the time col
+     */
     protected void updateTime() {
         SwingUtilities.invokeLater(new Runnable() {
 
@@ -1139,88 +1151,6 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private org.jdesktop.swingx.JXPanel jxSearchPane;
     // End of variables declaration//GEN-END:variables
 }
-
-// <editor-fold defaultstate="collapsed" desc=" NOTIFY THREAD ">
-class NotifyThread extends Thread {
-
-    private static Logger logger = Logger.getLogger("AttackNotificationHelper");
-    private boolean active = false;
-    private long nextCheck = 0;
-    private final int TEN_MINUTES = 10 * 60 * 1000;
-
-    public NotifyThread() {
-        setDaemon(true);
-        setPriority(MIN_PRIORITY);
-    }
-
-    public void setActive(boolean pValue) {
-        active = pValue;
-        if (active) {
-            logger.debug("Starting notification cycle");
-            nextCheck = System.currentTimeMillis();
-        }
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void run() {
-
-        while (true) {
-            if (active) {
-                long now = System.currentTimeMillis();
-                if (now > nextCheck) {
-                    logger.debug("Checking attacks");
-                    //do next check
-                    Hashtable<String, Integer> outstandingAttacks = new Hashtable<String, Integer>();
-                    Iterator<String> plans = AttackManager.getSingleton().getGroupIterator();
-                    while (plans.hasNext()) {
-                        String plan = plans.next();
-                        List<ManageableType> attacks = AttackManager.getSingleton().getAllElements(plan);
-                        int attackCount = 0;
-                        for (ManageableType t : attacks) {
-                            Attack a = (Attack) t;
-                            long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-                            //find send times between now and in 10 minutes
-                            if ((sendTime >= now) && (sendTime <= now + TEN_MINUTES)) {
-                                attackCount++;
-                            }
-                        }
-                        if (attackCount > 0) {
-                            outstandingAttacks.put(plan, attackCount);
-                        }
-                    }
-
-                    if (outstandingAttacks.size() > 0) {
-                        // if (attackCount > 0) {
-                        String message = "In den kommenden 10 Minuten müssen Angriffe aus den folgenden Plänen abgeschickt werden:\n";
-                        Enumeration<String> outstandingPlans = outstandingAttacks.keys();
-                        while (outstandingPlans.hasMoreElements()) {
-                            String nextPlan = outstandingPlans.nextElement();
-                            Integer cnt = outstandingAttacks.get(nextPlan);
-                            message += nextPlan + " (" + cnt + ")\n";
-                        }
-                        NotifierFrame.doNotification(message, NotifierFrame.NOTIFY_ATTACK);
-                        outstandingAttacks = null;
-                        logger.debug("Scheduling next check in 10 minutes");
-                        nextCheck = now + TEN_MINUTES;
-                    } else {
-                        //no attacks in next 10 minutes
-                        logger.debug("Scheduling next check in 1 minute");
-                        nextCheck = now + TEN_MINUTES / 10;
-                    }
-                }//wait for next check
-
-            }
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException ie) {
-            }
-        }
-    }
-}
-//</editor-fold>
 
 class ColorUpdateThread extends Thread {
 

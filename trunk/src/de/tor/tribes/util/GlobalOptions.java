@@ -13,23 +13,7 @@ import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.test.DummyUserProfile;
 import de.tor.tribes.types.UserProfile;
-import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
-import de.tor.tribes.ui.views.DSWorkbenchChurchFrame;
-import de.tor.tribes.ui.views.DSWorkbenchConquersFrame;
-import de.tor.tribes.ui.views.DSWorkbenchDistanceFrame;
-import de.tor.tribes.ui.views.DSWorkbenchDoItYourselfAttackPlaner;
-import de.tor.tribes.ui.views.DSWorkbenchFormFrame;
-import de.tor.tribes.ui.views.DSWorkbenchMarkerFrame;
-import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor;
-import de.tor.tribes.ui.views.DSWorkbenchNotepad;
-import de.tor.tribes.ui.views.DSWorkbenchRankFrame;
-import de.tor.tribes.ui.views.DSWorkbenchReTimerFrame;
-import de.tor.tribes.ui.views.DSWorkbenchReportFrame;
-import de.tor.tribes.ui.views.DSWorkbenchSOSRequestAnalyzer;
-import de.tor.tribes.ui.views.DSWorkbenchSelectionFrame;
-import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
-import de.tor.tribes.ui.views.DSWorkbenchTagFrame;
-import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
+import de.tor.tribes.ui.views.*;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import de.tor.tribes.util.church.ChurchManager;
@@ -267,6 +251,7 @@ public class GlobalOptions {
         DSWorkbenchTroopsFrame.getSingleton().storeProperties();
         DSWorkbenchSelectionFrame.getSingleton().storeProperties();
         DSWorkbenchReportFrame.getSingleton().storeProperties();
+        DSWorkbenchFarmManager.getSingleton().storeProperties();
     }
 
     /**

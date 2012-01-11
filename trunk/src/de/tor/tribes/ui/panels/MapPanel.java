@@ -1326,6 +1326,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             //center current village on map
             DSWorkbenchMainFrame.getSingleton().centerVillage(actionMenuVillage);
             //@TODO fix context entry to attack planer
+            //@TODO Integrate menu item to show all reports for a village
         } /*
          * else if (evt.getSource() == jCurrentToAttackPlanerAsSourceItem) { Village v = actionMenuVillage; if (v != null) { if
          * (v.getTribe() == Barbarians.getSingleton()) { JOptionPaneHelper.showInformationBox(this, "Angriffe von Barbarendörfern können

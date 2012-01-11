@@ -137,7 +137,6 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
             }
         } catch (ConfigurationException ex) {
             logger.error("Failed to write properties", ex);
-            return;
         }
     }
 

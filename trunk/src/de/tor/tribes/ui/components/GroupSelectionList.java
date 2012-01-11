@@ -212,12 +212,6 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
         checkStateAndRepaint();
     }
 
-    //OFF_F: 94:46:16 (464|941) K94 XXX
-    /*OFF:
-    94:45:48 (458|944) K94
-    94:46:16 (464|941) K94 XXX
-    94:46:56 (466|945) K94
-     */
     @Override
     public void setListData(Object[] listData) {
         super.setListData(listData);

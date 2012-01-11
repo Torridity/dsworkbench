@@ -7,17 +7,23 @@ package de.tor.tribes.util;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FarmInformation;
+import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchFarmManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.util.*;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author Torridity
  */
 public class TroopHelper {
+
+    private static Logger logger = Logger.getLogger("TroopHelper");
 
     public static Village[] getOwnVillagesByOwnTroops(Hashtable<UnitHolder, Integer> pTroops) {
         Village[] villages = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
@@ -128,6 +134,8 @@ public class TroopHelper {
         Hashtable<UnitHolder, Integer> units = new Hashtable<UnitHolder, Integer>();
         VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pSource, TroopsManager.TROOP_TYPE.OWN);
         double unitSpeed = 0;
+        int minUnits = DSWorkbenchFarmManager.getSingleton().getMinUnits();
+        int minHaul = DSWorkbenchFarmManager.getSingleton().getMinHaul();
 
         if (holder != null) {
             List<UnitHolder> neededUnits = new LinkedList<UnitHolder>();
@@ -135,7 +143,7 @@ public class TroopHelper {
             Arrays.sort(allowed, UnitHolder.RUNTIME_COMPARATOR);
             for (UnitHolder unit : allowed) {
                 int amount = holder.getTroopsOfUnitInVillage(unit);
-                if (amount > 30) {
+                if (amount > 0) {
                     int resources = pInfo.getResourcesInStorage(System.currentTimeMillis() + DSCalculator.calculateMoveTimeInMillis(pSource, pTarget, unit.getSpeed()));
                     neededUnits.add(unit);
                     unitSpeed = Math.max(unitSpeed, unit.getSpeed());
@@ -151,12 +159,20 @@ public class TroopHelper {
             }
 
             int resources = pInfo.getResourcesInStorage(System.currentTimeMillis() + DSCalculator.calculateMoveTimeInMillis(pSource, pTarget, unitSpeed));
+            if (resources < minHaul) {
+                logger.debug("Min haul not reached (" + resources + " < " + minHaul + ")");
+                return units;
+            }
+            int unitCount = 0;
             for (UnitHolder unit : neededUnits) {
                 int amount = holder.getTroopsOfUnitInVillage(unit);
                 if (amount * unit.getCarry() > resources) {
-                    units.put(unit, (int) Math.rint(resources / unit.getCarry()));
+                    int neededUnitsOfType = (int) Math.rint(resources / unit.getCarry());
+                    unitCount += neededUnitsOfType;
+                    units.put(unit, neededUnitsOfType);
                     resources = 0;
                 } else {
+                    unitCount += amount;
                     units.put(unit, amount);
                     resources -= (int) (amount * unit.getCarry());
                 }
@@ -164,10 +180,19 @@ public class TroopHelper {
                     break;
                 }
             }
+
+            if (unitCount < minUnits) {
+                logger.debug("Min unit count not met (" + unitCount + " < " + minUnits + ")");
+                units.clear();
+                return units;
+            }
+
             UnitHolder spy = DataHolder.getSingleton().getUnitByPlainName("spy");
             if (holder.getTroopsOfUnitInVillage(spy) > 0) {
                 units.put(spy, 1);
             }
+        } else {
+            logger.debug("No troops found for village " + pSource);
         }
         return units;
     }
@@ -212,7 +237,11 @@ public class TroopHelper {
         double speed = 0;
         Enumeration<UnitHolder> keys = pTroops.keys();
         while (keys.hasMoreElements()) {
-            speed = Math.max(speed, keys.nextElement().getSpeed());
+            UnitHolder unit = keys.nextElement();
+            Integer amount = pTroops.get(unit);
+            if (amount != null && amount != 0) {
+                speed = Math.max(speed, unit.getSpeed());
+            }
         }
         return speed;
     }
@@ -255,5 +284,48 @@ public class TroopHelper {
             result.put(DataHolder.getSingleton().getUnitByPlainName(key), pTroops.get(key));
         }
         return result;
+    }
+
+    public static String unitListToProperty(JList pList) {
+        if (pList.getModel() instanceof DefaultListModel) {
+            DefaultListModel model = (DefaultListModel) pList.getModel();
+            String result = "";
+            for (int i = 0; i < model.getSize(); i++) {
+                Object elem = model.getElementAt(i);
+                if (elem instanceof UnitHolder) {
+                    result += ((UnitHolder) model.getElementAt(i)).getPlainName();
+                    if (i != model.getSize() - 1) {
+                        result += ";";
+                    }
+                } else {
+                    logger.warn("Element " + i + " is not an instance of UnitHolder");
+                }
+            }
+            return result;
+        } else {
+            logger.warn("List model not an instance of DefaultListModel");
+            return "";
+        }
+    }
+
+    public static DefaultListModel unitListPropertyToModel(String pProperty, UnitHolder[] pDefault) {
+        DefaultListModel model = new DefaultListModel();
+        String[] elems = (pProperty == null) ? null : pProperty.split(";");
+        if (elems == null || elems.length == 0) {
+            for (UnitHolder unit : pDefault) {
+                model.addElement(unit);
+            }
+        } else {
+            for (String elem : elems) {
+                UnitHolder unit = DataHolder.getSingleton().getUnitByPlainName(elem);
+                if (unit.equals(UnknownUnit.getSingleton())) {
+                    logger.warn("Read unknown unit from string " + elem);
+                } else {
+                    model.addElement(unit);
+                }
+            }
+        }
+
+        return model;
     }
 }

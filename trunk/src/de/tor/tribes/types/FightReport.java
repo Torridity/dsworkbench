@@ -10,6 +10,7 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.ext.InvalidTribe;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.xml.JaxenUtils;
 import de.tor.tribes.util.xml.XMLHelper;
@@ -222,29 +223,31 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
             int attackerId = Integer.parseInt(attackerElement.getChild("id").getText());
             Tribe attElement = DataHolder.getSingleton().getTribes().get(attackerId);
-
             if (attElement != null) {
                 setAttacker(attElement);
             } else {
-                if (getSourceVillage() != null && getSourceVillage().getTribe() != null) {
+                if (attackerId != -666 && getSourceVillage() != null && getSourceVillage().getTribe() != null) {
                     setAttacker(getSourceVillage().getTribe());
                 } else {
-                    setAttacker(Barbarians.getSingleton());
+                    setAttacker(InvalidTribe.getSingleton());
                 }
             }
 
             int target = Integer.parseInt(defenderElement.getChild("trg").getText());
             setTargetVillage(DataHolder.getSingleton().getVillagesById().get(target));
-
             int defenderId = Integer.parseInt(defenderElement.getChild("id").getText());
-            Tribe defElement = DataHolder.getSingleton().getTribes().get(defenderId);
-            if (defElement != null) {
-                setDefender(defElement);
+            Tribe defendingTribe = DataHolder.getSingleton().getTribes().get(defenderId);
+            if (defendingTribe != null) {
+                setDefender(defendingTribe);
             } else {
-                if (getTargetVillage() != null && getTargetVillage().getTribe() != null) {
+                if (defenderId > 0 && getTargetVillage() != null && getTargetVillage().getTribe() != null) {
                     setDefender(getTargetVillage().getTribe());
                 } else {
-                    setDefender(Barbarians.getSingleton());
+                    if (defenderId == -666) {
+                        setDefender(InvalidTribe.getSingleton());
+                    } else {
+                        setDefender(Barbarians.getSingleton());
+                    }
                 }
             }
 
@@ -342,14 +345,13 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
             int attackerId = Integer.parseInt(attackerElement.getChild("id").getText());
             Tribe attElement = DataHolder.getSingleton().getTribes().get(attackerId);
-
             if (attElement != null) {
                 setAttacker(attElement);
             } else {
-                if (getSourceVillage() != null && getSourceVillage().getTribe() != null) {
+                if (attackerId != -666 && getSourceVillage() != null && getSourceVillage().getTribe() != null) {
                     setAttacker(getSourceVillage().getTribe());
                 } else {
-                    setAttacker(Barbarians.getSingleton());
+                    setAttacker(InvalidTribe.getSingleton());
                 }
             }
 
@@ -357,14 +359,18 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             setTargetVillage(DataHolder.getSingleton().getVillagesById().get(target));
 
             int defenderId = Integer.parseInt(defenderElement.getChild("id").getText());
-            Tribe defElement = DataHolder.getSingleton().getTribes().get(defenderId);
-            if (defElement != null) {
-                setDefender(defElement);
+            Tribe defendingTribe = DataHolder.getSingleton().getTribes().get(defenderId);
+            if (defendingTribe != null) {
+                setDefender(defendingTribe);
             } else {
-                if (getTargetVillage() != null && getTargetVillage().getTribe() != null) {
+                if (defenderId > 0 && getTargetVillage() != null && getTargetVillage().getTribe() != null) {
                     setDefender(getTargetVillage().getTribe());
                 } else {
-                    setDefender(Barbarians.getSingleton());
+                    if (defenderId == -666) {
+                        setDefender(InvalidTribe.getSingleton());
+                    } else {
+                        setDefender(Barbarians.getSingleton());
+                    }
                 }
             }
 
@@ -573,10 +579,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
      */
     public void setAttacker(Tribe attacker) {
         if (attacker == null) {
-            Tribe t = new Tribe();
-            t.setName("gelöscht");
-            t.setId(Integer.MAX_VALUE);
-            this.attacker = t;
+            this.attacker = Barbarians.getSingleton();
         } else {
             this.attacker = attacker;
         }
@@ -1268,46 +1271,83 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     public String getGroupNameAttributeIdentifier() {
         return "name";
     }
-    //@TODO Check equals...remove from list won't work!!!
-   /*
-     * @Override public boolean equals(Object obj) { if (obj instanceof FightReport) { return false; }
-     *
-     * FightReport theOther = (FightReport) obj; return hashCode() == theOther.hashCode();
-    }
-     */
 
-    /*
-     * @Override public int hashCode() { int hash = 3; hash = 47 * hash + (this.won ? 1 : 0); hash = 47 * hash + (int) (this.timestamp ^
-     * (this.timestamp >>> 32)); hash = 47 * hash + (int) (Double.doubleToLongBits(this.luck) ^ (Double.doubleToLongBits(this.luck) >>>
-     * 32)); hash = 47 * hash + (int) (Double.doubleToLongBits(this.moral) ^ (Double.doubleToLongBits(this.moral) >>> 32)); hash = 47 * hash
-     * + (this.attacker != null ? this.attacker.hashCode() : 0); hash = 47 * hash + (this.sourceVillage != null ?
-     * this.sourceVillage.hashCode() : 0); hash = 47 * hash + (this.attackers != null ? this.attackers.hashCode() : 0); hash = 47 * hash +
-     * (this.diedAttackers != null ? this.diedAttackers.hashCode() : 0); hash = 47 * hash + (this.defender != null ?
-     * this.defender.hashCode() : 0); hash = 47 * hash + (this.targetVillage != null ? this.targetVillage.hashCode() : 0); hash = 47 * hash
-     * + (this.defenders != null ? this.defenders.hashCode() : 0); hash = 47 * hash + (this.diedDefenders != null ?
-     * this.diedDefenders.hashCode() : 0); hash = 47 * hash + (this.defendersOutside != null ? this.defendersOutside.hashCode() : 0); hash =
-     * 47 * hash + (this.defendersOnTheWay != null ? this.defendersOnTheWay.hashCode() : 0); hash = 47 * hash + (this.conquered ? 1 : 0);
-     * hash = 47 * hash + this.wallBefore; hash = 47 * hash + this.wallAfter; hash = 47 * hash + (this.aimedBuilding != null ?
-     * this.aimedBuilding.hashCode() : 0); hash = 47 * hash + this.buildingBefore; hash = 47 * hash + this.buildingAfter; hash = 47 * hash +
-     * this.acceptanceBefore; hash = 47 * hash + this.acceptanceAfter; return hash; }
-     */
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof FightReport)) {
+            return false;
+        }
 
-    /*
-     * @Override public int hashCode() { int hash = 7; hash = 41 * hash + (this.won ? 1 : 0); hash = 41 * hash + (int) (this.timestamp ^
-     * (this.timestamp >>> 32)); hash = 41 * hash + (int) (Double.doubleToLongBits(this.luck) ^ (Double.doubleToLongBits(this.luck) >>>
-     * 32)); hash = 41 * hash + (int) (Double.doubleToLongBits(this.moral) ^ (Double.doubleToLongBits(this.moral) >>> 32)); hash = 41 * hash
-     * + (this.attacker != null ? this.attacker.hashCode() : 0); hash = 41 * hash + (this.sourceVillage != null ?
-     * this.sourceVillage.hashCode() : 0); hash = 41 * hash + (this.attackers != null ? this.attackers.hashCode() : 0); hash = 41 * hash +
-     * (this.diedAttackers != null ? this.diedAttackers.hashCode() : 0); hash = 41 * hash + (this.defender != null ?
-     * this.defender.hashCode() : 0); hash = 41 * hash + (this.targetVillage != null ? this.targetVillage.hashCode() : 0); hash = 41 * hash
-     * + (this.defenders != null ? this.defenders.hashCode() : 0); hash = 41 * hash + (this.diedDefenders != null ?
-     * this.diedDefenders.hashCode() : 0); hash = 41 * hash + (this.defendersOutside != null ? this.defendersOutside.hashCode() : 0); hash =
-     * 41 * hash + (this.defendersOnTheWay != null ? this.defendersOnTheWay.hashCode() : 0); hash = 41 * hash + (this.conquered ? 1 : 0);
-     * hash = 41 * hash + this.wallBefore; hash = 41 * hash + this.wallAfter; hash = 41 * hash + (this.aimedBuilding != null ?
-     * this.aimedBuilding.hashCode() : 0); hash = 41 * hash + this.buildingBefore; hash = 41 * hash + this.buildingAfter; hash = 41 * hash +
-     * this.acceptanceBefore; hash = 41 * hash + this.acceptanceAfter; hash = 41 * hash + Arrays.hashCode(this.spyedResources); hash = 41 *
-     * hash + Arrays.hashCode(this.haul); hash = 41 * hash + this.woodLevel; hash = 41 * hash + this.clayLevel; hash = 41 * hash +
-     * this.ironLevel; hash = 41 * hash + this.storageLevel; hash = 41 * hash + this.hideLevel; return hash;
+        FightReport theOther = (FightReport) obj;
+        return hashCode() == theOther.hashCode();
     }
-     */
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 53 * hash + (this.won ? 1 : 0);
+        hash = 53 * hash + (int) (this.timestamp ^ (this.timestamp >>> 32));
+        hash = 53 * hash + (int) (Double.doubleToLongBits(this.luck) ^ (Double.doubleToLongBits(this.luck) >>> 32));
+        hash = 53 * hash + (int) (Double.doubleToLongBits(this.moral) ^ (Double.doubleToLongBits(this.moral) >>> 32));
+        hash = 53 * hash + (this.attacker != null ? this.attacker.hashCode() : 0);
+        hash = 53 * hash + (this.sourceVillage != null ? this.sourceVillage.hashCode() : 0);
+        hash = 53 * hash + (this.attackers != null ? this.attackers.hashCode() : 0);
+        hash = 53 * hash + (this.diedAttackers != null ? this.diedAttackers.hashCode() : 0);
+        hash = 53 * hash + (this.defender != null ? this.defender.hashCode() : 0);
+        hash = 53 * hash + (this.targetVillage != null ? this.targetVillage.hashCode() : 0);
+        hash = 53 * hash + (this.defenders != null ? this.defenders.hashCode() : 0);
+        hash = 53 * hash + (this.diedDefenders != null ? this.diedDefenders.hashCode() : 0);
+        hash = 53 * hash + (this.defendersOutside != null ? this.defendersOutside.hashCode() : 0);
+        hash = 53 * hash + (this.defendersOnTheWay != null ? this.defendersOnTheWay.hashCode() : 0);
+        hash = 53 * hash + (this.conquered ? 1 : 0);
+        hash = 53 * hash + this.wallBefore;
+        hash = 53 * hash + this.wallAfter;
+        hash = 53 * hash + (this.aimedBuilding != null ? this.aimedBuilding.hashCode() : 0);
+        hash = 53 * hash + this.buildingBefore;
+        hash = 53 * hash + this.buildingAfter;
+        hash = 53 * hash + this.acceptanceBefore;
+        hash = 53 * hash + this.acceptanceAfter;
+        hash = 53 * hash + Arrays.hashCode(this.spyedResources);
+        hash = 53 * hash + Arrays.hashCode(this.haul);
+        hash = 53 * hash + this.woodLevel;
+        hash = 53 * hash + this.clayLevel;
+        hash = 53 * hash + this.ironLevel;
+        hash = 53 * hash + this.storageLevel;
+        hash = 53 * hash + this.hideLevel;
+        return hash;
+    }
+    
+      public int cleanupHashCode() {
+        int hash = 5;
+        hash = 53 * hash + (this.won ? 1 : 0);
+        hash = 53 * hash + (int) (this.timestamp ^ (this.timestamp >>> 32));
+        hash = 53 * hash + (int) (Double.doubleToLongBits(this.luck) ^ (Double.doubleToLongBits(this.luck) >>> 32));
+        hash = 53 * hash + (int) (Double.doubleToLongBits(this.moral) ^ (Double.doubleToLongBits(this.moral) >>> 32));
+        hash = 53 * hash + (this.attacker != null ? this.attacker.hashCode() : 0);
+        hash = 53 * hash + (this.sourceVillage != null ? this.sourceVillage.hashCode() : 0);
+        hash = 53 * hash + (this.attackers != null ? this.attackers.hashCode() : 0);
+        hash = 53 * hash + (this.diedAttackers != null ? this.diedAttackers.hashCode() : 0);
+        hash = 53 * hash + (this.defender != null ? this.defender.hashCode() : 0);
+        hash = 53 * hash + (this.targetVillage != null ? this.targetVillage.hashCode() : 0);
+        hash = 53 * hash + (this.defenders != null ? this.defenders.hashCode() : 0);
+        hash = 53 * hash + (this.diedDefenders != null ? this.diedDefenders.hashCode() : 0);
+        hash = 53 * hash + (this.defendersOutside != null ? this.defendersOutside.hashCode() : 0);
+        hash = 53 * hash + (this.defendersOnTheWay != null ? this.defendersOnTheWay.hashCode() : 0);
+        hash = 53 * hash + (this.conquered ? 1 : 0);
+        hash = 53 * hash + this.wallBefore;
+        hash = 53 * hash + this.wallAfter;
+        hash = 53 * hash + (this.aimedBuilding != null ? this.aimedBuilding.hashCode() : 0);
+        hash = 53 * hash + this.buildingBefore;
+        hash = 53 * hash + this.buildingAfter;
+        hash = 53 * hash + this.acceptanceBefore;
+        hash = 53 * hash + this.acceptanceAfter;
+        hash = 53 * hash + Arrays.hashCode(this.spyedResources);
+        hash = 53 * hash + Arrays.hashCode(this.haul);
+        hash = 53 * hash + this.woodLevel;
+        hash = 53 * hash + this.clayLevel;
+        hash = 53 * hash + this.ironLevel;
+        hash = 53 * hash + this.storageLevel;
+        hash = 53 * hash + this.hideLevel;
+        return hash;
+    }
 }

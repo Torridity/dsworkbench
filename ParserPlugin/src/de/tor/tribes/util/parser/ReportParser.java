@@ -47,7 +47,6 @@ public class ReportParser implements SilentParserInterface {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
             //no valid report data found
         }
         return false;

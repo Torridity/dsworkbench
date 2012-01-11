@@ -360,7 +360,6 @@ public class TroopsParser70 implements SilentParserInterface {
         Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         try {
 
-            //@TODO Stupid "Cheap rebuild" entry generates extra linebreak...need to be handled
 	  /*  String data = "Rattennest (0|0) (486|833) K84          eigene        14        8        6490        0        181        2550        300        0        300        30        0        +3 +        Befehle\n"
             + "im Dorf	15000	15000	5493	15000	950	2449	257	5000	300	30	0	1	Truppen\n"
             + "auswärts	0	0	0	0	0	0	0	0	0	0	0	0\n"

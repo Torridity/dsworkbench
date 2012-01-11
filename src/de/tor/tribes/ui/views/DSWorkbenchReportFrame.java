@@ -16,14 +16,11 @@ import com.jidesoft.swing.TabEditingListener;
 import com.jidesoft.swing.TabEditingValidator;
 import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.control.GenericManagerListener;
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.*;
 import de.tor.tribes.types.ext.Ally;
-import de.tor.tribes.types.AllyStatResult;
-import de.tor.tribes.types.FightStats;
-import de.tor.tribes.types.OverallStatResult;
-import de.tor.tribes.types.SingleAttackerStat;
 import de.tor.tribes.types.ext.Tribe;
-import de.tor.tribes.types.TribeStatResult;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.panels.GenericTestPanel;
@@ -39,6 +36,7 @@ import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.bb.AllyReportStatsFormatter;
 import de.tor.tribes.util.bb.OverallReportStatsFormatter;
 import de.tor.tribes.util.bb.TribeReportStatsFormatter;
+import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.report.ReportStatBuilder;
 import java.awt.BorderLayout;
@@ -156,7 +154,9 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         return SINGLETON;
     }
 
-    /** Creates new form DSWorkbenchReportFrame */
+    /**
+     * Creates new form DSWorkbenchReportFrame
+     */
     DSWorkbenchReportFrame() {
         initComponents();
         centerPanel = new GenericTestPanel();
@@ -358,9 +358,9 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
         JXTaskPane miscPane = new JXTaskPane();
         miscPane.setTitle("Sonstiges");
-        JXButton centerVillage = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/medal.png")));
-        centerVillage.setToolTipText("Statistiken zu den gewählten Berichten erstellen");
-        centerVillage.addMouseListener(new MouseAdapter() {
+        JXButton createStats = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/medal.png")));
+        createStats.setToolTipText("Statistiken zu den gewählten Berichten erstellen");
+        createStats.addMouseListener(new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -379,8 +379,76 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
-        miscPane.getContentPane().add(centerVillage);
+        miscPane.getContentPane().add(createStats);
+
+        JXButton cleanupReports = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/report_cleanup.png")));
+        cleanupReports.setToolTipText("Veraltete und doppelte Berichte im gewählten Berichtset löschen");
+        cleanupReports.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                cleanupReports();
+            }
+        });
+
+        miscPane.getContentPane().add(cleanupReports);
         centerPanel.setupTaskPane(transferTaskPane, miscPane);
+    }
+
+    private void cleanupReports() {
+        Village source = null;
+        Village target = null;
+        ReportTableTab tab = getActiveTab();
+        if (tab == null) {
+            return;
+        }
+        String set = tab.getReportSet();
+        List<FightReport> old = new LinkedList<FightReport>();
+        int currentIndex = 0;
+        for (ManageableType elem : ReportManager.getSingleton().getAllElements(set)) {
+            FightReport r = (FightReport) elem;
+            if (!old.contains(r)) {
+                source = r.getSourceVillage();
+                target = r.getTargetVillage();
+                FarmInformation info = FarmManager.getSingleton().getFarmInformation(target);
+                boolean removeByFarmInfo = false;
+                if (info != null) {
+                    if (info.getLastReport() > r.getTimestamp()) {
+                        old.add(r);
+                        removeByFarmInfo = true;
+                    }
+                }
+
+                if (!removeByFarmInfo) {
+                    long time = r.getTimestamp();
+                    int secondaryIndex = 0;
+                    for (ManageableType elem2 : ReportManager.getSingleton().getAllElements(set)) {
+                        FightReport r1 = (FightReport) elem2;
+                        if (!old.contains(r1) && r1.getSourceVillage().equals(source) && r1.getTargetVillage().equals(target)) {
+                            if (currentIndex != secondaryIndex) {
+                                if (r1.getTimestamp() > time || r.equals(r1)) {
+                                    old.add(r);
+                                    break;
+                                } else {
+                                    old.add(r1);
+                                }
+                            }
+                        }
+                        secondaryIndex++;
+                    }
+                }
+            }
+            currentIndex++;
+        }
+
+        if (!old.isEmpty()) {
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, old.size() + " veraltete Berichte gefunden. Jetzt löschen?", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                ReportManager.getSingleton().removeElements(set, old);
+            }
+            tab.showInfo(old.size() + " Berichte gelöscht");
+        } else {
+            tab.showInfo("Keine alten Berichte gefunden");
+        }
     }
 
     @Override
@@ -395,7 +463,9 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         generateReportTabs();
     }
 
-    /**Initialize and add one tab for each report set to jTabbedPane1*/
+    /**
+     * Initialize and add one tab for each report set to jTabbedPane1
+     */
     public void generateReportTabs() {
         jReportsTabbedPane.invalidate();
         while (jReportsTabbedPane.getTabCount() > 0) {
@@ -425,7 +495,9 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         }
     }
 
-    /**Get the currently selected tab*/
+    /**
+     * Get the currently selected tab
+     */
     private ReportTableTab getActiveTab() {
         try {
             if (jReportsTabbedPane.getModel().getSelectedIndex() < 0) {
@@ -437,10 +509,9 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         }
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this
+     * method is always regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -1056,7 +1127,9 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         }
     }
 
-    /**Update the attack plan filter*/
+    /**
+     * Update the attack plan filter
+     */
     private void updateFilter() {
         ReportTableTab tab = getActiveTab();
         if (tab != null) {
@@ -1131,25 +1204,14 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         } catch (Exception e) {
         }
         DSWorkbenchReportFrame.getSingleton().setSize(800, 600);
-        /*FightReport r = new FightReport();
-        r.setAcceptanceAfter((byte) 100);
-        r.setAcceptanceBefore((byte) 100);
-        r.setAimedBuilding("Wall");
-        r.setAttacker(Barbarians.getSingleton());
-        r.setBuildingAfter((byte) 10);
-        r.setBuildingBefore((byte) 20);
-        r.setConquered(false);
-        r.setDefender(Barbarians.getSingleton());
-        r.setLuck(0d);
-        r.setMoral(100d);
-        r.setSourceVillage(new DummyVillage());
-        r.setTargetVillage(new DummyVillage());
-        r.setWallAfter((byte) 20);
-        r.setWallBefore((byte) 20);
-        ReportManager.getSingleton().addManagedElement(r);
-        ReportManager.getSingleton().addGroup("test1");
-        ReportManager.getSingleton().addGroup("asd2");
-        ReportManager.getSingleton().addGroup("awe3");*/
+        /*
+         * FightReport r = new FightReport(); r.setAcceptanceAfter((byte) 100); r.setAcceptanceBefore((byte) 100);
+         * r.setAimedBuilding("Wall"); r.setAttacker(Barbarians.getSingleton()); r.setBuildingAfter((byte) 10); r.setBuildingBefore((byte)
+         * 20); r.setConquered(false); r.setDefender(Barbarians.getSingleton()); r.setLuck(0d); r.setMoral(100d); r.setSourceVillage(new
+         * DummyVillage()); r.setTargetVillage(new DummyVillage()); r.setWallAfter((byte) 20); r.setWallBefore((byte) 20);
+         * ReportManager.getSingleton().addManagedElement(r); ReportManager.getSingleton().addGroup("test1");
+         * ReportManager.getSingleton().addGroup("asd2"); ReportManager.getSingleton().addGroup("awe3");
+         */
 
         DSWorkbenchReportFrame.getSingleton().resetView();
         DSWorkbenchReportFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

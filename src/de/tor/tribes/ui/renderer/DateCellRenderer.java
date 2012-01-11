@@ -7,6 +7,7 @@ package de.tor.tribes.ui.renderer;
 import de.tor.tribes.util.ServerSettings;
 import java.awt.Component;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import org.apache.commons.lang.time.DateUtils;
@@ -39,8 +40,8 @@ public class DateCellRenderer extends DefaultTableRenderer {
         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         JLabel label = (JLabel) c;
         try {
-            Long val = (Long) value;
-            if (val < System.currentTimeMillis() - DateUtils.MILLIS_PER_DAY * 365) {//more than one year ago...invalid!
+            long val = ((Date) value).getTime();
+            if (val > System.currentTimeMillis() - DateUtils.MILLIS_PER_DAY * 365 * 10) {//more than ten year ago...invalid!
                 label.setText((value == null) ? "" : specialFormat.format(value));
             } else {
                 label.setText("-");

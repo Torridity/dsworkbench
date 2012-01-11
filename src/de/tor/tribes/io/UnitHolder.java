@@ -178,6 +178,10 @@ public class UnitHolder implements Serializable {
         this.carry = carry;
     }
 
+    public boolean isFarmUnit() {
+        return getCarry() > 0;
+    }
+
     public boolean isInfantry() {
         String plain = getPlainName();
         if (plain == null) {

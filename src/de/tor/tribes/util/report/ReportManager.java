@@ -31,6 +31,7 @@ public class ReportManager extends GenericManager<FightReport> {
 
     private static Logger logger = Logger.getLogger("ReportManager");
     private static ReportManager SINGLETON = null;
+    public final static String FARM_SET = "Farmberichte";
 
     public static synchronized ReportManager getSingleton() {
         if (SINGLETON == null) {
@@ -41,6 +42,32 @@ public class ReportManager extends GenericManager<FightReport> {
 
     ReportManager() {
         super(true);
+        addGroup(FARM_SET);
+    }
+
+    @Override
+    public void initialize() {
+        super.initialize();
+        addGroup(FARM_SET);
+    }
+
+    @Override
+    public String[] getGroups() {
+        String[] groups = super.getGroups();
+        Arrays.sort(groups, new Comparator<String>() {
+
+            @Override
+            public int compare(String o1, String o2) {
+                if (o1.equals(DEFAULT_GROUP) || o1.equals(FARM_SET)) {
+                    return -1;
+                } else if (o2.equals(DEFAULT_GROUP) || o2.equals(FARM_SET)) {
+                    return 1;
+                } else {
+                    return String.CASE_INSENSITIVE_ORDER.compare(o1, o2);
+                }
+            }
+        });
+        return groups;
     }
 
     @Override
@@ -54,8 +81,12 @@ public class ReportManager extends GenericManager<FightReport> {
         });
 
         if (result == null) {
-            super.addManagedElement(pElement);
-            FarmManager.getSingleton().updateFarmInfoFromReport(pElement);
+            if (FarmManager.getSingleton().getFarmInformation(pElement.getTargetVillage()) != null) {
+                super.addManagedElement(FARM_SET, pElement);
+                FarmManager.getSingleton().updateFarmInfoFromReport(pElement);
+            } else {
+                super.addManagedElement(pElement);
+            }
         }
     }
 
@@ -97,25 +128,6 @@ public class ReportManager extends GenericManager<FightReport> {
             }
         }
         revalidate();
-    }
-
-    @Override
-    public String[] getGroups() {
-        String[] groups = super.getGroups();
-        Arrays.sort(groups, new Comparator<String>() {
-
-            @Override
-            public int compare(String o1, String o2) {
-                if (o1.equals(DEFAULT_GROUP)) {
-                    return -1;
-                } else if (o2.equals(DEFAULT_GROUP)) {
-                    return 1;
-                } else {
-                    return String.CASE_INSENSITIVE_ORDER.compare(o1, o2);
-                }
-            }
-        });
-        return groups;
     }
 
     @Override

@@ -81,7 +81,6 @@ public class FarmManager extends GenericManager<FarmInformation> {
     }
 
     public int findFarmsInReports(int pRadius) {
-
         int addCount = 0;
         List<Village> handled = new LinkedList<Village>();
         Tribe yourTribe = GlobalOptions.getSelectedProfile().getTribe();
@@ -135,6 +134,8 @@ public class FarmManager extends GenericManager<FarmInformation> {
                             FightReport r = ReportManager.getSingleton().findLastReportForSource(v);
                             if (r != null) {
                                 info.updateFromReport(r);
+                            } else {
+                                info.setInitialResources();
                             }
                             addCount++;
                         }
@@ -144,6 +145,12 @@ public class FarmManager extends GenericManager<FarmInformation> {
         }
         revalidate(true);
         return addCount;
+    }
+
+    public void revalidateFarms() {
+        for (ManageableType t : getAllElements()) {
+            ((FarmInformation) t).revalidate();
+        }
     }
 
     @Override

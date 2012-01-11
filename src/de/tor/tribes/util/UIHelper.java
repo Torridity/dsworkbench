@@ -58,4 +58,19 @@ public class UIHelper {
         }
         return result;
     }
+
+    public static void setText(JTextField jField, Object pObject, Object pDefault) {
+        if (jField == null) {
+            return;
+        }
+        if (pObject != null) {
+            jField.setText(pObject.toString());
+        } else {
+            if (pDefault != null) {
+                jField.setText(pDefault.toString());
+            } else {
+                jField.setText("");
+            }
+        }
+    }
 }

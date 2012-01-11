@@ -5,10 +5,13 @@
 package de.tor.tribes.ui.models;
 
 import de.tor.tribes.types.FarmInformation;
+import de.tor.tribes.types.StorageStatus;
 import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.farm.FarmManager;
 import java.util.Date;
 import javax.swing.table.AbstractTableModel;
+import org.apache.commons.lang.time.DurationFormatUtils;
 
 /**
  *
@@ -16,8 +19,8 @@ import javax.swing.table.AbstractTableModel;
  */
 public class FarmTableModel extends AbstractTableModel {
 
-    private Class[] types = new Class[]{FarmInformation.FARM_STATUS.class, Village.class, new double[3].getClass(), Date.class, Boolean.class, Float.class};
-    private String[] colNames = new String[]{"Status", "Dorf", "Rohstoffe", "Letzter Bericht", "Ergebnisbericht erwartet", "Erfolgsquote"};
+    private Class[] types = new Class[]{FarmInformation.FARM_STATUS.class, FarmInformation.FARM_RESULT.class, Village.class, StorageStatus.class, Date.class, String.class, Float.class};
+    private String[] colNames = new String[]{"Status", "Letztes Ergebnis", "Dorf", "Rohstoffe", "Letzter Bericht", "Ankunft", "Erfolgsquote"};
 
     public FarmTableModel() {
     }
@@ -54,15 +57,21 @@ public class FarmTableModel extends AbstractTableModel {
             case 0:
                 return elem.getStatus();
             case 1:
+                return elem.getLastResult();
+            case 2:
                 return elem.getVillage();
-            case 2:               
-                return new double[]{(double) elem.getWoodInStorage() / (double) elem.getStorageCapacity(),
-                            (double) elem.getClayInStorage() / (double) elem.getStorageCapacity(),
-                            (double) elem.getIronInStorage() / (double) elem.getStorageCapacity()};
             case 3:
-                return new Date(elem.getLastReport());
+                //@TODO check storage status (200 resources each, capacity = 1000, view shows small amount!
+                return elem.getStorageStatus();
             case 4:
-                return elem.isReportExpected();
+                return new Date(elem.getLastReport());
+            case 5:
+                long t = elem.getRuntimeInformation();
+                t = (t <= 0) ? 0 : t;
+                if (t == 0) {
+                    return "Keine Truppen unterwegs";
+                }
+                return DurationFormatUtils.formatDuration(t, "HH:mm:ss", true);
             default:
                 return elem.getCorrectionFactor();
         }

@@ -83,7 +83,9 @@ public class DataHolder {
         initialize();
     }
 
-    /**Clear all data an re-initialize the structures*/
+    /**
+     * Clear all data an re-initialize the structures
+     */
     public void initialize() {
         mVillages = null;
         mVillagesTable = null;
@@ -130,7 +132,9 @@ public class DataHolder {
         mListeners.remove(pListener);
     }
 
-    /**Get the server data directory, depending on the selected server*/
+    /**
+     * Get the server data directory, depending on the selected server
+     */
     public String getDataDirectory() {
         return Constants.SERVER_DIR + "/" + GlobalOptions.getSelectedServer();
     }
@@ -158,7 +162,8 @@ public class DataHolder {
         return isDataAvailable(null);
     }
 
-    /**Check if server is supported or not. Currently only 1000x1000 servers are allowed
+    /**
+     * Check if server is supported or not. Currently only 1000x1000 servers are allowed
      */
     public boolean serverSupported() {
         fireDataHolderEvents("Prüfe Server Einstellungen");
@@ -209,7 +214,9 @@ public class DataHolder {
         return true;
     }
 
-    /**Update the data, optionally by downloading*/
+    /**
+     * Update the data, optionally by downloading
+     */
     public boolean loadData(boolean pReload) {
         loading = true;
         initialize();
@@ -651,7 +658,9 @@ public class DataHolder {
         return pAllies;
     }
 
-    /**Download all needed data files (villages, tribes, allies, kills, settings)*/
+    /**
+     * Download all needed data files (villages, tribes, allies, kills, settings)
+     */
     private boolean downloadData() {
         URL file = null;
         String serverID = GlobalOptions.getSelectedServer();
@@ -1074,7 +1083,9 @@ public class DataHolder {
         return true;
     }
 
-    /**Merge all data into the village data structure to ease searching*/
+    /**
+     * Merge all data into the village data structure to ease searching
+     */
     private void mergeData() {
         for (int i = 0; i < ServerSettings.getSingleton().getMapDimension().width; i++) {
             for (int j = 0; j < ServerSettings.getSingleton().getMapDimension().height; j++) {
@@ -1119,7 +1130,9 @@ public class DataHolder {
         DATA_VALID = true;
     }
 
-    /**Download one single file from a URL*/
+    /**
+     * Download one single file from a URL
+     */
     private void downloadDataFile(URL pSource, String pLocalName) throws Exception {
         URLConnection ucon = pSource.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
         ucon.setConnectTimeout(10000);
@@ -1158,7 +1171,9 @@ public class DataHolder {
         }
     }
 
-    /**Parse a line of a conquered units file and set the data for the associated tribe*/
+    /**
+     * Parse a line of a conquered units file and set the data for the associated tribe
+     */
     private void parseConqueredLine(String pLine, int pType) {
         StringTokenizer tokenizer = new StringTokenizer(pLine, ",");
         try {
@@ -1178,7 +1193,9 @@ public class DataHolder {
         }
     }
 
-    /**Parse the list of units*/
+    /**
+     * Parse the list of units
+     */
     private void parseUnits() {
         mUnits.clear();
         mUnitsByName.clear();
@@ -1214,8 +1231,8 @@ public class DataHolder {
         }
     }
 
-    /**Get all villages<BR>
-     * !!Attention!!<B>This call blocks while loading data. It is only intended to be used externally</B> !!Attention!! 
+    /**
+     * Get all villages<BR> !!Attention!!<B>This call blocks while loading data. It is only intended to be used externally</B> !!Attention!!
      */
     public synchronized Village[][] getVillages() {
         if (isLoading()) {
@@ -1298,25 +1315,14 @@ public class DataHolder {
         } catch (Exception e) {
             return null;
         }
-        /*Iterator<Integer> it = mVillagesTable.keySet().iterator();
-        int id = -1;
-        int cnt = (int) Math.rint(100.0 * Math.random());
-        while (cnt >= 0 && it.hasNext()) {
-        id = it.next();
-        cnt--;
+        /*
+         * Iterator<Integer> it = mVillagesTable.keySet().iterator(); int id = -1; int cnt = (int) Math.rint(100.0 * Math.random()); while
+         * (cnt >= 0 && it.hasNext()) { id = it.next(); cnt--; }
+         *
+         * if (id != -1) { return mVillagesTable.get(id); } else { DummyVillage v = new DummyVillage(); v.setId(-cnt);
+         * v.setName("Beispieldorf" + cnt); v.setX((short) cnt); v.setY((short) cnt); v.setPoints(cnt * 100); return v;
         }
-        
-        if (id != -1) {
-        return mVillagesTable.get(id);
-        } else {
-        DummyVillage v = new DummyVillage();
-        v.setId(-cnt);
-        v.setName("Beispieldorf" + cnt);
-        v.setX((short) cnt);
-        v.setY((short) cnt);
-        v.setPoints(cnt * 100);
-        return v;
-        }*/
+         */
     }
 
     public int countVisibleVillages(Point pStart, Point pEnd) {
@@ -1374,7 +1380,9 @@ public class DataHolder {
         return marked;
     }
 
-    /**Get villages as a hashtable ordered by IDs*/
+    /**
+     * Get villages as a hashtable ordered by IDs
+     */
     public synchronized Hashtable<Integer, Village> getVillagesById() {
         if (isLoading()) {
             //block getting villages while loading to avoid nullpointer exceptions
@@ -1386,12 +1394,16 @@ public class DataHolder {
         return mVillagesTable;
     }
 
-    /**Get all allies*/
+    /**
+     * Get all allies
+     */
     public Hashtable<Integer, Ally> getAllies() {
         return mAllies;
     }
 
-    /**Search the ally list for the ally with the provided name*/
+    /**
+     * Search the ally list for the ally with the provided name
+     */
     public Ally getAllyByName(String pName) {
         Ally result = null;
         if (pName != null) {
@@ -1400,7 +1412,9 @@ public class DataHolder {
         return result;
     }
 
-    /**Search the ally list for the ally with the provided tag name*/
+    /**
+     * Search the ally list for the ally with the provided tag name
+     */
     public Ally getAllyByTagName(String pTagName) {
         Ally result = null;
         if (pTagName != null) {
@@ -1409,12 +1423,16 @@ public class DataHolder {
         return result;
     }
 
-    /**Get all tribes*/
+    /**
+     * Get all tribes
+     */
     public Hashtable<Integer, Tribe> getTribes() {
         return mTribes;
     }
 
-    /**Search the tribes list for the tribe with the provided name*/
+    /**
+     * Search the tribes list for the tribe with the provided name
+     */
     public Tribe getTribeByName(String pName) {
         Tribe result = null;
         if (logger.isDebugEnabled()) {
@@ -1429,7 +1447,9 @@ public class DataHolder {
         return result;
     }
 
-    /**Get all units*/
+    /**
+     * Get all units
+     */
     public List<UnitHolder> getUnits() {
         return mUnits;
     }
@@ -1442,7 +1462,9 @@ public class DataHolder {
         return mUnits.get(id);
     }
 
-    /**Get a unit by its name*/
+    /**
+     * Get a unit by its name
+     */
     public UnitHolder getUnitByPlainName(String pName) {
         UnitHolder result = null;
         if (pName != null) {
@@ -1454,7 +1476,9 @@ public class DataHolder {
         return result;
     }
 
-    /**Get the ID of a unit*/
+    /**
+     * Get the ID of a unit
+     */
     public int getUnitID(String pUnitName) {
         int result = -1;
         int cnt = 0;
@@ -1469,7 +1493,9 @@ public class DataHolder {
         return result;
     }
 
-    /**Get the list of buildings*/
+    /**
+     * Get the list of buildings
+     */
     public List<BuildingHolder> getBuildings() {
         return mBuildings;
     }

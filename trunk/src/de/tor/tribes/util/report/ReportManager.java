@@ -4,19 +4,21 @@
  */
 package de.tor.tribes.util.report;
 
+import com.thoughtworks.xstream.XStream;
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
+import de.tor.tribes.types.FarmInformation;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.util.farm.FarmManager;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URLDecoder;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.Map.Entry;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.log4j.Logger;
@@ -32,6 +34,7 @@ public class ReportManager extends GenericManager<FightReport> {
     private static Logger logger = Logger.getLogger("ReportManager");
     private static ReportManager SINGLETON = null;
     public final static String FARM_SET = "Farmberichte";
+    private List<RuleEntry> rules = new LinkedList<RuleEntry>();//Hashtable<ReportFilterInterface, String> filterRules = new Hashtable<ReportFilterInterface, String>();
 
     public static synchronized ReportManager getSingleton() {
         if (SINGLETON == null) {
@@ -43,6 +46,7 @@ public class ReportManager extends GenericManager<FightReport> {
     ReportManager() {
         super(true);
         addGroup(FARM_SET);
+        rules.add(new RuleEntry(new FarmReportFilter(), FARM_SET));
     }
 
     @Override
@@ -70,6 +74,55 @@ public class ReportManager extends GenericManager<FightReport> {
         return groups;
     }
 
+    public static class RuleEntry {
+
+        private ReportFilterInterface rule = null;
+        private String targetSet = null;
+
+        public RuleEntry(ReportFilterInterface pRule, String pTargetSet) {
+            rule = pRule;
+            targetSet = pTargetSet;
+        }
+
+        public void setRule(ReportFilterInterface rule) {
+            this.rule = rule;
+        }
+
+        public ReportFilterInterface getRule() {
+            return rule;
+        }
+
+        public void setTargetSet(String targetSet) {
+            this.targetSet = targetSet;
+        }
+
+        public String getTargetSet() {
+            return targetSet;
+        }
+
+        @Override
+        public String toString() {
+            return rule.getStringRepresentation() + " -> " + targetSet;
+        }
+    }
+
+    public RuleEntry[] getRuleEntries() {
+        return rules.toArray(new RuleEntry[rules.size()]);
+    }
+
+    public void addRule(ReportFilterInterface pFilter, String pToSet) {
+        rules.add(new RuleEntry(pFilter, pToSet));
+    }
+
+    public void removeRule(ReportFilterInterface pFilter) {
+        for (RuleEntry rule : rules.toArray(new RuleEntry[rules.size()])) {
+            if (rule.getRule().equals(pFilter)) {
+                rules.remove(rule);
+                break;
+            }
+        }
+    }
+
     @Override
     public void addManagedElement(final FightReport pElement) {
         Object result = CollectionUtils.find(getAllElements(), new Predicate() {
@@ -80,14 +133,80 @@ public class ReportManager extends GenericManager<FightReport> {
             }
         });
 
-        if (result == null) {
-            if (FarmManager.getSingleton().getFarmInformation(pElement.getTargetVillage()) != null) {
-                super.addManagedElement(FARM_SET, pElement);
-                FarmManager.getSingleton().updateFarmInfoFromReport(pElement);
-            } else {
+        if (result == null) {//report not exists yet
+
+            boolean filtered = false;
+            for (RuleEntry entry : rules.toArray(new RuleEntry[rules.size()])) {
+                if (entry.getRule().isValid(pElement)) {
+                    super.addManagedElement(entry.getTargetSet(), pElement);
+                    filtered = true;
+                    break;
+                }
+            }
+
+            if (!filtered) {
                 super.addManagedElement(pElement);
             }
         }
+    }
+
+    @Override
+    public void addManagedElement(String pGroup, final FightReport pElement) {
+        addManagedElement(pGroup, pElement, false);
+    }
+
+    public void addManagedElement(String pGroup, final FightReport pElement, boolean pFiltered) {
+        Object result = CollectionUtils.find(getAllElements(pGroup), new Predicate() {
+
+            @Override
+            public boolean evaluate(Object o) {
+                return ((FightReport) o).equals(pElement);
+            }
+        });
+
+        if (result == null) {//report not exists yet
+            boolean filtered = false;
+            if (pFiltered) {
+                for (RuleEntry entry : rules.toArray(new RuleEntry[rules.size()])) {
+                    if (entry.getRule().isValid(pElement)) {
+                        addManagedElement(entry.getTargetSet(), pElement);
+                        filtered = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!filtered) {
+                super.addManagedElement(pGroup, pElement);
+            }
+        }
+    }
+
+    public void filterNow(String pGroup) {
+        invalidate();
+        Hashtable<FightReport, String> newGroups = new Hashtable<FightReport, String>();
+        for (ManageableType t : getAllElements(pGroup)) {
+            FightReport report = (FightReport) t;
+            for (RuleEntry entry : rules.toArray(new RuleEntry[rules.size()])) {
+                if (entry.getRule().isValid(report)) {
+                    if (!entry.getTargetSet().equals(pGroup)) {
+                        //only move report, if the filter points to a new group...
+                        //...otherwise, report stays in this group as the current filter is the first fits
+                        newGroups.put(report, entry.getTargetSet());
+                    }
+                    break;
+                }
+            }
+        }
+
+        Set<Entry<FightReport, String>> entries = newGroups.entrySet();
+        for (Entry<FightReport, String> entry : entries) {
+            //remove report from this group
+            removeElement(pGroup, entry.getKey());
+            //add report to new group and continue filtering
+            addManagedElement(entry.getValue(), entry.getKey(), true);
+        }
+        revalidate(true);
     }
 
     @Override
@@ -128,6 +247,9 @@ public class ReportManager extends GenericManager<FightReport> {
             }
         }
         revalidate();
+
+        //load rules
+        loadRules(GlobalOptions.getSelectedProfile().getProfileDirectory() + File.separator + "rules.xml");
     }
 
     @Override
@@ -227,6 +349,57 @@ public class ReportManager extends GenericManager<FightReport> {
                 logger.info("Ignoring error, server directory does not exists yet");
             } else {
                 logger.error("Failed to save reports", e);
+            }
+        }
+
+        //save rules
+        saveRules(GlobalOptions.getSelectedProfile().getProfileDirectory() + File.separator + "rules.xml");
+    }
+
+    private void saveRules(String pFile) {
+        XStream x = new XStream();
+        x.alias("rule", RuleEntry.class);
+        logger.debug("Writing report rules to file " + pFile);
+        FileWriter w = null;
+        try {
+            w = new FileWriter(pFile);
+            x.toXML(rules, w);
+            w.flush();
+        } catch (IOException ioe) {
+            logger.error("Failed to write report rules", ioe);
+        } finally {
+            try {
+                if (w != null) {
+                    w.close();
+                }
+            } catch (IOException ignored) {
+            }
+        }
+    }
+
+    private void loadRules(String pFile) {
+        XStream x = new XStream();
+        x.alias("rule", RuleEntry.class);
+        FileReader r = null;
+        logger.debug("Reading report rules from file " + pFile);
+        try {
+            r = new FileReader(pFile);
+            rules.clear();
+            List<RuleEntry> entries = (List<RuleEntry>) x.fromXML(r);
+            invalidate();
+            for (RuleEntry entry : entries) {
+                rules.add(entry);
+            }
+            r.close();
+            logger.debug("Report rules successfully read");
+        } catch (IOException ioe) {
+            logger.error("Failed to read report rules", ioe);
+        } finally {
+            try {
+                if (r != null) {
+                    r.close();
+                }
+            } catch (IOException ignored) {
             }
         }
     }

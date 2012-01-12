@@ -245,7 +245,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
             @Override
             public void dataChangedEvent(String pGroup) {
-                mMapRenderer.initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
+                getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
             }
         });
 
@@ -258,7 +258,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
             @Override
             public void dataChangedEvent(String pGroup) {
-                mMapRenderer.initiateRedraw(MapRenderer.ATTACK_LAYER);
+                getMapRenderer().initiateRedraw(MapRenderer.ATTACK_LAYER);
             }
         });
         MarkerManager.getSingleton().addManagerListener(new GenericManagerListener() {
@@ -270,7 +270,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
             @Override
             public void dataChangedEvent(String pGroup) {
-                mMapRenderer.initiateRedraw(MapRenderer.MARKER_LAYER);
+                getMapRenderer().initiateRedraw(MapRenderer.MARKER_LAYER);
             }
         });
         NoteManager.getSingleton().addManagerListener(new GenericManagerListener() {
@@ -282,7 +282,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
             @Override
             public void dataChangedEvent(String pGroup) {
-                mMapRenderer.initiateRedraw(MapRenderer.NOTE_LAYER);
+                getMapRenderer().initiateRedraw(MapRenderer.NOTE_LAYER);
             }
         });
         TroopsManager.getSingleton().addManagerListener(new GenericManagerListener() {
@@ -294,7 +294,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
             @Override
             public void dataChangedEvent(String pGroup) {
-                mMapRenderer.initiateRedraw(MapRenderer.TROOP_LAYER);
+                getMapRenderer().initiateRedraw(MapRenderer.TROOP_LAYER);
             }
         });
     }
@@ -311,14 +311,14 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             boolean villagesHandled = false;
             if (cursor == ImageManager.CURSOR_TAG) {
                 //tag selected villages
-                if (markedVillages != null || !markedVillages.isEmpty()) {
+                if (markedVillages != null && !markedVillages.isEmpty()) {
                     VillageTagFrame.getSingleton().setLocationRelativeTo(this);
                     VillageTagFrame.getSingleton().showTagsFrame(markedVillages);
                     villagesHandled = true;
                 }
             } else if (cursor == ImageManager.CURSOR_NOTE) {
                 //add note for selected villages
-                if (markedVillages != null || !markedVillages.isEmpty()) {
+                if (markedVillages != null && !markedVillages.isEmpty()) {
                     DSWorkbenchNotepad.getSingleton().addNoteForVillages(markedVillages);
                     villagesHandled = true;
                 }
@@ -593,8 +593,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 }
 
                 /*
-                 * if (MenuRenderer.getSingleton().isVisible()) { return;
-                }
+                 * if (MenuRenderer.getSingleton().isVisible()) { return; }
                  */
                 boolean isAttack = false;
                 mouseDown = true;
@@ -631,7 +630,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         //start drag if attack tool is active
                         mSourceVillage = getVillageAtMousePos();
                         if (mSourceVillage != null) {
-                            mMapRenderer.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
+                            getMapRenderer().setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
                         }
                         break;
                     }
@@ -675,7 +674,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         if (isAttack) {
                             mSourceVillage = getVillageAtMousePos();
                             if (mSourceVillage != null) {
-                                mMapRenderer.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
+                                getMapRenderer().setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
                             }
                         }
                     }
@@ -780,7 +779,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 }
                 mSourceVillage = null;
                 mTargetVillage = null;
-                mMapRenderer.setDragLine(-1, -1, -1, -1);
+                getMapRenderer().setDragLine(-1, -1, -1, -1);
             }
 
             @Override
@@ -867,7 +866,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     case ImageManager.CURSOR_MEASURE: {
                         //update drag if attack tool is active
                         if (mSourceVillage != null) {
-                            mMapRenderer.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
+                            getMapRenderer().setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
                         }
                         mTargetVillage = getVillageAtMousePos();
                         break;
@@ -910,7 +909,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     default: {
                         if (isAttack) {
                             if (mSourceVillage != null) {
-                                mMapRenderer.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
+                                getMapRenderer().setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
                                 mTargetVillage = getVillageAtMousePos();
                             }
                         }
@@ -947,7 +946,11 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         return mSourceVillage;
     }
 
-    public MapRenderer getMapRenderer() {
+    public synchronized MapRenderer getMapRenderer() {
+        if (mMapRenderer == null) {
+            logger.info("Creating MapRenderer");
+            mMapRenderer = new MapRenderer();
+        }
         return mMapRenderer;
     }
 
@@ -984,8 +987,9 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     }
 
     /**
-     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this
-     * method is always regenerated by the Form Editor.
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -1328,22 +1332,34 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             //@TODO fix context entry to attack planer
             //@TODO Integrate menu item to show all reports for a village
         } /*
-         * else if (evt.getSource() == jCurrentToAttackPlanerAsSourceItem) { Village v = actionMenuVillage; if (v != null) { if
-         * (v.getTribe() == Barbarians.getSingleton()) { JOptionPaneHelper.showInformationBox(this, "Angriffe von Barbarendörfern können
-         * nicht geplant werden.", "Information"); return; } List<Village> toAdd = new LinkedList<Village>(); toAdd.add(v); if
-         * (!DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isVisible()) { //show attack planer to allow adding data
+         * else if (evt.getSource() == jCurrentToAttackPlanerAsSourceItem) {
+         * Village v = actionMenuVillage; if (v != null) { if (v.getTribe() ==
+         * Barbarians.getSingleton()) {
+         * JOptionPaneHelper.showInformationBox(this, "Angriffe von
+         * Barbarendörfern können nicht geplant werden.", "Information");
+         * return; } List<Village> toAdd = new LinkedList<Village>();
+         * toAdd.add(v); if
+         * (!DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isVisible())
+         * { //show attack planer to allow adding data
          * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setup();
-         * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true); }
-         * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddSourcesEvent(toAdd); JOptionPaneHelper.showInformationBox(this,
-         * "Dorf in Angriffsplaner eingefügt", "Information"); } } else if (evt.getSource() == jCurrentToAttackPlanerAsTargetItem) { Village
-         * v = actionMenuVillage; if (v != null) { if (v.getTribe() == Barbarians.getSingleton()) {
-         * JOptionPaneHelper.showInformationBox(this, "Angriffe auf Barbarendörfer können nicht geplant werden.", "Information"); return; }
-         * List<Village> toAdd = new LinkedList<Village>(); toAdd.add(v); if
-         * (!DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isVisible()) { //show attack planer to allow adding data
+         * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true);
+         * }
+         * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddSourcesEvent(toAdd);
+         * JOptionPaneHelper.showInformationBox(this, "Dorf in Angriffsplaner
+         * eingefügt", "Information"); } } else if (evt.getSource() ==
+         * jCurrentToAttackPlanerAsTargetItem) { Village v = actionMenuVillage;
+         * if (v != null) { if (v.getTribe() == Barbarians.getSingleton()) {
+         * JOptionPaneHelper.showInformationBox(this, "Angriffe auf
+         * Barbarendörfer können nicht geplant werden.", "Information"); return;
+         * } List<Village> toAdd = new LinkedList<Village>(); toAdd.add(v); if
+         * (!DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isVisible())
+         * { //show attack planer to allow adding data
          * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setup();
-         * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true); }
-         * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddTargetsEvent(toAdd); JOptionPaneHelper.showInformationBox(this,
-         * "Dorf in Angriffsplaner eingefügt", "Information"); } }
+         * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true);
+         * }
+         * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddTargetsEvent(toAdd);
+         * JOptionPaneHelper.showInformationBox(this, "Dorf in Angriffsplaner
+         * eingefügt", "Information"); } }
          */ else if (evt.getSource() == jCurrentCreateNoteItem) {
             if (actionMenuVillage != null) {
                 DSWorkbenchNotepad.getSingleton().addNoteForVillage(actionMenuVillage);
@@ -1427,19 +1443,29 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
         } //@TODO fix context entry to attack planer
         /*
-         * else if (evt.getSource() == jAllToAttackPlanerAsSourceItem) { if (markedVillages.isEmpty()) {
-         * JOptionPaneHelper.showInformationBox(this, "Keine Dörfer markiert.", "Information"); return; } if
-         * (!DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isVisible()) { //show attack planer to allow adding data
+         * else if (evt.getSource() == jAllToAttackPlanerAsSourceItem) { if
+         * (markedVillages.isEmpty()) {
+         * JOptionPaneHelper.showInformationBox(this, "Keine Dörfer markiert.",
+         * "Information"); return; } if
+         * (!DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isVisible())
+         * { //show attack planer to allow adding data
          * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setup();
-         * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true); }
+         * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true);
+         * }
          * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddSourcesEvent(markedVillages);
-         * JOptionPaneHelper.showInformationBox(this, "Dörfer in Angriffsplaner eingefügt", "Information"); } else if (evt.getSource() ==
-         * jAllToAttackPlanerAsTargetItem) { if (markedVillages.isEmpty()) { JOptionPaneHelper.showInformationBox(this, "Keine Dörfer
-         * markiert.", "Information"); return; } if (!DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isVisible()) { //show attack
-         * planer to allow adding data DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setup();
-         * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true); }
+         * JOptionPaneHelper.showInformationBox(this, "Dörfer in Angriffsplaner
+         * eingefügt", "Information"); } else if (evt.getSource() ==
+         * jAllToAttackPlanerAsTargetItem) { if (markedVillages.isEmpty()) {
+         * JOptionPaneHelper.showInformationBox(this, "Keine Dörfer markiert.",
+         * "Information"); return; } if
+         * (!DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isVisible())
+         * { //show attack planer to allow adding data
+         * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setup();
+         * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true);
+         * }
          * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddTargetsEvent(markedVillages);
-         * JOptionPaneHelper.showInformationBox(this, "Dörfer in Angriffsplaner eingefügt", "Information"); }
+         * JOptionPaneHelper.showInformationBox(this, "Dörfer in Angriffsplaner
+         * eingefügt", "Information"); }
          */ else if (evt.getSource() == jAllCreateNoteItem) {
             if (markedVillages.isEmpty()) {
                 JOptionPaneHelper.showInformationBox(this, "Keine Dörfer markiert.", "Information");
@@ -1525,7 +1551,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             Paint p0 = g2d.getPaint();
             Shape cl0 = g2d.getClip();
             Stroke s0 = g2d.getStroke();
-            mMapRenderer.renderAll(g2d);
+            getMapRenderer().renderAll(g2d);
             g2d.setTransform(t0);
             g2d.setPaint(p0);
             g2d.setColor(c0);
@@ -1543,16 +1569,12 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         dCenterX = pX;
         dCenterY = pY;
 
-        if (mMapRenderer == null) {
-            logger.info("Creating MapRenderer");
-            mMapRenderer = new MapRenderer();
-        }
 
         positionUpdate = true;
         if (pZoomed) {
-            mMapRenderer.initiateRedraw(MapRenderer.ALL_LAYERS);
+            getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
         } else {
-            mMapRenderer.initiateRedraw(MapRenderer.MAP_LAYER);
+            getMapRenderer().initiateRedraw(MapRenderer.MAP_LAYER);
         }
     }
 

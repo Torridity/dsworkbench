@@ -414,7 +414,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
                 cutToInternalClipboard();
                 break;
             case FROM_INTERNAL_CLIPBOARD:
-                copyFromInternalClipboard();
+                pasteFromInternalClipboard();
                 break;
             case CLIPBOARD_BB:
                 copyBBToExternalClipboardEvent();
@@ -514,7 +514,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
         }
     }
 
-    private void copyFromInternalClipboard() {
+    private void pasteFromInternalClipboard() {
         try {
             String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
 

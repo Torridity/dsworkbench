@@ -5,6 +5,8 @@
 package de.tor.tribes.util.report;
 
 import de.tor.tribes.types.FightReport;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -45,5 +47,37 @@ public class ColorFilter implements ReportFilterInterface {
         ColorFilter f = new ColorFilter();
         f.setup(ColorFilter.RED + ColorFilter.BLUE + ColorFilter.GREEN);
 
+    }
+
+    @Override
+    public String getDescription() {
+        return "Filterung nach der Farbe eines Berichts";
+    }
+
+    @Override
+    public String getStringRepresentation() {
+        StringBuilder result = new StringBuilder();
+        List<String> validFor = new LinkedList<String>();
+        if ((color & GREY) > 0) {
+            validFor.add("grau");
+        }
+        if ((color & BLUE) > 0) {
+            validFor.add("blau");
+        }
+
+        if ((color & GREEN) > 0) {
+            validFor.add("grün");
+        }
+
+        if ((color & YELLOW) > 0) {
+            validFor.add("gelb");
+        }
+
+        if ((color & RED) > 0) {
+            validFor.add("rot");
+        }
+
+        result.append("Farben ").append(validFor.toString());
+        return result.toString();
     }
 }

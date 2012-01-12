@@ -11,10 +11,9 @@
     <description>Builds, tests, and runs the project DSWorkbench.</description>
     <import file="nbproject/build-impl.xml"/>
 
-     <target name="package-for-store" depends="jar">
+    <target name="package-for-store" depends="jar">
 
         <property name="store.jar.name" value="core"/>
-
 
         <!-- don't edit below this line -->
 
@@ -37,13 +36,56 @@
 
         <zip destfile="${store.jar}">
             <zipfileset src="${store.dir}/temp_final.jar"
-            excludes="META-INF/*.SF, META-INF/*.DSA, META-INF/*.RSA"/>
+                        excludes="META-INF/*.SF, META-INF/*.DSA, META-INF/*.RSA"/>
         </zip>
 
         <delete file="${store.dir}/temp_final.jar"/>
 
     </target>
-
+    
+     <!-- Add the Sonar task -->
+    <taskdef uri="antlib:org.sonar.ant" resource="org/sonar/ant/antlib.xml">
+        <classpath path="C:/Program Files/NetBeans 7.1/java/ant/lib/" />
+    </taskdef>
+ 
+  <!-- Out-of-the-box those parameters are optional -->
+  <!-- EXAMPLE FOR MYSQL -->
+    <property name="sonar.jdbc.url" value="jdbc:mysql://ipelsdf1.lsdf.kit.edu:3306/sonar?useUnicode=true&amp;characterEncoding=utf8" />
+    <property name="sonar.jdbc.driverClassName" value="com.mysql.jdbc.Driver" />
+    <property name="sonar.jdbc.username" value="sonar" />
+    <property name="sonar.jdbc.password" value="jCNwUvG63y9MWYZc" />
+ 
+  <!-- SERVER ON A REMOTE HOST -->
+    <property name="sonar.host.url" value="http://ipelsdf1.lsdf.kit.edu:8000/sonar" />
+    <target name="sonar">
+    <!-- The workDir directory is used by Sonar to store temporary files -->
+        <sonar:sonar workDir="." key="org.example:example" version="0.1-SNAPSHOT" xmlns:sonar="antlib:org.sonar.ant">
+ 
+      <!-- source directories (required) -->
+            <sources>
+                <path location="./src" />
+            </sources>
+ 
+      <!-- list of properties (optional) -->
+            <property key="sonar.projectName" value="this value overrides the name defined in Ant root node" />
+            <property key="sonar.dynamicAnalysis" value="false" />
+ 
+      <!-- test source directories (optional) -->
+            <tests>
+                <path location="." />
+            </tests>
+ 
+      <!-- binaries directories, which contain for example the compiled Java bytecode (optional) -->
+            <binaries>
+                <path location="." />
+            </binaries>
+ 
+      <!-- path to libraries (optional). These libraries are for example used by the Java Findbugs plugin -->
+            <libraries>
+                <path location="./lib" />
+            </libraries>
+        </sonar:sonar>
+    </target>
  <!--target name="-post-jar">
      <taskdef resource="proguard/ant/task.properties"
            classpath="lib/proguard.jar" />

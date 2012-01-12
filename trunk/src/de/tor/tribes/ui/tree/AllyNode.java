@@ -35,27 +35,24 @@ public class AllyNode extends DefaultMutableTreeNode {
         super.insert(child, index);
         Collections.sort(this.children, new Comparator() {
 
+            @Override
             public int compare(Object o1, Object o2) {
                 return o1.toString().compareToIgnoreCase(o2.toString());
             }
-
-            public boolean equals(Object obj) {
-                return false;
-            }
         });
-    //recalc elem count
+        //recalc elem count
     }
 
     @Override
     public void remove(int index) {
         super.remove(index);
-    //recalc elem count
+        //recalc elem count
     }
 
     @Override
     public void remove(MutableTreeNode node) {
         super.remove(node);
-    //recalc elem count
+        //recalc elem count
     }
 
     public void setUserObject(Ally object) {

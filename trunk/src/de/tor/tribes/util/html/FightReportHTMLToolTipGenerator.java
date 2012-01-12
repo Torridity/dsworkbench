@@ -11,6 +11,7 @@ import de.tor.tribes.types.ext.Village;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -44,14 +45,23 @@ public class FightReportHTMLToolTipGenerator {
     private static String pTemplateData = "";
 
     static {
+        FileReader fr = null;
         try {
-            BufferedReader r = new BufferedReader(new FileReader(new File("templates/report.tmpl")));
+            fr = new FileReader(new File("templates/report.tmpl"));
+            BufferedReader r = new BufferedReader(fr);
             String line = "";
             while ((line = r.readLine()) != null) {
                 pTemplateData += line;
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (fr != null) {
+                try {
+                    fr.close();
+                } catch (IOException ioe) {
+                }
+            }
         }
     }
 

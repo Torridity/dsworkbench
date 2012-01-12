@@ -168,7 +168,7 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
     }
 
     public String getCoordAsString() {
-        String coord = "";
+        String coord;
         if (ServerSettings.getSingleton().getCoordType() != 2) {
             int[] hier = DSCalculator.xyToHierarchical((int) getX(), (int) getY());
             coord = "(" + hier[0] + ":" + hier[1] + ":" + hier[2] + ")";
@@ -182,15 +182,25 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
         if (stringRepresentation == null) {
             String res = getName();
             res += " " + getCoordAsString();
-            int cont = getContinent();
-            if (cont < 10 && cont > 0) {
-                res += " K0" + cont;
-            } else {
-                res += " K" + cont;
-            }
+            res += " " + getContinentString();
             stringRepresentation = res;
         }
         return stringRepresentation;
+    }
+
+    public String getShortName() {
+        return getCoordAsString() + " " + getContinentString();
+    }
+
+    public String getContinentString() {
+        String res;
+        int cont = getContinent();
+        if (cont < 10 && cont > 0) {
+            res = "K0" + cont;
+        } else {
+            res = "K" + cont;
+        }
+        return res;
     }
 
     public void setName(String name) {
@@ -599,27 +609,12 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
             } else {
                 return result;
             }
-            /* if (Village.getOrderType() == ORDER_ALPHABETICALLY) {
-            int n1 = s1.toString().length(), n2 = s2.toString().length();
-            for (int i1 = 0, i2 = 0; i1 < n1 && i2 < n2; i1++, i2++) {
-            char c1 = s1.toString().charAt(i1);
-            char c2 = s2.toString().charAt(i2);
-            if (c1 != c2) {
-            c1 = Character.toUpperCase(c1);
-            c2 = Character.toUpperCase(c2);
-            if (c1 != c2) {
-            c1 = Character.toLowerCase(c1);
-            c2 = Character.toLowerCase(c2);
-            if (c1 != c2) {
-            return c1 - c2;
-            }
-            }
-            }
-            }
-            return n1 - n2;
-            } else {
-            return s1.compareTo(s2);
-            }*/
+            /*
+             * if (Village.getOrderType() == ORDER_ALPHABETICALLY) { int n1 = s1.toString().length(), n2 = s2.toString().length(); for (int
+             * i1 = 0, i2 = 0; i1 < n1 && i2 < n2; i1++, i2++) { char c1 = s1.toString().charAt(i1); char c2 = s2.toString().charAt(i2); if
+             * (c1 != c2) { c1 = Character.toUpperCase(c1); c2 = Character.toUpperCase(c2); if (c1 != c2) { c1 = Character.toLowerCase(c1);
+             * c2 = Character.toLowerCase(c2); if (c1 != c2) { return c1 - c2; } } } } return n1 - n2; } else { return s1.compareTo(s2); }
+             */
         }
     }
 

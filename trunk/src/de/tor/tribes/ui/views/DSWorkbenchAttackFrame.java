@@ -513,13 +513,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 if (tab != null) {
                     tab.addAttackTimer();
                 }
-
-                /*
-                 * mNotifyThread.setActive(!mNotifyThread.isActive()); if (mNotifyThread.isActive()) { ((JXButton)
-                 * e.getSource()).setIcon(new ImageIcon(DSWorkbenchAttackFrame.class.getResource("/res/ui/att_alert.png"))); } else {
-                 * ((JXButton) e.getSource()).setIcon(new ImageIcon(DSWorkbenchAttackFrame.class.getResource("/res/ui/att_alert_off.png")));
-                 * }
-                 */
             }
         }));
         // </editor-fold>

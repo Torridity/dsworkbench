@@ -4,14 +4,14 @@
  */
 package de.tor.tribes.util.report;
 
+import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.FightReport;
-import de.tor.tribes.util.farm.FarmManager;
 
 /**
  *
- * @author jejkal
+ * @author Torridity
  */
-public class FarmReportFilter implements ReportFilterInterface {
+public class FakeFilter implements ReportFilterInterface {
 
     @Override
     public void setup(Object pFilterComponent) {
@@ -19,16 +19,16 @@ public class FarmReportFilter implements ReportFilterInterface {
 
     @Override
     public boolean isValid(FightReport c) {
-        return c != null && FarmManager.getSingleton().getFarmInformation(c.getTargetVillage()) != null;
+        return (c.guessType() == Attack.FAKE_TYPE);
     }
 
     @Override
     public String getDescription() {
-        return "Filterung von Farmberichten";
+        return "Filtert Fake-Berichte";
     }
 
     @Override
     public String getStringRepresentation() {
-        return "Farmberichte";
+        return "Fakes";
     }
 }

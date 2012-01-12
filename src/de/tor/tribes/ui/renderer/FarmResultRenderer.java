@@ -19,22 +19,21 @@ import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 public class FarmResultRenderer extends DefaultTableRenderer {
 
     private ImageIcon okIcon = null;
-    private ImageIcon notEnoughResourcesIcon = null;
-    private ImageIcon noSourceByTroopsIcon = null;
-    private ImageIcon noSourceByResourcesIcon = null;
+    private ImageIcon noSourceByCarryCapacityIcon = null;
+    private ImageIcon noSourceByMinHaulIcon = null;
+    private ImageIcon noSourceByRangeIcon = null;
     private ImageIcon noTroopsIcon = null;
     private ImageIcon browserFailedIcon = null;
 
     public FarmResultRenderer() {
         super();
         try {
-            //@TODO Create icons
-            okIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/checkbox.png"));
-            notEnoughResourcesIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/spy.png"));
-            noSourceByTroopsIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/skull.png"));
-            noSourceByResourcesIcon = new ImageIcon("./graphics/icons/warning.png");
-            noTroopsIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/trade_in.png"));
-            browserFailedIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/trade_out.png"));
+            okIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/farm_result_ok.png"));
+            noSourceByCarryCapacityIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/farm_result_net.png"));
+            noSourceByMinHaulIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/farm_result_mhnr.png"));
+            noSourceByRangeIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/farm_result_nvir.png"));
+            noTroopsIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/farm_result_nt.png"));
+            browserFailedIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/farm_result_ft2b.png"));
         } catch (Exception e) {
         }
     }
@@ -45,21 +44,20 @@ public class FarmResultRenderer extends DefaultTableRenderer {
         JLabel label = ((JLabel) c);
         try {
             label.setText("");
-
             label.setHorizontalAlignment(SwingConstants.CENTER);
             FarmInformation.FARM_RESULT status = (FarmInformation.FARM_RESULT) value;
             switch (status) {
                 case FAILED_OPEN_BROWSER:
                     label.setIcon(browserFailedIcon);
                     break;
-                case NOT_ENOUGH_RESOURCES:
-                    label.setIcon(notEnoughResourcesIcon);
-                    break;
                 case NO_ADEQUATE_SOURCE_BY_RANGE:
-                    label.setIcon(noSourceByResourcesIcon);
+                    label.setIcon(noSourceByRangeIcon);
                     break;
-                case NO_ADEQUATE_SOURCE_BY_TROOPS:
-                    label.setIcon(noSourceByTroopsIcon);
+                case NO_ADEQUATE_SOURCE_BY_CARRY_CAPACITY:
+                    label.setIcon(noSourceByCarryCapacityIcon);
+                    break;
+                case NO_ADEQUATE_SOURCE_BY_MIN_HAUL:
+                    label.setIcon(noSourceByMinHaulIcon);
                     break;
                 case NO_TROOPS:
                     label.setIcon(noTroopsIcon);

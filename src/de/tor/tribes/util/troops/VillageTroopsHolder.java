@@ -65,18 +65,19 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
 
     @Override
     public String toXml() {
-        String result = "<troopInfo>\n";
-        result += "<id>" + getVillage().getId() + "</id>\n";
-        result += "<state>" + getState().getTime() + "</state>\n";
-        result += "<troops ";
+        StringBuilder builder = new StringBuilder();
+        builder.append("<troopInfo>\n");
+        builder.append("<id>").append(getVillage().getId()).append("</id>\n");
+        builder.append("<state>").append(getState().getTime()).append("</state>\n");
+        builder.append("<troops ");
 
         List<UnitHolder> units = DataHolder.getSingleton().getUnits();
         for (UnitHolder unit : units) {
-            result += unit.getPlainName() + "=\"" + troops.get(unit) + "\" ";
+            builder.append(unit.getPlainName()).append("=\"").append(troops.get(unit)).append("\" ");
         }
-        result += "/>\n";
-        result += "</troopInfo>";
-        return result;
+        builder.append("/>\n");
+        builder.append("</troopInfo>");
+        return builder.toString();
     }
 
     public void clear() {

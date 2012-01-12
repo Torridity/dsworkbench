@@ -5,6 +5,7 @@
 package de.tor.tribes.util.report;
 
 import de.tor.tribes.types.FightReport;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -27,5 +28,16 @@ public class DateFilter implements ReportFilterInterface {
     @Override
     public boolean isValid(FightReport c) {
         return (c.getTimestamp() >= start && c.getTimestamp() <= end);
+    }
+
+    @Override
+    public String getDescription() {
+        return "Filterung nach Datum";
+    }
+
+    @Override
+    public String getStringRepresentation() {
+        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+        return "Gesendet zwischen " + df.format(new Date(start)) + " und " + df.format(new Date(end));
     }
 }

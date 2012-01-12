@@ -110,19 +110,20 @@ public class Note extends ManageableType implements BBSupport {
 
     @Override
     public String toXml() {
+        StringBuilder result = new StringBuilder();
         try {
-            String result = "<note>\n";
-            result += "<timestamp>" + getTimestamp() + "</timestamp>\n";
-            result += "<mapMarker>" + getMapMarker() + "</mapMarker>\n";
-            result += "<noteSymbol>" + getNoteSymbol() + "</noteSymbol>\n";
-            result += "<text>" + URLEncoder.encode(getNoteText(), "UTF-8") + "</text>\n";
-            result += "<villages>\n";
+            result.append("<note>\n");
+            result.append("<timestamp>").append(getTimestamp()).append("</timestamp>\n");
+            result.append("<mapMarker>").append(getMapMarker()).append("</mapMarker>\n");
+            result.append("<noteSymbol>").append(getNoteSymbol()).append("</noteSymbol>\n");
+            result.append("<text>").append(URLEncoder.encode(getNoteText(), "UTF-8")).append("</text>\n");
+            result.append("<villages>\n");
             for (Integer id : getVillageIds()) {
-                result += "<village>" + id + "</village>\n";
+                result.append("<village>").append(id).append("</village>\n");
             }
-            result += "</villages>\n";
-            result += "</note>\n";
-            return result;
+            result.append("</villages>\n");
+            result.append("</note>\n");
+            return result.toString();
         } catch (UnsupportedEncodingException usee) {
             return null;
         }

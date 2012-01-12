@@ -97,7 +97,19 @@ public class UserProfile {
 
     private void loadProperties(File pPropertiesPath) throws Exception {
         mProperties = new Properties();
-        mProperties.load(new FileInputStream(pPropertiesPath));
+        FileInputStream fin = null;
+        try {
+            fin = new FileInputStream(pPropertiesPath);
+            mProperties.load(fin);
+        } finally {
+            try {
+                if (fin != null) {
+                    fin.close();
+                }
+            } catch (IOException e) {
+            }
+        }
+
     }
 
     public void updateProperties() {

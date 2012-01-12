@@ -278,13 +278,7 @@ public class GlobalOptions {
         return GLOBAL_PROPERTIES.getProperty(pKey);
     }
 
-    public static void main(String[] args) {
-        if ((Boolean) null) {
-            System.out.println("OK");
-        }
-    }
-
-    /**
+       /**
      * Load the default skin
      *
      * @throws Exception If there was an error while loading the default skin

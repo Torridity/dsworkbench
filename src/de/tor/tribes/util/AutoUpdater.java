@@ -33,19 +33,28 @@ public class AutoUpdater {
 
     public static String obtainChangeLog() throws IOException {
         URL u = new URL("http://www.dsworkbench.de/downloads/Update/changelog.gz");
-        GZIPInputStream in = new GZIPInputStream(u.openConnection().getInputStream());
-        InputStreamReader ir = new InputStreamReader(in, "ISO-8859-1");
+        InputStreamReader ir = null;
         StringBuilder buffer = new StringBuilder();
-        char[] data = new char[2048];
-        int br = 0;
-        while (br != -1) {
-            br = ir.read(data);
-            if (br != -1) {
-                buffer.append(data, 0, br);
-                data = new char[2048];
+        try {
+            ir = new InputStreamReader(new GZIPInputStream(u.openConnection().getInputStream()), "ISO-8859-1");
+            char[] data = new char[2048];
+            int br = 0;
+            while (br != -1) {
+                br = ir.read(data);
+                if (br != -1) {
+                    buffer.append(data, 0, br);
+                    data = new char[2048];
+                }
+            }
+        } finally {
+            if (ir != null) {
+                try {
+                    ir.close();
+                } catch (IOException ioe) {
+                }
             }
         }
-        in.close();
+
         return buffer.toString();
     }
 
@@ -59,72 +68,99 @@ public class AutoUpdater {
         currentJar = "H:/Software/DSWorkbench-Distribute/DSWorkbench3.01/DSWorkbench/lib/core.jar";
 
         HashMap<String, Long> existingEntries = new HashMap<String, Long>();
-        JarInputStream jarin = new JarInputStream(new FileInputStream(currentJar));
-        JarEntry entry = jarin.getNextJarEntry();
-        while (entry != null) {
-            if (!entry.isDirectory()) {
-                existingEntries.put(entry.getName(), entry.getCrc());
-            }
-            entry = jarin.getNextJarEntry();
-        }
-
-        int newFiles = 0;
-        int changedFiles = 0;
-
+        JarInputStream jarin = null;
         List<String> modified = new ArrayList<String>();
-        Set<Object> entries = props.keySet();
+        try {
+            jarin = new JarInputStream(new FileInputStream(currentJar));
+            JarEntry entry = jarin.getNextJarEntry();
+            while (entry != null) {
+                if (!entry.isDirectory()) {
+                    existingEntries.put(entry.getName(), entry.getCrc());
+                }
+                entry = jarin.getNextJarEntry();
+            }
 
-        for (Object e : entries) {
-            String resource = (String) e;
-            Long newHash = Long.parseLong((String) props.get(resource));
-            Long existingHash = existingEntries.get(resource);
-            if (existingHash == null) {
-                newFiles++;
-                modified.add(resource);
-            } else if (existingHash.compareTo(newHash) != 0) {
-                changedFiles++;
-                modified.add(resource);
+            int newFiles = 0;
+            int changedFiles = 0;
+
+
+            Set<Object> entries = props.keySet();
+
+            for (Object e : entries) {
+                String resource = (String) e;
+                Long newHash = Long.parseLong((String) props.get(resource));
+                Long existingHash = existingEntries.get(resource);
+                if (existingHash == null) {
+                    newFiles++;
+                    modified.add(resource);
+                } else if (existingHash.compareTo(newHash) != 0) {
+                    changedFiles++;
+                    modified.add(resource);
+                }
+            }
+        } finally {
+            if (jarin != null) {
+                try {
+                    jarin.close();
+                } catch (IOException ioe) {
+                }
             }
         }
-
         return modified;
     }
 
     public static void downloadUpdate(List<String> modifiedResources, UpdateListener pListener) throws IOException {
         URL u = new URL("http://www.dsworkbench.de/downloads/Update/core.jar");
-        ZipInputStream zin = new ZipInputStream(u.openConnection().getInputStream());
-
-        JarOutputStream jout = new JarOutputStream(new FileOutputStream("./update.jar"));
-        ZipEntry en = zin.getNextEntry();
-        int updateCnt = 0;
-        int toUpdate = modifiedResources.size();
-        while (en != null) {
-            String resourceName = en.getName();
-            if (modifiedResources.contains(resourceName)) {
-                ZipEntry n = new ZipEntry(resourceName);
-                jout.putNextEntry(n);
-                byte[] data = new byte[2048];
-                int br = 0;
-                while (br != -1) {
-                    br = zin.read(data);
-                    if (br != -1) {
-                        jout.write(data, 0, br);
-                        data = new byte[2048];
+        ZipInputStream zin = null;
+        JarOutputStream jout = null;
+        try {
+            zin = new ZipInputStream(u.openConnection().getInputStream());
+            jout = new JarOutputStream(new FileOutputStream("./update.jar"));
+            ZipEntry en = zin.getNextEntry();
+            int updateCnt = 0;
+            int toUpdate = modifiedResources.size();
+            while (en != null) {
+                String resourceName = en.getName();
+                if (modifiedResources.contains(resourceName)) {
+                    ZipEntry n = new ZipEntry(resourceName);
+                    jout.putNextEntry(n);
+                    byte[] data = new byte[2048];
+                    int br = 0;
+                    while (br != -1) {
+                        br = zin.read(data);
+                        if (br != -1) {
+                            jout.write(data, 0, br);
+                            data = new byte[2048];
+                        }
                     }
+                    jout.closeEntry();
+                    updateCnt++;
+                    if (pListener != null) {
+                        pListener.fireResourceUpdatedEvent(resourceName, 100.0 * updateCnt / toUpdate);
+                    }
+                    modifiedResources.remove(resourceName);
                 }
-                jout.closeEntry();
-                updateCnt++;
-                if (pListener != null) {
-                    pListener.fireResourceUpdatedEvent(resourceName, 100.0 * updateCnt / toUpdate);
-                }
-                modifiedResources.remove(resourceName);
+                en = zin.getNextEntry();
             }
-            en = zin.getNextEntry();
+
+            jout.finish();
+            jout.flush();
+        } finally {
+            if (zin != null) {
+                try {
+                    zin.close();
+                } catch (IOException ioe) {
+                }
+            }
+            if (jout != null) {
+                try {
+                    jout.close();
+                } catch (IOException ioe) {
+                }
+            }
         }
 
-        jout.finish();
-        jout.flush();
-        jout.close();
+
         if (pListener != null) {
             if (!modifiedResources.isEmpty()) {
                 pListener.fireUpdateFinishedEvent(false, "Es konnten nicht alle Daten geladen werden");

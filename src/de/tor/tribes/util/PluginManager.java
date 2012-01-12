@@ -11,11 +11,7 @@ import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.types.VillageMerchantInfo;
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
@@ -51,8 +47,10 @@ public class PluginManager {
     PluginManager() {
         mPluginVersions = new Properties();
         if (PROPERTIES_FILE.exists()) {
+            FileInputStream fin = null;
             try {
-                mPluginVersions.load(new FileInputStream(PROPERTIES_FILE));
+                fin = new FileInputStream(PROPERTIES_FILE);
+                mPluginVersions.load(fin);
                 INITIALIZED = true;
             } catch (Exception e) {
                 logger.warn("Failed to read file 'plugin.version'. Re-creating it...");
@@ -64,6 +62,13 @@ public class PluginManager {
                     }
                 } catch (Exception inner) {
                     logger.error("Failed to create file 'plugin.version'", inner);
+                }
+            } finally {
+                if (fin != null) {
+                    try {
+                        fin.close();
+                    } catch (IOException ioe) {
+                    }
                 }
             }
         }
@@ -94,7 +99,9 @@ public class PluginManager {
         }
     }
 
-    /**Execute the village parser plugin
+    /**
+     * Execute the village parser plugin
+     *
      * @param pData The text that contains village coordinates
      * @return List<Village> Parsed village list
      */
@@ -108,7 +115,9 @@ public class PluginManager {
         return new LinkedList<Village>();
     }
 
-    /**Execute the merchant parser plugin
+    /**
+     * Execute the merchant parser plugin
+     *
      * @param pData The text that contains merchant infos
      * @return List<VillageMerchantInfo> Parsed list of merchant infos
      */
@@ -233,12 +242,16 @@ public class PluginManager {
         return mClassloader.loadClass(pClazz).newInstance();
     }
 
-    /**Write the plugin properties to disk*/
+    /**
+     * Write the plugin properties to disk
+     */
     private void storePropertyFile() throws Exception {
         mPluginVersions.store(new FileOutputStream(PROPERTIES_FILE), "Please do not modify!");
     }
 
-    /**Check for plugin updates
+    /**
+     * Check for plugin updates
+     *
      * @throws Exception If the entire update fails
      */
     public void checkForUpdates() throws Exception {
@@ -258,7 +271,9 @@ public class PluginManager {
         initializeClassloader();
     }
 
-    /**Update all plugins
+    /**
+     * Update all plugins
+     *
      * @param pProperties Plugin versions properties file from server
      */
     private boolean downloadVersionUpdates(Properties pProperties) {
@@ -297,7 +312,9 @@ public class PluginManager {
         return true;
     }
 
-    /**Download one single plugin
+    /**
+     * Download one single plugin
+     *
      * @param pPluginName Name of the plugin
      * @param pVersion Plugin version
      */

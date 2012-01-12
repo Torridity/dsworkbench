@@ -20,4 +20,14 @@ public class ConqueredFilter implements ReportFilterInterface {
     public boolean isValid(FightReport c) {
         return !(c.wasConquered() || c.wasSnobAttack());
     }
+
+    @Override
+    public String getDescription() {
+        return "Filtert Adelungen";
+    }
+
+    @Override
+    public String getStringRepresentation() {
+        return "Adelungen";
+    }
 }

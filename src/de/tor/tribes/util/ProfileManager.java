@@ -142,8 +142,10 @@ public class ProfileManager {
                     logger.debug("Transforming legacy data structure to profile structure");
                     String server = f.getName();
                     Properties prop = new Properties();
+                    FileInputStream fin = null;
                     try {
-                        prop.load(new FileInputStream("global.properties"));
+                        fin = new FileInputStream("global.properties");
+                        prop.load(fin);
 
                         String player = prop.getProperty("player." + server);
 
@@ -167,6 +169,14 @@ public class ProfileManager {
                             logger.error("Failed to transform profile");
                         }
                     } catch (Exception e) {
+                        logger.warn("Failed to transfor legacy profile", e);
+                    } finally {
+                        if (fin != null) {
+                            try {
+                                fin.close();
+                            } catch (IOException ioe) {
+                            }
+                        }
                     }
                 }
             }

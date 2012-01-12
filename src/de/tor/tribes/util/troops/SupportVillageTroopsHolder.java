@@ -65,44 +65,49 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
 
     @Override
     public String toXml() {
-        String result = "<troopInfo type=\"support\">\n";
-        result += "<id>" + getVillage().getId() + "</id>\n";
-        result += "<state>" + getState().getTime() + "</state>\n";
-        result += "<troops ";
+        StringBuilder result = new StringBuilder();
+        result.append("<troopInfo type=\"support\">\n");
+        result.append("<id>").append(getVillage().getId()).append("</id>\n");
+        result.append("<state>").append(getState().getTime()).append("</state>\n");
+        result.append("<troops ");
 
         List<UnitHolder> units = DataHolder.getSingleton().getUnits();
         for (UnitHolder unit : units) {
-            result += unit.getPlainName() + "=\"" + getTroops().get(unit) + "\" ";
+            result.append(unit.getPlainName()).append("=\"").append(getTroops().get(unit)).append("\" ");
         }
-        result += "/>\n";
+        result.append("/>\n");
         Enumeration<Village> keys = outgoingSupports.keys();
-        String supportTrg = "<supportTargets>\n";
+        StringBuilder supportTargets = new StringBuilder();
+        supportTargets.append("<supportTargets>\n");
         while (keys.hasMoreElements()) {
             Village key = keys.nextElement();
-            String support = "<supportTarget village=\"" + key.getId() + "\" ";
+            StringBuilder support = new StringBuilder();
+            support.append("<supportTarget village=\"").append(key.getId()).append("\" ");
             for (UnitHolder unit : units) {
-                support += unit.getPlainName() + "=\"" + outgoingSupports.get(key).get(unit) + "\" ";
+                support.append(unit.getPlainName()).append("=\"").append(outgoingSupports.get(key).get(unit)).append("\" ");
             }
-            support += "/>\n";
-            supportTrg += support;
+            support.append("/>\n");
+            supportTargets.append(support.toString());
         }
-        supportTrg += "</supportTargets>\n";
+        supportTargets.append("</supportTargets>\n");
 
         keys = incomingSupports.keys();
-        String supportSrc = "<supportSources>\n";
+        StringBuilder supportSources = new StringBuilder();
+        supportSources.append("<supportSources>\n");
         while (keys.hasMoreElements()) {
             Village key = keys.nextElement();
-            String support = "<supportSource village=\"" + key.getId() + "\" ";
+            StringBuilder support = new StringBuilder();
+            support.append("<supportSource village=\"").append(key.getId()).append("\" ");
             for (UnitHolder unit : units) {
-                support += unit.getPlainName() + "=\"" + incomingSupports.get(key).get(unit) + "\" ";
+                support.append(unit.getPlainName()).append("=\"").append(incomingSupports.get(key).get(unit)).append("\" ");
             }
-            support += "/>\n";
-            supportSrc += support;
+            support.append("/>\n");
+            supportSources.append(support.toString());
         }
-        supportSrc += "</supportSources>\n";
-        result += supportTrg + supportSrc;
-        result += "</troopInfo>";
-        return result;
+        supportSources.append("</supportSources>\n");
+        result.append(supportTargets.toString()).append(supportSources.toString());
+        result.append("</troopInfo>");
+        return result.toString();
     }
 
     @Override
@@ -258,15 +263,13 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
 
     @Override
     public String toString() {
-        /* String result = "";
-        result += "Village: " + getVillage() + "\n";
-        Enumeration<UnitHolder> keys = getTroops().keys();
-        result += "Truppen\n";
-        while (keys.hasMoreElements()) {
-        UnitHolder unit = keys.nextElement();
-        result += unit.getName() + " " + getTroops().get(unit) + "\n";
-        }
-        return result;*/
+        /*
+         * String result = ""; result += "Village: " + getVillage() + "\n";
+         * Enumeration<UnitHolder> keys = getTroops().keys(); result +=
+         * "Truppen\n"; while (keys.hasMoreElements()) { UnitHolder unit =
+         * keys.nextElement(); result += unit.getName() + " " +
+         * getTroops().get(unit) + "\n"; } return result;
+         */
         if (getVillage() != null) {
             return getVillage().toString();
         }

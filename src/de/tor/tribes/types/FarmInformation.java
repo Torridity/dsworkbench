@@ -34,7 +34,7 @@ public class FarmInformation extends ManageableType {
 
     public enum FARM_RESULT {
 
-        OK, NOT_ENOUGH_RESOURCES, NO_ADEQUATE_SOURCE_BY_TROOPS, NO_ADEQUATE_SOURCE_BY_RANGE, NO_TROOPS, FAILED_OPEN_BROWSER
+        OK, NO_ADEQUATE_SOURCE_BY_CARRY_CAPACITY, NO_ADEQUATE_SOURCE_BY_RANGE, NO_ADEQUATE_SOURCE_BY_MIN_HAUL, NO_TROOPS, FAILED_OPEN_BROWSER
     }
 
     public enum FARM_STATUS {
@@ -127,7 +127,8 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Returns true if a report is expected depending on the running farm troops and the expected return time
+     * Returns true if a report is expected depending on the running farm troops
+     * and the expected return time
      */
     public boolean isReportExpected() {
         if (farmTroopReturn == -1 || farmTroop == null) {
@@ -276,8 +277,8 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Get the correction factor depending on overall expected haul and overall actual haul. Correction is started beginning with the fifth
-     * attack
+     * Get the correction factor depending on overall expected haul and overall
+     * actual haul. Correction is started beginning with the fifth attack
      */
     public float getCorrectionFactor() {
         if (attackCount < 5) {//wait a while until "correcting" 
@@ -363,7 +364,8 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Read haul information from report, correct storage amounts and return difference to max haul
+     * Read haul information from report, correct storage amounts and return
+     * difference to max haul
      */
     private int updateHaulInformation(FightReport pReport, int pMaxHaul, boolean pWasResourcesSpyed) {
         hauledWood += pReport.getHaul()[0];
@@ -419,11 +421,6 @@ public class FarmInformation extends ManageableType {
         }
         final int resources = getResourcesInStorage(System.currentTimeMillis());
 
-        if (!getStatus().equals(FARM_STATUS.NOT_SPYED) && DSWorkbenchFarmManager.getSingleton().getMinHaul() > resources) {
-            lastResult = FARM_RESULT.NOT_ENOUGH_RESOURCES;
-            return lastResult;
-        }
-
         Village[] villages = TroopHelper.getOwnVillagesByCarryCapacity(resources);
 
         if (villages.length == 0) {
@@ -433,7 +430,7 @@ public class FarmInformation extends ManageableType {
 
         if (villages.length == 0) {
             //no farm villages available
-            lastResult = FARM_RESULT.NO_ADEQUATE_SOURCE_BY_TROOPS;
+            lastResult = FARM_RESULT.NO_ADEQUATE_SOURCE_BY_CARRY_CAPACITY;
             return lastResult;
         }
 
@@ -454,21 +451,31 @@ public class FarmInformation extends ManageableType {
         Village selection = null;
         Hashtable<UnitHolder, Integer> farmers = null;
         IntRange r = DSWorkbenchFarmManager.getSingleton().getFarmRange();
-        //@TODO integrate result for to less resources
+        boolean allEmpty = true;
         for (Village v : villages) {
             Hashtable<UnitHolder, Integer> troops = TroopHelper.getTroopsForCarriage(v, getVillage(), FarmInformation.this);
             double speed = TroopHelper.getTroopSpeed(troops);
             double dist = (int) Math.rint(DSCalculator.calculateMoveTimeInMinutes(v, getVillage(), speed));
-            if (dist > 0 && !troops.isEmpty() && r.containsInteger(dist)) {
+            boolean troopsEmpty = troops.isEmpty();
+            if (!troopsEmpty) {
+                allEmpty = false;
+            }
+            if (dist > 0 && !troopsEmpty && r.containsInteger(dist)) {
                 selection = v;
                 farmers = troops;
             }
         }
 
         if (selection == null || farmers == null) {
-            lastResult = FARM_RESULT.NO_ADEQUATE_SOURCE_BY_RANGE;
-            return lastResult;
+            if (!allEmpty) {//not all results were empty, so probably 
+                lastResult = FARM_RESULT.NO_ADEQUATE_SOURCE_BY_RANGE;
+                return lastResult;
+            } else {//all results were empty, which can only happen if the min haul amount was not reached
+                lastResult = FARM_RESULT.NO_ADEQUATE_SOURCE_BY_MIN_HAUL;
+                return lastResult;
+            }
         }
+
         if (BrowserCommandSender.sendTroops(selection, getVillage(), farmers)) {
             // if (true) {
             TroopHelper.sendTroops(selection, farmers);

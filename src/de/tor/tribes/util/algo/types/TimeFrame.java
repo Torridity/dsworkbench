@@ -98,10 +98,14 @@ public class TimeFrame {
         return new LongRange(arriveNotBefore, arriveNotAfter);
     }
 
-    /**Check if a movement with the provided runtime is possible for this AttackFitter
+    /**
+     * Check if a movement with the provided runtime is possible for this
+     * AttackFitter
+     *
      * @param pRuntime Runtime to check
      * @param pTribe Tribe for which the runtime is valid
-     * @return boolean TRUE=Runtime might be fitted if not all send times are already used
+     * @return boolean TRUE=Runtime might be fitted if not all send times are
+     * already used
      */
     public boolean isMovementPossible(long pRuntime, de.tor.tribes.types.ext.Village pVillage) {
         if (startRanges == null) {
@@ -124,10 +128,14 @@ public class TimeFrame {
         return false;
     }
 
-    /**Returns an arrive date that fits into this AttackFitter and is based on the provided runtime
+    /**
+     * Returns an arrive date that fits into this AttackFitter and is based on
+     * the provided runtime
+     *
      * @param pRuntime Runtime to fit into
      * @param pTribe Tribe for which the arrive date should be valid
-     * @param pUsedSendTimes Already used send times (possible times are checked in steps of 10 seconds)
+     * @param pUsedSendTimes Already used send times (possible times are checked
+     * in steps of 10 seconds)
      * @return Date Fitted arrive time
      */
     public Date getFittedArriveTime(long pRuntime, de.tor.tribes.types.ext.Village pVillage, List<Long> pUsedSendTimes) {
@@ -240,7 +248,7 @@ public class TimeFrame {
 
             @Override
             public int compare(LongRange o1, LongRange o2) {
-                return new Long(o1.getMinimumLong()).compareTo(new Long(o2.getMinimumLong()));
+                return Long.valueOf(o1.getMinimumLong()).compareTo(Long.valueOf(o2.getMinimumLong()));
             }
         });
         return ranges;
@@ -360,7 +368,7 @@ public class TimeFrame {
 
             @Override
             public int compare(LongRange o1, LongRange o2) {
-                return new Long(o1.getMinimumLong()).compareTo(new Long(o2.getMinimumLong()));
+                return Long.valueOf(o1.getMinimumLong()).compareTo(Long.valueOf(o2.getMinimumLong()));
             }
         });
         return ranges;
@@ -451,27 +459,32 @@ public class TimeFrame {
 
 
 
-        /* long pRuntime = DateUtils.MILLIS_PER_DAY + 2 * DateUtils.MILLIS_PER_HOUR + 30 * DateUtils.MILLIS_PER_MINUTE + 10 * DateUtils.MILLIS_PER_SECOND + 100;
-        long runtimeDays = pRuntime / DateUtils.MILLIS_PER_DAY;
-        pRuntime -= (runtimeDays * DateUtils.MILLIS_PER_DAY);
-        long runtimeHours = pRuntime / DateUtils.MILLIS_PER_HOUR;
-        pRuntime -= (runtimeHours * DateUtils.MILLIS_PER_HOUR);
-        long runtimeMinutes = pRuntime / DateUtils.MILLIS_PER_MINUTE;
-        pRuntime -= (runtimeMinutes * DateUtils.MILLIS_PER_MINUTE);
-        long runtimeSeconds = pRuntime / DateUtils.MILLIS_PER_SECOND;
-        long runtimeMillis = pRuntime - (runtimeSeconds * DateUtils.MILLIS_PER_SECOND);
-        Date startDate = new Date(System.currentTimeMillis());
-        startDate = DateUtils.truncate(startDate, Calendar.DAY_OF_MONTH);
-        
-        SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
-        System.out.println(f.format(startDate));*/
+        /*
+         * long pRuntime = DateUtils.MILLIS_PER_DAY + 2 *
+         * DateUtils.MILLIS_PER_HOUR + 30 * DateUtils.MILLIS_PER_MINUTE + 10 *
+         * DateUtils.MILLIS_PER_SECOND + 100; long runtimeDays = pRuntime /
+         * DateUtils.MILLIS_PER_DAY; pRuntime -= (runtimeDays *
+         * DateUtils.MILLIS_PER_DAY); long runtimeHours = pRuntime /
+         * DateUtils.MILLIS_PER_HOUR; pRuntime -= (runtimeHours *
+         * DateUtils.MILLIS_PER_HOUR); long runtimeMinutes = pRuntime /
+         * DateUtils.MILLIS_PER_MINUTE; pRuntime -= (runtimeMinutes *
+         * DateUtils.MILLIS_PER_MINUTE); long runtimeSeconds = pRuntime /
+         * DateUtils.MILLIS_PER_SECOND; long runtimeMillis = pRuntime -
+         * (runtimeSeconds * DateUtils.MILLIS_PER_SECOND); Date startDate = new
+         * Date(System.currentTimeMillis()); startDate =
+         * DateUtils.truncate(startDate, Calendar.DAY_OF_MONTH);
+         *
+         * SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+         * System.out.println(f.format(startDate));
+         */
         // System.out.println(runtimeDays + " " + runtimeHours + " " + runtimeMinutes + " " + runtimeSeconds + " " + runtimeMillis);
         //SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
 
-        /* end = DateUtils.setHours(end, 0);
-        end = DateUtils.setMinutes(end, 0);
-        end = DateUtils.setSeconds(end, 0);
-        end = DateUtils.setMilliseconds(end, 0);*/
+        /*
+         * end = DateUtils.setHours(end, 0); end = DateUtils.setMinutes(end, 0);
+         * end = DateUtils.setSeconds(end, 0); end =
+         * DateUtils.setMilliseconds(end, 0);
+         */
 
         TimeFrame frame = new TimeFrame(f.parse("28.12.2010 13:00:00"),
                 f.parse("29.12.2010 15:00:00"),
@@ -497,20 +510,18 @@ public class TimeFrame {
         long pRuntime = DateUtils.MILLIS_PER_DAY;
         System.out.println("Possible: " + frame.isMovementPossible(pRuntime, null));
         List<Long> sendDates = new LinkedList<Long>();
-        /* for (int i = 0; i < 10; i++) {
-        
-        long time = pRuntime + (long) Math.round(10 * Math.random()) * 1000l;
-        System.out.println("Possible: " + frame.isMovementPossible(time, null));
-        System.out.println("Runtime: " + time);
-        Date d = frame.getFittedArriveTime(time, null, sendDates);
-        if (d != null) {
-        System.out.println("Arrive: " + f.format(d));
-        System.out.println("Send: " + f.format(new Date(d.getTime() - time)));
-        } else {
-        System.out.println("NO ARRIVE");
-        }
-        System.out.println("-------------");
-        }*/
+        /*
+         * for (int i = 0; i < 10; i++) {
+         *
+         * long time = pRuntime + (long) Math.round(10 * Math.random()) * 1000l;
+         * System.out.println("Possible: " + frame.isMovementPossible(time,
+         * null)); System.out.println("Runtime: " + time); Date d =
+         * frame.getFittedArriveTime(time, null, sendDates); if (d != null) {
+         * System.out.println("Arrive: " + f.format(d));
+         * System.out.println("Send: " + f.format(new Date(d.getTime() -
+         * time))); } else { System.out.println("NO ARRIVE"); }
+         * System.out.println("-------------"); }
+         */
     }
 
     public boolean isValid() {

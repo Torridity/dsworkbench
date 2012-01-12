@@ -10,7 +10,6 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.util.algo.ChurchRangeCalculator;
 import de.tor.tribes.util.church.ChurchManager;
-import de.tor.tribes.util.tag.TagManager;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -23,6 +22,8 @@ import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  *
@@ -53,13 +54,13 @@ public class ChurchLayerRenderer extends AbstractDirectLayerRenderer {
             }
         }
 
-        Iterator<Tribe> areas = churchAreas.keySet().iterator();
         Color cb = pG2D.getColor();
         Composite com = pG2D.getComposite();
+        Set<Entry<Tribe, Area>> entries = churchAreas.entrySet();
 
-        while (areas.hasNext()) {
-            Tribe t = areas.next();
-            Area a = churchAreas.get(t);
+        for (Entry<Tribe, Area> entry : entries) {
+            Tribe t = entry.getKey();
+            Area a = entry.getValue();
             pG2D.setColor(t.getMarkerColor());
             pG2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
             pG2D.setStroke(new BasicStroke(13.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));

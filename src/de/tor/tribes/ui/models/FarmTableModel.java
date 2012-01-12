@@ -19,7 +19,7 @@ import org.apache.commons.lang.time.DurationFormatUtils;
  */
 public class FarmTableModel extends AbstractTableModel {
 
-    private Class[] types = new Class[]{FarmInformation.FARM_STATUS.class, FarmInformation.FARM_RESULT.class, Village.class, StorageStatus.class, Date.class, String.class, Float.class};
+    private Class[] types = new Class[]{FarmInformation.FARM_STATUS.class, FarmInformation.FARM_RESULT.class, String.class, StorageStatus.class, Date.class, String.class, Float.class};
     private String[] colNames = new String[]{"Status", "Letztes Ergebnis", "Dorf", "Rohstoffe", "Letzter Bericht", "Ankunft", "Erfolgsquote"};
 
     public FarmTableModel() {
@@ -53,15 +53,15 @@ public class FarmTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         FarmInformation elem = (FarmInformation) FarmManager.getSingleton().getAllElements().get(rowIndex);
+
         switch (columnIndex) {
             case 0:
                 return elem.getStatus();
             case 1:
                 return elem.getLastResult();
             case 2:
-                return elem.getVillage();
+                return elem.getVillage().getShortName();
             case 3:
-                //@TODO check storage status (200 resources each, capacity = 1000, view shows small amount!
                 return elem.getStorageStatus();
             case 4:
                 return new Date(elem.getLastReport());

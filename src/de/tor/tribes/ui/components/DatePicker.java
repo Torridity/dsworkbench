@@ -1,8 +1,7 @@
 package de.tor.tribes.ui.components;
 
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * To change this template, choose Tools | Templates and open the template in the editor.
  */
 // Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
 // Jad home page: http://www.kpdus.com/jad.html
@@ -20,7 +19,7 @@ import org.netbeans.lib.awtextra.AbsoluteLayout;
 public class DatePicker extends JPanel {
 
     private static final Font smallFont = new Font("Dialog", 0, 10);
-   // private static final Font largeFont = new Font("Dialog", 0, 10);
+    // private static final Font largeFont = new Font("Dialog", 0, 10);
     private static final Insets insets = new Insets(1, 1, 1, 1);
     private static final Color highlight = new Color(255, 255, 204);
     private static final Color white = new Color(255, 255, 255);
@@ -109,7 +108,7 @@ public class DatePicker extends JPanel {
             }
         });
         add(backButton, new AbsoluteConstraints(10, 10, 20, 20));
-    //    monthAndYear.setFont(largeFont);
+        //    monthAndYear.setFont(largeFont);
         monthAndYear.setHorizontalAlignment(0);
         monthAndYear.setText(formatDateText(selectedDate.getTime()));
         add(monthAndYear, new AbsoluteConstraints(30, 10, 100, 20));
@@ -166,7 +165,7 @@ public class DatePicker extends JPanel {
     private void initButtons(boolean flag) {
         if (flag) {
             Dimension dimension = new Dimension(68, 24);
-          //  todayButton.setFont(largeFont);
+            //  todayButton.setFont(largeFont);
             todayButton.setText("Heute");
             todayButton.setMargin(insets);
             todayButton.setMaximumSize(dimension);
@@ -180,7 +179,7 @@ public class DatePicker extends JPanel {
                     onToday(actionevent);
                 }
             });
-         //   cancelButton.setFont(largeFont);
+            //   cancelButton.setFont(largeFont);
             cancelButton.setText("OK");
             cancelButton.setMargin(insets);
             cancelButton.setMaximumSize(dimension);
@@ -199,6 +198,10 @@ public class DatePicker extends JPanel {
 
         add(todayButton, new AbsoluteConstraints(9, 190, 68, -1));
         add(cancelButton, new AbsoluteConstraints(87, 190, 48, -1));
+    }
+
+    public void removeOk() {
+        remove(cancelButton);
     }
 
     private void onToday(ActionEvent actionevent) {
@@ -384,7 +387,9 @@ public class DatePicker extends JPanel {
         selectedDate = calCurrent;
     }
 
-    /**Calculate the number of days for the current month*/
+    /**
+     * Calculate the number of days for the current month
+     */
     private static int calculateDaysInMonth(Calendar calendar) {
         byte days = 0;
         switch (calendar.get(GregorianCalendar.MONTH)) {
@@ -425,7 +430,7 @@ public class DatePicker extends JPanel {
     }
 
     public static void main(String[] args) {
-         try {
+        try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception e) {
@@ -435,4 +440,3 @@ public class DatePicker extends JPanel {
         f.setVisible(true);
     }
 }
-

@@ -6,6 +6,7 @@ package de.tor.tribes.util.report;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.FightReport;
+import de.tor.tribes.types.ext.InvalidTribe;
 import de.tor.tribes.types.ext.Tribe;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class DefenderFilter implements ReportFilterInterface {
         for (String split : tribeSplit) {
             if (split != null) {
                 Tribe t = DataHolder.getSingleton().getTribeByName(split.trim());
-                if (t != null) {
+                if (t != null && !t.equals(InvalidTribe.getSingleton())) {
                     tribes.add(split.trim());
                 }
             }
@@ -47,7 +48,7 @@ public class DefenderFilter implements ReportFilterInterface {
 
     @Override
     public String getDescription() {
-        return "Filterung nach Angreifer.";
+        return "Filterung nach Verteidiger.";
     }
 
     @Override

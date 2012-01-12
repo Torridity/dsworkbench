@@ -81,9 +81,9 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
             LabeledTextField unitField = new LabeledTextField();
             unitField.setIcon(ImageManager.getUnitIcon(unit));
             unitFields[gridBagConstraints.gridx][gridBagConstraints.gridy] = unitField;
-            unitField.setMinimumSize(new Dimension(80, 21));
-            unitField.setPreferredSize(new Dimension(80, 21));
-            unitField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 21));
+            unitField.setMinimumSize(new Dimension(80, 24));
+            unitField.setPreferredSize(new Dimension(80, 24));
+            unitField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 24));
             unitField.setText("0");
             add(unitField, gridBagConstraints);
             unitCount++;
@@ -104,6 +104,16 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
         List<UnitHolder> units = new LinkedList<UnitHolder>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (unit.isOffense()) {
+                units.add(unit);
+            }
+        }
+        setup(units, pTypeSeparation);
+    }
+
+    public final void setupFarm(boolean pTypeSeparation) {
+        List<UnitHolder> units = new LinkedList<UnitHolder>();
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            if (unit.isFarmUnit()) {
                 units.add(unit);
             }
         }

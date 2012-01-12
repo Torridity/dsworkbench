@@ -23,6 +23,11 @@ public class DateFilter implements ReportFilterInterface {
         List<Long> dates = (List<Long>) pFilterComponent;
         start = dates.get(0);
         end = dates.get(1);
+        if (start > end) {
+            long tmp = end;
+            end = start;
+            start = tmp;
+        }
     }
 
     @Override
@@ -37,7 +42,7 @@ public class DateFilter implements ReportFilterInterface {
 
     @Override
     public String getStringRepresentation() {
-        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy");
         return "Gesendet zwischen " + df.format(new Date(start)) + " und " + df.format(new Date(end));
     }
 }

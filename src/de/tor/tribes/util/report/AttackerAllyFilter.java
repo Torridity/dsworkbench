@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author Torridity
  */
-public class AllyFilter implements ReportFilterInterface {
+public class AttackerAllyFilter implements ReportFilterInterface {
 
     private List<String> allies = null;
 
@@ -36,23 +36,22 @@ public class AllyFilter implements ReportFilterInterface {
 
     @Override
     public boolean isValid(FightReport c) {
-        if (c == null) {
+        if (c == null || allies.isEmpty()) {
             return false;
         }
         Ally a = (c.getAttacker() != null) ? c.getAttacker().getAlly() : NoAlly.getSingleton();
-        Ally d = (c.getDefender() != null) ? c.getDefender().getAlly() : NoAlly.getSingleton();
-        return (allies.contains(a.getTag()) || allies.contains(d.getTag()));
+        return allies.contains(a.getTag());
     }
 
     @Override
     public String getDescription() {
-        return "Filterung nach Stammestags (Angreifer oder Verteidiger).";
+        return "Filterung nach Stammestags der Angreifers";
     }
 
     @Override
     public String getStringRepresentation() {
         StringBuilder result = new StringBuilder();
-        result.append("Stammestags ").append(allies.toString());
+        result.append("Angreifende Stämme ").append(allies.toString());
         return result.toString();
     }
 }

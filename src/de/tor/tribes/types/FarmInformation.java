@@ -127,8 +127,7 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Returns true if a report is expected depending on the running farm troops
-     * and the expected return time
+     * Returns true if a report is expected depending on the running farm troops and the expected return time
      */
     public boolean isReportExpected() {
         if (farmTroopReturn == -1 || farmTroop == null) {
@@ -170,6 +169,9 @@ public class FarmInformation extends ManageableType {
      * Returns the last result of farmFarm()
      */
     public FARM_RESULT getLastResult() {
+        if (lastResult == null) {//used for lazy loading of XStream input
+            lastResult = FARM_RESULT.OK;
+        }
         return lastResult;
     }
 
@@ -242,16 +244,16 @@ public class FarmInformation extends ManageableType {
      * Get the amount of resources of a type, generated since the last update
      */
     private double getGeneratedResources(int pResourcesBefore, int pBuildingLevel, long pAtTimestamp) {
+        int usedBuildingLevel = pBuildingLevel;
         if (getStatus().equals(FARM_STATUS.NOT_SPYED)) {
             //return pResourcesBefore;
-            pBuildingLevel = 1;
+            usedBuildingLevel = 1;
         }
         long timeSinceLastFarmInfo = pAtTimestamp - lastReport;
         double timeFactor = (double) timeSinceLastFarmInfo / (double) DateUtils.MILLIS_PER_HOUR;
-        double generatedResources = pResourcesBefore + 30 * ServerSettings.getSingleton().getSpeed() * Math.pow(RESOURCE_PRODUCTION_CONTANT, (pBuildingLevel - 1));
-        generatedResources *= timeFactor;
+        double resourcesPerHour = 30 * ServerSettings.getSingleton().getSpeed() * Math.pow(RESOURCE_PRODUCTION_CONTANT, (usedBuildingLevel - 1));
+        double generatedResources = pResourcesBefore + resourcesPerHour * timeFactor;
         generatedResources *= getCorrectionFactor();
-
         return Math.min(getStorageCapacity(), generatedResources);
     }
 
@@ -277,8 +279,8 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Get the correction factor depending on overall expected haul and overall
-     * actual haul. Correction is started beginning with the fifth attack
+     * Get the correction factor depending on overall expected haul and overall actual haul. Correction is started beginning with the fifth
+     * attack
      */
     public float getCorrectionFactor() {
         if (attackCount < 5) {//wait a while until "correcting" 
@@ -364,8 +366,7 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Read haul information from report, correct storage amounts and return
-     * difference to max haul
+     * Read haul information from report, correct storage amounts and return difference to max haul
      */
     private int updateHaulInformation(FightReport pReport, int pMaxHaul, boolean pWasResourcesSpyed) {
         hauledWood += pReport.getHaul()[0];

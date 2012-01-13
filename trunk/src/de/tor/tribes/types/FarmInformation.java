@@ -34,7 +34,7 @@ public class FarmInformation extends ManageableType {
 
     public enum FARM_RESULT {
 
-        OK, NO_ADEQUATE_SOURCE_BY_CARRY_CAPACITY, NO_ADEQUATE_SOURCE_BY_RANGE, NO_ADEQUATE_SOURCE_BY_MIN_HAUL, NO_TROOPS, FAILED_OPEN_BROWSER
+        OK, NO_ADEQUATE_SOURCE_BY_NEEDED_TROOPS, NO_ADEQUATE_SOURCE_BY_RANGE, NO_ADEQUATE_SOURCE_BY_MIN_HAUL, NO_TROOPS, FAILED_OPEN_BROWSER
     }
 
     public enum FARM_STATUS {
@@ -88,6 +88,13 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
+     * Returns currently attacking farm troops
+     */
+    public Hashtable<String, Integer> getFarmTroop() {
+        return farmTroop;
+    }
+
+    /**
      * Returns the current storage status for table cell rendering
      */
     public StorageStatus getStorageStatus() {
@@ -127,7 +134,8 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Returns true if a report is expected depending on the running farm troops and the expected return time
+     * Returns true if a report is expected depending on the running farm troops
+     * and the expected return time
      */
     public boolean isReportExpected() {
         if (farmTroopReturn == -1 || farmTroop == null) {
@@ -279,8 +287,8 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Get the correction factor depending on overall expected haul and overall actual haul. Correction is started beginning with the fifth
-     * attack
+     * Get the correction factor depending on overall expected haul and overall
+     * actual haul. Correction is started beginning with the fifth attack
      */
     public float getCorrectionFactor() {
         if (attackCount < 5) {//wait a while until "correcting" 
@@ -366,7 +374,8 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Read haul information from report, correct storage amounts and return difference to max haul
+     * Read haul information from report, correct storage amounts and return
+     * difference to max haul
      */
     private int updateHaulInformation(FightReport pReport, int pMaxHaul, boolean pWasResourcesSpyed) {
         hauledWood += pReport.getHaul()[0];
@@ -415,33 +424,45 @@ public class FarmInformation extends ManageableType {
 
     }
 
-    public FARM_RESULT farmFarm() {
+    public FARM_RESULT farmFarm(final Hashtable<UnitHolder, Integer> pFarmUnits) {
         if (!TroopsManager.getSingleton().hasInformation(TroopsManager.TROOP_TYPE.OWN)) {
             lastResult = FARM_RESULT.NO_TROOPS;
             return lastResult;
         }
-        final int resources = getResourcesInStorage(System.currentTimeMillis());
 
-        Village[] villages = TroopHelper.getOwnVillagesByCarryCapacity(resources);
+        Village[] villages;
 
-        if (villages.length == 0) {
-            //no village can carry all...get max.
-            villages = TroopHelper.getOwnVillagesByCarryCapacity(DSWorkbenchFarmManager.getSingleton().getMinHaul());
+        if (pFarmUnits == null) {//get villages for farm type C, depending from resources
+            final int resources = getResourcesInStorage(System.currentTimeMillis());
+
+            villages = TroopHelper.getOwnVillagesByCarryCapacity(resources);
+
+            if (villages.length == 0) {
+                //no village can carry all...get max.
+                villages = TroopHelper.getOwnVillagesByCarryCapacity(DSWorkbenchFarmManager.getSingleton().getMinHaul());
+            }
+        } else {//get villages for farm type A or B, depending on static troop count
+            villages = TroopHelper.getOwnVillagesByOwnTroops(pFarmUnits);
         }
 
         if (villages.length == 0) {
             //no farm villages available
-            lastResult = FARM_RESULT.NO_ADEQUATE_SOURCE_BY_CARRY_CAPACITY;
+            lastResult = FARM_RESULT.NO_ADEQUATE_SOURCE_BY_NEEDED_TROOPS;
             return lastResult;
         }
 
-        //sort by speed
+        //sort valid villages by speed
         Arrays.sort(villages, new Comparator<Village>() {
 
             @Override
             public int compare(Village o1, Village o2) {
-                double speed1 = TroopHelper.getTroopSpeed(TroopHelper.getTroopsForCarriage(o1, getVillage(), FarmInformation.this));
-                double speed2 = TroopHelper.getTroopSpeed(TroopHelper.getTroopsForCarriage(o2, getVillage(), FarmInformation.this));
+
+                double speed1 = TroopHelper.getTroopSpeed((pFarmUnits == null)
+                        ? TroopHelper.getTroopsForCarriage(o1, FarmInformation.this)
+                        : pFarmUnits);
+                double speed2 = TroopHelper.getTroopSpeed((pFarmUnits == null)
+                        ? TroopHelper.getTroopsForCarriage(o2, FarmInformation.this)
+                        : pFarmUnits);
 
                 return new Double(
                         DSCalculator.calculateMoveTimeInMinutes(o1, getVillage(), speed1)).compareTo(
@@ -454,7 +475,7 @@ public class FarmInformation extends ManageableType {
         IntRange r = DSWorkbenchFarmManager.getSingleton().getFarmRange();
         boolean allEmpty = true;
         for (Village v : villages) {
-            Hashtable<UnitHolder, Integer> troops = TroopHelper.getTroopsForCarriage(v, getVillage(), FarmInformation.this);
+            Hashtable<UnitHolder, Integer> troops = (pFarmUnits == null) ? TroopHelper.getTroopsForCarriage(v, FarmInformation.this) : pFarmUnits;
             double speed = TroopHelper.getTroopSpeed(troops);
             double dist = (int) Math.rint(DSCalculator.calculateMoveTimeInMinutes(v, getVillage(), speed));
             boolean troopsEmpty = troops.isEmpty();

@@ -660,7 +660,8 @@ public class DataHolder {
     }
 
     /**
-     * Download all needed data files (villages, tribes, allies, kills, settings)
+     * Download all needed data files (villages, tribes, allies, kills,
+     * settings)
      */
     private boolean downloadData() {
         URL file = null;
@@ -1235,8 +1236,8 @@ public class DataHolder {
 
     /**
      * Get all villages<BR> !!Attention!!<B>This call blocks while loading data.
-     * It is only intended to be used internally</B> !!Attention!!
-     * @TODO Blocking removed as it makes no sense....keep an eye on it!
+     * It is only intended to be used internally</B> !!Attention!! @TODO
+     * Blocking removed as it makes no sense....keep an eye on it!
      */
     public Village[][] getVillages() {
         if (isLoading()) {
@@ -1327,8 +1328,7 @@ public class DataHolder {
          * if (id != -1) { return mVillagesTable.get(id); } else { DummyVillage
          * v = new DummyVillage(); v.setId(-cnt); v.setName("Beispieldorf" +
          * cnt); v.setX((short) cnt); v.setY((short) cnt); v.setPoints(cnt *
-         * 100); return v;
-        }
+         * 100); return v; }
          */
     }
 
@@ -1445,7 +1445,7 @@ public class DataHolder {
         if (logger.isDebugEnabled()) {
             logger.debug("Getting tribe by name '" + pName + "'");
         }
-        if (pName != null) {
+        if (pName != null && pName.trim().length() > 0) {
             result = mTribesByName.get(pName.trim());
         }
         if (result == null) {

@@ -11,7 +11,7 @@ import de.tor.tribes.util.farm.FarmManager;
  *
  * @author jejkal
  */
-public class FarmReportFilter implements ReportFilterInterface {
+public class FarmReportFilter implements ReportRuleInterface {
 
     @Override
     public void setup(Object pFilterComponent) {

@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author Torridity
  */
-public class ColorFilter implements ReportFilterInterface {
+public class ColorFilter implements ReportRuleInterface {
 
     private Integer color = 31;
     public static final int GREY = 1;
@@ -22,8 +22,12 @@ public class ColorFilter implements ReportFilterInterface {
     public static final int GREEN = 16;
 
     @Override
-    public void setup(Object pFilterComponent) {
-        color = (Integer) pFilterComponent;
+    public void setup(Object pFilterComponent) throws ReportRuleConfigurationException {
+        try {
+            color = (Integer) pFilterComponent;
+        } catch (Throwable t) {
+            throw new ReportRuleConfigurationException(t);
+        }
     }
 
     @Override
@@ -43,7 +47,7 @@ public class ColorFilter implements ReportFilterInterface {
         return ((color & value) > 0);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ReportRuleConfigurationException {
         ColorFilter f = new ColorFilter();
         f.setup(ColorFilter.RED + ColorFilter.BLUE + ColorFilter.GREEN);
 

@@ -26,12 +26,16 @@ public abstract class GenericManager<C extends ManageableType> {
     private boolean groupable = false;
     private boolean valid = true;
 
-    /**Default non-groupable constructor*/
+    /**
+     * Default non-groupable constructor
+     */
     public GenericManager() {
         this(null, false);
     }
 
-    /**Default groupable constructor
+    /**
+     * Default groupable constructor
+     *
      * @param pGroupable
      */
     public GenericManager(boolean pGroupable) {
@@ -48,7 +52,9 @@ public abstract class GenericManager<C extends ManageableType> {
         initialize();
     }
 
-    /**Add a manager listener
+    /**
+     * Add a manager listener
+     *
      * @param pListener
      */
     public void addManagerListener(GenericManagerListener pListener) {
@@ -57,7 +63,9 @@ public abstract class GenericManager<C extends ManageableType> {
         }
     }
 
-    /**Remove a manager listener
+    /**
+     * Remove a manager listener
+     *
      * @param pListener
      */
     public void removeManagerListener(GenericManagerListener pListener) {
@@ -77,7 +85,9 @@ public abstract class GenericManager<C extends ManageableType> {
         return managedElementGroups.keySet().toArray(new String[managedElementGroups.size()]);
     }
 
-    /**Add a new, empty group
+    /**
+     * Add a new, empty group
+     *
      * @param pGroup
      * @return
      */
@@ -93,7 +103,9 @@ public abstract class GenericManager<C extends ManageableType> {
         return changed;
     }
 
-    /**Remove an entire group
+    /**
+     * Remove an entire group
+     *
      * @param pGroup
      * @return
      */
@@ -114,7 +126,9 @@ public abstract class GenericManager<C extends ManageableType> {
         return (result != null) ? result : new ArrayList<ManageableType>();
     }
 
-    /**Rename a group from pOldName to pNewName
+    /**
+     * Rename a group from pOldName to pNewName
+     *
      * @param pOldName
      * @param pNewName
      * @return
@@ -145,7 +159,9 @@ public abstract class GenericManager<C extends ManageableType> {
         fireDataChangedEvents(group);
     }
 
-    /**Get a specific element located in the default group
+    /**
+     * Get a specific element located in the default group
+     *
      * @param pIndex
      * @return
      */
@@ -153,7 +169,9 @@ public abstract class GenericManager<C extends ManageableType> {
         return getManagedElement(DEFAULT_GROUP, pIndex);
     }
 
-    /**Get a specific element located in the specified group
+    /**
+     * Get a specific element located in the specified group
+     *
      * @param pGroup
      * @param pIndex
      * @return
@@ -165,7 +183,9 @@ public abstract class GenericManager<C extends ManageableType> {
         return null;
     }
 
-    /**Get all elements from all groups
+    /**
+     * Get all elements from all groups
+     *
      * @return
      */
     public List<ManageableType> getAllElementsFromAllGroups() {
@@ -177,7 +197,9 @@ public abstract class GenericManager<C extends ManageableType> {
         return allElements;
     }
 
-    /**Get all elements located in the provided groups
+    /**
+     * Get all elements located in the provided groups
+     *
      * @return
      */
     public List<ManageableType> getAllElements(final List<String> pGroups) {
@@ -188,14 +210,18 @@ public abstract class GenericManager<C extends ManageableType> {
         return allElements;
     }
 
-    /**Get all elements located in the default group
+    /**
+     * Get all elements located in the default group
+     *
      * @return
      */
     public List<ManageableType> getAllElements() {
         return getAllElements(DEFAULT_GROUP);
     }
 
-    /**Get all elements located in the specified group
+    /**
+     * Get all elements located in the specified group
+     *
      * @param pGroup
      * @return
      */
@@ -210,14 +236,18 @@ public abstract class GenericManager<C extends ManageableType> {
         return managedElementGroups.containsKey(pGroup);
     }
 
-    /**Get the amount of elements within the default group
+    /**
+     * Get the amount of elements within the default group
+     *
      * @return
      */
     public int getElementCount() {
         return getElementCount(DEFAULT_GROUP);
     }
 
-    /**Get the amount of elements within the specific group
+    /**
+     * Get the amount of elements within the specific group
+     *
      * @param pGroup
      * @return
      */
@@ -233,19 +263,24 @@ public abstract class GenericManager<C extends ManageableType> {
         return result;
     }
 
-    /**Adds an element to the default group
+    /**
+     * Adds an element to the default group
+     *
      * @param pElement
      */
     public void addManagedElement(C pElement) {
         addManagedElement(DEFAULT_GROUP, pElement);
     }
 
-    /**Adds an element to a specific group
+    /**
+     * Adds an element to a specific group
+     *
      * @param pGroup
      * @param pElement
      */
     public void addManagedElement(String pGroup, C pElement) {
         boolean changed = false;
+        boolean structureChanged = false;
         if (pElement == null) {
             return;
         }
@@ -256,6 +291,7 @@ public abstract class GenericManager<C extends ManageableType> {
             if (!managedElementGroups.containsKey(pGroup)) {
                 //add group if not exist
                 managedElementGroups.put(pGroup, new ArrayList<ManageableType>());
+                structureChanged = true;
             }
 
             List<ManageableType> elems = managedElementGroups.get(pGroup);
@@ -266,19 +302,25 @@ public abstract class GenericManager<C extends ManageableType> {
             elems.add(pElement);
             changed = true;
         }
-        if (changed) {
+        if (changed && !structureChanged) {
             fireDataChangedEvents(pGroup);
+        } else if (changed && structureChanged) {
+            fireDataChangedEvents();
         }
     }
 
-    /**Removes an element from the default group
+    /**
+     * Removes an element from the default group
+     *
      * @param pElement
      */
     public void removeElement(C pElement) {
         removeElement(DEFAULT_GROUP, pElement);
     }
 
-    /**Removes an element from a specific group
+    /**
+     * Removes an element from a specific group
+     *
      * @param pGroup
      * @param pElement
      */
@@ -298,14 +340,18 @@ public abstract class GenericManager<C extends ManageableType> {
         }
     }
 
-    /**Removes a list of element from the default group
-     * @param pElements 
+    /**
+     * Removes a list of element from the default group
+     *
+     * @param pElements
      */
     public void removeElements(List<C> pElements) {
         removeElements(DEFAULT_GROUP, pElements);
     }
 
-    /**Removes a list of element from the default group
+    /**
+     * Removes a list of element from the default group
+     *
      * @param pGroup
      * @param pElements
      */

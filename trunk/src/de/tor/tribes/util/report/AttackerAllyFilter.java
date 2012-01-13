@@ -11,26 +11,42 @@ import de.tor.tribes.types.ext.NoAlly;
 import de.tor.tribes.types.ext.Tribe;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.commons.lang.time.DateUtils;
 
 /**
  *
  * @author Torridity
  */
-public class AttackerAllyFilter implements ReportFilterInterface {
+public class AttackerAllyFilter implements ReportRuleInterface {
 
     private List<String> allies = null;
 
     @Override
-    public void setup(Object pFilterComponent) {
-        String[] allySplit = ((String) pFilterComponent).split(";");
-        allies = new LinkedList<String>();
-        for (String split : allySplit) {
-            if (split != null) {
-                Ally a = DataHolder.getSingleton().getAllyByName(split.trim());
-                if (a != null) {
-                    allies.add(split.trim());
+    public void setup(Object pFilterComponent) throws ReportRuleConfigurationException {
+
+
+        try {
+            String[] allySplit = ((String) pFilterComponent).split(";");
+            allies = new LinkedList<String>();
+            if (allySplit == null || allySplit.length == 0) {
+                throw new ReportRuleConfigurationException("Kein Stammestag gefunden");
+            }
+            for (String split : allySplit) {
+                if (split != null) {
+                    Ally a = DataHolder.getSingleton().getAllyByTagName(split.trim());
+                    if (a != null) {
+                        allies.add(split.trim());
+                    }
                 }
             }
+            if (allies.isEmpty()) {
+                throw new ReportRuleConfigurationException("Kein Stammestag gefunden");
+            }
+        } catch (Throwable t) {
+            if (t instanceof ReportRuleConfigurationException) {
+                throw (ReportRuleConfigurationException) t;
+            }
+            throw new ReportRuleConfigurationException(t);
         }
     }
 

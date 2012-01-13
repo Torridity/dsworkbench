@@ -786,7 +786,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     }
 
     public boolean wasLostEverything() {
-        //defenders are set to -1 if no information on them could be achived as result of a total loss
+        //defenders are set to -1 if no information on them could be achieved as result of a total loss
         try {
             return (defenders.get(defenders.keys().nextElement()) < 0);
         } catch (Exception e) {

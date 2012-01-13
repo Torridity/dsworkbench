@@ -11,9 +11,9 @@ import de.tor.tribes.util.Filter;
  *
  * @author Torridity
  */
-public interface ReportFilterInterface extends Filter<FightReport> {
+public interface ReportRuleInterface extends Filter<FightReport> {
 
-    void setup(Object pFilterComponent);
+    void setup(Object pFilterComponent) throws ReportRuleConfigurationException;
 
     String getDescription();
 

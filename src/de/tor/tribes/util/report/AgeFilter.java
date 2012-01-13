@@ -12,13 +12,17 @@ import org.apache.commons.lang.time.DurationFormatUtils;
  *
  * @author Torridity
  */
-public class AgeFilter implements ReportFilterInterface {
+public class AgeFilter implements ReportRuleInterface {
 
     private long maxAge = 0;
 
     @Override
-    public void setup(Object pFilterComponent) {
-        maxAge = (Long) pFilterComponent * DateUtils.MILLIS_PER_DAY * 365;
+    public void setup(Object pFilterComponent) throws ReportRuleConfigurationException {
+        try {
+            maxAge = (Long) pFilterComponent * DateUtils.MILLIS_PER_DAY * 365;
+        } catch (Throwable t) {
+            throw new ReportRuleConfigurationException(t);
+        }
     }
 
     @Override

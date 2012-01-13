@@ -5,10 +5,22 @@
 package de.tor.tribes.util.generator.ui;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.FarmInformation;
+import de.tor.tribes.types.FightReport;
+import de.tor.tribes.types.ext.InvalidTribe;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.PluginManager;
+import de.tor.tribes.util.TroopHelper;
+import de.tor.tribes.util.UIHelper;
+import de.tor.tribes.util.farm.FarmManager;
+import de.tor.tribes.util.report.ReportManager;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+import org.apache.commons.lang.ArrayUtils;
 
 /**
  *
@@ -33,6 +45,8 @@ public class ReportGenerator extends javax.swing.JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        buttonGroup2 = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
         jAttacker = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
@@ -45,7 +59,6 @@ public class ReportGenerator extends javax.swing.JFrame {
         jDefender = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jTarget = new javax.swing.JTextField();
-        jRadioButton4 = new javax.swing.JRadioButton();
         jSomeDef = new javax.swing.JRadioButton();
         jFullDef = new javax.swing.JRadioButton();
         jEmpty = new javax.swing.JRadioButton();
@@ -61,8 +74,15 @@ public class ReportGenerator extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jTroopsOutside = new javax.swing.JCheckBox();
+        jTroopsOnTheWay = new javax.swing.JCheckBox();
+        jWallDamaged = new javax.swing.JCheckBox();
+        jBuildingDamaged = new javax.swing.JCheckBox();
+        jButton2 = new javax.swing.JButton();
+        jReportCount = new org.jdesktop.swingx.JXTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Random Report Generator");
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jLabel1.setText("Attacker");
@@ -70,7 +90,7 @@ public class ReportGenerator extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jLabel1, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -83,12 +103,13 @@ public class ReportGenerator extends javax.swing.JFrame {
         getContentPane().add(jLabel2, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jSource, gridBagConstraints);
 
+        buttonGroup1.add(jFarming);
         jFarming.setText("Farm");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -98,6 +119,8 @@ public class ReportGenerator extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jFarming, gridBagConstraints);
 
+        buttonGroup1.add(jOffing);
+        jOffing.setSelected(true);
         jOffing.setText("Off");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -107,6 +130,7 @@ public class ReportGenerator extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jOffing, gridBagConstraints);
 
+        buttonGroup1.add(jFaking);
         jFaking.setText("Fake");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
@@ -116,7 +140,8 @@ public class ReportGenerator extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jFaking, gridBagConstraints);
 
-        jSnobbing.setText("AG");
+        buttonGroup1.add(jSnobbing);
+        jSnobbing.setText("Snob");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 2;
@@ -132,7 +157,7 @@ public class ReportGenerator extends javax.swing.JFrame {
         getContentPane().add(jLabel3, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -145,20 +170,14 @@ public class ReportGenerator extends javax.swing.JFrame {
         getContentPane().add(jLabel4, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jTarget, gridBagConstraints);
 
-        jRadioButton4.setText("Off");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        getContentPane().add(jRadioButton4, gridBagConstraints);
-
+        buttonGroup2.add(jSomeDef);
+        jSomeDef.setSelected(true);
         jSomeDef.setText("Some Def");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -168,6 +187,7 @@ public class ReportGenerator extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jSomeDef, gridBagConstraints);
 
+        buttonGroup2.add(jFullDef);
         jFullDef.setText("Full Def");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -177,6 +197,7 @@ public class ReportGenerator extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jFullDef, gridBagConstraints);
 
+        buttonGroup2.add(jEmpty);
         jEmpty.setText("Empty");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
@@ -279,14 +300,14 @@ public class ReportGenerator extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jPanel1, gridBagConstraints);
 
-        jButton1.setText("Create");
+        jButton1.setText("Create Single");
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCreateReportEvent(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.gridwidth = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
@@ -294,23 +315,266 @@ public class ReportGenerator extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jButton1, gridBagConstraints);
 
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Misc Features"));
+        jPanel2.setLayout(new java.awt.GridBagLayout());
+
+        jTroopsOutside.setText("Troops Outside");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jTroopsOutside, gridBagConstraints);
+
+        jTroopsOnTheWay.setText("Troops On The Way");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jTroopsOnTheWay, gridBagConstraints);
+
+        jWallDamaged.setSelected(true);
+        jWallDamaged.setText("Wall Damaged");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jWallDamaged, gridBagConstraints);
+
+        jBuildingDamaged.setSelected(true);
+        jBuildingDamaged.setText("Building Damaged");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jBuildingDamaged, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridwidth = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jPanel2, gridBagConstraints);
+
+        jButton2.setText("Create Many");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCreateManyReportsEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jButton2, gridBagConstraints);
+
+        jReportCount.setPrompt("Amount");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        getContentPane().add(jReportCount, gridBagConstraints);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireCreateReportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateReportEvent
-
         generateReport();
-
     }//GEN-LAST:event_fireCreateReportEvent
 
-    private void generateReport() {
-        String attacker = jAttacker.getText();
-        List<Village> target = PluginManager.getSingleton().executeVillageParser(jSource.getText());
-        if(target.isEmpty()){
-            Tribe t = DataHolder.getSingleton().getTribeByName(attacker);
+    private void fireCreateManyReportsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateManyReportsEvent
+        int amount = UIHelper.parseIntFromField(jReportCount, 1);
+        for (int i = 0; i < amount; i++) {
+            System.out.println("Generating report " + (i + 1));
+            generateReport();
         }
-        
-        
+    }//GEN-LAST:event_fireCreateManyReportsEvent
+
+    public void generateReport() {
+        FightReport r = new FightReport();
+        r.setTimestamp(System.currentTimeMillis());
+        Village source = getVillage(jAttacker.getText(), jSource.getText());
+        Village target = getVillage(jDefender.getText(), jTarget.getText());
+
+        r.setSourceVillage(source);
+        r.setTargetVillage(target);
+        r.setAttacker(source.getTribe());
+        r.setDefender(target.getTribe());
+        r.setAttackers(getAttackingTroops(r.getTargetVillage()));
+        r.setDefenders(getDefendingTroops());
+        r.setDiedAttackers((jFullDef.isSelected()) ? getReducedTroopAmount(r.getAttackers(), 0.0)
+                : (jSomeDef.isSelected()) ? getReducedTroopAmount(r.getAttackers(), Math.max(.3, Math.random()))
+                : getReducedTroopAmount(r.getAttackers(), 1.0));
+        r.setDiedDefenders((jFullDef.isSelected()) ? getReducedTroopAmount(r.getDefenders(), Math.max(.2, Math.random()))
+                : (jSomeDef.isSelected()) ? getReducedTroopAmount(r.getDefenders(), 0.0)
+                : getReducedTroopAmount(r.getDefenders(), 0.0));
+
+        if (!jFullDef.isSelected() && jSnobbing.isSelected()) {
+            r.setConquered(true);
+            r.setAcceptanceBefore((byte) 10);
+            r.setAcceptanceAfter((byte) -10);
+        }
+        if (hasHaul()) {
+            r.setHaul(UIHelper.parseIntFromField(jWoodHaul), UIHelper.parseIntFromField(jClayHaul), UIHelper.parseIntFromField(jIronHaul));
+        }
+        int[] spyInfo = getSpyInfo();
+        if (spyInfo != null) {
+            r.setWoodLevel(spyInfo[0]);
+            r.setClayLevel(spyInfo[1]);
+            r.setIronLevel(spyInfo[2]);
+            r.setStorageLevel(spyInfo[3]);
+            r.setHideLevel(spyInfo[4]);
+        }
+
+        if (jTroopsOutside.isSelected()) {
+            r.addDefendersOutside(DataHolder.getSingleton().getRandomVillage(), getReducedTroopAmount(getDefendingTroops(), Math.max(.2, Math.random())));
+            r.addDefendersOutside(DataHolder.getSingleton().getRandomVillage(), getDefendingTroops());
+        }
+
+        if (jTroopsOnTheWay.isSelected()) {
+            r.setDefendersOnTheWay(getReducedTroopAmount(getDefendingTroops(), Math.max(.2, Math.random())));
+        }
+        if (jWallDamaged.isSelected()) {
+            r.setWallBefore((byte) 20);
+            r.setWallAfter((byte) 10);
+        }
+
+        if (jBuildingDamaged.isSelected()) {
+            r.setBuildingBefore((byte) 20);
+            r.setBuildingAfter((byte) 10);
+            r.setAimedBuilding("Bauernhof");
+        }
+
+        //  System.out.println("---Adding generated report (Valid:" + r.isValid() + ")----");
+        // System.out.println(r.toXml());
+        ReportManager.getSingleton().addManagedElement(r);
+        //System.out.println("----Done----");
+    }
+
+    private Village getVillage(String pTribeString, String pVillageString) {
+        Village result;
+        List<Village> target = PluginManager.getSingleton().executeVillageParser(pVillageString);
+        if (target.isEmpty()) {
+            Tribe t = DataHolder.getSingleton().getTribeByName(pTribeString);
+            if (!t.equals(InvalidTribe.getSingleton())) {
+                result = t.getVillageList()[(int) (Math.random() * t.getVillages() - 1)];
+            } else {
+                result = DataHolder.getSingleton().getRandomVillage();
+            }
+        } else {
+            result = target.get(0);
+        }
+
+        return result;
+    }
+
+    private Hashtable<UnitHolder, Integer> getAttackingTroops(Village pVillage) {
+        Hashtable<String, Integer> units = new Hashtable<String, Integer>();
+        if (jFarming.isSelected()) {
+            FarmInformation info = FarmManager.getSingleton().getFarmInformation(pVillage);
+            if (info == null || info.getFarmTroop() == null) {
+                units.put("light", getRandomValueInRange(30, 60));
+                units.put("spy", 1);
+            } else {
+                units = info.getFarmTroop();
+            }
+        } else if (jOffing.isSelected()) {
+            units.put("axe", getRandomValueInRange(5000, 7000));
+            units.put("light", getRandomValueInRange(2000, 2300));
+            units.put("spy", getRandomValueInRange(100, 150));
+            units.put("ram", getRandomValueInRange(240, 300));
+            units.put("catapult", getRandomValueInRange(20, 50));
+        } else if (jFaking.isSelected()) {
+            units.put("spear", getRandomValueInRange(80, 110));
+            units.put("spy", getRandomValueInRange(20, 40));
+            units.put("ram", 1);
+        } else if (jSnobbing.isSelected()) {
+            units.put("axe", getRandomValueInRange(100, 300));
+            units.put("spy", 1);
+            units.put("snob", 1);
+        }
+
+        Hashtable<UnitHolder, Integer> result = TroopHelper.unitTableFromSerializableFormat(units);
+        for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
+            if (!result.containsKey(u)) {
+                result.put(u, 0);
+            }
+        }
+
+        return result;
+    }
+
+    public Hashtable<UnitHolder, Integer> getReducedTroopAmount(Hashtable<UnitHolder, Integer> pUnits, double pPercent) {
+        Hashtable<UnitHolder, Integer> units = new Hashtable<UnitHolder, Integer>();
+        Set<Entry<UnitHolder, Integer>> entries = pUnits.entrySet();
+        for (Entry<UnitHolder, Integer> entry : entries) {
+            int val = entry.getValue();
+            if (val == -1) {
+                val = -1;
+            } else {
+                val = (int) Math.rint(entry.getValue() - pPercent * entry.getValue());
+            }
+            units.put(entry.getKey(), val);
+        }
+        return units;
+    }
+
+    private Hashtable<UnitHolder, Integer> getDefendingTroops() {
+        Hashtable<String, Integer> units = new Hashtable<String, Integer>();
+        if (jSomeDef.isSelected()) {
+            units.put("spear", getRandomValueInRange(1000, 2000));
+            units.put("sword", getRandomValueInRange(1000, 2000));
+            units.put("heavy", getRandomValueInRange(300, 500));
+            units.put("spy", getRandomValueInRange(100, 200));
+        } else if (jFullDef.isSelected()) {
+            for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
+                units.put(u.getPlainName(), -1);
+            }
+        } else if (jEmpty.isSelected()) {
+            //add nothing
+        }
+
+        Hashtable<UnitHolder, Integer> result = TroopHelper.unitTableFromSerializableFormat(units);
+        for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
+            if (!result.containsKey(u)) {
+                result.put(u, 0);
+            }
+        }
+
+        return result;
+    }
+
+    private int getRandomValueInRange(int min, int max) {
+        return Math.max(min, (int) Math.random() * max);
+    }
+
+    private boolean hasHaul() {
+        return UIHelper.parseIntFromField(jWoodHaul) != 0 || UIHelper.parseIntFromField(jClayHaul) != 0 || UIHelper.parseIntFromField(jIronHaul) != 0;
+    }
+
+    private int[] getSpyInfo() {
+        int[] result = new int[]{
+            UIHelper.parseIntFromField(jWoodLevel),
+            UIHelper.parseIntFromField(jClayLevel),
+            UIHelper.parseIntFromField(jIronLevel),
+            UIHelper.parseIntFromField(jStorageLevel),
+            UIHelper.parseIntFromField(jHideLevel)};
+
+        if (ArrayUtils.contains(result, 0)) {//all buildings or nothing
+            return null;
+        }
+        return result;
     }
 
     /**
@@ -355,8 +619,12 @@ public class ReportGenerator extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JTextField jAttacker;
+    private javax.swing.JCheckBox jBuildingDamaged;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private org.jdesktop.swingx.JXTextField jClayHaul;
     private org.jdesktop.swingx.JXTextField jClayLevel;
     private javax.swing.JTextField jDefender;
@@ -375,12 +643,16 @@ public class ReportGenerator extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JRadioButton jOffing;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JRadioButton jRadioButton4;
+    private javax.swing.JPanel jPanel2;
+    private org.jdesktop.swingx.JXTextField jReportCount;
     private javax.swing.JRadioButton jSnobbing;
     private javax.swing.JRadioButton jSomeDef;
     private javax.swing.JTextField jSource;
     private org.jdesktop.swingx.JXTextField jStorageLevel;
     private javax.swing.JTextField jTarget;
+    private javax.swing.JCheckBox jTroopsOnTheWay;
+    private javax.swing.JCheckBox jTroopsOutside;
+    private javax.swing.JCheckBox jWallDamaged;
     private org.jdesktop.swingx.JXTextField jWoodHaul;
     private org.jdesktop.swingx.JXTextField jWoodLevel;
     // End of variables declaration//GEN-END:variables

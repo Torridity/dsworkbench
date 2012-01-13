@@ -78,11 +78,11 @@ public class ReportManager extends GenericManager<FightReport> {
         return rules.toArray(new RuleEntry[rules.size()]);
     }
 
-    public void addRule(ReportFilterInterface pFilter, String pToSet) {
+    public void addRule(ReportRuleInterface pFilter, String pToSet) {
         rules.add(new RuleEntry(pFilter, pToSet));
     }
 
-    public void removeRule(ReportFilterInterface pFilter) {
+    public void removeRule(ReportRuleInterface pFilter) {
 
         for (RuleEntry rule : rules.toArray(new RuleEntry[rules.size()])) {
             if (rule.getRule().equals(pFilter)) {
@@ -94,34 +94,33 @@ public class ReportManager extends GenericManager<FightReport> {
 
     @Override
     public void addManagedElement(final FightReport pElement) {
-        Object result = CollectionUtils.find(getAllElements(), new Predicate() {
+        /*
+         * Object result = CollectionUtils.find(getAllElements(), new
+         * Predicate() {
+         *
+         * @Override public boolean evaluate(Object o) { return ((FightReport)
+         * o).equals(pElement); } });
+         *
+         * if (result == null) {//report not exists yet
+         */
+        boolean filtered = false;
 
-            @Override
-            public boolean evaluate(Object o) {
-                return ((FightReport) o).equals(pElement);
+        if (farmFilter.isValid(pElement)) {
+            addManagedElement(FARM_SET, pElement, false);
+        } else {
+            for (RuleEntry entry : getRuleEntries()) {
+                if (entry.getRule().isValid(pElement)) {
+                    super.addManagedElement(entry.getTargetSet(), pElement);
+                    filtered = true;
+                    break;
+                }
             }
-        });
 
-        if (result == null) {//report not exists yet
-
-            boolean filtered = false;
-
-            if (farmFilter.isValid(pElement)) {
-                addManagedElement(FARM_SET, pElement, false);
-            } else {
-                for (RuleEntry entry : getRuleEntries()) {
-                    if (entry.getRule().isValid(pElement)) {
-                        super.addManagedElement(entry.getTargetSet(), pElement);
-                        filtered = true;
-                        break;
-                    }
-                }
-
-                if (!filtered) {
-                    super.addManagedElement(pElement);
-                }
+            if (!filtered) {
+                super.addManagedElement(pElement);
             }
         }
+        //   }
     }
 
     @Override
@@ -130,33 +129,34 @@ public class ReportManager extends GenericManager<FightReport> {
     }
 
     public void addManagedElement(String pGroup, final FightReport pElement, boolean pFiltered) {
-        Object result = CollectionUtils.find(getAllElements(pGroup), new Predicate() {
-
-            @Override
-            public boolean evaluate(Object o) {
-                return ((FightReport) o).equals(pElement);
-            }
-        });
-
-        if (result == null) {//report not exists yet
-            boolean filtered = false;
-            if (pFiltered) {
-                if (farmFilter.isValid(pElement)) {
-                    addManagedElement(FARM_SET, pElement, false);
-                } else {
-                    for (RuleEntry entry : getRuleEntries()) {
-                        if (entry.getRule().isValid(pElement)) {
-                            addManagedElement(entry.getTargetSet(), pElement);
-                            filtered = true;
-                            break;
-                        }
+        /*
+         * Object result = CollectionUtils.find(getAllElements(pGroup), new
+         * Predicate() {
+         *
+         * @Override public boolean evaluate(Object o) { return ((FightReport)
+         * o).equals(pElement); } });
+         *
+         * if (result == null) {//report not exists yet
+         */ boolean filtered = false;
+        if (pFiltered) {
+            if (farmFilter.isValid(pElement)) {
+                addManagedElement(FARM_SET, pElement, false);
+            } else {
+                for (RuleEntry entry : getRuleEntries()) {
+                    if (entry.getRule().isValid(pElement)) {
+                        addManagedElement(entry.getTargetSet(), pElement);
+                        filtered = true;
+                        break;
                     }
                 }
-                if (!filtered) {
-                    super.addManagedElement(pGroup, pElement);
-                }
             }
+            if (!filtered) {
+                super.addManagedElement(pGroup, pElement);
+            }
+        } else {//add element without filtering
+            super.addManagedElement(pGroup, pElement);
         }
+        //   }
     }
 
     public int filterNow(String pGroup) {
@@ -424,21 +424,41 @@ public class ReportManager extends GenericManager<FightReport> {
         return current;
     }
 
+    /**
+     * Return the most current report for pVillage
+     *
+     * @param pVillage
+     * @return
+     */
+    public FightReport findLastReportForVillage(Village pVillage) {
+        FightReport current = null;
+        for (ManageableType element : getAllElementsFromAllGroups()) {
+            FightReport report = (FightReport) element;
+            if ((report.getTargetVillage() != null && report.getTargetVillage().equals(pVillage))
+                    || (report.getSourceVillage() != null && report.getSourceVillage().equals(pVillage))) {
+                if (current == null || report.getTimestamp() > current.getTimestamp()) {
+                    current = report;
+                }
+            }
+        }
+        return current;
+    }
+
     public static class RuleEntry {
 
-        private ReportFilterInterface rule = null;
+        private ReportRuleInterface rule = null;
         private String targetSet = null;
 
-        public RuleEntry(ReportFilterInterface pRule, String pTargetSet) {
+        public RuleEntry(ReportRuleInterface pRule, String pTargetSet) {
             rule = pRule;
             targetSet = pTargetSet;
         }
 
-        public void setRule(ReportFilterInterface rule) {
+        public void setRule(ReportRuleInterface rule) {
             this.rule = rule;
         }
 
-        public ReportFilterInterface getRule() {
+        public ReportRuleInterface getRule() {
             return rule;
         }
 

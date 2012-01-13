@@ -18,6 +18,7 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.ProfileManager;
+import de.tor.tribes.util.generator.ui.ReportGenerator;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -389,6 +390,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             logger.debug("Initializing application window");
             DSWorkbenchMainFrame.getSingleton().init();
 
+            new ReportGenerator().setVisible(true);
+            
             logger.info("Showing application window");
             DSWorkbenchMainFrame.getSingleton().setVisible(true);
             t.stopRunning();

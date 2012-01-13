@@ -6,12 +6,9 @@ package de.tor.tribes.util.html;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.*;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.Barbarians;
-import de.tor.tribes.types.Conquer;
-import de.tor.tribes.types.Marker;
-import de.tor.tribes.types.Note;
-import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
@@ -23,6 +20,7 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.note.NoteManager;
+import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
@@ -103,7 +101,15 @@ public class VillageHTMLTooltipGenerator {
         if (pWithUnits) {
             b.append(buildUnitTableRow(pVillage));
         }
-        b.append("</table>\n").append("<html>\n");
+        b.append("</table>\n");
+        
+        //@TODO find a way to include reports properly 
+        FightReport r = ReportManager.getSingleton().findLastReportForVillage(pVillage);
+        if (r != null) {
+            String tt = FightReportHTMLToolTipGenerator.buildToolTip(r);
+            b.append("<table style=\"font-size:8px\"><tr><td>").append(tt.substring(tt.indexOf("<tr>"), tt.length() - "</http>".length())).append("</td></tr></table>");
+        }
+        b.append("<html>\n");
         return b.toString();
     }
 

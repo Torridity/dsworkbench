@@ -53,7 +53,7 @@ public class FarmResultRenderer extends DefaultTableRenderer {
                 case NO_ADEQUATE_SOURCE_BY_RANGE:
                     label.setIcon(noSourceByRangeIcon);
                     break;
-                case NO_ADEQUATE_SOURCE_BY_CARRY_CAPACITY:
+                case NO_ADEQUATE_SOURCE_BY_NEEDED_TROOPS:
                     label.setIcon(noSourceByCarryCapacityIcon);
                     break;
                 case NO_ADEQUATE_SOURCE_BY_MIN_HAUL:

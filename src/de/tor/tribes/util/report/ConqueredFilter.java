@@ -11,7 +11,7 @@ import de.tor.tribes.types.FightReport;
  *
  * @author Torridity
  */
-public class ConqueredFilter implements ReportFilterInterface {
+public class ConqueredFilter implements ReportRuleInterface {
 
     @Override
     public void setup(Object pFilterComponent) {

@@ -13,20 +13,24 @@ import java.util.List;
  *
  * @author Torridity
  */
-public class DateFilter implements ReportFilterInterface {
+public class DateFilter implements ReportRuleInterface {
 
     private long start = 0;
     private long end = 0;
 
     @Override
-    public void setup(Object pFilterComponent) {
-        List<Long> dates = (List<Long>) pFilterComponent;
-        start = dates.get(0);
-        end = dates.get(1);
-        if (start > end) {
-            long tmp = end;
-            end = start;
-            start = tmp;
+    public void setup(Object pFilterComponent) throws ReportRuleConfigurationException {
+        try {
+            List<Long> dates = (List<Long>) pFilterComponent;
+            start = dates.get(0);
+            end = dates.get(1);
+            if (start > end) {
+                long tmp = end;
+                end = start;
+                start = tmp;
+            }
+        } catch (Throwable t) {
+            throw new ReportRuleConfigurationException(t);
         }
     }
 

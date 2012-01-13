@@ -179,7 +179,7 @@ public class UnitHolder implements Serializable {
     }
 
     public boolean isFarmUnit() {
-        return getCarry() > 0;
+        return getCarry() > 0 || (getPlainName() != null && getPlainName().equals("spy"));
     }
 
     public boolean isInfantry() {

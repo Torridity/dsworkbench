@@ -11,7 +11,7 @@ import de.tor.tribes.types.FightReport;
  *
  * @author Torridity
  */
-public class FakeFilter implements ReportFilterInterface {
+public class FakeFilter implements ReportRuleInterface {
 
     @Override
     public void setup(Object pFilterComponent) {

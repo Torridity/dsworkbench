@@ -130,7 +130,7 @@ public class TroopHelper {
         return result.toArray(new Village[result.size()]);
     }
 
-    public static Hashtable<UnitHolder, Integer> getTroopsForCarriage(Village pSource, Village pTarget, FarmInformation pInfo) {
+    public static Hashtable<UnitHolder, Integer> getTroopsForCarriage(Village pSource, FarmInformation pInfo) {
         Hashtable<UnitHolder, Integer> units = new Hashtable<UnitHolder, Integer>();
         VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pSource, TroopsManager.TROOP_TYPE.OWN);
         double unitSpeed = 0;
@@ -144,7 +144,7 @@ public class TroopHelper {
             for (UnitHolder unit : allowed) {
                 int amount = holder.getTroopsOfUnitInVillage(unit);
                 if (amount > 0) {
-                    int resources = pInfo.getResourcesInStorage(System.currentTimeMillis() + DSCalculator.calculateMoveTimeInMillis(pSource, pTarget, unit.getSpeed()));
+                    int resources = pInfo.getResourcesInStorage(System.currentTimeMillis() + DSCalculator.calculateMoveTimeInMillis(pSource, pInfo.getVillage(), unit.getSpeed()));
                     neededUnits.add(unit);
                     unitSpeed = Math.max(unitSpeed, unit.getSpeed());
                     for (UnitHolder neededUnit : neededUnits) {
@@ -158,7 +158,7 @@ public class TroopHelper {
                 }
             }
 
-            int resources = pInfo.getResourcesInStorage(System.currentTimeMillis() + DSCalculator.calculateMoveTimeInMillis(pSource, pTarget, unitSpeed));
+            int resources = pInfo.getResourcesInStorage(System.currentTimeMillis() + DSCalculator.calculateMoveTimeInMillis(pSource, pInfo.getVillage(), unitSpeed));
             if (resources < minHaul) {
                 logger.debug("Min haul not reached (" + resources + " < " + minHaul + ")");
                 return units;

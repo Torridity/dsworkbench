@@ -8,6 +8,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import java.util.Hashtable;
 import java.util.List;
+import org.jdom.Attribute;
 import org.jdom.Element;
 
 /**
@@ -22,7 +23,7 @@ public class XMLHelper {
         List<UnitHolder> units = DataHolder.getSingleton().getUnits();
         for (UnitHolder unit : units) {
             Integer am = pTroops.get(unit);
-            if (am != null) {
+            if (am != null && am != 0) {
                 b.append(unit.getPlainName()).append("=\"").append(am).append("\" ");
             }
         }
@@ -39,8 +40,14 @@ public class XMLHelper {
         }
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             try {
-                troops.put(unit, troopsElement.getAttribute(unit.getPlainName()).getIntValue());
+                Attribute attrib = troopsElement.getAttribute(unit.getPlainName());
+                if (attrib != null) {
+                    troops.put(unit, attrib.getIntValue());
+                } else {
+                    troops.put(unit, Integer.valueOf(0));
+                }
             } catch (Exception ex) {
+                troops.put(unit, Integer.valueOf(0));
             }
         }
         return troops;

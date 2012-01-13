@@ -15,21 +15,35 @@ import java.util.List;
  *
  * @author Torridity
  */
-public class DefenderFilter implements ReportFilterInterface {
+public class DefenderFilter implements ReportRuleInterface {
 
     private List<String> tribes = null;
 
     @Override
-    public void setup(Object pFilterComponent) {
-        String[] tribeSplit = ((String) pFilterComponent).split(";");
-        tribes = new LinkedList<String>();
-        for (String split : tribeSplit) {
-            if (split != null) {
-                Tribe t = DataHolder.getSingleton().getTribeByName(split.trim());
-                if (t != null && !t.equals(InvalidTribe.getSingleton())) {
-                    tribes.add(split.trim());
+    public void setup(Object pFilterComponent) throws ReportRuleConfigurationException {
+
+        try {
+            String[] tribeSplit = ((String) pFilterComponent).split(";");
+            if (tribeSplit == null || tribeSplit.length == 0) {
+                throw new ReportRuleConfigurationException("Kein Spielername gefunden");
+            }
+            tribes = new LinkedList<String>();
+            for (String split : tribeSplit) {
+                if (split != null) {
+                    Tribe t = DataHolder.getSingleton().getTribeByName(split.trim());
+                    if (t != null && !t.equals(InvalidTribe.getSingleton())) {
+                        tribes.add(split.trim());
+                    }
                 }
             }
+            if (tribes.isEmpty()) {
+                throw new ReportRuleConfigurationException("Kein Spielername gefunden");
+            }
+        } catch (Throwable t) {
+            if (t instanceof ReportRuleConfigurationException) {
+                throw (ReportRuleConfigurationException) t;
+            }
+            throw new ReportRuleConfigurationException(t);
         }
     }
 

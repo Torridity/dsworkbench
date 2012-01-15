@@ -586,7 +586,7 @@ class ResourceDistributionTableModel extends AbstractTableModel {
         "Dorf", "Rohstoffe", "Handelsrichtung"
     };
     Class[] types = new Class[]{
-        Village.class, new double[0].getClass(), VillageMerchantInfo.Direction.class
+        Village.class, StorageStatus.class, VillageMerchantInfo.Direction.class
     };
     private final List<VillageMerchantInfo> elements = new LinkedList<VillageMerchantInfo>();
 

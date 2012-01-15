@@ -20,6 +20,9 @@ public class ReportInfoPanel extends javax.swing.JPanel {
     }
 
     public void configure(FightReport pReport) {
+        if (pReport == null) {
+            return;
+        }
         jLabel2.setVisible(pReport.wasWallDamaged());
         jLabel1.setVisible(pReport.wasBuildingDamaged());
         jLabel3.setVisible(pReport.wasSnobAttack());

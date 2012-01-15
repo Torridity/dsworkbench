@@ -40,9 +40,9 @@ public class DistanceManager {
         List<Village> tmp = new LinkedList<Village>();
 
         for (int col : pIds) {
-            col = col - 1;
-            if (col >= 0) {
-                tmp.add(villages.get(col));
+            int tCol = col - 1;
+            if (tCol >= 0) {
+                tmp.add(villages.get(tCol));
             }
         }
 

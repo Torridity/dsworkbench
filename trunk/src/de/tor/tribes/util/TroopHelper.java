@@ -32,14 +32,18 @@ public class TroopHelper {
             VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN);
             if (holder != null) {
                 Enumeration<UnitHolder> keys = pTroops.keys();
+                boolean villageFits = true;
                 while (keys.hasMoreElements()) {
                     UnitHolder key = keys.nextElement();
                     if (holder.getTroopsOfUnitInVillage(key) < pTroops.get(key)) {
-                        continue;
+                        villageFits = false;
+                        break;
                     }
                 }
                 //village is valid
-                result.add(v);
+                if (villageFits) {
+                    result.add(v);
+                }
             }
         }
 
@@ -135,7 +139,6 @@ public class TroopHelper {
         VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pSource, TroopsManager.TROOP_TYPE.OWN);
         double unitSpeed = 0;
         int minUnits = DSWorkbenchFarmManager.getSingleton().getMinUnits();
-        int minHaul = DSWorkbenchFarmManager.getSingleton().getMinHaul();
 
         if (holder != null) {
             List<UnitHolder> neededUnits = new LinkedList<UnitHolder>();
@@ -159,10 +162,6 @@ public class TroopHelper {
             }
 
             int resources = pInfo.getResourcesInStorage(System.currentTimeMillis() + DSCalculator.calculateMoveTimeInMillis(pSource, pInfo.getVillage(), unitSpeed));
-            if (resources < minHaul) {
-                logger.debug("Min haul not reached (" + resources + " < " + minHaul + ")");
-                return units;
-            }
             int unitCount = 0;
             for (UnitHolder unit : neededUnits) {
                 int amount = holder.getTroopsOfUnitInVillage(unit);
@@ -264,6 +263,31 @@ public class TroopHelper {
             pop += unit.getPop() * pTroops.get(unit);
         }
         return pop == 0;
+    }
+
+    public static String unitTableToProperty(Hashtable<UnitHolder, Integer> pTroops) {
+        StringBuilder result = new StringBuilder();
+        Enumeration<UnitHolder> keys = pTroops.keys();
+        while (keys.hasMoreElements()) {
+            UnitHolder key = keys.nextElement();
+            result.append(key.getPlainName()).append("=").append(pTroops.get(key)).append("/");
+        }
+        return result.toString().substring(0, result.length() - 1);
+    }
+
+    public static Hashtable<UnitHolder, Integer> propertyToUnitTable(String pProperty) {
+        Hashtable<UnitHolder, Integer> result = new Hashtable<UnitHolder, Integer>();
+        try {
+            String[] troops = pProperty.split("/");
+            for (String unit : troops) {
+                String[] split = unit.split("=");
+                result.put(DataHolder.getSingleton().getUnitByPlainName(split[0].trim()), Integer.parseInt(split[1]));
+            }
+        } catch (Exception e) {
+            logger.warn("Failed to read troops from property '" + pProperty + "'", e);
+            result.clear();
+        }
+        return result;
     }
 
     public static Hashtable<String, Integer> unitTableToSerializableFormat(Hashtable<UnitHolder, Integer> pTroops) {

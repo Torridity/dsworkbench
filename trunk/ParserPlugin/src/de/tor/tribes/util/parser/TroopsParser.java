@@ -11,7 +11,7 @@ import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.windows.NotifierFrame;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
-import de.tor.tribes.util.interfaces.SilentParserInterface;
+import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.util.Hashtable;

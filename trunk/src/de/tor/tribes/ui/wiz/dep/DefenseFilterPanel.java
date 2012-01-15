@@ -130,7 +130,7 @@ public class DefenseFilterPanel extends javax.swing.JPanel implements WizardPane
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jXCollapsiblePane1, gridBagConstraints);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10));
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Informationen einblenden");
         jLabel1.setToolTipText("Blendet Informationen zu dieser Ansicht und zu den Datenquellen ein/aus");
@@ -273,6 +273,7 @@ public class DefenseFilterPanel extends javax.swing.JPanel implements WizardPane
         jPanel2.add(jPanel4, gridBagConstraints);
 
         jToggleButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/search.png"))); // NOI18N
+        jToggleButton1.setToolTipText("Informationskarte vergrößern");
         jToggleButton1.setMaximumSize(new java.awt.Dimension(100, 23));
         jToggleButton1.setMinimumSize(new java.awt.Dimension(100, 23));
         jToggleButton1.setPreferredSize(new java.awt.Dimension(100, 23));

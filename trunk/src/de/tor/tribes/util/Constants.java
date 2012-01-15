@@ -13,7 +13,7 @@ import java.util.Hashtable;
  */
 public class Constants {
 
-    public final static double VERSION = 3.1;
+    public final static double VERSION = 3.2;
     public final static String VERSION_ADDITION = "";
     public final static Color DS_BACK = new Color(225, 213, 190);
     public final static Color DS_BACK_LIGHT = new Color(239, 235, 223);
@@ -28,7 +28,7 @@ public class Constants {
     public final static String SERVER_DIR = "./servers";
     public static Hashtable<String, Integer> LAYERS = null;
     public final static int LAYER_COUNT = 9;
-    public final static boolean DEBUG = true;
+    public final static boolean DEBUG = false;
 
     static {
         LAYERS = new Hashtable<String, Integer>();

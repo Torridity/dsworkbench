@@ -129,7 +129,7 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
 
         setLayout(new java.awt.GridBagLayout());
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10));
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Informationen einblenden");
         jLabel1.setToolTipText("Blendet Informationen zu dieser Ansicht und zu den Datenquellen ein/aus");
@@ -155,7 +155,7 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
 
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
-        jButton1.setToolTipText("Verwendbare Informationen in der Zwischenablage suchen");
+        jButton1.setToolTipText("Iin der Zwischenablage nach kopierter Produktionsübersicht suchen");
         jButton1.setMaximumSize(new java.awt.Dimension(120, 60));
         jButton1.setMinimumSize(new java.awt.Dimension(120, 60));
         jButton1.setPreferredSize(new java.awt.Dimension(120, 60));

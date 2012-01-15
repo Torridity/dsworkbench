@@ -72,12 +72,17 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
         return null;
     }
 
+    public static JFrame getFrame() {
+        return parent;
+    }
+
     public static void show() {
         if (parent != null) {
             parent.toFront();
             return;
         }
         parent = new JFrame();
+        parent.setTitle("Angriffsplaner");
         WizardPanelProvider provider = new TacticsPlanerWizard();
         Wizard wizard = provider.createWizard();
         parent.getContentPane().setLayout(new BorderLayout());

@@ -116,6 +116,7 @@ public class DefensePlanerWizard extends WizardPanelProvider {
             return;
         }
         parent = new JFrame();
+        parent.setTitle("Verteidigungsplaner");
         WizardPanelProvider provider = new DefensePlanerWizard();
         Wizard wizard = provider.createWizard();
         parent.getContentPane().setLayout(new BorderLayout());

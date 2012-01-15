@@ -86,7 +86,7 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="jButton1">
           <Properties>
-            <Property name="toolTipText" type="java.lang.String" value="Verwendbare Informationen in der Zwischenablage suchen"/>
+            <Property name="toolTipText" type="java.lang.String" value="Iin der Zwischenablage nach kopierter Produktions&#xfc;bersicht suchen"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[120, 60]"/>
             </Property>

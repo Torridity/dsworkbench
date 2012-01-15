@@ -11,7 +11,7 @@ import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.TargetInformation;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.util.interfaces.GenericParserInterface;
+import de.tor.tribes.util.GenericParserInterface;
 import de.tor.tribes.util.ServerSettings;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
@@ -24,6 +24,8 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.jfree.date.DateUtilities;
@@ -37,51 +39,24 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
     private boolean debug = true;
     private static Logger logger = Logger.getLogger("SOSParser");
     /*
-    [b]Verteidiger[/b]
-    Name: [player]Rattenfutter[/player]
-    Stamm: [ally][KdS][/ally]
-    Punkte: 1887516
-    
-    [b]Angegriffenes Dorf[/b]
-    [coord]444|867[/coord]
-    Punkte: 10000
-    Stufe des Walls: 20
-    
-    
-    [b]Anwesende Truppen[/b]
-    [unit]axe[/unit] 8000
-    [unit]spy[/unit] 6
-    
-    [b]1. Angriff[/b]
-    Angreifer: [player]Rattenfutter[/player]
-    Stamm: [ally][KdS][/ally]
-    Punkte: 1887516
-    Herkunft: [coord]444|868[/coord]
-    Ankunftszeit: 24.12.11 18:30:10:935
-    [b]Angegriffenes Dorf[/b]
-    [coord]443|871[/coord]
-    Punkte: 10014
-    Stufe des Walls: 20
-    
-    
-    [b]Anwesende Truppen[/b]
-    [unit]axe[/unit] 41
-    [unit]spy[/unit] 45
-    [unit]ram[/unit] 8
-    
-    [b]1. Angriff[/b]
-    Angreifer: [player]Rattenfutter[/player]
-    Stamm: [ally][KdS][/ally]
-    Punkte: 1887516
-    Herkunft: [coord]444|868[/coord]
-    Ankunftszeit: 23.12.11 18:44:00:931
-    
-    [b]2. Angriff[/b]
-    Angreifer: [player]Rattenfutter[/player]
-    Stamm: [ally][KdS][/ally]
-    Punkte: 1887516
-    Herkunft: [coord]444|867[/coord]
-    Ankunftszeit: 23.12.11 18:44:15:931
+     * [b]Verteidiger[/b] Name: [player]Rattenfutter[/player] Stamm: [ally][KdS][/ally] Punkte: 1887516
+     *
+     * [b]Angegriffenes Dorf[/b] [coord]444|867[/coord] Punkte: 10000 Stufe des Walls: 20
+     *
+     *
+     * [b]Anwesende Truppen[/b] [unit]axe[/unit] 8000 [unit]spy[/unit] 6
+     *
+     * [b]1. Angriff[/b] Angreifer: [player]Rattenfutter[/player] Stamm: [ally][KdS][/ally] Punkte: 1887516 Herkunft: [coord]444|868[/coord]
+     * Ankunftszeit: 24.12.11 18:30:10:935 [b]Angegriffenes Dorf[/b] [coord]443|871[/coord] Punkte: 10014 Stufe des Walls: 20
+     *
+     *
+     * [b]Anwesende Truppen[/b] [unit]axe[/unit] 41 [unit]spy[/unit] 45 [unit]ram[/unit] 8
+     *
+     * [b]1. Angriff[/b] Angreifer: [player]Rattenfutter[/player] Stamm: [ally][KdS][/ally] Punkte: 1887516 Herkunft: [coord]444|868[/coord]
+     * Ankunftszeit: 23.12.11 18:44:00:931
+     *
+     * [b]2. Angriff[/b] Angreifer: [player]Rattenfutter[/player] Stamm: [ally][KdS][/ally] Punkte: 1887516 Herkunft: [coord]444|867[/coord]
+     * Ankunftszeit: 23.12.11 18:44:15:931
      */
 
     public List<SOSRequest> parse(String pData) {
@@ -211,45 +186,33 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
     }
 
     /**
-    [b]Dorf:[/b] [coord]454|943[/coord]
-    [b]Wallstufe:[/b] 20
-    [b]Verteidiger:[/b]  18314  13982  0  18659  353  0  0  4825  0  17  0  0
-    
-    LKAV?, 20 Checkpoint (465|883) , K84 [coord]465|883[/coord] --> Ankunftszeit: 24.08.11 23:38:53:674 [player]Frank R.[/player]
-    Ramm, 31 dieBrüder 02 (460|888) , K84 [coord]460|888[/coord] --> Ankunftszeit: 25.08.11 17:14:33:064 [player]Frank R.[/player]
-    
-    [b]Dorf:[/b] [coord]453|943[/coord]
-    [b]Wallstufe:[/b] 20
-    [b]Verteidiger:[/b]  14998  13360  5929  14998  100  2809  260  3000 300  40  0  0
-    
-    Ramm, 22 Checkpoint (452|898) , K84 [coord]452|898[/coord] --> Ankunftszeit: 25.08.11 12:01:23:952 [player]Frank R.[/player]
-    
-    [b]Dorf:[/b] [coord]452|944[/coord]
-    [b]Wallstufe:[/b] 20
-    [b]Verteidiger:[/b]  18581  13354  0  18581  410  0  0  4994  0  19  0  0
-    
-    Ramm, 42 The White Knigth 04 (448|894) , K84 [coord]448|894[/coord] --> Ankunftszeit: 25.08.11 14:46:51:846 [player]Frank R.[/player]
-    
-    ================================================
-    Dorf: Just4Testing (454|943) K55
-    Wallstufe: 20
-    Verteidiger: 18314 13982 0 18659 353 0 0 4825 0 17 0 0
-    
-    LKAV?, 20 Checkpoint (465|883) , K84 Just4Testing (465|883) K55 --> Ankunftszeit: 24.08.11 23:38:53:674 Frank R.
-    Ramm, 31 dieBrüder 02 (460|888) , K84 Just4Testing (460|888) K55 --> Ankunftszeit: 25.08.11 17:14:33:064 Frank R.
-    
-    Dorf: Just4Testing (453|943) K55
-    Wallstufe: 20
-    Verteidiger: 14998 13360 5929 14998 100 2809 260 3000 300 40 0 0
-    
-    Ramm, 22 Checkpoint (452|898) , K84 Just4Testing (452|898) K55 --> Ankunftszeit: 25.08.11 12:01:23:952 Torridity
-    
-    Dorf: Just4Testing (452|944) K55
-    Wallstufe: 20
-    Verteidiger: 18581 13354 0 18581 410 0 0 4994 0 19 0 0
-    
-    Ramm, 42 The White Knigth 04 (448|894) , K84 Just4Testing (448|894) K55 --> Ankunftszeit: 25.08.11 14:46:51:846 Torridity
-    
+     * [b]Dorf:[/b] [coord]454|943[/coord] [b]Wallstufe:[/b] 20 [b]Verteidiger:[/b] 18314 13982 0 18659 353 0 0 4825 0 17 0 0
+     *
+     * LKAV?, 20 Checkpoint (465|883) , K84 [coord]465|883[/coord] --> Ankunftszeit: 24.08.11 23:38:53:674 [player]Frank R.[/player] Ramm,
+     * 31 dieBrüder 02 (460|888) , K84 [coord]460|888[/coord] --> Ankunftszeit: 25.08.11 17:14:33:064 [player]Frank R.[/player]
+     *
+     * [b]Dorf:[/b] [coord]453|943[/coord] [b]Wallstufe:[/b] 20 [b]Verteidiger:[/b] 14998 13360 5929 14998 100 2809 260 3000 300 40 0 0
+     *
+     * Ramm, 22 Checkpoint (452|898) , K84 [coord]452|898[/coord] --> Ankunftszeit: 25.08.11 12:01:23:952 [player]Frank R.[/player]
+     *
+     * [b]Dorf:[/b] [coord]452|944[/coord] [b]Wallstufe:[/b] 20 [b]Verteidiger:[/b] 18581 13354 0 18581 410 0 0 4994 0 19 0 0
+     *
+     * Ramm, 42 The White Knigth 04 (448|894) , K84 [coord]448|894[/coord] --> Ankunftszeit: 25.08.11 14:46:51:846 [player]Frank R.[/player]
+     *
+     * ================================================ Dorf: Just4Testing (454|943) K55 Wallstufe: 20 Verteidiger: 18314 13982 0 18659 353
+     * 0 0 4825 0 17 0 0
+     *
+     * LKAV?, 20 Checkpoint (465|883) , K84 Just4Testing (465|883) K55 --> Ankunftszeit: 24.08.11 23:38:53:674 Frank R. Ramm, 31 dieBrüder
+     * 02 (460|888) , K84 Just4Testing (460|888) K55 --> Ankunftszeit: 25.08.11 17:14:33:064 Frank R.
+     *
+     * Dorf: Just4Testing (453|943) K55 Wallstufe: 20 Verteidiger: 14998 13360 5929 14998 100 2809 260 3000 300 40 0 0
+     *
+     * Ramm, 22 Checkpoint (452|898) , K84 Just4Testing (452|898) K55 --> Ankunftszeit: 25.08.11 12:01:23:952 Torridity
+     *
+     * Dorf: Just4Testing (452|944) K55 Wallstufe: 20 Verteidiger: 18581 13354 0 18581 410 0 0 4994 0 19 0 0
+     *
+     * Ramm, 42 The White Knigth 04 (448|894) , K84 Just4Testing (448|894) K55 --> Ankunftszeit: 25.08.11 14:46:51:846 Torridity
+     *
      */
     private Hashtable<Tribe, SOSRequest> parseRequestsShort(String pData) {
         String[] lines = pData.split("\n");
@@ -266,16 +229,16 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
         }
 
         for (String line : lines) {
-            line = line.trim();
-            if (line.contains("Dorf:")) {
-                print("Village line '" + line + "'");
+            String usedLine = line.trim();
+            if (usedLine.contains("Dorf:")) {
+                print("Village line '" + usedLine + "'");
                 if (request != null && destination != null) {
                     print("Store last request");
                     requests.put(destination.getTribe(), request);
                 }
 
                 destination = null;
-                List<Village> villages = new VillageParser().parse(line);
+                List<Village> villages = new VillageParser().parse(usedLine);
                 //check if there is a village in the line
                 if (!villages.isEmpty()) {
                     //got destination
@@ -297,10 +260,10 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
 
 
             if (destination != null) {
-                print("Check destination in '" + line + "'");
-                if (line.contains("Wallstufe:")) {
-                    print("Check wall in line '" + line + "'");
-                    String wallSplit[] = line.split(" ");
+                print("Check destination in '" + usedLine + "'");
+                if (usedLine.contains("Wallstufe:")) {
+                    print("Check wall in line '" + usedLine + "'");
+                    String wallSplit[] = usedLine.split(" ");
                     if (wallSplit != null && wallSplit.length >= 2) {
                         print("Check for valid wall");
                         try {
@@ -313,9 +276,9 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
                     } else {
                         print("Invalid wall entry '" + wallSplit + "'");
                     }
-                } else if (line.contains("Verteidiger:")) {
-                    print("Get units from line '" + line + "'");
-                    int[] units = parseUnits(line);
+                } else if (usedLine.contains("Verteidiger:")) {
+                    print("Get units from line '" + usedLine + "'");
+                    int[] units = parseUnits(usedLine);
                     if (units.length != 0) {
                         print("Valid units, add to destination");
                         int cnt = 0;
@@ -324,10 +287,10 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
                             cnt++;
                         }
                     }
-                } else if (line.contains("-->")) {
+                } else if (usedLine.contains("-->")) {
                     //got attack?
-                    print("Check attack in line '" + line + "'");
-                    String[] attackSplit = line.split("-->");
+                    print("Check attack in line '" + usedLine + "'");
+                    String[] attackSplit = usedLine.split("-->");
                     if (attackSplit != null && attackSplit.length >= 2) {
                         print("Try to get attacker in split '" + attackSplit[0]);
                         List<Village> sources = new VillageParser().parse(attackSplit[0]);
@@ -335,6 +298,12 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
                             print("Got source");
                             Village source = sources.get(sources.size() - 1);
                             Date arrive = null;
+                            UnitHolder unit = null;
+                            boolean fake = false;
+                            if (source != null) {
+                                unit = guessUnit(attackSplit[0].replaceAll(Pattern.quote(source.getName()), ""));
+                                fake = markedAsFake(attackSplit[0].replaceAll(Pattern.quote(source.getName()), ""));
+                            }
 
                             try {
                                 String[] arriveSplit = attackSplit[1].trim().split(" ");
@@ -352,7 +321,19 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
                                 print("Failed to parse date (" + e.getMessage() + ")");
                             }
                             if (source != null && arrive != null) {
-                                request.getTargetInformation(destination).addAttack(source, arrive);
+                                try {
+                                    if (unit != null && unit.getPlainName().equals("ag")) {
+                                        request.getTargetInformation(destination).addAttack(source, arrive, unit, false, true);
+                                    } else if (fake) {
+                                        request.getTargetInformation(destination).addAttack(source, arrive, unit, true, false);
+                                    } else {
+                                        request.getTargetInformation(destination).addAttack(source, arrive, unit);
+                                    }
+                                } catch (Throwable t) {
+                                    logger.info("Failed to add attack with unit. Using old target information format");
+                                    //old target information format!?
+                                    request.getTargetInformation(destination).addAttack(source, arrive);
+                                }
                             }
                         }
                     } else {
@@ -367,6 +348,38 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
             requests.put(destination.getTribe(), request);
         }
         return requests;
+    }
+
+    private UnitHolder guessUnit(String pString) {
+        if (pString.toLowerCase().startsWith("ram")) {
+            return DataHolder.getSingleton().getUnitByPlainName("ram");
+        } else if (pString.toLowerCase().startsWith("ag")) {
+            return DataHolder.getSingleton().getUnitByPlainName("ag");
+        } else if (pString.toLowerCase().startsWith("kata") || pString.toLowerCase().startsWith("cata")) {
+            return DataHolder.getSingleton().getUnitByPlainName("catapult");
+        } else if (pString.toLowerCase().startsWith("lkav")) {
+            return DataHolder.getSingleton().getUnitByPlainName("light");
+        } else if (pString.toLowerCase().startsWith("axt")) {
+            return DataHolder.getSingleton().getUnitByPlainName("axe");
+        } else if (pString.toLowerCase().startsWith("späh") || pString.toLowerCase().startsWith("spy")) {
+            return DataHolder.getSingleton().getUnitByPlainName("spy");
+        } else if (pString.toLowerCase().startsWith("axt")) {
+            return DataHolder.getSingleton().getUnitByPlainName("axe");
+        } else if (pString.toLowerCase().startsWith("lkav")) {
+            return DataHolder.getSingleton().getUnitByPlainName("light");
+        } else if (pString.toLowerCase().startsWith("speer")) {
+            return DataHolder.getSingleton().getUnitByPlainName("spear");
+        } else if (pString.toLowerCase().startsWith("schwert")) {
+            return DataHolder.getSingleton().getUnitByPlainName("sword");
+        } else if (pString.toLowerCase().startsWith("skav")) {
+            return DataHolder.getSingleton().getUnitByPlainName("heavy");
+        }
+
+        return null;
+    }
+
+    private boolean markedAsFake(String pString) {
+        return pString.toLowerCase().startsWith("fake");
     }
 
     private static int[] parseUnits(String pLine) {
@@ -394,9 +407,9 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
             logger.debug(pText);
         }
 
-        /*if (debug) {
-        System.out.println(pText);
-        }*/
+        /*
+         * if (debug) { System.out.println(pText); }
+         */
     }
 
     public static Hashtable<Tribe, SOSRequest> attacksToSOSRequests(List<Attack> pAttacks) {
@@ -417,6 +430,7 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
     }
 
     public static void main(String[] args) throws Exception {
+
         try {
             Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
             String data = (String) t.getTransferData(DataFlavor.stringFlavor);

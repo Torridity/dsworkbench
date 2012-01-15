@@ -10,6 +10,7 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.FarmInformation;
 import de.tor.tribes.types.FightReport;
+import de.tor.tribes.types.ext.BarbarianAlly;
 import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
@@ -86,13 +87,14 @@ public class FarmManager extends GenericManager<FarmInformation> {
         Tribe yourTribe = GlobalOptions.getSelectedProfile().getTribe();
         Point center = DSCalculator.calculateCenterOfMass(Arrays.asList(yourTribe.getVillageList()));
         invalidate();
-        for (ManageableType t : ReportManager.getSingleton().getAllElements()) {
+        for (ManageableType t : ReportManager.getSingleton().getAllElementsFromAllGroups()) {
             FightReport report = (FightReport) t;
             Village target = report.getTargetVillage();
             if (report.isWon()) {
                 if (DSCalculator.calculateDistance(new Village(center.x, center.y), report.getTargetVillage()) <= pRadius) {//in radius
                     if (!report.getTargetVillage().getTribe().equals(t)
                             && (report.getTargetVillage().getTribe().getAlly() == null
+                            || report.getTargetVillage().getTribe().getAlly().equals(BarbarianAlly.getSingleton())
                             || !report.getTargetVillage().getTribe().getAlly().equals(yourTribe.getAlly()))) {
                         if (!handled.contains(target)) {//add farm
                             FarmInformation info = addFarm(target);
@@ -163,6 +165,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
             r = new FileReader(pFile);
             List<ManageableType> el = (List<ManageableType>) x.fromXML(r);
             invalidate();
+            initialize();
             for (ManageableType t : el) {
                 FarmInformation info = (FarmInformation) t;
                 info.revalidate();

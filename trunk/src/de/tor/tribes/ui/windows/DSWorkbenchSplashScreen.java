@@ -389,7 +389,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             logger.debug("Initializing application window");
             DSWorkbenchMainFrame.getSingleton().init();
 
-            new ReportGenerator().setVisible(true);
+           // new ReportGenerator().setVisible(true);
 
             logger.info("Showing application window");
             DSWorkbenchMainFrame.getSingleton().setVisible(true);
@@ -434,9 +434,11 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 if (arg.equals("-d") || arg.equals("--debug")) {
                     //debug mode
                     mode = 1;
+                    JOptionPane.showMessageDialog(null, "Running in debug mode");
                 } else if (arg.equals("-i") || arg.equals("--info")) {
                     //info mode
                     mode = 0;
+                    JOptionPane.showMessageDialog(null, "Running in info mode");
                 } else if (arg.equals("-m")) {
                     minimal = 1;
                 }
@@ -449,6 +451,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             a = new org.apache.log4j.RollingFileAppender();
             ((org.apache.log4j.RollingFileAppender) a).setMaxFileSize("1MB");
         } else {
+            JOptionPane.showMessageDialog(null, "Developer Mode enabled");
             a = new org.apache.log4j.ConsoleAppender();
             ((org.apache.log4j.ConsoleAppender) a).setWriter(new PrintWriter(System.out));
         }

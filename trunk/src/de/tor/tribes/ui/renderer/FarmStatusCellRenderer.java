@@ -26,6 +26,7 @@ public class FarmStatusCellRenderer extends DefaultTableRenderer {
     private ImageIcon troopsFoundIcon = null;
     private ImageIcon conqueredIcon = null;
     private ImageIcon farmingIcon = null;
+    private ImageIcon reportIcon = null;
     private ImageIcon returningIcon = null;
 
     public FarmStatusCellRenderer() {
@@ -37,6 +38,7 @@ public class FarmStatusCellRenderer extends DefaultTableRenderer {
             conqueredIcon = new ImageIcon("./graphics/icons/warning.png");
             farmingIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/trade_in.png"));
             returningIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/trade_out.png"));
+            reportIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/report.png"));
         } catch (Exception e) {
         }
     }
@@ -65,6 +67,9 @@ public class FarmStatusCellRenderer extends DefaultTableRenderer {
                     break;
                 case RETURNING:
                     label.setIcon(returningIcon);
+                    break;
+                case REPORT_EXPECTED:
+                    label.setIcon(reportIcon);
                     break;
                 default:
                     label.setIcon(readyIcon);

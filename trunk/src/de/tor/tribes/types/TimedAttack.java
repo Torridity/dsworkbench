@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Village;
 import java.util.Date;
 
@@ -12,7 +13,9 @@ import java.util.Date;
  * @author Torridity
  */
 public class TimedAttack {
+
     private Village mSource = null;
+    private UnitHolder unit = null;
     private long lArriveTime = 0;
     private boolean possibleFake = false;
     private boolean possibleSnob = false;
@@ -20,6 +23,14 @@ public class TimedAttack {
     public TimedAttack(Village pSource, Date pArriveTime) {
         mSource = pSource;
         lArriveTime = pArriveTime.getTime();
+    }
+
+    public void setUnit(UnitHolder unit) {
+        this.unit = unit;
+    }
+
+    public UnitHolder getUnit() {
+        return unit;
     }
 
     /**
@@ -77,5 +88,4 @@ public class TimedAttack {
     public void setPossibleSnob(boolean possibleSnob) {
         this.possibleSnob = possibleSnob;
     }
-    
 }

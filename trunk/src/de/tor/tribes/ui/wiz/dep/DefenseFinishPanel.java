@@ -68,8 +68,6 @@ public class DefenseFinishPanel extends javax.swing.JPanel implements WizardPane
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jXCollapsiblePane1.add(jInfoScrollPane, BorderLayout.CENTER);
         jInfoTextPane.setText(GENERAL_INFO);
-        jButton1.setIcon(new ImageIcon("./graphics/big/axe.png"));
-        jButton2.setIcon(new ImageIcon("./graphics/big/lifebelt.png"));
         overviewPanel = new VillageOverviewMapPanel();
         jPanel4.add(overviewPanel, BorderLayout.CENTER);
         jXCollapsiblePane2.add(jSummaryPanel, BorderLayout.CENTER);
@@ -102,8 +100,7 @@ public class DefenseFinishPanel extends javax.swing.JPanel implements WizardPane
         jResultScrollPane = new javax.swing.JScrollPane();
         jxResultsTable = new org.jdesktop.swingx.JXTable();
         jPanel3 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jToggleButton1 = new javax.swing.JToggleButton();
         jXCollapsiblePane2 = new org.jdesktop.swingx.JXCollapsiblePane();
@@ -197,7 +194,7 @@ public class DefenseFinishPanel extends javax.swing.JPanel implements WizardPane
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jXCollapsiblePane1, gridBagConstraints);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10));
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Informationen einblenden");
         jLabel1.setToolTipText("Blendet Informationen zu dieser Ansicht und zu den Datenquellen ein/aus");
@@ -243,25 +240,13 @@ public class DefenseFinishPanel extends javax.swing.JPanel implements WizardPane
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Abschließende Aktionen"));
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
-        jButton1.setToolTipText("Gewählte Unterstützungen in einen Angriffsplan übertragen");
-        jButton1.setMaximumSize(new java.awt.Dimension(70, 70));
-        jButton1.setMinimumSize(new java.awt.Dimension(70, 70));
-        jButton1.setPreferredSize(new java.awt.Dimension(70, 70));
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabel3.setText("<html><b>Keine weiteren Aktionen notwendig.<br/>Die berechneten Unterst&uuml;tzungen sind nun im SOS-Analyzer verf&uuml;gbar.<br/>\nFehlende Truppen k&ouml;nnen im SOS-Analyzer &uuml;ber die Funktion \"Unterst&uuml;tzungsanfrage stellen\" beim Stamm angefordert werden.</b></html>");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 20);
-        jPanel3.add(jButton1, gridBagConstraints);
-
-        jButton2.setToolTipText("Unterstützungsanforderungen für gefährdete und unsichere Dörfer erstellen");
-        jButton2.setMaximumSize(new java.awt.Dimension(70, 70));
-        jButton2.setMinimumSize(new java.awt.Dimension(70, 70));
-        jButton2.setPreferredSize(new java.awt.Dimension(70, 70));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 20, 5, 5);
-        jPanel3.add(jButton2, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        jPanel3.add(jLabel3, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -280,6 +265,7 @@ public class DefenseFinishPanel extends javax.swing.JPanel implements WizardPane
         jPanel2.add(jPanel4, gridBagConstraints);
 
         jToggleButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/search.png"))); // NOI18N
+        jToggleButton1.setToolTipText("Informationskarte vergrößern");
         jToggleButton1.setMaximumSize(new java.awt.Dimension(100, 23));
         jToggleButton1.setMinimumSize(new java.awt.Dimension(100, 23));
         jToggleButton1.setPreferredSize(new java.awt.Dimension(100, 23));
@@ -301,7 +287,7 @@ public class DefenseFinishPanel extends javax.swing.JPanel implements WizardPane
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         jPanel2.add(jXCollapsiblePane2, gridBagConstraints);
 
-        jToggleButton2.setFont(new java.awt.Font("Tahoma", 0, 9));
+        jToggleButton2.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
         jToggleButton2.setText("Zusammenfassung anzeigen");
         jToggleButton2.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -400,14 +386,13 @@ public class DefenseFinishPanel extends javax.swing.JPanel implements WizardPane
         jDangerousTargets.setText(Integer.toString(dangerousTargets) + "/" + Integer.toString(defenseInfo[0]));
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jDangerousTargets;
     private javax.swing.JLabel jFineTargets;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;

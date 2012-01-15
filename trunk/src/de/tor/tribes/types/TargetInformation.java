@@ -26,7 +26,7 @@ import org.jdom.Element;
  * @author Torridity
  */
 public class TargetInformation {
-
+    
     private Village target = null;
     private Hashtable<Village, List<TimedAttack>> timedAttacks = null;
     private int iWallLevel = 20;
@@ -37,14 +37,14 @@ public class TargetInformation {
     private long first = Long.MAX_VALUE;
     private long last = Long.MIN_VALUE;
     private SOSRequest outer;
-
+    
     public TargetInformation(SOSRequest outer, Village pTarget) {
         this.outer = outer;
         target = pTarget;
         troops = new Hashtable<UnitHolder, Integer>();
         timedAttacks = new Hashtable<Village, List<TimedAttack>>();
     }
-
+    
     private void updateAttackInfo() {
         snobs = 0;
         fakes = 0;
@@ -64,19 +64,19 @@ public class TargetInformation {
             }
         }
     }
-
+    
     public void setTarget(Village target) {
         this.target = target;
     }
-
+    
     public Village getTarget() {
         return target;
     }
-
+    
     public int getDelta() {
         return delta;
     }
-
+    
     public void setDelta(int pDelta) {
         delta = pDelta;
     }
@@ -96,15 +96,15 @@ public class TargetInformation {
         }
         return result;
     }
-
+    
     public int getSourceCount() {
         return timedAttacks.size();
     }
-
+    
     public Enumeration<Village> getSources() {
         return timedAttacks.keys();
     }
-
+    
     public int getAttackCountFromSource(Village pSource) {
         List<TimedAttack> attacksForSource = timedAttacks.get(pSource);
         if (attacksForSource == null || attacksForSource.isEmpty()) {
@@ -112,7 +112,7 @@ public class TargetInformation {
         }
         return attacksForSource.size();
     }
-
+    
     public List<TimedAttack> getAttacksFromSource(Village pSource) {
         List<TimedAttack> atts = timedAttacks.get(pSource);
         if (atts != null) {
@@ -121,27 +121,32 @@ public class TargetInformation {
             return new LinkedList<TimedAttack>();
         }
     }
-
+    
     public boolean addAttack(final Village pSource, final Date pArrive, boolean fake, boolean snob) {
+        return addAttack(pSource, pArrive, null, fake, snob);
+    }
+    
+    public boolean addAttack(final Village pSource, final Date pArrive, UnitHolder pUnit, boolean fake, boolean snob) {
         List<TimedAttack> attacksFromSource = timedAttacks.get(pSource);
         if (attacksFromSource == null) {
             attacksFromSource = new LinkedList<TimedAttack>();
             timedAttacks.put(pSource, attacksFromSource);
         }
-
+        
         Object result = CollectionUtils.find(attacksFromSource, new Predicate() {
-
+            
             @Override
             public boolean evaluate(Object o) {
                 TimedAttack t = (TimedAttack) o;
                 return t.getSource().equals(pSource) && t.getlArriveTime().equals(pArrive.getTime());
             }
         });
-
+        
         if (result == null) {
             TimedAttack a = new TimedAttack(pSource, pArrive);
             a.setPossibleFake(fake);
             a.setPossibleSnob(snob);
+            a.setUnit(pUnit);
             attacksFromSource.add(a);
             Collections.sort(attacksFromSource, SOSRequest.ARRIVE_TIME_COMPARATOR);
             updateAttackInfo();
@@ -154,25 +159,32 @@ public class TargetInformation {
      * @param attacks the attacks to set
      */
     public boolean addAttack(final Village pSource, final Date pArrive) {
-        return addAttack(pSource, pArrive, false, false);
+        return addAttack(pSource, pArrive, null);
     }
 
+    /**
+     * @param attacks the attacks to set
+     */
+    public boolean addAttack(final Village pSource, final Date pArrive, UnitHolder pUnit) {
+        return addAttack(pSource, pArrive, false, false);
+    }
+    
     public int getFakes() {
         return fakes;
     }
-
+    
     public int getSnobs() {
         return snobs;
     }
-
+    
     public int getOffs() {
         return getAttacks().size() - fakes;
     }
-
+    
     public long getFirstAttack() {
         return first;
     }
-
+    
     public TimedAttack getFirstTimedAttack() {
         Enumeration<Village> sources = timedAttacks.keys();
         while (sources.hasMoreElements()) {
@@ -186,7 +198,7 @@ public class TargetInformation {
         }
         return null;
     }
-
+    
     public long getLastAttack() {
         return last;
     }
@@ -218,7 +230,7 @@ public class TargetInformation {
     public void addTroopInformation(UnitHolder pUnit, Integer pAmount) {
         troops.put(pUnit, pAmount);
     }
-
+    
     public String getTroopInformationAsHTML() {
         StringBuilder b = new StringBuilder();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
@@ -229,7 +241,7 @@ public class TargetInformation {
         }
         return b.toString();
     }
-
+    
     public void merge(TargetInformation pInfo) {
         boolean millis = ServerSettings.getSingleton().isMillisArrival();
         List<TimedAttack> thisAttacks = getAttacks();
@@ -268,7 +280,7 @@ public class TargetInformation {
         setDelta(getAttacks().size() - attCount);
         updateAttackInfo();
     }
-
+    
     @Override
     public String toString() {
         String result = " Stufe des Walls: " + getWallLevel() + "\n";
@@ -290,7 +302,7 @@ public class TargetInformation {
         result += "\n";
         return result;
     }
-
+    
     public String toXml() {
         StringBuilder b = new StringBuilder();
         b.append("<wall>").append(getWallLevel()).append("</wall>\n");
@@ -304,7 +316,7 @@ public class TargetInformation {
         b.append("</attacks>\n");
         return b.toString();
     }
-
+    
     public void loadFromXml(Element e) {
         setWallLevel(Integer.parseInt(e.getChild("wall").getText()));
         Hashtable<UnitHolder, Integer> troops = XMLHelper.xmlToTroops(e);
@@ -313,7 +325,7 @@ public class TargetInformation {
             UnitHolder key = keys.nextElement();
             addTroopInformation(key, troops.get(key));
         }
-
+        
         for (Element attack : (List<Element>) JaxenUtils.getNodes(e, "attacks/attack")) {
             int sourceId = Integer.parseInt(attack.getAttributeValue("source"));
             long arrive = Long.parseLong(attack.getAttributeValue("arrive"));

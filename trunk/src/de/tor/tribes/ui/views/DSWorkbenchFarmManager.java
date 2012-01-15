@@ -16,8 +16,11 @@ import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.panels.TroopSelectionPanel;
 import de.tor.tribes.ui.renderer.*;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
+import de.tor.tribes.ui.windows.FarmInformationDetailsDialog;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.farm.FarmManager;
+import de.tor.tribes.util.troops.TroopsManager;
+import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Point;
@@ -25,6 +28,8 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.Timer;
 import javax.swing.*;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.math.IntRange;
 import org.apache.log4j.ConsoleAppender;
@@ -33,6 +38,7 @@ import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
+import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
  *
@@ -95,6 +101,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             }
         };
         capabilityInfoPanel1.addActionListener(listener);
+        jFarmTable.setSortsOnUpdates(false);
         jFarmTable.registerKeyboardAction(listener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jFarmTable.registerKeyboardAction(new ActionListener() {
 
@@ -288,6 +295,18 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         });
 
         actionPane.getContentPane().add(revalidateFarms);
+        JXButton showFarmInfo = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/farm_info.png")));
+        showFarmInfo.setToolTipText("Informationen über die gewählte Farm anzeigen");
+        showFarmInfo.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                new FarmInformationDetailsDialog(DSWorkbenchFarmManager.this, false).setupAndShow(getSelectedInformation());
+            }
+        });
+
+        actionPane.getContentPane().add(showFarmInfo);
+
         centerPanel.setupTaskPane(clickAccount, farmSourcePane, actionPane);
     }
 
@@ -339,6 +358,15 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         farm(null);
     }
 
+    public FarmInformation getSelectedInformation() {
+        int row = jFarmTable.getSelectedRow();
+        if (row == -1) {
+            return null;
+        }
+        int modelRow = jFarmTable.convertRowIndexToModel(row);
+        return (FarmInformation) FarmManager.getSingleton().getAllElements().get(modelRow);
+    }
+
     private void farm(Hashtable<UnitHolder, Integer> pUnitConfiguration) {
         int rows[] = jFarmTable.getSelectedRows();
         if (rows == null || rows.length == 0) {
@@ -349,70 +377,103 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         int noAdequateSourceByNeededTroops = 0;
         int noAdequateSourceByRange = 0;
         int noAdequateSourceByMinHaul = 0;
+        int alreadyFarming = 0;
 
         int opened = 0;
         String miscMessage = null;
         for (int row : rows) {
             int modelRow = jFarmTable.convertRowIndexToModel(row);
             FarmInformation farm = (FarmInformation) FarmManager.getSingleton().getAllElements().get(modelRow);
-            if (clickAccount.useClick() || rows.length == 1) {
-                boolean success = false;
-                boolean fatal = false;
-                switch (farm.farmFarm(pUnitConfiguration)) {
-                    case NO_TROOPS:
-                        miscMessage = "Keine Truppeninformationen gefunden";
-                        fatal = true;
-                        break;
-                    case NO_ADEQUATE_SOURCE_BY_NEEDED_TROOPS:
-                        noAdequateSourceByNeededTroops++;
-                        break;
-                    case NO_ADEQUATE_SOURCE_BY_RANGE:
-                        noAdequateSourceByRange++;
-                        break;
-                    case NO_ADEQUATE_SOURCE_BY_MIN_HAUL:
-                        noAdequateSourceByMinHaul++;
-                        break;
-                    case FAILED_OPEN_BROWSER:
-                        miscMessage = "Fehler beim Öffnen des Browsers";
-                        fatal = true;
-                        break;
-                    case OK:
-                        success = true;
-                        opened++;
-                        break;
-                }
-                getModel().fireTableRowsUpdated(modelRow, modelRow);
-                if (success) {
-                    if (row + 1 < jFarmTable.getRowCount()) {
-                        jFarmTable.getSelectionModel().addSelectionInterval(row + 1, row + 1);
+            if (!farm.getStatus().equals(FarmInformation.FARM_STATUS.FARMING)) {
+                if (clickAccount.useClick() || rows.length == 1) {
+                    boolean success = false;
+                    boolean fatal = false;
+                    boolean send = false;
+                    switch (farm.farmFarm(pUnitConfiguration)) {
+                        case NO_TROOPS:
+                            miscMessage = "Keine Truppeninformationen gefunden";
+                            fatal = true;
+                            break;
+                        case NO_ADEQUATE_SOURCE_BY_NEEDED_TROOPS:
+                            noAdequateSourceByNeededTroops++;
+                            break;
+                        case NO_ADEQUATE_SOURCE_BY_RANGE:
+                            noAdequateSourceByRange++;
+                            break;
+                        case NO_ADEQUATE_SOURCE_BY_MIN_HAUL:
+                            noAdequateSourceByMinHaul++;
+                            break;
+                        case FAILED_OPEN_BROWSER:
+                            miscMessage = "Fehler beim Öffnen des Browsers";
+                            fatal = true;
+                            break;
+                        case OK:
+                            success = true;
+                            send = true;
+                            opened++;
+                            break;
+                    }
+                    getModel().fireTableRowsUpdated(modelRow, modelRow);
+                    jFarmTable.getSelectionModel().removeSelectionInterval(row, row);
+                    if (success || !fatal) {
+                        if (row + 1 < jFarmTable.getRowCount()) {
+                            jFarmTable.getSelectionModel().addSelectionInterval(row + 1, row + 1);
+                            jFarmTable.requestFocus();
+                        }
+                        if (!send) {
+                            clickAccount.giveClickBack();
+                        }
+                    } else {
+                        jFarmTable.getSelectionModel().addSelectionInterval(row, row);
+                        clickAccount.giveClickBack();
+                        if (fatal) {
+                            break;
+                        }
                     }
                 } else {
-                    jFarmTable.getSelectionModel().addSelectionInterval(row, row);
-                    clickAccount.giveClickBack();
-                    if (fatal) {
-                        break;
-                    }
+                    miscMessage = "Das Klick-Konto ist leer";
+                    break;
                 }
-
-
             } else {
-                miscMessage = "Das Klick-Konto ist leer";
-                break;
+                alreadyFarming++;
+                jFarmTable.getSelectionModel().removeSelectionInterval(row, row);
+                if (row + 1 < jFarmTable.getRowCount()) {
+                    jFarmTable.getSelectionModel().addSelectionInterval(row + 1, row + 1);
+                    jFarmTable.requestFocus();
+                }
             }
         }
 
         if (miscMessage == null) {
             showInfo("<html>Ge&ouml;ffnete Tabs: " + opened + "/" + rows.length + "<br/>"
-                    + " - " + noAdequateSourceByNeededTroops + "  Mal kein passendes Herkunftsdorf mit ben&ouml;tigter Truppenanzahl<br/>"
+                    + " - " + noAdequateSourceByNeededTroops + "  Mal minimale Truppenzahl nicht erreicht oder kein Herkunftsdorf mit ben&ouml;tigter Truppenanzahl<br/>"
                     + " - " + noAdequateSourceByRange + " Mal kein passendes Herkunftsdorf in Reichweite<br/>"
-                    + " - " + noAdequateSourceByMinHaul + " Mal nicht gen&uuml;gend Rohstoffe</html>");
+                    + " - " + noAdequateSourceByMinHaul + " Mal nicht gen&uuml;gend Rohstoffe<br/>"
+                    + " - " + alreadyFarming + " Mal Truppen bereits unterwegs</html>");
         } else {
             showInfo("<html><b>Abbruch: '" + miscMessage + "'</b><br/>"
                     + "Ge&ouml;ffnete Tabs: " + opened + "/" + rows.length + "<br/>"
-                    + " - " + noAdequateSourceByNeededTroops + " Mal kein passendes Herkunftsdorf mit ben&ouml;tigter Truppenanzahl<br/>"
+                    + " - " + noAdequateSourceByNeededTroops + " Mal minimale Truppenzahl nicht erreicht oder kein Herkunftsdorf mit ben&ouml;tigter Truppenanzahl<br/>"
                     + " - " + noAdequateSourceByRange + " Mal kein passendes Herkunftsdorf in Reichweite<br/>"
-                    + " - " + noAdequateSourceByMinHaul + " Mal nicht gen&uuml;gend Rohstoffe</html>");
+                    + " - " + noAdequateSourceByMinHaul + " Mal nicht gen&uuml;gend Rohstoffe<br/>"
+                    + " - " + alreadyFarming + " Mal Truppen bereits unterwegs</html>");
         }
+
+        //@TODO check hide status!
+     //   updateHideStatus();
+    }
+
+    private void updateHideStatus() {
+     /*   if (jHideFamedFarms.isSelected()) {
+            jFarmTable.setRowFilter(new RowFilter<TableModel, Integer>() {
+
+                @Override
+                public boolean include(RowFilter.Entry<? extends TableModel, ? extends Integer> entry) {
+                    FarmInformation.FARM_STATUS status = (FarmInformation.FARM_STATUS) entry.getValue(0);
+                    return !status.equals(FarmInformation.FARM_STATUS.FARMING);
+                }
+            });
+        }*/
     }
 
     private void resetStatus() {
@@ -438,9 +499,8 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     }
 
     /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
+     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this
+     * method is always regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -476,6 +536,8 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         jMaxFarmRuntime = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jMinHaul = new javax.swing.JTextField();
+        jConsiderSucessRate = new javax.swing.JCheckBox();
+        jHideFamedFarms = new javax.swing.JCheckBox();
         jCenterPanel = new org.jdesktop.swingx.JXPanel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
         jAlwaysOnTop = new javax.swing.JCheckBox();
@@ -652,7 +714,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jSettingsPanel.add(jPanel2, gridBagConstraints);
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Farmradius"));
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Farmauswahl"));
         jPanel3.setMinimumSize(new java.awt.Dimension(311, 183));
         jPanel3.setPreferredSize(new java.awt.Dimension(311, 183));
         jPanel3.setLayout(new java.awt.GridBagLayout());
@@ -716,6 +778,24 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(jMinHaul, gridBagConstraints);
+
+        jConsiderSucessRate.setText("Erfolgsquote berücksichtigen");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jConsiderSucessRate, gridBagConstraints);
+
+        jHideFamedFarms.setText("<html>Momentan angegriffene<br/>Farmen ausblenden</html>");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jHideFamedFarms, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -815,8 +895,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
          */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /*
-         * If Nimbus (introduced in Java SE 6) is not available, stay with the
-         * default look and feel. For details see
+         * If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel. For details see
          * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
@@ -844,6 +923,16 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
         DataHolder.getSingleton().loadData(false);
         GlobalOptions.loadUserData();
+
+        for (Village v : GlobalOptions.getSelectedProfile().getTribe().getVillageList()) {
+            VillageTroopsHolder h = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN, true);
+            Hashtable<UnitHolder, Integer> troops = new Hashtable<UnitHolder, Integer>();
+            troops.put(DataHolder.getSingleton().getUnitByPlainName("axe"), 2000);
+            troops.put(DataHolder.getSingleton().getUnitByPlainName("light"), 2000);
+            troops.put(DataHolder.getSingleton().getUnitByPlainName("spy"), 100);
+            h.setTroops(troops);
+        }
+
         /*
          * Create and display the form
          */
@@ -866,8 +955,10 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JButton jButton2;
     private javax.swing.JPanel jCSettingsTab;
     private org.jdesktop.swingx.JXPanel jCenterPanel;
+    private javax.swing.JCheckBox jConsiderSucessRate;
     private javax.swing.JPanel jFarmPanel;
     private org.jdesktop.swingx.JXTable jFarmTable;
+    private javax.swing.JCheckBox jHideFamedFarms;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -904,6 +995,10 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         pConfig.setProperty(getPropertyPrefix() + ".max.farm.dist", jMaxFarmRuntime.getText());
         pConfig.setProperty(getPropertyPrefix() + ".allowed.units", TroopHelper.unitListToProperty(jAllowedList));
         pConfig.setProperty(getPropertyPrefix() + ".disallowed.units", TroopHelper.unitListToProperty(jNotAllowedList));
+        pConfig.setProperty(getPropertyPrefix() + ".farmA.units", TroopHelper.unitTableToProperty(aTroops.getAmounts()));
+        pConfig.setProperty(getPropertyPrefix() + ".farmB.units", TroopHelper.unitTableToProperty(bTroops.getAmounts()));
+       // pConfig.setProperty(getPropertyPrefix() + ".hide.farming", jHideFamedFarms.isSelected());
+        pConfig.setProperty(getPropertyPrefix() + ".use.success.rate", jConsiderSucessRate.isSelected());
         PropertyHelper.storeTableProperties(jFarmTable, pConfig, getPropertyPrefix());
     }
 
@@ -914,11 +1009,31 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             jAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
         } catch (Exception e) {
         }
+
+     /*   try {
+            jHideFamedFarms.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".hide.farming"));
+            updateHideStatus();
+        } catch (Exception e) {
+        }*/
+        try {
+            jConsiderSucessRate.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".use.success.rate"));
+        } catch (Exception e) {
+        }
+
         setAlwaysOnTop(jAlwaysOnTop.isSelected());
         UIHelper.setText(jMinUnits, pConfig.getProperty(getPropertyPrefix() + ".min.units"), 30);
         UIHelper.setText(jMinHaul, pConfig.getProperty(getPropertyPrefix() + ".min.haul"), 1000);
         UIHelper.setText(jMinFarmRuntime, pConfig.getProperty(getPropertyPrefix() + ".min.farm.dist"), 0);
         UIHelper.setText(jMaxFarmRuntime, pConfig.getProperty(getPropertyPrefix() + ".max.farm.dist"), 60);
+        String farmA = (String) pConfig.getProperty(getPropertyPrefix() + ".farmA.units");
+        if (farmA != null) {
+            aTroops.setAmounts(TroopHelper.propertyToUnitTable(farmA));
+        }
+        String farmB = (String) pConfig.getProperty(getPropertyPrefix() + ".farmB.units");
+        if (farmB != null) {
+            bTroops.setAmounts(TroopHelper.propertyToUnitTable(farmB));
+        }
+
         jAllowedList.setModel(TroopHelper.unitListPropertyToModel((String) pConfig.getProperty(getPropertyPrefix() + ".allowed.units"), getDefaultAllowedUnits()));
         jNotAllowedList.setModel(TroopHelper.unitListPropertyToModel((String) pConfig.getProperty(getPropertyPrefix() + ".disallowed.units"), getDefaultDisallowedUnits()));
         PropertyHelper.restoreTableProperties(jFarmTable, pConfig, getPropertyPrefix());

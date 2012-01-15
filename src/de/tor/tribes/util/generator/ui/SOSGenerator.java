@@ -9,13 +9,16 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.TargetInformation;
+import de.tor.tribes.types.TimedAttack;
 import de.tor.tribes.types.ext.Tribe;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.ProfileManager;
-import de.tor.tribes.util.TroopHelper;
-import de.tor.tribes.util.UIHelper;
+import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.attack.AttackManager;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ItemEvent;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import javax.swing.DefaultComboBoxModel;
@@ -56,6 +59,7 @@ public class SOSGenerator extends javax.swing.JFrame {
         jNoDef = new javax.swing.JRadioButton();
         jMedDef = new javax.swing.JRadioButton();
         jFullDef = new javax.swing.JRadioButton();
+        jIncludeTypes = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("SOS Generator");
@@ -69,7 +73,7 @@ public class SOSGenerator extends javax.swing.JFrame {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -83,7 +87,7 @@ public class SOSGenerator extends javax.swing.JFrame {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jButton2, gridBagConstraints);
@@ -91,7 +95,7 @@ public class SOSGenerator extends javax.swing.JFrame {
         jAmount.setPrompt("Amount");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -173,6 +177,15 @@ public class SOSGenerator extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jFullDef, gridBagConstraints);
 
+        jIncludeTypes.setText("Include Attack Types");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jIncludeTypes, gridBagConstraints);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -202,6 +215,21 @@ public class SOSGenerator extends javax.swing.JFrame {
             System.err.println("No attack selected");
             return;
         }
+        SimpleDateFormat f;
+        if (!ServerSettings.getSingleton().isMillisArrival()) {
+            f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format"));
+        } else {
+            f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format.ms"));
+        }
+        StringBuilder b = new StringBuilder();
+
+        b.append(PluginManager.getSingleton().getVariableValue("sos.source")).append(" ").
+                append(a.getSource().toString()).append("\n");
+        b.append("Ziel: ").append(a.getTarget().toString()).append("\n");
+        b.append(PluginManager.getSingleton().getVariableValue("attack.arrive.time")).append(" ").
+                append(f.format(a.getArriveTime())).append("\n");
+
+        sendToClipboard(b.toString());
     }
 
     private void generateSOS() {
@@ -217,8 +245,8 @@ public class SOSGenerator extends javax.swing.JFrame {
             }
 
             if (a.getTarget().getTribe().equals(t)) {
-                TargetInformation info = sos.getTargetInformation(a.getTarget());
-                if (info.getTroops() == null) {
+                TargetInformation info = sos.addTarget(a.getTarget());
+                if (info.getTroops().isEmpty()) {
                     Hashtable<UnitHolder, Integer> troops = getDefendingTroops();
 
                     Enumeration<UnitHolder> keys = troops.keys();
@@ -228,11 +256,75 @@ public class SOSGenerator extends javax.swing.JFrame {
                     }
                     info.setWallLevel(20);
                 }
-                info.addAttack(a.getSource(), a.getArriveTime());
+                if (jIncludeTypes.isSelected()) {
+                    info.addAttack(a.getSource(), a.getArriveTime(), a.getUnit(), a.getType() == Attack.FAKE_TYPE, a.getUnit().getPlainName().equals("snob"));
+                } else {
+                    info.addAttack(a.getSource(), a.getArriveTime());
+                }
             } else {
                 System.err.println("Tribe " + a.getTarget().getTribe() + "does not fit request tribe " + sos.getDefender());
             }
         }
+
+        /**
+         * [b]Dorf:[/b] [coord]112|87[/coord] [b]Wallstufe:[/b] 20 [b]Verteidiger:[/b] 23011 22928 0 266 0 814 0 0 0
+         *
+         * bäääng! [coord]282|306[/coord] --> Ankunftszeit: 11.10.11 14:37:57 [player]MrBlue76[/player]
+         *
+         * [b]Dorf:[/b] [coord]114|84[/coord] [b]Wallstufe:[/b] 20 [b]Verteidiger:[/b] 9079 9080 0 100 0 300 0 0 0
+         *
+         * bäääng! [coord]318|272[/coord] --> Ankunftszeit: 11.10.11 14:42:49 [player]MrBlue76[/player] bäääng! [coord]211|345[/coord] -->
+         * Ankunftszeit: 11.10.11 16:45:37 [player]MrBlue76[/player]
+         */
+        Enumeration<Village> targets = sos.getTargets();
+        StringBuilder b = new StringBuilder();
+        SimpleDateFormat df;
+        if (de.tor.tribes.util.ServerSettings.getSingleton().isMillisArrival()) {
+            df = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
+        } else {
+            df = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+        }
+        while (targets.hasMoreElements()) {
+            Village target = targets.nextElement();
+            b.append("[b]Dorf:[/b] ").append(target.toBBCode()).append("\n");
+            TargetInformation ti = sos.getTargetInformation(target);
+            b.append("[b]Wallstufe:[/b] ").append(ti.getWallLevel()).append("\n");
+            b.append("[b]Verteidiger:[/b] ");
+            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                b.append(ti.getTroops().get(unit)).append(" ");
+            }
+            b.append("\n\n");
+            for (TimedAttack a : ti.getAttacks()) {
+                if (jIncludeTypes.isSelected()) {
+                    if (a.isPossibleFake()) {
+                        b.append("Fake, ");
+                    } else {
+                        if (a.getUnit() != null) {
+                            if (a.getUnit().getPlainName().equals("axe")) {
+                                b.append("Axt, ");
+                            } else if (a.getUnit().getPlainName().equals("light")) {
+                                b.append("LKAV, ");
+                            } else if (a.getUnit().getPlainName().equals("snob")) {
+                                b.append("AG, ");
+                            } else if (a.getUnit().getPlainName().equals("heavy")) {
+                                b.append("SKAV, ");
+                            } else if (a.getUnit().getPlainName().equals("sword")) {
+                                b.append("Schwert, ");
+                            } else if (a.getUnit().getPlainName().equals("catapult")) {
+                                b.append("Kata, ");
+                            }
+                        }
+                    }
+                }
+                b.append(a.getSource().getName()).append(" ").append(a.getSource().toBBCode()).
+                        append(" --> Ankunftszeit: ").append(df.format(new Date(a.getlArriveTime()))).append(" ").
+                        append(a.getSource().getTribe().toBBCode()).
+                        append("\n");
+            }
+            b.append("\n");
+        }
+        sendToClipboard(b.toString());
+
     }
 
     private Hashtable<UnitHolder, Integer> getDefendingTroops() {
@@ -259,6 +351,10 @@ public class SOSGenerator extends javax.swing.JFrame {
         }
 
         return result;
+    }
+
+    private void sendToClipboard(String pText) {
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(pText), null);
     }
 
     private int getRandomValueInRange(int min, int max) {
@@ -319,6 +415,7 @@ public class SOSGenerator extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JRadioButton jFullDef;
+    private javax.swing.JCheckBox jIncludeTypes;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JRadioButton jMedDef;

@@ -50,6 +50,7 @@ public class ResourceDistributorWizard extends WizardPanelProvider {
             return;
         }
         parent = new JFrame();
+        parent.setTitle("Rohstoffverteiler");
         Wizard wizard = new ResourceDistributorBranchController().createWizard();
         parent.getContentPane().setLayout(new BorderLayout());
         WizardDisplayer.installInContainer(parent, BorderLayout.CENTER, wizard, null, null, null);

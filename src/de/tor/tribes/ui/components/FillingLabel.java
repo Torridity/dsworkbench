@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.text.NumberFormat;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
@@ -19,9 +20,19 @@ public class FillingLabel extends JLabel {
 
     private double[] fillings = null;
     private Color[] colors = null;
+    private String text = "";
 
-    public void setData(double[] fillings) {
+    public void setData(double[] fillings, double capacity) {
         this.fillings = fillings;
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(1);
+        nf.setMaximumFractionDigits(1);
+        double res = 0;
+        for (Double v : fillings) {
+            res += v * capacity;
+        }
+        res /= 1000;
+        text = nf.format(res) + " K";
     }
 
     public void setColors(Color[] colors) {
@@ -45,6 +56,8 @@ public class FillingLabel extends JLabel {
         }
         g2d.setColor(Color.LIGHT_GRAY);
         g2d.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+        g2d.setColor(Color.BLACK);
+        g2d.drawString(text, 1, getHeight() - 1);
     }
 
     public static void main(String[] args) {
@@ -52,7 +65,7 @@ public class FillingLabel extends JLabel {
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         FillingLabel l = new FillingLabel();
         l.setPreferredSize(new Dimension(100, 24));
-        l.setData(new double[]{134644.0 / 400000.0, 180000.0 / 400000.0, 161743.0 / 400000.0});
+        l.setData(new double[]{134644.0 / 400000.0, 180000.0 / 400000.0, 161743.0 / 400000.0}, 400000.0);
         l.setColors(new Color[]{new Color(187, 148, 70), new Color(242, 131, 30), new Color(224, 211, 209)});
         f.getContentPane().add(l);
         f.pack();

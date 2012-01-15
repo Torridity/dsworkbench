@@ -11,6 +11,7 @@ import de.tor.tribes.types.FarmInformation;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileReader;
@@ -94,19 +95,11 @@ public class ReportManager extends GenericManager<FightReport> {
 
     @Override
     public void addManagedElement(final FightReport pElement) {
-        /*
-         * Object result = CollectionUtils.find(getAllElements(), new
-         * Predicate() {
-         *
-         * @Override public boolean evaluate(Object o) { return ((FightReport)
-         * o).equals(pElement); } });
-         *
-         * if (result == null) {//report not exists yet
-         */
         boolean filtered = false;
 
         if (farmFilter.isValid(pElement)) {
             addManagedElement(FARM_SET, pElement, false);
+            FarmManager.getSingleton().updateFarmInfoFromReport(pElement);
         } else {
             for (RuleEntry entry : getRuleEntries()) {
                 if (entry.getRule().isValid(pElement)) {
@@ -120,7 +113,6 @@ public class ReportManager extends GenericManager<FightReport> {
                 super.addManagedElement(pElement);
             }
         }
-        //   }
     }
 
     @Override
@@ -129,18 +121,11 @@ public class ReportManager extends GenericManager<FightReport> {
     }
 
     public void addManagedElement(String pGroup, final FightReport pElement, boolean pFiltered) {
-        /*
-         * Object result = CollectionUtils.find(getAllElements(pGroup), new
-         * Predicate() {
-         *
-         * @Override public boolean evaluate(Object o) { return ((FightReport)
-         * o).equals(pElement); } });
-         *
-         * if (result == null) {//report not exists yet
-         */ boolean filtered = false;
+        boolean filtered = false;
         if (pFiltered) {
             if (farmFilter.isValid(pElement)) {
                 addManagedElement(FARM_SET, pElement, false);
+                FarmManager.getSingleton().updateFarmInfoFromReport(pElement);
             } else {
                 for (RuleEntry entry : getRuleEntries()) {
                     if (entry.getRule().isValid(pElement)) {

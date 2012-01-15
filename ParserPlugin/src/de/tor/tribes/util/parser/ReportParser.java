@@ -13,7 +13,7 @@ import de.tor.tribes.ui.windows.NotifierFrame;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.church.ChurchManager;
-import de.tor.tribes.util.interfaces.SilentParserInterface;
+import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.report.ReportManager;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;

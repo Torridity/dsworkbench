@@ -13,17 +13,24 @@ public class StorageStatus implements Comparable<StorageStatus> {
     private double woodStatus = 0;
     private double clayStatus = 0;
     private double ironStatus = 0;
+    private double capacity = 0;
 
     public StorageStatus(int pWood, int pClay, int pIron, int pStorageCapacity) {
         woodStatus = (double) pWood / (double) pStorageCapacity;
         clayStatus = (double) pClay / (double) pStorageCapacity;
         ironStatus = (double) pIron / (double) pStorageCapacity;
+        capacity = pStorageCapacity;
     }
 
     public void update(int pWood, int pClay, int pIron, int pStorageCapacity) {
         woodStatus = (double) pWood / (double) pStorageCapacity;
         clayStatus = (double) pClay / (double) pStorageCapacity;
         ironStatus = (double) pIron / (double) pStorageCapacity;
+        capacity = pStorageCapacity;
+    }
+
+    public double getCapacity() {
+        return capacity;
     }
 
     public double getWoodStatus() {

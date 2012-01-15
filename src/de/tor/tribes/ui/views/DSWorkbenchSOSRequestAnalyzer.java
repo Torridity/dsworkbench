@@ -526,6 +526,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         jSOSInputPanel.setLayout(new java.awt.GridBagLayout());
 
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/analyze.png"))); // NOI18N
+        jButton3.setText("Analysieren");
         jButton3.setMaximumSize(new java.awt.Dimension(73, 50));
         jButton3.setMinimumSize(new java.awt.Dimension(73, 50));
         jButton3.setPreferredSize(new java.awt.Dimension(73, 50));
@@ -847,14 +848,14 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
 
                 @Override
                 public void fireFinishedEvent() {
-                    jButton3.setText("Analyze");
+                    jButton3.setText("Analysieren");
                     updateSupportTable();
                 }
             }, offensePanel.getAmounts(), defensePanel.getAmounts(), UIHelper.parseIntFromField(jTextField1, 500), UIHelper.parseIntFromField(jTextField2, 30));
             a.start();
-            jButton3.setText("Cancel");
+            jButton3.setText("Abbrechen");
         } else {
-            if (jButton3.getText().equals("Cancel")) {
+            if (jButton3.getText().equals("Abbrechen")) {
                 a.abort();
             }
         }

@@ -18,7 +18,6 @@ import javax.swing.table.AbstractTableModel;
  */
 public class DistanceTableModel extends AbstractTableModel {
 
-    private static DistanceTableModel SINGLETON = null;
 
     public DistanceTableModel() {
     }

@@ -184,6 +184,7 @@ public class ValidationPanel extends javax.swing.JPanel implements WizardPanel, 
         jSourceValidationPanel.add(jPanel2, gridBagConstraints);
 
         jToggleButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/search.png"))); // NOI18N
+        jToggleButton1.setToolTipText("Informationskarte vergrößern");
         jToggleButton1.setMaximumSize(new java.awt.Dimension(100, 23));
         jToggleButton1.setMinimumSize(new java.awt.Dimension(100, 23));
         jToggleButton1.setPreferredSize(new java.awt.Dimension(100, 23));
@@ -233,6 +234,7 @@ public class ValidationPanel extends javax.swing.JPanel implements WizardPanel, 
         jTargetValidationPanel.add(jPanel3, gridBagConstraints);
 
         jToggleButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/search.png"))); // NOI18N
+        jToggleButton2.setToolTipText("Informationskarte vergrößern");
         jToggleButton2.setMaximumSize(new java.awt.Dimension(100, 23));
         jToggleButton2.setMinimumSize(new java.awt.Dimension(100, 23));
         jToggleButton2.setPreferredSize(new java.awt.Dimension(100, 23));

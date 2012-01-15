@@ -4,8 +4,6 @@
  */
 package de.tor.tribes.util;
 
-import de.tor.tribes.util.interfaces.GenericParserInterface;
-import de.tor.tribes.util.interfaces.SilentParserInterface;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.ext.Village;
@@ -23,7 +21,7 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 
 /**
- *
+ *@TODO Need completely new PluginVersion due to interface changes (4.0!!!!))
  * @author Torridity
  */
 public class PluginManager {

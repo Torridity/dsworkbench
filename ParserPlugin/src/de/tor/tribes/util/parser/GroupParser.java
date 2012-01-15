@@ -9,7 +9,7 @@ import de.tor.tribes.php.json.JSONObject;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
-import de.tor.tribes.util.interfaces.SilentParserInterface;
+import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;

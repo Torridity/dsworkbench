@@ -8,6 +8,7 @@ import de.tor.tribes.types.StorageStatus;
 import de.tor.tribes.ui.components.FillingLabel;
 import java.awt.Color;
 import java.awt.Component;
+import java.text.NumberFormat;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -37,7 +38,11 @@ public class StorageCellRenderer extends DefaultTableRenderer {
         label.setBackground(defaultLabel.getBackground());
         try {
             StorageStatus status = (StorageStatus) value;
-            label.setData(new double[]{status.getWoodStatus(), status.getClayStatus(), status.getIronStatus()});
+            double wood = status.getWoodStatus();
+            double clay = status.getClayStatus();
+            double iron = status.getIronStatus();
+            label.setData(new double[]{wood, clay, iron}, status.getCapacity());
+
         } catch (Exception e) {
         }
         return label;

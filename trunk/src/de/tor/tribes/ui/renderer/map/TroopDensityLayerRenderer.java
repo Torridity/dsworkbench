@@ -24,7 +24,6 @@ import java.awt.image.BufferedImage;
 import java.text.NumberFormat;
 
 /**
- * @TODO (DIFF) Fixed rendering of troop density from reports
  */
 public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
 
@@ -121,8 +120,8 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
     }
 
     private BufferedImage renderTroopColumns(RenderSettings pSettings) {
-        int dx = 0;//(int) Math.floor(pSettings.getDeltaX());
-        int dy = 0;//(int) Math.floor(pSettings.getDeltaY());
+        int dx = 0;
+        int dy = 0;
         //create new buffer for rendering
         BufferedImage newColumns = ImageUtils.createCompatibleBufferedImage(Math.abs(pSettings.getColumnsToRender()) * pSettings.getFieldWidth(), pSettings.getVillagesInY() * pSettings.getFieldHeight(), BufferedImage.BITMASK);
         //calculate first row that will be rendered

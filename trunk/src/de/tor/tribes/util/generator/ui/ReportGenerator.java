@@ -48,17 +48,13 @@ public class ReportGenerator extends javax.swing.JFrame {
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
-        jAttacker = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        jSource = new javax.swing.JTextField();
         jFarming = new javax.swing.JRadioButton();
         jOffing = new javax.swing.JRadioButton();
         jFaking = new javax.swing.JRadioButton();
         jSnobbing = new javax.swing.JRadioButton();
         jLabel3 = new javax.swing.JLabel();
-        jDefender = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTarget = new javax.swing.JTextField();
         jSomeDef = new javax.swing.JRadioButton();
         jFullDef = new javax.swing.JRadioButton();
         jEmpty = new javax.swing.JRadioButton();
@@ -81,6 +77,10 @@ public class ReportGenerator extends javax.swing.JFrame {
         jBuildingDamaged = new javax.swing.JCheckBox();
         jButton2 = new javax.swing.JButton();
         jReportCount = new org.jdesktop.swingx.JXTextField();
+        jAttacker = new org.jdesktop.swingx.JXTextField();
+        jSource = new org.jdesktop.swingx.JXTextField();
+        jDefender = new org.jdesktop.swingx.JXTextField();
+        jTarget = new org.jdesktop.swingx.JXTextField();
 
         setTitle("Random Report Generator");
         getContentPane().setLayout(new java.awt.GridBagLayout());
@@ -89,25 +89,12 @@ public class ReportGenerator extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jLabel1, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridwidth = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        getContentPane().add(jAttacker, gridBagConstraints);
 
         jLabel2.setText("Source");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 1;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jLabel2, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        getContentPane().add(jSource, gridBagConstraints);
 
         buttonGroup1.add(jFarming);
         jFarming.setText("Farm");
@@ -155,26 +142,12 @@ public class ReportGenerator extends javax.swing.JFrame {
         gridBagConstraints.gridy = 3;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jLabel3, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridwidth = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        getContentPane().add(jDefender, gridBagConstraints);
 
         jLabel4.setText("Target");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 4;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jLabel4, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        getContentPane().add(jTarget, gridBagConstraints);
 
         buttonGroup2.add(jSomeDef);
         jSomeDef.setSelected(true);
@@ -385,6 +358,44 @@ public class ReportGenerator extends javax.swing.JFrame {
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         getContentPane().add(jReportCount, gridBagConstraints);
+
+        jAttacker.setPrompt("Attacker");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jAttacker, gridBagConstraints);
+
+        jSource.setPrompt("Source Village");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jSource, gridBagConstraints);
+
+        jDefender.setPrompt("Defender");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jDefender, gridBagConstraints);
+
+        jTarget.setPrompt("Target Village");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jTarget, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -621,13 +632,13 @@ public class ReportGenerator extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
-    private javax.swing.JTextField jAttacker;
+    private org.jdesktop.swingx.JXTextField jAttacker;
     private javax.swing.JCheckBox jBuildingDamaged;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private org.jdesktop.swingx.JXTextField jClayHaul;
     private org.jdesktop.swingx.JXTextField jClayLevel;
-    private javax.swing.JTextField jDefender;
+    private org.jdesktop.swingx.JXTextField jDefender;
     private javax.swing.JRadioButton jEmpty;
     private javax.swing.JRadioButton jFaking;
     private javax.swing.JRadioButton jFarming;
@@ -647,9 +658,9 @@ public class ReportGenerator extends javax.swing.JFrame {
     private org.jdesktop.swingx.JXTextField jReportCount;
     private javax.swing.JRadioButton jSnobbing;
     private javax.swing.JRadioButton jSomeDef;
-    private javax.swing.JTextField jSource;
+    private org.jdesktop.swingx.JXTextField jSource;
     private org.jdesktop.swingx.JXTextField jStorageLevel;
-    private javax.swing.JTextField jTarget;
+    private org.jdesktop.swingx.JXTextField jTarget;
     private javax.swing.JCheckBox jTroopsOnTheWay;
     private javax.swing.JCheckBox jTroopsOutside;
     private javax.swing.JCheckBox jWallDamaged;

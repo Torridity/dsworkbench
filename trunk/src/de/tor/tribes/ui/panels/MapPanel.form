@@ -61,6 +61,14 @@
             <Property name="text" type="java.lang.String" value="Dieses Dorf"/>
           </Properties>
           <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="jLastReport">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Letzten Bericht anzeigen"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jCurrentCoordToClipboardItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Koordinaten in Zwischenablage"/>

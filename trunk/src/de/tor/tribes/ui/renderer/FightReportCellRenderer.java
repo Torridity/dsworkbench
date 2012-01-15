@@ -56,7 +56,7 @@ public class FightReportCellRenderer extends DefaultTableRenderer {
             } else {
                 label.setIcon(YELLOW_ICON);
             }
-            label.setToolTipText(FightReportHTMLToolTipGenerator.buildToolTip(rep));
+           // label.setToolTipText(FightReportHTMLToolTipGenerator.buildToolTip(rep));
         } catch (Exception e) {
         }
         return label;

@@ -347,7 +347,7 @@ public class AttackSourcePanel extends javax.swing.JPanel implements WizardPanel
         return (SourceTableModel) jVillageTable.getModel();
     }
     
-    private void addVillages(Village[] pVillages) {
+    public void addVillages(Village[] pVillages) {
         SourceTableModel model = getModel();
         for (Village v : pVillages) {
             model.addRow(v, villageSelectionPanel.getSelectedUnit(), villageSelectionPanel.isFake());

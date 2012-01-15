@@ -340,7 +340,7 @@ public class AttackTargetPanel extends javax.swing.JPanel implements WizardPanel
         return (TargetTableModel) jVillageTable.getModel();
     }
 
-    private void addVillages(Village[] pVillages) {
+    public void addVillages(Village[] pVillages) {
         if (pVillages.length == 0) {
             return;
         }

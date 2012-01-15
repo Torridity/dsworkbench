@@ -173,6 +173,20 @@ public class TargetInformation {
         return first;
     }
 
+    public TimedAttack getFirstTimedAttack() {
+        Enumeration<Village> sources = timedAttacks.keys();
+        while (sources.hasMoreElements()) {
+            Village source = sources.nextElement();
+            List<TimedAttack> attsForSource = timedAttacks.get(source);
+            for (TimedAttack a : attsForSource) {
+                if (a.getlArriveTime() == getFirstAttack()) {
+                    return a;
+                }
+            }
+        }
+        return null;
+    }
+
     public long getLastAttack() {
         return last;
     }

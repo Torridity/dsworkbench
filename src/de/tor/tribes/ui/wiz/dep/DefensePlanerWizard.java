@@ -12,6 +12,8 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.sos.SOSManager;
 import java.awt.BorderLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,6 +41,7 @@ public class DefensePlanerWizard extends WizardPanelProvider {
     private static final String ID_FILTER = "filter-id";
     private static final String ID_CALCULATION = "calculation-id";
     private static final String ID_FINISH = "finish-id";
+    private static JFrame parent = null;
 
     public DefensePlanerWizard() {
         super("DS Workbench - Verteidigungsplaner",
@@ -107,14 +110,27 @@ public class DefensePlanerWizard extends WizardPanelProvider {
         return result;
     }
 
-    public static void show(JFrame pParent) {
+    public static void show() {
+        if (parent != null) {
+            parent.toFront();
+            return;
+        }
+        parent = new JFrame();
         WizardPanelProvider provider = new DefensePlanerWizard();
         Wizard wizard = provider.createWizard();
-        pParent.getContentPane().setLayout(new BorderLayout());
-        WizardDisplayer.installInContainer(pParent, BorderLayout.CENTER, wizard, null, null, null);
-        pParent.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        pParent.pack();
-        pParent.setVisible(true);
+        parent.getContentPane().setLayout(new BorderLayout());
+        WizardDisplayer.installInContainer(parent, BorderLayout.CENTER, wizard, null, null, null);
+        parent.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        parent.addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                parent = null;
+            }
+        });
+        parent.pack();
+        parent.setVisible(true);
     }
 
     public static void main(String[] args) throws Exception {
@@ -139,26 +155,15 @@ public class DefensePlanerWizard extends WizardPanelProvider {
         WizardPanelProvider provider = new DefensePlanerWizard();
         Wizard wizard = provider.createWizard();
         // DefenseAnalysePanel.getSingleton().setData(createSampleRequests());
-       /*  final JFrame f = new JFrame();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        JPanel p = new JPanel();
-        p.setLayout(new BorderLayout());
-        WizardDisplayer.installInContainer(p, BorderLayout.CENTER, wizard, null, null, new WizardResultReceiver() {
-        
-        @Override
-        public void finished(Object o) {
-        System.out.println(o);
-        }
-        
-        @Override
-        public void cancelled(Map map) {
-        System.out.println("Cancel: " + map);
-        f.dispose();
-        }
-        });
-        f.getContentPane().add(p);
-        f.pack();
-        f.setVisible(true);*/
+       /*
+         * final JFrame f = new JFrame(); f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); JPanel p = new JPanel(); p.setLayout(new
+         * BorderLayout()); WizardDisplayer.installInContainer(p, BorderLayout.CENTER, wizard, null, null, new WizardResultReceiver() {
+         *
+         * @Override public void finished(Object o) { System.out.println(o); }
+         *
+         * @Override public void cancelled(Map map) { System.out.println("Cancel: " + map); f.dispose(); } }); f.getContentPane().add(p);
+         * f.pack(); f.setVisible(true);
+         */
 
         WizardDisplayer.showWizard(wizard);
     }

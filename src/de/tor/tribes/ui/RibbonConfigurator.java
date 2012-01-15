@@ -30,6 +30,9 @@ import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
 import de.tor.tribes.ui.views.DSWorkbenchTagFrame;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.ui.views.*;
+import de.tor.tribes.ui.wiz.dep.DefensePlanerWizard;
+import de.tor.tribes.ui.wiz.red.ResourceDistributorWizard;
+import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
@@ -42,6 +45,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -510,15 +514,25 @@ public class RibbonConfigurator {
 
                     @Override
                     public void run() {
-                        //@TODO show attack planer by ribbon
-                     /*
-                         * TribeTribeAttackFrame frame = DSWorkbenchMainFrame.getSingleton().getAttackPlaner(); frame.setVisible(true);
-                         * frame.requestFocus();
-                         */
+                        TacticsPlanerWizard.show();
                     }
                 });
             }
         });
+        /*
+         * JCommandButton defensePlanerToolButton = factoryButton("Verteidigungsplaner (automatisch)", "graphics/big/def_auto.png", "Öffnet
+         * den automatischen Verteidigungsplaner", "Der automatische Verteidigungsplaner erlaubt es, " + "ausgehend von eingelesenen
+         * SOS-Anfragen (siehe SOS-Analyzer), Verteidigungen im gro&szlig;en Stil zu planen. Der Fokus liegt dabei auf der Verteilung
+         * verf&uuml;gbarer Truppen in m&ouml;glichst kleinen Paketen, " + "so dass bei Verlusten die Rekrutierungszeiten klein gehalten
+         * werden.", true); defensePlanerToolButton.addActionListener(new ActionListener() {
+         *
+         * public void actionPerformed(ActionEvent e) { SwingUtilities.invokeLater(new Runnable() {
+         *
+         * @Override public void run() { DefensePlanerWizard.show(); } }); } });
+         */
+
+
+
         JCommandButton manualAttackPlanerToolButton = factoryButton("Angriffsplaner (manuell)", "graphics/big/att_manual.png", "Öffnet den manuellen Angriffsplaner", "Der manuelle Angriffsplaner erlaubt es, detailliert kleine bis mittlere Mengen an Angriffen zu planen. Er orientiert sich dabei im Wesentlichen an anderen, Online verfügbaren Angriffsplanern.", true);
         manualAttackPlanerToolButton.addActionListener(new ActionListener() {
 
@@ -619,7 +633,7 @@ public class RibbonConfigurator {
                 });
             }
         });
-        JCommandButton resourceDistributorToolButton = factoryButton("Rohstoffverteiler", "graphics/big/storage.png", "Öffnet den Rohstoffverteiler", "Der Rohstoffverteiler erlaubt, basierend auf kopierten Informationen aus der Produktionsübersicht, die Rohstoffe in den eingefügten Dörfern auszugleiche oder den Rohstoffbestand in bestimmten Dörfern auf eine gewünschte Menge zu bringen. Er berechnet die dafür notwendigen Transporte, die im Anschluss direkt in den Browser übertragen und von dort abgeschickt werden können.", true);
+        JCommandButton resourceDistributorToolButton = factoryButton("Rohstoffverteiler", "graphics/big/resource_distrib.png", "Öffnet den Rohstoffverteiler", "Der Rohstoffverteiler erlaubt, basierend auf kopierten Informationen aus der Produktionsübersicht, die Rohstoffe in den eingefügten Dörfern auszugleiche oder den Rohstoffbestand in bestimmten Dörfern auf eine gewünschte Menge zu bringen. Er berechnet die dafür notwendigen Transporte, die im Anschluss direkt in den Browser übertragen und von dort abgeschickt werden können.", true);
         resourceDistributorToolButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -627,14 +641,13 @@ public class RibbonConfigurator {
 
                     @Override
                     public void run() {
-                        DSWorkbenchMerchantDistibutor.getSingleton().setVisible(true);
-                        DSWorkbenchMerchantDistibutor.getSingleton().requestFocus();
+                        ResourceDistributorWizard.show();
                     }
                 });
             }
         });
 
-        JCommandButton farmManagerButton = factoryButton("Farmmanager", "graphics/big/storage.png", "Öffnet den Farmmanager", "Der Farmmanager erlaubt das einfache Farmen von Dörfern. Farmen können auf verschiedene Wege gesucht werden, der Farmmanager kümmert sich dann um deren Verwaltung. Zum eigentlichen Farmen muss man nur noch die entsprechenden Tabs im Browser öffnen lassen und den Farmangriff abschicken. Nach dem Farmlauf liest man den entsprechenden Bericht ein und verfügt sofort wieder über aktuelle Informationen.", true);
+        JCommandButton farmManagerButton = factoryButton("Farmmanager", "graphics/big/farm_tool.png", "Öffnet den Farmmanager", "Der Farmmanager erlaubt das einfache Farmen von Dörfern. Farmen können auf verschiedene Wege gesucht werden, der Farmmanager kümmert sich dann um deren Verwaltung. Zum eigentlichen Farmen muss man nur noch die entsprechenden Tabs im Browser öffnen lassen und den Farmangriff abschicken. Nach dem Farmlauf liest man den entsprechenden Bericht ein und verfügt sofort wieder über aktuelle Informationen.", true);
         farmManagerButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -687,6 +700,7 @@ public class RibbonConfigurator {
         });
 
         attackToolsBand.addCommandButton(attackPlanerToolButton, RibbonElementPriority.TOP);
+        // attackToolsBand.addCommandButton(defensePlanerToolButton, RibbonElementPriority.TOP);
         attackToolsBand.addCommandButton(manualAttackPlanerToolButton, RibbonElementPriority.TOP);
 
         defendToolsBand.addCommandButton(astarToolButton, RibbonElementPriority.MEDIUM);

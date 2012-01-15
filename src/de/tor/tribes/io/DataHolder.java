@@ -163,8 +163,7 @@ public class DataHolder {
     }
 
     /**
-     * Check if server is supported or not. Currently only 1000x1000 servers are
-     * allowed
+     * Check if server is supported or not. Currently only 1000x1000 servers are allowed
      */
     public boolean serverSupported() {
         fireDataHolderEvents("Prüfe Server Einstellungen");
@@ -660,8 +659,7 @@ public class DataHolder {
     }
 
     /**
-     * Download all needed data files (villages, tribes, allies, kills,
-     * settings)
+     * Download all needed data files (villages, tribes, allies, kills, settings)
      */
     private boolean downloadData() {
         URL file = null;
@@ -1174,8 +1172,7 @@ public class DataHolder {
     }
 
     /**
-     * Parse a line of a conquered units file and set the data for the
-     * associated tribe
+     * Parse a line of a conquered units file and set the data for the associated tribe
      */
     private void parseConqueredLine(String pLine, int pType) {
         StringTokenizer tokenizer = new StringTokenizer(pLine, ",");
@@ -1235,11 +1232,10 @@ public class DataHolder {
     }
 
     /**
-     * Get all villages<BR> !!Attention!!<B>This call blocks while loading data.
-     * It is only intended to be used internally</B> !!Attention!! @TODO
-     * Blocking removed as it makes no sense....keep an eye on it!
+     * Get all villages<BR> !!Attention!!<B>This call blocks while loading data. It is only intended to be used internally</B> !!Attention!!
+     * @TODO Blocking added again due to obvious deadlock....keep an eye on it!
      */
-    public Village[][] getVillages() {
+    public synchronized Village[][] getVillages() {
         if (isLoading()) {
             //block getting villages while loading to avoid nullpointer exceptions
             try {
@@ -1321,14 +1317,11 @@ public class DataHolder {
             return null;
         }
         /*
-         * Iterator<Integer> it = mVillagesTable.keySet().iterator(); int id =
-         * -1; int cnt = (int) Math.rint(100.0 * Math.random()); while (cnt >= 0
-         * && it.hasNext()) { id = it.next(); cnt--; }
+         * Iterator<Integer> it = mVillagesTable.keySet().iterator(); int id = -1; int cnt = (int) Math.rint(100.0 * Math.random()); while
+         * (cnt >= 0 && it.hasNext()) { id = it.next(); cnt--; }
          *
-         * if (id != -1) { return mVillagesTable.get(id); } else { DummyVillage
-         * v = new DummyVillage(); v.setId(-cnt); v.setName("Beispieldorf" +
-         * cnt); v.setX((short) cnt); v.setY((short) cnt); v.setPoints(cnt *
-         * 100); return v; }
+         * if (id != -1) { return mVillagesTable.get(id); } else { DummyVillage v = new DummyVillage(); v.setId(-cnt);
+         * v.setName("Beispieldorf" + cnt); v.setX((short) cnt); v.setY((short) cnt); v.setPoints(cnt * 100); return v; }
          */
     }
 

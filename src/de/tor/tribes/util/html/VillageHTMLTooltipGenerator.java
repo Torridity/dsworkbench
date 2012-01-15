@@ -18,6 +18,7 @@ import de.tor.tribes.util.BBCodeFormatter;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.conquer.ConquerManager;
+import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.note.NoteManager;
 import de.tor.tribes.util.report.ReportManager;
@@ -28,6 +29,7 @@ import java.net.URL;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -48,6 +50,7 @@ public class VillageHTMLTooltipGenerator {
         b.append("<html><head>").append(BBCodeFormatter.getStyles()).append("</head><table width=\"400\" style=\"border: solid 1px black; cellspacing:0px;cellpadding: 0px;background-color:#EFEBDF;color:black;\">\n");
         b.append(buildVillageRow(pVillage));
         NumberFormat nf = NumberFormat.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
         b.append(buildInfoRow("Punkte:", nf.format(pVillage.getPoints()), false));
@@ -86,6 +89,34 @@ public class VillageHTMLTooltipGenerator {
             tagString = tagString.substring(0, tagString.lastIndexOf(";"));
             b.append(buildInfoRow("Tags:", tagString, false));
         }
+
+        FightReport r = ReportManager.getSingleton().findLastReportForVillage(pVillage);
+        if (r != null) {
+            String imgString = "<img src=\"";
+            if (r.areAttackersHidden()) {
+                imgString += VillageHTMLTooltipGenerator.class.getResource("/res/ui/bullet_ball_grey.png");
+            } else if (r.isSpyReport()) {
+                imgString += VillageHTMLTooltipGenerator.class.getResource("/res/ui/bullet_ball_blue.png");
+            } else if (r.wasLostEverything()) {
+                imgString += VillageHTMLTooltipGenerator.class.getResource("/res/ui/bullet_ball_red.png");
+            } else if (r.wasLostNothing()) {
+                imgString += VillageHTMLTooltipGenerator.class.getResource("/res/ui/bullet_ball_green.png");
+            } else {
+                imgString += VillageHTMLTooltipGenerator.class.getResource("/res/ui/bullet_ball_yellow.png");
+            }
+            imgString += "\"/>";
+            b.append(buildInfoRow("Letzter Bericht:", imgString + " " + df.format(r.getTimestamp()), false));
+        }
+
+        FarmInformation fi = FarmManager.getSingleton().getFarmInformation(pVillage);
+        if (fi != null) {
+            b.append(buildInfoRow("Letzter Farmangriff:", (fi.getLastReport() > 0) ? df.format(fi.getLastReport()) : "Keine Informationen", false));
+            b.append(buildInfoRow("Rohstoffe im Speicher:",
+                    nf.format(fi.getWoodInStorage()) + "&nbsp;<img src=\"" + VillageHTMLTooltipGenerator.class.getResource("/res/holz.png") + "\"/>&nbsp;"
+                    + nf.format(fi.getClayInStorage()) + "&nbsp;<img src=\"" + VillageHTMLTooltipGenerator.class.getResource("/res/lehm.png") + "\"/>&nbsp;"
+                    + nf.format(fi.getIronInStorage()) + "&nbsp;<img src=\"" + VillageHTMLTooltipGenerator.class.getResource("/res/eisen.png") + "\"/>", false));
+        }
+
         if (showFarmSpace) {
             b.append(buildFarmLevel(pVillage));
         }
@@ -101,15 +132,7 @@ public class VillageHTMLTooltipGenerator {
         if (pWithUnits) {
             b.append(buildUnitTableRow(pVillage));
         }
-        b.append("</table>\n");
-        
-        //@TODO find a way to include reports properly 
-        FightReport r = ReportManager.getSingleton().findLastReportForVillage(pVillage);
-        if (r != null) {
-            String tt = FightReportHTMLToolTipGenerator.buildToolTip(r);
-            b.append("<table style=\"font-size:8px\"><tr><td>").append(tt.substring(tt.indexOf("<tr>"), tt.length() - "</http>".length())).append("</td></tr></table>");
-        }
-        b.append("<html>\n");
+        b.append("</table>\n").append("<html>\n");
         return b.toString();
     }
 

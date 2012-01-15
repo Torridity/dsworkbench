@@ -42,27 +42,19 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 import javax.swing.JToolTip;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
 import org.apache.log4j.Logger;
 
-/**Map Renderer which supports "dirty layers" defining which layer has to be redrawn.<BR/>
- * Layer order with z-ID:<BR/>
- * 0: Marker Layer -> redraw after marker changes (triggered by MarkerManager)
- * 1: Village Layer: Redraw on global events (e.g. init or resize) or after changes on scaling or skin
- * 2: Misc. Basic Map Decoration: e.g. Sector or continent drawing on demand (triggered by SettingsDialog)
- * 3: Attack Vector Layer: Redraw after attack changes (triggered by AttackManager)
- * 4: Misc. Extended Map Decoration: e.g. troop qualification or active village marker
- * 5: Live Layer: Redraw in every drawing cycle e.g. Drag line, tool popup(?), (troop movement?)
- * 6-16: Free assignable
+/**
+ * Map Renderer which supports "dirty layers" defining which layer has to be redrawn.<BR/> Layer order with z-ID:<BR/> 0: Marker Layer ->
+ * redraw after marker changes (triggered by MarkerManager) 1: Village Layer: Redraw on global events (e.g. init or resize) or after changes
+ * on scaling or skin 2: Misc. Basic Map Decoration: e.g. Sector or continent drawing on demand (triggered by SettingsDialog) 3: Attack
+ * Vector Layer: Redraw after attack changes (triggered by AttackManager) 4: Misc. Extended Map Decoration: e.g. troop qualification or
+ * active village marker 5: Live Layer: Redraw in every drawing cycle e.g. Drag line, tool popup(?), (troop movement?) 6-16: Free assignable
+ *
  * @author Charon
  */
 public class MapRenderer {
@@ -112,13 +104,16 @@ public class MapRenderer {
     private AttackLayerRenderer mAttackLayer = new AttackLayerRenderer();
     private SupportLayerRenderer mSupportLayer = new SupportLayerRenderer();
     private NoteLayerRenderer mNoteLayer = new NoteLayerRenderer();
-    /**RenderSettings used within the last rendering cycle*/
+    /**
+     * RenderSettings used within the last rendering cycle
+     */
     private RenderSettings mRenderSettings = null;
-    /* private Canvas mCanvas = null;
-    BufferStrategy strategy;*/
+    /*
+     * private Canvas mCanvas = null; BufferStrategy strategy;
+     */
 
-    /*  public MapRenderer(Canvas pCanvas) {
-    mCanvas = pCanvas;
+    /*
+     * public MapRenderer(Canvas pCanvas) { mCanvas = pCanvas;
      */
     public MapRenderer() {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
@@ -139,14 +134,18 @@ public class MapRenderer {
         }
     }
 
-    /**Set the order all layers are drawn
+    /**
+     * Set the order all layers are drawn
+     *
      * @param pDrawOrder
      */
     public void setDrawOrder(List<Integer> pDrawOrder) {
         mDrawOrder = new LinkedList<Integer>(pDrawOrder);
     }
 
-    /**Complete redraw on resize or scroll
+    /**
+     * Complete redraw on resize or scroll
+     *
      * @param pType
      */
     public synchronized void initiateRedraw(int pType) {
@@ -324,6 +323,7 @@ public class MapRenderer {
 
                 //draw live layer -> always on top
                 try {
+                    //new FarmLayerRenderer(mVillagePositions).performRendering(mRenderSettings, g2d);
                     renderLiveLayer(g2d);
                 } catch (Exception e) {
                     logger.warn("Failed to render live layer");
@@ -345,11 +345,13 @@ public class MapRenderer {
         }
     }
 
-    /**Set the drag line externally (done by MapPanel class)
+    /**
+     * Set the drag line externally (done by MapPanel class)
+     *
      * @param pXS
      * @param pYS
      * @param pXE
-     * @param pYE 
+     * @param pYE
      */
     public void setDragLine(int pXS, int pYS, int pXE, int pYE) {
         if (pXS == -1 && pYS == -1 && pXE == -1 && pYE == -1) {
@@ -363,7 +365,9 @@ public class MapRenderer {
         }
     }
 
-    /**Extract the visible villages (only needed on full repaint)*/
+    /**
+     * Extract the visible villages (only needed on full repaint)
+     */
     private void calculateVisibleVillages() {
         dCenterX = MapPanel.getSingleton().getCurrentPosition().x;
         dCenterY = MapPanel.getSingleton().getCurrentPosition().y;
@@ -425,8 +429,8 @@ public class MapRenderer {
                         Point villagePos = new Point((int) Math.floor(dx + x * dCurrentFieldWidth), (int) Math.floor(dy + y * dCurrentFieldHeight));
                         mVillagePositions.put(mVisibleVillages[x][y], new Rectangle(villagePos.x, villagePos.y, (int) Math.floor(dCurrentFieldWidth), (int) Math.floor(dCurrentFieldHeight)));
                         Tribe t = mVisibleVillages[x][y].getTribe();
-                        if (t != Barbarians.getSingleton()) {
-                            if (mTribeCount.get(t) == null) {
+                        if (t != Barbarians.getSingleton()) {                     
+                            if (!mTribeCount.containsKey(t)) {
                                 mTribeCount.put(t, 1);
                             } else {
                                 mTribeCount.put(t, mTribeCount.get(t) + 1);
@@ -435,7 +439,7 @@ public class MapRenderer {
                             if (a == null) {
                                 a = NoAlly.getSingleton();
                             }
-                            if (mAllyCount.get(a) == null) {
+                            if (!mAllyCount.containsKey(a)) {
                                 mAllyCount.put(a, 1);
                             } else {
                                 mAllyCount.put(a, mAllyCount.get(a) + 1);
@@ -463,7 +467,9 @@ public class MapRenderer {
         return (Hashtable<Ally, Integer>) mAllyCount.clone();
     }
 
-    /**Render e.g. drag line, radar, popup*/
+    /**
+     * Render e.g. drag line, radar, popup
+     */
     private void renderLiveLayer(Graphics2D g2d) {
         int wb = MapPanel.getSingleton().getWidth();
         int hb = MapPanel.getSingleton().getHeight();
@@ -495,7 +501,7 @@ public class MapRenderer {
                 targetRect = mVillagePositions.get(mouseVillage);
             }
 
-//check which region is visible
+            //check which region is visible
             if (sourceRect != null && targetRect != null) {
                 //source and target are visible and selected. Draw drag line between them
                 dragLine.setLine(sourceRect.x + sourceRect.width / 2, sourceRect.y + sourceRect.height / 2, targetRect.x + targetRect.width / 2, targetRect.y + targetRect.height / 2);
@@ -539,12 +545,12 @@ public class MapRenderer {
             Paint p = g2d.getPaint();
             if (mouseTribe != null) {
                 //Rectangle copy = null;
-                Iterator<Village> keys = mVillagePositions.keySet().iterator();
+                Set<Map.Entry<Village, Rectangle>> entries = mVillagePositions.entrySet();
 
-                while (keys.hasNext()) {
-                    Village v = keys.next();
+                for (Map.Entry<Village, Rectangle> entry : entries) {
+                    Village v = entry.getKey();
                     if ((v.getTribe() == null && mouseTribe.equals(Barbarians.getSingleton())) || (v.getTribe() != null && mouseTribe.equals(v.getTribe()))) {
-                        Rectangle r = mVillagePositions.get(v);
+                        Rectangle r = entry.getValue();
                         Ellipse2D ellipse = new Ellipse2D.Float(r.x, r.y, r.height, r.height);
                         g2d.setPaint(new RoundGradientPaint(r.getCenterX(), r.getCenterY(), Color.yellow, new Point2D.Double(0, r.height / 2), new Color(0, 0, 0, 0)));
                         g2d.fill(ellipse);
@@ -633,13 +639,13 @@ public class MapRenderer {
             }
         }
 
-        List<Village> marked = MapPanel.getSingleton().getMarkedVillages();
+        List<Village> marked = Arrays.asList(MapPanel.getSingleton().getMarkedVillages());
         if (!marked.isEmpty()) {
-            Iterator<Village> villages = mVillagePositions.keySet().iterator();
+            Set<Map.Entry<Village, Rectangle>> entries = mVillagePositions.entrySet();
             Color cBefore = g2d.getColor();
-            while (villages.hasNext()) {
-                Village v = villages.next();
-                Rectangle villageRect = mVillagePositions.get(v);
+            for (Map.Entry<Village, Rectangle> entry : entries) {
+                Village v = entry.getKey();
+                Rectangle villageRect = entry.getValue();
                 if (marked.contains(v)) {
                     g2d.setColor(Color.YELLOW);
                     g2d.fillOval(villageRect.x + villageRect.width - 10, villageRect.y, 10, 10);

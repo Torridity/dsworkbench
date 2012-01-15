@@ -7,8 +7,12 @@ package de.tor.tribes.ui.wiz.red;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ProfileManager;
+import java.awt.BorderLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Map;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.UIManager;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
@@ -24,6 +28,7 @@ import org.netbeans.spi.wizard.WizardPanelProvider;
 public class ResourceDistributorWizard extends WizardPanelProvider {
 
     private static final String ID_WELCOME = ResourceDistributorWelcomePanel.getStep();
+    private static JFrame parent = null;
 
     public ResourceDistributorWizard() {
         super("DS Workbench - Rohstoffverteiler",
@@ -37,6 +42,28 @@ public class ResourceDistributorWizard extends WizardPanelProvider {
             return ResourceDistributorWelcomePanel.getSingleton();
         }
         return null;
+    }
+
+    public static void show() {
+        if (parent != null) {
+            parent.toFront();
+            return;
+        }
+        parent = new JFrame();
+        Wizard wizard = new ResourceDistributorBranchController().createWizard();
+        parent.getContentPane().setLayout(new BorderLayout());
+        WizardDisplayer.installInContainer(parent, BorderLayout.CENTER, wizard, null, null, null);
+        parent.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        parent.addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                parent = null;
+            }
+        });
+        parent.pack();
+        parent.setVisible(true);
     }
 
     public static void main(String[] args) {

@@ -17,6 +17,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.regex.Pattern;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -87,10 +89,10 @@ public class FightReportHTMLToolTipGenerator {
         res = res.replaceAll(LUCK_POS, ((pReport.getLuck() >= 0) ? "<b>" + nf.format(pReport.getLuck()) + "%</b>" : ""));
         res = res.replaceAll(LUCK_ICON1, "<img src=\"" + ((pReport.getLuck() <= 0) ? FightReportHTMLToolTipGenerator.class.getResource("/res/rabe.png") : FightReportHTMLToolTipGenerator.class.getResource("/res/rabe_grau.png")) + "\"/>");
         res = res.replaceAll(LUCK_ICON2, "<img src=\"" + ((pReport.getLuck() >= 0) ? FightReportHTMLToolTipGenerator.class.getResource("/res/klee.png") : FightReportHTMLToolTipGenerator.class.getResource("/res/klee_grau.png")) + "\"/>");
-        res = res.replaceAll(ATTACKER, Pattern.quote(pReport.getAttacker().getName()));
-        res = res.replaceAll(SOURCE, Pattern.quote(pReport.getSourceVillage().getFullName()));
-        res = res.replaceAll(DEFENDER, Pattern.quote(pReport.getDefender().getName()));
-        res = res.replaceAll(TARGET, Pattern.quote(pReport.getTargetVillage().getFullName()));
+        res = res.replaceAll(ATTACKER, StringEscapeUtils.escapeHtml(pReport.getAttacker().getName()));
+        res = res.replaceAll(SOURCE, StringEscapeUtils.escapeHtml(pReport.getSourceVillage().getFullName()));
+        res = res.replaceAll(DEFENDER, StringEscapeUtils.escapeHtml(pReport.getDefender().getName()));
+        res = res.replaceAll(TARGET, StringEscapeUtils.escapeHtml(pReport.getTargetVillage().getFullName()));
         res = res.replaceAll(RAM_DAMAGE, ((pReport.wasWallDamaged()) ? "Wall besch&auml;digt von Level <b>" + pReport.getWallBefore() + "</b> auf Level <b>" + pReport.getWallAfter() + "</b>" : ""));
         res = res.replaceAll(CATA_DAMAGE, ((pReport.wasBuildingDamaged()) ? pReport.getAimedBuilding() + " besch&auml;digt von Level <b>" + pReport.getBuildingBefore() + "</b> auf Level <b>" + pReport.getBuildingAfter() + "</b>" : ""));
         res = res.replaceAll(SNOB_INFLUENCE, ((pReport.wasSnobAttack()) ? "Zustimmung gesunken von <b>" + pReport.getAcceptanceBefore() + "</b> auf <b>" + pReport.getAcceptanceAfter() + "</b>" : ""));

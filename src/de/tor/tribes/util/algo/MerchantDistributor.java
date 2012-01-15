@@ -215,7 +215,6 @@ public class MerchantDistributor extends Thread {
             costs[i] = new Hashtable<Destination, Double>();
             for (int j = 0; j < pDestinations.size(); j++) {
                 double cost = pSources.get(i).distanceTo(pDestinations.get(j));
-                //@TODO CHeck cost max.
                 if (cost == 0) {// || cost > 19) {
                     cost = 99999.0;
                 }

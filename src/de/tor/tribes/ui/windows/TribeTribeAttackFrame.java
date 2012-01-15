@@ -141,7 +141,6 @@ import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
- * @TODO (Diff) Arrive time in result table visible
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements

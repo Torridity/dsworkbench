@@ -17,7 +17,6 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.models.ReportManagerTableModel;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
@@ -28,6 +27,7 @@ import de.tor.tribes.ui.renderer.TribeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.ui.views.DSWorkbenchReportFrame;
+import de.tor.tribes.ui.windows.ReportShowDialog;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
@@ -36,11 +36,7 @@ import de.tor.tribes.util.bb.ReportListFormatter;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.HeadlessException;
-import java.awt.Point;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -50,9 +46,7 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
@@ -78,7 +72,7 @@ import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
- *@TODO (Diff) Fixed report troops transfer (attacker troops to own and to in village)
+ *
  * @author Torridity
  */
 public class ReportTableTab extends javax.swing.JPanel implements ListSelectionListener, AStarResultReceiver {
@@ -92,9 +86,11 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
         Village v = DataHolder.getSingleton().getVillages()[point.x][point.y];
         if (v != null) {
             //@TODO Add sim result to attack planer
-            /*DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddTargetEvent(v, pAttacks);
-            DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true);
-            DSWorkbenchMainFrame.getSingleton().getAttackPlaner().toFront();*/
+            /*
+             * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddTargetEvent(v, pAttacks);
+             * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true);
+             * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().toFront();
+             */
         } else {
             showError("Das Zieldorf ist ungültig");
         }
@@ -110,6 +106,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
     private static ReportManagerTableModel reportModel = null;
     private static boolean KEY_LISTENER_ADDED = false;
     private static PainterHighlighter highlighter = null;
+    private Hashtable<Integer, List<ReportShowDialog>> showDialogs = null;
 
     static {
         jxReportTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
@@ -139,7 +136,9 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
 
     }
 
-    /** Creates new form ReportTablePanel
+    /**
+     * Creates new form ReportTablePanel
+     *
      * @param pReportSet
      * @param pActionListener
      */
@@ -168,11 +167,12 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
 
             KEY_LISTENER_ADDED = true;
         }
+        showDialogs = new Hashtable<Integer, List<ReportShowDialog>>();
         jxReportTable.getSelectionModel().addListSelectionListener(ReportTableTab.this);
-
     }
 
     public void deregister() {
+        closeAllReportDialogs();
         jxReportTable.getSelectionModel().removeListSelectionListener(this);
     }
 
@@ -211,9 +211,68 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
         return sReportSet;
     }
 
-    /*  public Component getTabRenderer() {
-    return mTabRenderer;
-    }*/
+    public void viewReport() {
+        List<FightReport> selection = getSelectedReports();
+        if (selection.isEmpty()) {
+            showInfo("Kein Bericht gewählt");
+            return;
+        }
+
+        int x = 0;
+        int y = 0;
+        int layer = 0;
+        boolean max = false;
+        Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+        for (FightReport report : selection) {
+            ReportShowDialog dialog = new ReportShowDialog(DSWorkbenchReportFrame.getSingleton(), false);
+            dialog.setLocation(new Point(x, y));
+            dialog.setParentTab(this, layer);
+            dialog.setupAndShow(report);
+            List<ReportShowDialog> dialogsInLayer = showDialogs.get(layer);
+            if (dialogsInLayer == null) {
+                dialogsInLayer = new LinkedList<ReportShowDialog>();
+                showDialogs.put(layer, dialogsInLayer);
+            }
+            dialogsInLayer.add(dialog);
+
+            if (!max) {
+                x += dialog.getWidth();
+                if (x > size.getWidth() - dialog.getWidth() / 2) {
+                    x = 0;
+                    y += dialog.getHeight();
+                }
+
+                if (y > size.height - dialog.getHeight() / 2) {
+                    x = 0;
+                    y = 0;
+                    layer++;
+                }
+            }
+        }
+    }
+
+    public void closeReportLayer(int pLayer) {
+        List<ReportShowDialog> dialogsInLayer = showDialogs.get(pLayer);
+        for (ReportShowDialog d : dialogsInLayer) {
+            d.dispose();
+        }
+        showDialogs.remove(pLayer);
+    }
+
+    public void closeReportDialog(ReportShowDialog pDialog) {
+        List<ReportShowDialog> dialogsInLayer = showDialogs.get(pDialog.getLayer());
+        dialogsInLayer.remove(pDialog);
+        pDialog.dispose();
+    }
+
+    public void closeAllReportDialogs() {
+        Enumeration<Integer> keys = showDialogs.keys();
+        while (keys.hasMoreElements()) {
+            Integer key = keys.nextElement();
+            closeReportLayer(key);
+        }
+    }
+
     public JXTable getReportTable() {
         return jxReportTable;
     }
@@ -282,10 +341,9 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
         }
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this
+     * method is always regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -332,7 +390,6 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
             showInfo("Kein Bericht ausgewählt");
             return;
         }
-
 
         int res = JOptionPaneHelper.showQuestionThreeChoicesBox(DSWorkbenchReportFrame.getSingleton(), "<html>Welche Truppeninformationen m&ouml;chtest du &uuml;bertragen?<br/><b>Achtung:</b> Alle vorhandene Truppeninformationen des Dorfes werden &uuml;berschrieben.</html>", "Übertragen", "Angreifer", "Verteidiger", "Beide");
         if (res == JOptionPane.NO_OPTION) {

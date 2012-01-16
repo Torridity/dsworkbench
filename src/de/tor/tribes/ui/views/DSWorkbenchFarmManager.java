@@ -27,6 +27,7 @@ import java.awt.Point;
 import java.awt.event.*;
 import java.util.*;
 import java.util.Timer;
+import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
@@ -36,7 +37,10 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
+import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
+import org.jdesktop.swingx.decorator.PainterHighlighter;
+import org.jdesktop.swingx.decorator.PatternPredicate;
 import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
 
@@ -80,6 +84,11 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         FarmManager.getSingleton().addManagerListener(DSWorkbenchFarmManager.this);
         settingsPanel.setLayout(new BorderLayout());
         settingsPanel.add(jSettingsPanel, BorderLayout.CENTER);
+
+        PatternPredicate patternPredicate0 = new PatternPredicate(FarmInformation.FARM_STATUS.FARMING.toString(), 0);
+        MattePainter mp = new MattePainter(new Color(0, 0, 0, 200));
+        PainterHighlighter highlighter = new PainterHighlighter(new HighlightPredicate.AndHighlightPredicate(patternPredicate0), mp);
+        jFarmTable.addHighlighter(highlighter);
 
         new Timer("FarmTableUpdate").schedule(new TimerTask() {
 
@@ -460,20 +469,16 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         }
 
         //@TODO check hide status!
-     //   updateHideStatus();
+        //   updateHideStatus();
     }
 
     private void updateHideStatus() {
-     /*   if (jHideFamedFarms.isSelected()) {
-            jFarmTable.setRowFilter(new RowFilter<TableModel, Integer>() {
-
-                @Override
-                public boolean include(RowFilter.Entry<? extends TableModel, ? extends Integer> entry) {
-                    FarmInformation.FARM_STATUS status = (FarmInformation.FARM_STATUS) entry.getValue(0);
-                    return !status.equals(FarmInformation.FARM_STATUS.FARMING);
-                }
-            });
-        }*/
+        /*
+         * if (jHideFamedFarms.isSelected()) { jFarmTable.setRowFilter(new RowFilter<TableModel, Integer>() {
+         *
+         * @Override public boolean include(RowFilter.Entry<? extends TableModel, ? extends Integer> entry) { FarmInformation.FARM_STATUS
+         * status = (FarmInformation.FARM_STATUS) entry.getValue(0); return !status.equals(FarmInformation.FARM_STATUS.FARMING); } }); }
+         */
     }
 
     private void resetStatus() {
@@ -997,7 +1002,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         pConfig.setProperty(getPropertyPrefix() + ".disallowed.units", TroopHelper.unitListToProperty(jNotAllowedList));
         pConfig.setProperty(getPropertyPrefix() + ".farmA.units", TroopHelper.unitTableToProperty(aTroops.getAmounts()));
         pConfig.setProperty(getPropertyPrefix() + ".farmB.units", TroopHelper.unitTableToProperty(bTroops.getAmounts()));
-       // pConfig.setProperty(getPropertyPrefix() + ".hide.farming", jHideFamedFarms.isSelected());
+        // pConfig.setProperty(getPropertyPrefix() + ".hide.farming", jHideFamedFarms.isSelected());
         pConfig.setProperty(getPropertyPrefix() + ".use.success.rate", jConsiderSucessRate.isSelected());
         PropertyHelper.storeTableProperties(jFarmTable, pConfig, getPropertyPrefix());
     }
@@ -1010,11 +1015,10 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         } catch (Exception e) {
         }
 
-     /*   try {
-            jHideFamedFarms.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".hide.farming"));
-            updateHideStatus();
-        } catch (Exception e) {
-        }*/
+        /*
+         * try { jHideFamedFarms.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".hide.farming")); updateHideStatus(); } catch
+         * (Exception e) { }
+         */
         try {
             jConsiderSucessRate.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".use.success.rate"));
         } catch (Exception e) {

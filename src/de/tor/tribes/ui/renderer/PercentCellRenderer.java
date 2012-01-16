@@ -20,10 +20,12 @@ import org.jdesktop.swingx.renderer.DefaultTableRenderer;
  */
 public class PercentCellRenderer extends DefaultTableRenderer {
 
+    private DefaultTableCellRenderer renderer = null;
     private NumberFormat format = NumberFormat.getInstance();
 
     public PercentCellRenderer() {
         super();
+        renderer = new DefaultTableCellRenderer();
         format.setMinimumFractionDigits(2);
         format.setMaximumFractionDigits(2);
     }
@@ -35,22 +37,20 @@ public class PercentCellRenderer extends DefaultTableRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         ColoredProgressBar p = new ColoredProgressBar(0, 100);
 
         Float val = (Float) value * 100;
 
-        Color color = null;
 
-        if (row % 2 == 0) {
-            color = Constants.DS_ROW_A;
-        } else {
-            color = Constants.DS_ROW_B;
-        }
-        p.setBackground(color);
-        p.setForeground(ColorGradientHelper.getGradientColor(val, Color.RED, color));
-        if (isSelected) {
-            p.setBackground(table.getSelectionBackground());
-        }
+        /*
+         * if (row % 2 == 0) { color = Constants.DS_ROW_A; } else { color = Constants.DS_ROW_B; }
+         */
+        p.setBackground(c.getBackground());
+        p.setForeground(ColorGradientHelper.getGradientColor(val, Color.RED, c.getBackground()));
+        /*
+         * if (isSelected) { p.setBackground(table.getSelectionBackground()); }
+         */
         p.setStringPainted(true);
         p.setValue(Math.round(val));
 

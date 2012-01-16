@@ -254,7 +254,7 @@ public class PluginManager {
      */
     public void checkForUpdates() throws Exception {
         //try to get properties
-        URLConnection connection = new URL("http://www.dsworkbench.de/downloads/plugins/plugin_v3.version").openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
+        URLConnection connection = new URL("http://www.dsworkbench.de/downloads/plugins/plugin_v4.version").openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
         Properties props = new Properties();
         props.load(connection.getInputStream());
         if (!INITIALIZED) {

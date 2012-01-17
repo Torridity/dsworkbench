@@ -5,6 +5,8 @@
 package de.tor.tribes.util.farm;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.ConversionException;
+import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
@@ -36,10 +38,13 @@ import org.apache.log4j.Logger;
 public class FarmManager extends GenericManager<FarmInformation> {
 
     private static Logger logger = Logger.getLogger("FarmManager");
-    private static FarmManager SINGLETON = new FarmManager();
+    private static FarmManager SINGLETON = null;
     private Hashtable<Village, FarmInformation> infoMap = null;
 
-    public static FarmManager getSingleton() {
+    public static synchronized FarmManager getSingleton() {
+        if (SINGLETON == null) {
+            SINGLETON = new FarmManager();
+        }
         return SINGLETON;
     }
 
@@ -160,9 +165,9 @@ public class FarmManager extends GenericManager<FarmInformation> {
         logger.debug("Reading farm information from file " + pFile);
         try {
             r = new FileReader(pFile);
+            initialize();
             List<ManageableType> el = (List<ManageableType>) x.fromXML(r);
             invalidate();
-            initialize();
             for (ManageableType t : el) {
                 FarmInformation info = (FarmInformation) t;
                 info.revalidate();
@@ -173,6 +178,8 @@ public class FarmManager extends GenericManager<FarmInformation> {
             logger.debug("Farm information successfully read");
         } catch (IOException ioe) {
             logger.error("Failed to read farm information", ioe);
+        } catch (ConversionException ce) {
+            logger.error("Failed to deserialize farm information", ce);
         } finally {
             try {
                 if (r != null) {

@@ -48,7 +48,9 @@ public class VillageParser implements GenericParserInterface<Village> {
                     }
                 }
                 if (lastLineVillage != null) {
-                    villages.add(lastLineVillage);
+                    if (!villages.contains(lastLineVillage)) {
+                        villages.add(lastLineVillage);
+                    }
                 }
             } else {
                 StringTokenizer t = new StringTokenizer(lines.nextToken(), " []\t");
@@ -73,7 +75,9 @@ public class VillageParser implements GenericParserInterface<Village> {
                     }
                 }
                 if (lastLineVillage != null) {
-                    villages.add(lastLineVillage);
+                    if (!villages.contains(lastLineVillage)) {
+                        villages.add(lastLineVillage);
+                    }
                 }
             }
         }
@@ -81,8 +85,9 @@ public class VillageParser implements GenericParserInterface<Village> {
     }
 
     public static void main(String[] args) throws Exception {
-        /*   Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-        System.out.println(VillageParser.parse((String) t.getTransferData(DataFlavor.stringFlavor)));
+        /*
+         * Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+         * System.out.println(VillageParser.parse((String) t.getTransferData(DataFlavor.stringFlavor)));
          */
         String text = "[village](422|324)[/village]";
         System.out.println(text.matches(".{0,}\\({0,1}[0-9]{1,3}\\|[0-9]{1,3}\\){0,1}.{0,}"));

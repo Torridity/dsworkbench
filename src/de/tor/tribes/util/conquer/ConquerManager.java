@@ -345,7 +345,7 @@ public class ConquerManager extends GenericManager<Conquer> {
         if (pVillage == null) {
             return null;
         }
-        for (ManageableType t : getAllElements()) {
+        for (ManageableType t : getAllElements().toArray(new ManageableType[getElementCount()])) {
             Conquer c = (Conquer) t;
             if (c.getVillage().getId() == pVillage.getId()) {
                 return c;
@@ -401,7 +401,9 @@ public class ConquerManager extends GenericManager<Conquer> {
         return new int[]{grey, friendly};
     }
 
-    /**Notify all MarkerManagerListeners that the marker data has changed*/
+    /**
+     * Notify all MarkerManagerListeners that the marker data has changed
+     */
     private void fireConquersChangedEvents() {
         revalidate(true);
         try {

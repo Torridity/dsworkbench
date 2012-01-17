@@ -98,8 +98,9 @@ public class ReportManager extends GenericManager<FightReport> {
         boolean filtered = false;
 
         if (farmFilter.isValid(pElement)) {
-            addManagedElement(FARM_SET, pElement, false);
+            logger.debug("Farm filter was activated for village " + pElement.getTargetVillage());
             FarmManager.getSingleton().updateFarmInfoFromReport(pElement);
+            addManagedElement(FARM_SET, pElement, false);
         } else {
             for (RuleEntry entry : getRuleEntries()) {
                 if (entry.getRule().isValid(pElement)) {
@@ -124,8 +125,9 @@ public class ReportManager extends GenericManager<FightReport> {
         boolean filtered = false;
         if (pFiltered) {
             if (farmFilter.isValid(pElement)) {
-                addManagedElement(FARM_SET, pElement, false);
+                logger.debug("Farm filter was activated for village " + pElement.getTargetVillage());
                 FarmManager.getSingleton().updateFarmInfoFromReport(pElement);
+                addManagedElement(FARM_SET, pElement, false);
             } else {
                 for (RuleEntry entry : getRuleEntries()) {
                     if (entry.getRule().isValid(pElement)) {
@@ -141,7 +143,6 @@ public class ReportManager extends GenericManager<FightReport> {
         } else {//add element without filtering
             super.addManagedElement(pGroup, pElement);
         }
-        //   }
     }
 
     public int filterNow(String pGroup) {

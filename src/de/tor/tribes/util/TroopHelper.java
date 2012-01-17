@@ -166,6 +166,7 @@ public class TroopHelper {
             UnitHolder[] allowed = DSWorkbenchFarmManager.getSingleton().getAllowedFarmUnits();
             Arrays.sort(allowed, UnitHolder.RUNTIME_COMPARATOR);
             boolean minUnitsMetOnce = false;
+            logger.debug("Getting farm units from " + pSource);
             for (UnitHolder unit : allowed) {
                 int amount = holder.getTroopsOfUnitInVillage(unit);
                 if (amount > 0) {
@@ -181,19 +182,24 @@ public class TroopHelper {
                         currentCarryCapacity += entry.getKey().getCarry() * entry.getValue();
                     }//in the first loop, speed will be the unit speed and carry capacity will be 0
 
+                    logger.debug(" - Current max. speed: " + speed);
+                    logger.debug(" - Current capacity: " + currentCarryCapacity);
+
                     //get resources for current max speed excluding carry capacity
                     int resources = pInfo.getResourcesInStorage(System.currentTimeMillis() + DSCalculator.calculateMoveTimeInMillis(pSource, pInfo.getVillage(), speed));
                     resources -= currentCarryCapacity;
-
+                    logger.debug(" - Remaining resources: " + resources);
                     //get needed amount of units to carry remaining resources
-                    int neededAmountOfUnit = (int) Math.rint(resources / holder.getTroopsOfUnitInVillage(unit));
-
+                    int neededAmountOfUnit = (int) Math.rint((double) resources / unit.getCarry());
+                    logger.debug(" - Needing " + neededAmountOfUnit + " units of type " + unit);
                     if (neededAmountOfUnit <= amount && (minUnitsMetOnce || neededAmountOfUnit > DSWorkbenchFarmManager.getSingleton().getMinUnits(unit))) {
+                        logger.debug("Adding " + neededAmountOfUnit + " units of type " + unit);
                         //unit can carry all and more units than min are needed
                         units.put(unit, neededAmountOfUnit);
                         resources -= unit.getCarry() * neededAmountOfUnit;
                         minUnitsMetOnce = true;
                     } else if (neededAmountOfUnit > amount && (minUnitsMetOnce || amount > DSWorkbenchFarmManager.getSingleton().getMinUnits(unit))) {
+                        logger.debug("Adding all units (" + amount + ") of type " + unit);
                         //unit can not carry all and but more units than min are available
                         units.put(unit, amount);
                         resources -= unit.getCarry() * amount;
@@ -201,9 +207,12 @@ public class TroopHelper {
                     }//otherwise don't use unit
 
                     if (resources <= 0) {
+                        logger.debug("Got carriage for all resources");
                         //farm will be empty
                         break;
                     }
+                } else {
+                    logger.debug("No units of type " + unit + " in village");
                 }
             }
 

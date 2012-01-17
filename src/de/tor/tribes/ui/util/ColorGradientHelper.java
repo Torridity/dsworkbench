@@ -31,6 +31,14 @@ public class ColorGradientHelper {
             int red = (int) (c2.getRed() * ratio + c1.getRed() * (1 - ratio));
             int green = (int) (c2.getGreen() * ratio + c1.getGreen() * (1 - ratio));
             int blue = (int) (c2.getBlue() * ratio + c1.getBlue() * (1 - ratio));
+
+            red = Math.max(0, red);
+            green = Math.max(0, green);
+            blue = Math.max(0, blue);
+
+            red = Math.min(255, red);
+            green = Math.min(255, green);
+            blue = Math.min(255, blue);
             result = new Color(red, green, blue);
         } else {
             //default renderer and color

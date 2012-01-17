@@ -288,16 +288,11 @@ public abstract class GenericManager<C extends ManageableType> {
             managedElementGroups.get(DEFAULT_GROUP).add(pElement);
             changed = true;
         } else {
-            if (!managedElementGroups.containsKey(pGroup)) {
-                //add group if not exist
-                managedElementGroups.put(pGroup, new ArrayList<ManageableType>());
-                structureChanged = true;
-            }
-
             List<ManageableType> elems = managedElementGroups.get(pGroup);
             if (elems == null) {
                 elems = new ArrayList<ManageableType>();
                 managedElementGroups.put(pGroup, elems);
+                structureChanged = true;
             }
             elems.add(pElement);
             changed = true;

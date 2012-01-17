@@ -27,17 +27,15 @@ public class FarmStatusCellRenderer extends DefaultTableRenderer {
     private ImageIcon conqueredIcon = null;
     private ImageIcon farmingIcon = null;
     private ImageIcon reportIcon = null;
-    private ImageIcon returningIcon = null;
 
     public FarmStatusCellRenderer() {
         super();
         try {
             readyIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/checkbox.png"));
-            notSpyedIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/spy.png"));
+            notSpyedIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/spy_needed.png"));
             troopsFoundIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/skull.png"));
-            conqueredIcon = new ImageIcon("./graphics/icons/warning.png");
+            conqueredIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/snob.png"));
             farmingIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/trade_in.png"));
-            returningIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/trade_out.png"));
             reportIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/report.png"));
         } catch (Exception e) {
         }
@@ -64,9 +62,6 @@ public class FarmStatusCellRenderer extends DefaultTableRenderer {
                     break;
                 case FARMING:
                     label.setIcon(farmingIcon);
-                    break;
-                case RETURNING:
-                    label.setIcon(returningIcon);
                     break;
                 case REPORT_EXPECTED:
                     label.setIcon(reportIcon);

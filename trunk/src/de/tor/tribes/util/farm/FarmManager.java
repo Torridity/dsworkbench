@@ -17,7 +17,6 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
-import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.report.ReportManager;
 import java.awt.Point;
 import java.io.File;
@@ -37,13 +36,10 @@ import org.apache.log4j.Logger;
 public class FarmManager extends GenericManager<FarmInformation> {
 
     private static Logger logger = Logger.getLogger("FarmManager");
-    private static FarmManager SINGLETON = null;
+    private static FarmManager SINGLETON = new FarmManager();
     private Hashtable<Village, FarmInformation> infoMap = null;
 
-    public static synchronized FarmManager getSingleton() {
-        if (SINGLETON == null) {
-            SINGLETON = new FarmManager();
-        }
+    public static FarmManager getSingleton() {
         return SINGLETON;
     }
 
@@ -77,6 +73,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
     public void updateFarmInfoFromReport(FightReport pReport) {
         FarmInformation info = getFarmInformation(pReport.getTargetVillage());
         if (info != null) {
+            logger.debug("Updating farm information for farm " + info.getVillage());
             info.updateFromReport(pReport);
         }
     }

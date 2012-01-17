@@ -16,10 +16,12 @@ import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Map.Entry;
+import java.util.Set;
 import org.apache.commons.lang.math.IntRange;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.log4j.Logger;
 import org.jdom.Element;
 
 /**
@@ -28,6 +30,7 @@ import org.jdom.Element;
  */
 public class FarmInformation extends ManageableType {
 
+    private static Logger logger = Logger.getLogger("FarmInformation");
     private static double RESOURCE_PRODUCTION_CONTANT = 1.163118;
     private static double STORAGE_CAPACITY_CONTANT = 1.2294934;
     private static double HIDE_CAPACITY_CONTANT = 1.3335;
@@ -40,6 +43,11 @@ public class FarmInformation extends ManageableType {
     public enum FARM_STATUS {
 
         READY, FARMING, REPORT_EXPECTED, RETURNING, IGNORED, NOT_SPYED, TROOPS_FOUND, CONQUERED
+    }
+
+    public enum SPY_LEVEL {
+
+        NONE, RESOURCES, BUILDINGS
     }
     private FARM_STATUS status = FARM_STATUS.NOT_SPYED;
     private boolean justCreated = false;
@@ -67,6 +75,7 @@ public class FarmInformation extends ManageableType {
     private int farmSourceId = -1;
     private transient StorageStatus storageStatus = null;
     private Hashtable<String, Integer> farmTroop = null;
+    private transient boolean returning = false;
 
     /**
      * Default constructor
@@ -76,6 +85,9 @@ public class FarmInformation extends ManageableType {
         ownerId = pVillage.getTribe().getId();
     }
 
+    /**
+     * Get the village for this farm
+     */
     public Village getVillage() {
         if (village == null) {
             village = DataHolder.getSingleton().getVillagesById().get(villageId);
@@ -83,6 +95,9 @@ public class FarmInformation extends ManageableType {
         return village;
     }
 
+    /**
+     * Set a flag that indicates, that this info was just created.
+     */
     public void setJustCreated(boolean justCreated) {
         this.justCreated = justCreated;
     }
@@ -117,12 +132,20 @@ public class FarmInformation extends ManageableType {
         return false;
     }
 
+    /**
+     * Set initial resources
+     */
     public void setInitialResources() {
         woodInStorage = 1000;
         clayInStorage = 1000;
         ironInStorage = 1000;
     }
 
+    /**
+     * Revalidate the farm information (check owner, check returning/running
+     * troops) This method is called after initializing the farm manager and on
+     * user request
+     */
     public void revalidate() {
         checkOwner();
         if (farmTroopReturn < System.currentTimeMillis() && farmTroop != null) {
@@ -134,22 +157,7 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Returns true if a report is expected depending on the running farm troops and the expected return time
-     */
-    public boolean isReportExpected() {
-        if (farmTroopReturn == -1 || farmTroop == null) {
-            return false;
-        }
-
-        Hashtable<UnitHolder, Integer> units = TroopHelper.unitTableFromSerializableFormat(farmTroop);
-        double speed = TroopHelper.getTroopSpeed(units);
-        long arriveAtFarm = farmTroopReturn - DSCalculator.calculateMoveTimeInMillis(getVillage(), DataHolder.getSingleton().getVillagesById().get(farmSourceId), speed);
-        //return true if the last report is older than the expected arrive time plus a small delta 
-        return lastReport < arriveAtFarm + 1000;
-    }
-
-    /**
-     * Get the arrive time when the farm troops reach the farm
+     * Get the time when the farm troops reach the farm or return
      */
     public long getRuntimeInformation() {
         if (farmTroopReturn == -1 || farmTroop == null) {
@@ -157,21 +165,24 @@ public class FarmInformation extends ManageableType {
         }
         Hashtable<UnitHolder, Integer> units = TroopHelper.unitTableFromSerializableFormat(farmTroop);
         double speed = TroopHelper.getTroopSpeed(units);
-        long res = farmTroopReturn - DSCalculator.calculateMoveTimeInMillis(getVillage(), DataHolder.getSingleton().getVillagesById().get(farmSourceId), speed) - System.currentTimeMillis();
-        if (res < 0) {//farm was reached...return time until return
-            res = farmTroopReturn - System.currentTimeMillis();
-            if (res > 0) {
-                if (!getStatus().equals(FARM_STATUS.RETURNING)) {
+        long arriveTimeRelativeToNow = farmTroopReturn - DSCalculator.calculateMoveTimeInMillis(getVillage(), DataHolder.getSingleton().getVillagesById().get(farmSourceId), speed) - System.currentTimeMillis();
+        if (arriveTimeRelativeToNow < 0) {//farm was reached...return time until return
+            arriveTimeRelativeToNow = farmTroopReturn - System.currentTimeMillis();
+            if (arriveTimeRelativeToNow > 0) {
+                //troops are returning
+                if (!returning) {//set troops returning and change status once
                     setStatus(FARM_STATUS.REPORT_EXPECTED);
+                    returning = true;
                 }
             } else {
                 Hashtable<UnitHolder, Integer> troops = TroopHelper.unitTableFromSerializableFormat(farmTroop);
                 Village sourceVillage = DataHolder.getSingleton().getVillagesById().get(farmSourceId);
                 TroopHelper.returnTroops(sourceVillage, troops);
                 resetFarmStatus();
+                returning = false;
             }
         }
-        return res;
+        return arriveTimeRelativeToNow;
     }
 
     /**
@@ -276,10 +287,14 @@ public class FarmInformation extends ManageableType {
         }
     }
 
+    /**
+     * Reset farming troops and status (READY or NOT_SPYED)
+     */
     public void resetFarmStatus() {
         farmSourceId = -1;
         farmTroop = null;
         farmTroopReturn = -1;
+        returning = false;
         if (spyed) {
             setStatus(FARM_STATUS.READY);
         } else {
@@ -288,13 +303,10 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Get the correction factor depending on overall expected haul and overall actual haul. Correction is started beginning with the fifth
-     * attack
+     * Get the correction factor depending on overall expected haul and overall
+     * actual haul. Correction is started beginning with the fifth attack
      */
     public float getCorrectionFactor() {
-        if (attackCount < 5) {//wait a while until "correcting" 
-            return 1f;
-        }
         return Math.min(1f, (float) actualHaul / (float) expectedHaul);
     }
 
@@ -304,40 +316,68 @@ public class FarmInformation extends ManageableType {
     public void updateFromReport(FightReport pReport) {
         if (pReport == null || pReport.getTimestamp() < lastReport) {
             //old report
+            logger.debug("Skipping farm update from report for " + getVillage() + " due to an old report (" + lastReport + " > " + pReport.getTimestamp() + ")");
             return;
         }
         if (pReport.wasLostEverything()) {
+            logger.debug("Changing farm status to due to total loss");
             setStatus(FARM_STATUS.TROOPS_FOUND);
             farmTroop = null;
             farmTroopReturn = -1;
         } else {
-            int maxHaul = getWoodInStorage(pReport.getTimestamp()) + getClayInStorage(pReport.getTimestamp()) + getIronInStorage(pReport.getTimestamp());
-            int spyLevel = updateSpyInformation(pReport);
+            //get the carry capacity of the survived farmers
+            Hashtable<UnitHolder, Integer> survived = pReport.getSurvivingAttackers();
+            Set<Entry<UnitHolder, Integer>> entries = survived.entrySet();
+            int farmTroopsCapacity = 0;
+            for (Entry<UnitHolder, Integer> entry : entries) {
+                farmTroopsCapacity += (int) (entry.getKey().getCarry() * entry.getValue());
+            }
 
-            if (spyLevel == 2) {
+            //update spy information
+            SPY_LEVEL spyLevel = updateSpyInformation(pReport);
+            ///update max haul depending on spy information and the time the troops arrived at the target village
+            int maxHaul = farmTroopsCapacity;
+
+            if (spyLevel.equals(SPY_LEVEL.BUILDINGS)) {
                 spyed = true;
             }
+
+            if (!spyLevel.equals(SPY_LEVEL.NONE)) {
+                //set max haul to expected resources in storage if this information was spyed...otherwise use the carry capabilities of all sent troops
+                maxHaul = getWoodInStorage(pReport.getTimestamp()) + getClayInStorage(pReport.getTimestamp()) + getIronInStorage(pReport.getTimestamp());
+            }
+
             if (pReport.getHaul() != null) {
-                if (attackCount == 0) {
-                    //no info yet, max is hauled amount
-                    maxHaul = pReport.getHaul()[0] + pReport.getHaul()[1] + pReport.getHaul()[2];
-                }
-                int haulDelta = updateHaulInformation(pReport, maxHaul, spyLevel >= 1);
+                //resources were hauled
+                int haulDelta = updateHaulInformation(pReport, maxHaul, !spyLevel.equals(SPY_LEVEL.NONE));
+
+                float correctionBefore = getCorrectionFactor();
+                //expected haul maximum
                 expectedHaul += maxHaul;
+                //expected haul maximum including "disappeared" resources (negative delta) or "additional" resources (positive delta)
                 actualHaul += maxHaul + haulDelta;
+
+                float correctionAfter = getCorrectionFactor();
+
+                if (Math.abs(correctionAfter - correctionBefore) > .1) {
+                    //limit correction influence by one report to +/- 10 percent
+                    actualHaul = (int) Math.rint((correctionBefore + ((correctionAfter < correctionBefore) ? -.1 : .1)) * expectedHaul);
+                }
             }
 
             if (getStatus().equals(FARM_STATUS.REPORT_EXPECTED)) {
                 setStatus(FARM_STATUS.RETURNING);
             } else {
                 //set initial status
-                if (getStatus().equals(FARM_STATUS.NOT_SPYED) && spyLevel == 2) {
+                if (getStatus().equals(FARM_STATUS.NOT_SPYED) && spyLevel.equals(SPY_LEVEL.BUILDINGS)) {
                     setStatus(FARM_STATUS.READY);
                 }
             }
 
             //update arrival
             farmTroopReturn = pReport.getTimestamp() + DSCalculator.calculateMoveTimeInMillis(pReport.getSourceVillage(), pReport.getTargetVillage(), TroopHelper.getTroopSpeed(pReport.getSurvivingAttackers()));
+            //set returning...only to be sure that getRuntimeInformation does not reset the status to "REPORT_EXPECTED"
+            returning = true;
         }
         lastReport = pReport.getTimestamp();
     }
@@ -345,65 +385,57 @@ public class FarmInformation extends ManageableType {
     /**
      * Update spy'ed buildings and resources
      */
-    private int updateSpyInformation(FightReport pReport) {
-        int spyLevel = 0;
+    private SPY_LEVEL updateSpyInformation(FightReport pReport) {
+        SPY_LEVEL spyLevel = SPY_LEVEL.NONE;
         if (pReport.getSpyedResources() != null) {
             woodInStorage = pReport.getSpyedResources()[0];
             clayInStorage = pReport.getSpyedResources()[1];
             ironInStorage = pReport.getSpyedResources()[2];
-            spyLevel = 1;
+            spyLevel = SPY_LEVEL.RESOURCES;
         }
 
         if (pReport.getStorageLevel() != -1) {
             storageLevel = pReport.getStorageLevel();
-            spyLevel = 2;
+            spyLevel = SPY_LEVEL.BUILDINGS;
         }
         if (pReport.getWoodLevel() != -1) {
             woodLevel = pReport.getWoodLevel();
-            spyLevel = 2;
+            spyLevel = SPY_LEVEL.BUILDINGS;
         }
         if (pReport.getClayLevel() != -1) {
             clayLevel = pReport.getClayLevel();
-            spyLevel = 2;
+            spyLevel = SPY_LEVEL.BUILDINGS;
         }
         if (pReport.getIronLevel() != -1) {
             ironLevel = pReport.getIronLevel();
-            spyLevel = 2;
+            spyLevel = SPY_LEVEL.BUILDINGS;
         }
         if (pReport.getHideLevel() != -1) {
             hideLevel = pReport.getHideLevel();
-            spyLevel = 2;
+            spyLevel = SPY_LEVEL.BUILDINGS;
         }
 
         return spyLevel;
     }
 
     /**
-     * Read haul information from report, correct storage amounts and return difference to max haul
+     * Read haul information from report, correct storage amounts and return
+     * difference to max haul
      */
     private int updateHaulInformation(FightReport pReport, int pMaxHaul, boolean pWasResourcesSpyed) {
+        //get haul and update hauled resources
+        int hauledResourcesSum = pReport.getHaul()[0] + pReport.getHaul()[1] + pReport.getHaul()[2];
         hauledWood += pReport.getHaul()[0];
         hauledClay += pReport.getHaul()[1];
         hauledIron += pReport.getHaul()[2];
-        int haul = pReport.getHaul()[0] + pReport.getHaul()[1] + pReport.getHaul()[2];
-        //set max haul to current haul if no estimated resources are available
-        Hashtable<UnitHolder, Integer> survived = pReport.getSurvivingAttackers();
-        Enumeration<UnitHolder> keys = survived.keys();
-        int carryCapacity = 0;
-        while (keys.hasMoreElements()) {
-            UnitHolder unit = keys.nextElement();
-            carryCapacity += (int) (unit.getCarry() * survived.get(unit));
-        }
 
-        if (carryCapacity > haul) {
-            //storage is empty
+        if (pMaxHaul > hauledResourcesSum) {
+            //storage is now empty
             woodInStorage = 0;
             clayInStorage = 0;
             ironInStorage = 0;
-        } else if (carryCapacity < haul) {
-            //there is more in the farm than expected
         } else {//haul is smaller or equal capacity
-            if (!pWasResourcesSpyed) {//correct resources limited to 0
+            if (!pWasResourcesSpyed) {//correct resources limited to 0 if this was not done by spy information
                 woodInStorage -= pReport.getHaul()[0];
                 woodInStorage = (woodInStorage > 0) ? woodInStorage : 0;
                 clayInStorage -= pReport.getHaul()[1];
@@ -412,7 +444,8 @@ public class FarmInformation extends ManageableType {
                 ironInStorage = (ironInStorage > 0) ? ironInStorage : 0;
             }
         }
-        return pMaxHaul - haul;
+
+        return pMaxHaul - hauledResourcesSum;
     }
 
     /**
@@ -428,22 +461,29 @@ public class FarmInformation extends ManageableType {
 
     }
 
+    /**
+     * Farm this farm
+     *
+     * @param The troops used for farming or 'null' if the needed amount of
+     * troops should be calculated
+     */
     public FARM_RESULT farmFarm(final Hashtable<UnitHolder, Integer> pFarmUnits) {
         if (pFarmUnits == null && !TroopsManager.getSingleton().hasInformation(TroopsManager.TROOP_TYPE.OWN)) {
+            logger.info("No own troops imported to DS Workbench");
             lastResult = FARM_RESULT.NO_TROOPS;
             return lastResult;
         }
 
         Village[] villages;
+        boolean cByMinHaul = false;
 
-        if (pFarmUnits == null) {//get villages for farm type C, depending from resources
-            final int resources = getResourcesInStorage(System.currentTimeMillis());
+        if (pFarmUnits == null) {//get villages for farm type C, depending on current resources
+            villages = TroopHelper.getOwnVillagesByCarryCapacity(this);
 
-            villages = TroopHelper.getOwnVillagesByCarryCapacity(resources);
-
-            if (villages.length == 0) {
-                //no village can carry all...get max.
-                villages = TroopHelper.getOwnVillagesByCarryCapacity(DSWorkbenchFarmManager.getSingleton().getMinHaul());
+            if (villages.length == 0 && DSWorkbenchFarmManager.getSingleton().allowPartlyFarming()) {
+                //no village can carry all...get villages that can carry more than min haul (ordered by capacity and distance) if partly farming is allowed
+                villages = TroopHelper.getOwnVillagesByMinHaul(this, DSWorkbenchFarmManager.getSingleton().getMinHaul());
+                cByMinHaul = villages.length >= 0;
             }
         } else {//get villages for farm type A or B, depending on static troop count
             villages = TroopHelper.getOwnVillagesByOwnTroops(pFarmUnits);
@@ -455,33 +495,39 @@ public class FarmInformation extends ManageableType {
             return lastResult;
         }
 
-        //sort valid villages by speed
-        Arrays.sort(villages, new Comparator<Village>() {
+        if (!cByMinHaul) {//sort valid villages by speed if we are not in the case that we are using farm type C without sufficient troops
+            Arrays.sort(villages, new Comparator<Village>() {
 
-            @Override
-            public int compare(Village o1, Village o2) {
+                @Override
+                public int compare(Village o1, Village o2) {
+                    //get speed of defined troops (A and B) or by troops for carriage (C)...
+                    //...as this ordering is not performed in case of cByMinHaul, pAllowMaxCarriage is set to 'false'
+                    double speed1 = TroopHelper.getTroopSpeed((pFarmUnits == null)
+                            ? TroopHelper.getTroopsForCarriage(o1, FarmInformation.this, false)
+                            : pFarmUnits);
+                    double speed2 = TroopHelper.getTroopSpeed((pFarmUnits == null)
+                            ? TroopHelper.getTroopsForCarriage(o2, FarmInformation.this, false)
+                            : pFarmUnits);
 
-                double speed1 = TroopHelper.getTroopSpeed((pFarmUnits == null)
-                        ? TroopHelper.getTroopsForCarriage(o1, FarmInformation.this)
-                        : pFarmUnits);
-                double speed2 = TroopHelper.getTroopSpeed((pFarmUnits == null)
-                        ? TroopHelper.getTroopsForCarriage(o2, FarmInformation.this)
-                        : pFarmUnits);
+                    return new Double(
+                            DSCalculator.calculateMoveTimeInMinutes(o1, getVillage(), speed1)).compareTo(
+                            new Double(DSCalculator.calculateMoveTimeInMinutes(o2, getVillage(), speed2)));
+                }
+            });
+        }
 
-                return new Double(
-                        DSCalculator.calculateMoveTimeInMinutes(o1, getVillage(), speed1)).compareTo(
-                        new Double(DSCalculator.calculateMoveTimeInMinutes(o2, getVillage(), speed2)));
-            }
-        });
-
+        //now select the "best" village for farming
         Village selection = null;
         Hashtable<UnitHolder, Integer> farmers = null;
         IntRange r = DSWorkbenchFarmManager.getSingleton().getFarmRange();
         boolean allEmpty = true;
+        boolean minHaulMetAtLeastOnce = false;
         int minHaul = DSWorkbenchFarmManager.getSingleton().getMinHaul();
-        boolean wasMinHaul = false;
+
+
         for (Village v : villages) {
-            Hashtable<UnitHolder, Integer> troops = (pFarmUnits == null) ? TroopHelper.getTroopsForCarriage(v, FarmInformation.this) : pFarmUnits;
+            //either use defined farm units (A and B) or calculate needed troops (C)...optionally by accepting max. carriage
+            Hashtable<UnitHolder, Integer> troops = (pFarmUnits == null) ? TroopHelper.getTroopsForCarriage(v, FarmInformation.this, cByMinHaul) : pFarmUnits;
             double speed = TroopHelper.getTroopSpeed(troops);
             int resources = getResourcesInStorage(System.currentTimeMillis() + DSCalculator.calculateMoveTimeInMillis(v, getVillage(), speed));
             double dist = (int) Math.rint(DSCalculator.calculateMoveTimeInMinutes(v, getVillage(), speed));
@@ -492,18 +538,17 @@ public class FarmInformation extends ManageableType {
             }
             if (dist > 0 && !troopsEmpty && r.containsInteger(dist)) {
                 if (resources < minHaul) {
-                    wasMinHaul = true;
+                    minHaulMetAtLeastOnce = true;
                 } else {
                     selection = v;
                     farmers = troops;
                 }
             }
-
         }
 
         if (selection == null || farmers == null) {
             if (!allEmpty) {//not all results were empty, so probably 
-                if (!wasMinHaul) {
+                if (!minHaulMetAtLeastOnce) {
                     lastResult = FARM_RESULT.NO_ADEQUATE_SOURCE_BY_RANGE;
                     return lastResult;
                 } else {
@@ -538,6 +583,7 @@ public class FarmInformation extends ManageableType {
      * Set the current farm status
      */
     public void setStatus(FARM_STATUS status) {
+        logger.debug("Changing farm status for " + getVillage() + " from " + this.status + " to " + status);
         this.status = status;
     }
 

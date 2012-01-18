@@ -16,8 +16,8 @@ import java.util.List;
 import org.jdom.Element;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.GlobalOptions;
-import org.jdom.Attribute;
-import org.jdom.DataConversionException;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * @author Jejkal
@@ -90,6 +90,21 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
 
     public void setVillage(Village mVillage) {
         this.village = mVillage;
+    }
+
+    public boolean hasMinAmounts(Hashtable<UnitHolder, Integer> pMinAmounts) {
+        if (pMinAmounts == null || pMinAmounts.isEmpty()) {
+            return true;
+        }
+
+        Set<Entry<UnitHolder, Integer>> entries = pMinAmounts.entrySet();
+        for (Entry<UnitHolder, Integer> entry : entries) {
+            Integer amount = getAmountForUnit(entry.getKey());
+            if (amount == null || amount < entry.getValue()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void setTroops(Hashtable<UnitHolder, Integer> pTroops) {

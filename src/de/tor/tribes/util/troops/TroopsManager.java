@@ -284,39 +284,6 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
         }
     }
 
-    public Hashtable<Village, VillageTroopsHolder> getTroopsForAllVillages(Hashtable<UnitHolder, Integer> pMinAmounts, TROOP_TYPE pType) {
-        String group = null;
-        switch (pType) {
-            case ON_THE_WAY:
-                group = ON_THE_WAY_GROUP;
-                break;
-            case OUTWARDS:
-                group = OUTWARDS_GROUP;
-                break;
-            case OWN:
-                group = OWN_GROUP;
-                break;
-            case SUPPORT:
-                group = SUPPORT_GROUP;
-                break;
-            default:
-                group = IN_VILLAGE_GROUP;
-                break;
-        }
-        Hashtable<Village, VillageTroopsHolder> result = new Hashtable<Village, VillageTroopsHolder>();
-        for (ManageableType t : getAllElements(group)) {
-            VillageTroopsHolder holder = (VillageTroopsHolder) t;
-            if (holder != null && holder.hasMinAmounts(pMinAmounts)) {
-                result.put(holder.getVillage(), holder);
-            }
-        }
-        return result;
-    }
-
-    public Hashtable<Village, VillageTroopsHolder> getTroopsForAllVillages(TROOP_TYPE pType) {
-        return getTroopsForAllVillages(null, pType);
-    }
-
     public Image getTroopsMarkerForVillage(Village pVillage) {
         VillageTroopsHolder inVillage = getTroopsForVillage(pVillage);
         if (inVillage == null) {

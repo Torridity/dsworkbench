@@ -38,37 +38,37 @@ import org.jdom.Element;
  * @author Charon
  */
 public class ConquerManager extends GenericManager<Conquer> {
-    
+
     private static Logger logger = Logger.getLogger("ConquerManager");
     private static ConquerManager SINGLETON = null;
     private long lastUpdate = -1;
     private ConquerUpdateThread updateThread = null;
-    
+
     public static synchronized ConquerManager getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new ConquerManager();
         }
         return SINGLETON;
     }
-    
+
     ConquerManager() {
         super(false);
         updateThread = new ConquerUpdateThread();
         updateThread.start();
     }
-    
+
     public void addConquer(Conquer c) {
         addManagedElement(c);
     }
-    
+
     public int getConquerCount() {
         return getElementCount();
     }
-    
+
     public Conquer getConquer(int id) {
         return (Conquer) getAllElements().get(id);
     }
-    
+
     @Override
     public void loadElements(String pFile) {
         if (pFile == null) {
@@ -151,20 +151,20 @@ public class ConquerManager extends GenericManager<Conquer> {
         }
         revalidate();
     }
-    
+
     @Override
     public void saveElements(String pFile) {
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return;
         }
-        
+
         if (logger.isDebugEnabled()) {
             logger.debug("Writing conquers to '" + pFile + "'");
         }
-        
+
         try {
-            
+
             StringBuilder b = new StringBuilder();
             b.append("<conquers>\n");
             b.append("<lastUpdate>").append(getLastUpdate()).append("</lastUpdate>\n");
@@ -195,7 +195,7 @@ public class ConquerManager extends GenericManager<Conquer> {
             new File(pFile).delete();
         }
     }
-    
+
     private void updateAcceptance() {
         invalidate();
         logger.debug("Filtering conquers");
@@ -229,7 +229,7 @@ public class ConquerManager extends GenericManager<Conquer> {
         revalidate();
         fireConquersChangedEvents();
     }
-    
+
     protected void updateConquers() {
         logger.debug("Updating conquers from server");
         BufferedReader r = null;
@@ -245,12 +245,12 @@ public class ConquerManager extends GenericManager<Conquer> {
                 logger.debug("Last update more than 24h ago. Setting last update to NOW - 23h");
                 lastUpdate = System.currentTimeMillis() - 1000 * 60 * 60 * 23;
             }
-            
+
             URL u = new URL(baseUrl + "/interface.php?func=get_conquer&since=" + (int) Math.rint(lastUpdate / 1000));
             logger.debug("Querying " + u.toString());
             URLConnection uc = u.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
             r = new BufferedReader(new InputStreamReader(uc.getInputStream()));
-            String line = "";
+            String line;
             while ((line = r.readLine()) != null) {
                 if (line.indexOf("ONLY_ONE_DAY_AGO") != -1) {
                     logger.warn("Update still more than 24h ago. Diff to server clock > 1h ?");
@@ -284,7 +284,7 @@ public class ConquerManager extends GenericManager<Conquer> {
                     Tribe loser = DataHolder.getSingleton().getTribes().get(oldOwner);
                     Tribe winner = DataHolder.getSingleton().getTribes().get(newOwner);
                     Village v = DataHolder.getSingleton().getVillagesById().get(villageID);
-                    
+
                     try {
                         //remove troop information for conquered village
                         VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
@@ -298,7 +298,7 @@ public class ConquerManager extends GenericManager<Conquer> {
                         }
                     } catch (Exception ignored) {
                     }
-                    
+
                     if (winner != null && v != null && v.getTribeID() != winner.getId()) {
                         //conquer not yet in world data
                         if (loser != null && loser.removeVillage(v)) {
@@ -321,8 +321,6 @@ public class ConquerManager extends GenericManager<Conquer> {
                     }
                 }
             }
-            //enforce full map update
-            r.close();
         } catch (Exception e) {
             logger.error("An error occured while updating conquers", e);
             error = true;
@@ -340,7 +338,7 @@ public class ConquerManager extends GenericManager<Conquer> {
         }
         updateAcceptance();
     }
-    
+
     public Conquer getConquer(Village pVillage) {
         if (pVillage == null) {
             return null;
@@ -367,7 +365,7 @@ public class ConquerManager extends GenericManager<Conquer> {
     public void setLastUpdate(long lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
-    
+
     public int[] getConquersStats() {
         int grey = 0;
         int friendly = 0;
@@ -396,7 +394,7 @@ public class ConquerManager extends GenericManager<Conquer> {
                     }
                 }
             }
-            
+
         }
         return new int[]{grey, friendly};
     }
@@ -412,12 +410,12 @@ public class ConquerManager extends GenericManager<Conquer> {
             //failed to initialize redraw because renderer is still null
         }
     }
-    
+
     @Override
     public String getExportData(List<String> pGroupsToExport) {
         return "";
     }
-    
+
     @Override
     public boolean importData(File pFile, String pExtension) {
         return true;
@@ -425,13 +423,13 @@ public class ConquerManager extends GenericManager<Conquer> {
 }
 
 class ConquerUpdateThread extends Thread {
-    
+
     private final long FIVE_MINUTES = 1000 * 60 * 5;
-    
+
     public ConquerUpdateThread() {
         setDaemon(true);
     }
-    
+
     @Override
     public void run() {
         while (true) {

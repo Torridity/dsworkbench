@@ -29,10 +29,7 @@ import de.tor.tribes.util.algo.types.TimeFrame;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Point;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -127,6 +124,7 @@ public class AttackFinishPanel extends javax.swing.JPanel implements WizardPanel
         jButton2 = new javax.swing.JButton();
         jSlider1 = new javax.swing.JSlider();
         jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jHideDetailsButton = new javax.swing.JButton();
         jShowDetailsButton = new javax.swing.JButton();
@@ -283,14 +281,14 @@ public class AttackFinishPanel extends javax.swing.JPanel implements WizardPanel
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Abschließende Aktionen"));
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_overview.png"))); // NOI18N
-        jButton1.setToolTipText("Volle Angriffe in die Angriffsübersicht übertragen");
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/48x48/half_axe_clipboard.png"))); // NOI18N
+        jButton1.setToolTipText("Alle Angriffe in die Angriffsübersicht übertragen");
         jButton1.setMaximumSize(new java.awt.Dimension(70, 70));
         jButton1.setMinimumSize(new java.awt.Dimension(70, 70));
         jButton1.setPreferredSize(new java.awt.Dimension(70, 70));
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireTransferToAttackPlanEvent(evt);
+                fireTransferAllToAttackPlanEvent(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -312,7 +310,7 @@ public class AttackFinishPanel extends javax.swing.JPanel implements WizardPanel
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 20);
@@ -325,20 +323,20 @@ public class AttackFinishPanel extends javax.swing.JPanel implements WizardPanel
         jSlider1.setPaintTicks(true);
         jSlider1.setSnapToTicks(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 20);
         jPanel3.add(jSlider1, gridBagConstraints);
 
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_overview.png"))); // NOI18N
-        jButton3.setToolTipText("Gewählte Angriffe in die Angriffsübersicht übertragen");
+        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/48x48/full_axe_clipboard.png"))); // NOI18N
+        jButton3.setToolTipText("Nur volle Angriffe in die Angriffsübersicht übertragen");
         jButton3.setMaximumSize(new java.awt.Dimension(70, 70));
         jButton3.setMinimumSize(new java.awt.Dimension(70, 70));
         jButton3.setPreferredSize(new java.awt.Dimension(70, 70));
         jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton3fireTransferToAttackPlanEvent(evt);
+                fireFullToAttackPlanEvent(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -349,6 +347,25 @@ public class AttackFinishPanel extends javax.swing.JPanel implements WizardPanel
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 20);
         jPanel3.add(jButton3, gridBagConstraints);
+
+        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/48x48/selection_axe_clipboard.png"))); // NOI18N
+        jButton4.setToolTipText("Ausgewählte Angriffe in die Angriffsübersicht übertragen");
+        jButton4.setMaximumSize(new java.awt.Dimension(70, 70));
+        jButton4.setMinimumSize(new java.awt.Dimension(70, 70));
+        jButton4.setPreferredSize(new java.awt.Dimension(70, 70));
+        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSelectedToAttackPlanEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 20);
+        jPanel3.add(jButton4, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -537,18 +554,27 @@ public class AttackFinishPanel extends javax.swing.JPanel implements WizardPanel
         jXCollapsiblePane2.setCollapsed(!jToggleButton2.isSelected());
     }//GEN-LAST:event_fireShowHideSummaryEvent
 
-    private void fireTransferToAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferToAttackPlanEvent
-
-        int[] selection = jxResultsTable.getSelectedRows();
-
-        ResultDetailsTableModel model = getResultModel();
-        model.clear();
+    private void fireTransferAllToAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferAllToAttackPlanEvent
         List<Attack> attacks = new LinkedList<Attack>();
-        for (int row : selection) {
+        for (int row = 0; row < jxResultsTable.getRowCount(); row++) {
             int modelRow = jxResultsTable.convertRowIndexToModel(row);
             AbstractTroopMovement move = getModel().getRow(modelRow);
-            for (Attack a : move.getFinalizedAttacks()) {
-                attacks.add(a);
+            attacks.addAll(Arrays.asList(move.getFinalizedAttacks()));
+        }
+        if (attacks.isEmpty()) {
+            JOptionPaneHelper.showInformationBox(this, "Keine Angriffe gewählt", "Information");
+            return;
+        }
+        new AttackTransferDialog(TacticsPlanerWizard.getFrame(), true).setupAndShow(attacks.toArray(new Attack[attacks.size()]));
+    }//GEN-LAST:event_fireTransferAllToAttackPlanEvent
+
+    private void fireFullToAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireFullToAttackPlanEvent
+        List<Attack> attacks = new LinkedList<Attack>();
+        for (int row = 0; row < jxResultsTable.getRowCount(); row++) {
+            int modelRow = jxResultsTable.convertRowIndexToModel(row);
+            AbstractTroopMovement move = getModel().getRow(modelRow);
+            if (move.offComplete()) {
+                attacks.addAll(Arrays.asList(move.getFinalizedAttacks()));
             }
         }
         if (attacks.isEmpty()) {
@@ -556,12 +582,23 @@ public class AttackFinishPanel extends javax.swing.JPanel implements WizardPanel
             return;
         }
         new AttackTransferDialog(TacticsPlanerWizard.getFrame(), true).setupAndShow(attacks.toArray(new Attack[attacks.size()]));
+    }//GEN-LAST:event_fireFullToAttackPlanEvent
 
-    }//GEN-LAST:event_fireTransferToAttackPlanEvent
+    private void fireSelectedToAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectedToAttackPlanEvent
+        int[] selection = jxResultsTable.getSelectedRows();
 
-    private void jButton3fireTransferToAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3fireTransferToAttackPlanEvent
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3fireTransferToAttackPlanEvent
+        List<Attack> attacks = new LinkedList<Attack>();
+        for (int row : selection) {
+            int modelRow = jxResultsTable.convertRowIndexToModel(row);
+            AbstractTroopMovement move = getModel().getRow(modelRow);
+            attacks.addAll(Arrays.asList(move.getFinalizedAttacks()));
+        }
+        if (attacks.isEmpty()) {
+            JOptionPaneHelper.showInformationBox(this, "Keine Angriffe gewählt", "Information");
+            return;
+        }
+        new AttackTransferDialog(TacticsPlanerWizard.getFrame(), true).setupAndShow(attacks.toArray(new Attack[attacks.size()]));
+    }//GEN-LAST:event_fireSelectedToAttackPlanEvent
 
     private ResultTableModel getModel() {
         return (ResultTableModel) jxResultsTable.getModel();
@@ -644,6 +681,7 @@ public class AttackFinishPanel extends javax.swing.JPanel implements WizardPanel
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JButton jHideDetailsButton;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;

@@ -6,6 +6,7 @@ package de.tor.tribes.util.troops;
 
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
+import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.xml.JaxenUtils;
@@ -281,6 +282,39 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
         } else {
             return null;
         }
+    }
+
+    public Hashtable<Village, VillageTroopsHolder> getTroopsForAllVillages(Hashtable<UnitHolder, Integer> pMinAmounts, TROOP_TYPE pType) {
+        String group = null;
+        switch (pType) {
+            case ON_THE_WAY:
+                group = ON_THE_WAY_GROUP;
+                break;
+            case OUTWARDS:
+                group = OUTWARDS_GROUP;
+                break;
+            case OWN:
+                group = OWN_GROUP;
+                break;
+            case SUPPORT:
+                group = SUPPORT_GROUP;
+                break;
+            default:
+                group = IN_VILLAGE_GROUP;
+                break;
+        }
+        Hashtable<Village, VillageTroopsHolder> result = new Hashtable<Village, VillageTroopsHolder>();
+        for (ManageableType t : getAllElements(group)) {
+            VillageTroopsHolder holder = (VillageTroopsHolder) t;
+            if (holder != null && holder.hasMinAmounts(pMinAmounts)) {
+                result.put(holder.getVillage(), holder);
+            }
+        }
+        return result;
+    }
+
+    public Hashtable<Village, VillageTroopsHolder> getTroopsForAllVillages(TROOP_TYPE pType) {
+        return getTroopsForAllVillages(null, pType);
     }
 
     public Image getTroopsMarkerForVillage(Village pVillage) {

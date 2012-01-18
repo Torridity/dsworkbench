@@ -5,6 +5,7 @@
 package de.tor.tribes.ui.views;
 
 import de.tor.tribes.control.GenericManagerListener;
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FarmInformation;
@@ -27,29 +28,24 @@ import java.awt.Point;
 import java.awt.event.*;
 import java.util.*;
 import java.util.Timer;
-import java.util.regex.Pattern;
 import javax.swing.*;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.math.IntRange;
 import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
-import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.jdesktop.swingx.decorator.PainterHighlighter;
-import org.jdesktop.swingx.decorator.PatternPredicate;
 import org.jdesktop.swingx.painter.MattePainter;
-import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
  *
  * @author Torridity
  */
 public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements GenericManagerListener {
-
+    
     private static Logger logger = Logger.getLogger("FarmManager");
     private static DSWorkbenchFarmManager SINGLETON = null;
     private GenericTestPanel centerPanel = null;
@@ -57,7 +53,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     private TroopSelectionPanel aTroops = null;
     private TroopSelectionPanel bTroops = null;
     private TroopSelectionPanel cTroops = null;
-
+    
     public static synchronized DSWorkbenchFarmManager getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchFarmManager();
@@ -86,81 +82,82 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         FarmManager.getSingleton().addManagerListener(DSWorkbenchFarmManager.this);
         settingsPanel.setLayout(new BorderLayout());
         settingsPanel.add(jSettingsPanel, BorderLayout.CENTER);
-
-        /*
-         * PatternPredicate patternPredicate0 = new PatternPredicate(FarmInformation.FARM_STATUS.FARMING.toString(), 0); MattePainter mp =
-         * new MattePainter(new Color(0, 0, 0, 200)); PainterHighlighter highlighter = new PainterHighlighter(new
-         * HighlightPredicate.AndHighlightPredicate(patternPredicate0), mp); jFarmTable.addHighlighter(highlighter);
-         */
-
+        
         new Timer("FarmTableUpdate").schedule(new TimerTask() {
-
+            
             @Override
             public void run() {
+                updateInvisibleRuntimes();
                 jFarmTable.repaint();
             }
         }, Calendar.getInstance().getTime(), 1000);
-
+        
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         KeyStroke farmA = KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, false);
         KeyStroke farmB = KeyStroke.getKeyStroke(KeyEvent.VK_B, 0, false);
         KeyStroke farmC = KeyStroke.getKeyStroke(KeyEvent.VK_C, 0, false);
         ActionListener listener = new ActionListener() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 deleteSelection();
             }
         };
+        
         capabilityInfoPanel1.addActionListener(listener);
-        jFarmTable.setSortsOnUpdates(false);
+
+        // jFarmTable.setSortsOnUpdates(false);
         jFarmTable.registerKeyboardAction(listener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jFarmTable.registerKeyboardAction(new ActionListener() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 farmA();
             }
         }, "FarmA", farmA, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jFarmTable.registerKeyboardAction(new ActionListener() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 farmB();
             }
         }, "FarmB", farmB, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jFarmTable.registerKeyboardAction(new ActionListener() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 farmC();
             }
         }, "FarmC", farmC, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
+        
         aTroops = new TroopSelectionPanel();
         aTroops.setupFarm(true);
         bTroops = new TroopSelectionPanel();
         bTroops.setupFarm(true);
         cTroops = new TroopSelectionPanel();
         cTroops.setupFarm(true);
-
+        
         jASettingsTab.add(aTroops, BorderLayout.CENTER);
         jBSettingsTab.add(bTroops, BorderLayout.CENTER);
         jCSettingsTab.add(cTroops, BorderLayout.CENTER);
     }
-
+    
+    public void dataChangedExternally() {
+        ((FarmTableModel) jFarmTable.getModel()).fireTableDataChanged();
+    }
+    
     public IntRange getFarmRange() {
         return new IntRange(UIHelper.parseIntFromField(jMinFarmRuntime, 0), UIHelper.parseIntFromField(jMaxFarmRuntime, 60));
     }
-
+    
     public int getMinHaul() {
         return UIHelper.parseIntFromField(jMinHaul, 1000);
     }
-
+    
     public boolean isConsiderSuccessRate() {
         return jConsiderSucessRate.isSelected();
     }
-
+    
     public UnitHolder[] getAllowedFarmUnits() {
         Hashtable<UnitHolder, Integer> troops = cTroops.getAmounts();
         Enumeration<UnitHolder> keys = troops.keys();
@@ -177,23 +174,23 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         }
         return allowed.toArray(new UnitHolder[allowed.size()]);
     }
-
+    
     public int getMinUnits(UnitHolder pUnit) {
         return cTroops.getAmountForUnit(pUnit);
     }
-
+    
     public boolean allowPartlyFarming() {
         return !jNotAllowPartlyFarming.isSelected();
     }
-
+    
     private void buildMenu() {
         clickAccount = new ClickAccountPanel();
         JXTaskPane farmSourcePane = new JXTaskPane();
         farmSourcePane.setTitle("Farmen suchen");
-        JXButton searchBarbs = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/search_barbs.png")));
+        JXButton searchBarbs = new JXButton(new ImageIcon(DSWorkbenchFarmManager.class.getResource("/res/ui/search_barbs.png")));
         searchBarbs.setToolTipText("Barbarendörfer im Umkreis suchen");
         searchBarbs.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 String result = JOptionPane.showInputDialog(DSWorkbenchFarmManager.this, "Bitte gib den Radius (Felder) um dein Dorfzentrum an,\nin dem nach Farmen gesucht werden soll.", 20);
@@ -213,13 +210,14 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                 }
             }
         });
-
+        
         farmSourcePane.getContentPane().add(searchBarbs);
-
-        JXButton searchReports = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/search_reports.png")));
+        
+        JXButton searchReports = new JXButton(new ImageIcon(DSWorkbenchFarmManager.class.getResource("/res/ui/search_reports.png")));
+        
         searchReports.setToolTipText("Barbarendörfer in Berichtdatenbank suchen");
         searchReports.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 String result = JOptionPane.showInputDialog(DSWorkbenchFarmManager.this, "Bitte gib den Radius (Felder) um dein Dorfzentrum an,\nin dem nach verwendbaren Berichten gesucht werden soll.", 20);
@@ -239,124 +237,132 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                 }
             }
         });
-
+        
         farmSourcePane.getContentPane().add(searchReports);
-
-        JXButton centerFarm = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/center_ingame.png")));
+        
+        JXButton centerFarm = new JXButton(new ImageIcon(DSWorkbenchFarmManager.class.getResource("/res/ui/center_ingame.png")));
+        
         centerFarm.setToolTipText("Zentriert die gewählte Farm im Spiel");
         centerFarm.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 centerFarmInGame();
             }
         });
         farmSourcePane.getContentPane().add(centerFarm);
-
+        
         JXTaskPane actionPane = new JXTaskPane();
+        
         actionPane.setTitle("Aktionen");
-
-        JXButton farmA = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/farmA.png")));
+        
+        JXButton farmA = new JXButton(new ImageIcon(DSWorkbenchFarmManager.class.getResource("/res/ui/farmA.png")));
+        
         farmA.setToolTipText("Farmtruppen vom Typ A auf die gewählte Farm schicken");
         farmA.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 farmA();
             }
         });
-
+        
         actionPane.getContentPane().add(farmA);
-
-
-        JXButton farmB = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/farmB.png")));
+        
+        
+        JXButton farmB = new JXButton(new ImageIcon(DSWorkbenchFarmManager.class.getResource("/res/ui/farmB.png")));
+        
         farmB.setToolTipText("Farmtruppen vom Typ B auf die gewählte Farm schicken");
         farmB.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 farmB();
             }
         });
-
+        
         actionPane.getContentPane().add(farmB);
-
-        JXButton farmC = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/farmC.png")));
+        
+        JXButton farmC = new JXButton(new ImageIcon(DSWorkbenchFarmManager.class.getResource("/res/ui/farmC.png")));
+        
         farmC.setToolTipText("Farmtruppen entsprechend der im Dorf vorhandenen Ressourcen schicken");
         farmC.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 farmC();
             }
         });
-
+        
         actionPane.getContentPane().add(farmC);
-
-        JXButton clearStatus = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/clear_fs.png")));
+        
+        JXButton clearStatus = new JXButton(new ImageIcon(DSWorkbenchFarmManager.class.getResource("/res/ui/clear_fs.png")));
+        
         clearStatus.setToolTipText("Laufenden Angriff für die gewählte Farmen zurücksetzen");
         clearStatus.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 resetStatus();
             }
         });
-
+        
         actionPane.getContentPane().add(clearStatus);
-        JXButton revalidateFarms = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/check_farms.png")));
+        JXButton revalidateFarms = new JXButton(new ImageIcon(DSWorkbenchFarmManager.class.getResource("/res/ui/check_farms.png")));
+        
         revalidateFarms.setToolTipText("Farmen auf Adelungen und sonstige Veränderungen prüfen");
         revalidateFarms.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 FarmManager.getSingleton().revalidateFarms();
                 showInfo("Prüfung abgeschlossen");
             }
         });
-
+        
         actionPane.getContentPane().add(revalidateFarms);
-        JXButton showFarmInfo = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/farm_info.png")));
+        JXButton showFarmInfo = new JXButton(new ImageIcon(DSWorkbenchFarmManager.class.getResource("/res/ui/farm_info.png")));
+        
         showFarmInfo.setToolTipText("Informationen über die gewählte Farm anzeigen");
         showFarmInfo.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {
                 new FarmInformationDetailsDialog(DSWorkbenchFarmManager.this, false).setupAndShow(getSelectedInformation());
             }
         });
-
+        
         actionPane.getContentPane().add(showFarmInfo);
-
+        
         centerPanel.setupTaskPane(clickAccount, farmSourcePane, actionPane);
     }
-
+    
     private void deleteSelection() {
         int rows[] = jFarmTable.getSelectedRows();
         if (rows == null || rows.length == 0) {
             showInfo("Keine Farm gewählt");
             return;
         }
-
+        
         if (JOptionPaneHelper.showQuestionConfirmBox(this, rows.length + " Farm(en) und alle Informationen wirklich löschen?", "Löschen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
             return;
         }
-
+        
         FarmManager.getSingleton().invalidate();
         List<FarmInformation> toDelete = new LinkedList<FarmInformation>();
         for (int row : rows) {
             toDelete.add((FarmInformation) FarmManager.getSingleton().getAllElements().get(jFarmTable.convertRowIndexToModel(row)));
         }
-
+        
         for (FarmInformation delete : toDelete) {
             FarmManager.getSingleton().removeElement(delete);
         }
-
+        
         FarmManager.getSingleton().revalidate(true);
-
+        
         showInfo(rows.length + " Farm(en) gelöscht");
     }
-
+    
     private void centerFarmInGame() {
         FarmInformation v = getSelectedInformation();
         if (v != null) {
@@ -365,8 +371,33 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             showInfo("Keine Farm gewählt");
         }
     }
+    
+    private void updateInvisibleRuntimes() {
+        for (ManageableType t : FarmManager.getSingleton().getAllElements()) {
+            ((FarmInformation) t).refreshRuntime();
+        }
+    }
 
+    /**
+     * Farm selection using type A
+     */
     private void farmA() {
+        
+        for (ManageableType t : FarmManager.getSingleton().getAllElements()) {
+            System.out.println("Got info");
+            if (((FarmInformation) t).getStatus().equals(FarmInformation.FARM_STATUS.FARMING)) {
+                System.out.println("Set arri");
+                ((FarmInformation) t).setArrived();
+                return;
+            }
+        }
+        
+        if (true) {
+            return;
+        }
+        
+        
+        
         Hashtable<UnitHolder, Integer> troops = aTroops.getAmounts();
         if (TroopHelper.getPopulation(troops) == 0) {
             showInfo("Keine Truppen für Konfiguration A gefunden");
@@ -375,6 +406,9 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         farm(troops);
     }
 
+    /**
+     * Farm selection using type B
+     */
     private void farmB() {
         Hashtable<UnitHolder, Integer> troops = bTroops.getAmounts();
         if (TroopHelper.getPopulation(troops) == 0) {
@@ -384,11 +418,17 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         farm(troops);
     }
 
+    /**
+     * Farm selection using type C
+     */
     private void farmC() {
         farm(null);
     }
 
-    public FarmInformation getSelectedInformation() {
+    /**
+     * Get all selected items
+     */
+    private FarmInformation getSelectedInformation() {
         int row = jFarmTable.getSelectedRow();
         if (row == -1) {
             return null;
@@ -397,18 +437,22 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         return (FarmInformation) FarmManager.getSingleton().getAllElements().get(modelRow);
     }
 
+    /**
+     * Farm all selected items (using troops of A, B or C (null-argument))
+     */
     private void farm(Hashtable<UnitHolder, Integer> pUnitConfiguration) {
         int rows[] = jFarmTable.getSelectedRows();
         if (rows == null || rows.length == 0) {
             showInfo("Keine Einträge gewählt");
             return;
         }
-
+        
         int noAdequateSourceByNeededTroops = 0;
         int noAdequateSourceByRange = 0;
         int noAdequateSourceByMinHaul = 0;
+        int farmInactive = 0;
         int alreadyFarming = 0;
-
+        
         int opened = 0;
         String miscMessage = null;
         for (int row : rows) {
@@ -436,6 +480,9 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                         case FAILED_OPEN_BROWSER:
                             miscMessage = "Fehler beim Öffnen des Browsers";
                             fatal = true;
+                            break;
+                        case FARM_INACTIVE:
+                            farmInactive++;
                             break;
                         case OK:
                             success = true;
@@ -473,16 +520,18 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                 }
             }
         }
-
+        
         if (miscMessage == null) {
             showInfo("<html>Ge&ouml;ffnete Tabs: " + opened + "/" + rows.length + "<br/>"
-                    + " - " + noAdequateSourceByNeededTroops + "  Mal minimale Truppenzahl nicht erreicht oder kein Herkunftsdorf mit ben&ouml;tigter Truppenanzahl<br/>"
+                    + " - " + farmInactive + " Farmen deaktiviert<br/>"
+                    + " - " + noAdequateSourceByNeededTroops + " Mal minimale Truppenzahl nicht erreicht oder kein Herkunftsdorf mit ben&ouml;tigter Truppenanzahl<br/>"
                     + " - " + noAdequateSourceByRange + " Mal kein passendes Herkunftsdorf in Reichweite<br/>"
                     + " - " + noAdequateSourceByMinHaul + " Mal nicht gen&uuml;gend Rohstoffe<br/>"
                     + " - " + alreadyFarming + " Mal Truppen bereits unterwegs</html>");
         } else {
             showInfo("<html><b>Abbruch: '" + miscMessage + "'</b><br/>"
                     + "Ge&ouml;ffnete Tabs: " + opened + "/" + rows.length + "<br/>"
+                    + " - " + farmInactive + " Farmen deaktiviert<br/>"
                     + " - " + noAdequateSourceByNeededTroops + " Mal minimale Truppenzahl nicht erreicht oder kein Herkunftsdorf mit ben&ouml;tigter Truppenanzahl<br/>"
                     + " - " + noAdequateSourceByRange + " Mal kein passendes Herkunftsdorf in Reichweite<br/>"
                     + " - " + noAdequateSourceByMinHaul + " Mal nicht gen&uuml;gend Rohstoffe<br/>"
@@ -492,23 +541,14 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         //@TODO check hide status!
         //   updateHideStatus();
     }
-
-    private void updateHideStatus() {
-        /*
-         * if (jHideFamedFarms.isSelected()) { jFarmTable.setRowFilter(new RowFilter<TableModel, Integer>() {
-         *
-         * @Override public boolean include(RowFilter.Entry<? extends TableModel, ? extends Integer> entry) { FarmInformation.FARM_STATUS
-         * status = (FarmInformation.FARM_STATUS) entry.getValue(0); return !status.equals(FarmInformation.FARM_STATUS.FARMING); } }); }
-         */
-    }
-
+    
     private void resetStatus() {
         int rows[] = jFarmTable.getSelectedRows();
         if (rows == null || rows.length == 0) {
             showInfo("Keine Einträge gewählt");
             return;
         }
-
+        
         for (int row : rows) {
             FarmInformation farm = (FarmInformation) FarmManager.getSingleton().getAllElements().get(jFarmTable.convertRowIndexToModel(row));
             farm.resetFarmStatus();
@@ -516,7 +556,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         showInfo("Status zurückgesetzt. Es wird empfohlen, bei Gelegenheit die DS Workbench Truppeninformationen zu aktualisieren.");
         getModel().fireTableDataChanged();
     }
-
+    
     public void showInfo(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(getBackground()));
@@ -525,8 +565,9 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     }
 
     /**
-     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this
-     * method is always regenerated by the Form Editor.
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -558,7 +599,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         jLabel3 = new javax.swing.JLabel();
         jMinHaul = new javax.swing.JTextField();
         jConsiderSucessRate = new javax.swing.JCheckBox();
-        jHideFamedFarms = new javax.swing.JCheckBox();
+        jHideFarmedFarms = new javax.swing.JCheckBox();
         jNotAllowPartlyFarming = new javax.swing.JCheckBox();
         jCenterPanel = new org.jdesktop.swingx.JXPanel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
@@ -754,14 +795,19 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(jConsiderSucessRate, gridBagConstraints);
 
-        jHideFamedFarms.setText("Momentan angegriffene Farmen ausblenden");
+        jHideFarmedFarms.setText("Momentan angegriffene Farmen ausblenden");
+        jHideFarmedFarms.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireSwitchHideStateEvent(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(jHideFamedFarms, gridBagConstraints);
+        jPanel3.add(jHideFarmedFarms, gridBagConstraints);
 
         jNotAllowPartlyFarming.setText("Nur angreifen, wenn Farm komplett geleert werden kann (nur Typ C)");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -828,15 +874,30 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     private void jAlwaysOnTopfireChurchFrameOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jAlwaysOnTopfireChurchFrameOnTopEvent
         setAlwaysOnTop(!isAlwaysOnTop());
     }//GEN-LAST:event_jAlwaysOnTopfireChurchFrameOnTopEvent
-
+    
     private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXLabel1fireHideInfoEvent
         infoPanel.setCollapsed(true);
     }//GEN-LAST:event_jXLabel1fireHideInfoEvent
-
+    
     private void fireShowHideSettingsEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireShowHideSettingsEvent
         settingsPanel.setCollapsed(!jToggleButton1.isSelected());
     }//GEN-LAST:event_fireShowHideSettingsEvent
-
+    
+    private void fireSwitchHideStateEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireSwitchHideStateEvent
+        RowFilter<TableModel, Integer> filter = null;
+        if (jHideFarmedFarms.isSelected()) {
+            filter = new RowFilter<TableModel, Integer>() {
+                
+                @Override
+                public boolean include(RowFilter.Entry<? extends TableModel, ? extends Integer> entry) {
+                    FarmInformation.FARM_STATUS status = (FarmInformation.FARM_STATUS) entry.getValue(0);
+                    return !status.equals(FarmInformation.FARM_STATUS.FARMING);
+                }
+            };
+        }
+        jFarmTable.setRowFilter(filter);
+    }//GEN-LAST:event_fireSwitchHideStateEvent
+    
     private FarmTableModel getModel() {
         return TableHelper.getTableModel(jFarmTable);
     }
@@ -850,7 +911,8 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
          */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /*
-         * If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel. For details see
+         * If Nimbus (introduced in Java SE 6) is not available, stay with the
+         * default look and feel. For details see
          * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
@@ -858,8 +920,10 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
-
-
+                    
+                    
+                    
+                    
                 }
             }
         } catch (ClassNotFoundException ex) {
@@ -873,12 +937,14 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         }
         //</editor-fold>
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de77");
+        Logger.getRootLogger().setLevel(Level.ERROR);
+        GlobalOptions.setSelectedServer("de43");
         ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de77")[0]);
+        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
+        System.out.println(GlobalOptions.getSelectedProfile());
         DataHolder.getSingleton().loadData(false);
         GlobalOptions.loadUserData();
-
+        
         for (Village v : GlobalOptions.getSelectedProfile().getTribe().getVillageList()) {
             VillageTroopsHolder h = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN, true);
             Hashtable<UnitHolder, Integer> troops = new Hashtable<UnitHolder, Integer>();
@@ -892,7 +958,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
          * Create and display the form
          */
         java.awt.EventQueue.invokeLater(new Runnable() {
-
+            
             public void run() {
                 DSWorkbenchFarmManager.getSingleton().resetView();
                 DSWorkbenchFarmManager.getSingleton().setVisible(true);
@@ -910,7 +976,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JCheckBox jConsiderSucessRate;
     private javax.swing.JPanel jFarmPanel;
     private org.jdesktop.swingx.JXTable jFarmTable;
-    private javax.swing.JCheckBox jHideFamedFarms;
+    private javax.swing.JCheckBox jHideFarmedFarms;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -935,7 +1001,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     @Override
     public void resetView() {
     }
-
+    
     @Override
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
@@ -946,12 +1012,12 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         pConfig.setProperty(getPropertyPrefix() + ".farmA.units", TroopHelper.unitTableToProperty(aTroops.getAmounts()));
         pConfig.setProperty(getPropertyPrefix() + ".farmB.units", TroopHelper.unitTableToProperty(bTroops.getAmounts()));
         pConfig.setProperty(getPropertyPrefix() + ".farmC.units", TroopHelper.unitTableToProperty(cTroops.getAmounts()));
-        pConfig.setProperty(getPropertyPrefix() + ".hide.farming", jHideFamedFarms.isSelected());
+        pConfig.setProperty(getPropertyPrefix() + ".hide.farming", jHideFarmedFarms.isSelected());
         pConfig.setProperty(getPropertyPrefix() + ".disallow.partly.farming", jNotAllowPartlyFarming.isSelected());
         pConfig.setProperty(getPropertyPrefix() + ".use.success.rate", jConsiderSucessRate.isSelected());
         PropertyHelper.storeTableProperties(jFarmTable, pConfig, getPropertyPrefix());
     }
-
+    
     @Override
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
@@ -959,23 +1025,23 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             jAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
         } catch (Exception e) {
         }
-
+        
         try {
-            jHideFamedFarms.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".hide.farming"));
-            updateHideStatus();
+            jHideFarmedFarms.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".hide.farming"));
+            fireSwitchHideStateEvent(null);
         } catch (Exception e) {
         }
-
+        
         try {
             jConsiderSucessRate.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".use.success.rate"));
         } catch (Exception e) {
         }
-
+        
         try {
             jNotAllowPartlyFarming.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".disallow.partly.farming"));
         } catch (Exception e) {
         }
-
+        
         setAlwaysOnTop(jAlwaysOnTop.isSelected());
         UIHelper.setText(jMinHaul, pConfig.getProperty(getPropertyPrefix() + ".min.haul"), 1000);
         UIHelper.setText(jMinFarmRuntime, pConfig.getProperty(getPropertyPrefix() + ".min.farm.dist"), 0);
@@ -992,25 +1058,25 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         if (farmC != null) {
             cTroops.setAmounts(TroopHelper.propertyToUnitTable(farmC));
         }
-
+        
         PropertyHelper.restoreTableProperties(jFarmTable, pConfig, getPropertyPrefix());
     }
-
+    
     @Override
     public String getPropertyPrefix() {
         return "farm.manager";
     }
-
+    
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
-
+    
     @Override
     public void dataChangedEvent() {
         FarmTableModel model = TableHelper.getTableModel(jFarmTable);
         model.fireTableDataChanged();
     }
-
+    
     @Override
     public void dataChangedEvent(String pGroup) {
         dataChangedEvent();

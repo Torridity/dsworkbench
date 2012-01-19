@@ -33,7 +33,7 @@ public class FarmStatusCellRenderer extends DefaultTableRenderer {
         try {
             readyIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/checkbox.png"));
             notSpyedIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/spy_needed.png"));
-            troopsFoundIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/red_report_lock.png"));
+            troopsFoundIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/red_report_lock.png"));
             conqueredIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/snob_lock.png"));
             farmingIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/trade_in.png"));
             reportIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/report.png"));

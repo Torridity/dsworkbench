@@ -22,7 +22,7 @@ public class FarmInformationDetailsDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
     }
-
+    
     public void setupAndShow(FarmInformation pInfo) {
         if (pInfo == null) {
             return;
@@ -39,23 +39,23 @@ public class FarmInformationDetailsDialog extends javax.swing.JDialog {
         } else {
             jLastReport.setText("Noch Bericht eingelesen");
         }
-
+        
         jWoodLevel.setText(nf.format(pInfo.getWoodLevel()));
         jClayLevel.setText(nf.format(pInfo.getClayLevel()));
         jIronLevel.setText(nf.format(pInfo.getIronLevel()));
         jStorageLevel.setText(nf.format(pInfo.getStorageLevel()));
         jHideLevel.setText(nf.format(pInfo.getHideLevel()));
-
+        
         jCurrentWood.setText(nf.format(pInfo.getWoodInStorage()));
         jCurrentClay.setText(nf.format(pInfo.getClayInStorage()));
         jCurrentIron.setText(nf.format(pInfo.getIronInStorage()));
-
+        
         jFarmedWood.setText(nf.format(pInfo.getHauledWood()));
         jFarmedClay.setText(nf.format(pInfo.getHauledClay()));
         jFarmedIron.setText(nf.format(pInfo.getHauledIron()));
-
-        jSuccessRate.setValue((int) Math.rint(pInfo.getCorrectionFactor() * 100));
-
+        
+        jTextPane1.setText((pInfo.getLastSendInformation() != null) ? pInfo.getLastSendInformation() : "Keine Informationen vorhanden");
+        
         pack();
         setVisible(true);
     }
@@ -91,12 +91,13 @@ public class FarmInformationDetailsDialog extends javax.swing.JDialog {
         jFarmedWood = new com.jidesoft.swing.LabeledTextField();
         jFarmedClay = new com.jidesoft.swing.LabeledTextField();
         jFarmedIron = new com.jidesoft.swing.LabeledTextField();
-        jSuccessRate = new javax.swing.JProgressBar();
         jButton1 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextPane1 = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(370, 420));
-        setPreferredSize(new java.awt.Dimension(370, 420));
+        setMinimumSize(new java.awt.Dimension(370, 440));
+        setPreferredSize(new java.awt.Dimension(370, 440));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -322,16 +323,6 @@ public class FarmInformationDetailsDialog extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         getContentPane().add(jOverallInfoPanel, gridBagConstraints);
 
-        jSuccessRate.setString("Erfolgsrate");
-        jSuccessRate.setStringPainted(true);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        getContentPane().add(jSuccessRate, gridBagConstraints);
-
         jButton1.setText("Schließen");
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -339,11 +330,26 @@ public class FarmInformationDetailsDialog extends javax.swing.JDialog {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(10, 5, 5, 5);
         getContentPane().add(jButton1, gridBagConstraints);
+
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Informationen zum letzten Farmversuch"));
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(8, 80));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(8, 80));
+        jScrollPane1.setViewportView(jTextPane1);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jScrollPane1, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -386,11 +392,11 @@ public class FarmInformationDetailsDialog extends javax.swing.JDialog {
          * Create and display the dialog
          */
         java.awt.EventQueue.invokeLater(new Runnable() {
-
+            
             public void run() {
                 FarmInformationDetailsDialog dialog = new FarmInformationDetailsDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-
+                    
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
                         System.exit(0);
@@ -419,10 +425,11 @@ public class FarmInformationDetailsDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLastReport;
     private javax.swing.JPanel jOverallInfoPanel;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JPanel jStatusPanel;
     private com.jidesoft.swing.LabeledTextField jStorageLevel;
-    private javax.swing.JProgressBar jSuccessRate;
+    private javax.swing.JTextPane jTextPane1;
     private javax.swing.JLabel jVillageName;
     private com.jidesoft.swing.LabeledTextField jWoodLevel;
     // End of variables declaration//GEN-END:variables

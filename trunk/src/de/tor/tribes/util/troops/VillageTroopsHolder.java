@@ -92,21 +92,6 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
         this.village = mVillage;
     }
 
-    public boolean hasMinAmounts(Hashtable<UnitHolder, Integer> pMinAmounts) {
-        if (pMinAmounts == null || pMinAmounts.isEmpty()) {
-            return true;
-        }
-
-        Set<Entry<UnitHolder, Integer>> entries = pMinAmounts.entrySet();
-        for (Entry<UnitHolder, Integer> entry : entries) {
-            Integer amount = getAmountForUnit(entry.getKey());
-            if (amount == null || amount < entry.getValue()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public void setTroops(Hashtable<UnitHolder, Integer> pTroops) {
         troops = (Hashtable<UnitHolder, Integer>) pTroops.clone();
     }

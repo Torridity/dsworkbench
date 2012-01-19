@@ -103,7 +103,7 @@ public class TroopHelper {
         logger.debug("Getting farm units from " + source);
         for (UnitHolder unit : allowed) {
             int amount = pTroops.getTroopsOfUnitInVillage(unit);
-            if (amount > 0) {
+            if (amount > 0 && amount > DSWorkbenchFarmManager.getSingleton().getBackupUnits(unit)) {
                 //get current unit speed
                 double speed = unit.getSpeed();
                 Set<Entry<UnitHolder, Integer>> entries = units.entrySet();
@@ -146,7 +146,7 @@ public class TroopHelper {
                     break;
                 }
             } else {
-                logger.debug("No units of type " + unit + " in village");
+                logger.debug("No units of type " + unit + " in village or amount is smaller than backup");
             }
         }
 
@@ -176,11 +176,27 @@ public class TroopHelper {
         Hashtable<Village, VillageTroopsHolder> result = new Hashtable<Village, VillageTroopsHolder>();
         for (ManageableType t : TroopsManager.getSingleton().getAllElements(TroopsManager.OWN_GROUP)) {
             VillageTroopsHolder holder = (VillageTroopsHolder) t;
-            if (holder != null && holder.hasMinAmounts(pMinAmounts)) {
+            if (holder != null && hasMinTroopAmounts(holder, pMinAmounts)) {
                 result.put(holder.getVillage(), holder);
             }
         }
         return result;
+    }
+
+    public static boolean hasMinTroopAmounts(VillageTroopsHolder pHolder, Hashtable<UnitHolder, Integer> pMinAmounts) {
+        if (pMinAmounts == null || pMinAmounts.isEmpty()) {
+            return true;
+        }
+
+        Set<Entry<UnitHolder, Integer>> entries = pMinAmounts.entrySet();
+        for (Entry<UnitHolder, Integer> entry : entries) {//check for all units amount and backup
+            Integer amount = pHolder.getAmountForUnit(entry.getKey());
+            if (amount == null || amount < entry.getValue() || amount < DSWorkbenchFarmManager.getSingleton().getBackupUnits(entry.getKey())) {
+                //no troops of type or not enough units or backup met
+                return false;
+            }
+        }
+        return true;
     }
 
     public static Hashtable<Village, VillageTroopsHolder> getOwnTroopsForAllVillages() {
@@ -281,7 +297,7 @@ public class TroopHelper {
         if (pTroops != null && !pTroops.isEmpty() && allowedUnits.length > 0) {
             for (UnitHolder unit : allowedUnits) {
                 Integer amount = pTroops.get(unit);
-                if (amount != null && amount != 0) {
+                if (amount != null && amount != 0 && amount > DSWorkbenchFarmManager.getSingleton().getBackupUnits(unit)) {
                     capacity += unit.getCarry() * amount;
                 }
             }

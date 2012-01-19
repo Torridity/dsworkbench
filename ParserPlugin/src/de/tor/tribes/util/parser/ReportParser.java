@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 
@@ -203,7 +204,7 @@ public class ReportParser implements SilentParserInterface {
                     int clay = Integer.parseInt(spyedResources[1].replaceAll("\\.", ""));
                     int iron = Integer.parseInt(spyedResources[2].replaceAll("\\.", ""));
                     result.setSpyedResources(wood, clay, iron);
-                    debug("Successfully set spyed resources");
+                    debug("Successfully set spyed resources to " + wood + "/" + clay + "/" + iron);
                 } catch (Exception e) {
                     debug("Failed to set spyed resources from " + resources);
                     //no spyed resources
@@ -213,11 +214,32 @@ public class ReportParser implements SilentParserInterface {
                 String haul = line.substring(line.lastIndexOf(":") + 1).trim();
                 String[] hauledResource = haul.split(" ");
                 try {
-                    int wood = Integer.parseInt(hauledResource[0].replaceAll("\\.", ""));
-                    int clay = Integer.parseInt(hauledResource[1].replaceAll("\\.", ""));
-                    int iron = Integer.parseInt(hauledResource[2].replaceAll("\\.", ""));
+                    int wood = 0;
+                    int clay = 0;
+                    int iron = 0;
+                    for (int i = 0; i < hauledResource.length; i++) {
+                        if (i == 0) {
+                            try {
+                                wood = Integer.parseInt(hauledResource[0].replaceAll("\\.", ""));
+                            } catch (NumberFormatException nfe) {
+                                break;
+                            }
+                        } else if (i == 1) {
+                            try {
+                                clay = Integer.parseInt(hauledResource[1].replaceAll("\\.", ""));
+                            } catch (NumberFormatException nfe) {
+                                break;
+                            }
+                        } else if (i == 2) {
+                            try {
+                                iron = Integer.parseInt(hauledResource[2].replaceAll("\\.", ""));
+                            } catch (NumberFormatException nfe) {
+                                break;
+                            }
+                        }
+                    }
                     result.setHaul(wood, clay, iron);
-                    debug("Successfully set haul");
+                    debug("Successfully set haul to " + wood + "/" + clay + "/" + iron);
                 } catch (Exception e) {
                     debug("Failed to set haul from " + haul);
                     //no haul
@@ -451,6 +473,7 @@ public class ReportParser implements SilentParserInterface {
     }
 
     public static void main(String[] args) throws Exception {
+
         //  ReportParser.parseReport();
         /*
          * String test = "1\t2\t3\t4\t5"; String[] split = test.split("\t"); for(String t : split){ System.out.println(t); }

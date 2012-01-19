@@ -53,6 +53,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     private TroopSelectionPanel aTroops = null;
     private TroopSelectionPanel bTroops = null;
     private TroopSelectionPanel cTroops = null;
+    private TroopSelectionPanel rTroops = null;
 
     public static synchronized DSWorkbenchFarmManager getSingleton() {
         if (SINGLETON == null) {
@@ -78,6 +79,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         jFarmTable.setDefaultRenderer(FarmInformation.FARM_STATUS.class, new FarmStatusCellRenderer());
         jFarmTable.setDefaultRenderer(FarmInformation.FARM_RESULT.class, new FarmResultRenderer());
         jFarmTable.setDefaultRenderer(StorageStatus.class, new StorageCellRenderer());
+        jFarmTable.setDefaultRenderer(Boolean.class, new ResourcesInStorageCellRenderer());
         jFarmTable.setColumnControlVisible(true);
         FarmManager.getSingleton().addManagerListener(DSWorkbenchFarmManager.this);
         settingsPanel.setLayout(new BorderLayout());
@@ -136,10 +138,12 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         bTroops.setupFarm(true);
         cTroops = new TroopSelectionPanel();
         cTroops.setupFarm(true);
-
+        rTroops = new TroopSelectionPanel();
+        rTroops.setupFarm(true);
         jASettingsTab.add(aTroops, BorderLayout.CENTER);
         jBSettingsTab.add(bTroops, BorderLayout.CENTER);
         jCSettingsTab.add(cTroops, BorderLayout.CENTER);
+        jRSettingsTab.add(rTroops, BorderLayout.CENTER);
     }
 
     public void dataChangedExternally() {
@@ -175,6 +179,10 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
     public int getMinUnits(UnitHolder pUnit) {
         return cTroops.getAmountForUnit(pUnit);
+    }
+
+    public int getBackupUnits(UnitHolder pUnit) {
+        return rTroops.getAmountForUnit(pUnit);
     }
 
     public boolean allowPartlyFarming() {
@@ -477,9 +485,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             return;
         }
 
-        int noAdequateSourceByNeededTroops = 0;
-        int noAdequateSourceByRange = 0;
-        int noAdequateSourceByMinHaul = 0;
+        int impossible = 0;
         int farmInactive = 0;
         int alreadyFarming = 0;
 
@@ -489,27 +495,18 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             int modelRow = jFarmTable.convertRowIndexToModel(row);
             FarmInformation farm = (FarmInformation) FarmManager.getSingleton().getAllElements().get(modelRow);
             if (!farm.getStatus().equals(FarmInformation.FARM_STATUS.FARMING)) {
-                if (clickAccount.useClick() || rows.length == 1) {
+                boolean clickUsed = clickAccount.useClick();
+                if (clickUsed || rows.length == 1) {
                     boolean success = false;
                     boolean fatal = false;
                     boolean send = false;
                     switch (farm.farmFarm(pUnitConfiguration)) {
-                        case NO_TROOPS:
-                            miscMessage = "Keine Truppeninformationen gefunden";
+                        case FAILED:
+                            miscMessage = "Keine Truppeninformationen gefunden oder Fehler beim Öffnen des Browsers";
                             fatal = true;
                             break;
-                        case NO_ADEQUATE_SOURCE_BY_NEEDED_TROOPS:
-                            noAdequateSourceByNeededTroops++;
-                            break;
-                        case NO_ADEQUATE_SOURCE_BY_RANGE:
-                            noAdequateSourceByRange++;
-                            break;
-                        case NO_ADEQUATE_SOURCE_BY_MIN_HAUL:
-                            noAdequateSourceByMinHaul++;
-                            break;
-                        case FAILED_OPEN_BROWSER:
-                            miscMessage = "Fehler beim Öffnen des Browsers";
-                            fatal = true;
+                        case IMPOSSIBLE:
+                            impossible++;
                             break;
                         case FARM_INACTIVE:
                             farmInactive++;
@@ -527,12 +524,14 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                             jFarmTable.getSelectionModel().addSelectionInterval(row + 1, row + 1);
                             jFarmTable.requestFocus();
                         }
-                        if (!send) {
+                        if (!send && clickUsed) {
                             clickAccount.giveClickBack();
                         }
                     } else {
                         jFarmTable.getSelectionModel().addSelectionInterval(row, row);
-                        clickAccount.giveClickBack();
+                        if (clickUsed) {
+                            clickAccount.giveClickBack();
+                        }
                         if (fatal) {
                             break;
                         }
@@ -553,18 +552,14 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
         if (miscMessage == null) {
             showInfo("<html>Ge&ouml;ffnete Tabs: " + opened + "/" + rows.length + "<br/>"
+                    + " - " + impossible + " Mal keine passenden D&ouml;rfer gefunden<br/>"
                     + " - " + farmInactive + " Farmen deaktiviert<br/>"
-                    + " - " + noAdequateSourceByNeededTroops + " Mal minimale Truppenzahl nicht erreicht oder kein Herkunftsdorf mit ben&ouml;tigter Truppenanzahl<br/>"
-                    + " - " + noAdequateSourceByRange + " Mal kein passendes Herkunftsdorf in Reichweite<br/>"
-                    + " - " + noAdequateSourceByMinHaul + " Mal nicht gen&uuml;gend Rohstoffe<br/>"
                     + " - " + alreadyFarming + " Mal Truppen bereits unterwegs</html>");
         } else {
             showInfo("<html><b>Abbruch: '" + miscMessage + "'</b><br/>"
                     + "Ge&ouml;ffnete Tabs: " + opened + "/" + rows.length + "<br/>"
+                    + " - " + impossible + " Mal keine passenden D&ouml;rfer gefunden<br/>"
                     + " - " + farmInactive + " Farmen deaktiviert<br/>"
-                    + " - " + noAdequateSourceByNeededTroops + " Mal minimale Truppenzahl nicht erreicht oder kein Herkunftsdorf mit ben&ouml;tigter Truppenanzahl<br/>"
-                    + " - " + noAdequateSourceByRange + " Mal kein passendes Herkunftsdorf in Reichweite<br/>"
-                    + " - " + noAdequateSourceByMinHaul + " Mal nicht gen&uuml;gend Rohstoffe<br/>"
                     + " - " + alreadyFarming + " Mal Truppen bereits unterwegs</html>");
         }
     }
@@ -617,6 +612,8 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         jLabel6 = new javax.swing.JLabel();
         jCSettingsTab = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
+        jRSettingsTab = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jMinFarmRuntime = new javax.swing.JTextField();
@@ -692,8 +689,8 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         jFarmPanel.add(settingsPanel, gridBagConstraints);
 
-        jSettingsPanel.setMinimumSize(new java.awt.Dimension(600, 300));
-        jSettingsPanel.setPreferredSize(new java.awt.Dimension(600, 300));
+        jSettingsPanel.setMinimumSize(new java.awt.Dimension(750, 300));
+        jSettingsPanel.setPreferredSize(new java.awt.Dimension(750, 300));
         jSettingsPanel.setLayout(new java.awt.GridBagLayout());
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Farmeinheiten"));
@@ -705,7 +702,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
         jLabel5.setBackground(new java.awt.Color(153, 153, 153));
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
-        jLabel5.setText("<html><table><tr><td>123</td><td>= Anzahl Einheiten</td></tr>\n<tr><td>0</td><td>= Einheit nicht verwenden</td></tr></table></html>");
+        jLabel5.setText("<html><table><tr><td>123</td><td>= 123 Einheiten verwenden</td></tr>\n<tr><td>0</td><td>= Einheit nicht verwenden</td></tr></table></html>");
         jASettingsTab.add(jLabel5, java.awt.BorderLayout.SOUTH);
 
         jTabbedPane1.addTab("", new javax.swing.ImageIcon(getClass().getResource("/res/ui/farmA.png")), jASettingsTab); // NOI18N
@@ -714,7 +711,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
         jLabel6.setBackground(new java.awt.Color(153, 153, 153));
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
-        jLabel6.setText("<html><table><tr><td>123</td><td>= Anzahl Einheiten</td></tr>\n<tr><td>0</td><td>= Einheit nicht verwenden</td></tr></table></html>");
+        jLabel6.setText("<html><table><tr><td>123</td><td>= 123 Einheiten verwenden</td></tr>\n<tr><td>0</td><td>= Einheit nicht verwenden</td></tr></table></html>");
         jBSettingsTab.add(jLabel6, java.awt.BorderLayout.SOUTH);
 
         jTabbedPane1.addTab("", new javax.swing.ImageIcon(getClass().getResource("/res/ui/farmB.png")), jBSettingsTab); // NOI18N
@@ -723,10 +720,19 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
         jLabel4.setBackground(new java.awt.Color(153, 153, 153));
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
-        jLabel4.setText("<html><table><tr><td>123</td><td>= Min. Anzahl wenn allein</td></tr>\n<tr><td>0</td><td>= Einheit nicht verwenden</td></tr></table></html>");
+        jLabel4.setText("<html><table><tr><td>123</td><td>= Min. 123 Einheiten verwenden, wenn allein</td></tr>\n<tr><td>0</td><td>= Einheit nicht verwenden</td></tr></table></html>");
         jCSettingsTab.add(jLabel4, java.awt.BorderLayout.SOUTH);
 
         jTabbedPane1.addTab("", new javax.swing.ImageIcon(getClass().getResource("/res/ui/farmC.png")), jCSettingsTab); // NOI18N
+
+        jRSettingsTab.setLayout(new java.awt.BorderLayout());
+
+        jLabel7.setBackground(new java.awt.Color(153, 153, 153));
+        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
+        jLabel7.setText("<html><table><tr><td>123</td><td>= 123 Einheiten zur&uuml;ckhalten</td></tr>\n<tr><td>0</td><td>= Alle Einheiten verwenden</td></tr></table></html>");
+        jRSettingsTab.add(jLabel7, java.awt.BorderLayout.SOUTH);
+
+        jTabbedPane1.addTab("", new javax.swing.ImageIcon(getClass().getResource("/res/ui/farmR.png")), jRSettingsTab); // NOI18N
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1004,6 +1010,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JTextField jMaxFarmRuntime;
     private javax.swing.JTextField jMinFarmRuntime;
     private javax.swing.JTextField jMinHaul;
@@ -1011,6 +1018,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jRSettingsTab;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel jSettingsPanel;
     private javax.swing.JTabbedPane jTabbedPane1;
@@ -1033,6 +1041,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         pConfig.setProperty(getPropertyPrefix() + ".farmA.units", TroopHelper.unitTableToProperty(aTroops.getAmounts()));
         pConfig.setProperty(getPropertyPrefix() + ".farmB.units", TroopHelper.unitTableToProperty(bTroops.getAmounts()));
         pConfig.setProperty(getPropertyPrefix() + ".farmC.units", TroopHelper.unitTableToProperty(cTroops.getAmounts()));
+        pConfig.setProperty(getPropertyPrefix() + ".farmR.units", TroopHelper.unitTableToProperty(rTroops.getAmounts()));
         pConfig.setProperty(getPropertyPrefix() + ".hide.farming", jHideFarmedFarms.isSelected());
         pConfig.setProperty(getPropertyPrefix() + ".disallow.partly.farming", jNotAllowPartlyFarming.isSelected());
         pConfig.setProperty(getPropertyPrefix() + ".use.success.rate", jConsiderSucessRate.isSelected());
@@ -1079,7 +1088,10 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         if (farmC != null) {
             cTroops.setAmounts(TroopHelper.propertyToUnitTable(farmC));
         }
-
+        String farmR = (String) pConfig.getProperty(getPropertyPrefix() + ".farmR.units");
+        if (farmR != null) {
+            rTroops.setAmounts(TroopHelper.propertyToUnitTable(farmR));
+        }
         PropertyHelper.restoreTableProperties(jFarmTable, pConfig, getPropertyPrefix());
     }
 

@@ -19,21 +19,19 @@ import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 public class FarmResultRenderer extends DefaultTableRenderer {
 
     private ImageIcon okIcon = null;
-    private ImageIcon noSourceByCarryCapacityIcon = null;
-    private ImageIcon noSourceByMinHaulIcon = null;
-    private ImageIcon noSourceByRangeIcon = null;
-    private ImageIcon noTroopsIcon = null;
-    private ImageIcon browserFailedIcon = null;
+    private ImageIcon impossibleIcon = null;
+    private ImageIcon failedIcon = null;
+    private ImageIcon disabledIcon = null;
+    private ImageIcon unknownIcon = null;
 
     public FarmResultRenderer() {
         super();
         try {
-            okIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/farm_result_ok.png"));
-            noSourceByCarryCapacityIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/farm_result_net.png"));
-            noSourceByMinHaulIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/farm_result_mhnr.png"));
-            noSourceByRangeIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/farm_result_nvir.png"));
-            noTroopsIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/farm_result_nt.png"));
-            browserFailedIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/farm_result_ft2b.png"));
+            okIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/bullet_ball_green.png"));
+            impossibleIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/bullet_ball_yellow.png"));
+            failedIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/bullet_ball_red.png"));
+            disabledIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/bullet_ball_grey.png"));
+            unknownIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/bullet_ball_empty.png"));
         } catch (Exception e) {
         }
     }
@@ -47,20 +45,17 @@ public class FarmResultRenderer extends DefaultTableRenderer {
             label.setHorizontalAlignment(SwingConstants.CENTER);
             FarmInformation.FARM_RESULT status = (FarmInformation.FARM_RESULT) value;
             switch (status) {
-                case FAILED_OPEN_BROWSER:
-                    label.setIcon(browserFailedIcon);
+                case FAILED:
+                    label.setIcon(failedIcon);
                     break;
-                case NO_ADEQUATE_SOURCE_BY_RANGE:
-                    label.setIcon(noSourceByRangeIcon);
+                case IMPOSSIBLE:
+                    label.setIcon(impossibleIcon);
                     break;
-                case NO_ADEQUATE_SOURCE_BY_NEEDED_TROOPS:
-                    label.setIcon(noSourceByCarryCapacityIcon);
+                case FARM_INACTIVE:
+                    label.setIcon(disabledIcon);
                     break;
-                case NO_ADEQUATE_SOURCE_BY_MIN_HAUL:
-                    label.setIcon(noSourceByMinHaulIcon);
-                    break;
-                case NO_TROOPS:
-                    label.setIcon(noTroopsIcon);
+                case UNKNOWN:
+                    label.setIcon(unknownIcon);
                     break;
                 default:
                     label.setIcon(okIcon);

@@ -6,8 +6,6 @@ package de.tor.tribes.ui.models;
 
 import de.tor.tribes.types.FarmInformation;
 import de.tor.tribes.types.StorageStatus;
-import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.farm.FarmManager;
 import java.util.Date;
 import javax.swing.table.AbstractTableModel;
@@ -19,8 +17,8 @@ import org.apache.commons.lang.time.DurationFormatUtils;
  */
 public class FarmTableModel extends AbstractTableModel {
 
-    private Class[] types = new Class[]{FarmInformation.FARM_STATUS.class, FarmInformation.FARM_RESULT.class, String.class, StorageStatus.class, Date.class, String.class, Float.class};
-    private String[] colNames = new String[]{"Status", "Letztes Ergebnis", "Dorf", "Rohstoffe", "Letzter Bericht", "Ankunft", "Erfolgsquote"};
+    private Class[] types = new Class[]{FarmInformation.FARM_STATUS.class, Boolean.class, Date.class, String.class, StorageStatus.class, String.class, FarmInformation.FARM_RESULT.class, Float.class};
+    private String[] colNames = new String[]{"Status", "Letztes Ergebnis", "Letzter Bericht", "Dorf", "Rohstoffe", "Ankunft", "Übertragen", "Erfolgsquote"};
 
     public FarmTableModel() {
     }
@@ -53,18 +51,17 @@ public class FarmTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         FarmInformation elem = (FarmInformation) FarmManager.getSingleton().getAllElements().get(rowIndex);
-
         switch (columnIndex) {
             case 0:
                 return elem.getStatus();
             case 1:
-                return elem.getLastResult();
+                return elem.isResourcesFoundInLastReport();
             case 2:
-                return elem.getVillage().getShortName();
-            case 3:
-                return elem.getStorageStatus();
-            case 4:
                 return new Date(elem.getLastReport());
+            case 3:
+                return elem.getVillage().getShortName();
+            case 4:
+                return elem.getStorageStatus();
             case 5:
                 long t = elem.getRuntimeInformation();
                 t = (t <= 0) ? 0 : t;
@@ -72,6 +69,8 @@ public class FarmTableModel extends AbstractTableModel {
                     return "Keine Truppen unterwegs";
                 }
                 return DurationFormatUtils.formatDuration(t, "HH:mm:ss", true);
+            case 6:
+                return elem.getLastResult();
             default:
                 return elem.getCorrectionFactor();
         }

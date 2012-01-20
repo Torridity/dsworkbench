@@ -21,12 +21,15 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author jejkal
  */
 public class ReportGenerator extends javax.swing.JFrame {
+
+    private static Logger logger = Logger.getLogger("ReportGenerator");
 
     /**
      * Creates new form ReportGenerator
@@ -62,6 +65,7 @@ public class ReportGenerator extends javax.swing.JFrame {
         jWoodHaul = new org.jdesktop.swingx.JXTextField();
         jClayHaul = new org.jdesktop.swingx.JXTextField();
         jIronHaul = new org.jdesktop.swingx.JXTextField();
+        jRemainPercent = new org.jdesktop.swingx.JXTextField();
         jWoodLevel = new org.jdesktop.swingx.JXTextField();
         jClayLevel = new org.jdesktop.swingx.JXTextField();
         jIronLevel = new org.jdesktop.swingx.JXTextField();
@@ -204,6 +208,13 @@ public class ReportGenerator extends javax.swing.JFrame {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jIronHaul, gridBagConstraints);
+
+        jRemainPercent.setPrompt("% Remain");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jRemainPercent, gridBagConstraints);
 
         jWoodLevel.setPrompt("Wood");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -439,6 +450,10 @@ public class ReportGenerator extends javax.swing.JFrame {
         if (hasHaul()) {
             r.setHaul(UIHelper.parseIntFromField(jWoodHaul), UIHelper.parseIntFromField(jClayHaul), UIHelper.parseIntFromField(jIronHaul));
         }
+
+        int remain = UIHelper.parseIntFromField(jRemainPercent);
+        r.setSpyedResources((int) Math.rint(remain / 100.0 * (double) r.getHaul()[0]), (int) Math.rint(remain / 100.0 * (double) r.getHaul()[1]), (int) Math.rint(remain / 100.0 * (double) r.getHaul()[2]));
+
         int[] spyInfo = getSpyInfo();
         if (spyInfo != null) {
             r.setWoodLevel(spyInfo[0]);
@@ -467,10 +482,10 @@ public class ReportGenerator extends javax.swing.JFrame {
             r.setAimedBuilding("Bauernhof");
         }
 
-        //  System.out.println("---Adding generated report (Valid:" + r.isValid() + ")----");
-        // System.out.println(r.toXml());
+        System.out.println("---Adding generated report (Valid:" + r.isValid() + ")----");
+        System.out.println(r.toXml());
         ReportManager.getSingleton().addManagedElement(r);
-        //System.out.println("----Done----");
+        System.out.println("----Done----");
     }
 
     private Village getVillage(String pTribeString, String pVillageString) {
@@ -582,9 +597,10 @@ public class ReportGenerator extends javax.swing.JFrame {
             UIHelper.parseIntFromField(jStorageLevel),
             UIHelper.parseIntFromField(jHideLevel)};
 
-        if (ArrayUtils.contains(result, 0)) {//all buildings or nothing
-            return null;
-        }
+        /*
+         * if (ArrayUtils.contains(result, 0)) {//all buildings or nothing
+         * return null; }
+         */
         return result;
     }
 
@@ -655,6 +671,7 @@ public class ReportGenerator extends javax.swing.JFrame {
     private javax.swing.JRadioButton jOffing;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private org.jdesktop.swingx.JXTextField jRemainPercent;
     private org.jdesktop.swingx.JXTextField jReportCount;
     private javax.swing.JRadioButton jSnobbing;
     private javax.swing.JRadioButton jSomeDef;

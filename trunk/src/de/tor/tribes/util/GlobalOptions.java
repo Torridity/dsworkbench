@@ -198,6 +198,12 @@ public class GlobalOptions {
     }
 
     public static void setSelectedProfile(UserProfile pProfile) {
+        /*try{
+            throw new Exception();
+        }catch(Exception e){
+            e.printStackTrace();
+            
+        }*/
         mSelectedProfile = pProfile;
     }
 

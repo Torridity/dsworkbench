@@ -288,6 +288,33 @@ public class BrowserCommandSender {
         }
     }
 
+    public static boolean showVillageInfoInGame(Village pSource) {
+        try {
+            String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+            String url = baseURL + "/game.php?village=";
+            int uvID = GlobalOptions.getSelectedProfile().getUVId();
+            if (uvID >= 0) {
+                url = baseURL + "/game.php?t=" + uvID + "&village=";
+            }
+            url += pSource.getId() + "&screen=info_village&id=" + pSource.getId();
+            String browser = GlobalOptions.getProperty("default.browser");
+            if (browser == null || browser.length() < 1) {
+                Desktop.getDesktop().browse(new URI(url));
+            } else {
+                Process p = Runtime.getRuntime().exec(new String[]{browser, url});
+                p.waitFor();
+            }
+            try {
+                Thread.sleep(100);
+            } catch (Exception ignored) {
+            }
+            return true;
+        } catch (Throwable t) {
+            logger.error("Failed to open browser window", t);
+            return false;
+        }
+    }
+
     public static boolean centerCoordinate(int pX, int pY) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());

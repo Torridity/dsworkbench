@@ -73,11 +73,6 @@ public class AttackCalculationPanel extends javax.swing.JPanel implements Wizard
         StyleConstants.setItalic(defaultStyle, true);
         StyleConstants.setFontFamily(defaultStyle, "SansSerif");
         dateFormat = new SimpleDateFormat("HH:mm:ss");
-        
-        
-       // See here!!!
-       // Add panel which shows possible reached targets depending on time settings....with gradient to see "stupid" villages
-        
     }
 
     public void setController(WizardController pWizCtrl) {

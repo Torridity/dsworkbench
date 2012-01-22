@@ -253,9 +253,10 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         }
     }
 
-    @Override
-    public void resetView() {
-        DistanceManager.getSingleton().clear();
+    public void resetView(boolean pClear) {
+        if (pClear) {
+            DistanceManager.getSingleton().clear();
+        }
         jDistanceTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
         int w0 = 100;
@@ -282,14 +283,22 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         }
 
         jDistanceTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
-        ((DistanceTableModel) jDistanceTable.getModel()).fireTableDataChanged();
-
+        if (pClear) {
+            ((DistanceTableModel) jDistanceTable.getModel()).fireTableStructureChanged();
+        } else {
+            ((DistanceTableModel) jDistanceTable.getModel()).fireTableDataChanged();
+        }
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         model.addElement(UnknownUnit.getSingleton());
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             model.addElement(unit);
         }
         unitBox.setModel(model);
+    }
+
+    @Override
+    public void resetView() {
+        resetView(true);
 
     }
 
@@ -362,7 +371,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         }
         DistanceManager.getSingleton().removeVillages(realCols);
         ((DistanceTableModel) jDistanceTable.getModel()).fireTableStructureChanged();
-        resetView();
+        resetView(false);
         showSuccess(colsToRemove.size() + ((colsToRemove.size() == 1) ? " Spalte " : " Spalten ") + "gelöscht");
     }
 
@@ -379,7 +388,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
                     DistanceManager.getSingleton().addVillage(v);
                 }
                 ((DistanceTableModel) jDistanceTable.getModel()).fireTableStructureChanged();
-                resetView();
+                resetView(false);
             }
             showSuccess(villages.size() + ((villages.size() == 1) ? " Dorf " : " Dörfer ") + "aus der Zwischenablage eingefügt");
         } catch (Exception e) {
@@ -526,7 +535,7 @@ private void fireDistanceFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt
                 DistanceManager.getSingleton().addVillage(v);
             }
             ((DistanceTableModel) jDistanceTable.getModel()).fireTableStructureChanged();
-            resetView();
+            resetView(false);
         } catch (Exception e) {
             logger.error("Failed to received dropped villages", e);
         }
@@ -550,7 +559,7 @@ private void fireDistanceFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt
         for (int i = 0; i < 10; i++) {
             DistanceManager.getSingleton().addVillage(GlobalOptions.getSelectedProfile().getTribe().getVillageList()[i]);
         }
-        DSWorkbenchDistanceFrame.getSingleton().resetView();
+        DSWorkbenchDistanceFrame.getSingleton().resetView(true);
         DSWorkbenchDistanceFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         DSWorkbenchDistanceFrame.getSingleton().setVisible(true);
 

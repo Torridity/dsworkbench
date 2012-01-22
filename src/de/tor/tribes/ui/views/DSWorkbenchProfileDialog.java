@@ -221,9 +221,9 @@ public class DSWorkbenchProfileDialog extends javax.swing.JDialog {
                 if (newProfile == null) {
                     JOptionPaneHelper.showErrorBox(this, "Fehler bei der Profilerstellung.", "Fehler");
                     return;
-                } else {
+                } /*else {
                     GlobalOptions.setSelectedProfile(newProfile);
-                }
+                }*/
             } else {
                 //modify existing profile
                 Tribe tribe = (Tribe) jAccountTribeBox.getSelectedItem();

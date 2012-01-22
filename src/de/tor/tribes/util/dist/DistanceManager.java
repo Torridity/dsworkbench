@@ -33,7 +33,7 @@ public class DistanceManager {
     }
 
     public Village[] getVillages() {
-        return villages.toArray(new Village[]{});
+        return villages.toArray(new Village[villages.size()]);
     }
 
     public void removeVillages(int[] pIds) {

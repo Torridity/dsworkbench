@@ -2753,7 +2753,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
             logger.debug("Setting default profile for server '" + GlobalOptions.getSelectedServer() + "' to " + selectedProfile.getTribeName());
             UserProfile formerProfile = GlobalOptions.getSelectedProfile();
-
+          
             if (formerProfile.getProfileId() != selectedProfile.getProfileId()) {
                 logger.info("Writing user data for former profile");
                 GlobalOptions.saveUserData();

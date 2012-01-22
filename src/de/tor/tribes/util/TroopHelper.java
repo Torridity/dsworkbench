@@ -27,110 +27,11 @@ public class TroopHelper {
 
     private static Logger logger = Logger.getLogger("TroopHelper");
 
-    /*
-     * public static Village[] getOwnVillagesByOwnTroops(Hashtable<UnitHolder,
-     * Integer> pTroops) { Village[] villages =
-     * GlobalOptions.getSelectedProfile().getTribe().getVillageList();
-     * List<Village> result = new LinkedList<Village>(); for (Village v :
-     * villages) { VillageTroopsHolder holder =
-     * TroopsManager.getSingleton().getTroopsForVillage(v,
-     * TroopsManager.TROOP_TYPE.OWN); if (holder != null) {
-     * Enumeration<UnitHolder> keys = pTroops.keys(); boolean villageFits =
-     * true; while (keys.hasMoreElements()) { UnitHolder key =
-     * keys.nextElement(); if (holder.getTroopsOfUnitInVillage(key) <
-     * pTroops.get(key)) { villageFits = false; break; } } //village is valid if
-     * (villageFits) { result.add(v); } } }
-     *
-     * return result.toArray(new Village[result.size()]); }
-     *
-     * private static class CapacityInfo {
-     *
-     * private Village village = null; private Integer carriage = 0;
-     *
-     * public CapacityInfo(Village pVillage, int pCarriage) { village =
-     * pVillage; carriage = pCarriage; }
-     *
-     * public Village getVillage() { return village; }
-     *
-     * public Integer getCarriage() { return carriage; } }
-     */
-    /*
-     * public static Village[] getOwnVillagesByCarryCapacity(final
-     * FarmInformation pInfo) { Village[] villages =
-     * GlobalOptions.getSelectedProfile().getTribe().getVillageList();
-     * List<CapacityInfo> result = new LinkedList<CapacityInfo>(); UnitHolder[]
-     * allowedUnits =
-     * DSWorkbenchFarmManager.getSingleton().getAllowedFarmUnits(); int
-     * currentResources =
-     * pInfo.getResourcesInStorage(System.currentTimeMillis());
-     *
-     * for (Village v : villages) { VillageTroopsHolder holder =
-     * TroopsManager.getSingleton().getTroopsForVillage(v,
-     * TroopsManager.TROOP_TYPE.OWN); if (holder != null) { int capacity = 0;
-     * for (UnitHolder unit : allowedUnits) { capacity += unit.getCarry() *
-     * holder.getTroopsOfUnitInVillage(unit); if (capacity >= currentResources)
-     * { break; } }
-     *
-     * if (capacity >= currentResources) { //village is valid result.add(new
-     * CapacityInfo(v, capacity)); } } }
-     *
-     * //order valid villages by distance to target (prefer closer villages)
-     * Collections.sort(result, new Comparator<CapacityInfo>() {
-     *
-     * @Override public int compare(CapacityInfo o1, CapacityInfo o2) { double
-     * dist1 = DSCalculator.calculateDistance(o1.getVillage(),
-     * pInfo.getVillage()); double dist2 =
-     * DSCalculator.calculateDistance(o2.getVillage(), pInfo.getVillage());
-     * return Double.valueOf(dist1).compareTo(Double.valueOf(dist2)); } });
-     *
-     * //put ordered villages to result list List<Village> finalList = new
-     * LinkedList<Village>(); for (CapacityInfo v : result) {
-     * finalList.add(v.getVillage()); }
-     *
-     * return finalList.toArray(new Village[finalList.size()]); }
-     */
-    /*
-     * public static Village[] getOwnVillagesByMinHaul(final FarmInformation
-     * pInfo, int pMinHaul) { Village[] villages =
-     * GlobalOptions.getSelectedProfile().getTribe().getVillageList();
-     * List<CapacityInfo> result = new LinkedList<CapacityInfo>(); UnitHolder[]
-     * allowedUnits =
-     * DSWorkbenchFarmManager.getSingleton().getAllowedFarmUnits(); for (Village
-     * v : villages) { VillageTroopsHolder holder =
-     * TroopsManager.getSingleton().getTroopsForVillage(v,
-     * TroopsManager.TROOP_TYPE.OWN); if (holder != null) { int capacity = 0;
-     * for (UnitHolder unit : allowedUnits) { capacity += unit.getCarry() *
-     * holder.getTroopsOfUnitInVillage(unit); }
-     *
-     * if (capacity >= pMinHaul) { result.add(new CapacityInfo(v, capacity)); }
-     * } }
-     *
-     * //order valid villages by max carry capacity (prefer villages with
-     * higher capactity)... //...secondary order criteria at same capacity is
-     * the distance to the target Collections.sort(result, new
-     * Comparator<CapacityInfo>() {
-     *
-     * @Override public int compare(CapacityInfo o1, CapacityInfo o2) { int cap1
-     * = o1.getCarriage(); int cap2 = o2.getCarriage(); int result =
-     * Integer.valueOf(cap1).compareTo(Integer.valueOf(cap2)); if (result == 0)
-     * {//if carry capacity is the same, compare by distance double dist1 =
-     * DSCalculator.calculateDistance(o1.getVillage(), pInfo.getVillage());
-     * double dist2 = DSCalculator.calculateDistance(o2.getVillage(),
-     * pInfo.getVillage()); result =
-     * Double.valueOf(dist1).compareTo(Double.valueOf(dist2)); } return result;
-     * } });
-     *
-     * //put ordered villages to result list List<Village> finalList = new
-     * LinkedList<Village>(); for (CapacityInfo v : result) {
-     * finalList.add(v.getVillage()); }
-     *
-     * return finalList.toArray(new Village[finalList.size()]); }
-     */
-    public static Hashtable<UnitHolder, Integer> getTroopsForCarriage(VillageTroopsHolder pTroops, FarmInformation pInfo, boolean pAcceptMaxCarriage) {
+    public static Hashtable<UnitHolder, Integer> getTroopsForCarriage(DSWorkbenchFarmManager.FARM_CONFIGURATION pConfig, VillageTroopsHolder pTroops, FarmInformation pInfo, boolean pAcceptMaxCarriage) {
         Hashtable<UnitHolder, Integer> units = new Hashtable<UnitHolder, Integer>();
         Village source = pTroops.getVillage();
 
-        UnitHolder[] allowed = DSWorkbenchFarmManager.getSingleton().getAllowedFarmUnits();
+        UnitHolder[] allowed = DSWorkbenchFarmManager.getSingleton().getAllowedFarmUnits(pConfig);
         Arrays.sort(allowed, UnitHolder.RUNTIME_COMPARATOR);
         boolean minUnitsMetOnce = false;
         if (logger.isDebugEnabled()) {
@@ -165,7 +66,7 @@ public class TroopHelper {
                 //get needed amount of units to carry remaining resources
                 int neededAmountOfUnit = (int) Math.ceil((double) resources / unit.getCarry());
                 logger.debug(" - Needing " + neededAmountOfUnit + " units of type " + unit);
-                if (neededAmountOfUnit <= amount && (minUnitsMetOnce || neededAmountOfUnit > DSWorkbenchFarmManager.getSingleton().getMinUnits(unit))) {
+                if (neededAmountOfUnit <= amount && (minUnitsMetOnce || neededAmountOfUnit > DSWorkbenchFarmManager.getSingleton().getMinUnits(pConfig, unit))) {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Adding " + neededAmountOfUnit + " units of type " + unit);
                     }
@@ -173,7 +74,7 @@ public class TroopHelper {
                     units.put(unit, neededAmountOfUnit);
                     resources -= unit.getCarry() * neededAmountOfUnit;
                     minUnitsMetOnce = true;
-                } else if (neededAmountOfUnit > amount && (minUnitsMetOnce || amount > DSWorkbenchFarmManager.getSingleton().getMinUnits(unit))) {
+                } else if (neededAmountOfUnit > amount && (minUnitsMetOnce || amount > DSWorkbenchFarmManager.getSingleton().getMinUnits(pConfig, unit))) {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Adding all units (" + amount + ") of type " + unit);
                     }
@@ -340,9 +241,9 @@ public class TroopHelper {
 
     public static int getCapacity(Hashtable<UnitHolder, Integer> pTroops) {
         int capacity = 0;
-        if (pTroops != null && !pTroops.isEmpty() ) {
+        if (pTroops != null && !pTroops.isEmpty()) {
             Enumeration<UnitHolder> units = pTroops.keys();
-            while(units.hasMoreElements()){
+            while (units.hasMoreElements()) {
                 UnitHolder unit = units.nextElement();
                 Integer amount = pTroops.get(unit);
                 if (amount != null && amount != 0) {
@@ -352,7 +253,6 @@ public class TroopHelper {
         }
         return capacity;
     }
-
 
     public static boolean isEmpty(Hashtable<UnitHolder, Integer> pTroops) {
         int pop = 0;

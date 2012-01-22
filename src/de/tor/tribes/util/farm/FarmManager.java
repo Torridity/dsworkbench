@@ -6,7 +6,6 @@ package de.tor.tribes.util.farm;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
-import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
@@ -21,6 +20,8 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.report.ReportManager;
 import java.awt.Point;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -40,6 +41,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
     private static Logger logger = Logger.getLogger("FarmManager");
     private static FarmManager SINGLETON = null;
     private Hashtable<Village, FarmInformation> infoMap = null;
+    private Village lastUpdatedFarm = null;
 
     public static synchronized FarmManager getSingleton() {
         if (SINGLETON == null) {
@@ -79,6 +81,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
         FarmInformation info = getFarmInformation(pReport.getTargetVillage());
         if (info != null) {
             logger.debug("Updating farm information for farm " + info.getVillage());
+            lastUpdatedFarm = info.getVillage();
             info.updateFromReport(pReport);
         }
     }
@@ -89,12 +92,13 @@ public class FarmManager extends GenericManager<FarmInformation> {
         Tribe yourTribe = GlobalOptions.getSelectedProfile().getTribe();
         Point center = DSCalculator.calculateCenterOfMass(Arrays.asList(yourTribe.getVillageList()));
         invalidate();
+        Ellipse2D.Double e = new Ellipse2D.Double(center.x - pRadius, center.y - pRadius, 2 * pRadius, 2 * pRadius);
         for (ManageableType t : ReportManager.getSingleton().getAllElementsFromAllGroups()) {
             FightReport report = (FightReport) t;
             Village target = report.getTargetVillage();
             if (report.isWon()) {
-                if (DSCalculator.calculateDistance(new Village(center.x, center.y), report.getTargetVillage()) <= pRadius) {//in radius
-                    if (!report.getTargetVillage().getTribe().equals(t)
+                if (e.contains(new Point2D.Double(report.getTargetVillage().getX(), report.getTargetVillage().getY()))) {//in radius
+                    if (!report.getTargetVillage().getTribe().equals(yourTribe)
                             && (report.getTargetVillage().getTribe().getAlly() == null
                             || report.getTargetVillage().getTribe().getAlly().equals(BarbarianAlly.getSingleton())
                             || !report.getTargetVillage().getTribe().getAlly().equals(yourTribe.getAlly()))) {
@@ -102,7 +106,9 @@ public class FarmManager extends GenericManager<FarmInformation> {
                             FarmInformation info = addFarm(target);
                             info.updateFromReport(report);
                             handled.add(target);
-                            addCount++;
+                            if (info.isJustCreated()) {
+                                addCount++;
+                            }
                         } else {//update to newer report
                             FarmInformation info = getFarmInformation(target);
                             if (info != null && info.getLastReport() < report.getTimestamp()) {
@@ -127,21 +133,24 @@ public class FarmManager extends GenericManager<FarmInformation> {
         Tribe yourTribe = GlobalOptions.getSelectedProfile().getTribe();
         Point center = DSCalculator.calculateCenterOfMass(Arrays.asList(yourTribe.getVillageList()));
         invalidate();
+        Ellipse2D.Double e = new Ellipse2D.Double(center.x - pRadius, center.y - pRadius, 2 * pRadius, 2 * pRadius);
         for (int i = center.x - pRadius; i < center.x + pRadius; i++) {
             for (int j = center.y - pRadius; j < center.y + pRadius; j++) {
                 if (i > 0 && i < ServerSettings.getSingleton().getMapDimension().width
                         && j > 0 && j < ServerSettings.getSingleton().getMapDimension().height) {
-                    Village v = DataHolder.getSingleton().getVillages()[i][j];
-                    if (v != null && v.getTribe().equals(Barbarians.getSingleton())) {
-                        FarmInformation info = addFarm(v);
-                        if (info.isJustCreated()) {
-                            FightReport r = ReportManager.getSingleton().findLastReportForSource(v);
-                            if (r != null) {
-                                info.updateFromReport(r);
-                            } else {
-                                info.setInitialResources();
+                    if (e.contains(new Point2D.Double(i, j))) {
+                        Village v = DataHolder.getSingleton().getVillages()[i][j];
+                        if (v != null && v.getTribe().equals(Barbarians.getSingleton())) {
+                            FarmInformation info = addFarm(v);
+                            if (info.isJustCreated()) {
+                                FightReport r = ReportManager.getSingleton().findLastReportForSource(v);
+                                if (r != null) {
+                                    info.updateFromReport(r);
+                                } else {
+                                    info.setInitialResources();
+                                }
+                                addCount++;
                             }
-                            addCount++;
                         }
                     }
                 }
@@ -157,15 +166,21 @@ public class FarmManager extends GenericManager<FarmInformation> {
         }
     }
 
+    public Village getLastUpdatedFarm() {
+        return lastUpdatedFarm;
+    }
+
     @Override
     public void loadElements(String pFile) {
         XStream x = new XStream();
         x.alias("farmInfo", FarmInformation.class);
+        lastUpdatedFarm = null;
         FileReader r = null;
         logger.debug("Reading farm information from file " + pFile);
+        initialize();
+        infoMap.clear();
         try {
             r = new FileReader(pFile);
-            initialize();
             List<ManageableType> el = (List<ManageableType>) x.fromXML(r);
             invalidate();
             for (ManageableType t : el) {
@@ -188,7 +203,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
             } catch (IOException ignored) {
             }
         }
-        revalidate();
+        revalidate(true);
     }
 
     @Override

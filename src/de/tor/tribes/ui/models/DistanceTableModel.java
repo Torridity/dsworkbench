@@ -61,10 +61,6 @@ public class DistanceTableModel extends AbstractTableModel {
         return false;
     }
 
-    public Village[] getColumns() {
-        return DistanceManager.getSingleton().getVillages();
-    }
-
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         Object result = null;

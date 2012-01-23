@@ -24,11 +24,10 @@ import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.generator.ui.ReportGenerator;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 import java.util.Timer;
 import javax.swing.*;
 import org.apache.commons.configuration.Configuration;
@@ -321,7 +320,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         });
         farmSourcePane.getContentPane().add(centerFarm);
 
-        JXButton markLastFarm = new JXButton(new ImageIcon(DSWorkbenchFarmManager.class.getResource("/res/ui/center_ingame.png")));
+       /* JXButton markLastFarm = new JXButton(new ImageIcon(DSWorkbenchFarmManager.class.getResource("/res/ui/center_ingame.png")));
 
         markLastFarm.setToolTipText("Wählt die letzte Farm aus, für die ein Bericht eingelesen wurde");
         markLastFarm.addMouseListener(new MouseAdapter() {
@@ -331,7 +330,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                 selectLastFarm();
             }
         });
-        farmSourcePane.getContentPane().add(markLastFarm);
+        farmSourcePane.getContentPane().add(markLastFarm);*/
         JXTaskPane farmPane = new JXTaskPane();
         farmPane.setTitle("Farmaktionen");
 
@@ -476,15 +475,12 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     }
 
     private void selectLastFarm() {
-     /*   Village last = FarmManager.getSingleton().getLastUpdatedFarm();
-        if (last == null) {
-            showInfo("Keine letzte Farm bekannt");
-            return;
-        }
-        
-        FarmTableModel model = TableHelper.getTableModel(jFarmTable.getModel());*/
-        
-        
+        /*
+         * Village last = FarmManager.getSingleton().getLastUpdatedFarm(); if (last == null) { showInfo("Keine letzte Farm bekannt");
+         * return; }
+         *
+         * FarmTableModel model = TableHelper.getTableModel(jFarmTable.getModel());
+         */
     }
 
     /**
@@ -1259,6 +1255,17 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
      */
     public static void main(String args[]) throws Exception {
         /*
+         * Image image = Toolkit.getDefaultToolkit().getImage("./graphics/icons/axe.png"); final TrayIcon trayIcon = new TrayIcon(image,
+         * "Tray Demo"); if (SystemTray.isSupported()) { // get the SystemTray instance SystemTray tray = SystemTray.getSystemTray(); //
+         * load an image // create a action listener to listen for default action executed on the tray icon ActionListener listener = new
+         * ActionListener() {
+         *
+         * public void actionPerformed(ActionEvent e) { // execute default action of the application // ... } }; // set the TrayIcon
+         * properties trayIcon.addActionListener(listener); // ... // add the tray image try { tray.add(trayIcon); } catch (AWTException e)
+         * { System.err.println(e); }
+        }
+         */
+        /*
          * Set the Nimbus look and feel
          */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -1311,6 +1318,11 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
             public void run() {
                 DSWorkbenchFarmManager.getSingleton().resetView();
+                /*
+                 * for (int i = 0; i < 10; i++) { trayIcon.displayMessage("Test", "Hello World " + Math.random(),
+                 * TrayIcon.MessageType.INFO); try { Thread.sleep(500); } catch (Exception e) { }
+                }
+                 */
                 DSWorkbenchFarmManager.getSingleton().setVisible(true);
             }
         });

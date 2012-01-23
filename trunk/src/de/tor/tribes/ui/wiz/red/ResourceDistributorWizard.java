@@ -23,6 +23,8 @@ import org.netbeans.spi.wizard.WizardPanelProvider;
 
 /**
  *
+ * @TODO Check cell renderer in source table
+ * @TODO Check visibility of settings for different distib. types
  * @author Torridity
  */
 public class ResourceDistributorWizard extends WizardPanelProvider {

@@ -5,13 +5,12 @@
 package de.tor.tribes.util.algo;
 
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.Defense;
 import de.tor.tribes.types.DefenseInformation;
 import de.tor.tribes.ui.views.DSWorkbenchSOSRequestAnalyzer;
 import de.tor.tribes.ui.wiz.dep.DefenseAnalysePanel;
 import de.tor.tribes.ui.wiz.dep.DefenseFilterPanel;
 import de.tor.tribes.ui.wiz.dep.DefenseCalculationSettingsPanel;
-import de.tor.tribes.ui.wiz.dep.DefenseSourcePanel.SupportSourceElement;
+import de.tor.tribes.ui.wiz.dep.types.SupportSourceElement;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;

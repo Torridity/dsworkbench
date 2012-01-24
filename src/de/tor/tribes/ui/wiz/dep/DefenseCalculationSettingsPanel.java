@@ -10,18 +10,15 @@
  */
 package de.tor.tribes.ui.wiz.dep;
 
-import de.tor.tribes.ui.wiz.dep.DefenseSourcePanel.SupportSourceElement;
-import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.ui.wiz.dep.types.SupportSourceElement;
 import de.tor.tribes.util.UIHelper;
 import de.tor.tribes.util.algo.DefenseCalculator;
-import de.tor.tribes.util.sos.SOSManager;
 import java.awt.BorderLayout;
 import java.awt.Point;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JOptionPane;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;

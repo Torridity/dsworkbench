@@ -10,25 +10,20 @@
  */
 package de.tor.tribes.ui.wiz.dep;
 
-import de.tor.tribes.types.Defense;
 import de.tor.tribes.types.DefenseInformation;
-import de.tor.tribes.types.DefenseInformation.DEFENSE_STATUS;
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
+import de.tor.tribes.ui.models.DEPResultTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.DefenseStatusTableCellRenderer;
 import de.tor.tribes.ui.util.ColorGradientHelper;
-import de.tor.tribes.ui.wiz.dep.DefenseSourcePanel.SupportSourceElement;
+import de.tor.tribes.ui.wiz.dep.types.SupportSourceElement;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.TableHelper;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
-import javax.swing.table.AbstractTableModel;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPanel;
@@ -61,7 +56,7 @@ public class DefenseFinishPanel extends javax.swing.JPanel implements WizardPane
     /** Creates new form AttackSourcePanel */
     DefenseFinishPanel() {
         initComponents();
-        jxResultsTable.setModel(new ResultTableModel());
+        jxResultsTable.setModel(new DEPResultTableModel());
         jxResultsTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jxResultsTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jxResultsTable.getColumnExt("Status").setCellRenderer(new DefenseStatusTableCellRenderer());
@@ -341,7 +336,7 @@ public class DefenseFinishPanel extends javax.swing.JPanel implements WizardPane
     private void fireShowHideSummaryEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireShowHideSummaryEvent
         jXCollapsiblePane2.setCollapsed(!jToggleButton2.isSelected());
     }//GEN-LAST:event_fireShowHideSummaryEvent
-    private ResultTableModel getModel() {
+    private DEPResultTableModel getModel() {
         return TableHelper.getTableModel(jxResultsTable);
     }
 
@@ -354,7 +349,7 @@ public class DefenseFinishPanel extends javax.swing.JPanel implements WizardPane
         int usedSupports = 0;
 
         int[] defenseInfo = DefenseAnalysePanel.getSingleton().getDefenseInfo();
-        ResultTableModel model = getModel();
+        DEPResultTableModel model = getModel();
         model.clear();
         overviewPanel.reset();
         for (DefenseInformation info : results) {
@@ -424,82 +419,5 @@ public class DefenseFinishPanel extends javax.swing.JPanel implements WizardPane
     @Override
     public WizardPanelNavResult allowFinish(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;
-    }
-
-    private static class ResultTableModel extends AbstractTableModel {
-
-        private String[] columnNames = new String[]{
-            "Ziel", "Unterstützungen", "Status"
-        };
-        private Class[] types = new Class[]{
-            Village.class, String.class, DEFENSE_STATUS.class
-        };
-        private final List<DefenseInformation> elements = new LinkedList<DefenseInformation>();
-
-        public ResultTableModel() {
-            super();
-        }
-
-        public void clear() {
-            elements.clear();
-            fireTableDataChanged();
-        }
-
-        public void addRow(DefenseInformation pDefense) {
-            elements.add(pDefense);
-        }
-
-        @Override
-        public int getRowCount() {
-            if (elements == null) {
-                return 0;
-            }
-            return elements.size();
-        }
-
-        @Override
-        public Class getColumnClass(int columnIndex) {
-            return types[columnIndex];
-        }
-
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return false;
-        }
-
-        @Override
-        public String getColumnName(int column) {
-            return columnNames[column];
-        }
-
-        public void removeRow(int row, int viewRow) {
-            elements.remove(row);
-            fireTableDataChanged();
-        }
-
-        public DefenseInformation getRow(int row) {
-            return elements.get(row);
-        }
-
-        @Override
-        public Object getValueAt(int row, int column) {
-            if (elements == null || elements.size() - 1 < row) {
-                return null;
-            }
-            DefenseInformation element = elements.get(row);
-            switch (column) {
-                case 0:
-                    return element.getTarget();
-                case 1:
-                    return element.getSupports().length + "/" + element.getNeededSupports();
-                default:
-                    return element.getStatus();
-            }
-        }
-
-        @Override
-        public int getColumnCount() {
-            return columnNames.length;
-        }
     }
 }

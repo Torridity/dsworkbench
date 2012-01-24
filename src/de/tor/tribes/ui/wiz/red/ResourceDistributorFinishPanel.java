@@ -18,13 +18,15 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.types.VillageMerchantInfo;
 import de.tor.tribes.ui.components.ClickAccountPanel;
 import de.tor.tribes.ui.components.ProfileQuickChangePanel;
+import de.tor.tribes.ui.models.REDFinalDistributionTableModel;
+import de.tor.tribes.ui.models.REDFinalTransportsTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.SentNotSentCellRenderer;
 import de.tor.tribes.ui.renderer.StorageCellRenderer;
 import de.tor.tribes.ui.renderer.TradeDirectionCellRenderer;
 import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor.Resource;
-import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor.Transport;
+import de.tor.tribes.ui.wiz.red.types.ExtendedTransport;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
@@ -50,7 +52,6 @@ import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
-import javax.swing.table.AbstractTableModel;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
@@ -88,13 +89,13 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jXCollapsiblePane1.add(jInfoScrollPane, BorderLayout.CENTER);
         jInfoTextPane.setText(GENERAL_INFO);
-        jTransportsTable.setModel(new TransportsTableModel());
+        jTransportsTable.setModel(new REDFinalTransportsTableModel());
         jTransportsTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jTransportsTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jTransportsTable.setDefaultRenderer(Boolean.class, new SentNotSentCellRenderer());
         jTransportsTable.setDefaultRenderer(Integer.class, new NumberFormatCellRenderer());
 
-        jDistributionTable.setModel(new ResourceDistributionTableModel());
+        jDistributionTable.setModel(new REDFinalDistributionTableModel());
         jDistributionTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jDistributionTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jDistributionTable.setDefaultRenderer(StorageStatus.class, new StorageCellRenderer());
@@ -337,12 +338,14 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         if (selection.length > 0) {
             for (ExtendedTransport transport : selection) {
                 if (!jIgnoreSubmitted.isSelected() || !transport.isTransferredToBrowser()) {
-                    if (clickPanel.useClick()) {
+                    if (selection.length == 1 || clickPanel.useClick()) {
                         transport.setTransferredToBrowser(
                                 BrowserCommandSender.sendRes(transport.getSource(), transport.getTarget(), transport, quickProfilePanel.getSelectedProfile()));
                         if (!transport.isTransferredToBrowser()) {//if transfer failed, set browser access error flag and give click back
                             browserAccessFailed = (browserAccessFailed == false) ? true : browserAccessFailed;
-                            clickPanel.giveClickBack();
+                            if (selection.length > 1) {
+                                clickPanel.giveClickBack();
+                            }
                         }
                     } else {
                         outOfClicks = true;
@@ -359,18 +362,18 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         }
     }//GEN-LAST:event_fireTransferSelectionToBrowserEvent
 
-    public TransportsTableModel getTransportsModel() {
-        return (TransportsTableModel) jTransportsTable.getModel();
+    public REDFinalTransportsTableModel getTransportsModel() {
+        return (REDFinalTransportsTableModel) jTransportsTable.getModel();
     }
 
-    public ResourceDistributionTableModel getDistributionModel() {
-        return (ResourceDistributionTableModel) jDistributionTable.getModel();
+    public REDFinalDistributionTableModel getDistributionModel() {
+        return (REDFinalDistributionTableModel) jDistributionTable.getModel();
     }
 
     protected void setup() {
         Hashtable<Village, Hashtable<Village, List<Resource>>> transports = ResourceDistributorCalculationPanel.getSingleton().getTransports();
         Enumeration<Village> sourceKeys = transports.keys();
-        TransportsTableModel model = getTransportsModel();
+        REDFinalTransportsTableModel model = getTransportsModel();
         model.clear();
 
         VillageMerchantInfo[] infos = ResourceDistributorSettingsPanel.getSingleton().getAllElements();
@@ -415,7 +418,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         }
         model.fireTableDataChanged();
 
-        ResourceDistributionTableModel distributionModel = getDistributionModel();
+        REDFinalDistributionTableModel distributionModel = getDistributionModel();
         distributionModel.clear();
 
         Enumeration<Village> keys = infoTable.keys();
@@ -449,7 +452,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
     private ExtendedTransport[] getSelection() {
         int[] selection = jTransportsTable.getSelectedRows();
         List<ExtendedTransport> rows = new LinkedList<ExtendedTransport>();
-        TransportsTableModel model = getTransportsModel();
+        REDFinalTransportsTableModel model = getTransportsModel();
         if (selection.length > 0) {
 
             for (int i : selection) {
@@ -462,7 +465,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
     private void saveTransports() {
         StringBuilder b = new StringBuilder();
         int cnt = 0;
-        TransportsTableModel model = getTransportsModel();
+        REDFinalTransportsTableModel model = getTransportsModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             //get values
             Village source = (Village) jTransportsTable.getValueAt(i, 0);
@@ -503,7 +506,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         File transportsFile = new File(profileDir + "/transports.sav");
         if (transportsFile.exists()) {
             BufferedReader r = null;
-            TransportsTableModel model = getTransportsModel();
+            REDFinalTransportsTableModel model = getTransportsModel();
             model.clear();
             try {
                 r = new BufferedReader(new FileReader(transportsFile));
@@ -577,218 +580,5 @@ public class ResourceDistributorFinishPanel extends WizardPage {
     @Override
     public WizardPanelNavResult allowFinish(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;
-    }
-}
-
-class ResourceDistributionTableModel extends AbstractTableModel {
-
-    private String[] columnNames = new String[]{
-        "Dorf", "Rohstoffe", "Handelsrichtung"
-    };
-    Class[] types = new Class[]{
-        Village.class, StorageStatus.class, VillageMerchantInfo.Direction.class
-    };
-    private final List<VillageMerchantInfo> elements = new LinkedList<VillageMerchantInfo>();
-
-    public void clear() {
-        elements.clear();
-        fireTableDataChanged();
-    }
-
-    public void addRow(final Village pSource, int pStash, int pWood, int pClay, int pIron, VillageMerchantInfo.Direction pDirection) {
-        VillageMerchantInfo newInfo = new VillageMerchantInfo(pSource, pStash, pWood, pClay, pIron, 0, 0);
-        newInfo.setDirection(pDirection);
-        elements.add(newInfo);
-    }
-
-    @Override
-    public int getRowCount() {
-        if (elements == null) {
-            return 0;
-        }
-        return elements.size();
-    }
-
-    @Override
-    public Class getColumnClass(int columnIndex) {
-        return types[columnIndex];
-    }
-
-    @Override
-    public boolean isCellEditable(int row, int column) {
-        return false;
-    }
-
-    @Override
-    public String getColumnName(int column) {
-        return columnNames[column];
-    }
-
-    public void removeRow(int row) {
-        elements.remove(row);
-        fireTableDataChanged();
-    }
-
-    public VillageMerchantInfo getRow(int row) {
-        return elements.get(row);
-    }
-
-    @Override
-    public Object getValueAt(int row, int column) {
-        if (elements == null || elements.size() - 1 < row) {
-            return null;
-        }
-        VillageMerchantInfo element = elements.get(row);
-        switch (column) {
-            case 0:
-                return element.getVillage();
-            case 1:
-                return new StorageStatus(element.getWoodStock(), element.getClayStock(),
-                        element.getIronStock(), element.getStashCapacity());
-            default:
-                return element.getDirection();
-        }
-    }
-
-    @Override
-    public int getColumnCount() {
-        return columnNames.length;
-    }
-}
-
-class TransportsTableModel extends AbstractTableModel {
-
-    private String[] columnNames = new String[]{
-        "Herkunft", "Ziel", "Holz", "Lehm", "Eisen", "Übertragen"
-    };
-    Class[] types = new Class[]{
-        Village.class, Village.class, Integer.class, Integer.class, Integer.class, Boolean.class
-    };
-    private final List<ExtendedTransport> elements = new LinkedList<ExtendedTransport>();
-
-    public void clear() {
-        elements.clear();
-        fireTableDataChanged();
-    }
-
-    public boolean addRow(final Village pSource, Village pTarget, List<Resource> pResources, boolean pSubmitted) {
-        ExtendedTransport t = new ExtendedTransport(pSource, pResources, pTarget);
-        t.setTransferredToBrowser(pSubmitted);
-        if (t.hasGoods()) {
-            elements.add(t);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean addRow(final Village pSource, Village pTarget, List<Resource> pResources) {
-        ExtendedTransport t = new ExtendedTransport(pSource, pResources, pTarget);
-        if (t.hasGoods()) {
-            elements.add(t);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public int getRowCount() {
-        if (elements == null) {
-            return 0;
-        }
-        return elements.size();
-    }
-
-    @Override
-    public Class getColumnClass(int columnIndex) {
-        return types[columnIndex];
-    }
-
-    @Override
-    public boolean isCellEditable(int row, int column) {
-        return false;
-    }
-
-    @Override
-    public String getColumnName(int column) {
-        return columnNames[column];
-    }
-
-    public void removeRow(int row) {
-        elements.remove(row);
-        fireTableDataChanged();
-    }
-
-    public ExtendedTransport getRow(int row) {
-        return elements.get(row);
-    }
-
-    @Override
-    public Object getValueAt(int row, int column) {
-        if (elements == null || elements.size() - 1 < row) {
-            return null;
-        }
-        ExtendedTransport element = elements.get(row);
-        switch (column) {
-            case 0:
-                return element.getSource();
-            case 1:
-                return element.getTarget();
-            case 2:
-                return element.getWood();
-            case 3:
-                return element.getClay();
-            case 4:
-                return element.getIron();
-            default:
-                return element.isTransferredToBrowser();
-        }
-    }
-
-    @Override
-    public int getColumnCount() {
-        return columnNames.length;
-    }
-}
-
-class ExtendedTransport extends Transport {
-
-    private Village source = null;
-    private boolean transferredToBrowser = false;
-
-    public ExtendedTransport(Village pSource, List<Resource> pResources, Village pTarget) {
-        super(pTarget, pResources);
-        source = pSource;
-    }
-
-    public Village getSource() {
-        return source;
-    }
-
-    public int getWood() {
-        return getSingleTransports().get(0).getAmount();
-    }
-
-    public int getClay() {
-        return getSingleTransports().get(1).getAmount();
-    }
-
-    public int getIron() {
-        return getSingleTransports().get(2).getAmount();
-    }
-
-    public int getMerchants() {
-        int result = 0;
-        for (Resource r : getSingleTransports()) {
-            result += r.getAmount() / 1000;
-        }
-        return result;
-    }
-
-    public void setTransferredToBrowser(boolean transferredToBrowser) {
-        this.transferredToBrowser = transferredToBrowser;
-    }
-
-    public boolean isTransferredToBrowser() {
-        return transferredToBrowser;
     }
 }

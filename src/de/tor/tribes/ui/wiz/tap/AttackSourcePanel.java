@@ -13,18 +13,18 @@ package de.tor.tribes.ui.wiz.tap;
 import com.jidesoft.swing.JideBoxLayout;
 import com.jidesoft.swing.JideSplitPane;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.components.VillageSelectionPanel;
+import de.tor.tribes.ui.models.TAPSourceTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.FakeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
+import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.PluginManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -45,9 +45,6 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardController;
@@ -59,7 +56,7 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  * @author Torridity
  */
 public class AttackSourcePanel extends javax.swing.JPanel implements WizardPanel {
-    
+
     private static final String GENERAL_INFO = "Du befindest dich in der Dorfauswahl. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, "
             + "mit denen du angreifen m&ouml;chtest. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:"
             + "<ul> <li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>"
@@ -69,37 +66,39 @@ public class AttackSourcePanel extends javax.swing.JPanel implements WizardPanel
     private WizardController controller = null;
     private VillageSelectionPanel villageSelectionPanel = null;
     private VillageOverviewMapPanel overviewPanel = null;
-    
+
     public static synchronized AttackSourcePanel getSingleton() {
         if (singleton == null) {
             singleton = new AttackSourcePanel();
         }
         return singleton;
     }
-    
+
     public void setController(WizardController pWizCtrl) {
         controller = pWizCtrl;
     }
 
-    /** Creates new form AttackSourcePanel */
+    /**
+     * Creates new form AttackSourcePanel
+     */
     AttackSourcePanel() {
         initComponents();
-        jVillageTable.setModel(new SourceTableModel());
+        jVillageTable.setModel(new TAPSourceTableModel());
         jVillageTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
         jVillageTable.setDefaultRenderer(Boolean.class, new FakeCellRenderer());
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jXCollapsiblePane1.add(jInfoScrollPane, BorderLayout.CENTER);
         villageSelectionPanel = new VillageSelectionPanel(new VillageSelectionPanel.VillageSelectionPanelListener() {
-            
+
             @Override
             public void fireVillageSelectionEvent(Village[] pSelection) {
                 addVillages(pSelection);
             }
         });
-        
+
         jVillageTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jVillageTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
-        
+
         villageSelectionPanel.enableSelectionElement(VillageSelectionPanel.SELECTION_ELEMENT.ALLY, false);
         villageSelectionPanel.enableSelectionElement(VillageSelectionPanel.SELECTION_ELEMENT.TRIBE, false);
         villageSelectionPanel.setUnitSelectionEnabled(true);
@@ -116,7 +115,7 @@ public class AttackSourcePanel extends javax.swing.JPanel implements WizardPanel
         jideSplitPane1.add(jDataPanel, JideBoxLayout.FLEXIBLE);
         jideSplitPane1.add(jVillageTablePanel, JideBoxLayout.VARY);
         jideSplitPane1.getDividerAt(0).addMouseListener(new MouseAdapter() {
-            
+
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -124,11 +123,11 @@ public class AttackSourcePanel extends javax.swing.JPanel implements WizardPanel
                 }
             }
         });
-        
+
         KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         ActionListener panelListener = new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand().equals("Paste")) {
@@ -141,9 +140,9 @@ public class AttackSourcePanel extends javax.swing.JPanel implements WizardPanel
         jVillageTable.registerKeyboardAction(panelListener, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jVillageTable.registerKeyboardAction(panelListener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         capabilityInfoPanel1.addActionListener(panelListener);
-        
+
         jVillageTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            
+
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 int selectedRows = jVillageTable.getSelectedRowCount();
@@ -152,17 +151,16 @@ public class AttackSourcePanel extends javax.swing.JPanel implements WizardPanel
                 }
             }
         });
-        
-        
+
+
         jInfoTextPane.setText(GENERAL_INFO);
         overviewPanel = new VillageOverviewMapPanel();
         jPanel2.add(overviewPanel, BorderLayout.CENTER);
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this
+     * method is always regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -326,7 +324,7 @@ public class AttackSourcePanel extends javax.swing.JPanel implements WizardPanel
             jLabel1.setText("Informationen einblenden");
         }
     }//GEN-LAST:event_fireHideInfoEvent
-    
+
     private void fireViewStateChangeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireViewStateChangeEvent
         if (jToggleButton1.isSelected()) {
             overviewPanel.setOptimalSize();
@@ -336,20 +334,20 @@ public class AttackSourcePanel extends javax.swing.JPanel implements WizardPanel
             jTableScrollPane.setViewportView(jVillageTable);
             jPanel2.add(overviewPanel, BorderLayout.CENTER);
             SwingUtilities.invokeLater(new Runnable() {
-                
+
                 public void run() {
                     jPanel2.updateUI();
                 }
             });
         }
     }//GEN-LAST:event_fireViewStateChangeEvent
-    
-    private SourceTableModel getModel() {
-        return (SourceTableModel) jVillageTable.getModel();
+
+    private TAPSourceTableModel getModel() {
+        return (TAPSourceTableModel) jVillageTable.getModel();
     }
-    
+
     public void addVillages(Village[] pVillages) {
-        SourceTableModel model = getModel();
+        TAPSourceTableModel model = getModel();
         for (Village v : pVillages) {
             model.addRow(v, villageSelectionPanel.getSelectedUnit(), villageSelectionPanel.isFake());
         }
@@ -359,7 +357,7 @@ public class AttackSourcePanel extends javax.swing.JPanel implements WizardPanel
         jStatusLabel.setText(pVillages.length + " Dorf/Dörfer eingefügt");
         updateOverview(false);
     }
-    
+
     private void pasteFromClipboard() {
         String data = "";
         try {
@@ -373,7 +371,7 @@ public class AttackSourcePanel extends javax.swing.JPanel implements WizardPanel
         } catch (IOException ioe) {
         }
     }
-    
+
     private void deleteSelection() {
         int[] selection = jVillageTable.getSelectedRows();
         if (selection.length > 0) {
@@ -392,7 +390,7 @@ public class AttackSourcePanel extends javax.swing.JPanel implements WizardPanel
             }
         }
     }
-    
+
     private void updateOverview(boolean pReset) {
         if (pReset) {
             overviewPanel.reset();
@@ -402,23 +400,23 @@ public class AttackSourcePanel extends javax.swing.JPanel implements WizardPanel
         }
         overviewPanel.repaint();
     }
-    
+
     public Village[] getVillages() {
         List<Village> result = new LinkedList<Village>();
-        SourceTableModel model = getModel();
+        TAPSourceTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             result.add(model.getRow(i).getVillage());
         }
         return result.toArray(new Village[result.size()]);
     }
-    
-    public AttackSourceElement[] getAllElements() {
-        List<AttackSourceElement> result = new LinkedList<AttackSourceElement>();
-        SourceTableModel model = getModel();
+
+    public TAPAttackSourceElement[] getAllElements() {
+        List<TAPAttackSourceElement> result = new LinkedList<TAPAttackSourceElement>();
+        TAPSourceTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             result.add(model.getRow(i));
         }
-        return result.toArray(new AttackSourceElement[result.size()]);
+        return result.toArray(new TAPAttackSourceElement[result.size()]);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
@@ -446,158 +444,15 @@ public class AttackSourcePanel extends javax.swing.JPanel implements WizardPanel
         AttackSourceFilterPanel.getSingleton().setup();
         return WizardPanelNavResult.PROCEED;
     }
-    
+
     @Override
     public WizardPanelNavResult allowBack(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;
-        
+
     }
-    
+
     @Override
     public WizardPanelNavResult allowFinish(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;
-    }
-}
-
-class SourceTableModel extends AbstractTableModel {
-    
-    private String[] columnNames = new String[]{
-        "Spieler", "Dorf", "Einheit", "Fake"
-    };
-    private Class[] types = new Class[]{
-        Tribe.class, Village.class, UnitHolder.class, Boolean.class
-    };
-    private final List<AttackSourceElement> elements = new LinkedList<AttackSourceElement>();
-    
-    public SourceTableModel() {
-        super();
-    }
-    
-    public void addRow(final Village pVillage, UnitHolder pUnit, boolean pFake) {
-        Object result = CollectionUtils.find(elements, new Predicate() {
-            
-            @Override
-            public boolean evaluate(Object o) {
-                return ((AttackSourceElement) o).getVillage().equals(pVillage);
-            }
-        });
-        
-        if (result == null) {
-            elements.add(new AttackSourceElement(pVillage, pUnit, pFake));
-        } else {
-            AttackSourceElement resultElem = (AttackSourceElement) result;
-            resultElem.setUnit(pUnit);
-            resultElem.setFake(pFake);
-        }
-        fireTableDataChanged();
-    }
-    
-    @Override
-    public int getRowCount() {
-        if (elements == null) {
-            return 0;
-        }
-        return elements.size();
-    }
-    
-    @Override
-    public Class getColumnClass(int columnIndex) {
-        return types[columnIndex];
-    }
-    
-    @Override
-    public boolean isCellEditable(int row, int column) {
-        return false;
-    }
-    
-    @Override
-    public String getColumnName(int column) {
-        return columnNames[column];
-    }
-    
-    public void removeRow(int row) {
-        elements.remove(row);
-        fireTableDataChanged();
-    }
-    
-    public AttackSourceElement getRow(int row) {
-        return elements.get(row);
-    }
-    
-    @Override
-    public Object getValueAt(int row, int column) {
-        if (elements == null || elements.size() - 1 < row) {
-            return null;
-        }
-        AttackSourceElement element = elements.get(row);
-        switch (column) {
-            case 0:
-                return element.getVillage().getTribe();
-            case 1:
-                return element.getVillage();
-            case 2:
-                return element.getUnit();
-            default:
-                return element.isFake();
-        }
-    }
-    
-    @Override
-    public int getColumnCount() {
-        return columnNames.length;
-    }
-}
-
-class AttackSourceElement {
-    
-    private Village village = null;
-    private UnitHolder unit = null;
-    private boolean fake = false;
-    private boolean ignored = false;
-    
-    public AttackSourceElement(Village pVillage, UnitHolder pUnit) {
-        village = pVillage;
-        unit = pUnit;
-    }
-    
-    public AttackSourceElement(Village pVillage, UnitHolder pUnit, boolean pFake) {
-        this(pVillage, pUnit);
-        fake = pFake;
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof AttackSourceElement) {
-            return ((AttackSourceElement) obj).getVillage().equals(getVillage());
-        }
-        return false;
-    }
-    
-    public Village getVillage() {
-        return village;
-    }
-    
-    public UnitHolder getUnit() {
-        return unit;
-    }
-    
-    public void setUnit(UnitHolder pUnit) {
-        unit = pUnit;
-    }
-    
-    public boolean isFake() {
-        return fake;
-    }
-    
-    public void setFake(boolean pValue) {
-        fake = pValue;
-    }
-    
-    public boolean isIgnored() {
-        return ignored;
-    }
-    
-    public void setIgnored(boolean pValue) {
-        ignored = pValue;
     }
 }

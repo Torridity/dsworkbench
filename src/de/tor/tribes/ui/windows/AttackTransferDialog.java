@@ -50,19 +50,21 @@ public class AttackTransferDialog extends javax.swing.JDialog {
         jDoTransferButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(278, 108));
+        setPreferredSize(new java.awt.Dimension(278, 108));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jLabel14.setText("Angriffsplan");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jLabel14, gridBagConstraints);
 
-        jExistingPlanBox.setMinimumSize(new java.awt.Dimension(200, 20));
-        jExistingPlanBox.setPreferredSize(new java.awt.Dimension(200, 20));
+        jExistingPlanBox.setMinimumSize(new java.awt.Dimension(200, 25));
+        jExistingPlanBox.setPreferredSize(new java.awt.Dimension(200, 25));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -77,13 +79,13 @@ public class AttackTransferDialog extends javax.swing.JDialog {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jLabel15, gridBagConstraints);
 
-        jNewPlanName.setMinimumSize(new java.awt.Dimension(200, 20));
-        jNewPlanName.setPreferredSize(new java.awt.Dimension(200, 20));
+        jNewPlanName.setMinimumSize(new java.awt.Dimension(200, 25));
+        jNewPlanName.setPreferredSize(new java.awt.Dimension(200, 25));
         jNewPlanName.setPrompt("Bei Bedarf Name eingeben");
         jNewPlanName.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {

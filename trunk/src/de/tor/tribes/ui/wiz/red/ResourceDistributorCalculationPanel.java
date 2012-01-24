@@ -823,9 +823,9 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         return ResourceDistributorWelcomePanel.FILL_DISTRIBUTION.equals(getWizardDataMap().get(ResourceDistributorWelcomePanel.TYPE));
     }
 
-    protected void setup() {
-        jFillSettingsPanel.setVisible(isFillDistribution());
-        jNoSettingsLabel.setVisible(!isFillDistribution());
+    protected void setup(boolean pFill) {
+        jFillSettingsPanel.setVisible(pFill);
+        jNoSettingsLabel.setVisible(!pFill);
         int senders = 0;
         int receivers = 0;
         int merchants = 0;

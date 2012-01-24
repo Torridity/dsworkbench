@@ -11,8 +11,8 @@
 package de.tor.tribes.ui.wiz.red;
 
 import de.tor.tribes.types.StorageStatus;
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.types.VillageMerchantInfo;
+import de.tor.tribes.ui.models.REDSourceTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.StorageCellRenderer;
@@ -34,9 +34,6 @@ import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
-import javax.swing.table.AbstractTableModel;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
@@ -72,7 +69,7 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
         jXCollapsiblePane1.add(jInfoScrollPane, BorderLayout.CENTER);
         jInfoTextPane.setText(GENERAL_INFO);
         jButton1.setIcon(new ImageIcon("./graphics/big/find.png"));
-        jDataTable.setModel(new MerchantTableModel());
+        jDataTable.setModel(new REDSourceTableModel());
         jDataTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jDataTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jDataTable.setDefaultRenderer(VillageMerchantInfo.Direction.class, new TradeDirectionCellRenderer());
@@ -241,8 +238,8 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
         readMerchantInfoFromClipboard();
     }//GEN-LAST:event_fireReadDataFromClipboardEvent
 
-    public MerchantTableModel getModel() {
-        return (MerchantTableModel) jDataTable.getModel();
+    public REDSourceTableModel getModel() {
+        return (REDSourceTableModel) jDataTable.getModel();
     }
 
     private void readMerchantInfoFromClipboard() {
@@ -303,7 +300,7 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
 
     public VillageMerchantInfo[] getAllElements() {
         List<VillageMerchantInfo> elements = new LinkedList<VillageMerchantInfo>();
-        MerchantTableModel model = getModel();
+        REDSourceTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             elements.add(model.getRow(i).clone());
         }
@@ -330,10 +327,7 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
         }
 
         ResourceDistributorSettingsPanel.getSingleton().setup();
-
-        if (ResourceDistributorWelcomePanel.BALANCE_DISTRIBUTION.equals(map.get(ResourceDistributorWelcomePanel.TYPE))) {
-            ResourceDistributorCalculationPanel.getSingleton().setup();
-        }
+        ResourceDistributorCalculationPanel.getSingleton().setup(!ResourceDistributorWelcomePanel.BALANCE_DISTRIBUTION.equals(map.get(ResourceDistributorWelcomePanel.TYPE)));
 
         return WizardPanelNavResult.PROCEED;
     }
@@ -347,99 +341,5 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
     @Override
     public WizardPanelNavResult allowFinish(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;
-    }
-}
-
-class MerchantTableModel extends AbstractTableModel {
-
-    private String[] columnNames = new String[]{
-        "Dorf", "Rohstoffe", "Speicher", "Händler", "Bauernhof"
-    };
-    Class[] types = new Class[]{
-        Village.class, StorageStatus.class, Integer.class, String.class, String.class
-    };
-    private final List<VillageMerchantInfo> elements = new LinkedList<VillageMerchantInfo>();
-
-    public void addRow(final Village pVillage, int pStash, int pWood, int pClay, int pIron, int pAvailableMerchants, int pMerchants, int pAvailableFarm, int pOverallFarm) {
-        Object result = CollectionUtils.find(elements, new Predicate() {
-
-            @Override
-            public boolean evaluate(Object o) {
-                return ((VillageMerchantInfo) o).getVillage().equals(pVillage);
-            }
-        });
-
-        if (result == null) {
-            elements.add(new VillageMerchantInfo(pVillage, pStash, pWood, pClay, pIron, pAvailableMerchants, pMerchants, pAvailableFarm, pOverallFarm));
-        } else {
-            VillageMerchantInfo resultElem = (VillageMerchantInfo) result;
-            resultElem.setWoodStock(pWood);
-            resultElem.setClayStock(pClay);
-            resultElem.setIronStock(pIron);
-            resultElem.setStashCapacity(pStash);
-            resultElem.setAvailableMerchants(pAvailableMerchants);
-            resultElem.setOverallMerchants(pMerchants);
-            resultElem.setAvailableFarm(pAvailableFarm);
-            resultElem.setOverallFarm(pOverallFarm);
-        }
-        fireTableDataChanged();
-    }
-
-    @Override
-    public int getRowCount() {
-        if (elements == null) {
-            return 0;
-        }
-        return elements.size();
-    }
-
-    @Override
-    public Class getColumnClass(int columnIndex) {
-        return types[columnIndex];
-    }
-
-    @Override
-    public boolean isCellEditable(int row, int column) {
-        return false;
-    }
-
-    @Override
-    public String getColumnName(int column) {
-        return columnNames[column];
-    }
-
-    public void removeRow(int row) {
-        elements.remove(row);
-        fireTableDataChanged();
-    }
-
-    public VillageMerchantInfo getRow(int row) {
-        return elements.get(row);
-    }
-
-    @Override
-    public Object getValueAt(int row, int column) {
-        if (elements == null || elements.size() - 1 < row) {
-            return null;
-        }
-        VillageMerchantInfo element = elements.get(row);
-        switch (column) {
-            case 0:
-                return element.getVillage();
-            case 1:
-                return new StorageStatus(element.getWoodStock(), element.getClayStock(),
-                        element.getIronStock(), element.getStashCapacity());
-            case 2:
-                return element.getStashCapacity();
-            case 3:
-                return element.getAvailableMerchants() + "/" + element.getOverallMerchants();
-            default:
-                return element.getAvailableFarm() + "/" + element.getOverallFarm();
-        }
-    }
-
-    @Override
-    public int getColumnCount() {
-        return columnNames.length;
     }
 }

@@ -12,9 +12,9 @@ package de.tor.tribes.ui.wiz.red;
 
 import de.tor.tribes.types.StorageStatus;
 import de.tor.tribes.types.Tag;
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.types.VillageMerchantInfo;
 import de.tor.tribes.ui.components.GroupSelectionList;
+import de.tor.tribes.ui.models.REDExtendedMerchantTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.StorageCellRenderer;
@@ -26,9 +26,6 @@ import java.awt.BorderLayout;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import javax.swing.table.AbstractTableModel;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
@@ -64,7 +61,7 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jXCollapsiblePane1.add(jInfoScrollPane, BorderLayout.CENTER);
         jInfoTextPane.setText(GENERAL_INFO);
-        jDataTable.setModel(new ExtendedMerchantTableModel());
+        jDataTable.setModel(new REDExtendedMerchantTableModel());
         jDataTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jDataTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jDataTable.setDefaultRenderer(StorageStatus.class, new StorageCellRenderer());
@@ -136,7 +133,7 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
 
         setLayout(new java.awt.GridBagLayout());
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10));
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Informationen einblenden");
         jLabel1.setToolTipText("Blendet Informationen zu dieser Ansicht und zu den Datenquellen ein/aus");
@@ -200,7 +197,7 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
@@ -216,8 +213,9 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 0);
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 2, 5);
         jPanel2.add(jLabel2, gridBagConstraints);
 
         jLabel3.setText("Empfänger ab");
@@ -227,31 +225,32 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         jLabel3.setPreferredSize(new java.awt.Dimension(80, 14));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 0);
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(15, 5, 2, 5);
         jPanel2.add(jLabel3, gridBagConstraints);
 
         jSenderFarmSpace.setText("23000");
         jSenderFarmSpace.setEnabled(false);
         jSenderFarmSpace.setMinimumSize(new java.awt.Dimension(36, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(jSenderFarmSpace, gridBagConstraints);
 
         jReceiverFarmSpace.setText("20000");
         jReceiverFarmSpace.setEnabled(false);
         jReceiverFarmSpace.setMinimumSize(new java.awt.Dimension(36, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(jReceiverFarmSpace, gridBagConstraints);
 
         jLabel4.setText("Plätzen");
@@ -260,10 +259,9 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         jLabel4.setMinimumSize(new java.awt.Dimension(40, 14));
         jLabel4.setPreferredSize(new java.awt.Dimension(40, 14));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(jLabel4, gridBagConstraints);
 
@@ -273,10 +271,9 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         jLabel5.setMinimumSize(new java.awt.Dimension(40, 14));
         jLabel5.setPreferredSize(new java.awt.Dimension(40, 14));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(jLabel5, gridBagConstraints);
 
@@ -569,7 +566,7 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
     }
 
     public void setup() {
-        ExtendedMerchantTableModel model = getModel();
+        REDExtendedMerchantTableModel model = getModel();
         model.clear();
         for (VillageMerchantInfo newInfo : ResourceDistributorDataReadPanel.getSingleton().getAllElements()) {
             model.addRow(newInfo.getVillage(),
@@ -596,22 +593,23 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         return result;
     }
 
-    private ExtendedMerchantTableModel getModel() {
-        return (ExtendedMerchantTableModel) jDataTable.getModel();
+    private REDExtendedMerchantTableModel getModel() {
+        return (REDExtendedMerchantTableModel) jDataTable.getModel();
     }
 
     private VillageMerchantInfo[] getAllElementsInternal() {
         List<VillageMerchantInfo> elements = new LinkedList<VillageMerchantInfo>();
-        ExtendedMerchantTableModel model = getModel();
+        REDExtendedMerchantTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             elements.add(model.getRow(i));
         }
+
         return elements.toArray(new VillageMerchantInfo[elements.size()]);
     }
 
     public VillageMerchantInfo[] getAllElements() {
         List<VillageMerchantInfo> elements = new LinkedList<VillageMerchantInfo>();
-        ExtendedMerchantTableModel model = getModel();
+        REDExtendedMerchantTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             elements.add(model.getRow(i).clone());
         }
@@ -648,7 +646,7 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
 
     @Override
     public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
-        ResourceDistributorCalculationPanel.getSingleton().setup();
+        ResourceDistributorCalculationPanel.getSingleton().setup(ResourceDistributorWelcomePanel.FILL_DISTRIBUTION.equals(getWizardDataMap().get(ResourceDistributorWelcomePanel.TYPE)));
         return WizardPanelNavResult.PROCEED;
     }
 
@@ -661,116 +659,5 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
     @Override
     public WizardPanelNavResult allowFinish(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;
-    }
-
-    private static class ExtendedMerchantTableModel extends AbstractTableModel {
-
-        private String[] columnNames = new String[]{
-            "Dorf", "Rohstoffe", "Speicher", "Händler", "Bauernhof", "Handelsrichtung"
-        };
-        Class[] types = new Class[]{
-            Village.class, new double[0].getClass(), Integer.class, String.class, String.class, VillageMerchantInfo.Direction.class
-        };
-        private final List<VillageMerchantInfo> elements = new LinkedList<VillageMerchantInfo>();
-
-        public ExtendedMerchantTableModel() {
-            super();
-        }
-
-        public void clear() {
-            elements.clear();
-            fireTableDataChanged();
-        }
-
-        public void addRow(final Village pVillage, int pStash, int pWood, int pClay, int pIron, int pAvailableMerchants, int pMerchants, int pAvailableFarm, int pOverallFarm, boolean pCheck) {
-            Object result = CollectionUtils.find(elements, new Predicate() {
-
-                @Override
-                public boolean evaluate(Object o) {
-                    return ((VillageMerchantInfo) o).getVillage().equals(pVillage);
-                }
-            });
-
-            if (result == null) {
-                elements.add(new VillageMerchantInfo(pVillage, pStash, pWood, pClay, pIron, pAvailableMerchants, pMerchants, pAvailableFarm, pOverallFarm));
-            } else {
-                VillageMerchantInfo resultElem = (VillageMerchantInfo) result;
-                resultElem.setWoodStock(pWood);
-                resultElem.setClayStock(pClay);
-                resultElem.setIronStock(pIron);
-                resultElem.setStashCapacity(pStash);
-                resultElem.setAvailableMerchants(pAvailableMerchants);
-                resultElem.setOverallMerchants(pMerchants);
-                resultElem.setAvailableFarm(pAvailableFarm);
-                resultElem.setOverallFarm(pOverallFarm);
-            }
-            if (pCheck) {
-                fireTableDataChanged();
-            }
-        }
-
-        public void addRow(final Village pVillage, int pStash, int pWood, int pClay, int pIron, int pAvailableMerchants, int pMerchants, int pAvailableFarm, int pOverallFarm) {
-            addRow(pVillage, pStash, pWood, pClay, pIron, pAvailableMerchants, pMerchants, pAvailableFarm, pOverallFarm, true);
-        }
-
-        @Override
-        public int getRowCount() {
-            if (elements == null) {
-                return 0;
-            }
-            return elements.size();
-        }
-
-        @Override
-        public Class getColumnClass(int columnIndex) {
-            return types[columnIndex];
-        }
-
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return false;
-        }
-
-        @Override
-        public String getColumnName(int column) {
-            return columnNames[column];
-        }
-
-        public void removeRow(int row) {
-            elements.remove(row);
-            fireTableDataChanged();
-        }
-
-        public VillageMerchantInfo getRow(int row) {
-            return elements.get(row);
-        }
-
-        @Override
-        public Object getValueAt(int row, int column) {
-            if (elements == null || elements.size() - 1 < row) {
-                return null;
-            }
-            VillageMerchantInfo element = elements.get(row);
-            switch (column) {
-                case 0:
-                    return element.getVillage();
-                case 1:
-                    return new StorageStatus(element.getWoodStock(), element.getClayStock(),
-                            element.getIronStock(), element.getStashCapacity());
-                case 2:
-                    return element.getStashCapacity();
-                case 3:
-                    return element.getAvailableMerchants() + "/" + element.getOverallMerchants();
-                case 4:
-                    return element.getAvailableFarm() + "/" + element.getOverallFarm();
-                default:
-                    return element.getDirection();
-            }
-        }
-
-        @Override
-        public int getColumnCount() {
-            return columnNames.length;
-        }
     }
 }

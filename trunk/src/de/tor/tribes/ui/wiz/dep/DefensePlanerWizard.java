@@ -25,6 +25,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.netbeans.api.wizard.WizardDisplayer;
+import org.netbeans.api.wizard.WizardResultReceiver;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardController;
 import org.netbeans.spi.wizard.WizardPanelProvider;
@@ -120,7 +121,20 @@ public class DefensePlanerWizard extends WizardPanelProvider {
         WizardPanelProvider provider = new DefensePlanerWizard();
         Wizard wizard = provider.createWizard();
         parent.getContentPane().setLayout(new BorderLayout());
-        WizardDisplayer.installInContainer(parent, BorderLayout.CENTER, wizard, null, null, null);
+        WizardDisplayer.installInContainer(parent, BorderLayout.CENTER, wizard, null, null, new WizardResultReceiver() {
+
+            @Override
+            public void finished(Object o) {
+                parent.dispose();
+                parent = null;
+            }
+
+            @Override
+            public void cancelled(Map map) {
+                parent.dispose();
+                parent = null;
+            }
+        });
         parent.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         parent.addWindowListener(new WindowAdapter() {
 
@@ -153,8 +167,7 @@ public class DefensePlanerWizard extends WizardPanelProvider {
         }
 
 
-        WizardPanelProvider provider = new DefensePlanerWizard();
-        Wizard wizard = provider.createWizard();
+        new DefensePlanerWizard().show();
         // DefenseAnalysePanel.getSingleton().setData(createSampleRequests());
        /*
          * final JFrame f = new JFrame(); f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); JPanel p = new JPanel(); p.setLayout(new
@@ -166,6 +179,5 @@ public class DefensePlanerWizard extends WizardPanelProvider {
          * f.pack(); f.setVisible(true);
          */
 
-        WizardDisplayer.showWizard(wizard);
     }
 }

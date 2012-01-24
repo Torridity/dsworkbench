@@ -16,14 +16,12 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.Defense;
 import de.tor.tribes.types.DefenseInformation;
 import de.tor.tribes.types.SOSRequest;
-import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.TroopSplitDialog.TroopSplit;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.components.VillageSelectionPanel;
+import de.tor.tribes.ui.models.DEPSourceTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.views.DSWorkbenchSOSRequestAnalyzer;
-import de.tor.tribes.ui.wiz.dep.DefenseSourcePanel.SupportSourceElement;
+import de.tor.tribes.ui.wiz.dep.types.SupportSourceElement;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.TableHelper;
@@ -49,9 +47,6 @@ import java.util.Map;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import javax.swing.table.AbstractTableModel;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardController;
@@ -88,7 +83,7 @@ public class DefenseSourcePanel extends javax.swing.JPanel implements WizardPane
     /** Creates new form AttackSourcePanel */
     DefenseSourcePanel() {
         initComponents();
-        jVillageTable.setModel(new SupportTableModel());
+        jVillageTable.setModel(new DEPSourceTableModel());
         jVillageTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jVillageTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
 
@@ -307,7 +302,7 @@ public class DefenseSourcePanel extends javax.swing.JPanel implements WizardPane
         }
     }//GEN-LAST:event_fireViewChangeEvent
 
-    private SupportTableModel getModel() {
+    private DEPSourceTableModel getModel() {
         return TableHelper.getTableModel(jVillageTable);
     }
 
@@ -319,7 +314,7 @@ public class DefenseSourcePanel extends javax.swing.JPanel implements WizardPane
             attackedVillages.add(element.getTarget());
             overviewPanel.addVillage(element.getTarget(), Color.RED);
         }
-        SupportTableModel model = getModel();
+        DEPSourceTableModel model = getModel();
         List<Village> villages = new LinkedList<Village>();
         for (int i = 0; i < model.getRowCount(); i++) {
             villages.add(model.getRow(i).getVillage());
@@ -328,7 +323,7 @@ public class DefenseSourcePanel extends javax.swing.JPanel implements WizardPane
     }
 
     private void addVillages(Village[] pVillages) {
-        SupportTableModel model = getModel();
+        DEPSourceTableModel model = getModel();
         Hashtable<Village, Integer> supports = new Hashtable<Village, Integer>();
         for (Village village : pVillages) {
             supports.put(village, getSplits(village));
@@ -415,7 +410,7 @@ public class DefenseSourcePanel extends javax.swing.JPanel implements WizardPane
 
     public Village[] getUsedVillages() {
         List<Village> result = new LinkedList<Village>();
-        SupportTableModel model = getModel();
+        DEPSourceTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             result.add(model.getRow(i).getVillage());
         }
@@ -424,7 +419,7 @@ public class DefenseSourcePanel extends javax.swing.JPanel implements WizardPane
 
     public List<SupportSourceElement> getAllElements() {
         List<SupportSourceElement> elements = new LinkedList<SupportSourceElement>();
-        SupportTableModel model = getModel();
+        DEPSourceTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             elements.add(model.getRow(i));
         }
@@ -452,7 +447,7 @@ public class DefenseSourcePanel extends javax.swing.JPanel implements WizardPane
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
         List<SupportSourceElement> result = new LinkedList<SupportSourceElement>();
-        SupportTableModel model = getModel();
+        DEPSourceTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             result.add(model.getRow(i));
         }
@@ -468,122 +463,5 @@ public class DefenseSourcePanel extends javax.swing.JPanel implements WizardPane
     @Override
     public WizardPanelNavResult allowFinish(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;
-    }
-
-    public static class SupportSourceElement {
-
-        private Village village = null;
-        private int supports = 0;
-        private boolean ignored = false;
-
-        public SupportSourceElement(Village pVillage, int pSupports) {
-            village = pVillage;
-            supports = pSupports;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof SupportSourceElement) {
-                return ((SupportSourceElement) obj).getVillage().equals(getVillage());
-            }
-            return false;
-        }
-
-        public Village getVillage() {
-            return village;
-        }
-
-        public int getSupports() {
-            return supports;
-        }
-
-        public void setSupports(int pSupports) {
-            supports = pSupports;
-        }
-
-        public boolean isIgnored() {
-            return ignored;
-        }
-
-        public void setIgnored(boolean pValue) {
-            ignored = pValue;
-        }
-    }
-}
-
-class SupportTableModel extends AbstractTableModel {
-
-    private String[] columnNames = new String[]{
-        "Spieler", "Dorf", "Einzelverteidigungen"
-    };
-    private Class[] types = new Class[]{
-        Tribe.class, Village.class, Integer.class
-    };
-    private final List<SupportSourceElement> elements = new LinkedList<SupportSourceElement>();
-
-    public SupportTableModel() {
-        super();
-    }
-
-    public void clean() {
-        elements.clear();
-        fireTableDataChanged();
-    }
-
-    public void addRow(Village pVillage, int pSupports) {
-        elements.add(new SupportSourceElement(pVillage, pSupports));
-    }
-
-    @Override
-    public int getRowCount() {
-        if (elements == null) {
-            return 0;
-        }
-        return elements.size();
-    }
-
-    @Override
-    public Class getColumnClass(int columnIndex) {
-        return types[columnIndex];
-    }
-
-    @Override
-    public boolean isCellEditable(int row, int column) {
-        return false;
-    }
-
-    @Override
-    public String getColumnName(int column) {
-        return columnNames[column];
-    }
-
-    public void removeRow(int row) {
-        elements.remove(row);
-        fireTableDataChanged();
-    }
-
-    public SupportSourceElement getRow(int row) {
-        return elements.get(row);
-    }
-
-    @Override
-    public Object getValueAt(int row, int column) {
-        if (elements == null || elements.size() - 1 < row) {
-            return null;
-        }
-        SupportSourceElement element = elements.get(row);
-        switch (column) {
-            case 0:
-                return element.getVillage().getTribe();
-            case 1:
-                return element.getVillage();
-            default:
-                return element.getSupports();
-        }
-    }
-
-    @Override
-    public int getColumnCount() {
-        return columnNames.length;
     }
 }

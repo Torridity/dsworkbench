@@ -15,6 +15,8 @@ import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
+import de.tor.tribes.ui.models.TAPResultDetailsTableModel;
+import de.tor.tribes.ui.models.TAPResultTableModel;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
@@ -22,7 +24,8 @@ import de.tor.tribes.ui.renderer.PercentCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.util.ColorGradientHelper;
 import de.tor.tribes.ui.windows.AttackTransferDialog;
-import de.tor.tribes.ui.wiz.dep.DefenseFilterPanel;
+import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
+import de.tor.tribes.ui.wiz.tap.types.TAPAttackTargetElement;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.algo.types.TimeFrame;
@@ -34,7 +37,6 @@ import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPanel;
@@ -80,7 +82,7 @@ public class AttackFinishPanel extends javax.swing.JPanel implements WizardPanel
             }
         });
 
-        ResultDetailsTableModel model = new ResultDetailsTableModel();
+        TAPResultDetailsTableModel model = new TAPResultDetailsTableModel();
         jXDetailsTable.setModel(model);
         jXDetailsTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jXDetailsTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
@@ -561,11 +563,7 @@ public class AttackFinishPanel extends javax.swing.JPanel implements WizardPanel
             AbstractTroopMovement move = getModel().getRow(modelRow);
             attacks.addAll(Arrays.asList(move.getFinalizedAttacks()));
         }
-        if (attacks.isEmpty()) {
-            JOptionPaneHelper.showInformationBox(this, "Keine Angriffe gewählt", "Information");
-            return;
-        }
-        new AttackTransferDialog(TacticsPlanerWizard.getFrame(), true).setupAndShow(attacks.toArray(new Attack[attacks.size()]));
+        transferToAttackView(attacks);
     }//GEN-LAST:event_fireTransferAllToAttackPlanEvent
 
     private void fireFullToAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireFullToAttackPlanEvent
@@ -577,11 +575,7 @@ public class AttackFinishPanel extends javax.swing.JPanel implements WizardPanel
                 attacks.addAll(Arrays.asList(move.getFinalizedAttacks()));
             }
         }
-        if (attacks.isEmpty()) {
-            JOptionPaneHelper.showInformationBox(this, "Keine Angriffe gewählt", "Information");
-            return;
-        }
-        new AttackTransferDialog(TacticsPlanerWizard.getFrame(), true).setupAndShow(attacks.toArray(new Attack[attacks.size()]));
+        transferToAttackView(attacks);
     }//GEN-LAST:event_fireFullToAttackPlanEvent
 
     private void fireSelectedToAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectedToAttackPlanEvent
@@ -593,26 +587,31 @@ public class AttackFinishPanel extends javax.swing.JPanel implements WizardPanel
             AbstractTroopMovement move = getModel().getRow(modelRow);
             attacks.addAll(Arrays.asList(move.getFinalizedAttacks()));
         }
-        if (attacks.isEmpty()) {
+        transferToAttackView(attacks);
+
+    }//GEN-LAST:event_fireSelectedToAttackPlanEvent
+
+    private void transferToAttackView(List<Attack> pToTransfer) {
+        if (pToTransfer.isEmpty()) {
             JOptionPaneHelper.showInformationBox(this, "Keine Angriffe gewählt", "Information");
             return;
         }
-        new AttackTransferDialog(TacticsPlanerWizard.getFrame(), true).setupAndShow(attacks.toArray(new Attack[attacks.size()]));
-    }//GEN-LAST:event_fireSelectedToAttackPlanEvent
-
-    private ResultTableModel getModel() {
-        return (ResultTableModel) jxResultsTable.getModel();
+        new AttackTransferDialog(TacticsPlanerWizard.getFrame(), true).setupAndShow(pToTransfer.toArray(new Attack[pToTransfer.size()]));
     }
 
-    private ResultDetailsTableModel getResultModel() {
-        return (ResultDetailsTableModel) jXDetailsTable.getModel();
+    private TAPResultTableModel getModel() {
+        return (TAPResultTableModel) jxResultsTable.getModel();
+    }
+
+    private TAPResultDetailsTableModel getResultModel() {
+        return (TAPResultDetailsTableModel) jXDetailsTable.getModel();
     }
 
     public void update() {
         List<AbstractTroopMovement> results = AttackCalculationPanel.getSingleton().getResults();
         TimeFrame timeFrame = TimeSettingsPanel.getSingleton().getTimeFrame();
         List<Long> used = new LinkedList<Long>();
-        ResultTableModel model = new ResultTableModel();
+        TAPResultTableModel model = new TAPResultTableModel();
         int perfectOffs = 0;
         int maxAttacks = 0;
         int assignedAttacks = 0;
@@ -620,11 +619,11 @@ public class AttackFinishPanel extends javax.swing.JPanel implements WizardPanel
         List<Village> usedSources = new LinkedList<Village>();
         overviewPanel.reset();
 
-        for (AttackSourceElement elem : AttackSourceFilterPanel.getSingleton().getFilteredElements()) {
+        for (TAPAttackSourceElement elem : AttackSourceFilterPanel.getSingleton().getFilteredElements()) {
             overviewPanel.addVillage(new Point(elem.getVillage().getX(), elem.getVillage().getY()), Color.BLACK);
         }
 
-        for (AttackTargetElement elem : AttackTargetPanel.getSingleton().getAllElements()) {
+        for (TAPAttackTargetElement elem : AttackTargetPanel.getSingleton().getAllElements()) {
             overviewPanel.addVillage(new Point(elem.getVillage().getX(), elem.getVillage().getY()), Color.BLACK);
         }
 
@@ -645,7 +644,6 @@ public class AttackFinishPanel extends javax.swing.JPanel implements WizardPanel
                 if (!usedSources.contains(a.getSource())) {
                     usedSources.add(a.getSource());
                     overviewPanel.addVillage(new Point(a.getSource().getX(), a.getSource().getY()), Color.YELLOW);
-
                 }
             }
             overviewPanel.addVillage(new Point(result.getTarget().getX(), result.getTarget().getY()),
@@ -665,7 +663,7 @@ public class AttackFinishPanel extends javax.swing.JPanel implements WizardPanel
     private void updateAttackDetails() {
         int[] selection = jxResultsTable.getSelectedRows();
 
-        ResultDetailsTableModel model = getResultModel();
+        TAPResultDetailsTableModel model = getResultModel();
         model.clear();
 
         for (int row : selection) {
@@ -724,153 +722,5 @@ public class AttackFinishPanel extends javax.swing.JPanel implements WizardPanel
     @Override
     public WizardPanelNavResult allowFinish(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;
-    }
-}
-
-class ResultTableModel extends AbstractTableModel {
-
-    private String[] columnNames = new String[]{
-        "Spieler", "Ziel", "Zugewiesene Angriffe"
-    };
-    private Class[] types = new Class[]{
-        Village.class, UnitHolder.class, Float.class
-    };
-    private final List<AbstractTroopMovement> elements = new LinkedList<AbstractTroopMovement>();
-
-    public ResultTableModel() {
-        super();
-    }
-
-    public void addRow(AbstractTroopMovement pMovement) {
-        elements.add(pMovement);
-        fireTableDataChanged();
-    }
-
-    @Override
-    public int getRowCount() {
-        if (elements == null) {
-            return 0;
-        }
-        return elements.size();
-    }
-
-    @Override
-    public Class getColumnClass(int columnIndex) {
-        return types[columnIndex];
-    }
-
-    @Override
-    public boolean isCellEditable(int row, int column) {
-        return false;
-    }
-
-    @Override
-    public String getColumnName(int column) {
-        return columnNames[column];
-    }
-
-    public void removeRow(int row, int viewRow) {
-        elements.remove(row);
-        fireTableDataChanged();
-    }
-
-    public AbstractTroopMovement getRow(int row) {
-        return elements.get(row);
-    }
-
-    @Override
-    public Object getValueAt(int row, int column) {
-        if (elements == null || elements.size() - 1 < row) {
-            return null;
-        }
-        AbstractTroopMovement element = elements.get(row);
-        switch (column) {
-            case 0:
-                return element.getTarget().getTribe();
-            case 1:
-                return element.getTarget();
-            default:
-                return (float) element.getFinalizedAttacks().length / (float) element.getMaxOffs();
-        }
-    }
-
-    @Override
-    public int getColumnCount() {
-        return columnNames.length;
-    }
-}
-
-class ResultDetailsTableModel extends AbstractTableModel {
-
-    private String[] columnNames = new String[]{
-        "Herkunft", "Ziel", "Einheit", "Start", "Ankunft", "Typ"
-    };
-    private Class[] types = new Class[]{
-        Village.class, Village.class, UnitHolder.class, Date.class, Date.class, Integer.class
-    };
-    private final List<Attack> elements = new LinkedList<Attack>();
-
-    public ResultDetailsTableModel() {
-        super();
-    }
-
-    public void addRow(Attack pMovement) {
-        elements.add(pMovement);
-        fireTableDataChanged();
-    }
-
-    public void clear() {
-        elements.clear();
-        fireTableDataChanged();
-    }
-
-    @Override
-    public int getRowCount() {
-        if (elements == null) {
-            return 0;
-        }
-        return elements.size();
-    }
-
-    @Override
-    public Class getColumnClass(int columnIndex) {
-        return types[columnIndex];
-    }
-
-    @Override
-    public boolean isCellEditable(int row, int column) {
-        return false;
-    }
-
-    @Override
-    public String getColumnName(int column) {
-        return columnNames[column];
-    }
-
-    @Override
-    public Object getValueAt(int row, int column) {
-        if (elements == null || elements.size() - 1 < row) {
-            return null;
-        }
-        Attack element = elements.get(row);
-        switch (column) {
-            case 0:
-                return element.getSource();
-            case 1:
-                return element.getTarget();
-            case 2:
-                return element.getUnit();
-            case 3:
-                return element.getSendTime();
-            case 4:
-                return element.getArriveTime();
-            default:
-                return element.getType();
-        }
-    }
-
-    @Override
-    public int getColumnCount() {
-        return columnNames.length;
     }
 }

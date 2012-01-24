@@ -19,6 +19,8 @@ import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.PercentCellRenderer;
 import de.tor.tribes.ui.util.ColorGradientHelper;
+import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
+import de.tor.tribes.ui.wiz.tap.types.TAPAttackTargetElement;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.algo.types.TimeFrame;
@@ -335,15 +337,15 @@ public class ValidationPanel extends javax.swing.JPanel implements WizardPanel, 
     protected void setup() {
         sourceOverviewPanel.reset();
         targetOverviewPanel.reset();
-        AttackSourceElement[] sourceElements = AttackSourceFilterPanel.getSingleton().getFilteredElements();
-        List<AttackTargetElement> targetElements = AttackTargetPanel.getSingleton().getAllElements();
+        TAPAttackSourceElement[] sourceElements = AttackSourceFilterPanel.getSingleton().getFilteredElements();
+        List<TAPAttackTargetElement> targetElements = AttackTargetPanel.getSingleton().getAllElements();
 
         Hashtable<Village, Integer> validSources = new Hashtable<Village, Integer>();
         Hashtable<Village, Integer> validTargets = new Hashtable<Village, Integer>();
 
         TimeFrame f = TimeSettingsPanel.getSingleton().getTimeFrame();
-        for (AttackSourceElement sourceElement : sourceElements) {
-            for (AttackTargetElement targetElement : targetElements) {
+        for (TAPAttackSourceElement sourceElement : sourceElements) {
+            for (TAPAttackTargetElement targetElement : targetElements) {
                 long runtime = DSCalculator.calculateMoveTimeInMillis(sourceElement.getVillage(), targetElement.getVillage(), sourceElement.getUnit().getSpeed());
                 if (f.isMovementPossible(runtime, targetElement.getVillage())) {
                     Integer sourceVal = validSources.get(sourceElement.getVillage());
@@ -519,8 +521,8 @@ class VillageUsageElement {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof AttackSourceElement) {
-            return ((AttackSourceElement) obj).getVillage().equals(getVillage());
+        if (obj instanceof TAPAttackSourceElement) {
+            return ((TAPAttackSourceElement) obj).getVillage().equals(getVillage());
         }
         return false;
     }

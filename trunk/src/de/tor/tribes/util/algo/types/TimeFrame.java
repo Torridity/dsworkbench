@@ -176,7 +176,7 @@ public class TimeFrame {
                     int cnt = 0;
                     while (cnt < 100) {
                         long arriveTime = checkStart + Math.round(Math.random() * (checkEnd - checkStart));
-                        if (cnt > 100 || !pUsedSendTimes.contains(arriveTime - pRuntime) && (arriveTime - pRuntime > System.currentTimeMillis())) {
+                        if (cnt > 100 || !pUsedSendTimes.contains(arriveTime - pRuntime)) {
                             pUsedSendTimes.add(arriveTime - pRuntime);
                             return new Date(arriveTime);
                         }
@@ -205,30 +205,44 @@ public class TimeFrame {
                         Date spanEndDate = DateUtils.setHours(thisDate, span.getSpan().getMaximumInteger() - 1);
                         spanEndDate = DateUtils.setMinutes(spanEndDate, 59);
                         spanEndDate = DateUtils.setSeconds(spanEndDate, 59);
+                        LongRange newRange = null;
                         //check span location relative to start frame
                         if (spanStartDate.getTime() >= startNotBefore && spanEndDate.getTime() > startNotBefore
                                 && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() <= startNotAfter) {
                             //|----------| (startNotBefore - startNotAfter)
                             //  |----| (SpanStart - SpanEnd)
-                            ranges.add(new LongRange(spanStartDate.getTime(), spanEndDate.getTime()));
+                            newRange = new LongRange(spanStartDate.getTime(), spanEndDate.getTime());
                         } else if (spanStartDate.getTime() < startNotBefore && spanEndDate.getTime() > startNotBefore
                                 && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() <= startNotAfter) {
                             //  |----------| (startNotBefore - startNotAfter)
                             //|----| (SpanStart - SpanEnd)
                             //set span start to 'startNotBefore'
-                            ranges.add(new LongRange(startNotBefore, spanEndDate.getTime()));
+                            newRange = new LongRange(startNotBefore, spanEndDate.getTime());
                         } else if (spanStartDate.getTime() <= startNotBefore && spanEndDate.getTime() > startNotBefore
                                 && spanStartDate.getTime() > startNotAfter && spanEndDate.getTime() >= startNotAfter) {
                             //  |----------| (startNotBefore - startNotAfter)
                             //|--------------| (SpanStart - SpanEnd)
                             //set span start to 'startNotBefore'
-                            ranges.add(new LongRange(startNotBefore, startNotAfter));
+                            newRange = new LongRange(startNotBefore, startNotAfter);
                         } else if (spanStartDate.getTime() >= startNotBefore && spanEndDate.getTime() > startNotBefore
                                 && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() >= startNotAfter) {
                             //|----------| (startNotBefore - startNotAfter)
                             //    |---------| (SpanStart - SpanEnd)
                             //set span start to 'startNotBefore'
-                            ranges.add(new LongRange(spanStartDate.getTime(), startNotAfter));
+                            newRange = new LongRange(spanStartDate.getTime(), startNotAfter);
+                        }
+  
+                        if (newRange != null) {
+                            if (newRange.getMinimumLong() < System.currentTimeMillis()) {
+                                //check minimum as current minimum is in past
+                                if (newRange.getMaximumLong() > System.currentTimeMillis()) {
+                                    newRange = new LongRange(System.currentTimeMillis(), newRange.getMaximumLong());
+                                    ranges.add(newRange);
+                                }//ignore as entire range is in past
+                            } else {
+                                //add range as it is in future
+                                ranges.add(newRange);
+                            }
                         }
                     }
                     //increment current date by one day
@@ -265,30 +279,43 @@ public class TimeFrame {
                     Date spanEndDate = DateUtils.setHours(thisDate, span.getSpan().getMaximumInteger() - 1);
                     spanEndDate = DateUtils.setMinutes(spanEndDate, 59);
                     spanEndDate = DateUtils.setSeconds(spanEndDate, 59);
+                    LongRange newRange = null;
                     //check span location relative to start frame
                     if (spanStartDate.getTime() >= startNotBefore && spanEndDate.getTime() > startNotBefore
                             && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() <= startNotAfter) {
                         //|----------| (startNotBefore - startNotAfter)
                         //  |----| (SpanStart - SpanEnd)
-                        rangesMap.put(new LongRange(spanStartDate.getTime(), spanEndDate.getTime()), span);
+                        newRange = new LongRange(spanStartDate.getTime(), spanEndDate.getTime());
                     } else if (spanStartDate.getTime() < startNotBefore && spanEndDate.getTime() > startNotBefore
                             && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() <= startNotAfter) {
                         //  |----------| (startNotBefore - startNotAfter)
                         //|----| (SpanStart - SpanEnd)
                         //set span start to 'startNotBefore'
-                        rangesMap.put(new LongRange(startNotBefore, spanEndDate.getTime()), span);
+                        newRange = new LongRange(startNotBefore, spanEndDate.getTime());
                     } else if (spanStartDate.getTime() <= startNotBefore && spanEndDate.getTime() > startNotBefore
                             && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() >= startNotAfter) {
                         //  |----------| (startNotBefore - startNotAfter)
                         //|--------------| (SpanStart - SpanEnd)
                         //set span start to 'startNotBefore'
-                        rangesMap.put(new LongRange(startNotBefore, startNotAfter), span);
+                        newRange = new LongRange(startNotBefore, startNotAfter);
                     } else if (spanStartDate.getTime() >= startNotBefore && spanEndDate.getTime() > startNotBefore
                             && spanStartDate.getTime() < startNotAfter && spanEndDate.getTime() >= startNotAfter) {
                         //|----------| (startNotBefore - startNotAfter)
                         //    |---------| (SpanStart - SpanEnd)
                         //set span start to 'startNotBefore'
-                        rangesMap.put(new LongRange(spanStartDate.getTime(), startNotAfter), span);
+                        newRange = new LongRange(spanStartDate.getTime(), startNotAfter);
+                    }
+                    if (newRange != null) {
+                        if (newRange.getMinimumLong() < System.currentTimeMillis()) {
+                            //check minimum as current minimum is in past
+                            if (newRange.getMaximumLong() > System.currentTimeMillis()) {
+                                newRange = new LongRange(System.currentTimeMillis(), newRange.getMaximumLong());
+                                rangesMap.put(newRange, span);
+                            }//ignore as entire range is in past
+                        } else {
+                            //add range as it is in future
+                            rangesMap.put(newRange, span);
+                        }
                     }
                 }
                 //increment current date by one day

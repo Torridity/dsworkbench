@@ -17,14 +17,12 @@ import javax.swing.UIManager;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.netbeans.api.wizard.WizardDisplayer;
+import org.netbeans.api.wizard.WizardResultReceiver;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardController;
 import org.netbeans.spi.wizard.WizardPanelProvider;
 
 /**
- *
- * @TODO Check cell renderer in source table
- * @TODO Check visibility of settings for different distib. types
  * @author Torridity
  */
 public class ResourceDistributorWizard extends WizardPanelProvider {
@@ -55,7 +53,20 @@ public class ResourceDistributorWizard extends WizardPanelProvider {
         parent.setTitle("Rohstoffverteiler");
         Wizard wizard = new ResourceDistributorBranchController().createWizard();
         parent.getContentPane().setLayout(new BorderLayout());
-        WizardDisplayer.installInContainer(parent, BorderLayout.CENTER, wizard, null, null, null);
+        WizardDisplayer.installInContainer(parent, BorderLayout.CENTER, wizard, null, null, new WizardResultReceiver() {
+
+            @Override
+            public void finished(Object o) {
+                parent.dispose();
+                parent = null;
+            }
+
+            @Override
+            public void cancelled(Map map) {
+                parent.dispose();
+                parent = null;
+            }
+        });
         parent.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         parent.addWindowListener(new WindowAdapter() {
 
@@ -83,8 +94,8 @@ public class ResourceDistributorWizard extends WizardPanelProvider {
         DataHolder.getSingleton().loadData(false);
         GlobalOptions.loadUserData();
 
-        Wizard wizard = new ResourceDistributorBranchController().createWizard();
-
-        System.out.println(WizardDisplayer.showWizard(wizard));
+      //  Wizard wizard = new ResourceDistributorBranchController().createWizard();
+new ResourceDistributorWizard().show();
+      //  System.out.println("RES: " + WizardDisplayer.showWizard(wizard));
     }
 }

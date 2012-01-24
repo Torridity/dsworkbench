@@ -18,6 +18,7 @@ import javax.swing.UIManager;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.netbeans.api.wizard.WizardDisplayer;
+import org.netbeans.api.wizard.WizardResultReceiver;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardController;
 import org.netbeans.spi.wizard.WizardPanelProvider;
@@ -86,7 +87,20 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
         WizardPanelProvider provider = new TacticsPlanerWizard();
         Wizard wizard = provider.createWizard();
         parent.getContentPane().setLayout(new BorderLayout());
-        WizardDisplayer.installInContainer(parent, BorderLayout.CENTER, wizard, null, null, null);
+        WizardDisplayer.installInContainer(parent, BorderLayout.CENTER, wizard, null, null, new WizardResultReceiver() {
+
+            @Override
+            public void finished(Object o) {
+                parent.dispose();
+                parent = null;
+            }
+
+            @Override
+            public void cancelled(Map map) {
+                parent.dispose();
+                parent = null;
+            }
+        });
         parent.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         parent.addWindowListener(new WindowAdapter() {
 
@@ -97,6 +111,8 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
             }
         });
         parent.pack();
+        
+        //WizardDisplayer.showWizard(wizard);
         parent.setVisible(true);
     }
 
@@ -115,8 +131,8 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
         DataHolder.getSingleton().loadData(false);
         GlobalOptions.loadUserData();
 
-        TacticsPlanerWizard provider = new TacticsPlanerWizard();
-        Wizard wizard = provider.createWizard();
-        System.out.println(WizardDisplayer.showWizard(wizard));
+        new TacticsPlanerWizard().show();
+        //Wizard wizard = provider.createWizard();
+     //   System.out.println(WizardDisplayer.showWizard(wizard));
     }
 }

@@ -21,7 +21,6 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO Need completely new PluginVersion due to interface changes (4.0!!!!))
  * @author Torridity
  */
 public class PluginManager {

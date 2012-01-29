@@ -173,7 +173,8 @@ public class DefenseInformation {
     }
 
     public int getNeededSupports() {
-        return neededSupports;
+        return neededSupports - getSupports().length;
+        //return neededSupports;
     }
 
     public void setNeededSupports(int pValue) {

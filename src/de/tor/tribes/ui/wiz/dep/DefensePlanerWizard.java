@@ -10,6 +10,7 @@ import de.tor.tribes.types.TargetInformation;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ProfileManager;
+import de.tor.tribes.util.generator.ui.SOSGenerator;
 import de.tor.tribes.util.sos.SOSManager;
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
@@ -116,6 +117,7 @@ public class DefensePlanerWizard extends WizardPanelProvider {
             parent.toFront();
             return;
         }
+        
         parent = new JFrame();
         parent.setTitle("Verteidigungsplaner");
         WizardPanelProvider provider = new DefensePlanerWizard();
@@ -146,6 +148,7 @@ public class DefensePlanerWizard extends WizardPanelProvider {
         });
         parent.pack();
         parent.setVisible(true);
+        new SOSGenerator().setVisible(true);
     }
 
     public static void main(String[] args) throws Exception {
@@ -156,17 +159,17 @@ public class DefensePlanerWizard extends WizardPanelProvider {
         }
 
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de43");
+        GlobalOptions.setSelectedServer("de77");
         ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
+        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de77")[0]);
         DataHolder.getSingleton().loadData(false);
         GlobalOptions.loadUserData();
 
-        for (SOSRequest r : createSampleRequests()) {
+    /*    for (SOSRequest r : createSampleRequests()) {
             SOSManager.getSingleton().addManagedElement(r);
-        }
+        }*/
 
-
+new SOSGenerator().setVisible(true);
         new DefensePlanerWizard().show();
         // DefenseAnalysePanel.getSingleton().setData(createSampleRequests());
        /*

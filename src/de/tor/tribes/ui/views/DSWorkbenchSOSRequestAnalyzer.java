@@ -39,6 +39,7 @@ import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.TableHelper;
 import de.tor.tribes.util.UIHelper;
+import de.tor.tribes.util.generator.ui.SOSGenerator;
 import de.tor.tribes.util.sos.SOSManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -255,6 +256,16 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
             @Override
             public void mouseReleased(MouseEvent e) {
                 List<DefenseInformation> selection = getSelectedRows();
+                if (selection.isEmpty()) {
+                    showInfo("Keine Angriffe gewählt");
+                    return;
+                }
+                for (DefenseInformation info : selection) {
+                    if (!info.isAnalyzed()) {
+                        showInfo("Eine oder mehrere Einträge wurden noch nicht analysiert. Bitte führe die Analyse vor der Übertragung durch.");
+                        return;
+                    }
+                }
                 DefenseAnalysePanel.getSingleton().setData(selection);
                 SwingUtilities.invokeLater(new Runnable() {
 
@@ -441,11 +452,11 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         }
 
         if (!pAsk || JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du " + ((selectedRows.length == 1) ? "den gewählten Angriff " : "die gewählten Angriffe ") + "wirklich löschen?", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-            DefaultTableModel model = (DefaultTableModel) jAttacksTable.getModel();
-            int numRows = selectedRows.length;
-            for (int i = 0; i < numRows; i++) {
-                model.removeRow(jAttacksTable.convertRowIndexToModel(jAttacksTable.getSelectedRow()));
-            }
+            /*
+             * DefenseToolModel model = TableHelper.getTableModel(jAttacksTable); int numRows = selectedRows.length; for (int i = 0; i <
+             * numRows; i++) { model.removeRow(jAttacksTable.convertRowIndexToModel(jAttacksTable.getSelectedRow())); }
+             */
+            int numRows = TableHelper.deleteSelectedRows(jAttacksTable);
             showSuccess(((numRows == 1) ? "Angriff" : numRows + " Angriffe") + " gelöscht");
         }
     }
@@ -865,6 +876,11 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
         return defensePanel.getAmounts();
     }
 
+    public void updateExternally() {
+        getModel().fireTableDataChanged();
+        updateSupportTable();
+    }
+
     private void updateSupportTable() {
         SupportsModel model = TableHelper.getTableModel(jSupportsTable);
         model.clear();
@@ -994,9 +1010,9 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
      */
     public static void main(String args[]) {
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de43");
+        GlobalOptions.setSelectedServer("de77");
         ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
+        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de77")[0]);
         DataHolder.getSingleton().loadData(false);
         GlobalOptions.loadUserData();
         try {
@@ -1004,7 +1020,8 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception e) {
         }
-        createSampleRequests();
+        // createSampleRequests();
+        new SOSGenerator().setVisible(true);
         DSWorkbenchSOSRequestAnalyzer.getSingleton().resetView();
         DSWorkbenchSOSRequestAnalyzer.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         DSWorkbenchSOSRequestAnalyzer.getSingleton().setVisible(true);

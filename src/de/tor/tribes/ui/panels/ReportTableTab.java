@@ -28,6 +28,8 @@ import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.ui.views.DSWorkbenchReportFrame;
 import de.tor.tribes.ui.windows.ReportShowDialog;
+import de.tor.tribes.ui.wiz.tap.AttackTargetPanel;
+import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
@@ -85,12 +87,12 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
         }
         Village v = DataHolder.getSingleton().getVillages()[point.x][point.y];
         if (v != null) {
-            //@TODO Add sim result to attack planer
-            /*
-             * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddTargetEvent(v, pAttacks);
-             * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true);
-             * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().toFront();
-             */
+            List<Village> villages = new ArrayList<Village>();
+            for (int i = 0; i < pAttacks; i++) {
+                villages.add(v);
+            }
+            AttackTargetPanel.getSingleton().addVillages(villages.toArray(new Village[pAttacks]));
+            TacticsPlanerWizard.show();
         } else {
             showError("Das Zieldorf ist ungültig");
         }

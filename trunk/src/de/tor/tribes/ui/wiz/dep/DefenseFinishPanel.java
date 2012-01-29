@@ -16,6 +16,7 @@ import de.tor.tribes.ui.models.DEPResultTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.DefenseStatusTableCellRenderer;
 import de.tor.tribes.ui.util.ColorGradientHelper;
+import de.tor.tribes.ui.views.DSWorkbenchSOSRequestAnalyzer;
 import de.tor.tribes.ui.wiz.dep.types.SupportSourceElement;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.TableHelper;
@@ -356,10 +357,13 @@ public class DefenseFinishPanel extends javax.swing.JPanel implements WizardPane
             model.addRow(info);
             if (info.getSupports().length == info.getNeededSupports()) {
                 saveTargets++;
+                info.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.SAVE);
             } else if (info.getSupports().length >= ((double) info.getNeededSupports()) / 2) {
                 fineTargets++;
+                info.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.FINE);
             } else {
                 dangerousTargets++;
+                info.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.DANGEROUS);
             }
 
             float percentFilled = 100f * ((float) info.getSupports().length / (float) info.getNeededSupports());
@@ -379,6 +383,7 @@ public class DefenseFinishPanel extends javax.swing.JPanel implements WizardPane
         jSaveTargets.setText(Integer.toString(saveTargets) + "/" + Integer.toString(defenseInfo[0]));
         jFineTargets.setText(Integer.toString(fineTargets) + "/" + Integer.toString(defenseInfo[0]));
         jDangerousTargets.setText(Integer.toString(dangerousTargets) + "/" + Integer.toString(defenseInfo[0]));
+        DSWorkbenchSOSRequestAnalyzer.getSingleton().updateExternally();
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jDangerousTargets;

@@ -16,12 +16,9 @@ import de.tor.tribes.types.DefenseInformation;
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.TargetInformation;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.renderer.TroopAmountListCellRenderer;
-import de.tor.tribes.ui.util.ColorGradientHelper;
 import de.tor.tribes.util.sos.SOSManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.awt.Color;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -84,17 +81,16 @@ public class DefenseAnalyzer extends Thread {
 
     public void run() {
         running = true;
+        try {
+            UnitManager.getSingleton().setUnits("./servers/" + GlobalOptions.getSelectedServer() + "/units.xml");
+        } catch (Exception e) {
+        }
         updateStatus();
         running = false;
         listener.fireFinishedEvent();
     }
 
     private void updateStatus() {
-        try {
-            UnitManager.getSingleton().parseUnits(GlobalOptions.getSelectedServer());
-        } catch (Exception e) {
-        }
-
         int targetCount = SOSManager.getSingleton().getOverallTargetCount();
         int currentTarget = 0;
         for (ManageableType e : SOSManager.getSingleton().getAllElements()) {
@@ -147,6 +143,7 @@ public class DefenseAnalyzer extends Thread {
                                 int amount = result.getSurvivingDef().get(key).getCount();
                                 survive += (double) amount * key.getPop();
                             }
+                            //@TODO update depending on current defenses!!!
                             lossPercent = 100 - (100.0 * survive / (double) pop);
                             if (Math.max(75.0, lossPercent) == lossPercent) {
                                 info.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.DANGEROUS);

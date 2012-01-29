@@ -5,12 +5,11 @@
 package de.tor.tribes.ui.models;
 
 import de.tor.tribes.types.DefenseInformation;
-import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 
@@ -18,13 +17,14 @@ import org.apache.commons.collections.Predicate;
  *
  * @author Torridity
  */
-public class DefenseToolModel extends AbstractTableModel {
+public class DefenseToolModel extends DefaultTableModel {
 
     private List<DefenseInformation> entries = null;
-    private Class[] types = new Class[]{Integer.class, Village.class, Integer.class, Integer.class, Date.class, Date.class, DefenseInformation.DEFENSE_STATUS.class, Double.class, Integer.class, Boolean.class, Boolean.class};
-    private String[] colNames = new String[]{"Tendenz", "Ziel", "Angriffe", "Fakes", "Erster Angriff", "Letzter Angriff", "Status", "Verlustrate", "Unterstützungen", "Analysiert", "Verteidigt"};
+    private Class[] types = new Class[]{Integer.class, Village.class, Integer.class, Integer.class, Date.class, Date.class, DefenseInformation.DEFENSE_STATUS.class, Double.class, Integer.class, Boolean.class};
+    private String[] colNames = new String[]{"Tendenz", "Ziel", "Angriffe", "Fakes", "Erster Angriff", "Letzter Angriff", "Status", "Verlustrate", "Unterstützungen", "Analysiert"};
 
     public DefenseToolModel() {
+        super();
         entries = new ArrayList<DefenseInformation>();
     }
 
@@ -34,7 +34,16 @@ public class DefenseToolModel extends AbstractTableModel {
     }
 
     @Override
+    public void removeRow(int pRow) {
+        entries.remove(pRow);
+        fireTableDataChanged();
+    }
+
+    @Override
     public int getRowCount() {
+        if (entries == null) {
+            return 0;
+        }
         return entries.size();
     }
 
@@ -98,10 +107,8 @@ public class DefenseToolModel extends AbstractTableModel {
                 return info.getLossRatio();
             case 8:
                 return info.getNeededSupports();
-            case 9:
-                return info.isAnalyzed();
             default:
-                return info.isSave();
+                return info.isAnalyzed();
         }
     }
 }

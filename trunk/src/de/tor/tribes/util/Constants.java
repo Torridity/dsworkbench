@@ -28,7 +28,7 @@ public class Constants {
     public final static String SERVER_DIR = "./servers";
     public static Hashtable<String, Integer> LAYERS = null;
     public final static int LAYER_COUNT = 9;
-    public final static boolean DEBUG = false;
+    public final static boolean DEBUG = true;
 
     static {
         LAYERS = new Hashtable<String, Integer>();

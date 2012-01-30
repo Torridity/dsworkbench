@@ -202,6 +202,7 @@ public class SOSGenerator extends javax.swing.JFrame {
     private void fireAttackPlanSelectionChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireAttackPlanSelectionChangedEvent
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             jAttack.setModel(new DefaultComboBoxModel(AttackManager.getSingleton().getAllElements((String) jAttackPlan.getModel().getSelectedItem()).toArray()));
+            jAmount.setText(Integer.toString(AttackManager.getSingleton().getAllElements((String) jAttackPlan.getModel().getSelectedItem()).size()));
         }
     }//GEN-LAST:event_fireAttackPlanSelectionChangedEvent
 

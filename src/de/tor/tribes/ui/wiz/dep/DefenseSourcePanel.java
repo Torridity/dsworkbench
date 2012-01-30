@@ -356,7 +356,9 @@ public class DefenseSourcePanel extends javax.swing.JPanel implements WizardPane
 
     private int getSplits(Village pVillage) {
         /*
-         * TroopSplit split = new TroopSplit(pVillage); split.update(DSWorkbenchSOSRequestAnalyzer.getSingleton().getDefense(), 10); return split.getSplitCount();
+         * TroopSplit split = new TroopSplit(pVillage); 
+         * split.update(DSWorkbenchSOSRequestAnalyzer.getSingleton().getDefense(), 10); 
+         * return split.getSplitCount();
          */
         return 10;
     }

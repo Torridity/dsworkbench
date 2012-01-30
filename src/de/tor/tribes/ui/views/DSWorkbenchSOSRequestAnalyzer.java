@@ -69,7 +69,6 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.table.DefaultTableModel;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.ConsoleAppender;
@@ -178,6 +177,9 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         defensePanel.setAmounts(defAmounts);
         offensePanel.setEnabled(false);
         defensePanel.setEnabled(false);
+
+        jXInfoLabel.setLineWrap(true);
+
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         if (!Constants.DEBUG) {
             GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.sos_analyzer", GlobalOptions.getHelpBroker().getHelpSet());
@@ -452,11 +454,28 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         }
 
         if (!pAsk || JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du " + ((selectedRows.length == 1) ? "den gewählten Angriff " : "die gewählten Angriffe ") + "wirklich löschen?", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-            /*
-             * DefenseToolModel model = TableHelper.getTableModel(jAttacksTable); int numRows = selectedRows.length; for (int i = 0; i <
-             * numRows; i++) { model.removeRow(jAttacksTable.convertRowIndexToModel(jAttacksTable.getSelectedRow())); }
-             */
-            int numRows = TableHelper.deleteSelectedRows(jAttacksTable);
+
+            DefenseToolModel model = TableHelper.getTableModel(jAttacksTable);
+            int numRows = selectedRows.length;
+            List<DefenseInformation> toRemove = new LinkedList<DefenseInformation>();
+            for (int row : selectedRows) {
+                toRemove.add(model.getRows()[jAttacksTable.convertRowIndexToModel(row)]);
+            }
+
+            //remove model rows
+            for (DefenseInformation defense : toRemove) {
+                model.removeRow(defense);
+            }
+
+            //update SOS requests
+            for (ManageableType e : SOSManager.getSingleton().getAllElements()) {
+                SOSRequest r = (SOSRequest) e;
+                for (DefenseInformation defense : toRemove) {
+                    r.removeTarget(defense.getTarget());
+                }
+            }
+
+            model.fireTableDataChanged();
             showSuccess(((numRows == 1) ? "Angriff" : numRows + " Angriffe") + " gelöscht");
         }
     }
@@ -908,12 +927,16 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
                 for (SOSRequest request : requests) {
                     SOSManager.getSingleton().addRequest(request);
                     findFakes(request);
-
                 }
             } else {
                 showInfo("Keine gültigen SOS Anfrage gefunden");
             }
             updateView();
+            if (!ServerSettings.getSingleton().isMillisArrival()) {
+                showInfo("Der aktuelle Server unterstützt keine Millisekunden.\n"
+                        + "Daher werden bereits eingelesene Angriffe nicht herausgefiltert.\n"
+                        + "Es wird empfohlen, vor dem Einlesen vorhandene Einträge zu löschen und eine neue Berechnung zu starten.");
+            }
         } catch (HeadlessException he) {
             showInfo("Fehler beim Lesen aus der Zwischenablage");
         } catch (UnsupportedFlavorException usfe) {

@@ -18,27 +18,37 @@ import org.apache.commons.collections.Predicate;
  * @author Torridity
  */
 public class DefenseToolModel extends DefaultTableModel {
-
+    
     private List<DefenseInformation> entries = null;
     private Class[] types = new Class[]{Integer.class, Village.class, Integer.class, Integer.class, Date.class, Date.class, DefenseInformation.DEFENSE_STATUS.class, Double.class, Integer.class, Boolean.class};
     private String[] colNames = new String[]{"Tendenz", "Ziel", "Angriffe", "Fakes", "Erster Angriff", "Letzter Angriff", "Status", "Verlustrate", "Unterstützungen", "Analysiert"};
-
+    
     public DefenseToolModel() {
         super();
         entries = new ArrayList<DefenseInformation>();
     }
-
-    public void clear() {
+    
+    public void clear(boolean pNotify) {
         entries.clear();
-        fireTableDataChanged();
+        if (pNotify) {
+            fireTableDataChanged();
+        }
     }
-
+    
+    public void clear() {
+        clear(true);
+    }
+    
     @Override
     public void removeRow(int pRow) {
         entries.remove(pRow);
         fireTableDataChanged();
     }
-
+    
+    public void removeRow(DefenseInformation pToRemove) {
+        entries.remove(pToRemove);
+    }
+    
     @Override
     public int getRowCount() {
         if (entries == null) {
@@ -46,45 +56,45 @@ public class DefenseToolModel extends DefaultTableModel {
         }
         return entries.size();
     }
-
+    
     public DefenseInformation[] getRows() {
         return entries.toArray(new DefenseInformation[entries.size()]);
     }
-
+    
     @Override
     public Class<?> getColumnClass(int columnIndex) {
         return types[columnIndex];
     }
-
+    
     @Override
     public String getColumnName(int column) {
         return colNames[column];
     }
-
+    
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
     }
-
+    
     @Override
     public int getColumnCount() {
         return colNames.length;
     }
-
+    
     public DefenseInformation findElement(final Village pTarget) {
         return (DefenseInformation) CollectionUtils.find(entries, new Predicate() {
-
+            
             @Override
             public boolean evaluate(Object o) {
                 return ((DefenseInformation) o).getTarget().equals(pTarget);
             }
         });
     }
-
+    
     public void addRow(DefenseInformation pElement) {
         entries.add(pElement);
     }
-
+    
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         DefenseInformation info = entries.get(rowIndex);

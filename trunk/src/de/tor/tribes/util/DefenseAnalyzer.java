@@ -110,7 +110,7 @@ public class DefenseAnalyzer extends Thread {
 
                 if (!info.isAnalyzed()) {//re-analyze info
                     Hashtable<UnitHolder, AbstractUnitElement> off = dswbUnitsToSimulatorUnits(standardOff);
-                    Hashtable<UnitHolder, AbstractUnitElement> def = getDefense(targetInfo, info, 0);
+                    Hashtable<UnitHolder, AbstractUnitElement> def = getDefense(targetInfo, info, info.getSupports().length);
 
                     int pop = 0;
                     Enumeration<UnitHolder> units = def.keys();
@@ -143,7 +143,6 @@ public class DefenseAnalyzer extends Thread {
                                 int amount = result.getSurvivingDef().get(key).getCount();
                                 survive += (double) amount * key.getPop();
                             }
-                            //@TODO update depending on current defenses!!!
                             lossPercent = 100 - (100.0 * survive / (double) pop);
                             if (Math.max(75.0, lossPercent) == lossPercent) {
                                 info.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.DANGEROUS);
@@ -200,7 +199,7 @@ public class DefenseAnalyzer extends Thread {
             return;
         }
 
-        int factor = 1;
+        int factor = pInfo.getSupports().length;
         SimulatorResult result = null;
         while (true) {
             if (aborted) {
@@ -233,7 +232,7 @@ public class DefenseAnalyzer extends Thread {
             double lossesPercent = 100 - (100.0 * survive / troops);
             if (!result.isWin() && lossesPercent < maxLossRatio) {
                 pInfo.setNeededSupports(factor);
-                pInfo.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.SAVE);
+              //  pInfo.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.SAVE);
                 pInfo.setLossRation(lossesPercent);
                 break;
             } else {
@@ -242,11 +241,11 @@ public class DefenseAnalyzer extends Thread {
             if (factor > maxRuns) {
                 if (lossesPercent < 100) {
                     pInfo.setNeededSupports(factor);
-                    pInfo.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.FINE);
+                  //  pInfo.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.FINE);
                     pInfo.setLossRation(lossesPercent);
                 } else {
                     pInfo.setNeededSupports(factor);
-                    pInfo.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.DANGEROUS);
+                   // pInfo.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.DANGEROUS);
                     pInfo.setLossRation(100.0);
                 }
                 //break due to max iterations

@@ -32,18 +32,18 @@ import org.jdom.Element;
  * @author Torridity
  */
 public class SOSRequest extends ManageableType implements BBSupport {
-    
+
     private final String[] VARIABLES = new String[]{"%SOS_ICON%", "%TARGET%", "%ATTACKS%", "%DEFENDERS%", "%WALL_INFO%", "%WALL_LEVEL%", "%FIRST_ATTACK%", "%LAST_ATTACK%", "%SOURCE_LIST%", "%SOURCE_DATE_TYPE_LIST%", "%ATTACK_LIST%", "%SOURCE_DATE_LIST%", "%SOURCE_TYPE_LIST%", "%SUMMARY%"};
     private final static String STANDARD_TEMPLATE = "[quote]%SOS_ICON% %TARGET% (%ATTACKS%)\n[quote]%DEFENDERS%\n%WALL_INFO%[/quote]\n\n%FIRST_ATTACK%\n%SOURCE_DATE_LIST%\n%LAST_ATTACK%\n\n%SUMMARY%[/quote]";
     private Tribe mDefender = null;
     private Hashtable<Village, TargetInformation> targetInformations = null;
     private Hashtable<Village, DefenseInformation> defenseInformations = null;
-    
+
     @Override
     public String[] getBBVariables() {
         return VARIABLES;
     }
-    
+
     public String[] getReplacementsForTarget(Village pTarget, boolean pExtended) {
         String serverURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
         //main quote
@@ -62,7 +62,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
         //build first-last-attack
 
         List<TimedAttack> atts = targetInformations.get(pTarget).getAttacks();
-        
+
         Collections.sort(atts, SOSRequest.ARRIVE_TIME_COMPARATOR);
 
         //add first and last attack information
@@ -105,9 +105,9 @@ public class SOSRequest extends ManageableType implements BBSupport {
             } catch (Exception e) {
             }
         }
-        
+
         attackList = new AttackListFormatter().formatElements(thisAttacks, pExtended);
-        
+
         for (int i = 0; i < atts.size(); i++) {
             try {
                 TimedAttack attack = atts.get(i);
@@ -128,17 +128,17 @@ public class SOSRequest extends ManageableType implements BBSupport {
             } catch (Exception e) {
             }
         }
-        
+
         sourceVal = sourceVal.trim();
         sourceTypeVal = sourceTypeVal.trim();
         sourceDateVal = sourceDateVal.trim();
         sourceDateTypeVal = sourceDateTypeVal.trim();
         String lastAttackVal = "[img]" + serverURL + "/graphic/map/return.png[/img] " + dateFormat.format(new Date(atts.get(atts.size() - 1).getlArriveTime()));
         String summaryVal = "[u]Mögliche Fakes:[/u] " + fakeCount + "\n" + "[u]Mögliche AGs:[/u] " + snobCount;
-        
+
         return new String[]{sosImageVal, targetVal, attackCountVal, unitVal, wallInfoVal, wallLevelVal, firstAttackVal, lastAttackVal, sourceVal, sourceDateTypeVal, attackList, sourceDateVal, sourceTypeVal, summaryVal};
     }
-    
+
     private String buildUnitInfo(TargetInformation pTargetInfo) {
         StringBuilder buffer = new StringBuilder();
         NumberFormat nf = NumberFormat.getInstance();
@@ -146,7 +146,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
         nf.setMaximumFractionDigits(0);
         String defRow = "";
         String offRow = "";
-        
+
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             Integer amount = pTargetInfo.getTroops().get(unit);
             if (amount != null && amount != 0) {
@@ -165,7 +165,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
         }
         return buffer.toString();
     }
-    
+
     private String buildWallInfo(TargetInformation pTargetInfo) {
         StringBuilder buffer = new StringBuilder();
         double perc = pTargetInfo.getWallLevel() / 20.0;
@@ -182,39 +182,39 @@ public class SOSRequest extends ManageableType implements BBSupport {
             }
             buffer.append("[/color]");
         }
-        
+
         buffer.append(" (").append(pTargetInfo.getWallLevel()).append(")");
         return buffer.toString();
     }
-    
+
     @Override
     public String[] getReplacements(boolean pExtended) {
         return getReplacementsForTarget(targetInformations.keys().nextElement(), pExtended);
     }
-    
+
     @Override
     public String getStandardTemplate() {
         return STANDARD_TEMPLATE;
     }
-    
+
     public SOSRequest() {
         targetInformations = new Hashtable<Village, TargetInformation>();
         defenseInformations = new Hashtable<Village, DefenseInformation>();
     }
-    
+
     public SOSRequest(Tribe pDefender) {
         this();
         setDefender(pDefender);
     }
-    
+
     public final void setDefender(Tribe pDefender) {
         mDefender = pDefender;
     }
-    
+
     public Tribe getDefender() {
         return mDefender;
     }
-    
+
     public TargetInformation addTarget(Village pTarget) {
         TargetInformation targetInfo = targetInformations.get(pTarget);
         if (targetInfo == null) {
@@ -224,7 +224,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
         }
         return targetInfo;
     }
-    
+
     private DefenseInformation addDefense(Village pTarget) {
         DefenseInformation defenseInfo = defenseInformations.get(pTarget);
         if (defenseInfo == null) {
@@ -234,7 +234,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
         }
         return defenseInfo;
     }
-    
+
     public void resetDefenses() {
         Enumeration<Village> targets = getTargets();
         while (targets.hasMoreElements()) {
@@ -242,25 +242,30 @@ public class SOSRequest extends ManageableType implements BBSupport {
             DefenseInformation info = getDefenseInformation(target);
             info.reset();
         }
-        
+
     }
-    
+
     public TargetInformation getTargetInformation(Village pTarget) {
         return targetInformations.get(pTarget);
     }
-    
+
     public DefenseInformation getDefenseInformation(Village pTarget) {
         return defenseInformations.get(pTarget);
     }
-    
+
+    public void removeTarget(Village pTarget) {
+        targetInformations.remove(pTarget);
+        defenseInformations.remove(pTarget);
+    }
+
     public Enumeration<Village> getTargets() {
         return targetInformations.keys();
     }
-    
+
     public String toBBCode() {
         return toBBCode(true);
     }
-    
+
     public String toBBCode(boolean pDetailed) {
         StringBuilder buffer = new StringBuilder();
         Enumeration<Village> targets = getTargets();
@@ -272,7 +277,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
         }
         return buffer.toString();
     }
-    
+
     public String toBBCode(Village pTarget, boolean pDetailed) {
         StringBuilder buffer = new StringBuilder();
         Village target = pTarget;
@@ -283,16 +288,18 @@ public class SOSRequest extends ManageableType implements BBSupport {
         buffer.append(SOSFormater.format(target, targetInfo, pDetailed));
         return buffer.toString();
     }
-    
+
     public void merge(SOSRequest pOther) {
         if (!getDefender().equals(pOther.getDefender())) {
             throw new IllegalArgumentException("Cannot merge with unequal defender");
         }
+
         Enumeration<Village> otherTargets = pOther.getTargets();
         while (otherTargets.hasMoreElements()) {
             Village otherTarget = otherTargets.nextElement();
             TargetInformation otherInfo = pOther.getTargetInformation(otherTarget);
             TargetInformation thisInfo = addTarget(otherTarget);
+            thisInfo.setDelta(0);
             thisInfo.setWallLevel(otherInfo.getWallLevel());
             int addCount = 0;
             for (TimedAttack att : otherInfo.getAttacks()) {
@@ -304,37 +311,37 @@ public class SOSRequest extends ManageableType implements BBSupport {
             thisInfo.setDelta(addCount);
         }
     }
-    
+
     @Override
     public String toString() {
         String result = "Verteidiger: " + getDefender() + "\n";
         Enumeration<Village> targets = getTargets();
-        
+
         while (targets.hasMoreElements()) {
             Village target = targets.nextElement();
             result += " Ziel: " + target + "\n";
             result += getTargetInformation(target);
             //result += "\n";
         }
-        
+
         return result;
     }
-    
+
     @Override
     public String getElementIdentifier() {
         return "sosRequest";
     }
-    
+
     @Override
     public String getElementGroupIdentifier() {
         return "sosRequests";
     }
-    
+
     @Override
     public String getGroupNameAttributeIdentifier() {
         return "";
     }
-    
+
     @Override
     public String toXml() {
         try {
@@ -371,7 +378,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
         }
         return null;
     }
-    
+
     @Override
     public void loadFromXml(Element e) {
         int defenderId = Integer.parseInt(e.getAttributeValue("defender"));
@@ -393,9 +400,9 @@ public class SOSRequest extends ManageableType implements BBSupport {
         }
     }
     public static final Comparator<TimedAttack> ARRIVE_TIME_COMPARATOR = new ArriveTimeComparator();
-    
+
     private static class ArriveTimeComparator implements Comparator<TimedAttack>, java.io.Serializable {
-        
+
         @Override
         public int compare(TimedAttack s1, TimedAttack s2) {
             return s1.getlArriveTime().compareTo(s2.getlArriveTime());

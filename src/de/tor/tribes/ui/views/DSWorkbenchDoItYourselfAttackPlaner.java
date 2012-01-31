@@ -962,6 +962,8 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
 class DoItYourselfCountdownThread extends Thread {
 
     public DoItYourselfCountdownThread() {
+        setName("DoItYourselfCountdownUpdater");
+        setPriority(MIN_PRIORITY);
         setDaemon(true);
     }
 

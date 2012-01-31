@@ -20,11 +20,8 @@ import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.panels.TroopSelectionPanel;
 import de.tor.tribes.ui.models.DefenseToolModel;
 import de.tor.tribes.ui.models.SupportsModel;
-import de.tor.tribes.ui.renderer.DateCellRenderer;
-import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.DefenseStatusTableCellRenderer;
-import de.tor.tribes.ui.renderer.LossRatioTableCellRenderer;
-import de.tor.tribes.ui.renderer.TendencyTableCellRenderer;
+import de.tor.tribes.ui.panels.AttackTableTab;
+import de.tor.tribes.ui.renderer.*;
 import de.tor.tribes.ui.windows.VillageSupportFrame;
 import de.tor.tribes.ui.wiz.dep.DefenseAnalysePanel;
 import de.tor.tribes.ui.wiz.dep.DefensePlanerWizard;
@@ -56,11 +53,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -77,6 +70,7 @@ import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
+import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
  * @author Torridity
@@ -112,6 +106,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     @Override
     public void resetView() {
         updateView();
+        updateSupportTable();
     }
 
     /**
@@ -156,8 +151,8 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         jSupportsTable.setModel(new SupportsModel());
         jSupportsTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jSupportsTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
-        jSupportsTable.setDefaultRenderer(Date.class, new DateCellRenderer());
-
+        jSupportsTable.setDefaultRenderer(Date.class, new ColoredDateCellRenderer());
+        jSupportsTable.setDefaultRenderer(Boolean.class, new SentNotSentCellRenderer());
         offensePanel = new TroopSelectionPanel();
         offensePanel.setupOffense(true);
         Hashtable<de.tor.tribes.io.UnitHolder, Integer> offAmounts = new Hashtable<de.tor.tribes.io.UnitHolder, Integer>();
@@ -177,7 +172,8 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         defensePanel.setAmounts(defAmounts);
         offensePanel.setEnabled(false);
         defensePanel.setEnabled(false);
-
+        new SupportCountdownThread().start();
+        new SupportColorUpdateThread().start();
         jXInfoLabel.setLineWrap(true);
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
@@ -380,49 +376,6 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         }
     }
 
-    /*
-     * private void copySelectionToInternalClipboard() { List<Attack> selection = getSelectedAttacks(); if (selection.isEmpty()) { return; }
-     *
-     * StringBuilder b = new StringBuilder(); int cnt = 0; for (Attack a : selection) { if (a.getUnit() == null) {
-     * a.setUnit(UnknownUnit.getSingleton()); } b.append(Attack.toInternalRepresentation(a)).append("\n"); cnt++; } try {
-     * Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b.toString()), null); showSuccess(cnt + ((cnt == 1)
-     * ? " Angriff kopiert" : " Angriffe kopiert")); } catch (HeadlessException hex) { showError("Fehler beim Kopieren der Angriffe"); } }
-     *//*
-     * private void copySelectionToClipboardAsBBCode() { if (currentRequests == null || currentRequests.isEmpty()) { showInfo("Keine SOS
-     * Anfragen eingelesen"); return; } try { boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes
-     * verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
-     *
-     * StringBuilder buffer = new StringBuilder(); if (extended) { buffer.append("[u][size=12]SOS Anfragen[/size][/u]\n\n"); } else {
-     * buffer.append("[u]SOS Anfragen[/u]\n\n"); }
-     *
-     * List<SOSRequest> requests = new LinkedList<SOSRequest>();
-     *
-     * Enumeration<Tribe> tribeKeys = currentRequests.keys(); while (tribeKeys.hasMoreElements()) {
-     * requests.add(currentRequests.get(tribeKeys.nextElement())); } buffer.append(new SosListFormatter().formatElements(requests,
-     * extended));
-     *
-     * if (extended) { buffer.append("\n[size=8]Erstellt am "); buffer.append(new SimpleDateFormat("dd.MM.yy 'um'
-     * HH:mm:ss").format(Calendar.getInstance().getTime())); buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS
-     * Workbench "); buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url][/size]\n"); } else {
-     * buffer.append("\nErstellt am "); buffer.append(new SimpleDateFormat("dd.MM.yy 'um'
-     * HH:mm:ss").format(Calendar.getInstance().getTime())); buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS
-     * Workbench "); buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url]\n"); }
-     *
-     * String b = buffer.toString(); StringTokenizer t = new StringTokenizer(b, "["); int cnt = t.countTokens(); if (cnt > 1000) { if
-     * (JOptionPaneHelper.showQuestionConfirmBox(this, "Die momentan vorhandenen Anfragen benötigen mehr als 1000 BB-Codes\n" + "und können
-     * daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja")
-     * == JOptionPane.NO_OPTION) { return; } }
-     *
-     * Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null); showSuccess("Daten in Zwischenablage
-     * kopiert"); } catch (Exception e) { logger.error("Failed to copy data to clipboard", e); showError("Fehler beim Kopieren in die
-     * Zwischenablage"); }
-     *
-     * }
-     *
-     * private void cutSelectionToInternalClipboard() { List<Attack> selection = getSelectedAttacks(); copySelectionToInternalClipboard();
-     * removeSelection(false); showSuccess(((selection.size() == 1) ? "Angriff" : selection.size() + " Angriffe") + " ausgeschnitten"); }
-     */
-
     public de.tor.tribes.io.UnitHolder getSlowestUnit() {
         Hashtable<UnitHolder, Integer> units = defensePanel.getAmounts();
         Enumeration<UnitHolder> keys = units.keys();
@@ -444,6 +397,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
 
     private void removeSelection() {
         removeSelection(true);
+        updateSupportTable();
     }
 
     private void removeSelection(boolean pAsk) {
@@ -498,24 +452,6 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         return infos;
     }
 
-    /*
-     * private List<Attack> getSelectedAttacks() { List<Attack> attacks = new LinkedList<Attack>(); if (currentRequests == null) {
-     * showInfo("Keine SOS Anfragen vorhanden"); return attacks; }
-     *
-     * int[] rows = jResultTable.getSelectedRows(); if (rows == null || rows.length == 0) { showInfo("Kein Angriff gewählt"); return
-     * attacks; }
-     *
-     * for (int row : rows) { Village target = (Village) jResultTable.getValueAt(row, 1); Village source = (Village)
-     * jResultTable.getValueAt(row, 3); String arrive = (String) jResultTable.getValueAt(row, 4); int type = (Integer)
-     * jResultTable.getValueAt(row, 8); SimpleDateFormat f = null; if (!ServerSettings.getSingleton().isMillisArrival()) { f = new
-     * SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format")); } else { f = new
-     * SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format.ms")); }
-     *
-     * Attack a = new Attack(); a.setSource(source); a.setTarget(target); if (type == Attack.SNOB_TYPE) {
-     * a.setUnit(DataHolder.getSingleton().getUnitByPlainName("snob")); } else if (type == Attack.FAKE_TYPE) {
-     * a.setUnit(DataHolder.getSingleton().getUnitByPlainName("ram")); } try { a.setArriveTime(f.parse(arrive)); attacks.add(a); } catch
-     * (ParseException ex) { showError("Fehler beim Lesen der Ankunftszeit"); } } return attacks; }
-     */
     /**
      * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this
      * method is always regenerated by the Form Editor.
@@ -1028,6 +964,38 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
         }
     }
 
+    public void updateCountdown() {
+        if (!jSupportsTable.isVisible()) {
+            return;
+        }
+        TableColumnExt col = jSupportsTable.getColumnExt("Countdown");
+        if (col.isVisible()) {
+            int startX = 0;
+            for (int i = 0; i < jSupportsTable.getColumnCount(); i++) {
+                if (jSupportsTable.getColumnExt(i).equals(col)) {
+                    break;
+                }
+                startX += (jSupportsTable.getColumnExt(i).isVisible()) ? jSupportsTable.getColumnExt(i).getWidth() : 0;
+            }
+            jSupportsTable.repaint(startX, (int) jSupportsTable.getVisibleRect().getY(), startX + col.getWidth(), (int) jSupportsTable.getVisibleRect().getHeight());
+        }
+    }
+
+    public void updateTime() {
+        TableColumnExt firstCol = jSupportsTable.getColumnExt("Früheste Abschickzeit");
+        TableColumnExt lastCol = jSupportsTable.getColumnExt("Späteste Abschickzeit");
+        if (firstCol.isVisible() && lastCol.isVisible()) {
+            int startX = 0;
+            for (int i = 0; i < jSupportsTable.getColumnCount(); i++) {
+                if (jSupportsTable.getColumnExt(i).equals(firstCol)) {
+                    break;
+                }
+                startX += (jSupportsTable.getColumnExt(i).isVisible()) ? jSupportsTable.getColumnExt(i).getWidth() : 0;
+            }
+            jSupportsTable.repaint(startX, 0, startX + firstCol.getWidth() + lastCol.getWidth(), jSupportsTable.getHeight());
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -1080,4 +1048,58 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
     private javax.swing.JTextField jTextField2;
     private org.jdesktop.swingx.JXLabel jXInfoLabel;
     // End of variables declaration//GEN-END:variables
+}
+
+class SupportColorUpdateThread extends Thread {
+
+    public SupportColorUpdateThread() {
+        setName("SupportColorUpdater");
+        setPriority(MIN_PRIORITY);
+        setDaemon(true);
+    }
+
+    public void run() {
+        while (true) {
+            try {
+                DSWorkbenchSOSRequestAnalyzer.getSingleton().updateTime();
+                try {
+                    Thread.sleep(10000);
+                } catch (Exception e) {
+                }
+            } catch (Throwable t) {
+            }
+        }
+    }
+}
+
+class SupportCountdownThread extends Thread {
+
+    private boolean showCountdown = true;
+
+    public SupportCountdownThread() {
+        setName("SupportTableCountdownUpdater");
+        setPriority(MIN_PRIORITY);
+        setDaemon(true);
+    }
+
+    public void updateSettings() {
+        showCountdown = Boolean.parseBoolean(GlobalOptions.getProperty("show.live.countdown"));
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                if (showCountdown && DSWorkbenchSOSRequestAnalyzer.getSingleton().isVisible()) {
+                    DSWorkbenchSOSRequestAnalyzer.getSingleton().updateCountdown();
+                    //yield();
+                    sleep(100);
+                } else {
+                    // yield();
+                    sleep(1000);
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
 }

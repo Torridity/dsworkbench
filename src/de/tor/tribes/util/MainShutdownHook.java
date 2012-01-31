@@ -19,6 +19,7 @@ public class MainShutdownHook extends Thread {
     private static Logger logger = Logger.getLogger("ShutdownHook");
 
     public MainShutdownHook() {
+        setName("ShutdownHook");
         setDaemon(true);
     }
 

@@ -44,6 +44,7 @@ public class DefenseAnalyzer extends Thread {
         if (pListener == null) {
             throw new IllegalArgumentException("pListener must not be null");
         }
+        setName("DefenseAnalyzer");
         listener = pListener;
         standardOff = pStandardOff;
         standardDefSplit = pStandardDefSplit;

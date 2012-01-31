@@ -492,9 +492,7 @@ public class AttackSourceFilterPanel extends javax.swing.JPanel implements Wizar
         overviewPanel.reset();
         List<TAPAttackSourceElement> elements = getAllElements();
         for (TAPAttackSourceElement element : elements) {
-            if (!element.isIgnored()) {
-                overviewPanel.addVillage(new Point(element.getVillage().getX(), element.getVillage().getY()), Color.yellow);
-            }
+            overviewPanel.addVillage(new Point(element.getVillage().getX(), element.getVillage().getY()), (!element.isIgnored()) ? Color.yellow : Color.red);
         }
         overviewPanel.repaint();
     }
@@ -612,4 +610,3 @@ public class AttackSourceFilterPanel extends javax.swing.JPanel implements Wizar
         return WizardPanelNavResult.PROCEED;
     }
 }
-

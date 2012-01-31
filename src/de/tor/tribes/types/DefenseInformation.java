@@ -173,8 +173,11 @@ public class DefenseInformation {
     }
 
     public int getNeededSupports() {
-        return neededSupports - getSupports().length;
-        //return neededSupports;
+        return neededSupports;
+    }
+
+    private int getNeededSupportsInternal() {
+        return neededSupports;
     }
 
     public void setNeededSupports(int pValue) {
@@ -185,7 +188,7 @@ public class DefenseInformation {
         StringBuilder b = new StringBuilder();
         b.append("<status>").append(getStatus().toString()).append("</status>\n");
         b.append("<lossRatio>").append(Double.toString(getLossRatio())).append("</lossRatio>\n");
-        b.append("<neededSupports>").append(getNeededSupports()).append("</neededSupports>\n");
+        b.append("<neededSupports>").append(getNeededSupportsInternal()).append("</neededSupports>\n");
         b.append("<cleanAfter>").append(getCleanAfter()).append("</cleanAfter>\n");
         if (!defenses.isEmpty()) {
             b.append("<defenses>\n");

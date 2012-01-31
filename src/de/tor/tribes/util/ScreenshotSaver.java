@@ -28,6 +28,7 @@ public class ScreenshotSaver extends Thread {
 
     public ScreenshotSaver() {
         setDaemon(true);
+        setName("ScreenshotSaver");
         setPriority(MIN_PRIORITY);
     }
 

@@ -37,6 +37,11 @@ public abstract class AbstractAttackAlgorithm extends Thread {
     private boolean running = false;
     private boolean aborted = false;
     private LogListener listener = null;
+
+    public AbstractAttackAlgorithm() {
+        setName("AbstractAttackAlgorithm");
+        setDaemon(true);
+    }
     
     public void initialize(
             Hashtable<UnitHolder, List<Village>> pSources,

@@ -184,7 +184,7 @@ public class FarmInformation extends ManageableType {
             farmTroopArrive = -1;
             farmSourceId = -1;
             farmTroop = null;
-          //  DSWorkbenchFarmManager.getSingleton().dataChangedExternally();
+            //  DSWorkbenchFarmManager.getSingleton().dataChangedExternally();
         }
         return arriveTimeRelativeToNow;
     }
@@ -337,8 +337,8 @@ public class FarmInformation extends ManageableType {
             return;
         }
 
-        if (pReport.wasLostEverything()) {
-            logger.debug("Changing farm status to due to total loss");
+        if (pReport.wasLostEverything() || pReport.hasSurvivedDefenders()) {
+            logger.debug("Changing farm status to due to total loss or found troops");
             setStatus(FARM_STATUS.TROOPS_FOUND);
         } else {
             //at first, update correction factor as spy information update might modifiy farm levels and expected resource calcuclation
@@ -414,6 +414,9 @@ public class FarmInformation extends ManageableType {
      * Read haul information from report, correct storage amounts and return difference to max haul
      */
     private void updateHaulInformation(FightReport pReport) {
+        if (pReport.getHaul() == null) {
+            return;
+        }
         //get haul and update hauled resources
         hauledWood += pReport.getHaul()[0];
         hauledClay += pReport.getHaul()[1];
@@ -634,7 +637,7 @@ public class FarmInformation extends ManageableType {
                         } else {
                             //send troops and update
                             if (BrowserCommandSender.sendTroops(selection, getVillage(), farmers)) {
-                              //  if (true) {
+                                //  if (true) {
                                 TroopHelper.sendTroops(selection, farmers);
                                 double speed = TroopHelper.getTroopSpeed(farmers);
                                 farmTroop = TroopHelper.unitTableToSerializableFormat(farmers);

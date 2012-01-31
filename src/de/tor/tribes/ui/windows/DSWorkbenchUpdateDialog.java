@@ -323,6 +323,7 @@ class UpdateThread extends Thread {
     public UpdateThread(List<String> pResources, UpdateListener pListener) {
         resources = pResources;
         listener = pListener;
+        setName("DSWorkbenchUpdateThread");
         setDaemon(true);
     }
 

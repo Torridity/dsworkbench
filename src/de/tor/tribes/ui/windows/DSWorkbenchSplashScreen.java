@@ -553,6 +553,7 @@ class SplashRepaintThread extends Thread {
     private boolean running = true;
 
     public SplashRepaintThread() {
+        setName("SplashHideThread");
         setDaemon(true);
     }
 

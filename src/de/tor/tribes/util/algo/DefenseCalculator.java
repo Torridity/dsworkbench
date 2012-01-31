@@ -27,6 +27,7 @@ public class DefenseCalculator extends Thread {
     private boolean multiSupport = false;
 
     public DefenseCalculator() {
+        setName("DefenseCalculator");
         setDaemon(true);
     }
 

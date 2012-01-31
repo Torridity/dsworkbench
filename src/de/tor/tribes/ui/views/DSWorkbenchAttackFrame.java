@@ -1148,6 +1148,8 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
 class ColorUpdateThread extends Thread {
 
     public ColorUpdateThread() {
+        setName("AttackColorUpdater");
+        setPriority(MIN_PRIORITY);
         setDaemon(true);
     }
 
@@ -1170,6 +1172,8 @@ class CountdownThread extends Thread {
     private boolean showCountdown = true;
 
     public CountdownThread() {
+        setName("AttackTableCountdownUpdater");
+        setPriority(MIN_PRIORITY);
         setDaemon(true);
     }
 

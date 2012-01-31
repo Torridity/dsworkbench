@@ -24,6 +24,7 @@ import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.note.NoteManager;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.roi.ROIManager;
+import de.tor.tribes.util.sos.SOSManager;
 import de.tor.tribes.util.stat.StatManager;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
@@ -198,12 +199,11 @@ public class GlobalOptions {
     }
 
     public static void setSelectedProfile(UserProfile pProfile) {
-        /*try{
-            throw new Exception();
-        }catch(Exception e){
-            e.printStackTrace();
-            
-        }*/
+        /*
+         * try{ throw new Exception(); }catch(Exception e){ e.printStackTrace();
+         *
+         * }
+         */
         mSelectedProfile = pProfile;
     }
 
@@ -284,7 +284,7 @@ public class GlobalOptions {
         return GLOBAL_PROPERTIES.getProperty(pKey);
     }
 
-       /**
+    /**
      * Load the default skin
      *
      * @throws Exception If there was an error while loading the default skin
@@ -333,6 +333,8 @@ public class GlobalOptions {
             logger.debug("Loading reports");
             fireDataHolderEvent("Lade Berichte");
             ReportManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/reports.xml");
+            fireDataHolderEvent("Lade SOS-Anfragen");
+            SOSManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/sos.xml");
             fireDataHolderEvent("Lade Farminformationen");
             FarmManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/farms.xml");
             logger.debug("Removing temporary data");
@@ -376,8 +378,10 @@ public class GlobalOptions {
             StandardAttackManager.getSingleton().saveStandardAttacksToDisk(getSelectedProfile().getProfileDirectory() + "/stdAttacks.xml");
             logger.debug("Saving stats");
             StatManager.getSingleton().storeStats();
-            logger.debug("Saving resports");
+            logger.debug("Saving reports");
             ReportManager.getSingleton().saveElements(getSelectedProfile().getProfileDirectory() + "/reports.xml");
+            logger.debug("Saving sos requests");
+            SOSManager.getSingleton().saveElements(getSelectedProfile().getProfileDirectory() + "/sos.xml");
             logger.debug("Saving farms");
             FarmManager.getSingleton().saveElements(getSelectedProfile().getProfileDirectory() + "/farms.xml");
             logger.debug("User data saved");

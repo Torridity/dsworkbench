@@ -39,6 +39,7 @@ public class ClipboardWatch extends Thread {
     }
 
     ClipboardWatch() {
+        setName("ClipboardMonitor");
         setDaemon(true);
         setPriority(MIN_PRIORITY);
     }

@@ -10,6 +10,8 @@ import de.tor.tribes.ui.wiz.dep.types.SupportSourceElement;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 
 /**
  *
@@ -34,8 +36,20 @@ public class DEPSourceTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    public void addRow(Village pVillage, int pSupports) {
-        elements.add(new SupportSourceElement(pVillage, pSupports));
+    public void addRow(final Village pVillage, int pSupports) {
+        Object existing = CollectionUtils.find(elements, new Predicate() {
+
+            @Override
+            public boolean evaluate(Object o) {
+                if (((SupportSourceElement) o).getVillage().equals(pVillage)) {
+                    return true;
+                }
+                return false;
+            }
+        });
+        if (existing == null) {
+            elements.add(new SupportSourceElement(pVillage, pSupports));
+        }
     }
 
     @Override

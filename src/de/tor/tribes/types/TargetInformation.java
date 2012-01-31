@@ -36,10 +36,8 @@ public class TargetInformation {
     private int fakes = 0;
     private long first = Long.MAX_VALUE;
     private long last = Long.MIN_VALUE;
-    private SOSRequest outer;
     
-    public TargetInformation(SOSRequest outer, Village pTarget) {
-        this.outer = outer;
+    public TargetInformation(Village pTarget) {
         target = pTarget;
         troops = new Hashtable<UnitHolder, Integer>();
         timedAttacks = new Hashtable<Village, List<TimedAttack>>();

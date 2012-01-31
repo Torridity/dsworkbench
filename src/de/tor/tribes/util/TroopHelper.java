@@ -231,10 +231,12 @@ public class TroopHelper {
 
     public static int getPopulation(Hashtable<UnitHolder, Integer> pTroops) {
         int pop = 0;
-        Enumeration<UnitHolder> keys = pTroops.keys();
-        while (keys.hasMoreElements()) {
-            UnitHolder unit = keys.nextElement();
-            pop += unit.getPop() * pTroops.get(unit);
+        if (pTroops != null) {
+            Enumeration<UnitHolder> keys = pTroops.keys();
+            while (keys.hasMoreElements()) {
+                UnitHolder unit = keys.nextElement();
+                pop += unit.getPop() * pTroops.get(unit);
+            }
         }
         return pop;
     }

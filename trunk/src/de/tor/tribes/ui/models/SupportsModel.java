@@ -74,9 +74,9 @@ public class SupportsModel extends AbstractTableModel {
             case 1:
                 return elem.getTarget();
             case 2:
-                return elem.getBestSendTime();
+                return new Date(elem.getBestSendTime());
             case 3:
-                return elem.getWorstSendTime();
+                return new Date(elem.getWorstSendTime());
             case 4:
 
                 long sendTime = elem.getBestSendTime();

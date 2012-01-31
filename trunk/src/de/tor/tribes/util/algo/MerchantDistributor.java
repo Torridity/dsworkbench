@@ -33,6 +33,7 @@ public class MerchantDistributor extends Thread {
 
     public MerchantDistributor() {
         setDaemon(true);
+        setName("MerchantDistributor");
         setPriority(MIN_PRIORITY);
     }
 

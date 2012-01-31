@@ -506,6 +506,7 @@ class TimerThread extends Thread {
 
     public TimerThread(ClockFrame pParent) {
         mParent = pParent;
+        setName("ClockTimer");
         setDaemon(true);
     }
 

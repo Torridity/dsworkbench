@@ -1306,7 +1306,6 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         GlobalOptions.setSelectedServer("de43");
         ProfileManager.getSingleton().loadProfiles();
         GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-        System.out.println(GlobalOptions.getSelectedProfile());
         DataHolder.getSingleton().loadData(false);
         GlobalOptions.loadUserData();
 

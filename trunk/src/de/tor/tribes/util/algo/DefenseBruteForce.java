@@ -50,7 +50,7 @@ public class DefenseBruteForce {
                     pParent.logMessage("Unterstützungen für Ziel " + defense.getTarget() + " vollständig");
                     //finished with this target
                     break;
-                } else if (defense.getNeededSupports() == 0) {
+                } else if (defense.getNeededSupports() == defense.getSupports().length) {
                     pParent.logMessage(defense.getTarget() + " benötigt keine Unterstützungen");
                     //finished with this target
                     break;

@@ -12,6 +12,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.InvalidTribe;
 import de.tor.tribes.util.BBSupport;
+import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.xml.JaxenUtils;
 import de.tor.tribes.util.xml.XMLHelper;
 import java.net.URLDecoder;
@@ -774,6 +775,10 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         return result;
     }
 
+    public boolean hasSurvivedDefenders() {
+        return (TroopHelper.getPopulation(getSurvivingDefenders()) == 0);
+    }
+
     /**
      * @param diedDefenders the diedDefenders to set
      */
@@ -1316,8 +1321,8 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         hash = 53 * hash + this.hideLevel;
         return hash;
     }
-    
-      public int cleanupHashCode() {
+
+    public int cleanupHashCode() {
         int hash = 5;
         hash = 53 * hash + (this.won ? 1 : 0);
         hash = 53 * hash + (int) (this.timestamp ^ (this.timestamp >>> 32));

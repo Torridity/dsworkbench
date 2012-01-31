@@ -218,7 +218,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
     public TargetInformation addTarget(Village pTarget) {
         TargetInformation targetInfo = targetInformations.get(pTarget);
         if (targetInfo == null) {
-            targetInfo = new TargetInformation(this, pTarget);
+            targetInfo = new TargetInformation(pTarget);
             targetInformations.put(pTarget, targetInfo);
             addDefense(pTarget);
         }
@@ -393,8 +393,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
             int targetId = Integer.parseInt(defenseInfo.getAttributeValue("target"));
             boolean analyzed = Boolean.parseBoolean(defenseInfo.getAttributeValue("analyzed"));
             Village target = DataHolder.getSingleton().getVillagesById().get(targetId);
-            addDefense(target);
-            DefenseInformation info = getDefenseInformation(target);
+            DefenseInformation info = addDefense(target);
             info.loadFromXml(defenseInfo);
             info.setAnalyzed(analyzed);
         }

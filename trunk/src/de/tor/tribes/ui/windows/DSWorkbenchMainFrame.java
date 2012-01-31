@@ -3658,6 +3658,8 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
 class NotificationHideThread extends Thread {
 
     public NotificationHideThread() {
+        setName("NotificationHideThread");
+        setPriority(MIN_PRIORITY);
         setDaemon(true);
     }
 

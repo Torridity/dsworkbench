@@ -516,6 +516,7 @@ class SearchThread extends Thread {
     private SearchListener mListener;
 
     public SearchThread(String pSearchTerm, SearchListener pListener) {
+        setName("SearchThread");
         setDaemon(true);
         sSearchTerm = pSearchTerm;
         mListener = pListener;

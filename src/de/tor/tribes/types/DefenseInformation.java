@@ -34,6 +34,7 @@ public class DefenseInformation {
     private int neededSupports = 0;
     private int cleanAfter = 0;
     private boolean analyzed = false;
+    private boolean ignored = false;
 
     public DefenseInformation(TargetInformation pInfo) {
         targetInfo = pInfo;
@@ -74,6 +75,14 @@ public class DefenseInformation {
         Defense d = new Defense(this, pSource, pUnit);
         d.setTransferredToBrowser(pTransferred);
         defenses.add(d);
+    }
+
+    public void setIgnored(boolean ignored) {
+        this.ignored = ignored;
+    }
+
+    public boolean isIgnored() {
+        return ignored;
     }
 
     public Defense[] getSupports() {

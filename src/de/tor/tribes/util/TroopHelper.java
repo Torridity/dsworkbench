@@ -27,7 +27,7 @@ public class TroopHelper {
 
     private static Logger logger = Logger.getLogger("TroopHelper");
 
-    public static Hashtable<UnitHolder, Integer> getTroopsForCarriage(DSWorkbenchFarmManager.FARM_CONFIGURATION pConfig, VillageTroopsHolder pTroops, FarmInformation pInfo, boolean pAcceptMaxCarriage) {
+    public static Hashtable<UnitHolder, Integer> getTroopsForCarriage(DSWorkbenchFarmManager.FARM_CONFIGURATION pConfig, VillageTroopsHolder pTroops, FarmInformation pInfo, boolean pAcceptPartlyFarming) {
         Hashtable<UnitHolder, Integer> units = new Hashtable<UnitHolder, Integer>();
         Village source = pTroops.getVillage();
 
@@ -110,7 +110,7 @@ public class TroopHelper {
             carryCapacity += entry.getKey().getCarry() * entry.getValue();
         }
         int resources = pInfo.getResourcesInStorage(System.currentTimeMillis() + DSCalculator.calculateMoveTimeInMillis(source, pInfo.getVillage(), speed));
-        if (resources > carryCapacity && !pAcceptMaxCarriage) {
+        if (resources > carryCapacity && !pAcceptPartlyFarming) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Failed to get enough units to carry '" + resources + "' resources. Max. carriage was '" + carryCapacity + "'");
             }

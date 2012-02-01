@@ -37,8 +37,8 @@ public class SupportsModel extends AbstractTableModel {
         return entries.size();
     }
 
-    public DefenseInformation[] getRows() {
-        return entries.toArray(new DefenseInformation[entries.size()]);
+    public Defense[] getRows() {
+        return entries.toArray(new Defense[entries.size()]);
     }
 
     @Override

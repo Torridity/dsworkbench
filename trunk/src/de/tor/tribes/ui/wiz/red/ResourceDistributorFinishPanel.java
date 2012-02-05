@@ -63,11 +63,13 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  */
 public class ResourceDistributorFinishPanel extends WizardPage {
 
-    private static final String GENERAL_INFO = "Du befindest dich in der Dorfauswahl. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, "
-            + "mit denen du angreifen m&ouml;chtest. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:"
-            + "<ul> <li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>"
-            + "<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Gruppen der Gruppen&uuml;bersicht</li>"
-            + "</ul></html>";
+    private static final String GENERAL_INFO = "<html>Bist du bei diesem Schritt angekommen, hast du abschlie&szlig; die M&ouml;glichkeit, "
+            + "die berechneten Rohstoffe in den Browser zu &uuml;bertragen und abzuschicken. Voraussetzung hierf&uuml;r ist, dass du das "
+            + "DS Workbench Userscript in deinem Browser (Firefox oder Opera) installiert hast. Markiere einfach die Rohstoffe die du "
+            + "&uuml;bertragen m&ouml;chtest in der Tabelle, f&uuml;lle das Klickkonto mit der ben&ouml;tigten Anzahl Klicks auf und "
+            + "klicke auf den Button mit dem Firefox Symbol. Sind es zuviele Transporte um sie auf einmal abzuschicken, kannst du "
+            + "DS Workbench auch schlie&szlig;en, den Rohstoffverteiler sp&auml; erneut starten und die errechneten Transporte im ersten "
+            + "Schritt von deiner Festplatte laden.</html>";
     private static ResourceDistributorFinishPanel singleton = null;
     private ClickAccountPanel clickPanel = null;
     private ProfileQuickChangePanel quickProfilePanel = null;

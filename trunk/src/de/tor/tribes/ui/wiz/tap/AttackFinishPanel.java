@@ -39,15 +39,15 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
+import org.netbeans.spi.wizard.WizardPage;
 import org.netbeans.spi.wizard.WizardPanel;
 import org.netbeans.spi.wizard.WizardPanelNavResult;
 
 /**
- * @TODO Transfer to attack view and implement defense requester
  *
  * @author Torridity
  */
-public class AttackFinishPanel extends javax.swing.JPanel implements WizardPanel {
+public class AttackFinishPanel extends WizardPage {
 
     private static final String GENERAL_INFO = "<html>In diesem abschlie&szlig;enden Schritt werden alle Ergebnisse der Berechnung angezeigt. "
             + "In der Tabelle sind alle Ziele aufgelistet, sowie die prozetuale Anzahl der Angriffe auf jedes Ziel"
@@ -60,6 +60,14 @@ public class AttackFinishPanel extends javax.swing.JPanel implements WizardPanel
             singleton = new AttackFinishPanel();
         }
         return singleton;
+    }
+
+    public static String getDescription() {
+        return "Fertig";
+    }
+
+    public static String getStep() {
+        return "id-attack-finish";
     }
 
     /**

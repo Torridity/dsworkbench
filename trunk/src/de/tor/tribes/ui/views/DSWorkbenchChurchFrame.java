@@ -83,7 +83,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     private static DSWorkbenchChurchFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
     
-    public static DSWorkbenchChurchFrame getSingleton() {
+    public static synchronized DSWorkbenchChurchFrame getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchChurchFrame();
         }

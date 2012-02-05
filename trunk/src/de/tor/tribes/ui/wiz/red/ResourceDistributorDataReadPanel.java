@@ -45,11 +45,12 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  */
 public class ResourceDistributorDataReadPanel extends WizardPage {
 
-    private static final String GENERAL_INFO = "Du befindest dich in der Dorfauswahl. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, "
-            + "mit denen du angreifen m&ouml;chtest. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:"
-            + "<ul> <li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>"
-            + "<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Gruppen der Gruppen&uuml;bersicht</li>"
-            + "</ul></html>";
+    private static final String GENERAL_INFO = "<html>In diesem Schritt musst du die notwendigen Daten aus dem Spiel importieren. "
+            + "Wechsle daf&uml;r im Spiel in die Produktions&uuml;bersicht, markiere die komplette Seite per STRG+A und klicke anschlie&szlig;end "
+            + "auf den gro&szlig;en Button im oberen Bereich des Rohstoffverteilers, um die Daten aus der Zwischenablage zu lesen. Danach "
+            + "m&uuml;ssten alle gefunden Informationen in der Tabelle aufgelistet sein. Sollte das nicht funktionieren, versuche bitte "
+            + "vor dem Kopieren der Produktions&uuml;bersicht alle Scripte im Spiel zu deaktivieren, die Ver&auml;nderungen an dieser "
+            + "&Uuml;bersicht vornehmen. Warst du erfolgreich, kannst du auf 'Weiter' klicken.</html>";
     private static ResourceDistributorDataReadPanel singleton = null;
 
     public static synchronized ResourceDistributorDataReadPanel getSingleton() {

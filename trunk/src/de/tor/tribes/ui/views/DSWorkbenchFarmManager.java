@@ -30,6 +30,8 @@ import java.util.*;
 import java.util.List;
 import java.util.Timer;
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.math.IntRange;
 import org.apache.log4j.ConsoleAppender;
@@ -150,11 +152,14 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         jCTroopsPanel.add(cTroops, BorderLayout.CENTER);
         jRSettingsTab.add(rTroops, BorderLayout.CENTER);
         jXLabel1.setLineWrap(true);
-        /*
-         * jFarmTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-         *
-         * @Override public void valueChanged(ListSelectionEvent e) { updateSelection(); } });
-         */
+
+        jFarmTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                showInfo(jFarmTable.getSelectedRowCount() + " Farm(en) gewählt");
+            }
+        });
     }
 
     /*
@@ -274,7 +279,6 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                     } catch (Exception ex) {
                         showInfo("Eingabe für Farmradius ungültig");
                     }
-                    // updateVillagePanel();
                 }
             }
         });
@@ -426,24 +430,9 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         });
 
         miscPane.getContentPane().add(resetLockedStatus);
-        /*
-         * villagePanel = new VillageOverviewMapPanel(); villagePanel.setOptimalSize(1);
-         */
-        // updateVillagePanel();
-        centerPanel.setupTaskPane(clickAccount, farmSourcePane, farmPane, miscPane);
+         centerPanel.setupTaskPane(clickAccount, farmSourcePane, farmPane, miscPane);
     }
-
-    /*
-     * private void updateVillagePanel() { villagePanel.reset(); for (Village v :
-     * GlobalOptions.getSelectedProfile().getTribe().getVillageList()) { villagePanel.addVillage(v, Color.BLACK); }
-     *
-     * for (ManageableType info : FarmManager.getSingleton().getAllElements()) { villagePanel.addVillage(((FarmInformation)
-     * info).getVillage(), Color.WHITE); } int rows[] = jFarmTable.getSelectedRows(); if (rows == null || rows.length == 0) { return; }
-     *
-     * for (int row : rows) { FarmInformation info = (FarmInformation)
-     * FarmManager.getSingleton().getAllElements().get(jFarmTable.convertRowIndexToModel(row)); villagePanel.addVillage(info.getVillage(),
-     * Color.RED); } }
-     */
+   
     /**
      * Delete all selected farms
      */
@@ -469,13 +458,10 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         }
 
         FarmManager.getSingleton().revalidate(true);
-
         showInfo(rows.length + " Farm(en) gelöscht");
-        //   updateVillagePanel();
     }
 
     private void selectLastFarm() {
-
         Village last = FarmManager.getSingleton().getLastUpdatedFarm();
         if (last == null) {
             showInfo("Keine letzte Farm bekannt");
@@ -489,6 +475,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                 jFarmTable.getSelectionModel().clearSelection();
                 jFarmTable.getSelectionModel().addSelectionInterval(i, i);
                 jFarmTable.scrollRowToVisible(i);
+                jFarmTable.requestFocus();
                 break;
             }
         }
@@ -1390,6 +1377,9 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
     @Override
     public void resetView() {
+        aTroops.setupFarm(true);
+        bTroops.setupFarm(true);
+        cTroops.setupFarm(true);
     }
 
     @Override

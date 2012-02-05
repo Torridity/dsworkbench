@@ -35,7 +35,6 @@ public class AttackIGMSender {
             }
         }
 
-        //@TODO Switch to BB-Template editor for IGM attacks
         Enumeration<Tribe> tribeKeys = attacks.keys();
         String sUrl = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
         String messageStart = "[i](Diese IGM wurde automatisch durch DS Workbench generiert)[/i]\n\n";
@@ -58,8 +57,6 @@ public class AttackIGMSender {
                 //9 messages + rest
                 String warning = "An Spieler " + t + " müssten mehr als 10 IGMs verschickt werden.\n";
                 warning += "Sende entweder mehr Angriffe pro IGM oder teile das Versenden auf mehrere Vorgänge auf.";
-                //JOptionPaneHelper.showWarningBox(jSendAttacksIGMDialog, warning, "Warnung");
-                // return;
                 return new SenderResult(ID_ERROR_WHILE_SUBMITTING, warning);
             }
 

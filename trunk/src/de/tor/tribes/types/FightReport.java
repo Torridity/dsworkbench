@@ -10,6 +10,8 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.php.LuckViewInterface;
+import de.tor.tribes.php.UnitTableInterface;
 import de.tor.tribes.types.ext.InvalidTribe;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.TroopHelper;
@@ -46,102 +48,50 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         String targetVal = getTargetVillage().toBBCode();
         SimpleDateFormat d = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
         String sendDateVal = d.format(new Date(getTimestamp()));
-        String resultVal = "";
-        if (isWon()) {
-            resultVal = "Der Angreifer hat gewonnen";
-        } else {
-            resultVal = "Der Verteidiger hat gewonnen";
-        }
+        String resultVal = (isWon()) ? "Der Angreifer hat gewonnen" : "Der Verteidiger hat gewonnen";
 
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(1);
         nf.setMinimumFractionDigits(1);
 
-        String luckVal = "[img]http://dsextra.net/ic/luck_" + nf.format(getLuck()) + "[/img] " + nf.format(getLuck()) + "%";
+        String luckVal = "[img]" + LuckViewInterface.createLuckIndicator(getLuck()) + "[/img] " + nf.format(getLuck()) + "%";
         nf.setMinimumFractionDigits(0);
         nf.setMinimumFractionDigits(0);
         String moraleVal = nf.format(getMoral()) + " %";
 
         String sourceVal = getSourceVillage().toBBCode();
-        String attackerTroopsVal = "";
-        if (!areAttackersHidden()) {
-
-            attackerTroopsVal = "http://dsextra.net/ic/knights_";
-            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                Integer amount = getAttackers().get(unit);
-                attackerTroopsVal += amount + "_";
-            }
-            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                Integer amount = getDiedAttackers().get(unit);
-                attackerTroopsVal += amount + "_";
-            }
-            attackerTroopsVal = attackerTroopsVal.substring(0, attackerTroopsVal.lastIndexOf("_"));
-            attackerTroopsVal = "[img]" + attackerTroopsVal + "[/img]";
-        } else {
-            attackerTroopsVal = "Durch Besitzer des Berichts verborgen";
-        }
-
+        String attackerTroopsVal = (areAttackersHidden())
+                ? "Durch Besitzer des Berichts verborgen"
+                : "[img]" + UnitTableInterface.createAttackerUnitTableLink(getAttackers(), getDiedAttackers()) + "[/img]";
 
         String defenderVal = getDefender().toBBCode();
-        String defenderTroopsVal = "";
-        if (!wasLostEverything()) {
-            defenderTroopsVal = "http://dsextra.net/ic/knights_";
-            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                Integer amount = getDefenders().get(unit);
-                defenderTroopsVal += amount + "_";
-            }
-            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                Integer amount = getDiedDefenders().get(unit);
-                defenderTroopsVal += amount + "_";
-            }
-            defenderTroopsVal = defenderTroopsVal.substring(0, defenderTroopsVal.lastIndexOf("_"));
-            defenderTroopsVal = "[img]" + defenderTroopsVal + "[/img]";
-        } else {
-            defenderTroopsVal = "Keiner deiner Kämpfer ist lebend zurückgekehrt.\nEs konnten keine Informationen über die Truppenstärke des Gegners erlangt werden.";
-        }
+        String defenderTroopsVal = (wasLostEverything())
+                ? "Keiner deiner Kämpfer ist lebend zurückgekehrt.\nEs konnten keine Informationen über die Truppenstärke des Gegners erlangt werden."
+                : "[img]" + UnitTableInterface.createDefenderUnitTableLink(getDefenders(), getDiedDefenders()) + "[/img]";
 
-        boolean wasAdditionTroops = false;
-        String troopsEnRouteVal = "";
-        if (whereDefendersOnTheWay()) {
-            wasAdditionTroops = true;
-            troopsEnRouteVal = "http://dsextra.net/ic/knights_";
-            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                Integer amount = getDefendersOnTheWay().get(unit);
-                troopsEnRouteVal += amount + "_";
-            }
-            troopsEnRouteVal = troopsEnRouteVal.substring(0, troopsEnRouteVal.lastIndexOf("_"));
-            troopsEnRouteVal = "[b]Truppen des Verteidigers, die unterwegs waren[/b]\n\n" + "[img]" + troopsEnRouteVal + "[/img]";
-        }
+        String troopsEnRouteVal = (whereDefendersOnTheWay())
+                ? "[b]Truppen des Verteidigers, die unterwegs waren[/b]\n\n" + "[img]" + UnitTableInterface.createAttackerUnitTableLink(getDefendersOnTheWay()) + "[/img]"
+                : "";
         String troopsOutsideVal = "";
         if (whereDefendersOutside()) {
-            wasAdditionTroops = true;
             Enumeration<Village> targetKeys = getDefendersOutside().keys();
             while (targetKeys.hasMoreElements()) {
                 Village target = targetKeys.nextElement();
                 troopsOutsideVal += target.toBBCode() + "\n\n";
-                String graphUrl = "http://dsextra.net/ic/knights_";
-                for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                    Integer amount = getDefendersOutside().get(target).get(unit);
-                    graphUrl += amount + "_";
-                }
-                graphUrl = graphUrl.substring(0, graphUrl.lastIndexOf("_"));
-                troopsOutsideVal += "[img]" + graphUrl + "[/img]\n\n";
+                troopsOutsideVal += "[img]" + UnitTableInterface.createAttackerUnitTableLink(getDefendersOutside().get(target)) + "[/img]\n\n";
             }
         }
 
-        String loyalityChangeVal = "";
-        if (wasSnobAttack()) {
-            loyalityChangeVal = "[b]Veränderung der Zustimmung:[/b] Zustimmung gesunken von " + nf.format(getAcceptanceBefore()) + " auf " + getAcceptanceAfter();
-        }
+        String loyalityChangeVal = (wasSnobAttack())
+                ? "[b]Veränderung der Zustimmung:[/b] Zustimmung gesunken von " + nf.format(getAcceptanceBefore()) + " auf " + getAcceptanceAfter()
+                : "";
 
-        String wallChangeVal = "";
-        if (wasWallDamaged()) {
-            wallChangeVal = "[b]Schaden durch Rammen:[/b] Wall beschädigt von Level " + getWallBefore() + " auf Level " + getWallAfter();
-        }
-        String cataChangeVal = "";
-        if (wasBuildingDamaged()) {
-            cataChangeVal = "[b]Schaden durch Katapultbeschuss:[/b] " + getAimedBuilding() + " beschädigt von Level " + getBuildingBefore() + " auf Level " + getBuildingAfter();
-        }
+        String wallChangeVal = (wasWallDamaged())
+                ? "[b]Schaden durch Rammen:[/b] Wall beschädigt von Level " + getWallBefore() + " auf Level " + getWallAfter()
+                : "";
+        String cataChangeVal = (wasBuildingDamaged())
+                ? "[b]Schaden durch Katapultbeschuss:[/b] " + getAimedBuilding() + " beschädigt von Level " + getBuildingBefore() + " auf Level " + getBuildingAfter()
+                : "";
         return new String[]{attackerVal, sourceVal, defenderVal, targetVal, sendDateVal, resultVal, luckVal, moraleVal, attackerTroopsVal, defenderTroopsVal, troopsOutsideVal, troopsEnRouteVal, loyalityChangeVal, wallChangeVal, cataChangeVal};
     }
 
@@ -776,7 +726,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     }
 
     public boolean hasSurvivedDefenders() {
-        return (TroopHelper.getPopulation(getSurvivingDefenders()) == 0);
+        return (TroopHelper.getPopulation(getSurvivingDefenders()) != 0);
     }
 
     /**

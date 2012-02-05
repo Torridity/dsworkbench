@@ -55,7 +55,7 @@ public class DefensePlanerWizard extends WizardPanelProvider {
     protected JComponent createPanel(WizardController wc, String string, Map map) {
         if (string.equals(ID_WELCOME)) {
             return WelcomePanel.getSingleton();
-        } else if (string.equals(ID_ANALYSE)) {
+        } /*else if (string.equals(ID_ANALYSE)) {
             DefenseAnalysePanel.getSingleton().setController(wc);
             return DefenseAnalysePanel.getSingleton();
         } else if (string.equals(ID_VILLAGES)) {
@@ -69,7 +69,7 @@ public class DefensePlanerWizard extends WizardPanelProvider {
             return DefenseCalculationSettingsPanel.getSingleton();
         } else if (string.equals(ID_FINISH)) {
             return DefenseFinishPanel.getSingleton();
-        }
+        }*/
         return null;
     }
 

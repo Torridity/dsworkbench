@@ -14,10 +14,6 @@ import de.tor.tribes.util.*;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
 import org.apache.commons.lang.math.IntRange;
@@ -338,6 +334,7 @@ public class FarmInformation extends ManageableType {
         }
 
         if (pReport.wasLostEverything() || pReport.hasSurvivedDefenders()) {
+            System.out.println(pReport.wasLostEverything() + " - " +pReport.hasSurvivedDefenders());
             logger.debug("Changing farm status to due to total loss or found troops");
             setStatus(FARM_STATUS.TROOPS_FOUND);
         } else {

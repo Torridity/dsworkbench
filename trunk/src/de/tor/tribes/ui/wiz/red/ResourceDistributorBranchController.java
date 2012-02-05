@@ -19,10 +19,12 @@ public class ResourceDistributorBranchController extends WizardBranchController 
 
     private static final WizardResultProducer ERGEBNIS = new WizardResultProducer() {
 
+        @Override
         public Object finish(Map wizardData) throws WizardException {
             return wizardData;
         }
 
+        @Override
         public boolean cancel(Map settings) {
             return true;
         }

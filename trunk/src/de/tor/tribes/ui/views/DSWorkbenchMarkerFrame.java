@@ -254,7 +254,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         return "marker.view";
     }
 
-    public static DSWorkbenchMarkerFrame getSingleton() {
+    public static synchronized DSWorkbenchMarkerFrame getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchMarkerFrame();
         }

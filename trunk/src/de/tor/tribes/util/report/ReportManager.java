@@ -11,6 +11,7 @@ import de.tor.tribes.types.FarmInformation;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.SystrayHelper;
 import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
@@ -113,6 +114,7 @@ public class ReportManager extends GenericManager<FightReport> {
             if (!filtered) {
                 super.addManagedElement(pElement);
             }
+            SystrayHelper.showInfoMessage("Bericht erfolgreich eingelesen");
         }
     }
 
@@ -140,6 +142,7 @@ public class ReportManager extends GenericManager<FightReport> {
             if (!filtered) {
                 super.addManagedElement(pGroup, pElement);
             }
+            SystrayHelper.showInfoMessage("Bericht erfolgreich eingelesen");
         } else {//add element without filtering
             super.addManagedElement(pGroup, pElement);
         }
@@ -291,13 +294,15 @@ public class ReportManager extends GenericManager<FightReport> {
             Iterator<String> setKeys = getGroupIterator();
             while (setKeys.hasNext()) {
                 String set = setKeys.next();
-                b.append("<reportSet name=\"").append(set).append("\">\n");
-                b.append("<reports>\n");
-                for (ManageableType t : getAllElements(set)) {
-                    b.append(t.toXml()).append("\n");
+                if (!set.equals(FARM_SET) || !Boolean.parseBoolean(GlobalOptions.getProperty("delete.farm.reports.on.exit"))) {
+                    b.append("<reportSet name=\"").append(set).append("\">\n");
+                    b.append("<reports>\n");
+                    for (ManageableType t : getAllElements(set)) {
+                        b.append(t.toXml()).append("\n");
+                    }
+                    b.append("</reports>\n");
+                    b.append("</reportSet>\n");
                 }
-                b.append("</reports>\n");
-                b.append("</reportSet>\n");
             }
             b.append("</reportSets>");
             //writing data to file

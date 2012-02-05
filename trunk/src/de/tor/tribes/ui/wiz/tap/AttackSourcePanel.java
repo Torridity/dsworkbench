@@ -46,24 +46,20 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.netbeans.spi.wizard.Wizard;
-import org.netbeans.spi.wizard.WizardController;
-import org.netbeans.spi.wizard.WizardPanel;
-import org.netbeans.spi.wizard.WizardPanelNavResult;
+import org.netbeans.spi.wizard.*;
 
 /**
  *
  * @author Torridity
  */
-public class AttackSourcePanel extends javax.swing.JPanel implements WizardPanel {
+public class AttackSourcePanel extends WizardPage {
 
-    private static final String GENERAL_INFO = "Du befindest dich in der Dorfauswahl. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, "
+    private static final String GENERAL_INFO = "<html>Du befindest dich in der Dorfauswahl. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, "
             + "mit denen du angreifen m&ouml;chtest. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:"
             + "<ul> <li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>"
             + "<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Gruppen der Gruppen&uuml;bersicht</li>"
             + "</ul></html>";
     private static AttackSourcePanel singleton = null;
-    private WizardController controller = null;
     private VillageSelectionPanel villageSelectionPanel = null;
     private VillageOverviewMapPanel overviewPanel = null;
 
@@ -72,10 +68,6 @@ public class AttackSourcePanel extends javax.swing.JPanel implements WizardPanel
             singleton = new AttackSourcePanel();
         }
         return singleton;
-    }
-
-    public void setController(WizardController pWizCtrl) {
-        controller = pWizCtrl;
     }
 
     /**
@@ -156,6 +148,14 @@ public class AttackSourcePanel extends javax.swing.JPanel implements WizardPanel
         jInfoTextPane.setText(GENERAL_INFO);
         overviewPanel = new VillageOverviewMapPanel();
         jPanel2.add(overviewPanel, BorderLayout.CENTER);
+    }
+
+    public static String getDescription() {
+        return "Herkunft";
+    }
+
+    public static String getStep() {
+        return "id-attack-source";
     }
 
     /**
@@ -352,7 +352,7 @@ public class AttackSourcePanel extends javax.swing.JPanel implements WizardPanel
             model.addRow(v, villageSelectionPanel.getSelectedUnit(), villageSelectionPanel.isFake());
         }
         if (model.getRowCount() > 0) {
-            controller.setProblem(null);
+            setProblem(null);
         }
         jStatusLabel.setText(pVillages.length + " Dorf/Dörfer eingefügt");
         updateOverview(false);
@@ -386,7 +386,7 @@ public class AttackSourcePanel extends javax.swing.JPanel implements WizardPanel
             jStatusLabel.setText(selection.length + " Dorf/Dörfer entfernt");
             updateOverview(true);
             if (getModel().getRowCount() == 0) {
-                controller.setProblem("Keine Dörfer gewählt");
+                setProblem("Keine Dörfer gewählt");
             }
         }
     }
@@ -438,7 +438,7 @@ public class AttackSourcePanel extends javax.swing.JPanel implements WizardPanel
     @Override
     public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
         if (getAllElements().length == 0) {
-            controller.setProblem("Keine Dörfer gewählt");
+            setProblem("Keine Dörfer gewählt");
             return WizardPanelNavResult.PROCEED;
         }
         AttackSourceFilterPanel.getSingleton().setup();

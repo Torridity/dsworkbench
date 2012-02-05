@@ -13,6 +13,7 @@ package de.tor.tribes.ui.windows;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.wiz.tap.AttackTargetPanel;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.SplitSetHelper;
@@ -330,7 +331,7 @@ public class SupportRefillDialog extends javax.swing.JDialog {
                 int supports = Math.max(Math.max(Math.max(Math.max(spearSupports, swordSupports), archerSupports), spySupports), heavySupports);
                 if (supports != 0) {
                     //@TODO support refill to DefensePlanner!!!
-                    //DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddTargetEvent(village, supports);
+                   // AttackTargetPanel.getSingleton().addVgetAttackPlaner().fireAddTargetEvent(village, supports);
                 }
             }
            /* DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true);

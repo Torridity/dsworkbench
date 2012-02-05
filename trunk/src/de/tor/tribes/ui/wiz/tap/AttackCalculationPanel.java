@@ -35,16 +35,13 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
-import org.netbeans.spi.wizard.Wizard;
-import org.netbeans.spi.wizard.WizardController;
-import org.netbeans.spi.wizard.WizardPanel;
-import org.netbeans.spi.wizard.WizardPanelNavResult;
+import org.netbeans.spi.wizard.*;
 
 /**
  *
  * @author Torridity
  */
-public class AttackCalculationPanel extends javax.swing.JPanel implements WizardPanel {
+public class AttackCalculationPanel extends WizardPage {
 
     private static final String GENERAL_INFO = "Bist du hier angekommen, steht einer Berechnung der Angriffe nichts mehr im Wege. "
             + "Im oberen Bereich werden noch einmal Informationen zu den bisherigen Einstellungen angezeigt, im mittleren Bereich "
@@ -52,7 +49,6 @@ public class AttackCalculationPanel extends javax.swing.JPanel implements Wizard
             + "Mit einem Klick auf 'Angriffe berechnen' startet die Berechnung."
             + "</html>";
     private static AttackCalculationPanel singleton = null;
-    private WizardController controller = null;
     private AbstractAttackAlgorithm calculator = null;
     private SimpleDateFormat dateFormat = null;
 
@@ -78,8 +74,12 @@ public class AttackCalculationPanel extends javax.swing.JPanel implements Wizard
         dateFormat = new SimpleDateFormat("HH:mm:ss");
     }
 
-    public void setController(WizardController pWizCtrl) {
-        controller = pWizCtrl;
+    public static String getDescription() {
+        return "Berechnung";
+    }
+
+    public static String getStep() {
+        return "id-attack-calculation";
     }
 
     /**
@@ -385,7 +385,7 @@ public class AttackCalculationPanel extends javax.swing.JPanel implements Wizard
 
         jCalculateButton.setText("Abbrechen");
         calculator.start();
-        controller.setBusy(true);
+        setBusy(true);
         //wait until calculation is running
         try {
             Thread.sleep(20);
@@ -487,11 +487,11 @@ public class AttackCalculationPanel extends javax.swing.JPanel implements Wizard
     }
 
     public void notifyCalculationFinished() {
-        controller.setBusy(false);
+        setBusy(false);
         if (calculator.hasResults()) {
-            controller.setProblem(null);
+            setProblem(null);
         } else {
-            controller.setProblem("Berechnung erzielte keine Ergebnisse");
+            setProblem("Berechnung erzielte keine Ergebnisse");
         }
         jCalculateButton.setText("Angriffe berechnen");
     }

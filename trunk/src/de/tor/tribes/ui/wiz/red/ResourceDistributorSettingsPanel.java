@@ -37,11 +37,12 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  */
 public class ResourceDistributorSettingsPanel extends WizardPage {
 
-    private static final String GENERAL_INFO = "Du befindest dich in der Dorfauswahl. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, "
-            + "mit denen du angreifen m&ouml;chtest. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:"
-            + "<ul> <li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>"
-            + "<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Gruppen der Gruppen&uuml;bersicht</li>"
-            + "</ul></html>";
+    private static final String GENERAL_INFO = "<html>In diesem Schritt kannst du einstellen, welche der eingelesenen D&ouml;rfer Empf&auml;nger und "
+            + "welche D&ouml;rfer Lieferanten von Rohstoffen sind. Die Entscheidung kann entweder basierend auf dem F&uuml;llstand des Bauernhofes, "
+            + "der Zugeh&ouml;rigkeit zu bestimmten Gruppen oder durch die Auswahl einzelner D&ouml;rfer geschehen. In jedem Fall musst du nach der "
+            + "Einstellung der Auswahlkriterien den Button 'Anwenden' klicken, um die &Auml;nderungen durchzuf&uuml;hren. Es wird empfohlen, immer "
+            + "nur ein Kriterium zu verweden, da sich verschiedene Kriterien gegenseitig ausschlie&szlig;en k&ouml;nnen und das Endergebnis dadurch "
+            + "schwer nachzuvollziehen ist.</html>";
     private static ResourceDistributorSettingsPanel singleton = null;
     private GroupSelectionList groupList = null;
 

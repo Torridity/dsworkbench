@@ -4,10 +4,7 @@
  */
 package de.tor.tribes.ui.models;
 
-import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -18,23 +15,29 @@ import org.apache.commons.collections.Predicate;
  *
  * @author Torridity
  */
-public class TAPSourceTableModel extends AbstractTableModel {
+public class REFTargetTableModel extends AbstractTableModel {
 
     private String[] columnNames = new String[]{
-        "Spieler", "Dorf", "Einheit", "Fake"
+        "Dorf"
     };
-    private Class[] types = new Class[]{
-        Tribe.class, Village.class, UnitHolder.class, Boolean.class
+    Class[] types = new Class[]{
+        Village.class
     };
-    private final List<TAPAttackSourceElement> elements = new LinkedList<TAPAttackSourceElement>();
+    private final List<Village> elements = new LinkedList<Village>();
 
-    public TAPSourceTableModel() {
-        super();
-    }
+    public void addRow(final Village pVillage) {
+        Object result = CollectionUtils.find(elements, new Predicate() {
 
-    public void addRow(final Village pVillage, UnitHolder pUnit, boolean pFake) {
-        elements.add(new TAPAttackSourceElement(pVillage, pUnit, pFake));
-        fireTableDataChanged();
+            @Override
+            public boolean evaluate(Object o) {
+                return ((Village) o).equals(pVillage);
+            }
+        });
+
+        if (result == null) {
+            elements.add(pVillage);
+            fireTableDataChanged();
+        }
     }
 
     @Override
@@ -65,7 +68,7 @@ public class TAPSourceTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    public TAPAttackSourceElement getRow(int row) {
+    public Village getRow(int row) {
         return elements.get(row);
     }
 
@@ -74,16 +77,10 @@ public class TAPSourceTableModel extends AbstractTableModel {
         if (elements == null || elements.size() - 1 < row) {
             return null;
         }
-        TAPAttackSourceElement element = elements.get(row);
+        Village element = elements.get(row);
         switch (column) {
-            case 0:
-                return element.getVillage().getTribe();
-            case 1:
-                return element.getVillage();
-            case 2:
-                return element.getUnit();
             default:
-                return element.isFake();
+                return element;
         }
     }
 

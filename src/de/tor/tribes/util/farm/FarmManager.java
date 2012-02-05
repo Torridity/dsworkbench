@@ -18,6 +18,8 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.SystrayHelper;
+import de.tor.tribes.util.generator.ui.ReportGenerator;
 import de.tor.tribes.util.report.ReportManager;
 import java.awt.Point;
 import java.awt.geom.Ellipse2D;
@@ -83,6 +85,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
             logger.debug("Updating farm information for farm " + info.getVillage());
             lastUpdatedFarm = info.getVillage();
             info.updateFromReport(pReport);
+            SystrayHelper.showInfoMessage("Farminformationen für " + info.getVillage() + " aktualisiert");
         }
     }
 

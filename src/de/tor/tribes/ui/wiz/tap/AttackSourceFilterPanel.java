@@ -40,16 +40,13 @@ import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.netbeans.spi.wizard.Wizard;
-import org.netbeans.spi.wizard.WizardController;
-import org.netbeans.spi.wizard.WizardPanel;
-import org.netbeans.spi.wizard.WizardPanelNavResult;
+import org.netbeans.spi.wizard.*;
 
 /**
  *
  * @author Torridity
  */
-public class AttackSourceFilterPanel extends javax.swing.JPanel implements WizardPanel {
+public class AttackSourceFilterPanel extends WizardPage {
 
     private static final String GENERAL_INFO = "Du befindest dich in der Filterauswahl. Hier kannst du vorher gew&auml;hlte Herkunftsd&ouml;rfer herausfiltern, "
             + "wenn sie nicht bestimmten Kriterien entsprechen. M&ouml;gliche Filterkriterien sind:"
@@ -62,7 +59,6 @@ public class AttackSourceFilterPanel extends javax.swing.JPanel implements Wizar
             + "Herausgefilterte D&ouml;rfer sind dann in der Tabelle markiert. Unter der Tabelle siehst du die genaue Anzahl der D&ouml;rfer, die herausgefiltert wurden."
             + "</html>";
     private static AttackSourceFilterPanel singleton = null;
-    private WizardController controller = null;
     private TroopFilterDialog troopFilterDialog = null;
     private VillageOverviewMapPanel overviewPanel = null;
 
@@ -108,8 +104,12 @@ public class AttackSourceFilterPanel extends javax.swing.JPanel implements Wizar
         jPanel2.add(overviewPanel, BorderLayout.CENTER);
     }
 
-    public void setController(WizardController pWizCtrl) {
-        controller = pWizCtrl;
+    public static String getDescription() {
+        return "Filterung";
+    }
+
+    public static String getStep() {
+        return "id-attack-source-filter";
     }
 
     /**
@@ -529,13 +529,13 @@ public class AttackSourceFilterPanel extends javax.swing.JPanel implements Wizar
             }
         }
 
-        if (controller != null) {
-            if (ignoreCount == pAllElements.size()) {
-                controller.setProblem("Alle Dörfer werden ignoriert");
-            } else {
-                controller.setProblem(null);
-            }
+
+        if (ignoreCount == pAllElements.size()) {
+            setProblem("Alle Dörfer werden ignoriert");
+        } else {
+            setProblem(null);
         }
+
         jLabel2.setText(ignoreCount + " Dörfer werden ignoriert");
     }
 
@@ -588,7 +588,7 @@ public class AttackSourceFilterPanel extends javax.swing.JPanel implements Wizar
     @Override
     public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
         if (getFilteredElements().length == 0) {
-            controller.setProblem("Alle Dörfer werden ignoriert");
+            setProblem("Alle Dörfer werden ignoriert");
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
 

@@ -1456,22 +1456,25 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             } catch (Exception e) {
                 JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren in die Zwischenablage", "Fehler");
             }
-        } //@TODO fix context entry to attack planer
-        /*
-         * else if (evt.getSource() == jAllToAttackPlanerAsSourceItem) { if (markedVillages.isEmpty()) {
-         * JOptionPaneHelper.showInformationBox(this, "Keine Dörfer markiert.", "Information"); return; } if
-         * (!DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isVisible()) { //show attack planer to allow adding data
-         * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setup();
-         * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true); }
-         * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddSourcesEvent(markedVillages);
-         * JOptionPaneHelper.showInformationBox(this, "Dörfer in Angriffsplaner eingefügt", "Information"); } else if (evt.getSource() ==
-         * jAllToAttackPlanerAsTargetItem) { if (markedVillages.isEmpty()) { JOptionPaneHelper.showInformationBox(this, "Keine Dörfer
-         * markiert.", "Information"); return; } if (!DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isVisible()) { //show attack
-         * planer to allow adding data DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setup();
-         * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true); }
-         * DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddTargetsEvent(markedVillages);
-         * JOptionPaneHelper.showInformationBox(this, "Dörfer in Angriffsplaner eingefügt", "Information"); }
-         */ else if (evt.getSource() == jAllCreateNoteItem) {
+        } else if (evt.getSource() == jAllToAttackPlanerAsSourceItem) {
+            if (markedVillages == null || markedVillages.isEmpty()) {
+                JOptionPaneHelper.showInformationBox(this,
+                        "Keine Dörfer gewählt.", "Information");
+                return;
+            }
+            AttackSourcePanel.getSingleton().addVillages(markedVillages.toArray(new Village[]{}));
+            TacticsPlanerWizard.show();
+            JOptionPaneHelper.showInformationBox(this, "Dörfer in Angriffsplaner eingefügt", "Information");
+        } else if (evt.getSource() == jAllToAttackPlanerAsTargetItem) {
+            if (markedVillages == null || markedVillages.isEmpty()) {
+                JOptionPaneHelper.showInformationBox(this,
+                        "Keine Dörfer gewählt.", "Information");
+                return;
+            }
+            AttackTargetPanel.getSingleton().addVillages(markedVillages.toArray(new Village[]{}));
+            TacticsPlanerWizard.show();
+            JOptionPaneHelper.showInformationBox(this, "Dörfer in Angriffsplaner eingefügt", "Information");
+        } else if (evt.getSource() == jAllCreateNoteItem) {
             if (markedVillages.isEmpty()) {
                 JOptionPaneHelper.showInformationBox(this, "Keine Dörfer markiert.", "Information");
                 return;

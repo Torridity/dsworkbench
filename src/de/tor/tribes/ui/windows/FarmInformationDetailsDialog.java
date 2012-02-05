@@ -96,8 +96,8 @@ public class FarmInformationDetailsDialog extends javax.swing.JDialog {
         jTextPane1 = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(370, 440));
-        setPreferredSize(new java.awt.Dimension(370, 440));
+        setMinimumSize(new java.awt.Dimension(370, 600));
+        setPreferredSize(new java.awt.Dimension(370, 600));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N

@@ -50,16 +50,13 @@ import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.netbeans.spi.wizard.Wizard;
-import org.netbeans.spi.wizard.WizardController;
-import org.netbeans.spi.wizard.WizardPanel;
-import org.netbeans.spi.wizard.WizardPanelNavResult;
+import org.netbeans.spi.wizard.*;
 
 /**
  *
  * @author Torridity
  */
-public class DefenseSourcePanel extends javax.swing.JPanel implements WizardPanel {
+public class DefenseSourcePanel extends WizardPage {
 
     private static final String GENERAL_INFO = "Du befindest dich in der Dorfauswahl. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, "
             + "mit denen du verteidigen m&ouml;chtest. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:"
@@ -67,7 +64,6 @@ public class DefenseSourcePanel extends javax.swing.JPanel implements WizardPane
             + "<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Gruppen der Gruppen&uuml;bersicht</li>"
             + "</ul> </html>";
     private static DefenseSourcePanel singleton = null;
-    private WizardController controller = null;
     private VillageSelectionPanel villageSelectionPanel = null;
     private VillageOverviewMapPanel overviewPanel = null;
 
@@ -78,8 +74,12 @@ public class DefenseSourcePanel extends javax.swing.JPanel implements WizardPane
         return singleton;
     }
 
-    public void setController(WizardController pWizCtrl) {
-        controller = pWizCtrl;
+    public static String getDescription() {
+        return "Herkunft";
+    }
+
+    public static String getStep() {
+        return "id-defense-source";
     }
 
     /**
@@ -348,7 +348,7 @@ public class DefenseSourcePanel extends javax.swing.JPanel implements WizardPane
         }
 
         if (model.getRowCount() > 0) {
-            controller.setProblem(null);
+            setProblem(null);
             model.fireTableDataChanged();
         }
         overviewPanel.repaint();
@@ -404,7 +404,7 @@ public class DefenseSourcePanel extends javax.swing.JPanel implements WizardPane
                 getModel().removeRow(rows.get(i));
             }
             if (getModel().getRowCount() == 0) {
-                controller.setProblem("Keine Dörfer gewählt");
+                setProblem("Keine Dörfer gewählt");
             }
             overviewPanel.repaint();
         }
@@ -445,7 +445,7 @@ public class DefenseSourcePanel extends javax.swing.JPanel implements WizardPane
     @Override
     public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
         if (getModel().getRowCount() == 0) {
-            controller.setProblem("Keine Dörfer gewählt");
+            setProblem("Keine Dörfer gewählt");
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
         List<SupportSourceElement> result = new LinkedList<SupportSourceElement>();
@@ -457,7 +457,7 @@ public class DefenseSourcePanel extends javax.swing.JPanel implements WizardPane
             supportCount += elem.getSupports();
         }
         if (supportCount == 0) {
-            controller.setProblem("Keine Unterstützungen verfügbar");
+            setProblem("Keine Unterstützungen verfügbar");
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
         DefenseFilterPanel.getSingleton().setup(result.toArray(new SupportSourceElement[result.size()]));

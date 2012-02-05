@@ -37,10 +37,7 @@ import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.panels.MinimapPanel;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
-import de.tor.tribes.util.BrowserCommandSender;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.ProfileManager;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
 import java.awt.Component;
 import java.awt.event.ActionListener;
@@ -407,7 +404,33 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             jClipboardSound.setSelected(true);
             GlobalOptions.addProperty("clipboard.notification", Boolean.toString(true));
         }
+        try {
+            jLabel24.setEnabled(SystrayHelper.isSystraySupported());
+            jEnableSystray.setEnabled(SystrayHelper.isSystraySupported());
+            String val = GlobalOptions.getProperty("systray.enabled");
+            if (val != null) {
+                jEnableSystray.setSelected(Boolean.parseBoolean(val));
+            } else {
+                jEnableSystray.setSelected(SystrayHelper.isSystraySupported());
+                GlobalOptions.addProperty("systray.enabled", Boolean.toString(SystrayHelper.isSystraySupported()));
+            }
+        } catch (Exception e) {
+            jClipboardSound.setSelected(SystrayHelper.isSystraySupported());
+            GlobalOptions.addProperty("systray.enabled", Boolean.toString(SystrayHelper.isSystraySupported()));
+        }
 
+        try {
+            String val = GlobalOptions.getProperty("delete.farm.reports.on.exit");
+            if (val != null) {
+                jDeleteFarmReportsOnExit.setSelected(Boolean.parseBoolean(val));
+            } else {
+                jDeleteFarmReportsOnExit.setSelected(true);
+                GlobalOptions.addProperty("delete.farm.reports.on.exit", Boolean.toString(true));
+            }
+        } catch (Exception e) {
+            jDeleteFarmReportsOnExit.setSelected(true);
+            GlobalOptions.addProperty("delete.farm.reports.on.exit", Boolean.toString(true));
+        }
         try {
             String val = GlobalOptions.getProperty("max.farm.space");
             if (val != null) {
@@ -804,6 +827,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jHalfSizeMainMenu = new javax.swing.JCheckBox();
         jLabel8 = new javax.swing.JLabel();
         jClipboardSound = new javax.swing.JCheckBox();
+        jLabel20 = new javax.swing.JLabel();
+        jDeleteFarmReportsOnExit = new javax.swing.JCheckBox();
+        jLabel24 = new javax.swing.JLabel();
+        jEnableSystray = new javax.swing.JCheckBox();
         jOKButton = new javax.swing.JButton();
         jCancelButton = new javax.swing.JButton();
         jCreateAccountButton = new javax.swing.JButton();
@@ -2448,7 +2475,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel6.add(jHalfSizeMainMenu, gridBagConstraints);
 
-        jLabel8.setText("Hinweiston bei gelesenen Clipboard-Daten");
+        jLabel8.setText("Hinweis bei gelesenen Clipboard-Daten");
         jLabel8.setMaximumSize(new java.awt.Dimension(34, 18));
         jLabel8.setMinimumSize(new java.awt.Dimension(34, 18));
         jLabel8.setPreferredSize(new java.awt.Dimension(34, 18));
@@ -2463,6 +2490,11 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jClipboardSound.setSelected(true);
         jClipboardSound.setToolTipText("<html>Zeigt das Hauptmen&uuml; in halber Gr&ouml;sse an.<br/>Dies Option kann verwendet werden, um z.B. bei Monitoren mit kleiner Aufl&ouml;sung Platz zu sparen.</html>");
         jClipboardSound.setOpaque(false);
+        jClipboardSound.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireEnableClipboardNotificationEvent(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 6;
@@ -2472,6 +2504,66 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel6.add(jClipboardSound, gridBagConstraints);
+
+        jLabel20.setText("Farmberichte beim Beenden löschen");
+        jLabel20.setMaximumSize(new java.awt.Dimension(34, 18));
+        jLabel20.setMinimumSize(new java.awt.Dimension(34, 18));
+        jLabel20.setPreferredSize(new java.awt.Dimension(34, 18));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel6.add(jLabel20, gridBagConstraints);
+
+        jDeleteFarmReportsOnExit.setSelected(true);
+        jDeleteFarmReportsOnExit.setToolTipText("<html>Zeigt das Hauptmen&uuml; in halber Gr&ouml;sse an.<br/>Dies Option kann verwendet werden, um z.B. bei Monitoren mit kleiner Aufl&ouml;sung Platz zu sparen.</html>");
+        jDeleteFarmReportsOnExit.setOpaque(false);
+        jDeleteFarmReportsOnExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireDeleteFarmReportsOnExitEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel6.add(jDeleteFarmReportsOnExit, gridBagConstraints);
+
+        jLabel24.setText("Systray Benachrichtigungen aktivieren");
+        jLabel24.setMaximumSize(new java.awt.Dimension(34, 18));
+        jLabel24.setMinimumSize(new java.awt.Dimension(34, 18));
+        jLabel24.setPreferredSize(new java.awt.Dimension(34, 18));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel6.add(jLabel24, gridBagConstraints);
+
+        jEnableSystray.setSelected(true);
+        jEnableSystray.setToolTipText("<html>Zeigt das Hauptmen&uuml; in halber Gr&ouml;sse an.<br/>Dies Option kann verwendet werden, um z.B. bei Monitoren mit kleiner Aufl&ouml;sung Platz zu sparen.</html>");
+        jEnableSystray.setOpaque(false);
+        jEnableSystray.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireEnableSystrayEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel6.add(jEnableSystray, gridBagConstraints);
 
         javax.swing.GroupLayout jMiscSettingsLayout = new javax.swing.GroupLayout(jMiscSettings);
         jMiscSettings.setLayout(jMiscSettingsLayout);
@@ -2487,7 +2579,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jMiscSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(231, Short.MAX_VALUE))
+                .addContainerGap(169, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab("Sonstiges", new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png")), jMiscSettings); // NOI18N
@@ -2753,7 +2845,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
             logger.debug("Setting default profile for server '" + GlobalOptions.getSelectedServer() + "' to " + selectedProfile.getTribeName());
             UserProfile formerProfile = GlobalOptions.getSelectedProfile();
-          
+
             if (formerProfile.getProfileId() != selectedProfile.getProfileId()) {
                 logger.info("Writing user data for former profile");
                 GlobalOptions.saveUserData();
@@ -3411,6 +3503,18 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
         JOptionPaneHelper.showInformationBox(DSWorkbenchSettingsDialog.this, "Für die Größenänderung des Hauptmenüs ist ein Neustart von DS Workbench erforderlich.", "Neustart erforderlich");
     }//GEN-LAST:event_fireShowHalfSizeMainMenuEvent
 
+    private void fireEnableClipboardNotificationEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireEnableClipboardNotificationEvent
+        GlobalOptions.addProperty("clipboard.notification", Boolean.toString(jClipboardSound.isSelected()));
+    }//GEN-LAST:event_fireEnableClipboardNotificationEvent
+
+    private void fireEnableSystrayEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireEnableSystrayEvent
+        GlobalOptions.addProperty("systray.enabled", Boolean.toString(jEnableSystray.isSelected()));
+    }//GEN-LAST:event_fireEnableSystrayEvent
+
+    private void fireDeleteFarmReportsOnExitEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireDeleteFarmReportsOnExitEvent
+        GlobalOptions.addProperty("delete.farm.reports.on.exit", Boolean.toString(jDeleteFarmReportsOnExit.isSelected()));
+    }//GEN-LAST:event_fireDeleteFarmReportsOnExitEvent
+
     // </editor-fold>
     /**
      * Update the server list
@@ -3741,11 +3845,13 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
     private javax.swing.JDialog jCreateAccountDialog;
     private javax.swing.JComboBox jDefaultMarkBox;
     private javax.swing.JButton jDeffStrengthOKButton;
+    private javax.swing.JCheckBox jDeleteFarmReportsOnExit;
     private javax.swing.JButton jDeleteProfileButton;
     private javax.swing.JRadioButton jDirectConnectOption;
     private javax.swing.JButton jDownloadDataButton;
     private javax.swing.JButton jDownloadLiveDataButton;
     private javax.swing.JCheckBox jDrawAttacksByDefaultBox;
+    private javax.swing.JCheckBox jEnableSystray;
     private javax.swing.JCheckBox jExtendedAttackLineDrawing;
     private javax.swing.JTextField jFooterPath;
     private javax.swing.JCheckBox jHalfSizeMainMenu;
@@ -3764,9 +3870,11 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel36;

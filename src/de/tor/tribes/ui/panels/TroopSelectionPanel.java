@@ -17,6 +17,7 @@ import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.UIHelper;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Point;
@@ -32,8 +33,8 @@ import org.apache.log4j.Logger;
  * @author Torridity
  */
 public class TroopSelectionPanel extends javax.swing.JPanel {
-
-    private Hashtable<UnitHolder, Point> unitCoordinates = new Hashtable<UnitHolder, Point>();
+    
+    private Hashtable<String, Point> unitCoordinates = new Hashtable<String, Point>();
     private LabeledTextField[][] unitFields = new LabeledTextField[20][20];
 
     /**
@@ -42,14 +43,16 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
     public TroopSelectionPanel() {
         initComponents();
         setup(DataHolder.getSingleton().getUnits());
+        jXCollapsiblePane1.setLayout(new BorderLayout());
+        jXCollapsiblePane1.add(jPanel2, BorderLayout.CENTER);
     }
-
+    
     public final void setup(List<UnitHolder> pUnits) {
         setup(pUnits, true);
     }
-
+    
     public final void setup(List<UnitHolder> pUnits, boolean pTypeSeparation) {
-        removeAll();
+        jUnitContainer.removeAll();
         unitCoordinates.clear();
         unitFields = new LabeledTextField[20][20];
         int infantryX = 0;
@@ -65,17 +68,17 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
             if (unit.isInfantry()) {
                 gridBagConstraints.gridx = (pTypeSeparation) ? infantryX : unitCount;
                 gridBagConstraints.gridy = 0;
-                unitCoordinates.put(unit, new Point(gridBagConstraints.gridx, gridBagConstraints.gridy));
+                unitCoordinates.put(unit.getPlainName(), new Point(gridBagConstraints.gridx, gridBagConstraints.gridy));
                 infantryX++;
             } else if (unit.isCavalry()) {
                 gridBagConstraints.gridx = (pTypeSeparation) ? cavallryX : unitCount;
                 gridBagConstraints.gridy = (pTypeSeparation) ? 1 : 0;
-                unitCoordinates.put(unit, new Point(gridBagConstraints.gridx, gridBagConstraints.gridy));
+                unitCoordinates.put(unit.getPlainName(), new Point(gridBagConstraints.gridx, gridBagConstraints.gridy));
                 cavallryX++;
             } else if (unit.isOther()) {
                 gridBagConstraints.gridx = (pTypeSeparation) ? otherX : unitCount;
                 gridBagConstraints.gridy = (pTypeSeparation) ? 2 : 0;
-                unitCoordinates.put(unit, new Point(gridBagConstraints.gridx, gridBagConstraints.gridy));
+                unitCoordinates.put(unit.getPlainName(), new Point(gridBagConstraints.gridx, gridBagConstraints.gridy));
                 otherX++;
             }
             LabeledTextField unitField = new LabeledTextField();
@@ -85,11 +88,11 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
             unitField.setPreferredSize(new Dimension(80, 24));
             unitField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 24));
             unitField.setText("0");
-            add(unitField, gridBagConstraints);
+            jUnitContainer.add(unitField, gridBagConstraints);
             unitCount++;
         }
     }
-
+    
     public final void setupDefense(boolean pTypeSeparation) {
         List<UnitHolder> units = new LinkedList<UnitHolder>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
@@ -99,7 +102,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
         }
         setup(units, pTypeSeparation);
     }
-
+    
     public final void setupOffense(boolean pTypeSeparation) {
         List<UnitHolder> units = new LinkedList<UnitHolder>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
@@ -109,7 +112,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
         }
         setup(units, pTypeSeparation);
     }
-
+    
     public final void setupFarm(boolean pTypeSeparation) {
         List<UnitHolder> units = new LinkedList<UnitHolder>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
@@ -119,7 +122,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
         }
         setup(units, pTypeSeparation);
     }
-
+    
     public Hashtable<UnitHolder, Integer> getAmounts() {
         Hashtable<UnitHolder, Integer> values = new Hashtable<UnitHolder, Integer>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
@@ -127,7 +130,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
         }
         return values;
     }
-
+    
     public void setAmounts(Hashtable<UnitHolder, Integer> pAmounts) {
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             Integer amount = pAmounts.get(unit);
@@ -138,24 +141,24 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
             }
         }
     }
-
+    
     public int getAmountForUnit(UnitHolder pUnit) {
-        Point location = unitCoordinates.get(pUnit);
+        Point location = unitCoordinates.get(pUnit.getPlainName());
         if (location != null) {
             LabeledTextField field = unitFields[location.x][location.y];
             return UIHelper.parseIntFromField(field, 0);
         }
         return 0;
     }
-
+    
     public void setAmountForUnit(UnitHolder pUnit, int pValue) {
-        Point location = unitCoordinates.get(pUnit);
+        Point location = unitCoordinates.get(pUnit.getPlainName());
         if (location != null) {
             LabeledTextField field = unitFields[location.x][location.y];
             field.setText(Integer.toString(pValue));
         }
     }
-
+    
     @Override
     public void setEnabled(boolean enabled) {
         for (int i = 0; i < 20; i++) {
@@ -174,10 +177,66 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-        setLayout(new java.awt.GridBagLayout());
+        jPanel2 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
+        jUnitContainer = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
+
+        jPanel2.setLayout(new java.awt.GridBagLayout());
+
+        jLabel1.setText("jLabel1");
+        jPanel2.add(jLabel1, new java.awt.GridBagConstraints());
+
+        jButton2.setText("jButton2");
+        jPanel2.add(jButton2, new java.awt.GridBagConstraints());
+
+        setLayout(new java.awt.BorderLayout());
+
+        jUnitContainer.setMinimumSize(new java.awt.Dimension(73, 23));
+        jUnitContainer.setPreferredSize(new java.awt.Dimension(73, 23));
+        jUnitContainer.setLayout(new java.awt.GridBagLayout());
+        add(jUnitContainer, java.awt.BorderLayout.CENTER);
+
+        jPanel1.setLayout(new java.awt.GridBagLayout());
+
+        jButton1.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
+        jButton1.setText("Einstellungen");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireClick(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        jPanel1.add(jButton1, gridBagConstraints);
+
+        jXCollapsiblePane1.setCollapsed(true);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jPanel1.add(jXCollapsiblePane1, gridBagConstraints);
+
+        add(jPanel1, java.awt.BorderLayout.SOUTH);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void fireClick(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireClick
+        jXCollapsiblePane1.setCollapsed(!jXCollapsiblePane1.isCollapsed());
+    }//GEN-LAST:event_fireClick
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jUnitContainer;
+    private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
     // End of variables declaration//GEN-END:variables
 
     public static void main(String[] args) {

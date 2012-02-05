@@ -587,7 +587,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
                     cnt++;
                 }
             }
-            showSuccess(cnt + ((cnt == 1) ? " Angriff eingefügt" : " Angriffe eingefügt"));
+            showSuccess(cnt + ((cnt == 1) ? " Bericht eingefügt" : " Berichte eingefügt"));
         } catch (UnsupportedFlavorException ufe) {
             logger.error("Failed to copy reports from internal clipboard", ufe);
             showError("Fehler beim Einfügen der Berichte");

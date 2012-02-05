@@ -11,6 +11,7 @@ import de.tor.tribes.ui.components.TimerPanel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.SystrayHelper;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.applet.Applet;
 import java.applet.AudioClip;
@@ -137,6 +138,7 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
         for (TimerPanel p : timers.toArray(new TimerPanel[timers.size()])) {
             if (p.isExpired()) {
                 playSound(p.getSound());
+                SystrayHelper.showInfoMessage("Timer  '" + p.getName() + "' ist abgelaufen");
                 removeTimer(p);
             } else {
                 p.update();

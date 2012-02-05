@@ -63,14 +63,8 @@ import org.apache.log4j.Logger;
 import de.tor.tribes.ui.models.StandardAttackTableModel;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.ui.views.*;
-import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.MainShutdownHook;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.interfaces.MapShotListener;
-import de.tor.tribes.util.MouseGestureHandler;
-import de.tor.tribes.util.PluginManager;
-import de.tor.tribes.util.ServerSettings;
-import de.tor.tribes.util.UIHelper;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.conquer.ConquerManager;
@@ -548,6 +542,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
         mNotificationHideThread = new NotificationHideThread();
         mNotificationHideThread.start();
+        SystrayHelper.installSystrayIcon();
         //update online state
         onlineStateChanged();
         restoreProperties();
@@ -622,8 +617,10 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             DSWorkbenchChurchFrame.getSingleton().restoreProperties();
             DSWorkbenchAttackFrame.getSingleton().resetView();
             DSWorkbenchAttackFrame.getSingleton().restoreProperties();
-            DSWorkbenchMerchantDistibutor.getSingleton().resetView();
+            /*
+             * DSWorkbenchMerchantDistibutor.getSingleton().resetView();
             DSWorkbenchMerchantDistibutor.getSingleton().restoreProperties();
+             */
             DSWorkbenchTagFrame.getSingleton().resetView();
             DSWorkbenchTagFrame.getSingleton().restoreProperties();
             DSWorkbenchConquersFrame.getSingleton().resetView();
@@ -650,10 +647,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             DSWorkbenchFarmManager.getSingleton().restoreProperties();
             BBCodeEditor.getSingleton().reset();
             //update attack planner
-           /*
-             * if (mTribeTribeAttackFrame != null) { mTribeTribeAttackFrame.setup(); }
-             */
-
             DSWorkbenchSettingsDialog.getSingleton().setupAttackColorTable();
             DSWorkbenchRankFrame.getSingleton().resetView();
             DSWorkbenchRankFrame.getSingleton().restoreProperties();

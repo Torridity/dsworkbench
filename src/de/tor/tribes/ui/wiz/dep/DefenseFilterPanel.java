@@ -26,16 +26,13 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.SwingUtilities;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.netbeans.spi.wizard.Wizard;
-import org.netbeans.spi.wizard.WizardController;
-import org.netbeans.spi.wizard.WizardPanel;
-import org.netbeans.spi.wizard.WizardPanelNavResult;
+import org.netbeans.spi.wizard.*;
 
 /**
  *
  * @author Torridity
  */
-public class DefenseFilterPanel extends javax.swing.JPanel implements WizardPanel {
+public class DefenseFilterPanel extends WizardPage {
 
     private static final String GENERAL_INFO = "Du befindest dich in der Filterauswahl. Hier kannst du vorher gew&auml;hlte Herkunftsd&ouml;rfer herausfiltern, "
             + "wenn sie nicht bestimmten Kriterien entsprechen. M&ouml;gliche Filterkriterien sind:"
@@ -47,7 +44,6 @@ public class DefenseFilterPanel extends javax.swing.JPanel implements WizardPane
             + "M&ouml;chtest du alle D&ouml;rfer verwenden oder hast du die Filterung abgeschlossen, klicke auf 'Weiter'."
             + "</html>";
     private static DefenseFilterPanel singleton = null;
-    private WizardController controller = null;
     private VillageOverviewMapPanel overviewPanel = null;
 
     public static synchronized DefenseFilterPanel getSingleton() {
@@ -55,6 +51,14 @@ public class DefenseFilterPanel extends javax.swing.JPanel implements WizardPane
             singleton = new DefenseFilterPanel();
         }
         return singleton;
+    }
+
+    public static String getDescription() {
+        return "Filterung";
+    }
+
+    public static String getStep() {
+        return "id-defense-filter";
     }
 
     /**
@@ -69,10 +73,6 @@ public class DefenseFilterPanel extends javax.swing.JPanel implements WizardPane
         jInfoTextPane.setText(GENERAL_INFO);
         overviewPanel = new VillageOverviewMapPanel();
         jPanel4.add(overviewPanel, BorderLayout.CENTER);
-    }
-
-    public void setController(WizardController pWizCtrl) {
-        controller = pWizCtrl;
     }
 
     /**
@@ -344,13 +344,13 @@ public class DefenseFilterPanel extends javax.swing.JPanel implements WizardPane
                 ignored++;
             }
         }
-        if (controller != null) {
-            if (ignored == getModel().getRowCount()) {
-                controller.setProblem("Alle Dörfer werden ignoriert");
-            } else {
-                controller.setProblem(null);
-            }
+
+        if (ignored == getModel().getRowCount()) {
+            setProblem("Alle Dörfer werden ignoriert");
+        } else {
+            setProblem(null);
         }
+
         jLabel2.setText(ignored + " Dörfer werden ignoriert");
     }
 
@@ -373,9 +373,9 @@ public class DefenseFilterPanel extends javax.swing.JPanel implements WizardPane
         }
 
         if (ignored == getModel().getRowCount()) {
-            controller.setProblem("Alle Dörfer werden ignoriert");
+            setProblem("Alle Dörfer werden ignoriert");
         } else {
-            controller.setProblem(null);
+            setProblem(null);
         }
         jLabel2.setText(ignored + " Dörfer werden ignoriert");
     }
@@ -459,7 +459,7 @@ public class DefenseFilterPanel extends javax.swing.JPanel implements WizardPane
     @Override
     public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
         if (getFilteredElements().length == 0) {
-            controller.setProblem("Alle Dörfer werden ignoriert");
+            setProblem("Alle Dörfer werden ignoriert");
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
 

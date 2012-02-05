@@ -11,6 +11,7 @@
 package de.tor.tribes.ui.wiz.red;
 
 import de.tor.tribes.util.JOptionPaneHelper;
+import java.awt.event.ItemEvent;
 import java.util.Map;
 import javax.swing.ImageIcon;
 import org.netbeans.spi.wizard.Wizard;
@@ -23,6 +24,23 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  */
 public class ResourceDistributorWelcomePanel extends WizardPage {
 
+    private final String EQUAL_DISTIBUTION_HELP = "<html><b>Willkommen beim DS Workbench Rohstoffverteiler.</b><br/><br/>"
+            + "Du hast die Gleichverteilung von Rohstoffen gew&auml;hlt. Dabei wird versucht, die vorhandenen Rohstoffe zwischen den D&ouml;rfern "
+            + "so zu verteilen, dass in allen D&ouml;rfer am Ende gleichviel Rohstoffe vorhanden sind, sofern dies die Ausbaustufen der Speicher zulassen. "
+            + "Bei der Gleichverteilung wird weder die Ausbaustufe der D&ouml;rfer noch der F&uuml;llstand des Bauernhofes ber&uuml;cksichtigt. "
+            + "Diese Berechnung bietet sich daher f&uuml;r gro&szlig;e Accounts an, wo ein Gro&szlig;teil der D&oouml;rfern voll ausgebaut ist, "
+            + "oder f&uuml;r kleine Accounts, wo alle D&ouml;rfer einen &auml;hnlichen Bedarf an Rohstoffen haben.</html>";
+    private final String FILL_DISTIBUTION_HELP = "<html><b>Willkommen beim DS Workbench Rohstoffverteiler.</b><br/><br/>"
+            + "Du hast die Belieferung bestimmter D&ouml;rfer gew&auml;hlt. Dabei k&ouml;nnen die vorhandenen D&ouml;rfern in Lieferanten "
+            + " und Empf&auml;nger unterteilt werden, um Rohstoffe gezielt zu verteilen. So k&ouml;nnen etwa Dorfgruppen mit voll ausgebauten "
+            + "D&ouml;rfern als Liefernanten dienen, w&auml;hrend D&ouml;rfer im Aufbau nur Rohstoffe empfangen. "
+            + "Diese Berechnung eignet sich vorrangig f&uuml;r gro&szlig;e Accounts, wie viele Lieferanten vergleichsweise wenige Empf&auml;nger "
+            + "beliefern k&ouml;nnen. Bei kleinen Accounts, in denen nur wenige Liefernanten vorhanden sind, ist der Rohstoffbedarf oft gr&ouml;&szlig;er "
+            + "als die vorhandenen Rohstoffe. Daher sollte hier eher die Gleichverteilung bevorzugt werden.</html>";
+    private final String LOAD_HELP = "<html><b>Willkommen beim DS Workbench Rohstoffverteiler.</b><br/><br/>"
+            + "Du hast das Laden vorher berechneter Transporte gew&auml;hlt. Sobald eine Berechnung erfolgreich durchgef&uuml;hrt wurde, "
+            + "werden alle notwendigen Transporte beim Beenden von DS Workbench gespeichert. So hast du die M&ouml;glichkeit Transporte nach und nach "
+            + "abzuschicken, falls du es zeitlich nicht schaffst, alle errechneten Transporte auf einmal auf den Weg zu bringen.</html>";
     private static ResourceDistributorWelcomePanel singleton = null;
     public static final String TYPE = "type";
     public final static Integer BALANCE_DISTRIBUTION = 0;
@@ -44,6 +62,7 @@ public class ResourceDistributorWelcomePanel extends WizardPage {
         jEqualButton.setIcon(new ImageIcon("./graphics/big/distribute_equal.png"));
         jFillButton.setIcon(new ImageIcon("./graphics/big/fill_distribution.png"));
         jLoadButton.setIcon(new ImageIcon("./graphics/big/load_transports.png"));
+        jTextPane1.setText(EQUAL_DISTIBUTION_HELP);
     }
 
     public static String getDescription() {
@@ -89,6 +108,11 @@ public class ResourceDistributorWelcomePanel extends WizardPage {
         jEqualButton.setMaximumSize(new java.awt.Dimension(80, 80));
         jEqualButton.setMinimumSize(new java.awt.Dimension(80, 80));
         jEqualButton.setPreferredSize(new java.awt.Dimension(80, 80));
+        jEqualButton.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireMethodChangeEvent(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -98,6 +122,11 @@ public class ResourceDistributorWelcomePanel extends WizardPage {
         jFillButton.setMaximumSize(new java.awt.Dimension(80, 80));
         jFillButton.setMinimumSize(new java.awt.Dimension(80, 80));
         jFillButton.setPreferredSize(new java.awt.Dimension(80, 80));
+        jFillButton.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireMethodChangeEvent(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -107,6 +136,11 @@ public class ResourceDistributorWelcomePanel extends WizardPage {
         jLoadButton.setMaximumSize(new java.awt.Dimension(80, 80));
         jLoadButton.setMinimumSize(new java.awt.Dimension(80, 80));
         jLoadButton.setPreferredSize(new java.awt.Dimension(80, 80));
+        jLoadButton.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireMethodChangeEvent(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -114,6 +148,19 @@ public class ResourceDistributorWelcomePanel extends WizardPage {
 
         add(jPanel1, java.awt.BorderLayout.PAGE_END);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void fireMethodChangeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireMethodChangeEvent
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            if (evt.getSource() == jEqualButton) {
+                jTextPane1.setText(EQUAL_DISTIBUTION_HELP);
+            } else if (evt.getSource() == jFillButton) {
+                jTextPane1.setText(FILL_DISTIBUTION_HELP);
+            } else if (evt.getSource() == jLoadButton) {
+                jTextPane1.setText(LOAD_HELP);
+            }
+        }
+
+    }//GEN-LAST:event_fireMethodChangeEvent
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JToggleButton jEqualButton;

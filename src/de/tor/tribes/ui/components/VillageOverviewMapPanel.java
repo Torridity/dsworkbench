@@ -38,7 +38,7 @@ import org.apache.log4j.Logger;
  * @author Torridity
  */
 public class VillageOverviewMapPanel extends javax.swing.JPanel {
-    
+
     private Color[][] colors = new Color[1000][1000];
     private Hashtable<Shape, Color> additionalShapes = new Hashtable<Shape, Color>();
     private int upperLeftContinent = -1;
@@ -54,62 +54,61 @@ public class VillageOverviewMapPanel extends javax.swing.JPanel {
     public VillageOverviewMapPanel() {
         initComponents();
     }
-    
+
     public void addShape(Shape pShape, Color pColor) {
         additionalShapes.put(pShape, pColor);
     }
-    
+
     public void clearShapes() {
         additionalShapes.clear();
     }
-    
+
     public void addVillage(Village pVillage, Color pColor) {
         addVillage(new Point(pVillage.getX(), pVillage.getY()), pColor);
     }
-    
+
     public Color getColor(Village pVillage) {
         return colors[pVillage.getX()][pVillage.getY()];
     }
-    
+
     public void addVillage(Point pPoint, Color pColor) {
         colors[pPoint.x][pPoint.y] = pColor;
         int cont = DSCalculator.getContinent(pPoint.x, pPoint.y);
-        
+
         int col = cont % 10;
         int row = cont / 10;
-        
+
         if (minCol == -1) {
             minCol = col;
         } else {
             minCol = Math.min(col, minCol);
         }
-        
+
         if (maxCol == -1) {
             maxCol = col;
         } else {
             maxCol = Math.max(col, maxCol);
         }
-        
+
         if (minRow == -1) {
             minRow = row;
         } else {
             minRow = Math.min(row, minRow);
         }
-        
+
         if (maxRow == -1) {
             maxRow = row;
         } else {
             maxRow = Math.max(row, maxRow);
         }
-        
+
         upperLeftContinent = 10 * minRow + minCol;
-        
+
         int continentRows = Math.max(1, maxRow - minRow + 1);
         int continentColumns = Math.max(1, maxCol - minCol + 1);
         continentsInXAndY = Math.max(continentsInXAndY, Math.max(continentRows, continentColumns));
-        
     }
-    
+
     public void setOptimalSize(int pScale) {
         Dimension dim = new Dimension(getSquareContinents() * pScale * 100, getSquareContinents() * pScale * 100);
         setSize(dim);
@@ -117,23 +116,23 @@ public class VillageOverviewMapPanel extends javax.swing.JPanel {
         setMinimumSize(dim);
         setMaximumSize(dim);
     }
-    
+
     public void setOptimalSize() {
         setOptimalSize(1);
     }
-    
+
     public int getSquareContinents() {
         return Math.max(1, continentsInXAndY);
     }
-    
+
     public void removeVillage(Village pVillage) {
         removeVillage(new Point(pVillage.getX(), pVillage.getY()));
     }
-    
+
     public void removeVillage(Point pPoint) {
         colors[pPoint.x][pPoint.y] = null;
     }
-    
+
     public void addVillages(Hashtable<Village, Color> pVillages) {
         Enumeration<Village> keys = pVillages.keys();
         while (keys.hasMoreElements()) {
@@ -142,7 +141,7 @@ public class VillageOverviewMapPanel extends javax.swing.JPanel {
         }
         repaint();
     }
-    
+
     public void reset() {
         colors = new Color[1000][1000];
         upperLeftContinent = -1;
@@ -152,31 +151,28 @@ public class VillageOverviewMapPanel extends javax.swing.JPanel {
         minRow = -1;
         maxRow = -1;
     }
-    
+
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        
+
         if (continentsInXAndY < 0 || upperLeftContinent < 0) {
             g.setColor(Constants.DS_DEFAULT_BACKGROUND);
             g.fillRect(0, 0, getWidth(), getHeight());
             return;
         }
-        //System.out.println("ULC " + upperLeftContinent);
-        //System.out.println("W " + continentsInXAndY);
-
         int horizontalVillages = continentsInXAndY * 100;
         int verticalVillages = continentsInXAndY * 100;
         int startContinentColumn = upperLeftContinent % 10;
         int startContinentRow = upperLeftContinent / 10;
-        
+
         BufferedImage im = ImageUtils.createCompatibleBufferedImage(horizontalVillages, verticalVillages, BufferedImage.OPAQUE);
         int deltaContinentColumn = startContinentColumn * 100;
         int deltaContinentRow = startContinentRow * 100;
         Graphics2D g2d = (Graphics2D) im.getGraphics();
         g2d.setColor(Constants.DS_DEFAULT_BACKGROUND);
         g2d.fillRect(0, 0, im.getWidth(), im.getHeight());
-        
+
         for (int i = deltaContinentColumn; i < deltaContinentColumn + continentsInXAndY * 100; i++) {
             for (int j = deltaContinentRow; j < deltaContinentRow + continentsInXAndY * 100; j++) {
                 if (i < 1000 && j < 1000 && colors[i][j] != null) {
@@ -189,12 +185,11 @@ public class VillageOverviewMapPanel extends javax.swing.JPanel {
         for (int i = minCol + 1; i <= maxCol + 1; i++) {
             g2d.drawLine((i - minCol) * 100, 0, (i - minCol) * 100, im.getHeight());
         }
-        
+
         for (int i = minRow + 1; i <= maxRow + 1; i++) {
             g2d.drawLine(0, (i - minRow) * 100, im.getWidth(), (i - minRow) * 100);
         }
 
-        // int cont = upperLeftContinent;
         for (int i = minRow + 1; i <= maxRow + 1; i++) {
             for (int j = minCol; j <= maxCol + 1; j++) {
                 int cont = (i - 1) * 10 + j;
@@ -202,13 +197,13 @@ public class VillageOverviewMapPanel extends javax.swing.JPanel {
                 cont++;
             }
         }
-        
+
         AffineTransform tb = g2d.getTransform();
         g2d.setTransform(AffineTransform.getTranslateInstance(-deltaContinentColumn, -deltaContinentRow));
         Enumeration<Shape> keys = additionalShapes.keys();
         while (keys.hasMoreElements()) {
             Shape s = keys.nextElement();
-            
+
             g2d.setColor(additionalShapes.get(s));
             g2d.draw(s);
         }
@@ -249,17 +244,17 @@ public class VillageOverviewMapPanel extends javax.swing.JPanel {
         ProfileManager.getSingleton().loadProfiles();
         GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
         DataHolder.getSingleton().loadData(false);
-        
+
         Point po = DSCalculator.calculateCenterOfMass(Arrays.asList(ProfileManager.getSingleton().getProfiles("de43")[0].getTribe().getVillageList()));
-        
+
         for (Village v : ProfileManager.getSingleton().getProfiles("de43")[0].getTribe().getVillageList()) {
-            // if (v.getContinent() == 84) {
-            p.addVillage(new Point(v.getX(), v.getY()), Color.RED);
-            //   }
+            if (v.getContinent() == 96 || v.getContinent() == 95) {
+                p.addVillage(new Point(v.getX(), v.getY()), Color.RED);
+            }
         }
         p.addShape(new Ellipse2D.Double(po.x, po.y, 30, 30), Color.yellow);
-        
-        
+
+
         f.getContentPane().add(p);
         f.pack();
         f.setVisible(true);

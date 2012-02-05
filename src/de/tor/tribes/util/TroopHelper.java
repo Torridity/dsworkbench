@@ -97,8 +97,10 @@ public class TroopHelper {
         }
 
         UnitHolder spy = DataHolder.getSingleton().getUnitByPlainName("spy");
-        if (pTroops.getTroopsOfUnitInVillage(spy) > 0) {
-            units.put(spy, 1);
+        Integer neededSpies = DSWorkbenchFarmManager.getSingleton().getMinUnits(pConfig, spy);
+        int availableSpies = pTroops.getTroopsOfUnitInVillage(spy);
+        if (neededSpies != null) {
+            units.put(spy, (neededSpies > availableSpies) ? availableSpies : neededSpies);
         }
 
         //check result

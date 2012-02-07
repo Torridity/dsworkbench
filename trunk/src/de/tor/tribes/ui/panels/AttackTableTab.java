@@ -18,19 +18,14 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.editors.AttackTypeCellEditor;
+import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.editors.DrawNotDrawEditor;
+import de.tor.tribes.ui.editors.NoteIconCellEditor;
 import de.tor.tribes.ui.editors.SentNotSentEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.models.AttackTableModel;
-import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
-import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
-import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.DrawNotDrawCellRenderer;
-import de.tor.tribes.ui.renderer.SentNotSentCellRenderer;
-import de.tor.tribes.ui.renderer.UnitCellRenderer;
-import de.tor.tribes.ui.renderer.UnitListCellRenderer;
+import de.tor.tribes.ui.renderer.*;
 import de.tor.tribes.ui.views.DSWorkbenchSelectionFrame;
 import de.tor.tribes.ui.windows.ClockFrame;
 import de.tor.tribes.util.AttackIGMSender;
@@ -44,6 +39,7 @@ import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.TableHelper;
 import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.attack.StandardAttackManager;
 import de.tor.tribes.util.bb.AttackListFormatter;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
 import de.tor.tribes.util.js.AttackScriptWriter;
@@ -99,7 +95,8 @@ import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
- *@TODO DIFF: Integrated attack notification with clock tool
+ * @TODO DIFF: Integrated attack notification with clock tool
+ *
  * @author Torridity
  */
 public class AttackTableTab extends javax.swing.JPanel implements ListSelectionListener {
@@ -127,10 +124,10 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jxAttackTable.setColumnControlVisible(true);
         jxAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jxAttackTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
-        jxAttackTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
+        jxAttackTable.setDefaultRenderer(Integer.class, new NoteIconCellRenderer(NoteIconCellRenderer.ICON_TYPE.NOTE));
         jxAttackTable.setDefaultRenderer(Date.class, new ColoredDateCellRenderer());
         jxAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
-        jxAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
+        jxAttackTable.setDefaultEditor(Integer.class, new NoteIconCellEditor(NoteIconCellEditor.ICON_TYPE.NOTE));
 
         attackModel = new AttackTableModel(AttackManager.DEFAULT_GROUP);
 
@@ -152,6 +149,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         g.setColor(Color.GREEN.darker());
         g.fill(p);
         g.dispose();
+
         jxAttackTable.addHighlighter(new PainterHighlighter(HighlightPredicate.EDITABLE, new ImagePainter(back, HorizontalAlignment.RIGHT, VerticalAlignment.TOP)));
     }
 
@@ -168,6 +166,15 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         initComponents();
         jScrollPane1.setViewportView(jxAttackTable);
         jUnitBox.setRenderer(new UnitListCellRenderer());
+
+        jTypeComboBox.setRenderer(new NoteIconListCellRenderer(NoteIconCellEditor.ICON_TYPE.NOTE));
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        for (int i = -1; i <= ImageManager.MAX_NOTE_SYMBOL; i++) {
+            model.addElement(i);
+        }
+        jTypeComboBox.setModel(model);
+        jUnconfiguredTypeWarning.setVisible(false);
+        jTypeComboBox.setSelectedIndex(0);
         if (!KEY_LISTENER_ADDED) {
             KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
             KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
@@ -441,25 +448,13 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jNotRandomToNightBonus = new javax.swing.JCheckBox();
         jModifySendOption = new javax.swing.JRadioButton();
         jChangeAttackTypeDialog = new javax.swing.JDialog();
-        jPanel6 = new javax.swing.JPanel();
-        jNoType = new javax.swing.JRadioButton();
-        jLabel23 = new javax.swing.JLabel();
-        jAttackType = new javax.swing.JRadioButton();
-        jLabel28 = new javax.swing.JLabel();
-        jEnobleType = new javax.swing.JRadioButton();
-        jLabel24 = new javax.swing.JLabel();
-        jDefType = new javax.swing.JRadioButton();
-        jLabel25 = new javax.swing.JLabel();
-        jFakeType = new javax.swing.JRadioButton();
-        jLabel26 = new javax.swing.JLabel();
-        jFakeDefType = new javax.swing.JRadioButton();
-        jLabel27 = new javax.swing.JLabel();
-        jAdeptUnitPanel = new javax.swing.JPanel();
-        jUnitBox = new javax.swing.JComboBox();
         jAcceptChangeUnitTypeButton = new javax.swing.JButton();
         jButton15 = new javax.swing.JButton();
         jAdeptTypeBox = new javax.swing.JCheckBox();
         jAdeptUnitBox = new javax.swing.JCheckBox();
+        jTypeComboBox = new javax.swing.JComboBox();
+        jUnitBox = new javax.swing.JComboBox();
+        jUnconfiguredTypeWarning = new org.jdesktop.swingx.JXLabel();
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
@@ -908,72 +903,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         );
 
         jChangeAttackTypeDialog.setTitle("Angriffstyp anpassen");
-
-        jPanel6.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jPanel6.setLayout(new java.awt.GridLayout(6, 2));
-
-        buttonGroup1.add(jNoType);
-        jNoType.setSelected(true);
-        jNoType.setText("Keiner");
-        jNoType.setOpaque(false);
-        jPanel6.add(jNoType);
-        jPanel6.add(jLabel23);
-
-        buttonGroup1.add(jAttackType);
-        jAttackType.setOpaque(false);
-        jPanel6.add(jAttackType);
-
-        jLabel28.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/axe.png"))); // NOI18N
-        jPanel6.add(jLabel28);
-
-        buttonGroup1.add(jEnobleType);
-        jEnobleType.setOpaque(false);
-        jPanel6.add(jEnobleType);
-
-        jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/snob.png"))); // NOI18N
-        jPanel6.add(jLabel24);
-
-        buttonGroup1.add(jDefType);
-        jDefType.setOpaque(false);
-        jPanel6.add(jDefType);
-
-        jLabel25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ally.png"))); // NOI18N
-        jPanel6.add(jLabel25);
-
-        buttonGroup1.add(jFakeType);
-        jFakeType.setOpaque(false);
-        jPanel6.add(jFakeType);
-
-        jLabel26.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/fake.png"))); // NOI18N
-        jPanel6.add(jLabel26);
-
-        buttonGroup1.add(jFakeDefType);
-        jFakeDefType.setOpaque(false);
-        jPanel6.add(jFakeDefType);
-
-        jLabel27.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/def_fake.png"))); // NOI18N
-        jPanel6.add(jLabel27);
-
-        jAdeptUnitPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        jUnitBox.setEnabled(false);
-
-        javax.swing.GroupLayout jAdeptUnitPanelLayout = new javax.swing.GroupLayout(jAdeptUnitPanel);
-        jAdeptUnitPanel.setLayout(jAdeptUnitPanelLayout);
-        jAdeptUnitPanelLayout.setHorizontalGroup(
-            jAdeptUnitPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jAdeptUnitPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jUnitBox, 0, 87, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jAdeptUnitPanelLayout.setVerticalGroup(
-            jAdeptUnitPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jAdeptUnitPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jUnitBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(107, Short.MAX_VALUE))
-        );
+        jChangeAttackTypeDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jAcceptChangeUnitTypeButton.setText("Übernehmen");
         jAcceptChangeUnitTypeButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -981,6 +911,13 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 fireChangeUnitTypeEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(15, 5, 5, 5);
+        jChangeAttackTypeDialog.getContentPane().add(jAcceptChangeUnitTypeButton, gridBagConstraints);
 
         jButton15.setText("Abbrechen");
         jButton15.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -988,6 +925,13 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 fireChangeUnitTypeEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(15, 5, 5, 5);
+        jChangeAttackTypeDialog.getContentPane().add(jButton15, gridBagConstraints);
 
         jAdeptTypeBox.setSelected(true);
         jAdeptTypeBox.setText("Typ angleichen");
@@ -997,6 +941,12 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 jAdeptTypeBoxfireEnableDisableAdeptTypeEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jChangeAttackTypeDialog.getContentPane().add(jAdeptTypeBox, gridBagConstraints);
 
         jAdeptUnitBox.setText("Einheit angleichen");
         jAdeptUnitBox.setOpaque(false);
@@ -1005,45 +955,52 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 jAdeptUnitBoxfireEnableDisableChangeUnitEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jChangeAttackTypeDialog.getContentPane().add(jAdeptUnitBox, gridBagConstraints);
 
-        javax.swing.GroupLayout jChangeAttackTypeDialogLayout = new javax.swing.GroupLayout(jChangeAttackTypeDialog.getContentPane());
-        jChangeAttackTypeDialog.getContentPane().setLayout(jChangeAttackTypeDialogLayout);
-        jChangeAttackTypeDialogLayout.setHorizontalGroup(
-            jChangeAttackTypeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jChangeAttackTypeDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jChangeAttackTypeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jAdeptTypeBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addGroup(jChangeAttackTypeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jAdeptUnitPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jAdeptUnitBox))
-                .addGap(11, 11, 11))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jChangeAttackTypeDialogLayout.createSequentialGroup()
-                .addContainerGap(70, Short.MAX_VALUE)
-                .addComponent(jButton15)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jAcceptChangeUnitTypeButton)
-                .addContainerGap())
-        );
-        jChangeAttackTypeDialogLayout.setVerticalGroup(
-            jChangeAttackTypeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jChangeAttackTypeDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jChangeAttackTypeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jAdeptTypeBox)
-                    .addComponent(jAdeptUnitBox))
-                .addGap(10, 10, 10)
-                .addGroup(jChangeAttackTypeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jAdeptUnitPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addGroup(jChangeAttackTypeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jAcceptChangeUnitTypeButton)
-                    .addComponent(jButton15))
-                .addContainerGap())
-        );
+        jTypeComboBox.setMinimumSize(new java.awt.Dimension(51, 25));
+        jTypeComboBox.setPreferredSize(new java.awt.Dimension(56, 25));
+        jTypeComboBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireTypeSelectionChangedEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jChangeAttackTypeDialog.getContentPane().add(jTypeComboBox, gridBagConstraints);
+
+        jUnitBox.setEnabled(false);
+        jUnitBox.setMinimumSize(new java.awt.Dimension(23, 25));
+        jUnitBox.setPreferredSize(new java.awt.Dimension(28, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jChangeAttackTypeDialog.getContentPane().add(jUnitBox, gridBagConstraints);
+
+        jUnconfiguredTypeWarning.setForeground(new java.awt.Color(255, 0, 0));
+        jUnconfiguredTypeWarning.setText("Achtung: Der gewählte Angriffstyp ist nicht konfiguriert!");
+        jUnconfiguredTypeWarning.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
+        jUnconfiguredTypeWarning.setLineWrap(true);
+        jUnconfiguredTypeWarning.setMaximumSize(new java.awt.Dimension(40, 25));
+        jUnconfiguredTypeWarning.setMinimumSize(new java.awt.Dimension(40, 25));
+        jUnconfiguredTypeWarning.setPreferredSize(new java.awt.Dimension(40, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jChangeAttackTypeDialog.getContentPane().add(jUnconfiguredTypeWarning, gridBagConstraints);
 
         jXTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1157,12 +1114,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 }//GEN-LAST:event_fireChangeUnitTypeEvent
 
     private void jAdeptTypeBoxfireEnableDisableAdeptTypeEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jAdeptTypeBoxfireEnableDisableAdeptTypeEvent
-        jNoType.setEnabled(jAdeptTypeBox.isSelected());
-        jAttackType.setEnabled(jAdeptTypeBox.isSelected());
-        jEnobleType.setEnabled(jAdeptTypeBox.isSelected());
-        jDefType.setEnabled(jAdeptTypeBox.isSelected());
-        jFakeType.setEnabled(jAdeptTypeBox.isSelected());
-        jFakeDefType.setEnabled(jAdeptTypeBox.isSelected());
+        jTypeComboBox.setEnabled(jAdeptTypeBox.isSelected());
 }//GEN-LAST:event_jAdeptTypeBoxfireEnableDisableAdeptTypeEvent
 
     private void jAdeptUnitBoxfireEnableDisableChangeUnitEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jAdeptUnitBoxfireEnableDisableChangeUnitEvent
@@ -1187,6 +1139,14 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             }
         }
     }//GEN-LAST:event_fireChangeAdeptTypeEvent
+
+    private void fireTypeSelectionChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireTypeSelectionChangedEvent
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            Integer v = (Integer) jTypeComboBox.getSelectedItem();
+            jUnconfiguredTypeWarning.setVisible(StandardAttackManager.getSingleton().getElementByIcon(v) == null);
+        }
+        jChangeAttackTypeDialog.pack();
+    }//GEN-LAST:event_fireTypeSelectionChangedEvent
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
@@ -1196,8 +1156,6 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private static javax.swing.JComboBox jAdaptTypeBox;
     private static javax.swing.JCheckBox jAdeptTypeBox;
     private static javax.swing.JCheckBox jAdeptUnitBox;
-    private javax.swing.JPanel jAdeptUnitPanel;
-    private static javax.swing.JRadioButton jAttackType;
     private static javax.swing.JButton jButton13;
     private static javax.swing.JButton jButton14;
     private static javax.swing.JButton jButton15;
@@ -1205,11 +1163,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private static javax.swing.JDialog jChangeAttackTypeDialog;
     private static de.tor.tribes.ui.components.DateTimeField jDateField;
     private static javax.swing.JSpinner jDayField;
-    private static javax.swing.JRadioButton jDefType;
     private static javax.swing.JButton jDoScriptExportButton;
-    private static javax.swing.JRadioButton jEnobleType;
-    private static javax.swing.JRadioButton jFakeDefType;
-    private static javax.swing.JRadioButton jFakeType;
     private static javax.swing.JSpinner jHourField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel14;
@@ -1218,12 +1172,6 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel22;
-    private javax.swing.JLabel jLabel23;
-    private javax.swing.JLabel jLabel24;
-    private javax.swing.JLabel jLabel25;
-    private javax.swing.JLabel jLabel26;
-    private javax.swing.JLabel jLabel27;
-    private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -1232,14 +1180,12 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private static javax.swing.JRadioButton jModifyArrivalOption;
     private static javax.swing.JRadioButton jModifySendOption;
     private static javax.swing.JRadioButton jMoveTimeOption;
-    private static javax.swing.JRadioButton jNoType;
     private static javax.swing.JCheckBox jNotRandomToNightBonus;
     private static javax.swing.JButton jOKButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
     private static javax.swing.JFormattedTextField jRandomField;
     private static javax.swing.JRadioButton jRandomizeOption;
     private static javax.swing.JDialog jScriptExportDialog;
@@ -1254,6 +1200,8 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private static javax.swing.JCheckBox jShowAttacksOnConfirmPage;
     private static javax.swing.JTextField jSubject;
     private static javax.swing.JDialog jTimeChangeDialog;
+    private static javax.swing.JComboBox jTypeComboBox;
+    private org.jdesktop.swingx.JXLabel jUnconfiguredTypeWarning;
     private static javax.swing.JComboBox jUnitBox;
     private org.jdesktop.swingx.JXLabel jXLabel1;
     private org.jdesktop.swingx.JXTable jXTable1;
@@ -1365,19 +1313,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     public void fireChangeUnitEvent() {
         int newType = -2;
         if (jAdeptTypeBox.isSelected()) {
-            if (jNoType.isSelected()) {
-                newType = Attack.NO_TYPE;
-            } else if (jAttackType.isSelected()) {
-                newType = Attack.CLEAN_TYPE;
-            } else if (jEnobleType.isSelected()) {
-                newType = Attack.SNOB_TYPE;
-            } else if (jDefType.isSelected()) {
-                newType = Attack.SUPPORT_TYPE;
-            } else if (jFakeType.isSelected()) {
-                newType = Attack.FAKE_TYPE;
-            } else if (jFakeDefType.isSelected()) {
-                newType = Attack.FAKE_DEFF_TYPE;
-            }
+            newType = (Integer) jTypeComboBox.getSelectedItem();
         }
         UnitHolder newUnit = null;
         if (jAdeptUnitBox.isSelected()) {
@@ -1767,14 +1703,19 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
         for (Attack a : attacks) {
             if (!a.isTransferredToBrowser()) {
+                if (attacks.size() > 1) {//try to use click in case of multiple attacks
+                    if (!DSWorkbenchAttackFrame.getSingleton().decreaseClickAccountValue()) {
+                        //no click left
+                        break;
+                    }
+                }
+
                 if (BrowserCommandSender.sendAttack(a, profile)) {
                     a.setTransferredToBrowser(true);
-                    if (attacks.size() > 1) {
-                        DSWorkbenchAttackFrame.getSingleton().decreaseClickAccountValue();
-                    }
                     sentAttacks++;
-                    if (DSWorkbenchAttackFrame.getSingleton().getClickAccountValue() == 0) {
-                        break;
+                } else {//give click back in case of an error and for multiple attacks
+                    if (attacks.size() > 1) {
+                        DSWorkbenchAttackFrame.getSingleton().increaseClickAccountValue();
                     }
                 }
             } else {

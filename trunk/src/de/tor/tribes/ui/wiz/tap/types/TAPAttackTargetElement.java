@@ -47,7 +47,9 @@ public class TAPAttackTargetElement {
 
     public boolean removeAttack() {
         attacks--;
-        return attacks > 0;
+        boolean modified = (attacks <= 0) ? false : true;
+        attacks = Math.max(1, attacks);
+        return modified;
     }
 
     public boolean isFake() {

@@ -17,10 +17,7 @@ import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
-import de.tor.tribes.util.AllyUtils;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.ProfileManager;
-import de.tor.tribes.util.TagUtils;
+import de.tor.tribes.util.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -42,9 +39,9 @@ import org.jdesktop.swingx.JXList;
  * @author jejkal
  */
 public class VillageSelectionPanel extends javax.swing.JPanel {
-    
+
     public enum SELECTION_ELEMENT {
-        
+
         ALLY, TRIBE, GROUP, CONTINENT, VILLAGE
     }
     private IconizedList allyList = null;
@@ -58,22 +55,24 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
     private FilterPipeline<ContinentVillageSelection, Village> continentVillagePipeline = null;
     private VillageSelectionPanelListener listener = null;
 
-    /** Creates new form VillageSelectionPanel */
+    /**
+     * Creates new form VillageSelectionPanel
+     */
     public VillageSelectionPanel(VillageSelectionPanelListener pListener) {
         initComponents();
         listener = pListener;
         allyList = new IconizedList("/res/awards/ally.png");
         jAllyScrollPane.setViewportView(allyList);
-        
+
         tribeList = new IconizedList("/res/awards/tribe.png");
         jTribeScrollPane.setViewportView(tribeList);
-        
+
         groupList = new GroupSelectionList("/res/awards/group.png");
         jGroupScrollPane.setViewportView(groupList);
-        
+
         continentList = new IconizedList("/res/awards/continent.png");
         jContinentScrollPane.setViewportView(continentList);
-        
+
         villageList = new IconizedList("/res/awards/village.png");
         jVillageScrollPane.setViewportView(villageList);
         enableSelectionElement(SELECTION_ELEMENT.ALLY, true);
@@ -83,36 +82,38 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
         enableSelectionElement(SELECTION_ELEMENT.VILLAGE, true);
         setUnitSelectionEnabled(false);
         setFakeSelectionEnabled(false);
+        setAmountSelectionEnabled(false);
     }
-    
+
     public void setup() {
         allyList.setListData(AllyUtils.getAlliesByFilter("", Ally.CASE_INSENSITIVE_ORDER));
         jXTextField1.setText("");
+
         setupFilters();
         //do initial selection
         if (!allyList.isVisible()) {
             allyList.setSelectedValue(GlobalOptions.getSelectedProfile().getTribe().getAlly(), false);
         }
-        
+
         if (!tribeList.isVisible()) {
             tribeList.setSelectedValue(GlobalOptions.getSelectedProfile().getTribe(), false);
         }
-        
+
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (!unit.getPlainName().equals("militia")) {
                 model.addElement(unit);
             }
         }
-        
+
         jUnitBox.setModel(model);
         jUnitBox.setRenderer(new UnitListCellRenderer());
         jUnitBox.setSelectedItem(DataHolder.getSingleton().getUnitByPlainName("ram"));
     }
-    
+
     private void setupFilters() {
         allyTribePipeline = new FilterPipeline<Ally, Tribe>(allyList, tribeList) {
-            
+
             @Override
             public Tribe[] filter() {
                 List<Tribe> res = new LinkedList<Tribe>();
@@ -122,14 +123,14 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
                         res.add(t);
                     }
                 }
-                
+
                 Collections.sort(res, Tribe.CASE_INSENSITIVE_ORDER);
                 return res.toArray(new Tribe[res.size()]);
             }
         };
-        
+
         tribeGroupPipeline = new FilterPipeline<Tribe, GroupSelectionList.ListItem>(tribeList, groupList) {
-            
+
             @Override
             public GroupSelectionList.ListItem[] filter() {
                 List<Tag> usedTags = new LinkedList<Tag>();
@@ -149,13 +150,13 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
                 return items.toArray(new GroupSelectionList.ListItem[items.size()]);
             }
         };
-        
+
         groupContinentPipeline = new FilterPipeline<GroupSelectionList.ListItem, ContinentVillageSelection>(groupList, continentList) {
-            
+
             @Override
             public ContinentVillageSelection[] filter() {
                 HashMap<Integer, ContinentVillageSelection> map = new HashMap<Integer, ContinentVillageSelection>();
-                
+
                 for (Village v : ((GroupSelectionList) getInputList()).getValidVillages()) {
                     int cont = v.getContinent();
                     ContinentVillageSelection s = map.get(cont);
@@ -165,10 +166,10 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
                     }
                     s.addVillage(v);
                 }
-                
+
                 ContinentVillageSelection[] result = map.values().toArray(new ContinentVillageSelection[map.size()]);
                 Arrays.sort(result, new Comparator<ContinentVillageSelection>() {
-                    
+
                     @Override
                     public int compare(ContinentVillageSelection o1, ContinentVillageSelection o2) {
                         return String.CASE_INSENSITIVE_ORDER.compare(o1.toString(), o2.toString());
@@ -176,16 +177,16 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
                 });
                 return result;
             }
-            
+
             @Override
             public void updateOutputSelection() {
                 getOutputList().getSelectionModel().setSelectionInterval(0, getOutputList().getElementCount() - 1);
             }
         };
-        
-        
+
+
         continentVillagePipeline = new FilterPipeline<ContinentVillageSelection, Village>(continentList, villageList) {
-            
+
             @Override
             public Village[] filter() {
                 List<Village> res = new LinkedList<Village>();
@@ -196,22 +197,27 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
                 Collections.sort(res, Village.CASE_INSENSITIVE_ORDER);
                 return res.toArray(new Village[res.size()]);
             }
-            
+
             @Override
             public void updateOutputSelection() {
                 getOutputList().getSelectionModel().setSelectionInterval(0, getOutputList().getElementCount() - 1);
             }
         };
     }
-    
+
     public final void setUnitSelectionEnabled(boolean pValue) {
         jUnitBox.setVisible(pValue);
     }
-    
+
     public final void setFakeSelectionEnabled(boolean pValue) {
         jFakeBox.setVisible(pValue);
     }
-    
+
+    public final void setAmountSelectionEnabled(boolean pValue) {
+        jAmountLabel.setVisible(pValue);
+        jAmountField.setVisible(pValue);
+    }
+
     public final void enableSelectionElement(SELECTION_ELEMENT pElement, boolean pEnable) {
         switch (pElement) {
             case ALLY:
@@ -233,21 +239,20 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
                 break;
         }
     }
-    
+
     private void changeSelectionElementVisibility(JScrollPane pScrollPane, JXList pList, boolean pShow) {
         pScrollPane.setVisible(pShow);
         pList.setVisible(pShow);
     }
-    
+
     public static interface VillageSelectionPanelListener {
-        
+
         public void fireVillageSelectionEvent(Village[] pSelection);
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this
+     * method is always regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -266,6 +271,8 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
         jUnitBox = new org.jdesktop.swingx.JXComboBox();
         jFakeBox = new javax.swing.JCheckBox();
         jXTextField1 = new org.jdesktop.swingx.JXTextField();
+        jAmountLabel = new javax.swing.JLabel();
+        jAmountField = new javax.swing.JTextField();
 
         setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -304,23 +311,25 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         add(jVillageScrollPane, gridBagConstraints);
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(153, 153, 153));
         jLabel1.setText("<html>Elemente der Reihe nach ausw&auml;hlen. F&uuml;r eine Suche nach Elementen in die entsprechende Liste klicken und den Elementnamen tippen oder per STRG+F die Suche &ouml;ffnen. Mehrere Elemente mit gedr&uuml;ckter STRG-Taste ausw&auml;hlen.</html>");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         add(jLabel1, gridBagConstraints);
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 9));
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(153, 153, 153));
         jLabel2.setText("<html>Gruppeneintrag doppelt klicken, um Art der Verkn&uuml;pfung zu &auml;ndern. Verwendung einer Gruppe &uuml;ber <b>ENTF</b> l&ouml;schen.</html>");
         jLabel2.setToolTipText("");
@@ -333,8 +342,8 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
         add(jLabel2, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jSeparator1, gridBagConstraints);
 
@@ -349,13 +358,15 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         add(jXButton1, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         add(jUnitBox, gridBagConstraints);
@@ -369,6 +380,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         add(jFakeBox, gridBagConstraints);
@@ -385,6 +397,22 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         add(jXTextField1, gridBagConstraints);
+
+        jAmountLabel.setText("Anzahl");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        add(jAmountLabel, gridBagConstraints);
+
+        jAmountField.setText("1");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        add(jAmountField, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireTransferVillageSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferVillageSelectionEvent
@@ -399,29 +427,37 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
             }
         } else {
             for (Object s : selection) {
-                result.add((Village) s);
+                int cnt = 1;
+                if (jAmountField.isVisible()) {
+                    cnt = UIHelper.parseIntFromField(jAmountField, 1);
+                }
+                for (int i = 0; i < cnt; i++) {
+                    result.add((Village) s);
+                }
             }
         }
-        
+
         if (!result.isEmpty()) {
             listener.fireVillageSelectionEvent(result.toArray(new Village[result.size()]));
         }
-        
+
     }//GEN-LAST:event_fireTransferVillageSelectionEvent
-    
+
     private void fireAllyNameTagChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireAllyNameTagChangedEvent
         allyList.setListData(AllyUtils.getAlliesByFilter(jXTextField1.getText(), Ally.CASE_INSENSITIVE_ORDER));
     }//GEN-LAST:event_fireAllyNameTagChangedEvent
-    
+
     public UnitHolder getSelectedUnit() {
         return (UnitHolder) jUnitBox.getSelectedItem();
     }
-    
+
     public boolean isFake() {
         return jFakeBox.isSelected();
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jAllyScrollPane;
+    private javax.swing.JTextField jAmountField;
+    private javax.swing.JLabel jAmountLabel;
     private javax.swing.JScrollPane jContinentScrollPane;
     private javax.swing.JCheckBox jFakeBox;
     private javax.swing.JScrollPane jGroupScrollPane;
@@ -450,7 +486,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
         JFrame f = new JFrame();
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         VillageSelectionPanel p = new VillageSelectionPanel(new VillageSelectionPanelListener() {
-            
+
             @Override
             public void fireVillageSelectionEvent(Village[] pSelection) {
                 System.out.println("TRANS " + pSelection.length);
@@ -460,20 +496,20 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
         f.getContentPane().add(p);
         f.pack();
         f.setVisible(true);
-        
+
     }
 }
 
 abstract class FilterPipeline<C, D> {
-    
+
     private JXList inputList = null;
     private JXList outputList = null;
-    
+
     public FilterPipeline(JXList pThisList, JXList pRightList) {
         inputList = pThisList;
         outputList = pRightList;
         pThisList.addListSelectionListener(new ListSelectionListener() {
-            
+
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
@@ -484,12 +520,14 @@ abstract class FilterPipeline<C, D> {
         });
     }
 
-    /**Special constructor for group list, as selection handling is managed by the list itself*/
+    /**
+     * Special constructor for group list, as selection handling is managed by the list itself
+     */
     public FilterPipeline(GroupSelectionList pThisList, JXList pRightList) {
         inputList = pThisList;
         outputList = pRightList;
     }
-    
+
     public Object[] getSelection() {
         List<C> result = new LinkedList<C>();
         if (inputList.isVisible() || inputList.getSelectedValues().length > 0) {
@@ -501,20 +539,20 @@ abstract class FilterPipeline<C, D> {
                 result.add((C) inputList.getModel().getElementAt(i));
             }
         }
-        
+
         return result.toArray();
     }
-    
+
     public JXList getInputList() {
         return inputList;
     }
-    
+
     public JXList getOutputList() {
         return outputList;
     }
-    
+
     public abstract D[] filter();
-    
+
     public void updateOutputSelection() {
         if (outputList.isVisible()) {
             outputList.setSelectedIndex(0);
@@ -525,25 +563,25 @@ abstract class FilterPipeline<C, D> {
 }
 
 class ContinentVillageSelection {
-    
+
     private int continent = 0;
     private String continentString = null;
     private List<Village> villages = null;
-    
+
     public ContinentVillageSelection(int pContinent) {
         continent = pContinent;
         continentString = "K" + ((continent < 10) ? "0" + continent : continent);
         villages = new LinkedList<Village>();
     }
-    
+
     public void addVillage(Village pVillage) {
         villages.add(pVillage);
     }
-    
+
     public Village[] getVillages() {
         return villages.toArray(new Village[villages.size()]);
     }
-    
+
     @Override
     public String toString() {
         return continentString;

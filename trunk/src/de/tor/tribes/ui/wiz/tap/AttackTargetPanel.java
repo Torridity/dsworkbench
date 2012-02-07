@@ -97,6 +97,7 @@ public class AttackTargetPanel extends WizardPage {
         });
 
         villageSelectionPanel.setFakeSelectionEnabled(true);
+        villageSelectionPanel.setAmountSelectionEnabled(true);
         villageSelectionPanel.enableSelectionElement(VillageSelectionPanel.SELECTION_ELEMENT.GROUP, false);
         villageSelectionPanel.setup();
         jPanel1.add(villageSelectionPanel, BorderLayout.CENTER);
@@ -174,6 +175,9 @@ public class AttackTargetPanel extends WizardPage {
         jToggleButton1 = new javax.swing.JToggleButton();
         jStatusLabel = new javax.swing.JLabel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jAddAttackButton = new javax.swing.JButton();
+        jRemoveAttackButton = new javax.swing.JButton();
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jLabel1 = new javax.swing.JLabel();
         jideSplitPane1 = new com.jidesoft.swing.JideSplitPane();
@@ -276,6 +280,46 @@ public class AttackTargetPanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jVillageTablePanel.add(capabilityInfoPanel1, gridBagConstraints);
 
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
+        jAddAttackButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/add_attack.png"))); // NOI18N
+        jAddAttackButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                fireChangeAttackCountEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
+        jPanel3.add(jAddAttackButton, gridBagConstraints);
+
+        jRemoveAttackButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/remove_attack.png"))); // NOI18N
+        jRemoveAttackButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireChangeAttackCountEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
+        jPanel3.add(jRemoveAttackButton, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jVillageTablePanel.add(jPanel3, gridBagConstraints);
+
         setLayout(new java.awt.GridBagLayout());
 
         jXCollapsiblePane1.setCollapsed(true);
@@ -336,6 +380,39 @@ public class AttackTargetPanel extends WizardPage {
             });
         }
     }//GEN-LAST:event_fireViewStateChangeEvent
+
+    private void fireChangeAttackCountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeAttackCountEvent
+        boolean increase = false;
+        if (evt.getSource() == jAddAttackButton) {
+            increase = true;
+        } else if (evt.getSource() == jRemoveAttackButton) {
+            increase = false;
+        }
+
+        int[] selection = jVillageTable.getSelectedRows();
+        if (selection.length > 0) {
+            int modificationCount = 0;
+            for (int i : selection) {
+                TAPAttackTargetElement elem = getModel().getRow(jVillageTable.convertRowIndexToView(i));
+                if (increase) {
+                    elem.addAttack();
+                    modificationCount++;
+                } else {
+                    if (elem.removeAttack()) {
+                        modificationCount++;
+                    }
+                }
+            }
+
+            jStatusLabel.setText(modificationCount + " Angriff(e) " + ((increase) ? "hinzugefügt" : "entfernt"));
+            if (modificationCount > 0) {
+                getModel().fireTableDataChanged();
+            }
+        } else {
+            jStatusLabel.setText("Keine Angriffe gewählt");
+        }
+
+    }//GEN-LAST:event_fireChangeAttackCountEvent
 
     private TAPTargetTableModel getModel() {
         return (TAPTargetTableModel) jVillageTable.getModel();
@@ -432,12 +509,15 @@ public class AttackTargetPanel extends WizardPage {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
+    private javax.swing.JButton jAddAttackButton;
     private javax.swing.JPanel jDataPanel;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JButton jRemoveAttackButton;
     private javax.swing.JLabel jStatusLabel;
     private javax.swing.JScrollPane jTableScrollPane;
     private javax.swing.JToggleButton jToggleButton1;

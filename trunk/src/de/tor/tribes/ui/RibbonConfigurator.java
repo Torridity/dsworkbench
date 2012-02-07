@@ -25,12 +25,10 @@ import de.tor.tribes.ui.views.DSWorkbenchConquersFrame;
 import de.tor.tribes.ui.views.DSWorkbenchChurchFrame;
 import de.tor.tribes.ui.views.DSWorkbenchSearchFrame;
 import de.tor.tribes.ui.views.DSWorkbenchRankFrame;
-import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor;
 import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
 import de.tor.tribes.ui.views.DSWorkbenchTagFrame;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.ui.views.*;
-import de.tor.tribes.ui.wiz.dep.DefensePlanerWizard;
 import de.tor.tribes.ui.wiz.red.ResourceDistributorWizard;
 import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.BrowserCommandSender;
@@ -45,7 +43,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -134,6 +131,26 @@ public class RibbonConfigurator {
         });
 
         appmen.addMenuEntry(bbEditorEntry);
+
+
+        RibbonApplicationMenuEntryPrimary standardAttackFrame = new RibbonApplicationMenuEntryPrimary(getResizableIconFromResource("/res/ui/troop_info_add.png"), "Standardangriffe", new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                TroopSetupConfigurationFrame.getSingleton().setVisible(true);
+            }
+        }, JCommandButton.CommandButtonKind.ACTION_ONLY);
+
+        standardAttackFrame.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
+
+            public void menuEntryActivated(JPanel targetPanel) {
+                targetPanel.removeAll();
+                targetPanel.setLayout(new BorderLayout());
+                targetPanel.add(new JLabel("<html>Standardangriffe, z.B. f&uuml;r das &Uuml;bertragen von Angriffen in den Browser, festlegen</html>"), BorderLayout.CENTER);
+                targetPanel.revalidate();
+            }
+        });
+
+        appmen.addMenuEntry(standardAttackFrame);
 
         if (!GlobalOptions.isMinimal()) {
             RibbonApplicationMenuEntryPrimary layerEditor = new RibbonApplicationMenuEntryPrimary(getResizableIconFromFile("graphics/icons/24x24/layer_settings.gif"), "Ebeneneinstellungen", new ActionListener() {

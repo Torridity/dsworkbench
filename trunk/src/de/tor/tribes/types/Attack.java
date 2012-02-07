@@ -11,6 +11,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.php.json.JSONObject;
+import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.xml.JaxenUtils;
@@ -19,6 +20,7 @@ import java.util.Date;
 import org.jdom.Element;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.attack.StandardAttackManager;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 
@@ -30,12 +32,12 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
 
     private final static String[] VARIABLES = new String[]{"%TYPE%", "%ATTACKER%", "%SOURCE%", "%UNIT%", "%DEFENDER%", "%TARGET%", "%SEND%", "%ARRIVE%", "%PLACE%", "%PLACE_URL%"};
     private final static String STANDARD_TEMPLATE = "%TYPE% von %ATTACKER% aus %SOURCE% mit %UNIT% auf %DEFENDER% in %TARGET% startet am [color=#ff0e0e]%SEND%[/color] und kommt am [color=#2eb92e]%ARRIVE%[/color] an (%PLACE%)";
-    public static final int NO_TYPE = 0;
-    public static final int CLEAN_TYPE = 1;
-    public static final int SNOB_TYPE = 2;
-    public static final int SUPPORT_TYPE = 3;
-    public static final int FAKE_TYPE = 4;
-    public static final int FAKE_DEFF_TYPE = 5;
+    public static final int NO_TYPE = StandardAttack.NO_ICON;
+    public static final int CLEAN_TYPE = StandardAttack.OFF_ICON;
+    public static final int SNOB_TYPE = StandardAttack.SNOB_ICON;
+    public static final int SUPPORT_TYPE = StandardAttack.SUPPORT_ICON;
+    public static final int FAKE_TYPE = StandardAttack.FAKE_ICON;
+    public static final int FAKE_DEFF_TYPE = ImageManager.NOTE_SYMBOL_FAKE_DEF;
     public static final int SPY_TYPE = 6;
     private static final long serialVersionUID = 10L;
     private Village source = null;

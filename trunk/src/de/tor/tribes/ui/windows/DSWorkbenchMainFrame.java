@@ -60,7 +60,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
-import de.tor.tribes.ui.models.StandardAttackTableModel;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.ui.views.*;
 import de.tor.tribes.util.*;
@@ -618,15 +617,14 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             DSWorkbenchAttackFrame.getSingleton().resetView();
             DSWorkbenchAttackFrame.getSingleton().restoreProperties();
             /*
-             * DSWorkbenchMerchantDistibutor.getSingleton().resetView();
-            DSWorkbenchMerchantDistibutor.getSingleton().restoreProperties();
+             * DSWorkbenchMerchantDistibutor.getSingleton().resetView(); DSWorkbenchMerchantDistibutor.getSingleton().restoreProperties();
              */
             DSWorkbenchTagFrame.getSingleton().resetView();
             DSWorkbenchTagFrame.getSingleton().restoreProperties();
             DSWorkbenchConquersFrame.getSingleton().resetView();
             DSWorkbenchConquersFrame.getSingleton().restoreProperties();
             //update troops table and troops view
-            StandardAttackTableModel.getSingleton().setup();
+            TroopSetupConfigurationFrame.getSingleton().setup();
             DSWorkbenchTroopsFrame.getSingleton().resetView();
             DSWorkbenchTroopsFrame.getSingleton().restoreProperties();
             DistanceManager.getSingleton().clear();

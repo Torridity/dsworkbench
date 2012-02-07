@@ -17,11 +17,12 @@ import de.tor.tribes.types.test.DummyUnit;
 import de.tor.tribes.types.StandardAttackElement;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.components.ClickAccountPanel;
+import de.tor.tribes.ui.components.ProfileQuickChangePanel;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.panels.AttackTableTab;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.editors.StandardAttackElementEditor;
-import de.tor.tribes.ui.models.StandardAttackTableModel;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.ui.renderer.StandardAttackTypeCellRenderer;
@@ -77,20 +78,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
 /**
  * @author Charon
  */
-public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, ProfileManagerListener, Serializable {
-
-    @Override
-    public void fireProfilesLoadedEvent() {
-        UserProfile[] profiles = ProfileManager.getSingleton().getProfiles(GlobalOptions.getSelectedServer());
-
-        DefaultComboBoxModel model = new DefaultComboBoxModel(new Object[]{"Standard"});
-        if (profiles != null && profiles.length > 0) {
-            for (UserProfile profile : profiles) {
-                model.addElement(profile);
-            }
-        }
-        jProfileBox.setModel(model);
-    }
+public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, Serializable {
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -152,6 +140,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
     private CountdownThread mCountdownThread = null;
     private int iClickAccount = 0;
     private GenericTestPanel centerPanel = null;
+    private ClickAccountPanel clickAccount = null;
+    private ProfileQuickChangePanel profilePanel = null;
 
     public static synchronized DSWorkbenchAttackFrame getSingleton() {
         if (SINGLETON == null) {
@@ -168,7 +158,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         centerPanel = new GenericTestPanel();
         jAttackPanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildComponent(jXAttackPanel);
-        fireProfilesLoadedEvent();
         buildMenu();
         capabilityInfoPanel1.addActionListener(this);
         jAttackTabPane.setCloseAction(new AbstractAction("closeAction") {
@@ -255,14 +244,11 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
-        ProfileManager.getSingleton().addProfileManagerListener(DSWorkbenchAttackFrame.this);
-        jStandardAttackDialog.pack();
         setGlassPane(jxSearchPane);
         pack();
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         if (!Constants.DEBUG) {
             GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.attack_view", GlobalOptions.getHelpBroker().getHelpSet());
-            GlobalOptions.getHelpBroker().enableHelpKey(jStandardAttackDialog, "pages.standard_attacks", GlobalOptions.getHelpBroker().getHelpSet());
         }       // </editor-fold>
     }
 
@@ -301,10 +287,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
     @Override
     public String getPropertyPrefix() {
         return "attack.view";
-    }
-
-    public JDialog getStandardAttackDialog() {
-        return jStandardAttackDialog;
     }
 
     /**
@@ -473,26 +455,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
         JXTaskPane miscTaskPane = new JXTaskPane();
         miscTaskPane.setTitle("Sonstiges");
-        miscTaskPane.getContentPane().add(factoryButton("/res/ui/standard_attacks.png", "Truppenst&auml;rke von Standardangriffen definieren. Diese Einstellungen werden verwendet, wenn man Angriffe in den Browser &uuml;bertr&auml;gt und das entsprechende Userscript 'dswb.user.js' installiert hat, um im ge&ouml;ffneten Versammlungsplatz Truppen bereits einzutragen", new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                //build table
-                jStandardAttackTable.invalidate();
-                jStandardAttackTable.setModel(new DefaultTableModel());
-                jStandardAttackTable.revalidate();
-
-                jStandardAttackTable.setModel(StandardAttackTableModel.getSingleton());
-                for (int i = 0; i < StandardAttackTableModel.getSingleton().getColumnCount(); i++) {
-                    jStandardAttackTable.getColumnModel().getColumn(i).setHeaderRenderer(new UnitTableHeaderRenderer());
-                }
-                jStandardAttackTable.setDefaultEditor(StandardAttackElement.class, new StandardAttackElementEditor());
-                jStandardAttackTable.setDefaultRenderer(String.class, new StandardAttackTypeCellRenderer());
-                jStandardAttackTable.setRowHeight(20);
-                jStandardAttackDialog.setLocationRelativeTo(DSWorkbenchAttackFrame.getSingleton());
-                jStandardAttackDialog.setVisible(true);
-            }
-        }));
 
         miscTaskPane.getContentPane().add(factoryButton("/res/ui/colorize.gif", "F&auml;rbt zusammengeh&ouml;rigen Angriffe entsprechend der aktuellen Tabellensortierung ein<br/><i>Farbalgorithmus &copy;bodhiBrute</i>", new MouseAdapter() {
 
@@ -516,15 +478,10 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         }));
         // </editor-fold>
-        centerPanel.setupTaskPane(jClickAccountLabel, jProfileQuickChange, editTaskPane, transferTaskPane, miscTaskPane);
-    }
 
-    public UserProfile getQuickProfile() {
-        Object o = jProfileBox.getSelectedItem();
-        if (o instanceof UserProfile) {
-            return (UserProfile) o;
-        }
-        return null;
+        clickAccount = new ClickAccountPanel();
+        profilePanel = new ProfileQuickChangePanel();
+        centerPanel.setupTaskPane(clickAccount, profilePanel, editTaskPane, transferTaskPane, miscTaskPane);
     }
 
     /**
@@ -548,13 +505,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jStandardAttackDialog = new javax.swing.JDialog();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        jStandardAttackTable = new javax.swing.JTable();
-        jButton11 = new javax.swing.JButton();
-        jScrollPane6 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
-        jClickAccountLabel = new javax.swing.JLabel();
         jxSearchPane = new org.jdesktop.swingx.JXPanel();
         jXPanel2 = new org.jdesktop.swingx.JXPanel();
         jButton12 = new javax.swing.JButton();
@@ -569,91 +519,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jAttackTabPane = new com.jidesoft.swing.JideTabbedPane();
         jNewPlanPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jProfileQuickChange = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jProfileBox = new javax.swing.JComboBox();
         jAttackPanel = new javax.swing.JPanel();
         jAttackFrameAlwaysOnTop = new javax.swing.JCheckBox();
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
-
-        jStandardAttackDialog.setTitle("Standardangriffe");
-        jStandardAttackDialog.setModal(true);
-
-        jStandardAttackTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jStandardAttackTable.setToolTipText("");
-        jScrollPane5.setViewportView(jStandardAttackTable);
-
-        jButton11.setText("Schließen");
-        jButton11.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireApplyStandardAttacksEvent(evt);
-            }
-        });
-
-        jScrollPane6.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jScrollPane6.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jScrollPane6.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-        jScrollPane6.setMaximumSize(new java.awt.Dimension(472, 159));
-        jScrollPane6.setMinimumSize(new java.awt.Dimension(472, 159));
-        jScrollPane6.setPreferredSize(new java.awt.Dimension(472, 159));
-
-        jTextPane1.setContentType("text/html");
-        jTextPane1.setEditable(false);
-        jTextPane1.setText("<html><p style=\"margin-top: 0\"> Für die obere Tabelle gibt es vier mögliche Formatvorgaben:<UL><LI><I>Ganze Zahlen</I> (0 &lt;= X &lt;= Max.), um eine feste Anzahl einer Truppenart einzufügen (z.B: '100')<LI><I>Alle</I>, um alle Truppen einzufügen (z.B: 'Alle')\n<LI><I>Alle - X</I>, um alle Truppen abzüglich einer bestimmten Anzahl einzufügen (z.B: 'Alle - 100')\n<LI><I>X%</I>, um einen prozentualen Anteil aller Truppen einzufügen (z.B: '50%')\n</UL> </p></html>");
-        jTextPane1.setOpaque(false);
-        jScrollPane6.setViewportView(jTextPane1);
-
-        javax.swing.GroupLayout jStandardAttackDialogLayout = new javax.swing.GroupLayout(jStandardAttackDialog.getContentPane());
-        jStandardAttackDialog.getContentPane().setLayout(jStandardAttackDialogLayout);
-        jStandardAttackDialogLayout.setHorizontalGroup(
-            jStandardAttackDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jStandardAttackDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jStandardAttackDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
-                    .addComponent(jButton11))
-                .addContainerGap())
-        );
-        jStandardAttackDialogLayout.setVerticalGroup(
-            jStandardAttackDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jStandardAttackDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton11)
-                .addContainerGap())
-        );
-
-        jClickAccountLabel.setBackground(new java.awt.Color(255, 255, 255));
-        jClickAccountLabel.setFont(new java.awt.Font("sansserif", 0, 11));
-        jClickAccountLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jClickAccountLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/LeftClick.png"))); // NOI18N
-        jClickAccountLabel.setText("Klick-Konto [0]");
-        jClickAccountLabel.setToolTipText("0 Klick(s) aufgeladen");
-        jClickAccountLabel.setAlignmentY(1.0F);
-        jClickAccountLabel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
-        jClickAccountLabel.setMaximumSize(new java.awt.Dimension(110, 40));
-        jClickAccountLabel.setMinimumSize(new java.awt.Dimension(110, 40));
-        jClickAccountLabel.setOpaque(true);
-        jClickAccountLabel.setPreferredSize(new java.awt.Dimension(110, 40));
-        jClickAccountLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireFillClickAccountEvent(evt);
-            }
-        });
 
         jxSearchPane.setOpaque(false);
         jxSearchPane.setLayout(new java.awt.GridBagLayout());
@@ -778,29 +646,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         });
         jNewPlanPanel.add(jLabel1, java.awt.BorderLayout.CENTER);
 
-        jProfileQuickChange.setBackground(new java.awt.Color(255, 255, 255));
-        jProfileQuickChange.setLayout(new java.awt.GridBagLayout());
-
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("Profil-Schnellauswahl");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 5);
-        jProfileQuickChange.add(jLabel2, gridBagConstraints);
-
-        jProfileBox.setToolTipText("Erlaubt die Schnellauswahl des Benutzerprofils mit dem Angriffe in den Browser übertragen werden");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 5, 5, 5);
-        jProfileQuickChange.add(jProfileBox, gridBagConstraints);
-
         setTitle("Angriffe");
         setMinimumSize(new java.awt.Dimension(700, 500));
         getContentPane().setLayout(new java.awt.GridBagLayout());
@@ -839,11 +684,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-private void fireFillClickAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireFillClickAccountEvent
-    iClickAccount++;
-    updateClickAccount();
-}//GEN-LAST:event_fireFillClickAccountEvent
-
 private void fireHideGlassPaneEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideGlassPaneEvent
     jxSearchPane.setBackgroundPainter(null);
     jxSearchPane.setVisible(false);
@@ -855,10 +695,6 @@ private void fireHighlightEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:e
 private void fireUpdateFilterEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireUpdateFilterEvent
     updateFilter();
 }//GEN-LAST:event_fireUpdateFilterEvent
-
-private void fireApplyStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireApplyStandardAttacksEvent
-    jStandardAttackDialog.setVisible(false);
-}//GEN-LAST:event_fireApplyStandardAttacksEvent
 
 private void fireAttackFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireAttackFrameAlwaysOnTopEvent
     setAlwaysOnTop(!isAlwaysOnTop());
@@ -907,18 +743,16 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         super.toBack();
     }
 
-    public void decreaseClickAccountValue() {
-        iClickAccount = (iClickAccount == 0) ? 0 : iClickAccount - 1;
-        updateClickAccount();
+    public boolean decreaseClickAccountValue() {
+        return clickAccount.useClick();
     }
 
-    public int getClickAccountValue() {
-        return iClickAccount;
+    public void increaseClickAccountValue() {
+        clickAccount.giveClickBack();
     }
 
-    private void updateClickAccount() {
-        jClickAccountLabel.setToolTipText(iClickAccount + " Klick(s) aufgeladen");
-        jClickAccountLabel.setText("Klick-Konto [" + iClickAccount + "]");
+    public UserProfile getQuickProfile() {
+        return profilePanel.getSelectedProfile();
     }
 
     @Override
@@ -1119,25 +953,15 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JCheckBox jAttackFrameAlwaysOnTop;
     private javax.swing.JPanel jAttackPanel;
     private com.jidesoft.swing.JideTabbedPane jAttackTabPane;
-    private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
-    private javax.swing.JLabel jClickAccountLabel;
     private javax.swing.JCheckBox jFilterCaseSensitive;
     private javax.swing.JCheckBox jFilterRows;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JPanel jNewPlanPanel;
-    private javax.swing.JComboBox jProfileBox;
-    private javax.swing.JPanel jProfileQuickChange;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JScrollPane jScrollPane6;
-    private javax.swing.JDialog jStandardAttackDialog;
-    private javax.swing.JTable jStandardAttackTable;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextPane jTextPane1;
     private org.jdesktop.swingx.JXPanel jXAttackPanel;
     private org.jdesktop.swingx.JXList jXColumnList;
     private org.jdesktop.swingx.JXPanel jXPanel2;

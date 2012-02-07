@@ -36,7 +36,7 @@ public class NoteIconCellEditor extends AbstractCellEditor implements TableCellE
 
         switch (type) {
             case NOTE: {
-                for (int i = -1; i <= ImageManager.NOTE_SYMBOL_WALL; i++) {
+                for (int i = -1; i <= ImageManager.MAX_NOTE_SYMBOL; i++) {
                     model.addElement(i);
                 }
                 break;

@@ -8,6 +8,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.StandardAttack;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor.Transport;
@@ -41,10 +42,10 @@ public class BrowserCommandSender {
         return sendAttack(pAttack, null);
     }
 
-    private static boolean sendTroops(Village pSource, Village pTarget, int pType, UserProfile pProfile) {
+    private static boolean sendTroops(Village pSource, Village pTarget, int pTypeIcon, UserProfile pProfile) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
-            logger.debug("Transfer troops to browser for village '" + pSource + "' to '" + pTarget + "' with type '" + pType + "'");
+            logger.debug("Transfer troops to browser for village '" + pSource + "' to '" + pTarget + "' with type '" + pTypeIcon + "'");
             String url = baseURL + "/game.php?village=";
             int uvID = -1;
             if (pProfile != null) {
@@ -57,8 +58,13 @@ public class BrowserCommandSender {
             }
             url += pSource.getId() + "&screen=place&mode=command&target=" + pTarget.getId();
             url += "&type=0";
+
+            StandardAttack a = StandardAttackManager.getSingleton().getElementByIcon(pTypeIcon);
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                int amount = StandardAttackManager.getSingleton().getAmountForVillage(pType, unit, pSource);
+                int amount = 0;
+                if (a != null) {
+                    amount = a.getAmountForUnit(unit, pSource);
+                }
                 url += "&" + unit.getPlainName() + "=" + amount;
             }
             url += "&ts=" + System.currentTimeMillis();

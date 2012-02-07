@@ -7,6 +7,9 @@ package de.tor.tribes.types;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.ImageManager;
+import de.tor.tribes.util.attack.StandardAttackManager;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.IOException;
 import java.net.URLDecoder;
@@ -25,7 +28,13 @@ public class StandardAttack extends ManageableType {
     private static Logger logger = Logger.getLogger("StandardAttack");
     private String name = null;
     private List<StandardAttackElement> elements = null;
-    private int icon = -1;
+    public static final int NO_ICON = ImageManager.NOTE_SYMBOL_NONE;
+    public static final int OFF_ICON = ImageManager.NOTE_SYMBOL_AXE;
+    public static final int FAKE_ICON = ImageManager.NOTE_SYMBOL_FAKE;
+    public static final int SNOB_ICON = ImageManager.NOTE_SYMBOL_SNOB;
+    public static final int SUPPORT_ICON = ImageManager.NOTE_SYMBOL_SPEAR;
+    public static final int FAKE_SUPPORT_ICON = ImageManager.NOTE_SYMBOL_FAKE_DEF;
+    private int icon = NO_ICON;
 
     public StandardAttack() {
         this(null);
@@ -63,11 +72,12 @@ public class StandardAttack extends ManageableType {
     public String toXml() {
         StringBuilder b = new StringBuilder();
         try {
-            b.append("<").append(getElementIdentifier()).append(" name=\"").append(URLEncoder.encode(name, "UTF-8")).append("\">");
-            b.append("<icon>").append(getIcon()).append("</icon>\n");
+            b.append("<").append(getElementIdentifier()).append(" name=\"").append(URLEncoder.encode(name, "UTF-8")).append("\" icon=\"").append(getIcon()).append("\">\n");
+            b.append("<attackElements>\n");
             for (StandardAttackElement elem : elements) {
                 b.append(elem.toXml());
             }
+            b.append("</attackElements>\n");
             b.append("</").append(getElementIdentifier()).append(">\n");
         } catch (IOException ioe) {
             return "\n";
@@ -84,38 +94,35 @@ public class StandardAttack extends ManageableType {
         }
 
         try {
-            setIcon(Integer.parseInt(e.getChild("icon").getText()));
+            setIcon(Integer.parseInt(e.getAttribute("icon").getValue()));
         } catch (Exception ex) {
             setIcon(-1);
         }
 
         elements.clear();
-
-        for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-            Element unitElement = e.getChild(u.getPlainName());
-            StandardAttackElement elem = null;
+        for (Element aElem : (List<Element>) JaxenUtils.getNodes(e, "attackElements/attackElement")) {
             try {
-               // elem = StandardAttackElement.fromXml(u, unitElement);
+                StandardAttackElement elem = StandardAttackElement.fromXml(aElem);
+                elements.add(elem);
             } catch (Exception ex) {
-                elem = new StandardAttackElement(u, 0);
+                //ignore
             }
-            elements.add(elem);
         }
     }
 
-    public void setName(String pName) {
+    public final void setName(String pName) {
         name = pName;
     }
 
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
-    public void setIcon(int pIcon) {
+    public final void setIcon(int pIcon) {
         icon = pIcon;
     }
 
-    public int getIcon() {
+    public final int getIcon() {
         return icon;
     }
 
@@ -126,5 +133,10 @@ public class StandardAttack extends ManageableType {
             }
         }
         return null;
+    }
+
+    public int getAmountForUnit(UnitHolder pUnit, Village pVillage) {
+        StandardAttackElement element = getElementForUnit(pUnit);
+        return (element == null) ? 0 : getElementForUnit(pUnit).getTroopsAmount(pVillage);
     }
 }

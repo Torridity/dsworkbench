@@ -23,7 +23,9 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
 
-/**Class for loading and holding all cursors needed for DS Workbench
+/**
+ * Class for loading and holding all cursors needed for DS Workbench
+ *
  * @author Jejkal
  */
 public class ImageManager {
@@ -150,6 +152,8 @@ public class ImageManager {
     public final static int NOTE_SYMBOL_FARM = 43;
     public final static int NOTE_SYMBOL_STORAGE = 44;
     public final static int NOTE_SYMBOL_WALL = 45;
+    public final static int NOTE_SYMBOL_FAKE_DEF = 46;
+    public final static int MAX_NOTE_SYMBOL = 46;
 
     static {
         try {
@@ -199,7 +203,8 @@ public class ImageManager {
                 new File("graphics/icons/iron.png").toURI().toURL(),
                 new File("graphics/icons/farm.png").toURI().toURL(),
                 new File("graphics/icons/storage.png").toURI().toURL(),
-                new File("graphics/icons/wall.png").toURI().toURL()};
+                new File("graphics/icons/wall.png").toURI().toURL(),
+                ImageManager.class.getResource("/res/ui/def_fake.png")};
         } catch (Exception e) {
             NOTE_URLS = null;
         }
@@ -225,7 +230,9 @@ public class ImageManager {
         }
     }
 
-    /**Load the list of cursors*/
+    /**
+     * Load the list of cursors
+     */
     public static void loadCursors() throws Exception {
         try {
             //default map panel cursors
@@ -337,7 +344,9 @@ public class ImageManager {
         return NOTE_SYMBOLS.get(v);
     }
 
-    /**Get the cursor for the provided ID*/
+    /**
+     * Get the cursor for the provided ID
+     */
     public static Cursor getCursor(int pID) {
 
         if (!cursorSupported) {
@@ -357,12 +366,16 @@ public class ImageManager {
         return Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
     }
 
-    /**Get the cursor for the provided ID*/
+    /**
+     * Get the cursor for the provided ID
+     */
     public static ImageIcon getCursorImage(int pID) {
         return CURSOR_IMAGES.get(pID);
     }
 
-    /**Load the icons of the units used for the animated unit movement on the MapPanel*/
+    /**
+     * Load the icons of the units used for the animated unit movement on the MapPanel
+     */
     public static void loadUnitIcons() throws Exception {
         try {
             UNIT_IMAGES.add(ImageUtils.loadImage(new File("graphics/icons/spear.png")));//0
@@ -392,7 +405,9 @@ public class ImageManager {
         }
     }
 
-    /**Get thr unit icon for the provided ID*/
+    /**
+     * Get thr unit icon for the provided ID
+     */
     public static ImageIcon getUnitIcon(int pId) {
         if (DataHolder.getSingleton().getUnits().size() == 9 || DataHolder.getSingleton().getUnits().size() == 10) {
             //old style
@@ -423,7 +438,9 @@ public class ImageManager {
         }
     }
 
-    /**Get thr unit icon for the provided ID*/
+    /**
+     * Get thr unit icon for the provided ID
+     */
     public static ImageIcon getUnitIcon(int pId, boolean pChecked) {
         if ((DataHolder.getSingleton().getUnits().size() == 9 || DataHolder.getSingleton().getUnits().size() == 10) && pChecked) {
             //old style
@@ -458,7 +475,9 @@ public class ImageManager {
         return getUnitImage(pId, true);
     }
 
-    /**Get thr unit icon for the provided ID*/
+    /**
+     * Get thr unit icon for the provided ID
+     */
     public static BufferedImage getUnitImage(int pId, boolean pChecked) {
 
         if (DataHolder.getSingleton().getUnits().size() == 9 && pChecked) {

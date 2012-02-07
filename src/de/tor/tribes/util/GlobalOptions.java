@@ -329,7 +329,7 @@ public class GlobalOptions {
             NoteManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/notes.xml");
             logger.debug("Loading standard attacks");
             fireDataHolderEvent("Lade Standardangriffe");
-            StandardAttackManager.getSingleton().loadStandardAttacksFromDisk(getSelectedProfile().getProfileDirectory() + "/stdAttacks.xml");
+            StandardAttackManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/stdAttacks.xml");
             logger.debug("Loading reports");
             fireDataHolderEvent("Lade Berichte");
             ReportManager.getSingleton().loadElements(getSelectedProfile().getProfileDirectory() + "/reports.xml");
@@ -375,7 +375,7 @@ public class GlobalOptions {
             logger.debug("Saving notes");
             NoteManager.getSingleton().saveElements(getSelectedProfile().getProfileDirectory() + "/notes.xml");
             logger.debug("Saving standard attacks");
-            StandardAttackManager.getSingleton().saveStandardAttacksToDisk(getSelectedProfile().getProfileDirectory() + "/stdAttacks.xml");
+            StandardAttackManager.getSingleton().saveElements(getSelectedProfile().getProfileDirectory() + "/stdAttacks.xml");
             logger.debug("Saving stats");
             StatManager.getSingleton().storeStats();
             logger.debug("Saving reports");

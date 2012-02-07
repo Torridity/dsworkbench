@@ -39,7 +39,7 @@ public class TagMapMarkerEditorImpl extends javax.swing.JPanel {
         //setup note symbol box
         jComboBox1.addItem(-1);
         //ICON_SNOB
-        for (int i = 0; i <= ImageManager.NOTE_SYMBOL_WALL; i++) {
+        for (int i = 0; i <= ImageManager.MAX_NOTE_SYMBOL; i++) {
             jComboBox1.addItem(i);
         }
 

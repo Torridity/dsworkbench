@@ -50,6 +50,38 @@ public class TAPTargetTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
+    public void increaseRowCount(final Village pVillage) {
+        Object result = CollectionUtils.find(elements, new Predicate() {
+
+            @Override
+            public boolean evaluate(Object o) {
+                return ((TAPAttackTargetElement) o).getVillage().equals(pVillage);
+            }
+        });
+
+        if (result != null) {
+            TAPAttackTargetElement resultElem = (TAPAttackTargetElement) result;
+            resultElem.addAttack();
+            fireTableDataChanged();
+        }
+    }
+
+    public void decreaseRowCount(final Village pVillage) {
+        Object result = CollectionUtils.find(elements, new Predicate() {
+
+            @Override
+            public boolean evaluate(Object o) {
+                return ((TAPAttackTargetElement) o).getVillage().equals(pVillage);
+            }
+        });
+
+        if (result != null) {
+            TAPAttackTargetElement resultElem = (TAPAttackTargetElement) result;
+            resultElem.removeAttack();
+            fireTableDataChanged();
+        }
+    }
+
     public void removeTargets(List<Village> pToRemove) {
         for (TAPAttackTargetElement elem : elements.toArray(new TAPAttackTargetElement[elements.size()])) {
             if (pToRemove.contains(elem.getVillage())) {

@@ -4,20 +4,24 @@
  */
 package de.tor.tribes.util.attack;
 
+import de.tor.tribes.control.GenericManager;
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.StandardAttack;
 import de.tor.tribes.types.StandardAttackElement;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import javax.naming.ldap.ManageReferralControl;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -25,17 +29,16 @@ import org.jdom.Element;
 /**
  * @author Charon
  */
-public class StandardAttackManager {
+public class StandardAttackManager extends GenericManager<StandardAttack> {
 
     private static Logger logger = Logger.getLogger("StandardAttackManager");
-    public static final int NO_TYPE_ROW = 0;
-    public static final int OFF_TYPE_ROW = 1;
-    public static final int SNOB_TYPE_ROW = 2;
-    public static final int SUPPORT_TYPE_ROW = 3;
-    public static final int FAKE_TYPE_ROW = 4;
-    public static final int FAKE_DEFF_TYPE_ROW = 5;
+    public static final String NO_TYPE_NAME = "Keine Auswahl";
+    public static final String FAKE_TYPE_NAME = "Fake";
+    public static final String OFF_TYPE_NAME = "Off";
+    public static final String SNOB_TYPE_NAME = "AG";
+    public static final String SUPPORT_TYPE_NAME = "Unterstützung";
+    public static final String FAKE_SUPPORT_TYPE_NAME = "Unterstützung (Fake)";
     private static StandardAttackManager SINGLETON = null;
-    private Hashtable<String, List<StandardAttackElement>> standardAttacks = null;
 
     public static synchronized StandardAttackManager getSingleton() {
         if (SINGLETON == null) {
@@ -45,24 +48,125 @@ public class StandardAttackManager {
     }
 
     StandardAttackManager() {
-        standardAttacks = new Hashtable<String, List<StandardAttackElement>>();
+        super(false);
     }
 
-    public Hashtable<String, List<StandardAttackElement>> getStandardAttacks() {
-        return standardAttacks;
+    private void checkValues() {
+        if (getElementByName(NO_TYPE_NAME) == null) {
+            addManagedElement(new StandardAttack(NO_TYPE_NAME, StandardAttack.NO_ICON));
+        }
+        if (getElementByName(OFF_TYPE_NAME) == null) {
+            addManagedElement(new StandardAttack(OFF_TYPE_NAME, StandardAttack.OFF_ICON));
+        }
+        if (getElementByName(FAKE_TYPE_NAME) == null) {
+            addManagedElement(new StandardAttack(FAKE_TYPE_NAME, StandardAttack.FAKE_ICON));
+        }
+        if (getElementByName(SNOB_TYPE_NAME) == null) {
+            addManagedElement(new StandardAttack(SNOB_TYPE_NAME, StandardAttack.SNOB_ICON));
+        }
+        if (getElementByName(SUPPORT_TYPE_NAME) == null) {
+            addManagedElement(new StandardAttack(SUPPORT_TYPE_NAME, StandardAttack.SUPPORT_ICON));
+        }
+        if (getElementByName(FAKE_SUPPORT_TYPE_NAME) == null) {
+            addManagedElement(new StandardAttack(FAKE_SUPPORT_TYPE_NAME, StandardAttack.FAKE_SUPPORT_ICON));
+        }
     }
 
-    public void loadStandardAttacksFromDatabase(String pUrl) {
-        //not yet implemented
+    public StandardAttack getElementByName(final String pName) {
+        Object result = CollectionUtils.find(getAllElements(), new Predicate() {
+
+            @Override
+            public boolean evaluate(Object o) {
+                return ((StandardAttack) o).getName().equals(pName);
+            }
+        });
+
+        return (StandardAttack) result;
     }
 
-    public void loadStandardAttacksFromDisk(String pFile) {
-        standardAttacks.clear();
+    public StandardAttack getElementByIcon(final int pIcon) {
+        Object result = CollectionUtils.find(getAllElements(), new Predicate() {
+
+            @Override
+            public boolean evaluate(Object o) {
+                return ((StandardAttack) o).getIcon() == pIcon;
+            }
+        });
+
+        return (StandardAttack) result;
+    }
+
+    public boolean containsElementByName(final String pName) {
+        Object result = CollectionUtils.find(getAllElements(), new Predicate() {
+
+            @Override
+            public boolean evaluate(Object o) {
+                return ((StandardAttack) o).getName().equals(pName);
+            }
+        });
+
+        return result != null;
+    }
+
+    public boolean containsElementByIcon(final int pIcon) {
+        Object result = CollectionUtils.find(getAllElements(), new Predicate() {
+
+            @Override
+            public boolean evaluate(Object o) {
+                return ((StandardAttack) o).getIcon() == pIcon;
+            }
+        });
+
+        return result != null;
+    }
+
+    public boolean addStandardAttack(String pName, int pIcon) {
+        if (isAllowedName(pName) && !containsElementByName(pName) && isAllowedIcon(pIcon) && !containsElementByIcon(pIcon)) {
+            addManagedElement(new StandardAttack(pName, pIcon));
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isAllowedName(String pName) {
+        if (pName == null
+                || pName.equals(StandardAttackManager.NO_TYPE_NAME)
+                || pName.equals(StandardAttackManager.OFF_TYPE_NAME)
+                || pName.equals(StandardAttackManager.FAKE_TYPE_NAME)
+                || pName.equals(StandardAttackManager.SNOB_TYPE_NAME)
+                || pName.equals(StandardAttackManager.SUPPORT_TYPE_NAME)
+                || pName.equals(StandardAttackManager.FAKE_SUPPORT_TYPE_NAME)) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isAllowedIcon(int pIcon) {
+        return pIcon != StandardAttack.NO_ICON
+                && pIcon != StandardAttack.OFF_ICON
+                && pIcon != StandardAttack.FAKE_ICON
+                && pIcon != StandardAttack.SNOB_ICON
+                && pIcon != StandardAttack.SUPPORT_ICON
+                && pIcon != StandardAttack.FAKE_SUPPORT_ICON;
+    }
+
+    public boolean removeStandardAttack(StandardAttack pElement) {
+        if (!isAllowedName(pElement.getName()) || !isAllowedIcon(pElement.getIcon())) {
+            return false;
+        }
+        super.removeElement(pElement);
+        return true;
+    }
+
+    @Override
+    public void loadElements(String pFile) {
+
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return;
         }
-
+        invalidate();
+        initialize();
         File attackFile = new File(pFile);
         if (attackFile.exists()) {
             if (logger.isDebugEnabled()) {
@@ -70,57 +174,33 @@ public class StandardAttackManager {
             }
             try {
                 Document d = JaxenUtils.getDocument(attackFile);
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//stdAttacks/type")) {
-                    String type = URLDecoder.decode(e.getAttributeValue("name"), "UTF-8");
-                    logger.debug("Adding standard attack for type '" + type + "'");
-                    logger.debug(" * loading standard attacks for type '" + type + "'");
-                    List<StandardAttackElement> elements = new LinkedList<StandardAttackElement>();
-                    standardAttacks.put(type, elements);
-                    for (Element elem : (List<Element>) JaxenUtils.getNodes(e, "attackElement")) {
-                        StandardAttackElement element = null;
-                        try {
-                            element = StandardAttackElement.fromXml(elem);
-                        } catch (Exception invalid) {
-                            logger.warn("Invalid standard attack element", invalid);
-                        }
-
-                        if (element != null) {
-                            logger.debug("   * adding element for unit '" + element.getUnit() + "'");
-                            elements.add(element);
-                        }
-                    }
+                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//stdAttacks/stdAttack")) {
+                    StandardAttack element = new StandardAttack();
+                    element.loadFromXml(e);
+                    addManagedElement(element);
                 }
                 checkValues();
                 logger.debug("Standard attacks loaded successfully");
             } catch (Exception e) {
                 logger.error("Failed to load standard attacks", e);
+                checkValues();
             }
         } else {
             logger.info("No standard attacks found under '" + pFile + "'");
             checkValues();
         }
+        revalidate();
     }
 
-    public void saveStandardAttacksToDatabase(String pUrl) {
-        //not implemented yet
-    }
-
-    public void saveStandardAttacksToDisk(String pFile) {
+    @Override
+    public void saveElements(String pFile) {
         try {
             FileWriter w = new FileWriter(pFile);
             w.write("<stdAttacks>\n");
-            Enumeration<String> keys = standardAttacks.keys();
-            while (keys.hasMoreElements()) {
-                String key = keys.nextElement();
-                List<StandardAttackElement> elements = standardAttacks.get(key);
-                logger.debug(" * writing type '" + key + "'");
-                w.write("<type name=\"" + URLEncoder.encode(key, "UTF-8") + "\">\n");
-                for (StandardAttackElement elem : elements) {
-                    w.write(elem.toXml());
-                }
-                w.write("</type>\n");
-            }
 
+            for (ManageableType element : getAllElements()) {
+                w.write(((StandardAttack) element).toXml());
+            }
             w.write("</stdAttacks>\n");
             w.flush();
             w.close();
@@ -129,143 +209,13 @@ public class StandardAttackManager {
         }
     }
 
-    private void checkValues() {
-        for (int type = 0; type <= FAKE_DEFF_TYPE_ROW; type++) {
-            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                String typeName = "";
-                if (type == NO_TYPE_ROW) {
-                    typeName = "Keiner";
-                } else if (type == FAKE_TYPE_ROW) {
-                    typeName = "Fake";
-                } else if (type == OFF_TYPE_ROW) {
-                    typeName = "Off";
-                } else if (type == SNOB_TYPE_ROW) {
-                    typeName = "AG";
-                } else if (type == SUPPORT_TYPE_ROW) {
-                    typeName = "Unterstützung";
-                } else if (type == FAKE_DEFF_TYPE_ROW) {
-                    typeName = "Fake (Deff)";
-                }
-                if (standardAttacks.get(typeName) == null) {
-                    //add empty list if element list for type not found
-                    standardAttacks.put(typeName, new LinkedList<StandardAttackElement>());
-                }
-                if (!containsElementForUnit(typeName, unit)) {
-                    standardAttacks.get(typeName).add(new StandardAttackElement(unit, 0));
-                }
-            }
-        }
+    @Override
+    public String getExportData(List<String> pGroupsToExport) {
+        return "";
     }
 
-    public int getAmountForVillage(int pType, UnitHolder pUnit, Village pVillage) {
-        List<StandardAttackElement> activeList = null;
-        switch (pType) {
-            case Attack.CLEAN_TYPE: {
-                activeList = standardAttacks.get("Off");
-                break;
-            }
-            case Attack.FAKE_TYPE: {
-                activeList = standardAttacks.get("Fake");
-                break;
-            }
-            case Attack.SNOB_TYPE: {
-                activeList = standardAttacks.get("AG");
-                break;
-            }
-            case Attack.SUPPORT_TYPE: {
-                activeList = standardAttacks.get("Unterstützung");
-                break;
-            }
-            case Attack.FAKE_DEFF_TYPE: {
-                activeList = standardAttacks.get("Fake (Deff)");
-                break;
-            }
-            default: {
-                activeList = standardAttacks.get("Keiner");
-                break;
-            }
-        }
-        if (activeList == null) {
-            logger.warn("StdAttack list for type '" + pType + "' is 'null', returning 0");
-            return 0;
-        }
-        for (StandardAttackElement elem : activeList) {
-            if (elem.affectsUnit(pUnit)) {
-                return elem.getTroopsAmount(pVillage);
-            }
-        }
-
-        return 0;
-    }
-
-    public StandardAttackElement getElementForUnit(int pType, UnitHolder pUnit) {
-
-        List<StandardAttackElement> activeList = null;
-        switch (pType) {
-            case OFF_TYPE_ROW: {
-                activeList = standardAttacks.get("Off");
-                break;
-            }
-            case FAKE_TYPE_ROW: {
-                activeList = standardAttacks.get("Fake");
-                break;
-            }
-            case FAKE_DEFF_TYPE_ROW: {
-                activeList = standardAttacks.get("Fake (Deff)");
-                break;
-            }
-            case SNOB_TYPE_ROW: {
-                activeList = standardAttacks.get("AG");
-                break;
-            }
-            case SUPPORT_TYPE_ROW: {
-                activeList = standardAttacks.get("Unterstützung");
-                break;
-            }
-            default: {
-                activeList = standardAttacks.get("Keiner");
-                break;
-            }
-        }
-
-        for (StandardAttackElement elem : activeList) {
-            if (elem.affectsUnit(pUnit)) {
-                return elem;
-            }
-        }
-        return null;
-    }
-
-    private boolean containsElementForUnit(String pType, UnitHolder pUnit) {
-        /* List<StandardAttackElement> activeList = null;
-        switch (pType) {
-        case OFF_TYPE_ROW: {
-        activeList = standardAttacks.get("Off");
-        break;
-        }
-        case FAKE_TYPE_ROW: {
-        activeList = standardAttacks.get("Fake");
-        break;
-        }
-        case SNOB_TYPE_ROW: {
-        activeList = standardAttacks.get("AG");
-        break;
-        }
-        case SUPPORT_TYPE_ROW: {
-        activeList = standardAttacks.get("Unterstützung");
-        break;
-        }
-        default: {
-        activeList = standardAttacks.get("Keiner");
-        break;
-        }
-        }*/
-
-        for (StandardAttackElement elem : standardAttacks.get(pType)) {
-            if (elem.affectsUnit(pUnit)) {
-                return true;
-            }
-        }
+    @Override
+    public boolean importData(File pFile, String pExtension) {
         return false;
     }
 }

@@ -10,6 +10,7 @@ import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.StandardAttack;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import java.io.BufferedReader;
@@ -336,8 +337,13 @@ public class AttackPlanHTMLExporter {
             placeURL += a.getSource().getId() + "&screen=place&mode=command&target=" + a.getTarget().getId();
 
             placeURL += "&type=0";
+
+            StandardAttack stdAttack = StandardAttackManager.getSingleton().getElementByIcon(a.getType());
             for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-                int amount = StandardAttackManager.getSingleton().getAmountForVillage(a.getType(), u, a.getSource());
+                int amount = 0;
+                if (stdAttack != null) {
+                    amount = stdAttack.getAmountForUnit(u, a.getSource());
+                }
                 placeURL += "&" + u.getPlainName() + "=" + amount;
             }
 

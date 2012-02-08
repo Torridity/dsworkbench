@@ -54,8 +54,6 @@ public class BruteForce extends AbstractAttackAlgorithm {
         int maxStatus = allTargets.size() + allFakeTargets.size();
         int currentStatus = 0;
 
-
-
         // <editor-fold defaultstate="collapsed" desc=" Assign Offs">
         while (unitKeys.hasMoreElements()) {
             UnitHolder unit = unitKeys.nextElement();

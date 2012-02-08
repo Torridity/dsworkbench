@@ -17,11 +17,7 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.models.TAPResultDetailsTableModel;
 import de.tor.tribes.ui.models.TAPResultTableModel;
-import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
-import de.tor.tribes.ui.renderer.DateCellRenderer;
-import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.PercentCellRenderer;
-import de.tor.tribes.ui.renderer.UnitCellRenderer;
+import de.tor.tribes.ui.renderer.*;
 import de.tor.tribes.ui.util.ColorGradientHelper;
 import de.tor.tribes.ui.windows.AttackTransferDialog;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
@@ -40,7 +36,6 @@ import javax.swing.event.ListSelectionListener;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
-import org.netbeans.spi.wizard.WizardPanel;
 import org.netbeans.spi.wizard.WizardPanelNavResult;
 
 /**
@@ -96,7 +91,7 @@ public class AttackFinishPanel extends WizardPage {
         jXDetailsTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jXDetailsTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
         jXDetailsTable.setDefaultRenderer(Date.class, new DateCellRenderer());
-        jXDetailsTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
+        jXDetailsTable.setDefaultRenderer(Integer.class, new NoteIconCellRenderer(NoteIconCellRenderer.ICON_TYPE.NOTE));
         overviewPanel = new VillageOverviewMapPanel();
         jPanel5.add(overviewPanel, BorderLayout.CENTER);
         jXCollapsiblePane2.add(jSummaryPanel, BorderLayout.CENTER);

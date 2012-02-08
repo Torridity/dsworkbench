@@ -96,6 +96,10 @@ public class StandardAttackElement {
         dynamicAmount = ALL_TROOPS;
     }
 
+    public boolean isFixed() {
+        return fixedAmount != -1;
+    }
+
     public void setFixedAmount(int pAmount) {
         fixedAmount = pAmount;
         dynamicAmount = null;
@@ -117,6 +121,14 @@ public class StandardAttackElement {
     public void setAll() {
         fixedAmount = -1;
         dynamicAmount = ALL_TROOPS;
+    }
+
+    public int getTroopsAmount() {
+        if (isFixed()) {
+            return fixedAmount;
+        } else {
+            return 0;
+        }
     }
 
     public int getTroopsAmount(Village pVillage) {

@@ -11,12 +11,17 @@
 package de.tor.tribes.ui.panels;
 
 import com.jidesoft.swing.LabeledTextField;
+import de.tor.tribes.control.GenericManagerListener;
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.StandardAttack;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.UIHelper;
+import de.tor.tribes.util.attack.StandardAttackManager;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -24,6 +29,7 @@ import java.awt.Point;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
@@ -32,10 +38,20 @@ import org.apache.log4j.Logger;
  *
  * @author Torridity
  */
-public class TroopSelectionPanel extends javax.swing.JPanel {
-    
+public class TroopSelectionPanel extends javax.swing.JPanel implements GenericManagerListener {
+
     private Hashtable<String, Point> unitCoordinates = new Hashtable<String, Point>();
     private LabeledTextField[][] unitFields = new LabeledTextField[20][20];
+
+    @Override
+    public void dataChangedEvent() {
+        rebuildStandardAttackSelection();
+    }
+
+    @Override
+    public void dataChangedEvent(String pGroup) {
+        dataChangedEvent();
+    }
 
     /**
      * Creates new form TroopSelectionPanel
@@ -45,12 +61,22 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
         setup(DataHolder.getSingleton().getUnits());
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jXCollapsiblePane1.add(jPanel2, BorderLayout.CENTER);
+        StandardAttackManager.getSingleton().addManagerListener(TroopSelectionPanel.this);
+        rebuildStandardAttackSelection();
     }
-    
+
+    private void rebuildStandardAttackSelection() {
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        for (ManageableType t : StandardAttackManager.getSingleton().getAllElements()) {
+            model.addElement(t);
+        }
+        jStandardAttackBox.setModel(model);
+    }
+
     public final void setup(List<UnitHolder> pUnits) {
         setup(pUnits, true);
     }
-    
+
     public final void setup(List<UnitHolder> pUnits, boolean pTypeSeparation) {
         jUnitContainer.removeAll();
         unitCoordinates.clear();
@@ -92,7 +118,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
             unitCount++;
         }
     }
-    
+
     public final void setupDefense(boolean pTypeSeparation) {
         List<UnitHolder> units = new LinkedList<UnitHolder>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
@@ -102,7 +128,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
         }
         setup(units, pTypeSeparation);
     }
-    
+
     public final void setupOffense(boolean pTypeSeparation) {
         List<UnitHolder> units = new LinkedList<UnitHolder>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
@@ -112,7 +138,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
         }
         setup(units, pTypeSeparation);
     }
-    
+
     public final void setupFarm(boolean pTypeSeparation) {
         List<UnitHolder> units = new LinkedList<UnitHolder>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
@@ -122,7 +148,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
         }
         setup(units, pTypeSeparation);
     }
-    
+
     public Hashtable<UnitHolder, Integer> getAmounts() {
         Hashtable<UnitHolder, Integer> values = new Hashtable<UnitHolder, Integer>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
@@ -130,7 +156,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
         }
         return values;
     }
-    
+
     public void setAmounts(Hashtable<UnitHolder, Integer> pAmounts) {
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             Integer amount = pAmounts.get(unit);
@@ -141,7 +167,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
             }
         }
     }
-    
+
     public int getAmountForUnit(UnitHolder pUnit) {
         Point location = unitCoordinates.get(pUnit.getPlainName());
         if (location != null) {
@@ -150,7 +176,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
         }
         return 0;
     }
-    
+
     public void setAmountForUnit(UnitHolder pUnit, int pValue) {
         Point location = unitCoordinates.get(pUnit.getPlainName());
         if (location != null) {
@@ -158,7 +184,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
             field.setText(Integer.toString(pValue));
         }
     }
-    
+
     @Override
     public void setEnabled(boolean enabled) {
         for (int i = 0; i < 20; i++) {
@@ -181,7 +207,8 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
 
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
+        jStandardAttackBox = new javax.swing.JComboBox();
+        jButton3 = new javax.swing.JButton();
         jUnitContainer = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
@@ -189,11 +216,31 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
 
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
-        jLabel1.setText("jLabel1");
-        jPanel2.add(jLabel1, new java.awt.GridBagConstraints());
+        jLabel1.setText("Standardangriffe");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jLabel1, gridBagConstraints);
 
-        jButton2.setText("jButton2");
-        jPanel2.add(jButton2, new java.awt.GridBagConstraints());
+        jStandardAttackBox.setMinimumSize(new java.awt.Dimension(120, 18));
+        jStandardAttackBox.setPreferredSize(new java.awt.Dimension(120, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jStandardAttackBox, gridBagConstraints);
+
+        jButton3.setText("Verwenden");
+        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireUseStandardAttackEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jButton3, gridBagConstraints);
 
         setLayout(new java.awt.BorderLayout());
 
@@ -221,6 +268,9 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jXCollapsiblePane1, gridBagConstraints);
 
         add(jPanel1, java.awt.BorderLayout.SOUTH);
@@ -229,21 +279,42 @@ public class TroopSelectionPanel extends javax.swing.JPanel {
     private void fireClick(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireClick
         jXCollapsiblePane1.setCollapsed(!jXCollapsiblePane1.isCollapsed());
     }//GEN-LAST:event_fireClick
+
+    private void fireUseStandardAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUseStandardAttackEvent
+        StandardAttack att = (StandardAttack) jStandardAttackBox.getSelectedItem();
+        if (att == null) {
+            return;
+        }
+
+        if (!att.containsDynamicAmount()) {
+            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                setAmountForUnit(unit, att.getFixedAmountForUnit(unit));
+            }
+        } else {
+            JOptionPaneHelper.showInformationBox(this, "Der gewählte Standardangriff enthält dynamische Werte,\n"
+                    + "die abhängig von der Truppenzahl eines Dorfes bestimmt werden.\n"
+                    + "Er kann daher hier nicht verwendet werden.", "Information");
+        }
+    }//GEN-LAST:event_fireUseStandardAttackEvent
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JComboBox jStandardAttackBox;
     private javax.swing.JPanel jUnitContainer;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
     // End of variables declaration//GEN-END:variables
 
     public static void main(String[] args) {
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de68");
+        GlobalOptions.setSelectedServer("de77");
         ProfileManager.getSingleton().loadProfiles();
+        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de77")[0]);
         DataHolder.getSingleton().loadData(false);
+        GlobalOptions.loadUserData();
+
         JFrame f = new JFrame();
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(300, 300);

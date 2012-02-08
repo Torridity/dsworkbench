@@ -9,7 +9,6 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.ImageManager;
-import de.tor.tribes.util.attack.StandardAttackManager;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.IOException;
 import java.net.URLDecoder;
@@ -68,6 +67,15 @@ public class StandardAttack extends ManageableType {
         return "";
     }
 
+    public boolean containsDynamicAmount() {
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            if (!getElementForUnit(unit).isFixed()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public String toXml() {
         StringBuilder b = new StringBuilder();
@@ -118,6 +126,11 @@ public class StandardAttack extends ManageableType {
         return name;
     }
 
+    @Override
+    public String toString() {
+        return getName();
+    }
+
     public final void setIcon(int pIcon) {
         icon = pIcon;
     }
@@ -138,5 +151,10 @@ public class StandardAttack extends ManageableType {
     public int getAmountForUnit(UnitHolder pUnit, Village pVillage) {
         StandardAttackElement element = getElementForUnit(pUnit);
         return (element == null) ? 0 : getElementForUnit(pUnit).getTroopsAmount(pVillage);
+    }
+
+    public int getFixedAmountForUnit(UnitHolder pUnit) {
+        StandardAttackElement element = getElementForUnit(pUnit);
+        return (element == null) ? 0 : getElementForUnit(pUnit).getTroopsAmount();
     }
 }

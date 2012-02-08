@@ -38,14 +38,14 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
     public static final int SUPPORT_TYPE = StandardAttack.SUPPORT_ICON;
     public static final int FAKE_TYPE = StandardAttack.FAKE_ICON;
     public static final int FAKE_DEFF_TYPE = ImageManager.NOTE_SYMBOL_FAKE_DEF;
-    public static final int SPY_TYPE = 6;
+    public static final int SPY_TYPE = ImageManager.NOTE_SYMBOL_SPY;
     private static final long serialVersionUID = 10L;
     private Village source = null;
     private Village target = null;
     private UnitHolder unit = null;
     private Date arriveTime = null;
     private boolean showOnMap = false;
-    private int type = 0;
+    private int type = NO_TYPE;
     private boolean transferredToBrowser = false;
 
     public Attack() {
@@ -169,19 +169,18 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
      * @param type the type to set
      */
     public void setType(int type) {
+        if(type == 1){
+            try{
+                throw new Exception();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
         this.type = type;
     }
     /*
-    <attack>
-    <source>VillageID</source>
-    <target>VillageID</target>
-    <arrive>Timestamp</arrive>
-    <unit>Name</unit>
-    <extensions>
-    <showOnMap>true</showOnMap>
-    <type>0</type>
-    </extensions>
-    </attack>
+     * <attack> <source>VillageID</source> <target>VillageID</target> <arrive>Timestamp</arrive> <unit>Name</unit> <extensions>
+     * <showOnMap>true</showOnMap> <type>0</type> </extensions> </attack>
      */
 
     public JSONObject toJSON(String pOwner, String pPlanID) throws Exception {

@@ -17,16 +17,11 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
-import de.tor.tribes.ui.editors.AttackTypeCellEditor;
 import de.tor.tribes.ui.editors.DateSpinEditor;
+import de.tor.tribes.ui.editors.NoteIconCellEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.models.DoItYourselfAttackTableModel;
-import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
-import de.tor.tribes.ui.renderer.AttackTypeListCellRenderer;
-import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
-import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.UnitCellRenderer;
-import de.tor.tribes.ui.renderer.UnitListCellRenderer;
+import de.tor.tribes.ui.renderer.*;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
@@ -89,7 +84,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
  * @author Torridity
  */
 public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, ListSelectionListener {
-
+    
     @Override
     public void valueChanged(ListSelectionEvent e) {
         if (e.getValueIsAdjusting()) {
@@ -99,22 +94,22 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             }
         }
     }
-
+    
     public static enum TRANSFER_TYPE {
-
+        
         CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD, BB_TO_CLIPBOARD
     }
-
+    
     @Override
     public void dataChangedEvent() {
         dataChangedEvent(null);
     }
-
+    
     @Override
     public void dataChangedEvent(String pGroup) {
         ((DoItYourselfAttackTableModel) jAttackTable.getModel()).fireTableDataChanged();
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand() != null) {
@@ -134,13 +129,15 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
     private static Logger logger = Logger.getLogger("DoItYourselflAttackPlaner");
     private static DSWorkbenchDoItYourselfAttackPlaner SINGLETON = null;
 
-    /** Creates new form DSWorkbenchDoItYourselflAttackPlaner */
+    /**
+     * Creates new form DSWorkbenchDoItYourselflAttackPlaner
+     */
     DSWorkbenchDoItYourselfAttackPlaner() {
         initComponents();
-
+        
         jAttackTable.setModel(new DoItYourselfAttackTableModel());
         jAttackTable.getSelectionModel().addListSelectionListener(DSWorkbenchDoItYourselfAttackPlaner.this);
-
+        
         jArriveTime.setDate(Calendar.getInstance().getTime());
         jNewArriveSpinner.setDate(Calendar.getInstance().getTime());
         capabilityInfoPanel1.addActionListener(this);
@@ -155,13 +152,13 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jAttackTable.registerKeyboardAction(DSWorkbenchDoItYourselfAttackPlaner.this, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jAttackTable.registerKeyboardAction(DSWorkbenchDoItYourselfAttackPlaner.this, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jAttackTable.getActionMap().put("find", new AbstractAction() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 //no find
             }
         });
-
+        
         DoItYourselfCountdownThread thread = new DoItYourselfCountdownThread();
         thread.start();
 
@@ -172,42 +169,42 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         // </editor-fold>
         pack();
     }
-
+    
     @Override
     public void toBack() {
         jAlwaysOnTopBox.setSelected(false);
         fireAttackFrameOnTopEvent(null);
         super.toBack();
     }
-
+    
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
         PropertyHelper.storeTableProperties(jAttackTable, pConfig, getPropertyPrefix());
-
+        
     }
-
+    
     public void restoreCustomProperties(Configuration pConfig) {
         try {
             jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
         } catch (Exception e) {
         }
-
+        
         setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
-
+        
         PropertyHelper.restoreTableProperties(jAttackTable, pConfig, getPropertyPrefix());
     }
-
+    
     public String getPropertyPrefix() {
         return "manual.attack.planer.view";
     }
-
+    
     public static synchronized DSWorkbenchDoItYourselfAttackPlaner getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchDoItYourselfAttackPlaner();
         }
         return SINGLETON;
     }
-
+    
     @Override
     public void resetView() {
         AttackManager.getSingleton().addManagerListener(this);
@@ -221,10 +218,10 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jAttackTable.setColumnControlVisible(true);
         jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jAttackTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
-        jAttackTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
+        jAttackTable.setDefaultRenderer(Integer.class, new NoteIconCellRenderer(NoteIconCellRenderer.ICON_TYPE.NOTE));
         jAttackTable.setDefaultRenderer(Date.class, new ColoredDateCellRenderer());
         jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
-        jAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
+        jAttackTable.setDefaultEditor(Integer.class, new NoteIconCellEditor(NoteIconCellEditor.ICON_TYPE.NOTE));
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
         Graphics2D g = back.createGraphics();
         GeneralPath p = new GeneralPath();
@@ -236,7 +233,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         g.fill(p);
         g.dispose();
         jAttackTable.addHighlighter(new PainterHighlighter(HighlightPredicate.EDITABLE, new ImagePainter(back, HorizontalAlignment.RIGHT, VerticalAlignment.TOP)));
-
+        
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         DefaultComboBoxModel model2 = new DefaultComboBoxModel();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
@@ -257,9 +254,9 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         typeModel.addElement(Attack.FAKE_DEFF_TYPE);
         typeModel.addElement(Attack.SUPPORT_TYPE);
         jAttackTypeComboBox.setModel(typeModel);
-
+        
         jUnitComboBox.setRenderer(new UnitListCellRenderer());
-
+        
         if (ServerSettings.getSingleton().getCoordType() != 2) {
             jSourceVillage.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new DefaultFormatter()));
             jSourceVillage.setText("00:00:00");
@@ -275,15 +272,15 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             }
         }
         SwingUtilities.invokeLater(new Runnable() {
-
+            
             public void run() {
                 jSourceVillage.updateUI();
                 jTargetVillage.updateUI();
             }
         });
-
+        
     }
-
+    
     protected void updateCountdown() {
         TableColumnExt col = jAttackTable.getColumnExt("Verbleibend");
         if (col.isVisible()) {
@@ -294,25 +291,25 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 }
                 startX += (jAttackTable.getColumnExt(i).isVisible()) ? jAttackTable.getColumnExt(i).getWidth() : 0;
             }
-
+            
             jAttackTable.repaint(startX, 0, startX + col.getWidth(), jAttackTable.getHeight());
         }
     }
-
+    
     public void showSuccess(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(Color.GREEN));
         jXLabel1.setForeground(Color.BLACK);
         jXLabel1.setText(pMessage);
     }
-
+    
     public void showInfo(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(getBackground()));
         jXLabel1.setForeground(Color.BLACK);
         jXLabel1.setText(pMessage);
     }
-
+    
     public void showError(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(Color.RED));
@@ -320,10 +317,9 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jXLabel1.setText(pMessage);
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this
+     * method is always regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -663,10 +659,10 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
     private void fireAttackFrameOnTopEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireAttackFrameOnTopEvent
         setAlwaysOnTop(!isAlwaysOnTop());
     }//GEN-LAST:event_fireAttackFrameOnTopEvent
-
+    
     private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddAttackEvent
         String source = jSourceVillage.getText();
-
+        
         List<Village> sourceList = PluginManager.getSingleton().executeVillageParser(source);
         if (sourceList.isEmpty()) {
             showError("Kein gültiges Herkunftsdorf gewählt");
@@ -693,7 +689,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         AttackManager.getSingleton().addDoItYourselfAttack(sourceList.get(0), targetList.get(0), unit, arrive, type);
         showSuccess("Angriff hinzugefügt");
     }//GEN-LAST:event_fireAddAttackEvent
-
+    
     private void fireAdeptEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAdeptEvent
         int[] rows = jAttackTable.getSelectedRows();
         if (rows == null || rows.length == 0) {
@@ -711,14 +707,14 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 Attack a = (Attack) AttackManager.getSingleton().getDoItYourselfAttacks().get(row);
                 a.setArriveTime(newArrive);
             }
-
+            
         } else if (evt.getSource() == jAdeptUnitButton) {
             UnitHolder newUnit = (UnitHolder) jUnitComboBox.getSelectedItem();
             if (newUnit == null) {
                 showError("Keine Einheit ausgewählt");
                 return;
             }
-
+            
             for (int r = rows.length - 1; r >= 0; r--) {
                 int row = jAttackTable.convertRowIndexToModel(rows[r]);
                 Attack a = (Attack) AttackManager.getSingleton().getDoItYourselfAttacks().get(row);
@@ -730,7 +726,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 showError("Kein Angriffstyp ausgewählt");
                 return;
             }
-
+            
             for (int r = rows.length - 1; r >= 0; r--) {
                 int row = jAttackTable.convertRowIndexToModel(rows[r]);
                 Attack a = (Attack) AttackManager.getSingleton().getDoItYourselfAttacks().get(row);
@@ -739,11 +735,11 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         }
         AttackManager.getSingleton().revalidate(true);
     }//GEN-LAST:event_fireAdeptEvent
-
+    
     private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXLabel1fireHideInfoEvent
         infoPanel.setCollapsed(true);
 }//GEN-LAST:event_jXLabel1fireHideInfoEvent
-
+    
     public void transferSelection(TRANSFER_TYPE pType) {
         switch (pType) {
             case COPY_TO_INTERNAL_CLIPBOARD:
@@ -760,28 +756,28 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 break;
         }
     }
-
+    
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
-
+    
     public boolean deleteSelection(boolean pAsk) {
         List<Attack> selectedAttacks = getSelectedAttacks();
-
+        
         if (pAsk) {
             String message = ((selectedAttacks.size() == 1) ? "Angriff " : (selectedAttacks.size() + " Angriffe ")) + "wirklich löschen?";
             if (selectedAttacks.isEmpty() || JOptionPaneHelper.showQuestionConfirmBox(this, message, "Angriffe löschen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
                 return false;
             }
         }
-
+        
         jAttackTable.editingCanceled(new ChangeEvent(this));
         AttackManager.getSingleton().removeElements(AttackManager.MANUAL_ATTACK_PLAN, selectedAttacks);
         ((DoItYourselfAttackTableModel) jAttackTable.getModel()).fireTableDataChanged();
         showSuccess(selectedAttacks.size() + " Angriff(e) gelöscht");
         return true;
     }
-
+    
     private boolean copyToInternalClipboard() {
         List<Attack> selection = getSelectedAttacks();
         StringBuilder b = new StringBuilder();
@@ -799,7 +795,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             return false;
         }
     }
-
+    
     private void cutToInternalClipboard() {
         int size = getSelectedAttacks().size();
         if (copyToInternalClipboard() && deleteSelection(false)) {
@@ -808,11 +804,11 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             showError("Fehler beim Ausschneiden der Angriffe");
         }
     }
-
+    
     private void copyFromInternalClipboard() {
         try {
             String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
-
+            
             String[] lines = data.split("\n");
             int cnt = 0;
             AttackManager.getSingleton().invalidate();
@@ -834,7 +830,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         ((DoItYourselfAttackTableModel) jAttackTable.getModel()).fireTableDataChanged();
         AttackManager.getSingleton().revalidate();
     }
-
+    
     private void copyBBToExternalClipboardEvent() {
         try {
             List<Attack> attacks = getSelectedAttacks();
@@ -843,16 +839,16 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 return;
             }
             boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
-
+            
             StringBuilder buffer = new StringBuilder();
             if (extended) {
                 buffer.append("[u][size=12]Angriffsplan[/size][/u]\n\n");
             } else {
                 buffer.append("[u]Angriffsplan[/u]\n\n");
             }
-
+            
             buffer.append(new AttackListFormatter().formatElements(attacks, extended));
-
+            
             if (extended) {
                 buffer.append("\n[size=8]Erstellt am ");
                 buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
@@ -864,7 +860,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
                 buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url]\n");
             }
-
+            
             String b = buffer.toString();
             StringTokenizer t = new StringTokenizer(b, "[");
             int cnt = t.countTokens();
@@ -873,7 +869,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                     return;
                 }
             }
-
+            
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
             String result = "Daten in Zwischenablage kopiert.";
             showSuccess(result);
@@ -883,7 +879,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             showError(result);
         }
     }
-
+    
     private List<Attack> getSelectedAttacks() {
         final List<Attack> selectedAttacks = new LinkedList<Attack>();
         int[] selectedRows = jAttackTable.getSelectedRows();
@@ -898,7 +894,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         }
         return selectedAttacks;
     }
-
+    
     public static void main(String[] args) {
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         MouseGestures mMouseGestures = new MouseGestures();
@@ -908,7 +904,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         GlobalOptions.setSelectedServer("de43");
         ProfileManager.getSingleton().loadProfiles();
         GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-
+        
         DataHolder.getSingleton().loadData(false);
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -922,7 +918,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         for (int i = 0; i < 100; i++) {
             AttackManager.getSingleton().addDoItYourselfAttack(DataHolder.getSingleton().getRandomVillage(), DataHolder.getSingleton().getRandomVillage(), DataHolder.getSingleton().getRandomUnit(), new Date(System.currentTimeMillis() + DateUtils.MILLIS_PER_DAY), Attack.CLEAN_TYPE);
         }
-
+        
         AttackManager.getSingleton().revalidate(AttackManager.MANUAL_ATTACK_PLAN, true);
         DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setVisible(true);
@@ -960,13 +956,13 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
 }
 
 class DoItYourselfCountdownThread extends Thread {
-
+    
     public DoItYourselfCountdownThread() {
         setName("DoItYourselfCountdownUpdater");
         setPriority(MIN_PRIORITY);
         setDaemon(true);
     }
-
+    
     @Override
     public void run() {
         while (true) {

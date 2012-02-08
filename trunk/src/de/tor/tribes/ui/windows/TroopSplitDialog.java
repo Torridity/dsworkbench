@@ -12,6 +12,7 @@ package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.TroopSplit;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.CollapseExpandTrigger;
 import de.tor.tribes.ui.renderer.TroopAmountListCellRenderer;
@@ -21,8 +22,6 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.SplitSetHelper;
-import de.tor.tribes.util.troops.TroopsManager;
-import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -30,10 +29,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -598,64 +593,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
     /**
      * Internal class for data holding
      */
-    public static class TroopSplit {
-
-        private Village mVillage = null;
-        private int iSplitCount = 1;
-
-        public TroopSplit(Village pVillage) {
-            mVillage = pVillage;
-        }
-
-        public void update(Hashtable<UnitHolder, Integer> pSplitValues, int pTolerance) {
-            if (pSplitValues.isEmpty()) {
-                iSplitCount = 1;
-                return;
-            }
-            Enumeration<UnitHolder> unitKeys = pSplitValues.keys();
-            int maxSplitCount = -1;
-            while (unitKeys.hasMoreElements()) {
-                UnitHolder unitKey = unitKeys.nextElement();
-                Integer splitAmount = pSplitValues.get(unitKey);
-                if (splitAmount > 0) {
-                    VillageTroopsHolder ownTroops = TroopsManager.getSingleton().getTroopsForVillage(mVillage, TroopsManager.TROOP_TYPE.OWN);
-
-                    if (ownTroops == null) {
-                        //do nothing if there are no own troops in the village
-                        iSplitCount = 0;
-                        return;
-                    }
-
-                    int amountInVillage = ownTroops.getTroopsOfUnitInVillage(unitKey);
-                    int split = amountInVillage / splitAmount;
-                    int currentSplitCount = split;
-                    int rest = amountInVillage - split * splitAmount;
-                    if (100.0 * (double) rest / (double) splitAmount >= 100.0 - (double) pTolerance) {
-                        currentSplitCount++;
-                    }
-                    if (maxSplitCount == -1 || (currentSplitCount < maxSplitCount)) {
-                        maxSplitCount = currentSplitCount;
-                    }
-                }
-            }
-            iSplitCount = maxSplitCount;
-        }
-
-        public Village getVillage() {
-            return mVillage;
-        }
-
-        public int getSplitCount() {
-            return iSplitCount;
-        }
-
-        public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append(mVillage.toString()).append(" (").append(iSplitCount).append("x)");
-            return builder.toString();
-        }
-    }
-
+  
     public static void main(String[] args) {
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         GlobalOptions.setSelectedServer("de43");

@@ -63,12 +63,12 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  */
 public class ResourceDistributorFinishPanel extends WizardPage {
 
-    private static final String GENERAL_INFO = "<html>Bist du bei diesem Schritt angekommen, hast du abschlie&szlig; die M&ouml;glichkeit, "
+    private static final String GENERAL_INFO = "<html>Bist du bei diesem Schritt angekommen, hast du abschlie&szlig;end die M&ouml;glichkeit, "
             + "die berechneten Rohstoffe in den Browser zu &uuml;bertragen und abzuschicken. Voraussetzung hierf&uuml;r ist, dass du das "
-            + "DS Workbench Userscript in deinem Browser (Firefox oder Opera) installiert hast. Markiere einfach die Rohstoffe die du "
+            + "DS Workbench Userscript in deinem Browser (Firefox oder Opera) installiert hast. Markiere einfach in der unteren Tabelle die Transporte die du "
             + "&uuml;bertragen m&ouml;chtest in der Tabelle, f&uuml;lle das Klickkonto mit der ben&ouml;tigten Anzahl Klicks auf und "
             + "klicke auf den Button mit dem Firefox Symbol. Sind es zuviele Transporte um sie auf einmal abzuschicken, kannst du "
-            + "DS Workbench auch schlie&szlig;en, den Rohstoffverteiler sp&auml; erneut starten und die errechneten Transporte im ersten "
+            + "DS Workbench auch schlie&szlig;en, den Rohstoffverteiler sp&auml;ter erneut starten und die errechneten Transporte im ersten "
             + "Schritt von deiner Festplatte laden.</html>";
     private static ResourceDistributorFinishPanel singleton = null;
     private ClickAccountPanel clickPanel = null;
@@ -130,7 +130,8 @@ public class ResourceDistributorFinishPanel extends WizardPage {
                 }
             }
         });
-
+        jXCollapsiblePane2.setLayout(new BorderLayout());
+        jXCollapsiblePane1.add(jInfoLabel, BorderLayout.CENTER);
         quickProfilePanel = new ProfileQuickChangePanel();
         clickPanel = new ClickAccountPanel();
         jClickAccountPanel.add(clickPanel, BorderLayout.CENTER);
@@ -143,6 +144,11 @@ public class ResourceDistributorFinishPanel extends WizardPage {
 
     public static String getStep() {
         return "id-finish";
+    }
+
+    private void showInfo(String pText) {
+        jInfoLabel.setText(pText);
+        jXCollapsiblePane2.setCollapsed(false);
     }
 
     /**
@@ -159,9 +165,11 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         jTransportsPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTransportsTable = new org.jdesktop.swingx.JXTable();
+        jXCollapsiblePane2 = new org.jdesktop.swingx.JXCollapsiblePane();
         jFinalDistributionPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jDistributionTable = new org.jdesktop.swingx.JXTable();
+        jInfoLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jPanel1 = new javax.swing.JPanel();
@@ -199,6 +207,9 @@ public class ResourceDistributorFinishPanel extends WizardPage {
 
         jTransportsPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
+        jXCollapsiblePane2.setCollapsed(true);
+        jTransportsPanel.add(jXCollapsiblePane2, java.awt.BorderLayout.SOUTH);
+
         jFinalDistributionPanel.setLayout(new java.awt.BorderLayout());
 
         jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder("Resultierende Rohstoffverteilung"));
@@ -218,9 +229,16 @@ public class ResourceDistributorFinishPanel extends WizardPage {
 
         jFinalDistributionPanel.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
+        jInfoLabel.setText("jLabel2");
+        jInfoLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireHideInfoEvent(evt);
+            }
+        });
+
         setLayout(new java.awt.GridBagLayout());
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10));
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Informationen einblenden");
         jLabel1.setToolTipText("Blendet Informationen zu dieser Ansicht und zu den Datenquellen ein/aus");
@@ -337,32 +355,41 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         ExtendedTransport[] selection = getSelection();
         boolean outOfClicks = false;
         boolean browserAccessFailed = false;
+        int transferred = 0;
         if (selection.length > 0) {
             for (ExtendedTransport transport : selection) {
                 if (!jIgnoreSubmitted.isSelected() || !transport.isTransferredToBrowser()) {
                     if (selection.length == 1 || clickPanel.useClick()) {
-                        transport.setTransferredToBrowser(
-                                BrowserCommandSender.sendRes(transport.getSource(), transport.getTarget(), transport, quickProfilePanel.getSelectedProfile()));
+                        transport.setTransferredToBrowser(BrowserCommandSender.sendRes(transport.getSource(), transport.getTarget(), transport, quickProfilePanel.getSelectedProfile()));
                         if (!transport.isTransferredToBrowser()) {//if transfer failed, set browser access error flag and give click back
                             browserAccessFailed = (browserAccessFailed == false) ? true : browserAccessFailed;
                             if (selection.length > 1) {
                                 clickPanel.giveClickBack();
                             }
+                        } else {
+                            transferred++;
                         }
                     } else {
                         outOfClicks = true;
                     }
                 }
             }
+        } else {
+            showInfo("Keine Transporte ausgewählt");
         }
         saveTransports();
         if (outOfClicks) {
-            JOptionPaneHelper.showInformationBox(ResourceDistributorFinishPanel.this, "Keine weiteren Klicks vorhanden.", "Information");
+            showInfo("Keine weiteren Klicks vorhanden.\n"
+                    + "Es wurde(n) " + transferred + " Transport(e) übertragen.");
         }
         if (browserAccessFailed) {
-            JOptionPaneHelper.showInformationBox(ResourceDistributorFinishPanel.this, "Einer oder mehrere Transporte konnten nicht im Browser geöffnet werden.", "Information");
+            showInfo("Einer oder mehrere Transporte konnten nicht im Browser geöffnet werden.");
         }
     }//GEN-LAST:event_fireTransferSelectionToBrowserEvent
+
+    private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideInfoEvent
+        jXCollapsiblePane2.setCollapsed(true);
+    }//GEN-LAST:event_fireHideInfoEvent
 
     public REDFinalTransportsTableModel getTransportsModel() {
         return (REDFinalTransportsTableModel) jTransportsTable.getModel();
@@ -456,7 +483,6 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         List<ExtendedTransport> rows = new LinkedList<ExtendedTransport>();
         REDFinalTransportsTableModel model = getTransportsModel();
         if (selection.length > 0) {
-
             for (int i : selection) {
                 rows.add(model.getRow(jTransportsTable.convertRowIndexToModel(i)));
             }
@@ -555,6 +581,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
     private javax.swing.JPanel jFinalActionPanel;
     private javax.swing.JPanel jFinalDistributionPanel;
     private javax.swing.JCheckBox jIgnoreSubmitted;
+    private javax.swing.JLabel jInfoLabel;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;
@@ -565,6 +592,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
     private javax.swing.JPanel jTransportsPanel;
     private org.jdesktop.swingx.JXTable jTransportsTable;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
+    private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane2;
     private com.jidesoft.swing.JideSplitPane jideSplitPane1;
     // End of variables declaration//GEN-END:variables
 

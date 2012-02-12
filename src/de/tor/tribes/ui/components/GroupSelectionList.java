@@ -13,6 +13,7 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.renderer.GroupListCellRenderer;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ProfileManager;
+import de.tor.tribes.util.TagUtils;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.Point;
 import java.awt.event.KeyAdapter;
@@ -38,31 +39,13 @@ import org.apache.log4j.Logger;
 public class GroupSelectionList extends IconizedList implements GenericManagerListener {
 
     private Village[] relevantVillages = null;
+    private boolean expertSelection = false;
+    private GroupListCellRenderer renderer = new GroupListCellRenderer();
 
     public GroupSelectionList(String pResourceURL) {
         super(pResourceURL);
-        setToolTipText("<html>In dieser Liste k&ouml;nnen Gruppen beliebig kombiniert werden, "
-                + "um die darin enthaltenen D&ouml;rfer anzuzeigen.<br/>"
-                + "M&ouml;gliche Verkn&uuml;pfungen sind dabei:"
-                + "<ul>"
-                + "<li>NICHT: D&ouml;rfer d&uuml;rfen nicht in dieser Gruppe sein.</li>"
-                + "<li>ODER: D&ouml;rfer k&ouml;nnen in dieser oder einer anderen Gruppe sein.</li>"
-                + "<li>UND: D&ouml;rfer m&uuml;ssen in dieser Gruppe und allen anderen mit UND gekennzeichneten Gruppen sein.</li>"
-                + "<li>OHNE: Diese Gruppe wird nicht ber&uuml;cksichtigt.</li>"
-                + "</ul>"
-                + "Der erste Eintrag der Liste beinhaltet alle D&ouml;rfer die in keiner Gruppe enthalten sind. Ist dieser Eintrag gew&auml;hlt, "
-                + "werden alle anderen Eintr&auml;ge deaktiviert.<br/>"
-                + "Bei der Verkn&uuml;pfung gilt stets, dass UND-Verkn&uuml;pfungen immer zuerst aufgel&ouml;st werden, also Vorrang haben.<br/>"
-                + "&Auml;nderung von Verkn&uuml;pfungen:"
-                + "<ul>"
-                + "<li>Doppelklick (links) oder Pfeil rechts: N&auml;chste Verkn&uuml;pfung</li>"
-                + "<li>Pfeil rechts: Vorherige Verkn&uuml;pfung</li>"
-                + "<li>Doppelklick (rechts) oder ENTF: Gruppe ignorieren</li>"
-                + "<li>ENTF auf 'Keine Gruppe': Alle Gruppen ignorieren, 'Keine Gruppe' ausw&auml;hlen</li>"
-                + "</ul>"
-                + "</html>");
 
-        setCellRenderer(new GroupListCellRenderer());
+        setCellRenderer(renderer);
 
         addKeyListener(new KeyAdapter() {
 
@@ -185,6 +168,40 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
         getSelectionModel().setValueIsAdjusting(false);
     }
 
+    public void setExpertSelection(boolean expertSelection) {
+        this.expertSelection = expertSelection;
+        renderer.setExpertMode(expertSelection);
+        if (isExpertSelection()) {
+            setToolTipText("<html>In dieser Liste k&ouml;nnen Gruppen beliebig kombiniert werden, "
+                    + "um die darin enthaltenen D&ouml;rfer anzuzeigen.<br/>"
+                    + "M&ouml;gliche Verkn&uuml;pfungen sind dabei:"
+                    + "<ul>"
+                    + "<li>NICHT: D&ouml;rfer d&uuml;rfen nicht in dieser Gruppe sein.</li>"
+                    + "<li>ODER: D&ouml;rfer k&ouml;nnen in dieser oder einer anderen Gruppe sein.</li>"
+                    + "<li>UND: D&ouml;rfer m&uuml;ssen in dieser Gruppe und allen anderen mit UND gekennzeichneten Gruppen sein.</li>"
+                    + "<li>OHNE: Diese Gruppe wird nicht ber&uuml;cksichtigt.</li>"
+                    + "</ul>"
+                    + "Der erste Eintrag der Liste beinhaltet alle D&ouml;rfer die in keiner Gruppe enthalten sind. Ist dieser Eintrag gew&auml;hlt, "
+                    + "werden alle anderen Eintr&auml;ge deaktiviert.<br/>"
+                    + "Bei der Verkn&uuml;pfung gilt stets, dass UND-Verkn&uuml;pfungen immer zuerst aufgel&ouml;st werden, also Vorrang haben.<br/>"
+                    + "&Auml;nderung von Verkn&uuml;pfungen:"
+                    + "<ul>"
+                    + "<li>Doppelklick (links) oder Pfeil rechts: N&auml;chste Verkn&uuml;pfung</li>"
+                    + "<li>Pfeil rechts: Vorherige Verkn&uuml;pfung</li>"
+                    + "<li>Doppelklick (rechts) oder ENTF: Gruppe ignorieren</li>"
+                    + "<li>ENTF auf 'Keine Gruppe': Alle Gruppen ignorieren, 'Keine Gruppe' ausw&auml;hlen</li>"
+                    + "</ul>"
+                    + "</html>");
+        } else {
+            setToolTipText("");
+        }
+        repaint();
+    }
+
+    public boolean isExpertSelection() {
+        return expertSelection;
+    }
+
     private void resetModel() {
         HashMap<Tag, ListItem.RELATION_TYPE> storedState = new HashMap<Tag, ListItem.RELATION_TYPE>();
         for (int i = 0; i < getModel().getSize(); i++) {
@@ -192,16 +209,11 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
             storedState.put(item.getTag(), item.getState());
         }
         DefaultListModel model = new DefaultListModel();
-        model.addElement(new ListItem(NoTag.getSingleton()));
 
-        /*  List<Tag> tags = new LinkedList<Tag>();
-        for (int i = 1; i < 30; i++) {
-        tags.add(new Tag("Test" + i, false));
-        }*/
+        model.addElement(new ListItem(NoTag.getSingleton()));
 
         for (ManageableType element : TagManager.getSingleton().getAllElements()) {
             Tag tag = (Tag) element;
-            // for (Tag tag : tags) {
             ListItem item = new ListItem(tag);
             if (storedState.get(tag) != null) {
                 item.setState(storedState.get(tag));
@@ -227,7 +239,9 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
         }
         //(complex) relation selected
         relevantVillages = new Village[]{pVillage};
-        return !getVillagesByEquation().isEmpty();
+
+        return !getValidVillages().isEmpty();
+        //return !getVillagesByEquation().isEmpty();
     }
 
     public List<Village> getValidVillages() {
@@ -240,16 +254,41 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
             return result;
         }
 
-        if (getItemAt(0).getState() != ListItem.RELATION_TYPE.DISABLED) {
-            //NoTag selected
-            for (Village v : relevantVillages) {
-                if (TagManager.getSingleton().getTags(v).isEmpty()) {
-                    result.add(v);
+        if (!isExpertSelection()) {
+            Object[] values = getSelectedValues();
+            if (values.length == 0) {
+                return result;
+            }
+            List<Tag> selection = new LinkedList<Tag>();
+            for (Object v : values) {
+                ListItem i = (ListItem) v;
+                selection.add(i.getTag());
+            }
+
+            for (Village village : relevantVillages) {
+                boolean use = true;
+                for (Tag t : selection) {
+                    if (!t.tagsVillage(village.getId())) {
+                        use = false;
+                        break;
+                    }
+                }
+                if (use) {//all tags are valid for this village
+                    result.add(village);
                 }
             }
         } else {
-            //(complex) relation selected
-            result = getVillagesByEquation();
+            if (getItemAt(0).getState() != ListItem.RELATION_TYPE.DISABLED) {
+                //NoTag selected
+                for (Village v : relevantVillages) {
+                    if (TagManager.getSingleton().getTags(v).isEmpty()) {
+                        result.add(v);
+                    }
+                }
+            } else {
+                //(complex) relation selected
+                result = getVillagesByEquation();
+            }
         }
         return result;
     }

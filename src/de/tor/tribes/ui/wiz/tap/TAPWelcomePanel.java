@@ -46,6 +46,7 @@ public class TAPWelcomePanel extends WizardPage {
     public static final String TYPE = "type";
     public final static Integer ATTACK_TYPE = 0;
     public final static Integer DEFENSE_TYPE = 1;
+    public final static Integer REFILL_TYPE = 2;
 
     public static synchronized TAPWelcomePanel getSingleton() {
         if (singleton == null) {
@@ -179,7 +180,7 @@ public class TAPWelcomePanel extends WizardPage {
         if (jDefenseButton.isSelected()) {
             type = DEFENSE_TYPE;
         } else if (jRefillButton.isSelected()) {
-            type = 2;
+            type = REFILL_TYPE;
         }
         map.put(TYPE, new Integer(type));
         return WizardPanelNavResult.PROCEED;

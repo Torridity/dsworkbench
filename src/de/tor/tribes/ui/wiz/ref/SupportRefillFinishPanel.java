@@ -8,31 +8,31 @@
  *
  * Created on Oct 15, 2011, 9:54:36 AM
  */
-package de.tor.tribes.ui.wiz.tap;
+package de.tor.tribes.ui.wiz.ref;
 
-import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.control.ManageableType;
+import de.tor.tribes.ui.wiz.tap.*;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Attack;
-import de.tor.tribes.types.UserProfile;
+import de.tor.tribes.types.StandardAttack;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
-import de.tor.tribes.ui.models.TAPResultDetailsTableModel;
-import de.tor.tribes.ui.models.TAPResultTableModel;
+import de.tor.tribes.ui.models.REFResultTableModel;
 import de.tor.tribes.ui.renderer.*;
 import de.tor.tribes.ui.util.ColorGradientHelper;
 import de.tor.tribes.ui.windows.AttackTransferDialog;
+import de.tor.tribes.ui.wiz.ref.types.REFResultElement;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackTargetElement;
 import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.algo.types.TimeFrame;
+import de.tor.tribes.util.attack.StandardAttackManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.*;
-import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
@@ -43,7 +43,7 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  *
  * @author Torridity
  */
-public class AttackFinishPanel extends WizardPage {
+public class SupportRefillFinishPanel extends WizardPage {
 
     private static final String GENERAL_INFO = "<html>In diesem abschlie&szlig;enden Schritt werden alle Ergebnisse der Berechnung angezeigt. "
             + "In der oberen Tabelle sind alle Ziele aufgelistet, sowie die prozentuale Angabe, wieviele der unter 'Ziele' angegebenen Anzahl von Angriffen auf "
@@ -53,12 +53,12 @@ public class AttackFinishPanel extends WizardPage {
             + "Angriffsplaner der Angriffs&uuml;bersicht zu &uuml;bertragen. Fahre mit der Maus &uuml;ber die einzelnen Buttons, um dir einen Tooltip mit der "
             + "entsprechenden Erkl&auml;rung anzeigen zu lassen."
             + "</html>";
-    private static AttackFinishPanel singleton = null;
+    private static SupportRefillFinishPanel singleton = null;
     private VillageOverviewMapPanel overviewPanel = null;
 
-    public static synchronized AttackFinishPanel getSingleton() {
+    public static synchronized SupportRefillFinishPanel getSingleton() {
         if (singleton == null) {
-            singleton = new AttackFinishPanel();
+            singleton = new SupportRefillFinishPanel();
         }
         return singleton;
     }
@@ -68,50 +68,23 @@ public class AttackFinishPanel extends WizardPage {
     }
 
     public static String getStep() {
-        return "id-attack-finish";
+        return "id-ref-finish";
     }
 
     /**
      * Creates new form AttackSourcePanel
      */
-    AttackFinishPanel() {
+    SupportRefillFinishPanel() {
         initComponents();
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jXCollapsiblePane1.add(jInfoScrollPane, BorderLayout.CENTER);
         jInfoTextPane.setText(GENERAL_INFO);
-        jButton1.setIcon(new ImageIcon("./graphics/big/axe.png"));
-        jButton2.setIcon(new ImageIcon("./graphics/big/axe_unfilled.png"));
         jxResultsTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jxResultsTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
-        /*
-         * jxResultsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-         *
-         * @Override public void valueChanged(ListSelectionEvent e) { updateAttackDetails(); } });
-         */
-
-        TAPResultDetailsTableModel model = new TAPResultDetailsTableModel();
-        jXDetailsTable.setModel(model);
-        jXDetailsTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
-        jXDetailsTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
-        jXDetailsTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
-        jXDetailsTable.setDefaultRenderer(Date.class, new DateCellRenderer());
-        jXDetailsTable.setDefaultRenderer(Integer.class, new NoteIconCellRenderer(NoteIconCellRenderer.ICON_TYPE.NOTE));
+        jxResultsTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
         overviewPanel = new VillageOverviewMapPanel();
         jPanel5.add(overviewPanel, BorderLayout.CENTER);
         jXCollapsiblePane2.add(jSummaryPanel, BorderLayout.CENTER);
-    }
-
-    public void storeProperties() {
-        UserProfile profile = GlobalOptions.getSelectedProfile();
-        profile.addProperty("tap.finish.expert", jExpertView.isSelected());
-    }
-
-    public void restoreProperties() {
-        getModel().clear();
-        getResultModel().clear();
-        UserProfile profile = GlobalOptions.getSelectedProfile();
-        jExpertView.setSelected(Boolean.parseBoolean(profile.getProperty("tap.finish.expert")));
-        changeExpertView();
     }
 
     /**
@@ -125,13 +98,11 @@ public class AttackFinishPanel extends WizardPage {
 
         jInfoScrollPane = new javax.swing.JScrollPane();
         jInfoTextPane = new javax.swing.JTextPane();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jXDetailsTable = new org.jdesktop.swingx.JXTable();
         jSummaryPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jAttackedTargets = new javax.swing.JLabel();
+        jSupportedTargets = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jOverallAttacks = new javax.swing.JLabel();
+        jOverallSupports = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jUsedSourceVillages = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -143,14 +114,10 @@ public class AttackFinishPanel extends WizardPage {
         jxResultsTable = new org.jdesktop.swingx.JXTable();
         jPanel3 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jSlider1 = new javax.swing.JSlider();
-        jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jToggleButton1 = new javax.swing.JToggleButton();
-        jExpertView = new javax.swing.JCheckBox();
         jToggleButton2 = new javax.swing.JToggleButton();
         jXCollapsiblePane2 = new org.jdesktop.swingx.JXCollapsiblePane();
 
@@ -162,25 +129,10 @@ public class AttackFinishPanel extends WizardPage {
         jInfoTextPane.setText("<html>Du befindest dich im <b>Angriffsmodus</b>. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, die f&uuml;r Angriffe verwendet werden d&uuml;rfen. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:\n<ul>\n<li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus der Gruppen&uuml;bersicht</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus dem SOS-Analyzer</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Berichten</li>\n<li>Einf&uuml;gen aus der Auswahlübersicht</li>\n<li>Manuelle Eingabe</li>\n</ul>\n</html>\n");
         jInfoScrollPane.setViewportView(jInfoTextPane);
 
-        jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder("Angriffsdetails"));
-
-        jXDetailsTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane2.setViewportView(jXDetailsTable);
-
         jSummaryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Zusammenfassung"));
         jSummaryPanel.setLayout(new java.awt.GridBagLayout());
 
-        jLabel2.setText("Angegriffene Ziele");
+        jLabel2.setText("Unterstützte Ziele");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -188,16 +140,16 @@ public class AttackFinishPanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jSummaryPanel.add(jLabel2, gridBagConstraints);
 
-        jAttackedTargets.setText("0");
+        jSupportedTargets.setText("0");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jSummaryPanel.add(jAttackedTargets, gridBagConstraints);
+        jSummaryPanel.add(jSupportedTargets, gridBagConstraints);
 
-        jLabel4.setText("Zugeteilte Angriffe");
+        jLabel4.setText("Zugeteilte Unterstützungen");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -205,14 +157,14 @@ public class AttackFinishPanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jSummaryPanel.add(jLabel4, gridBagConstraints);
 
-        jOverallAttacks.setText("0");
+        jOverallSupports.setText("0");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jSummaryPanel.add(jOverallAttacks, gridBagConstraints);
+        jSummaryPanel.add(jOverallSupports, gridBagConstraints);
 
         jLabel6.setText("Verwendete Herkunftsdörfer");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -302,8 +254,8 @@ public class AttackFinishPanel extends WizardPage {
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Abschließende Aktionen"));
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/48x48/half_axe_clipboard.png"))); // NOI18N
-        jButton1.setToolTipText("Alle Angriffe in die Angriffsübersicht übertragen");
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/48x48/full_sword_clipboard.png"))); // NOI18N
+        jButton1.setToolTipText("Alle Unterstützungen in die Angriffsübersicht übertragen");
         jButton1.setMaximumSize(new java.awt.Dimension(70, 70));
         jButton1.setMinimumSize(new java.awt.Dimension(70, 70));
         jButton1.setPreferredSize(new java.awt.Dimension(70, 70));
@@ -321,56 +273,8 @@ public class AttackFinishPanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 20);
         jPanel3.add(jButton1, gridBagConstraints);
 
-        jButton2.setToolTipText("<html>Ziele entfernen, auf die weniger als die unten angezeigte Prozentzahl der max. Angriffe laufen.<br/>\nDurch die Entfernung werden ggf. Herkunftsd&ouml;rfer 'frei', die für andere Ziele verwendet werden können.</html>");
-        jButton2.setMaximumSize(new java.awt.Dimension(70, 70));
-        jButton2.setMinimumSize(new java.awt.Dimension(70, 70));
-        jButton2.setPreferredSize(new java.awt.Dimension(70, 70));
-        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireRecalculateEvent(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 20);
-        jPanel3.add(jButton2, gridBagConstraints);
-
-        jSlider1.setMajorTickSpacing(10);
-        jSlider1.setMinimum(10);
-        jSlider1.setMinorTickSpacing(5);
-        jSlider1.setPaintLabels(true);
-        jSlider1.setPaintTicks(true);
-        jSlider1.setSnapToTicks(true);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 20);
-        jPanel3.add(jSlider1, gridBagConstraints);
-
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/48x48/full_axe_clipboard.png"))); // NOI18N
-        jButton3.setToolTipText("Nur volle Angriffe in die Angriffsübersicht übertragen");
-        jButton3.setMaximumSize(new java.awt.Dimension(70, 70));
-        jButton3.setMinimumSize(new java.awt.Dimension(70, 70));
-        jButton3.setPreferredSize(new java.awt.Dimension(70, 70));
-        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireFullToAttackPlanEvent(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 20);
-        jPanel3.add(jButton3, gridBagConstraints);
-
-        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/48x48/selection_axe_clipboard.png"))); // NOI18N
-        jButton4.setToolTipText("Ausgewählte Angriffe in die Angriffsübersicht übertragen");
+        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/48x48/selection_sword_clipboard.png"))); // NOI18N
+        jButton4.setToolTipText("Ausgewählte Unterstützungen in die Angriffsübersicht übertragen");
         jButton4.setMaximumSize(new java.awt.Dimension(70, 70));
         jButton4.setMinimumSize(new java.awt.Dimension(70, 70));
         jButton4.setPreferredSize(new java.awt.Dimension(70, 70));
@@ -427,18 +331,6 @@ public class AttackFinishPanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
         jPanel4.add(jToggleButton1, gridBagConstraints);
 
-        jExpertView.setText("Expertenansicht");
-        jExpertView.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireChangeExpertViewEvent(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel4.add(jExpertView, gridBagConstraints);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -485,32 +377,6 @@ public class AttackFinishPanel extends WizardPage {
         }
     }//GEN-LAST:event_fireHideInfoEvent
 
-    private void fireRecalculateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRecalculateEvent
-        float max = (float) jSlider1.getValue();
-        List<Village> targetsToRemove = new LinkedList<Village>();
-        for (int i = 0; i < getModel().getRowCount(); i++) {
-            Village target = (Village) getModel().getValueAt(i, 1);
-            float perc = (Float) getModel().getValueAt(i, 2);
-            perc *= 100f;
-            if (perc < max) {
-                targetsToRemove.add(target);
-            }
-        }
-
-        if (!targetsToRemove.isEmpty()) {
-            if (AttackTargetPanel.getSingleton().removeTargets(targetsToRemove)) {
-                JOptionPaneHelper.showInformationBox(this, targetsToRemove.size() + " Ziel(e) wurden entfernt. Wechsle nun zum vorherigen Schritt\n"
-                        + "und führe die Berechnung erneut durch.", "Information");
-                ValidationPanel.getSingleton().setup();
-                AttackSourceFilterPanel.getSingleton().setup();
-            } else {
-                JOptionPaneHelper.showInformationBox(this, "Es wurden alle Ziele entfernt.\nBitte wähle neue Ziele oder verwende die bisherigen Erbgenisse.", "Information");
-            }
-        } else {
-            JOptionPaneHelper.showInformationBox(this, "Keine entsprechenden Ziele gefunden.", "Information");
-        }
-    }//GEN-LAST:event_fireRecalculateEvent
-
     private void fireViewStateChangeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireViewStateChangeEvent
         if (jToggleButton1.isSelected()) {
             overviewPanel.setOptimalSize(2);
@@ -535,87 +401,74 @@ public class AttackFinishPanel extends WizardPage {
 
     private void fireTransferAllToAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferAllToAttackPlanEvent
         List<Attack> attacks = new LinkedList<Attack>();
+        Hashtable<UnitHolder, Integer> split = SupportRefillSettingsPanel.getSingleton().getSplit();
+        StandardAttack used = null;
+        for (ManageableType t : StandardAttackManager.getSingleton().getAllElements()) {
+            StandardAttack a = (StandardAttack) t;
+            if (a.equals(split)) {
+                used = a;
+                break;
+            }
+        }
+
         for (int row = 0; row < jxResultsTable.getRowCount(); row++) {
             int modelRow = jxResultsTable.convertRowIndexToModel(row);
-            AbstractTroopMovement move = getModel().getRow(modelRow);
-            attacks.addAll(Arrays.asList(move.getFinalizedAttacks()));
+            REFResultElement move = getModel().getRow(modelRow);
+            Attack a = move.asAttack();
+            if (used != null) {
+                a.setType(used.getIcon());
+            }
+            attacks.add(a);
         }
         transferToAttackView(attacks);
     }//GEN-LAST:event_fireTransferAllToAttackPlanEvent
 
-    private void fireFullToAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireFullToAttackPlanEvent
+    private void fireSelectedToAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectedToAttackPlanEvent
+        int[] selection = jxResultsTable.getSelectedRows();
         List<Attack> attacks = new LinkedList<Attack>();
-        for (int row = 0; row < jxResultsTable.getRowCount(); row++) {
-            int modelRow = jxResultsTable.convertRowIndexToModel(row);
-            AbstractTroopMovement move = getModel().getRow(modelRow);
-            if (move.offComplete()) {
-                attacks.addAll(Arrays.asList(move.getFinalizedAttacks()));
+        Hashtable<UnitHolder, Integer> split = SupportRefillSettingsPanel.getSingleton().getSplit();
+        StandardAttack used = null;
+        for (ManageableType t : StandardAttackManager.getSingleton().getAllElements()) {
+            StandardAttack a = (StandardAttack) t;
+            if (a.equals(split)) {
+                used = a;
+                break;
             }
+        }
+
+        for (int row : selection) {
+            int modelRow = jxResultsTable.convertRowIndexToModel(row);
+            REFResultElement move = getModel().getRow(modelRow);
+            Attack a = move.asAttack();
+            if (used != null) {
+                a.setType(used.getIcon());
+            }
+            attacks.add(a);
         }
         transferToAttackView(attacks);
-    }//GEN-LAST:event_fireFullToAttackPlanEvent
-
-    private void fireSelectedToAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectedToAttackPlanEvent
-        if (jScrollPane1.getViewport().getView().equals(jxResultsTable)) {
-            int[] selection = jxResultsTable.getSelectedRows();
-            List<Attack> attacks = new LinkedList<Attack>();
-            for (int row : selection) {
-                int modelRow = jxResultsTable.convertRowIndexToModel(row);
-                AbstractTroopMovement move = getModel().getRow(modelRow);
-                attacks.addAll(Arrays.asList(move.getFinalizedAttacks()));
-            }
-            transferToAttackView(attacks);
-        } else if (jScrollPane1.getViewport().getView().equals(jXDetailsTable)) {
-            int[] selection = jXDetailsTable.getSelectedRows();
-            List<Attack> attacks = new LinkedList<Attack>();
-            for (int row : selection) {
-                int modelRow = jXDetailsTable.convertRowIndexToModel(row);
-                Attack a = getResultModel().getRow(modelRow);
-                attacks.add(a);
-            }
-            transferToAttackView(attacks);
-        }
     }//GEN-LAST:event_fireSelectedToAttackPlanEvent
-
-    private void fireChangeExpertViewEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeExpertViewEvent
-        changeExpertView();
-    }//GEN-LAST:event_fireChangeExpertViewEvent
-
-    private void changeExpertView() {
-        if (jExpertView.isSelected()) {
-            jScrollPane1.setViewportView(jXDetailsTable);
-            jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Zieldetails"));
-        } else {
-            jScrollPane1.setViewportView(jxResultsTable);
-            jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Angegriffene Ziele"));
-        }
-    }
 
     private void transferToAttackView(List<Attack> pToTransfer) {
         if (pToTransfer.isEmpty()) {
-            JOptionPaneHelper.showInformationBox(this, "Keine Angriffe gewählt", "Information");
+            JOptionPaneHelper.showInformationBox(this, "Keine Unterstützungen gewählt", "Information");
             return;
         }
         new AttackTransferDialog(TacticsPlanerWizard.getFrame(), true).setupAndShow(pToTransfer.toArray(new Attack[pToTransfer.size()]));
     }
 
-    private TAPResultTableModel getModel() {
-        return (TAPResultTableModel) jxResultsTable.getModel();
-    }
-
-    private TAPResultDetailsTableModel getResultModel() {
-        return (TAPResultDetailsTableModel) jXDetailsTable.getModel();
+    private REFResultTableModel getModel() {
+        return (REFResultTableModel) jxResultsTable.getModel();
     }
 
     public void update() {
-        List<AbstractTroopMovement> results = AttackCalculationPanel.getSingleton().getResults();
-        TimeFrame timeFrame = TimeSettingsPanel.getSingleton().getTimeFrame();
+        List<AbstractTroopMovement> results = SupportRefillCalculationPanel.getSingleton().getResults();
+        TimeFrame timeFrame = SupportRefillCalculationPanel.getSingleton().getTimeFrame();
         List<Long> used = new LinkedList<Long>();
-        TAPResultTableModel model = new TAPResultTableModel();
-        int perfectOffs = 0;
-        int maxAttacks = 0;
-        int assignedAttacks = 0;
-        int attackedTargets = 0;
+        REFResultTableModel model = new REFResultTableModel();
+        int perfectTargets = 0;
+        int supportedTargets = 0;
+        int maxSupports = 0;
+        int assignedSupports = 0;
         List<Village> usedSources = new LinkedList<Village>();
         overviewPanel.reset();
 
@@ -630,14 +483,14 @@ public class AttackFinishPanel extends WizardPage {
         for (AbstractTroopMovement result : results) {
             result.finalizeMovement(timeFrame, used);
             if (result.offComplete()) {
-                perfectOffs++;
+                perfectTargets++;
             }
-            maxAttacks += result.getMaxOffs();
-            int offCount = result.getOffCount();
-            assignedAttacks += offCount;
+            maxSupports += result.getMaxOffs();
+            int supportCount = result.getOffCount();
+            assignedSupports += supportCount;
 
-            if (offCount > 0) {
-                attackedTargets++;
+            if (supportCount > 0) {
+                supportedTargets++;
             }
 
             for (Attack a : result.getFinalizedAttacks()) {
@@ -645,40 +498,21 @@ public class AttackFinishPanel extends WizardPage {
                     usedSources.add(a.getSource());
                     overviewPanel.addVillage(new Point(a.getSource().getX(), a.getSource().getY()), Color.YELLOW);
                 }
+                model.addRow(a.getSource(), a.getTarget(), a.getUnit(), a.getArriveTime());
             }
             overviewPanel.addVillage(new Point(result.getTarget().getX(), result.getTarget().getY()),
                     ColorGradientHelper.getGradientColor(100.0f * (float) result.getFinalizedAttacks().length / (float) result.getMaxOffs(), Color.RED, Color.BLACK));
-            model.addRow(result);
         }
 
         jxResultsTable.setModel(model);
-        jxResultsTable.setDefaultRenderer(Float.class, new PercentCellRenderer());
-        updateAttackDetails();
-        jAttackedTargets.setText(Integer.toString(attackedTargets) + " von " + results.size());
-        jPerfectTargets.setText(Integer.toString(perfectOffs));
-        jOverallAttacks.setText(Integer.toString(assignedAttacks) + " von " + Integer.toString(maxAttacks));
-        jUsedSourceVillages.setText(Integer.toString(usedSources.size()) + " von " + AttackSourceFilterPanel.getSingleton().getFilteredElements().length);
-    }
-
-    private void updateAttackDetails() {
-        TAPResultDetailsTableModel model = getResultModel();
-        model.clear();
-
-        for (int row = 0; row < jxResultsTable.getRowCount(); row++) {
-            int modelRow = jxResultsTable.convertRowIndexToModel(row);
-            AbstractTroopMovement move = getModel().getRow(modelRow);
-            for (Attack a : move.getFinalizedAttacks()) {
-                model.addRow(a);
-            }
-        }
+        jSupportedTargets.setText(Integer.toString(supportedTargets) + " von " + results.size());
+        jPerfectTargets.setText(Integer.toString(perfectTargets));
+        jOverallSupports.setText(Integer.toString(assignedSupports) + " von " + Integer.toString(maxSupports));
+        jUsedSourceVillages.setText(Integer.toString(usedSources.size()) + " von " + SupportRefillSourcePanel.getSingleton().getAllElements().length);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jAttackedTargets;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JCheckBox jExpertView;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;
@@ -686,22 +520,20 @@ public class AttackFinishPanel extends WizardPage {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jOverallAttacks;
+    private javax.swing.JLabel jOverallSupports;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JLabel jPerfectTargets;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JSlider jSlider1;
     private javax.swing.JPanel jSummaryPanel;
+    private javax.swing.JLabel jSupportedTargets;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JToggleButton jToggleButton2;
     private javax.swing.JLabel jUsedSourceVillages;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane2;
-    private org.jdesktop.swingx.JXTable jXDetailsTable;
     private org.jdesktop.swingx.JXTable jxResultsTable;
     // End of variables declaration//GEN-END:variables
 

@@ -25,6 +25,11 @@ public class REFTargetTableModel extends AbstractTableModel {
     };
     private final List<Village> elements = new LinkedList<Village>();
 
+    public void clear() {
+        elements.clear();
+        fireTableDataChanged();
+    }
+
     public void addRow(final Village pVillage) {
         Object result = CollectionUtils.find(elements, new Predicate() {
 

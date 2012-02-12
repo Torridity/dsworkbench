@@ -18,6 +18,7 @@ import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import de.tor.tribes.util.*;
+import java.awt.GridBagLayout;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -83,6 +84,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
         setUnitSelectionEnabled(false);
         setFakeSelectionEnabled(false);
         setAmountSelectionEnabled(false);
+        jExpertHelpLabel.setVisible(false);
     }
 
     public void setup() {
@@ -207,15 +209,39 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
 
     public final void setUnitSelectionEnabled(boolean pValue) {
         jUnitBox.setVisible(pValue);
+        try {
+            if (!pValue) {
+                ((GridBagLayout) getLayout()).getConstraints(jVillageScrollPane).gridheight += 1;
+            } else {
+                ((GridBagLayout) getLayout()).getConstraints(jVillageScrollPane).gridheight -= 1;
+            }
+        } catch (Exception e) {
+        }
     }
 
     public final void setFakeSelectionEnabled(boolean pValue) {
         jFakeBox.setVisible(pValue);
+        try {
+            if (!pValue) {
+                ((GridBagLayout) getLayout()).getConstraints(jVillageScrollPane).gridheight += 1;
+            } else {
+                ((GridBagLayout) getLayout()).getConstraints(jVillageScrollPane).gridheight -= 1;
+            }
+        } catch (Exception e) {
+        }
     }
 
     public final void setAmountSelectionEnabled(boolean pValue) {
         jAmountLabel.setVisible(pValue);
         jAmountField.setVisible(pValue);
+        try {
+            if (!pValue) {
+                ((GridBagLayout) getLayout()).getConstraints(jVillageScrollPane).gridheight += 1;
+            } else {
+                ((GridBagLayout) getLayout()).getConstraints(jVillageScrollPane).gridheight -= 1;
+            }
+        } catch (Exception e) {
+        }
     }
 
     public final void enableSelectionElement(SELECTION_ELEMENT pElement, boolean pEnable) {
@@ -229,7 +255,8 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
                 break;
             case GROUP:
                 changeSelectionElementVisibility(jGroupScrollPane, groupList, pEnable);
-                jLabel2.setVisible(pEnable);
+                jExpertHelpLabel.setVisible(pEnable);
+                jExpertSelection.setVisible(pEnable);
                 break;
             case CONTINENT:
                 changeSelectionElementVisibility(jContinentScrollPane, continentList, pEnable);
@@ -265,7 +292,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
         jContinentScrollPane = new javax.swing.JScrollPane();
         jVillageScrollPane = new javax.swing.JScrollPane();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        jExpertHelpLabel = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         jXButton1 = new org.jdesktop.swingx.JXButton();
         jUnitBox = new org.jdesktop.swingx.JXComboBox();
@@ -273,12 +300,14 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
         jXTextField1 = new org.jdesktop.swingx.JXTextField();
         jAmountLabel = new javax.swing.JLabel();
         jAmountField = new javax.swing.JTextField();
+        jExpertSelection = new javax.swing.JCheckBox();
 
+        setPreferredSize(new java.awt.Dimension(600, 350));
         setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.gridheight = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
@@ -329,17 +358,17 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         add(jLabel1, gridBagConstraints);
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(153, 153, 153));
-        jLabel2.setText("<html>Gruppeneintrag doppelt klicken, um Art der Verkn&uuml;pfung zu &auml;ndern. Verwendung einer Gruppe &uuml;ber <b>ENTF</b> l&ouml;schen.</html>");
-        jLabel2.setToolTipText("");
+        jExpertHelpLabel.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
+        jExpertHelpLabel.setForeground(new java.awt.Color(153, 153, 153));
+        jExpertHelpLabel.setText("<html>Gruppeneintrag doppelt klicken, um Art der Verkn&uuml;pfung zu &auml;ndern. Verwendung einer Gruppe &uuml;ber <b>ENTF</b> l&ouml;schen.</html>");
+        jExpertHelpLabel.setToolTipText("");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        add(jLabel2, gridBagConstraints);
+        add(jExpertHelpLabel, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
@@ -393,7 +422,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         add(jXTextField1, gridBagConstraints);
@@ -413,6 +442,23 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         add(jAmountField, gridBagConstraints);
+
+        jExpertSelection.setText("Expertenansicht");
+        jExpertSelection.setToolTipText("<html>Aktiviert die Expertenansicht. Hierbei können komplexe Verknüpfungen zwischen<br/>Gruppen erstellt werden, um Gruppen gezielt ein- und auszuschließen.</html>");
+        jExpertSelection.setMaximumSize(new java.awt.Dimension(70, 23));
+        jExpertSelection.setMinimumSize(new java.awt.Dimension(70, 23));
+        jExpertSelection.setPreferredSize(new java.awt.Dimension(70, 23));
+        jExpertSelection.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireChangeExpertSelectionEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
+        add(jExpertSelection, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireTransferVillageSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferVillageSelectionEvent
@@ -447,22 +493,52 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
         allyList.setListData(AllyUtils.getAlliesByFilter(jXTextField1.getText(), Ally.CASE_INSENSITIVE_ORDER));
     }//GEN-LAST:event_fireAllyNameTagChangedEvent
 
+    private void fireChangeExpertSelectionEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeExpertSelectionEvent
+        ((GroupSelectionList) groupList).setExpertSelection(jExpertSelection.isSelected());
+        jExpertHelpLabel.setVisible(jExpertSelection.isSelected());
+    }//GEN-LAST:event_fireChangeExpertSelectionEvent
+
+    public boolean isExpertSelection() {
+        return jExpertSelection.isSelected();
+    }
+
+    public void setExpertSelection(boolean pValue) {
+        jExpertSelection.setSelected(pValue);
+    }
+
+    public void setSelectedUnit(UnitHolder pUnit) {
+        jUnitBox.setSelectedItem(pUnit);
+    }
+
     public UnitHolder getSelectedUnit() {
         return (UnitHolder) jUnitBox.getSelectedItem();
     }
 
+    public void setFake(boolean pFake) {
+        jFakeBox.setSelected(pFake);
+    }
+
     public boolean isFake() {
         return jFakeBox.isSelected();
+    }
+
+    public int getAmount() {
+        return UIHelper.parseIntFromField(jAmountField, 1);
+    }
+
+    public void setAmount(int pAmount) {
+        UIHelper.setText(jAmountField, Integer.toString(pAmount), "1");
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jAllyScrollPane;
     private javax.swing.JTextField jAmountField;
     private javax.swing.JLabel jAmountLabel;
     private javax.swing.JScrollPane jContinentScrollPane;
+    private javax.swing.JLabel jExpertHelpLabel;
+    private javax.swing.JCheckBox jExpertSelection;
     private javax.swing.JCheckBox jFakeBox;
     private javax.swing.JScrollPane jGroupScrollPane;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JScrollPane jTribeScrollPane;
     private org.jdesktop.swingx.JXComboBox jUnitBox;

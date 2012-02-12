@@ -12,7 +12,9 @@ package de.tor.tribes.ui.wiz.tap;
 
 import com.jidesoft.swing.JideBoxLayout;
 import com.jidesoft.swing.JideSplitPane;
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.components.VillageSelectionPanel;
@@ -22,6 +24,7 @@ import de.tor.tribes.ui.renderer.FakeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.PluginManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -156,6 +159,24 @@ public class AttackSourcePanel extends WizardPage {
 
     public static String getStep() {
         return "id-attack-source";
+    }
+
+    public void storeProperties() {
+        UserProfile profile = GlobalOptions.getSelectedProfile();
+        profile.addProperty("tap.source.expert", villageSelectionPanel.isExpertSelection());
+        profile.addProperty("tap.source.unit", villageSelectionPanel.getSelectedUnit().getPlainName());
+        profile.addProperty("tap.source.fake", villageSelectionPanel.isFake());
+    }
+
+    public void restoreProperties() {
+        getModel().clear();
+        UserProfile profile = GlobalOptions.getSelectedProfile();
+        villageSelectionPanel.setExpertSelection(Boolean.parseBoolean(profile.getProperty("tap.source.expert")));
+        String unit = profile.getProperty("tap.source.unit");
+        if (unit != null) {
+            villageSelectionPanel.setSelectedUnit(DataHolder.getSingleton().getUnitByPlainName(unit));
+        }
+        villageSelectionPanel.setFake(Boolean.parseBoolean(profile.getProperty("tap.source.fake")));
     }
 
     /**

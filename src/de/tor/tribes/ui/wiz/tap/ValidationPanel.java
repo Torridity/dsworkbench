@@ -50,18 +50,12 @@ public class ValidationPanel extends WizardPage implements SettingsChangedListen
     @Override
     public void fireTimeFrameChangedEvent() {
     }
-    private static final String GENERAL_INFO = "Die Zeiteinstellungen dienen dazu, die m&ouml;glichen Angriffe zeitlich einzuordnen. "
-            + "Die grobe Einordnung aller Angriffe geschieht &uuml;ber die beiden Felder 'Startdatum' und 'Enddatum'. DS Workbench "
-            + "wird keinen Angriff vor bzw. nach diesen Daten planen. Je gr&ouml;&szlig;er der Abstand zwischen diesen Zeitpunkten ist, "
-            + "desto l&auml;nger dauert die Berechnung.<br/>"
-            + "Eine genauere Festlegung von Abschick- und Ankunftzeiten geschieht anschlie&szlig;end &uuml;ber die Zeitrahmen."
-            + "Hier gibt es die folgenden M&ouml;glichkeiten:"
-            + "<ul><li>Immer: Zeitrahmen von diesem Typ gelten an jedem Tag zwischen den angegebenen Stunden</li> "
-            + "<li>Tag: Zeitrahmen von diesem Typ gelten nur an dem festgelegten Tag zwischen den angegebenen Stunden</li>"
-            + "<li>Zeitpunkt: Elemente von diesem Typ gelten an dem festgelegten Tag und zu der festgelegten Uhrzeit. Sie sind daher vorrangig f&uuml;r die Ankunft von Angriffen gedacht.</li>"
-            + "</ul>"
-            + "Eingestellte Zeitrahmen werden per Drag&amp;Drop in die Zeitrahmenliste gezogen und k&ouml;nnen mit ENTF wieder gel&ouml;scht werden."
-            + "Um eine Berechnung durchzuf&uuml;hren, wird mindestens ein Abschick- und ein Ankunftzeitrahmen ben&ouml;tigt.</html>";
+    private static final String GENERAL_INFO = "In diesem Schritt kannst du noch einmal &uuml;berpr&uuml;fen, ob deine bisherigen Einstellungen "
+            + "&uuml;berhaupt zu einem Ergebnis f&uuml;hren k&ouml;nnen. Die obere Tabelle zeigt dir alle verwendeten Herkunftsd&ouml;rfer und "
+            + "die Prozentzahl der Zield&ouml;rfer, die vom jeweiligen Herkunftsdorf erreicht werden kann.<br/>"
+            + "Die untere Tabelle zeigt dir die Zield&ouml;rfer und die Prozentzahl der Herkunftsd&ouml;rfer, die dieses Zieldorf erreichen kann. "
+            + "Je kleiner die Prozentzahl ist, desto unwahrscheinlicher ist es, dass das jeweilige Dorf f&uuml;r einem Angriff verwendet wird. "
+            + "Die Erh&ouml;hung der Prozentzahl kann &uuml;ber eine Ver&auml;nderung der Zeiteinstellungen erreicht werden.</html>";
     private static ValidationPanel singleton = null;
     private VillageOverviewMapPanel sourceOverviewPanel = null;
     private VillageOverviewMapPanel targetOverviewPanel = null;

@@ -169,13 +169,6 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
      * @param type the type to set
      */
     public void setType(int type) {
-        if(type == 1){
-            try{
-                throw new Exception();
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-        }
         this.type = type;
     }
     /*

@@ -29,6 +29,11 @@ public class TAPResultTableModel extends AbstractTableModel {
         super();
     }
 
+    public void clear() {
+        elements.clear();
+        fireTableDataChanged();
+    }
+
     public void addRow(AbstractTroopMovement pMovement) {
         elements.add(pMovement);
         fireTableDataChanged();

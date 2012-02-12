@@ -70,7 +70,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
  * @author Torridity
  */
 public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame implements ActionListener {
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("Copy")) {
@@ -90,14 +90,14 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     private TroopSelectionPanel offensePanel = null;
     private DefenseAnalyzer a = null;
     private ClickAccountPanel clickAccount = new ClickAccountPanel();
-    
+
     public static synchronized DSWorkbenchSOSRequestAnalyzer getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchSOSRequestAnalyzer();
         }
         return SINGLETON;
     }
-    
+
     @Override
     public void resetView() {
         offensePanel.setupOffense(true);
@@ -126,13 +126,13 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         jAttacksTable.registerKeyboardAction(DSWorkbenchSOSRequestAnalyzer.this, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jAttacksTable.registerKeyboardAction(DSWorkbenchSOSRequestAnalyzer.this, "Cut", cut, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jAttacksTable.getActionMap().put("find", new AbstractAction() {
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 //ignore find
             }
         });
-        
+
         jAttacksTable.setModel(new DefenseToolModel());
         jAttacksTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jAttacksTable.getColumnExt("Tendenz").setCellRenderer(new TendencyTableCellRenderer());
@@ -144,7 +144,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         jAttacksTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         jAttacksTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jAttacksTable.requestFocus();
-        
+
         jSupportsTable.setModel(new SupportsModel());
         jSupportsTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jSupportsTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
@@ -158,7 +158,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         offAmounts.put(DataHolder.getSingleton().getUnitByPlainName("ram"), 250);
         offensePanel.setAmounts(offAmounts);
         jPanel1.add(offensePanel, BorderLayout.CENTER);
-        
+
         defensePanel = new TroopSelectionPanel();
         defensePanel.setupDefense(true);
         Hashtable<UnitHolder, Integer> defAmounts = new Hashtable<UnitHolder, Integer>();
@@ -179,14 +179,14 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         }
         // </editor-fold>
     }
-    
+
     @Override
     public void toBack() {
         jAlwaysOnTopBox.setSelected(false);
         fireAlwaysOnTopEvent(null);
         super.toBack();
     }
-    
+
     @Override
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
@@ -195,19 +195,19 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         pConfig.setProperty(getPropertyPrefix() + ".offense", TroopHelper.unitTableToProperty(offensePanel.getAmounts()));
         pConfig.setProperty(getPropertyPrefix() + ".loss.ratio", UIHelper.parseIntFromField(jMaxLossRatio, 30));
         pConfig.setProperty(getPropertyPrefix() + ".max.rounds", UIHelper.parseIntFromField(jMaxSimRounds, 500));
-        
+
         PropertyHelper.storeTableProperties(jAttacksTable, pConfig, getPropertyPrefix());
     }
-    
+
     @Override
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
-        
+
         try {
             jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
         } catch (Exception e) {
         }
-        
+
         String defense = (String) pConfig.getProperty(getPropertyPrefix() + ".defense");
         if (defense != null) {
             defensePanel.setAmounts(TroopHelper.propertyToUnitTable(defense));
@@ -216,121 +216,108 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         if (offense != null) {
             offensePanel.setAmounts(TroopHelper.propertyToUnitTable(offense));
         }
-        
+
         UIHelper.setText(jMaxLossRatio, pConfig.getInt(getPropertyPrefix() + ".loss.ratio", 30), 30);
         UIHelper.setText(jMaxSimRounds, pConfig.getInt(getPropertyPrefix() + ".max.rounds", 500), 500);
         setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
         PropertyHelper.restoreTableProperties(jAttacksTable, pConfig, getPropertyPrefix());
     }
-    
+
     @Override
     public String getPropertyPrefix() {
         return "sos.view";
     }
-    
+
     private void buildMenu() {
         JXTaskPane viewPane = new JXTaskPane();
         viewPane.setTitle("Ansicht");
         JXButton toSosView = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/axe24.png")));
         toSosView.setToolTipText("Eingelesene SOS-Anfragen anzeigen");
         toSosView.addMouseListener(new MouseAdapter() {
-            
+
             @Override
             public void mouseReleased(MouseEvent e) {
                 jScrollPane6.setViewportView(jAttacksTable);
             }
         });
         viewPane.getContentPane().add(toSosView);
-        
+
         JXButton toSupportView = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/sword24.png")));
         toSupportView.setToolTipText("Errechnete Unterstützungen anzeigen");
         toSupportView.addMouseListener(new MouseAdapter() {
-            
+
             @Override
             public void mouseReleased(MouseEvent e) {
                 jScrollPane6.setViewportView(jSupportsTable);
             }
         });
-        
+
         viewPane.getContentPane().add(toSupportView);
-        
+
         JXTaskPane transferPane = new JXTaskPane();
         transferPane.setTitle("Übertragen");
-        
-        JXButton toDefensePlanner = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/def_auto_small.png")));
-        toDefensePlanner.setToolTipText("Überträgt die gewählten SOS-Anfragen in den automatischen Verteidigungsplaner");
-        toDefensePlanner.addMouseListener(new MouseAdapter() {
-            
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                List<DefenseInformation> selection = getSelectedRows();
-                if (selection.isEmpty()) {
-                    showInfo("Keine Einträge gewählt");
-                    return;
-                }
-                for (DefenseInformation info : selection) {
-                    if (!info.isAnalyzed()) {
-                        showInfo("Eine oder mehrere Einträge wurden noch nicht analysiert. Bitte führe die Analyse vor der Übertragung durch.");
-                        return;
-                    }
-                }
-                DefenseAnalysePanel.getSingleton().setData(selection);
-                showInfo("Einträge in Verteidigungsplaner übertragen");
-                /*
-                 * SwingUtilities.invokeLater(new Runnable() {
-                 *
-                 * public void run() { DefensePlanerWizard.show(); } });
-                 */
-            }
-        });
-        transferPane.getContentPane().add(toDefensePlanner);
+
+        /*
+         * JXButton toDefensePlanner = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/def_auto_small.png")));
+         * toDefensePlanner.setToolTipText("Überträgt die gewählten SOS-Anfragen in den automatischen Verteidigungsplaner");
+         * toDefensePlanner.addMouseListener(new MouseAdapter() {
+         *
+         * @Override public void mouseReleased(MouseEvent e) { List<DefenseInformation> selection = getSelectedRows(); if
+         * (selection.isEmpty()) { showInfo("Keine Einträge gewählt"); return; } for (DefenseInformation info : selection) { if
+         * (!info.isAnalyzed()) { showInfo("Eine oder mehrere Einträge wurden noch nicht analysiert. Bitte führe die Analyse vor der
+         * Übertragung durch."); return; } } DefenseAnalysePanel.getSingleton().setData(selection); showInfo("Einträge in
+         * Verteidigungsplaner übertragen");
+         *
+         * }
+         * }); transferPane.getContentPane().add(toDefensePlanner);
+         */
         JXButton toSupport = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/support_tool.png")));
         toSupport.setToolTipText("Überträgt den ersten Angriff der gewählten SOS-Anfrage in das Unterstützungswerkzeug");
         toSupport.addMouseListener(new MouseAdapter() {
-            
+
             @Override
             public void mouseReleased(MouseEvent e) {
                 transferToSupportTool();
             }
         });
-        
+
         transferPane.getContentPane().add(toSupport);
-        
+
         JXButton toRetime = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/re-time.png")));
         toRetime.setToolTipText("Überträgt den ersten Angriff der gewählten SOS-Anfrage in den ReTimer");
         toRetime.addMouseListener(new MouseAdapter() {
-            
+
             @Override
             public void mouseReleased(MouseEvent e) {
                 transferToRetimeTool();
             }
         });
-        
+
         transferPane.getContentPane().add(toRetime);
-        
+
         JXButton toBrowser = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/att_browser.png")));
         toBrowser.setToolTipText("Überträgt die gewählten Unterstützungen in den Browser");
         toBrowser.addMouseListener(new MouseAdapter() {
-            
+
             @Override
             public void mouseReleased(MouseEvent e) {
                 transferToBrowser();
             }
         });
-        
+
         transferPane.getContentPane().add(toBrowser);
-        
+
         transferPane.getContentPane().add(new JXButton(new AbstractAction(null, new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/sos_clipboard.png"))) {
-            
+
             @Override
             public Object getValue(String key) {
                 if (key.equals(Action.SHORT_DESCRIPTION)) {
                     return "Unterstützungsanfragen für die gewählten, unvollständigen Verteidigungen erstellen\n"
-                            + "und in die Zwischenablage kopieren";
+                            + " und in die Zwischenablage kopieren";
                 }
                 return super.getValue(key);
             }
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 copyDefRequests();
@@ -339,7 +326,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         JXTaskPane miscPane = new JXTaskPane();
         miscPane.setTitle("Sonstiges");
         miscPane.getContentPane().add(new JXButton(new AbstractAction(null, new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/sos_settings.png"))) {
-            
+
             @Override
             public Object getValue(String key) {
                 if (key.equals(Action.SHORT_DESCRIPTION)) {
@@ -347,7 +334,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
                 }
                 return super.getValue(key);
             }
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 jDefenseSettingsFrame.pack();
@@ -355,37 +342,60 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
                 jDefenseSettingsFrame.setVisible(true);
             }
         }));
-        
-        
+
+
         clickAccount = new ClickAccountPanel();
         centerPanel.setupTaskPane(clickAccount, viewPane, transferPane, miscPane);
     }
-    
+
+    public boolean sendDataToDefensePlaner() {
+        List<DefenseInformation> infos = new LinkedList<DefenseInformation>();
+        if (getModel().getRowCount() == 0) {
+            return false;
+        } else {
+            boolean analyzeNeeded = false;
+            for (DefenseInformation info : getModel().getRows()) {
+                if (!info.isAnalyzed()) {
+                    analyzeNeeded = true;
+                    break;
+                }
+            }
+            if (analyzeNeeded) {
+                fireAnalyzeEvent(null);
+            }
+            for (int row = 0; row < jAttacksTable.getRowCount(); row++) {
+                infos.add(getModel().getRows()[jAttacksTable.convertRowIndexToModel(row)]);
+            }
+        }
+        DefenseAnalysePanel.getSingleton().setData(infos);
+        return true;
+    }
+
     public DefenseToolModel getModel() {
         return TableHelper.getTableModel(jAttacksTable);
     }
-    
+
     private void showInfo(String pMessage) {
         infoPanel.setCollapsed(false);
         jXInfoLabel.setBackgroundPainter(new MattePainter(getBackground()));
         jXInfoLabel.setForeground(Color.BLACK);
         jXInfoLabel.setText(pMessage);
     }
-    
+
     private void showSuccess(String pMessage) {
         infoPanel.setCollapsed(false);
         jXInfoLabel.setBackgroundPainter(new MattePainter(Color.GREEN));
         jXInfoLabel.setForeground(Color.BLACK);
         jXInfoLabel.setText(pMessage);
     }
-    
+
     private void showError(String pMessage) {
         infoPanel.setCollapsed(false);
         jXInfoLabel.setBackgroundPainter(new MattePainter(Color.RED));
         jXInfoLabel.setForeground(Color.WHITE);
         jXInfoLabel.setText(pMessage);
     }
-    
+
     private void transferToSupportTool() {
         List<DefenseInformation> attacks = getSelectedRows();
         if (attacks.isEmpty()) {
@@ -393,7 +403,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         }
         VillageSupportFrame.getSingleton().showSupportFrame(attacks.get(0).getTarget(), attacks.get(0).getFirstAttack().getTime());
     }
-    
+
     private void transferToBrowser() {
         if (!jScrollPane6.getViewport().getView().equals(jSupportsTable)) {
             showInfo("Du musst dich in der Ansicht 'Unterstützungen' befinden um diese Funktion zu verwenden.");
@@ -436,10 +446,10 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
             }
         }
     }
-    
+
     private void copyDefRequests() {
         List<DefenseInformation> selection = getSelectedRows();
-        
+
         if (selection.isEmpty()) {
             showInfo("Keine Einträge gewählt");
             return;
@@ -447,7 +457,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
         StringBuilder b = new StringBuilder();
         b.append("Ich benötige die aufgelisteten oder vergleichbare Unterstützungen in den folgenden Dörfern:\n\n");
-        
+
         for (DefenseInformation defense : selection) {
             if (!defense.isSave()) {
                 Village target = defense.getTarget();
@@ -473,7 +483,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
             showError("Fehler beim Kopieren in die Zwischenablage");
         }
     }
-    
+
     private void transferToRetimeTool() {
         List<DefenseInformation> attacks = getSelectedRows();
         if (attacks.isEmpty()) {
@@ -486,7 +496,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
             f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format.ms"));
         }
         StringBuilder b = new StringBuilder();
-        
+
         b.append(PluginManager.getSingleton().getVariableValue("sos.source")).append(" ").
                 append(attacks.get(0).getTargetInformation().getFirstTimedAttack().getSource().toString()).append("\n");
         b.append("Ziel: ").append(attacks.get(0).getTarget().toString()).append("\n");
@@ -497,7 +507,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
             DSWorkbenchReTimerFrame.getSingleton().setVisible(true);
         }
     }
-    
+
     public de.tor.tribes.io.UnitHolder getSlowestUnit() {
         Hashtable<UnitHolder, Integer> units = defensePanel.getAmounts();
         Enumeration<UnitHolder> keys = units.keys();
@@ -516,21 +526,21 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         }
         return slowest;
     }
-    
+
     private void removeSelection() {
         removeSelection(true);
         updateSupportTable();
     }
-    
+
     private void removeSelection(boolean pAsk) {
         int[] selectedRows = jAttacksTable.getSelectedRows();
         if (selectedRows == null || selectedRows.length < 1) {
             showInfo("Keine Angriffe ausgewählt");
             return;
         }
-        
+
         if (!pAsk || JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du " + ((selectedRows.length == 1) ? "den gewählten Angriff " : "die gewählten Angriffe ") + "wirklich löschen?", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-            
+
             DefenseToolModel model = TableHelper.getTableModel(jAttacksTable);
             int numRows = selectedRows.length;
             List<DefenseInformation> toRemove = new LinkedList<DefenseInformation>();
@@ -550,12 +560,12 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
                     r.removeTarget(defense.getTarget());
                 }
             }
-            
+
             model.fireTableDataChanged();
             showSuccess(((numRows == 1) ? "Angriff" : numRows + " Angriffe") + " gelöscht");
         }
     }
-    
+
     private List<DefenseInformation> getSelectedRows() {
         List<DefenseInformation> infos = new LinkedList<DefenseInformation>();
         if (getModel().getRowCount() == 0) {
@@ -883,15 +893,15 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     private void jXInfoLabelfireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXInfoLabelfireHideInfoEvent
         infoPanel.setCollapsed(true);
 }//GEN-LAST:event_jXInfoLabelfireHideInfoEvent
-    
+
 private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireAlwaysOnTopEvent
     setAlwaysOnTop(!isAlwaysOnTop());
 }//GEN-LAST:event_fireAlwaysOnTopEvent
-    
+
     private void fireReadDataFromClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireReadDataFromClipboardEvent
         readRequestFromClipboard();
     }//GEN-LAST:event_fireReadDataFromClipboardEvent
-    
+
     private void fireEditTroopsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireEditTroopsEvent
         if (JOptionPaneHelper.showWarningConfirmBox(jDefenseSettingsFrame,
                 "Das Ändern der Truppeneinstellungen führt dazu, dass alle bisher berechneten\n"
@@ -903,7 +913,7 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             offensePanel.setEnabled(true);
         }
     }//GEN-LAST:event_fireEditTroopsEvent
-    
+
     private void fireAcceptSettingsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAcceptSettingsEvent
         if (evt.getSource() == jAcceptButton) {
             if (offensePanel.isEnabled() || defensePanel.isEnabled()) {
@@ -916,15 +926,15 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             offensePanel.setEnabled(false);
             defensePanel.setEnabled(false);
         }
-        
+
         jDefenseSettingsFrame.setVisible(false);
     }//GEN-LAST:event_fireAcceptSettingsEvent
-    
+
     private void fireAnalyzeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAnalyzeEvent
         if (a == null || !a.isRunning()) {
             jProgressBar1.setValue(0);
             a = new DefenseAnalyzer(new DefenseAnalyzer.DefenseAnalyzerListener() {
-                
+
                 @Override
                 public void fireProceedEvent(double pStatus) {
                     int status = (int) Math.rint(pStatus * 100.0);
@@ -933,7 +943,7 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
                         jAttacksTable.repaint();
                     }
                 }
-                
+
                 @Override
                 public void fireFinishedEvent() {
                     jButton3.setText("Analysieren");
@@ -948,16 +958,16 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             }
         }
     }//GEN-LAST:event_fireAnalyzeEvent
-    
+
     public Hashtable<UnitHolder, Integer> getDefense() {
         return defensePanel.getAmounts();
     }
-    
+
     public void updateExternally() {
         getModel().fireTableDataChanged();
         updateSupportTable();
     }
-    
+
     private void updateSupportTable() {
         SupportsModel model = TableHelper.getTableModel(jSupportsTable);
         model.clear();
@@ -974,12 +984,12 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
         }
         model.fireTableDataChanged();
     }
-    
+
     private void readRequestFromClipboard() {
         try {
             Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
             String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-            
+
             List<SOSRequest> requests = PluginManager.getSingleton().executeSOSParserParser(data);
             if (requests != null && !requests.isEmpty()) {
                 for (SOSRequest request : requests) {
@@ -995,7 +1005,7 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
                 showInfo("Keine gültigen SOS Anfrage gefunden");
             }
             updateView();
-            
+
         } catch (HeadlessException he) {
             showInfo("Fehler beim Lesen aus der Zwischenablage");
         } catch (UnsupportedFlavorException usfe) {
@@ -1004,11 +1014,11 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             showInfo("Fehler beim Lesen aus der Zwischenablage");
         }
     }
-    
+
     private void updateView() {
         DefenseToolModel model = getModel();
         model.clear();
-        
+
         for (ManageableType e : SOSManager.getSingleton().getAllElements()) {
             SOSRequest r = (SOSRequest) e;
             Enumeration<Village> targets = r.getTargets();
@@ -1018,7 +1028,7 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
         }
         model.fireTableDataChanged();
     }
-    
+
     private void findFakes(SOSRequest pRequest) {
         Enumeration<Village> targets = pRequest.getTargets();
         // List<Village> foundSources = new LinkedList<Village>();
@@ -1051,27 +1061,27 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             }
         }
     }
-    
+
     private static void createSampleRequests() {
         int wallLevel = 20;
         int supportCount = 20;
         int maxAttackCount = 10;
         int maxFakeCount = 0;
-        
+
         Village[] villages = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
         Village[] attackerVillages = DataHolder.getSingleton().getTribeByName("Alexander25").getVillageList();
-        
+
         for (int i = 0; i < supportCount; i++) {
             int id = (int) Math.rint(Math.random() * (villages.length - 1));
             Village target = villages[id];
             SOSRequest r = new SOSRequest(target.getTribe());
             TargetInformation info = r.addTarget(target);
             info.setWallLevel(wallLevel);
-            
+
             info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("spear"), (int) Math.rint(Math.random() * 14000));
             info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("sword"), (int) Math.rint(Math.random() * 14000));
             info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("heavy"), (int) Math.rint(Math.random() * 5000));
-            
+
             int cnt = (int) Math.rint(maxAttackCount * Math.random());
             for (int j = 0; j < cnt; j++) {
                 int idx = (int) Math.rint(Math.random() * (attackerVillages.length - 2));
@@ -1086,7 +1096,7 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             SOSManager.getSingleton().addRequest(r);
         }
     }
-    
+
     public void updateCountdown() {
         if (!jSupportsTable.isVisible()) {
             return;
@@ -1103,7 +1113,7 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             jSupportsTable.repaint(startX, (int) jSupportsTable.getVisibleRect().getY(), startX + col.getWidth(), (int) jSupportsTable.getVisibleRect().getHeight());
         }
     }
-    
+
     public void updateTime() {
         TableColumnExt firstCol = jSupportsTable.getColumnExt("Früheste Abschickzeit");
         TableColumnExt lastCol = jSupportsTable.getColumnExt("Späteste Abschickzeit");
@@ -1140,7 +1150,7 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
         DSWorkbenchSOSRequestAnalyzer.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         DSWorkbenchSOSRequestAnalyzer.getSingleton().setVisible(true);
     }
-    
+
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
@@ -1174,13 +1184,13 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
 }
 
 class SupportColorUpdateThread extends Thread {
-    
+
     public SupportColorUpdateThread() {
         setName("SupportColorUpdater");
         setPriority(MIN_PRIORITY);
         setDaemon(true);
     }
-    
+
     public void run() {
         while (true) {
             try {
@@ -1196,19 +1206,19 @@ class SupportColorUpdateThread extends Thread {
 }
 
 class SupportCountdownThread extends Thread {
-    
+
     private boolean showCountdown = true;
-    
+
     public SupportCountdownThread() {
         setName("SupportTableCountdownUpdater");
         setPriority(MIN_PRIORITY);
         setDaemon(true);
     }
-    
+
     public void updateSettings() {
         showCountdown = Boolean.parseBoolean(GlobalOptions.getProperty("show.live.countdown"));
     }
-    
+
     @Override
     public void run() {
         while (true) {

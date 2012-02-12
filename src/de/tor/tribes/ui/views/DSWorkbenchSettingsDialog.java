@@ -37,6 +37,7 @@ import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.panels.MinimapPanel;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
+import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
 import java.awt.Component;
@@ -2848,6 +2849,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
             if (formerProfile.getProfileId() != selectedProfile.getProfileId()) {
                 logger.info("Writing user data for former profile");
+                TacticsPlanerWizard.storeProperties();
                 GlobalOptions.saveUserData();
                 GlobalOptions.addProperty("selected.profile", Long.toString(selectedProfile.getProfileId()));
                 formerProfile.updateProperties();

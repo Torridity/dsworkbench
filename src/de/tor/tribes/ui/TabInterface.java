@@ -32,5 +32,4 @@ public interface TabInterface {
 
     public void updateSelectionInfo();
 
-    public void refillSupports();
 }

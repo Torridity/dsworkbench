@@ -16,7 +16,6 @@ import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.windows.SupportDetailsDialog;
-import de.tor.tribes.ui.windows.SupportRefillDialog;
 import de.tor.tribes.ui.TabInterface;
 import de.tor.tribes.ui.decorator.GroupPredicate;
 import de.tor.tribes.ui.models.TroopsTableModel;
@@ -87,7 +86,6 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
     private static boolean KEY_LISTENER_ADDED = false;
     private PainterHighlighter highlighter = null;
     private ActionListener actionListener = null;
-    private SupportRefillDialog mRefillDialog = null;
     private SupportDetailsDialog mDetailsDialog = null;
 
     static {
@@ -120,7 +118,6 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         sTroopSet = pTroopSet;
         initComponents();
         jScrollPane1.setViewportView(jxTroopTable);
-        mRefillDialog = new SupportRefillDialog(DSWorkbenchTroopsFrame.getSingleton(), true);
         mDetailsDialog = new SupportDetailsDialog(DSWorkbenchTroopsFrame.getSingleton(), true);
         if (!KEY_LISTENER_ADDED) {
             KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
@@ -185,22 +182,6 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         jTroopAmountList.repaint();
     }
 
-    @Override
-    public void refillSupports() {
-        if (getTroopSet() == null || !getTroopSet().equals(TroopsManager.SUPPORT_GROUP)) {
-            showInfo("Diese Funktion ist nur für Unterstützungen verfügbar");
-            return;
-        }
-        List<VillageTroopsHolder> selection = getSelectedTroopHolders();
-        if (selection.isEmpty()) {
-            showInfo("Keine Dörfer ausgewählt");
-            return;
-        }
-
-        mRefillDialog.pack();
-        mRefillDialog.setupAndShow(selection);
-    }
-
     public void showSupportDetails() {
         if (getTroopSet() == null || !getTroopSet().equals(TroopsManager.SUPPORT_GROUP)) {
             showInfo("Diese Funktion ist nur für Unterstützungen verfügbar");
@@ -212,7 +193,6 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
             return;
         }
         mDetailsDialog.setupAndShow(selection);
-
     }
 
     public void showSuccess(String pMessage) {

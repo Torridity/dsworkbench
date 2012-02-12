@@ -12,36 +12,31 @@ package de.tor.tribes.ui.wiz.ref;
 
 import com.jidesoft.swing.JideBoxLayout;
 import com.jidesoft.swing.JideSplitPane;
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.UnknownUnit;
+import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
-import de.tor.tribes.ui.components.VillageSelectionPanel;
-import de.tor.tribes.ui.models.REFTargetTableModel;
+import de.tor.tribes.ui.models.REFSettingsTableModel;
 import de.tor.tribes.ui.panels.TroopSelectionPanel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.FakeCellRenderer;
-import de.tor.tribes.ui.renderer.UnitCellRenderer;
+import de.tor.tribes.ui.util.ColorGradientHelper;
+import de.tor.tribes.ui.wiz.ref.types.REFTargetElement;
 import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.PluginManager;
+import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.TroopHelper;
+import de.tor.tribes.util.troops.TroopsManager;
+import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.HeadlessException;
 import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.util.Collections;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -60,7 +55,6 @@ public class SupportRefillSettingsPanel extends WizardPage {
             + "<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Gruppen der Gruppen&uuml;bersicht</li>"
             + "</ul></html>";
     private static SupportRefillSettingsPanel singleton = null;
-    private VillageSelectionPanel villageSelectionPanel = null;
     private VillageOverviewMapPanel overviewPanel = null;
     private TroopSelectionPanel targetAmountPanel = null;
     private TroopSelectionPanel splitAmountPanel = null;
@@ -77,28 +71,11 @@ public class SupportRefillSettingsPanel extends WizardPage {
      */
     SupportRefillSettingsPanel() {
         initComponents();
-        jVillageTable.setModel(new REFTargetTableModel());
-        jVillageTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
-        jVillageTable.setDefaultRenderer(Boolean.class, new FakeCellRenderer());
+        jVillageTable.setModel(new REFSettingsTableModel());
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jXCollapsiblePane1.add(jInfoScrollPane, BorderLayout.CENTER);
-        villageSelectionPanel = new VillageSelectionPanel(new VillageSelectionPanel.VillageSelectionPanelListener() {
-
-            @Override
-            public void fireVillageSelectionEvent(Village[] pSelection) {
-                addVillages(pSelection);
-            }
-        });
-
         jVillageTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jVillageTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
-
-        villageSelectionPanel.enableSelectionElement(VillageSelectionPanel.SELECTION_ELEMENT.ALLY, false);
-        villageSelectionPanel.enableSelectionElement(VillageSelectionPanel.SELECTION_ELEMENT.TRIBE, false);
-        villageSelectionPanel.setUnitSelectionEnabled(false);
-        villageSelectionPanel.setFakeSelectionEnabled(false);
-        villageSelectionPanel.setup();
-        jPanel1.add(villageSelectionPanel, BorderLayout.CENTER);
         jideSplitPane1.setOrientation(JideSplitPane.VERTICAL_SPLIT);
         jideSplitPane1.setProportionalLayout(true);
         jideSplitPane1.setDividerSize(5);
@@ -118,23 +95,6 @@ public class SupportRefillSettingsPanel extends WizardPage {
             }
         });
 
-        KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
-        KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
-        ActionListener panelListener = new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (e.getActionCommand().equals("Paste")) {
-                    pasteFromClipboard();
-                } else if (e.getActionCommand().equals("Delete")) {
-                    deleteSelection();
-                }
-            }
-        };
-        jVillageTable.registerKeyboardAction(panelListener, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        jVillageTable.registerKeyboardAction(panelListener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        capabilityInfoPanel1.addActionListener(panelListener);
-
         jVillageTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -148,18 +108,37 @@ public class SupportRefillSettingsPanel extends WizardPage {
 
         targetAmountPanel = new TroopSelectionPanel();
         targetAmountPanel.setupDefense(true);
+        jTargetAmountsPanel.add(targetAmountPanel, BorderLayout.CENTER);
+        splitAmountPanel = new TroopSelectionPanel();
         splitAmountPanel.setupDefense(true);
+        jSplitSizePanel.add(splitAmountPanel, BorderLayout.CENTER);
         jInfoTextPane.setText(GENERAL_INFO);
         overviewPanel = new VillageOverviewMapPanel();
         jPanel2.add(overviewPanel, BorderLayout.CENTER);
     }
 
     public static String getDescription() {
-        return "Ziele";
+        return "Einstellungen";
     }
 
     public static String getStep() {
-        return "id-ref-target";
+        return "id-ref-settings";
+    }
+
+    public void storeProperties() {
+        UserProfile profile = GlobalOptions.getSelectedProfile();
+        profile.addProperty("ref.filter.amount", TroopHelper.unitTableToProperty(targetAmountPanel.getAmounts()));
+        profile.addProperty("ref.filter.split", TroopHelper.unitTableToProperty(splitAmountPanel.getAmounts()));
+    }
+
+    public void restoreProperties() {
+        UserProfile profile = GlobalOptions.getSelectedProfile();
+        targetAmountPanel.setAmounts(TroopHelper.propertyToUnitTable(profile.getProperty("ref.filter.amount")));
+        splitAmountPanel.setAmounts(TroopHelper.propertyToUnitTable(profile.getProperty("ref.filter.split")));
+    }
+
+    public Hashtable<UnitHolder, Integer> getSplit() {
+        return splitAmountPanel.getAmounts();
     }
 
     /**
@@ -175,15 +154,15 @@ public class SupportRefillSettingsPanel extends WizardPage {
         jInfoTextPane = new javax.swing.JTextPane();
         jDataPanel = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
-        jPanel4 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
+        jTargetAmountsPanel = new javax.swing.JPanel();
+        jSplitSizePanel = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
         jVillageTablePanel = new javax.swing.JPanel();
         jTableScrollPane = new javax.swing.JScrollPane();
         jVillageTable = new org.jdesktop.swingx.JXTable();
         jPanel2 = new javax.swing.JPanel();
         jToggleButton1 = new javax.swing.JToggleButton();
         jStatusLabel = new javax.swing.JLabel();
-        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jLabel1 = new javax.swing.JLabel();
         jideSplitPane1 = new com.jidesoft.swing.JideSplitPane();
@@ -202,25 +181,38 @@ public class SupportRefillSettingsPanel extends WizardPage {
 
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Gewünschte Truppenmenge"));
-        jPanel4.setLayout(new java.awt.BorderLayout());
+        jTargetAmountsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Gewünschte Truppenstärke"));
+        jTargetAmountsPanel.setLayout(new java.awt.BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        jPanel1.add(jPanel4, gridBagConstraints);
+        jPanel1.add(jTargetAmountsPanel, gridBagConstraints);
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Einzelunterstützung"));
-        jPanel3.setLayout(new java.awt.BorderLayout());
+        jSplitSizePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Einzelunterstützung"));
+        jSplitSizePanel.setLayout(new java.awt.BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        jPanel1.add(jPanel3, gridBagConstraints);
+        jPanel1.add(jSplitSizePanel, gridBagConstraints);
+
+        jButton1.setText("Notwendige Unterstützungen neu berechnen");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireCalculateNeededSupportsEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jButton1, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -233,7 +225,7 @@ public class SupportRefillSettingsPanel extends WizardPage {
 
         jVillageTablePanel.setLayout(new java.awt.GridBagLayout());
 
-        jTableScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Verwendete Dörfer"));
+        jTableScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Berücksichtigte Dörfer"));
         jTableScrollPane.setMinimumSize(new java.awt.Dimension(23, 100));
         jTableScrollPane.setPreferredSize(new java.awt.Dimension(23, 100));
 
@@ -298,16 +290,6 @@ public class SupportRefillSettingsPanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jVillageTablePanel.add(jStatusLabel, gridBagConstraints);
 
-        capabilityInfoPanel1.setBbSupport(false);
-        capabilityInfoPanel1.setCopyable(false);
-        capabilityInfoPanel1.setSearchable(false);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jVillageTablePanel.add(capabilityInfoPanel1, gridBagConstraints);
-
         setLayout(new java.awt.GridBagLayout());
 
         jXCollapsiblePane1.setCollapsed(true);
@@ -369,85 +351,132 @@ public class SupportRefillSettingsPanel extends WizardPage {
         }
     }//GEN-LAST:event_fireViewStateChangeEvent
 
-    private REFTargetTableModel getModel() {
-        return (REFTargetTableModel) jVillageTable.getModel();
+    private void fireCalculateNeededSupportsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateNeededSupportsEvent
+
+        Hashtable<UnitHolder, Integer> target = targetAmountPanel.getAmounts();
+        Hashtable<UnitHolder, Integer> split = splitAmountPanel.getAmounts();
+
+        if (TroopHelper.getPopulation(target) == 0) {
+            jStatusLabel.setText("Keine gewünschte Truppenstärke angegeben");
+            return;
+        }
+        if (TroopHelper.getPopulation(split) == 0) {
+            jStatusLabel.setText("Menge einer Einzelunterstützung nicht angegeben");
+            return;
+        }
+
+        int max = 0;
+        for (int i = 0; i < getModel().getRowCount(); i++) {
+            REFTargetElement elem = getModel().getRow(jVillageTable.convertRowIndexToModel(i));
+            elem.setNeededSupports(getNeededSupports(elem.getVillage(), target, split));
+            max = Math.max(elem.getNeededSupports(), max);
+        }
+        getModel().fireTableDataChanged();
+
+        for (REFTargetElement element : getAllElements()) {
+            overviewPanel.addVillage(new Point(element.getVillage().getX(), element.getVillage().getY()),
+                    ColorGradientHelper.getGradientColor(100.0f * (float) element.getNeededSupports() / (float) max, Color.RED, Color.GREEN));
+        }
+        overviewPanel.repaint();
+    }//GEN-LAST:event_fireCalculateNeededSupportsEvent
+
+    private int getNeededSupports(Village pVillage, Hashtable<UnitHolder, Integer> pTargetAmount, Hashtable<UnitHolder, Integer> pSplitAmount) {
+        boolean useArcher = !DataHolder.getSingleton().getUnitByPlainName("archer").equals(UnknownUnit.getSingleton());
+
+        Integer spearGoal = pTargetAmount.get(DataHolder.getSingleton().getUnitByPlainName("spear"));
+        Integer swordGoal = pTargetAmount.get(DataHolder.getSingleton().getUnitByPlainName("sword"));
+        Integer archerGoal = 0;
+        if (useArcher) {
+            archerGoal = pTargetAmount.get(DataHolder.getSingleton().getUnitByPlainName("archer"));
+        }
+        Integer spyGoal = pTargetAmount.get(DataHolder.getSingleton().getUnitByPlainName("spy"));
+        Integer heavyGoal = pTargetAmount.get(DataHolder.getSingleton().getUnitByPlainName("heavy"));
+
+        Integer spearSplit = pSplitAmount.get(DataHolder.getSingleton().getUnitByPlainName("spear"));
+        Integer swordSplit = pSplitAmount.get(DataHolder.getSingleton().getUnitByPlainName("sword"));
+        Integer archerSplit = 0;
+        if (useArcher) {
+            archerSplit = pSplitAmount.get(DataHolder.getSingleton().getUnitByPlainName("archer"));
+        }
+        Integer spySplit = pSplitAmount.get(DataHolder.getSingleton().getUnitByPlainName("spy"));
+        Integer heavySplit = pSplitAmount.get(DataHolder.getSingleton().getUnitByPlainName("heavy"));
+
+        VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.IN_VILLAGE);
+        Hashtable<UnitHolder, Integer> troops;
+        if (holder == null) {
+            troops = new Hashtable<UnitHolder, Integer>();
+            troops.put(DataHolder.getSingleton().getUnitByPlainName("spear"), 0);
+            troops.put(DataHolder.getSingleton().getUnitByPlainName("sword"), 0);
+            if (useArcher) {
+                troops.put(DataHolder.getSingleton().getUnitByPlainName("archer"), 0);
+            }
+            troops.put(DataHolder.getSingleton().getUnitByPlainName("spy"), 0);
+            troops.put(DataHolder.getSingleton().getUnitByPlainName("heavy"), 0);
+        } else {
+            troops = holder.getTroops();
+        }
+
+        int spearDiff = spearGoal - troops.get(DataHolder.getSingleton().getUnitByPlainName("spear"));
+        int swordDiff = swordGoal - troops.get(DataHolder.getSingleton().getUnitByPlainName("sword"));
+        int archerDiff = 0;
+        if (useArcher) {
+            archerDiff = archerGoal - troops.get(DataHolder.getSingleton().getUnitByPlainName("archer"));
+        }
+        int spyDiff = spyGoal - troops.get(DataHolder.getSingleton().getUnitByPlainName("spy"));
+        int heavyDiff = heavyGoal - troops.get(DataHolder.getSingleton().getUnitByPlainName("heavy"));
+
+        int spearSupports = (spearSplit == 0) ? 0 : (int) (Math.ceil((double) spearDiff / (double) spearSplit));
+        int swordSupports = (swordSplit == 0) ? 0 : (int) (Math.ceil((double) swordDiff / (double) swordSplit));
+        int archerSupports = (archerSplit == 0) ? 0 : (int) (Math.ceil((double) archerDiff / (double) archerSplit));
+        int spySupports = (spySplit == 0) ? 0 : (int) (Math.ceil((double) spyDiff / (double) spySplit));
+        int heavySupports = (heavySplit == 0) ? 0 : (int) (Math.ceil((double) heavyDiff / (double) heavySplit));
+
+        return Math.max(Math.max(Math.max(Math.max(spearSupports, swordSupports), archerSupports), spySupports), heavySupports);
     }
 
-    public void addVillages(Village[] pVillages) {
-        REFTargetTableModel model = getModel();
-        for (Village v : pVillages) {
+    private REFSettingsTableModel getModel() {
+        return (REFSettingsTableModel) jVillageTable.getModel();
+    }
+
+    public void update() {
+        REFSettingsTableModel model = getModel();
+        model.clear();
+        for (Village v : SupportRefillTargetPanel.getSingleton().getAllElements()) {
             model.addRow(v);
         }
-        if (model.getRowCount() > 0) {
-            setProblem(null);
-        }
-        jStatusLabel.setText(pVillages.length + " Dorf/Dörfer eingefügt");
-        updateOverview(false);
-    }
-
-    private void pasteFromClipboard() {
-        String data = "";
-        try {
-            data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
-            List<Village> villages = PluginManager.getSingleton().executeVillageParser(data);
-            if (!villages.isEmpty()) {
-                addVillages(villages.toArray(new Village[villages.size()]));
-            }
-        } catch (HeadlessException he) {
-        } catch (UnsupportedFlavorException ufe) {
-        } catch (IOException ioe) {
-        }
-    }
-
-    private void deleteSelection() {
-        int[] selection = jVillageTable.getSelectedRows();
-        if (selection.length > 0) {
-            List<Integer> rows = new LinkedList<Integer>();
-            for (int i : selection) {
-                rows.add(jVillageTable.convertRowIndexToModel(i));
-            }
-            Collections.sort(rows);
-            for (int i = rows.size() - 1; i >= 0; i--) {
-                getModel().removeRow(rows.get(i));
-            }
-            jStatusLabel.setText(selection.length + " Dorf/Dörfer entfernt");
-            updateOverview(true);
-            if (getModel().getRowCount() == 0) {
-                setProblem("Keine Dörfer gewählt");
-            }
-        }
+        updateOverview(true);
     }
 
     private void updateOverview(boolean pReset) {
         if (pReset) {
             overviewPanel.reset();
         }
-        for (Village v : getAllElements()) {
-            overviewPanel.addVillage(new Point(v.getX(), v.getY()), Color.yellow);
+        for (REFTargetElement element : getAllElements()) {
+            overviewPanel.addVillage(new Point(element.getVillage().getX(), element.getVillage().getY()), Color.yellow);
         }
         overviewPanel.repaint();
     }
 
-    public Village[] getAllElements() {
-        List<Village> result = new LinkedList<Village>();
-        REFTargetTableModel model = getModel();
+    public REFTargetElement[] getAllElements() {
+        List<REFTargetElement> result = new LinkedList<REFTargetElement>();
+        REFSettingsTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
-            result.add(model.getRow(i));
+            result.add(model.getRow(jVillageTable.convertRowIndexToModel(i)));
         }
-        return result.toArray(new Village[result.size()]);
+        return result.toArray(new REFTargetElement[result.size()]);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
+    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jDataPanel;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jSplitSizePanel;
     private javax.swing.JLabel jStatusLabel;
     private javax.swing.JScrollPane jTableScrollPane;
+    private javax.swing.JPanel jTargetAmountsPanel;
     private javax.swing.JToggleButton jToggleButton1;
     private org.jdesktop.swingx.JXTable jVillageTable;
     private javax.swing.JPanel jVillageTablePanel;
@@ -459,8 +488,19 @@ public class SupportRefillSettingsPanel extends WizardPage {
     public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
         if (getAllElements().length == 0) {
             setProblem("Keine Dörfer gewählt");
-            return WizardPanelNavResult.PROCEED;
+            return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
+        int need = 0;
+        for (REFTargetElement elem : getAllElements()) {
+            need += elem.getNeededSupports();
+        }
+
+        if (need == 0) {
+            setProblem("Keine notwendigen Unterstützungen bestimmmt");
+            return WizardPanelNavResult.REMAIN_ON_PAGE;
+        }
+
+        SupportRefillSourcePanel.getSingleton().update();
         return WizardPanelNavResult.PROCEED;
     }
 

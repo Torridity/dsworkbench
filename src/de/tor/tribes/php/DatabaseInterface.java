@@ -43,7 +43,8 @@ public class DatabaseInterface {
     public static final int ID_USER_ALREADY_EXIST = -13;
     public static final int ID_USER_NOT_EXIST = -14;
     public static final int ID_VERSION_NOT_ALLOWED = -26;
-    public final static String INTERFACE_URL = "http://www.support.dsworkbench.de/interface.php";
+    public final static String INTERFACE_URL = "http://www.dsworkbench.de/interface.php";
+    //public final static String INTERFACE_URL = "http://v38729.1blu.de/interface.php";
     private static boolean bAccountValidated = false;
     private static String sValidatedUser = null;
     private static String sValidatedPassword = null;

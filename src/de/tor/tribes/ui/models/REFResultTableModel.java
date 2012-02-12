@@ -5,40 +5,34 @@
 package de.tor.tribes.ui.models;
 
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
+import de.tor.tribes.ui.wiz.ref.types.REFResultElement;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 
 /**
  *
  * @author Torridity
  */
-public class TAPSourceTableModel extends AbstractTableModel {
+public class REFResultTableModel extends AbstractTableModel {
 
     private String[] columnNames = new String[]{
-        "Spieler", "Dorf", "Einheit", "Fake"
+        "Herkunft", "Ziel", "Einheit", "Späteste Abschickzeit", "Ankunftzeit"
     };
-    private Class[] types = new Class[]{
-        Tribe.class, Village.class, UnitHolder.class, Boolean.class
+    Class[] types = new Class[]{
+        Village.class, Village.class, UnitHolder.class, Date.class, Date.class
     };
-    private final List<TAPAttackSourceElement> elements = new LinkedList<TAPAttackSourceElement>();
+    private final List<REFResultElement> elements = new LinkedList<REFResultElement>();
 
-    public TAPSourceTableModel() {
-        super();
-    }
-
-    public void clear(){
+    public void clear() {
         elements.clear();
         fireTableDataChanged();
     }
-    
-    public void addRow(final Village pVillage, UnitHolder pUnit, boolean pFake) {
-        elements.add(new TAPAttackSourceElement(pVillage, pUnit, pFake));
+
+    public void addRow(Village pSource, Village pTarget, UnitHolder pUnit, Date pArrive) {
+        elements.add(new REFResultElement(pSource, pTarget, pUnit, pArrive));
         fireTableDataChanged();
     }
 
@@ -70,7 +64,7 @@ public class TAPSourceTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    public TAPAttackSourceElement getRow(int row) {
+    public REFResultElement getRow(int row) {
         return elements.get(row);
     }
 
@@ -79,16 +73,18 @@ public class TAPSourceTableModel extends AbstractTableModel {
         if (elements == null || elements.size() - 1 < row) {
             return null;
         }
-        TAPAttackSourceElement element = elements.get(row);
+        REFResultElement element = elements.get(row);
         switch (column) {
             case 0:
-                return element.getVillage().getTribe();
+                return element.getSource();
             case 1:
-                return element.getVillage();
+                return element.getTarget();
             case 2:
                 return element.getUnit();
+            case 3:
+                return element.getSendTime();
             default:
-                return element.isFake();
+                return element.getArriveTime();
         }
     }
 

@@ -8,7 +8,6 @@
  */
 package de.tor.tribes.types.ext;
 
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.DSCalculator;
@@ -16,14 +15,12 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.html.VillageHTMLTooltipGenerator;
-import de.tor.tribes.util.tag.TagManager;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.util.Comparator;
-import java.util.List;
 import java.util.StringTokenizer;
 
 /**
@@ -34,6 +31,16 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
 
     private final static String[] VARIABLES = new String[]{"%NAME%", "%X%", "%Y%", "%CONTINENT%", "%FULL_NAME%", "%TRIBE%", "%ALLY%", "%POINTS%"};
     private final static String STANDARD_TEMPLATE = "[coord]%X%|%Y%[/coord]";
+    public final static int NO_BONUS = 0;
+    public final static int WOOD_BONUS = 1;
+    public final static int CLAY_BONUS = 2;
+    public final static int IRON_BONUS = 3;
+    public final static int FARM_BONUS = 4;
+    public final static int BARRACKS_BONUS = 5;
+    public final static int STABLE_BONUS = 6;
+    public final static int WORKSHOP_BONUS = 7;
+    public final static int RESOURCES_BONUS = 8;
+    public final static int STORAGE_BONUS = 9;
 
     @Override
     public String[] getBBVariables() {
@@ -433,12 +440,58 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
                 } else {
                     graphicsType = Skin.ID_B6_LEFT;
                 }
-
             }
         }
 
-
         return graphicsType;
+    }
+
+    public static String getBonusDescription(Village pVillage) {
+        if (ServerSettings.getSingleton().getNewBonus() == 0) {
+            switch (pVillage.getType()) {
+                case WOOD_BONUS:
+                    return "10% mehr Holzproduktion";
+                case CLAY_BONUS:
+                    return "10% mehr Lehmproduktion";
+                case IRON_BONUS:
+                    return "10% mehr Eisenproduktion";
+                case FARM_BONUS:
+                    return "10% mehr Bevölkerung";
+                case BARRACKS_BONUS:
+                    return "10% schnellere Produktion in der Kaserne";
+                case STABLE_BONUS:
+                    return "10% schnellere Produktion im Stall";
+                case WORKSHOP_BONUS:
+                    return "10% schnellere Produktion in der Werkstatt";
+                case RESOURCES_BONUS:
+                    return "3% höhere Rohstoffproduktion";
+                default:
+                    return "";
+            }
+        } else {
+            switch (pVillage.getType()) {
+                case WOOD_BONUS:
+                    return "100% mehr Holzproduktion";
+                case CLAY_BONUS:
+                    return "100% mehr Lehmproduktion";
+                case IRON_BONUS:
+                    return "100% mehr Eisenproduktion";
+                case FARM_BONUS:
+                    return "10% mehr Bevölkerung";
+                case BARRACKS_BONUS:
+                    return "33% schnellere Produktion in der Kaserne";
+                case STABLE_BONUS:
+                    return "33% schnellere Produktion im Stall";
+                case WORKSHOP_BONUS:
+                    return "50% schnellere Produktion in der Werkstatt";
+                case RESOURCES_BONUS:
+                    return "30% höhere Rohstoffproduktion";
+                case STORAGE_BONUS:
+                    return "50% mehr Speicherkapazität und Händler";
+                default:
+                    return "";
+            }
+        }
     }
 
     private static class CaseInsensitiveComparator implements Comparator<Village>, java.io.Serializable {

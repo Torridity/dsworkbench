@@ -31,6 +31,11 @@ public class TAPTargetTableModel extends AbstractTableModel {
         super();
     }
 
+    public void clear(){
+        elements.clear();
+        fireTableDataChanged();
+    }
+    
     public void addRow(final Village pVillage, boolean pFake) {
         Object result = CollectionUtils.find(elements, new Predicate() {
 

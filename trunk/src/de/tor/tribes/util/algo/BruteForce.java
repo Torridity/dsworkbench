@@ -49,8 +49,6 @@ public class BruteForce extends AbstractAttackAlgorithm {
         logger.debug("Assigning offs");
         logText("Starte zufällige Berechnung");
 
-
-
         int maxStatus = allTargets.size() + allFakeTargets.size();
         int currentStatus = 0;
 
@@ -96,7 +94,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                 //create new table of attacks
                                 attacksForVillage = new Hashtable<UnitHolder, List<Village>>();
                                 List<Village> sourceList = new LinkedList<Village>();
-                                logInfo("   * Neuer Angriff: " + source + " -> " + v);
+                                logInfo("   * Neue Truppenbewegung: " + source + " -> " + v);
                                 sourceList.add(source);
                                 attacksForVillage.put(unit, sourceList);
                                 attacks.put(v, attacksForVillage);
@@ -117,14 +115,14 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                         if (!attsPerUnit.contains(source)) {
                                             //only add source if it does not attack current target yet
                                             added = true;
-                                            logInfo("   * Neuer Angriff: " + source + " -> " + v);
+                                            logInfo("   * Neue Truppenbewegung: " + source + " -> " + v);
                                             attsPerUnit.add(source);
                                         }
                                     } else {
                                         attsPerUnit = new LinkedList<Village>();
                                         //only add source if it does not attack current target yet
                                         added = true;
-                                        logInfo("   * Neuer Angriff: " + source + " -> " + v);
+                                        logInfo("   * Neue Truppenbewegung: " + source + " -> " + v);
                                         attsPerUnit.add(source);
                                         attacksForVillage.put(unit, attsPerUnit);
                                     }
@@ -253,7 +251,6 @@ public class BruteForce extends AbstractAttackAlgorithm {
         logText(" - Erstelle Ergebnisliste");
         //convert to result list
         List<AbstractTroopMovement> movements = new LinkedList<AbstractTroopMovement>();
-        //  Enumeration<Village> targetKeys = attacks.keys();
         int fullMovements = 0;
         logger.debug(" - adding offs");
         int off = 0;
@@ -278,26 +275,6 @@ public class BruteForce extends AbstractAttackAlgorithm {
             movements.add(f);
         }
 
-
-
-        /*  while (targetKeys.hasMoreElements()) {
-        Village target = targetKeys.nextElement();
-        Enumeration<UnitHolder> sourceKeys = attacks.get(target).keys();
-        Off f = new Off(target, pMaxAttacksTable.get(target));
-        while (sourceKeys.hasMoreElements()) {
-        UnitHolder sourceUnit = sourceKeys.nextElement();
-        List<Village> unitVillages = attacks.get(target).get(sourceUnit);
-        for (Village source : unitVillages) {
-        off++;
-        f.addOff(sourceUnit, source);
-        }
-        }
-        if (f.offComplete()) {
-        fullMovements++;
-        }
-        movements.add(f);
-        }*/
-
         logger.debug(" - adding fakes");
 
         for (Village target : allFakeTargets) {
@@ -317,24 +294,6 @@ public class BruteForce extends AbstractAttackAlgorithm {
             movements.add(f);
         }
 
-
-        /*
-        Enumeration<Village> fakeKeys = fakes.keys();
-        while (fakeKeys.hasMoreElements()) {
-        Village target = fakeKeys.nextElement();
-        Enumeration<Village> sourceKeys = fakes.get(target).keys();
-        Fake f = new Fake(target, pMaxAttacksTable.get(target));
-        while (sourceKeys.hasMoreElements()) {
-        Village source = sourceKeys.nextElement();
-        UnitHolder unit = fakes.get(target).get(source);
-        f.addOff(unit, source);
-        }
-        if (f.offComplete()) {
-        fullMovements++;
-        }
-        movements.add(f);
-        }
-         */
         logText("Berechnung abgeschlossen.");
         return movements;
     }

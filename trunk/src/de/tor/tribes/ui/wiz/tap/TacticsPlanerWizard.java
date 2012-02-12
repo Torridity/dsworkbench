@@ -5,6 +5,10 @@
 package de.tor.tribes.ui.wiz.tap;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.ui.wiz.dep.DefenseFilterPanel;
+import de.tor.tribes.ui.wiz.ref.SupportRefillCalculationPanel;
+import de.tor.tribes.ui.wiz.ref.SupportRefillSourcePanel;
+import de.tor.tribes.ui.wiz.ref.SupportRefillTargetPanel;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ProfileManager;
 import java.awt.BorderLayout;
@@ -28,14 +32,12 @@ import org.netbeans.spi.wizard.WizardPanelProvider;
  */
 public class TacticsPlanerWizard extends WizardPanelProvider {
 
-   /* private static final String ID_WELCOME = "welcome-id";
-    private static final String ID_SOURCE = "source-id";
-    private static final String ID_FILTER = "filter-id";
-    private static final String ID_TARGET = "target-id";
-    private static final String ID_TIME = "time-id";
-    private static final String ID_VALIDATE = "validate-id";
-    private static final String ID_CALCULATION = "calculation-id";
-    private static final String ID_FINISH = "finish-id";*/
+    /*
+     * private static final String ID_WELCOME = "welcome-id"; private static final String ID_SOURCE = "source-id"; private static final
+     * String ID_FILTER = "filter-id"; private static final String ID_TARGET = "target-id"; private static final String ID_TIME = "time-id";
+     * private static final String ID_VALIDATE = "validate-id"; private static final String ID_CALCULATION = "calculation-id"; private
+     * static final String ID_FINISH = "finish-id";
+     */
     private static JFrame parent = null;
 
     public TacticsPlanerWizard() {
@@ -90,6 +92,32 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
         });
         parent.pack();
         parent.setVisible(true);
+    }
+
+    public static void storeProperties() {
+        AttackSourcePanel.getSingleton().storeProperties();
+        AttackSourceFilterPanel.getSingleton().storeProperties();
+        AttackTargetPanel.getSingleton().storeProperties();
+        TimeSettingsPanel.getSingleton().storeProperties();
+        AttackCalculationPanel.getSingleton().storeProperties();
+        AttackFinishPanel.getSingleton().storeProperties();
+        DefenseFilterPanel.getSingleton().storeProperties();
+        SupportRefillTargetPanel.getSingleton().storeProperties();
+        SupportRefillSourcePanel.getSingleton().storeProperties();
+        SupportRefillCalculationPanel.getSingleton().storeProperties();
+    }
+
+    public static void restoreProperties() {
+        AttackSourcePanel.getSingleton().restoreProperties();
+        AttackSourceFilterPanel.getSingleton().restoreProperties();
+        AttackTargetPanel.getSingleton().restoreProperties();
+        TimeSettingsPanel.getSingleton().restoreProperties();
+        AttackCalculationPanel.getSingleton().restoreProperties();
+        AttackFinishPanel.getSingleton().restoreProperties();
+        DefenseFilterPanel.getSingleton().restoreProperties();
+        SupportRefillTargetPanel.getSingleton().restoreProperties();
+        SupportRefillSourcePanel.getSingleton().restoreProperties();
+        SupportRefillCalculationPanel.getSingleton().restoreProperties();
     }
 
     public static void main(String[] args) {

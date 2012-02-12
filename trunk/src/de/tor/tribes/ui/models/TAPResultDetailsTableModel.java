@@ -30,6 +30,10 @@ public class TAPResultDetailsTableModel extends AbstractTableModel {
         super();
     }
 
+    public Attack getRow(int pRow) {
+        return elements.get(pRow);
+    }
+
     public void addRow(Attack pMovement) {
         elements.add(pMovement);
         fireTableDataChanged();

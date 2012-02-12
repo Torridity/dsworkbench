@@ -17,7 +17,6 @@ import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.SupportDirectionRenderer;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.JOptionPaneHelper;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.decorator.HighlighterFactory;

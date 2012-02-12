@@ -11,12 +11,14 @@
 package de.tor.tribes.ui.wiz.dep;
 
 import de.tor.tribes.types.DefenseInformation;
+import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.models.DEPFilterTableModel;
 import de.tor.tribes.ui.wiz.dep.types.SupportSourceElement;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.UIHelper;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -73,6 +75,22 @@ public class DefenseFilterPanel extends WizardPage {
         jInfoTextPane.setText(GENERAL_INFO);
         overviewPanel = new VillageOverviewMapPanel();
         jPanel4.add(overviewPanel, BorderLayout.CENTER);
+    }
+
+    public void storeProperties() {
+        UserProfile profile = GlobalOptions.getSelectedProfile();
+        profile.addProperty("dep.filter.min.splits", UIHelper.parseIntFromField(jMinSplits, 1));
+        profile.addProperty("dep.filter.min.dist", UIHelper.parseIntFromField(jDistance, 0));
+        profile.addProperty("dep.filter.ignore.targets", jIgnoreAttackedTargets.isSelected());
+    }
+
+    public void restoreProperties() {
+        getModel().clear();
+        UserProfile profile = GlobalOptions.getSelectedProfile();
+        UIHelper.setText(jMinSplits, profile.getProperty("dep.filter.min.splits"), "1");
+        UIHelper.setText(jDistance, profile.getProperty("dep.filter.min.dist"), "32");
+        String value = profile.getProperty("dep.filter.ignore.targets");
+        jIgnoreAttackedTargets.setSelected((value == null) ? true : Boolean.parseBoolean(value));
     }
 
     /**

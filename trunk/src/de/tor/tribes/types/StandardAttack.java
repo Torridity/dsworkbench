@@ -14,7 +14,10 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 import org.apache.log4j.Logger;
 import org.jdom.Element;
 
@@ -65,6 +68,20 @@ public class StandardAttack extends ManageableType {
     @Override
     public String getGroupNameAttributeIdentifier() {
         return "";
+    }
+
+    public boolean equals(Hashtable<UnitHolder, Integer> pUnits) {
+        if (containsDynamicAmount()) {
+            return false;
+        }
+
+        Set<Entry<UnitHolder, Integer>> entries = pUnits.entrySet();
+        for (Entry<UnitHolder, Integer> entry : entries) {
+            if (getFixedAmountForUnit(entry.getKey()) != entry.getValue()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean containsDynamicAmount() {

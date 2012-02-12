@@ -62,6 +62,7 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.ui.views.*;
+import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.interfaces.MapShotListener;
 import de.tor.tribes.util.attack.AttackManager;
@@ -619,6 +620,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             /*
              * DSWorkbenchMerchantDistibutor.getSingleton().resetView(); DSWorkbenchMerchantDistibutor.getSingleton().restoreProperties();
              */
+            TacticsPlanerWizard.restoreProperties();
             DSWorkbenchTagFrame.getSingleton().resetView();
             DSWorkbenchTagFrame.getSingleton().restoreProperties();
             DSWorkbenchConquersFrame.getSingleton().resetView();

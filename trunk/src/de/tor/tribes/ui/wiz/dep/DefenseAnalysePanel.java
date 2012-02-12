@@ -34,10 +34,7 @@ import de.tor.tribes.ui.renderer.TendencyTableCellRenderer;
 import de.tor.tribes.ui.renderer.WallLevellCellRenderer;
 import de.tor.tribes.ui.util.ColorGradientHelper;
 import de.tor.tribes.ui.views.DSWorkbenchSOSRequestAnalyzer;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.TableHelper;
-import de.tor.tribes.util.UIHelper;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.sos.SOSManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -52,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.*;
@@ -89,6 +87,7 @@ public class DefenseAnalysePanel extends WizardPage {
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jXCollapsiblePane1.add(jInfoScrollPane, BorderLayout.CENTER);
         jInfoTextPane.setText(GENERAL_INFO);
+        jButton1.setIcon(new ImageIcon("./graphics/big/lifebelt.png"));
         numFormat.setMaximumFractionDigits(0);
         numFormat.setMinimumFractionDigits(0);
         jxAttacksTable.setModel(new DefenseToolModel());
@@ -144,10 +143,12 @@ public class DefenseAnalysePanel extends WizardPage {
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        jTableScrollPane = new javax.swing.JScrollPane();
-        jxAttacksTable = new org.jdesktop.swingx.JXTable();
         jPanel6 = new javax.swing.JPanel();
         jToggleButton1 = new javax.swing.JToggleButton();
+        jPanel1 = new javax.swing.JPanel();
+        jTableScrollPane = new javax.swing.JScrollPane();
+        jxAttacksTable = new org.jdesktop.swingx.JXTable();
+        jButton1 = new javax.swing.JButton();
 
         jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
         jInfoScrollPane.setPreferredSize(new java.awt.Dimension(19, 180));
@@ -184,6 +185,34 @@ public class DefenseAnalysePanel extends WizardPage {
 
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
+        jPanel6.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel6.setMinimumSize(new java.awt.Dimension(100, 100));
+        jPanel6.setPreferredSize(new java.awt.Dimension(100, 100));
+        jPanel6.setLayout(new java.awt.BorderLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.insets = new java.awt.Insets(12, 5, 5, 5);
+        jPanel2.add(jPanel6, gridBagConstraints);
+
+        jToggleButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/search.png"))); // NOI18N
+        jToggleButton1.setToolTipText("Informationskarte vergrößern");
+        jToggleButton1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireChangeViewEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jToggleButton1, gridBagConstraints);
+
+        jPanel1.setLayout(new java.awt.GridBagLayout());
+
         jTableScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Angegriffene Dörfer"));
 
         jxAttacksTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -201,37 +230,38 @@ public class DefenseAnalysePanel extends WizardPage {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 3;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(jTableScrollPane, gridBagConstraints);
+        jPanel1.add(jTableScrollPane, gridBagConstraints);
 
-        jPanel6.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jPanel6.setMinimumSize(new java.awt.Dimension(100, 100));
-        jPanel6.setPreferredSize(new java.awt.Dimension(100, 100));
-        jPanel6.setLayout(new java.awt.BorderLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new java.awt.Insets(12, 5, 5, 5);
-        jPanel2.add(jPanel6, gridBagConstraints);
-
-        jToggleButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/search.png"))); // NOI18N
-        jToggleButton1.setToolTipText("Informationskarte vergrößern");
-        jToggleButton1.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireChangeViewEvent(evt);
+        jButton1.setToolTipText("Angriffsdaten aus dem SOS-Analyzer einlesen");
+        jButton1.setMaximumSize(new java.awt.Dimension(73, 60));
+        jButton1.setMinimumSize(new java.awt.Dimension(73, 60));
+        jButton1.setPreferredSize(new java.awt.Dimension(73, 60));
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireLoadAttackInformationEvent(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(jToggleButton1, gridBagConstraints);
+        jPanel1.add(jButton1, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jPanel1, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -270,6 +300,12 @@ public class DefenseAnalysePanel extends WizardPage {
         }
     }//GEN-LAST:event_fireChangeViewEvent
 
+    private void fireLoadAttackInformationEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireLoadAttackInformationEvent
+        if (!DSWorkbenchSOSRequestAnalyzer.getSingleton().sendDataToDefensePlaner()) {
+            JOptionPaneHelper.showInformationBox(this, "Keine Angriffe vorhanden", "Information");
+        }
+    }//GEN-LAST:event_fireLoadAttackInformationEvent
+
     public int[] getDefenseInfo() {
         int targets = 0;
         int offs = 0;
@@ -289,9 +325,11 @@ public class DefenseAnalysePanel extends WizardPage {
         return getModel().getRows();
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jTableScrollPane;

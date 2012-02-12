@@ -14,10 +14,7 @@ import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.ui.renderer.ProfileTreeNodeRenderer;
 import de.tor.tribes.ui.wiz.FirstStartWizard;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.PluginManager;
-import de.tor.tribes.util.ProfileManager;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.generator.ui.ReportGenerator;
 import java.io.File;
 import java.io.IOException;
@@ -157,7 +154,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         }
         if (profile == null) {
             JOptionPaneHelper.showWarningBox(jProfileDialog, "Bitte eine Profil auswählen.", "Bitte wählen");
-            return;
         } else {
             String server = profile.getServerId();
             GlobalOptions.setSelectedServer(server);
@@ -389,7 +385,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             logger.debug("Initializing application window");
             DSWorkbenchMainFrame.getSingleton().init();
 
-           // new ReportGenerator().setVisible(true);
+            // new ReportGenerator().setVisible(true);
 
             logger.info("Showing application window");
             DSWorkbenchMainFrame.getSingleton().setVisible(true);
@@ -434,11 +430,11 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 if (arg.equals("-d") || arg.equals("--debug")) {
                     //debug mode
                     mode = 1;
-                    JOptionPane.showMessageDialog(null, "Running in debug mode");
+                    SystrayHelper.showInfoMessage("Running in debug mode");
                 } else if (arg.equals("-i") || arg.equals("--info")) {
                     //info mode
                     mode = 0;
-                    JOptionPane.showMessageDialog(null, "Running in info mode");
+                    SystrayHelper.showInfoMessage("Running in info mode");
                 } else if (arg.equals("-m")) {
                     minimal = 1;
                 }

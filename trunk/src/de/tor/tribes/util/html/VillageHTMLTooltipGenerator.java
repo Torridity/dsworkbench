@@ -36,11 +36,11 @@ import javax.swing.ImageIcon;
  * @author Torridity
  */
 public class VillageHTMLTooltipGenerator {
-
+    
     public static String buildToolTip(Village pVillage) {
         return buildToolTip(pVillage, true);
     }
-
+    
     public static String buildToolTip(Village pVillage, boolean pWithUnits) {
         boolean showMoral = Boolean.parseBoolean(GlobalOptions.getProperty("show.popup.moral"));
         boolean showRanks = Boolean.parseBoolean(GlobalOptions.getProperty("show.popup.ranks"));
@@ -60,7 +60,7 @@ public class VillageHTMLTooltipGenerator {
                 b.append(buildSubInfoRow("Besiegte Gegner (Off):", nf.format(pVillage.getTribe().getKillsAtt()) + " (" + nf.format(pVillage.getTribe().getRankAtt()) + ". Platz)"));
                 b.append(buildSubInfoRow("Besiegte Gegner (Deff):", nf.format(pVillage.getTribe().getKillsDef()) + " (" + nf.format(pVillage.getTribe().getRankDef()) + ". Platz)"));
             }
-
+            
             if (pVillage.getTribe().getAlly() != null) {
                 b.append(buildInfoRow("Stamm:", pVillage.getTribe().getAlly(), showRanks));
             }
@@ -79,7 +79,12 @@ public class VillageHTMLTooltipGenerator {
                 b.append(buildInfoRow("Moral:", "100%", false));
             }
         }
-
+        
+        
+        if (pVillage.getType() != 0) {
+            b.append(buildInfoRow("Bonus:", Village.getBonusDescription(pVillage), false));
+        }
+        
         List<Tag> tags = TagManager.getSingleton().getTags(pVillage);
         if (tags != null && !tags.isEmpty()) {
             String tagString = "";
@@ -89,7 +94,7 @@ public class VillageHTMLTooltipGenerator {
             tagString = tagString.substring(0, tagString.lastIndexOf(";"));
             b.append(buildInfoRow("Tags:", tagString, false));
         }
-
+        
         FightReport r = ReportManager.getSingleton().findLastReportForVillage(pVillage);
         if (r != null) {
             String imgString = "<img src=\"";
@@ -107,7 +112,7 @@ public class VillageHTMLTooltipGenerator {
             imgString += "\"/>";
             b.append(buildInfoRow("Letzter Bericht:", imgString + " " + df.format(r.getTimestamp()), false));
         }
-
+        
         FarmInformation fi = FarmManager.getSingleton().getFarmInformation(pVillage);
         if (fi != null) {
             b.append(buildInfoRow("Letzter Farmangriff:", (fi.getLastReport() > 0) ? df.format(fi.getLastReport()) : "Keine Informationen", false));
@@ -116,7 +121,7 @@ public class VillageHTMLTooltipGenerator {
                     + nf.format(fi.getClayInStorage()) + "&nbsp;<img src=\"" + VillageHTMLTooltipGenerator.class.getResource("/res/lehm.png") + "\"/>&nbsp;"
                     + nf.format(fi.getIronInStorage()) + "&nbsp;<img src=\"" + VillageHTMLTooltipGenerator.class.getResource("/res/eisen.png") + "\"/>", false));
         }
-
+        
         if (showFarmSpace) {
             b.append(buildFarmLevel(pVillage));
         }
@@ -126,23 +131,23 @@ public class VillageHTMLTooltipGenerator {
             b.append(buildInfoRow("Erobert am:", f.format(c.getTimestamp() * 1000l), false));
             b.append(buildInfoRow("Zustimmung:", c.getCurrentAcceptance(), false));
         }
-
+        
         b.append(buildNotes(pVillage));
-
+        
         if (pWithUnits) {
             b.append(buildUnitTableRow(pVillage));
         }
         b.append("</table>\n").append("<html>\n");
         return b.toString();
     }
-
+    
     static String buildVillageRow(Village pVillage) {
         String res = "<tr>\n";
         res += "<td colspan='3' bgcolor='#E1D5BE'><strong>" + pVillage.getFullName() + "</strong></td>\n";
         res += "</tr>\n";
         return res;
     }
-
+    
     static String buildInfoRow(String pField, Object pValue, boolean pExtended) {
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);
@@ -197,25 +202,25 @@ public class VillageHTMLTooltipGenerator {
         } else {
             b.append("<td colspan='2' width='300'>").append(pValue).append("</td>\n");
         }
-
+        
         b.append("</tr>\n");
-
+        
         return b.toString();
     }
-
+    
     static String buildSubInfoRow(String pField, Object pValue) {
         StringBuilder b = new StringBuilder();
         return b.append("<tr>\n").append("<td width=\"150\" style=\"font-size:8px;\">&nbsp;&nbsp;&nbsp;").append(pField).append("</td>\n").append("<td colspan='2' width=\"300\" >" + pValue + "</td>\n").
                 append("</tr>\n").toString();
     }
-
+    
     static String buildFarmLevel(Village pVillage) {
         StringBuilder b = new StringBuilder();
         b.append("<tr>\n");
         b.append("<td width=\"150\"><strong>Bauernhof:</strong></td>\n");
         b.append("<td colspan='2' width=\"300\">\n");
         b.append("<table width='100%' style=\"font-size:8px;border: 0px black; padding: 0px;\">\n");
-
+        
         VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage);
         if (holder != null) {
             float farmSpace = holder.getFarmSpace() * 100.f;
@@ -236,14 +241,14 @@ public class VillageHTMLTooltipGenerator {
             b.append("<td width='100%'>Keine Informationen</td>\n");
             b.append("</tr>\n");
         }
-
+        
         b.append("</table>\n");
         b.append("</td>\n");
         b.append("</tr>\n");
         return b.toString();
-
+        
     }
-
+    
     static String buildUnitTableRow(Village pVillage) {
         StringBuilder b = new StringBuilder();
         b.append("<tr>\n");
@@ -254,7 +259,7 @@ public class VillageHTMLTooltipGenerator {
         VillageTroopsHolder inVillage = TroopsManager.getSingleton().getTroopsForVillage(pVillage);
         VillageTroopsHolder outside = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.OUTWARDS);
         VillageTroopsHolder onTheWay = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.ON_THE_WAY);
-
+        
         Village current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
         int cnt = 0;
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
@@ -301,7 +306,7 @@ public class VillageHTMLTooltipGenerator {
             }
             b.append("</div>");
             b.append("</td>");
-
+            
             cnt++;
         }
         b.append("</tr>\n");
@@ -310,7 +315,7 @@ public class VillageHTMLTooltipGenerator {
         b.append("</tr>\n");
         return b.toString();
     }
-
+    
     static String buildNotes(Village pVillage) {
         List<Note> notes = NoteManager.getSingleton().getNotesForVillage(pVillage);
         StringBuilder lines = new StringBuilder();

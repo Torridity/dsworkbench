@@ -10,11 +10,18 @@
  */
 package de.tor.tribes.ui.wiz.tap;
 
+import de.tor.tribes.types.TimeSpan;
+import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.ui.algo.AttackTimePanel;
 import de.tor.tribes.ui.algo.SettingsChangedListener;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.algo.types.TimeFrame;
 import java.awt.BorderLayout;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang.time.DateUtils;
 import org.netbeans.spi.wizard.*;
 
 /**
@@ -22,7 +29,7 @@ import org.netbeans.spi.wizard.*;
  * @author Torridity
  */
 public class TimeSettingsPanel extends WizardPage implements SettingsChangedListener {
-    
+
     @Override
     public void fireTimeFrameChangedEvent() {
     }
@@ -40,7 +47,7 @@ public class TimeSettingsPanel extends WizardPage implements SettingsChangedList
             + "Um eine Berechnung durchzuf&uuml;hren, wird mindestens ein Abschick- und ein Ankunftzeitrahmen ben&ouml;tigt.</html>";
     private static TimeSettingsPanel singleton = null;
     private AttackTimePanel timePanel = null;
-    
+
     public static synchronized TimeSettingsPanel getSingleton() {
         if (singleton == null) {
             singleton = new TimeSettingsPanel();
@@ -59,13 +66,70 @@ public class TimeSettingsPanel extends WizardPage implements SettingsChangedList
         timePanel = new AttackTimePanel(this);
         jPanel1.add(timePanel, BorderLayout.CENTER);
     }
-    
+
     public static String getDescription() {
         return "Zeiteinstellungen";
     }
-    
+
     public static String getStep() {
         return "id-attack-time";
+    }
+
+    public void storeProperties() {
+        UserProfile profile = GlobalOptions.getSelectedProfile();
+
+        profile.addProperty("attack.frame.start", Long.toString(timePanel.getStartTime().getTime()));
+        profile.addProperty("attack.frame.arrive", Long.toString(timePanel.getArriveTime().getTime()));
+
+        String spanProp = "";
+        for (TimeSpan span : timePanel.getTimeSpans()) {
+            spanProp += span.toPropertyString() + ";";
+        }
+        profile.addProperty("attack.frame.spans", spanProp);
+    }
+
+    public void restoreProperties() {
+        try {
+            UserProfile profile = GlobalOptions.getSelectedProfile();
+            String val = profile.getProperty("attack.frame.start");
+            long start = (val != null) ? Long.parseLong(val) : System.currentTimeMillis();
+            val = profile.getProperty("attack.frame.arrive");
+            long arrive = (val != null) ? Long.parseLong(val) : System.currentTimeMillis();
+
+            if (start < System.currentTimeMillis()) {
+                start = System.currentTimeMillis();
+            }
+
+            if (arrive < System.currentTimeMillis()) {
+                arrive = System.currentTimeMillis() + DateUtils.MILLIS_PER_HOUR;
+            }
+
+            timePanel.setStartTime(new Date(start));
+            timePanel.setArriveTime(new Date(arrive));
+            // <editor-fold defaultstate="collapsed" desc="Restore time spans">
+            //restore send spans
+            String spanProp = profile.getProperty("attack.frame.spans");
+            if (spanProp == null) {
+                spanProp = "";
+            }
+            String[] spans = spanProp.split(";");
+
+            List<TimeSpan> spanList = new LinkedList<TimeSpan>();
+            for (String span : spans) {
+                try {
+                    TimeSpan s = TimeSpan.fromPropertyString(span);
+                    if (s != null) {
+                        spanList.add(s);
+                    }
+                } catch (Exception invalid) {
+                }
+            }
+
+            timePanel.setTimeSpans(spanList);
+            // </editor-fold>
+        } catch (Exception e) {
+            timePanel.reset();
+        }
     }
 
     /**
@@ -136,7 +200,7 @@ public class TimeSettingsPanel extends WizardPage implements SettingsChangedList
             jLabel1.setText("Informationen einblenden");
         }
     }//GEN-LAST:event_fireHideInfoEvent
-    
+
     public TimeFrame getTimeFrame() {
         return timePanel.getTimeFrame();
     }
@@ -157,13 +221,13 @@ public class TimeSettingsPanel extends WizardPage implements SettingsChangedList
         ValidationPanel.getSingleton().setup();
         return WizardPanelNavResult.PROCEED;
     }
-    
+
     @Override
     public WizardPanelNavResult allowBack(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;
-        
+
     }
-    
+
     @Override
     public WizardPanelNavResult allowFinish(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;

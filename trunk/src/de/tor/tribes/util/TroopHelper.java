@@ -231,6 +231,26 @@ public class TroopHelper {
         return speed;
     }
 
+    public static UnitHolder getSlowestUnit(Hashtable<UnitHolder, Integer> pTroops) {
+        UnitHolder slowest = null;
+
+        Enumeration<UnitHolder> keys = pTroops.keys();
+        while (keys.hasMoreElements()) {
+            UnitHolder unit = keys.nextElement();
+            Integer amount = pTroops.get(unit);
+            if (amount != null && amount > 0) {
+                if (slowest == null) {
+                    slowest = unit;
+                } else {
+                    if (unit.getSpeed() > slowest.getSpeed()) {
+                        slowest = unit;
+                    }
+                }
+            }
+        }
+        return slowest;
+    }
+
     public static int getPopulation(Hashtable<UnitHolder, Integer> pTroops) {
         int pop = 0;
         if (pTroops != null) {
@@ -280,6 +300,9 @@ public class TroopHelper {
 
     public static Hashtable<UnitHolder, Integer> propertyToUnitTable(String pProperty) {
         Hashtable<UnitHolder, Integer> result = new Hashtable<UnitHolder, Integer>();
+        if (pProperty == null) {
+            return result;
+        }
         try {
             String[] troops = pProperty.split("/");
             for (String unit : troops) {

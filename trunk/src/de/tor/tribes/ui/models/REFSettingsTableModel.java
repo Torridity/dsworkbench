@@ -4,10 +4,8 @@
  */
 package de.tor.tribes.ui.models;
 
-import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
+import de.tor.tribes.ui.wiz.ref.types.REFTargetElement;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -18,27 +16,23 @@ import org.apache.commons.collections.Predicate;
  *
  * @author Torridity
  */
-public class TAPSourceTableModel extends AbstractTableModel {
+public class REFSettingsTableModel extends AbstractTableModel {
 
     private String[] columnNames = new String[]{
-        "Spieler", "Dorf", "Einheit", "Fake"
+        "Dorf", "Notwendige Unterstützungen"
     };
-    private Class[] types = new Class[]{
-        Tribe.class, Village.class, UnitHolder.class, Boolean.class
+    Class[] types = new Class[]{
+        Village.class, Integer.class
     };
-    private final List<TAPAttackSourceElement> elements = new LinkedList<TAPAttackSourceElement>();
+    private final List<REFTargetElement> elements = new LinkedList<REFTargetElement>();
 
-    public TAPSourceTableModel() {
-        super();
-    }
-
-    public void clear(){
+    public void clear() {
         elements.clear();
         fireTableDataChanged();
     }
-    
-    public void addRow(final Village pVillage, UnitHolder pUnit, boolean pFake) {
-        elements.add(new TAPAttackSourceElement(pVillage, pUnit, pFake));
+
+    public void addRow(Village pVillage) {
+        elements.add(new REFTargetElement(pVillage));
         fireTableDataChanged();
     }
 
@@ -70,7 +64,7 @@ public class TAPSourceTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    public TAPAttackSourceElement getRow(int row) {
+    public REFTargetElement getRow(int row) {
         return elements.get(row);
     }
 
@@ -79,16 +73,12 @@ public class TAPSourceTableModel extends AbstractTableModel {
         if (elements == null || elements.size() - 1 < row) {
             return null;
         }
-        TAPAttackSourceElement element = elements.get(row);
+        REFTargetElement element = elements.get(row);
         switch (column) {
             case 0:
-                return element.getVillage().getTribe();
-            case 1:
                 return element.getVillage();
-            case 2:
-                return element.getUnit();
             default:
-                return element.isFake();
+                return element.getNeededSupports();
         }
     }
 

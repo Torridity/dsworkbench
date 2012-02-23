@@ -107,7 +107,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jCurrentToAttackPlanerAsTargetItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="In Angriffsplaner (Ziel)"/>
+                <Property name="text" type="java.lang.String" value="In Taktikplaner (Ziel)"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
@@ -115,7 +115,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jCurrentToAttackPlanerAsSourceItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="In Angriffsplaner (Herkunft)"/>
+                <Property name="text" type="java.lang.String" value="In Taktikplaner (Herkunft)"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
@@ -186,7 +186,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jAllToAttackPlanerAsSourceItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="In Angriffsplaner (Herkunft)"/>
+                <Property name="text" type="java.lang.String" value="In Taktikplaner (Herkunft)"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
@@ -194,7 +194,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jAllToAttackPlanerAsTargetItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="In Angriffsplaner (Ziel)"/>
+                <Property name="text" type="java.lang.String" value="In Taktikplaner (Ziel)"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>

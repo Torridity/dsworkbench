@@ -14,6 +14,7 @@ import com.jidesoft.swing.JideBoxLayout;
 import com.jidesoft.swing.JideSplitPane;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.StorageStatus;
+import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.types.VillageMerchantInfo;
 import de.tor.tribes.ui.components.ClickAccountPanel;
@@ -27,10 +28,7 @@ import de.tor.tribes.ui.renderer.StorageCellRenderer;
 import de.tor.tribes.ui.renderer.TradeDirectionCellRenderer;
 import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor.Resource;
 import de.tor.tribes.ui.wiz.red.types.ExtendedTransport;
-import de.tor.tribes.util.BrowserCommandSender;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.*;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -62,7 +60,7 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  * @author Torridity
  */
 public class ResourceDistributorFinishPanel extends WizardPage {
-
+    
     private static final String GENERAL_INFO = "<html>Bist du bei diesem Schritt angekommen, hast du abschlie&szlig;end die M&ouml;glichkeit, "
             + "die berechneten Rohstoffe in den Browser zu &uuml;bertragen und abzuschicken. Voraussetzung hierf&uuml;r ist, dass du das "
             + "DS Workbench Userscript in deinem Browser (Firefox oder Opera) installiert hast. Markiere einfach in der unteren Tabelle die Transporte die du "
@@ -73,12 +71,12 @@ public class ResourceDistributorFinishPanel extends WizardPage {
     private static ResourceDistributorFinishPanel singleton = null;
     private ClickAccountPanel clickPanel = null;
     private ProfileQuickChangePanel quickProfilePanel = null;
-
+    
     public static synchronized ResourceDistributorFinishPanel getSingleton() {
         if (singleton == null) {
             singleton = new ResourceDistributorFinishPanel();
         }
-
+        
         return singleton;
     }
 
@@ -96,7 +94,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         jTransportsTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jTransportsTable.setDefaultRenderer(Boolean.class, new SentNotSentCellRenderer());
         jTransportsTable.setDefaultRenderer(Integer.class, new NumberFormatCellRenderer());
-
+        
         jDistributionTable.setModel(new REDFinalDistributionTableModel());
         jDistributionTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jDistributionTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
@@ -104,14 +102,14 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         jDistributionTable.setDefaultRenderer(VillageMerchantInfo.Direction.class, new TradeDirectionCellRenderer());
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         jTransportsTable.registerKeyboardAction(new ActionListener() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 deleteSelection();
             }
         }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
-
+        
+        
         jideSplitPane1.setOrientation(JideSplitPane.VERTICAL_SPLIT);
         jideSplitPane1.setProportionalLayout(true);
         jideSplitPane1.setDividerSize(5);
@@ -122,7 +120,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         jideSplitPane1.add(jFinalDistributionPanel, JideBoxLayout.FLEXIBLE);
         jideSplitPane1.add(jTransportsPanel, JideBoxLayout.VARY);
         jideSplitPane1.getDividerAt(0).addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -137,13 +135,24 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         jClickAccountPanel.add(clickPanel, BorderLayout.CENTER);
         jQuickProfilePanel.add(quickProfilePanel, BorderLayout.CENTER);
     }
-
+    
     public static String getDescription() {
         return "Fertig";
     }
-
+    
     public static String getStep() {
         return "id-finish";
+    }
+
+    public void storeProperties() {
+        UserProfile profile = GlobalOptions.getSelectedProfile();
+        profile.addProperty("red.ignore.submitted", jIgnoreSubmitted.isSelected());
+    }
+    
+    public void restoreProperties() {
+        UserProfile profile = GlobalOptions.getSelectedProfile();
+        jIgnoreSubmitted.setSelected(Boolean.parseBoolean(profile.getProperty("red.ignore.submitted")));
+        
     }
 
     private void showInfo(String pText) {
@@ -350,7 +359,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
             jLabel1.setText("Informationen einblenden");
         }
     }//GEN-LAST:event_fireShowHideInfoEvent
-
+    
     private void fireTransferSelectionToBrowserEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferSelectionToBrowserEvent
         ExtendedTransport[] selection = getSelection();
         boolean outOfClicks = false;
@@ -386,37 +395,37 @@ public class ResourceDistributorFinishPanel extends WizardPage {
             showInfo("Einer oder mehrere Transporte konnten nicht im Browser geöffnet werden.");
         }
     }//GEN-LAST:event_fireTransferSelectionToBrowserEvent
-
+    
     private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideInfoEvent
         jXCollapsiblePane2.setCollapsed(true);
     }//GEN-LAST:event_fireHideInfoEvent
-
+    
     public REDFinalTransportsTableModel getTransportsModel() {
         return (REDFinalTransportsTableModel) jTransportsTable.getModel();
     }
-
+    
     public REDFinalDistributionTableModel getDistributionModel() {
         return (REDFinalDistributionTableModel) jDistributionTable.getModel();
     }
-
+    
     protected void setup() {
         Hashtable<Village, Hashtable<Village, List<Resource>>> transports = ResourceDistributorCalculationPanel.getSingleton().getTransports();
         Enumeration<Village> sourceKeys = transports.keys();
         REDFinalTransportsTableModel model = getTransportsModel();
         model.clear();
-
+        
         VillageMerchantInfo[] infos = ResourceDistributorSettingsPanel.getSingleton().getAllElements();
-
+        
         Hashtable<Village, VillageMerchantInfo> infoTable = new Hashtable<Village, VillageMerchantInfo>();
-
+        
         for (VillageMerchantInfo info : infos) {
             infoTable.put(info.getVillage(), info);
         }
-
-
+        
+        
         while (sourceKeys.hasMoreElements()) {
             Village sourceVillage = sourceKeys.nextElement();
-
+            
             Hashtable<Village, List<Resource>> transportsFromSource = transports.get(sourceVillage);
             Enumeration<Village> destKeys = transportsFromSource.keys();
             while (destKeys.hasMoreElements()) {
@@ -425,7 +434,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
                 if (model.addRow(sourceVillage, targetVillage, resources)) {
                     VillageMerchantInfo sourceInfo = infoTable.get(sourceVillage);
                     VillageMerchantInfo targetInfo = infoTable.get(targetVillage);
-
+                    
                     for (Resource r : resources) {
                         switch (r.getType()) {
                             case WOOD:
@@ -446,21 +455,21 @@ public class ResourceDistributorFinishPanel extends WizardPage {
             }
         }
         model.fireTableDataChanged();
-
+        
         REDFinalDistributionTableModel distributionModel = getDistributionModel();
         distributionModel.clear();
-
+        
         Enumeration<Village> keys = infoTable.keys();
         while (keys.hasMoreElements()) {
             Village v = keys.nextElement();
             VillageMerchantInfo info = infoTable.get(v);
             distributionModel.addRow(v, info.getStashCapacity(), info.getWoodStock(), info.getClayStock(), info.getIronStock(), info.getDirection());
         }
-
+        
         distributionModel.fireTableDataChanged();
         saveTransports();
     }
-
+    
     private void deleteSelection() {
         int[] selection = jTransportsTable.getSelectedRows();
         if (selection.length > 0) {
@@ -477,7 +486,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
             }
         }
     }
-
+    
     private ExtendedTransport[] getSelection() {
         int[] selection = jTransportsTable.getSelectedRows();
         List<ExtendedTransport> rows = new LinkedList<ExtendedTransport>();
@@ -489,7 +498,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         }
         return rows.toArray(new ExtendedTransport[rows.size()]);
     }
-
+    
     private void saveTransports() {
         StringBuilder b = new StringBuilder();
         int cnt = 0;
@@ -509,7 +518,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
             b.append(submitted).append("\n");
             cnt++;
         }
-
+        
         String profileDir = GlobalOptions.getSelectedProfile().getProfileDirectory();
         FileWriter w = null;
         try {
@@ -527,7 +536,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
             }
         }
     }
-
+    
     protected boolean loadTransports() {
         boolean result = false;
         String profileDir = GlobalOptions.getSelectedProfile().getProfileDirectory();
@@ -548,7 +557,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
                     Resource iron = new Resource(Integer.parseInt(split[3]), Resource.Type.IRON);
                     Village targetVillage = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(split[4]));
                     boolean submitted = Boolean.parseBoolean(split[5]);
-
+                    
                     if (sourceVillage != null && targetVillage != null) {
                         List<Resource> resources = Arrays.asList(wood, clay, iron);
                         model.addRow(sourceVillage, targetVillage, resources, submitted);
@@ -568,7 +577,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
                 }
             }
         }
-
+        
         if (result) {
             jideSplitPane1.setProportions(new double[]{0.0});
         }
@@ -600,13 +609,13 @@ public class ResourceDistributorFinishPanel extends WizardPage {
     public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;
     }
-
+    
     @Override
     public WizardPanelNavResult allowBack(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;
-
+        
     }
-
+    
     @Override
     public WizardPanelNavResult allowFinish(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;

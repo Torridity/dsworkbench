@@ -123,7 +123,7 @@ public class ConquerManager extends GenericManager<Conquer> {
                             }
                         }
                         if (winner != null && !winner.ownsVillage(v)) {
-                            winner.addVillage(v);
+                            winner.addVillage(v, true);
                             winner.setVillages((short) (winner.getVillages() + 1));
                             v.setTribe(winner);
                             v.setTribeID(winner.getId());
@@ -309,7 +309,7 @@ public class ConquerManager extends GenericManager<Conquer> {
                             }
                         }
                         if (winner != null && !winner.ownsVillage(v)) {
-                            winner.addVillage(v);
+                            winner.addVillage(v, true);
                             winner.setVillages((short) (winner.getVillages() + 1));
                             v.setTribe(winner);
                             v.setTribeID(winner.getId());

@@ -84,7 +84,9 @@ public class UserProfile {
     }
 
     public void addProperty(String pKey, Object pValue) {
-        mProperties.put(pKey, pValue);
+        if (pValue != null) {
+            mProperties.put(pKey, pValue.toString());
+        }
     }
 
     public String getProperty(String pKey) {
@@ -149,7 +151,7 @@ public class UserProfile {
             mProperties.store(fout, "");
             fout.flush();
         } catch (Exception e) {
-            logger.error("Failed to store profile properties");
+            logger.error("Failed to store profile properties", e);
             return false;
         } finally {
             try {

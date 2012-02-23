@@ -14,6 +14,7 @@ import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.test.DummyUserProfile;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.ui.views.*;
+import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import de.tor.tribes.util.church.ChurchManager;
@@ -199,11 +200,6 @@ public class GlobalOptions {
     }
 
     public static void setSelectedProfile(UserProfile pProfile) {
-        /*
-         * try{ throw new Exception(); }catch(Exception e){ e.printStackTrace();
-         *
-         * }
-         */
         mSelectedProfile = pProfile;
     }
 
@@ -236,6 +232,7 @@ public class GlobalOptions {
         } catch (Exception e) {
             logger.error("Failed to write properties", e);
         }
+        
     }
 
     public static void storeViewStates() {
@@ -245,7 +242,7 @@ public class GlobalOptions {
         DSWorkbenchDistanceFrame.getSingleton().storeProperties();
         DSWorkbenchDoItYourselfAttackPlaner.getSingleton().storeProperties();
         DSWorkbenchMarkerFrame.getSingleton().storeProperties();
-        DSWorkbenchMerchantDistibutor.getSingleton().storeProperties();
+       // DSWorkbenchMerchantDistibutor.getSingleton().storeProperties();
         DSWorkbenchReTimerFrame.getSingleton().storeProperties();
         DSWorkbenchSOSRequestAnalyzer.getSingleton().storeProperties();
         DSWorkbenchStatsFrame.getSingleton().storeProperties();

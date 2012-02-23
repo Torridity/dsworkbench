@@ -1123,7 +1123,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         jCurrentVillageSubmenu.add(jCurrentCreateNoteItem);
         jCurrentVillageSubmenu.add(jSeparator3);
 
-        jCurrentToAttackPlanerAsTargetItem.setText("In Angriffsplaner (Ziel)");
+        jCurrentToAttackPlanerAsTargetItem.setText("In Taktikplaner (Ziel)");
         jCurrentToAttackPlanerAsTargetItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireVillagePopupActionEvent(evt);
@@ -1131,7 +1131,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         });
         jCurrentVillageSubmenu.add(jCurrentToAttackPlanerAsTargetItem);
 
-        jCurrentToAttackPlanerAsSourceItem.setText("In Angriffsplaner (Herkunft)");
+        jCurrentToAttackPlanerAsSourceItem.setText("In Taktikplaner (Herkunft)");
         jCurrentToAttackPlanerAsSourceItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireVillagePopupActionEvent(evt);
@@ -1195,7 +1195,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         jMarkedVillageSubmenu.add(jAllCoordAsBBToClipboardItem);
         jMarkedVillageSubmenu.add(jSeparator5);
 
-        jAllToAttackPlanerAsSourceItem.setText("In Angriffsplaner (Herkunft)");
+        jAllToAttackPlanerAsSourceItem.setText("In Taktikplaner (Herkunft)");
         jAllToAttackPlanerAsSourceItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireVillagePopupActionEvent(evt);
@@ -1203,7 +1203,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         });
         jMarkedVillageSubmenu.add(jAllToAttackPlanerAsSourceItem);
 
-        jAllToAttackPlanerAsTargetItem.setText("In Angriffsplaner (Ziel)");
+        jAllToAttackPlanerAsTargetItem.setText("In Taktikplaner (Ziel)");
         jAllToAttackPlanerAsTargetItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireVillagePopupActionEvent(evt);

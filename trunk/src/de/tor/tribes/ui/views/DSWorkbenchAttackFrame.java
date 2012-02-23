@@ -138,7 +138,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
     private static Logger logger = Logger.getLogger("AttackView");
     private static DSWorkbenchAttackFrame SINGLETON = null;
     private CountdownThread mCountdownThread = null;
-    private int iClickAccount = 0;
     private GenericTestPanel centerPanel = null;
     private ClickAccountPanel clickAccount = null;
     private ProfileQuickChangePanel profilePanel = null;
@@ -164,7 +163,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
             public void actionPerformed(ActionEvent e) {
                 AttackTableTab tab = (AttackTableTab) e.getSource();
-                if (JOptionPaneHelper.showQuestionConfirmBox(jAttackTabPane, "Angriffsplan '" + tab.getAttackPlan() + "' und alle darin enthaltenen Angriffe wirklich löschen? ", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(jAttackTabPane, "Befehlsplan '" + tab.getAttackPlan() + "' und alle darin enthaltenen Befehle wirklich löschen? ", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
                     AttackManager.getSingleton().removeGroup(tab.getAttackPlan());
                 }
             }
@@ -323,7 +322,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         // <editor-fold defaultstate="collapsed" desc="Edit task pane">
         JXTaskPane editTaskPane = new JXTaskPane();
         editTaskPane.setTitle("Bearbeiten");
-        editTaskPane.getContentPane().add(factoryButton("/res/ui/garbage.png", "Abgelaufene Angriffe entfernen", new MouseAdapter() {
+        editTaskPane.getContentPane().add(factoryButton("/res/ui/garbage.png", "Abgelaufene Befehle entfernen", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -333,7 +332,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         }));
-        editTaskPane.getContentPane().add(factoryButton("/res/ui/att_changeTime.png", "Ankunfts-/Abschickzeit für markierte Angriffe &auml;ndern. Die Startzeit der Angriffe wird dabei entsprechend der Laufzeit angepasst", new MouseAdapter() {
+        editTaskPane.getContentPane().add(factoryButton("/res/ui/att_changeTime.png", "Ankunfts-/Abschickzeit für markierte Befehle &auml;ndern. "
+                + "Die Startzeit der Befehle wird dabei entsprechend der Laufzeit angepasst", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -343,7 +343,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         }));
-        editTaskPane.getContentPane().add(factoryButton("/res/ui/standard_attacks.png", "Einheit und Angriffstyp für markierte Angriffe &auml;ndern. Bitte beachte, dass sich beim &Auml;ndern der Einheit auch die Startzeit der Angriffe &auml;ndern kann", new MouseAdapter() {
+        editTaskPane.getContentPane().add(factoryButton("/res/ui/standard_attacks.png", "Einheit und Befehlstyp für markierte Befehle &auml;ndern. "
+                + "Bitte beachte, dass sich beim &Auml;ndern der Einheit auch die Startzeit der Befehle &auml;ndern kann", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -353,7 +354,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         }));
-        editTaskPane.getContentPane().add(factoryButton("/res/ui/att_browser_unsent.png", "'&Uuml;bertragen' Feld für markierte Angriffe l&ouml;schen", new MouseAdapter() {
+        editTaskPane.getContentPane().add(factoryButton("/res/ui/att_browser_unsent.png", "'&Uuml;bertragen' Feld für markierte Befehle l&ouml;schen", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -363,7 +364,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         }));
-        editTaskPane.getContentPane().add(factoryButton("/res/ui/pencil2.png", "Markierte Angriffe auf der Karte einzeichen. Ist ein gewählter Angriff bereits eingezeichnet, so wird er nach Bet&auml;tigung dieses Buttons nicht mehr eingezeichnet", new MouseAdapter() {
+        editTaskPane.getContentPane().add(factoryButton("/res/ui/pencil2.png", "Markierte Befehle auf der Karte einzeichen. "
+                + "Ist ein gewählter Befehl bereits eingezeichnet, so wird er nach Bet&auml;tigung dieses Buttons nicht mehr eingezeichnet", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -377,7 +379,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         // <editor-fold defaultstate="collapsed" desc="Transfer task pane">
         JXTaskPane transferTaskPane = new JXTaskPane();
         transferTaskPane.setTitle("Übertragen");
-        transferTaskPane.getContentPane().add(factoryButton("/res/ui/att_clipboard.png", "Markierte Angriffe im Klartext in die Zwischenablage kopieren. Der Inhalt der Zwischenablage kann dann z.B. in Excel oder OpenOffice eingef&uuml;gt werden", new MouseAdapter() {
+        transferTaskPane.getContentPane().add(factoryButton("/res/ui/att_clipboard.png", "Markierte Befehle im Klartext in die Zwischenablage kopieren. "
+                + "Der Inhalt der Zwischenablage kann dann z.B. in Excel oder OpenOffice eingef&uuml;gt werden", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -388,7 +391,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         }));
 
-        transferTaskPane.getContentPane().add(factoryButton("/res/ui/att_HTML.png", "Markierte Angriffe in eine HTML Datei kopieren.<br/>Die erstellte Datei kann dann per eMail verschickt oder zum Abschicken von Angriffen ohne ge&ouml;ffnetesDS Workbench verwendet werden", new MouseAdapter() {
+        transferTaskPane.getContentPane().add(factoryButton("/res/ui/att_HTML.png", "Markierte Befehle in eine HTML Datei kopieren.<br/>"
+                + "Die erstellte Datei kann dann per eMail verschickt oder zum Abschicken von Befehlen ohne ge&ouml;ffnetesDS Workbench verwendet werden", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -398,7 +402,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         }));
-        transferTaskPane.getContentPane().add(factoryButton("/res/ui/atts_igm.png", "Markierte Angriffe als IGM verschicken. (PA notwendig) Der/die Empf&auml;nger der IGMs sind die Besitzer der Herkunftsd&ouml;rfer der geplanten Angriffe.", new MouseAdapter() {
+        transferTaskPane.getContentPane().add(factoryButton("/res/ui/atts_igm.png", "Markierte Befehle als IGM verschicken. (PA notwendig) "
+                + "Der/die Empf&auml;nger der IGMs sind die Besitzer der Herkunftsd&ouml;rfer der geplanten Befehle.", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -408,7 +413,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         }));
-        transferTaskPane.getContentPane().add(factoryButton("/res/ui/re-time.png", "Markierten Angriff in das Werkzeug 'Retimer' einfügen", new MouseAdapter() {
+        transferTaskPane.getContentPane().add(factoryButton("/res/ui/re-time.png", "Markierten Befehl in das Werkzeug 'Retimer' einfügen", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -418,7 +423,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         }));
-        transferTaskPane.getContentPane().add(factoryButton("/res/ui/att_browser.png", "Markierte Angriffe in den Browser &uuml;bertragen. Im Normalfall werden nur einzelne Angriffe &uuml;bertragen. F&uuml;r das &Uuml;bertragen mehrerer Angriffe ist zuerst das Klickkonto entsprechend zu f&uuml;llen", new MouseAdapter() {
+        transferTaskPane.getContentPane().add(factoryButton("/res/ui/att_browser.png", "Markierte Befehle in den Browser &uuml;bertragen. "
+                + "Im Normalfall werden nur einzelne Befehle &uuml;bertragen. F&uuml;r das &Uuml;bertragen mehrerer Befehle ist zuerst das Klickkonto entsprechend zu f&uuml;llen", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -428,7 +434,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         }));
-        transferTaskPane.getContentPane().add(factoryButton("/res/ui/export_js.png", "Markierte Angriffe in ein Userscript schreiben. Das erstellte Userscript muss im Anschluss manuell im Browser installiert werden. Als Ergebnis bekommt man an verschiedenen Stellen im Spiel Informationen &uuml;ber geplante Angriffe angezeigt.", new MouseAdapter() {
+        transferTaskPane.getContentPane().add(factoryButton("/res/ui/export_js.png", "Markierte Befehle in ein Userscript schreiben. "
+                + "Das erstellte Userscript muss im Anschluss manuell im Browser installiert werden. "
+                + "Als Ergebnis bekommt man an verschiedenen Stellen im Spiel Informationen &uuml;ber geplante Befehle angezeigt.", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -439,7 +447,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         }));
 
-        transferTaskPane.getContentPane().add(factoryButton("/res/ui/to_selection.png", "Herkunfts- oder Zield&ouml;rfer markierter Angriffe in die Auswahl&uuml;bersicht übertragen.", new MouseAdapter() {
+        transferTaskPane.getContentPane().add(factoryButton("/res/ui/to_selection.png", "Herkunfts- oder Zield&ouml;rfer markierter Befehle in die Auswahl&uuml;bersicht übertragen.", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -456,7 +464,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         JXTaskPane miscTaskPane = new JXTaskPane();
         miscTaskPane.setTitle("Sonstiges");
 
-        miscTaskPane.getContentPane().add(factoryButton("/res/ui/colorize.gif", "F&auml;rbt zusammengeh&ouml;rigen Angriffe entsprechend der aktuellen Tabellensortierung ein<br/><i>Farbalgorithmus &copy;bodhiBrute</i>", new MouseAdapter() {
+        miscTaskPane.getContentPane().add(factoryButton("/res/ui/colorize.gif", "F&auml;rbt zusammengeh&ouml;rigen Befehle entsprechend der aktuellen Tabellensortierung ein<br/>"
+                + "<i>Farbalgorithmus &copy;bodhiBrute</i>", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -467,7 +476,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         }));
 
-        miscTaskPane.getContentPane().add(factoryButton("/res/ui/att_alert_off.png", "Einen Alarm für den gewählten Angriff erstellen", new MouseAdapter() {
+        miscTaskPane.getContentPane().add(factoryButton("/res/ui/att_alert_off.png", "Einen Alarm für den gewählten Befehl erstellen", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -628,7 +637,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_new_24x24.png"))); // NOI18N
-        jLabel1.setToolTipText("Leeren Angriffsplan erstellen");
+        jLabel1.setToolTipText("Leeren Plan erstellen");
         jLabel1.setEnabled(false);
         jLabel1.setMaximumSize(new java.awt.Dimension(40, 40));
         jLabel1.setMinimumSize(new java.awt.Dimension(40, 40));
@@ -646,7 +655,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         });
         jNewPlanPanel.add(jLabel1, java.awt.BorderLayout.CENTER);
 
-        setTitle("Angriffe");
+        setTitle("Befehle");
         setMinimumSize(new java.awt.Dimension(700, 500));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -717,7 +726,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         unusedId++;
     }
     if (unusedId == 1000) {
-        JOptionPaneHelper.showErrorBox(DSWorkbenchAttackFrame.this, "Du hast mehr als 1000 Angriffspläne. Bitte lösche zuerst ein paar bevor du Neue erstellst.", "Fehler");
+        JOptionPaneHelper.showErrorBox(DSWorkbenchAttackFrame.this, "Du hast mehr als 1000 Befehlspläne. Bitte lösche zuerst ein paar bevor du Neue erstellst.", "Fehler");
         return;
     }
 }//GEN-LAST:event_fireCreateAttackPlanEvent

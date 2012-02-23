@@ -82,6 +82,7 @@ public class SupportRefillFinishPanel extends WizardPage {
         jxResultsTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jxResultsTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jxResultsTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
+        jxResultsTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         overviewPanel = new VillageOverviewMapPanel();
         jPanel5.add(overviewPanel, BorderLayout.CENTER);
         jXCollapsiblePane2.add(jSummaryPanel, BorderLayout.CENTER);
@@ -255,7 +256,7 @@ public class SupportRefillFinishPanel extends WizardPage {
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/48x48/full_sword_clipboard.png"))); // NOI18N
-        jButton1.setToolTipText("Alle Unterstützungen in die Angriffsübersicht übertragen");
+        jButton1.setToolTipText("Alle Unterstützungen in die Befehlsübersicht übertragen");
         jButton1.setMaximumSize(new java.awt.Dimension(70, 70));
         jButton1.setMinimumSize(new java.awt.Dimension(70, 70));
         jButton1.setPreferredSize(new java.awt.Dimension(70, 70));
@@ -274,7 +275,7 @@ public class SupportRefillFinishPanel extends WizardPage {
         jPanel3.add(jButton1, gridBagConstraints);
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/48x48/selection_sword_clipboard.png"))); // NOI18N
-        jButton4.setToolTipText("Ausgewählte Unterstützungen in die Angriffsübersicht übertragen");
+        jButton4.setToolTipText("Ausgewählte Unterstützungen in die Befehlsübersicht übertragen");
         jButton4.setMaximumSize(new java.awt.Dimension(70, 70));
         jButton4.setMinimumSize(new java.awt.Dimension(70, 70));
         jButton4.setPreferredSize(new java.awt.Dimension(70, 70));

@@ -10,8 +10,10 @@
  */
 package de.tor.tribes.ui.wiz.red;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.StorageStatus;
 import de.tor.tribes.types.Tag;
+import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.VillageMerchantInfo;
 import de.tor.tribes.ui.components.GroupSelectionList;
 import de.tor.tribes.ui.models.REDExtendedMerchantTableModel;
@@ -20,6 +22,7 @@ import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.StorageCellRenderer;
 import de.tor.tribes.ui.renderer.TradeDirectionCellRenderer;
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.TagUtils;
 import de.tor.tribes.util.UIHelper;
 import java.awt.BorderLayout;
@@ -86,6 +89,25 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
 
     public static String getStep() {
         return "id-settings";
+    }
+
+    public void storeProperties() {
+        UserProfile profile = GlobalOptions.getSelectedProfile();
+        profile.addProperty("red.send.farm", UIHelper.parseIntFromField(jSenderFarmSpace, 23000));
+        profile.addProperty("red.receive.farm", UIHelper.parseIntFromField(jReceiverFarmSpace, 20000));
+
+    }
+
+    public void restoreProperties() {
+        UserProfile profile = GlobalOptions.getSelectedProfile();
+        String val = profile.getProperty("red.send.farm");
+        if (val != null) {
+            jSenderFarmSpace.setText(val);
+        }
+        val = profile.getProperty("red.receive.farm");
+        if (val != null) {
+            jReceiverFarmSpace.setText(val);
+        }
     }
 
     /**

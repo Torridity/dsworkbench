@@ -32,12 +32,6 @@ import org.netbeans.spi.wizard.WizardPanelProvider;
  */
 public class TacticsPlanerWizard extends WizardPanelProvider {
 
-    /*
-     * private static final String ID_WELCOME = "welcome-id"; private static final String ID_SOURCE = "source-id"; private static final
-     * String ID_FILTER = "filter-id"; private static final String ID_TARGET = "target-id"; private static final String ID_TIME = "time-id";
-     * private static final String ID_VALIDATE = "validate-id"; private static final String ID_CALCULATION = "calculation-id"; private
-     * static final String ID_FINISH = "finish-id";
-     */
     private static JFrame parent = null;
 
     public TacticsPlanerWizard() {

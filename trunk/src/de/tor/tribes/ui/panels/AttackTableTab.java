@@ -241,7 +241,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         if (e.getValueIsAdjusting()) {
             int selectionCount = jxAttackTable.getSelectedRowCount();
             if (selectionCount != 0) {
-                showInfo(selectionCount + ((selectionCount == 1) ? " Angriff gewählt" : " Angriffe gewählt"));
+                showInfo(selectionCount + ((selectionCount == 1) ? " Befehl gewählt" : " Befehle gewählt"));
             }
         }
     }
@@ -278,15 +278,15 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     public void addAttackTimer() {
         List<Attack> selection = getSelectedAttacks();
         if (selection.isEmpty()) {
-            showInfo("Kein Angriff gewählt");
+            showInfo("Kein Befehl gewählt");
         } else {
-            String result = JOptionPane.showInputDialog(this, "Wieviele Sekunden vor dem Angriff soll der Alarm abgespielt werden?", 30);
+            String result = JOptionPane.showInputDialog(this, "Wieviele Sekunden vor dem Befehl soll der Alarm abgespielt werden?", 30);
             if (result != null) {
                 try {
                     int time = Integer.parseInt(result);
                     String name = ClockFrame.getSingleton().addTimer(selection.get(0), time);
                     if (name == null) {
-                        showError("Ungültiger Angriff");
+                        showError("Ungültiger Befehl");
                     } else {
                         showInfo("Neuer Timer '" + name + "' hinzugefügt");
                     }
@@ -467,19 +467,19 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jScriptExportDialog.setTitle("Scripteinstellungen");
 
         jShowAttacksInVillageInfo.setSelected(true);
-        jShowAttacksInVillageInfo.setText("Angriffe in den Dorfinformationen anzeigen");
+        jShowAttacksInVillageInfo.setText("Befehle in den Dorfinformationen anzeigen");
         jShowAttacksInVillageInfo.setOpaque(false);
 
         jShowAttacksOnConfirmPage.setSelected(true);
-        jShowAttacksOnConfirmPage.setText("Angriffe auf der Angriffsbestätigungsseite anzeigen");
+        jShowAttacksOnConfirmPage.setText("Befehle auf der Befehlsbestätigungsseite anzeigen");
         jShowAttacksOnConfirmPage.setOpaque(false);
 
         jShowAttacksInPlace.setSelected(true);
-        jShowAttacksInPlace.setText("Angriffe im Versammlungsplatz anzeigen");
+        jShowAttacksInPlace.setText("Befehle im Versammlungsplatz anzeigen");
         jShowAttacksInPlace.setOpaque(false);
 
         jShowAttacksInOverview.setSelected(true);
-        jShowAttacksInOverview.setText("Angriffe in den Übersichten anzeigen");
+        jShowAttacksInOverview.setText("Befehle in den Übersichten anzeigen");
         jShowAttacksInOverview.setOpaque(false);
 
         jDoScriptExportButton.setText("Script erstellen");
@@ -811,7 +811,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jPanel5.add(jLabel18, gridBagConstraints);
 
         jRandomField.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        jRandomField.setToolTipText("<html>Zeitfenster in Stunden<br/>Wird hier 2 eingegeben, so werden alle Angriffe um einen zufälligen Wert<br/>\n in einem Bereich von -2 bis +2 Stunden,<br/> ausgehend von ihrer aktuellen Zeit, verschoben.</html>");
+        jRandomField.setToolTipText("<html>Zeitfenster in Stunden<br/>Wird hier 2 eingegeben, so werden alle Befehle um einen zufälligen Wert<br/>\n in einem Bereich von -2 bis +2 Stunden,<br/> ausgehend von ihrer aktuellen Zeit, verschoben.</html>");
         jRandomField.setEnabled(false);
         jRandomField.setMinimumSize(new java.awt.Dimension(6, 25));
         jRandomField.setPreferredSize(new java.awt.Dimension(6, 25));
@@ -834,7 +834,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
         jNotRandomToNightBonus.setSelected(true);
         jNotRandomToNightBonus.setText("Nicht in Nachtbonus verschieben");
-        jNotRandomToNightBonus.setToolTipText("DS Workbench sorgt dafür, dass Angriffe nicht im Nachtbonus landen");
+        jNotRandomToNightBonus.setToolTipText("DS Workbench sorgt dafür, dass Befehle nicht im Nachtbonus landen");
         jNotRandomToNightBonus.setEnabled(false);
         jNotRandomToNightBonus.setOpaque(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -902,7 +902,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 .addContainerGap())
         );
 
-        jChangeAttackTypeDialog.setTitle("Angriffstyp anpassen");
+        jChangeAttackTypeDialog.setTitle("Befehlstyp anpassen");
         jChangeAttackTypeDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jAcceptChangeUnitTypeButton.setText("Übernehmen");
@@ -988,7 +988,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jChangeAttackTypeDialog.getContentPane().add(jUnitBox, gridBagConstraints);
 
         jUnconfiguredTypeWarning.setForeground(new java.awt.Color(255, 0, 0));
-        jUnconfiguredTypeWarning.setText("Achtung: Der gewählte Angriffstyp ist nicht konfiguriert!");
+        jUnconfiguredTypeWarning.setText("Achtung: Der gewählte Befehlstyp ist nicht konfiguriert!");
         jUnconfiguredTypeWarning.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
         jUnconfiguredTypeWarning.setLineWrap(true);
         jUnconfiguredTypeWarning.setMaximumSize(new java.awt.Dimension(40, 25));
@@ -1391,9 +1391,9 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         if (toRemove.isEmpty()) {
             return;
         }
-        String message = (toRemove.size() == 1) ? "1 Angriff entfernen?" : toRemove.size() + " Angriffe entfernen?";
+        String message = (toRemove.size() == 1) ? "1 Befehl entfernen?" : toRemove.size() + " Befehle entfernen?";
         
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Abgelaufene Angriffe entfernen", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Abgelaufene Befehle entfernen", "Nein", "Ja") == JOptionPane.NO_OPTION) {
             return;
         }
         
@@ -1401,15 +1401,15 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         
         AttackManager.getSingleton().removeElements(getAttackPlan(), toRemove);
         attackModel.fireTableDataChanged();
-        showSuccess(toRemove.size() + " Angriff(e) entfernt");
+        showSuccess(toRemove.size() + " Befehl(e) entfernt");
     }
     
     public boolean deleteSelection(boolean pAsk) {
         List<Attack> selectedAttacks = getSelectedAttacks();
         
         if (pAsk) {
-            String message = ((selectedAttacks.size() == 1) ? "Angriff " : (selectedAttacks.size() + " Angriffe ")) + "wirklich löschen?";
-            if (selectedAttacks.isEmpty() || JOptionPaneHelper.showQuestionConfirmBox(this, message, "Angriffe löschen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
+            String message = ((selectedAttacks.size() == 1) ? "Befehl " : (selectedAttacks.size() + " Befehle ")) + "wirklich löschen?";
+            if (selectedAttacks.isEmpty() || JOptionPaneHelper.showQuestionConfirmBox(this, message, "Befehle löschen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
                 return false;
             }
         }
@@ -1417,7 +1417,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jxAttackTable.editingCanceled(new ChangeEvent(this));
         AttackManager.getSingleton().removeElements(getAttackPlan(), selectedAttacks);
         attackModel.fireTableDataChanged();
-        showSuccess(selectedAttacks.size() + " Angriff(e) gelöscht");
+        showSuccess(selectedAttacks.size() + " Befehl(e) gelöscht");
         return true;
     }
     
@@ -1429,7 +1429,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         if (!getSelectedAttacks().isEmpty()) {
             jTimeChangeDialog.setVisible(true);
         } else {
-            showInfo("Keine Angriffe gewählt");
+            showInfo("Keine Befehle gewählt");
         }
     }
     
@@ -1442,7 +1442,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             jChangeAttackTypeDialog.pack();
             jChangeAttackTypeDialog.setVisible(true);
         } else {
-            showInfo("Keine Angriffe gewählt");
+            showInfo("Keine Befehle gewählt");
         }
     }
     
@@ -1453,7 +1453,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             }
             attackModel.fireTableDataChanged();
         } else {
-            showInfo("Keine Angriffe gewählt");
+            showInfo("Keine Befehle gewählt");
         }
     }
     
@@ -1464,13 +1464,13 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             }
             attackModel.fireTableDataChanged();
         } else {
-            showInfo("Keine Angriffe gewählt");
+            showInfo("Keine Befehle gewählt");
         }
     }
     
     public void transferToScript() {
         if (getSelectedAttacks().isEmpty()) {
-            showInfo("Keine Angriffe gewählt");
+            showInfo("Keine Befehle gewählt");
             return;
         }
         jScriptExportDialog.pack();
@@ -1481,7 +1481,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private void transferToSelectionTool() {
         List<Attack> selection = getSelectedAttacks();
         if (selection.isEmpty()) {
-            showInfo("Keine Angriffe gewählt");
+            showInfo("Keine Befehle gewählt");
             return;
         }
         List<Village> villages = new ArrayList<Village>();
@@ -1550,7 +1550,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         try {
             List<Attack> attacks = getSelectedAttacks();
             if (attacks.isEmpty()) {
-                showInfo("Keine Angriffe ausgewählt");
+                showInfo("Keine Befehle ausgewählt");
                 return;
             }
             StringBuilder buffer = new StringBuilder();
@@ -1560,7 +1560,6 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(buffer.toString()), null);
             String result = "Daten in Zwischenablage kopiert.";
-            //  JOptionPaneHelper.showInformationBox(this, result, "Information");
             showSuccess(result);
         } catch (Exception e) {
             logger.error("Failed to copy data to clipboard", e);
@@ -1574,16 +1573,16 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         try {
             List<Attack> attacks = getSelectedAttacks();
             if (attacks.isEmpty()) {
-                showInfo("Keine Angriffe ausgewählt");
+                showInfo("Keine Befehle ausgewählt");
                 return;
             }
             boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
             
             StringBuilder buffer = new StringBuilder();
             if (extended) {
-                buffer.append("[u][size=12]Angriffsplan[/size][/u]\n\n");
+                buffer.append("[u][size=12]Geplante Befehle[/size][/u]\n\n");
             } else {
-                buffer.append("[u]Angriffsplan[/u]\n\n");
+                buffer.append("[u]Geplante Befehle[/u]\n\n");
             }
             
             buffer.append(new AttackListFormatter().formatElements(attacks, extended));
@@ -1604,7 +1603,9 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             StringTokenizer t = new StringTokenizer(b, "[");
             int cnt = t.countTokens();
             if (cnt > 1000) {
-                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Angriffe benötigen mehr als 1000 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Befehle benötigen mehr als 1000 BB-Codes\n"
+                        + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\n"
+                        + "Trotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                     return;
                 }
             }
@@ -1623,7 +1624,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         List<Attack> toExport = getSelectedAttacks();
         
         if (toExport.isEmpty()) {
-            showInfo("Keine Angriffe ausgewählt");
+            showInfo("Keine Befehle ausgewählt");
             return;
         }
         
@@ -1679,7 +1680,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 AttackPlanHTMLExporter.doExport(target, selectedPlan, toExport);
                 //store current directory
                 GlobalOptions.addProperty("screen.dir", target.getParent());
-                showSuccess("Angriffe erfolgreich gespeichert");
+                showSuccess("Befehle erfolgreich gespeichert");
                 if (JOptionPaneHelper.showQuestionConfirmBox(this, "Möchtest du die erstellte Datei jetzt im Browser betrachten?", "Information", "Nein", "Ja") == JOptionPane.YES_OPTION) {
                     BrowserCommandSender.openPage(target.toURI().toURL().toString());
                 }
@@ -1694,7 +1695,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private void sendAttacksToBrowser() {
         List<Attack> attacks = getSelectedAttacks();
         if (attacks.isEmpty()) {
-            showInfo("Keine Angriffe ausgewählt");
+            showInfo("Keine Befehle ausgewählt");
             return;
         }
         int sentAttacks = 0;
@@ -1733,9 +1734,9 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         if (profile != null) {
             usedProfile = "als " + profile.toString();
         }
-        String message = "<html>" + sentAttacks + " von " + attacks.size() + " Angriffe(n) " + usedProfile + " in den Browser &uuml;bertragen";
+        String message = "<html>" + sentAttacks + " von " + attacks.size() + " Befehle(n) " + usedProfile + " in den Browser &uuml;bertragen";
         if (ignoredAttacks != 0) {
-            message += "<br/>" + ignoredAttacks + " Angriff(e) ignoriert, da sie bereits &uuml;bertragen wurden";
+            message += "<br/>" + ignoredAttacks + " Befehl(e) ignoriert, da sie bereits &uuml;bertragen wurden";
         }
         message += "</html>";
         showInfo(message);
@@ -1744,7 +1745,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private boolean copyToInternalClipboard() {
         List<Attack> selection = getSelectedAttacks();
         if (selection.isEmpty()) {
-            showInfo("Keine Angriffe gewählt");
+            showInfo("Keine Befehle gewählt");
             return false;
         }
         StringBuilder b = new StringBuilder();
@@ -1755,10 +1756,10 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         }
         try {
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b.toString()), null);
-            showSuccess(cnt + ((cnt == 1) ? " Angriff kopiert" : " Angriffe kopiert"));
+            showSuccess(cnt + ((cnt == 1) ? " Befehl kopiert" : " Befehle kopiert"));
             return true;
         } catch (HeadlessException hex) {
-            showError("Fehler beim Kopieren der Angriffe");
+            showError("Fehler beim Kopieren der Befehle");
             return false;
         }
     }
@@ -1766,13 +1767,13 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private void cutToInternalClipboard() {
         int size = getSelectedAttacks().size();
         if (size == 0) {
-            showInfo("Keine Angriffe gewählt");
+            showInfo("Keine Befehle gewählt");
             return;
         }
         if (copyToInternalClipboard() && deleteSelection(false)) {
-            showSuccess(size + ((size == 1) ? " Angriff ausgeschnitten" : " Angriffe ausgeschnitten"));
+            showSuccess(size + ((size == 1) ? " Befehl ausgeschnitten" : " Befehle ausgeschnitten"));
         } else {
-            showError("Fehler beim Ausschneiden der Angriffe");
+            showError("Fehler beim Ausschneiden der Befehle");
         }
     }
     
@@ -1789,24 +1790,24 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                     cnt++;
                 }
             }
-            showSuccess(cnt + ((cnt == 1) ? " Angriff eingefügt" : " Angriffe eingefügt"));
+            showSuccess(cnt + ((cnt == 1) ? " Befehl eingefügt" : " Befehle eingefügt"));
         } catch (UnsupportedFlavorException ufe) {
             logger.error("Failed to copy attacks from internal clipboard", ufe);
-            showError("Fehler beim Einfügen der Angriffe");
+            showError("Fehler beim Einfügen der Befehle");
         } catch (IOException ioe) {
             logger.error("Failed to copy attacks from internal clipboard", ioe);
-            showError("Fehler beim Einfügen der Angriffe");
+            showError("Fehler beim Einfügen der Befehle");
         }
         attackModel.fireTableDataChanged();
     }
     
     private void sendAttacksAsIGM() {
         if (getSelectedAttacks().isEmpty()) {
-            showInfo("Kein Angriffe gewählt");
+            showInfo("Kein Befehle gewählt");
             return;
         }
         
-        jSubject.setText("Deine Angriffe (Plan: " + getAttackPlan() + ")");
+        jSubject.setText("Deine Befehle (Plan: " + getAttackPlan() + ")");
         jSendAttacksIGMDialog.pack();
         jSendAttacksIGMDialog.setLocationRelativeTo(this);
         jSendAttacksIGMDialog.setVisible(true);
@@ -1814,7 +1815,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     
     private void sendAttackToRetimeFrame() {
         if (getSelectedAttacks().isEmpty()) {
-            showInfo("Kein Angriffe gewählt");
+            showInfo("Kein Befehle gewählt");
             return;
         }
         Attack attack = getSelectedAttacks().get(0);
@@ -1830,7 +1831,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         }
         b.append("Ankunft: ").append(f.format(attack.getArriveTime())).append("\n");
         DSWorkbenchReTimerFrame.getSingleton().setCustomAttack(b.toString());
-        showSuccess("Angriff in Retimer übertragen");
+        showSuccess("Befehl in Retimer übertragen");
         if (!DSWorkbenchReTimerFrame.getSingleton().isVisible()) {
             DSWorkbenchReTimerFrame.getSingleton().setVisible(true);
         }

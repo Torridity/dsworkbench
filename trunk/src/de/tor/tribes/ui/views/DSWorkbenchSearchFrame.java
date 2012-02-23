@@ -64,7 +64,7 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
             jSendDefButton.setEnabled(false);
             jSendResButton.setEnabled(false);
         }
-        mSearchThread = new SearchThread("", this);
+        mSearchThread = new SearchThread("SearchThread", this);
         mSearchThread.start();
         mMarkerAddFrame = new MarkerAddFrame();
         jCenterButton.setEnabled(GlobalOptions.isMinimal());

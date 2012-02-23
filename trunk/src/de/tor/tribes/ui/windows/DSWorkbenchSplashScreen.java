@@ -264,6 +264,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         }
 
         logger.debug("Starting profile selection");
+        boolean settingsRestored = false;
         try {
             //open profile selection
             if (ProfileManager.getSingleton().getProfiles().length == 0) {
@@ -331,6 +332,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             }
             logger.debug("Profile selection finished");
             //check settings
+            DSWorkbenchSettingsDialog.getSingleton().restoreProperties();
+            settingsRestored = true;
             if (!DSWorkbenchSettingsDialog.getSingleton().checkSettings()) {
                 logger.debug("Settings check in settings dialog failed");
                 logger.info("Reading user settings returned error(s)");
@@ -341,20 +344,21 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             logger.warn("Failed to open profile manager", e);
         }
 
+        if (!settingsRestored) {
+            DSWorkbenchSettingsDialog.getSingleton().restoreProperties();
+        }
+
         // <editor-fold defaultstate="collapsed" desc=" Check for data updates ">
         logger.debug("Checking for application updates");
-        boolean checkForUpdates = false;
-        try {
-            checkForUpdates = Boolean.parseBoolean(GlobalOptions.getProperty("check.updates.on.startup"));
-        } catch (Exception e) {
-            checkForUpdates = false;
-        }
+        boolean checkForUpdates = Boolean.parseBoolean(GlobalOptions.getProperty("check.updates.on.startup"));
+
         if (checkForUpdates && !GlobalOptions.isOfflineMode()) {
             String selectedServer = GlobalOptions.getProperty("default.server");
             String name = GlobalOptions.getProperty("account.name");
             String password = GlobalOptions.getProperty("account.password");
             if (DatabaseInterface.checkUser(name, password) != DatabaseInterface.ID_SUCCESS) {
-                JOptionPaneHelper.showErrorBox(this, "Die Accountvalidierung ist fehlgeschlagen.\n" + "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
+                JOptionPaneHelper.showErrorBox(this, "Die Accountvalidierung ist fehlgeschlagen.\n"
+                        + "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
                         "Fehler");
                 checkForUpdates = false;
             } else {
@@ -384,9 +388,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
             logger.debug("Initializing application window");
             DSWorkbenchMainFrame.getSingleton().init();
-
-            // new ReportGenerator().setVisible(true);
-
             logger.info("Showing application window");
             DSWorkbenchMainFrame.getSingleton().setVisible(true);
             t.stopRunning();
@@ -447,7 +448,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             a = new org.apache.log4j.RollingFileAppender();
             ((org.apache.log4j.RollingFileAppender) a).setMaxFileSize("1MB");
         } else {
-            JOptionPane.showMessageDialog(null, "Developer Mode enabled");
+            SystrayHelper.showInfoMessage("Running in debug mode");
             a = new org.apache.log4j.ConsoleAppender();
             ((org.apache.log4j.ConsoleAppender) a).setWriter(new PrintWriter(System.out));
         }
@@ -538,7 +539,12 @@ class HideSplashTask extends TimerTask {
     }
 
     public void run() {
-        if (!DSWorkbenchSplashScreen.getSingleton().hideSplash()) {
+        try {
+            if (!DSWorkbenchSplashScreen.getSingleton().hideSplash()) {
+                System.exit(1);
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
             System.exit(1);
         }
     }

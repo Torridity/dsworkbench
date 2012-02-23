@@ -39,15 +39,15 @@ import org.apache.log4j.Logger;
  * @author Torridity
  */
 public class TroopSelectionPanel extends javax.swing.JPanel implements GenericManagerListener {
-
+    
     private Hashtable<String, Point> unitCoordinates = new Hashtable<String, Point>();
     private LabeledTextField[][] unitFields = new LabeledTextField[20][20];
-
+    
     @Override
     public void dataChangedEvent() {
         rebuildStandardAttackSelection();
     }
-
+    
     @Override
     public void dataChangedEvent(String pGroup) {
         dataChangedEvent();
@@ -64,7 +64,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
         StandardAttackManager.getSingleton().addManagerListener(TroopSelectionPanel.this);
         rebuildStandardAttackSelection();
     }
-
+    
     private void rebuildStandardAttackSelection() {
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         for (ManageableType t : StandardAttackManager.getSingleton().getAllElements()) {
@@ -72,11 +72,11 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
         }
         jStandardAttackBox.setModel(model);
     }
-
+    
     public final void setup(List<UnitHolder> pUnits) {
         setup(pUnits, true);
     }
-
+    
     public final void setup(List<UnitHolder> pUnits, boolean pTypeSeparation) {
         jUnitContainer.removeAll();
         unitCoordinates.clear();
@@ -117,8 +117,9 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
             jUnitContainer.add(unitField, gridBagConstraints);
             unitCount++;
         }
+        setEnabled(isEnabled());
     }
-
+    
     public final void setupDefense(boolean pTypeSeparation) {
         List<UnitHolder> units = new LinkedList<UnitHolder>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
@@ -128,7 +129,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
         }
         setup(units, pTypeSeparation);
     }
-
+    
     public final void setupOffense(boolean pTypeSeparation) {
         List<UnitHolder> units = new LinkedList<UnitHolder>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
@@ -138,7 +139,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
         }
         setup(units, pTypeSeparation);
     }
-
+    
     public final void setupFarm(boolean pTypeSeparation) {
         List<UnitHolder> units = new LinkedList<UnitHolder>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
@@ -148,7 +149,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
         }
         setup(units, pTypeSeparation);
     }
-
+    
     public Hashtable<UnitHolder, Integer> getAmounts() {
         Hashtable<UnitHolder, Integer> values = new Hashtable<UnitHolder, Integer>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
@@ -156,7 +157,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
         }
         return values;
     }
-
+    
     public void setAmounts(Hashtable<UnitHolder, Integer> pAmounts) {
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             Integer amount = pAmounts.get(unit);
@@ -167,7 +168,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
             }
         }
     }
-
+    
     public int getAmountForUnit(UnitHolder pUnit) {
         Point location = unitCoordinates.get(pUnit.getPlainName());
         if (location != null) {
@@ -176,7 +177,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
         }
         return 0;
     }
-
+    
     public void setAmountForUnit(UnitHolder pUnit, int pValue) {
         Point location = unitCoordinates.get(pUnit.getPlainName());
         if (location != null) {
@@ -184,9 +185,10 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
             field.setText(Integer.toString(pValue));
         }
     }
-
+    
     @Override
     public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < 20; j++) {
                 if (unitFields[i][j] != null) {
@@ -194,6 +196,10 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
                 }
             }
         }
+        jSettingsButton.setEnabled(enabled);
+        if (!enabled) {
+            jXCollapsiblePane1.setCollapsed(true);
+        }        
     }
 
     /**
@@ -211,7 +217,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
         jButton3 = new javax.swing.JButton();
         jUnitContainer = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        jSettingsButton = new javax.swing.JButton();
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
 
         jPanel2.setLayout(new java.awt.GridBagLayout());
@@ -251,9 +257,9 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
 
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
-        jButton1.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
-        jButton1.setText("Einstellungen");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        jSettingsButton.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
+        jSettingsButton.setText("Einstellungen");
+        jSettingsButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireClick(evt);
             }
@@ -261,7 +267,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        jPanel1.add(jButton1, gridBagConstraints);
+        jPanel1.add(jSettingsButton, gridBagConstraints);
 
         jXCollapsiblePane1.setCollapsed(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -277,15 +283,17 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireClick(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireClick
-        jXCollapsiblePane1.setCollapsed(!jXCollapsiblePane1.isCollapsed());
+        if (jSettingsButton.isEnabled()) {
+            jXCollapsiblePane1.setCollapsed(!jXCollapsiblePane1.isCollapsed());
+        }
     }//GEN-LAST:event_fireClick
-
+    
     private void fireUseStandardAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUseStandardAttackEvent
         StandardAttack att = (StandardAttack) jStandardAttackBox.getSelectedItem();
         if (att == null) {
             return;
         }
-
+        
         if (!att.containsDynamicAmount()) {
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
                 setAmountForUnit(unit, att.getFixedAmountForUnit(unit));
@@ -297,11 +305,11 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
         }
     }//GEN-LAST:event_fireUseStandardAttackEvent
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JButton jSettingsButton;
     private javax.swing.JComboBox jStandardAttackBox;
     private javax.swing.JPanel jUnitContainer;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
@@ -314,7 +322,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
         GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de77")[0]);
         DataHolder.getSingleton().loadData(false);
         GlobalOptions.loadUserData();
-
+        
         JFrame f = new JFrame();
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(300, 300);

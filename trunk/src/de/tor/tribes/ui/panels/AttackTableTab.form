@@ -56,7 +56,7 @@
         <Component class="javax.swing.JCheckBox" name="jShowAttacksInVillageInfo">
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" value="Angriffe in den Dorfinformationen anzeigen"/>
+            <Property name="text" type="java.lang.String" value="Befehle in den Dorfinformationen anzeigen"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <AuxValues>
@@ -66,7 +66,7 @@
         <Component class="javax.swing.JCheckBox" name="jShowAttacksOnConfirmPage">
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" value="Angriffe auf der Angriffsbest&#xe4;tigungsseite anzeigen"/>
+            <Property name="text" type="java.lang.String" value="Befehle auf der Befehlsbest&#xe4;tigungsseite anzeigen"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <AuxValues>
@@ -76,7 +76,7 @@
         <Component class="javax.swing.JCheckBox" name="jShowAttacksInPlace">
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" value="Angriffe im Versammlungsplatz anzeigen"/>
+            <Property name="text" type="java.lang.String" value="Befehle im Versammlungsplatz anzeigen"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <AuxValues>
@@ -86,7 +86,7 @@
         <Component class="javax.swing.JCheckBox" name="jShowAttacksInOverview">
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" value="Angriffe in den &#xdc;bersichten anzeigen"/>
+            <Property name="text" type="java.lang.String" value="Befehle in den &#xdc;bersichten anzeigen"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <AuxValues>
@@ -644,7 +644,7 @@
             <Component class="javax.swing.JFormattedTextField" name="jRandomField">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="4"/>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Zeitfenster in Stunden&lt;br/&gt;Wird hier 2 eingegeben, so werden alle Angriffe um einen zuf&#xe4;lligen Wert&lt;br/&gt;&#xa; in einem Bereich von -2 bis +2 Stunden,&lt;br/&gt; ausgehend von ihrer aktuellen Zeit, verschoben.&lt;/html&gt;"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Zeitfenster in Stunden&lt;br/&gt;Wird hier 2 eingegeben, so werden alle Befehle um einen zuf&#xe4;lligen Wert&lt;br/&gt;&#xa; in einem Bereich von -2 bis +2 Stunden,&lt;br/&gt; ausgehend von ihrer aktuellen Zeit, verschoben.&lt;/html&gt;"/>
                 <Property name="enabled" type="boolean" value="false"/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[6, 25]"/>
@@ -676,7 +676,7 @@
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Nicht in Nachtbonus verschieben"/>
-                <Property name="toolTipText" type="java.lang.String" value="DS Workbench sorgt daf&#xfc;r, dass Angriffe nicht im Nachtbonus landen"/>
+                <Property name="toolTipText" type="java.lang.String" value="DS Workbench sorgt daf&#xfc;r, dass Befehle nicht im Nachtbonus landen"/>
                 <Property name="enabled" type="boolean" value="false"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
@@ -710,7 +710,7 @@
     </Container>
     <Container class="javax.swing.JDialog" name="jChangeAttackTypeDialog">
       <Properties>
-        <Property name="title" type="java.lang.String" value="Angriffstyp anpassen"/>
+        <Property name="title" type="java.lang.String" value="Befehlstyp anpassen"/>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
@@ -836,7 +836,7 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="0" green="0" red="ff" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Achtung: Der gew&#xe4;hlte Angriffstyp ist nicht konfiguriert!"/>
+            <Property name="text" type="java.lang.String" value="Achtung: Der gew&#xe4;hlte Befehlstyp ist nicht konfiguriert!"/>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="9" style="0"/>
             </Property>

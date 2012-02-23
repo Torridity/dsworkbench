@@ -44,6 +44,17 @@ public class ResourceDistributorWizard extends WizardPanelProvider {
         return null;
     }
 
+    public static void storeProperties() {
+        ResourceDistributorSettingsPanel.getSingleton().storeProperties();
+        ResourceDistributorCalculationPanel.getSingleton().storeProperties();
+        ResourceDistributorFinishPanel.getSingleton().storeProperties();
+    }
+
+    public static void restoreProperties() {
+        ResourceDistributorSettingsPanel.getSingleton().restoreProperties();
+        ResourceDistributorFinishPanel.getSingleton().restoreProperties();
+    }
+
     public static void show() {
         if (parent != null) {
             parent.toFront();
@@ -94,8 +105,8 @@ public class ResourceDistributorWizard extends WizardPanelProvider {
         DataHolder.getSingleton().loadData(false);
         GlobalOptions.loadUserData();
 
-      //  Wizard wizard = new ResourceDistributorBranchController().createWizard();
-new ResourceDistributorWizard().show();
-      //  System.out.println("RES: " + WizardDisplayer.showWizard(wizard));
+        //  Wizard wizard = new ResourceDistributorBranchController().createWizard();
+        new ResourceDistributorWizard().show();
+        //  System.out.println("RES: " + WizardDisplayer.showWizard(wizard));
     }
 }

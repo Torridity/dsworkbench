@@ -81,14 +81,9 @@ public class AttackFinishPanel extends WizardPage {
         jInfoTextPane.setText(GENERAL_INFO);
         jButton1.setIcon(new ImageIcon("./graphics/big/axe.png"));
         jButton2.setIcon(new ImageIcon("./graphics/big/axe_unfilled.png"));
+        jxResultsTable.setModel(new TAPResultTableModel());
         jxResultsTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jxResultsTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
-        /*
-         * jxResultsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-         *
-         * @Override public void valueChanged(ListSelectionEvent e) { updateAttackDetails(); } });
-         */
-
         TAPResultDetailsTableModel model = new TAPResultDetailsTableModel();
         jXDetailsTable.setModel(model);
         jXDetailsTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
@@ -303,7 +298,7 @@ public class AttackFinishPanel extends WizardPage {
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/48x48/half_axe_clipboard.png"))); // NOI18N
-        jButton1.setToolTipText("Alle Angriffe in die Angriffsübersicht übertragen");
+        jButton1.setToolTipText("Alle Angriffe in die Befehlsübersicht übertragen");
         jButton1.setMaximumSize(new java.awt.Dimension(70, 70));
         jButton1.setMinimumSize(new java.awt.Dimension(70, 70));
         jButton1.setPreferredSize(new java.awt.Dimension(70, 70));
@@ -351,7 +346,7 @@ public class AttackFinishPanel extends WizardPage {
         jPanel3.add(jSlider1, gridBagConstraints);
 
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/48x48/full_axe_clipboard.png"))); // NOI18N
-        jButton3.setToolTipText("Nur volle Angriffe in die Angriffsübersicht übertragen");
+        jButton3.setToolTipText("Nur volle Angriffe in die Befehlsübersicht übertragen");
         jButton3.setMaximumSize(new java.awt.Dimension(70, 70));
         jButton3.setMinimumSize(new java.awt.Dimension(70, 70));
         jButton3.setPreferredSize(new java.awt.Dimension(70, 70));
@@ -370,7 +365,7 @@ public class AttackFinishPanel extends WizardPage {
         jPanel3.add(jButton3, gridBagConstraints);
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/48x48/selection_axe_clipboard.png"))); // NOI18N
-        jButton4.setToolTipText("Ausgewählte Angriffe in die Angriffsübersicht übertragen");
+        jButton4.setToolTipText("Ausgewählte Angriffe in die Befehlsübersicht übertragen");
         jButton4.setMaximumSize(new java.awt.Dimension(70, 70));
         jButton4.setMinimumSize(new java.awt.Dimension(70, 70));
         jButton4.setPreferredSize(new java.awt.Dimension(70, 70));

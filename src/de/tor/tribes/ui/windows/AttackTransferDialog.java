@@ -50,12 +50,12 @@ public class AttackTransferDialog extends javax.swing.JDialog {
         jDoTransferButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Angriffe übertragen");
+        setTitle("Befehle übertragen");
         setMinimumSize(new java.awt.Dimension(290, 140));
         setPreferredSize(new java.awt.Dimension(290, 140));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        jLabel14.setText("Angriffsplan");
+        jLabel14.setText("Vorhandener Plan");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;

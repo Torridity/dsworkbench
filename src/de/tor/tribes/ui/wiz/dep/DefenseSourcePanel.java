@@ -164,6 +164,7 @@ public class DefenseSourcePanel extends WizardPage {
         jVillageTable = new org.jdesktop.swingx.JXTable();
         jPanel2 = new javax.swing.JPanel();
         jToggleButton1 = new javax.swing.JToggleButton();
+        jXLabel1 = new org.jdesktop.swingx.JXLabel();
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jLabel1 = new javax.swing.JLabel();
         jideSplitPane1 = new com.jidesoft.swing.JideSplitPane();
@@ -243,6 +244,17 @@ public class DefenseSourcePanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jVillageTablePanel.add(jToggleButton1, gridBagConstraints);
 
+        jXLabel1.setForeground(new java.awt.Color(102, 102, 102));
+        jXLabel1.setText("Die Anzahl der möglichen Einzelunterstützungen richtet sich nach den Einstellungen im SOS-Analyzer. Werden keine Einzelunterstützungen gefunden, verfügt das Dorf möglicherweise nicht über eine bestimmten Truppentyp, der in den Einstellungen festgelegt ist.");
+        jXLabel1.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
+        jXLabel1.setLineWrap(true);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jVillageTablePanel.add(jXLabel1, gridBagConstraints);
+
         setLayout(new java.awt.GridBagLayout());
 
         jXCollapsiblePane1.setCollapsed(true);
@@ -252,7 +264,7 @@ public class DefenseSourcePanel extends WizardPage {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jXCollapsiblePane1, gridBagConstraints);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10));
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Informationen einblenden");
         jLabel1.setToolTipText("Blendet Informationen zu dieser Ansicht und zu den Datenquellen ein/aus");
@@ -439,6 +451,7 @@ public class DefenseSourcePanel extends WizardPage {
     private org.jdesktop.swingx.JXTable jVillageTable;
     private javax.swing.JPanel jVillageTablePanel;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
+    private org.jdesktop.swingx.JXLabel jXLabel1;
     private com.jidesoft.swing.JideSplitPane jideSplitPane1;
     // End of variables declaration//GEN-END:variables
 

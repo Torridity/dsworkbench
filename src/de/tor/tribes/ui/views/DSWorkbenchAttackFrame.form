@@ -182,7 +182,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/res/ui/document_new_24x24.png"/>
             </Property>
-            <Property name="toolTipText" type="java.lang.String" value="Leeren Angriffsplan erstellen"/>
+            <Property name="toolTipText" type="java.lang.String" value="Leeren Plan erstellen"/>
             <Property name="enabled" type="boolean" value="false"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[40, 40]"/>
@@ -209,7 +209,7 @@
     </Container>
   </NonVisualComponents>
   <Properties>
-    <Property name="title" type="java.lang.String" value="Angriffe"/>
+    <Property name="title" type="java.lang.String" value="Befehle"/>
     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
       <Dimension value="[700, 500]"/>
     </Property>

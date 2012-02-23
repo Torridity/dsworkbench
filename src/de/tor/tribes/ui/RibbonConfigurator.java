@@ -221,89 +221,6 @@ public class RibbonConfigurator {
             }
         }));
 
-        //////////////////
-
-        JCommandButton attackViewButton = factoryButton("Angriffe", "graphics/big/axe.png", "Öffnet die Angriffsübersicht", "Die Angriffsübersicht erlaubt es, geplante Angriffe zu verwalten, zu modifizieren, zu exportieren (z.B. als BB-Codes) und in den Browser zu übertragen. Angriffe müssen vorher durch eins der verfügbaren Angriffswerkzeuge automatisch oder manuell erstellt werden", true);
-        attackViewButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                DSWorkbenchAttackFrame.getSingleton().setVisible(true);
-                DSWorkbenchAttackFrame.getSingleton().requestFocus();
-            }
-        });
-
-        JCommandButton markerViewButton = factoryButton("Markierungen", "graphics/icons/mark.png", "Öffnet die Markierungsübersicht", "Die Markierungsübersicht erlaubt es, Spieler und Stammesmarkierungen zu verwalten und zu modifizieren. Markierungen müssen vorher über das entsprechende Kartenwerkzeug erstellt werden", true);
-        markerViewButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                DSWorkbenchMarkerFrame.getSingleton().setVisible(true);
-            }
-        });
-        JCommandButton troopsViewButton = factoryButton("Truppen", "graphics/big/troops.png", "Öffnet die Truppenübersicht", "Die Truppenübersicht erlaubt es, vorher aus dem Spiel importierte Truppeninformationen zu verwalten. Weitere Informationen findest du in der Hilfe (F1) im Abschnitt 'Import von Spielinformationen'.", true);
-        troopsViewButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                DSWorkbenchTroopsFrame.getSingleton().setVisible(true);
-            }
-        });
-        JCommandButton rankViewButton = factoryButton("Ranglisten", "graphics/big/medal.png", "Öffnet die Rangliste", "Zeigt Ranglisten von Spielern und Stämmen mit allen verfügbaren Informationen (Punkte, Dörfer, Kills usw.)", true);
-        rankViewButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                DSWorkbenchRankFrame.getSingleton().setVisible(true);
-            }
-        });
-        JCommandButton formsViewButton = factoryButton("Zeichnungen", "graphics/big/palette2.png", "Öffnet die Zeichnungsübersicht", "Die Zeichnungsübersicht zeigt alle auf der Hauptkarte eingetragenen Zeichnungen an und erlaubt es, diese nachträglich zu verändern.", true);
-        formsViewButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                DSWorkbenchFormFrame.getSingleton().setVisible(true);
-            }
-        });
-        JCommandButton churchViewButton = factoryButton("Kirchen", "graphics/big/Church1.png", "Öffnet die Kirchenübersicht", "Die Kirchenübersicht zeigt alle in DS Workbench eingetragenen Kirchen an. Diese Ansicht ist nur auf Kirchenwelten verfügbar.", true);
-        churchViewButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                if (ServerSettings.getSingleton().isChurch()) {
-                    DSWorkbenchChurchFrame.getSingleton().setVisible(true);
-                }
-            }
-        });
-        JCommandButton conquerViewButton = factoryButton("Eroberungen", "graphics/big/snob.png", "Öffnet die Eroberungsübersicht", "Die Eroberungsübersicht zeigt alle kürzlich durchgeführten Eroberungen der aktuellen Welt an und erlaubt es, diese nach vielen Kriterien zu filtern. Eroberungen werden bei laufendem DS Workbench regelmäßig vom DS-Server gelesen, die aktuelle Zustimmung von eingelesenen Eroberungen wird entsprechend den Servereinstellungen ausgerechnet.", true);
-        conquerViewButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                DSWorkbenchConquersFrame.getSingleton().setVisible(true);
-            }
-        });
-        JCommandButton notesViewButton = factoryButton("Notizblock", "graphics/big/notebook.png", "Öffnet den Notizblock", "Der Notizblock erlaubt es, Notizen zu einelnen oder mehreren Dörfern zu verwalten. Dabei stehen die gängigen BB-Codes zu Verfügung. Erstellte Notizen tauchen, sofern die Ebene 'Notizen' sichtbar ist, auf der Hauptkarte als Symbole und im Kartenpopup mit dem zugehörigen Notiztext auf. Das Erstellen von Notizen kann entweder über das entsprechende Kartenwerkzeug oder direkt im Notizblock geschehen.", true);
-        notesViewButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                DSWorkbenchNotepad.getSingleton().setVisible(true);
-            }
-        });
-        JCommandButton tagsViewButton = factoryButton("Gruppen", "graphics/icons/tag.png", "Öffnet die Gruppenübersicht", "Die Gruppenübersicht erlaubt es, vorher aus dem Spiel importierte Gruppen zu verwalten und zu neuen Gruppen zu kombinieren. Weitere Informationen findest du in der Hilfe (F1) im Abschnitt 'Import von Spielinformationen'.", true);
-        tagsViewButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                DSWorkbenchTagFrame.getSingleton().setVisible(true);
-            }
-        });
-        JCommandButton statsViewButton = factoryButton("Statistiken", "graphics/icons/ally_chart.png", "Öffnet die Statistikübersicht", "Die Statistikübersicht erlaubt es, Statistiken über Spieler und Stämme für beliebige Zeiträume zu führen. Um einen Spieler oder einen Stamm in die Statistiken aufzunehmen, klicke mit der rechten Maustaste auf ein Dorf auf der Hauptkarte und wähle im entsprechenden Untermenü des Kontextmenüs 'Spieler überwachen' oder 'Stamm überwachen'", true);
-        statsViewButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                DSWorkbenchStatsFrame.getSingleton().setVisible(true);
-            }
-        });
-        JCommandButton reportsViewButton = factoryButton("Berichte", "graphics/big/report.png", "Öffnet die Berichtdatenbank", "Die Berichtdatenbank erlaubt es, vorher aus dem Spiel importierte Berichte zu verwalten. Weitere Informationen findest du in der Hilfe (F1) im Abschnitt 'Import von Spielinformationen'.", true);
-        reportsViewButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                DSWorkbenchReportFrame.getSingleton().setVisible(true);
-            }
-        });
         frame.getRibbon().setApplicationMenu(appmen);
 
         frame.getRibbon().configureHelp(getResizableIconFromFile("graphics/big/help2.png"),
@@ -323,7 +240,9 @@ public class RibbonConfigurator {
         JRibbonBand attackViewBand = new JRibbonBand("Angriff", getResizableIconFromFile("graphics/big/axe.png"));
         JRibbonBand ingameInfoViewBand = new JRibbonBand("Importierte Daten", getResizableIconFromFile("graphics/big/clipboard_next.png"));
 
-        JCommandButton attackViewButton = factoryButton("Angriffe", "graphics/big/axe.png", "Öffnet die Angriffsübersicht", "Die Angriffsübersicht erlaubt es, geplante Angriffe zu verwalten, zu modifizieren, zu exportieren (z.B. als BB-Codes) und in den Browser zu übertragen. Angriffe müssen vorher durch eins der verfügbaren Angriffswerkzeuge automatisch oder manuell erstellt werden", true);
+        JCommandButton attackViewButton = factoryButton("Befehle", "graphics/big/axe_sword.png", "Öffnet die Befehlsübersicht", 
+                "Die Befehlssübersicht erlaubt es, geplante Angriffe und Verteidigungen zu verwalten, zu modifizieren, zu exportieren (z.B. als BB-Codes) "
+                + "und in den Browser zu übertragen. Befehle müssen vorher durch eins der verfügbaren Werkzeuge automatisch oder manuell erstellt werden", true);
         attackViewButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -523,7 +442,10 @@ public class RibbonConfigurator {
         JRibbonBand infoToolBand = new JRibbonBand("Information", getResizableIconFromFile("graphics/big/information.png"));
         JRibbonBand miscToolsBand = new JRibbonBand("Sonstige", getResizableIconFromFile("graphics/big/box.png"));
 
-        JCommandButton attackPlanerToolButton = factoryButton("Angriffsplaner (automatisch)", "graphics/big/att_auto.png", "Öffnet den automatischen Angriffsplaner", "Der automatische Angriffsplaner erlaubt es, innerhalb kürzester Zeit eine Vielzahl von Angriffen bzw. Truppenbewegungen auf eine beliebige Menge von Zielen zu planen. Er ist dabei auf die grobe Planung unter Verwendung vieler Dörfern ausgelegt, gezielte AG-Angriffe oder Angriffe mit sehr wenigen Dörfern liefern in der Regeln weniger gute oder keine Ergebnisse.", true);
+        JCommandButton attackPlanerToolButton = factoryButton("Taktikplaner", "graphics/big/att_auto.png", "Öffnet den Taktikplaner", 
+                "Der Taktikplaner erlaubt es, innerhalb kürzester Zeit eine Vielzahl von Angriffen oder Verteidungen auf eine beliebige Menge von Zielen zu planen. "
+                + "Er ist dabei auf die grobe Planung unter Verwendung vieler Dörfern ausgelegt, gezielte AG-Angriffe oder Angriffe mit sehr wenigen Dörfern liefern "
+                + "in der Regeln weniger gute oder keine Ergebnisse.", true);
         attackPlanerToolButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {

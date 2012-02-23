@@ -22,6 +22,7 @@ import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.util.Comparator;
 import java.util.StringTokenizer;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -187,10 +188,9 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
 
     public String getFullName() {
         if (stringRepresentation == null) {
-            String res = getName();
-            res += " " + getCoordAsString();
-            res += " " + getContinentString();
-            stringRepresentation = res;
+            StringBuilder b = new StringBuilder();
+            b.append(getName()).append(" ").append(getCoordAsString()).append(" ").append(getContinentString());
+            stringRepresentation = b.toString();
         }
         return stringRepresentation;
     }
@@ -501,7 +501,8 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
 
         @Override
         public int compare(Village s1, Village s2) {
-            if (Village.getOrderType() == ORDER_ALPHABETICALLY) {
+  
+           /* if (Village.getOrderType() == ORDER_ALPHABETICALLY) {
                 int n1 = s1.toString().length(), n2 = s2.toString().length();
                 for (int i1 = 0, i2 = 0; i1 < n1 && i2 < n2; i1++, i2++) {
                     char c1 = s1.toString().charAt(i1);
@@ -513,15 +514,15 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
                             c1 = Character.toLowerCase(c1);
                             c2 = Character.toLowerCase(c2);
                             if (c1 != c2) {
-                                return c1 - c2;
+                                returcompareTon c1 - c2;
                             }
                         }
                     }
                 }
                 return n1 - n2;
-            } else {
+            } else {*/
                 return s1.compareTo(s2);
-            }
+           // }
         }
     }
 

@@ -259,13 +259,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         }
         jDistanceTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-        int w0 = 100;
-        for (Village v : GlobalOptions.getSelectedProfile().getTribe().getVillageList()) {
-            int w = jDistanceTable.getGraphics().getFontMetrics().stringWidth(v.getFullName());
-            if (w > w0) {
-                w0 = w;
-            }
-        }
+        int w0 = 200;
         for (int i = 0; i < jDistanceTable.getColumnCount(); i++) {
             TableColumnExt column = jDistanceTable.getColumnExt(i);
             if (i == 0) {

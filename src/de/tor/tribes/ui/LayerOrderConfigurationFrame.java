@@ -113,9 +113,9 @@ public class LayerOrderConfigurationFrame extends javax.swing.JFrame implements 
         tooltips.put("Notizmarkierungen", "<html><font font size='-1'><b>Notizmarkierungen</b><br/>Diese Ebene stellt Markierungen von Notizen dar."
                 + " Sind einem Dorf Notizen zugeordnet und sind f&uuml;r diese Notizen Kartenmarkierungen eingestellt, so werden die auf der Hauptkarte"
                 + " angezeigt wenn diese Ebene eingeblendet ist.</html>");
-        tooltips.put("Angriffe", "<html><font font size='-1'><b>Angriffe</b><br/>Diese Ebene stellt Angriffe, die sich in Angriffspl&auml;nen befinden,"
-                + " auf der Hauptkarte dar, sofern die Angriffe eingezeichnet werden sollen. In den DS Workbench Einstellungen unter 'Angriffe' kann man"
-                + " weitere Eigenschaften dieser sog. Angriffsvektoren festlegen (z.B. Aktuelle Truppenposition anzeigen oder die Laufrichtung einzeichnen)<br/><br/>"
+        tooltips.put("Angriffe", "<html><font font size='-1'><b>Angriffe</b><br/>Diese Ebene stellt Angriffe, die sich in Befehlspl&auml;nen befinden,"
+                + " auf der Hauptkarte dar, sofern die Angriffe eingezeichnet werden sollen. In den DS Workbench Einstellungen unter 'Befehle' kann man"
+                + " weitere Eigenschaften dieser sog. Befehlsvektoren festlegen (z.B. Aktuelle Truppenposition anzeigen oder die Laufrichtung einzeichnen)<br/><br/>"
                 + "<img src='" + warnURL + "'/>&nbsp;In der Regel wird empfohlen, diese Ebene auszublenden. Dies dient zum einen der &Uuml;bersichtlichkeit,"
                 + " zum anderen ist das Zeichnen dieser Ebene, besonders wenn Truppenposition und Laufrichtung eingezeichnet werden, sehr aufw&auml;ndig.</html>");
         tooltips.put("Unterstützungen", "<html><font font size='-1'><b>Unterst&uuml;tzungen</b><br/>Diese Ebene stellt dar, in welchen D&ouml;rfern Unterst&uuml;tzungen "

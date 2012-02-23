@@ -237,7 +237,7 @@ public class DefenseAnalysePanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jTableScrollPane, gridBagConstraints);
 
-        jButton1.setToolTipText("Angriffsdaten aus dem SOS-Analyzer einlesen");
+        jButton1.setToolTipText("Angriffsdaten aus dem SOS-Analyzer übertragen");
         jButton1.setMaximumSize(new java.awt.Dimension(73, 60));
         jButton1.setMinimumSize(new java.awt.Dimension(73, 60));
         jButton1.setPreferredSize(new java.awt.Dimension(73, 60));
@@ -302,7 +302,7 @@ public class DefenseAnalysePanel extends WizardPage {
 
     private void fireLoadAttackInformationEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireLoadAttackInformationEvent
         if (!DSWorkbenchSOSRequestAnalyzer.getSingleton().sendDataToDefensePlaner()) {
-            JOptionPaneHelper.showInformationBox(this, "Keine Angriffe vorhanden", "Information");
+            JOptionPaneHelper.showInformationBox(this, "Der SOS-Analyzer enthält keine Angriffe.\nBitte lies zuerst SOS-Anfragen ein.", "Information");
         }
     }//GEN-LAST:event_fireLoadAttackInformationEvent
 
@@ -341,7 +341,7 @@ public class DefenseAnalysePanel extends WizardPage {
     @Override
     public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
         if (getModel().getRowCount() == 0) {
-            setProblem("Keine Angriffe vorhanden. Verwende den SOS Analyzer, um Einträge einzufügen.");
+            setProblem("Keine Angriffe vorhanden. Lies bitte zuerst SOS-Anfragen im SOS-Analyzer ein.");
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
         DefenseSourcePanel.getSingleton().update();

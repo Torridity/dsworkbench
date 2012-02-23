@@ -166,7 +166,7 @@
             </Container>
             <Component class="javax.swing.JButton" name="jButton1">
               <Properties>
-                <Property name="toolTipText" type="java.lang.String" value="Angriffsdaten aus dem SOS-Analyzer einlesen"/>
+                <Property name="toolTipText" type="java.lang.String" value="Angriffsdaten aus dem SOS-Analyzer &#xfc;bertragen"/>
                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[73, 60]"/>
                 </Property>

@@ -88,8 +88,6 @@ public class TroopTableHeaderRenderer extends DefaultTableCellRenderer implement
             }
         }
 
-
-
         TroopsTableModel model = (TroopsTableModel) table.getModel();
 
         ImageIcon icon = model.getColumnIcon((String) value);
@@ -101,8 +99,8 @@ public class TroopTableHeaderRenderer extends DefaultTableCellRenderer implement
             setText("");
             if (sortIcon != null) {
                 g2d.setColor(getBackground());
-                g2d.fillRect(18 - sortIcon.getIconWidth()-2, 18 - sortIcon.getIconHeight()-2, sortIcon.getIconWidth()+2, sortIcon.getIconHeight()+2);
-                sortIcon.paintIcon(this, g2d, 18 - sortIcon.getIconWidth()-1, 18 - sortIcon.getIconHeight()-1);
+                g2d.fillRect(18 - sortIcon.getIconWidth() - 2, 18 - sortIcon.getIconHeight() - 2, sortIcon.getIconWidth() + 2, sortIcon.getIconHeight() + 2);
+                sortIcon.paintIcon(this, g2d, 18 - sortIcon.getIconWidth() - 1, 18 - sortIcon.getIconHeight() - 1);
             }
             setIcon(new ImageIcon(i));
         } else {

@@ -552,13 +552,12 @@ public class AttackTargetPanel extends WizardPage {
 
     @Override
     public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
-        if (getModel().getRowCount() > 0) {
-            AttackCalculationPanel.getSingleton().updateStatus();
-            return WizardPanelNavResult.PROCEED;
+        if (getModel().getRowCount() <= 0) {
+            setProblem("Keine Ziele gewählt");
+            return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
-
-        setProblem("Keine Ziele gewählt");
-        return WizardPanelNavResult.REMAIN_ON_PAGE;
+        AttackCalculationPanel.getSingleton().updateStatus();
+        return WizardPanelNavResult.PROCEED;
     }
 
     @Override

@@ -35,23 +35,24 @@ public class AllyUtils {
         final String filter = pFilter.toLowerCase();
 
         List<Ally> allies = new LinkedList<Ally>();
-        Enumeration<Ally> keys = DataHolder.getSingleton().getAllies().elements();
-        while (keys.hasMoreElements()) {
-            allies.add(keys.nextElement());
+        CollectionUtils.addAll(allies, DataHolder.getSingleton().getAllies().elements());
+
+        if (filter.length() > 0) {
+            CollectionUtils.filter(allies, new Predicate() {
+
+                @Override
+                public boolean evaluate(Object o) {
+                    return pFilter.length() == 0 || ((Ally) o).getName().toLowerCase().indexOf(filter) >= 0 || ((Ally) o).getTag().toLowerCase().indexOf(filter) >= 0;
+                }
+            });
         }
-        CollectionUtils.filter(allies, new Predicate() {
 
-            @Override
-            public boolean evaluate(Object o) {
-                return pFilter.length() == 0 || ((Ally) o).getName().toLowerCase().indexOf(filter) >= 0 || ((Ally) o).getTag().toLowerCase().indexOf(filter) >= 0;
-            }
-        });
-
-        Ally[] result = allies.toArray(new Ally[allies.size()]);
         if (pComparator != null) {
-            Arrays.sort(result, pComparator);
+            Collections.sort(allies, pComparator);
         }
-        result = (Ally[]) ArrayUtils.add(result, 0, NoAlly.getSingleton());
+        allies.add(0, NoAlly.getSingleton());
+        Ally[] result = allies.toArray(new Ally[allies.size()]);
+        //result = (Ally[]) ArrayUtils.add(result, 0, NoAlly.getSingleton());
         return result;
     }
 

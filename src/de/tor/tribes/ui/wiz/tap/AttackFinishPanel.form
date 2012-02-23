@@ -259,7 +259,7 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/res/48x48/half_axe_clipboard.png"/>
                 </Property>
-                <Property name="toolTipText" type="java.lang.String" value="Alle Angriffe in die Angriffs&#xfc;bersicht &#xfc;bertragen"/>
+                <Property name="toolTipText" type="java.lang.String" value="Alle Angriffe in die Befehls&#xfc;bersicht &#xfc;bertragen"/>
                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[70, 70]"/>
                 </Property>
@@ -321,7 +321,7 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/res/48x48/full_axe_clipboard.png"/>
                 </Property>
-                <Property name="toolTipText" type="java.lang.String" value="Nur volle Angriffe in die Angriffs&#xfc;bersicht &#xfc;bertragen"/>
+                <Property name="toolTipText" type="java.lang.String" value="Nur volle Angriffe in die Befehls&#xfc;bersicht &#xfc;bertragen"/>
                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[70, 70]"/>
                 </Property>
@@ -346,7 +346,7 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/res/48x48/selection_axe_clipboard.png"/>
                 </Property>
-                <Property name="toolTipText" type="java.lang.String" value="Ausgew&#xe4;hlte Angriffe in die Angriffs&#xfc;bersicht &#xfc;bertragen"/>
+                <Property name="toolTipText" type="java.lang.String" value="Ausgew&#xe4;hlte Angriffe in die Befehls&#xfc;bersicht &#xfc;bertragen"/>
                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[70, 70]"/>
                 </Property>

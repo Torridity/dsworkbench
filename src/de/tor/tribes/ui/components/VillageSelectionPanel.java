@@ -633,7 +633,10 @@ abstract class FilterPipeline<C, D> {
         if (outputList.isVisible()) {
             outputList.setSelectedIndex(0);
         } else {
-            outputList.getSelectionModel().setSelectionInterval(0, outputList.getElementCount() - 1);
+            if (outputList instanceof GroupSelectionList) {
+                //for group selection lists all elements are selected if list is not visible...all other lists have to handle this for themselfes
+                outputList.getSelectionModel().setSelectionInterval(0, outputList.getElementCount() - 1);
+            }
         }
     }
 }

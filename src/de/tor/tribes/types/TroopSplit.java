@@ -55,7 +55,8 @@ public class TroopSplit {
                 }
             }
         }
-        iSplitCount = maxSplitCount;
+
+        iSplitCount = Math.max(0, maxSplitCount);
     }
 
     public Village getVillage() {

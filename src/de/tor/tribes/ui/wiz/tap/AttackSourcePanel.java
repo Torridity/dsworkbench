@@ -460,7 +460,7 @@ public class AttackSourcePanel extends WizardPage {
     public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
         if (getAllElements().length == 0) {
             setProblem("Keine Dörfer gewählt");
-            return WizardPanelNavResult.PROCEED;
+            return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
         AttackSourceFilterPanel.getSingleton().setup();
         return WizardPanelNavResult.PROCEED;

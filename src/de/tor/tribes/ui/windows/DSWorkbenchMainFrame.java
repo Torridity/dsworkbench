@@ -62,6 +62,7 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.ui.views.*;
+import de.tor.tribes.ui.wiz.red.ResourceDistributorWizard;
 import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.interfaces.MapShotListener;
@@ -617,10 +618,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             DSWorkbenchChurchFrame.getSingleton().restoreProperties();
             DSWorkbenchAttackFrame.getSingleton().resetView();
             DSWorkbenchAttackFrame.getSingleton().restoreProperties();
-            /*
-             * DSWorkbenchMerchantDistibutor.getSingleton().resetView(); DSWorkbenchMerchantDistibutor.getSingleton().restoreProperties();
-             */
             TacticsPlanerWizard.restoreProperties();
+            ResourceDistributorWizard.restoreProperties();
             DSWorkbenchTagFrame.getSingleton().resetView();
             DSWorkbenchTagFrame.getSingleton().restoreProperties();
             DSWorkbenchConquersFrame.getSingleton().resetView();
@@ -904,6 +903,10 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     }
 
     private void showTotD() {
+        if (true) {
+            //@TODO enable TOTD if necessary
+            return;
+        }
         try {
             URLConnection connection = new URL("http://www.dsworkbench.de/downloads/totd/totd.properties").openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
             Properties props = new Properties();
@@ -1481,7 +1484,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMenu3.add(jClockItem);
 
         jTribeTribeAttackItem.setBackground(new java.awt.Color(239, 235, 223));
-        jTribeTribeAttackItem.setText("Angriffsplaner");
+        jTribeTribeAttackItem.setText("Taktikplaner");
         jTribeTribeAttackItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireToolsActionEvent(evt);
@@ -2584,9 +2587,9 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
         DSWorkbenchSearchFrame.getSingleton().setVisible(true);
     } else if (evt.getSource() == jClockItem) {
         ClockFrame.getSingleton().setVisible(true);
-    } /*
-     * else if (evt.getSource() == jTribeTribeAttackItem) { mTribeTribeAttackFrame.setVisible(true); }
-     */ else if (evt.getSource() == jUnitOverviewItem) {
+    } else if (evt.getSource() == jTribeTribeAttackItem) {
+        TacticsPlanerWizard.show();
+    } else if (evt.getSource() == jUnitOverviewItem) {
         UnitOrderBuilder.showUnitOrder(null, null);
     } else if (evt.getSource() == jSelectionOverviewItem) {
         DSWorkbenchSelectionFrame.getSingleton().setVisible(true);
@@ -2602,7 +2605,7 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
     } else if (evt.getSource() == jSOSAnalyzerItem) {
         DSWorkbenchSOSRequestAnalyzer.getSingleton().setVisible(true);
     } else if (evt.getSource() == jMerchantDistributorItem) {
-        DSWorkbenchMerchantDistibutor.getSingleton().setVisible(true);
+        ResourceDistributorWizard.show();
     }
 }//GEN-LAST:event_fireToolsActionEvent
 
@@ -2952,8 +2955,11 @@ private void fireDSWorkbenchClosingEvent(java.awt.event.WindowEvent evt) {//GEN-
     try {
         GlobalOptions.addProperty("ribbon.minimized", Boolean.toString(getRibbon().isMinimized()));
         GlobalOptions.getSelectedProfile().updateProperties();
+        TacticsPlanerWizard.storeProperties();
+        ResourceDistributorWizard.storeProperties();
         GlobalOptions.getSelectedProfile().storeProfileData();
     } catch (Exception e) {
+        logger.error("Failed to store profile settings on shutdown");
     }
     dispose();
     System.exit(0);
@@ -3180,7 +3186,7 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
 
                 File target = new File(file);
 
-                String extension = JOptionPane.showInputDialog(this, "Welche Kennzeichnung sollen importierte Angriffspläne und Tags erhalten?\n" + "Lass das Eingabefeld leer oder drücke 'Abbrechen', um sie unverändert zu importieren.", "Kennzeichnung festlegen", JOptionPane.INFORMATION_MESSAGE);
+                String extension = JOptionPane.showInputDialog(this, "Welche Kennzeichnung sollen importierte Pläne und Tags erhalten?\n" + "Lass das Eingabefeld leer oder drücke 'Abbrechen', um sie unverändert zu importieren.", "Kennzeichnung festlegen", JOptionPane.INFORMATION_MESSAGE);
                 if (extension != null && extension.length() > 0) {
                     logger.debug("Using import extension '" + extension + "'");
                 } else {

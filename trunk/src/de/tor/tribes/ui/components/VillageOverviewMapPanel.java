@@ -78,29 +78,10 @@ public class VillageOverviewMapPanel extends javax.swing.JPanel {
         int col = cont % 10;
         int row = cont / 10;
 
-        if (minCol == -1) {
-            minCol = col;
-        } else {
-            minCol = Math.min(col, minCol);
-        }
-
-        if (maxCol == -1) {
-            maxCol = col;
-        } else {
-            maxCol = Math.max(col, maxCol);
-        }
-
-        if (minRow == -1) {
-            minRow = row;
-        } else {
-            minRow = Math.min(row, minRow);
-        }
-
-        if (maxRow == -1) {
-            maxRow = row;
-        } else {
-            maxRow = Math.max(row, maxRow);
-        }
+        minCol = (minCol == -1) ? col : Math.min(col, minCol);
+        maxCol = (maxCol == -1) ? col : Math.max(col, maxCol);
+        minRow = (minRow == -1) ? row : Math.min(row, minRow);
+        maxRow = (maxRow == -1) ? row : Math.max(row, maxRow);
 
         upperLeftContinent = 10 * minRow + minCol;
 

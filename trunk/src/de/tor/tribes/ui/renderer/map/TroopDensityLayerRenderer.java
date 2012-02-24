@@ -130,13 +130,7 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
         ImageUtils.setupGraphics(g2d);
         //iterate through entire row
         int cnt = 0;
-        boolean includeSupport = false;
-        String val = GlobalOptions.getProperty("include.support");
-        if (val == null || Boolean.parseBoolean(val)) {
-            includeSupport = true;
-        } else {
-            includeSupport = false;
-        }
+        boolean includeSupport = GlobalOptions.getProperties().getBoolean("include.support", true);
         for (int x = firstCol; x < firstCol + Math.abs(pSettings.getColumnsToRender()); x++) {
             for (int y = 0; y < pSettings.getVillagesInY(); y++) {
                 cnt++;
@@ -168,13 +162,7 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
         int lastVillageCol = 0;
 
         Village currentMouseVillage = MapPanel.getSingleton().getVillageAtMousePos();
-        boolean includeSupport = false;
-        String val = GlobalOptions.getProperty("include.support");
-        if (val == null || Boolean.parseBoolean(val)) {
-            includeSupport = true;
-        } else {
-            includeSupport = false;
-        }
+        boolean includeSupport = GlobalOptions.getProperties().getBoolean("include.support", true);
 
         for (int x = 0; x < pSettings.getVillagesInX(); x++) {
             //iterate from first row for 'pRows' times
@@ -218,13 +206,7 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
         }
 
         if (v != null && v.isVisibleOnMap() && (defIn != 0 || defOwn != 0)) {
-            int maxDef = 650000;
-            try {
-                maxDef = Integer.parseInt(GlobalOptions.getProperty("max.density.troops"));
-            } catch (Exception e) {
-                maxDef = 650000;
-            }
-
+            int maxDef = GlobalOptions.getProperties().getInt("max.density.troops", 65000);
             double percOfMax = defIn / maxDef;
             double percFromOthers = (defIn - defOwn) / defIn;
             double half = (double) maxDef / 2.0;

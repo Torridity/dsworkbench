@@ -100,11 +100,11 @@ import org.jdesktop.swingx.table.TableColumnExt;
  * @author Torridity
  */
 public class AttackTableTab extends javax.swing.JPanel implements ListSelectionListener {
-    
+
     private static Logger logger = Logger.getLogger("AttackTableTab");
-    
+
     public static enum TRANSFER_TYPE {
-        
+
         CLIPBOARD_PLAIN, CLIPBOARD_BB, FILE_HTML, FILE_GM, BROWSER_IGM, DSWB_RETIME, SELECTION_TOOL, BROWSER_LINK, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD
     }
     private String sAttackPlan = null;
@@ -115,11 +115,11 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private ActionListener actionListener = null;
     private static List<Highlighter> highlighters = new ArrayList<Highlighter>();
     private static boolean useSortColoring = false;
-    
+
     static {
         jxAttackTable.setRowHeight(24);
         HighlightPredicate.ColumnHighlightPredicate colu = new HighlightPredicate.ColumnHighlightPredicate(0, 1, 2, 3, 4, 5, 6, 7, 10, 11, 12);
-        
+
         jxAttackTable.setHighlighters(new CompoundHighlighter(colu, HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B)));
         jxAttackTable.setColumnControlVisible(true);
         jxAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
@@ -128,9 +128,9 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jxAttackTable.setDefaultRenderer(Date.class, new ColoredDateCellRenderer());
         jxAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jxAttackTable.setDefaultEditor(Integer.class, new NoteIconCellEditor(NoteIconCellEditor.ICON_TYPE.NOTE));
-        
+
         attackModel = new AttackTableModel(AttackManager.DEFAULT_GROUP);
-        
+
         jxAttackTable.setModel(attackModel);
         TableColumnExt drawCol = jxAttackTable.getColumnExt("Einzeichnen");
         drawCol.setCellRenderer(new DrawNotDrawCellRenderer());
@@ -138,7 +138,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         TableColumnExt transferCol = jxAttackTable.getColumnExt("Übertragen");
         transferCol.setCellRenderer(new SentNotSentCellRenderer());
         transferCol.setCellEditor(new SentNotSentEditor());
-        
+
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
         Graphics2D g = back.createGraphics();
         GeneralPath p = new GeneralPath();
@@ -149,7 +149,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         g.setColor(Color.GREEN.darker());
         g.fill(p);
         g.dispose();
-        
+
         jxAttackTable.addHighlighter(new PainterHighlighter(HighlightPredicate.EDITABLE, new ImagePainter(back, HorizontalAlignment.RIGHT, VerticalAlignment.TOP)));
     }
 
@@ -166,7 +166,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         initComponents();
         jScrollPane1.setViewportView(jxAttackTable);
         jUnitBox.setRenderer(new UnitListCellRenderer());
-        
+
         jTypeComboBox.setRenderer(new NoteIconListCellRenderer(NoteIconCellEditor.ICON_TYPE.NOTE));
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         for (int i = -1; i <= ImageManager.MAX_NOTE_SYMBOL; i++) {
@@ -187,43 +187,39 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             jxAttackTable.registerKeyboardAction(pActionListener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxAttackTable.registerKeyboardAction(pActionListener, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxAttackTable.getActionMap().put("find", new AbstractAction() {
-                
+
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     pActionListener.actionPerformed(new ActionEvent(jxAttackTable, 0, "Find"));
                 }
             });
-            
+
             jxAttackTable.getRowSorter().addRowSorterListener(new RowSorterListener() {
-                
+
                 @Override
                 public void sorterChanged(RowSorterEvent e) {
                     actionListener.actionPerformed(new ActionEvent(this, 0, "Recolor"));
                 }
             });
-            
+
             KEY_LISTENER_ADDED = true;
         }
         jxAttackTable.getSelectionModel().addListSelectionListener(AttackTableTab.this);
         jDateField.setDate(new Date());
-        String prop = GlobalOptions.getProperty("attack.script.attacks.in.village.info");
-        jShowAttacksInVillageInfo.setSelected((prop == null) ? true : Boolean.parseBoolean(prop));
-        prop = GlobalOptions.getProperty("attack.script.attacks.on.confirm.page");
-        jShowAttacksOnConfirmPage.setSelected((prop == null) ? true : Boolean.parseBoolean(prop));
-        prop = GlobalOptions.getProperty("attack.script.attacks.in.place");
-        jShowAttacksInPlace.setSelected((prop == null) ? true : Boolean.parseBoolean(prop));
-        prop = GlobalOptions.getProperty("attack.script.attacks.in.overview");
-        jShowAttacksInOverview.setSelected((prop == null) ? true : Boolean.parseBoolean(prop));
+        jShowAttacksInVillageInfo.setSelected(GlobalOptions.getProperties().getBoolean("attack.script.attacks.in.village.info", true));
+        jShowAttacksOnConfirmPage.setSelected(GlobalOptions.getProperties().getBoolean("attack.script.attacks.on.confirm.page", true));
+        jShowAttacksInPlace.setSelected(GlobalOptions.getProperties().getBoolean("attack.script.attacks.in.place", true));
+        jShowAttacksInOverview.setSelected(GlobalOptions.getProperties().getBoolean("attack.script.attacks.in.overview", true));
         jTimeChangeDialog.pack();
         jSendAttacksIGMDialog.pack();
         jChangeAttackTypeDialog.pack();
         jScriptExportDialog.pack();
     }
-    
+
     public void deregister() {
         jxAttackTable.getSelectionModel().removeListSelectionListener(this);
     }
-    
+
     public void setUseSortColoring() {
         useSortColoring = !useSortColoring;
         if (!useSortColoring) {
@@ -235,7 +231,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             updateSortHighlighter();
         }
     }
-    
+
     @Override
     public void valueChanged(ListSelectionEvent e) {
         if (e.getValueIsAdjusting()) {
@@ -245,36 +241,36 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             }
         }
     }
-    
+
     public void showSuccess(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(Color.GREEN));
         jXLabel1.setForeground(Color.BLACK);
         jXLabel1.setText(pMessage);
     }
-    
+
     public void showInfo(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(getBackground()));
         jXLabel1.setForeground(Color.BLACK);
         jXLabel1.setText(pMessage);
     }
-    
+
     public void showError(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(Color.RED));
         jXLabel1.setForeground(Color.WHITE);
         jXLabel1.setText(pMessage);
     }
-    
+
     public String getAttackPlan() {
         return sAttackPlan;
     }
-    
+
     public JXTable getAttackTable() {
         return jxAttackTable;
     }
-    
+
     public void addAttackTimer() {
         List<Attack> selection = getSelectedAttacks();
         if (selection.isEmpty()) {
@@ -296,7 +292,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             }
         }
     }
-    
+
     public void updateCountdown() {
         TableColumnExt col = jxAttackTable.getColumnExt("Verbleibend");
         if (col.isVisible()) {
@@ -310,7 +306,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             jxAttackTable.repaint(startX, (int) jxAttackTable.getVisibleRect().getY(), startX + col.getWidth(), (int) jxAttackTable.getVisibleRect().getHeight());
         }
     }
-    
+
     public void updateTime() {
         TableColumnExt col = jxAttackTable.getColumnExt("Abschickzeit");
         if (col.isVisible()) {
@@ -324,7 +320,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             jxAttackTable.repaint(startX, 0, startX + col.getWidth(), jxAttackTable.getHeight());
         }
     }
-    
+
     public void updatePlan() {
         attackModel.setPlan(sAttackPlan);
         String[] cols = new String[]{"Einheit", "Typ", "Übertragen", "Einzeichnen"};
@@ -334,18 +330,18 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             columns.setMaxWidth(80);
             columns.setWidth(80);
         }
-        
+
         jScrollPane1.setViewportView(jxAttackTable);
         jxAttackTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         updateSortHighlighter();
     }
-    
+
     public void updateSortHighlighter() {
         if (useSortColoring) {
             TableHelper.applyTableColoring(jxAttackTable, getAttackPlan(), highlighters);
         }
     }
-    
+
     public void updateFilter(final String pValue, final List<String> columns, final boolean pCaseSensitive, final boolean pFilterRows) {
         if (highlighter != null) {
             jxAttackTable.removeHighlighter(highlighter);
@@ -368,7 +364,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             }
         } else {
             jxAttackTable.setRowFilter(new RowFilter<TableModel, Integer>() {
-                
+
                 @Override
                 public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
                     final List<Integer> relevantCols = new LinkedList<Integer>();
@@ -379,7 +375,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                             relevantCols.add(cols.indexOf(col));
                         }
                     }
-                    
+
                     for (Integer col : relevantCols) {
                         if (pCaseSensitive) {
                             if (entry.getStringValue(col).indexOf(pValue) > -1) {
@@ -1060,21 +1056,21 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         }
         jScriptExportDialog.setVisible(false);
     }//GEN-LAST:event_fireDoExportAsScriptEvent
-    
+
     private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSendIGMsEvent
         if (evt.getSource() == jSendButton) {
             actionListener.actionPerformed(new ActionEvent(this, 0, "SendIGM"));
         }
         jSendAttacksIGMDialog.setVisible(false);
 }//GEN-LAST:event_fireSendIGMsEvent
-    
+
     private void fireCloseTimeChangeDialogEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCloseTimeChangeDialogEvent
         if (evt.getSource() == jOKButton) {
             actionListener.actionPerformed(new ActionEvent(this, 0, "TimeChange"));
         }
         jTimeChangeDialog.setVisible(false);
 }//GEN-LAST:event_fireCloseTimeChangeDialogEvent
-    
+
     private void fireModifyTimeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireModifyTimeEvent
         boolean moveMode = false;
         boolean arriveMode = false;
@@ -1105,26 +1101,26 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jRandomField.setEnabled(randomMode);
         jNotRandomToNightBonus.setEnabled(randomMode);
 }//GEN-LAST:event_fireModifyTimeEvent
-    
+
     private void fireChangeUnitTypeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeUnitTypeEvent
         if (evt.getSource() == jAcceptChangeUnitTypeButton) {
             actionListener.actionPerformed(new ActionEvent(this, 0, "UnitChange"));
         }
         jChangeAttackTypeDialog.setVisible(false);
 }//GEN-LAST:event_fireChangeUnitTypeEvent
-    
+
     private void jAdeptTypeBoxfireEnableDisableAdeptTypeEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jAdeptTypeBoxfireEnableDisableAdeptTypeEvent
         jTypeComboBox.setEnabled(jAdeptTypeBox.isSelected());
 }//GEN-LAST:event_jAdeptTypeBoxfireEnableDisableAdeptTypeEvent
-    
+
     private void jAdeptUnitBoxfireEnableDisableChangeUnitEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jAdeptUnitBoxfireEnableDisableChangeUnitEvent
         jUnitBox.setEnabled(jAdeptUnitBox.isSelected());
 }//GEN-LAST:event_jAdeptUnitBoxfireEnableDisableChangeUnitEvent
-    
+
     private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideInfoEvent
         infoPanel.setCollapsed(true);
     }//GEN-LAST:event_fireHideInfoEvent
-    
+
     private void fireChangeAdeptTypeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeAdeptTypeEvent
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             if (jAdaptTypeBox.getSelectedIndex() == 0) {//adapt both
@@ -1139,7 +1135,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             }
         }
     }//GEN-LAST:event_fireChangeAdeptTypeEvent
-    
+
     private void fireTypeSelectionChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireTypeSelectionChangedEvent
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             Integer v = (Integer) jTypeComboBox.getSelectedItem();
@@ -1214,7 +1210,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             Integer min = (Integer) jMinuteField.getValue();
             Integer hour = (Integer) jHourField.getValue();
             Integer day = (Integer) jDayField.getValue();
-            
+
             for (Attack attack : attacksToModify) {
                 long arrive = attack.getArriveTime().getTime();
                 long diff = sec * 1000 + min * 60000 + hour * 3600000 + day * 86400000;
@@ -1223,7 +1219,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 arrive += diff;
                 attack.setArriveTime(new Date(arrive));
             }
-            
+
         } else if (jModifyArrivalOption.isSelected()) {
             Calendar arrive = Calendar.getInstance();
             arrive.setTime(jDateField.getSelectedDate());
@@ -1294,7 +1290,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                     //if later, add diff to arrival, else remove diff from arrival
                     int sign = (Math.random() > .5) ? 1 : -1;
                     arrive = (long) (arrive + (sign * Math.random() * rand));
-                    
+
                     c.setTimeInMillis(arrive);
                     int hours = c.get(Calendar.HOUR_OF_DAY);
                     if (hours >= 0 && hours < 8 && jNotRandomToNightBonus.isSelected()) {
@@ -1309,7 +1305,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         }
         attackModel.fireTableDataChanged();
     }
-    
+
     public void fireChangeUnitEvent() {
         int newType = -2;
         if (jAdeptTypeBox.isSelected()) {
@@ -1319,7 +1315,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         if (jAdeptUnitBox.isSelected()) {
             newUnit = (UnitHolder) jUnitBox.getSelectedItem();
         }
-        
+
         for (Attack attack : getSelectedAttacks()) {
             if (newType != -2) {
                 attack.setType(newType);
@@ -1330,7 +1326,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         }
         attackModel.fireTableDataChanged();
     }
-    
+
     public void fireSendIGMEvent() {
         String subject = jSubject.getText();
         String apiKey = jAPIKey.getText().trim();
@@ -1349,13 +1345,13 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 showSuccess(result.getMessage());
         }
     }
-    
+
     public void fireExportScriptEvent() {
         List<Attack> attacks = getSelectedAttacks();
         if (attacks.isEmpty()) {
             return;
         }
-        
+
         if (AttackScriptWriter.writeAttackScript(attacks, false, 5, true, Color.GREEN, Color.RED, jShowAttacksInVillageInfo.isSelected(), jShowAttacksOnConfirmPage.isSelected(), jShowAttacksInPlace.isSelected(), jShowAttacksInOverview.isSelected())) {
             showSuccess("Script erfolgreich nach 'zz_attack_info.user.js' geschrieben.\nDenke bitte daran, das Script in deinem Browser einzufügen/zu aktualisieren!");
             if (System.getProperty("os.name").startsWith("Windows")) {
@@ -1377,7 +1373,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         GlobalOptions.addProperty("attack.script.attacks.in.place", Boolean.toString(jShowAttacksInPlace.isSelected()));
         GlobalOptions.addProperty("attack.script.attacks.in.overview", Boolean.toString(jShowAttacksInOverview.isSelected()));
     }
-    
+
     public void cleanup() {
         List<ManageableType> elements = AttackManager.getSingleton().getAllElements(getAttackPlan());
         List<Attack> toRemove = new LinkedList<Attack>();
@@ -1392,39 +1388,39 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             return;
         }
         String message = (toRemove.size() == 1) ? "1 Befehl entfernen?" : toRemove.size() + " Befehle entfernen?";
-        
+
         if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Abgelaufene Befehle entfernen", "Nein", "Ja") == JOptionPane.NO_OPTION) {
             return;
         }
-        
+
         logger.debug("Cleaning up " + toRemove.size() + " attacks");
-        
+
         AttackManager.getSingleton().removeElements(getAttackPlan(), toRemove);
         attackModel.fireTableDataChanged();
         showSuccess(toRemove.size() + " Befehl(e) entfernt");
     }
-    
+
     public boolean deleteSelection(boolean pAsk) {
         List<Attack> selectedAttacks = getSelectedAttacks();
-        
+
         if (pAsk) {
             String message = ((selectedAttacks.size() == 1) ? "Befehl " : (selectedAttacks.size() + " Befehle ")) + "wirklich löschen?";
             if (selectedAttacks.isEmpty() || JOptionPaneHelper.showQuestionConfirmBox(this, message, "Befehle löschen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
                 return false;
             }
         }
-        
+
         jxAttackTable.editingCanceled(new ChangeEvent(this));
         AttackManager.getSingleton().removeElements(getAttackPlan(), selectedAttacks);
         attackModel.fireTableDataChanged();
         showSuccess(selectedAttacks.size() + " Befehl(e) gelöscht");
         return true;
     }
-    
+
     public void deleteSelection() {
         deleteSelection(true);
     }
-    
+
     public void changeSelectionTime() {
         if (!getSelectedAttacks().isEmpty()) {
             jTimeChangeDialog.setVisible(true);
@@ -1432,12 +1428,12 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             showInfo("Keine Befehle gewählt");
         }
     }
-    
+
     public void changeSelectionType() {
         if (!getSelectedAttacks().isEmpty()) {
-            
+
             jUnitBox.setModel(new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{})));
-            
+
             jChangeAttackTypeDialog.setLocationRelativeTo(this);
             jChangeAttackTypeDialog.pack();
             jChangeAttackTypeDialog.setVisible(true);
@@ -1445,7 +1441,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             showInfo("Keine Befehle gewählt");
         }
     }
-    
+
     public void setSelectionUnsent() {
         if (!getSelectedAttacks().isEmpty()) {
             for (Attack a : getSelectedAttacks()) {
@@ -1456,7 +1452,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             showInfo("Keine Befehle gewählt");
         }
     }
-    
+
     public void changeSelectionDrawState() {
         if (!getSelectedAttacks().isEmpty()) {
             for (Attack a : getSelectedAttacks()) {
@@ -1467,7 +1463,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             showInfo("Keine Befehle gewählt");
         }
     }
-    
+
     public void transferToScript() {
         if (getSelectedAttacks().isEmpty()) {
             showInfo("Keine Befehle gewählt");
@@ -1477,7 +1473,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jScriptExportDialog.setLocationRelativeTo(this);
         jScriptExportDialog.setVisible(true);
     }
-    
+
     private void transferToSelectionTool() {
         List<Attack> selection = getSelectedAttacks();
         if (selection.isEmpty()) {
@@ -1507,7 +1503,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         DSWorkbenchSelectionFrame.getSingleton().addVillages(villages);
         showInfo(villages.size() + ((villages.size() == 1) ? " Dorf" : " Dörfer") + " in die Auswahlübersicht übertragen");
     }
-    
+
     public void transferSelection(TRANSFER_TYPE pType) {
         switch (pType) {
             case COPY_TO_INTERNAL_CLIPBOARD:
@@ -1545,7 +1541,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 break;
         }
     }
-    
+
     private void copyPlainToExternalClipboardEvent() {
         try {
             List<Attack> attacks = getSelectedAttacks();
@@ -1557,7 +1553,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             for (Attack a : getSelectedAttacks()) {
                 buffer.append(AttackToPlainTextFormatter.formatAttack(a)).append("\n");
             }
-            
+
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(buffer.toString()), null);
             String result = "Daten in Zwischenablage kopiert.";
             showSuccess(result);
@@ -1568,7 +1564,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             showError(result);
         }
     }
-    
+
     private void copyBBToExternalClipboardEvent() {
         try {
             List<Attack> attacks = getSelectedAttacks();
@@ -1577,16 +1573,16 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 return;
             }
             boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
-            
+
             StringBuilder buffer = new StringBuilder();
             if (extended) {
                 buffer.append("[u][size=12]Geplante Befehle[/size][/u]\n\n");
             } else {
                 buffer.append("[u]Geplante Befehle[/u]\n\n");
             }
-            
+
             buffer.append(new AttackListFormatter().formatElements(attacks, extended));
-            
+
             if (extended) {
                 buffer.append("\n[size=8]Erstellt am ");
                 buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
@@ -1598,7 +1594,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
                 buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url]\n");
             }
-            
+
             String b = buffer.toString();
             StringTokenizer t = new StringTokenizer(b, "[");
             int cnt = t.countTokens();
@@ -1609,7 +1605,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                     return;
                 }
             }
-            
+
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
             String result = "Daten in Zwischenablage kopiert.";
             showSuccess(result);
@@ -1619,15 +1615,15 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             showError(result);
         }
     }
-    
+
     private void copyHTMLToFileEvent() {
         List<Attack> toExport = getSelectedAttacks();
-        
+
         if (toExport.isEmpty()) {
             showInfo("Keine Befehle ausgewählt");
             return;
         }
-        
+
         String dir = GlobalOptions.getProperty("screen.dir");
         if (dir == null) {
             dir = ".";
@@ -1640,11 +1636,11 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
             return;
         }
-        
+
         chooser.setDialogTitle("Datei auswählen");
-        
+
         chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
-            
+
             @Override
             public boolean accept(File f) {
                 if ((f != null) && (f.isDirectory() || f.getName().endsWith(".html"))) {
@@ -1652,7 +1648,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 }
                 return false;
             }
-            
+
             @Override
             public String getDescription() {
                 return "*.html";
@@ -1667,7 +1663,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 if (!file.endsWith(".html")) {
                     file += ".html";
                 }
-                
+
                 File target = new File(file);
                 if (target.exists()) {
                     if (JOptionPaneHelper.showQuestionConfirmBox(this, "Bestehende Datei überschreiben?", "Überschreiben", "Nein", "Ja") == JOptionPane.NO_OPTION) {
@@ -1675,8 +1671,8 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                         return;
                     }
                 }
-                
-                
+
+
                 AttackPlanHTMLExporter.doExport(target, selectedPlan, toExport);
                 //store current directory
                 GlobalOptions.addProperty("screen.dir", target.getParent());
@@ -1691,7 +1687,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             }
         }
     }
-    
+
     private void sendAttacksToBrowser() {
         List<Attack> attacks = getSelectedAttacks();
         if (attacks.isEmpty()) {
@@ -1701,7 +1697,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         int sentAttacks = 0;
         int ignoredAttacks = 0;
         UserProfile profile = DSWorkbenchAttackFrame.getSingleton().getQuickProfile();
-        
+
         for (Attack a : attacks) {
             if (!a.isTransferredToBrowser()) {
                 if (attacks.size() > 1) {//try to use click in case of multiple attacks
@@ -1710,7 +1706,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                         break;
                     }
                 }
-                
+
                 if (BrowserCommandSender.sendAttack(a, profile)) {
                     a.setTransferredToBrowser(true);
                     sentAttacks++;
@@ -1723,13 +1719,13 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 ignoredAttacks++;
             }
         }
-        
+
         if (sentAttacks == 1) {
             jxAttackTable.getSelectionModel().setSelectionInterval(jxAttackTable.getSelectedRow() + 1, jxAttackTable.getSelectedRow() + 1);
         } else {
             jxAttackTable.getSelectionModel().setSelectionInterval(jxAttackTable.getSelectedRow() + sentAttacks, jxAttackTable.getSelectedRow() + sentAttacks);
         }
-        
+
         String usedProfile = "";
         if (profile != null) {
             usedProfile = "als " + profile.toString();
@@ -1741,7 +1737,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         message += "</html>";
         showInfo(message);
     }
-    
+
     private boolean copyToInternalClipboard() {
         List<Attack> selection = getSelectedAttacks();
         if (selection.isEmpty()) {
@@ -1763,7 +1759,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             return false;
         }
     }
-    
+
     private void cutToInternalClipboard() {
         int size = getSelectedAttacks().size();
         if (size == 0) {
@@ -1776,11 +1772,11 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             showError("Fehler beim Ausschneiden der Befehle");
         }
     }
-    
+
     private void copyFromInternalClipboard() {
         try {
             String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
-            
+
             String[] lines = data.split("\n");
             int cnt = 0;
             for (String line : lines) {
@@ -1800,26 +1796,26 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         }
         attackModel.fireTableDataChanged();
     }
-    
+
     private void sendAttacksAsIGM() {
         if (getSelectedAttacks().isEmpty()) {
             showInfo("Kein Befehle gewählt");
             return;
         }
-        
+
         jSubject.setText("Deine Befehle (Plan: " + getAttackPlan() + ")");
         jSendAttacksIGMDialog.pack();
         jSendAttacksIGMDialog.setLocationRelativeTo(this);
         jSendAttacksIGMDialog.setVisible(true);
     }
-    
+
     private void sendAttackToRetimeFrame() {
         if (getSelectedAttacks().isEmpty()) {
             showInfo("Kein Befehle gewählt");
             return;
         }
         Attack attack = getSelectedAttacks().get(0);
-        
+
         StringBuilder b = new StringBuilder();
         b.append("Herkunft: ").append(attack.getSource().toString()).append("\n");
         b.append("Ziel: ").append(attack.getTarget().toString()).append("\n");
@@ -1836,7 +1832,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             DSWorkbenchReTimerFrame.getSingleton().setVisible(true);
         }
     }
-    
+
     private List<Attack> getSelectedAttacks() {
         final List<Attack> selectedAttacks = new LinkedList<Attack>();
         int[] selectedRows = jxAttackTable.getSelectedRows();

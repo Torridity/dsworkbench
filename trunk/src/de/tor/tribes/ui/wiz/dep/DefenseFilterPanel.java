@@ -36,7 +36,7 @@ import org.netbeans.spi.wizard.*;
  */
 public class DefenseFilterPanel extends WizardPage {
 
-    private static final String GENERAL_INFO = "Du befindest dich in der Filterauswahl. Hier kannst du vorher gew&auml;hlte Herkunftsd&ouml;rfer herausfiltern, "
+    private static final String GENERAL_INFO = "<html>Du befindest dich in der Filterauswahl. Hier kannst du vorher gew&auml;hlte Herkunftsd&ouml;rfer herausfiltern, "
             + "wenn sie nicht bestimmten Kriterien entsprechen. M&ouml;gliche Filterkriterien sind:"
             + "<ul> <li>D&ouml;rfer werden bereits in einem Angriffsplan verwendet</li> "
             + "<li>D&ouml;rfer verf&uuml;gen nicht &uuml;ber eine bestimmte Anzahl Einzelunterst&uuml;tzungen</li>"

@@ -6,6 +6,7 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.ext.InvalidTribe;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.util.ProfileManager;
@@ -47,6 +48,10 @@ public class UserProfile {
     public Tribe getTribe() {
         if (tribe == null) {
             tribe = DataHolder.getSingleton().getTribeByName(getProperty("tribe.name"));
+            if (DataHolder.getSingleton().getTribes().isEmpty()) {
+                //not yet loaded
+                tribe = null;
+            }
         }
         return tribe;
     }

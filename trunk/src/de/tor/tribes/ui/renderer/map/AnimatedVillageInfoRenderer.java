@@ -82,8 +82,7 @@ public class AnimatedVillageInfoRenderer {
         int centerY = (int) Math.floor(mCurrentLocation.getCenterY());
         int halfDiameter = (int) Math.floor(iDiameter / 2.0);
 
-        String val = GlobalOptions.getProperty("include.support");
-        if (val == null || Boolean.parseBoolean(val)) {
+        if (GlobalOptions.getProperties().getBoolean("include.support", true)) {
             holder = TroopsManager.getSingleton().getTroopsForVillage(mVillage);
         } else {
             holder = TroopsManager.getSingleton().getTroopsForVillage(mVillage, TroopsManager.TROOP_TYPE.OWN);

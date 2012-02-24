@@ -126,44 +126,28 @@ public class BrowserCommandSender {
     }
 
     public static boolean sendTroops(Village pSource, Village pTarget) {
-        try {
-            String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
-            logger.debug("Transfer troops to browser for village '" + pSource + "' to '" + pTarget + "'");
-            String url = baseURL + "/game.php?village=";
-            int uvID = GlobalOptions.getSelectedProfile().getUVId();
-            if (uvID >= 0) {
-                url = baseURL + "/game.php?t=" + uvID + "&village=";
-            }
-            url += pSource.getId() + "&screen=place&mode=command&target=" + pTarget.getId();
-            url += "&ts=" + System.currentTimeMillis();
-            String browser = GlobalOptions.getProperty("default.browser");
-            if (browser == null || browser.length() < 1) {
-                Desktop.getDesktop().browse(new URI(url));
-            } else {
-                Process p = Runtime.getRuntime().exec(new String[]{browser, url});
-                p.waitFor();
-            }
-
-            try {
-                Thread.sleep(100);
-            } catch (Exception ignored) {
-            }
-        } catch (Throwable t) {
-            logger.error("Failed to open browser window", t);
-            return false;
-        }
-        return true;
+        return sendTroops(pSource, pTarget, new Hashtable<UnitHolder, Integer>());
     }
 
     public static boolean sendTroops(Village pSource, Village pTarget, Hashtable<UnitHolder, Integer> pTroops) {
+        return sendTroops(pSource, pTarget, pTroops, null);
+    }
+
+    public static boolean sendTroops(Village pSource, Village pTarget, Hashtable<UnitHolder, Integer> pTroops, UserProfile pProfile) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             logger.debug("Transfer troops to browser for village '" + pSource + "' to '" + pTarget + "'");
             String url = baseURL + "/game.php?village=";
-            int uvID = GlobalOptions.getSelectedProfile().getUVId();
+            int uvID = -1;
+            if (pProfile != null) {
+                uvID = pProfile.getUVId();
+            } else {
+                uvID = GlobalOptions.getSelectedProfile().getUVId();
+            }
             if (uvID >= 0) {
                 url = baseURL + "/game.php?t=" + uvID + "&village=";
             }
+
             url += pSource.getId() + "&screen=place&mode=command&target=" + pTarget.getId();
             url += "&type=0";
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {

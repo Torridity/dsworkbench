@@ -36,7 +36,7 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  */
 public class DefenseFinishPanel extends WizardPage {
 
-    private static final String GENERAL_INFO = "Fertig. Wenn alles geklappt hat befinden sich nun in der Tabelle Informationen zu gefundenen Unterst&uuml;tzungen. "
+    private static final String GENERAL_INFO = "<html>Fertig! Wenn alles geklappt hat befinden sich nun in der Tabelle Informationen zu gefundenen Unterst&uuml;tzungen. "
             + "Diese solltest du &uuml;ber den entsprechenden Button in die Angriffs&uuml;bersicht transferieren, um die Unterst&uuml;tzungen komfortabel abschicken zu k&ouml;nnen. "
             + "Das sollte nat&uuml; sobald wie m&ouml;glich geschehen.<br/>"
             + "Wurden nicht ausreichend Unterst&uuml;tzungen gefunden, so kannst du &uuml;ber den zweiten Button eine passende Unterst&uuml;tzungsanfrage stellen und sie im Stammesforum "

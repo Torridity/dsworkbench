@@ -33,7 +33,7 @@ import org.netbeans.spi.wizard.*;
  */
 public class DefenseCalculationSettingsPanel extends WizardPage {
 
-    private static final String GENERAL_INFO = "Hier kannst du noch einmal pr&uuml;fen, mit welchen Daten DS Workbench versuchen wird, m&ouml;gliche Unterst&uuml;tzungen zu bestimmen. "
+    private static final String GENERAL_INFO = "<html>Hier kannst du noch einmal pr&uuml;fen, mit welchen Daten DS Workbench versuchen wird, m&ouml;gliche Unterst&uuml;tzungen zu bestimmen. "
             + "Mit der Checkbox 'Mehrfachunterst&uuml;tzungen erlauben' erh&auml;ltst du zudem eine letzte Einstellungsm&ouml;glichkeit. Ist dieses Feld deaktiviert, so werden aus jedem "
             + "Dorf nur maximal eine Unterst&uuml;tzung zu einem angegriffenen Dorf geschickt. Dadurch kommt es zu einer sehr guten Verteilung und sehr geringen Verlusten in einzelnen "
             + "D&ouml;rfern. Bei vielen Angriffen kann es aber sein, dass dadurch nicht alle Ziele ausreichend verteidigt werden k&ouml;nnen. Falls dem so ist, probiere doch mal die Option "
@@ -423,6 +423,11 @@ public class DefenseCalculationSettingsPanel extends WizardPage {
 
     @Override
     public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
+        if (calculator == null) {
+            setProblem("Noch keine Berechnung durchgeführt");
+            return WizardPanelNavResult.REMAIN_ON_PAGE;
+        }
+
         if (calculator != null && calculator.isRunning()) {
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }

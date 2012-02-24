@@ -130,13 +130,7 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
             }
         }
 
-        int max = 20000;
-        try {
-            max = Integer.parseInt(GlobalOptions.getProperty("max.farm.space"));
-        } catch (Exception e) {
-            max = 20000;
-        }
-
+        int max = GlobalOptions.getProperties().getInt("max.farm.space", 20000);
         //calculate farm space depending on pop bonus
         float res = (float) (farmSpace / (double) max);
 
@@ -264,10 +258,8 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
     @Override
     public String toString() {
         /*
-         * String result = ""; result += "Village: " + getVillage() + "\n";
-         * Enumeration<UnitHolder> keys = getTroops().keys(); result +=
-         * "Truppen\n"; while (keys.hasMoreElements()) { UnitHolder unit =
-         * keys.nextElement(); result += unit.getName() + " " +
+         * String result = ""; result += "Village: " + getVillage() + "\n"; Enumeration<UnitHolder> keys = getTroops().keys(); result +=
+         * "Truppen\n"; while (keys.hasMoreElements()) { UnitHolder unit = keys.nextElement(); result += unit.getName() + " " +
          * getTroops().get(unit) + "\n"; } return result;
          */
         if (getVillage() != null) {

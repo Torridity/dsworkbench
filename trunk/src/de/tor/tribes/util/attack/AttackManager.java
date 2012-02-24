@@ -162,7 +162,7 @@ public class AttackManager extends GenericManager<Attack> {
         return result;
     }
 
-    /** 
+    /**
      * @param plansToExport
      * @return
      */
@@ -230,15 +230,13 @@ public class AttackManager extends GenericManager<Attack> {
     }
 
     public void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, String pPlan) {
-        boolean showOnMap = false;
-        try {
-            showOnMap = Boolean.parseBoolean(GlobalOptions.getProperty("draw.attacks.by.default"));
-        } catch (Exception e) {
-        }
+        boolean showOnMap = GlobalOptions.getProperties().getBoolean("draw.attacks.by.default", false);
         addAttack(pSource, pTarget, pUnit, pArriveTime, showOnMap, pPlan, -1, false);
     }
 
-    /**Add an attack to a plan
+    /**
+     * Add an attack to a plan
+     *
      * @param pSource
      * @param pTarget
      * @param pUnit

@@ -15,6 +15,7 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.html.VillageHTMLTooltipGenerator;
+import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.net.URLDecoder;
@@ -22,7 +23,6 @@ import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.util.Comparator;
 import java.util.StringTokenizer;
-import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -84,19 +84,27 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
     private String name = null;
     private short x;
     private short y;
+    private Point position = null;
     private int tribeID;
     private Tribe tribe = null;
-    private int points;
-    private byte type;
+    private int points = -1;
+    private byte type = -1;
+    private String tempPoints = null;
+    private String tempType = null;
+    //cached values
     private String stringRepresentation = null;
+    private String coordAsString = null;
+    private String contAsString = null;
     private boolean visibleOnMap = true;
     private int continent = -1;
     //$id, $name, $x, $y, $tribe, $points, $type
 
     public Village() {
+        position = new Point();
     }
 
     public Village(int x, int y) {
+        this();
         setX((short) x);
         setY((short) y);
     }
@@ -113,20 +121,30 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
             entry.setId(Integer.parseInt(tokenizer.nextToken()));
             String n = URLDecoder.decode(tokenizer.nextToken(), "UTF-8");
             //replace HTML characters
-            n = n.replaceAll("&gt;", ">").replaceAll("&lt;", "<");
-            n = n.replaceAll("&quot;", "\"").replaceAll("&amp;", "&");
-            n = n.replaceAll("&tilde;", "~");
+            if (n.indexOf("&") > -1) {
+                n = n.replaceAll("&gt;", ">").replaceAll("&lt;", "<").replaceAll("&quot;", "\"").replaceAll("&amp;", "&").replaceAll("&tilde;", "~");
+            }
             entry.setName(n);
             entry.setX(Short.parseShort(tokenizer.nextToken()));
             entry.setY(Short.parseShort(tokenizer.nextToken()));
             entry.setTribeID(Integer.parseInt(tokenizer.nextToken()));
-            entry.setPoints(Integer.parseInt(tokenizer.nextToken()));
-            entry.setType(Byte.parseByte(tokenizer.nextToken()));
+            // entry.setPoints(Integer.parseInt(tokenizer.nextToken()));
+            entry.setTempPoints(tokenizer.nextToken());
+            // entry.setType(Byte.parseByte(tokenizer.nextToken()));
+            entry.setTempType(tokenizer.nextToken());
             return entry;
         } catch (Exception e) {
             //village invalid
         }
         return null;
+    }
+
+    public void setTempPoints(String tempPoints) {
+        this.tempPoints = tempPoints;
+    }
+
+    public void setTempType(String tempType) {
+        this.tempType = tempType;
     }
 
     public String toPlainData() {
@@ -176,14 +194,15 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
     }
 
     public String getCoordAsString() {
-        String coord;
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-            int[] hier = DSCalculator.xyToHierarchical((int) getX(), (int) getY());
-            coord = "(" + hier[0] + ":" + hier[1] + ":" + hier[2] + ")";
-        } else {
-            coord = "(" + getX() + "|" + getY() + ")";
+        if (coordAsString == null) {
+            if (ServerSettings.getSingleton().getCoordType() != 2) {
+                int[] hier = DSCalculator.xyToHierarchical((int) getX(), (int) getY());
+                coordAsString = "(" + hier[0] + ":" + hier[1] + ":" + hier[2] + ")";
+            } else {
+                coordAsString = "(" + getX() + "|" + getY() + ")";
+            }
         }
-        return coord;
+        return coordAsString;
     }
 
     public String getFullName() {
@@ -200,14 +219,15 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
     }
 
     public String getContinentString() {
-        String res;
-        int cont = getContinent();
-        if (cont < 10 && cont > 0) {
-            res = "K0" + cont;
-        } else {
-            res = "K" + cont;
+        if (contAsString == null) {
+            int cont = getContinent();
+            if (cont < 10 && cont > 0) {
+                contAsString = "K0" + cont;
+            } else {
+                contAsString = "K" + cont;
+            }
         }
-        return res;
+        return contAsString;
     }
 
     public void setName(String name) {
@@ -219,16 +239,22 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
         return x;
     }
 
-    public void setX(short x) {
+    public final void setX(short x) {
         this.x = x;
+        position.x = x;
     }
 
     public short getY() {
         return y;
     }
 
-    public void setY(short y) {
+    public final void setY(short y) {
         this.y = y;
+        position.y = y;
+    }
+
+    public Point getPosition() {
+        return position;
     }
 
     public int getContinent() {
@@ -251,6 +277,10 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
     }
 
     public int getPoints() {
+        if (this.points == -1) {
+            this.points = Integer.parseInt(tempPoints);
+            tempPoints = null;
+        }
         return points;
     }
 
@@ -263,6 +293,10 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
     }
 
     public byte getType() {
+        if (this.type == -1) {
+            this.type = Byte.parseByte(tempType);
+            tempType = null;
+        }
         return this.type;
     }
 
@@ -501,28 +535,15 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
 
         @Override
         public int compare(Village s1, Village s2) {
-  
-           /* if (Village.getOrderType() == ORDER_ALPHABETICALLY) {
-                int n1 = s1.toString().length(), n2 = s2.toString().length();
-                for (int i1 = 0, i2 = 0; i1 < n1 && i2 < n2; i1++, i2++) {
-                    char c1 = s1.toString().charAt(i1);
-                    char c2 = s2.toString().charAt(i2);
-                    if (c1 != c2) {
-                        c1 = Character.toUpperCase(c1);
-                        c2 = Character.toUpperCase(c2);
-                        if (c1 != c2) {
-                            c1 = Character.toLowerCase(c1);
-                            c2 = Character.toLowerCase(c2);
-                            if (c1 != c2) {
-                                returcompareTon c1 - c2;
-                            }
-                        }
-                    }
-                }
-                return n1 - n2;
-            } else {*/
-                return s1.compareTo(s2);
-           // }
+
+            /*
+             * if (Village.getOrderType() == ORDER_ALPHABETICALLY) { int n1 = s1.toString().length(), n2 = s2.toString().length(); for (int
+             * i1 = 0, i2 = 0; i1 < n1 && i2 < n2; i1++, i2++) { char c1 = s1.toString().charAt(i1); char c2 = s2.toString().charAt(i2); if
+             * (c1 != c2) { c1 = Character.toUpperCase(c1); c2 = Character.toUpperCase(c2); if (c1 != c2) { c1 = Character.toLowerCase(c1);
+             * c2 = Character.toLowerCase(c2); if (c1 != c2) { returcompareTon c1 - c2; } } } } return n1 - n2; } else {
+             */
+            return s1.compareTo(s2);
+            // }
         }
     }
 

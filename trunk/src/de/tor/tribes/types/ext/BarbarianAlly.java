@@ -52,8 +52,8 @@ public class BarbarianAlly extends Ally {
         return 0;
     }
 
-    public List<Tribe> getTribes() {
-        return new LinkedList<Tribe>();
+    public Tribe[] getTribes() {
+        return new Tribe[]{Barbarians.getSingleton()};
     }
 
     public String toString() {

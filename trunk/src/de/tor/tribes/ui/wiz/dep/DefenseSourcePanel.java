@@ -23,6 +23,7 @@ import de.tor.tribes.ui.components.VillageSelectionPanel;
 import de.tor.tribes.ui.models.DEPSourceTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.views.DSWorkbenchSOSRequestAnalyzer;
+import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.wiz.dep.types.SupportSourceElement;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.PluginManager;
@@ -58,7 +59,7 @@ import org.netbeans.spi.wizard.*;
  */
 public class DefenseSourcePanel extends WizardPage {
 
-    private static final String GENERAL_INFO = "Du befindest dich in der Dorfauswahl. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, "
+    private static final String GENERAL_INFO = "<html>Du befindest dich in der Dorfauswahl. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, "
             + "mit denen du verteidigen m&ouml;chtest. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:"
             + "<ul> <li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>"
             + "<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Gruppen der Gruppen&uuml;bersicht</li>"
@@ -368,7 +369,7 @@ public class DefenseSourcePanel extends WizardPage {
 
     private int getSplits(Village pVillage) {
         TroopSplit split = new TroopSplit(pVillage);
-        split.update(DSWorkbenchSOSRequestAnalyzer.getSingleton().getDefense(), 10);
+        split.update(DSWorkbenchSettingsDialog.getSingleton().getDefense(), 10);
         return split.getSplitCount();
     }
 

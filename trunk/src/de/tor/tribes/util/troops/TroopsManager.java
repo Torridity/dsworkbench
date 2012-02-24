@@ -123,6 +123,9 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
     @Override
     public List<ManageableType> getAllElements(String pGroup) {
         HashMap<Village, VillageTroopsHolder> set = managedElementGroups.get(pGroup);
+        if (set == null) {
+            return new LinkedList<ManageableType>();
+        }
         Collection<VillageTroopsHolder> values = set.values();
         if (values == null) {
             return new LinkedList<ManageableType>();

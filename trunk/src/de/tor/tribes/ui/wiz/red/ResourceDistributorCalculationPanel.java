@@ -43,10 +43,10 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  */
 public class ResourceDistributorCalculationPanel extends WizardPage {
 
-    private static final String GENERAL_INFO = "<html>Du befindest dich in den Einstellungen f&uuml;r die Rohstoffverteilung. Abh&auml;ngig davon, "
-            + "welche Art der Rohstoffverteilung du im ersten Schritt gew&auml;hlt hast, stehen dir unterschiedliche Einstellungen zur Verf&uuml;gung. "
-            + "Im einfachsten Fall l&auml;sst du alle Einstellungen so wie sie sind und startest die Berechnung &uuml;ber den entsprechenden Button. "
-            + "Bei Bedarf kannst du aber auch die Einstellungen nach deinen W&uuml;nschen &auml;ndern.</html>";
+    private static final String GENERAL_INFO = "In diesem Schritt kannst du letztendlich die Berechnung durchführen. Abhängig von der Art der Berechnung "
+            + "hast du die Möglichkeit, letzte Einstellungen vorzunehmen. Weiterhin stehen 'Erweiterte Einstellungen' zur Verfügung, die du ebenfalls bei "
+            + "Bedarf anpassen kannst. Für den Anfang ist aber empfohlen, diese Einstellungen so zu lassen wie sie sind. Sind alle Einstellungen getroffen,"
+            + " kannst du die Berechnung über 'Transporte berechnen' starten.";
     private static ResourceDistributorCalculationPanel singleton = null;
     private MerchantDistributor calculator = null;
 

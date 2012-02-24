@@ -13,14 +13,14 @@ import java.awt.*;
 public class SystrayHelper {
 
     private static TrayIcon trayIcon;
+    private static boolean installed = false;
 
     public static boolean isSystraySupported() {
         return SystemTray.isSupported();
     }
 
     public static void installSystrayIcon() {
-        if (SystemTray.isSupported()) {
-
+        if (!installed && SystemTray.isSupported()) {
             SystemTray tray = SystemTray.getSystemTray();
             Image image = Toolkit.getDefaultToolkit().getImage(SystrayHelper.class.getResource("/res/ui/axe.png"));
             trayIcon = new TrayIcon(image, "DS Workbench", null);
@@ -28,6 +28,7 @@ public class SystrayHelper {
             trayIcon.setImageAutoSize(true);
             try {
                 tray.add(trayIcon);
+                installed = true;
             } catch (AWTException e) {
                 trayIcon = null;
             }
@@ -35,6 +36,10 @@ public class SystrayHelper {
     }
 
     public static boolean isSystrayEnabled() {
+        String systrayEnabled = GlobalOptions.getProperty("systray.enabled");
+        if (systrayEnabled == null) {//developer mode
+            return true;
+        }
         return Boolean.parseBoolean(GlobalOptions.getProperty("systray.enabled"));
     }
 

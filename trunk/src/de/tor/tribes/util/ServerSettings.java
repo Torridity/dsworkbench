@@ -127,6 +127,9 @@ public class ServerSettings {
     }
 
     public Dimension getMapDimension() {
+        if (mapSize == null) {
+            return new Dimension(1000, 1000);
+        }
         return mapSize;
     }
 

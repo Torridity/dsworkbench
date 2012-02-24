@@ -74,12 +74,11 @@ public class ConquerTableModel extends AbstractTableModel {
                 }
             }
             case 2: {
-                Village v = c.getVillage();
-                return "K" + DSCalculator.getContinent(v.getX(), v.getY());
+                return c.getVillage().getContinentString();
             }
             case 3: {
                 SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-                return f.format(new Date((long) c.getTimestamp() * 1000));//new Date( c.getTimestamp() * 1000);//f.format(new Date((long) c.getTimestamp() * 1000));
+                return f.format(new Date(c.getTimestamp() * 1000));//new Date( c.getTimestamp() * 1000);//f.format(new Date((long) c.getTimestamp() * 1000));
             }
             case 4: {
                 Tribe t = c.getLoser();

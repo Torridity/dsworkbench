@@ -441,13 +441,20 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 }
             }
         }
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                logger.error("Uncaught exception in thread " + t, e);
+            }
+        });
         Appender a = null;
 
         if (!Constants.DEBUG) {
             a = new org.apache.log4j.RollingFileAppender();
             ((org.apache.log4j.RollingFileAppender) a).setMaxFileSize("1MB");
         } else {
+            SystrayHelper.installSystrayIcon();
             SystrayHelper.showInfoMessage("Running in debug mode");
             a = new org.apache.log4j.ConsoleAppender();
             ((org.apache.log4j.ConsoleAppender) a).setWriter(new PrintWriter(System.out));
@@ -477,6 +484,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             Logger.getLogger("dswb").addAppender(a);
             GlobalOptions.setMinimalVersion(minimal == 1);
         } catch (IOException ioe) {
+            logger.error("Failed to initialize logging", ioe);
         }
 
         try {
@@ -494,14 +502,19 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 UIManager.setLookAndFeel(lnf);
             }
         } catch (Exception e) {
+            logger.error("Failed to setup LnF", e);
         }
 
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {
-                DSWorkbenchSplashScreen.getSingleton().setLocationRelativeTo(null);
-                DSWorkbenchSplashScreen.getSingleton().setVisible(true);
+                try {
+                    DSWorkbenchSplashScreen.getSingleton().setLocationRelativeTo(null);
+                    DSWorkbenchSplashScreen.getSingleton().setVisible(true);
+                } catch (Exception e) {
+                    logger.error("Fatal application error", e);
+                }
             }
         });
     }

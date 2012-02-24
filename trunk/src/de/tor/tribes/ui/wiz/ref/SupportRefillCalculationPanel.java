@@ -47,11 +47,10 @@ import org.netbeans.spi.wizard.*;
  */
 public class SupportRefillCalculationPanel extends WizardPage {
 
-    private static final String GENERAL_INFO = "Bist du hier angekommen, steht einer Berechnung der Angriffe nichts mehr im Wege. "
-            + "Im oberen Bereich werden noch einmal Informationen zu den bisherigen Einstellungen angezeigt, im mittleren Bereich "
-            + "k&ouml;nnen letzte Einstellungen vorgenommen werden, die im Normalfall jedoch nicht ver&auml;ndert werden m&uuml;ssen. "
-            + "Mit einem Klick auf 'Angriffe berechnen' startet die Berechnung."
-            + "</html>";
+    private static final String GENERAL_INFO = "In diesem Schritt kannst du mögliche Unterstützungen für die eingegebenen Einstellungen errechnen lassen. "
+            + "Was du nun noch brauchst ist eine Ankunftzeit. Alle Unterstützungen werden so berechnet, dass sie genau zu diesem Zeitpunkt ankommen. "
+            + "Als früheste Abschickzeit wird die aktuelle Zeit gewählt, mögliche Abschickzeiten liegen zwischen jetzt und der eingestellten Ankunftzeit. "
+            + "Drücke auf 'Unterstützungen berechnen' um die Berechnung zu starten.";
     private static SupportRefillCalculationPanel singleton = null;
     private BruteForce calculator = null;
     private SimpleDateFormat dateFormat = null;
@@ -251,7 +250,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Einstellungen"));
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
-        jLabel3.setText("Ankunftzeit");
+        jLabel3.setText("Späteste Ankunftzeit");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(jLabel3, gridBagConstraints);
@@ -443,6 +442,11 @@ public class SupportRefillCalculationPanel extends WizardPage {
 
     @Override
     public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
+        if (calculator == null) {
+            setProblem("Noch keine Berechnung durchgeführt");
+            return WizardPanelNavResult.REMAIN_ON_PAGE;
+        }
+
         if (calculator != null && calculator.isRunning()) {
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }

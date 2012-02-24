@@ -33,7 +33,6 @@ public class Tribe implements Comparable<Tribe>, Serializable {
     private String name = null;
     private int allyID = 0;
     private Ally ally = null;
-    private short villages = 0;
     private double points = 0;
     private int rank = 0;
     private List<Village> villageList = null;
@@ -57,12 +56,10 @@ public class Tribe implements Comparable<Tribe>, Serializable {
         
         try {
             entry.setId(Integer.parseInt(tokenizer.nextToken()));
-            String nn = tokenizer.nextToken();
-            String n = URLDecoder.decode(nn, "UTF-8");
-            
-            entry.setName(n);
+            entry.setName(URLDecoder.decode(tokenizer.nextToken(), "UTF-8"));
             entry.setAllyID(Integer.parseInt(tokenizer.nextToken()));
-            entry.setVillages(Short.parseShort(tokenizer.nextToken()));
+            //skip villages amount as we hold this information separately
+            tokenizer.nextToken();
             entry.setPoints(Double.parseDouble(tokenizer.nextToken()));
             entry.setRank(Integer.parseInt(tokenizer.nextToken()));
             return entry;
@@ -127,10 +124,6 @@ public class Tribe implements Comparable<Tribe>, Serializable {
         return (short) villageList.size();
     }
     
-    public void setVillages(short pVillages) {
-        villages = pVillages;
-    }
-    
     public double getPoints() {
         return points;
     }
@@ -153,6 +146,9 @@ public class Tribe implements Comparable<Tribe>, Serializable {
     
     public void setAlly(Ally ally) {
         this.ally = ally;
+        if (ally != null) {
+            setAllyID(ally.getId());
+        }
     }
     
     public void addVillage(Village v, boolean pChecked) {

@@ -41,6 +41,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPInputStream;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
@@ -184,14 +185,13 @@ public class DataHolder {
                 } else {
                     //download settings.xml
                     logger.debug("Server settings do not exist");
+                    ServerManager.loadServerList();
                     String sURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
                     new File(DataHolder.getSingleton().getDataDirectory()).mkdirs();
                     fireDataHolderEvents("Lese Server Einstellungen");
                     URL file = new URL(sURL + "/interface.php?func=get_config");
                     logger.debug("Try downloading server settings from " + sURL + "/interface.php?func=get_config");
                     downloadDataFile(file, "settings_tmp.xml");
-                    //new File("settings_tmp.xml").renameTo(settings);
-
                     copyFile(new File("settings_tmp.xml"), settings);
 
                     if (!ServerSettings.getSingleton().loadSettings(GlobalOptions.getSelectedServer())) {
@@ -560,7 +560,7 @@ public class DataHolder {
     public boolean readLocalDataCopy(String pServerDir) {
         try {
             BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(pServerDir + "/village.txt.gz"))));
-            String line = "";
+            String line;
             while ((line = r.readLine()) != null) {
                 line = line.replaceAll(",,", ", ,");
                 Village v = Village.parseFromPlainData(line);
@@ -571,7 +571,6 @@ public class DataHolder {
                 }
             }
             r.close();
-
             getTribesForServer(GlobalOptions.getSelectedServer(), mTribes);
 
             Collection<Tribe> tribes = mTribes.values();
@@ -609,15 +608,13 @@ public class DataHolder {
             if (pTribes == null) {
                 pTribes = new Hashtable<Integer, Tribe>();
             }
-            String line = "";
+            String line;
 
             while ((line = r.readLine()) != null) {
                 line = line.replaceAll(",,", ", ,");
                 Tribe t = Tribe.parseFromPlainData(line);
-                try {
+                if (t != null) {
                     pTribes.put(t.getId(), t);
-                } catch (Exception e) {
-                    //ignore invalid tribe
                 }
             }
 
@@ -639,15 +636,13 @@ public class DataHolder {
             if (pAllies == null) {
                 pAllies = new Hashtable<Integer, Ally>();
             }
-            String line = "";
+            String line;
 
             while ((line = r.readLine()) != null) {
                 line = line.replaceAll(",,", ", ,");
                 Ally a = Ally.parseFromPlainData(line);
-                try {
+                if (a != null) {
                     pAllies.put(a.getId(), a);
-                } catch (Exception e) {
-                    //ignore invalid tribe
                 }
             }
 
@@ -779,7 +774,6 @@ public class DataHolder {
                     Tribe t = Tribe.parseFromPlainData(line);
                     if (t != null && t.getName() != null) {
                         mTribes.put(t.getId(), t);
-                        System.out.println(t);
                         mTribesByName.put(t.getName(), t);
                     }
                 }
@@ -961,10 +955,8 @@ public class DataHolder {
             while ((line = r.readLine()) != null) {
                 line = line.replaceAll(",,", ", ,");
                 Village v = Village.parseFromPlainData(line);
-                try {
+                if (v != null && v.getX() > 0 && v.getX() < mVillages.length && v.getY() > 0 && v.getY() < mVillages[0].length) {
                     mVillages[v.getX()][v.getY()] = v;
-                } catch (Exception e) {
-                    //ignore invalid village
                 }
             }
             r.close();
@@ -1087,8 +1079,8 @@ public class DataHolder {
      * Merge all data into the village data structure to ease searching
      */
     private void mergeData() {
-        for (int i = 0; i < ServerSettings.getSingleton().getMapDimension().width; i++) {
-            for (int j = 0; j < ServerSettings.getSingleton().getMapDimension().height; j++) {
+        for (int i = 0; i < mVillages.length; i++) {
+            for (int j = 0; j < mVillages[0].length; j++) {
                 Village current = mVillages[i][j];
 
                 if (current != null) {
@@ -1099,12 +1091,14 @@ public class DataHolder {
                     if (t != null) {
                         //add village to tribe
                         t.addVillage(current);
-                        Ally currentAlly = mAllies.get(t.getAllyID());
-                        //set ally of tribe
-                        t.setAlly(currentAlly);
-                        if (currentAlly != null) {
-                            //add tribe to ally
-                            currentAlly.addTribe(t);
+                        if (t.getAlly() == null) {
+                            Ally currentAlly = mAllies.get(t.getAllyID());
+                            //set ally of tribe
+                            t.setAlly(currentAlly);
+                            if (currentAlly != null) {
+                                //add tribe to ally
+                                currentAlly.addTribe(t);
+                            }
                         }
                     }
                     mVillagesTable.put(current.getId(), current);
@@ -1117,7 +1111,7 @@ public class DataHolder {
         List<Ally> toRemove = new LinkedList<Ally>();
         while (allyKeys.hasMoreElements()) {
             Ally a = mAllies.get(allyKeys.nextElement());
-            if (a.getTribes() == null || a.getTribes().isEmpty()) {
+            if (a.getTribes() == null || a.getTribes().length == 0) {
                 toRemove.add(a);
             }
         }
@@ -1354,13 +1348,7 @@ public class DataHolder {
             int xEnd = (pEnd.x > pStart.x) ? pEnd.x : pStart.x;
             int yStart = (pStart.y < pEnd.y) ? pStart.y : pEnd.y;
             int yEnd = (pEnd.y > pStart.y) ? pEnd.y : pStart.y;
-            boolean showBarbarian = true;
-            try {
-                showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
-            } catch (Exception e) {
-                showBarbarian = true;
-            }
-
+            boolean showBarbarian = GlobalOptions.getProperties().getBoolean("show.barbarian", true);
             for (int x = xStart; x <= xEnd; x++) {
                 for (int y = yStart; y <= yEnd; y++) {
                     Village v = getVillages()[x][y];

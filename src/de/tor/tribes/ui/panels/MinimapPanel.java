@@ -11,8 +11,8 @@ import de.tor.tribes.php.ScreenUploadInterface;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.Marker;
-import de.tor.tribes.types.ext.Tribe;
-import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.types.UserProfile;
+import de.tor.tribes.types.ext.*;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.MinimapListener;
@@ -601,7 +601,8 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
         //plot.setCircular(true);
         //  plot.setMaximumLabelWidth(30.0);
      /*
-         * plot.setLabelGenerator(new StandardPieSectionLabelGenerator( "{0} = {2}", NumberFormat.getNumberInstance(), NumberFormat.getPercentInstance()));
+         * plot.setLabelGenerator(new StandardPieSectionLabelGenerator( "{0} = {2}", NumberFormat.getNumberInstance(),
+         * NumberFormat.getPercentInstance()));
          */
         //   chart.getLegend().setVerticalAlignment(VerticalAlignment.CENTER);
         //  chart.getLegend().setPosition(RectangleEdge.RIGHT);
@@ -609,15 +610,13 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
         plot.setLabelGenerator(null);
         plot.setBackgroundPaint(Constants.DS_BACK);
         /*
-         * plot.setInteriorGap(0.0);
-        plot.setLabelGap(0.0);
+         * plot.setInteriorGap(0.0); plot.setLabelGap(0.0);
          */
         plot.setLegendLabelGenerator(new StandardPieSectionLabelGenerator(
                 "{0} = {2}", NumberFormat.getNumberInstance(), NumberFormat.getPercentInstance()));
 
         /*
-         * plot.getL
-        plot.setLabelFont(g2d.getFont().deriveFont(10.0f));
+         * plot.getL plot.setLabelFont(g2d.getFont().deriveFont(10.0f));
          */
 
 
@@ -1122,23 +1121,13 @@ class MinimapRepaintThread extends Thread {
         Graphics2D g2d = (Graphics2D) mBuffer.getGraphics();
         g2d.setColor(new Color(35, 125, 0));
         g2d.fillRect(0, 0, mBuffer.getWidth(null), mBuffer.getHeight(null));
-        boolean markPlayer = false;
-        try {
-            markPlayer = Boolean.parseBoolean(GlobalOptions.getProperty("mark.villages.on.minimap"));
-        } catch (Exception e) {
-            markPlayer = false;
-        }
-
-
+        boolean markPlayer = GlobalOptions.getProperties().getBoolean("mark.villages.on.minimap", true);
         if (ServerSettings.getSingleton().getMapDimension() == null) {
-//could not draw minimap if dimensions are not loaded yet
+            //could not draw minimap if dimensions are not loaded yet
             return false;
         }
-        boolean showBarbarian = true;
-        try {
-            showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
-        } catch (Exception e) {
-        }
+        boolean showBarbarian = GlobalOptions.getProperties().getBoolean("show.barbarian", true);
+
         Color DEFAULT = Constants.DS_DEFAULT_MARKER;
         try {
             int mark = Integer.parseInt(GlobalOptions.getProperty("default.mark"));
@@ -1153,10 +1142,14 @@ class MinimapRepaintThread extends Thread {
             DEFAULT = Constants.DS_DEFAULT_MARKER;
         }
 
-
         double wField = ServerSettings.getSingleton().getMapDimension().getWidth() / (double) visiblePart.width;
         double hField = ServerSettings.getSingleton().getMapDimension().getHeight() / (double) visiblePart.height;
-        Village currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
+        
+        UserProfile profile = GlobalOptions.getSelectedProfile();
+        Tribe currentTribe = InvalidTribe.getSingleton();
+        if(profile != null){
+            currentTribe = profile.getTribe();
+        }
 
         for (int i = visiblePart.x; i < (visiblePart.width + visiblePart.x); i += 3) {
             for (int j = visiblePart.y; j < (visiblePart.height + visiblePart.y); j += 3) {
@@ -1167,7 +1160,7 @@ class MinimapRepaintThread extends Thread {
                     if (v.getTribe() == Barbarians.getSingleton()) {
                         isLeft = true;
                     } else {
-                        if ((currentUserVillage != null) && (v.getTribe().toString().equals(currentUserVillage.getTribe().toString()))) {
+                        if ((currentTribe != null) && (v.getTribe().getId() == currentTribe.getId())) {
                             //village is owned by current player. mark it dependent on settings
                             if (markPlayer) {
                                 markerColor = Color.YELLOW;
@@ -1185,12 +1178,10 @@ class MinimapRepaintThread extends Thread {
                                     if (marker != null && marker.isShownOnMap()) {
                                         markerColor = marker.getMarkerColor();
                                     } else {
-                                        marker = null;
                                         markerColor = DEFAULT;
                                     }
                                 } else {
                                     if (!marker.isShownOnMap()) {
-                                        marker = null;
                                         markerColor = DEFAULT;
                                     } else {
                                         markerColor = marker.getMarkerColor();
@@ -1220,7 +1211,7 @@ class MinimapRepaintThread extends Thread {
         }
 
         try {
-            if (Boolean.parseBoolean(GlobalOptions.getProperty("map.showcontinents"))) {
+            if (GlobalOptions.getProperties().getBoolean("map.showcontinents", true)) {
                 g2d.setColor(Color.BLACK);
                 Composite c = g2d.getComposite();
                 Composite a = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f);

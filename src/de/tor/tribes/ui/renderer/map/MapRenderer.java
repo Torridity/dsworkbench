@@ -429,7 +429,7 @@ public class MapRenderer {
                         Point villagePos = new Point((int) Math.floor(dx + x * dCurrentFieldWidth), (int) Math.floor(dy + y * dCurrentFieldHeight));
                         mVillagePositions.put(mVisibleVillages[x][y], new Rectangle(villagePos.x, villagePos.y, (int) Math.floor(dCurrentFieldWidth), (int) Math.floor(dCurrentFieldHeight)));
                         Tribe t = mVisibleVillages[x][y].getTribe();
-                        if (t != Barbarians.getSingleton()) {                     
+                        if (t != Barbarians.getSingleton()) {
                             if (!mTribeCount.containsKey(t)) {
                                 mTribeCount.put(t, 1);
                             } else {
@@ -528,7 +528,7 @@ public class MapRenderer {
 
         // <editor-fold defaultstate="collapsed" desc="Mark current players villages">
 
-        if (!mouseDown && Boolean.parseBoolean(GlobalOptions.getProperty("highlight.tribes.villages"))) {
+        if (!mouseDown && GlobalOptions.getProperties().getBoolean("highlight.tribes.villages", false)) {
             Tribe mouseTribe = Barbarians.getSingleton();
             if (mouseVillage != null) {
                 mouseTribe = mouseVillage.getTribe();
@@ -582,7 +582,7 @@ public class MapRenderer {
                 int cnt = 0;
                 for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
                     de.tor.tribes.types.drawing.Circle c = new de.tor.tribes.types.drawing.Circle();
-                    int r = Integer.parseInt(GlobalOptions.getProperty("radar.size"));
+                    int r = GlobalOptions.getProperties().getInt("radar.size", 1);
                     double diam = 2 * (double) r / u.getSpeed();
                     double xp = v.getX() + 0.5 - diam / 2;
                     double yp = v.getY() + 0.5 - diam / 2;
@@ -597,11 +597,7 @@ public class MapRenderer {
                     c.setStrokeWidth(3f);
                     c.setXPosEnd(xp + diam);
                     c.setYPosEnd(yp + diam);
-                    Color co = Color.RED;
-                    try {
-                        co = Color.decode(GlobalOptions.getProperty(u.getName() + ".color"));
-                    } catch (Exception e) {
-                    }
+                    Color co = Color.decode(GlobalOptions.getProperties().getString(u.getName() + ".color", "#FF0000"));
                     c.setDrawColor(co);
                     c.setDrawAlpha(0.8f);
                     c.renderForm(g2d);
@@ -653,7 +649,7 @@ public class MapRenderer {
             }
             g2d.setColor(cBefore);
         }
-        if (Boolean.parseBoolean(GlobalOptions.getProperty("show.ruler"))) {
+        if (GlobalOptions.getProperties().getBoolean("show.ruler", true)) {
             //ruler drawing
             HashMap<Color, Rectangle> vertRulerParts = new HashMap<Color, Rectangle>();
             HashMap<Color, Rectangle> horRulerParts = new HashMap<Color, Rectangle>();
@@ -786,7 +782,9 @@ public class MapRenderer {
             g2d.setColor(c);
         }
 
-        if (!MapPanel.getSingleton().isMouseDown() && Boolean.parseBoolean(GlobalOptions.getProperty("show.map.popup")) && !DSWorkbenchMainFrame.getSingleton().isGlasspaneVisible()) {
+        if (!MapPanel.getSingleton().isMouseDown()
+                && Boolean.parseBoolean(GlobalOptions.getProperty("show.map.popup"))
+                && !DSWorkbenchMainFrame.getSingleton().isGlasspaneVisible()) {
             try {
                 if (DSWorkbenchMainFrame.getSingleton().isActive() && MapPanel.getSingleton().getMousePosition() != null) {
                     if (mouseVillage == null) {

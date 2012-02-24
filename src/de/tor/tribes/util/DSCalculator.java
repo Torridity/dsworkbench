@@ -18,9 +18,7 @@ public class DSCalculator {
         if ((pSource == null) || (pTarget == null)) {
             return 0;
         }
-        int dx = pTarget.getX() - pSource.getX();
-        int dy = pTarget.getY() - pSource.getY();
-        return Math.sqrt(dx * dx + dy * dy);
+        return pSource.getPosition().distance(pTarget.getPosition());
     }
 
     public static double calculateMoveTimeInMinutes(Village pSource, Village pTarget, double pMinPerField) {
@@ -45,22 +43,6 @@ public class DSCalculator {
 
     public static Point calculateCenterOfMass(List<Village> pVillages) {
         double mass = pVillages.size();
-        double xMass = 0;
-        double yMass = 0;
-        for (Village v : pVillages) {
-            xMass += v.getX();
-            yMass += v.getY();
-        }
-        xMass = Math.rint(xMass / mass);
-        yMass = Math.rint(yMass / mass);
-        return new Point((int) xMass, (int) yMass);
-    }
-
-    public static Point calculateCenterOfMass(Village[] pVillages) {
-        double mass = pVillages.length;
-        if (mass == 0) {
-            return new Point(500, 500);
-        }
         double xMass = 0;
         double yMass = 0;
         for (Village v : pVillages) {

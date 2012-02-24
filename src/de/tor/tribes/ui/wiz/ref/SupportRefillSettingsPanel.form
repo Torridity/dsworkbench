@@ -81,7 +81,7 @@
             </Container>
             <Component class="javax.swing.JButton" name="jButton1">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Notwendige Unterst&#xfc;tzungen neu berechnen"/>
+                <Property name="text" type="java.lang.String" value="Notwendige Unterst&#xfc;tzungen berechnen"/>
               </Properties>
               <Events>
                 <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireCalculateNeededSupportsEvent"/>

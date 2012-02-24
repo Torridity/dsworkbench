@@ -48,12 +48,7 @@ public class AttackLayerRenderer extends AbstractDirectLayerRenderer {
     private void renderAttacks(Point2D.Double viewStartPoint, RenderSettings pSettings, Graphics2D pG2D) {
         HashMap<String, Color> attackColors = new HashMap<String, Color>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            Color unitColor = Color.RED;
-            try {
-                unitColor = Color.decode(GlobalOptions.getProperty(unit.getName() + ".color"));
-            } catch (Exception e) {
-                unitColor = Color.RED;
-            }
+            Color unitColor = Color.decode(GlobalOptions.getProperties().getString(unit.getName() + ".color", "#ff0000"));
             attackColors.put(unit.getName(), unitColor);
         }
 
@@ -81,19 +76,14 @@ public class AttackLayerRenderer extends AbstractDirectLayerRenderer {
                 },
                 10.0f);
         Iterator<String> keys = AttackManager.getSingleton().getGroupIterator();
-       
-        boolean drawExtendedVectors = false;
-        try {
-            drawExtendedVectors = Boolean.parseBoolean(GlobalOptions.getProperty("extended.attack.vectors"));
-        } catch (Exception e) {
-            drawExtendedVectors = false;
-        }
 
+        boolean drawExtendedVectors = GlobalOptions.getProperties().getBoolean("extended.attack.vectors", false);
+        boolean showAttackMovement = GlobalOptions.getProperties().getBoolean("attack.movement", false);
         while (keys.hasNext()) {
             String plan = keys.next();
             List<ManageableType> elements = AttackManager.getSingleton().getAllElements(plan);
             for (ManageableType element : elements) {
-                Attack attack = (Attack)element;
+                Attack attack = (Attack) element;
                 //go through all attacks
                 //render if shown on map or if either source or target are visible
                 if (attack.isShowOnMap() && (attack.getSource().isVisibleOnMap() || attack.getTarget().isVisibleOnMap())) {
@@ -101,8 +91,6 @@ public class AttackLayerRenderer extends AbstractDirectLayerRenderer {
                     //only enter if attack should be visible
                     //get line for this attack
                     Line2D.Double attackLine = new Line2D.Double(attack.getSource().getX(), attack.getSource().getY(), attack.getTarget().getX(), attack.getTarget().getY());
-                    String value = GlobalOptions.getProperty("attack.movement");
-                    boolean showAttackMovement = (value == null) ? false : Boolean.parseBoolean(value);
                     double xStart = (attackLine.getX1() - viewStartPoint.x) * pSettings.getFieldWidth() + pSettings.getFieldWidth() / 2;
                     double yStart = (attackLine.getY1() - viewStartPoint.y) * pSettings.getFieldHeight() + pSettings.getFieldHeight() / 2;
                     double xEnd = (attackLine.getX2() - viewStartPoint.x) * pSettings.getFieldWidth() + pSettings.getFieldWidth() / 2;

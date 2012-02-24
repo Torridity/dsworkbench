@@ -96,7 +96,7 @@ public class AllyUtils {
             });
             result = tribes.toArray(new Tribe[tribes.size()]);
         } else {
-            result = pAlly.getTribes().toArray(new Tribe[pAlly.getMembers()]);
+            result = pAlly.getTribes();
         }
 
         if (pComparator != null) {

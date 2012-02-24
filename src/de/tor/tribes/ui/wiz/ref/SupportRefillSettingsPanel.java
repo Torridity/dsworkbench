@@ -48,17 +48,16 @@ import org.netbeans.spi.wizard.*;
  * @author Torridity
  */
 public class SupportRefillSettingsPanel extends WizardPage {
-    
-    private static final String GENERAL_INFO = "<html>Du befindest dich in der Dorfauswahl. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, "
-            + "mit denen du angreifen m&ouml;chtest. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:"
-            + "<ul> <li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>"
-            + "<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Gruppen der Gruppen&uuml;bersicht</li>"
-            + "</ul></html>";
+
+    private static final String GENERAL_INFO = "In diesem Schritt kannst du bestimmen, wieviele Truppen in alles Zieldörfer sein sollen und wie groß eine "
+            + "einzelne Unterstützung ist. DS Workbench wird versuchen, die Zielmenge durch alle bekannten Truppeninformationen im möglichst vielen Dörfern zu erreichen. "
+            + "Beachte: Je kleiner die Einzelunterstützungen sind, desto schneller können Verluste ausgeglichen werden, jedoch dauert es auch eine Weile, bis man die Unterstützungen "
+            + "auf den Weg geschickt hat. Hast du deine Einstellungen getroffen, klicke auf 'Notwendige Unterstützungen berechnen' um die Tabelle zu aktualisieren.";
     private static SupportRefillSettingsPanel singleton = null;
     private VillageOverviewMapPanel overviewPanel = null;
     private TroopSelectionPanel targetAmountPanel = null;
     private TroopSelectionPanel splitAmountPanel = null;
-    
+
     public static synchronized SupportRefillSettingsPanel getSingleton() {
         if (singleton == null) {
             singleton = new SupportRefillSettingsPanel();
@@ -86,7 +85,7 @@ public class SupportRefillSettingsPanel extends WizardPage {
         jideSplitPane1.add(jDataPanel, JideBoxLayout.FLEXIBLE);
         jideSplitPane1.add(jVillageTablePanel, JideBoxLayout.VARY);
         jideSplitPane1.getDividerAt(0).addMouseListener(new MouseAdapter() {
-            
+
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -94,9 +93,9 @@ public class SupportRefillSettingsPanel extends WizardPage {
                 }
             }
         });
-        
+
         jVillageTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            
+
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 int selectedRows = jVillageTable.getSelectedRowCount();
@@ -105,7 +104,7 @@ public class SupportRefillSettingsPanel extends WizardPage {
                 }
             }
         });
-        
+
         targetAmountPanel = new TroopSelectionPanel();
         targetAmountPanel.setupDefense(true);
         jTargetAmountsPanel.add(targetAmountPanel, BorderLayout.CENTER);
@@ -116,27 +115,27 @@ public class SupportRefillSettingsPanel extends WizardPage {
         overviewPanel = new VillageOverviewMapPanel();
         jPanel2.add(overviewPanel, BorderLayout.CENTER);
     }
-    
+
     public static String getDescription() {
         return "Einstellungen";
     }
-    
+
     public static String getStep() {
         return "id-ref-settings";
     }
-    
+
     public void storeProperties() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
         profile.addProperty("ref.filter.amount", TroopHelper.unitTableToProperty(targetAmountPanel.getAmounts()));
         profile.addProperty("ref.filter.split", TroopHelper.unitTableToProperty(splitAmountPanel.getAmounts()));
     }
-    
+
     public void restoreProperties() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
         targetAmountPanel.setAmounts(TroopHelper.propertyToUnitTable(profile.getProperty("ref.filter.amount")));
         splitAmountPanel.setAmounts(TroopHelper.propertyToUnitTable(profile.getProperty("ref.filter.split")));
     }
-    
+
     public Hashtable<UnitHolder, Integer> getSplit() {
         return splitAmountPanel.getAmounts();
     }
@@ -201,7 +200,7 @@ public class SupportRefillSettingsPanel extends WizardPage {
         gridBagConstraints.weighty = 1.0;
         jPanel1.add(jSplitSizePanel, gridBagConstraints);
 
-        jButton1.setText("Notwendige Unterstützungen neu berechnen");
+        jButton1.setText("Notwendige Unterstützungen berechnen");
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 fireCalculateNeededSupportsEvent(evt);
@@ -333,7 +332,7 @@ public class SupportRefillSettingsPanel extends WizardPage {
             jLabel1.setText("Informationen einblenden");
         }
     }//GEN-LAST:event_fireHideInfoEvent
-    
+
     private void fireViewStateChangeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireViewStateChangeEvent
         if (jToggleButton1.isSelected()) {
             overviewPanel.setOptimalSize();
@@ -343,18 +342,18 @@ public class SupportRefillSettingsPanel extends WizardPage {
             jTableScrollPane.setViewportView(jVillageTable);
             jPanel2.add(overviewPanel, BorderLayout.CENTER);
             SwingUtilities.invokeLater(new Runnable() {
-                
+
                 public void run() {
                     jPanel2.updateUI();
                 }
             });
         }
     }//GEN-LAST:event_fireViewStateChangeEvent
-    
+
     private void fireCalculateNeededSupportsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateNeededSupportsEvent
         Hashtable<UnitHolder, Integer> target = targetAmountPanel.getAmounts();
         Hashtable<UnitHolder, Integer> split = splitAmountPanel.getAmounts();
-        
+
         if (TroopHelper.getPopulation(target) == 0) {
             jStatusLabel.setText("Keine gewünschte Truppenstärke angegeben");
             return;
@@ -363,7 +362,7 @@ public class SupportRefillSettingsPanel extends WizardPage {
             jStatusLabel.setText("Menge einer Einzelunterstützung nicht angegeben");
             return;
         }
-        
+
         int max = 0;
         for (int i = 0; i < getModel().getRowCount(); i++) {
             REFTargetElement elem = getModel().getRow(jVillageTable.convertRowIndexToModel(i));
@@ -371,7 +370,7 @@ public class SupportRefillSettingsPanel extends WizardPage {
             max = Math.max(elem.getNeededSupports(), max);
         }
         getModel().fireTableDataChanged();
-        
+
         for (REFTargetElement element : getAllElements()) {
             overviewPanel.addVillage(new Point(element.getVillage().getX(), element.getVillage().getY()),
                     ColorGradientHelper.getGradientColor(100.0f * (float) element.getNeededSupports() / (float) max, Color.RED, Color.GREEN));
@@ -379,10 +378,10 @@ public class SupportRefillSettingsPanel extends WizardPage {
         overviewPanel.repaint();
         setProblem(null);
     }//GEN-LAST:event_fireCalculateNeededSupportsEvent
-    
+
     private int getNeededSupports(Village pVillage, Hashtable<UnitHolder, Integer> pTargetAmount, Hashtable<UnitHolder, Integer> pSplitAmount) {
         boolean useArcher = !DataHolder.getSingleton().getUnitByPlainName("archer").equals(UnknownUnit.getSingleton());
-        
+
         Integer spearGoal = pTargetAmount.get(DataHolder.getSingleton().getUnitByPlainName("spear"));
         Integer swordGoal = pTargetAmount.get(DataHolder.getSingleton().getUnitByPlainName("sword"));
         Integer archerGoal = 0;
@@ -391,7 +390,7 @@ public class SupportRefillSettingsPanel extends WizardPage {
         }
         Integer spyGoal = pTargetAmount.get(DataHolder.getSingleton().getUnitByPlainName("spy"));
         Integer heavyGoal = pTargetAmount.get(DataHolder.getSingleton().getUnitByPlainName("heavy"));
-        
+
         Integer spearSplit = pSplitAmount.get(DataHolder.getSingleton().getUnitByPlainName("spear"));
         Integer swordSplit = pSplitAmount.get(DataHolder.getSingleton().getUnitByPlainName("sword"));
         Integer archerSplit = 0;
@@ -400,7 +399,7 @@ public class SupportRefillSettingsPanel extends WizardPage {
         }
         Integer spySplit = pSplitAmount.get(DataHolder.getSingleton().getUnitByPlainName("spy"));
         Integer heavySplit = pSplitAmount.get(DataHolder.getSingleton().getUnitByPlainName("heavy"));
-        
+
         VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.IN_VILLAGE);
         Hashtable<UnitHolder, Integer> troops;
         if (holder == null) {
@@ -415,7 +414,7 @@ public class SupportRefillSettingsPanel extends WizardPage {
         } else {
             troops = holder.getTroops();
         }
-        
+
         int spearDiff = spearGoal - troops.get(DataHolder.getSingleton().getUnitByPlainName("spear"));
         int swordDiff = swordGoal - troops.get(DataHolder.getSingleton().getUnitByPlainName("sword"));
         int archerDiff = 0;
@@ -424,20 +423,20 @@ public class SupportRefillSettingsPanel extends WizardPage {
         }
         int spyDiff = spyGoal - troops.get(DataHolder.getSingleton().getUnitByPlainName("spy"));
         int heavyDiff = heavyGoal - troops.get(DataHolder.getSingleton().getUnitByPlainName("heavy"));
-        
+
         int spearSupports = (spearSplit == 0) ? 0 : (int) (Math.ceil((double) spearDiff / (double) spearSplit));
         int swordSupports = (swordSplit == 0) ? 0 : (int) (Math.ceil((double) swordDiff / (double) swordSplit));
         int archerSupports = (archerSplit == 0) ? 0 : (int) (Math.ceil((double) archerDiff / (double) archerSplit));
         int spySupports = (spySplit == 0) ? 0 : (int) (Math.ceil((double) spyDiff / (double) spySplit));
         int heavySupports = (heavySplit == 0) ? 0 : (int) (Math.ceil((double) heavyDiff / (double) heavySplit));
-        
+
         return Math.max(Math.max(Math.max(Math.max(spearSupports, swordSupports), archerSupports), spySupports), heavySupports);
     }
-    
+
     private REFSettingsTableModel getModel() {
         return (REFSettingsTableModel) jVillageTable.getModel();
     }
-    
+
     public void update() {
         REFSettingsTableModel model = getModel();
         model.clear();
@@ -446,7 +445,7 @@ public class SupportRefillSettingsPanel extends WizardPage {
         }
         updateOverview(true);
     }
-    
+
     private void updateOverview(boolean pReset) {
         if (pReset) {
             overviewPanel.reset();
@@ -456,7 +455,7 @@ public class SupportRefillSettingsPanel extends WizardPage {
         }
         overviewPanel.repaint();
     }
-    
+
     public REFTargetElement[] getAllElements() {
         List<REFTargetElement> result = new LinkedList<REFTargetElement>();
         REFSettingsTableModel model = getModel();
@@ -494,22 +493,22 @@ public class SupportRefillSettingsPanel extends WizardPage {
         for (REFTargetElement elem : getAllElements()) {
             need += elem.getNeededSupports();
         }
-        
+
         if (need == 0) {
             setProblem("Keine notwendigen Unterstützungen bestimmmt");
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
-        
+
         SupportRefillSourcePanel.getSingleton().update();
         return WizardPanelNavResult.PROCEED;
     }
-    
+
     @Override
     public WizardPanelNavResult allowBack(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;
-        
+
     }
-    
+
     @Override
     public WizardPanelNavResult allowFinish(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;

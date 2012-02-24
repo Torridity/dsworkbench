@@ -298,6 +298,16 @@ public class TroopHelper {
         return result.toString().substring(0, result.length() - 1);
     }
 
+    public static String stringUnitTableToProperty(Hashtable<String, Integer> pTroops) {
+        StringBuilder result = new StringBuilder();
+        Enumeration<String> keys = pTroops.keys();
+        while (keys.hasMoreElements()) {
+            String key = keys.nextElement();
+            result.append(key).append("=").append(pTroops.get(key)).append("/");
+        }
+        return result.toString().substring(0, result.length() - 1);
+    }
+
     public static Hashtable<UnitHolder, Integer> propertyToUnitTable(String pProperty) {
         Hashtable<UnitHolder, Integer> result = new Hashtable<UnitHolder, Integer>();
         if (pProperty == null) {
@@ -308,6 +318,24 @@ public class TroopHelper {
             for (String unit : troops) {
                 String[] split = unit.split("=");
                 result.put(DataHolder.getSingleton().getUnitByPlainName(split[0].trim()), Integer.parseInt(split[1]));
+            }
+        } catch (Exception e) {
+            logger.warn("Failed to read troops from property '" + pProperty + "'", e);
+            result.clear();
+        }
+        return result;
+    }
+
+    public static Hashtable<String, Integer> stringPropertyToUnitTable(String pProperty) {
+        Hashtable<String, Integer> result = new Hashtable<String, Integer>();
+        if (pProperty == null) {
+            return result;
+        }
+        try {
+            String[] troops = pProperty.split("/");
+            for (String unit : troops) {
+                String[] split = unit.split("=");
+                result.put(split[0].trim(), Integer.parseInt(split[1]));
             }
         } catch (Exception e) {
             logger.warn("Failed to read troops from property '" + pProperty + "'", e);

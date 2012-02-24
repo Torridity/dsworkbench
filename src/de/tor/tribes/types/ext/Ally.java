@@ -35,7 +35,9 @@ public class Ally implements Comparable<Ally>, Serializable {
     private String stringRepresentation = null;
     //$id, $name, $tag, $members, $villages, $points, $all_points, $rank
 
-    /**Read ally from world data*/
+    /**
+     * Read ally from world data
+     */
     public static Ally parseFromPlainData(String pLine) {
         StringTokenizer tokenizer = new StringTokenizer(pLine, ",");
         Ally entry = new Ally();
@@ -45,10 +47,8 @@ public class Ally implements Comparable<Ally>, Serializable {
 
         try {
             entry.setId(Integer.parseInt(tokenizer.nextToken()));
-            String name = URLDecoder.decode(tokenizer.nextToken(), "UTF-8");
-            entry.setName(name);
-            String tag = URLDecoder.decode(tokenizer.nextToken(), "UTF-8");
-            entry.setTag(tag);
+            entry.setName(URLDecoder.decode(tokenizer.nextToken(), "UTF-8"));
+            entry.setTag(URLDecoder.decode(tokenizer.nextToken(), "UTF-8"));
             entry.setMembers(Short.parseShort(tokenizer.nextToken()));
             entry.setVillages(Integer.parseInt(tokenizer.nextToken()));
             entry.setPoints(Double.parseDouble(tokenizer.nextToken()));
@@ -168,11 +168,11 @@ public class Ally implements Comparable<Ally>, Serializable {
         }
     }
 
-    public List<Tribe> getTribes() {
+    public Tribe[] getTribes() {
         if (tribes == null) {
             tribes = new LinkedList<Tribe>();
         }
-        return tribes;
+        return tribes.toArray(new Tribe[tribes.size()]);
     }
 
     public String getHTMLInfo() {

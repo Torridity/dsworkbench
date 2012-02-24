@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXList;
 
 /**
- *
+ * @TODO Check selection in attack target view...sometimes the continent list is empty (e.g. Hermann der Starke - w43)
  * @author jejkal
  */
 public class VillageSelectionPanel extends javax.swing.JPanel {
@@ -121,9 +121,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
                 List<Tribe> res = new LinkedList<Tribe>();
                 for (Object o : getSelection()) {
                     Ally a = (Ally) o;
-                    for (Tribe t : a.getTribes()) {
-                        res.add(t);
-                    }
+                    res.addAll(Arrays.asList(a.getTribes()));
                 }
 
                 Collections.sort(res, Tribe.CASE_INSENSITIVE_ORDER);

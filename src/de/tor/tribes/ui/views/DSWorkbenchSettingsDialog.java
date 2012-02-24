@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.php.DatabaseInterface;
+import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.test.DummyUserProfile;
 import de.tor.tribes.types.ext.InvalidTribe;
 import de.tor.tribes.types.UserProfile;
@@ -36,14 +37,12 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.panels.MinimapPanel;
-import de.tor.tribes.ui.panels.TroopSelectionPanel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.ui.wiz.red.ResourceDistributorWizard;
 import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
-import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.io.File;
@@ -53,13 +52,13 @@ import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.SocketAddress;
 import java.util.*;
+import java.util.Map.Entry;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 import org.apache.log4j.ConsoleAppender;
 
 /**
- * @TODO implement store of defense settings....include defense settings to defense planer
  * @author Jejkal
  */
 public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
@@ -180,288 +179,126 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
     public void restoreProperties() {
         //show popup moral
-        try {
-            String v = GlobalOptions.getProperty("show.popup.moral");
-            if (v == null) {
-                jShowPopupMoral.setSelected(true);
-                GlobalOptions.addProperty("show.popup.moral", Boolean.toString(true));
-            } else {
-                if (Boolean.parseBoolean(v)) {
-                    jShowPopupMoral.setSelected(true);
-                }
-            }
-        } catch (Exception e) {
-        }
-
-        //show popup conquers
-        try {
-            String v = GlobalOptions.getProperty("show.popup.conquers");
-            if (v == null) {
-                jShowPopupConquers.setSelected(true);
-                GlobalOptions.addProperty("show.popup.conquers", Boolean.toString(true));
-            } else {
-                if (Boolean.parseBoolean(v)) {
-                    jShowPopupConquers.setSelected(true);
-                }
-            }
-        } catch (Exception e) {
-        }
-
-        //show popup ranks
-        try {
-            String v = GlobalOptions.getProperty("show.popup.ranks");
-            if (v == null) {
-                jShowPopupRanks.setSelected(true);
-                GlobalOptions.addProperty("show.popup.ranks", Boolean.toString(true));
-            } else {
-                if (Boolean.parseBoolean(v)) {
-                    jShowPopupRanks.setSelected(true);
-                }
-            }
-        } catch (Exception e) {
-        }
-
-        //show popup farm space
-        try {
-            String v = GlobalOptions.getProperty("show.popup.farm.space");
-            if (v == null) {
-                jShowPopupFarmSpace.setSelected(true);
-                GlobalOptions.addProperty("show.popup.farm.space", Boolean.toString(true));
-            } else {
-                if (Boolean.parseBoolean(v)) {
-                    jShowPopupFarmSpace.setSelected(true);
-                }
-            }
-        } catch (Exception e) {
-        }
-
-        //show continents
-        try {
-            if (Boolean.parseBoolean(GlobalOptions.getProperty("map.showcontinents"))) {
-                jShowContinents.setSelected(true);
-            }
-        } catch (Exception e) {
-        }
-        //show sectors
-        try {
-            if (Boolean.parseBoolean(GlobalOptions.getProperty("show.sectors"))) {
-                jShowSectorsBox.setSelected(true);
-            }
-        } catch (Exception e) {
-        }
-
-        //show barbarian
-        try {
-            String v = GlobalOptions.getProperty("show.barbarian");
-            if (v == null) {
-                jShowBarbarianBox.setSelected(true);
-                GlobalOptions.addProperty("show.barbarian", Boolean.toString(true));
-            } else if (Boolean.parseBoolean(v)) {
-                jShowBarbarianBox.setSelected(true);
-            }
-        } catch (Exception e) {
-        }
-
-        //attack movement
-        try {
-            if (Boolean.parseBoolean(GlobalOptions.getProperty("attack.movement"))) {
-                jShowAttackMovementBox.setSelected(true);
-            }
-        } catch (Exception e) {
-        }
-
-        //draw attacks by default
-        try {
-            if (Boolean.parseBoolean(GlobalOptions.getProperty("draw.attacks.by.default"))) {
-                jDrawAttacksByDefaultBox.setSelected(true);
-            }
-        } catch (Exception e) {
-        }
-        //show live countdown in attack table
-        try {
-            if (Boolean.parseBoolean(GlobalOptions.getProperty("show.live.countdown"))) {
-                jShowLiveCountdown.setSelected(true);
-            }
-            DSWorkbenchAttackFrame.getSingleton().getCountdownThread().updateSettings();
-        } catch (Exception e) {
-        }
-        //extended attack vector drawing
-        try {
-            if (Boolean.parseBoolean(GlobalOptions.getProperty("extended.attack.vectors"))) {
-                jExtendedAttackLineDrawing.setSelected(true);
-            }
-        } catch (Exception e) {
-            GlobalOptions.addProperty("extended.attack.vectors", Boolean.toString(false));
-        }
-        //attack template paths
-        try {
-            String path = GlobalOptions.getProperty("attack.template.header");
-            if (path == null) {
-                jHeaderPath.setText("<Standard>");
-            } else {
-                jHeaderPath.setText(path);
-            }
-        } catch (Exception e) {
-            jHeaderPath.setText("<Standard>");
-        }
-        try {
-            String path = GlobalOptions.getProperty("attack.template.block");
-            if (path == null) {
-                jBlockPath.setText("<Standard>");
-            } else {
-                jBlockPath.setText(path);
-            }
-        } catch (Exception e) {
-            jBlockPath.setText("<Standard>");
-        }
-        try {
-            String path = GlobalOptions.getProperty("attack.template.footer");
-            if (path == null) {
-                jFooterPath.setText("<Standard>");
-            } else {
-                jFooterPath.setText(path);
-            }
-        } catch (Exception e) {
-            jFooterPath.setText("<Standard>");
-        }
+        jShowPopupMoral.setSelected(GlobalOptions.getProperties().getBoolean("show.popup.moral", true));
+        GlobalOptions.getProperties().setProperty("show.popup.moral", jShowPopupMoral.isSelected());
+        jShowPopupConquers.setSelected(GlobalOptions.getProperties().getBoolean("show.popup.conquers", true));
+        GlobalOptions.getProperties().setProperty("show.popup.conquers", jShowPopupConquers.isSelected());
+        jShowPopupRanks.setSelected(GlobalOptions.getProperties().getBoolean("show.popup.ranks", true));
+        GlobalOptions.getProperties().setProperty("show.popup.ranks", jShowPopupRanks.isSelected());
+        jShowPopupFarmSpace.setSelected(GlobalOptions.getProperties().getBoolean("show.popup.farm.space", true));
+        GlobalOptions.getProperties().setProperty("show.popup.farm.space", jShowPopupFarmSpace.isSelected());
+        jShowContinents.setSelected(GlobalOptions.getProperties().getBoolean("map.showcontinents", true));
+        GlobalOptions.getProperties().setProperty("map.showcontinents", jShowContinents.isSelected());
+        jShowSectorsBox.setSelected(GlobalOptions.getProperties().getBoolean("show.sectors", true));
+        GlobalOptions.getProperties().setProperty("show.sectors", jShowSectorsBox.isSelected());
+        jShowBarbarianBox.setSelected(GlobalOptions.getProperties().getBoolean("show.barbarian", true));
+        GlobalOptions.getProperties().setProperty("show.barbarian", jShowBarbarianBox.isSelected());
+        jShowAttackMovementBox.setSelected(GlobalOptions.getProperties().getBoolean("attack.movement", false));
+        jDrawAttacksByDefaultBox.setSelected(GlobalOptions.getProperties().getBoolean("draw.attacks.by.default", false));
+        jShowLiveCountdown.setSelected(GlobalOptions.getProperties().getBoolean("show.live.countdown", true));
+        GlobalOptions.getProperties().setProperty("show.live.countdown", jShowLiveCountdown.isSelected());
+        jExtendedAttackLineDrawing.setSelected(GlobalOptions.getProperties().getBoolean("extended.attack.vectors", false));
+        jHeaderPath.setText(GlobalOptions.getProperties().getString("attack.template.header", "<Standard>"));
+        jBlockPath.setText(GlobalOptions.getProperties().getString("attack.template.block", "<Standard>"));
+        jFooterPath.setText(GlobalOptions.getProperties().getString("attack.template.footer", "<Standard>"));
         //reload templates
         AttackPlanHTMLExporter.loadCustomTemplate();
+        jMarkOwnVillagesOnMinimapBox.setSelected(GlobalOptions.getProperties().getBoolean("mark.villages.on.minimap", true));
+        GlobalOptions.getProperties().setProperty("mark.villages.on.minimap", jMarkOwnVillagesOnMinimapBox.isSelected());
+        jDefaultMarkBox.setSelectedIndex(GlobalOptions.getProperties().getInt("default.mark", 0));
+        GlobalOptions.getProperties().setProperty("default.mark", jDefaultMarkBox.getSelectedIndex());
+        jCheckForUpdatesBox.setSelected(GlobalOptions.getProperties().getBoolean("check.updates.on.startup", true));
+        GlobalOptions.getProperties().setProperty("check.updates.on.startup", jCheckForUpdatesBox.isSelected());
+        int villageOrder = GlobalOptions.getProperties().getInt("village.order", 0);
+        Village.setOrderType(villageOrder);
+        jVillageSortTypeChooser.setSelectedIndex(villageOrder);
+        jNotifyDurationBox.setSelectedIndex(GlobalOptions.getProperties().getInt("notify.duration", 1));
+        GlobalOptions.getProperties().setProperty("notify.duration", jNotifyDurationBox.getSelectedIndex());
+        jInformOnUpdates.setSelected(GlobalOptions.getProperties().getBoolean("inform.on.updates", true));
+        GlobalOptions.getProperties().setProperty("inform.on.updates", jInformOnUpdates.isSelected());
+        jMaxTroopDensity.setText(GlobalOptions.getProperties().getString("max.density.troops", "650000"));
+        GlobalOptions.getProperties().setProperty("max.density.troops", jMaxTroopDensity.getText());
+        jHalfSizeMainMenu.setSelected(GlobalOptions.getProperties().getBoolean("half.ribbon.size", false));
+        GlobalOptions.getProperties().setProperty("half.ribbon.size", jHalfSizeMainMenu.isSelected());
+        jClipboardSound.setSelected(GlobalOptions.getProperties().getBoolean("clipboard.notification", true));
+        GlobalOptions.getProperties().setProperty("clipboard.notification", jClipboardSound.isSelected());
+        jLabel24.setEnabled(SystrayHelper.isSystraySupported());
+        jEnableSystray.setEnabled(SystrayHelper.isSystraySupported());
+        jEnableSystray.setSelected(GlobalOptions.getProperties().getBoolean("systray.enabled", SystrayHelper.isSystraySupported()));
+        GlobalOptions.getProperties().setProperty("systray.enabled", jEnableSystray.isSelected());
+        jDeleteFarmReportsOnExit.setSelected(GlobalOptions.getProperties().getBoolean("delete.farm.reports.on.exit", true));
+        GlobalOptions.getProperties().setProperty("delete.farm.reports.on.exit", jDeleteFarmReportsOnExit.isSelected());
+        jMaxFarmSpace.setText(GlobalOptions.getProperties().getString("max.farm.space", "20000"));
+        GlobalOptions.getProperties().setProperty("max.farm.space", jMaxFarmSpace.getText());
+        jBrowserPath.setText(GlobalOptions.getProperties().getString("default.browser", ""));
+        GlobalOptions.getProperties().setProperty("default.browser", jBrowserPath.getText());
+        jUseStandardBrowser.setSelected(jBrowserPath.getText().length() < 1);
+        setOffense(TroopHelper.stringPropertyToUnitTable(GlobalOptions.getProperty("standard.off")));
+        setDefense(TroopHelper.stringPropertyToUnitTable(GlobalOptions.getProperty("standard.defense.split")));
+        jMaxSimRounds.setText(GlobalOptions.getProperties().getString("max.sim.rounds", "500"));
+        GlobalOptions.getProperties().setProperty("max.sim.rounds", jMaxSimRounds.getText());
+        jMaxLossRatio.setText(GlobalOptions.getProperties().getString("max.loss.ratio", "50"));
+        GlobalOptions.getProperties().setProperty("max.loss.ratio", jMaxLossRatio.getText());
+    }
 
-        //own villages on minmap
-        try {
-            if (Boolean.parseBoolean(GlobalOptions.getProperty("mark.villages.on.minimap"))) {
-                jMarkOwnVillagesOnMinimapBox.setSelected(true);
-            }
-        } catch (Exception e) {
-        }
+    private void setDefense(Hashtable<String, Integer> pDefense) {
+        jDefSpear.setText((pDefense.get("spear") != null) ? Integer.toString(pDefense.get("spear")) : "500");
+        jDefSword.setText((pDefense.get("sword") != null) ? Integer.toString(pDefense.get("sword")) : "500");
+        jDefArcher.setText((pDefense.get("archer") != null) ? Integer.toString(pDefense.get("archer")) : "500");
+        jDefSpy.setText((pDefense.get("spy") != null) ? Integer.toString(pDefense.get("spy")) : "50");
+        jDefHeavy.setText((pDefense.get("heavy") != null) ? Integer.toString(pDefense.get("heavy")) : "0");
+    }
 
-        //default enemy marker color
-        try {
-            int sel = Integer.parseInt(GlobalOptions.getProperty("default.mark"));
-            jDefaultMarkBox.setSelectedIndex(sel);
-        } catch (Exception e) {
-            jDefaultMarkBox.setSelectedIndex(0);
+    public Hashtable<UnitHolder, Integer> getDefense() {
+        Hashtable<UnitHolder, Integer> result = new Hashtable<UnitHolder, Integer>();
+        Set<Entry<String, Integer>> entries = getDefenseInternal().entrySet();
+        for (Entry<String, Integer> e : entries) {
+            UnitHolder unit = DataHolder.getSingleton().getUnitByPlainName(e.getKey());
+            if (!unit.equals(UnknownUnit.getSingleton())) {
+                result.put(unit, e.getValue());
+            }
         }
+        return result;
+    }
 
-        //data update check on startup
-        try {
-            String value = GlobalOptions.getProperty("check.updates.on.startup");
-            boolean check = false;
-            if (value == null) {
-                check = true;
-            } else {
-                check = Boolean.parseBoolean(value);
-            }
-            jCheckForUpdatesBox.setSelected(check);
-        } catch (Exception e) {
-        }
+    private Hashtable<String, Integer> getDefenseInternal() {
+        Hashtable<String, Integer> result = new Hashtable<String, Integer>();
+        result.put("spear", UIHelper.parseIntFromField(jDefSpear, 500));
+        result.put("sword", UIHelper.parseIntFromField(jDefSword, 500));
+        result.put("archer", UIHelper.parseIntFromField(jDefArcher, 500));
+        result.put("spy", UIHelper.parseIntFromField(jDefSpy, 50));
+        result.put("heavy", UIHelper.parseIntFromField(jDefHeavy, 0));
+        return result;
+    }
 
-        //village sort order
-        try {
-            int villageOrder = Integer.parseInt(GlobalOptions.getProperty("village.order"));
-            villageOrder = (villageOrder == 0 || villageOrder == 1) ? villageOrder : 0;
-            Village.setOrderType(villageOrder);
-            jVillageSortTypeChooser.setSelectedIndex(villageOrder);
-        } catch (Exception e) {
-        }
+    private void setOffense(Hashtable<String, Integer> pOffense) {
+        jOffAxe.setText((pOffense.get("axe") != null) ? Integer.toString(pOffense.get("axe")) : "7000");
+        jOffLight.setText((pOffense.get("light") != null) ? Integer.toString(pOffense.get("light")) : "3000");
+        jOffMarcher.setText((pOffense.get("marcher") != null) ? Integer.toString(pOffense.get("marcher")) : "500");
+        jOffCata.setText((pOffense.get("catapult") != null) ? Integer.toString(pOffense.get("catapult")) : "50");
+        jOffRam.setText((pOffense.get("ram") != null) ? Integer.toString(pOffense.get("ram")) : "300");
+    }
 
-        //notification visibility
-        try {
-            int notifyDuration = Integer.parseInt(GlobalOptions.getProperty("notify.duration"));
-            jNotifyDurationBox.setSelectedIndex(notifyDuration);
-        } catch (Exception e) {
+    public Hashtable<UnitHolder, Integer> getOffense() {
+        Hashtable<UnitHolder, Integer> result = new Hashtable<UnitHolder, Integer>();
+        Set<Entry<String, Integer>> entries = getOffenseInternal().entrySet();
+        for (Entry<String, Integer> e : entries) {
+            UnitHolder unit = DataHolder.getSingleton().getUnitByPlainName(e.getKey());
+            if (!unit.equals(UnknownUnit.getSingleton())) {
+                result.put(unit, e.getValue());
+            }
         }
+        return result;
+    }
 
-        //check for version updates
-        try {
-            String val = GlobalOptions.getProperty("inform.on.updates");
-            if (val != null) {
-                jInformOnUpdates.setSelected(Boolean.parseBoolean(val));
-            }
-        } catch (Exception e) {
-        }
-
-        try {
-            String val = GlobalOptions.getProperty("max.density.troops");
-            if (val != null) {
-                jMaxTroopDensity.setText(val);
-            }
-        } catch (Exception e) {
-            jMaxTroopDensity.setText("650000");
-            GlobalOptions.addProperty("max.density.troops", "650000");
-        }
-
-        try {
-            String val = GlobalOptions.getProperty("half.ribbon.size");
-            if (val != null) {
-                jHalfSizeMainMenu.setSelected(Boolean.parseBoolean(val));
-            }
-        } catch (Exception e) {
-            jHalfSizeMainMenu.setSelected(false);
-            GlobalOptions.addProperty("half.ribbon.size", Boolean.toString(false));
-        }
-        try {
-            String val = GlobalOptions.getProperty("clipboard.notification");
-            if (val != null) {
-                jClipboardSound.setSelected(Boolean.parseBoolean(val));
-            } else {
-                jClipboardSound.setSelected(true);
-                GlobalOptions.addProperty("clipboard.notification", Boolean.toString(true));
-            }
-        } catch (Exception e) {
-            jClipboardSound.setSelected(true);
-            GlobalOptions.addProperty("clipboard.notification", Boolean.toString(true));
-        }
-        try {
-            jLabel24.setEnabled(SystrayHelper.isSystraySupported());
-            jEnableSystray.setEnabled(SystrayHelper.isSystraySupported());
-            String val = GlobalOptions.getProperty("systray.enabled");
-            if (val != null) {
-                jEnableSystray.setSelected(Boolean.parseBoolean(val));
-            } else {
-                jEnableSystray.setSelected(SystrayHelper.isSystraySupported());
-                GlobalOptions.addProperty("systray.enabled", Boolean.toString(SystrayHelper.isSystraySupported()));
-            }
-        } catch (Exception e) {
-            jClipboardSound.setSelected(SystrayHelper.isSystraySupported());
-            GlobalOptions.addProperty("systray.enabled", Boolean.toString(SystrayHelper.isSystraySupported()));
-        }
-
-        try {
-            String val = GlobalOptions.getProperty("delete.farm.reports.on.exit");
-            if (val != null) {
-                jDeleteFarmReportsOnExit.setSelected(Boolean.parseBoolean(val));
-            } else {
-                jDeleteFarmReportsOnExit.setSelected(true);
-                GlobalOptions.addProperty("delete.farm.reports.on.exit", Boolean.toString(true));
-            }
-        } catch (Exception e) {
-            jDeleteFarmReportsOnExit.setSelected(true);
-            GlobalOptions.addProperty("delete.farm.reports.on.exit", Boolean.toString(true));
-        }
-        try {
-            String val = GlobalOptions.getProperty("max.farm.space");
-            if (val != null) {
-                jMaxFarmSpace.setText(val);
-            }
-        } catch (Exception e) {
-            jMaxFarmSpace.setText("20000");
-            GlobalOptions.addProperty("max.farm.space", "20000");
-        }
-
-        //set default browser settings
-        try {
-            String val = GlobalOptions.getProperty("default.browser");
-            if (val == null || val.length() < 1) {
-                jBrowserPath.setText("");
-                jUseStandardBrowser.setSelected(true);
-            } else {
-                jBrowserPath.setText(val);
-                jUseStandardBrowser.setSelected(false);
-            }
-        } catch (Exception e) {
-            jUseStandardBrowser.setSelected(true);
-        }
+    private Hashtable<String, Integer> getOffenseInternal() {
+        Hashtable<String, Integer> result = new Hashtable<String, Integer>();
+        result.put("axe", UIHelper.parseIntFromField(jOffAxe, 7000));
+        result.put("light", UIHelper.parseIntFromField(jOffLight, 3000));
+        result.put("marcher", UIHelper.parseIntFromField(jOffMarcher, 500));
+        result.put("catapult", UIHelper.parseIntFromField(jOffCata, 50));
+        result.put("ram", UIHelper.parseIntFromField(jOffRam, 300));
+        return result;
     }
 
     public Proxy getWebProxy() {
@@ -752,12 +589,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jExtendedAttackLineDrawing = new javax.swing.JCheckBox();
         jDefenseSettings = new javax.swing.JPanel();
         jSingleSupportPanel = new javax.swing.JPanel();
-        labeledTextField6 = new com.jidesoft.swing.LabeledTextField();
-        labeledTextField7 = new com.jidesoft.swing.LabeledTextField();
-        labeledTextField8 = new com.jidesoft.swing.LabeledTextField();
-        labeledTextField9 = new com.jidesoft.swing.LabeledTextField();
-        labeledTextField10 = new com.jidesoft.swing.LabeledTextField();
+        jDefSpear = new com.jidesoft.swing.LabeledTextField();
+        jDefSpy = new com.jidesoft.swing.LabeledTextField();
+        jDefSword = new com.jidesoft.swing.LabeledTextField();
+        jDefHeavy = new com.jidesoft.swing.LabeledTextField();
+        jDefArcher = new com.jidesoft.swing.LabeledTextField();
         jXLabel2 = new org.jdesktop.swingx.JXLabel();
+        jButton4 = new javax.swing.JButton();
         jPanel15 = new javax.swing.JPanel();
         jLabel25 = new javax.swing.JLabel();
         jMaxSimRounds = new javax.swing.JTextField();
@@ -765,12 +603,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jMaxLossRatio = new javax.swing.JTextField();
         jLabel27 = new javax.swing.JLabel();
         jStandardAttackerPanel = new javax.swing.JPanel();
-        labeledTextField1 = new com.jidesoft.swing.LabeledTextField();
-        labeledTextField2 = new com.jidesoft.swing.LabeledTextField();
-        labeledTextField3 = new com.jidesoft.swing.LabeledTextField();
-        labeledTextField4 = new com.jidesoft.swing.LabeledTextField();
-        labeledTextField5 = new com.jidesoft.swing.LabeledTextField();
+        jOffAxe = new com.jidesoft.swing.LabeledTextField();
+        jOffLight = new com.jidesoft.swing.LabeledTextField();
+        jOffMarcher = new com.jidesoft.swing.LabeledTextField();
+        jOffCata = new com.jidesoft.swing.LabeledTextField();
+        jOffRam = new com.jidesoft.swing.LabeledTextField();
         jXLabel1 = new org.jdesktop.swingx.JXLabel();
+        jButton3 = new javax.swing.JButton();
         jNetworkSettings = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jUseStandardBrowser = new javax.swing.JCheckBox();
@@ -1811,51 +1650,82 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jSingleSupportPanel.setOpaque(false);
         jSingleSupportPanel.setLayout(new java.awt.GridBagLayout());
 
-        labeledTextField6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/spear.png"))); // NOI18N
-        labeledTextField6.setText("500");
+        jDefSpear.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/spear.png"))); // NOI18N
+        jDefSpear.setText("500");
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jSingleSupportPanel.add(labeledTextField6, gridBagConstraints);
+        jSingleSupportPanel.add(jDefSpear, gridBagConstraints);
 
-        labeledTextField7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/spy.png"))); // NOI18N
-        labeledTextField7.setText("50");
+        jDefSpy.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/spy.png"))); // NOI18N
+        jDefSpy.setText("50");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jSingleSupportPanel.add(labeledTextField7, gridBagConstraints);
+        jSingleSupportPanel.add(jDefSpy, gridBagConstraints);
 
-        labeledTextField8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/sword.png"))); // NOI18N
-        labeledTextField8.setText("500");
+        jDefSword.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/sword.png"))); // NOI18N
+        jDefSword.setText("500");
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jSingleSupportPanel.add(labeledTextField8, gridBagConstraints);
+        jSingleSupportPanel.add(jDefSword, gridBagConstraints);
 
-        labeledTextField9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/heavy.png"))); // NOI18N
-        labeledTextField9.setText("0");
+        jDefHeavy.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/heavy.png"))); // NOI18N
+        jDefHeavy.setText("0");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jSingleSupportPanel.add(labeledTextField9, gridBagConstraints);
+        jSingleSupportPanel.add(jDefHeavy, gridBagConstraints);
 
-        labeledTextField10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/archer.png"))); // NOI18N
-        labeledTextField10.setText("500");
+        jDefArcher.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/archer.png"))); // NOI18N
+        jDefArcher.setText("500");
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jSingleSupportPanel.add(labeledTextField10, gridBagConstraints);
+        jSingleSupportPanel.add(jDefArcher, gridBagConstraints);
 
         jXLabel2.setForeground(new java.awt.Color(102, 102, 102));
         jXLabel2.setText("Trage hier die Truppenstärke einer Einzelverteidigung ein. Beachte dabei, dass von diesen Einstellungen die Analyse von SOS-Anfragen abhängt. Änderst du die Einstellungen, musst du alle Verteidigungen manuell erneut analysieren und berechnen.");
         jXLabel2.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
         jXLabel2.setLineWrap(true);
+        jXLabel2.setPreferredSize(new java.awt.Dimension(400, 40));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jSingleSupportPanel.add(jXLabel2, gridBagConstraints);
+
+        jButton4.setText("Übernehmen");
+        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireChangeDefEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jSingleSupportPanel.add(jButton4, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1901,7 +1771,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel15.add(jLabel26, gridBagConstraints);
 
-        jMaxLossRatio.setText("30");
+        jMaxLossRatio.setText("50");
         jMaxLossRatio.setToolTipText("Die maximale Verlustrate der Verteidiger, die man akzeptieren möchte");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -1933,51 +1803,83 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jStandardAttackerPanel.setOpaque(false);
         jStandardAttackerPanel.setLayout(new java.awt.GridBagLayout());
 
-        labeledTextField1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/axe.png"))); // NOI18N
-        labeledTextField1.setText("7000");
+        jOffAxe.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/axe.png"))); // NOI18N
+        jOffAxe.setText("7000");
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jStandardAttackerPanel.add(labeledTextField1, gridBagConstraints);
+        jStandardAttackerPanel.add(jOffAxe, gridBagConstraints);
 
-        labeledTextField2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/light.png"))); // NOI18N
-        labeledTextField2.setText("3000");
+        jOffLight.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/light.png"))); // NOI18N
+        jOffLight.setText("3000");
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jStandardAttackerPanel.add(labeledTextField2, gridBagConstraints);
+        jStandardAttackerPanel.add(jOffLight, gridBagConstraints);
 
-        labeledTextField3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/marcher.png"))); // NOI18N
-        labeledTextField3.setText("500");
+        jOffMarcher.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/marcher.png"))); // NOI18N
+        jOffMarcher.setText("500");
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jStandardAttackerPanel.add(labeledTextField3, gridBagConstraints);
+        jStandardAttackerPanel.add(jOffMarcher, gridBagConstraints);
 
-        labeledTextField4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/catapult.png"))); // NOI18N
-        labeledTextField4.setText("50");
+        jOffCata.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/catapult.png"))); // NOI18N
+        jOffCata.setText("50");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jStandardAttackerPanel.add(labeledTextField4, gridBagConstraints);
+        jStandardAttackerPanel.add(jOffCata, gridBagConstraints);
 
-        labeledTextField5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/ram.png"))); // NOI18N
-        labeledTextField5.setText("300");
+        jOffRam.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/ram.png"))); // NOI18N
+        jOffRam.setText("300");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jStandardAttackerPanel.add(labeledTextField5, gridBagConstraints);
+        jStandardAttackerPanel.add(jOffRam, gridBagConstraints);
 
         jXLabel1.setForeground(new java.awt.Color(102, 102, 102));
         jXLabel1.setText("Die hier eingestellten Truppen sollten in der Regel beibehalten werden, da sie eine recht aussagekräftige Off darstellen. Minimale Änderungen beeinflussen das Ergebnis bei der Verteidigungsplanung ohnehin nur unwesentlich.");
         jXLabel1.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
         jXLabel1.setLineWrap(true);
+        jXLabel1.setPreferredSize(new java.awt.Dimension(300, 40));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jStandardAttackerPanel.add(jXLabel1, gridBagConstraints);
+
+        jButton3.setText("Übernehmen");
+        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireChangeOffEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jStandardAttackerPanel.add(jButton3, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -3077,6 +2979,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         GlobalOptions.addProperty("max.farm.space", jMaxFarmSpace.getText());
         GlobalOptions.addProperty("show.live.countdown", Boolean.toString(jShowLiveCountdown.isSelected()));
         GlobalOptions.addProperty("extended.attack.vectors", Boolean.toString(jExtendedAttackLineDrawing.isSelected()));
+        GlobalOptions.addProperty("max.sim.rounds", jMaxSimRounds.getText());
+        GlobalOptions.addProperty("max.loss.ratio", jMaxLossRatio.getText());
         GlobalOptions.saveProperties();
         if (!checkSettings()) {
             return;
@@ -3084,7 +2988,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         setBlocking(false);
         setVisible(false);
         DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
-        DSWorkbenchAttackFrame.getSingleton().getCountdownThread().updateSettings();
         MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
         MinimapPanel.getSingleton().redraw();
     }//GEN-LAST:event_fireOkEvent
@@ -3700,6 +3603,14 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
         GlobalOptions.addProperty("delete.farm.reports.on.exit", Boolean.toString(jDeleteFarmReportsOnExit.isSelected()));
     }//GEN-LAST:event_fireDeleteFarmReportsOnExitEvent
 
+    private void fireChangeOffEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeOffEvent
+        GlobalOptions.addProperty("standard.off", TroopHelper.stringUnitTableToProperty(getOffenseInternal()));
+    }//GEN-LAST:event_fireChangeOffEvent
+
+    private void fireChangeDefEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeDefEvent
+        GlobalOptions.addProperty("standard.defense.split", TroopHelper.stringUnitTableToProperty(getDefenseInternal()));
+    }//GEN-LAST:event_fireChangeDefEvent
+
     // </editor-fold>
     /**
      * Update the server list
@@ -4017,6 +3928,8 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JButton jCancelButton;
@@ -4028,6 +3941,11 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
     private javax.swing.JCheckBox jClipboardSound;
     private javax.swing.JButton jCreateAccountButton;
     private javax.swing.JDialog jCreateAccountDialog;
+    private com.jidesoft.swing.LabeledTextField jDefArcher;
+    private com.jidesoft.swing.LabeledTextField jDefHeavy;
+    private com.jidesoft.swing.LabeledTextField jDefSpear;
+    private com.jidesoft.swing.LabeledTextField jDefSpy;
+    private com.jidesoft.swing.LabeledTextField jDefSword;
     private javax.swing.JComboBox jDefaultMarkBox;
     private javax.swing.JPanel jDefenseSettings;
     private javax.swing.JButton jDeffStrengthOKButton;
@@ -4091,6 +4009,11 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
     private javax.swing.JButton jNewProfileButton;
     private javax.swing.JComboBox jNotifyDurationBox;
     private javax.swing.JButton jOKButton;
+    private com.jidesoft.swing.LabeledTextField jOffAxe;
+    private com.jidesoft.swing.LabeledTextField jOffCata;
+    private com.jidesoft.swing.LabeledTextField jOffLight;
+    private com.jidesoft.swing.LabeledTextField jOffMarcher;
+    private com.jidesoft.swing.LabeledTextField jOffRam;
     private javax.swing.JPasswordField jOldPassword;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
@@ -4157,16 +4080,6 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
     private org.jdesktop.swingx.JXLabel jXLabel1;
     private org.jdesktop.swingx.JXLabel jXLabel2;
     private com.jidesoft.swing.JideLabel jideLabel1;
-    private com.jidesoft.swing.LabeledTextField labeledTextField1;
-    private com.jidesoft.swing.LabeledTextField labeledTextField10;
-    private com.jidesoft.swing.LabeledTextField labeledTextField2;
-    private com.jidesoft.swing.LabeledTextField labeledTextField3;
-    private com.jidesoft.swing.LabeledTextField labeledTextField4;
-    private com.jidesoft.swing.LabeledTextField labeledTextField5;
-    private com.jidesoft.swing.LabeledTextField labeledTextField6;
-    private com.jidesoft.swing.LabeledTextField labeledTextField7;
-    private com.jidesoft.swing.LabeledTextField labeledTextField8;
-    private com.jidesoft.swing.LabeledTextField labeledTextField9;
     private javax.swing.ButtonGroup tagMarkerGroup;
     // End of variables declaration//GEN-END:variables
 }

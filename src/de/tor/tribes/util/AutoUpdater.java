@@ -59,11 +59,9 @@ public class AutoUpdater {
     }
 
     public static List<String> getUpdatedResources() throws IOException {
-
         Properties props = new Properties();
         URL u = new URL("http://www.dsworkbench.de/downloads/Update/hash.props");
         props.load(u.openConnection().getInputStream());
-
         String currentJar = "./store/core.jar";
         currentJar = "H:/Software/DSWorkbench-Distribute/DSWorkbench3.01/DSWorkbench/lib/core.jar";
 
@@ -82,8 +80,7 @@ public class AutoUpdater {
 
             int newFiles = 0;
             int changedFiles = 0;
-
-
+            
             Set<Object> entries = props.keySet();
 
             for (Object e : entries) {
@@ -172,10 +169,15 @@ public class AutoUpdater {
 
     }
 
+    
+    
+    
+    
+    
+    
+    
     public static void main(String[] args) throws Exception {
-
         System.out.println(obtainChangeLog());
-
         //////////////////////////////////////////////
         List<File> files = new ArrayList<File>();
         getImages(new File("./graphics"), files);

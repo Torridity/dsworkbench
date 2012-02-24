@@ -817,8 +817,10 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         }
     }
 
-    public CountdownThread getCountdownThread() {
-        return mCountdownThread;
+    public void updateCountdownSettings() {
+        if (mCountdownThread != null) {
+            mCountdownThread.updateSettings();
+        }
     }
 
     @Override

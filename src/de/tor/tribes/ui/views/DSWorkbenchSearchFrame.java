@@ -358,7 +358,7 @@ private void fireTribeSelectionChangedEvent(java.awt.event.ItemEvent evt) {//GEN
 private void fireAllySelectionChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireAllySelectionChangedEvent
     try {
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            Tribe[] tl = ((Ally) evt.getItem()).getTribes().toArray(new Tribe[0]);
+            Tribe[] tl = ((Ally) evt.getItem()).getTribes();
             Arrays.sort(tl, Tribe.CASE_INSENSITIVE_ORDER);
             DefaultComboBoxModel model = new DefaultComboBoxModel(tl);
             jTribesList.setModel(model);
@@ -379,7 +379,7 @@ private void fireAddMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
             if (selection instanceof String) {
                 //no ally selected
             } else {
-                mMarkerAddFrame.setVillage(((Ally) selection).getTribes().get(0).getVillageList()[0]);
+                mMarkerAddFrame.setVillage(((Ally) selection).getTribes()[0].getVillageList()[0]);
                 mMarkerAddFrame.setAllyOnly();
                 mMarkerAddFrame.setVisible(true);
             }

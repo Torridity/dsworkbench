@@ -217,9 +217,9 @@ public class TroopSetupConfigurationFrame extends javax.swing.JDialog implements
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jXCollapsiblePane1, gridBagConstraints);
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Informationen");
+        jLabel3.setText("Informationen anzeigen");
+        jLabel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 fireShowHideInfoEvent(evt);
@@ -229,6 +229,7 @@ public class TroopSetupConfigurationFrame extends javax.swing.JDialog implements
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 2, 0);
         getContentPane().add(jLabel3, gridBagConstraints);
 
         jXCollapsiblePane2.setCollapsed(true);

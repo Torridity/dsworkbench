@@ -14,25 +14,25 @@ import java.util.List;
  * @author Torridity
  */
 public class DummyAlly extends Ally {
-
+    
     List<Tribe> t = new LinkedList<Tribe>();
-
+    
     public DummyAlly() {
         t.add(new DummyTribe());
     }
-
+    
     @Override
     public int getId() {
         return 1;
     }
-
+    
     @Override
     public short getMembers() {
         return 1;
     }
-
+    
     @Override
-    public List<Tribe> getTribes() {
-        return t;
+    public Tribe[] getTribes() {
+        return t.toArray(new Tribe[1]);
     }
 }

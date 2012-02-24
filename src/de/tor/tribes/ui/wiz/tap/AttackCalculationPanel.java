@@ -45,7 +45,7 @@ import org.netbeans.spi.wizard.*;
  * @author Torridity
  */
 public class AttackCalculationPanel extends WizardPage {
-    
+
     private static final String GENERAL_INFO = "Bist du hier angekommen, steht einer Berechnung der Angriffe nichts mehr im Wege. "
             + "Im oberen Bereich werden noch einmal Informationen zu den bisherigen Einstellungen angezeigt, im mittleren Bereich "
             + "k&ouml;nnen letzte Einstellungen vorgenommen werden, die im Normalfall jedoch nicht ver&auml;ndert werden m&uuml;ssen. "
@@ -54,7 +54,7 @@ public class AttackCalculationPanel extends WizardPage {
     private static AttackCalculationPanel singleton = null;
     private AbstractAttackAlgorithm calculator = null;
     private SimpleDateFormat dateFormat = null;
-    
+
     public static synchronized AttackCalculationPanel getSingleton() {
         if (singleton == null) {
             singleton = new AttackCalculationPanel();
@@ -75,16 +75,17 @@ public class AttackCalculationPanel extends WizardPage {
         StyleConstants.setItalic(defaultStyle, true);
         StyleConstants.setFontFamily(defaultStyle, "SansSerif");
         dateFormat = new SimpleDateFormat("HH:mm:ss");
+        jSystematicWarning.setVisible(false);
     }
-    
+
     public static String getDescription() {
         return "Berechnung";
     }
-    
+
     public static String getStep() {
         return "id-attack-calculation";
     }
-    
+
     public void storeProperties() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
         int algo = 0;
@@ -94,12 +95,12 @@ public class AttackCalculationPanel extends WizardPage {
         profile.addProperty("tap.calculation.algo", algo);
         profile.addProperty("tap.calculation.fake.off", jAllowFakeOffs.isSelected());
     }
-    
+
     public void restoreProperties() {
         calculator = null;
         UserProfile profile = GlobalOptions.getSelectedProfile();
         String value = profile.getProperty("tap.calculation.algo");
-        
+
         int type = 0;
         try {
             type = Integer.parseInt(value);
@@ -107,8 +108,10 @@ public class AttackCalculationPanel extends WizardPage {
         }
         if (type == 0) {
             jBruteForce.setSelected(true);
+            jSystematicWarning.setVisible(false);
         } else {
             jSystematicCalculation.setSelected(true);
+            jSystematicWarning.setVisible(true);
         }
         jAllowFakeOffs.setSelected(Boolean.parseBoolean(profile.getProperty("tap.calculation.fake.off")));
     }
@@ -132,6 +135,7 @@ public class AttackCalculationPanel extends WizardPage {
         jAllowFakeOffs = new javax.swing.JCheckBox();
         jBruteForce = new javax.swing.JRadioButton();
         jSystematicCalculation = new javax.swing.JRadioButton();
+        jSystematicWarning = new org.jdesktop.swingx.JXLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane();
         jCalculateButton = new javax.swing.JButton();
@@ -193,7 +197,7 @@ public class AttackCalculationPanel extends WizardPage {
         jAllowFakeOffs.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -205,16 +209,36 @@ public class AttackCalculationPanel extends WizardPage {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(jBruteForce, gridBagConstraints);
 
         buttonGroup1.add(jSystematicCalculation);
         jSystematicCalculation.setText("Systematische Berechnung");
+        jSystematicCalculation.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireSystematicSelectionChangedEvent(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(jSystematicCalculation, gridBagConstraints);
+
+        jSystematicWarning.setForeground(new java.awt.Color(102, 102, 102));
+        jSystematicWarning.setText("Du hast die systematische Berechnung gewählt. Diese Art der Berechnung ist für wenige Ziele gedacht, da die Berechnung sehr zeitintensiv ist. Sind bei der Angriffsplanung mehr als 100 Dörfer beteiligt wird dringend empfohlen, die 'Zufällige Berechnung' zu wählen.");
+        jSystematicWarning.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
+        jSystematicWarning.setLineWrap(true);
+        jSystematicWarning.setPreferredSize(new java.awt.Dimension(100, 40));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jSystematicWarning, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -236,7 +260,7 @@ public class AttackCalculationPanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(jScrollPane1, gridBagConstraints);
 
-        jCalculateButton.setFont(new java.awt.Font("Tahoma", 0, 14));
+        jCalculateButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jCalculateButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/select.png"))); // NOI18N
         jCalculateButton.setText("Angriffe berechnen");
         jCalculateButton.setMaximumSize(new java.awt.Dimension(167, 40));
@@ -395,7 +419,7 @@ public class AttackCalculationPanel extends WizardPage {
             jLabel1.setText("Informationen einblenden");
         }
     }//GEN-LAST:event_fireHideInfoEvent
-    
+
     private void fireCalculateAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateAttacksEvent
         if (calculator == null) {//not used yet
             initializeCalculation();
@@ -413,7 +437,7 @@ public class AttackCalculationPanel extends WizardPage {
                 }
             }
         }
-        
+
         jCalculateButton.setText("Abbrechen");
         calculator.start();
         setBusy(true);
@@ -422,9 +446,13 @@ public class AttackCalculationPanel extends WizardPage {
             Thread.sleep(20);
         } catch (Exception e) {
         }
-        
+
     }//GEN-LAST:event_fireCalculateAttacksEvent
-    
+
+    private void fireSystematicSelectionChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireSystematicSelectionChangedEvent
+           jSystematicWarning.setVisible(jSystematicCalculation.isSelected());
+    }//GEN-LAST:event_fireSystematicSelectionChangedEvent
+
     private void initializeCalculation() {
         if (jBruteForce.isSelected()) {
             calculator = new BruteForce();
@@ -450,7 +478,7 @@ public class AttackCalculationPanel extends WizardPage {
             }
             sourcesForUnit.add(element.getVillage());
         }
-        
+
         List<Village> targets = new LinkedList<Village>();
         List<Village> fakeTargets = new LinkedList<Village>();
         Hashtable<Village, Integer> maxAttacks = new Hashtable<Village, Integer>();
@@ -462,29 +490,29 @@ public class AttackCalculationPanel extends WizardPage {
             }
             maxAttacks.put(element.getVillage(), element.getAttacks());
         }
-        
+
         TimeFrame timeFrame = TimeSettingsPanel.getSingleton().getTimeFrame();
         calculator.initialize(sources, fakeSources, targets, fakeTargets, maxAttacks, timeFrame, jAllowFakeOffs.isSelected(), null);
         jProgressBar1.setValue(0);
         calculator.setLogListener(new AbstractAttackAlgorithm.LogListener() {
-            
+
             @Override
             public void logMessage(String pMessage) {
                 notifyStatusUpdate(pMessage);
             }
-            
+
             @Override
             public void calculationFinished() {
                 notifyCalculationFinished();
             }
-            
+
             @Override
             public void updateProgress(double pPercent) {
                 jProgressBar1.setValue((int) Math.rint(pPercent));
             }
         });
     }
-    
+
     public void updateStatus() {
         TAPAttackSourceElement[] elements = AttackSourceFilterPanel.getSingleton().getFilteredElements();
         jOverallSources.setText(Integer.toString(elements.length));
@@ -497,10 +525,10 @@ public class AttackCalculationPanel extends WizardPage {
                 offs++;
             }
         }
-        
+
         jOverallAttacks.setText(Integer.toString(offs));
         jOverallFakes.setText(Integer.toString(fakes));
-        
+
         List<TAPAttackTargetElement> targetElements = AttackTargetPanel.getSingleton().getAllElements();
         jOverallTargets.setText(Integer.toString(targetElements.size()));
         offs = 0;
@@ -512,11 +540,11 @@ public class AttackCalculationPanel extends WizardPage {
                 offs += element.getAttacks();
             }
         }
-        
+
         jTargetAttacks.setText(Integer.toString(offs));
         jTargetFakes.setText(Integer.toString(fakes));
     }
-    
+
     public void notifyCalculationFinished() {
         setBusy(false);
         if (calculator.hasResults()) {
@@ -526,13 +554,13 @@ public class AttackCalculationPanel extends WizardPage {
         }
         jCalculateButton.setText("Angriffe berechnen");
     }
-    
+
     public void notifyStatusUpdate(String pMessage) {
         try {
             StyledDocument doc = jTextPane1.getStyledDocument();
             doc.insertString(doc.getLength(), "(" + dateFormat.format(new Date(System.currentTimeMillis())) + ") " + pMessage + "\n", doc.getStyle("Info"));
             SwingUtilities.invokeLater(new Runnable() {
-                
+
                 public void run() {
                     scroll();
                 }
@@ -540,7 +568,7 @@ public class AttackCalculationPanel extends WizardPage {
         } catch (BadLocationException ble) {
         }
     }
-    
+
     private void scroll() {
         Point point = new Point(0, (int) (jTextPane1.getSize().getHeight()));
         JViewport vp = jScrollPane1.getViewport();
@@ -549,7 +577,7 @@ public class AttackCalculationPanel extends WizardPage {
         }
         vp.setViewPosition(point);
     }
-    
+
     public List<AbstractTroopMovement> getResults() {
         return calculator.getResults();
     }
@@ -577,6 +605,7 @@ public class AttackCalculationPanel extends WizardPage {
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JRadioButton jSystematicCalculation;
+    private org.jdesktop.swingx.JXLabel jSystematicWarning;
     private javax.swing.JLabel jTargetAttacks;
     private javax.swing.JLabel jTargetFakes;
     private javax.swing.JTextPane jTextPane1;
@@ -585,22 +614,26 @@ public class AttackCalculationPanel extends WizardPage {
 
     @Override
     public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
+        if (calculator == null) {
+            setProblem("Noch keine Berechnung durchgeführt");
+            return WizardPanelNavResult.REMAIN_ON_PAGE;
+        }
         if (calculator != null && calculator.isRunning()) {
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
         AttackFinishPanel.getSingleton().update();
         return WizardPanelNavResult.PROCEED;
     }
-    
+
     @Override
     public WizardPanelNavResult allowBack(String string, Map map, Wizard wizard) {
         if (calculator != null && calculator.isRunning()) {
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
         return WizardPanelNavResult.PROCEED;
-        
+
     }
-    
+
     @Override
     public WizardPanelNavResult allowFinish(String string, Map map, Wizard wizard) {
         if (calculator != null && calculator.isRunning()) {

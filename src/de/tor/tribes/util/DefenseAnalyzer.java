@@ -37,10 +37,13 @@ public class DefenseAnalyzer extends Thread {
     private double maxLossRatio = 0;
     private boolean running = false;
     private boolean aborted = false;
+    private boolean reAnalyze = false;
     private DefenseAnalyzerListener listener = null;
 
-    public DefenseAnalyzer(DefenseAnalyzerListener pListener, Hashtable<de.tor.tribes.io.UnitHolder, Integer> pStandardOff, Hashtable<de.tor.tribes.io.UnitHolder, Integer> pStandardDefSplit,
-            int pMaxRuns, double pMaxLossRatio) {
+    public DefenseAnalyzer(DefenseAnalyzerListener pListener,
+            Hashtable<de.tor.tribes.io.UnitHolder, Integer> pStandardOff,
+            Hashtable<de.tor.tribes.io.UnitHolder, Integer> pStandardDefSplit,
+            int pMaxRuns, double pMaxLossRatio, boolean pReAnalyze) {
         if (pListener == null) {
             throw new IllegalArgumentException("pListener must not be null");
         }
@@ -50,6 +53,7 @@ public class DefenseAnalyzer extends Thread {
         standardDefSplit = pStandardDefSplit;
         maxRuns = pMaxRuns;
         maxLossRatio = pMaxLossRatio;
+        reAnalyze = pReAnalyze;
         setDaemon(true);
     }
 
@@ -109,7 +113,7 @@ public class DefenseAnalyzer extends Thread {
                 int attCount = targetInfo.getOffs();
                 boolean noAttack = (attCount == 0);
 
-                if (!info.isAnalyzed()) {//re-analyze info
+                if (reAnalyze || !info.isAnalyzed()) {//re-analyze info
                     Hashtable<UnitHolder, AbstractUnitElement> off = dswbUnitsToSimulatorUnits(standardOff);
                     Hashtable<UnitHolder, AbstractUnitElement> def = getDefense(targetInfo, info, info.getSupports().length);
 
@@ -233,7 +237,7 @@ public class DefenseAnalyzer extends Thread {
             double lossesPercent = 100 - (100.0 * survive / troops);
             if (!result.isWin() && lossesPercent < maxLossRatio) {
                 pInfo.setNeededSupports(factor);
-              //  pInfo.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.SAVE);
+                //  pInfo.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.SAVE);
                 pInfo.setLossRation(lossesPercent);
                 break;
             } else {
@@ -242,11 +246,11 @@ public class DefenseAnalyzer extends Thread {
             if (factor > maxRuns) {
                 if (lossesPercent < 100) {
                     pInfo.setNeededSupports(factor);
-                  //  pInfo.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.FINE);
+                    //  pInfo.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.FINE);
                     pInfo.setLossRation(lossesPercent);
                 } else {
                     pInfo.setNeededSupports(factor);
-                   // pInfo.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.DANGEROUS);
+                    // pInfo.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.DANGEROUS);
                     pInfo.setLossRation(100.0);
                 }
                 //break due to max iterations

@@ -51,7 +51,7 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.*;
 
 /**
- *
+ *@TODO remember selection if attack amount is increased
  * @author Torridity
  */
 public class AttackTargetPanel extends WizardPage {
@@ -430,10 +430,11 @@ public class AttackTargetPanel extends WizardPage {
 
             jStatusLabel.setText(modificationCount + " Angriff(e) " + ((increase) ? "hinzugefügt" : "entfernt"));
             if (modificationCount > 0) {
-                getModel().fireTableDataChanged();
+               // getModel().fireTableDataChanged();
+                jVillageTable.repaint();
             }
         } else {
-            jStatusLabel.setText("Keine Angriffe gewählt");
+            jStatusLabel.setText("Keine Ziele gewählt");
         }
     }//GEN-LAST:event_fireChangeAttackCountEvent
 

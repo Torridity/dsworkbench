@@ -14,7 +14,6 @@ import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.test.DummyUserProfile;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.ui.views.*;
-import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import de.tor.tribes.util.church.ChurchManager;
@@ -43,6 +42,7 @@ import javax.help.CSH;
 import javax.help.HelpBroker;
 import javax.help.HelpSet;
 import javax.help.HelpSetException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.log4j.Logger;
 
 /**
@@ -63,7 +63,8 @@ public class GlobalOptions {
      */
     private static WorldDecorationHolder mDecorationHolder = null;
     private static String SELECTED_SERVER = null;
-    private static Properties GLOBAL_PROPERTIES = new Properties();
+    //private static Properties GLOBAL_PROPERTIES = new Properties();
+    private static PropertiesConfiguration GLOBAL_PROPERTIES = null;
     //flag for online/offline mode
     private static boolean isOfflineMode = false;
     //used to store last attack time of AttackAddFrame
@@ -207,7 +208,7 @@ public class GlobalOptions {
      * Load the global properties
      */
     private static void loadProperties() throws Exception {
-        GLOBAL_PROPERTIES = new Properties();
+        GLOBAL_PROPERTIES = new PropertiesConfiguration();
         if (new File("global.properties").exists()) {
             logger.debug("Loading existing properties file");
             FileInputStream fin = new FileInputStream("global.properties");
@@ -226,13 +227,13 @@ public class GlobalOptions {
         logger.debug("Saving global properties");
         try {
             FileOutputStream fout = new FileOutputStream("global.properties");
-            GLOBAL_PROPERTIES.store(fout, "Automatically generated. Please do not modify!");
+            GLOBAL_PROPERTIES.save(fout);
             fout.flush();
             fout.close();
         } catch (Exception e) {
             logger.error("Failed to write properties", e);
         }
-        
+
     }
 
     public static void storeViewStates() {
@@ -242,7 +243,7 @@ public class GlobalOptions {
         DSWorkbenchDistanceFrame.getSingleton().storeProperties();
         DSWorkbenchDoItYourselfAttackPlaner.getSingleton().storeProperties();
         DSWorkbenchMarkerFrame.getSingleton().storeProperties();
-       // DSWorkbenchMerchantDistibutor.getSingleton().storeProperties();
+        // DSWorkbenchMerchantDistibutor.getSingleton().storeProperties();
         DSWorkbenchReTimerFrame.getSingleton().storeProperties();
         DSWorkbenchSOSRequestAnalyzer.getSingleton().storeProperties();
         DSWorkbenchStatsFrame.getSingleton().storeProperties();
@@ -261,24 +262,36 @@ public class GlobalOptions {
      * Add a property
      */
     public static void addProperty(String pKey, String pValue) {
-        GLOBAL_PROPERTIES.put(pKey, pValue);
+        GLOBAL_PROPERTIES.setProperty(pKey, pValue);
     }
 
     /**
      * Remove a property
      */
     public static void removeProperty(String pKey) {
-        GLOBAL_PROPERTIES.remove(pKey);
+        GLOBAL_PROPERTIES.clearProperty(pKey);
     }
 
     /**
      * Get the value of a property
      */
     public static String getProperty(String pKey) {
-        if (pKey == null) {
+        if (GLOBAL_PROPERTIES == null || pKey == null) {
             return null;
         }
-        return GLOBAL_PROPERTIES.getProperty(pKey);
+        Object property = GLOBAL_PROPERTIES.getProperty(pKey);
+        if (property != null) {
+            return property.toString();
+        } else {
+            return null;
+        }
+    }
+
+    public static PropertiesConfiguration getProperties() {
+        if (GLOBAL_PROPERTIES == null) {//return empty properties if not yet loaded
+            return new PropertiesConfiguration();
+        }
+        return GLOBAL_PROPERTIES;
     }
 
     /**
@@ -287,7 +300,7 @@ public class GlobalOptions {
      * @throws Exception If there was an error while loading the default skin
      */
     public static void loadSkin() throws Exception {
-        mSkin = new Skin(GLOBAL_PROPERTIES.getProperty("default.skin"));
+        mSkin = new Skin(GLOBAL_PROPERTIES.getString("default.skin"));
     }
 
     /**

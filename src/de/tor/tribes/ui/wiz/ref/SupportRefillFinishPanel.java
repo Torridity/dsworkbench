@@ -45,14 +45,10 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  */
 public class SupportRefillFinishPanel extends WizardPage {
 
-    private static final String GENERAL_INFO = "<html>In diesem abschlie&szlig;enden Schritt werden alle Ergebnisse der Berechnung angezeigt. "
-            + "In der oberen Tabelle sind alle Ziele aufgelistet, sowie die prozentuale Angabe, wieviele der unter 'Ziele' angegebenen Anzahl von Angriffen auf "
-            + "dieses Dorf zugeteilt werden konnten. Die Einzelangriff kannst du dir anzeigen lassen, indem du eins oder mehrere Zeilen ausw&auml;hlst und auf den "
-            + "Button 'Details' klickst.<br/>"
-            + "Bist du mit dem Ergebnis zufrieden, hast du im unteren Bereich verschiedene M&ouml;glichkeiten, alle oder ausgew&auml;hlte Angriffe in einen neuen "
-            + "Angriffsplaner der Angriffs&uuml;bersicht zu &uuml;bertragen. Fahre mit der Maus &uuml;ber die einzelnen Buttons, um dir einen Tooltip mit der "
-            + "entsprechenden Erkl&auml;rung anzeigen zu lassen."
-            + "</html>";
+    private static final String GENERAL_INFO = "Die Berechnung ist abgeschlossen und im besten Fall wurden für die angegebenen Einstellungen und Truppeninformationen "
+            + "Unterstützungen gefunden. Du kannst die Ergebnisse nun in die Befehlsübersicht übertragen, von dort im Browser öffnen und abschicken. Beachte dabei, "
+            + "dass es sich bei der Abschickzeit um die späteste Abschickzeit handelt. Da es hier um Unterstützungen geht ist es kein Problem, wenn du die Befehle "
+            + "vorher abschickst, falls die Abschickzeit mitten in der Nacht liegt oder du die Unterstützungen schnell in den Zieldörfern haben möchtest.";
     private static SupportRefillFinishPanel singleton = null;
     private VillageOverviewMapPanel overviewPanel = null;
 

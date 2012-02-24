@@ -49,10 +49,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
     private boolean transferredToBrowser = false;
 
     public Attack() {
-        try {
-            showOnMap = Boolean.parseBoolean(GlobalOptions.getProperty("draw.attacks.by.default"));
-        } catch (Exception e) {
-        }
+        showOnMap = GlobalOptions.getProperties().getBoolean("draw.attacks.by.default", false);
     }
 
     public boolean isSourceVillage(Village pVillage) {

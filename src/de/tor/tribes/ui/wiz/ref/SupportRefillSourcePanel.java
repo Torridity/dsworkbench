@@ -54,11 +54,9 @@ import org.netbeans.spi.wizard.*;
  */
 public class SupportRefillSourcePanel extends WizardPage {
 
-    private static final String GENERAL_INFO = "<html>Du befindest dich in der Dorfauswahl. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, "
-            + "mit denen du angreifen m&ouml;chtest. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:"
-            + "<ul> <li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>"
-            + "<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Gruppen der Gruppen&uuml;bersicht</li>"
-            + "</ul></html>";
+    private static final String GENERAL_INFO = "Hier kannst du die Herkunftsdörfer für Unterstützungen festlegen. DS Workbench wird später versuchen, "
+            + "mit den zu diesen Dörfern importierten Truppeninformationen einen Unterstützungsplan zu erstellen. Möchtest du die Dörfer lieber aus einer "
+            + "vorhandenen BB-Code Liste einfügen, so kannst du die BB-Codes in die Zwischenablage kopieren und hier per STRG+V einfügen.";
     private static SupportRefillSourcePanel singleton = null;
     private VillageSelectionPanel villageSelectionPanel = null;
     private VillageOverviewMapPanel overviewPanel = null;

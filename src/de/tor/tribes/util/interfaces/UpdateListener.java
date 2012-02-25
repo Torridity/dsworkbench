@@ -10,8 +10,8 @@ package de.tor.tribes.util.interfaces;
  */
 public interface UpdateListener {
 
+    void fireUpdatesFoundEvent(int pChangedFiles, int pNewFiles);
     void fireResourceUpdatedEvent(String pResource, double pPercentFinished);
-
     void fireUpdateFinishedEvent(boolean pSuccess, String pMessage);
     
 }

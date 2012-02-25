@@ -9,7 +9,6 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import org.apache.commons.ssl.OpenSSL;
 import org.apache.log4j.Logger;
 
 /**
@@ -20,7 +19,7 @@ public class SecurityAdapter {
 
     private static Logger logger = Logger.getLogger("SecurityTools");
 
-    public static String encryptString(String pData, String pPassword) {
+   /* public static String encryptString(String pData, String pPassword) {
         try {
             return new String(OpenSSL.encrypt("des3", pPassword.toCharArray(), pData.getBytes()));
         } catch (Exception e) {
@@ -37,7 +36,7 @@ public class SecurityAdapter {
             logger.error("Unknown error while decrypting string", e);
             return null;
         }
-    }
+    }*/
 
     public static String hashStringMD5(String pData) {
         String hashed = null;

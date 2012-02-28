@@ -4,8 +4,10 @@
  */
 package de.tor.tribes.util;
 
+import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.interfaces.UpdateListener;
 import java.io.*;
+import java.net.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +16,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
-import java.util.jar.JarOutputStream;
 import java.util.zip.GZIPInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -26,36 +27,10 @@ import org.apache.commons.io.FilenameUtils;
 public class AutoUpdater {
 
     private final static File UPDATES_DIR = new File("./lib/classes");
+    private final static File CORE_JAR = new File("./store/core.jar");//new File("./lib/core.jar");
 
     static {
         initialize();
-    }
-
-    public static String obtainChangeLog() throws IOException {
-        URL u = new URL("http://www.dsworkbench.de/downloads/Update/changelog.gz");
-        InputStreamReader ir = null;
-        StringBuilder buffer = new StringBuilder();
-        try {
-            ir = new InputStreamReader(new GZIPInputStream(u.openConnection().getInputStream()), "ISO-8859-1");
-            char[] data = new char[2048];
-            int br = 0;
-            while (br != -1) {
-                br = ir.read(data);
-                if (br != -1) {
-                    buffer.append(data, 0, br);
-                    data = new char[2048];
-                }
-            }
-        } finally {
-            if (ir != null) {
-                try {
-                    ir.close();
-                } catch (IOException ioe) {
-                }
-            }
-        }
-
-        return buffer.toString();
     }
 
     public static void initialize() {
@@ -68,51 +43,52 @@ public class AutoUpdater {
 
     public static List<String> getUpdatedResources(UpdateListener pListener) throws IOException {
         Properties props = new Properties();
-        URL u = new URL("http://www.dsworkbench.de/downloads/Update/hash.props");
-        props.load(u.openConnection().getInputStream());
-        String currentJar = "./store/core.jar";
-        currentJar = "H:/Software/DSWorkbench-Distribute/DSWorkbench3.01/DSWorkbench/lib/core.jar";
-
+        Proxy webProxy = DSWorkbenchSettingsDialog.getSingleton().getWebProxy();
+        URL u = new URL("http://www.dsworkbench.de/downloads/Update/hash.props.gz");
+        props.load(new GZIPInputStream(u.openConnection(webProxy).getInputStream()));
         HashMap<String, Long> existingEntries = new HashMap<String, Long>();
         JarInputStream jarin = null;
         List<String> modified = new ArrayList<String>();
         int newFiles = 0;
         int changedFiles = 0;
-        try {
-            jarin = new JarInputStream(new FileInputStream(currentJar));
-            JarEntry entry = jarin.getNextJarEntry();
-            while (entry != null) {
-                if (!entry.isDirectory()) {
-                    existingEntries.put(entry.getName(), entry.getCrc());
+        
+        if (CORE_JAR.exists()) {
+            try {
+                jarin = new JarInputStream(new FileInputStream(CORE_JAR));
+                JarEntry entry = jarin.getNextJarEntry();
+                while (entry != null) {
+                    if (!entry.isDirectory()) {
+                        existingEntries.put(entry.getName(), entry.getCrc());
+                    }
+                    entry = jarin.getNextJarEntry();
                 }
-                entry = jarin.getNextJarEntry();
-            }
-            jarin.close();
-            Set<Object> entries = props.keySet();
+                jarin.close();
+                Set<Object> entries = props.keySet();
 
-            for (Object e : entries) {
-                String resource = (String) e;
-                Long newHash = Long.parseLong((String) props.get(resource));
-                Long existingHash = existingEntries.get(resource);
+                for (Object e : entries) {
+                    String resource = (String) e;
+                    Long newHash = Long.parseLong((String) props.get(resource));
+                    Long existingHash = existingEntries.get(resource);
 
-                File existingFile = new File(FilenameUtils.concat(UPDATES_DIR.getPath(), resource));
-                if (existingFile.exists() && !existingFile.isDirectory()) {
-                    existingHash = FileUtils.checksumCRC32(existingFile);
+                    File existingFile = new File(FilenameUtils.concat(UPDATES_DIR.getPath(), resource));
+                    if (existingFile.exists() && !existingFile.isDirectory()) {
+                        existingHash = FileUtils.checksumCRC32(existingFile);
+                    }
+
+                    if (existingHash == null) {
+                        newFiles++;
+                        modified.add(resource);
+                    } else if (newHash.longValue() != existingHash.longValue()) {
+                        changedFiles++;
+                        modified.add(resource);
+                    }
                 }
-
-                if (existingHash == null) {
-                    newFiles++;
-                    modified.add(resource);
-                } else if (newHash.longValue() != existingHash.longValue()) {
-                    changedFiles++;
-                    modified.add(resource);
-                }
-            }
-        } finally {
-            if (jarin != null) {
-                try {
-                    jarin.close();
-                } catch (IOException ioe) {
+            } finally {
+                if (jarin != null) {
+                    try {
+                        jarin.close();
+                    } catch (IOException ioe) {
+                    }
                 }
             }
         }

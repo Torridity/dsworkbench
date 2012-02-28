@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXList;
 
 /**
- * @TODO Check selection in attack target view...sometimes the continent list is empty (e.g. Hermann der Starke - w43)
+ * @TODO Check selection in attack target view...sometimes the continent list is empty (e.g. Hermann der Starke - w43 when using Dirki123)
  * @author jejkal
  */
 public class VillageSelectionPanel extends javax.swing.JPanel {
@@ -156,7 +156,6 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
             @Override
             public ContinentVillageSelection[] filter() {
                 HashMap<Integer, ContinentVillageSelection> map = new HashMap<Integer, ContinentVillageSelection>();
-
                 for (Village v : ((GroupSelectionList) getInputList()).getValidVillages()) {
                     int cont = v.getContinent();
                     ContinentVillageSelection s = map.get(cont);
@@ -567,6 +566,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
             }
         });
         p.setup();
+    p.enableSelectionElement(SELECTION_ELEMENT.GROUP, false);
         f.getContentPane().add(p);
         f.pack();
         f.setVisible(true);

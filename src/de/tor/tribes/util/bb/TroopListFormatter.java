@@ -11,7 +11,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * @TODO switch to php version!?
  * @author Torridity
  */
 public class TroopListFormatter extends BasicFormatter<VillageTroopsHolder> {

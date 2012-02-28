@@ -70,7 +70,7 @@ public class VillageUtils {
             for (Integer id : tag.getVillageIDs()) {
                 Village v = DataHolder.getSingleton().getVillagesById().get(id);
                 if (pWithBarbarians || !v.getTribe().equals(Barbarians.getSingleton())) {
-                    if (pTribe == null || v.getTribe().equals(pTribe)) {
+                    if (pTribe == null || v.getTribe().getId() == pTribe.getId()) {
                         usageCount.put(v, (usageCount.get(v) == null) ? 1 : usageCount.get(v) + 1);
                         if (!villages.contains(v)) {
                             villages.add(v);

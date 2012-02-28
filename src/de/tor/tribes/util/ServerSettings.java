@@ -77,9 +77,15 @@ public class ServerSettings {
             try {
                 setMillisArrival(Integer.parseInt(JaxenUtils.getNodeValue(d, "//misc/millis_arrival")) == 1);
             } catch (Exception inner) {
-                //empty or invalid value...use no millis
-                setMillisArrival(false);
+                try {//new settings is under "commands"
+                    setMillisArrival(Integer.parseInt(JaxenUtils.getNodeValue(d, "//commands/millis_arrival")) == 1);
+                } catch (Exception inner2) {
+                    //empty or invalid value...use no millis
+                    setMillisArrival(false);
+                }
             }
+
+
             logger.debug(" - reading server speed");
             try {
                 setSpeed(Double.parseDouble(JaxenUtils.getNodeValue(d, "//speed")));

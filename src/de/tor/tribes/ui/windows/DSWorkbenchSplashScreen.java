@@ -15,7 +15,6 @@ import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.ui.renderer.ProfileTreeNodeRenderer;
 import de.tor.tribes.ui.wiz.FirstStartWizard;
 import de.tor.tribes.util.*;
-import de.tor.tribes.util.generator.ui.ReportGenerator;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -227,15 +226,14 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             }
 
             jStatusOutput.setString("Prüfe auf Updates");
-
-            //@TODO activate update 
-           /*
-             * DSWorkbenchUpdateDialog updateDialog = new DSWorkbenchUpdateDialog(this, true); DSWorkbenchUpdateDialog.UPDATE_RESULT result
-             * = DSWorkbenchUpdateDialog.UPDATE_RESULT.READY; if (updateDialog.getResult() == DSWorkbenchUpdateDialog.UPDATE_RESULT.READY) {
-             * updateDialog.setLocationRelativeTo(this); updateDialog.setVisible(true); }
-             */
-            DSWorkbenchUpdateDialog.UPDATE_RESULT result = DSWorkbenchUpdateDialog.UPDATE_RESULT.CANCELED;//updateDialog.getResult();
-            switch (result) {
+            DSWorkbenchUpdateDialog.UPDATE_RESULT updateResult = DSWorkbenchUpdateDialog.UPDATE_RESULT.READY;
+            DSWorkbenchUpdateDialog updateDialog = new DSWorkbenchUpdateDialog(this, true);
+            if (updateDialog.getResult() == DSWorkbenchUpdateDialog.UPDATE_RESULT.READY) {
+                updateDialog.setLocationRelativeTo(this);
+                updateDialog.setVisible(true);
+            }
+            updateResult = updateDialog.getResult();
+            switch (updateResult) {
                 case CANCELED:
                     jStatusOutput.setString("Update abgebrochen");
                     break;
@@ -389,7 +387,11 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             logger.debug("Initializing application window");
             DSWorkbenchMainFrame.getSingleton().init();
             logger.info("Showing application window");
+
+
             DSWorkbenchMainFrame.getSingleton().setVisible(true);
+            // DSWorkbenchMainFrame.getSingleton().setupAndShow();
+
             t.stopRunning();
             setVisible(false);
             GlobalOptions.removeDataHolderListener(this);
@@ -455,7 +457,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             ((org.apache.log4j.RollingFileAppender) a).setMaxFileSize("1MB");
         } else {
             SystrayHelper.installSystrayIcon();
-            SystrayHelper.showInfoMessage("Running in debug mode");
+            SystrayHelper.showInfoMessage("Running in developer mode");
             a = new org.apache.log4j.ConsoleAppender();
             ((org.apache.log4j.ConsoleAppender) a).setWriter(new PrintWriter(System.out));
         }

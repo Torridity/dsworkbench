@@ -49,6 +49,15 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
     }
 
     @Override
+    //@TODO ATTENTION: Workaround...check if this causes errors
+    public boolean equals(Object obj) {
+        if (obj instanceof Village && obj != null) {
+            return getId() == ((Village) obj).getId();
+        }
+        return super.equals(obj);
+    }
+
+    @Override
     public String[] getReplacements(boolean pExtended) {
         String nameVal = getName();
         String xVal = Short.toString(getX());
@@ -111,7 +120,6 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
 
     public static Village parseFromPlainData(String pLine) {
         StringTokenizer tokenizer = new StringTokenizer(pLine, ",");
-
         Village entry = new Village();
         if (tokenizer.countTokens() < 7) {
             return null;
@@ -120,22 +128,21 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
         try {
             entry.setId(Integer.parseInt(tokenizer.nextToken()));
             String n = URLDecoder.decode(tokenizer.nextToken(), "UTF-8");
-            //replace HTML characters
+            //replace HTML characters 
             if (n.indexOf("&") > -1) {
-                n = n.replaceAll("&gt;", ">").replaceAll("&lt;", "<").replaceAll("&quot;", "\"").replaceAll("&amp;", "&").replaceAll("&tilde;", "~");
+                n = n.replaceAll("&gt;", ">").replaceAll("&lt;", "<").replaceAll("&quot;",
+                        "\"").replaceAll("&amp;", "&").replaceAll("&tilde;", "~");
             }
             entry.setName(n);
             entry.setX(Short.parseShort(tokenizer.nextToken()));
             entry.setY(Short.parseShort(tokenizer.nextToken()));
             entry.setTribeID(Integer.parseInt(tokenizer.nextToken()));
-            // entry.setPoints(Integer.parseInt(tokenizer.nextToken()));
             entry.setTempPoints(tokenizer.nextToken());
-            // entry.setType(Byte.parseByte(tokenizer.nextToken()));
             entry.setTempType(tokenizer.nextToken());
             return entry;
-        } catch (Exception e) {
-            //village invalid
+        } catch (Exception e) { //village invalid 
         }
+
         return null;
     }
 

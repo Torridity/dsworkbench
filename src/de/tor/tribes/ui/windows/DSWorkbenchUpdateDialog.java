@@ -17,7 +17,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.List;
+import javax.swing.ImageIcon;
 import javax.swing.JProgressBar;
+import javax.swing.plaf.basic.BasicProgressBarUI;
 import org.apache.log4j.Logger;
 
 /**
@@ -47,23 +49,22 @@ public class DSWorkbenchUpdateDialog extends javax.swing.JDialog implements Upda
     public DSWorkbenchUpdateDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        jChangelogFrame.setAlwaysOnTop(true);
-        jChangelogFrame.pack();
         try {
+            jLabel1.setIcon(new ImageIcon("./graphics/big/information.png"));
             updates = AutoUpdater.getUpdatedResources(DSWorkbenchUpdateDialog.this);
             if (updates.isEmpty()) {
                 result = UPDATE_RESULT.NOT_NEEDED;
                 fireUpdateFinishedEvent(true, "Kein Update notwendig");
-                jButton1.setText("Schließen");
+                jDoUpdateButton.setText("Schließen");
             } else {
-                int size = updates.size();
-                fireUpdateFinishedEvent(true, "0 von " + size + " Datei(en) aktualisiert");
-                jButton1.setText("Update starten");
+                filesToUpdate = updates.size();
+                jProgressBar1.setString("0 von " + filesToUpdate + " Datei(en) aktualisiert");
+                jDoUpdateButton.setText("Update starten");
             }
         } catch (IOException ioe) {
             logger.error("Failed to obtain update list", ioe);
             result = UPDATE_RESULT.ERROR;
-            jButton1.setText("Schließen");
+            jDoUpdateButton.setText("Schließen");
         }
     }
 
@@ -80,55 +81,12 @@ public class DSWorkbenchUpdateDialog extends javax.swing.JDialog implements Upda
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jChangelogFrame = new javax.swing.JFrame();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jEditorPane1 = new javax.swing.JEditorPane();
-        jButton3 = new javax.swing.JButton();
         jProgressBar1 = new javax.swing.JProgressBar();
-        jButton1 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        jDoUpdateButton = new javax.swing.JButton();
+        jSkipButton = new javax.swing.JButton();
         jXLabel1 = new org.jdesktop.swingx.JXLabel();
         jUpdateInformationLabel = new org.jdesktop.swingx.JXLabel();
-
-        jChangelogFrame.setTitle("Changelog");
-        jChangelogFrame.setAlwaysOnTop(true);
-        jChangelogFrame.setMinimumSize(new java.awt.Dimension(600, 250));
-
-        jScrollPane1.setMinimumSize(new java.awt.Dimension(580, 200));
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(580, 200));
-
-        jEditorPane1.setContentType("text/html");
-        jEditorPane1.setEditable(false);
-        jEditorPane1.setText("");
-        jScrollPane1.setViewportView(jEditorPane1);
-
-        jButton3.setText("Schließen");
-        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                fireHideChangelogEvent(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jChangelogFrameLayout = new javax.swing.GroupLayout(jChangelogFrame.getContentPane());
-        jChangelogFrame.getContentPane().setLayout(jChangelogFrameLayout);
-        jChangelogFrameLayout.setHorizontalGroup(
-            jChangelogFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jChangelogFrameLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jChangelogFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 580, Short.MAX_VALUE)
-                    .addComponent(jButton3))
-                .addContainerGap())
-        );
-        jChangelogFrameLayout.setVerticalGroup(
-            jChangelogFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jChangelogFrameLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3)
-                .addContainerGap())
-        );
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Update");
@@ -153,8 +111,8 @@ public class DSWorkbenchUpdateDialog extends javax.swing.JDialog implements Upda
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jProgressBar1, gridBagConstraints);
 
-        jButton1.setText("Update starten");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        jDoUpdateButton.setText("Update starten");
+        jDoUpdateButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 firePerformUpdateEvent(evt);
             }
@@ -164,10 +122,10 @@ public class DSWorkbenchUpdateDialog extends javax.swing.JDialog implements Upda
         gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        getContentPane().add(jButton1, gridBagConstraints);
+        getContentPane().add(jDoUpdateButton, gridBagConstraints);
 
-        jButton4.setText("Überspringen");
-        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+        jSkipButton.setText("Überspringen");
+        jSkipButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 fireSkipUpdateEvent(evt);
             }
@@ -176,20 +134,20 @@ public class DSWorkbenchUpdateDialog extends javax.swing.JDialog implements Upda
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        getContentPane().add(jButton4, gridBagConstraints);
+        getContentPane().add(jSkipButton, gridBagConstraints);
 
         jXLabel1.setText("<html>   Es stehen Updates für DS Workbench zur Verf&uuml;gung. Klicke auf <i>Update starten</i>, um deine Installation zu aktualisieren. Nach der Aktualisierung ist ein <b>Neustart</b> von DS Workbench <b>notwendig</b>. </html>  ");
         jXLabel1.setLineWrap(true);
         jXLabel1.setPreferredSize(new java.awt.Dimension(300, 100));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 10);
         getContentPane().add(jXLabel1, gridBagConstraints);
 
         jUpdateInformationLabel.setBorder(javax.swing.BorderFactory.createTitledBorder("Updateinformationen"));
@@ -206,28 +164,41 @@ public class DSWorkbenchUpdateDialog extends javax.swing.JDialog implements Upda
         gridBagConstraints.insets = new java.awt.Insets(10, 5, 10, 5);
         getContentPane().add(jUpdateInformationLabel, gridBagConstraints);
 
+        jLabel1.setPreferredSize(new java.awt.Dimension(48, 48));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 5);
+        getContentPane().add(jLabel1, gridBagConstraints);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void firePerformUpdateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_firePerformUpdateEvent
-        if (jButton1.getText().equals("Schließen")) {
+        if (!jDoUpdateButton.isEnabled()) {
+            return;
+        }
+        if (jDoUpdateButton.getText().equals("Schließen")) {
             dispose();
         } else {
             jProgressBar1.setForeground(new JProgressBar().getForeground());
+            jDoUpdateButton.setEnabled(false);
+            jSkipButton.setEnabled(false);
             updatedFiles = 0;
             new UpdateThread(updates, this).start();
         }
     }//GEN-LAST:event_firePerformUpdateEvent
-
-    private void fireHideChangelogEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideChangelogEvent
-        jChangelogFrame.setVisible(false);
-    }//GEN-LAST:event_fireHideChangelogEvent
 
     private void fireUpdateCanceledEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireUpdateCanceledEvent
         result = UPDATE_RESULT.CANCELED;
     }//GEN-LAST:event_fireUpdateCanceledEvent
 
     private void fireSkipUpdateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSkipUpdateEvent
+        if (!jSkipButton.isEnabled()) {
+            return;
+        }
         result = UPDATE_RESULT.CANCELED;
         setVisible(false);
     }//GEN-LAST:event_fireSkipUpdateEvent
@@ -240,22 +211,35 @@ public class DSWorkbenchUpdateDialog extends javax.swing.JDialog implements Upda
     public final void fireResourceUpdatedEvent(String pResource, double pPercentFinished) {
         jProgressBar1.setValue((int) Math.rint(pPercentFinished * 100));
         updatedFiles++;
-        jProgressBar1.setString(updatedFiles + " von" + filesToUpdate + " Datei(en) aktualisiert");
+        jProgressBar1.setString(updatedFiles + " von " + filesToUpdate + " Datei(en) aktualisiert");
         jProgressBar1.repaint();
     }
 
     @Override
     public final void fireUpdateFinishedEvent(boolean pResult, String pMessage) {
+        jProgressBar1.setUI(new BasicProgressBarUI() {
+
+            @Override
+            protected Color getSelectionBackground() {
+                return Color.BLACK;
+            }
+
+            @Override
+            protected Color getSelectionForeground() {
+                return Color.DARK_GRAY;
+            }
+        });
         if (pResult) {
             jProgressBar1.setForeground(Color.GREEN);
             jProgressBar1.setString("Update erfolgreich");
-            jButton1.setText("Schließen");
             result = UPDATE_RESULT.SUCCESS;
         } else {
             jProgressBar1.setString(pMessage);
             jProgressBar1.setForeground(Color.YELLOW);
             result = UPDATE_RESULT.ERROR;
         }
+        jDoUpdateButton.setEnabled(true);
+        jDoUpdateButton.setText("Schließen");
     }
 
     /**
@@ -305,13 +289,10 @@ public class DSWorkbenchUpdateDialog extends javax.swing.JDialog implements Upda
 
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JFrame jChangelogFrame;
-    private javax.swing.JEditorPane jEditorPane1;
+    private javax.swing.JButton jDoUpdateButton;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JProgressBar jProgressBar1;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton jSkipButton;
     private org.jdesktop.swingx.JXLabel jUpdateInformationLabel;
     private org.jdesktop.swingx.JXLabel jXLabel1;
     // End of variables declaration//GEN-END:variables

@@ -1819,12 +1819,12 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jPanel2" pref="725" max="32767" attributes="0"/>
-                      <Component id="jPanel1" alignment="1" pref="725" max="32767" attributes="0"/>
+                      <Component id="jStatusPanel" pref="725" max="32767" attributes="0"/>
+                      <Component id="jMapPanelHolder" alignment="1" pref="725" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jScrollPane2" min="-2" pref="320" max="-2" attributes="1"/>
+                      <Component id="jSettingsScrollPane" min="-2" pref="320" max="-2" attributes="1"/>
                       <Component id="jMinimapPanel" alignment="0" min="-2" pref="320" max="-2" attributes="1"/>
                   </Group>
               </Group>
@@ -1835,18 +1835,18 @@
               <Group type="102" alignment="1" attributes="0">
                   <Component id="jMinimapPanel" min="-2" pref="300" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Component id="jScrollPane2" pref="405" max="32767" attributes="0"/>
+                  <Component id="jSettingsScrollPane" pref="405" max="32767" attributes="0"/>
               </Group>
               <Group type="102" alignment="1" attributes="0">
-                  <Component id="jPanel1" pref="689" max="32767" attributes="1"/>
+                  <Component id="jMapPanelHolder" pref="689" max="32767" attributes="1"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
+                  <Component id="jStatusPanel" min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Container class="javax.swing.JPanel" name="jPanel2">
+        <Container class="javax.swing.JPanel" name="jStatusPanel">
           <Properties>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[32, 30]"/>
@@ -1904,7 +1904,7 @@
             </Container>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JPanel" name="jPanel1">
+        <Container class="javax.swing.JPanel" name="jMapPanelHolder">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -1938,7 +1938,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
         </Container>
-        <Container class="javax.swing.JScrollPane" name="jScrollPane2">
+        <Container class="javax.swing.JScrollPane" name="jSettingsScrollPane">
           <Properties>
             <Property name="focusTraversalPolicyProvider" type="boolean" value="true"/>
           </Properties>

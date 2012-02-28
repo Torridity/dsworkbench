@@ -5,7 +5,6 @@
 package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.types.FarmInformation;
-import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 
@@ -22,7 +21,7 @@ public class FarmInformationDetailsDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
     }
-    
+
     public void setupAndShow(FarmInformation pInfo) {
         if (pInfo == null) {
             return;
@@ -39,23 +38,23 @@ public class FarmInformationDetailsDialog extends javax.swing.JDialog {
         } else {
             jLastReport.setText("Noch Bericht eingelesen");
         }
-        
+
         jWoodLevel.setText(nf.format(pInfo.getWoodLevel()));
         jClayLevel.setText(nf.format(pInfo.getClayLevel()));
         jIronLevel.setText(nf.format(pInfo.getIronLevel()));
         jStorageLevel.setText(nf.format(pInfo.getStorageLevel()));
         jHideLevel.setText(nf.format(pInfo.getHideLevel()));
-        
+
         jCurrentWood.setText(nf.format(pInfo.getWoodInStorage()));
         jCurrentClay.setText(nf.format(pInfo.getClayInStorage()));
         jCurrentIron.setText(nf.format(pInfo.getIronInStorage()));
-        
+
         jFarmedWood.setText(nf.format(pInfo.getHauledWood()));
         jFarmedClay.setText(nf.format(pInfo.getHauledClay()));
         jFarmedIron.setText(nf.format(pInfo.getHauledIron()));
-        
+
         jTextPane1.setText((pInfo.getLastSendInformation() != null) ? pInfo.getLastSendInformation() : "Keine Informationen vorhanden");
-        
+
         pack();
         setVisible(true);
     }
@@ -392,11 +391,11 @@ public class FarmInformationDetailsDialog extends javax.swing.JDialog {
          * Create and display the dialog
          */
         java.awt.EventQueue.invokeLater(new Runnable() {
-            
+
             public void run() {
                 FarmInformationDetailsDialog dialog = new FarmInformationDetailsDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    
+
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
                         System.exit(0);

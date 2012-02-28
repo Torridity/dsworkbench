@@ -277,7 +277,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
 
         JXTaskPane miscPane = new JXTaskPane();
         miscPane.setTitle("Sonstiges");
-        JXButton reAnalyzeButton = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/axe24.png")));
+        JXButton reAnalyzeButton = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/reanalyze.png")));
         reAnalyzeButton.setToolTipText("Analysiert die eingelesenen Angriffe erneut, z.B. wenn man die Truppenzahlen in den Einstellungen geändert hat.");
         reAnalyzeButton.addMouseListener(new MouseAdapter() {
 

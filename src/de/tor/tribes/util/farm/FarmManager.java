@@ -101,10 +101,10 @@ public class FarmManager extends GenericManager<FarmInformation> {
             Village target = report.getTargetVillage();
             if (report.isWon()) {
                 if (e.contains(new Point2D.Double(report.getTargetVillage().getX(), report.getTargetVillage().getY()))) {//in radius
-                    if (!report.getTargetVillage().getTribe().equals(yourTribe)
+                    if (!(report.getTargetVillage().getTribe().getId() == yourTribe.getId())
                             && (report.getTargetVillage().getTribe().getAlly() == null
                             || report.getTargetVillage().getTribe().getAlly().equals(BarbarianAlly.getSingleton())
-                            || !report.getTargetVillage().getTribe().getAlly().equals(yourTribe.getAlly()))) {
+                            || !(report.getTargetVillage().getTribe().getAlly().getId() != yourTribe.getAlly().getId()))) {
                         if (!handled.contains(target)) {//add farm
                             FarmInformation info = addFarm(target);
                             info.updateFromReport(report);

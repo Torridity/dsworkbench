@@ -63,7 +63,7 @@ public class FarmInformation extends ManageableType {
     private boolean inactive = false;
     private int villageId = 0;
     private transient Village village = null;
-    private transient FARM_RESULT lastResult = FARM_RESULT.OK;
+    private transient FARM_RESULT lastResult = FARM_RESULT.UNKNOWN;
     private int ownerId = -1;
     private int attackCount = 0;
     private int woodLevel = 1;

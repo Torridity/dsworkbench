@@ -20,8 +20,8 @@ import org.apache.commons.collections.Predicate;
 public class DefenseToolModel extends DefaultTableModel {
 
     private List<DefenseInformation> entries = null;
-    private Class[] types = new Class[]{Integer.class, Village.class, Integer.class, Integer.class, Date.class, Date.class, DefenseInformation.DEFENSE_STATUS.class, Double.class, String.class, Boolean.class};
-    private String[] colNames = new String[]{"Tendenz", "Ziel", "Angriffe", "Fakes", "Erster Angriff", "Letzter Angriff", "Status", "Verlustrate", "Unterstützungen", "Analysiert"};
+    private Class[] types = new Class[]{Integer.class, Village.class, Integer.class, Integer.class, Date.class, Date.class, DefenseInformation.DEFENSE_STATUS.class, Double.class, String.class};
+    private String[] colNames = new String[]{"Tendenz", "Ziel", "Angriffe", "Fakes", "Erster Angriff", "Letzter Angriff", "Status", "Verlustrate", "Unterstützungen"};
 
     public DefenseToolModel() {
         super();
@@ -115,10 +115,8 @@ public class DefenseToolModel extends DefaultTableModel {
                 return info.getStatus();
             case 7:
                 return info.getLossRatio();
-            case 8:
+             default:
                 return info.getSupports().length + "/" + info.getNeededSupports();
-            default:
-                return info.isAnalyzed();
         }
     }
 }

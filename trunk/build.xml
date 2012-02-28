@@ -26,8 +26,9 @@
         <mkdir dir="${store.dir}"/>
 
         <jar destfile="${store.dir}/temp_final.jar" filesetmanifest="skip">
-            <zipgroupfileset dir="dist" includes="*.jar"/>
-            <zipgroupfileset dir="dist/lib" includes="*.jar"/>
+            <zipgroupfileset dir="proguard" includes="shrink.jar"/>
+            <!--zipgroupfileset dir="dist" includes="*.jar"/-->
+            <zipgroupfileset dir="dist/lib" includes="*.jar" excludes="DSSim.jar"/>
 
             <manifest>
                 <attribute name="Main-Class" value="${main.class}"/>

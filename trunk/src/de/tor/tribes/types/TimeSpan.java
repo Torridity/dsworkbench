@@ -238,7 +238,7 @@ public class TimeSpan implements Comparable<TimeSpan> {
     }
 
     public boolean isValidForTribe(Tribe pTribe) {
-        return (validFor == null || validFor.equals(pTribe) || (pTribe != null && pTribe.equals(AnyTribe.getSingleton())));
+        return pTribe == null || (validFor == null || validFor.getId() == pTribe.getId() || (pTribe != null && pTribe.equals(AnyTribe.getSingleton())));
     }
 
     public boolean intersects(TimeSpan pSpan) {
@@ -249,7 +249,7 @@ public class TimeSpan implements Comparable<TimeSpan> {
         }
         Tribe thisTribe = isValidFor();
         Tribe theOtherTribe = pSpan.isValidFor();
-        if (thisTribe != null && theOtherTribe != null && !thisTribe.equals(theOtherTribe)) {
+        if (thisTribe != null && theOtherTribe != null && thisTribe.getId() != theOtherTribe.getId()) {
             //both spans are for different tribes, so they can't intersect by definition
             return false;
         }

@@ -20,6 +20,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +30,7 @@ import javax.script.ScriptEngineManager;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.UIManager;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 
@@ -253,6 +255,12 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
         if (getElementCount() == 0) {
             return result;
         }
+
+        if (!isVisible()) {
+            CollectionUtils.addAll(result, relevantVillages);
+            return result;
+        }
+
 
         if (!isExpertSelection()) {
             Object[] values = getSelectedValues();

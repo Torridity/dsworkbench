@@ -33,11 +33,7 @@ import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.ImageManager;
-import de.tor.tribes.ui.LayerOrderConfigurationFrame;
-import de.tor.tribes.ui.MapPanelListener;
-import de.tor.tribes.ui.RibbonConfigurator;
-import de.tor.tribes.ui.UnitOrderBuilder;
+import de.tor.tribes.ui.*;
 import de.tor.tribes.ui.components.JOutlookBar;
 import de.tor.tribes.ui.components.WelcomePanel;
 import de.tor.tribes.util.BrowserCommandSender;
@@ -98,9 +94,7 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.naming.event.EventDirContext;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import org.apache.commons.io.FileUtils;
 import org.jdesktop.swingx.JXTipOfTheDay;
@@ -161,7 +155,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         outlookBar.addBar("Karte", jMapPanel);
         outlookBar.addBar("ROI", jROIPanel);
         outlookBar.setVisibleBar(1);
-        jScrollPane2.setViewportView(outlookBar);
+        jSettingsScrollPane.setViewportView(outlookBar);
 
         mAbout = new AboutDialog(this, true);
         mAbout.pack();
@@ -205,11 +199,11 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
 
         //give focus to map panel if mouse enters map
-        jPanel1.addMouseListener(new MouseAdapter() {
+        jMapPanelHolder.addMouseListener(new MouseAdapter() {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                jPanel1.requestFocusInWindow();
+                jMapPanelHolder.requestFocusInWindow();
             }
         });
 
@@ -359,10 +353,10 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                         //ROI 10
                         centerROI(9);
                     } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                        jPanel1.requestFocusInWindow();
+                        jMapPanelHolder.requestFocusInWindow();
                         MapPanel.getSingleton().setSpaceDown(true);
                     } else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-                        jPanel1.requestFocusInWindow();
+                        jMapPanelHolder.requestFocusInWindow();
                         MapPanel.getSingleton().setShiftDown(true);
                     }
                 } else if (((KeyEvent) event).getID() == KeyEvent.KEY_RELEASED) {
@@ -773,7 +767,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         MapPanel.getSingleton().addToolChangeListener(this);
         MinimapPanel.getSingleton().addToolChangeListener(this);
         logger.info("Adding MapPanel");
-        jPanel1.add(MapPanel.getSingleton(), BorderLayout.CENTER);
+        jMapPanelHolder.add(MapPanel.getSingleton(), BorderLayout.CENTER);
         //build the minimap
         logger.info("Adding MinimapPanel");
         jMinimapPanel.add(MinimapPanel.getSingleton());
@@ -784,6 +778,42 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         checkZoomRange();
     }
 
+   /* public void setupAndShow() {
+        DockController controller = new DockController();
+        controller.setRootWindow(this);
+        SplitDockStation splitDockStation = new SplitDockStation();
+
+        controller.add(splitDockStation);
+        add(splitDockStation);
+        MyDockable miniMap = new MyDockable("Minimap", jMinimapPanel);
+        MyDockable map = new MyDockable("Hauptkarte", jMapPanelHolder);
+        splitDockStation.drop(map);
+        splitDockStation.drop(miniMap, new SplitDockProperty(1, 0, 1, 0.5));
+        MyDockable settings = new MyDockable("Einstellungen", jSettingsScrollPane);
+        settings.installActions(controller);
+        splitDockStation.drop(settings, new SplitDockProperty(1, 0.5, 1, 0.5));
+        ScreenDockStation screenDockStation = new ScreenDockStation(controller.getRootWindowProvider());
+        DefaultScreenDockWindowFactory fac = new DefaultScreenDockWindowFactory();
+        fac.setKind(DefaultScreenDockWindowFactory.Kind.FRAME);
+        screenDockStation.setWindowFactory(fac);
+        controller.add(screenDockStation);
+        setVisible(true);
+        screenDockStation.setShowing(true);
+    }*/
+
+   /* public static class MyDockable extends DefaultDockable {
+
+        public MyDockable(String title, JComponent pPanel) {
+            setTitleText(title);
+            add(pPanel);
+        }
+
+        public void installActions(DockController pController) {
+            DefaultDockActionSource source = new DefaultDockActionSource(new CloseAction(pController));
+            setActionOffers(source);
+        }
+    }*/
+   
     @Override
     public void setVisible(boolean v) {
         logger.info("Setting MainWindow visible");
@@ -1083,13 +1113,13 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jEnableClipboardWatchButton = new javax.swing.JButton();
         jXTipOfTheDay1 = new org.jdesktop.swingx.JXTipOfTheDay();
         jPanel4 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
+        jStatusPanel = new javax.swing.JPanel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
         infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
         jXLabel1 = new org.jdesktop.swingx.JXLabel();
-        jPanel1 = new javax.swing.JPanel();
+        jMapPanelHolder = new javax.swing.JPanel();
         jMinimapPanel = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        jSettingsScrollPane = new javax.swing.JScrollPane();
 
         jExportDialog.setTitle("Export");
         jExportDialog.setMinimumSize(new java.awt.Dimension(560, 370));
@@ -2328,13 +2358,13 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             }
         });
 
-        jPanel2.setMaximumSize(new java.awt.Dimension(32, 30));
-        jPanel2.setLayout(new java.awt.BorderLayout());
+        jStatusPanel.setMaximumSize(new java.awt.Dimension(32, 30));
+        jStatusPanel.setLayout(new java.awt.BorderLayout());
 
         capabilityInfoPanel1.setDeletable(false);
         capabilityInfoPanel1.setPastable(false);
         capabilityInfoPanel1.setSearchable(false);
-        jPanel2.add(capabilityInfoPanel1, java.awt.BorderLayout.WEST);
+        jStatusPanel.add(capabilityInfoPanel1, java.awt.BorderLayout.WEST);
 
         infoPanel.setAnimated(false);
         infoPanel.setCollapsed(true);
@@ -2350,19 +2380,19 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         });
         infoPanel.add(jXLabel1, java.awt.BorderLayout.CENTER);
 
-        jPanel2.add(infoPanel, java.awt.BorderLayout.LINE_END);
+        jStatusPanel.add(infoPanel, java.awt.BorderLayout.LINE_END);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2));
-        jPanel1.setForeground(new java.awt.Color(240, 240, 240));
-        jPanel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jPanel1.setDoubleBuffered(false);
-        jPanel1.setLayout(new java.awt.BorderLayout());
+        jMapPanelHolder.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2));
+        jMapPanelHolder.setForeground(new java.awt.Color(240, 240, 240));
+        jMapPanelHolder.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jMapPanelHolder.setDoubleBuffered(false);
+        jMapPanelHolder.setLayout(new java.awt.BorderLayout());
 
         jMinimapPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2));
         jMinimapPanel.setDoubleBuffered(false);
         jMinimapPanel.setLayout(new java.awt.BorderLayout());
 
-        jScrollPane2.setFocusTraversalPolicyProvider(true);
+        jSettingsScrollPane.setFocusTraversalPolicyProvider(true);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -2370,11 +2400,11 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 725, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 725, Short.MAX_VALUE))
+                    .addComponent(jStatusPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 725, Short.MAX_VALUE)
+                    .addComponent(jMapPanelHolder, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 725, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSettingsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
         jPanel4Layout.setVerticalGroup(
@@ -2382,11 +2412,11 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE))
+                .addComponent(jSettingsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 689, Short.MAX_VALUE)
+                .addComponent(jMapPanelHolder, javax.swing.GroupLayout.DEFAULT_SIZE, 689, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jStatusPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         getContentPane().add(jPanel4, java.awt.BorderLayout.CENTER);
@@ -3580,6 +3610,7 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jMapPanel;
+    private javax.swing.JPanel jMapPanelHolder;
     private javax.swing.JTable jMarkerSetExportTable;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
@@ -3605,8 +3636,6 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JPanel jNavigationPanel;
     private javax.swing.JTable jNoteSetExportTable;
     private javax.swing.JLabel jOnlineLabel;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JComboBox jROIBox;
@@ -3620,7 +3649,6 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JTable jReportSetExportTable;
     private javax.swing.JMenuItem jSOSAnalyzerItem;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
@@ -3629,6 +3657,7 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JMenuItem jSelectionOverviewItem;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JScrollPane jSettingsScrollPane;
     private javax.swing.JCheckBoxMenuItem jShowAttackFrame;
     private javax.swing.JCheckBoxMenuItem jShowChurchFrame;
     private javax.swing.JCheckBoxMenuItem jShowConquersFrame;
@@ -3644,6 +3673,7 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JCheckBoxMenuItem jShowTagFrame;
     private javax.swing.JCheckBoxMenuItem jShowTroopsFrame;
     private javax.swing.JMenuItem jStartAStarItem;
+    private javax.swing.JPanel jStatusPanel;
     private javax.swing.JMenuItem jTribeTribeAttackItem;
     private javax.swing.JTable jTroopSetExportTable;
     private javax.swing.JMenuItem jUnitOverviewItem;

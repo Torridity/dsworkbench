@@ -51,7 +51,6 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.*;
 
 /**
- *@TODO remember selection if attack amount is increased
  * @author Torridity
  */
 public class AttackTargetPanel extends WizardPage {

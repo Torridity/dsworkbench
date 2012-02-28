@@ -531,7 +531,7 @@
         <Component class="javax.swing.JComboBox" name="jRuleSelection">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="10">
+              <StringArray count="12">
                 <StringItem index="0" value="Berichte mit den Farben..."/>
                 <StringItem index="1" value="Berichte die von ... bis ... gesendet wurden..."/>
                 <StringItem index="2" value="Berichte die &#xe4;lter als ... Tage sind..."/>
@@ -542,6 +542,8 @@
                 <StringItem index="7" value="Off-Berichte..."/>
                 <StringItem index="8" value="Fake-Berichte..."/>
                 <StringItem index="9" value="AG-Angriffe und Adelungen..."/>
+                <StringItem index="10" value="Berichte mit Wallbesch&#xe4;digung..."/>
+                <StringItem index="11" value="Berichte mit Geb&#xe4;udebesch&#xe4;digung..."/>
               </StringArray>
             </Property>
           </Properties>

@@ -549,7 +549,8 @@ public class MapRenderer {
 
                 for (Map.Entry<Village, Rectangle> entry : entries) {
                     Village v = entry.getKey();
-                    if ((v.getTribe() == null && mouseTribe.equals(Barbarians.getSingleton())) || (v.getTribe() != null && mouseTribe.equals(v.getTribe()))) {
+                    if ((v.getTribe() == null && mouseTribe.equals(Barbarians.getSingleton()))
+                            || (v.getTribe() != null && mouseTribe.getId() == v.getTribe().getId())) {
                         Rectangle r = entry.getValue();
                         Ellipse2D ellipse = new Ellipse2D.Float(r.x, r.y, r.height, r.height);
                         g2d.setPaint(new RoundGradientPaint(r.getCenterX(), r.getCenterY(), Color.yellow, new Point2D.Double(0, r.height / 2), new Color(0, 0, 0, 0)));

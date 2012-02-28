@@ -10,20 +10,9 @@
  */
 package de.tor.tribes.ui.wiz.dep;
 
-import de.tor.tribes.control.ManageableType;
-import de.tor.tribes.dssim.algo.NewSimulator;
-import de.tor.tribes.dssim.types.AbstractUnitElement;
-import de.tor.tribes.dssim.types.KnightItem;
-import de.tor.tribes.dssim.types.SimulatorResult;
-import de.tor.tribes.dssim.types.UnitHolder;
-import de.tor.tribes.dssim.util.UnitManager;
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.DefenseInformation;
-import de.tor.tribes.types.SOSRequest;
-import de.tor.tribes.types.TargetInformation;
 import de.tor.tribes.types.TimedAttack;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.panels.TroopSelectionPanel;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.models.DefenseToolModel;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
@@ -31,25 +20,18 @@ import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.DefenseStatusTableCellRenderer;
 import de.tor.tribes.ui.renderer.LossRatioTableCellRenderer;
 import de.tor.tribes.ui.renderer.TendencyTableCellRenderer;
-import de.tor.tribes.ui.renderer.WallLevellCellRenderer;
-import de.tor.tribes.ui.util.ColorGradientHelper;
 import de.tor.tribes.ui.views.DSWorkbenchSOSRequestAnalyzer;
 import de.tor.tribes.util.*;
-import de.tor.tribes.util.sos.SOSManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import java.util.*;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.*;
@@ -60,14 +42,9 @@ import org.netbeans.spi.wizard.*;
  */
 public class DefenseAnalysePanel extends WizardPage {
 
-    private static final String GENERAL_INFO = "Du befindest dich in der Angriffsanalyse. Hier kannst du pr&uuml;fen bzw. festlegen, bei welchen Angriffen eine Verteidung sinnvoll bzw. notwendig ist. "
-            + "In der Tabelle sind alle aktuellen Angriffe aufgelistet, anfangs sind lediglich die Informationen enhalten, die aus den SOS-Anfragen gewonnen wurden. "
-            + "Um die notwendigen Unterst&uuml;tzungen zu berechnen, trage zuerst die vermuteten Truppen des Angreifers ein. In den meisten F&auml;llen gen&uuml;gen die Voreinstellungen um ein ausreichend genaues Ergebnis zu erzielen. "
-            + "Anschlie&szlig;end werden die Truppen einer Einzelverteidigung ben&ouml;tigt. Diese Werte entscheiden, wieviele Unterst&uuml;tzungen auf ein Dorf laufen m&uuml;ssen, bis es sicher ist. "
-            + "Kleine Werte bewirken, dass bei Verlusten in einzelnen D&ouml;rfern nur wenige Truppen nachgebaut werden m&uuml;ssen. Bei gro&szlig;en Werten m&uuml;ssen weniger Unterst&uuml;tzungen geschickt werden. "
-            + "Zuletzt kann man angeben, wieviele Einzelunterst&uuml;tzungen maximal geschickt werden sollen und wieviele Verluste man in einem verteidigten Dorf maximal zulassen m&ouml;chte. "
-            + "Hier k&ouml;nnen meist die Standardeinstellungen verwendet werden. Um die notwendigen Unterst&uuml;tzungen zu berechnen, muss man nun noch auf 'Aktualisieren' klicken."
-            + "</html>";
+    private static final String GENERAL_INFO = "Du befindest dich in der Angriffsanalyse. In diesem Schritt kannst du eingelesene SOS-Anfragen "
+            + "aus dem SOS-Analyzer in den Verteidigungsplaner übertragen und bei Bedarf einzelne von der Berechnung ausschließen, indem du sie "
+            + "per ENTF löscht.";
     private static DefenseAnalysePanel singleton = null;
     private final NumberFormat numFormat = NumberFormat.getInstance();
     private VillageOverviewMapPanel overviewPanel = null;
@@ -99,6 +76,19 @@ public class DefenseAnalysePanel extends WizardPage {
         jxAttacksTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         overviewPanel = new VillageOverviewMapPanel();
         jPanel6.add(overviewPanel, BorderLayout.CENTER);
+
+        ActionListener listener = new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getActionCommand().equals("Delete")) {
+                    deleteSelection();
+                }
+            }
+        };
+        KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
+        jxAttacksTable.registerKeyboardAction(listener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        capabilityInfoPanel1.addActionListener(listener);
     }
 
     public static String getDescription() {
@@ -129,6 +119,20 @@ public class DefenseAnalysePanel extends WizardPage {
         overviewPanel.repaint();
     }
 
+    private void deleteSelection() {
+        int[] selection = jxAttacksTable.getSelectedRows();
+        if (selection.length > 0) {
+            List<Integer> rows = new LinkedList<Integer>();
+            for (int i : selection) {
+                rows.add(jxAttacksTable.convertRowIndexToModel(i));
+            }
+            Collections.sort(rows);
+            for (int i = rows.size() - 1; i >= 0; i--) {
+                getModel().removeRow(rows.get(i));
+            }
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this
      * method is always regenerated by the Form Editor.
@@ -149,6 +153,7 @@ public class DefenseAnalysePanel extends WizardPage {
         jTableScrollPane = new javax.swing.JScrollPane();
         jxAttacksTable = new org.jdesktop.swingx.JXTable();
         jButton1 = new javax.swing.JButton();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
         jInfoScrollPane.setPreferredSize(new java.awt.Dimension(19, 180));
@@ -253,6 +258,17 @@ public class DefenseAnalysePanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jButton1, gridBagConstraints);
 
+        capabilityInfoPanel1.setBbSupport(false);
+        capabilityInfoPanel1.setCopyable(false);
+        capabilityInfoPanel1.setPastable(false);
+        capabilityInfoPanel1.setSearchable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel1.add(capabilityInfoPanel1, gridBagConstraints);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -325,6 +341,7 @@ public class DefenseAnalysePanel extends WizardPage {
         return getModel().getRows();
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;

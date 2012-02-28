@@ -438,7 +438,11 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         //center village on click with default cursor
                         if (v != null) {
                             Tribe t = GlobalOptions.getSelectedProfile().getTribe();
-                            if ((v != null) && (v.getTribe() != Barbarians.getSingleton()) && (t != Barbarians.getSingleton()) && (t.equals(v.getTribe()))) {
+                            if ((v != null)
+                                    && (t != null)
+                                    && (v.getTribe() != Barbarians.getSingleton())
+                                    && (t != Barbarians.getSingleton())
+                                    && (t.getId() == v.getTribe().getId())) {
                                 DSWorkbenchMainFrame.getSingleton().setCurrentUserVillage(v);
                             }
                         }

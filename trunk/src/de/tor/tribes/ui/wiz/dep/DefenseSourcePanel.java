@@ -125,23 +125,25 @@ public class DefenseSourcePanel extends WizardPage {
             }
         });
 
+
+        ActionListener listener = new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getActionCommand().equals("Paste")) {
+                    pasteFromClipboard();
+                } else if (e.getActionCommand().equals("Delete")) {
+                    deleteSelection();
+                }
+
+            }
+        };
+
         KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
-        jVillageTable.registerKeyboardAction(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pasteFromClipboard();
-
-            }
-        }, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jVillageTable.registerKeyboardAction(listener, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
-        jVillageTable.registerKeyboardAction(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                deleteSelection();
-            }
-        }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jVillageTable.registerKeyboardAction(listener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        capabilityInfoPanel1.addActionListener(listener);
         jInfoTextPane.setText(GENERAL_INFO);
         overviewPanel = new VillageOverviewMapPanel();
         jPanel2.add(overviewPanel, BorderLayout.CENTER);
@@ -166,6 +168,7 @@ public class DefenseSourcePanel extends WizardPage {
         jPanel2 = new javax.swing.JPanel();
         jToggleButton1 = new javax.swing.JToggleButton();
         jXLabel1 = new org.jdesktop.swingx.JXLabel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jLabel1 = new javax.swing.JLabel();
         jideSplitPane1 = new com.jidesoft.swing.JideSplitPane();
@@ -255,6 +258,16 @@ public class DefenseSourcePanel extends WizardPage {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jVillageTablePanel.add(jXLabel1, gridBagConstraints);
+
+        capabilityInfoPanel1.setBbSupport(false);
+        capabilityInfoPanel1.setCopyable(false);
+        capabilityInfoPanel1.setSearchable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 0);
+        jVillageTablePanel.add(capabilityInfoPanel1, gridBagConstraints);
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -441,6 +454,7 @@ public class DefenseSourcePanel extends WizardPage {
         return elements;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private javax.swing.JPanel jDataPanel;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;

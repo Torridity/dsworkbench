@@ -12,8 +12,8 @@ package de.tor.tribes.ui.wiz.tap;
 
 import com.jidesoft.swing.JideBoxLayout;
 import com.jidesoft.swing.JideSplitPane;
+import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.control.ManageableType;
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Tribe;
@@ -25,7 +25,6 @@ import de.tor.tribes.ui.wiz.dep.DefenseCalculationSettingsPanel;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.UIHelper;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.troops.TroopsManager;
@@ -105,6 +104,18 @@ public class AttackSourceFilterPanel extends WizardPage {
         updateFilterPanel(new LinkedList<TAPAttackSourceElement>());
         overviewPanel = new VillageOverviewMapPanel();
         jPanel2.add(overviewPanel, BorderLayout.CENTER);
+        AttackManager.getSingleton().addManagerListener(new GenericManagerListener() {
+
+            @Override
+            public void dataChangedEvent() {
+                updateAttackList();
+            }
+
+            @Override
+            public void dataChangedEvent(String pGroup) {
+                dataChangedEvent();
+            }
+        });
     }
 
     public static String getDescription() {
@@ -128,7 +139,13 @@ public class AttackSourceFilterPanel extends WizardPage {
         String value = profile.getProperty("tap.filter.own.only");
         jPlayerVillagesOnly.setSelected((value == null) ? true : Boolean.parseBoolean(value));
         UIHelper.setText(jMinFarmSpace, profile.getProperty("tap.filter.min.farm"), null);
+        if (jMinFarmSpace.getText().equals("0")) {
+            jMinFarmSpace.setText("");
+        }
         UIHelper.setText(jMinFarmSpaceBonus, profile.getProperty("tap.filter.min.farm.bonus"), null);
+        if (jMinFarmSpaceBonus.getText().equals("0")) {
+            jMinFarmSpaceBonus.setText("");
+        }
     }
 
     /**
@@ -571,13 +588,17 @@ public class AttackSourceFilterPanel extends WizardPage {
         overviewPanel.repaint();
     }
 
-    protected void updateFilterPanel(List<TAPAttackSourceElement> pAllElements) {
+    private void updateAttackList() {
         DefaultListModel attackModel = new DefaultListModel();
         for (String plan : AttackManager.getSingleton().getGroups()) {
             attackModel.addElement(plan);
         }
         jAttackPlanList.setModel(attackModel);
 
+    }
+
+    protected void updateFilterPanel(List<TAPAttackSourceElement> pAllElements) {
+        updateAttackList();
         int ignoreCount = 0;
         for (TAPAttackSourceElement elem : pAllElements) {
             if (elem.isIgnored()) {

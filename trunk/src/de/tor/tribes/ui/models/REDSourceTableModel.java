@@ -20,7 +20,7 @@ import org.apache.commons.collections.Predicate;
 public class REDSourceTableModel extends AbstractTableModel {
 
     private String[] columnNames = new String[]{
-        "Dorf", "Rohstoffe", "Speicher", "Händler", "Bauernhof"
+        "Dorf", "Rohstoffe", "Speicher", "Verfügbare Händler", "Bauernhof"
     };
     Class[] types = new Class[]{
         Village.class, StorageStatus.class, Integer.class, String.class, String.class
@@ -110,4 +110,3 @@ public class REDSourceTableModel extends AbstractTableModel {
         return columnNames.length;
     }
 }
-

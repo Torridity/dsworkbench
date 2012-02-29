@@ -1015,8 +1015,8 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
                 getFillAmountByResourceId(priorities[1]),
                 getFillAmountByResourceId(priorities[2])};
             remainRes = new int[]{getRemainAmountByResourceId(priorities[0]),
-                getRemainAmountByResourceId(priorities[0]),
-                getRemainAmountByResourceId(priorities[0])};
+                getRemainAmountByResourceId(priorities[1]),
+                getRemainAmountByResourceId(priorities[2])};
         } else {
             targetRes = new int[]{getMeanValueByResourceId(priorities[0], woodSum, claySum, ironSum, allElements.length),
                 getMeanValueByResourceId(priorities[1], woodSum, claySum, ironSum, allElements.length),
@@ -1132,7 +1132,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
                             }
                             int amount = order.getAmount();
                             int merchants = amount;
-                            if (merchants >= minAmount) {
+                            if (merchants * 1000 >= minAmount) {
                                 Resource res = new Resource(merchants * 1000, current);
                                 transportsFromSourceToDest.add(res);
                             }

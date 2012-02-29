@@ -32,7 +32,9 @@ public class TimeSettingsPanel extends WizardPage implements SettingsChangedList
 
     @Override
     public void fireTimeFrameChangedEvent() {
+        setProblem(null);
     }
+    
     private static final String GENERAL_INFO = "Die Zeiteinstellungen dienen dazu, die m&ouml;glichen Angriffe zeitlich einzuordnen. "
             + "Die grobe Einordnung aller Angriffe geschieht &uuml;ber die beiden Felder 'Startdatum' und 'Enddatum'. DS Workbench "
             + "wird keinen Angriff vor bzw. nach diesen Daten planen. Je gr&ouml;&szlig;er der Abstand zwischen diesen Zeitpunkten ist, "

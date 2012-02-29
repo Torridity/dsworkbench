@@ -360,10 +360,13 @@ public abstract class GenericManager<C extends ManageableType> {
             group = DEFAULT_GROUP;
         }
         invalidate();
-        for (C element : pElements) {
-            removeElement(group, element);
+        try {
+            for (C element : pElements) {
+                removeElement(group, element);
+            }
+        } finally {
+            revalidate();
         }
-        revalidate();
         fireDataChangedEvents(pGroup);
     }
 

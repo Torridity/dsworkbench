@@ -23,7 +23,7 @@ public class REDExtendedMerchantTableModel extends AbstractTableModel {
         "Dorf", "Rohstoffe", "Speicher", "Händler", "Bauernhof", "Handelsrichtung"
     };
     Class[] types = new Class[]{
-        Village.class, new double[0].getClass(), Integer.class, String.class, String.class, VillageMerchantInfo.Direction.class
+        Village.class, StorageStatus.class, Integer.class, String.class, String.class, VillageMerchantInfo.Direction.class
     };
     private final List<VillageMerchantInfo> elements = new LinkedList<VillageMerchantInfo>();
 
@@ -65,6 +65,11 @@ public class REDExtendedMerchantTableModel extends AbstractTableModel {
 
     public void addRow(final Village pVillage, int pStash, int pWood, int pClay, int pIron, int pAvailableMerchants, int pMerchants, int pAvailableFarm, int pOverallFarm) {
         addRow(pVillage, pStash, pWood, pClay, pIron, pAvailableMerchants, pMerchants, pAvailableFarm, pOverallFarm, true);
+    }
+
+    public void removeRow(VillageMerchantInfo pRemove) {
+        elements.remove(pRemove);
+        fireTableDataChanged();
     }
 
     @Override

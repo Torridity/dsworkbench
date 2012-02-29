@@ -512,7 +512,7 @@ public class AttackFinishPanel extends WizardPage {
             jScrollPane1.setViewportView(overviewPanel);
             jPanel2.remove(overviewPanel);
         } else {
-            jScrollPane1.setViewportView(jxResultsTable);
+            changeExpertView();
             jPanel5.add(overviewPanel, BorderLayout.CENTER);
 
             SwingUtilities.invokeLater(new Runnable() {

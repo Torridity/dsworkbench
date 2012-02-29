@@ -184,8 +184,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         capabilityInfoPanel2.addActionListener(resultListener);
         jResultTabbedPane.registerKeyboardAction(resultListener, "BBCopy", bbCopy, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-
-
         jReportsTabbedPane.setCloseAction(new AbstractAction("closeAction") {
 
             public void actionPerformed(ActionEvent e) {
@@ -527,7 +525,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jOverallStatsArea.setText("");
         jAllyStatsArea.setText("");
         jTribeStatsArea.setText("");
-        ReportManager.getSingleton().addManagerListener(this);
+        ReportManager.getSingleton().addManagerListener(DSWorkbenchReportFrame.this);
         generateReportTabs();
     }
 
@@ -1277,7 +1275,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         ReportGenerator rgen = new ReportGenerator();
 
         rgen.setVisible(true);
-       
+
         DSWorkbenchReportFrame.getSingleton().setSize(800, 600);
         DSWorkbenchReportFrame.getSingleton().resetView();
         DSWorkbenchReportFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

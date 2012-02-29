@@ -201,6 +201,8 @@ public class AttackTargetPanel extends WizardPage {
         jPanel3 = new javax.swing.JPanel();
         jAddAttackButton = new javax.swing.JButton();
         jRemoveAttackButton = new javax.swing.JButton();
+        jToFakeButton = new javax.swing.JButton();
+        jToNoFakeButton = new javax.swing.JButton();
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jLabel1 = new javax.swing.JLabel();
         jideSplitPane1 = new com.jidesoft.swing.JideSplitPane();
@@ -318,7 +320,6 @@ public class AttackTargetPanel extends WizardPage {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
         jPanel3.add(jAddAttackButton, gridBagConstraints);
 
         jRemoveAttackButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/remove_attack.png"))); // NOI18N
@@ -328,13 +329,47 @@ public class AttackTargetPanel extends WizardPage {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
+        gridBagConstraints.weighty = 1.0;
         jPanel3.add(jRemoveAttackButton, gridBagConstraints);
+
+        jToFakeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/fake.png"))); // NOI18N
+        jToFakeButton.setToolTipText("Gewählte Ziele auf \"Fake-Ziele\" setzen");
+        jToFakeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireChangeFakeEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
+        jPanel3.add(jToFakeButton, gridBagConstraints);
+
+        jToNoFakeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/no_fake.png"))); // NOI18N
+        jToNoFakeButton.setToolTipText("Gewählte Ziele auf \"Keine Fake-Ziele\" setzen");
+        jToNoFakeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireChangeFakeEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
+        jPanel3.add(jToNoFakeButton, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -429,13 +464,21 @@ public class AttackTargetPanel extends WizardPage {
 
             jStatusLabel.setText(modificationCount + " Angriff(e) " + ((increase) ? "hinzugefügt" : "entfernt"));
             if (modificationCount > 0) {
-               // getModel().fireTableDataChanged();
+                // getModel().fireTableDataChanged();
                 jVillageTable.repaint();
             }
         } else {
             jStatusLabel.setText("Keine Ziele gewählt");
         }
     }//GEN-LAST:event_fireChangeAttackCountEvent
+
+    private void fireChangeFakeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeFakeEvent
+        boolean toFake = evt.getSource() == jToFakeButton;
+        for (TAPAttackTargetElement elem : getSelection()) {
+            elem.setFake(toFake);
+        }
+        repaint();
+    }//GEN-LAST:event_fireChangeFakeEvent
 
     private TAPTargetTableModel getModel() {
         return (TAPTargetTableModel) jVillageTable.getModel();
@@ -446,7 +489,7 @@ public class AttackTargetPanel extends WizardPage {
             return;
         }
         for (Village village : pVillages) {
-            getModel().addRow(village, villageSelectionPanel.isFake());
+            getModel().addRow(village, villageSelectionPanel.isFake(), villageSelectionPanel.getAmount());
         }
         if (getModel().getRowCount() > 0) {
             setProblem(null);
@@ -456,7 +499,7 @@ public class AttackTargetPanel extends WizardPage {
     }
 
     private void pasteFromClipboard() {
-        String data = "";
+        String data;
         try {
             data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
             List<Village> villages = PluginManager.getSingleton().executeVillageParser(data);
@@ -478,7 +521,7 @@ public class AttackTargetPanel extends WizardPage {
             }
             Collections.sort(rows);
             for (int i = rows.size() - 1; i >= 0; i--) {
-                getModel().removeRow(rows.get(i), jVillageTable.convertRowIndexToView(rows.get(i)));
+                getModel().removeRow(rows.get(i));
             }
             if (getModel().getRowCount() == 0) {
                 setProblem("Keine Ziele gewählt");
@@ -502,6 +545,15 @@ public class AttackTargetPanel extends WizardPage {
         TAPTargetTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             elements.add(model.getRow(i));
+        }
+        return elements;
+    }
+
+    public List<TAPAttackTargetElement> getSelection() {
+        List<TAPAttackTargetElement> elements = new LinkedList<TAPAttackTargetElement>();
+        TAPTargetTableModel model = getModel();
+        for (int i : jVillageTable.getSelectedRows()) {
+            elements.add(model.getRow(jVillageTable.convertRowIndexToModel(i)));
         }
         return elements;
     }
@@ -543,6 +595,8 @@ public class AttackTargetPanel extends WizardPage {
     private javax.swing.JButton jRemoveAttackButton;
     private javax.swing.JLabel jStatusLabel;
     private javax.swing.JScrollPane jTableScrollPane;
+    private javax.swing.JButton jToFakeButton;
+    private javax.swing.JButton jToNoFakeButton;
     private javax.swing.JToggleButton jToggleButton1;
     private org.jdesktop.swingx.JXTable jVillageTable;
     private javax.swing.JPanel jVillageTablePanel;

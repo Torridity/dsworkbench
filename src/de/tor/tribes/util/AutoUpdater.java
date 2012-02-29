@@ -27,7 +27,8 @@ import org.apache.commons.io.FilenameUtils;
 public class AutoUpdater {
 
     private final static File UPDATES_DIR = new File("./lib/classes");
-    private final static File CORE_JAR = new File("./store/core.jar");//new File("./lib/core.jar");
+    private final static File CORE_JAR = new File("./lib/core.jar");//new File("./lib/core.jar");
+   // private final static File CORE_JAR = new File("C:/Users/Torridity/AppData/Local/DSWorkbench/lib/core.jar");//new File("./lib/core.jar");
 
     static {
         initialize();
@@ -43,7 +44,7 @@ public class AutoUpdater {
 
     public static List<String> getUpdatedResources(UpdateListener pListener) throws IOException {
         Properties props = new Properties();
-        Proxy webProxy = DSWorkbenchSettingsDialog.getSingleton().getWebProxy();
+        Proxy webProxy = Proxy.NO_PROXY;//DSWorkbenchSettingsDialog.getSingleton().getWebProxy();
         URL u = new URL("http://www.dsworkbench.de/downloads/Update/hash.props.gz");
         props.load(new GZIPInputStream(u.openConnection(webProxy).getInputStream()));
         HashMap<String, Long> existingEntries = new HashMap<String, Long>();
@@ -96,6 +97,7 @@ public class AutoUpdater {
             pListener.fireUpdatesFoundEvent(changedFiles, newFiles);
 
         }
+        
         return modified;
     }
 

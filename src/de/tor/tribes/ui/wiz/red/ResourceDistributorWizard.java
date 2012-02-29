@@ -23,6 +23,8 @@ import org.netbeans.spi.wizard.WizardController;
 import org.netbeans.spi.wizard.WizardPanelProvider;
 
 /**
+ * @TODO (ALL Wizards) Remember sizes!
+ * @TODO (ALL Wizards) Check if link between steps is possible!
  * @author Torridity
  */
 public class ResourceDistributorWizard extends WizardPanelProvider {
@@ -52,6 +54,7 @@ public class ResourceDistributorWizard extends WizardPanelProvider {
 
     public static void restoreProperties() {
         ResourceDistributorSettingsPanel.getSingleton().restoreProperties();
+        ResourceDistributorCalculationPanel.getSingleton().restoreProperties();
         ResourceDistributorFinishPanel.getSingleton().restoreProperties();
     }
 
@@ -61,6 +64,7 @@ public class ResourceDistributorWizard extends WizardPanelProvider {
             return;
         }
         parent = new JFrame();
+
         parent.setTitle("Rohstoffverteiler");
         Wizard wizard = new ResourceDistributorBranchController().createWizard();
         parent.getContentPane().setLayout(new BorderLayout());

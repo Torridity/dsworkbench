@@ -207,7 +207,7 @@ public class UnitHolder implements Serializable {
         if (plain == null) {
             return false;
         }
-        return plain.equals("spear") || plain.equals("sword") || plain.equals("archer") || plain.equals("spy") || plain.equals("heavy");
+        return plain.equals("spear") || plain.equals("sword") || plain.equals("archer") || plain.equals("spy") || plain.equals("heavy") || plain.equals("catapult");
     }
 
     public boolean isOffense() {

@@ -36,7 +36,6 @@ import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXList;
 
 /**
- * @TODO Check selection in attack target view...sometimes the continent list is empty (e.g. Hermann der Starke - w43 when using Dirki123)
  * @author jejkal
  */
 public class VillageSelectionPanel extends javax.swing.JPanel {

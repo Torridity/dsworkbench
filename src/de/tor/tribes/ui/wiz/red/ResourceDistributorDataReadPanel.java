@@ -20,6 +20,7 @@ import de.tor.tribes.ui.renderer.TradeDirectionCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PluginManager;
+import de.tor.tribes.util.SlashComparator;
 import java.awt.BorderLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
@@ -28,13 +29,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
+import org.jdesktop.swingx.renderer.StringValue;
+import org.jdesktop.swingx.sort.StringValueProvider;
+import org.jdesktop.swingx.sort.TableSortController;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
 import org.netbeans.spi.wizard.WizardPanelNavResult;
@@ -76,6 +83,11 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
         jDataTable.setDefaultRenderer(VillageMerchantInfo.Direction.class, new TradeDirectionCellRenderer());
         jDataTable.setDefaultRenderer(Integer.class, new NumberFormatCellRenderer());
         jDataTable.setDefaultRenderer(StorageStatus.class, new StorageCellRenderer());
+
+        TableSortController sorter = (TableSortController) jDataTable.getRowSorter();
+        SlashComparator splitComparator = new SlashComparator();
+        sorter.setComparator(3, splitComparator);
+        sorter.setComparator(4, splitComparator);
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         ActionListener deleteListener = new ActionListener() {
 
@@ -125,6 +137,7 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
         jInfoTextPane.setText("<html>Du befindest dich im <b>Angriffsmodus</b>. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, die f&uuml;r Angriffe verwendet werden d&uuml;rfen. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:\n<ul>\n<li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus der Gruppen&uuml;bersicht</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus dem SOS-Analyzer</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Berichten</li>\n<li>Einf&uuml;gen aus der Auswahlübersicht</li>\n<li>Manuelle Eingabe</li>\n</ul>\n</html>\n");
         jInfoScrollPane.setViewportView(jInfoTextPane);
 
+        setPreferredSize(new java.awt.Dimension(520, 320));
         setLayout(new java.awt.GridBagLayout());
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N

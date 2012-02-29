@@ -211,11 +211,9 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
             storedState.put(item.getTag(), item.getState());
         }
         DefaultListModel model = new DefaultListModel();
+     //   model.addElement(new ListItem(NoTag.getSingleton()));
 
-        model.addElement(new ListItem(NoTag.getSingleton()));
-
-        for (ManageableType element : TagManager.getSingleton().getAllElements()) {
-            Tag tag = (Tag) element;
+        for (Tag tag : TagUtils.getTags(Tag.CASE_INSENSITIVE_ORDER)) {
             ListItem item = new ListItem(tag);
             if (storedState.get(tag) != null) {
                 item.setState(storedState.get(tag));
@@ -233,7 +231,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
     }
 
     public boolean isVillageValid(Village pVillage) {
-        if (getItemAt(0).getState() != ListItem.RELATION_TYPE.DISABLED) {
+        if (isExpertSelection() && getItemAt(0).getState() != ListItem.RELATION_TYPE.DISABLED) {
             //NoTag selected
             if (TagManager.getSingleton().getTags(pVillage).isEmpty()) {
                 return true;
@@ -274,10 +272,10 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
             }
 
             for (Village village : relevantVillages) {
-                boolean use = true;
+                boolean use = false;
                 for (Tag t : selection) {
-                    if (!t.tagsVillage(village.getId())) {
-                        use = false;
+                    if (t.tagsVillage(village.getId())) {
+                        use = true;
                         break;
                     }
                 }

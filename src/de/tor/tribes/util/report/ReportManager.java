@@ -85,7 +85,6 @@ public class ReportManager extends GenericManager<FightReport> {
     }
 
     public void removeRule(ReportRuleInterface pFilter) {
-
         for (RuleEntry rule : rules.toArray(new RuleEntry[rules.size()])) {
             if (rule.getRule().equals(pFilter)) {
                 rules.remove(rule);
@@ -150,30 +149,33 @@ public class ReportManager extends GenericManager<FightReport> {
 
     public int filterNow(String pGroup) {
         invalidate();
-        Hashtable<FightReport, String> newGroups = new Hashtable<FightReport, String>();
-        for (ManageableType t : getAllElements(pGroup)) {
-            FightReport report = (FightReport) t;
-            for (RuleEntry entry : getRuleEntries()) {
-                if (entry.getRule().isValid(report)) {
-                    if (!entry.getTargetSet().equals(pGroup)) {
-                        //only move report, if the filter points to a new group...
-                        //...otherwise, report stays in this group as the current filter is the first fits
-                        newGroups.put(report, entry.getTargetSet());
+        try {
+            Hashtable<FightReport, String> newGroups = new Hashtable<FightReport, String>();
+            for (ManageableType t : getAllElements(pGroup)) {
+                FightReport report = (FightReport) t;
+                for (RuleEntry entry : getRuleEntries()) {
+                    if (entry.getRule().isValid(report)) {
+                        if (!entry.getTargetSet().equals(pGroup)) {
+                            //only move report, if the filter points to a new group...
+                            //...otherwise, report stays in this group as the current filter is the first fits
+                            newGroups.put(report, entry.getTargetSet());
+                        }
+                        break;
                     }
-                    break;
                 }
             }
-        }
 
-        Set<Entry<FightReport, String>> entries = newGroups.entrySet();
-        for (Entry<FightReport, String> entry : entries) {
-            //remove report from this group
-            removeElement(pGroup, entry.getKey());
-            //add report to new group and continue filtering
-            addManagedElement(entry.getValue(), entry.getKey(), true);
+            Set<Entry<FightReport, String>> entries = newGroups.entrySet();
+            for (Entry<FightReport, String> entry : entries) {
+                //remove report from this group
+                removeElement(pGroup, entry.getKey());
+                //add report to new group and continue filtering
+                addManagedElement(entry.getValue(), entry.getKey(), true);
+            }
+            return entries.size();
+        } finally {
+            revalidate(true);
         }
-        revalidate(true);
-        return entries.size();
     }
 
     @Override
@@ -185,35 +187,38 @@ public class ReportManager extends GenericManager<FightReport> {
         invalidate();
         initialize();
         File reportFile = new File(pFile);
-        if (reportFile.exists()) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Reading reports from '" + pFile + "'");
-            }
-            try {
-                Document d = JaxenUtils.getDocument(reportFile);
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//reportSets/reportSet")) {
-                    String setKey = e.getAttributeValue("name");
-                    setKey = URLDecoder.decode(setKey, "UTF-8");
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Loading report set '" + setKey + "'");
-                    }
-                    addGroup(setKey);
-                    for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "reports/report")) {
-                        FightReport r = new FightReport();
-                        r.loadFromXml(e1);
-                        addManagedElement(setKey, r);
-                    }
+        try {
+            if (reportFile.exists()) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Reading reports from '" + pFile + "'");
                 }
-                logger.debug("Reports successfully loaded");
-            } catch (Exception e) {
-                logger.error("Failed to load Reports", e);
+                try {
+                    Document d = JaxenUtils.getDocument(reportFile);
+                    for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//reportSets/reportSet")) {
+                        String setKey = e.getAttributeValue("name");
+                        setKey = URLDecoder.decode(setKey, "UTF-8");
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Loading report set '" + setKey + "'");
+                        }
+                        addGroup(setKey);
+                        for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "reports/report")) {
+                            FightReport r = new FightReport();
+                            r.loadFromXml(e1);
+                            addManagedElement(setKey, r);
+                        }
+                    }
+                    logger.debug("Reports successfully loaded");
+                } catch (Exception e) {
+                    logger.error("Failed to load Reports", e);
+                }
+            } else {
+                if (logger.isInfoEnabled()) {
+                    logger.info("Reports file not found under '" + pFile + "'");
+                }
             }
-        } else {
-            if (logger.isInfoEnabled()) {
-                logger.info("Reports file not found under '" + pFile + "'");
-            }
+        } finally {
+            revalidate();
         }
-        revalidate();
 
         //load rules
         loadRules(GlobalOptions.getSelectedProfile().getProfileDirectory() + File.separator + "rules.xml");
@@ -252,8 +257,9 @@ public class ReportManager extends GenericManager<FightReport> {
             result = true;
         } catch (Exception e) {
             logger.error("Failed to import reports", e);
+        } finally {
+            revalidate(true);
         }
-        revalidate(true);
         return result;
     }
 
@@ -351,11 +357,11 @@ public class ReportManager extends GenericManager<FightReport> {
         x.alias("rule", RuleEntry.class);
         FileReader r = null;
         logger.debug("Reading report rules from file " + pFile);
+        invalidate();
         try {
             r = new FileReader(pFile);
             rules.clear();
             List<RuleEntry> entries = (List<RuleEntry>) x.fromXML(r);
-            invalidate();
             for (RuleEntry entry : entries) {
                 rules.add(entry);
             }
@@ -364,6 +370,7 @@ public class ReportManager extends GenericManager<FightReport> {
         } catch (IOException ioe) {
             logger.error("Failed to read report rules", ioe);
         } finally {
+            revalidate();
             try {
                 if (r != null) {
                     r.close();

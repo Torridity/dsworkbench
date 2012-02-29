@@ -3047,7 +3047,7 @@
                 <Component class="javax.swing.JCheckBox" name="jClipboardSound">
                   <Properties>
                     <Property name="selected" type="boolean" value="true"/>
-                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Zeigt das Hauptmen&amp;uuml; in halber Gr&amp;ouml;sse an.&lt;br/&gt;Dies Option kann verwendet werden, um z.B. bei Monitoren mit kleiner Aufl&amp;ouml;sung Platz zu sparen.&lt;/html&gt;"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Spielt einen Ton ab, wenn Spieldaten (Berichte, &#xdc;bersichten...) aus der Zwischenablage importiert wurden"/>
                     <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                   <Events>
@@ -3081,7 +3081,7 @@
                 <Component class="javax.swing.JCheckBox" name="jDeleteFarmReportsOnExit">
                   <Properties>
                     <Property name="selected" type="boolean" value="true"/>
-                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Zeigt das Hauptmen&amp;uuml; in halber Gr&amp;ouml;sse an.&lt;br/&gt;Dies Option kann verwendet werden, um z.B. bei Monitoren mit kleiner Aufl&amp;ouml;sung Platz zu sparen.&lt;/html&gt;"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Farmberichte werden beim Beenden von DS Workbench automatisch gel&#xf6;scht (empfohlen)"/>
                     <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                   <Events>
@@ -3115,7 +3115,7 @@
                 <Component class="javax.swing.JCheckBox" name="jEnableSystray">
                   <Properties>
                     <Property name="selected" type="boolean" value="true"/>
-                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Zeigt das Hauptmen&amp;uuml; in halber Gr&amp;ouml;sse an.&lt;br/&gt;Dies Option kann verwendet werden, um z.B. bei Monitoren mit kleiner Aufl&amp;ouml;sung Platz zu sparen.&lt;/html&gt;"/>
+                    <Property name="toolTipText" type="java.lang.String" value="&#xd6;ffnet eine Nachricht im Systray (sofern unterst&#xfc;tzt) wenn Spieldaten (Berichte, &#xdc;bersichten...) aus der Zwischenablage gelesen wurden"/>
                     <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                   <Events>

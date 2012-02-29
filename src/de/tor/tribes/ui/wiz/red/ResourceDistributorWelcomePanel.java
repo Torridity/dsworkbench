@@ -28,7 +28,7 @@ public class ResourceDistributorWelcomePanel extends WizardPage {
             + "Du hast die Gleichverteilung von Rohstoffen gew&auml;hlt. Dabei wird versucht, die vorhandenen Rohstoffe zwischen den D&ouml;rfern "
             + "so zu verteilen, dass in allen D&ouml;rfer am Ende gleichviel Rohstoffe vorhanden sind, sofern dies die Ausbaustufen der Speicher zulassen. "
             + "Bei der Gleichverteilung wird weder die Ausbaustufe der D&ouml;rfer noch der F&uuml;llstand des Bauernhofes ber&uuml;cksichtigt. "
-            + "Diese Berechnung bietet sich daher f&uuml;r gro&szlig;e Accounts an, wo ein Gro&szlig;teil der D&oouml;rfern voll ausgebaut ist, "
+            + "Diese Berechnung bietet sich daher f&uuml;r gro&szlig;e Accounts an, wo ein Gro&szlig;teil der D&ouml;rfern voll ausgebaut ist, "
             + "oder f&uuml;r kleine Accounts, wo alle D&ouml;rfer einen &auml;hnlichen Bedarf an Rohstoffen haben.</html>";
     private final String FILL_DISTIBUTION_HELP = "<html><b>Willkommen beim DS Workbench Rohstoffverteiler.</b><br/><br/>"
             + "Du hast die Belieferung bestimmter D&ouml;rfer gew&auml;hlt. Dabei k&ouml;nnen die vorhandenen D&ouml;rfern in Lieferanten "

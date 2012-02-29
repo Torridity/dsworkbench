@@ -17,12 +17,17 @@ public class TAPAttackTargetElement {
     private boolean fake = false;
 
     public TAPAttackTargetElement(Village pVillage) {
-        village = pVillage;
+        this(pVillage, false, 1);
     }
 
     public TAPAttackTargetElement(Village pVillage, boolean pFake) {
-        this(pVillage);
+        this(pVillage, pFake, 1);
+    }
+
+    public TAPAttackTargetElement(Village pVillage, boolean pFake, int pAmount) {
+        village = pVillage;
         fake = pFake;
+        attacks = pAmount;
     }
 
     @Override
@@ -58,5 +63,9 @@ public class TAPAttackTargetElement {
 
     public void setFake(boolean pValue) {
         fake = pValue;
+    }
+
+    public void setAttacks(int attacks) {
+        this.attacks = attacks;
     }
 }

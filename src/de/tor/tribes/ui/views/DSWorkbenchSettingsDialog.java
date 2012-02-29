@@ -2573,7 +2573,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jPanel6.add(jLabel8, gridBagConstraints);
 
         jClipboardSound.setSelected(true);
-        jClipboardSound.setToolTipText("<html>Zeigt das Hauptmen&uuml; in halber Gr&ouml;sse an.<br/>Dies Option kann verwendet werden, um z.B. bei Monitoren mit kleiner Aufl&ouml;sung Platz zu sparen.</html>");
+        jClipboardSound.setToolTipText("Spielt einen Ton ab, wenn Spieldaten (Berichte, Übersichten...) aus der Zwischenablage importiert wurden");
         jClipboardSound.setOpaque(false);
         jClipboardSound.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2603,7 +2603,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jPanel6.add(jLabel20, gridBagConstraints);
 
         jDeleteFarmReportsOnExit.setSelected(true);
-        jDeleteFarmReportsOnExit.setToolTipText("<html>Zeigt das Hauptmen&uuml; in halber Gr&ouml;sse an.<br/>Dies Option kann verwendet werden, um z.B. bei Monitoren mit kleiner Aufl&ouml;sung Platz zu sparen.</html>");
+        jDeleteFarmReportsOnExit.setToolTipText("Farmberichte werden beim Beenden von DS Workbench automatisch gelöscht (empfohlen)");
         jDeleteFarmReportsOnExit.setOpaque(false);
         jDeleteFarmReportsOnExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2633,7 +2633,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jPanel6.add(jLabel24, gridBagConstraints);
 
         jEnableSystray.setSelected(true);
-        jEnableSystray.setToolTipText("<html>Zeigt das Hauptmen&uuml; in halber Gr&ouml;sse an.<br/>Dies Option kann verwendet werden, um z.B. bei Monitoren mit kleiner Aufl&ouml;sung Platz zu sparen.</html>");
+        jEnableSystray.setToolTipText("Öffnet eine Nachricht im Systray (sofern unterstützt) wenn Spieldaten (Berichte, Übersichten...) aus der Zwischenablage gelesen wurden");
         jEnableSystray.setOpaque(false);
         jEnableSystray.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

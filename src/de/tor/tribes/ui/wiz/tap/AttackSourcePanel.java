@@ -177,6 +177,7 @@ public class AttackSourcePanel extends WizardPage {
             villageSelectionPanel.setSelectedUnit(DataHolder.getSingleton().getUnitByPlainName(unit));
         }
         villageSelectionPanel.setFake(Boolean.parseBoolean(profile.getProperty("tap.source.fake")));
+        villageSelectionPanel.setup();
     }
 
     /**

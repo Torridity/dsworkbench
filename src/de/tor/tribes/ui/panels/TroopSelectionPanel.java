@@ -65,6 +65,10 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
         rebuildStandardAttackSelection();
     }
     
+    public void hideSettings() {
+        jSettingsButton.setVisible(false);
+    }
+    
     private void rebuildStandardAttackSelection() {
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         for (ManageableType t : StandardAttackManager.getSingleton().getAllElements()) {

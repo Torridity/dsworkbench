@@ -89,38 +89,42 @@ public class FarmManager extends GenericManager<FarmInformation> {
         }
     }
 
-    public int findFarmsInReports(int pRadius) {
+    public int findFarmsInReports() {
         int addCount = 0;
         List<Village> handled = new LinkedList<Village>();
         Tribe yourTribe = GlobalOptions.getSelectedProfile().getTribe();
-        Point center = DSCalculator.calculateCenterOfMass(Arrays.asList(yourTribe.getVillageList()));
         invalidate();
-        Ellipse2D.Double e = new Ellipse2D.Double(center.x - pRadius, center.y - pRadius, 2 * pRadius, 2 * pRadius);
-        for (ManageableType t : ReportManager.getSingleton().getAllElementsFromAllGroups()) {
+        //get all groups but the farm group itself
+        List<String> searchInGroups = new LinkedList<String>();
+        for (String group : ReportManager.getSingleton().getGroups()) {
+            if (group != null && group.equals(ReportManager.FARM_SET)) {
+                searchInGroups.add(group);
+            }
+        }
+
+        for (ManageableType t : ReportManager.getSingleton().getAllElements(searchInGroups)) {
             FightReport report = (FightReport) t;
             Village target = report.getTargetVillage();
             if (report.isWon()) {
-                if (e.contains(new Point2D.Double(report.getTargetVillage().getX(), report.getTargetVillage().getY()))) {//in radius
-                    if (!(report.getTargetVillage().getTribe().getId() == yourTribe.getId())
-                            && (report.getTargetVillage().getTribe().getAlly() == null
-                            || report.getTargetVillage().getTribe().getAlly().equals(BarbarianAlly.getSingleton())
-                            || !(report.getTargetVillage().getTribe().getAlly().getId() != yourTribe.getAlly().getId()))) {
-                        if (!handled.contains(target)) {//add farm
-                            FarmInformation info = addFarm(target);
+                if (!(report.getTargetVillage().getTribe().getId() == yourTribe.getId())
+                        && (report.getTargetVillage().getTribe().getAlly() == null
+                        || report.getTargetVillage().getTribe().getAlly().equals(BarbarianAlly.getSingleton()) //  || !(report.getTargetVillage().getTribe().getAlly().getId() != yourTribe.getAlly().getId()))) {
+                        )) {
+                    if (!handled.contains(target)) {//add farm
+                        FarmInformation info = addFarm(target);
+                        info.updateFromReport(report);
+                        handled.add(target);
+                        if (info.isJustCreated()) {
+                            addCount++;
+                        }
+                    } else {//update to newer report
+                        FarmInformation info = getFarmInformation(target);
+                        if (info != null && info.getLastReport() < report.getTimestamp()) {
                             info.updateFromReport(report);
-                            handled.add(target);
-                            if (info.isJustCreated()) {
-                                addCount++;
-                            }
-                        } else {//update to newer report
-                            FarmInformation info = getFarmInformation(target);
-                            if (info != null && info.getLastReport() < report.getTimestamp()) {
-                                info.updateFromReport(report);
-                                if (info.getStatus().equals(FarmInformation.FARM_STATUS.CONQUERED)
-                                        || info.getStatus().equals(FarmInformation.FARM_STATUS.TROOPS_FOUND)) {
-                                    removeFarm(target);
-                                    addCount--;
-                                }
+                            if (info.getStatus().equals(FarmInformation.FARM_STATUS.CONQUERED)
+                                    || info.getStatus().equals(FarmInformation.FARM_STATUS.TROOPS_FOUND)) {
+                                removeFarm(target);
+                                addCount--;
                             }
                         }
                     }
@@ -131,14 +135,12 @@ public class FarmManager extends GenericManager<FarmInformation> {
         return addCount;
     }
 
-    public int findFarmsFromBarbarians(int pRadius) {
+    public int findFarmsFromBarbarians(Point pCenter, int pRadius) {
         int addCount = 0;
-        Tribe yourTribe = GlobalOptions.getSelectedProfile().getTribe();
-        Point center = DSCalculator.calculateCenterOfMass(Arrays.asList(yourTribe.getVillageList()));
         invalidate();
-        Ellipse2D.Double e = new Ellipse2D.Double(center.x - pRadius, center.y - pRadius, 2 * pRadius, 2 * pRadius);
-        for (int i = center.x - pRadius; i < center.x + pRadius; i++) {
-            for (int j = center.y - pRadius; j < center.y + pRadius; j++) {
+        Ellipse2D.Double e = new Ellipse2D.Double(pCenter.x - pRadius, pCenter.y - pRadius, 2 * pRadius, 2 * pRadius);
+        for (int i = pCenter.x - pRadius; i < pCenter.x + pRadius; i++) {
+            for (int j = pCenter.y - pRadius; j < pCenter.y + pRadius; j++) {
                 if (i > 0 && i < ServerSettings.getSingleton().getMapDimension().width
                         && j > 0 && j < ServerSettings.getSingleton().getMapDimension().height) {
                     if (e.contains(new Point2D.Double(i, j))) {

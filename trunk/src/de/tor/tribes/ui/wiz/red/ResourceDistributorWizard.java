@@ -23,8 +23,8 @@ import org.netbeans.spi.wizard.WizardController;
 import org.netbeans.spi.wizard.WizardPanelProvider;
 
 /**
- * @TODO (ALL Wizards) Remember sizes!
  * @TODO (ALL Wizards) Check if link between steps is possible!
+ *
  * @author Torridity
  */
 public class ResourceDistributorWizard extends WizardPanelProvider {
@@ -47,6 +47,10 @@ public class ResourceDistributorWizard extends WizardPanelProvider {
     }
 
     public static void storeProperties() {
+        if (parent != null) {
+            GlobalOptions.addProperty("red.width", Integer.toString(parent.getWidth()));
+            GlobalOptions.addProperty("red.height", Integer.toString(parent.getHeight()));
+        }
         ResourceDistributorSettingsPanel.getSingleton().storeProperties();
         ResourceDistributorCalculationPanel.getSingleton().storeProperties();
         ResourceDistributorFinishPanel.getSingleton().storeProperties();
@@ -87,12 +91,25 @@ public class ResourceDistributorWizard extends WizardPanelProvider {
 
             @Override
             public void windowClosing(WindowEvent e) {
+                try {
+                    GlobalOptions.addProperty("red.width", Integer.toString(parent.getWidth()));
+                    GlobalOptions.addProperty("red.height", Integer.toString(parent.getHeight()));
+                } catch (Exception ex) {
+                }
                 super.windowClosing(e);
                 parent = null;
             }
         });
         parent.pack();
-        parent.setVisible(true);
+        int w = GlobalOptions.getProperties().getInt("red.width", 0);
+        int h = GlobalOptions.getProperties().getInt("red.height", 0);
+        if (w != 0 && h
+                != 0) {
+            parent.setSize(w, h);
+        }
+
+        parent.setVisible(
+                true);
     }
 
     public static void main(String[] args) {

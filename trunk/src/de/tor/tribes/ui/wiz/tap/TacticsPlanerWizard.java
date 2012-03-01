@@ -6,6 +6,7 @@ package de.tor.tribes.ui.wiz.tap;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.wiz.dep.DefenseFilterPanel;
+import de.tor.tribes.ui.wiz.dep.DefenseSourcePanel;
 import de.tor.tribes.ui.wiz.ref.SupportRefillCalculationPanel;
 import de.tor.tribes.ui.wiz.ref.SupportRefillSourcePanel;
 import de.tor.tribes.ui.wiz.ref.SupportRefillTargetPanel;
@@ -80,21 +81,39 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
 
             @Override
             public void windowClosing(WindowEvent e) {
+                try {
+                    GlobalOptions.addProperty("tap.width", Integer.toString(parent.getWidth()));
+                    GlobalOptions.addProperty("tap.height", Integer.toString(parent.getHeight()));
+                } catch (Exception ex) {
+                }
                 super.windowClosing(e);
                 parent = null;
             }
         });
         parent.pack();
+
+        int w = GlobalOptions.getProperties().getInt("tap.width", 0);
+        int h = GlobalOptions.getProperties().getInt("tap.height", 0);
+
+        if (w != 0 && h != 0) {
+            parent.setSize(w, h);
+        }
+
         parent.setVisible(true);
     }
 
     public static void storeProperties() {
+        if (parent != null) {
+            GlobalOptions.addProperty("tap.width", Integer.toString(parent.getWidth()));
+            GlobalOptions.addProperty("tap.height", Integer.toString(parent.getHeight()));
+        }
         AttackSourcePanel.getSingleton().storeProperties();
         AttackSourceFilterPanel.getSingleton().storeProperties();
         AttackTargetPanel.getSingleton().storeProperties();
         TimeSettingsPanel.getSingleton().storeProperties();
         AttackCalculationPanel.getSingleton().storeProperties();
         AttackFinishPanel.getSingleton().storeProperties();
+        DefenseSourcePanel.getSingleton().storeProperties();
         DefenseFilterPanel.getSingleton().storeProperties();
         SupportRefillTargetPanel.getSingleton().storeProperties();
         SupportRefillSourcePanel.getSingleton().storeProperties();
@@ -108,6 +127,7 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
         TimeSettingsPanel.getSingleton().restoreProperties();
         AttackCalculationPanel.getSingleton().restoreProperties();
         AttackFinishPanel.getSingleton().restoreProperties();
+        DefenseSourcePanel.getSingleton().restoreProperties();
         DefenseFilterPanel.getSingleton().restoreProperties();
         SupportRefillTargetPanel.getSingleton().restoreProperties();
         SupportRefillSourcePanel.getSingleton().restoreProperties();

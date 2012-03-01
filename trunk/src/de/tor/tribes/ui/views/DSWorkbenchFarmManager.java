@@ -10,6 +10,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FarmInformation;
 import de.tor.tribes.types.StorageStatus;
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.ClickAccountPanel;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
@@ -141,12 +142,16 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
         aTroops = new TroopSelectionPanel();
         aTroops.setupFarm(true);
+        aTroops.hideSettings();
         bTroops = new TroopSelectionPanel();
         bTroops.setupFarm(true);
+        //bTroops.hideSettings();
         cTroops = new TroopSelectionPanel();
         cTroops.setupFarm(true);
+       // cTroops.hideSettings();
         rTroops = new TroopSelectionPanel();
         rTroops.setupFarm(true);
+       // rTroops.hideSettings();
         jATroopsPanel.add(aTroops, BorderLayout.CENTER);
         jBTroopsPanel.add(bTroops, BorderLayout.CENTER);
         jCTroopsPanel.add(cTroops, BorderLayout.CENTER);
@@ -265,12 +270,14 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                String result = JOptionPane.showInputDialog(DSWorkbenchFarmManager.this, "Bitte gib den Radius (Felder) um dein Dorfzentrum an,\nin dem nach Farmen gesucht werden soll.", 20);
+                Tribe yourTribe = GlobalOptions.getSelectedProfile().getTribe();
+                Point center = DSCalculator.calculateCenterOfMass(Arrays.asList(yourTribe.getVillageList()));
+                String result = JOptionPane.showInputDialog(DSWorkbenchFarmManager.this, "Bitte gib den Radius (Felder) um dein Dorfzentrum (" + center.x + "|" + center.y + ") an,\nin dem nach Farmen gesucht werden soll.", 20);
                 if (result == null) {
                     showInfo("Keine Farmen hinzugefügt");
                 } else {
                     try {
-                        int added = FarmManager.getSingleton().findFarmsFromBarbarians(Integer.parseInt(result));
+                        int added = FarmManager.getSingleton().findFarmsFromBarbarians(center, Integer.parseInt(result));
                         if (added > 0) {
                             showInfo(added + " Farm(en) hinzugefügt");
                         } else {
@@ -292,20 +299,15 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                String result = JOptionPane.showInputDialog(DSWorkbenchFarmManager.this, "Bitte gib den Radius (Felder) um dein Dorfzentrum an,\nin dem nach verwendbaren Berichten gesucht werden soll.", 20);
-                if (result == null) {
-                    showInfo("Keine Farmen hinzugefügt");
-                } else {
-                    try {
-                        int added = FarmManager.getSingleton().findFarmsInReports(Integer.parseInt(result));
-                        if (added > 0) {
-                            showInfo(added + " Farm(en) hinzugefügt");
-                        } else {
-                            showInfo("Keine neuen Farmen gefunden");
-                        }
-                    } catch (Exception ex) {
-                        showInfo("Eingabe für Radius ungültig");
+                try {
+                    int added = FarmManager.getSingleton().findFarmsInReports();
+                    if (added > 0) {
+                        showInfo(added + " Farm(en) hinzugefügt");
+                    } else {
+                        showInfo("Keine neuen Farmen gefunden");
                     }
+                } catch (Exception ex) {
+                    showInfo("Eingabe für Radius ungültig");
                 }
             }
         });
@@ -430,9 +432,9 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         });
 
         miscPane.getContentPane().add(resetLockedStatus);
-         centerPanel.setupTaskPane(clickAccount, farmSourcePane, farmPane, miscPane);
+        centerPanel.setupTaskPane(clickAccount, farmSourcePane, farmPane, miscPane);
     }
-   
+
     /**
      * Delete all selected farms
      */

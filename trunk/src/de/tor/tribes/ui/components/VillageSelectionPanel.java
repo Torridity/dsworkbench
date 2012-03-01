@@ -112,95 +112,111 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
         jUnitBox.setSelectedItem(DataHolder.getSingleton().getUnitByPlainName("ram"));
     }
 
+    public void update() {
+        if (!allyList.isVisible()) {
+            allyList.setSelectedValue(GlobalOptions.getSelectedProfile().getTribe().getAlly(), false);
+        }
+
+        if (!tribeList.isVisible()) {
+            tribeList.setSelectedValue(GlobalOptions.getSelectedProfile().getTribe(), false);
+        }
+    }
+
     private void setupFilters() {
-        allyTribePipeline = new FilterPipeline<Ally, Tribe>(allyList, tribeList) {
+        if (allyTribePipeline == null) {
+            allyTribePipeline = new FilterPipeline<Ally, Tribe>(allyList, tribeList) {
 
-            @Override
-            public Tribe[] filter() {
-                List<Tribe> res = new LinkedList<Tribe>();
-                for (Object o : getSelection()) {
-                    Ally a = (Ally) o;
-                    res.addAll(Arrays.asList(a.getTribes()));
+                @Override
+                public Tribe[] filter() {
+                    List<Tribe> res = new LinkedList<Tribe>();
+                    for (Object o : getSelection()) {
+                        Ally a = (Ally) o;
+                        res.addAll(Arrays.asList(a.getTribes()));
+                    }
+
+                    Collections.sort(res, Tribe.CASE_INSENSITIVE_ORDER);
+                    return res.toArray(new Tribe[res.size()]);
                 }
+            };
+        }
 
-                Collections.sort(res, Tribe.CASE_INSENSITIVE_ORDER);
-                return res.toArray(new Tribe[res.size()]);
-            }
-        };
+        if (tribeGroupPipeline == null) {
+            tribeGroupPipeline = new FilterPipeline<Tribe, GroupSelectionList.ListItem>(tribeList, groupList) {
 
-        tribeGroupPipeline = new FilterPipeline<Tribe, GroupSelectionList.ListItem>(tribeList, groupList) {
-
-            @Override
-            public GroupSelectionList.ListItem[] filter() {
-                List<Tag> usedTags = new LinkedList<Tag>();
-                List<Village> villages = new LinkedList<Village>();
-                List<GroupSelectionList.ListItem> items = new LinkedList<GroupSelectionList.ListItem>();
-                for (Object o : getSelection()) {
-                    Tribe t = (Tribe) o;
-                    Collections.addAll(villages, t.getVillageList());
-                    for (Tag tag : TagUtils.getTagsByTribe(t, null)) {
-                        if (!usedTags.contains(tag)) {
-                            items.add(new GroupSelectionList.ListItem(tag));
-                            usedTags.add(tag);
+                @Override
+                public GroupSelectionList.ListItem[] filter() {
+                    List<Tag> usedTags = new LinkedList<Tag>();
+                    List<Village> villages = new LinkedList<Village>();
+                    List<GroupSelectionList.ListItem> items = new LinkedList<GroupSelectionList.ListItem>();
+                    for (Object o : getSelection()) {
+                        Tribe t = (Tribe) o;
+                        Collections.addAll(villages, t.getVillageList());
+                        for (Tag tag : TagUtils.getTagsByTribe(t, null)) {
+                            if (!usedTags.contains(tag)) {
+                                items.add(new GroupSelectionList.ListItem(tag));
+                                usedTags.add(tag);
+                            }
                         }
                     }
+                    ((GroupSelectionList) getOutputList()).setRelevantVillages(villages.toArray(new Village[villages.size()]));
+                    return items.toArray(new GroupSelectionList.ListItem[items.size()]);
                 }
-                ((GroupSelectionList) getOutputList()).setRelevantVillages(villages.toArray(new Village[villages.size()]));
-                return items.toArray(new GroupSelectionList.ListItem[items.size()]);
-            }
-        };
+            };
+        }
+        if (groupContinentPipeline == null) {
+            groupContinentPipeline = new FilterPipeline<GroupSelectionList.ListItem, ContinentVillageSelection>(groupList, continentList) {
 
-        groupContinentPipeline = new FilterPipeline<GroupSelectionList.ListItem, ContinentVillageSelection>(groupList, continentList) {
-
-            @Override
-            public ContinentVillageSelection[] filter() {
-                HashMap<Integer, ContinentVillageSelection> map = new HashMap<Integer, ContinentVillageSelection>();
-                for (Village v : ((GroupSelectionList) getInputList()).getValidVillages()) {
-                    int cont = v.getContinent();
-                    ContinentVillageSelection s = map.get(cont);
-                    if (s == null) {
-                        s = new ContinentVillageSelection(cont);
-                        map.put(cont, s);
+                @Override
+                public ContinentVillageSelection[] filter() {
+                    HashMap<Integer, ContinentVillageSelection> map = new HashMap<Integer, ContinentVillageSelection>();
+                    for (Village v : ((GroupSelectionList) getInputList()).getValidVillages()) {
+                        int cont = v.getContinent();
+                        ContinentVillageSelection s = map.get(cont);
+                        if (s == null) {
+                            s = new ContinentVillageSelection(cont);
+                            map.put(cont, s);
+                        }
+                        s.addVillage(v);
                     }
-                    s.addVillage(v);
+
+                    ContinentVillageSelection[] result = map.values().toArray(new ContinentVillageSelection[map.size()]);
+                    Arrays.sort(result, new Comparator<ContinentVillageSelection>() {
+
+                        @Override
+                        public int compare(ContinentVillageSelection o1, ContinentVillageSelection o2) {
+                            return String.CASE_INSENSITIVE_ORDER.compare(o1.toString(), o2.toString());
+                        }
+                    });
+                    return result;
                 }
 
-                ContinentVillageSelection[] result = map.values().toArray(new ContinentVillageSelection[map.size()]);
-                Arrays.sort(result, new Comparator<ContinentVillageSelection>() {
+                @Override
+                public void updateOutputSelection() {
+                    getOutputList().getSelectionModel().setSelectionInterval(0, getOutputList().getElementCount() - 1);
+                }
+            };
+        }
+        if (continentVillagePipeline == null) {
 
-                    @Override
-                    public int compare(ContinentVillageSelection o1, ContinentVillageSelection o2) {
-                        return String.CASE_INSENSITIVE_ORDER.compare(o1.toString(), o2.toString());
+            continentVillagePipeline = new FilterPipeline<ContinentVillageSelection, Village>(continentList, villageList) {
+
+                @Override
+                public Village[] filter() {
+                    List<Village> res = new LinkedList<Village>();
+                    for (Object o : getSelection()) {
+                        ContinentVillageSelection c = (ContinentVillageSelection) o;
+                        Collections.addAll(res, c.getVillages());
                     }
-                });
-                return result;
-            }
-
-            @Override
-            public void updateOutputSelection() {
-                getOutputList().getSelectionModel().setSelectionInterval(0, getOutputList().getElementCount() - 1);
-            }
-        };
-
-
-        continentVillagePipeline = new FilterPipeline<ContinentVillageSelection, Village>(continentList, villageList) {
-
-            @Override
-            public Village[] filter() {
-                List<Village> res = new LinkedList<Village>();
-                for (Object o : getSelection()) {
-                    ContinentVillageSelection c = (ContinentVillageSelection) o;
-                    Collections.addAll(res, c.getVillages());
+                    Collections.sort(res, Village.CASE_INSENSITIVE_ORDER);
+                    return res.toArray(new Village[res.size()]);
                 }
-                Collections.sort(res, Village.CASE_INSENSITIVE_ORDER);
-                return res.toArray(new Village[res.size()]);
-            }
 
-            @Override
-            public void updateOutputSelection() {
-                getOutputList().getSelectionModel().setSelectionInterval(0, getOutputList().getElementCount() - 1);
-            }
-        };
+                @Override
+                public void updateOutputSelection() {
+                    getOutputList().getSelectionModel().setSelectionInterval(0, getOutputList().getElementCount() - 1);
+                }
+            };
+        }
     }
 
     public final void setUnitSelectionEnabled(boolean pValue) {
@@ -565,7 +581,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
             }
         });
         p.setup();
-    p.enableSelectionElement(SELECTION_ELEMENT.GROUP, false);
+        p.enableSelectionElement(SELECTION_ELEMENT.GROUP, false);
         f.getContentPane().add(p);
         f.pack();
         f.setVisible(true);

@@ -98,7 +98,6 @@ public class AttackSourcePanel extends WizardPage {
         villageSelectionPanel.enableSelectionElement(VillageSelectionPanel.SELECTION_ELEMENT.TRIBE, false);
         villageSelectionPanel.setUnitSelectionEnabled(true);
         villageSelectionPanel.setFakeSelectionEnabled(true);
-        villageSelectionPanel.setup();
         jPanel1.add(villageSelectionPanel, BorderLayout.CENTER);
         jideSplitPane1.setOrientation(JideSplitPane.VERTICAL_SPLIT);
         jideSplitPane1.setProportionalLayout(true);

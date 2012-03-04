@@ -600,7 +600,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                 jCurrentPlayerVillages.setModel(new DefaultComboBoxModel(new Object[]{"-keine Dörfer-"}));
             }
 // </editor-fold>
-
             //update maps
             MapPanel.getSingleton().resetServerDependendSettings();
             MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
@@ -667,7 +666,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             //relevant for first start
             LayerOrderConfigurationFrame.getSingleton();
             MinimapPanel.getSingleton().redraw(true);
-
             DSWorkbenchFormFrame.getSingleton().resetView();
             DSWorkbenchFormFrame.getSingleton().restoreProperties();
             FormConfigFrame.getSingleton();
@@ -778,42 +776,27 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         checkZoomRange();
     }
 
-   /* public void setupAndShow() {
-        DockController controller = new DockController();
-        controller.setRootWindow(this);
-        SplitDockStation splitDockStation = new SplitDockStation();
+    /*
+     * public void setupAndShow() { DockController controller = new DockController(); controller.setRootWindow(this); SplitDockStation
+     * splitDockStation = new SplitDockStation();
+     *
+     * controller.add(splitDockStation); add(splitDockStation); MyDockable miniMap = new MyDockable("Minimap", jMinimapPanel); MyDockable
+     * map = new MyDockable("Hauptkarte", jMapPanelHolder); splitDockStation.drop(map); splitDockStation.drop(miniMap, new
+     * SplitDockProperty(1, 0, 1, 0.5)); MyDockable settings = new MyDockable("Einstellungen", jSettingsScrollPane);
+     * settings.installActions(controller); splitDockStation.drop(settings, new SplitDockProperty(1, 0.5, 1, 0.5)); ScreenDockStation
+     * screenDockStation = new ScreenDockStation(controller.getRootWindowProvider()); DefaultScreenDockWindowFactory fac = new
+     * DefaultScreenDockWindowFactory(); fac.setKind(DefaultScreenDockWindowFactory.Kind.FRAME); screenDockStation.setWindowFactory(fac);
+     * controller.add(screenDockStation); setVisible(true); screenDockStation.setShowing(true); }
+     */
 
-        controller.add(splitDockStation);
-        add(splitDockStation);
-        MyDockable miniMap = new MyDockable("Minimap", jMinimapPanel);
-        MyDockable map = new MyDockable("Hauptkarte", jMapPanelHolder);
-        splitDockStation.drop(map);
-        splitDockStation.drop(miniMap, new SplitDockProperty(1, 0, 1, 0.5));
-        MyDockable settings = new MyDockable("Einstellungen", jSettingsScrollPane);
-        settings.installActions(controller);
-        splitDockStation.drop(settings, new SplitDockProperty(1, 0.5, 1, 0.5));
-        ScreenDockStation screenDockStation = new ScreenDockStation(controller.getRootWindowProvider());
-        DefaultScreenDockWindowFactory fac = new DefaultScreenDockWindowFactory();
-        fac.setKind(DefaultScreenDockWindowFactory.Kind.FRAME);
-        screenDockStation.setWindowFactory(fac);
-        controller.add(screenDockStation);
-        setVisible(true);
-        screenDockStation.setShowing(true);
-    }*/
-
-   /* public static class MyDockable extends DefaultDockable {
-
-        public MyDockable(String title, JComponent pPanel) {
-            setTitleText(title);
-            add(pPanel);
-        }
-
-        public void installActions(DockController pController) {
-            DefaultDockActionSource source = new DefaultDockActionSource(new CloseAction(pController));
-            setActionOffers(source);
-        }
-    }*/
-   
+    /*
+     * public static class MyDockable extends DefaultDockable {
+     *
+     * public MyDockable(String title, JComponent pPanel) { setTitleText(title); add(pPanel); }
+     *
+     * public void installActions(DockController pController) { DefaultDockActionSource source = new DefaultDockActionSource(new
+     * CloseAction(pController)); setActionOffers(source); } }
+     */
     @Override
     public void setVisible(boolean v) {
         logger.info("Setting MainWindow visible");

@@ -21,8 +21,11 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.TroopFilterDialog;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.models.TAPSourceFilterTableModel;
+import de.tor.tribes.ui.models.TAPTargetFilterTableModel;
+import de.tor.tribes.ui.models.TAPTargetTableModel;
 import de.tor.tribes.ui.wiz.dep.DefenseCalculationSettingsPanel;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
+import de.tor.tribes.ui.wiz.tap.types.TAPAttackTargetElement;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.UIHelper;
@@ -48,7 +51,7 @@ import org.netbeans.spi.wizard.*;
  *
  * @author Torridity
  */
-public class AttackSourceFilterPanel extends WizardPage {
+public class AttackTargetFilterPanel extends WizardPage {
 
     private static final String GENERAL_INFO = "Du befindest dich in der Filterauswahl. Hier kannst du vorher gew&auml;hlte Herkunftsd&ouml;rfer herausfiltern, "
             + "wenn sie nicht bestimmten Kriterien entsprechen. M&ouml;gliche Filterkriterien sind:"
@@ -60,13 +63,12 @@ public class AttackSourceFilterPanel extends WizardPage {
             + "Nach einer &Auml;nderung der Filtereinstellungen muss die Filterung aktualisiert werden. "
             + "Herausgefilterte D&ouml;rfer sind dann in der Tabelle markiert. Unter der Tabelle siehst du die genaue Anzahl der D&ouml;rfer, die herausgefiltert wurden."
             + "</html>";
-    private static AttackSourceFilterPanel singleton = null;
-    private TroopFilterDialog troopFilterDialog = null;
+    private static AttackTargetFilterPanel singleton = null;
     private VillageOverviewMapPanel overviewPanel = null;
 
-    public static synchronized AttackSourceFilterPanel getSingleton() {
+    public static synchronized AttackTargetFilterPanel getSingleton() {
         if (singleton == null) {
-            singleton = new AttackSourceFilterPanel();
+            singleton = new AttackTargetFilterPanel();
         }
         return singleton;
     }
@@ -74,11 +76,11 @@ public class AttackSourceFilterPanel extends WizardPage {
     /**
      * Creates new form AttackSourcePanel
      */
-    AttackSourceFilterPanel() {
+    AttackTargetFilterPanel() {
         initComponents();
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jXCollapsiblePane1.add(jInfoScrollPane, BorderLayout.CENTER);
-        jVillageTable.setModel(new TAPSourceFilterTableModel());
+        jVillageTable.setModel(new TAPTargetFilterTableModel());
         jVillageTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jInfoTextPane.setText(GENERAL_INFO);
 
@@ -100,8 +102,7 @@ public class AttackSourceFilterPanel extends WizardPage {
                 }
             }
         });
-        troopFilterDialog = new TroopFilterDialog(new JFrame(), true);
-        updateFilterPanel(new LinkedList<TAPAttackSourceElement>());
+        updateFilterPanel(new LinkedList<TAPAttackTargetElement>());
         overviewPanel = new VillageOverviewMapPanel();
         jPanel2.add(overviewPanel, BorderLayout.CENTER);
         AttackManager.getSingleton().addManagerListener(new GenericManagerListener() {
@@ -119,33 +120,18 @@ public class AttackSourceFilterPanel extends WizardPage {
     }
 
     public static String getDescription() {
-        return "Filterung (Herkunft)";
+        return "Filterung (Ziel)";
     }
 
     public static String getStep() {
-        return "id-attack-source-filter";
+        return "id-attack-target-filter";
     }
 
     public void storeProperties() {
-        UserProfile profile = GlobalOptions.getSelectedProfile();
-        profile.addProperty("tap.filter.own.only", jPlayerVillagesOnly.isSelected());
-        profile.addProperty("tap.filter.min.farm", UIHelper.parseIntFromField(jMinFarmSpace, 0));
-        profile.addProperty("tap.filter.min.farm.bonus", UIHelper.parseIntFromField(jMinFarmSpaceBonus, 0));
     }
 
     public void restoreProperties() {
         getModel().clear();
-        UserProfile profile = GlobalOptions.getSelectedProfile();
-        String value = profile.getProperty("tap.filter.own.only");
-        jPlayerVillagesOnly.setSelected((value == null) ? true : Boolean.parseBoolean(value));
-        UIHelper.setText(jMinFarmSpace, profile.getProperty("tap.filter.min.farm"), null);
-        if (jMinFarmSpace.getText().equals("0")) {
-            jMinFarmSpace.setText("");
-        }
-        UIHelper.setText(jMinFarmSpaceBonus, profile.getProperty("tap.filter.min.farm.bonus"), null);
-        if (jMinFarmSpaceBonus.getText().equals("0")) {
-            jMinFarmSpaceBonus.setText("");
-        }
     }
 
     /**
@@ -165,14 +151,6 @@ public class AttackSourceFilterPanel extends WizardPage {
         jAttackPlanList = new org.jdesktop.swingx.JXList();
         jButton1 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jPanel1 = new javax.swing.JPanel();
-        jPlayerVillagesOnly = new javax.swing.JCheckBox();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jTroopFilterButton = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
-        jMinFarmSpace = new org.jdesktop.swingx.JXTextField();
-        jMinFarmSpaceBonus = new org.jdesktop.swingx.JXTextField();
         jVillagePanel = new javax.swing.JPanel();
         jTableScrollPane = new javax.swing.JScrollPane();
         jVillageTable = new org.jdesktop.swingx.JXTable();
@@ -234,7 +212,6 @@ public class AttackSourceFilterPanel extends WizardPage {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
@@ -248,101 +225,12 @@ public class AttackSourceFilterPanel extends WizardPage {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(2, 5, 17, 5);
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jFilterPanel.add(jButton3, gridBagConstraints);
-
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Truppen & Sonstiges"));
-        jPanel1.setLayout(new java.awt.GridBagLayout());
-
-        jPlayerVillagesOnly.setSelected(true);
-        jPlayerVillagesOnly.setText("Nur Spielerdörfer verwenden");
-        jPlayerVillagesOnly.setToolTipText("Ignoriert alle Herkunftsdörfer die nicht dem Spieler gehören, für den das aktuelle Profil gilt.");
-        jPlayerVillagesOnly.setIconTextGap(12);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jPlayerVillagesOnly, gridBagConstraints);
-
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/face.png"))); // NOI18N
-        jLabel3.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jLabel3, gridBagConstraints);
-
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/barracks.png"))); // NOI18N
-        jLabel4.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jLabel4, gridBagConstraints);
-
-        jTroopFilterButton.setBackground(new java.awt.Color(255, 51, 51));
-        jTroopFilterButton.setText("Inaktiv (klicken)");
-        jTroopFilterButton.setMaximumSize(new java.awt.Dimension(120, 23));
-        jTroopFilterButton.setMinimumSize(new java.awt.Dimension(120, 23));
-        jTroopFilterButton.setPreferredSize(new java.awt.Dimension(120, 23));
-        jTroopFilterButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireShowTroopFilterEvent(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jTroopFilterButton, gridBagConstraints);
-
-        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/face_bonus.png"))); // NOI18N
-        jLabel5.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jLabel5, gridBagConstraints);
-
-        jMinFarmSpace.setToolTipText("");
-        jMinFarmSpace.setPrompt("Min. BH Plätze");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jMinFarmSpace, gridBagConstraints);
-
-        jMinFarmSpaceBonus.setToolTipText("");
-        jMinFarmSpaceBonus.setPrompt("Min. BH Plätze (Bonus)");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jMinFarmSpaceBonus, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jFilterPanel.add(jPanel1, gridBagConstraints);
 
         jVillagePanel.setLayout(new java.awt.GridBagLayout());
 
@@ -493,16 +381,6 @@ public class AttackSourceFilterPanel extends WizardPage {
         updateFilters();
     }//GEN-LAST:event_fireUpdateFilterEvent
 
-    private void fireShowTroopFilterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowTroopFilterEvent
-        if (troopFilterDialog.showDialog()) {
-            jTroopFilterButton.setBackground(Color.GREEN);
-            jTroopFilterButton.setText("Aktiv");
-        } else {
-            jTroopFilterButton.setBackground(Color.RED);
-            jTroopFilterButton.setText("Inaktiv (klicken)");
-        }
-    }//GEN-LAST:event_fireShowTroopFilterEvent
-
     private void fireViewStateChangeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireViewStateChangeEvent
         if (jToggleButton1.isSelected()) {
             overviewPanel.setOptimalSize();
@@ -522,8 +400,8 @@ public class AttackSourceFilterPanel extends WizardPage {
 
     private void fireChangeIgnoreSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeIgnoreSelectionEvent
         boolean ignore = (evt.getSource() == jIgnoreButton);
-        List<TAPAttackSourceElement> selection = getSelection();
-        for (TAPAttackSourceElement element : selection) {
+        List<TAPAttackTargetElement> selection = getSelection();
+        for (TAPAttackTargetElement element : selection) {
             element.setIgnored(ignore);
         }
         updateFilterPanel(selection);
@@ -532,71 +410,32 @@ public class AttackSourceFilterPanel extends WizardPage {
     }//GEN-LAST:event_fireChangeIgnoreSelectionEvent
 
     private void updateFilters() {
-        List<TAPAttackSourceElement> elements = getAllElements();
-        filterMisc(elements);
+        List<TAPAttackTargetElement> elements = getAllElements();
         filterByAttackPlans(elements);
-        filterTroops(elements);
         updateFilterPanel(elements);
         updateVillageOverview();
         getModel().fireTableDataChanged();
     }
 
-    private void filterMisc(List<TAPAttackSourceElement> pAllElements) {
-        Tribe t = GlobalOptions.getSelectedProfile().getTribe();
-        for (TAPAttackSourceElement elem : pAllElements) {
-            if (jPlayerVillagesOnly.isSelected()) {
-                elem.setIgnored(elem.getVillage().getTribe().getId() != t.getId());
-            }
-        }
-    }
-
-    private void filterByAttackPlans(List<TAPAttackSourceElement> pAllElements) {
+    private void filterByAttackPlans(List<TAPAttackTargetElement> pAllElements) {
         Object[] selection = jAttackPlanList.getSelectedValues();
-        List<String> groups = new ArrayList<String>();
-        for (Object o : selection) {
-            groups.add((String) o);
-        }
-
-        List<ManageableType> attacks = AttackManager.getSingleton().getAllElements(groups);
-        for (ManageableType type : attacks) {
-            Attack a = (Attack) type;
-            for (TAPAttackSourceElement element : pAllElements) {
-                if (a.getSource().getId() == element.getVillage().getId()) {
-                    element.setIgnored(true);
-                }
+        if (selection.length == 0) {
+            for (TAPAttackTargetElement element : pAllElements) {
+                element.setIgnored(false);
             }
-        }
-    }
+        } else {
+            List<String> groups = new ArrayList<String>();
+            for (Object o : selection) {
+                groups.add((String) o);
+            }
 
-    private void filterTroops(List<TAPAttackSourceElement> pAllElements) {
-        //filter by farm space
-        int requiredTroopAmount = UIHelper.parseIntFromField(jMinFarmSpace, 0);
-        int requiredTroopAmountBonus = UIHelper.parseIntFromField(jMinFarmSpaceBonus, 0);
-        if (requiredTroopAmount > 0 || requiredTroopAmountBonus > 0) {
-            for (TAPAttackSourceElement element : pAllElements) {//go through all elements
-                if (!element.isIgnored()) {
-                    VillageTroopsHolder troopsForVillage = TroopsManager.getSingleton().getTroopsForVillage(element.getVillage(), TroopsManager.TROOP_TYPE.OWN);
-                    if (troopsForVillage != null) {//troop information available
-                        if (element.getVillage().getType() == Village.FARM_BONUS) {//bonus village, set ignored if not enough troops
-                            element.setIgnored(troopsForVillage.getTroopPopCount() < requiredTroopAmountBonus);
-                        } else {//no bonus village, set ignored if not enough troops
-                            element.setIgnored(troopsForVillage.getTroopPopCount() < requiredTroopAmount);
-                        }
-                    } else {//no troop information available
-                        if (element.getVillage().getType() == Village.FARM_BONUS) {//ignore if needed troops contains value != 0
-                            element.setIgnored(requiredTroopAmountBonus > 0);
-                        } else {//ignore if needed troops contains value != 0
-                            element.setIgnored(requiredTroopAmount > 0);
-                        }
+            List<ManageableType> attacks = AttackManager.getSingleton().getAllElements(groups);
+            for (ManageableType type : attacks) {
+                Attack a = (Attack) type;
+                for (TAPAttackTargetElement element : pAllElements) {
+                    if (a.getSource().equals(element.getVillage())) {
+                        element.setIgnored(true);
                     }
-                }
-            }
-        }
-        //filter single amounts
-        if (troopFilterDialog.canFilter()) {
-            for (TAPAttackSourceElement elem : pAllElements) {
-                if (troopFilterDialog.getIgnoredVillages(new Village[]{elem.getVillage()}).length != 0) {
-                    elem.setIgnored(true);
                 }
             }
         }
@@ -604,22 +443,22 @@ public class AttackSourceFilterPanel extends WizardPage {
 
     private void updateVillageOverview() {
         overviewPanel.reset();
-        List<TAPAttackSourceElement> elements = getAllElements();
-        for (TAPAttackSourceElement element : elements) {
+        List<TAPAttackTargetElement> elements = getAllElements();
+        for (TAPAttackTargetElement element : elements) {
             overviewPanel.addVillage(new Point(element.getVillage().getX(), element.getVillage().getY()), (!element.isIgnored()) ? Color.yellow : Color.red);
         }
         overviewPanel.repaint();
     }
 
-    private TAPSourceFilterTableModel getModel() {
-        return (TAPSourceFilterTableModel) jVillageTable.getModel();
+    private TAPTargetFilterTableModel getModel() {
+        return (TAPTargetFilterTableModel) jVillageTable.getModel();
     }
 
     protected void setup() {
-        TAPAttackSourceElement[] elements = AttackSourcePanel.getSingleton().getAllElements();
+        List<TAPAttackTargetElement> elements = AttackTargetPanel.getSingleton().getAllElements();
         getModel().clear();
         overviewPanel.reset();
-        for (TAPAttackSourceElement element : elements) {
+        for (TAPAttackTargetElement element : elements) {
             getModel().addRow(element, false);
             if (!element.isIgnored()) {
                 overviewPanel.addVillage(new Point(element.getVillage().getX(), element.getVillage().getY()), Color.yellow);
@@ -637,10 +476,10 @@ public class AttackSourceFilterPanel extends WizardPage {
         jAttackPlanList.setModel(attackModel);
     }
 
-    protected void updateFilterPanel(List<TAPAttackSourceElement> pAllElements) {
+    protected void updateFilterPanel(List<TAPAttackTargetElement> pAllElements) {
         updateAttackList();
         int ignoreCount = 0;
-        for (TAPAttackSourceElement elem : pAllElements) {
+        for (TAPAttackTargetElement elem : pAllElements) {
             ignoreCount += (elem.isIgnored()) ? 1 : 0;
         }
 
@@ -653,30 +492,30 @@ public class AttackSourceFilterPanel extends WizardPage {
         jLabel2.setText(ignoreCount + " von " + getModel().getRowCount() + " Dörfern werden ignoriert");
     }
 
-    public TAPAttackSourceElement[] getFilteredElements() {
-        List<TAPAttackSourceElement> filtered = new LinkedList<TAPAttackSourceElement>();
-        TAPSourceFilterTableModel model = getModel();
+    public TAPAttackTargetElement[] getFilteredElements() {
+        List<TAPAttackTargetElement> filtered = new LinkedList<TAPAttackTargetElement>();
+        TAPTargetFilterTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
-            TAPAttackSourceElement elem = model.getRow(i);
+            TAPAttackTargetElement elem = model.getRow(i);
             if (!elem.isIgnored()) {
                 filtered.add(model.getRow(i));
             }
         }
-        return filtered.toArray(new TAPAttackSourceElement[filtered.size()]);
+        return filtered.toArray(new TAPAttackTargetElement[filtered.size()]);
     }
 
-    public List<TAPAttackSourceElement> getSelection() {
-        List<TAPAttackSourceElement> elements = new LinkedList<TAPAttackSourceElement>();
-        TAPSourceFilterTableModel model = getModel();
+    public List<TAPAttackTargetElement> getSelection() {
+        List<TAPAttackTargetElement> elements = new LinkedList<TAPAttackTargetElement>();
+        TAPTargetFilterTableModel model = getModel();
         for (int i : jVillageTable.getSelectedRows()) {
             elements.add(model.getRow(jVillageTable.convertRowIndexToModel(i)));
         }
         return elements;
     }
 
-    public List<TAPAttackSourceElement> getAllElements() {
-        List<TAPAttackSourceElement> elements = new LinkedList<TAPAttackSourceElement>();
-        TAPSourceFilterTableModel model = getModel();
+    public List<TAPAttackTargetElement> getAllElements() {
+        List<TAPAttackTargetElement> elements = new LinkedList<TAPAttackTargetElement>();
+        TAPTargetFilterTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             elements.add(model.getRow(i));
         }
@@ -692,21 +531,13 @@ public class AttackSourceFilterPanel extends WizardPage {
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private org.jdesktop.swingx.JXTextField jMinFarmSpace;
-    private org.jdesktop.swingx.JXTextField jMinFarmSpaceBonus;
     private javax.swing.JButton jNotIgnoreButton;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JCheckBox jPlayerVillagesOnly;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jTableScrollPane;
     private javax.swing.JToggleButton jToggleButton1;
-    private javax.swing.JButton jTroopFilterButton;
     private javax.swing.JPanel jVillagePanel;
     private org.jdesktop.swingx.JXTable jVillageTable;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;

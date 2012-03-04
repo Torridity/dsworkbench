@@ -195,6 +195,10 @@ public class FarmInformation extends ManageableType {
         return spyed;
     }
 
+    public void setSpyed(boolean spyed) {
+        this.spyed = spyed;
+    }
+
     public void setArrived() {
         farmTroopArrive = System.currentTimeMillis();
     }
@@ -334,7 +338,7 @@ public class FarmInformation extends ManageableType {
         }
 
         if (pReport.wasLostEverything() || pReport.hasSurvivedDefenders()) {
-            System.out.println(pReport.wasLostEverything() + " - " +pReport.hasSurvivedDefenders());
+            System.out.println(pReport.wasLostEverything() + " - " + pReport.hasSurvivedDefenders());
             logger.debug("Changing farm status to due to total loss or found troops");
             setStatus(FARM_STATUS.TROOPS_FOUND);
         } else {
@@ -699,20 +703,40 @@ public class FarmInformation extends ManageableType {
         return woodLevel;
     }
 
+    public void setWoodLevel(int woodLevel) {
+        this.woodLevel = woodLevel;
+    }
+
     public int getClayLevel() {
         return clayLevel;
+    }
+
+    public void setClayLevel(int clayLevel) {
+        this.clayLevel = clayLevel;
     }
 
     public int getIronLevel() {
         return ironLevel;
     }
 
+    public void setIronLevel(int ironLevel) {
+        this.ironLevel = ironLevel;
+    }
+
     public int getStorageLevel() {
         return storageLevel;
     }
 
+    public void setStorageLevel(int storageLevel) {
+        this.storageLevel = storageLevel;
+    }
+
     public int getHideLevel() {
         return hideLevel;
+    }
+
+    public void setHideLevel(int hideLevel) {
+        this.hideLevel = hideLevel;
     }
 
     /**
@@ -741,6 +765,10 @@ public class FarmInformation extends ManageableType {
      */
     public long getLastReport() {
         return lastReport;
+    }
+
+    public void setLastReport(long lastReport) {
+        this.lastReport = lastReport;
     }
 
     public boolean isInactive() {

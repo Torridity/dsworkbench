@@ -19,6 +19,7 @@ import java.util.jar.JarInputStream;
 import java.util.zip.GZIPInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -26,9 +27,10 @@ import org.apache.commons.io.FilenameUtils;
  */
 public class AutoUpdater {
 
+    private static Logger logger = Logger.getLogger("AutoUpdater");
     private final static File UPDATES_DIR = new File("./lib/classes");
     private final static File CORE_JAR = new File("./lib/core.jar");//new File("./lib/core.jar");
-   // private final static File CORE_JAR = new File("C:/Users/Torridity/AppData/Local/DSWorkbench/lib/core.jar");//new File("./lib/core.jar");
+    // private final static File CORE_JAR = new File("C:/Users/Torridity/AppData/Local/DSWorkbench/lib/core.jar");//new File("./lib/core.jar");
 
     static {
         initialize();
@@ -37,14 +39,26 @@ public class AutoUpdater {
     public static void initialize() {
         if (!UPDATES_DIR.exists()) {
             if (UPDATES_DIR.mkdir()) {
-                System.out.println("Update directory created");
+                logger.info("Update directory created");
             }
         }
     }
 
     public static List<String> getUpdatedResources(UpdateListener pListener) throws IOException {
         Properties props = new Properties();
-        Proxy webProxy = Proxy.NO_PROXY;//DSWorkbenchSettingsDialog.getSingleton().getWebProxy();
+        //@TODO check + store core.jar version to recognize manual update!!!
+        long coreVersion = GlobalOptions.getProperties().getLong("core.version", 0);
+        if (coreVersion == 0) {
+            GlobalOptions.addProperty("core.version", Long.toString(CORE_JAR.lastModified()));
+        } else {
+            if (coreVersion != CORE_JAR.lastModified()) {
+                logger.info("Manual update detected. Removing updated resources");
+                FileUtils.deleteDirectory(UPDATES_DIR);
+                initialize();
+            }
+        }
+
+        Proxy webProxy = DSWorkbenchSettingsDialog.getSingleton().getWebProxy();
         URL u = new URL("http://www.dsworkbench.de/downloads/Update/hash.props.gz");
         props.load(new GZIPInputStream(u.openConnection(webProxy).getInputStream()));
         HashMap<String, Long> existingEntries = new HashMap<String, Long>();
@@ -52,7 +66,7 @@ public class AutoUpdater {
         List<String> modified = new ArrayList<String>();
         int newFiles = 0;
         int changedFiles = 0;
-        
+
         if (CORE_JAR.exists()) {
             try {
                 jarin = new JarInputStream(new FileInputStream(CORE_JAR));
@@ -97,7 +111,7 @@ public class AutoUpdater {
             pListener.fireUpdatesFoundEvent(changedFiles, newFiles);
 
         }
-        
+
         return modified;
     }
 

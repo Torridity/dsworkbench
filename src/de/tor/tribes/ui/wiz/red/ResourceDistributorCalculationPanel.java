@@ -49,6 +49,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
             + " kannst du die Berechnung über 'Transporte berechnen' starten.";
     private static ResourceDistributorCalculationPanel singleton = null;
     private MerchantDistributor calculator = null;
+    private boolean transportsAlreadyTransferred = false;
 
     public static synchronized ResourceDistributorCalculationPanel getSingleton() {
         if (singleton == null) {
@@ -198,6 +199,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jRemainClay = new com.jidesoft.swing.LabeledTextField();
         jTargetIron = new com.jidesoft.swing.LabeledTextField();
         jRemainIron = new com.jidesoft.swing.LabeledTextField();
+        jButton1 = new javax.swing.JButton();
         jNoSettingsLabel = new javax.swing.JLabel();
         jCalculateButton = new javax.swing.JButton();
         jProgressBar1 = new javax.swing.JProgressBar();
@@ -731,6 +733,18 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jFillSettingsPanel.add(jRemainIron, gridBagConstraints);
 
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/median.png"))); // NOI18N
+        jButton1.setToolTipText("Durchnittliche Ressourcen aller Dörfer verwenden");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireSetMinToMedianEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 1;
+        jFillSettingsPanel.add(jButton1, gridBagConstraints);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -831,6 +845,24 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jXCollapsiblePane3.setCollapsed(!jToggleButton1.isSelected());
     }//GEN-LAST:event_fireShowHideExpertSettingsEvent
 
+    private void fireSetMinToMedianEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSetMinToMedianEvent
+
+        int elementCount = 0;
+        int wood = 0;
+        int clay = 0;
+        int iron = 0;
+        for (VillageMerchantInfo info : ResourceDistributorSettingsPanel.getSingleton().getAllElements()) {
+            wood += info.getWoodStock();
+            clay += info.getClayStock();
+            iron += info.getIronStock();
+            elementCount++;
+        }
+
+        jRemainWood.setText(Integer.toString(wood / elementCount));
+        jRemainClay.setText(Integer.toString(clay / elementCount));
+        jRemainIron.setText(Integer.toString(iron / elementCount));
+    }//GEN-LAST:event_fireSetMinToMedianEvent
+
     private void setAdvisedTransportOrder(int pWood, int pClay, int pIron) {
         Integer[] sums = new Integer[]{pWood, pClay, pIron};
         Arrays.sort(sums);
@@ -899,7 +931,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         int clay = 0;
         int iron = 0;
 
-        for (VillageMerchantInfo newInfo : ResourceDistributorDataReadPanel.getSingleton().getAllElements()) {
+        for (VillageMerchantInfo newInfo : ResourceDistributorSettingsPanel.getSingleton().getAllElements()) {
             switch (newInfo.getDirection()) {
                 case INCOMING:
                     receivers++;
@@ -979,6 +1011,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
                     return;
                 } else {
                     calculator = null;
+                    transportsAlreadyTransferred = false;
                 }
             }
         }
@@ -1145,6 +1178,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jCalculateButton;
     private javax.swing.JLabel jClay;
     private javax.swing.JPanel jExpertSettingsPanel;
@@ -1206,7 +1240,11 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
             setProblem("Berechnung läuft...");
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
-        ResourceDistributorFinishPanel.getSingleton().setup();
+
+        if (!transportsAlreadyTransferred) {
+            ResourceDistributorFinishPanel.getSingleton().setup();
+            transportsAlreadyTransferred = true;
+        }
         return WizardPanelNavResult.PROCEED;
     }
 

@@ -110,6 +110,7 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
         AttackSourcePanel.getSingleton().storeProperties();
         AttackSourceFilterPanel.getSingleton().storeProperties();
         AttackTargetPanel.getSingleton().storeProperties();
+        AttackTargetFilterPanel.getSingleton().storeProperties();
         TimeSettingsPanel.getSingleton().storeProperties();
         AttackCalculationPanel.getSingleton().storeProperties();
         AttackFinishPanel.getSingleton().storeProperties();
@@ -124,6 +125,7 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
         AttackSourcePanel.getSingleton().restoreProperties();
         AttackSourceFilterPanel.getSingleton().restoreProperties();
         AttackTargetPanel.getSingleton().restoreProperties();
+        AttackTargetFilterPanel.getSingleton().restoreProperties();
         TimeSettingsPanel.getSingleton().restoreProperties();
         AttackCalculationPanel.getSingleton().restoreProperties();
         AttackFinishPanel.getSingleton().restoreProperties();

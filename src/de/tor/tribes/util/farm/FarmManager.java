@@ -11,10 +11,7 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.FarmInformation;
 import de.tor.tribes.types.FightReport;
-import de.tor.tribes.types.ext.BarbarianAlly;
-import de.tor.tribes.types.ext.Barbarians;
-import de.tor.tribes.types.ext.Tribe;
-import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.types.ext.*;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
@@ -89,27 +86,53 @@ public class FarmManager extends GenericManager<FarmInformation> {
         }
     }
 
-    public int findFarmsInReports() {
+    public int findFarmsInReports(boolean pAllowAloneTribes, boolean pAllowTribesInAllies, boolean pAllowTribesInOwnAlly) {
+        return findFarmsInReports(null, pAllowAloneTribes, pAllowTribesInAllies, pAllowTribesInOwnAlly);
+    }
+
+    public int findFarmsInReports(String pReportSet, boolean pAllowAloneTribes, boolean pAllowTribesInAllies, boolean pAllowTribesInOwnAlly) {
         int addCount = 0;
         List<Village> handled = new LinkedList<Village>();
         Tribe yourTribe = GlobalOptions.getSelectedProfile().getTribe();
         invalidate();
         //get all groups but the farm group itself
         List<String> searchInGroups = new LinkedList<String>();
-        for (String group : ReportManager.getSingleton().getGroups()) {
-            if (group != null && group.equals(ReportManager.FARM_SET)) {
-                searchInGroups.add(group);
+        if (pReportSet == null) {
+            for (String group : ReportManager.getSingleton().getGroups()) {
+                if (group.equals(ReportManager.FARM_SET)) {
+                    searchInGroups.add(group);
+                }
             }
+        } else {
+            searchInGroups.add(pReportSet);
         }
+
 
         for (ManageableType t : ReportManager.getSingleton().getAllElements(searchInGroups)) {
             FightReport report = (FightReport) t;
             Village target = report.getTargetVillage();
-            if (report.isWon()) {
-                if (!(report.getTargetVillage().getTribe().getId() == yourTribe.getId())
-                        && (report.getTargetVillage().getTribe().getAlly() == null
-                        || report.getTargetVillage().getTribe().getAlly().equals(BarbarianAlly.getSingleton()) //  || !(report.getTargetVillage().getTribe().getAlly().getId() != yourTribe.getAlly().getId()))) {
-                        )) {
+            if (report.isWon() && !(report.getTargetVillage().getTribe().getId() == yourTribe.getId())) {
+                boolean allowed;
+                if (report.getTargetVillage().getTribe().getAlly() != null && report.getTargetVillage().getTribe().getAlly().equals(yourTribe.getAlly())) {
+                    //own ally
+                    allowed = pAllowTribesInOwnAlly;
+                } else {//target is not in own ally
+                    if (!report.getTargetVillage().getTribe().equals(Barbarians.getSingleton())) {
+                        //village has owner
+                        if ((report.getTargetVillage().getTribe().getAlly() == null || report.getTargetVillage().getTribe().getAlly().equals(NoAlly.getSingleton()))) {
+                            //owner has no ally
+                            allowed = pAllowAloneTribes;
+                        } else {
+                            //tribe is in ally
+                            allowed = pAllowTribesInAllies;
+                        }
+                    } else {
+                        //Barbarians
+                        allowed = true;
+                    }
+                }
+
+                if (allowed) {
                     if (!handled.contains(target)) {//add farm
                         FarmInformation info = addFarm(target);
                         info.updateFromReport(report);
@@ -130,6 +153,42 @@ public class FarmManager extends GenericManager<FarmInformation> {
                     }
                 }
             }
+        }
+        revalidate(true);
+        return addCount;
+    }
+
+    /**
+     * Find barbarians in radius around all own villages
+     */
+    public int findFarmsFromBarbarians(int pRadius) {
+        int addCount = 0;
+        invalidate();
+        for (Village v : GlobalOptions.getSelectedProfile().getTribe().getVillageList()) {
+            Ellipse2D.Double e = new Ellipse2D.Double((int) v.getX() - pRadius, (int) v.getY() - pRadius, 2 * pRadius, 2 * pRadius);
+            for (int x = (int) v.getX() - pRadius; x < (int) v.getX() + pRadius; x++) {
+                for (int y = (int) v.getY() - pRadius; y < (int) v.getY() + pRadius; y++) {
+                    if (x > 0 && x < ServerSettings.getSingleton().getMapDimension().width
+                            && y > 0 && y < ServerSettings.getSingleton().getMapDimension().height) {
+                        if (e.contains(new Point2D.Double(x, y))) {
+                            Village farm = DataHolder.getSingleton().getVillages()[x][y];
+                            if (farm != null && farm.getTribe().equals(Barbarians.getSingleton())) {
+                                FarmInformation info = addFarm(farm);
+                                if (info.isJustCreated()) {
+                                    FightReport r = ReportManager.getSingleton().findLastReportForSource(farm);
+                                    if (r != null) {
+                                        info.updateFromReport(r);
+                                    } else {
+                                        info.setInitialResources();
+                                    }
+                                    addCount++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
         }
         revalidate(true);
         return addCount;

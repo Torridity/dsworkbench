@@ -13,6 +13,7 @@ import de.tor.tribes.types.StorageStatus;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.ClickAccountPanel;
+import de.tor.tribes.ui.components.CoordinateSpinner;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.models.FarmTableModel;
 import de.tor.tribes.ui.panels.GenericTestPanel;
@@ -23,6 +24,7 @@ import de.tor.tribes.ui.windows.FarmInformationDetailsDialog;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.generator.ui.ReportGenerator;
+import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.*;
@@ -62,6 +64,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     private TroopSelectionPanel cTroops = null;
     private TroopSelectionPanel rTroops = null;
     private VillageOverviewMapPanel villagePanel = null;
+    private CoordinateSpinner coordSpinner = null;
 
     public static synchronized DSWorkbenchFarmManager getSingleton() {
         if (SINGLETON == null) {
@@ -142,16 +145,16 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
         aTroops = new TroopSelectionPanel();
         aTroops.setupFarm(true);
-        aTroops.hideSettings();
+        //aTroops.hideSettings();
         bTroops = new TroopSelectionPanel();
         bTroops.setupFarm(true);
         //bTroops.hideSettings();
         cTroops = new TroopSelectionPanel();
         cTroops.setupFarm(true);
-       // cTroops.hideSettings();
+        // cTroops.hideSettings();
         rTroops = new TroopSelectionPanel();
         rTroops.setupFarm(true);
-       // rTroops.hideSettings();
+        // rTroops.hideSettings();
         jATroopsPanel.add(aTroops, BorderLayout.CENTER);
         jBTroopsPanel.add(bTroops, BorderLayout.CENTER);
         jCTroopsPanel.add(cTroops, BorderLayout.CENTER);
@@ -165,6 +168,16 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                 showInfo(jFarmTable.getSelectedRowCount() + " Farm(en) gewählt");
             }
         });
+
+        coordSpinner = new CoordinateSpinner();
+        coordSpinner.setEnabled(false);
+        java.awt.GridBagConstraints gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFarmFromBarbarianSelectionDialog.getContentPane().add(coordSpinner, gridBagConstraints);
     }
 
     /*
@@ -272,21 +285,10 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             public void mouseReleased(MouseEvent e) {
                 Tribe yourTribe = GlobalOptions.getSelectedProfile().getTribe();
                 Point center = DSCalculator.calculateCenterOfMass(Arrays.asList(yourTribe.getVillageList()));
-                String result = JOptionPane.showInputDialog(DSWorkbenchFarmManager.this, "Bitte gib den Radius (Felder) um dein Dorfzentrum (" + center.x + "|" + center.y + ") an,\nin dem nach Farmen gesucht werden soll.", 20);
-                if (result == null) {
-                    showInfo("Keine Farmen hinzugefügt");
-                } else {
-                    try {
-                        int added = FarmManager.getSingleton().findFarmsFromBarbarians(center, Integer.parseInt(result));
-                        if (added > 0) {
-                            showInfo(added + " Farm(en) hinzugefügt");
-                        } else {
-                            showInfo("Keine neuen Farmen gefunden");
-                        }
-                    } catch (Exception ex) {
-                        showInfo("Eingabe für Farmradius ungültig");
-                    }
-                }
+                coordSpinner.setValue(center);
+                jFarmFromBarbarianSelectionDialog.pack();
+                jFarmFromBarbarianSelectionDialog.setLocationRelativeTo(DSWorkbenchFarmManager.getSingleton());
+                jFarmFromBarbarianSelectionDialog.setVisible(true);
             }
         });
 
@@ -299,16 +301,18 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                try {
-                    int added = FarmManager.getSingleton().findFarmsInReports();
-                    if (added > 0) {
-                        showInfo(added + " Farm(en) hinzugefügt");
-                    } else {
-                        showInfo("Keine neuen Farmen gefunden");
+
+                DefaultComboBoxModel model = new DefaultComboBoxModel();
+                model.addElement("Alle");
+                for (String set : ReportManager.getSingleton().getGroups()) {
+                    if (!set.equals(ReportManager.FARM_SET)) {
+                        model.addElement(set);
                     }
-                } catch (Exception ex) {
-                    showInfo("Eingabe für Radius ungültig");
                 }
+                jReportSetBox.setModel(model);
+                jFarmFromReportSelectionDialog.pack();
+                jFarmFromReportSelectionDialog.setLocationRelativeTo(DSWorkbenchFarmManager.getSingleton());
+                jFarmFromReportSelectionDialog.setVisible(true);
             }
         });
 
@@ -481,7 +485,6 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                 break;
             }
         }
-
     }
 
     /**
@@ -515,12 +518,6 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             BrowserCommandSender.showVillageInfoInGame(v.getVillage());
         } else {
             showInfo("Keine Farm gewählt");
-        }
-    }
-
-    private void updateInvisibleRuntimes() {
-        for (ManageableType t : FarmManager.getSingleton().getAllElements()) {
-            ((FarmInformation) t).refreshRuntime();
         }
     }
 
@@ -749,6 +746,23 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         jNotAllowPartlyFarming = new javax.swing.JCheckBox();
         jRSettingsTab = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
+        jFarmFromBarbarianSelectionDialog = new javax.swing.JDialog();
+        jLabel14 = new javax.swing.JLabel();
+        jRangeField = new javax.swing.JTextField();
+        jByVillageCenter = new javax.swing.JRadioButton();
+        jByCenter = new javax.swing.JRadioButton();
+        jByVillage = new javax.swing.JRadioButton();
+        jButton1 = new javax.swing.JButton();
+        jSearchButton = new javax.swing.JButton();
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        jFarmFromReportSelectionDialog = new javax.swing.JDialog();
+        jLabel15 = new javax.swing.JLabel();
+        jReportSetBox = new javax.swing.JComboBox();
+        jAllowAloneTribes = new javax.swing.JCheckBox();
+        jAllowAllyTribes = new javax.swing.JCheckBox();
+        jAllowTribesInOwnAlly = new javax.swing.JCheckBox();
+        jCancelFindInReportsButton = new javax.swing.JButton();
+        jFindInReportsButton = new javax.swing.JButton();
         jCenterPanel = new org.jdesktop.swingx.JXPanel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
         jAlwaysOnTop = new javax.swing.JCheckBox();
@@ -1179,6 +1193,168 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jSettingsPanel.add(jTabbedPane1, gridBagConstraints);
 
+        jFarmFromBarbarianSelectionDialog.setTitle("Barbarendörfer suchen...");
+        jFarmFromBarbarianSelectionDialog.setModal(true);
+        jFarmFromBarbarianSelectionDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
+
+        jLabel14.setText("Radius [Felder]");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 25, 5, 5);
+        jFarmFromBarbarianSelectionDialog.getContentPane().add(jLabel14, gridBagConstraints);
+
+        jRangeField.setText("20");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFarmFromBarbarianSelectionDialog.getContentPane().add(jRangeField, gridBagConstraints);
+
+        buttonGroup1.add(jByVillageCenter);
+        jByVillageCenter.setText("Um das Dorfzentrum");
+        jByVillageCenter.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireSelectionByCenterChangedEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFarmFromBarbarianSelectionDialog.getContentPane().add(jByVillageCenter, gridBagConstraints);
+
+        buttonGroup1.add(jByCenter);
+        jByCenter.setText("Um eine Koordinate");
+        jByCenter.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireSelectionByCenterChangedEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFarmFromBarbarianSelectionDialog.getContentPane().add(jByCenter, gridBagConstraints);
+
+        buttonGroup1.add(jByVillage);
+        jByVillage.setSelected(true);
+        jByVillage.setText("Um jedes Dorf");
+        jByVillage.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireSelectionByCenterChangedEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFarmFromBarbarianSelectionDialog.getContentPane().add(jByVillage, gridBagConstraints);
+
+        jButton1.setText("Abbrechen");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireCloseFarmSearchEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFarmFromBarbarianSelectionDialog.getContentPane().add(jButton1, gridBagConstraints);
+
+        jSearchButton.setText("Suchen...");
+        jSearchButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireCloseFarmSearchEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFarmFromBarbarianSelectionDialog.getContentPane().add(jSearchButton, gridBagConstraints);
+
+        jFarmFromReportSelectionDialog.setTitle("Berichte durchsuchen...");
+        jFarmFromReportSelectionDialog.setModal(true);
+        jFarmFromReportSelectionDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
+
+        jLabel15.setText("Berichtset");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFarmFromReportSelectionDialog.getContentPane().add(jLabel15, gridBagConstraints);
+
+        jReportSetBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Alle" }));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFarmFromReportSelectionDialog.getContentPane().add(jReportSetBox, gridBagConstraints);
+
+        jAllowAloneTribes.setSelected(true);
+        jAllowAloneTribes.setText("Angriffe auf stammlose Spieler berücksichtigen");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFarmFromReportSelectionDialog.getContentPane().add(jAllowAloneTribes, gridBagConstraints);
+
+        jAllowAllyTribes.setSelected(true);
+        jAllowAllyTribes.setText("Angriffe auf Spieler in Stämmen berücksichtigen");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFarmFromReportSelectionDialog.getContentPane().add(jAllowAllyTribes, gridBagConstraints);
+
+        jAllowTribesInOwnAlly.setText("Angriffe auf Spieler im eigenen Stamm berücksichtigen");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFarmFromReportSelectionDialog.getContentPane().add(jAllowTribesInOwnAlly, gridBagConstraints);
+
+        jCancelFindInReportsButton.setText("Abbrechen");
+        jCancelFindInReportsButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireFindFarmsInReportsEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFarmFromReportSelectionDialog.getContentPane().add(jCancelFindInReportsButton, gridBagConstraints);
+
+        jFindInReportsButton.setText("Suchen...");
+        jFindInReportsButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireFindFarmsInReportsEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFarmFromReportSelectionDialog.getContentPane().add(jFindInReportsButton, gridBagConstraints);
+
         setTitle("Farmmanager");
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -1246,6 +1422,54 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             jConsiderSucessRateB.setSelected(jConsiderSucessRateC.isSelected());
         }
     }//GEN-LAST:event_fireChangeEvent
+
+    private void fireCloseFarmSearchEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCloseFarmSearchEvent
+        if (evt.getSource() == jSearchButton) {
+            int added = 0;
+            if (jByCenter.isSelected()) {
+                added = FarmManager.getSingleton().findFarmsFromBarbarians(coordSpinner.getValue(), UIHelper.parseIntFromField(jRangeField, 20));
+            } else if (jByVillage.isSelected()) {
+                added = FarmManager.getSingleton().findFarmsFromBarbarians(UIHelper.parseIntFromField(jRangeField, 20));
+            } else if (jByVillageCenter.isSelected()) {
+                Tribe yourTribe = GlobalOptions.getSelectedProfile().getTribe();
+                Point center = DSCalculator.calculateCenterOfMass(Arrays.asList(yourTribe.getVillageList()));
+                added = FarmManager.getSingleton().findFarmsFromBarbarians(center, UIHelper.parseIntFromField(jRangeField, 20));
+            }
+
+            if (added == 0) {
+                showInfo("Keine neuen Farmen gefunden");
+            } else {
+                showInfo(added + " Farmen hinzugefügt");
+            }
+        }
+        jFarmFromBarbarianSelectionDialog.setVisible(false);
+
+    }//GEN-LAST:event_fireCloseFarmSearchEvent
+
+    private void fireSelectionByCenterChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireSelectionByCenterChangedEvent
+        coordSpinner.setEnabled(evt.getSource() == jByCenter);
+    }//GEN-LAST:event_fireSelectionByCenterChangedEvent
+
+    private void fireFindFarmsInReportsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireFindFarmsInReportsEvent
+
+        if (evt.getSource() == jFindInReportsButton) {
+            int found = 0;
+            if (jReportSetBox.getSelectedIndex() <= 0) {//search in all report sets
+                found = FarmManager.getSingleton().findFarmsInReports(jAllowAloneTribes.isSelected(), jAllowAllyTribes.isSelected(), jAllowTribesInOwnAlly.isSelected());
+            } else {//search in specific report set
+                found = FarmManager.getSingleton().findFarmsInReports((String) jReportSetBox.getSelectedItem(), jAllowAloneTribes.isSelected(), jAllowAllyTribes.isSelected(), jAllowTribesInOwnAlly.isSelected());
+            }
+
+            if (found == 0) {
+                showInfo("Keine neuen Farmen gefunden");
+            } else {
+                showInfo(found + " Farm(en) hinzugefügt");
+            }
+        }
+
+        jFarmFromReportSelectionDialog.setVisible(false);
+
+    }//GEN-LAST:event_fireFindFarmsInReportsEvent
 
     private FarmTableModel getModel() {
         return TableHelper.getTableModel(jFarmTable);
@@ -1326,15 +1550,24 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JPanel jASettingsTab;
     private javax.swing.JPanel jATroopsPanel;
+    private javax.swing.JCheckBox jAllowAllyTribes;
+    private javax.swing.JCheckBox jAllowAloneTribes;
+    private javax.swing.JCheckBox jAllowTribesInOwnAlly;
     private javax.swing.JCheckBox jAlwaysOnTop;
     private javax.swing.JPanel jBSettingsTab;
     private javax.swing.JPanel jBTroopsPanel;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JRadioButton jByCenter;
+    private javax.swing.JRadioButton jByVillage;
+    private javax.swing.JRadioButton jByVillageCenter;
     private javax.swing.JPanel jCSettingsTab;
     private javax.swing.JPanel jCTroopsPanel;
+    private javax.swing.JButton jCancelFindInReportsButton;
     private org.jdesktop.swingx.JXPanel jCenterPanel;
     private javax.swing.JCheckBox jConsiderSucessRateA;
     private javax.swing.JCheckBox jConsiderSucessRateB;
@@ -1342,13 +1575,18 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JPanel jFarmASettings;
     private javax.swing.JPanel jFarmBSettings;
     private javax.swing.JPanel jFarmCSettings;
+    private javax.swing.JDialog jFarmFromBarbarianSelectionDialog;
+    private javax.swing.JDialog jFarmFromReportSelectionDialog;
     private javax.swing.JPanel jFarmPanel;
     private org.jdesktop.swingx.JXTable jFarmTable;
+    private javax.swing.JButton jFindInReportsButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1369,7 +1607,10 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JCheckBox jNotAllowPartlyFarming;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jRSettingsTab;
+    private javax.swing.JTextField jRangeField;
+    private javax.swing.JComboBox jReportSetBox;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton jSearchButton;
     private javax.swing.JPanel jSettingsPanel;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JToggleButton jToggleButton1;

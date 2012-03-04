@@ -84,7 +84,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
  * @author Torridity
  */
 public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, ListSelectionListener {
-    
+
     @Override
     public void valueChanged(ListSelectionEvent e) {
         if (e.getValueIsAdjusting()) {
@@ -94,22 +94,22 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             }
         }
     }
-    
+
     public static enum TRANSFER_TYPE {
-        
+
         CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD, BB_TO_CLIPBOARD
     }
-    
+
     @Override
     public void dataChangedEvent() {
         dataChangedEvent(null);
     }
-    
+
     @Override
     public void dataChangedEvent(String pGroup) {
         ((DoItYourselfAttackTableModel) jAttackTable.getModel()).fireTableDataChanged();
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand() != null) {
@@ -134,10 +134,10 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
      */
     DSWorkbenchDoItYourselfAttackPlaner() {
         initComponents();
-        
+
         jAttackTable.setModel(new DoItYourselfAttackTableModel());
         jAttackTable.getSelectionModel().addListSelectionListener(DSWorkbenchDoItYourselfAttackPlaner.this);
-        
+
         jArriveTime.setDate(Calendar.getInstance().getTime());
         jNewArriveSpinner.setDate(Calendar.getInstance().getTime());
         capabilityInfoPanel1.addActionListener(this);
@@ -152,13 +152,13 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jAttackTable.registerKeyboardAction(DSWorkbenchDoItYourselfAttackPlaner.this, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jAttackTable.registerKeyboardAction(DSWorkbenchDoItYourselfAttackPlaner.this, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jAttackTable.getActionMap().put("find", new AbstractAction() {
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 //no find
             }
         });
-        
+
         DoItYourselfCountdownThread thread = new DoItYourselfCountdownThread();
         thread.start();
 
@@ -169,42 +169,42 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         // </editor-fold>
         pack();
     }
-    
+
     @Override
     public void toBack() {
         jAlwaysOnTopBox.setSelected(false);
         fireAttackFrameOnTopEvent(null);
         super.toBack();
     }
-    
+
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
         PropertyHelper.storeTableProperties(jAttackTable, pConfig, getPropertyPrefix());
-        
+
     }
-    
+
     public void restoreCustomProperties(Configuration pConfig) {
         try {
             jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
         } catch (Exception e) {
         }
-        
+
         setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
-        
+
         PropertyHelper.restoreTableProperties(jAttackTable, pConfig, getPropertyPrefix());
     }
-    
+
     public String getPropertyPrefix() {
         return "manual.attack.planer.view";
     }
-    
+
     public static synchronized DSWorkbenchDoItYourselfAttackPlaner getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchDoItYourselfAttackPlaner();
         }
         return SINGLETON;
     }
-    
+
     @Override
     public void resetView() {
         AttackManager.getSingleton().addManagerListener(this);
@@ -233,7 +233,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         g.fill(p);
         g.dispose();
         jAttackTable.addHighlighter(new PainterHighlighter(HighlightPredicate.EDITABLE, new ImagePainter(back, HorizontalAlignment.RIGHT, VerticalAlignment.TOP)));
-        
+
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         DefaultComboBoxModel model2 = new DefaultComboBoxModel();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
@@ -254,33 +254,33 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         typeModel.addElement(Attack.FAKE_DEFF_TYPE);
         typeModel.addElement(Attack.SUPPORT_TYPE);
         jAttackTypeComboBox.setModel(typeModel);
-        
+
         jUnitComboBox.setRenderer(new UnitListCellRenderer());
-        
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-            jSourceVillage.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new DefaultFormatter()));
-            jSourceVillage.setText("00:00:00");
-            jTargetVillage.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new DefaultFormatter()));
-            jTargetVillage.setText("00:00:00");
-        } else {
-            try {
-                jSourceVillage.setText("000|000");
-                jSourceVillage.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("###|###")));
-                jTargetVillage.setText("000|000");
-                jTargetVillage.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("###|###")));
-            } catch (java.text.ParseException ex) {
-            }
-        }
+
+
+        //@TODO implement XX:YY:ZZ if needed...currently no server has this system
+
+        jSourceVillage.setValue(new Point(500, 500));
+        jTargetVillage.setValue(new Point(500, 500));
+        /*
+         * if (ServerSettings.getSingleton().getCoordType() != 2) { jSourceVillage.setFormatterFactory(new
+         * javax.swing.text.DefaultFormatterFactory(new DefaultFormatter())); jSourceVillage.setText("00:00:00");
+         * jTargetVillage.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new DefaultFormatter()));
+         * jTargetVillage.setText("00:00:00"); } else { try { jSourceVillage.setText("000|000"); jSourceVillage.setFormatterFactory(new
+         * javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("###|###"))); jTargetVillage.setText("000|000");
+         * jTargetVillage.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("###|###")));
+         * } catch (java.text.ParseException ex) { } }
+         */
         SwingUtilities.invokeLater(new Runnable() {
-            
+
             public void run() {
                 jSourceVillage.updateUI();
                 jTargetVillage.updateUI();
             }
         });
-        
+
     }
-    
+
     protected void updateCountdown() {
         TableColumnExt col = jAttackTable.getColumnExt("Verbleibend");
         if (col.isVisible()) {
@@ -291,25 +291,25 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 }
                 startX += (jAttackTable.getColumnExt(i).isVisible()) ? jAttackTable.getColumnExt(i).getWidth() : 0;
             }
-            
+
             jAttackTable.repaint(startX, 0, startX + col.getWidth(), jAttackTable.getHeight());
         }
     }
-    
+
     public void showSuccess(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(Color.GREEN));
         jXLabel1.setForeground(Color.BLACK);
         jXLabel1.setText(pMessage);
     }
-    
+
     public void showInfo(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(getBackground()));
         jXLabel1.setForeground(Color.BLACK);
         jXLabel1.setText(pMessage);
     }
-    
+
     public void showError(String pMessage) {
         infoPanel.setCollapsed(false);
         jXLabel1.setBackgroundPainter(new MattePainter(Color.RED));
@@ -340,14 +340,14 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jNewArriveSpinner = new de.tor.tribes.ui.components.DateTimeField();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jSourceVillage = new javax.swing.JFormattedTextField();
         jLabel2 = new javax.swing.JLabel();
-        jTargetVillage = new javax.swing.JFormattedTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jUnitBox = new javax.swing.JComboBox();
         jButton1 = new javax.swing.JButton();
         jArriveTime = new de.tor.tribes.ui.components.DateTimeField();
+        jSourceVillage = new de.tor.tribes.ui.components.CoordinateSpinner();
+        jTargetVillage = new de.tor.tribes.ui.components.CoordinateSpinner();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jAttackTable = new org.jdesktop.swingx.JXTable();
@@ -376,11 +376,20 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Anpassen"));
         jPanel3.setOpaque(false);
+        jPanel3.setPreferredSize(new java.awt.Dimension(350, 152));
+        jPanel3.setLayout(new java.awt.GridBagLayout());
 
         jLabel7.setText("Ankunftszeit");
         jLabel7.setMaximumSize(new java.awt.Dimension(80, 25));
         jLabel7.setMinimumSize(new java.awt.Dimension(80, 25));
         jLabel7.setPreferredSize(new java.awt.Dimension(80, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jLabel7, gridBagConstraints);
 
         jAdeptTimeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png"))); // NOI18N
         jAdeptTimeButton.setToolTipText("Ankunftszeit für alle markierten Angriffe anpassen");
@@ -392,14 +401,35 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 fireAdeptEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jAdeptTimeButton, gridBagConstraints);
 
         jLabel8.setText("Einheit");
         jLabel8.setMaximumSize(new java.awt.Dimension(80, 25));
         jLabel8.setMinimumSize(new java.awt.Dimension(80, 25));
         jLabel8.setPreferredSize(new java.awt.Dimension(80, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jLabel8, gridBagConstraints);
 
         jUnitComboBox.setMinimumSize(new java.awt.Dimension(23, 25));
         jUnitComboBox.setPreferredSize(new java.awt.Dimension(28, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jUnitComboBox, gridBagConstraints);
 
         jAdeptUnitButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png"))); // NOI18N
         jAdeptUnitButton.setToolTipText("Einheit für alle markierten Angriffe anpassen");
@@ -411,14 +441,35 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 fireAdeptEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jAdeptUnitButton, gridBagConstraints);
 
         jLabel9.setText("Angriffstyp");
         jLabel9.setMaximumSize(new java.awt.Dimension(80, 25));
         jLabel9.setMinimumSize(new java.awt.Dimension(80, 25));
         jLabel9.setPreferredSize(new java.awt.Dimension(80, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jLabel9, gridBagConstraints);
 
         jAttackTypeComboBox.setMinimumSize(new java.awt.Dimension(23, 25));
         jAttackTypeComboBox.setPreferredSize(new java.awt.Dimension(28, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jAttackTypeComboBox, gridBagConstraints);
 
         jAdeptTypeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png"))); // NOI18N
         jAdeptTypeButton.setToolTipText("Angriffstyp für alle markierten Angriffe anpassen");
@@ -430,104 +481,96 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 fireAdeptEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jAdeptTypeButton, gridBagConstraints);
 
         jNewArriveSpinner.setMinimumSize(new java.awt.Dimension(64, 25));
         jNewArriveSpinner.setPreferredSize(new java.awt.Dimension(258, 25));
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(jAttackTypeComboBox, 0, 215, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jAdeptTypeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jNewArriveSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
-                            .addComponent(jUnitComboBox, 0, 215, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jAdeptUnitButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jAdeptTimeButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap())
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jAdeptTimeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jNewArriveSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jAdeptUnitButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jUnitComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jAdeptTypeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jAttackTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(85, Short.MAX_VALUE))
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jNewArriveSpinner, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weightx = 0.7;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel4.add(jPanel3, gridBagConstraints);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Neuer Angriff"));
         jPanel2.setOpaque(false);
+        jPanel2.setLayout(new java.awt.GridBagLayout());
 
         jLabel1.setText("Herkunft");
         jLabel1.setMaximumSize(new java.awt.Dimension(80, 25));
         jLabel1.setMinimumSize(new java.awt.Dimension(80, 25));
         jLabel1.setPreferredSize(new java.awt.Dimension(80, 25));
-
-        jSourceVillage.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jSourceVillage.setToolTipText("Herkunftsdorf");
-        jSourceVillage.setMinimumSize(new java.awt.Dimension(6, 25));
-        jSourceVillage.setPreferredSize(new java.awt.Dimension(6, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jLabel1, gridBagConstraints);
 
         jLabel2.setText("Ziel");
         jLabel2.setMaximumSize(new java.awt.Dimension(80, 25));
         jLabel2.setMinimumSize(new java.awt.Dimension(80, 25));
         jLabel2.setPreferredSize(new java.awt.Dimension(80, 25));
-
-        jTargetVillage.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTargetVillage.setToolTipText("Zieldorf");
-        jTargetVillage.setMinimumSize(new java.awt.Dimension(6, 25));
-        jTargetVillage.setPreferredSize(new java.awt.Dimension(6, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jLabel2, gridBagConstraints);
 
         jLabel3.setText("Einheit");
         jLabel3.setMaximumSize(new java.awt.Dimension(80, 25));
         jLabel3.setMinimumSize(new java.awt.Dimension(80, 25));
         jLabel3.setPreferredSize(new java.awt.Dimension(80, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jLabel3, gridBagConstraints);
 
         jLabel4.setText("Ankunft");
         jLabel4.setMaximumSize(new java.awt.Dimension(80, 25));
         jLabel4.setMinimumSize(new java.awt.Dimension(80, 25));
         jLabel4.setPreferredSize(new java.awt.Dimension(80, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jLabel4, gridBagConstraints);
 
         jUnitBox.setToolTipText("Langsamste Einheit");
         jUnitBox.setMinimumSize(new java.awt.Dimension(23, 25));
         jUnitBox.setPreferredSize(new java.awt.Dimension(28, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jUnitBox, gridBagConstraints);
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
         jButton1.setText("Hinzufügen");
@@ -536,56 +579,41 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 fireAddAttackEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jButton1, gridBagConstraints);
 
         jArriveTime.setMinimumSize(new java.awt.Dimension(64, 25));
         jArriveTime.setPreferredSize(new java.awt.Dimension(258, 25));
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
-                    .addComponent(jArriveTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jUnitBox, javax.swing.GroupLayout.Alignment.TRAILING, 0, 258, Short.MAX_VALUE)
-                    .addComponent(jSourceVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jSourceVillage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTargetVillage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jArriveTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jUnitBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addComponent(jButton1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jArriveTime, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jSourceVillage, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jTargetVillage, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -659,21 +687,20 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
     private void fireAttackFrameOnTopEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireAttackFrameOnTopEvent
         setAlwaysOnTop(!isAlwaysOnTop());
     }//GEN-LAST:event_fireAttackFrameOnTopEvent
-    
+
     private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddAttackEvent
-        String source = jSourceVillage.getText();
-        
-        List<Village> sourceList = PluginManager.getSingleton().executeVillageParser(source);
-        if (sourceList.isEmpty()) {
+        Village source = jSourceVillage.getVillage();
+        if (source == null) {
             showError("Kein gültiges Herkunftsdorf gewählt");
             return;
         }
-        String target = jTargetVillage.getText();
-        List<Village> targetList = PluginManager.getSingleton().executeVillageParser(target);
-        if (targetList.isEmpty()) {
+
+        Village target = jTargetVillage.getVillage();
+        if (target == null) {
             showError("Kein gültiges Zieldorf gewählt");
             return;
         }
+
         Date arrive = jArriveTime.getSelectedDate();
         if (arrive.getTime() < System.currentTimeMillis()) {
             showError("Ankunftszeit darf nicht in der Vergangenheit liegen");
@@ -686,10 +713,10 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         } else if (unit.equals(DataHolder.getSingleton().getUnitByPlainName("ram"))) {
             type = Attack.CLEAN_TYPE;
         }
-        AttackManager.getSingleton().addDoItYourselfAttack(sourceList.get(0), targetList.get(0), unit, arrive, type);
+        AttackManager.getSingleton().addDoItYourselfAttack(source, target, unit, arrive, type);
         showSuccess("Angriff hinzugefügt");
     }//GEN-LAST:event_fireAddAttackEvent
-    
+
     private void fireAdeptEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAdeptEvent
         int[] rows = jAttackTable.getSelectedRows();
         if (rows == null || rows.length == 0) {
@@ -707,14 +734,14 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 Attack a = (Attack) AttackManager.getSingleton().getDoItYourselfAttacks().get(row);
                 a.setArriveTime(newArrive);
             }
-            
+
         } else if (evt.getSource() == jAdeptUnitButton) {
             UnitHolder newUnit = (UnitHolder) jUnitComboBox.getSelectedItem();
             if (newUnit == null) {
                 showError("Keine Einheit ausgewählt");
                 return;
             }
-            
+
             for (int r = rows.length - 1; r >= 0; r--) {
                 int row = jAttackTable.convertRowIndexToModel(rows[r]);
                 Attack a = (Attack) AttackManager.getSingleton().getDoItYourselfAttacks().get(row);
@@ -726,7 +753,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 showError("Kein Angriffstyp ausgewählt");
                 return;
             }
-            
+
             for (int r = rows.length - 1; r >= 0; r--) {
                 int row = jAttackTable.convertRowIndexToModel(rows[r]);
                 Attack a = (Attack) AttackManager.getSingleton().getDoItYourselfAttacks().get(row);
@@ -735,11 +762,11 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         }
         AttackManager.getSingleton().revalidate(true);
     }//GEN-LAST:event_fireAdeptEvent
-    
+
     private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXLabel1fireHideInfoEvent
         infoPanel.setCollapsed(true);
 }//GEN-LAST:event_jXLabel1fireHideInfoEvent
-    
+
     public void transferSelection(TRANSFER_TYPE pType) {
         switch (pType) {
             case COPY_TO_INTERNAL_CLIPBOARD:
@@ -756,28 +783,28 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 break;
         }
     }
-    
+
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
-    
+
     public boolean deleteSelection(boolean pAsk) {
         List<Attack> selectedAttacks = getSelectedAttacks();
-        
+
         if (pAsk) {
             String message = ((selectedAttacks.size() == 1) ? "Angriff " : (selectedAttacks.size() + " Angriffe ")) + "wirklich löschen?";
             if (selectedAttacks.isEmpty() || JOptionPaneHelper.showQuestionConfirmBox(this, message, "Angriffe löschen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
                 return false;
             }
         }
-        
+
         jAttackTable.editingCanceled(new ChangeEvent(this));
         AttackManager.getSingleton().removeElements(AttackManager.MANUAL_ATTACK_PLAN, selectedAttacks);
         ((DoItYourselfAttackTableModel) jAttackTable.getModel()).fireTableDataChanged();
         showSuccess(selectedAttacks.size() + " Angriff(e) gelöscht");
         return true;
     }
-    
+
     private boolean copyToInternalClipboard() {
         List<Attack> selection = getSelectedAttacks();
         StringBuilder b = new StringBuilder();
@@ -795,7 +822,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             return false;
         }
     }
-    
+
     private void cutToInternalClipboard() {
         int size = getSelectedAttacks().size();
         if (copyToInternalClipboard() && deleteSelection(false)) {
@@ -804,11 +831,11 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             showError("Fehler beim Ausschneiden der Angriffe");
         }
     }
-    
+
     private void copyFromInternalClipboard() {
         try {
             String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
-            
+
             String[] lines = data.split("\n");
             int cnt = 0;
             AttackManager.getSingleton().invalidate();
@@ -830,7 +857,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         ((DoItYourselfAttackTableModel) jAttackTable.getModel()).fireTableDataChanged();
         AttackManager.getSingleton().revalidate();
     }
-    
+
     private void copyBBToExternalClipboardEvent() {
         try {
             List<Attack> attacks = getSelectedAttacks();
@@ -839,16 +866,16 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 return;
             }
             boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
-            
+
             StringBuilder buffer = new StringBuilder();
             if (extended) {
                 buffer.append("[u][size=12]Angriffsplan[/size][/u]\n\n");
             } else {
                 buffer.append("[u]Angriffsplan[/u]\n\n");
             }
-            
+
             buffer.append(new AttackListFormatter().formatElements(attacks, extended));
-            
+
             if (extended) {
                 buffer.append("\n[size=8]Erstellt am ");
                 buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
@@ -860,7 +887,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
                 buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url]\n");
             }
-            
+
             String b = buffer.toString();
             StringTokenizer t = new StringTokenizer(b, "[");
             int cnt = t.countTokens();
@@ -869,7 +896,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                     return;
                 }
             }
-            
+
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
             String result = "Daten in Zwischenablage kopiert.";
             showSuccess(result);
@@ -879,7 +906,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             showError(result);
         }
     }
-    
+
     private List<Attack> getSelectedAttacks() {
         final List<Attack> selectedAttacks = new LinkedList<Attack>();
         int[] selectedRows = jAttackTable.getSelectedRows();
@@ -894,7 +921,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         }
         return selectedAttacks;
     }
-    
+
     public static void main(String[] args) {
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         MouseGestures mMouseGestures = new MouseGestures();
@@ -904,7 +931,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         GlobalOptions.setSelectedServer("de43");
         ProfileManager.getSingleton().loadProfiles();
         GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-        
+
         DataHolder.getSingleton().loadData(false);
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -918,7 +945,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         for (int i = 0; i < 100; i++) {
             AttackManager.getSingleton().addDoItYourselfAttack(DataHolder.getSingleton().getRandomVillage(), DataHolder.getSingleton().getRandomVillage(), DataHolder.getSingleton().getRandomUnit(), new Date(System.currentTimeMillis() + DateUtils.MILLIS_PER_DAY), Attack.CLEAN_TYPE);
         }
-        
+
         AttackManager.getSingleton().revalidate(AttackManager.MANUAL_ATTACK_PLAN, true);
         DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setVisible(true);
@@ -947,8 +974,8 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JFormattedTextField jSourceVillage;
-    private javax.swing.JFormattedTextField jTargetVillage;
+    private de.tor.tribes.ui.components.CoordinateSpinner jSourceVillage;
+    private de.tor.tribes.ui.components.CoordinateSpinner jTargetVillage;
     private javax.swing.JComboBox jUnitBox;
     private javax.swing.JComboBox jUnitComboBox;
     private org.jdesktop.swingx.JXLabel jXLabel1;
@@ -956,13 +983,13 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
 }
 
 class DoItYourselfCountdownThread extends Thread {
-    
+
     public DoItYourselfCountdownThread() {
         setName("DoItYourselfCountdownUpdater");
         setPriority(MIN_PRIORITY);
         setDaemon(true);
     }
-    
+
     @Override
     public void run() {
         while (true) {

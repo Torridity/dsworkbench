@@ -25,11 +25,14 @@ import de.tor.tribes.ui.renderer.StorageCellRenderer;
 import de.tor.tribes.ui.renderer.TradeDirectionCellRenderer;
 import de.tor.tribes.util.*;
 import java.awt.BorderLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.sort.TableSortController;
 import org.netbeans.spi.wizard.Wizard;
@@ -79,6 +82,18 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         SlashComparator splitComparator = new SlashComparator();
         sorter.setComparator(3, splitComparator);
         sorter.setComparator(4, splitComparator);
+        ActionListener actionListener = new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getActionCommand().equals("Delete")) {
+                    removeSelection();
+                }
+            }
+        };
+        KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
+        jDataTable.registerKeyboardAction(actionListener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        capabilityInfoPanel1.addActionListener(actionListener);
 
         jideSplitPane1.setOrientation(JideSplitPane.VERTICAL_SPLIT);
         jideSplitPane1.setProportionalLayout(true);
@@ -95,6 +110,16 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     jideSplitPane1.setProportions(new double[]{0.5});
+                }
+            }
+        });
+
+        jDataTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    jStatusLabel.setText(jDataTable.getSelectedRowCount() + " Eintrag/Einträge gewählt");
                 }
             }
         });
@@ -120,9 +145,8 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
 
     public void storeProperties() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
-        profile.addProperty("red.send.farm", UIHelper.parseIntFromField(jSenderFarmSpace, 23000));
-        profile.addProperty("red.receive.farm", UIHelper.parseIntFromField(jReceiverFarmSpace, 20000));
-        profile.addProperty("red.delete.farm", UIHelper.parseIntFromField(jDeleteFarmSpace, 0));
+        profile.addProperty("red.send.farm", UIHelper.parseIntFromField(jSenderFarmSpace, 1000));
+        profile.addProperty("red.receive.farm", UIHelper.parseIntFromField(jReceiverFarmSpace, 5000));
 
     }
 
@@ -135,10 +159,6 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         val = profile.getProperty("red.receive.farm");
         if (val != null) {
             jReceiverFarmSpace.setText(val);
-        }
-        val = profile.getProperty("red.delete.farm");
-        if (val != null) {
-            jDeleteFarmSpace.setText(val);
         }
     }
 
@@ -157,15 +177,11 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         jPanel2 = new javax.swing.JPanel();
         jEnableFarmSettingsBox = new javax.swing.JCheckBox();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
         jSenderFarmSpace = new javax.swing.JTextField();
-        jDeleteFarmSpace = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jReceiverFarmSpace = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
-        jXLabel1 = new org.jdesktop.swingx.JXLabel();
         jButton1 = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jEnableGroupSettingsBox = new javax.swing.JCheckBox();
@@ -178,7 +194,8 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         jChangeToReceive = new javax.swing.JButton();
         jChangeToSend = new javax.swing.JButton();
         jChangeToBoth = new javax.swing.JButton();
-        jRemoveSelection = new javax.swing.JButton();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
+        jStatusLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jPanel1 = new javax.swing.JPanel();
@@ -210,7 +227,7 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
@@ -231,20 +248,7 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 2, 5);
         jPanel2.add(jLabel2, gridBagConstraints);
 
-        jLabel3.setText("Entfernen ab");
-        jLabel3.setEnabled(false);
-        jLabel3.setMaximumSize(new java.awt.Dimension(80, 14));
-        jLabel3.setMinimumSize(new java.awt.Dimension(80, 14));
-        jLabel3.setPreferredSize(new java.awt.Dimension(80, 14));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(15, 5, 2, 5);
-        jPanel2.add(jLabel3, gridBagConstraints);
-
-        jSenderFarmSpace.setText("23000");
+        jSenderFarmSpace.setText("1000");
         jSenderFarmSpace.setEnabled(false);
         jSenderFarmSpace.setMinimumSize(new java.awt.Dimension(36, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -255,39 +259,17 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(jSenderFarmSpace, gridBagConstraints);
 
-        jDeleteFarmSpace.setEnabled(false);
-        jDeleteFarmSpace.setMinimumSize(new java.awt.Dimension(36, 20));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(jDeleteFarmSpace, gridBagConstraints);
-
-        jLabel4.setText("Plätzen");
+        jLabel4.setText("freien Plätzen");
         jLabel4.setEnabled(false);
-        jLabel4.setMaximumSize(new java.awt.Dimension(40, 14));
-        jLabel4.setMinimumSize(new java.awt.Dimension(40, 14));
-        jLabel4.setPreferredSize(new java.awt.Dimension(40, 14));
+        jLabel4.setMaximumSize(new java.awt.Dimension(80, 14));
+        jLabel4.setMinimumSize(new java.awt.Dimension(80, 14));
+        jLabel4.setPreferredSize(new java.awt.Dimension(80, 14));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(jLabel4, gridBagConstraints);
-
-        jLabel5.setText("Plätzen");
-        jLabel5.setEnabled(false);
-        jLabel5.setMaximumSize(new java.awt.Dimension(40, 14));
-        jLabel5.setMinimumSize(new java.awt.Dimension(40, 14));
-        jLabel5.setPreferredSize(new java.awt.Dimension(40, 14));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(jLabel5, gridBagConstraints);
 
         jLabel6.setText("Empfänger ab");
         jLabel6.setEnabled(false);
@@ -302,7 +284,7 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(15, 5, 2, 5);
         jPanel2.add(jLabel6, gridBagConstraints);
 
-        jReceiverFarmSpace.setText("20000");
+        jReceiverFarmSpace.setText("5000");
         jReceiverFarmSpace.setEnabled(false);
         jReceiverFarmSpace.setMinimumSize(new java.awt.Dimension(36, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -313,32 +295,17 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(jReceiverFarmSpace, gridBagConstraints);
 
-        jLabel7.setText("Plätzen");
+        jLabel7.setText("freien Plätzen");
         jLabel7.setEnabled(false);
-        jLabel7.setMaximumSize(new java.awt.Dimension(40, 14));
-        jLabel7.setMinimumSize(new java.awt.Dimension(40, 14));
-        jLabel7.setPreferredSize(new java.awt.Dimension(40, 14));
+        jLabel7.setMaximumSize(new java.awt.Dimension(80, 14));
+        jLabel7.setMinimumSize(new java.awt.Dimension(80, 14));
+        jLabel7.setPreferredSize(new java.awt.Dimension(80, 14));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(jLabel7, gridBagConstraints);
-
-        jXLabel1.setForeground(new java.awt.Color(102, 102, 102));
-        jXLabel1.setText("Die Entfernung wird bevorzugt verwendet. Möchtest du keine Dörfer entfernen, trage in dieses Feld eine '0' ein.");
-        jXLabel1.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
-        jXLabel1.setLineWrap(true);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(2, 5, 5, 5);
-        jPanel2.add(jXLabel1, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -497,30 +464,35 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel4.add(jChangeToBoth, gridBagConstraints);
 
-        jRemoveSelection.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
-        jRemoveSelection.setToolTipText("Gewählte Dörfer löschen");
-        jRemoveSelection.setMaximumSize(new java.awt.Dimension(60, 33));
-        jRemoveSelection.setMinimumSize(new java.awt.Dimension(60, 33));
-        jRemoveSelection.setPreferredSize(new java.awt.Dimension(60, 33));
-        jRemoveSelection.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                fireChangeSelectionEvent(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel4.add(jRemoveSelection, gridBagConstraints);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jVillagePanel.add(jPanel4, gridBagConstraints);
+
+        capabilityInfoPanel1.setBbSupport(false);
+        capabilityInfoPanel1.setCopyable(false);
+        capabilityInfoPanel1.setPastable(false);
+        capabilityInfoPanel1.setSearchable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 2, 0);
+        jVillagePanel.add(capabilityInfoPanel1, gridBagConstraints);
+
+        jStatusLabel.setMaximumSize(new java.awt.Dimension(0, 14));
+        jStatusLabel.setMinimumSize(new java.awt.Dimension(0, 14));
+        jStatusLabel.setPreferredSize(new java.awt.Dimension(0, 14));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 25, 2, 5);
+        jVillagePanel.add(jStatusLabel, gridBagConstraints);
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -580,13 +552,10 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
 
     private void fireEnableFarmSettingsEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireEnableFarmSettingsEvent
         jLabel2.setEnabled(jEnableFarmSettingsBox.isSelected());
-        jLabel3.setEnabled(jEnableFarmSettingsBox.isSelected());
         jLabel4.setEnabled(jEnableFarmSettingsBox.isSelected());
-        jLabel5.setEnabled(jEnableFarmSettingsBox.isSelected());
         jLabel6.setEnabled(jEnableFarmSettingsBox.isSelected());
         jSenderFarmSpace.setEnabled(jEnableFarmSettingsBox.isSelected());
         jReceiverFarmSpace.setEnabled(jEnableFarmSettingsBox.isSelected());
-        jDeleteFarmSpace.setEnabled(jEnableFarmSettingsBox.isSelected());
     }//GEN-LAST:event_fireEnableFarmSettingsEvent
 
     private void fireEnableGroupSettingsEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireEnableGroupSettingsEvent
@@ -605,43 +574,47 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
             newDir = VillageMerchantInfo.Direction.OUTGOING;
         } else if (evt.getSource() == jChangeToReceive) {
             newDir = VillageMerchantInfo.Direction.INCOMING;
-        } else if (evt.getSource() == jChangeToBoth) {
+        } else {
             newDir = VillageMerchantInfo.Direction.BOTH;
-        } else if (evt.getSource() == jRemoveSelection) {
-            newDir = null;
         }
 
+        int cnt = 0;
         for (VillageMerchantInfo element : getSelection()) {
-            if (newDir != null) {
-                element.setDirection(newDir);
-            } else {
-                getModel().removeRow(element);
-            }
+            element.setDirection(newDir);
+            cnt++;
+        }
+        setProblem(null);
+        repaint();
+        jStatusLabel.setText(cnt + " Eintrag/Einträge angepasst");
+    }//GEN-LAST:event_fireChangeSelectionEvent
+
+    private void removeSelection() {
+        int cnt = 0;
+        for (VillageMerchantInfo element : getSelection()) {
+            getModel().removeRow(element);
+            cnt++;
         }
         repaint();
-    }//GEN-LAST:event_fireChangeSelectionEvent
+        jStatusLabel.setText(cnt + " Eintrag/Einträge gelöscht");
+    }
 
     private void applySettings() {
         VillageMerchantInfo[] allElements = getAllElementsInternal();
         filterByFarm(allElements);
         filterByGroup(allElements);
         getModel().fireTableDataChanged();
+        setProblem(null);
     }
 
     private void filterByFarm(VillageMerchantInfo[] pAllElements) {
         if (jEnableFarmSettingsBox.isSelected()) {
-            int senderFarmSpace = UIHelper.parseIntFromField(jSenderFarmSpace, 23000);
-            int receiverFarmSpace = UIHelper.parseIntFromField(jReceiverFarmSpace, 20000);
-            int removeFarmSpace = UIHelper.parseIntFromField(jDeleteFarmSpace, 0);
+            int senderFarmSpace = UIHelper.parseIntFromField(jSenderFarmSpace, 1000);
+            int receiverFarmSpace = UIHelper.parseIntFromField(jReceiverFarmSpace, 5000);
             for (VillageMerchantInfo element : pAllElements) {
-                if (removeFarmSpace != 0 && element.getAvailableFarm() >= removeFarmSpace) {
-                    getModel().removeRow(element);
-                } else {
-                    if (element.getAvailableFarm() >= senderFarmSpace) {
-                        element.setDirection(VillageMerchantInfo.Direction.OUTGOING);
-                    } else if (element.getAvailableFarm() <= receiverFarmSpace) {
-                        element.setDirection(VillageMerchantInfo.Direction.INCOMING);
-                    }
+                if (element.getOverallFarm() - element.getAvailableFarm() <= senderFarmSpace) {
+                    element.setDirection(VillageMerchantInfo.Direction.OUTGOING);
+                } else if (element.getOverallFarm() - element.getAvailableFarm() >= receiverFarmSpace) {
+                    element.setDirection(VillageMerchantInfo.Direction.INCOMING);
                 }
             }
         }
@@ -699,6 +672,7 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
                     newInfo.getOverallFarm(), false);
         }
         model.fireTableDataChanged();
+        setProblem(null);
     }
 
     public List<VillageMerchantInfo> getSelection() {
@@ -735,12 +709,12 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         return elements.toArray(new VillageMerchantInfo[elements.size()]);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jChangeToBoth;
     private javax.swing.JButton jChangeToReceive;
     private javax.swing.JButton jChangeToSend;
     private org.jdesktop.swingx.JXTable jDataTable;
-    private javax.swing.JTextField jDeleteFarmSpace;
     private javax.swing.JCheckBox jEnableFarmSettingsBox;
     private javax.swing.JCheckBox jEnableGroupSettingsBox;
     private javax.swing.JPanel jFilterPanel;
@@ -750,9 +724,7 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
@@ -760,17 +732,46 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JTextField jReceiverFarmSpace;
-    private javax.swing.JButton jRemoveSelection;
     private javax.swing.JTextField jSenderFarmSpace;
+    private javax.swing.JLabel jStatusLabel;
     private javax.swing.JPanel jVillagePanel;
     private javax.swing.JScrollPane jVillageTableScrollPane;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
-    private org.jdesktop.swingx.JXLabel jXLabel1;
     private com.jidesoft.swing.JideSplitPane jideSplitPane1;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
+
+        boolean hasReceiver = false;
+        boolean hasSender = false;
+        if (getModel().getRowCount() == 0) {
+            setProblem("Keine Dörfer vorhanden");
+            return WizardPanelNavResult.REMAIN_ON_PAGE;
+        }
+        for (VillageMerchantInfo info : getAllElements()) {
+            if (info.getDirection().equals(VillageMerchantInfo.Direction.BOTH)) {
+                hasSender = true;
+                hasReceiver = true;
+            } else if (info.getDirection().equals(VillageMerchantInfo.Direction.OUTGOING)) {
+                hasSender = true;
+            } else if (info.getDirection().equals(VillageMerchantInfo.Direction.INCOMING)) {
+                hasReceiver = true;
+            }
+            if (hasSender && hasReceiver) {
+                break;
+            }
+        }
+
+        if (!hasSender) {
+            setProblem("Keine Lieferanten angegeben");
+            return WizardPanelNavResult.REMAIN_ON_PAGE;
+        }
+
+        if (!hasReceiver) {
+            setProblem("Keine Empfänger angegeben");
+            return WizardPanelNavResult.REMAIN_ON_PAGE;
+        }
         ResourceDistributorCalculationPanel.getSingleton().setup(ResourceDistributorWelcomePanel.FILL_DISTRIBUTION.equals(getWizardDataMap().get(ResourceDistributorWelcomePanel.TYPE)));
         return WizardPanelNavResult.PROCEED;
     }

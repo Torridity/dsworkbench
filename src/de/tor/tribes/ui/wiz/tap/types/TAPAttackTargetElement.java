@@ -15,6 +15,7 @@ public class TAPAttackTargetElement {
     private Village village = null;
     private int attacks = 1;
     private boolean fake = false;
+    private boolean ignored = false;
 
     public TAPAttackTargetElement(Village pVillage) {
         this(pVillage, false, 1);
@@ -68,4 +69,14 @@ public class TAPAttackTargetElement {
     public void setAttacks(int attacks) {
         this.attacks = attacks;
     }
+
+    public boolean isIgnored() {
+        return ignored;
+    }
+
+    public void setIgnored(boolean ignored) {
+        this.ignored = ignored;
+    }
+    
+    
 }

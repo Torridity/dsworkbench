@@ -22,10 +22,10 @@ import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.components.VillageSelectionPanel;
 import de.tor.tribes.ui.models.DEPSourceTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.views.DSWorkbenchSOSRequestAnalyzer;
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.wiz.dep.types.SupportSourceElement;
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.TableHelper;
 import de.tor.tribes.util.sos.SOSManager;
@@ -104,7 +104,6 @@ public class DefenseSourcePanel extends WizardPage {
 
         villageSelectionPanel.enableSelectionElement(VillageSelectionPanel.SELECTION_ELEMENT.ALLY, false);
         villageSelectionPanel.enableSelectionElement(VillageSelectionPanel.SELECTION_ELEMENT.TRIBE, false);
-        villageSelectionPanel.setup();
         jPanel1.add(villageSelectionPanel, BorderLayout.CENTER);
         jideSplitPane1.setOrientation(JideSplitPane.VERTICAL_SPLIT);
         jideSplitPane1.setProportionalLayout(true);
@@ -389,7 +388,13 @@ public class DefenseSourcePanel extends WizardPage {
 
     private int getSplits(Village pVillage) {
         TroopSplit split = new TroopSplit(pVillage);
-        split.update(DSWorkbenchSettingsDialog.getSingleton().getDefense(), 10);
+        int supportTolerance = 10;
+        try {
+            supportTolerance = GlobalOptions.getProperties().getInt("support.tolerance", 10);
+        } catch (Exception e) {
+        }
+
+        split.update(DSWorkbenchSettingsDialog.getSingleton().getDefense(), supportTolerance);
         return split.getSplitCount();
     }
 

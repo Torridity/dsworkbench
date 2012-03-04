@@ -19,6 +19,7 @@ import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.components.VillageSelectionPanel;
 import de.tor.tribes.ui.models.REFSourceTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
+import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.wiz.ref.types.REFSourceElement;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
@@ -91,7 +92,6 @@ public class SupportRefillSourcePanel extends WizardPage {
         villageSelectionPanel.enableSelectionElement(VillageSelectionPanel.SELECTION_ELEMENT.TRIBE, false);
         villageSelectionPanel.setUnitSelectionEnabled(false);
         villageSelectionPanel.setFakeSelectionEnabled(false);
-        villageSelectionPanel.setup();
         jPanel1.add(villageSelectionPanel, BorderLayout.CENTER);
         jideSplitPane1.setOrientation(JideSplitPane.VERTICAL_SPLIT);
         jideSplitPane1.setProportionalLayout(true);
@@ -163,6 +163,7 @@ public class SupportRefillSourcePanel extends WizardPage {
         getModel().clear();
         UserProfile profile = GlobalOptions.getSelectedProfile();
         villageSelectionPanel.setExpertSelection(Boolean.parseBoolean(profile.getProperty("ref.source.expert")));
+        villageSelectionPanel.setup();
     }
 
     /**
@@ -185,6 +186,8 @@ public class SupportRefillSourcePanel extends WizardPage {
         jToggleButton1 = new javax.swing.JToggleButton();
         jStatusLabel = new javax.swing.JLabel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jLabel1 = new javax.swing.JLabel();
         jideSplitPane1 = new com.jidesoft.swing.JideSplitPane();
@@ -288,6 +291,29 @@ public class SupportRefillSourcePanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jVillageTablePanel.add(capabilityInfoPanel1, gridBagConstraints);
 
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/support_ignorel.png"))); // NOI18N
+        jButton1.setToolTipText("Dörfer entfernen, die als Unterstützungsziel eingetragen sind");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireRemoveSupportTargetsEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jButton1, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jVillageTablePanel.add(jPanel3, gridBagConstraints);
+
         setLayout(new java.awt.GridBagLayout());
 
         jXCollapsiblePane1.setCollapsed(true);
@@ -349,6 +375,19 @@ public class SupportRefillSourcePanel extends WizardPage {
         }
     }//GEN-LAST:event_fireViewStateChangeEvent
 
+    private void fireRemoveSupportTargetsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveSupportTargetsEvent
+        int remCount = 0;
+        for (Village v : SupportRefillTargetPanel.getSingleton().getAllElements()) {
+            if (getModel().removeRow(v, false)) {
+                overviewPanel.removeVillage(v);
+                remCount++;
+            }
+        }
+        getModel().fireTableDataChanged();
+        overviewPanel.repaint();
+        jStatusLabel.setText(remCount + " Dorf/Dörfer entfernt");
+    }//GEN-LAST:event_fireRemoveSupportTargetsEvent
+
     private REFSourceTableModel getModel() {
         return (REFSourceTableModel) jVillageTable.getModel();
     }
@@ -400,8 +439,14 @@ public class SupportRefillSourcePanel extends WizardPage {
     }
 
     public void update() {
+        int supportTolerance = 10;
+
+        try {
+            supportTolerance = GlobalOptions.getProperties().getInt("support.tolerance", 10);
+        } catch (Exception e) {
+        }
         for (REFSourceElement element : getAllElements()) {
-            element.updateAvailableSupports(SupportRefillSettingsPanel.getSingleton().getSplit(), 10);
+            element.updateAvailableSupports(SupportRefillSettingsPanel.getSingleton().getSplit(), supportTolerance);
         }
         getModel().fireTableDataChanged();
     }
@@ -426,12 +471,14 @@ public class SupportRefillSourcePanel extends WizardPage {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
+    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jDataPanel;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel jStatusLabel;
     private javax.swing.JScrollPane jTableScrollPane;
     private javax.swing.JToggleButton jToggleButton1;

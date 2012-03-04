@@ -114,9 +114,14 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 img = renderMarkerRows(pSettings);
             }
             Graphics2D ig2d = (Graphics2D) img.getGraphics();
+            int val = GlobalOptions.getProperties().getInt("map.marker.transparency", 80);
+
+
+            float transparency = (float) val / 100.0f;
+
             if (isMarkOnTop()) {
                 Composite c = ig2d.getComposite();
-                ig2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .8f));
+                ig2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, transparency));
                 ig2d.drawImage(renderMarkerRows(pSettings), 0, 0, null);
                 ig2d.setComposite(c);
             } else {
@@ -144,7 +149,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
 
                 if (isMarkOnTop()) {
                     Composite c = ig2d.getComposite();
-                    ig2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .8f));
+                    ig2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, transparency));
                     ig2d.drawImage(renderMarkerColumns(pSettings), 0, 0, null);
                     ig2d.setComposite(c);
                 } else {
@@ -496,8 +501,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             showBarbarian = true;
         }
 
-        if (v != null
-                && !(v.getTribe().equals(Barbarians.getSingleton()) && !showBarbarian) //&& !(MarkerManager.getSingleton().getMarker(v) == null && !v.getTribe().getName().equals(GlobalOptions.getSelectedProfile().getTribeName()))
+        if (v != null && !(v.getTribe().equals(Barbarians.getSingleton()) && !showBarbarian) //&& !(MarkerManager.getSingleton().getMarker(v) == null && !v.getTribe().getName().equals(GlobalOptions.getSelectedProfile().getTribeName()))
                 ) {
             v.setVisibleOnMap(true);
             tribeId = v.getTribeID();

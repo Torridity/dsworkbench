@@ -90,7 +90,6 @@ public class SupportRefillTargetPanel extends WizardPage {
         villageSelectionPanel.enableSelectionElement(VillageSelectionPanel.SELECTION_ELEMENT.TRIBE, false);
         villageSelectionPanel.setUnitSelectionEnabled(false);
         villageSelectionPanel.setFakeSelectionEnabled(false);
-        villageSelectionPanel.setup();
         jPanel1.add(villageSelectionPanel, BorderLayout.CENTER);
         jideSplitPane1.setOrientation(JideSplitPane.VERTICAL_SPLIT);
         jideSplitPane1.setProportionalLayout(true);
@@ -162,6 +161,7 @@ public class SupportRefillTargetPanel extends WizardPage {
         getModel().clear();
         UserProfile profile = GlobalOptions.getSelectedProfile();
         villageSelectionPanel.setExpertSelection(Boolean.parseBoolean(profile.getProperty("ref.target.expert")));
+        villageSelectionPanel.setup();
     }
 
     /**

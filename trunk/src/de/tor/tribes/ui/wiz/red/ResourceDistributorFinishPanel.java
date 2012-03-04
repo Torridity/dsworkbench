@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -50,6 +51,9 @@ import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.text.NumberFormatter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
@@ -60,7 +64,7 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  * @author Torridity
  */
 public class ResourceDistributorFinishPanel extends WizardPage {
-
+    
     private static final String GENERAL_INFO = "<html>Bist du bei diesem Schritt angekommen, hast du abschlie&szlig;end die M&ouml;glichkeit, "
             + "die berechneten Rohstoffe in den Browser zu &uuml;bertragen und abzuschicken. Voraussetzung hierf&uuml;r ist, dass du das "
             + "DS Workbench Userscript in deinem Browser (Firefox oder Opera) installiert hast. Markiere einfach in der unteren Tabelle die Transporte die du "
@@ -71,12 +75,12 @@ public class ResourceDistributorFinishPanel extends WizardPage {
     private static ResourceDistributorFinishPanel singleton = null;
     private ClickAccountPanel clickPanel = null;
     private ProfileQuickChangePanel quickProfilePanel = null;
-
+    
     public static synchronized ResourceDistributorFinishPanel getSingleton() {
         if (singleton == null) {
             singleton = new ResourceDistributorFinishPanel();
         }
-
+        
         return singleton;
     }
 
@@ -94,7 +98,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         jTransportsTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jTransportsTable.setDefaultRenderer(Boolean.class, new SentNotSentCellRenderer());
         jTransportsTable.setDefaultRenderer(Integer.class, new NumberFormatCellRenderer());
-
+        
         jDistributionTable.setModel(new REDFinalDistributionTableModel());
         jDistributionTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jDistributionTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
@@ -102,14 +106,35 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         jDistributionTable.setDefaultRenderer(VillageMerchantInfo.Direction.class, new TradeDirectionCellRenderer());
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         jTransportsTable.registerKeyboardAction(new ActionListener() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 deleteSelection();
             }
         }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
-
+        
+        
+        jTransportsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    showInfo(jTransportsTable.getSelectedRowCount() + " Transport(e) gewählt");
+                }
+            }
+        });
+        
+        JideSplitPane split1 = new JideSplitPane();
+        split1.setOrientation(JideSplitPane.HORIZONTAL_SPLIT);
+        split1.setProportionalLayout(true);
+        split1.setDividerSize(5);
+        split1.setShowGripper(true);
+        split1.setOneTouchExpandable(true);
+        split1.setDividerStepSize(10);
+        split1.setInitiallyEven(true);
+        split1.add(jFinalDistributionPanel, JideBoxLayout.FLEXIBLE);
+        split1.add(jFinalStatusPanel, JideBoxLayout.VARY);
+        
         jideSplitPane1.setOrientation(JideSplitPane.VERTICAL_SPLIT);
         jideSplitPane1.setProportionalLayout(true);
         jideSplitPane1.setDividerSize(5);
@@ -117,10 +142,10 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         jideSplitPane1.setOneTouchExpandable(true);
         jideSplitPane1.setDividerStepSize(10);
         jideSplitPane1.setInitiallyEven(true);
-        jideSplitPane1.add(jFinalDistributionPanel, JideBoxLayout.FLEXIBLE);
+        jideSplitPane1.add(split1, JideBoxLayout.FLEXIBLE);
         jideSplitPane1.add(jTransportsPanel, JideBoxLayout.VARY);
         jideSplitPane1.getDividerAt(0).addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -135,26 +160,26 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         jClickAccountPanel.add(clickPanel, BorderLayout.CENTER);
         jQuickProfilePanel.add(quickProfilePanel, BorderLayout.CENTER);
     }
-
+    
     public static String getDescription() {
         return "Fertig";
     }
-
+    
     public static String getStep() {
         return "id-finish";
     }
-
+    
     public void storeProperties() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
         profile.addProperty("red.ignore.submitted", jIgnoreSubmitted.isSelected());
     }
-
+    
     public void restoreProperties() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
         jIgnoreSubmitted.setSelected(Boolean.parseBoolean(profile.getProperty("red.ignore.submitted")));
-
+        
     }
-
+    
     private void showInfo(String pText) {
         jInfoLabel.setText(pText);
         jXCollapsiblePane2.setCollapsed(false);
@@ -179,6 +204,17 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         jScrollPane2 = new javax.swing.JScrollPane();
         jDistributionTable = new org.jdesktop.swingx.JXTable();
         jInfoLabel = new javax.swing.JLabel();
+        jFinalStatusPanel = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jTransports = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jUsedMerchants = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jTransportedWood = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jTransportedClay = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jTransportedIron = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jPanel1 = new javax.swing.JPanel();
@@ -244,6 +280,77 @@ public class ResourceDistributorFinishPanel extends WizardPage {
                 fireHideInfoEvent(evt);
             }
         });
+
+        jFinalStatusPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Sonstige Informationen"));
+        jFinalStatusPanel.setLayout(new java.awt.GridBagLayout());
+
+        jLabel2.setText("Errechnete Transporte");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFinalStatusPanel.add(jLabel2, gridBagConstraints);
+
+        jTransports.setText("0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFinalStatusPanel.add(jTransports, gridBagConstraints);
+
+        jLabel4.setText("Verwendete Händler");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFinalStatusPanel.add(jLabel4, gridBagConstraints);
+
+        jUsedMerchants.setText("0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFinalStatusPanel.add(jUsedMerchants, gridBagConstraints);
+
+        jLabel6.setText("Transportiertes Holz");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFinalStatusPanel.add(jLabel6, gridBagConstraints);
+
+        jTransportedWood.setText("0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFinalStatusPanel.add(jTransportedWood, gridBagConstraints);
+
+        jLabel8.setText("Transportierter Lehm");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFinalStatusPanel.add(jLabel8, gridBagConstraints);
+
+        jTransportedClay.setText("0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFinalStatusPanel.add(jTransportedClay, gridBagConstraints);
+
+        jLabel10.setText("Transportiertes Eisen");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFinalStatusPanel.add(jLabel10, gridBagConstraints);
+
+        jTransportedIron.setText("0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFinalStatusPanel.add(jTransportedIron, gridBagConstraints);
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -331,6 +438,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
         jPanel1.add(jFinalActionPanel, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -338,6 +446,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
         jPanel1.add(jideSplitPane1, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -359,7 +468,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
             jLabel1.setText("Informationen einblenden");
         }
     }//GEN-LAST:event_fireShowHideInfoEvent
-
+    
     private void fireTransferSelectionToBrowserEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferSelectionToBrowserEvent
         boolean outOfClicks = false;
         boolean browserAccessFailed = false;
@@ -389,7 +498,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
                     ignored++;
                     removeSelection = true;
                 }
-
+                
                 if (removeSelection) {
                     jTransportsTable.getSelectionModel().removeSelectionInterval(i, i);
                 }
@@ -397,14 +506,14 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         } else {
             showInfo("Keine Transporte ausgewählt");
         }
-
+        
         if (transferred + ignored != 0 && transferred + ignored == selectedRows.length) {
             int last = selectedRows[selectedRows.length - 1];
             if (jTransportsTable.getRowCount() > last) {
                 jTransportsTable.getSelectionModel().addSelectionInterval(last + 1, last + 1);
             }
         }
-
+        
         saveTransports();
         if (outOfClicks) {
             showInfo("Keine weiteren Klicks vorhanden.\n"
@@ -414,37 +523,39 @@ public class ResourceDistributorFinishPanel extends WizardPage {
             showInfo("Einer oder mehrere Transporte konnten nicht im Browser geöffnet werden.");
         }
     }//GEN-LAST:event_fireTransferSelectionToBrowserEvent
-
+    
     private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideInfoEvent
         jXCollapsiblePane2.setCollapsed(true);
     }//GEN-LAST:event_fireHideInfoEvent
-
+    
     public REDFinalTransportsTableModel getTransportsModel() {
         return (REDFinalTransportsTableModel) jTransportsTable.getModel();
     }
-
+    
     public REDFinalDistributionTableModel getDistributionModel() {
         return (REDFinalDistributionTableModel) jDistributionTable.getModel();
     }
-
+    
     protected void setup() {
         Hashtable<Village, Hashtable<Village, List<Resource>>> transports = ResourceDistributorCalculationPanel.getSingleton().getTransports();
         Enumeration<Village> sourceKeys = transports.keys();
         REDFinalTransportsTableModel model = getTransportsModel();
         model.clear();
-
+        
         VillageMerchantInfo[] infos = ResourceDistributorSettingsPanel.getSingleton().getAllElements();
-
+        
         Hashtable<Village, VillageMerchantInfo> infoTable = new Hashtable<Village, VillageMerchantInfo>();
-
+        
         for (VillageMerchantInfo info : infos) {
             infoTable.put(info.getVillage(), info);
         }
-
-
+        int usedMerchants = 0;
+        int transportedWood = 0;
+        int transportedClay = 0;
+        int transportedIron = 0;
         while (sourceKeys.hasMoreElements()) {
             Village sourceVillage = sourceKeys.nextElement();
-
+            
             Hashtable<Village, List<Resource>> transportsFromSource = transports.get(sourceVillage);
             Enumeration<Village> destKeys = transportsFromSource.keys();
             while (destKeys.hasMoreElements()) {
@@ -453,20 +564,24 @@ public class ResourceDistributorFinishPanel extends WizardPage {
                 if (model.addRow(sourceVillage, targetVillage, resources)) {
                     VillageMerchantInfo sourceInfo = infoTable.get(sourceVillage);
                     VillageMerchantInfo targetInfo = infoTable.get(targetVillage);
-
+                    
                     for (Resource r : resources) {
+                        usedMerchants += r.getAmount() / 1000;
                         switch (r.getType()) {
                             case WOOD:
                                 sourceInfo.setWoodStock(sourceInfo.getWoodStock() - r.getAmount());
                                 targetInfo.setWoodStock(targetInfo.getWoodStock() + r.getAmount());
+                                transportedWood += r.getAmount();
                                 break;
                             case CLAY:
                                 sourceInfo.setClayStock(sourceInfo.getClayStock() - r.getAmount());
                                 targetInfo.setClayStock(targetInfo.getClayStock() + r.getAmount());
+                                transportedClay += r.getAmount();
                                 break;
                             case IRON:
                                 sourceInfo.setIronStock(sourceInfo.getIronStock() - r.getAmount());
                                 targetInfo.setIronStock(targetInfo.getIronStock() + r.getAmount());
+                                transportedIron += r.getAmount();
                                 break;
                         }
                     }
@@ -474,21 +589,31 @@ public class ResourceDistributorFinishPanel extends WizardPage {
             }
         }
         model.fireTableDataChanged();
-
+        int overallTransports = model.getRowCount();
+        
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+        jTransports.setText(nf.format(overallTransports));
+        jUsedMerchants.setText(nf.format(usedMerchants));
+        jTransportedWood.setText(nf.format(transportedWood));
+        jTransportedClay.setText(nf.format(transportedClay));
+        jTransportedIron.setText(nf.format(transportedIron));
+        
         REDFinalDistributionTableModel distributionModel = getDistributionModel();
         distributionModel.clear();
-
+        
         Enumeration<Village> keys = infoTable.keys();
         while (keys.hasMoreElements()) {
             Village v = keys.nextElement();
             VillageMerchantInfo info = infoTable.get(v);
             distributionModel.addRow(v, info.getStashCapacity(), info.getWoodStock(), info.getClayStock(), info.getIronStock(), info.getDirection());
         }
-
+        
         distributionModel.fireTableDataChanged();
         saveTransports();
     }
-
+    
     private void deleteSelection() {
         int[] selection = jTransportsTable.getSelectedRows();
         if (selection.length > 0) {
@@ -505,7 +630,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
             }
         }
     }
-
+    
     private ExtendedTransport[] getSelection() {
         int[] selection = jTransportsTable.getSelectedRows();
         List<ExtendedTransport> rows = new LinkedList<ExtendedTransport>();
@@ -517,7 +642,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         }
         return rows.toArray(new ExtendedTransport[rows.size()]);
     }
-
+    
     private void saveTransports() {
         StringBuilder b = new StringBuilder();
         int cnt = 0;
@@ -537,7 +662,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
             b.append(submitted).append("\n");
             cnt++;
         }
-
+        
         String profileDir = GlobalOptions.getSelectedProfile().getProfileDirectory();
         FileWriter w = null;
         try {
@@ -555,7 +680,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
             }
         }
     }
-
+    
     protected boolean loadTransports() {
         boolean result = false;
         String profileDir = GlobalOptions.getSelectedProfile().getProfileDirectory();
@@ -576,7 +701,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
                     Resource iron = new Resource(Integer.parseInt(split[3]), Resource.Type.IRON);
                     Village targetVillage = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(split[4]));
                     boolean submitted = Boolean.parseBoolean(split[5]);
-
+                    
                     if (sourceVillage != null && targetVillage != null) {
                         List<Resource> resources = Arrays.asList(wood, clay, iron);
                         model.addRow(sourceVillage, targetVillage, resources, submitted);
@@ -596,7 +721,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
                 }
             }
         }
-
+        
         if (result) {
             jideSplitPane1.setProportions(new double[]{0.0});
         }
@@ -608,17 +733,28 @@ public class ResourceDistributorFinishPanel extends WizardPage {
     private org.jdesktop.swingx.JXTable jDistributionTable;
     private javax.swing.JPanel jFinalActionPanel;
     private javax.swing.JPanel jFinalDistributionPanel;
+    private javax.swing.JPanel jFinalStatusPanel;
     private javax.swing.JCheckBox jIgnoreSubmitted;
     private javax.swing.JLabel jInfoLabel;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jQuickProfilePanel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel jTransportedClay;
+    private javax.swing.JLabel jTransportedIron;
+    private javax.swing.JLabel jTransportedWood;
+    private javax.swing.JLabel jTransports;
     private javax.swing.JPanel jTransportsPanel;
     private org.jdesktop.swingx.JXTable jTransportsTable;
+    private javax.swing.JLabel jUsedMerchants;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane2;
     private com.jidesoft.swing.JideSplitPane jideSplitPane1;
@@ -628,13 +764,13 @@ public class ResourceDistributorFinishPanel extends WizardPage {
     public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;
     }
-
+    
     @Override
     public WizardPanelNavResult allowBack(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;
-
+        
     }
-
+    
     @Override
     public WizardPanelNavResult allowFinish(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;

@@ -211,7 +211,6 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
             storedState.put(item.getTag(), item.getState());
         }
         DefaultListModel model = new DefaultListModel();
-     //   model.addElement(new ListItem(NoTag.getSingleton()));
 
         for (Tag tag : TagUtils.getTags(Tag.CASE_INSENSITIVE_ORDER)) {
             ListItem item = new ListItem(tag);

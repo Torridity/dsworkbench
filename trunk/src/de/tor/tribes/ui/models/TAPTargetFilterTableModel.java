@@ -4,56 +4,47 @@
  */
 package de.tor.tribes.ui.models;
 
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.wiz.ref.types.REFSourceElement;
+import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
+import de.tor.tribes.ui.wiz.tap.types.TAPAttackTargetElement;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 
 /**
  *
  * @author Torridity
  */
-public class REFSourceTableModel extends AbstractTableModel {
+public class TAPTargetFilterTableModel extends AbstractTableModel {
 
     private String[] columnNames = new String[]{
-        "Dorf", "Verfügbare Unterstützungen"
+        "Spieler", "Dorf", "Ignoriert"
     };
-    Class[] types = new Class[]{
-        Village.class, Integer.class
+    private Class[] types = new Class[]{
+        Tribe.class, Village.class, Boolean.class
     };
-    private final List<REFSourceElement> elements = new LinkedList<REFSourceElement>();
+    private final List<TAPAttackTargetElement> elements = new LinkedList<TAPAttackTargetElement>();
+
+    public TAPTargetFilterTableModel() {
+        super();
+    }
 
     public void clear() {
         elements.clear();
-        fireTableDataChanged();
     }
 
-    public void addRow(Village pVillage) {
-        elements.add(new REFSourceElement(pVillage));
-        fireTableDataChanged();
-    }
-
-    public boolean removeRow(final Village pVillage, boolean pNotify) {
-
-        REFSourceElement elem = (REFSourceElement) CollectionUtils.find(elements, new Predicate() {
-
-            @Override
-            public boolean evaluate(Object o) {
-                return ((REFSourceElement) o).getVillage().equals(pVillage);
-            }
-        });
-
-        if (elem != null) {
-            elements.remove(elem);
+    public void addRow(TAPAttackTargetElement pElement, boolean pCheck) {
+        if (!elements.contains(pElement)) {
+            elements.add(pElement);
         }
-
-        if (pNotify) {
+        if (pCheck) {
             fireTableDataChanged();
         }
-        return elem != null;
+    }
+
+    public void addRow(TAPAttackTargetElement pElement) {
+        addRow(pElement, true);
     }
 
     @Override
@@ -84,7 +75,7 @@ public class REFSourceTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    public REFSourceElement getRow(int row) {
+    public TAPAttackTargetElement getRow(int row) {
         return elements.get(row);
     }
 
@@ -93,12 +84,14 @@ public class REFSourceTableModel extends AbstractTableModel {
         if (elements == null || elements.size() - 1 < row) {
             return null;
         }
-        REFSourceElement element = elements.get(row);
+        TAPAttackTargetElement element = elements.get(row);
         switch (column) {
             case 0:
+                return element.getVillage().getTribe();
+            case 1:
                 return element.getVillage();
             default:
-                return element.getAvailableSupports();
+                return element.isIgnored();
         }
     }
 

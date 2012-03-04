@@ -5,6 +5,8 @@
 package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.types.FarmInformation;
+import de.tor.tribes.ui.views.DSWorkbenchFarmManager;
+import de.tor.tribes.util.UIHelper;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 
@@ -13,6 +15,8 @@ import java.text.SimpleDateFormat;
  * @author Torridity
  */
 public class FarmInformationDetailsDialog extends javax.swing.JDialog {
+
+    private FarmInformation currentInfo = null;
 
     /**
      * Creates new form FarmInformationDetailsDialog
@@ -26,6 +30,7 @@ public class FarmInformationDetailsDialog extends javax.swing.JDialog {
         if (pInfo == null) {
             return;
         }
+        currentInfo = pInfo;
         setTitle("Farminformationen - " + pInfo.getVillage().getFullName());
         jVillageName.setText(pInfo.getVillage().getFullName());
         jAttacks.setText(Integer.toString(pInfo.getAttackCount()));
@@ -36,7 +41,7 @@ public class FarmInformationDetailsDialog extends javax.swing.JDialog {
         if (pInfo.getLastReport() > 0) {
             jLastReport.setText(f.format(pInfo.getLastReport()));
         } else {
-            jLastReport.setText("Noch Bericht eingelesen");
+            jLastReport.setText("Noch kein Bericht eingelesen");
         }
 
         jWoodLevel.setText(nf.format(pInfo.getWoodLevel()));
@@ -82,6 +87,7 @@ public class FarmInformationDetailsDialog extends javax.swing.JDialog {
         jIronLevel = new com.jidesoft.swing.LabeledTextField();
         jStorageLevel = new com.jidesoft.swing.LabeledTextField();
         jHideLevel = new com.jidesoft.swing.LabeledTextField();
+        jButton2 = new javax.swing.JButton();
         jCurrentResourcesPanel = new javax.swing.JPanel();
         jCurrentClay = new com.jidesoft.swing.LabeledTextField();
         jCurrentWood = new com.jidesoft.swing.LabeledTextField();
@@ -223,6 +229,15 @@ public class FarmInformationDetailsDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jBuildingPanel.add(jHideLevel, gridBagConstraints);
 
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png"))); // NOI18N
+        jButton2.setToolTipText("<html>Legt die eingetragenen Geb&auml;udestufen für diese Farm fest.<br/>\nDiese Option sollte nur im Notfall (z.B. auf Servern mit eingeschr&auml;nkten Sp&auml;hern) verwendet werden. <br/>Im Normalfall verwendet bitte die Informationen aus Sp&auml;hberichten.</html>");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireSetBuildingsEvent(evt);
+            }
+        });
+        jBuildingPanel.add(jButton2, new java.awt.GridBagConstraints());
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
@@ -357,6 +372,22 @@ public class FarmInformationDetailsDialog extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_fireCloseDialogEvent
 
+    private void fireSetBuildingsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSetBuildingsEvent
+        if (currentInfo != null) {
+            currentInfo.setWoodLevel(UIHelper.parseIntFromField(jWoodLevel, 1));
+            currentInfo.setClayLevel(UIHelper.parseIntFromField(jClayLevel, 1));
+            currentInfo.setIronLevel(UIHelper.parseIntFromField(jIronLevel, 1));
+            currentInfo.setStorageLevel(UIHelper.parseIntFromField(jStorageLevel, 1));
+            currentInfo.setHideLevel(UIHelper.parseIntFromField(jHideLevel, 1));
+            currentInfo.setLastReport(System.currentTimeMillis());
+            if (currentInfo.getStatus().equals(FarmInformation.FARM_STATUS.NOT_SPYED)) {
+                currentInfo.setStatus(FarmInformation.FARM_STATUS.READY);
+            }
+            currentInfo.setSpyed(true);
+        }
+        DSWorkbenchFarmManager.getSingleton().repaint();
+    }//GEN-LAST:event_fireSetBuildingsEvent
+
     /**
      * @param args the command line arguments
      */
@@ -409,6 +440,7 @@ public class FarmInformationDetailsDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jAttacks;
     private javax.swing.JPanel jBuildingPanel;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private com.jidesoft.swing.LabeledTextField jClayLevel;
     private com.jidesoft.swing.LabeledTextField jCurrentClay;
     private com.jidesoft.swing.LabeledTextField jCurrentIron;

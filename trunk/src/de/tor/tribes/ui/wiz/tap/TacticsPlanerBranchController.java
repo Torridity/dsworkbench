@@ -35,7 +35,7 @@ public class TacticsPlanerBranchController extends WizardBranchController {
             return true;
         }
     };
-    private static final Wizard ATTACK_PATH = WizardPage.createWizard(new WizardPage[]{AttackSourcePanel.getSingleton(), AttackSourceFilterPanel.getSingleton(), AttackTargetPanel.getSingleton(), TimeSettingsPanel.getSingleton(), ValidationPanel.getSingleton(), AttackCalculationPanel.getSingleton(), AttackFinishPanel.getSingleton()}, ERGEBNIS);
+    private static final Wizard ATTACK_PATH = WizardPage.createWizard(new WizardPage[]{AttackSourcePanel.getSingleton(), AttackSourceFilterPanel.getSingleton(), AttackTargetPanel.getSingleton(),AttackTargetFilterPanel.getSingleton(), TimeSettingsPanel.getSingleton(), ValidationPanel.getSingleton(), AttackCalculationPanel.getSingleton(), AttackFinishPanel.getSingleton()}, ERGEBNIS);
     private static final Wizard DEFENSE_PATH = WizardPage.createWizard(new WizardPage[]{DefenseAnalysePanel.getSingleton(), DefenseSourcePanel.getSingleton(), DefenseFilterPanel.getSingleton(), DefenseCalculationSettingsPanel.getSingleton(), DefenseFinishPanel.getSingleton()}, ERGEBNIS);
     private static final Wizard REFILL_PATH = WizardPage.createWizard(new WizardPage[]{SupportRefillTargetPanel.getSingleton(), SupportRefillSettingsPanel.getSingleton(), SupportRefillSourcePanel.getSingleton(), SupportRefillCalculationPanel.getSingleton(), SupportRefillFinishPanel.getSingleton()}, ERGEBNIS);
 

@@ -193,6 +193,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         GlobalOptions.getProperties().setProperty("show.sectors", jShowSectorsBox.isSelected());
         jShowBarbarianBox.setSelected(GlobalOptions.getProperties().getBoolean("show.barbarian", true));
         GlobalOptions.getProperties().setProperty("show.barbarian", jShowBarbarianBox.isSelected());
+        jMarkerTransparency.setValue(GlobalOptions.getProperties().getInt("map.marker.transparency", 50));
+        GlobalOptions.getProperties().setProperty("map.marker.transparency", jMarkerTransparency.getValue());
         jShowAttackMovementBox.setSelected(GlobalOptions.getProperties().getBoolean("attack.movement", false));
         jDrawAttacksByDefaultBox.setSelected(GlobalOptions.getProperties().getBoolean("draw.attacks.by.default", false));
         jShowLiveCountdown.setSelected(GlobalOptions.getProperties().getBoolean("show.live.countdown", true));
@@ -237,6 +239,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         setDefense(TroopHelper.stringPropertyToUnitTable(GlobalOptions.getProperty("standard.defense.split")));
         jMaxSimRounds.setText(GlobalOptions.getProperties().getString("max.sim.rounds", "500"));
         GlobalOptions.getProperties().setProperty("max.sim.rounds", jMaxSimRounds.getText());
+        jTolerance.setText(GlobalOptions.getProperties().getString("support.tolerance", "10"));
+        GlobalOptions.getProperties().setProperty("support.tolerance", jTolerance.getText());
         jMaxLossRatio.setText(GlobalOptions.getProperties().getString("max.loss.ratio", "50"));
         GlobalOptions.getProperties().setProperty("max.loss.ratio", jMaxLossRatio.getText());
     }
@@ -558,11 +562,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jShowSectorsBox = new javax.swing.JCheckBox();
         jMarkOwnVillagesOnMinimapBox = new javax.swing.JCheckBox();
         jShowBarbarianBox = new javax.swing.JCheckBox();
+        jMarkerTransparency = new javax.swing.JSlider();
         jPanel2 = new javax.swing.JPanel();
         jShowContinentsLabel = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jAttackMovementLabel2 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
+        jLabel30 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jDefaultMarkBox = new javax.swing.JComboBox();
         jLabel3 = new javax.swing.JLabel();
@@ -602,6 +608,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jLabel26 = new javax.swing.JLabel();
         jMaxLossRatio = new javax.swing.JTextField();
         jLabel27 = new javax.swing.JLabel();
+        jLabel28 = new javax.swing.JLabel();
+        jTolerance = new javax.swing.JTextField();
+        jLabel29 = new javax.swing.JLabel();
         jStandardAttackerPanel = new javax.swing.JPanel();
         jOffAxe = new com.jidesoft.swing.LabeledTextField();
         jOffLight = new com.jidesoft.swing.LabeledTextField();
@@ -1051,7 +1060,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jLoginPanelLayout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addGroup(jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jideLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 592, Short.MAX_VALUE)
+                    .addComponent(jideLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 580, Short.MAX_VALUE)
                     .addGroup(jLoginPanelLayout.createSequentialGroup()
                         .addGroup(jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jAccountNameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1078,7 +1087,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCheckAccountButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jideLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
+                .addComponent(jideLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1138,7 +1147,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jPanel9Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jServerList, 0, 294, Short.MAX_VALUE)
+                    .addComponent(jServerList, 0, 288, Short.MAX_VALUE)
                     .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(jCheckForUpdatesBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel9Layout.createSequentialGroup()
@@ -1204,7 +1213,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jProfileBox, 0, 236, Short.MAX_VALUE)
+                    .addComponent(jProfileBox, 0, 230, Short.MAX_VALUE)
                     .addGroup(jPanel10Layout.createSequentialGroup()
                         .addComponent(jNewProfileButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1240,13 +1249,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 580, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 568, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel11Layout.setVerticalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1282,7 +1291,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jMapSettings.setPreferredSize(new java.awt.Dimension(620, 400));
 
         jPanel1.setOpaque(false);
-        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
+        jPanel1.setLayout(new java.awt.GridBagLayout());
 
         jShowContinents.setToolTipText("Anzeiger der Kontinente auf der Minimap");
         jShowContinents.setContentAreaFilled(false);
@@ -1294,7 +1303,11 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 fireChangeContinentsOnMinimapEvent(evt);
             }
         });
-        jPanel1.add(jShowContinents);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(jShowContinents, gridBagConstraints);
 
         jShowSectorsBox.setToolTipText("Sektoren in Hauptkarte einzeichnen");
         jShowSectorsBox.setMaximumSize(new java.awt.Dimension(25, 25));
@@ -1306,7 +1319,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 fireChangeShowSectorsEvent(evt);
             }
         });
-        jPanel1.add(jShowSectorsBox);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(jShowSectorsBox, gridBagConstraints);
 
         jMarkOwnVillagesOnMinimapBox.setToolTipText("Markiert die Dörfer des aktuellen Spielers auf der Minimap");
         jMarkOwnVillagesOnMinimapBox.setMaximumSize(new java.awt.Dimension(25, 25));
@@ -1318,7 +1336,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 fireChangeMarkOwnVillagesOnMinimapEvent(evt);
             }
         });
-        jPanel1.add(jMarkOwnVillagesOnMinimapBox);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(jMarkOwnVillagesOnMinimapBox, gridBagConstraints);
 
         jShowBarbarianBox.setToolTipText("Anzeige von Barbarendörfern auf der Karte");
         jShowBarbarianBox.setMaximumSize(new java.awt.Dimension(25, 25));
@@ -1330,34 +1353,61 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 fireShowBarbarianChangedEvent(evt);
             }
         });
-        jPanel1.add(jShowBarbarianBox);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(jShowBarbarianBox, gridBagConstraints);
 
+        jMarkerTransparency.setMajorTickSpacing(10);
+        jMarkerTransparency.setMinimum(10);
+        jMarkerTransparency.setMinorTickSpacing(1);
+        jMarkerTransparency.setPaintLabels(true);
+        jMarkerTransparency.setPaintTicks(true);
+        jMarkerTransparency.setOpaque(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(jMarkerTransparency, gridBagConstraints);
+
+        jPanel2.setMaximumSize(new java.awt.Dimension(190, 125));
+        jPanel2.setMinimumSize(new java.awt.Dimension(190, 125));
         jPanel2.setOpaque(false);
+        jPanel2.setPreferredSize(new java.awt.Dimension(190, 125));
         jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.Y_AXIS));
 
         jShowContinentsLabel.setText("Kontinente anzeigen");
-        jShowContinentsLabel.setMaximumSize(new java.awt.Dimension(150, 25));
-        jShowContinentsLabel.setMinimumSize(new java.awt.Dimension(150, 25));
-        jShowContinentsLabel.setPreferredSize(new java.awt.Dimension(150, 25));
+        jShowContinentsLabel.setMaximumSize(new java.awt.Dimension(190, 25));
+        jShowContinentsLabel.setMinimumSize(new java.awt.Dimension(190, 25));
+        jShowContinentsLabel.setPreferredSize(new java.awt.Dimension(190, 25));
         jPanel2.add(jShowContinentsLabel);
 
         jLabel7.setText("Sektoren anzeigen");
-        jLabel7.setMaximumSize(new java.awt.Dimension(150, 25));
-        jLabel7.setMinimumSize(new java.awt.Dimension(150, 25));
-        jLabel7.setPreferredSize(new java.awt.Dimension(150, 25));
+        jLabel7.setMaximumSize(new java.awt.Dimension(190, 25));
+        jLabel7.setMinimumSize(new java.awt.Dimension(190, 25));
+        jLabel7.setPreferredSize(new java.awt.Dimension(190, 25));
         jPanel2.add(jLabel7);
 
         jAttackMovementLabel2.setText("Eigene Dörfer auf Minimap");
-        jAttackMovementLabel2.setMaximumSize(new java.awt.Dimension(150, 25));
-        jAttackMovementLabel2.setMinimumSize(new java.awt.Dimension(150, 25));
-        jAttackMovementLabel2.setPreferredSize(new java.awt.Dimension(150, 25));
+        jAttackMovementLabel2.setMaximumSize(new java.awt.Dimension(190, 25));
+        jAttackMovementLabel2.setMinimumSize(new java.awt.Dimension(190, 25));
+        jAttackMovementLabel2.setPreferredSize(new java.awt.Dimension(190, 25));
         jPanel2.add(jAttackMovementLabel2);
 
         jLabel17.setText("Barbarendörfer anzeigen");
-        jLabel17.setMaximumSize(new java.awt.Dimension(150, 25));
-        jLabel17.setMinimumSize(new java.awt.Dimension(150, 25));
-        jLabel17.setPreferredSize(new java.awt.Dimension(150, 25));
+        jLabel17.setMaximumSize(new java.awt.Dimension(190, 25));
+        jLabel17.setMinimumSize(new java.awt.Dimension(190, 25));
+        jLabel17.setPreferredSize(new java.awt.Dimension(190, 25));
         jPanel2.add(jLabel17);
+
+        jLabel30.setText("Deckkraft von Markierungen [%]");
+        jLabel30.setMaximumSize(new java.awt.Dimension(190, 25));
+        jLabel30.setMinimumSize(new java.awt.Dimension(190, 25));
+        jLabel30.setPreferredSize(new java.awt.Dimension(190, 25));
+        jPanel2.add(jLabel30);
 
         jLabel4.setText("Standardmarkierung");
         jLabel4.setMaximumSize(new java.awt.Dimension(150, 25));
@@ -1438,14 +1488,14 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jMapSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(36, 36, 36)
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE)
-                    .addComponent(jDefaultMarkBox, 0, 418, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
+                    .addComponent(jDefaultMarkBox, 0, 374, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jMapSettingsLayout.setVerticalGroup(
@@ -1630,14 +1680,14 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jAttackSettingsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, 612, Short.MAX_VALUE)
+                .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jAttackSettingsLayout.setVerticalGroup(
             jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jAttackSettingsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
+                .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1744,8 +1794,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jLabel25.setText("Max. Simulationsrunden");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel15.add(jLabel25, gridBagConstraints);
 
@@ -1753,7 +1803,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jMaxSimRounds.setToolTipText("Die maximale Anzahl an Simulationsrunden, bevor die Simulation abgebrochen wird");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
@@ -1766,8 +1816,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jLabel26.setPreferredSize(new java.awt.Dimension(114, 14));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel15.add(jLabel26, gridBagConstraints);
 
@@ -1775,7 +1825,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jMaxLossRatio.setToolTipText("Die maximale Verlustrate der Verteidiger, die man akzeptieren möchte");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -1784,10 +1834,36 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jLabel27.setText("%");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 5);
         jPanel15.add(jLabel27, gridBagConstraints);
+
+        jLabel28.setText("Toleranz für Einzelunterstützungen");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel15.add(jLabel28, gridBagConstraints);
+
+        jTolerance.setText("10");
+        jTolerance.setToolTipText("Toleranz in Prozent, um welche eine Einzelunterstützung abweichen darf");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel15.add(jTolerance, gridBagConstraints);
+
+        jLabel29.setText("%");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 5);
+        jPanel15.add(jLabel29, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -2157,8 +2233,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jNetworkSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 612, Short.MAX_VALUE)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 612, Short.MAX_VALUE))
+                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jNetworkSettingsLayout.setVerticalGroup(
@@ -2167,7 +2243,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap()
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE)
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -2351,7 +2427,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             jTemplateSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jTemplateSettingsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, 612, Short.MAX_VALUE)
+                .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jTemplateSettingsLayout.setVerticalGroup(
@@ -2359,7 +2435,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jTemplateSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(322, Short.MAX_VALUE))
+                .addContainerGap(367, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab("Templates", new javax.swing.ImageIcon(getClass().getResource("/res/ui/component.png")), jTemplateSettings); // NOI18N
@@ -2656,7 +2732,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jMiscSettingsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 612, Short.MAX_VALUE)
+                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jMiscSettingsLayout.setVerticalGroup(
@@ -2664,7 +2740,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jMiscSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(169, Short.MAX_VALUE))
+                .addContainerGap(214, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab("Sonstiges", new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png")), jMiscSettings); // NOI18N
@@ -2724,12 +2800,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 637, Short.MAX_VALUE)
+                    .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 625, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jCreateAccountButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jChangePasswordButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
                         .addComponent(jCancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOKButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -2739,7 +2815,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 491, Short.MAX_VALUE)
+                .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jCreateAccountButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -2980,7 +3056,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         GlobalOptions.addProperty("show.live.countdown", Boolean.toString(jShowLiveCountdown.isSelected()));
         GlobalOptions.addProperty("extended.attack.vectors", Boolean.toString(jExtendedAttackLineDrawing.isSelected()));
         GlobalOptions.addProperty("max.sim.rounds", jMaxSimRounds.getText());
+        GlobalOptions.addProperty("support.tolerance", jTolerance.getText());
         GlobalOptions.addProperty("max.loss.ratio", jMaxLossRatio.getText());
+        GlobalOptions.addProperty("map.marker.transparency", Integer.toString(jMarkerTransparency.getValue()));
+
         GlobalOptions.saveProperties();
         if (!checkSettings()) {
             return;
@@ -3982,7 +4061,10 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
+    private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel36;
     private javax.swing.JLabel jLabel37;
@@ -3997,6 +4079,7 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
     private javax.swing.JPanel jLoginPanel;
     private javax.swing.JPanel jMapSettings;
     private javax.swing.JCheckBox jMarkOwnVillagesOnMinimapBox;
+    private javax.swing.JSlider jMarkerTransparency;
     private javax.swing.JTextField jMaxFarmSpace;
     private javax.swing.JTextField jMaxLossRatio;
     private javax.swing.JTextField jMaxSimRounds;
@@ -4074,6 +4157,7 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
     private javax.swing.JTextArea jStatusArea;
     private com.jidesoft.swing.LabeledTextField jSwordAmount;
     private javax.swing.JPanel jTemplateSettings;
+    private javax.swing.JTextField jTolerance;
     private javax.swing.JDialog jTroopDensitySelectionDialog;
     private javax.swing.JCheckBox jUseStandardBrowser;
     private javax.swing.JComboBox jVillageSortTypeChooser;

@@ -451,7 +451,7 @@ public class AttackCalculationPanel extends WizardPage {
     }//GEN-LAST:event_fireCalculateAttacksEvent
 
     private void fireSystematicSelectionChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireSystematicSelectionChangedEvent
-           jSystematicWarning.setVisible(jSystematicCalculation.isSelected());
+        jSystematicWarning.setVisible(jSystematicCalculation.isSelected());
     }//GEN-LAST:event_fireSystematicSelectionChangedEvent
 
     private void initializeCalculation() {
@@ -483,7 +483,7 @@ public class AttackCalculationPanel extends WizardPage {
         List<Village> targets = new LinkedList<Village>();
         List<Village> fakeTargets = new LinkedList<Village>();
         Hashtable<Village, Integer> maxAttacks = new Hashtable<Village, Integer>();
-        for (TAPAttackTargetElement element : AttackTargetPanel.getSingleton().getAllElements()) {
+        for (TAPAttackTargetElement element : AttackTargetFilterPanel.getSingleton().getFilteredElements()) {
             if (element.isFake()) {
                 fakeTargets.add(element.getVillage());
             } else {
@@ -530,8 +530,8 @@ public class AttackCalculationPanel extends WizardPage {
         jOverallAttacks.setText(Integer.toString(offs));
         jOverallFakes.setText(Integer.toString(fakes));
 
-        List<TAPAttackTargetElement> targetElements = AttackTargetPanel.getSingleton().getAllElements();
-        jOverallTargets.setText(Integer.toString(targetElements.size()));
+        TAPAttackTargetElement[] targetElements = AttackTargetFilterPanel.getSingleton().getFilteredElements();
+        jOverallTargets.setText(Integer.toString(targetElements.length));
         offs = 0;
         fakes = 0;
         for (TAPAttackTargetElement element : targetElements) {

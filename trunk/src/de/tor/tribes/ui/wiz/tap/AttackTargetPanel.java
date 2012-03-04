@@ -101,7 +101,6 @@ public class AttackTargetPanel extends WizardPage {
         villageSelectionPanel.setFakeSelectionEnabled(true);
         villageSelectionPanel.setAmountSelectionEnabled(true);
         villageSelectionPanel.enableSelectionElement(VillageSelectionPanel.SELECTION_ELEMENT.GROUP, false);
-        villageSelectionPanel.setup();
         jPanel1.add(villageSelectionPanel, BorderLayout.CENTER);
         jideSplitPane1.setOrientation(JideSplitPane.VERTICAL_SPLIT);
         jideSplitPane1.setProportionalLayout(true);
@@ -176,6 +175,7 @@ public class AttackTargetPanel extends WizardPage {
         if (value != null) {
             villageSelectionPanel.setAmount(Integer.parseInt(value));
         }
+        villageSelectionPanel.setup();
     }
 
     /**
@@ -610,6 +610,9 @@ public class AttackTargetPanel extends WizardPage {
             setProblem("Keine Ziele gewählt");
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
+        
+        AttackTargetFilterPanel.getSingleton().setup();
+        
         AttackCalculationPanel.getSingleton().updateStatus();
         return WizardPanelNavResult.PROCEED;
     }

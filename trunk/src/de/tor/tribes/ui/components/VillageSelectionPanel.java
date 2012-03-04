@@ -87,19 +87,26 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
     }
 
     public void setup() {
-        allyList.setListData(AllyUtils.getAlliesByFilter("", Ally.CASE_INSENSITIVE_ORDER));
+        if (allyTribePipeline != null) {
+            allyTribePipeline.setActive(false);
+        }
+        if (tribeGroupPipeline != null) {
+            tribeGroupPipeline.setActive(false);
+        }
+
+        if (!allyList.isVisible()) {
+            allyList.setListData(new Ally[]{GlobalOptions.getSelectedProfile().getTribe().getAlly()});
+        } else {
+            allyList.setListData(AllyUtils.getAlliesByFilter("", Ally.CASE_INSENSITIVE_ORDER));
+        }
         jXTextField1.setText("");
 
         setupFilters();
         //do initial selection
-        if (!allyList.isVisible()) {
-            allyList.setSelectedValue(GlobalOptions.getSelectedProfile().getTribe().getAlly(), false);
-        }
 
         if (!tribeList.isVisible()) {
             tribeList.setSelectedValue(GlobalOptions.getSelectedProfile().getTribe(), false);
         }
-
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (!unit.getPlainName().equals("militia")) {
@@ -110,16 +117,11 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
         jUnitBox.setModel(model);
         jUnitBox.setRenderer(new UnitListCellRenderer());
         jUnitBox.setSelectedItem(DataHolder.getSingleton().getUnitByPlainName("ram"));
-    }
 
-    public void update() {
-        if (!allyList.isVisible()) {
-            allyList.setSelectedValue(GlobalOptions.getSelectedProfile().getTribe().getAlly(), false);
-        }
-
-        if (!tribeList.isVisible()) {
-            tribeList.setSelectedValue(GlobalOptions.getSelectedProfile().getTribe(), false);
-        }
+        //enable and perform initial selection
+        allyTribePipeline.setActive(true);
+        tribeGroupPipeline.setActive(true);
+        allyList.setSelectedIndex(0);
     }
 
     private void setupFilters() {
@@ -128,6 +130,10 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
 
                 @Override
                 public Tribe[] filter() {
+                    if (!tribeList.isVisible()) {
+                        return new Tribe[]{GlobalOptions.getSelectedProfile().getTribe()};
+                    }
+
                     List<Tribe> res = new LinkedList<Tribe>();
                     for (Object o : getSelection()) {
                         Ally a = (Ally) o;
@@ -151,7 +157,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
                     for (Object o : getSelection()) {
                         Tribe t = (Tribe) o;
                         Collections.addAll(villages, t.getVillageList());
-                        for (Tag tag : TagUtils.getTagsByTribe(t, null)) {
+                        for (Tag tag : TagUtils.getTagsByTribe(t, Tag.CASE_INSENSITIVE_ORDER)) {
                             if (!usedTags.contains(tag)) {
                                 items.add(new GroupSelectionList.ListItem(tag));
                                 usedTags.add(tag);
@@ -589,24 +595,28 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
     }
 }
 
-abstract class FilterPipeline<C, D> {
+abstract class FilterPipeline<C, D> implements ListSelectionListener {
 
     private JXList inputList = null;
     private JXList outputList = null;
+    private boolean active = true;
 
     public FilterPipeline(JXList pThisList, JXList pRightList) {
         inputList = pThisList;
         outputList = pRightList;
-        pThisList.addListSelectionListener(new ListSelectionListener() {
+        pThisList.addListSelectionListener(FilterPipeline.this);
+    }
 
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    outputList.setListData(filter());
-                    updateOutputSelection();
-                }
-            }
-        });
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    @Override
+    public void valueChanged(ListSelectionEvent e) {
+        if (active && !e.getValueIsAdjusting()) {
+            outputList.setListData(filter());
+            updateOutputSelection();
+        }
     }
 
     /**
@@ -643,14 +653,13 @@ abstract class FilterPipeline<C, D> {
     public abstract D[] filter();
 
     public void updateOutputSelection() {
-        if (outputList.isVisible()) {
-            outputList.setSelectedIndex(0);
-        } else {
-            if (outputList instanceof GroupSelectionList) {
-                //for group selection lists all elements are selected if list is not visible...all other lists have to handle this for themselfes
-                outputList.getSelectionModel().setSelectionInterval(0, outputList.getElementCount() - 1);
-            }
+        if (!outputList.isVisible() && outputList instanceof GroupSelectionList) {
+            //for group selection lists all elements are selected if list is not visible...for all other lists the first element is selected
+            outputList.getSelectionModel().setSelectionInterval(0, outputList.getElementCount() - 1);
+            return;
         }
+
+        outputList.setSelectedIndex(0);
     }
 }
 

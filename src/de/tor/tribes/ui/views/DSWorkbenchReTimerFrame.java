@@ -988,6 +988,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     private void fireComandDataChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireComandDataChangedEvent
         parsedAttack = new Attack();
         List<Village> villages = PluginManager.getSingleton().executeVillageParser(jCommandArea.getText());
+        System.out.println(villages);
         if (villages == null || villages.isEmpty() || villages.size() < 2) {
             parsedAttack = null;
         } else {
@@ -1015,9 +1016,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 }
                 
                 StringTokenizer tokenizer = new StringTokenizer(arriveLine, "\n");
-                // tokenizer.nextToken();
                 String date = tokenizer.nextToken();
-                // String time = tokenizer.nextToken();
                 arrive = date.trim();//arriveLine.trim();//date.trim() + " " + time.trim();
                 SimpleDateFormat f = null;
                 if (!ServerSettings.getSingleton().isMillisArrival()) {
@@ -1133,7 +1132,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 }
             }
             
-            Village target = parsedAttack.getTarget();
+            Village target = parsedAttack.getSource();
             UnitHolder unit = (UnitHolder) jUnitBox.getSelectedItem();
             Hashtable<Village, Date> timings = new Hashtable<Village, Date>();
             

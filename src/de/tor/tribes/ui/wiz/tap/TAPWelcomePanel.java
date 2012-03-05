@@ -47,6 +47,7 @@ public class TAPWelcomePanel extends WizardPage {
     public final static Integer ATTACK_TYPE = 0;
     public final static Integer DEFENSE_TYPE = 1;
     public final static Integer REFILL_TYPE = 2;
+    public final static Integer RETIME_TYPE = 3;
 
     public static synchronized TAPWelcomePanel getSingleton() {
         if (singleton == null) {
@@ -90,6 +91,7 @@ public class TAPWelcomePanel extends WizardPage {
         jAttackButton = new javax.swing.JToggleButton();
         jDefenseButton = new javax.swing.JToggleButton();
         jRefillButton = new javax.swing.JToggleButton();
+        jRetimeButton = new javax.swing.JToggleButton();
 
         setMinimumSize(new java.awt.Dimension(600, 600));
         setPreferredSize(new java.awt.Dimension(600, 600));
@@ -147,6 +149,20 @@ public class TAPWelcomePanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jRefillButton, gridBagConstraints);
 
+        buttonGroup1.add(jRetimeButton);
+        jRetimeButton.setMaximumSize(new java.awt.Dimension(80, 80));
+        jRetimeButton.setMinimumSize(new java.awt.Dimension(80, 80));
+        jRetimeButton.setPreferredSize(new java.awt.Dimension(80, 80));
+        jRetimeButton.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireMethodChangeEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jRetimeButton, gridBagConstraints);
+
         add(jPanel1, java.awt.BorderLayout.PAGE_END);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -169,6 +185,7 @@ public class TAPWelcomePanel extends WizardPage {
     private javax.swing.JToggleButton jDefenseButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JToggleButton jRefillButton;
+    private javax.swing.JToggleButton jRetimeButton;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextPane jTextPane1;
     // End of variables declaration//GEN-END:variables
@@ -181,6 +198,8 @@ public class TAPWelcomePanel extends WizardPage {
             type = DEFENSE_TYPE;
         } else if (jRefillButton.isSelected()) {
             type = REFILL_TYPE;
+        } else if (jRetimeButton.isSelected()) {
+            type = RETIME_TYPE;
         }
         map.put(TYPE, new Integer(type));
         return WizardPanelNavResult.PROCEED;

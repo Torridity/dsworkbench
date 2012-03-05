@@ -35,7 +35,7 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 
 /**
- *
+ *@TODO Add new shortcuts (U, O, N)
  * @author Torridity
  */
 public class GroupSelectionList extends IconizedList implements GenericManagerListener {

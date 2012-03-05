@@ -104,6 +104,7 @@ import org.jdesktop.swingx.tips.TipOfTheDayModel;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 /**
+* @TODO add some simple runtime and retime calculator to replace excel
  * @author Charon
  */
 public class DSWorkbenchMainFrame extends JRibbonFrame implements

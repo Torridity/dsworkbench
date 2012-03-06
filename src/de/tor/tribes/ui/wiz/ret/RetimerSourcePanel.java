@@ -12,6 +12,7 @@ package de.tor.tribes.ui.wiz.ret;
 
 import com.jidesoft.swing.JideBoxLayout;
 import com.jidesoft.swing.JideSplitPane;
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.UserProfile;
@@ -21,6 +22,7 @@ import de.tor.tribes.ui.models.TAPSourceTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.FakeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
+import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
@@ -38,6 +40,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
@@ -55,8 +58,6 @@ public class RetimerSourcePanel extends WizardPage {
 
     private static final String GENERAL_INFO = "";
     private static RetimerSourcePanel singleton = null;
-    private CoordinateSpinner sourceCoordinate = null;
-    private CoordinateSpinner targetCoordinate = null;
 
     public static synchronized RetimerSourcePanel getSingleton() {
         if (singleton == null) {
@@ -126,24 +127,6 @@ public class RetimerSourcePanel extends WizardPage {
             }
         });
 
-        sourceCoordinate = new CoordinateSpinner();
-        GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(sourceCoordinate, gridBagConstraints);
-
-        targetCoordinate = new CoordinateSpinner();
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(targetCoordinate, gridBagConstraints);
-
         ChangeListener cl = new ChangeListener() {
 
             @Override
@@ -152,8 +135,8 @@ public class RetimerSourcePanel extends WizardPage {
             }
         };
 
-        sourceCoordinate.addChangeListener(cl);
-        targetCoordinate.addChangeListener(cl);
+        jSourceCoord.addChangeListener(cl);
+        jTargetCoord.addChangeListener(cl);
         jArriveTime.setActionListener(new ActionListener() {
 
             @Override
@@ -163,6 +146,8 @@ public class RetimerSourcePanel extends WizardPage {
         });
 
         jInfoTextPane.setText(GENERAL_INFO);
+        jUnitBox.setRenderer(new UnitListCellRenderer());
+        jWarningLabel.setVisible(false);
     }
 
     public static String getDescription() {
@@ -179,6 +164,7 @@ public class RetimerSourcePanel extends WizardPage {
 
     public void restoreProperties() {
         getModel().clear();
+        jUnitBox.setModel(new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{})));
     }
 
     /**
@@ -204,6 +190,9 @@ public class RetimerSourcePanel extends WizardPage {
         jArriveTime = new de.tor.tribes.ui.components.DateTimeField();
         jSendTime = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
+        jSourceCoord = new de.tor.tribes.ui.components.CoordinateSpinner();
+        jTargetCoord = new de.tor.tribes.ui.components.CoordinateSpinner();
+        jWarningLabel = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -309,11 +298,32 @@ public class RetimerSourcePanel extends WizardPage {
         jButton3.setText("Angriff hinzufügen");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(15, 5, 5, 5);
         jPanel3.add(jButton3, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jSourceCoord, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jTargetCoord, gridBagConstraints);
+
+        jWarningLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/warning.png"))); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jWarningLabel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -469,14 +479,18 @@ public class RetimerSourcePanel extends WizardPage {
     }
 
     private void recalculateArriveTime() {
-        Village source = sourceCoordinate.getVillage();
+        Village source = jSourceCoord.getVillage();
         String result = "";
         if (source == null) {
-            result = "-unbekannt- (Herkunftsdorf ungültig)";
+            result = "-unbekannt-";
+            jWarningLabel.setVisible(true);
+            jWarningLabel.setText("Herkunftsdorf ungültig");
         } else {
-            Village target = targetCoordinate.getVillage();
+            Village target = jTargetCoord.getVillage();
             if (target == null) {
-                result = "-unbekannt- (Zieldorf ungültig)";
+                result = "-unbekannt-";
+                jWarningLabel.setVisible(true);
+                jWarningLabel.setText("Zieldorf ungültig");
             } else {
                 Date arriveTime = jArriveTime.getSelectedDate();
                 UnitHolder unit = (UnitHolder) jUnitBox.getSelectedItem();
@@ -486,9 +500,13 @@ public class RetimerSourcePanel extends WizardPage {
                 SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
                 result = f.format(send);
                 if (arriveTime.getTime() < System.currentTimeMillis()) {
-                    result += " (Ankunft in der Vergangenheit)";
+                    jWarningLabel.setVisible(true);
+                    jWarningLabel.setText("Ankunft in der Vergangenheit. Bitte Zeit prüfen.");
                 } else if (send.getTime() > System.currentTimeMillis()) {
-                    result += " (Abschickzeit in der Zukunft)";
+                    jWarningLabel.setVisible(true);
+                    jWarningLabel.setText("Abschickzeit in der Zukunft. Langsamere Einheit wählen?");
+                } else {
+                    jWarningLabel.setVisible(false);
                 }
             }
         }
@@ -555,11 +573,14 @@ public class RetimerSourcePanel extends WizardPage {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel jSendTime;
+    private de.tor.tribes.ui.components.CoordinateSpinner jSourceCoord;
     private javax.swing.JLabel jStatusLabel;
     private javax.swing.JScrollPane jTableScrollPane;
+    private de.tor.tribes.ui.components.CoordinateSpinner jTargetCoord;
     private javax.swing.JComboBox jUnitBox;
     private org.jdesktop.swingx.JXTable jVillageTable;
     private javax.swing.JPanel jVillageTablePanel;
+    private javax.swing.JLabel jWarningLabel;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
     private com.jidesoft.swing.JideSplitPane jideSplitPane1;
     // End of variables declaration//GEN-END:variables

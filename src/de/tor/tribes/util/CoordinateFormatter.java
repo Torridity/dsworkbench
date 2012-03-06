@@ -10,7 +10,10 @@ import java.awt.Point;
 import java.text.ParseException;
 import java.util.List;
 import javax.swing.JFormattedTextField;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultFormatter;
+import javax.swing.text.DocumentFilter;
 
 /**
  *
@@ -19,10 +22,12 @@ import javax.swing.text.DefaultFormatter;
 public class CoordinateFormatter extends DefaultFormatter {
 
     private static JFormattedTextField.AbstractFormatter formatter;
+    private static DoNothingFilter d = null;
 
     public synchronized static JFormattedTextField.AbstractFormatter getInstance() {
         if (formatter == null) {
             formatter = new CoordinateFormatter();
+            d = new DoNothingFilter();
         }
         return formatter;
     }
@@ -32,14 +37,18 @@ public class CoordinateFormatter extends DefaultFormatter {
     }
 
     @Override
+    protected DocumentFilter getDocumentFilter() {
+        return d;
+    }
+
+    @Override
     public Object stringToValue(String text) throws ParseException {
-        //text = text.trim();
         List<Village> villages = PluginManager.getSingleton().executeVillageParser(text);
         if (villages.size() > 0) {
             return (Point) villages.get(0).getPosition().clone();
         } else {
             try {
-                text = text.substring(text.indexOf("(") + 1, text.indexOf(")"));
+                text = text.substring(text.lastIndexOf("(") + 1, text.lastIndexOf(")"));
                 String[] splition = text.split("\\|");
                 return new Point(Integer.parseInt(splition[0].trim()), Integer.parseInt(splition[1].trim()));
             } catch (Exception e) {
@@ -53,10 +62,9 @@ public class CoordinateFormatter extends DefaultFormatter {
         if (value instanceof Point) {
             Point point = (Point) value;
             Village v = null;
-            if (point.x > 0 && point.y > 0) {
+            if (point.x > 0 && point.y > 0 && point.x < ServerSettings.getSingleton().getMapDimension().width && point.y < ServerSettings.getSingleton().getMapDimension().height) {
                 v = DataHolder.getSingleton().getVillages()[point.x][point.y];
             }
-
             if (v == null) {
                 return "Kein Dorf (" + point.x + "|" + point.y + ")";
             } else {
@@ -84,5 +92,23 @@ public class CoordinateFormatter extends DefaultFormatter {
             point = null;
         }
         System.out.println(point);
+    }
+}
+
+class DoNothingFilter extends DocumentFilter {
+
+    public void insertString(DocumentFilter.FilterBypass fb, int offset, String text,
+            AttributeSet attr) throws BadLocationException {
+        fb.insertString(offset, text, attr);
+    }
+
+    public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String text,
+            AttributeSet attrs) throws BadLocationException {
+        fb.replace(offset, length, text, attrs);
+    }
+
+    @Override
+    public void remove(DocumentFilter.FilterBypass fb, int offset, int length) throws BadLocationException {
+        super.remove(fb, offset, length);
     }
 }

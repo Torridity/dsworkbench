@@ -12,8 +12,10 @@ import de.tor.tribes.util.CoordinateFormatter;
 import java.awt.Point;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.ParseException;
 import javax.swing.*;
-import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.event.*;
+import javax.swing.text.*;
 
 /**
  *
@@ -66,7 +68,7 @@ public class CoordinateSpinner extends JSpinner {
             final JFormattedTextField ftf = getTextField();
             ftf.setEditable(true);
             ftf.setFormatterFactory(factory);
-            ftf.setHorizontalAlignment(JTextField.RIGHT);
+            ftf.setHorizontalAlignment(JTextField.TRAILING);
 
             /*
              * TBD - initializing the column width of the text field is imprecise and doing it here is tricky because the developer may
@@ -74,7 +76,6 @@ public class CoordinateSpinner extends JSpinner {
              */
             String min = Integer.toString(Integer.MIN_VALUE);
             ftf.setColumns(4 + 2 * min.length());
-
             ftf.addPropertyChangeListener("value", new PropertyChangeListener() {
 
                 public void propertyChange(PropertyChangeEvent evt) {
@@ -92,6 +93,7 @@ public class CoordinateSpinner extends JSpinner {
                     ftf.select(number, number + digit.length());
                 }
             });
+
         }
     }
 

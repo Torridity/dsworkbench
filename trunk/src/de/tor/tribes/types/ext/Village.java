@@ -236,7 +236,7 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
         }
         return contAsString;
     }
-
+   
     public void setName(String name) {
         this.name = name;
         stringRepresentation = null;

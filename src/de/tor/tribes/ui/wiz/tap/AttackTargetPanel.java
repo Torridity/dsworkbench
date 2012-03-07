@@ -18,6 +18,7 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.components.VillageSelectionPanel;
 import de.tor.tribes.ui.models.TAPTargetTableModel;
+import de.tor.tribes.ui.panels.TAPAttackInfoPanel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.FakeCellRenderer;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
@@ -176,6 +177,7 @@ public class AttackTargetPanel extends WizardPage {
             villageSelectionPanel.setAmount(Integer.parseInt(value));
         }
         villageSelectionPanel.setup();
+        updateOverview();
     }
 
     /**
@@ -470,6 +472,7 @@ public class AttackTargetPanel extends WizardPage {
         } else {
             jStatusLabel.setText("Keine Ziele gewählt");
         }
+        updateOverview();
     }//GEN-LAST:event_fireChangeAttackCountEvent
 
     private void fireChangeFakeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeFakeEvent
@@ -477,6 +480,7 @@ public class AttackTargetPanel extends WizardPage {
         for (TAPAttackTargetElement elem : getSelection()) {
             elem.setFake(toFake);
         }
+        updateOverview();
         repaint();
     }//GEN-LAST:event_fireChangeFakeEvent
 
@@ -571,15 +575,28 @@ public class AttackTargetPanel extends WizardPage {
     protected void updateOverview() {
         overviewPanel.reset();
         for (TAPAttackSourceElement element : AttackSourceFilterPanel.getSingleton().getFilteredElements()) {
-            if (!element.isIgnored()) {
-                overviewPanel.addVillage(new Point(element.getVillage().getX(), element.getVillage().getY()), Color.yellow);
-            }
+            overviewPanel.addVillage(new Point(element.getVillage().getX(), element.getVillage().getY()), (!element.isIgnored()) ? Color.yellow : Color.lightGray);
         }
 
+        int target = 0;
+        int fake = 0;
+        int ignored = 0;
         for (int i = 0; i < getModel().getRowCount(); i++) {
-            Village v = getModel().getRow(i).getVillage();
-            overviewPanel.addVillage(new Point(v.getX(), v.getY()), Color.red);
+            TAPAttackTargetElement te = getModel().getRow(i);
+
+            if (te.isIgnored()) {
+                ignored++;
+            } else {
+                if (te.isFake()) {
+                    fake++;
+                }
+            }
+            Village v = te.getVillage();
+            overviewPanel.addVillage(new Point(v.getX(), v.getY()), (!te.isIgnored()) ? Color.red : Color.lightGray);
+            target += te.getAttacks();
         }
+
+        TAPAttackInfoPanel.getSingleton().updateTarget(target, fake, ignored);
         overviewPanel.repaint();
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -610,9 +627,9 @@ public class AttackTargetPanel extends WizardPage {
             setProblem("Keine Ziele gewählt");
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
-        
+
         AttackTargetFilterPanel.getSingleton().setup();
-        
+
         AttackCalculationPanel.getSingleton().updateStatus();
         return WizardPanelNavResult.PROCEED;
     }

@@ -19,6 +19,7 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.components.VillageSelectionPanel;
 import de.tor.tribes.ui.models.TAPSourceTableModel;
+import de.tor.tribes.ui.panels.TAPAttackInfoPanel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.FakeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
@@ -177,6 +178,7 @@ public class AttackSourcePanel extends WizardPage {
         }
         villageSelectionPanel.setFake(Boolean.parseBoolean(profile.getProperty("tap.source.fake")));
         villageSelectionPanel.setup();
+        updateOverview(true);
     }
 
     /**
@@ -199,6 +201,9 @@ public class AttackSourcePanel extends WizardPage {
         jToggleButton1 = new javax.swing.JToggleButton();
         jStatusLabel = new javax.swing.JLabel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jSetFake = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jLabel1 = new javax.swing.JLabel();
         jideSplitPane1 = new com.jidesoft.swing.JideSplitPane();
@@ -302,6 +307,37 @@ public class AttackSourcePanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jVillageTablePanel.add(capabilityInfoPanel1, gridBagConstraints);
 
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
+        jSetFake.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/fake.png"))); // NOI18N
+        jSetFake.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireChangeFakeForSelectionEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        jPanel3.add(jSetFake, gridBagConstraints);
+
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/no_fake.png"))); // NOI18N
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireChangeFakeForSelectionEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        jPanel3.add(jButton2, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jVillageTablePanel.add(jPanel3, gridBagConstraints);
+
         setLayout(new java.awt.GridBagLayout());
 
         jXCollapsiblePane1.setCollapsed(true);
@@ -363,6 +399,20 @@ public class AttackSourcePanel extends WizardPage {
         }
     }//GEN-LAST:event_fireViewStateChangeEvent
 
+    private void fireChangeFakeForSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeFakeForSelectionEvent
+
+        boolean fake = evt.getSource() == jSetFake;
+        int[] selection = jVillageTable.getSelectedRows();
+        TAPSourceTableModel model = getModel();
+        if (selection.length > 0) {
+            for (int i : selection) {
+                model.getRow(jVillageTable.convertRowIndexToModel(i)).setFake(fake);
+            }
+        }
+        updateOverview(false);
+        repaint();
+    }//GEN-LAST:event_fireChangeFakeForSelectionEvent
+
     private TAPSourceTableModel getModel() {
         return (TAPSourceTableModel) jVillageTable.getModel();
     }
@@ -416,9 +466,23 @@ public class AttackSourcePanel extends WizardPage {
         if (pReset) {
             overviewPanel.reset();
         }
-        for (Village v : getVillages()) {
-            overviewPanel.addVillage(new Point(v.getX(), v.getY()), Color.yellow);
+        int offs = 0;
+        int fakes = 0;
+        int ignored = 0;
+
+        for (TAPAttackSourceElement element : getAllElements()) {
+            overviewPanel.addVillage(new Point(element.getVillage().getX(), element.getVillage().getY()), (!element.isIgnored()) ? Color.yellow : Color.lightGray);
+            offs++;
+            if (element.isIgnored()) {
+                ignored++;
+            } else {
+                if (element.isFake()) {
+                    fakes++;
+                }
+            }
         }
+
+        TAPAttackInfoPanel.getSingleton().updateSource(offs, fakes, ignored);
         overviewPanel.repaint();
     }
 
@@ -441,12 +505,15 @@ public class AttackSourcePanel extends WizardPage {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JPanel jDataPanel;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JButton jSetFake;
     private javax.swing.JLabel jStatusLabel;
     private javax.swing.JScrollPane jTableScrollPane;
     private javax.swing.JToggleButton jToggleButton1;
@@ -468,6 +535,7 @@ public class AttackSourcePanel extends WizardPage {
 
     @Override
     public WizardPanelNavResult allowBack(String string, Map map, Wizard wizard) {
+        TAPAttackInfoPanel.getSingleton().setVisible(false);
         return WizardPanelNavResult.PROCEED;
 
     }

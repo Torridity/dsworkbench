@@ -99,7 +99,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
         List<String> searchInGroups = new LinkedList<String>();
         if (pReportSet == null) {
             for (String group : ReportManager.getSingleton().getGroups()) {
-                if (group.equals(ReportManager.FARM_SET)) {
+                if (!group.equals(ReportManager.FARM_SET)) {
                     searchInGroups.add(group);
                 }
             }

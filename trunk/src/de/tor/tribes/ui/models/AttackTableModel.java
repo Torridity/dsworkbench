@@ -25,7 +25,7 @@ import org.apache.commons.lang.time.DurationFormatUtils;
 public class AttackTableModel extends AbstractTableModel {
 
     private String sPlan = null;
-    private Class[] types = new Class[]{Tribe.class, Ally.class, Village.class, Tribe.class, Ally.class, Village.class, UnitHolder.class, Integer.class, Date.class, Date.class, String.class, Boolean.class, Boolean.class};
+    private Class[] types = new Class[]{Tribe.class, Ally.class, Village.class, Tribe.class, Ally.class, Village.class, UnitHolder.class, Integer.class, Date.class, Date.class, Long.class, Boolean.class, Boolean.class};
     private String[] colNames = new String[]{"Angreifer", "Stamm (Angreifer)", "Herkunft", "Verteidiger", "Stamm (Verteidiger)", "Ziel", "Einheit", "Typ", "Abschickzeit", "Ankunftzeit", "Verbleibend", "Einzeichnen", "Übertragen"};
     private boolean[] editableColumns = new boolean[]{false, false, false, false, false, false, true, true, true, true, false, true, true};
 
@@ -127,8 +127,7 @@ public class AttackTableModel extends AbstractTableModel {
                 case 10: {
                     long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
                     long t = sendTime - System.currentTimeMillis();
-                    t = (t <= 0) ? 0 : t;
-                    return DurationFormatUtils.formatDuration(t, "HHH:mm:ss.SSS", true);
+                    return (t <= 0) ? 0 : t;
                 }
                 case 11: {
                     return a.isShowOnMap();
@@ -187,7 +186,8 @@ public class AttackTableModel extends AbstractTableModel {
                 case 11: {
                     a.setShowOnMap((Boolean) pValue);
                     break;
-                }case 12: {
+                }
+                case 12: {
                     a.setTransferredToBrowser((Boolean) pValue);
                     break;
                 }

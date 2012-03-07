@@ -10,6 +10,7 @@
  */
 package de.tor.tribes.ui.wiz.tap;
 
+import de.tor.tribes.ui.panels.TAPAttackInfoPanel;
 import java.awt.event.ItemEvent;
 import java.util.Map;
 import javax.swing.ImageIcon;
@@ -64,6 +65,7 @@ public class TAPWelcomePanel extends WizardPage {
         jAttackButton.setIcon(new ImageIcon("./graphics/big/axe.png"));
         jDefenseButton.setIcon(new ImageIcon("./graphics/big/sword.png"));
         jRefillButton.setIcon(new ImageIcon("./graphics/big/def_refill.png"));
+        jRetimeButton.setIcon(new ImageIcon("./graphics/big/retime.png"));
         jTextPane1.setText(ATTACK_HELP);
     }
 
@@ -201,6 +203,9 @@ public class TAPWelcomePanel extends WizardPage {
         } else if (jRetimeButton.isSelected()) {
             type = RETIME_TYPE;
         }
+        
+        TAPAttackInfoPanel.getSingleton().setVisible(type == ATTACK_TYPE);
+       
         map.put(TYPE, new Integer(type));
         return WizardPanelNavResult.PROCEED;
     }

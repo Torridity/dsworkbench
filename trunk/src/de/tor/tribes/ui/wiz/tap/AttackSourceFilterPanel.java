@@ -21,6 +21,7 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.TroopFilterDialog;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.models.TAPSourceFilterTableModel;
+import de.tor.tribes.ui.panels.TAPAttackInfoPanel;
 import de.tor.tribes.ui.wiz.dep.DefenseCalculationSettingsPanel;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
 import de.tor.tribes.util.Constants;
@@ -146,6 +147,7 @@ public class AttackSourceFilterPanel extends WizardPage {
         if (jMinFarmSpaceBonus.getText().equals("0")) {
             jMinFarmSpaceBonus.setText("");
         }
+        updateVillageOverview();
     }
 
     /**
@@ -176,7 +178,6 @@ public class AttackSourceFilterPanel extends WizardPage {
         jVillagePanel = new javax.swing.JPanel();
         jTableScrollPane = new javax.swing.JScrollPane();
         jVillageTable = new org.jdesktop.swingx.JXTable();
-        jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jToggleButton1 = new javax.swing.JToggleButton();
         jPanel4 = new javax.swing.JPanel();
@@ -370,16 +371,6 @@ public class AttackSourceFilterPanel extends WizardPage {
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jVillagePanel.add(jTableScrollPane, gridBagConstraints);
-
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel2.setText("0 Dörfer werden ignoriert");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jVillagePanel.add(jLabel2, gridBagConstraints);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel2.setMinimumSize(new java.awt.Dimension(100, 100));
@@ -605,9 +596,23 @@ public class AttackSourceFilterPanel extends WizardPage {
     private void updateVillageOverview() {
         overviewPanel.reset();
         List<TAPAttackSourceElement> elements = getAllElements();
+
+        int offs = 0;
+        int fakes = 0;
+        int ignored = 0;
+
         for (TAPAttackSourceElement element : elements) {
-            overviewPanel.addVillage(new Point(element.getVillage().getX(), element.getVillage().getY()), (!element.isIgnored()) ? Color.yellow : Color.red);
+            overviewPanel.addVillage(new Point(element.getVillage().getX(), element.getVillage().getY()), (!element.isIgnored()) ? Color.yellow : Color.lightGray);
+            offs++;
+            if (element.isIgnored()) {
+                ignored++;
+            } else {
+                if (element.isFake()) {
+                    fakes++;
+                }
+            }
         }
+        TAPAttackInfoPanel.getSingleton().updateSource(offs, fakes, ignored);
         overviewPanel.repaint();
     }
 
@@ -619,13 +624,24 @@ public class AttackSourceFilterPanel extends WizardPage {
         TAPAttackSourceElement[] elements = AttackSourcePanel.getSingleton().getAllElements();
         getModel().clear();
         overviewPanel.reset();
+        int offs = 0;
+        int fakes = 0;
+        int ignored = 0;
+
         for (TAPAttackSourceElement element : elements) {
             getModel().addRow(element, false);
-            if (!element.isIgnored()) {
-                overviewPanel.addVillage(new Point(element.getVillage().getX(), element.getVillage().getY()), Color.yellow);
+            overviewPanel.addVillage(new Point(element.getVillage().getX(), element.getVillage().getY()), (!element.isIgnored()) ? Color.yellow : Color.lightGray);
+            offs++;
+            if (element.isIgnored()) {
+                ignored++;
+            } else {
+                if (element.isFake()) {
+                    fakes++;
+                }
             }
         }
         getModel().fireTableDataChanged();
+        TAPAttackInfoPanel.getSingleton().updateSource(offs, fakes, ignored);
         overviewPanel.repaint();
     }
 
@@ -649,8 +665,6 @@ public class AttackSourceFilterPanel extends WizardPage {
         } else {
             setProblem(null);
         }
-
-        jLabel2.setText(ignoreCount + " von " + getModel().getRowCount() + " Dörfern werden ignoriert");
     }
 
     public TAPAttackSourceElement[] getFilteredElements() {
@@ -691,7 +705,6 @@ public class AttackSourceFilterPanel extends WizardPage {
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;

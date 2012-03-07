@@ -5,11 +5,14 @@
 package de.tor.tribes.ui.wiz.tap;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.ui.panels.TAPAttackInfoPanel;
+import de.tor.tribes.ui.wiz.AttackWizardDisplayerImpl;
 import de.tor.tribes.ui.wiz.dep.DefenseFilterPanel;
 import de.tor.tribes.ui.wiz.dep.DefenseSourcePanel;
 import de.tor.tribes.ui.wiz.ref.SupportRefillCalculationPanel;
 import de.tor.tribes.ui.wiz.ref.SupportRefillSourcePanel;
 import de.tor.tribes.ui.wiz.ref.SupportRefillTargetPanel;
+import de.tor.tribes.ui.wiz.ret.RetimerDataPanel;
 import de.tor.tribes.ui.wiz.ret.RetimerSourcePanel;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ProfileManager;
@@ -63,6 +66,7 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
         parent.setTitle("Taktikplaner");
         Wizard wizard = new TacticsPlanerBranchController().createWizard();
         parent.getContentPane().setLayout(new BorderLayout());
+        System.setProperty("WizardDisplayer.default", "de.tor.tribes.ui.wiz.AttackWizardDisplayerImpl");
         WizardDisplayer.installInContainer(parent, BorderLayout.CENTER, wizard, null, null, new WizardResultReceiver() {
 
             @Override
@@ -77,6 +81,9 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
                 parent = null;
             }
         });
+        //restore property
+        System.setProperty("WizardDisplayer.default", "org.netbeans.api.wizard.displayer.WizardDisplayerImpl");
+        TAPAttackInfoPanel.getSingleton().setVisible(false);
         parent.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         parent.addWindowListener(new WindowAdapter() {
 
@@ -120,6 +127,7 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
         SupportRefillTargetPanel.getSingleton().storeProperties();
         SupportRefillSourcePanel.getSingleton().storeProperties();
         SupportRefillCalculationPanel.getSingleton().storeProperties();
+        RetimerDataPanel.getSingleton().storeProperties();
         RetimerSourcePanel.getSingleton().storeProperties();
     }
 
@@ -136,6 +144,7 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
         SupportRefillTargetPanel.getSingleton().restoreProperties();
         SupportRefillSourcePanel.getSingleton().restoreProperties();
         SupportRefillCalculationPanel.getSingleton().restoreProperties();
+        RetimerDataPanel.getSingleton().restoreProperties();
         RetimerSourcePanel.getSingleton().restoreProperties();
     }
 
@@ -148,9 +157,9 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
 
 
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de81");
+        GlobalOptions.setSelectedServer("de43");
         ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de81")[0]);
+        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
         DataHolder.getSingleton().loadData(false);
         GlobalOptions.loadUserData();
 

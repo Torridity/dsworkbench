@@ -12,39 +12,40 @@ package de.tor.tribes.ui.wiz.ret;
 
 import com.jidesoft.swing.JideBoxLayout;
 import com.jidesoft.swing.JideSplitPane;
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.components.CoordinateSpinner;
+import de.tor.tribes.ui.components.VillageOverviewMapPanel;
+import de.tor.tribes.ui.components.VillageSelectionPanel;
+import de.tor.tribes.ui.models.RETSourceTableModel;
 import de.tor.tribes.ui.models.TAPSourceTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.FakeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
-import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
 import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.PluginManager;
 import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
+import java.awt.Color;
+import java.awt.HeadlessException;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.SimpleDateFormat;
+import java.io.IOException;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -58,6 +59,8 @@ public class RetimerSourcePanel extends WizardPage {
 
     private static final String GENERAL_INFO = "";
     private static RetimerSourcePanel singleton = null;
+    private VillageSelectionPanel villageSelectionPanel = null;
+    private VillageOverviewMapPanel overviewPanel = null;
 
     public static synchronized RetimerSourcePanel getSingleton() {
         if (singleton == null) {
@@ -71,16 +74,27 @@ public class RetimerSourcePanel extends WizardPage {
      */
     RetimerSourcePanel() {
         initComponents();
-        jVillageTable.setModel(new TAPSourceTableModel());
+        jVillageTable.setModel(new RETSourceTableModel());
         jVillageTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
         jVillageTable.setDefaultRenderer(Boolean.class, new FakeCellRenderer());
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jXCollapsiblePane1.add(jInfoScrollPane, BorderLayout.CENTER);
+        villageSelectionPanel = new VillageSelectionPanel(new VillageSelectionPanel.VillageSelectionPanelListener() {
+
+            @Override
+            public void fireVillageSelectionEvent(Village[] pSelection) {
+                addVillages(pSelection);
+            }
+        });
 
         jVillageTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jVillageTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
 
-
+        villageSelectionPanel.enableSelectionElement(VillageSelectionPanel.SELECTION_ELEMENT.ALLY, false);
+        villageSelectionPanel.enableSelectionElement(VillageSelectionPanel.SELECTION_ELEMENT.TRIBE, false);
+        villageSelectionPanel.setUnitSelectionEnabled(false);
+        villageSelectionPanel.setFakeSelectionEnabled(false);
+        jPanel1.add(villageSelectionPanel, BorderLayout.CENTER);
         jideSplitPane1.setOrientation(JideSplitPane.VERTICAL_SPLIT);
         jideSplitPane1.setProportionalLayout(true);
         jideSplitPane1.setDividerSize(5);
@@ -107,6 +121,7 @@ public class RetimerSourcePanel extends WizardPage {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand().equals("Paste")) {
+                    pasteFromClipboard();
                 } else if (e.getActionCommand().equals("Delete")) {
                     deleteSelection();
                 }
@@ -127,44 +142,30 @@ public class RetimerSourcePanel extends WizardPage {
             }
         });
 
-        ChangeListener cl = new ChangeListener() {
-
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                recalculateArriveTime();
-            }
-        };
-
-        jSourceCoord.addChangeListener(cl);
-        jTargetCoord.addChangeListener(cl);
-        jArriveTime.setActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                recalculateArriveTime();
-            }
-        });
 
         jInfoTextPane.setText(GENERAL_INFO);
-        jUnitBox.setRenderer(new UnitListCellRenderer());
-        jWarningLabel.setVisible(false);
+        overviewPanel = new VillageOverviewMapPanel();
+        jPanel2.add(overviewPanel, BorderLayout.CENTER);
     }
 
     public static String getDescription() {
-        return "Angriffe";
+        return "Herkunft";
     }
 
     public static String getStep() {
-        return "id-ret-attacks";
+        return "id-ret-source";
     }
 
     public void storeProperties() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
+        profile.addProperty("ret.source.expert", villageSelectionPanel.isExpertSelection());
     }
 
     public void restoreProperties() {
         getModel().clear();
-        jUnitBox.setModel(new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{})));
+        UserProfile profile = GlobalOptions.getSelectedProfile();
+        villageSelectionPanel.setExpertSelection(Boolean.parseBoolean(profile.getProperty("ret.source.expert")));
+        villageSelectionPanel.setup();
     }
 
     /**
@@ -180,25 +181,11 @@ public class RetimerSourcePanel extends WizardPage {
         jInfoTextPane = new javax.swing.JTextPane();
         jDataPanel = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jUnitBox = new javax.swing.JComboBox();
-        jArriveTime = new de.tor.tribes.ui.components.DateTimeField();
-        jSendTime = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
-        jSourceCoord = new de.tor.tribes.ui.components.CoordinateSpinner();
-        jTargetCoord = new de.tor.tribes.ui.components.CoordinateSpinner();
-        jWarningLabel = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
         jVillageTablePanel = new javax.swing.JPanel();
         jTableScrollPane = new javax.swing.JScrollPane();
         jVillageTable = new org.jdesktop.swingx.JXTable();
+        jPanel2 = new javax.swing.JPanel();
+        jToggleButton1 = new javax.swing.JToggleButton();
         jStatusLabel = new javax.swing.JLabel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
@@ -217,154 +204,7 @@ public class RetimerSourcePanel extends WizardPage {
         jDataPanel.setPreferredSize(new java.awt.Dimension(0, 130));
         jDataPanel.setLayout(new java.awt.GridBagLayout());
 
-        jPanel1.setLayout(new java.awt.GridBagLayout());
-
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Manuelle Eingabe"));
-        jPanel3.setLayout(new java.awt.GridBagLayout());
-
-        jLabel2.setText("Herkunft");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(jLabel2, gridBagConstraints);
-
-        jLabel3.setText("Ziel");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(jLabel3, gridBagConstraints);
-
-        jLabel4.setText("Ankunft");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(jLabel4, gridBagConstraints);
-
-        jLabel5.setText("Vermutete Einheit");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(jLabel5, gridBagConstraints);
-
-        jLabel6.setText("Errechnete Abschickzeit");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(jLabel6, gridBagConstraints);
-
-        jUnitBox.setMinimumSize(new java.awt.Dimension(51, 22));
-        jUnitBox.setPreferredSize(new java.awt.Dimension(56, 22));
-        jUnitBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fireUnitChangedEvent(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(jUnitBox, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(jArriveTime, gridBagConstraints);
-
-        jSendTime.setText("-unbekannt-");
-        jSendTime.setToolTipText("");
-        jSendTime.setMaximumSize(new java.awt.Dimension(34, 22));
-        jSendTime.setMinimumSize(new java.awt.Dimension(34, 22));
-        jSendTime.setPreferredSize(new java.awt.Dimension(34, 22));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(jSendTime, gridBagConstraints);
-
-        jButton3.setText("Angriff hinzufügen");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(15, 5, 5, 5);
-        jPanel3.add(jButton3, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(jSourceCoord, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(jTargetCoord, gridBagConstraints);
-
-        jWarningLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/warning.png"))); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(jWarningLabel, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        jPanel1.add(jPanel3, gridBagConstraints);
-
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Sonstige Quellen"));
-        jPanel2.setMinimumSize(new java.awt.Dimension(150, 87));
-        jPanel2.setPreferredSize(new java.awt.Dimension(150, 87));
-        jPanel2.setLayout(new java.awt.GridBagLayout());
-
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_overview.png"))); // NOI18N
-        jButton1.setMaximumSize(new java.awt.Dimension(60, 60));
-        jButton1.setMinimumSize(new java.awt.Dimension(60, 60));
-        jButton1.setPreferredSize(new java.awt.Dimension(60, 60));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        jPanel2.add(jButton1, gridBagConstraints);
-
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/sos_clipboard.png"))); // NOI18N
-        jButton2.setMaximumSize(new java.awt.Dimension(60, 60));
-        jButton2.setMinimumSize(new java.awt.Dimension(60, 60));
-        jButton2.setPreferredSize(new java.awt.Dimension(60, 60));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        jPanel2.add(jButton2, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weighty = 1.0;
-        jPanel1.add(jPanel2, gridBagConstraints);
-
+        jPanel1.setLayout(new java.awt.BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -404,6 +244,31 @@ public class RetimerSourcePanel extends WizardPage {
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jVillageTablePanel.add(jTableScrollPane, gridBagConstraints);
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel2.setMinimumSize(new java.awt.Dimension(100, 100));
+        jPanel2.setPreferredSize(new java.awt.Dimension(100, 100));
+        jPanel2.setLayout(new java.awt.BorderLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(12, 5, 5, 5);
+        jVillageTablePanel.add(jPanel2, gridBagConstraints);
+
+        jToggleButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/search.png"))); // NOI18N
+        jToggleButton1.setToolTipText("Informationskarte vergrößern");
+        jToggleButton1.setMaximumSize(new java.awt.Dimension(100, 23));
+        jToggleButton1.setMinimumSize(new java.awt.Dimension(100, 23));
+        jToggleButton1.setPreferredSize(new java.awt.Dimension(100, 23));
+        jToggleButton1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireViewStateChangeEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jVillageTablePanel.add(jToggleButton1, gridBagConstraints);
 
         jStatusLabel.setMaximumSize(new java.awt.Dimension(0, 16));
         jStatusLabel.setMinimumSize(new java.awt.Dimension(0, 16));
@@ -470,56 +335,54 @@ public class RetimerSourcePanel extends WizardPage {
         }
     }//GEN-LAST:event_fireHideInfoEvent
 
-    private void fireUnitChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireUnitChangedEvent
-        recalculateArriveTime();
-    }//GEN-LAST:event_fireUnitChangedEvent
-
-    private TAPSourceTableModel getModel() {
-        return (TAPSourceTableModel) jVillageTable.getModel();
-    }
-
-    private void recalculateArriveTime() {
-        Village source = jSourceCoord.getVillage();
-        String result = "";
-        if (source == null) {
-            result = "-unbekannt-";
-            jWarningLabel.setVisible(true);
-            jWarningLabel.setText("Herkunftsdorf ungültig");
+    private void fireViewStateChangeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireViewStateChangeEvent
+        if (jToggleButton1.isSelected()) {
+            overviewPanel.setOptimalSize();
+            jTableScrollPane.setViewportView(overviewPanel);
+            jPanel2.remove(overviewPanel);
         } else {
-            Village target = jTargetCoord.getVillage();
-            if (target == null) {
-                result = "-unbekannt-";
-                jWarningLabel.setVisible(true);
-                jWarningLabel.setText("Zieldorf ungültig");
-            } else {
-                Date arriveTime = jArriveTime.getSelectedDate();
-                UnitHolder unit = (UnitHolder) jUnitBox.getSelectedItem();
+            jTableScrollPane.setViewportView(jVillageTable);
+            jPanel2.add(overviewPanel, BorderLayout.CENTER);
+            SwingUtilities.invokeLater(new Runnable() {
 
-                long runtime = DSCalculator.calculateMoveTimeInMillis(source, target, unit.getSpeed());
-                Date send = new Date(arriveTime.getTime() - runtime);
-                SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
-                result = f.format(send);
-                if (arriveTime.getTime() < System.currentTimeMillis()) {
-                    jWarningLabel.setVisible(true);
-                    jWarningLabel.setText("Ankunft in der Vergangenheit. Bitte Zeit prüfen.");
-                } else if (send.getTime() > System.currentTimeMillis()) {
-                    jWarningLabel.setVisible(true);
-                    jWarningLabel.setText("Abschickzeit in der Zukunft. Langsamere Einheit wählen?");
-                } else {
-                    jWarningLabel.setVisible(false);
+                public void run() {
+                    jPanel2.updateUI();
                 }
-            }
+            });
         }
-        jSendTime.setText(result);
+    }//GEN-LAST:event_fireViewStateChangeEvent
+
+    private RETSourceTableModel getModel() {
+        return (RETSourceTableModel) jVillageTable.getModel();
     }
 
-    /*
-     * private void pasteFromClipboard() { String data = ""; try { data = (String)
-     * Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor); List<Village> villages =
-     * PluginManager.getSingleton().executeVillageParser(data); if (!villages.isEmpty()) { addVillages(villages.toArray(new
-     * Village[villages.size()])); } } catch (HeadlessException he) { } catch (UnsupportedFlavorException ufe) { } catch (IOException ioe) {
-     * } }
-     */
+    public void addVillages(Village[] pVillages) {
+        RETSourceTableModel model = getModel();
+        for (Village v : pVillages) {
+            model.addRow(v, false);
+        }
+        if (model.getRowCount() > 0) {
+            setProblem(null);
+            model.fireTableDataChanged();
+        }
+        jStatusLabel.setText(pVillages.length + " Dorf/Dörfer eingefügt");
+        updateOverview(false);
+    }
+
+    private void pasteFromClipboard() {
+        String data = "";
+        try {
+            data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
+            List<Village> villages = PluginManager.getSingleton().executeVillageParser(data);
+            if (!villages.isEmpty()) {
+                addVillages(villages.toArray(new Village[villages.size()]));
+            }
+        } catch (HeadlessException he) {
+        } catch (UnsupportedFlavorException ufe) {
+        } catch (IOException ioe) {
+        }
+    }
+
     private void deleteSelection() {
         int[] selection = jVillageTable.getSelectedRows();
         if (selection.length > 0) {
@@ -532,66 +395,54 @@ public class RetimerSourcePanel extends WizardPage {
                 getModel().removeRow(rows.get(i));
             }
             jStatusLabel.setText(selection.length + " Dorf/Dörfer entfernt");
+            updateOverview(true);
             if (getModel().getRowCount() == 0) {
                 setProblem("Keine Dörfer gewählt");
             }
         }
     }
 
-    public Attack[] getAttacks() {
-        /*
-         * List<Village> result = new LinkedList<Village>(); TAPSourceTableModel model = getModel(); for (int i = 0; i <
-         * model.getRowCount(); i++) { result.add(model.getRow(i).getVillage()); } return result.toArray(new Village[result.size()]);
-         */
-        return null;
+    private void updateOverview(boolean pReset) {
+        if (pReset) {
+            overviewPanel.reset();
+        }
+        for (Village v : getVillages()) {
+            overviewPanel.addVillage(new Point(v.getX(), v.getY()), Color.yellow);
+        }
+        overviewPanel.repaint();
     }
 
-    public TAPAttackSourceElement[] getAllElements() {
-        List<TAPAttackSourceElement> result = new LinkedList<TAPAttackSourceElement>();
-        TAPSourceTableModel model = getModel();
+    public Village[] getVillages() {
+        List<Village> result = new LinkedList<Village>();
+        RETSourceTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             result.add(model.getRow(i));
         }
-        return result.toArray(new TAPAttackSourceElement[result.size()]);
+        return result.toArray(new Village[result.size()]);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
-    private de.tor.tribes.ui.components.DateTimeField jArriveTime;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JPanel jDataPanel;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JLabel jSendTime;
-    private de.tor.tribes.ui.components.CoordinateSpinner jSourceCoord;
     private javax.swing.JLabel jStatusLabel;
     private javax.swing.JScrollPane jTableScrollPane;
-    private de.tor.tribes.ui.components.CoordinateSpinner jTargetCoord;
-    private javax.swing.JComboBox jUnitBox;
+    private javax.swing.JToggleButton jToggleButton1;
     private org.jdesktop.swingx.JXTable jVillageTable;
     private javax.swing.JPanel jVillageTablePanel;
-    private javax.swing.JLabel jWarningLabel;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
     private com.jidesoft.swing.JideSplitPane jideSplitPane1;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
-        if (getAllElements().length == 0) {
-            setProblem("Keine Angriffe eingelesen");
+        if (getVillages().length == 0) {
+            setProblem("Keine Dörfer gewählt");
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
-
         return WizardPanelNavResult.PROCEED;
     }
 

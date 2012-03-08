@@ -40,7 +40,6 @@ import org.netbeans.spi.wizard.WizardPage;
 import org.netbeans.spi.wizard.WizardPanelNavResult;
 
 /**
- * @TODO move selection settings to village panel
  *
  * @author Torridity
  */

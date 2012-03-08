@@ -251,6 +251,34 @@ public class TroopHelper {
         return slowest;
     }
 
+    public static List<UnitHolder> getContainedUnits(Hashtable<UnitHolder, Integer> pTroops) {
+        List<UnitHolder> units = new LinkedList<UnitHolder>();
+
+        Enumeration<UnitHolder> keys = pTroops.keys();
+        while (keys.hasMoreElements()) {
+            UnitHolder unit = keys.nextElement();
+            Integer amount = pTroops.get(unit);
+            if (amount != null && amount > 0) {
+                units.add(unit);
+            }
+        }
+        return units;
+    }
+
+    public static double getAttackForce(Hashtable<UnitHolder, Integer> pTroops) {
+        double result = 0;
+
+        Enumeration<UnitHolder> keys = pTroops.keys();
+        while (keys.hasMoreElements()) {
+            UnitHolder unit = keys.nextElement();
+            Integer amount = pTroops.get(unit);
+            if (amount != null && amount > 0) {
+                result += amount * unit.getAttack();
+            }
+        }
+        return result;
+    }
+
     public static int getPopulation(Hashtable<UnitHolder, Integer> pTroops) {
         int pop = 0;
         if (pTroops != null) {

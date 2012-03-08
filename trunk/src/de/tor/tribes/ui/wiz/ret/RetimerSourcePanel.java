@@ -17,11 +17,13 @@ import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.components.VillageSelectionPanel;
+import de.tor.tribes.ui.models.RETSourceFilterTableModel;
 import de.tor.tribes.ui.models.RETSourceTableModel;
 import de.tor.tribes.ui.models.TAPSourceTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.FakeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
+import de.tor.tribes.ui.wiz.ret.types.RETSourceElement;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
@@ -359,7 +361,7 @@ public class RetimerSourcePanel extends WizardPage {
     public void addVillages(Village[] pVillages) {
         RETSourceTableModel model = getModel();
         for (Village v : pVillages) {
-            model.addRow(v, false);
+            model.addRow(new RETSourceElement(v), false);
         }
         if (model.getRowCount() > 0) {
             setProblem(null);
@@ -406,19 +408,19 @@ public class RetimerSourcePanel extends WizardPage {
         if (pReset) {
             overviewPanel.reset();
         }
-        for (Village v : getVillages()) {
-            overviewPanel.addVillage(new Point(v.getX(), v.getY()), Color.yellow);
+        for (RETSourceElement element : getAllElements()) {
+            overviewPanel.addVillage(new Point(element.getVillage().getX(), element.getVillage().getY()), ((!element.isIgnored()) ? Color.yellow : Color.lightGray));
         }
         overviewPanel.repaint();
     }
 
-    public Village[] getVillages() {
-        List<Village> result = new LinkedList<Village>();
+    public RETSourceElement[] getAllElements() {
+        List<RETSourceElement> result = new LinkedList<RETSourceElement>();
         RETSourceTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             result.add(model.getRow(i));
         }
-        return result.toArray(new Village[result.size()]);
+        return result.toArray(new RETSourceElement[result.size()]);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
@@ -439,10 +441,11 @@ public class RetimerSourcePanel extends WizardPage {
 
     @Override
     public WizardPanelNavResult allowNext(String string, Map map, Wizard wizard) {
-        if (getVillages().length == 0) {
+        if (getAllElements().length == 0) {
             setProblem("Keine Dörfer gewählt");
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
+        RetimerSourceFilterPanel.getSingleton().setup();
         return WizardPanelNavResult.PROCEED;
     }
 

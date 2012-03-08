@@ -23,8 +23,6 @@ import org.netbeans.spi.wizard.WizardController;
 import org.netbeans.spi.wizard.WizardPanelProvider;
 
 /**
- * @TODO (ALL Wizards) Check if link between steps is possible!
- *
  * @author Torridity
  */
 public class ResourceDistributorWizard extends WizardPanelProvider {

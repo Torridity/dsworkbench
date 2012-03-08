@@ -35,7 +35,7 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO Add new shortcuts (U, O, N)
+ *
  * @author Torridity
  */
 public class GroupSelectionList extends IconizedList implements GenericManagerListener {
@@ -59,6 +59,14 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
                     fireIncrementEvent();
                 } else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
                     fireResetEvent();
+                } else if (e.getKeyCode() == KeyEvent.VK_O) {
+                    fireSetStateEvent(ListItem.RELATION_TYPE.OR);
+                } else if (e.getKeyCode() == KeyEvent.VK_U) {
+                    fireSetStateEvent(ListItem.RELATION_TYPE.AND);
+                } else if (e.getKeyCode() == KeyEvent.VK_N) {
+                    fireSetStateEvent(ListItem.RELATION_TYPE.NOT);
+                } else if (e.getKeyCode() == KeyEvent.VK_I) {
+                    fireSetStateEvent(ListItem.RELATION_TYPE.DISABLED);
                 }
             }
         });
@@ -91,6 +99,12 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
     private void fireDecrementEvent() {
         ListItem item = getItemAt(getSelectedIndex());
         item.decrementState();
+        checkStateAndRepaint();
+    }
+
+    private void fireSetStateEvent(ListItem.RELATION_TYPE pType) {
+        ListItem item = getItemAt(getSelectedIndex());
+        item.setState(pType);
         checkStateAndRepaint();
     }
 
@@ -158,8 +172,6 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
         }
         repaint();
         updateBySelection();
-
-        ///  System.out.println(getVillagesByEquation());
     }
 
     private void updateBySelection() {
@@ -190,6 +202,10 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
                     + "<ul>"
                     + "<li>Doppelklick (links) oder Pfeil rechts: N&auml;chste Verkn&uuml;pfung</li>"
                     + "<li>Pfeil rechts: Vorherige Verkn&uuml;pfung</li>"
+                    + "<li>O: ODER-Verkn&uuml;pfung</li>"
+                    + "<li>U: UND-Verkn&uuml;pfung</li>"
+                    + "<li>I: Ignorieren</li>"
+                    + "<li>N: NICHT-Verkn&uuml;pfung</li>"
                     + "<li>Doppelklick (rechts) oder ENTF: Gruppe ignorieren</li>"
                     + "<li>ENTF auf 'Keine Gruppe': Alle Gruppen ignorieren, 'Keine Gruppe' ausw&auml;hlen</li>"
                     + "</ul>"

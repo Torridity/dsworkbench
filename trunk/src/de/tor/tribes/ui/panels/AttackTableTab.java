@@ -96,7 +96,6 @@ import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
  * @TODO DIFF: Integrated attack notification with clock tool
- *@TODO Add colored countdown to manual attack planer
  * @author Torridity
  */
 public class AttackTableTab extends javax.swing.JPanel implements ListSelectionListener {

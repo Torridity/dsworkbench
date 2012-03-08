@@ -4,11 +4,10 @@
  */
 package de.tor.tribes.ui.models;
 
-import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.wiz.ret.types.RETSourceElement;
-import java.util.Date;
+import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -17,30 +16,35 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author Torridity
  */
-public class RETSourceTableModel extends AbstractTableModel {
+public class RETSourceFilterTableModel extends AbstractTableModel {
 
     private String[] columnNames = new String[]{
-        "Herkunft"
+        "Dorf", "Ignoriert"
     };
     private Class[] types = new Class[]{
-        Village.class
+        Village.class, Boolean.class
     };
     private final List<RETSourceElement> elements = new LinkedList<RETSourceElement>();
 
-    public RETSourceTableModel() {
+    public RETSourceFilterTableModel() {
         super();
     }
 
     public void clear() {
         elements.clear();
-        fireTableDataChanged();
     }
 
-    public void addRow(RETSourceElement pVillage, boolean pValidate) {
-        elements.add(pVillage);
-        if (pValidate) {
+    public void addRow(RETSourceElement pElement, boolean pCheck) {
+        if (!elements.contains(pElement)) {
+            elements.add(pElement);
+        }
+        if (pCheck) {
             fireTableDataChanged();
         }
+    }
+
+    public void addRow(RETSourceElement pElement) {
+        addRow(pElement, true);
     }
 
     @Override
@@ -80,7 +84,13 @@ public class RETSourceTableModel extends AbstractTableModel {
         if (elements == null || elements.size() - 1 < row) {
             return null;
         }
-        return elements.get(row).getVillage();
+        RETSourceElement element = elements.get(row);
+        switch (column) {
+            case 0:
+                return element.getVillage();
+            default:
+                return element.isIgnored();
+        }
     }
 
     @Override

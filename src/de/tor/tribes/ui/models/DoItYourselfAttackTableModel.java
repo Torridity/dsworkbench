@@ -21,7 +21,7 @@ import org.apache.commons.lang.time.DurationFormatUtils;
 public class DoItYourselfAttackTableModel extends AbstractTableModel {
 
     private static Logger logger = Logger.getLogger("DoItYourselfAttackTable");
-    protected static Class[] types = new Class[]{Integer.class, UnitHolder.class, Village.class, Village.class, Date.class, Date.class, String.class};
+    protected static Class[] types = new Class[]{Integer.class, UnitHolder.class, Village.class, Village.class, Date.class, Date.class, Long.class};
     protected static String[] colNames = new String[]{"Angriffstyp", "Einheit", "Herkunft", "Ziel", "Abschickzeit", "Ankunftzeit", "Verbleibend"};
     protected static boolean[] editableColumns = new boolean[]{true, true, false, false, true, true, false};
 
@@ -93,40 +93,9 @@ public class DoItYourselfAttackTableModel extends AbstractTableModel {
                         return null;
                     }
                 default: {
-                    try {
-                        long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-                        long t = sendTime - System.currentTimeMillis();
-                        t = (t <= 0) ? 0 : t;
-                        return DurationFormatUtils.formatDuration(t, "HHH:mm:ss.SSS", true);
-                        /* t = (t <= 0) ? 0 : t;
-                        if (t != 0) {
-                        long h = (int) Math.floor((double) t / (double) (1000 * 60 * 60));
-                        t -= (h * 1000 * 60 * 60);
-                        long min = (int) Math.floor((double) t / (double) (1000 * 60));
-                        t -= (min * 1000 * 60);
-                        long s = (int) Math.floor((double) t / (double) 1000);
-                        t -= (s * 1000);
-                        long ms = t;
-                        String res = ((h < 10) ? ("0" + h) : "" + h);
-                        res += ":";
-                        res += ((min < 10) ? "0" + min : "" + min);
-                        res += ":";
-                        res += ((s < 10) ? "0" + s : "" + s);
-                        res += ".";
-                        if (ms < 100) {
-                        if (ms < 10) {
-                        res += "00" + ms;
-                        } else {
-                        res += "0" + ms;
-                        }
-                        } else {
-                        res += "" + ms;
-                        }
-                        return res;
-                        }*/
-                    } catch (Exception e) {
-                    }
-                    return "00:00:00.000";
+                    long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
+                    long t = sendTime - System.currentTimeMillis();
+                    return (t <= 0) ? 0 : t;
                 }
             }
         } catch (Exception e) {

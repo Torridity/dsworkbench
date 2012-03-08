@@ -8,7 +8,7 @@
  *
  * Created on Oct 15, 2011, 9:54:36 AM
  */
-package de.tor.tribes.ui.wiz.tap;
+package de.tor.tribes.ui.wiz.ret;
 
 import com.jidesoft.swing.JideBoxLayout;
 import com.jidesoft.swing.JideSplitPane;
@@ -20,10 +20,8 @@ import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.TroopFilterDialog;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
-import de.tor.tribes.ui.models.TAPSourceFilterTableModel;
-import de.tor.tribes.ui.panels.TAPAttackInfoPanel;
-import de.tor.tribes.ui.wiz.dep.DefenseCalculationSettingsPanel;
-import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
+import de.tor.tribes.ui.models.RETSourceFilterTableModel;
+import de.tor.tribes.ui.wiz.ret.types.RETSourceElement;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.UIHelper;
@@ -49,25 +47,16 @@ import org.netbeans.spi.wizard.*;
  *
  * @author Torridity
  */
-public class AttackSourceFilterPanel extends WizardPage {
+public class RetimerSourceFilterPanel extends WizardPage {
 
-    private static final String GENERAL_INFO = "<html>Du befindest dich in der Filterauswahl. Hier kannst du vorher gew&auml;hlte Herkunftsd&ouml;rfer herausfiltern, "
-            + "wenn sie nicht bestimmten Kriterien entsprechen. M&ouml;gliche Filterkriterien sind:"
-            + "<ul> <li>D&ouml;rfer werden bereits in einem Angriffsplan verwendet</li> "
-            + "<li>D&ouml;rfer geh&ouml;ren nicht dem momentan aktiven Spieler. Diese Option dient dazu, D&ouml;rfer zu entfernen, die aufgrund ihrer Gruppenzugeh&ouml;rigkeit in die Auswahl gelangt sind, zu entfernen.</li>"
-            + "<li>Die Anzahl der belegten Bauernhofpl&auml;tze in einem Dorf ist kleiner als ein bestimmter Wert</li>"
-            + "<li>Die im Dorf stationierten Truppen entsprechen nicht bestimmten Vorgaben.</li>"
-            + "</ul> "
-            + "Nach einer &Auml;nderung der Filtereinstellungen muss die Filterung aktualisiert werden. "
-            + "Herausgefilterte D&ouml;rfer sind dann in der Tabelle markiert. Unter der Tabelle siehst du die genaue Anzahl der D&ouml;rfer, die herausgefiltert wurden."
-            + "</html>";
-    private static AttackSourceFilterPanel singleton = null;
+    private static final String GENERAL_INFO = "";
+    private static RetimerSourceFilterPanel singleton = null;
     private TroopFilterDialog troopFilterDialog = null;
     private VillageOverviewMapPanel overviewPanel = null;
 
-    public static synchronized AttackSourceFilterPanel getSingleton() {
+    public static synchronized RetimerSourceFilterPanel getSingleton() {
         if (singleton == null) {
-            singleton = new AttackSourceFilterPanel();
+            singleton = new RetimerSourceFilterPanel();
         }
         return singleton;
     }
@@ -75,11 +64,11 @@ public class AttackSourceFilterPanel extends WizardPage {
     /**
      * Creates new form AttackSourcePanel
      */
-    AttackSourceFilterPanel() {
+    RetimerSourceFilterPanel() {
         initComponents();
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jXCollapsiblePane1.add(jInfoScrollPane, BorderLayout.CENTER);
-        jVillageTable.setModel(new TAPSourceFilterTableModel());
+        jVillageTable.setModel(new RETSourceFilterTableModel());
         jVillageTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jInfoTextPane.setText(GENERAL_INFO);
 
@@ -102,7 +91,7 @@ public class AttackSourceFilterPanel extends WizardPage {
             }
         });
         troopFilterDialog = new TroopFilterDialog(new JFrame(), true);
-        updateFilterPanel(new LinkedList<TAPAttackSourceElement>());
+        updateFilterPanel(new LinkedList<RETSourceElement>());
         overviewPanel = new VillageOverviewMapPanel();
         jPanel2.add(overviewPanel, BorderLayout.CENTER);
         AttackManager.getSingleton().addManagerListener(new GenericManagerListener() {
@@ -124,26 +113,23 @@ public class AttackSourceFilterPanel extends WizardPage {
     }
 
     public static String getStep() {
-        return "id-attack-source-filter";
+        return "id-ret-source-filter";
     }
 
     public void storeProperties() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
-        profile.addProperty("tap.filter.own.only", jPlayerVillagesOnly.isSelected());
-        profile.addProperty("tap.filter.min.farm", UIHelper.parseIntFromField(jMinFarmSpace, 0));
-        profile.addProperty("tap.filter.min.farm.bonus", UIHelper.parseIntFromField(jMinFarmSpaceBonus, 0));
+        profile.addProperty("ret.filter.min.farm", UIHelper.parseIntFromField(jMinFarmSpace, 0));
+        profile.addProperty("ret.filter.min.farm.bonus", UIHelper.parseIntFromField(jMinFarmSpaceBonus, 0));
     }
 
     public void restoreProperties() {
         getModel().clear();
         UserProfile profile = GlobalOptions.getSelectedProfile();
-        String value = profile.getProperty("tap.filter.own.only");
-        jPlayerVillagesOnly.setSelected((value == null) ? true : Boolean.parseBoolean(value));
-        UIHelper.setText(jMinFarmSpace, profile.getProperty("tap.filter.min.farm"), null);
+        UIHelper.setText(jMinFarmSpace, profile.getProperty("ret.filter.min.farm"), null);
         if (jMinFarmSpace.getText().equals("0")) {
             jMinFarmSpace.setText("");
         }
-        UIHelper.setText(jMinFarmSpaceBonus, profile.getProperty("tap.filter.min.farm.bonus"), null);
+        UIHelper.setText(jMinFarmSpaceBonus, profile.getProperty("ret.filter.min.farm.bonus"), null);
         if (jMinFarmSpaceBonus.getText().equals("0")) {
             jMinFarmSpaceBonus.setText("");
         }
@@ -513,8 +499,8 @@ public class AttackSourceFilterPanel extends WizardPage {
 
     private void fireChangeIgnoreSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeIgnoreSelectionEvent
         boolean ignore = (evt.getSource() == jIgnoreButton);
-        List<TAPAttackSourceElement> selection = getSelection();
-        for (TAPAttackSourceElement element : selection) {
+        List<RETSourceElement> selection = getSelection();
+        for (RETSourceElement element : selection) {
             element.setIgnored(ignore);
         }
         updateFilterPanel(selection);
@@ -523,7 +509,7 @@ public class AttackSourceFilterPanel extends WizardPage {
     }//GEN-LAST:event_fireChangeIgnoreSelectionEvent
 
     private void updateFilters() {
-        List<TAPAttackSourceElement> elements = getAllElements();
+        List<RETSourceElement> elements = getAllElements();
         filterMisc(elements);
         filterByAttackPlans(elements);
         filterTroops(elements);
@@ -532,16 +518,16 @@ public class AttackSourceFilterPanel extends WizardPage {
         getModel().fireTableDataChanged();
     }
 
-    private void filterMisc(List<TAPAttackSourceElement> pAllElements) {
+    private void filterMisc(List<RETSourceElement> pAllElements) {
         Tribe t = GlobalOptions.getSelectedProfile().getTribe();
-        for (TAPAttackSourceElement elem : pAllElements) {
+        for (RETSourceElement elem : pAllElements) {
             if (jPlayerVillagesOnly.isSelected()) {
                 elem.setIgnored(elem.getVillage().getTribe().getId() != t.getId());
             }
         }
     }
 
-    private void filterByAttackPlans(List<TAPAttackSourceElement> pAllElements) {
+    private void filterByAttackPlans(List<RETSourceElement> pAllElements) {
         Object[] selection = jAttackPlanList.getSelectedValues();
         List<String> groups = new ArrayList<String>();
         for (Object o : selection) {
@@ -551,7 +537,7 @@ public class AttackSourceFilterPanel extends WizardPage {
         List<ManageableType> attacks = AttackManager.getSingleton().getAllElements(groups);
         for (ManageableType type : attacks) {
             Attack a = (Attack) type;
-            for (TAPAttackSourceElement element : pAllElements) {
+            for (RETSourceElement element : pAllElements) {
                 if (a.getSource().getId() == element.getVillage().getId()) {
                     element.setIgnored(true);
                 }
@@ -559,12 +545,12 @@ public class AttackSourceFilterPanel extends WizardPage {
         }
     }
 
-    private void filterTroops(List<TAPAttackSourceElement> pAllElements) {
+    private void filterTroops(List<RETSourceElement> pAllElements) {
         //filter by farm space
         int requiredTroopAmount = UIHelper.parseIntFromField(jMinFarmSpace, 0);
         int requiredTroopAmountBonus = UIHelper.parseIntFromField(jMinFarmSpaceBonus, 0);
         if (requiredTroopAmount > 0 || requiredTroopAmountBonus > 0) {
-            for (TAPAttackSourceElement element : pAllElements) {//go through all elements
+            for (RETSourceElement element : pAllElements) {//go through all elements
                 if (!element.isIgnored()) {
                     VillageTroopsHolder troopsForVillage = TroopsManager.getSingleton().getTroopsForVillage(element.getVillage(), TroopsManager.TROOP_TYPE.OWN);
                     if (troopsForVillage != null) {//troop information available
@@ -585,7 +571,7 @@ public class AttackSourceFilterPanel extends WizardPage {
         }
         //filter single amounts
         if (troopFilterDialog.canFilter()) {
-            for (TAPAttackSourceElement elem : pAllElements) {
+            for (RETSourceElement elem : pAllElements) {
                 if (troopFilterDialog.getIgnoredVillages(new Village[]{elem.getVillage()}).length != 0) {
                     elem.setIgnored(true);
                 }
@@ -595,53 +581,26 @@ public class AttackSourceFilterPanel extends WizardPage {
 
     private void updateVillageOverview() {
         overviewPanel.reset();
-        List<TAPAttackSourceElement> elements = getAllElements();
-
-        int offs = 0;
-        int fakes = 0;
-        int ignored = 0;
-
-        for (TAPAttackSourceElement element : elements) {
+        List<RETSourceElement> elements = getAllElements();
+        for (RETSourceElement element : elements) {
             overviewPanel.addVillage(new Point(element.getVillage().getX(), element.getVillage().getY()), (!element.isIgnored()) ? Color.yellow : Color.lightGray);
-            offs++;
-            if (element.isIgnored()) {
-                ignored++;
-            } else {
-                if (element.isFake()) {
-                    fakes++;
-                }
-            }
         }
-        TAPAttackInfoPanel.getSingleton().updateSource(offs, fakes, ignored);
         overviewPanel.repaint();
     }
 
-    private TAPSourceFilterTableModel getModel() {
-        return (TAPSourceFilterTableModel) jVillageTable.getModel();
+    private RETSourceFilterTableModel getModel() {
+        return (RETSourceFilterTableModel) jVillageTable.getModel();
     }
 
     protected void setup() {
-        TAPAttackSourceElement[] elements = AttackSourcePanel.getSingleton().getAllElements();
+        RETSourceElement[] elements = RetimerSourcePanel.getSingleton().getAllElements();
         getModel().clear();
         overviewPanel.reset();
-        int offs = 0;
-        int fakes = 0;
-        int ignored = 0;
-
-        for (TAPAttackSourceElement element : elements) {
+        for (RETSourceElement element : elements) {
             getModel().addRow(element, false);
             overviewPanel.addVillage(new Point(element.getVillage().getX(), element.getVillage().getY()), (!element.isIgnored()) ? Color.yellow : Color.lightGray);
-            offs++;
-            if (element.isIgnored()) {
-                ignored++;
-            } else {
-                if (element.isFake()) {
-                    fakes++;
-                }
-            }
         }
         getModel().fireTableDataChanged();
-        TAPAttackInfoPanel.getSingleton().updateSource(offs, fakes, ignored);
         overviewPanel.repaint();
     }
 
@@ -653,10 +612,10 @@ public class AttackSourceFilterPanel extends WizardPage {
         jAttackPlanList.setModel(attackModel);
     }
 
-    protected void updateFilterPanel(List<TAPAttackSourceElement> pAllElements) {
+    protected void updateFilterPanel(List<RETSourceElement> pAllElements) {
         updateAttackList();
         int ignoreCount = 0;
-        for (TAPAttackSourceElement elem : pAllElements) {
+        for (RETSourceElement elem : pAllElements) {
             ignoreCount += (elem.isIgnored()) ? 1 : 0;
         }
 
@@ -667,30 +626,30 @@ public class AttackSourceFilterPanel extends WizardPage {
         }
     }
 
-    public TAPAttackSourceElement[] getFilteredElements() {
-        List<TAPAttackSourceElement> filtered = new LinkedList<TAPAttackSourceElement>();
-        TAPSourceFilterTableModel model = getModel();
+    public RETSourceElement[] getFilteredElements() {
+        List<RETSourceElement> filtered = new LinkedList<RETSourceElement>();
+        RETSourceFilterTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
-            TAPAttackSourceElement elem = model.getRow(i);
+            RETSourceElement elem = model.getRow(i);
             if (!elem.isIgnored()) {
                 filtered.add(model.getRow(i));
             }
         }
-        return filtered.toArray(new TAPAttackSourceElement[filtered.size()]);
+        return filtered.toArray(new RETSourceElement[filtered.size()]);
     }
 
-    public List<TAPAttackSourceElement> getSelection() {
-        List<TAPAttackSourceElement> elements = new LinkedList<TAPAttackSourceElement>();
-        TAPSourceFilterTableModel model = getModel();
+    public List<RETSourceElement> getSelection() {
+        List<RETSourceElement> elements = new LinkedList<RETSourceElement>();
+        RETSourceFilterTableModel model = getModel();
         for (int i : jVillageTable.getSelectedRows()) {
             elements.add(model.getRow(jVillageTable.convertRowIndexToModel(i)));
         }
         return elements;
     }
 
-    public List<TAPAttackSourceElement> getAllElements() {
-        List<TAPAttackSourceElement> elements = new LinkedList<TAPAttackSourceElement>();
-        TAPSourceFilterTableModel model = getModel();
+    public List<RETSourceElement> getAllElements() {
+        List<RETSourceElement> elements = new LinkedList<RETSourceElement>();
+        RETSourceFilterTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             elements.add(model.getRow(i));
         }
@@ -733,11 +692,6 @@ public class AttackSourceFilterPanel extends WizardPage {
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
 
-        if (getModel().getRowCount() > 0) {
-            AttackTargetPanel.getSingleton().updateOverview();
-        }
-
-        AttackCalculationPanel.getSingleton().updateStatus();
         return WizardPanelNavResult.PROCEED;
     }
 

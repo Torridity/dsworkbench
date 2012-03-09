@@ -2958,6 +2958,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
             @Override
             public void run() {
+                setName("DataLoadThread");
                 try {
                     logger.debug("Start loading from hard disk");
                     boolean ret = DataHolder.getSingleton().loadData(false);

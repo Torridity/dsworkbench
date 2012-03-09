@@ -12,6 +12,7 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchFarmManager;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.conquer.ConquerManager;
+import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.util.*;
@@ -154,8 +155,9 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Revalidate the farm information (check owner, check returning/running troops) This method is called after initializing the farm
-     * manager and on user request
+     * Revalidate the farm information (check owner, check returning/running
+     * troops) This method is called after initializing the farm manager and on
+     * user request
      */
     public void revalidate() {
         checkOwner();
@@ -284,6 +286,90 @@ public class FarmInformation extends ManageableType {
         return Math.min(getStorageCapacity(), generatedResources);
     }
 
+    public void guessBuildings() {
+        List<FightReport> reports = ReportManager.getSingleton().findAllReportsForTarget(getVillage());
+        Collections.sort(reports, new Comparator<FightReport>() {
+
+            @Override
+            public int compare(FightReport o1, FightReport o2) {
+                return Long.valueOf(o1.getTimestamp()).compareTo(Long.valueOf(o2.getTimestamp()));
+            }
+        });
+
+        for (FightReport r : reports) {
+            System.out.println(r.getTimestamp());
+        }
+
+        if (!reports.isEmpty()) {//at least one report exists
+            if (reports.size() > 1) {
+                //resource guess possible...do so!
+                Iterator<FightReport> reportIterator = reports.iterator();
+                //get first report from iterator
+                FightReport report1 = reportIterator.next();
+                guessStorage(report1);
+                while (reportIterator.hasNext()) {
+                    //get second report
+                    FightReport report2 = reportIterator.next();
+                    //check if haul information is available
+                    if (report1.getHaul() != null && report2.getHaul() != null) {//haul information available, perform guess
+                        guessResourceBuildings(report1, report2);
+                        //guess storage from report2
+                        guessStorage(report2);
+                    }
+
+                    //set last report to report2 and continue
+                    report1 = report2;
+                }
+            } else {
+                //guess only storage with one report
+                guessStorage(reports.get(0));
+            }
+        }
+    }
+
+    private void guessResourceBuildings(FightReport pReport1, FightReport pReport2) {
+        double dt = (double) (pReport2.getTimestamp() - pReport1.getTimestamp()) / (double) DateUtils.MILLIS_PER_HOUR;
+
+        for (int i = 0; i < 3; i++) {
+            //get resources in village at time of arrival
+            int resourceInVillage1 = pReport1.getHaul()[i] + ((pReport1.getSpyedResources() != null) ? pReport1.getSpyedResources()[i] : 0);
+            int resourceInVillage2 = pReport2.getHaul()[i] + ((pReport2.getSpyedResources() != null) ? pReport2.getSpyedResources()[i] : 0);
+            int dResource = resourceInVillage2 - resourceInVillage1;
+
+            int resourceBuildingLevel = (int) Math.ceil(Math.log(dResource / (dt * 30 * ServerSettings.getSingleton().getSpeed())) / Math.log(RESOURCE_PRODUCTION_CONTANT) + 1);
+            switch (i) {
+                case 0:
+                    setWoodLevel(Math.max(getWoodLevel(), resourceBuildingLevel));
+                    break;
+                case 1:
+                    setClayLevel(Math.max(getClayLevel(), resourceBuildingLevel));
+                    break;
+                case 2:
+                    setIronLevel(Math.max(getIronLevel(), resourceBuildingLevel));
+                    break;
+            }
+        }
+    }
+
+    private void guessStorage(FightReport pReport) {
+        for (int i = 0; i < 3; i++) {
+            //get resources in village at time of arrival
+            double resourceInStorage = (double) pReport.getHaul()[i] + ((pReport.getSpyedResources() != null) ? pReport.getSpyedResources()[i] : 0);
+            int guessedStorageLeven = (int) Math.ceil(Math.log(resourceInStorage / 1000.0) / Math.log(STORAGE_CAPACITY_CONTANT) + 1);
+            switch (i) {
+                case 0:
+                    setStorageLevel(Math.max(getStorageLevel(), guessedStorageLeven));
+                    break;
+                case 1:
+                    setStorageLevel(Math.max(getStorageLevel(), guessedStorageLeven));
+                    break;
+                case 2:
+                    setStorageLevel(Math.max(getStorageLevel(), guessedStorageLeven));
+                    break;
+            }
+        }
+    }
+
     /**
      * Check if the owner of this farm has changed
      */
@@ -312,13 +398,16 @@ public class FarmInformation extends ManageableType {
                 setStatus(FARM_STATUS.READY);
             } else {
                 setStatus(FARM_STATUS.NOT_SPYED);
+                //now it is time to check updates in building levels
+                logger.debug("Checking building updates");
+                guessBuildings();
             }
         }
     }
 
     /**
-     * Get the correction factor depending on overall expected haul and overall actual haul. Correction is started beginning with the fifth
-     * attack
+     * Get the correction factor depending on overall expected haul and overall
+     * actual haul. Correction is started beginning with the fifth attack
      */
     public float getCorrectionFactor() {
         if (expectedHaul == 0) {
@@ -332,13 +421,11 @@ public class FarmInformation extends ManageableType {
      */
     public void updateFromReport(FightReport pReport) {
         if (pReport == null || pReport.getTimestamp() < lastReport) { //old report 
-            logger.debug("Skipping farm update from report for "
-                    + getVillage() + " due to an old report (" + lastReport + " > " + pReport.getTimestamp() + ")");
+            logger.debug("Skipping farm update from report for " + getVillage() + " as it is an old report (" + lastReport + " > " + pReport.getTimestamp() + ")");
             return;
         }
 
         if (pReport.wasLostEverything() || pReport.hasSurvivedDefenders()) {
-            System.out.println(pReport.wasLostEverything() + " - " + pReport.hasSurvivedDefenders());
             logger.debug("Changing farm status to due to total loss or found troops");
             setStatus(FARM_STATUS.TROOPS_FOUND);
         } else {
@@ -399,7 +486,7 @@ public class FarmInformation extends ManageableType {
 
         switch (spyLevel) {
             case BUILDINGS:
-                logger.debug("Included building and reosurce spy information into farm information");
+                logger.debug("Included building and resource spy information into farm information");
                 spyed = true;
                 break;
             case RESOURCES:
@@ -412,7 +499,8 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Read haul information from report, correct storage amounts and return difference to max haul
+     * Read haul information from report, correct storage amounts and return
+     * difference to max haul
      */
     private void updateHaulInformation(FightReport pReport) {
         if (pReport.getHaul() == null) {
@@ -455,9 +543,12 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Update this farm's correction factor by calculating the expected haul (estimated storage status) and the actual haul (sum of haul and
-     * remaining resources). This call will do nothing if no spy information is available or if no haul information is available. The
-     * correction factor delta is limited to +/- 10 percent to reduce the influence of A and B runs and for farms which are relatively new.
+     * Update this farm's correction factor by calculating the expected haul
+     * (estimated storage status) and the actual haul (sum of haul and remaining
+     * resources). This call will do nothing if no spy information is available
+     * or if no haul information is available. The correction factor delta is
+     * limited to +/- 10 percent to reduce the influence of A and B runs and for
+     * farms which are relatively new.
      */
     private void updateCorrectionFactor(FightReport pReport) {
         if (pReport.getHaul() != null && pReport.getSpyedResources() != null) {
@@ -507,7 +598,8 @@ public class FarmInformation extends ManageableType {
     /**
      * Farm this farm
      *
-     * @param The troops used for farming or 'null' if the needed amount of troops should be calculated
+     * @param The troops used for farming or 'null' if the needed amount of
+     * troops should be calculated
      */
     public FARM_RESULT farmFarm(DSWorkbenchFarmManager.FARM_CONFIGURATION pConfig) {
         StringBuilder info = new StringBuilder();
@@ -571,9 +663,9 @@ public class FarmInformation extends ManageableType {
                     }
 
                     if (villages.isEmpty()) {
-                        info.append("Es wurden alle Dörfer aufgrund der Tragekapazität ihrer Truppen und/oder ihrer Entfernung zum Ziel gelöscht.\n"
-                                + "Möglicherweise könnte ein erneuter Truppenimport aus dem Spiel hilfreich sein.\n"
-                                + "Überprüfe auch die eingestellte Truppenreserve (R), falls vorhanden.\n");
+                        info.append("Es wurden alle Dörfer aufgrund der Tragekapazität ihrer Truppen, ihrer Entfernung zum Ziel oder der erwarteten Ressourcen gelöscht.\n"
+                                + "Möglicherweise könnte ein erneuter Truppenimport aus dem Spiel, eine Vergrößerung des Farmradius oder eine Verkleinerung der minimalen Anzahl an Einheiten\n"
+                                + "hilfreich sein. Überprüfe auch die eingestellte Truppenreserve (R), falls vorhanden.\n");
                         lastResult = FARM_RESULT.IMPOSSIBLE;
                     } else {
                         info.append(villages.size()).append(" Dorf/Dörfer verfügen über die benötigte Tragekapazität.\n");

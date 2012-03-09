@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 
 /**
  * @TOTO (DIFF) Check max. snob runtime
+ *
  * @author Jejkal
  */
 public abstract class AbstractAttackAlgorithm extends Thread {
@@ -37,9 +38,10 @@ public abstract class AbstractAttackAlgorithm extends Thread {
     private boolean running = false;
     private boolean aborted = false;
     private LogListener listener = null;
-
+  
     public AbstractAttackAlgorithm() {
-        setName("AbstractAttackAlgorithm");
+        setName("AttackAlgorithmCalculationThread");
+        setPriority(MIN_PRIORITY);
         setDaemon(true);
     }
     

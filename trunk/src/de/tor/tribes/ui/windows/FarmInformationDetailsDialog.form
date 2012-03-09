@@ -237,9 +237,9 @@
         <Component class="javax.swing.JButton" name="jButton2">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/res/checkbox.png"/>
+              <Image iconType="3" name="/res/refresh.png"/>
             </Property>
-            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Legt die eingetragenen Geb&amp;auml;udestufen f&#xfc;r diese Farm fest.&lt;br/&gt;&#xa;Diese Option sollte nur im Notfall (z.B. auf Servern mit eingeschr&amp;auml;nkten Sp&amp;auml;hern) verwendet werden. &lt;br/&gt;Im Normalfall verwendet bitte die Informationen aus Sp&amp;auml;hberichten.&lt;/html&gt;"/>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Aktuelle Rohstoffgeb&amp;auml;ude und Speichergr&amp;ouml;&amp;szlig;e errechnen&lt;br/&gt;Diese Funktion wird versuchen, mit Hilfe vorhandener Berichte die aktuellen Geb&amp;auml;deinformationen zu bestimmen.&lt;br/&gt;Vorrangig ist dies f&amp;uuml;r Server gedacht, auf denen keine Geb&amp;auml;udeinformationen ersp&amp;auml;ht werden k&amp;ouml;nnen.&lt;br/&gt;&#xa;Auf anderen Servern sollte man diese Funktion nicht verwenden.&lt;/html&gt;"/>
           </Properties>
           <Events>
             <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireSetBuildingsEvent"/>

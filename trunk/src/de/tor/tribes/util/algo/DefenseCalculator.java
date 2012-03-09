@@ -29,6 +29,8 @@ public class DefenseCalculator extends Thread {
     public DefenseCalculator() {
         setName("DefenseCalculator");
         setDaemon(true);
+        setName("DefenseCalculationThread");
+        setPriority(MIN_PRIORITY);
     }
 
     public void setAllowMultiSupport(boolean pValue) {

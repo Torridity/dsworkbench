@@ -423,6 +423,23 @@ public class ReportManager extends GenericManager<FightReport> {
     }
 
     /**
+     * Return all reports for target pVillage
+     *
+     * @param pVillage
+     * @return
+     */
+    public List<FightReport> findAllReportsForTarget(Village pVillage) {
+        List<FightReport> all = new LinkedList<FightReport>();
+        for (ManageableType element : getAllElementsFromAllGroups()) {
+            FightReport report = (FightReport) element;
+            if (report.getTargetVillage() != null && report.getTargetVillage().equals(pVillage)) {
+                all.add(report);
+            }
+        }
+        return all;
+    }
+
+    /**
      * Return the most current report for pVillage
      *
      * @param pVillage

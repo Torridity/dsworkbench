@@ -18,6 +18,8 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.wiz.ret.types.RETSourceElement;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackTargetElement;
+import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.TroopHelper;
@@ -35,6 +37,8 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.log4j.Logger;
 import org.netbeans.spi.wizard.*;
 
 /**
@@ -43,6 +47,7 @@ import org.netbeans.spi.wizard.*;
  */
 public class RetimerCalculationPanel extends WizardPage {
 
+    private static Logger logger = Logger.getLogger("Retimer-Calculation");
     private static final String GENERAL_INFO = "";
     private static RetimerCalculationPanel singleton = null;
     private List<Attack> retimes = null;
@@ -108,17 +113,9 @@ public class RetimerCalculationPanel extends WizardPage {
         jCalculateButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jOverallSources = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jOverallAttacks = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jOverallFakes = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jTargetAttacks = new javax.swing.JLabel();
+        jAttacks = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        jOverallTargets = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
-        jTargetFakes = new javax.swing.JLabel();
+        jRetimeSources = new javax.swing.JLabel();
         jProgressBar1 = new javax.swing.JProgressBar();
 
         jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
@@ -170,10 +167,10 @@ public class RetimerCalculationPanel extends WizardPage {
 
         jCalculateButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jCalculateButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/select.png"))); // NOI18N
-        jCalculateButton.setText("Angriffe berechnen");
-        jCalculateButton.setMaximumSize(new java.awt.Dimension(167, 40));
-        jCalculateButton.setMinimumSize(new java.awt.Dimension(167, 40));
-        jCalculateButton.setPreferredSize(new java.awt.Dimension(167, 40));
+        jCalculateButton.setText("Retimes berechnen");
+        jCalculateButton.setMaximumSize(new java.awt.Dimension(190, 40));
+        jCalculateButton.setMinimumSize(new java.awt.Dimension(190, 40));
+        jCalculateButton.setPreferredSize(new java.awt.Dimension(190, 40));
         jCalculateButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 fireCalculateAttacksEvent(evt);
@@ -189,108 +186,38 @@ public class RetimerCalculationPanel extends WizardPage {
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Zusammenfassung"));
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
-        jLabel2.setText("Angreifende Dörfer");
+        jLabel2.setText("Angriffe");
         jLabel2.setPreferredSize(new java.awt.Dimension(200, 14));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jLabel2, gridBagConstraints);
 
-        jOverallSources.setText("10");
+        jAttacks.setText("10");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jOverallSources, gridBagConstraints);
+        jPanel1.add(jAttacks, gridBagConstraints);
 
-        jLabel4.setText("<html>&nbsp;&nbsp;&nbsp;Angriffe</html>");
-        jLabel4.setPreferredSize(new java.awt.Dimension(200, 14));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jLabel4, gridBagConstraints);
-
-        jOverallAttacks.setText("10");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jOverallAttacks, gridBagConstraints);
-
-        jLabel6.setText("<html>&nbsp;&nbsp;&nbsp;Fakes</html>");
-        jLabel6.setPreferredSize(new java.awt.Dimension(200, 14));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jLabel6, gridBagConstraints);
-
-        jOverallFakes.setText("10");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jOverallFakes, gridBagConstraints);
-
-        jLabel8.setText("<html>&nbsp;&nbsp;&nbsp;Angriffe</html>");
-        jLabel8.setPreferredSize(new java.awt.Dimension(200, 14));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jLabel8, gridBagConstraints);
-
-        jTargetAttacks.setText("10");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jTargetAttacks, gridBagConstraints);
-
-        jLabel10.setText("Angegriffene Dörfer");
+        jLabel10.setText("Herkunftsdörfer für Retimes");
         jLabel10.setPreferredSize(new java.awt.Dimension(200, 14));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jLabel10, gridBagConstraints);
 
-        jOverallTargets.setText("10");
+        jRetimeSources.setText("10");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jOverallTargets, gridBagConstraints);
-
-        jLabel12.setText("<html>&nbsp;&nbsp;&nbsp;Fakes</html>");
-        jLabel12.setPreferredSize(new java.awt.Dimension(200, 14));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jLabel12, gridBagConstraints);
-
-        jTargetFakes.setText("10");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jTargetFakes, gridBagConstraints);
+        jPanel1.add(jRetimeSources, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -359,78 +286,66 @@ public class RetimerCalculationPanel extends WizardPage {
         new Thread(new Runnable() {
 
             public void run() {
-                RETSourceElement[] filtered = RetimerSourceFilterPanel.getSingleton().getFilteredElements();
-                Attack[] attacks = RetimerDataPanel.getSingleton().getAttacks();
-                for (Attack a : attacks) {
-                    for (RETSourceElement element : filtered) {
-                        if (!element.isIgnored()) {
-                            VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(element.getVillage(), TroopsManager.TROOP_TYPE.OWN);
-                            if (holder != null) {
-
-                                List<Attack> retimesForVillage = getRetimesForVillage(a, holder);
-                                
-
+                try {
+                    RETSourceElement[] filtered = RetimerSourceFilterPanel.getSingleton().getFilteredElements();
+                    Attack[] attacks = RetimerDataPanel.getSingleton().getAttacks();
+                    for (Attack a : attacks) {
+                        for (RETSourceElement element : filtered) {
+                            if (!element.isIgnored()) {
+                                VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(element.getVillage(), TroopsManager.TROOP_TYPE.OWN);
+                                if (Constants.DEBUG) {
+                                    holder = TroopHelper.getRandomOffVillageTroops(element.getVillage());
+                                }
+                                if (holder != null) {
+                                    List<Attack> retimesForVillage = getRetimesForVillage(a, holder);
+                                    CollectionUtils.addAll(retimes, retimesForVillage.toArray(new Attack[retimesForVillage.size()]));
+                                } else {
+                                    notifyStatusUpdate("Keine Truppen für Dorf " + element.getVillage() + " gefunden");
+                                }
                             } else {
-                                notifyStatusUpdate("Keine Truppen für Dorf " + element.getVillage() + " gefunden");
+                                notifyStatusUpdate("Dorf " + element.getVillage() + " wird ignoriert");
                             }
-                        } else {
-                            notifyStatusUpdate("Dorf " + element.getVillage() + " wird ignoriert");
                         }
                     }
+                } catch (Exception e) {
+                    logger.error("Failed to calculate retimes", e);
+                } finally {
+                    notifyCalculationFinished();
                 }
-                notifyCalculationFinished();
             }
         }).start();
-
     }
 
     private List<Attack> getRetimesForVillage(Attack pAttack, VillageTroopsHolder pHolder) {
         List<Attack> results = new LinkedList<Attack>();
-        Village source = pAttack.getSource();
+        Village target = pAttack.getSource();
+        Village source = pHolder.getVillage();
         long returnTime = pAttack.getReturnTime().getTime();
         Hashtable<UnitHolder, Integer> amounts = pHolder.getTroops();
-               List<UnitHolder> units = TroopHelper.getContainedUnits(amounts);
-               Collections.sort(units, UnitHolder.RUNTIME_COMPARATOR);
-               //@TODO Check sorting!
-        for(UnitHolder unit : units){
-            System.out.println("Checking unit " + unit);
-            
+        List<UnitHolder> units = TroopHelper.getContainedUnits(amounts);
+        Collections.sort(units, UnitHolder.RUNTIME_COMPARATOR);
+        for (int i = units.size() - 1; i >= 0; i--) {
+            UnitHolder unit = units.get(i);
+            if (unit.isRetimeUnit()) {
+                long sendTime = returnTime - DSCalculator.calculateMoveTimeInMillis(source, target, unit.getSpeed());
+                if (sendTime > System.currentTimeMillis() + DateUtils.MILLIS_PER_MINUTE && sendTime > pAttack.getArriveTime().getTime() + DateUtils.MILLIS_PER_MINUTE) {
+                    Attack a = new Attack();
+                    a.setSource(source);
+                    a.setTarget(target);
+                    a.setUnit(unit);
+                    a.setSendTime(new Date(sendTime));
+                    a.setType(Attack.CLEAN_TYPE);
+                    results.add(a);
+                }
+            }
         }
-        
-        
+
         return results;
     }
 
     public void updateStatus() {
-        TAPAttackSourceElement[] elements = AttackSourceFilterPanel.getSingleton().getFilteredElements();
-        jOverallSources.setText(Integer.toString(elements.length));
-        int offs = 0;
-        int fakes = 0;
-        for (TAPAttackSourceElement element : elements) {
-            if (element.isFake()) {
-                fakes++;
-            } else {
-                offs++;
-            }
-        }
-
-        jOverallAttacks.setText(Integer.toString(offs));
-        jOverallFakes.setText(Integer.toString(fakes));
-
-        TAPAttackTargetElement[] targetElements = AttackTargetFilterPanel.getSingleton().getFilteredElements();
-        jOverallTargets.setText(Integer.toString(targetElements.length));
-        offs = 0;
-        fakes = 0;
-        for (TAPAttackTargetElement element : targetElements) {
-            if (element.isFake()) {
-                fakes += element.getAttacks();
-            } else {
-                offs += element.getAttacks();
-            }
-        }
-
-        jTargetAttacks.setText(Integer.toString(offs));
-        jTargetFakes.setText(Integer.toString(fakes));
+        jAttacks.setText(Integer.toString(RetimerDataPanel.getSingleton().getAttacks().length));
+        jRetimeSources.setText(Integer.toString(RetimerSourceFilterPanel.getSingleton().getFilteredElements().length));
     }
 
     public void notifyCalculationFinished() {
@@ -472,26 +387,18 @@ public class RetimerCalculationPanel extends WizardPage {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JLabel jAttacks;
     private javax.swing.JButton jCalculateButton;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jOverallAttacks;
-    private javax.swing.JLabel jOverallFakes;
-    private javax.swing.JLabel jOverallSources;
-    private javax.swing.JLabel jOverallTargets;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JProgressBar jProgressBar1;
+    private javax.swing.JLabel jRetimeSources;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel jTargetAttacks;
-    private javax.swing.JLabel jTargetFakes;
     private javax.swing.JTextPane jTextPane1;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
     // End of variables declaration//GEN-END:variables

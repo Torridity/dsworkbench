@@ -67,9 +67,9 @@ public class Defense {
     }
 
     public long getWorstSendTime() {
-        long first = parent.getLastAttack().getTime();
+        long last = parent.getLastAttack().getTime();
         long moveTime = DSCalculator.calculateMoveTimeInMillis(supporter, parent.getTarget(), unit.getSpeed());
-        return first - moveTime;
+        return last - moveTime;
 
     }
 }

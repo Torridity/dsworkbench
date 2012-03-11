@@ -281,7 +281,7 @@ public class SOSGenerator extends javax.swing.JFrame {
         StringBuilder b = new StringBuilder();
         SimpleDateFormat df;
         if (de.tor.tribes.util.ServerSettings.getSingleton().isMillisArrival()) {
-            df = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
+            df = new SimpleDateFormat("dd.MM.yy HH:mm:ss:SSS");
         } else {
             df = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
         }

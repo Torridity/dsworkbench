@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.time.DateUtils;
 import org.jdom.Element;
 
 /**
@@ -42,17 +43,15 @@ public class DefenseInformation {
     }
 
     public boolean addSupport(final Village pSource, UnitHolder pUnit, boolean pPrimary, boolean pMultiUse) {
-        long runtime = Math.round(DSCalculator.calculateDistance(pSource, getTarget()) * pUnit.getSpeed()) * 1000l;
+        long runtime = DSCalculator.calculateMoveTimeInMillis(pSource, getTarget(), pUnit.getSpeed());
         boolean allowed = false;
-        if (getFirstAttack().getTime() - runtime > System.currentTimeMillis()) {
+        if (getFirstAttack().getTime() - runtime > System.currentTimeMillis() + DateUtils.MILLIS_PER_MINUTE) {
             //high priority
             allowed = true;
-        } else if (getLastAttack().getTime() - runtime > System.currentTimeMillis()) {
+        } else if (getLastAttack().getTime() - runtime > System.currentTimeMillis() + DateUtils.MILLIS_PER_MINUTE) {
             //low priority
-            if (!pPrimary) {
-                allowed = true;
-            }
-        } else if (getLastAttack().getTime() - runtime < System.currentTimeMillis()) {
+            allowed = !pPrimary;
+        } else {// if (getLastAttack().getTime() - runtime < System.currentTimeMillis() - DateUtils.MILLIS_PER_MINUTE) {
             //impossible
         }
         if (allowed) {

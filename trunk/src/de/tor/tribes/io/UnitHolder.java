@@ -222,6 +222,30 @@ public class UnitHolder implements Serializable {
         return (!isDefense() && !isOffense());
     }
 
+    public boolean isSpy() {
+        String plain = getPlainName();
+        if (plain == null) {
+            return false;
+        }
+        return plain.equals("spy");
+    }
+
+    public boolean isSnob() {
+        String plain = getPlainName();
+        if (plain == null) {
+            return false;
+        }
+        return plain.equals("snob");
+    }
+
+    public boolean isRetimeUnit() {
+        String plain = getPlainName();
+        if (plain == null) {
+            return false;
+        }
+        return !plain.equals("spy") && !plain.equals("snob") && !plain.equals("militia");
+    }
+
     public double getBuildTime() {
         return buildTime;
     }

@@ -132,7 +132,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
 
     public Date getReturnTime() {
         long runtime = DSCalculator.calculateMoveTimeInMillis(getSource(), getTarget(), getUnit().getSpeed());
-        return new Date(getArriveTime().getTime() + runtime);
+        return new Date((getArriveTime().getTime() + runtime) / 1000 * 1000);
     }
 
     public boolean isShowOnMap() {

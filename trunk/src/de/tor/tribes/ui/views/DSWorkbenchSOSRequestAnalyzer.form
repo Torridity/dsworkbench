@@ -184,6 +184,7 @@
     </Container>
     <Component class="de.tor.tribes.ui.components.CapabilityInfoPanel" name="capabilityInfoPanel1">
       <Properties>
+        <Property name="copyable" type="boolean" value="false"/>
         <Property name="pastable" type="boolean" value="false"/>
         <Property name="searchable" type="boolean" value="false"/>
       </Properties>

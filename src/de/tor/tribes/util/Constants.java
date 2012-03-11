@@ -5,6 +5,7 @@
 package de.tor.tribes.util;
 
 import java.awt.Color;
+import java.text.SimpleDateFormat;
 import java.util.Hashtable;
 
 /**
@@ -27,7 +28,7 @@ public class Constants {
     public final static String SERVER_DIR = "./servers";
     public static Hashtable<String, Integer> LAYERS = null;
     public final static int LAYER_COUNT = 9;
-    public final static boolean DEBUG = false;
+    public final static boolean DEBUG = true;
 
     static {
         LAYERS = new Hashtable<String, Integer>();
@@ -43,5 +44,9 @@ public class Constants {
         if (DEBUG) {
             System.err.println("DEBUG MODE ENABLED!");
         }
+    }
+
+    public static SimpleDateFormat getDateFormat() {
+        return new SimpleDateFormat("dd.MM.yy HH:mm:ss");
     }
 }

@@ -665,11 +665,12 @@ public class RetimerDataPanel extends WizardPage {
     }
 
     public Attack[] getAttacks() {
-        /*
-         * List<Village> result = new LinkedList<Village>(); TAPSourceTableModel model = getModel(); for (int i = 0; i <
-         * model.getRowCount(); i++) { result.add(model.getRow(i).getVillage()); } return result.toArray(new Village[result.size()]);
-         */
-        return null;
+        RETAttackTableModel model = getModel();
+        List<Attack> rows = new LinkedList<Attack>();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            rows.add(model.getRow(i));
+        }
+        return rows.toArray(new Attack[rows.size()]);
     }
 
     public Attack[] getAllElements() {

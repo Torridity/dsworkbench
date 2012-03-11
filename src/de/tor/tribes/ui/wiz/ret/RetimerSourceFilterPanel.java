@@ -692,6 +692,7 @@ public class RetimerSourceFilterPanel extends WizardPage {
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
 
+        RetimerCalculationPanel.getSingleton().updateStatus();
         return WizardPanelNavResult.PROCEED;
     }
 

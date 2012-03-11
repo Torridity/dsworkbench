@@ -15,19 +15,19 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.php.UnitTableInterface;
 import de.tor.tribes.types.*;
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.ClickAccountPanel;
 import de.tor.tribes.ui.components.ProfileQuickChangePanel;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.panels.GenericTestPanel;
-import de.tor.tribes.ui.panels.TroopSelectionPanel;
 import de.tor.tribes.ui.models.DefenseToolModel;
 import de.tor.tribes.ui.models.SupportsModel;
 import de.tor.tribes.ui.renderer.*;
 import de.tor.tribes.ui.windows.VillageSupportFrame;
 import de.tor.tribes.ui.wiz.dep.DefenseAnalysePanel;
-import de.tor.tribes.ui.wiz.dep.DefensePlanerWizard;
 import de.tor.tribes.util.*;
+import de.tor.tribes.util.bb.SosListFormatter;
 import de.tor.tribes.util.generator.ui.SOSGenerator;
 import de.tor.tribes.util.sos.SOSManager;
 import java.awt.BorderLayout;
@@ -55,7 +55,6 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.time.DateUtils;
@@ -75,16 +74,14 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals("Copy")) {
-            // copySelectionToInternalClipboard();
-        } else if (e.getActionCommand().equals("BBCopy")) {
-            // copySelectionToClipboardAsBBCode();
-        } else if (e.getActionCommand().equals("Cut")) {
-            // cutSelectionToInternalClipboard();
+        if (e.getActionCommand().equals("BBCopy")) {
+            copySelectionToClipboardAsBBCode();
         } else if (e.getActionCommand().equals("Delete")) {
             removeSelection();
         }
     }
+    
+    
     private static Logger logger = Logger.getLogger("SOSRequestAnalyzer");
     private static DSWorkbenchSOSRequestAnalyzer SINGLETON = null;
     private GenericTestPanel centerPanel = null;
@@ -116,14 +113,14 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         buildMenu();
         jButton1.setIcon(new ImageIcon("./graphics/big/find.png"));
         capabilityInfoPanel1.addActionListener(DSWorkbenchSOSRequestAnalyzer.this);
-        KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
+        //  KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
         KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
-        KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK, false);
-        jAttacksTable.registerKeyboardAction(DSWorkbenchSOSRequestAnalyzer.this, "Copy", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        //KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK, false);
+        // jAttacksTable.registerKeyboardAction(DSWorkbenchSOSRequestAnalyzer.this, "Copy", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jAttacksTable.registerKeyboardAction(DSWorkbenchSOSRequestAnalyzer.this, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jAttacksTable.registerKeyboardAction(DSWorkbenchSOSRequestAnalyzer.this, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        jAttacksTable.registerKeyboardAction(DSWorkbenchSOSRequestAnalyzer.this, "Cut", cut, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        // jAttacksTable.registerKeyboardAction(DSWorkbenchSOSRequestAnalyzer.this, "Cut", cut, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jAttacksTable.getActionMap().put("find", new AbstractAction() {
 
             @Override
@@ -383,6 +380,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     }
 
     private void copyDefRequests() {
+        //@TODO (Later?) Add simple copy for IGMs
         List<DefenseInformation> selection = getSelectedRows();
 
         if (selection.isEmpty()) {
@@ -444,27 +442,70 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     }
 
     public de.tor.tribes.io.UnitHolder getSlowestUnit() {
-        Hashtable<UnitHolder, Integer> units = DSWorkbenchSettingsDialog.getSingleton().getDefense();
-        Enumeration<UnitHolder> keys = units.keys();
-        UnitHolder slowest = null;
-        while (keys.hasMoreElements()) {
-            UnitHolder key = keys.nextElement();
-            if (units.get(key) != null && units.get(key) != 0) {
-                if (slowest == null) {
-                    slowest = key;
-                } else {
-                    if (key.getSpeed() > slowest.getSpeed()) {
-                        slowest = key;
-                    }
-                }
-            }
-        }
-        return slowest;
+        return TroopHelper.getSlowestUnit(DSWorkbenchSettingsDialog.getSingleton().getDefense());
     }
 
     private void removeSelection() {
         removeSelection(true);
         updateSupportTable();
+    }
+
+    private void copySelectionToClipboardAsBBCode() {
+ //@TODO Implement BB-Copy
+        Hashtable<Tribe, SOSRequest> currentRequests = new Hashtable<Tribe, SOSRequest>();
+
+        if (currentRequests == null || currentRequests.isEmpty()) {
+            showInfo("Keine SOS Anfragen eingelesen");
+            return;
+        }
+        try {
+            boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
+
+            StringBuilder buffer = new StringBuilder();
+            if (extended) {
+                buffer.append("[u][size=12]SOS Anfragen[/size][/u]\n\n");
+            } else {
+                buffer.append("[u]SOS Anfragen[/u]\n\n");
+            }
+
+            List<SOSRequest> requests = new LinkedList<SOSRequest>();
+
+            Enumeration<Tribe> tribeKeys = currentRequests.keys();
+            while (tribeKeys.hasMoreElements()) {
+                requests.add(currentRequests.get(tribeKeys.nextElement()));
+            }
+            buffer.append(new SosListFormatter().formatElements(requests,
+                    extended));
+
+            if (extended) {
+                buffer.append("\n[size=8]Erstellt am ");
+                buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+                buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url][/size]\n");
+            } else {
+                buffer.append("\nErstellt am ");
+                buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+                buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/url]\n");
+            }
+
+            String b = buffer.toString();
+            StringTokenizer t = new StringTokenizer(b, "[");
+            int cnt = t.countTokens();
+            if (cnt > 1000) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die momentan vorhandenen Anfragen benötigen mehr als 1000 BB-Codes\n"
+                        + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                    return;
+                }
+            }
+
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
+            showSuccess("Daten in Zwischenablage kopiert");
+        } catch (Exception e) {
+            logger.error("Failed to copy data to clipboard", e);
+            showError("Fehler beim Kopieren in die Zwischenablage");
+        }
+
     }
 
     private void removeSelection(boolean pAsk) {
@@ -641,6 +682,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jSOSPanel, gridBagConstraints);
 
+        capabilityInfoPanel1.setCopyable(false);
         capabilityInfoPanel1.setPastable(false);
         capabilityInfoPanel1.setSearchable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();

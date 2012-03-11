@@ -387,6 +387,9 @@ public class DefenseSourcePanel extends WizardPage {
     }
 
     private int getSplits(Village pVillage) {
+        if(Constants.DEBUG){
+            return 10;
+        }
         TroopSplit split = new TroopSplit(pVillage);
         int supportTolerance = 10;
         try {

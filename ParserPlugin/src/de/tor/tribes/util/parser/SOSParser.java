@@ -229,6 +229,7 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
         }
 
         for (String line : lines) {
+           // System.out.println("L " + line);
             String usedLine = line.trim();
             if (usedLine.contains("Dorf:")) {
                 print("Village line '" + usedLine + "'");
@@ -310,8 +311,11 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
                                 if (arriveSplit != null && arriveSplit.length >= 4) {
                                     print("Try to check arrive time");
                                     String arriveValue = arriveSplit[1] + " " + arriveSplit[2];
+                                   // System.out.println("AV " + arriveValue);
                                     arrive = dateFormat.parse(arriveValue);
+                                   // System.out.println("HAVE AR ");
                                     if (!useMillis) {//add current millis to be able to compare times
+                                    //    System.out.println("ADD CM");
                                         arrive = new Date(arrive.getTime() + Calendar.getInstance().get(Calendar.MILLISECOND));
                                     }
                                 } else {
@@ -319,9 +323,11 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
                                 }
                             } catch (Exception e) {
                                 print("Failed to parse date (" + e.getMessage() + ")");
+                               // e.printStackTrace();
                             }
                             if (source != null && arrive != null) {
                                 try {
+                                  //  System.out.println("T " + dateFormat.format(arrive));
                                     if (unit != null && unit.getPlainName().equals("ag")) {
                                         request.getTargetInformation(destination).addAttack(source, arrive, unit, false, true);
                                     } else if (fake) {

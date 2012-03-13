@@ -351,7 +351,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
                 relevantTags.add(item.getTag());
             }
         }
-
+       
         ScriptEngineManager factory = new ScriptEngineManager();
         ScriptEngine engine = factory.getEngineByName("JavaScript");
         String baseEquation = b.toString();

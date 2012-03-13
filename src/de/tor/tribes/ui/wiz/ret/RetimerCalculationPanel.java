@@ -290,8 +290,10 @@ public class RetimerCalculationPanel extends WizardPage {
                     RETSourceElement[] filtered = RetimerSourceFilterPanel.getSingleton().getFilteredElements();
                     Attack[] attacks = RetimerDataPanel.getSingleton().getAttacks();
                     for (Attack a : attacks) {
+                        notifyStatusUpdate("Berechne Retimes für Angriff " + a.getSource().getFullName() + " -> " + a.getTarget().getFullName());
                         for (RETSourceElement element : filtered) {
                             if (!element.isIgnored()) {
+                                notifyStatusUpdate(" - Teste Herkunftsdorf " + element.getVillage().getFullName());
                                 VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(element.getVillage(), TroopsManager.TROOP_TYPE.OWN);
                                 if (Constants.DEBUG) {
                                     holder = TroopHelper.getRandomOffVillageTroops(element.getVillage());
@@ -309,6 +311,7 @@ public class RetimerCalculationPanel extends WizardPage {
                     }
                 } catch (Exception e) {
                     logger.error("Failed to calculate retimes", e);
+                    notifyStatusUpdate("Interner Fehler bei der Berechnung!");
                 } finally {
                     notifyCalculationFinished();
                 }
@@ -327,8 +330,10 @@ public class RetimerCalculationPanel extends WizardPage {
         for (int i = units.size() - 1; i >= 0; i--) {
             UnitHolder unit = units.get(i);
             if (unit.isRetimeUnit()) {
+                notifyStatusUpdate(" - Teste Einheit '" + unit.getName() + "'");
                 long sendTime = returnTime - DSCalculator.calculateMoveTimeInMillis(source, target, unit.getSpeed());
                 if (sendTime > System.currentTimeMillis() + DateUtils.MILLIS_PER_MINUTE && sendTime > pAttack.getArriveTime().getTime() + DateUtils.MILLIS_PER_MINUTE) {
+                    notifyStatusUpdate(" - Einheit für Retime geeignet");
                     Attack a = new Attack();
                     a.setSource(source);
                     a.setTarget(target);
@@ -355,6 +360,7 @@ public class RetimerCalculationPanel extends WizardPage {
         } else {
             setProblem("Berechnung erzielte keine Ergebnisse");
         }
+        notifyStatusUpdate("Berechnung abgeschlossen");
         jCalculateButton.setText("Retimes berechnen");
         jCalculateButton.setEnabled(true);
     }
@@ -409,6 +415,8 @@ public class RetimerCalculationPanel extends WizardPage {
             setProblem("Keine Ergebnisse vorhanden");
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
+
+        RetimerFinishPanel.getSingleton().update();
         return WizardPanelNavResult.PROCEED;
     }
 

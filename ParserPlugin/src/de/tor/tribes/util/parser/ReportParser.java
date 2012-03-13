@@ -289,6 +289,15 @@ public class ReportParser implements SilentParserInterface {
                 } else {
                     debug("No valid hide level from " + line);
                 }
+            } else if (line.indexOf("Wall") > -1) {
+                debug("Parse wall");
+                int val = parseIntFromPattern(line, "Wall(.*)\\(Stufe(.*?)\\)", 2);
+                if (val != -1) {
+                    debug("Got wall level " + val);
+                    result.setWallLevel(val);
+                } else {
+                    debug("No valid wall level from " + line);
+                }
             } else if (searchChurch && line.indexOf("Erste Kirche") > -1) {
                 debug("Try adding first church");
                 try {

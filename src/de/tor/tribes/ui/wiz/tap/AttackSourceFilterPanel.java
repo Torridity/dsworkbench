@@ -50,7 +50,7 @@ import org.netbeans.spi.wizard.*;
  * @author Torridity
  */
 public class AttackSourceFilterPanel extends WizardPage {
-
+    
     private static final String GENERAL_INFO = "<html>Du befindest dich in der Filterauswahl. Hier kannst du vorher gew&auml;hlte Herkunftsd&ouml;rfer herausfiltern, "
             + "wenn sie nicht bestimmten Kriterien entsprechen. M&ouml;gliche Filterkriterien sind:"
             + "<ul> <li>D&ouml;rfer werden bereits in einem Angriffsplan verwendet</li> "
@@ -64,7 +64,7 @@ public class AttackSourceFilterPanel extends WizardPage {
     private static AttackSourceFilterPanel singleton = null;
     private TroopFilterDialog troopFilterDialog = null;
     private VillageOverviewMapPanel overviewPanel = null;
-
+    
     public static synchronized AttackSourceFilterPanel getSingleton() {
         if (singleton == null) {
             singleton = new AttackSourceFilterPanel();
@@ -82,7 +82,7 @@ public class AttackSourceFilterPanel extends WizardPage {
         jVillageTable.setModel(new TAPSourceFilterTableModel());
         jVillageTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jInfoTextPane.setText(GENERAL_INFO);
-
+        
         jideSplitPane1.setOrientation(JideSplitPane.VERTICAL_SPLIT);
         jideSplitPane1.setProportionalLayout(true);
         jideSplitPane1.setDividerSize(5);
@@ -93,7 +93,7 @@ public class AttackSourceFilterPanel extends WizardPage {
         jideSplitPane1.add(jFilterPanel, JideBoxLayout.FLEXIBLE);
         jideSplitPane1.add(jVillagePanel, JideBoxLayout.VARY);
         jideSplitPane1.getDividerAt(0).addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -106,34 +106,34 @@ public class AttackSourceFilterPanel extends WizardPage {
         overviewPanel = new VillageOverviewMapPanel();
         jPanel2.add(overviewPanel, BorderLayout.CENTER);
         AttackManager.getSingleton().addManagerListener(new GenericManagerListener() {
-
+            
             @Override
             public void dataChangedEvent() {
                 updateAttackList();
             }
-
+            
             @Override
             public void dataChangedEvent(String pGroup) {
                 dataChangedEvent();
             }
         });
     }
-
+    
     public static String getDescription() {
         return "Filterung (Herkunft)";
     }
-
+    
     public static String getStep() {
         return "id-attack-source-filter";
     }
-
+    
     public void storeProperties() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
         profile.addProperty("tap.filter.own.only", jPlayerVillagesOnly.isSelected());
         profile.addProperty("tap.filter.min.farm", UIHelper.parseIntFromField(jMinFarmSpace, 0));
         profile.addProperty("tap.filter.min.farm.bonus", UIHelper.parseIntFromField(jMinFarmSpaceBonus, 0));
     }
-
+    
     public void restoreProperties() {
         getModel().clear();
         UserProfile profile = GlobalOptions.getSelectedProfile();
@@ -475,15 +475,15 @@ public class AttackSourceFilterPanel extends WizardPage {
             jLabel1.setText("Informationen einblenden");
         }
     }//GEN-LAST:event_fireHideInfoEvent
-
+    
     private void fireRemoveAttackPlanSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveAttackPlanSelectionEvent
         jAttackPlanList.getSelectionModel().clearSelection();
     }//GEN-LAST:event_fireRemoveAttackPlanSelectionEvent
-
+    
     private void fireUpdateFilterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUpdateFilterEvent
         updateFilters();
     }//GEN-LAST:event_fireUpdateFilterEvent
-
+    
     private void fireShowTroopFilterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowTroopFilterEvent
         if (troopFilterDialog.showDialog()) {
             jTroopFilterButton.setBackground(Color.GREEN);
@@ -493,7 +493,7 @@ public class AttackSourceFilterPanel extends WizardPage {
             jTroopFilterButton.setText("Inaktiv (klicken)");
         }
     }//GEN-LAST:event_fireShowTroopFilterEvent
-
+    
     private void fireViewStateChangeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireViewStateChangeEvent
         if (jToggleButton1.isSelected()) {
             overviewPanel.setOptimalSize();
@@ -503,14 +503,14 @@ public class AttackSourceFilterPanel extends WizardPage {
             jTableScrollPane.setViewportView(jVillageTable);
             jPanel2.add(overviewPanel, BorderLayout.CENTER);
             SwingUtilities.invokeLater(new Runnable() {
-
+                
                 public void run() {
                     jPanel2.updateUI();
                 }
             });
         }
     }//GEN-LAST:event_fireViewStateChangeEvent
-
+    
     private void fireChangeIgnoreSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeIgnoreSelectionEvent
         boolean ignore = (evt.getSource() == jIgnoreButton);
         List<TAPAttackSourceElement> selection = getSelection();
@@ -521,9 +521,12 @@ public class AttackSourceFilterPanel extends WizardPage {
         updateVillageOverview();
         repaint();
     }//GEN-LAST:event_fireChangeIgnoreSelectionEvent
-
+    
     private void updateFilters() {
         List<TAPAttackSourceElement> elements = getAllElements();
+        for (TAPAttackSourceElement element : elements) {
+            element.setIgnored(false);
+        }
         filterMisc(elements);
         filterByAttackPlans(elements);
         filterTroops(elements);
@@ -531,7 +534,7 @@ public class AttackSourceFilterPanel extends WizardPage {
         updateVillageOverview();
         getModel().fireTableDataChanged();
     }
-
+    
     private void filterMisc(List<TAPAttackSourceElement> pAllElements) {
         Tribe t = GlobalOptions.getSelectedProfile().getTribe();
         for (TAPAttackSourceElement elem : pAllElements) {
@@ -540,14 +543,14 @@ public class AttackSourceFilterPanel extends WizardPage {
             }
         }
     }
-
+    
     private void filterByAttackPlans(List<TAPAttackSourceElement> pAllElements) {
         Object[] selection = jAttackPlanList.getSelectedValues();
         List<String> groups = new ArrayList<String>();
         for (Object o : selection) {
             groups.add((String) o);
         }
-
+        
         List<ManageableType> attacks = AttackManager.getSingleton().getAllElements(groups);
         for (ManageableType type : attacks) {
             Attack a = (Attack) type;
@@ -558,7 +561,7 @@ public class AttackSourceFilterPanel extends WizardPage {
             }
         }
     }
-
+    
     private void filterTroops(List<TAPAttackSourceElement> pAllElements) {
         //filter by farm space
         int requiredTroopAmount = UIHelper.parseIntFromField(jMinFarmSpace, 0);
@@ -592,15 +595,15 @@ public class AttackSourceFilterPanel extends WizardPage {
             }
         }
     }
-
+    
     private void updateVillageOverview() {
         overviewPanel.reset();
         List<TAPAttackSourceElement> elements = getAllElements();
-
+        
         int offs = 0;
         int fakes = 0;
         int ignored = 0;
-
+        
         for (TAPAttackSourceElement element : elements) {
             overviewPanel.addVillage(new Point(element.getVillage().getX(), element.getVillage().getY()), (!element.isIgnored()) ? Color.yellow : Color.lightGray);
             offs++;
@@ -615,11 +618,11 @@ public class AttackSourceFilterPanel extends WizardPage {
         TAPAttackInfoPanel.getSingleton().updateSource(offs, fakes, ignored);
         overviewPanel.repaint();
     }
-
+    
     private TAPSourceFilterTableModel getModel() {
         return (TAPSourceFilterTableModel) jVillageTable.getModel();
     }
-
+    
     protected void setup() {
         TAPAttackSourceElement[] elements = AttackSourcePanel.getSingleton().getAllElements();
         getModel().clear();
@@ -627,7 +630,7 @@ public class AttackSourceFilterPanel extends WizardPage {
         int offs = 0;
         int fakes = 0;
         int ignored = 0;
-
+        
         for (TAPAttackSourceElement element : elements) {
             getModel().addRow(element, false);
             overviewPanel.addVillage(new Point(element.getVillage().getX(), element.getVillage().getY()), (!element.isIgnored()) ? Color.yellow : Color.lightGray);
@@ -644,7 +647,7 @@ public class AttackSourceFilterPanel extends WizardPage {
         TAPAttackInfoPanel.getSingleton().updateSource(offs, fakes, ignored);
         overviewPanel.repaint();
     }
-
+    
     private void updateAttackList() {
         DefaultListModel attackModel = new DefaultListModel();
         for (String plan : AttackManager.getSingleton().getGroups()) {
@@ -652,21 +655,21 @@ public class AttackSourceFilterPanel extends WizardPage {
         }
         jAttackPlanList.setModel(attackModel);
     }
-
+    
     protected void updateFilterPanel(List<TAPAttackSourceElement> pAllElements) {
         updateAttackList();
         int ignoreCount = 0;
         for (TAPAttackSourceElement elem : pAllElements) {
             ignoreCount += (elem.isIgnored()) ? 1 : 0;
         }
-
+        
         if (ignoreCount == getModel().getRowCount()) {
             setProblem("Alle Dörfer werden ignoriert");
         } else {
             setProblem(null);
         }
     }
-
+    
     public TAPAttackSourceElement[] getFilteredElements() {
         List<TAPAttackSourceElement> filtered = new LinkedList<TAPAttackSourceElement>();
         TAPSourceFilterTableModel model = getModel();
@@ -678,7 +681,7 @@ public class AttackSourceFilterPanel extends WizardPage {
         }
         return filtered.toArray(new TAPAttackSourceElement[filtered.size()]);
     }
-
+    
     public List<TAPAttackSourceElement> getSelection() {
         List<TAPAttackSourceElement> elements = new LinkedList<TAPAttackSourceElement>();
         TAPSourceFilterTableModel model = getModel();
@@ -687,7 +690,7 @@ public class AttackSourceFilterPanel extends WizardPage {
         }
         return elements;
     }
-
+    
     public List<TAPAttackSourceElement> getAllElements() {
         List<TAPAttackSourceElement> elements = new LinkedList<TAPAttackSourceElement>();
         TAPSourceFilterTableModel model = getModel();
@@ -732,20 +735,20 @@ public class AttackSourceFilterPanel extends WizardPage {
             setProblem("Alle Dörfer werden ignoriert");
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
-
+        
         if (getModel().getRowCount() > 0) {
             AttackTargetPanel.getSingleton().updateOverview();
         }
-
+        
         AttackCalculationPanel.getSingleton().updateStatus();
         return WizardPanelNavResult.PROCEED;
     }
-
+    
     @Override
     public WizardPanelNavResult allowBack(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;
     }
-
+    
     @Override
     public WizardPanelNavResult allowFinish(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;

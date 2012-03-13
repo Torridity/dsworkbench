@@ -99,14 +99,16 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
         } else {
             allyList.setListData(AllyUtils.getAlliesByFilter("", Ally.CASE_INSENSITIVE_ORDER));
         }
+        
+        if (!tribeList.isVisible()) {
+            tribeList.setListData(new Tribe[]{GlobalOptions.getSelectedProfile().getTribe()});
+        }
+
         jXTextField1.setText("");
 
         setupFilters();
         //do initial selection
 
-        if (!tribeList.isVisible()) {
-            tribeList.setSelectedValue(GlobalOptions.getSelectedProfile().getTribe(), false);
-        }
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (!unit.getPlainName().equals("militia")) {

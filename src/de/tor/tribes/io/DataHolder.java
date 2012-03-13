@@ -15,7 +15,7 @@ import de.tor.tribes.types.test.DummyUnit;
 import de.tor.tribes.types.ext.InvalidTribe;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.UnknownUnit;
-import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.types.ext.*;
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
@@ -1082,7 +1082,6 @@ public class DataHolder {
         for (int i = 0; i < mVillages.length; i++) {
             for (int j = 0; j < mVillages[0].length; j++) {
                 Village current = mVillages[i][j];
-
                 if (current != null) {
                     //set tribe of village
                     Tribe t = mTribes.get(current.getTribeID());
@@ -1120,6 +1119,18 @@ public class DataHolder {
             mAlliesByName.remove(a.getName());
             mAlliesByTagName.remove(a.getTag());
         }
+
+
+        logger.debug("Updating tribes with no allies");
+        Enumeration<Integer> tribeKeys = mTribes.keys();
+        NoAlly.getSingleton().reset();
+        while (tribeKeys.hasMoreElements()) {
+            Tribe t = mTribes.get(tribeKeys.nextElement());
+            if (t.getAllyID() == 0) {
+                NoAlly.getSingleton().addTribe(t);
+            }
+        }
+
         logger.debug("Removed " + toRemove.size() + " empty allies");
         DATA_VALID = true;
     }

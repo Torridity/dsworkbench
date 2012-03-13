@@ -5,57 +5,78 @@
 package de.tor.tribes.types.ext;
 
 import java.text.NumberFormat;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
  * @author Jejkal
  */
 public class NoAlly extends Ally {
-
+    
     private static NoAlly SINGLETON = null;
-
+    private List<Tribe> tribes = null;
+    
     public static synchronized NoAlly getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new NoAlly();
         }
         return SINGLETON;
     }
-
+    
+    public NoAlly() {
+        tribes = new LinkedList<Tribe>();
+    }
+    
+    public void reset() {
+        tribes.clear();
+    }
+    
+    @Override
+    public void addTribe(Tribe t) {
+        tribes.add(t);
+    }
+    
     @Override
     public int getId() {
         return -1;
     }
-
+    
     @Override
     public String getName() {
         return "Kein Stamm";
     }
-
+    
     @Override
     public String getTag() {
         return "-";
     }
-
+    
+    @Override
+    public Tribe[] getTribes() {
+        return tribes.toArray(new Tribe[tribes.size()]);
+    }
+    
     @Override
     public short getMembers() {
-        return 0;
+        return (short) tribes.size();
     }
-
+    
     @Override
     public double getPoints() {
         return 0;
     }
-
+    
     @Override
     public int getRank() {
         return 0;
     }
-
+    
     @Override
     public String toString() {
         return "Kein Stamm";
     }
-
+    
     @Override
     public String getToolTipText() {
         NumberFormat nf = NumberFormat.getInstance();

@@ -128,6 +128,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     private int ironLevel = -1;
     private int storageLevel = -1;
     private int hideLevel = -1;
+    private int wallLevel = -1;
 
     public FightReport() {
         attackers = new Hashtable<UnitHolder, Integer>();
@@ -403,9 +404,11 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 setIronLevel(Integer.parseInt(buildings.getAttributeValue("iron")));
                 setStorageLevel(Integer.parseInt(buildings.getAttributeValue("storage")));
                 setHideLevel(Integer.parseInt(buildings.getAttributeValue("hide")));
+                if (buildingElement.getAttribute("wall") != null) {
+                    setWallLevel(Integer.parseInt(buildings.getAttributeValue("wall")));
+                }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 
@@ -471,26 +474,6 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
             b.append("</defender>\n");
 
-
-            /*
-             * xml += sDefenders + "/>\n"; xml += sDiedDefenders + "/>\n"; if (sDefendersOnTheWay != null) { xml += sDefendersOnTheWay +
-             * "/>\n"; }
-             */
-
-            /*
-             * if (whereDefendersOutside()) { xml += "<outside>\n";
-             *
-             * Enumeration<Village> targetVillages = defendersOutside.keys();
-             *
-             * while (targetVillages.hasMoreElements()) { Village v = targetVillages.nextElement(); if (v != null) { String villageString =
-             * "<support "; Hashtable<UnitHolder, Integer> support = defendersOutside.get(v); if (support != null) { villageString +=
-             * "trg=\"" + v.getId() + "\" "; Enumeration<UnitHolder> suppUnits = support.keys(); while (suppUnits.hasMoreElements()) {
-             * UnitHolder unit = suppUnits.nextElement(); villageString += unit.getPlainName() + "=\"" + support.get(unit) + "\" "; }
-             * villageString += "/>\n"; xml += villageString; } } } xml += "</outside>\n"; }
-             *
-             * xml += "</defender>\n";
-             */
-
             if (wasWallDamaged()) {
                 b.append("<wall before=\"").append(getWallBefore()).append("\" after=\"").append(getWallAfter()).append("\"/>\n");
             }
@@ -509,7 +492,19 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 b.append("<spy wood=\"").append(getSpyedResources()[0]).append("\" clay=\"").append(getSpyedResources()[1]).append("\" iron=\"").append(getSpyedResources()[2]).append("\"/>\n");
             }
 
-            b.append("<buildings wood=\"").append(getWoodLevel()).append("\" clay=\"").append(getClayLevel()).append("\" iron=\"").append(getIronLevel()).append("\" storage=\"").append(getStorageLevel()).append("\" hide=\"").append(getHideLevel()).append("\"/>\n");
+            b.append("<buildings wood=\"").
+                    append(getWoodLevel()).
+                    append("\" clay=\"").
+                    append(getClayLevel()).
+                    append("\" iron=\"").
+                    append(getIronLevel()).
+                    append("\" storage=\"").
+                    append(getStorageLevel()).
+                    append("\" hide=\"").
+                    append(getHideLevel()).
+                    append("\" wall=\"").
+                    append(getWallLevel()).
+                    append("\"/>\n");
 
             b.append("</report>");
             return b.toString();
@@ -683,6 +678,14 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
     public int getHideLevel() {
         return hideLevel;
+    }
+
+    public void setWallLevel(int wallLevel) {
+        this.wallLevel = wallLevel;
+    }
+
+    public int getWallLevel() {
+        return wallLevel;
     }
 
     /**

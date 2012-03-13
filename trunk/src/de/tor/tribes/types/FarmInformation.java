@@ -72,6 +72,7 @@ public class FarmInformation extends ManageableType {
     private int ironLevel = 1;
     private int storageLevel = 1;
     private int hideLevel = 0;
+    private int wallLevel = 0;
     private int woodInStorage = 0;
     private int clayInStorage = 0;
     private int ironInStorage = 0;
@@ -155,9 +156,8 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Revalidate the farm information (check owner, check returning/running
-     * troops) This method is called after initializing the farm manager and on
-     * user request
+     * Revalidate the farm information (check owner, check returning/running troops) This method is called after initializing the farm
+     * manager and on user request
      */
     public void revalidate() {
         checkOwner();
@@ -296,10 +296,6 @@ public class FarmInformation extends ManageableType {
             }
         });
 
-        for (FightReport r : reports) {
-            System.out.println(r.getTimestamp());
-        }
-
         if (!reports.isEmpty()) {//at least one report exists
             if (reports.size() > 1) {
                 //resource guess possible...do so!
@@ -406,8 +402,8 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Get the correction factor depending on overall expected haul and overall
-     * actual haul. Correction is started beginning with the fifth attack
+     * Get the correction factor depending on overall expected haul and overall actual haul. Correction is started beginning with the fifth
+     * attack
      */
     public float getCorrectionFactor() {
         if (expectedHaul == 0) {
@@ -483,7 +479,10 @@ public class FarmInformation extends ManageableType {
             hideLevel = pReport.getHideLevel();
             spyLevel = SPY_LEVEL.BUILDINGS;
         }
-
+        if (pReport.getWallLevel() != -1) {
+            wallLevel = pReport.getWallLevel();
+            spyLevel = SPY_LEVEL.BUILDINGS;
+        }
         switch (spyLevel) {
             case BUILDINGS:
                 logger.debug("Included building and resource spy information into farm information");
@@ -499,8 +498,7 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Read haul information from report, correct storage amounts and return
-     * difference to max haul
+     * Read haul information from report, correct storage amounts and return difference to max haul
      */
     private void updateHaulInformation(FightReport pReport) {
         if (pReport.getHaul() == null) {
@@ -543,12 +541,9 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Update this farm's correction factor by calculating the expected haul
-     * (estimated storage status) and the actual haul (sum of haul and remaining
-     * resources). This call will do nothing if no spy information is available
-     * or if no haul information is available. The correction factor delta is
-     * limited to +/- 10 percent to reduce the influence of A and B runs and for
-     * farms which are relatively new.
+     * Update this farm's correction factor by calculating the expected haul (estimated storage status) and the actual haul (sum of haul and
+     * remaining resources). This call will do nothing if no spy information is available or if no haul information is available. The
+     * correction factor delta is limited to +/- 10 percent to reduce the influence of A and B runs and for farms which are relatively new.
      */
     private void updateCorrectionFactor(FightReport pReport) {
         if (pReport.getHaul() != null && pReport.getSpyedResources() != null) {
@@ -598,8 +593,7 @@ public class FarmInformation extends ManageableType {
     /**
      * Farm this farm
      *
-     * @param The troops used for farming or 'null' if the needed amount of
-     * troops should be calculated
+     * @param The troops used for farming or 'null' if the needed amount of troops should be calculated
      */
     public FARM_RESULT farmFarm(DSWorkbenchFarmManager.FARM_CONFIGURATION pConfig) {
         StringBuilder info = new StringBuilder();
@@ -616,13 +610,13 @@ public class FarmInformation extends ManageableType {
                         + "per STRG+C in die Zwischenablage, von wo DS Workbench sie dann automatisch einlesen wird.\n");
             } else {//troops are imported
                 Hashtable<Village, VillageTroopsHolder> unitsAndVillages;
-                boolean configCUsingMinHaul = false;
+                boolean pFarmByMinHaul = false;
                 if (pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.C)) {//get villages for farm type C, depending on current resources
                     unitsAndVillages = TroopHelper.getOwnTroopsForAllVillagesByCapacity(this);
                     if (unitsAndVillages.isEmpty() && DSWorkbenchFarmManager.getSingleton().allowPartlyFarming()) {
                         //no village can carry all...get villages that can carry more than min haul (ordered by capacity and distance) if partly farming is allowed
                         unitsAndVillages = TroopHelper.getOwnTroopsForAllVillagesByMinHaul(DSWorkbenchFarmManager.getSingleton().getMinHaul(pConfig));
-                        configCUsingMinHaul = !unitsAndVillages.isEmpty();
+                        pFarmByMinHaul = !unitsAndVillages.isEmpty();
                     }
                 } else {//get villages for farm type A or B, depending on static troop count
                     unitsAndVillages = TroopHelper.getOwnTroopsForAllVillages(DSWorkbenchFarmManager.getSingleton().getTroops(pConfig));
@@ -645,7 +639,10 @@ public class FarmInformation extends ManageableType {
                         Hashtable<UnitHolder, Integer> units;
                         if (pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.C)) {
                             //calculate needed units
-                            units = TroopHelper.getTroopsForCarriage(pConfig, unitsAndVillages.get(selectedVillage), this, configCUsingMinHaul);
+
+                            units = TroopHelper.getTroopsForCarriage(pConfig,
+                                    unitsAndVillages.get(selectedVillage),
+                                    this);
                         } else {//use provided units for A/B-Scenario
                             units = new Hashtable<UnitHolder, Integer>();
                             Hashtable<UnitHolder, Integer> configTroops = DSWorkbenchFarmManager.getSingleton().getTroops(pConfig);
@@ -670,7 +667,7 @@ public class FarmInformation extends ManageableType {
                     } else {
                         info.append(villages.size()).append(" Dorf/Dörfer verfügen über die benötigte Tragekapazität.\n");
                         //there are villages which can carry all ressources or we use scenario A/B
-                        if (!configCUsingMinHaul) {//sort valid villages by speed if we are not in the case that we are using farm type C without sufficient troops
+                        if (!pFarmByMinHaul) {//sort valid villages by speed if we are not in the case that we are using farm type C without sufficient troops
                             Collections.sort(villages, new Comparator<Village>() {
 
                                 @Override
@@ -702,7 +699,7 @@ public class FarmInformation extends ManageableType {
                             int resources = getResourcesInStorage(System.currentTimeMillis() + DSCalculator.calculateMoveTimeInMillis(v, getVillage(), speed));
                             double dist = DSCalculator.calculateMoveTimeInMinutes(v, getVillage(), speed);
                             //troops are empty if they are not met the minimum troop amount
-                            if (troops.isEmpty() || TroopHelper.getCapacity(troops) == 0) {
+                            if (troops.isEmpty() || TroopHelper.getPopulation(troops) == 0) {
                                 noTroops++;
                             } else {//enough troops
                                 if (dist > 0 && r.containsDouble(dist)) {
@@ -829,6 +826,14 @@ public class FarmInformation extends ManageableType {
 
     public void setHideLevel(int hideLevel) {
         this.hideLevel = hideLevel;
+    }
+
+    public void setWallLevel(int wallLevel) {
+        this.wallLevel = wallLevel;
+    }
+
+    public int getWallLevel() {
+        return wallLevel;
     }
 
     /**

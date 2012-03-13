@@ -87,6 +87,10 @@ public class DSCalculator {
         int hour = (int) Math.floor(dur / 60);
         dur -= hour * 60;
         int min = (int) Math.floor(dur);
+        if (min == 60) {
+            hour++;
+            min -= 60;
+        }
         int sec = (int) Math.rint((dur - min) * 60);
         if (sec == 60) {
             min++;

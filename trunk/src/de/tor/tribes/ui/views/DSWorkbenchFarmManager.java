@@ -5,7 +5,6 @@
 package de.tor.tribes.ui.views;
 
 import de.tor.tribes.control.GenericManagerListener;
-import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FarmInformation;
@@ -48,6 +47,7 @@ import org.jdesktop.swingx.painter.MattePainter;
 /**
  *
  * @author Torridity
+ * @TODO upload new parser version if DSWB3.2 is released to enable wall feature
  */
 public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements GenericManagerListener {
 
@@ -262,6 +262,17 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                 return bTroops.getAmountForUnit(pUnit);
             default:
                 return cTroops.getAmountForUnit(pUnit);
+        }
+    }
+
+    public boolean isUseRams(FARM_CONFIGURATION pConfig) {
+        switch (pConfig) {
+            case A:
+                return jSendRamsA.isSelected();
+            case B:
+                return jSendRamsB.isSelected();
+            default:
+                return jSendRamsC.isSelected();
         }
     }
 
@@ -526,7 +537,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
      */
     private void farmA() {
         Hashtable<UnitHolder, Integer> troops = aTroops.getAmounts();
-        if (TroopHelper.getCapacity(troops) == 0) {
+        if (TroopHelper.getPopulation(troops) == 0) {
             showInfo("Keine gültigen Farmtruppen für Konfiguration A gefunden");
             return;
         }
@@ -538,7 +549,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
      */
     private void farmB() {
         Hashtable<UnitHolder, Integer> troops = bTroops.getAmounts();
-        if (TroopHelper.getCapacity(troops) == 0) {
+        if (TroopHelper.getPopulation(troops) == 0) {
             showInfo("Keine gültigen Farmtruppen für Konfiguration B gefunden");
             return;
         }
@@ -721,6 +732,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         jLabel3 = new javax.swing.JLabel();
         jMinHaulA = new javax.swing.JTextField();
         jConsiderSucessRateA = new javax.swing.JCheckBox();
+        jSendRamsA = new javax.swing.JCheckBox();
         jBSettingsTab = new javax.swing.JPanel();
         jBTroopsPanel = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
@@ -732,6 +744,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         jLabel10 = new javax.swing.JLabel();
         jMinHaulB = new javax.swing.JTextField();
         jConsiderSucessRateB = new javax.swing.JCheckBox();
+        jSendRamsB = new javax.swing.JCheckBox();
         jCSettingsTab = new javax.swing.JPanel();
         jCTroopsPanel = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
@@ -744,6 +757,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         jMinHaulC = new javax.swing.JTextField();
         jConsiderSucessRateC = new javax.swing.JCheckBox();
         jNotAllowPartlyFarming = new javax.swing.JCheckBox();
+        jSendRamsC = new javax.swing.JCheckBox();
         jRSettingsTab = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jFarmFromBarbarianSelectionDialog = new javax.swing.JDialog();
@@ -932,6 +946,15 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jFarmASettings.add(jConsiderSucessRateA, gridBagConstraints);
 
+        jSendRamsA.setText("Rammen bei Bedarf mitschicken");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFarmASettings.add(jSendRamsA, gridBagConstraints);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -1042,6 +1065,15 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jFarmBSettings.add(jConsiderSucessRateB, gridBagConstraints);
+
+        jSendRamsB.setText("Rammen bei Bedarf mitschicken");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFarmBSettings.add(jSendRamsB, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -1163,6 +1195,15 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jFarmCSettings.add(jNotAllowPartlyFarming, gridBagConstraints);
+
+        jSendRamsC.setText("Rammen bei Bedarf mitschicken");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFarmCSettings.add(jSendRamsC, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -1611,6 +1652,9 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JComboBox jReportSetBox;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton jSearchButton;
+    private javax.swing.JCheckBox jSendRamsA;
+    private javax.swing.JCheckBox jSendRamsB;
+    private javax.swing.JCheckBox jSendRamsC;
     private javax.swing.JPanel jSettingsPanel;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JToggleButton jToggleButton1;
@@ -1630,12 +1674,15 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTop.isSelected());
         pConfig.setProperty(getPropertyPrefix() + ".min.haul.a", jMinHaulA.getText());
+        pConfig.setProperty(getPropertyPrefix() + ".use.ram.a", jSendRamsA.getText());
         pConfig.setProperty(getPropertyPrefix() + ".min.farm.dist.a", jMinFarmRuntimeA.getText());
         pConfig.setProperty(getPropertyPrefix() + ".max.farm.dist.a", jMaxFarmRuntimeA.getText());
         pConfig.setProperty(getPropertyPrefix() + ".min.haul.b", jMinHaulB.getText());
+        pConfig.setProperty(getPropertyPrefix() + ".use.ram.b", jSendRamsB.getText());
         pConfig.setProperty(getPropertyPrefix() + ".min.farm.dist.b", jMinFarmRuntimeB.getText());
         pConfig.setProperty(getPropertyPrefix() + ".max.farm.dist.b", jMaxFarmRuntimeB.getText());
         pConfig.setProperty(getPropertyPrefix() + ".min.haul.c", jMinHaulC.getText());
+        pConfig.setProperty(getPropertyPrefix() + ".use.ram.c", jSendRamsC.getText());
         pConfig.setProperty(getPropertyPrefix() + ".min.farm.dist.c", jMinFarmRuntimeC.getText());
         pConfig.setProperty(getPropertyPrefix() + ".max.farm.dist.c", jMaxFarmRuntimeC.getText());
         pConfig.setProperty(getPropertyPrefix() + ".farmA.units", TroopHelper.unitTableToProperty(aTroops.getAmounts()));
@@ -1669,12 +1716,15 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
         setAlwaysOnTop(jAlwaysOnTop.isSelected());
         UIHelper.setText(jMinHaulA, pConfig.getProperty(getPropertyPrefix() + ".min.haul.a"), 1000);
+        jSendRamsA.setSelected(Boolean.parseBoolean((String) pConfig.getProperty(getPropertyPrefix() + ".use.ram.a")));
         UIHelper.setText(jMinFarmRuntimeA, pConfig.getProperty(getPropertyPrefix() + ".min.farm.dist.a"), 0);
         UIHelper.setText(jMaxFarmRuntimeA, pConfig.getProperty(getPropertyPrefix() + ".max.farm.dist.a"), 60);
         UIHelper.setText(jMinHaulB, pConfig.getProperty(getPropertyPrefix() + ".min.haul.b"), 1000);
+        jSendRamsB.setSelected(Boolean.parseBoolean((String) pConfig.getProperty(getPropertyPrefix() + ".use.ram.b")));
         UIHelper.setText(jMinFarmRuntimeB, pConfig.getProperty(getPropertyPrefix() + ".min.farm.dist.b"), 0);
         UIHelper.setText(jMaxFarmRuntimeB, pConfig.getProperty(getPropertyPrefix() + ".max.farm.dist.b"), 60);
         UIHelper.setText(jMinHaulC, pConfig.getProperty(getPropertyPrefix() + ".min.haul.c"), 1000);
+        jSendRamsC.setSelected(Boolean.parseBoolean((String) pConfig.getProperty(getPropertyPrefix() + ".use.ram.c")));
         UIHelper.setText(jMinFarmRuntimeC, pConfig.getProperty(getPropertyPrefix() + ".min.farm.dist.c"), 0);
         UIHelper.setText(jMaxFarmRuntimeC, pConfig.getProperty(getPropertyPrefix() + ".max.farm.dist.c"), 60);
         String farmA = (String) pConfig.getProperty(getPropertyPrefix() + ".farmA.units");

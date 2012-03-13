@@ -402,6 +402,9 @@ public class AttackTargetFilterPanel extends WizardPage {
 
     private void updateFilters() {
         List<TAPAttackTargetElement> elements = getAllElements();
+        for (TAPAttackTargetElement element : elements) {
+            element.setIgnored(false);
+        }
         filterByAttackPlans(elements);
         updateFilterPanel(elements);
         updateOverview();
@@ -424,7 +427,7 @@ public class AttackTargetFilterPanel extends WizardPage {
             for (ManageableType type : attacks) {
                 Attack a = (Attack) type;
                 for (TAPAttackTargetElement element : pAllElements) {
-                    if (a.getSource().equals(element.getVillage())) {
+                    if (a.getTarget().equals(element.getVillage())) {
                         element.setIgnored(true);
                     }
                 }

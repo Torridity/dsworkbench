@@ -45,6 +45,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
@@ -56,6 +57,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
+import javax.swing.text.NumberFormatter;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.ConsoleAppender;
@@ -80,8 +82,6 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
             removeSelection();
         }
     }
-    
-    
     private static Logger logger = Logger.getLogger("SOSRequestAnalyzer");
     private static DSWorkbenchSOSRequestAnalyzer SINGLETON = null;
     private GenericTestPanel centerPanel = null;
@@ -387,6 +387,8 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
             showInfo("Keine Einträge gewählt");
             return;
         }
+        boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
+
         SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
         StringBuilder b = new StringBuilder();
         b.append("Ich benötige die aufgelisteten oder vergleichbare Unterstützungen in den folgenden Dörfern:\n\n");
@@ -394,8 +396,6 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         for (DefenseInformation defense : selection) {
             if (!defense.isSave()) {
                 Village target = defense.getTarget();
-                b.append("[table]\n");
-                b.append("[**]").append(target.toBBCode()).append("[|]");
                 int needed = defense.getNeededSupports();
                 int available = defense.getSupports().length;
                 Hashtable<UnitHolder, Integer> split = DSWorkbenchSettingsDialog.getSingleton().getDefense();
@@ -404,9 +404,17 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
                 for (Entry<UnitHolder, Integer> entry : entries) {
                     need.put(entry.getKey(), (needed - available) * entry.getValue());
                 }
-                b.append("[img]").append(UnitTableInterface.createDefenderUnitTableLink(need)).append("[/img][/**]\n");
-                b.append("[*]Zeitraum[|]").append(df.format(defense.getFirstAttack())).append(" bis ").append(df.format(defense.getLastAttack())).append("\n");
-                b.append("[/table]\n");
+
+                if (extended) {
+                    b.append("[table]\n");
+                    b.append("[**]").append(target.toBBCode()).append("[|]");
+                    b.append("[img]").append(UnitTableInterface.createDefenderUnitTableLink(need)).append("[/img][/**]\n");
+                    b.append("[*]Angriffe/Fakes[|]").append(defense.getAttackCount()).append("/").append(defense.getFakeCount()).append("\n");
+                    b.append("[*]Zeitraum[|]").append(df.format(defense.getFirstAttack())).append(" bis ").append(df.format(defense.getLastAttack())).append("\n");
+                    b.append("[/table]\n");
+                } else {
+                    b.append(buildSimpleRequestTable(target, need, defense));
+                }
             }
         }
         try {
@@ -415,6 +423,48 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         } catch (HeadlessException hex) {
             showError("Fehler beim Kopieren in die Zwischenablage");
         }
+    }
+
+    private String buildSimpleRequestTable(Village pTarget, Hashtable<UnitHolder, Integer> pNeed, DefenseInformation pDefense) {
+        StringBuilder b = new StringBuilder();
+        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+        b.append("[table]\n");
+        b.append("[**]").append(pTarget.toBBCode());
+        int colCount = 0;
+
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            Integer value = pNeed.get(unit);
+            if (value != null && value > 0) {
+                b.append("[|]").append("[unit]").append(unit.getPlainName()).append("[/unit]");
+                colCount++;
+            }
+        }
+        b.append("[/**]\n");
+
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+        b.append("[*]");
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            Integer value = pNeed.get(unit);
+            if (value != null && value > 0) {
+                b.append("[|]").append(nf.format(value));
+            }
+        }
+
+        b.append("[*][b]Angriffe/Fakes:[/b] ").append(pDefense.getAttackCount()).append("/").append(pDefense.getFakeCount());
+        for (int i = 0; i < colCount; i++) {
+            b.append("[|]");
+        }
+        b.append("\n");
+        b.append("[*][b]Zeitraum:[/b] ").append(df.format(pDefense.getFirstAttack())).append(" bis ").append(df.format(pDefense.getLastAttack()));
+        for (int i = 0; i < colCount; i++) {
+            b.append("[|]");
+        }
+        b.append("\n");
+        b.append("[/table]\n");
+
+        return b.toString();
     }
 
     private void transferToRetimeTool() {
@@ -451,7 +501,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     }
 
     private void copySelectionToClipboardAsBBCode() {
- //@TODO Implement BB-Copy
+        //@TODO Implement BB-Copy
         Hashtable<Tribe, SOSRequest> currentRequests = new Hashtable<Tribe, SOSRequest>();
 
         if (currentRequests == null || currentRequests.isEmpty()) {

@@ -12,6 +12,8 @@ import de.tor.tribes.ui.wiz.dep.DefenseSourcePanel;
 import de.tor.tribes.ui.wiz.ref.SupportRefillCalculationPanel;
 import de.tor.tribes.ui.wiz.ref.SupportRefillSourcePanel;
 import de.tor.tribes.ui.wiz.ref.SupportRefillTargetPanel;
+import de.tor.tribes.ui.wiz.ret.RetimerFinishPanel;
+import de.tor.tribes.ui.wiz.ret.RetimerCalculationPanel;
 import de.tor.tribes.ui.wiz.ret.RetimerDataPanel;
 import de.tor.tribes.ui.wiz.ret.RetimerSourcePanel;
 import de.tor.tribes.util.GlobalOptions;
@@ -129,6 +131,8 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
         SupportRefillCalculationPanel.getSingleton().storeProperties();
         RetimerDataPanel.getSingleton().storeProperties();
         RetimerSourcePanel.getSingleton().storeProperties();
+        RetimerCalculationPanel.getSingleton().storeProperties();
+        RetimerFinishPanel.getSingleton().storeProperties();
     }
 
     public static void restoreProperties() {
@@ -146,6 +150,8 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
         SupportRefillCalculationPanel.getSingleton().restoreProperties();
         RetimerDataPanel.getSingleton().restoreProperties();
         RetimerSourcePanel.getSingleton().restoreProperties();
+        RetimerCalculationPanel.getSingleton().restoreProperties();
+        RetimerFinishPanel.getSingleton().restoreProperties();
     }
 
     public static void main(String[] args) {

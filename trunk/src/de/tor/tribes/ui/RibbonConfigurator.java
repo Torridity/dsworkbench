@@ -240,7 +240,7 @@ public class RibbonConfigurator {
         JRibbonBand attackViewBand = new JRibbonBand("Angriff", getResizableIconFromFile("graphics/big/axe.png"));
         JRibbonBand ingameInfoViewBand = new JRibbonBand("Importierte Daten", getResizableIconFromFile("graphics/big/clipboard_next.png"));
 
-        JCommandButton attackViewButton = factoryButton("Befehle", "graphics/big/axe_sword.png", "Öffnet die Befehlsübersicht", 
+        JCommandButton attackViewButton = factoryButton("Befehle", "graphics/big/axe_sword.png", "Öffnet die Befehlsübersicht",
                 "Die Befehlssübersicht erlaubt es, geplante Angriffe und Verteidigungen zu verwalten, zu modifizieren, zu exportieren (z.B. als BB-Codes) "
                 + "und in den Browser zu übertragen. Befehle müssen vorher durch eins der verfügbaren Werkzeuge automatisch oder manuell erstellt werden", true);
         attackViewButton.addActionListener(new ActionListener() {
@@ -442,7 +442,7 @@ public class RibbonConfigurator {
         JRibbonBand infoToolBand = new JRibbonBand("Information", getResizableIconFromFile("graphics/big/information.png"));
         JRibbonBand miscToolsBand = new JRibbonBand("Sonstige", getResizableIconFromFile("graphics/big/box.png"));
 
-        JCommandButton attackPlanerToolButton = factoryButton("Taktikplaner", "graphics/big/att_auto.png", "Öffnet den Taktikplaner", 
+        JCommandButton attackPlanerToolButton = factoryButton("Taktikplaner", "graphics/big/att_auto.png", "Öffnet den Taktikplaner",
                 "Der Taktikplaner erlaubt es, innerhalb kürzester Zeit eine Vielzahl von Angriffen oder Verteidungen auf eine beliebige Menge von Zielen zu planen. "
                 + "Er ist dabei auf die grobe Planung unter Verwendung vieler Dörfern ausgelegt, gezielte AG-Angriffe oder Angriffe mit sehr wenigen Dörfern liefern "
                 + "in der Regeln weniger gute oder keine Ergebnisse.", true);
@@ -928,6 +928,24 @@ public class RibbonConfigurator {
                 }
             }
         });
+
+        String noChurchFile = "graphics/big/NoChurch.png";
+        if (!new File(noChurchFile).exists()) {
+            noChurchFile = "graphics/icons/no_church.png";
+        }
+
+        JCommandButton removeChurchToolButton = factoryButton(null, noChurchFile, "Kirche löschen", "Mit gewähltem Werkzeug auf ein Dorf der Hauptkarte klicken, um die dortige Kirche zu löschen", true);
+        removeChurchToolButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                if (ServerSettings.getSingleton().isChurch()) {
+                    MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_REMOVE_CHURCH);
+                } else {
+                    DSWorkbenchMainFrame.getSingleton().showInfo("Dieses Werkzeug ist nur auf Kirchenwelten verfügbar");
+                }
+            }
+        });
+
 //
         JCommandButtonPanel cbp = new JCommandButtonPanel(CommandButtonDisplayState.FIT_TO_ICON);
         cbp.setLayoutKind(JCommandButtonPanel.LayoutKind.ROW_FILL);
@@ -935,8 +953,9 @@ public class RibbonConfigurator {
         cbp.addButtonToLastGroup(createChurch1ToolButton);
         cbp.addButtonToLastGroup(createChurch2ToolButton);
         cbp.addButtonToLastGroup(createChurch3ToolButton);
+        cbp.addButtonToLastGroup(removeChurchToolButton);
         final JCommandPopupMenu popupMenu = new JCommandPopupMenu(
-                cbp, 1, 3);
+                cbp, 1, 4);
 
         createChurchToolButton.setPopupCallback(new PopupPanelCallback() {
 

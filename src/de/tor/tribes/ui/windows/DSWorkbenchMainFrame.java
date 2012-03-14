@@ -104,7 +104,8 @@ import org.jdesktop.swingx.tips.TipOfTheDayModel;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 /**
-* @TODO add some simple runtime and retime calculator to replace excel
+ * @TODO add some simple runtime and retime calculator to replace excel
+ *
  * @author Charon
  */
 public class DSWorkbenchMainFrame extends JRibbonFrame implements
@@ -310,7 +311,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                     } else if (e.getKeyCode() == KeyEvent.VK_F6) {
                         DSWorkbenchFormFrame.getSingleton().setVisible(!DSWorkbenchFormFrame.getSingleton().isVisible());
                     } else if (e.getKeyCode() == KeyEvent.VK_F7) {
-                        if (jShowChurchFrame.isEnabled()) {
+                        if (ServerSettings.getSingleton().isChurch()) {
                             DSWorkbenchChurchFrame.getSingleton().setVisible(!DSWorkbenchChurchFrame.getSingleton().isVisible());
                         }
                     } else if (e.getKeyCode() == KeyEvent.VK_F8) {
@@ -517,13 +518,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         }
         //</editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        if (!Constants.DEBUG) {
-            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "index", GlobalOptions.getHelpBroker().getHelpSet());
-            jHelpItem.addActionListener(GlobalOptions.getHelpDisplay());
-        }
-        // </editor-fold>
-
         // <editor-fold defaultstate="collapsed" desc=" Init A*Star HelpSystem ">
         if (!Constants.DEBUG) {
             GlobalOptions.getHelpBroker().enableHelpKey(DSWorkbenchSimulatorFrame.getSingleton().getRootPane(), "pages.astar", GlobalOptions.getHelpBroker().getHelpSet());
@@ -631,8 +625,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             DSWorkbenchStatsFrame.getSingleton().restoreProperties();
             DSWorkbenchDoItYourselfAttackPlaner.getSingleton().resetView();
             DSWorkbenchDoItYourselfAttackPlaner.getSingleton().restoreProperties();
-            DSWorkbenchReTimerFrame.getSingleton().resetView();
-            DSWorkbenchReTimerFrame.getSingleton().restoreProperties();
+            // DSWorkbenchReTimerFrame.getSingleton().resetView();
+            // DSWorkbenchReTimerFrame.getSingleton().restoreProperties();
             DSWorkbenchReportFrame.getSingleton().resetView();
             DSWorkbenchReportFrame.getSingleton().restoreProperties();
             DSWorkbenchSOSRequestAnalyzer.getSingleton().resetView();
@@ -654,7 +648,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                 DSRealManager.getSingleton().checkFilesystem();
             }
 
-            jShowChurchFrame.setEnabled(ServerSettings.getSingleton().isChurch());
             jROIBox.setModel(new DefaultComboBoxModel(ROIManager.getSingleton().getROIs()));
             DSWorkbenchSelectionFrame.getSingleton().resetView();
             DSWorkbenchSelectionFrame.getSingleton().restoreProperties();
@@ -1014,42 +1007,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jAddNewROIButton = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jCustomPanel = new javax.swing.JPanel();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jSeparator2 = new javax.swing.JSeparator();
-        jMenuItem3 = new javax.swing.JMenuItem();
-        jMenuItem4 = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JSeparator();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenu3 = new javax.swing.JMenu();
-        jSearchItem = new javax.swing.JMenuItem();
-        jClockItem = new javax.swing.JMenuItem();
-        jTribeTribeAttackItem = new javax.swing.JMenuItem();
-        jUnitOverviewItem = new javax.swing.JMenuItem();
-        jSelectionOverviewItem = new javax.swing.JMenuItem();
-        jStartAStarItem = new javax.swing.JMenuItem();
-        jDistanceItem = new javax.swing.JMenuItem();
-        jDoItYourselfAttackPlanerItem = new javax.swing.JMenuItem();
-        jReTimeToolEvent = new javax.swing.JMenuItem();
-        jSOSAnalyzerItem = new javax.swing.JMenuItem();
-        jMerchantDistributorItem = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
-        jShowAttackFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowMarkerFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowTroopsFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowRankFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowFormsFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowChurchFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowConquersFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowNotepadFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowTagFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowStatsFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowReportFrame = new javax.swing.JCheckBoxMenuItem();
-        jMenu4 = new javax.swing.JMenu();
-        jHelpItem = new javax.swing.JMenuItem();
-        jAboutItem = new javax.swing.JMenuItem();
-        jDonateButton = new javax.swing.JMenuItem();
         jNavigationPanel = new javax.swing.JPanel();
         jMoveE = new javax.swing.JButton();
         jMoveNE = new javax.swing.JButton();
@@ -1426,292 +1383,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             jCustomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 501, Short.MAX_VALUE)
         );
-
-        jMenuBar1.setBackground(new java.awt.Color(225, 213, 190));
-
-        jMenu1.setBackground(new java.awt.Color(225, 213, 190));
-        jMenu1.setMnemonic('a');
-        jMenu1.setText("Allgemein");
-
-        jMenuItem1.setBackground(new java.awt.Color(239, 235, 223));
-        jMenuItem1.setMnemonic('t');
-        jMenuItem1.setText("Einstellungen");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireShowSettingsEvent(evt);
-            }
-        });
-        jMenu1.add(jMenuItem1);
-        jMenu1.add(jSeparator2);
-
-        jMenuItem3.setBackground(new java.awt.Color(239, 235, 223));
-        jMenuItem3.setText("Import...");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireShowImportDialogEvent(evt);
-            }
-        });
-        jMenu1.add(jMenuItem3);
-
-        jMenuItem4.setBackground(new java.awt.Color(239, 235, 223));
-        jMenuItem4.setText("Export...");
-        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireOpenExportDialogEvent(evt);
-            }
-        });
-        jMenu1.add(jMenuItem4);
-        jMenu1.add(jSeparator1);
-
-        jMenuItem2.setBackground(new java.awt.Color(239, 235, 223));
-        jMenuItem2.setMnemonic('n');
-        jMenuItem2.setText("Beenden");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireExitEvent(evt);
-            }
-        });
-        jMenu1.add(jMenuItem2);
-
-        jMenuBar1.add(jMenu1);
-
-        jMenu3.setBackground(new java.awt.Color(225, 213, 190));
-        jMenu3.setMnemonic('e');
-        jMenu3.setText("Werkzeuge");
-
-        jSearchItem.setBackground(new java.awt.Color(239, 235, 223));
-        jSearchItem.setMnemonic('s');
-        jSearchItem.setText("Suche");
-        jSearchItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireToolsActionEvent(evt);
-            }
-        });
-        jMenu3.add(jSearchItem);
-
-        jClockItem.setBackground(new java.awt.Color(239, 235, 223));
-        jClockItem.setText("Uhr");
-        jClockItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireToolsActionEvent(evt);
-            }
-        });
-        jMenu3.add(jClockItem);
-
-        jTribeTribeAttackItem.setBackground(new java.awt.Color(239, 235, 223));
-        jTribeTribeAttackItem.setText("Taktikplaner");
-        jTribeTribeAttackItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireToolsActionEvent(evt);
-            }
-        });
-        jMenu3.add(jTribeTribeAttackItem);
-
-        jUnitOverviewItem.setBackground(new java.awt.Color(239, 235, 223));
-        jUnitOverviewItem.setText("Laufzeitenübersicht");
-        jUnitOverviewItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireToolsActionEvent(evt);
-            }
-        });
-        jMenu3.add(jUnitOverviewItem);
-
-        jSelectionOverviewItem.setBackground(new java.awt.Color(239, 235, 223));
-        jSelectionOverviewItem.setText("Auswahlübersicht");
-        jSelectionOverviewItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireToolsActionEvent(evt);
-            }
-        });
-        jMenu3.add(jSelectionOverviewItem);
-
-        jStartAStarItem.setBackground(new java.awt.Color(239, 235, 223));
-        jStartAStarItem.setText("A*Star");
-        jStartAStarItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireToolsActionEvent(evt);
-            }
-        });
-        jMenu3.add(jStartAStarItem);
-
-        jDistanceItem.setBackground(new java.awt.Color(239, 235, 223));
-        jDistanceItem.setText("Entfernungsübersicht");
-        jDistanceItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireToolsActionEvent(evt);
-            }
-        });
-        jMenu3.add(jDistanceItem);
-
-        jDoItYourselfAttackPlanerItem.setBackground(new java.awt.Color(239, 235, 223));
-        jDoItYourselfAttackPlanerItem.setText("Manueller Angriffsplaner");
-        jDoItYourselfAttackPlanerItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireToolsActionEvent(evt);
-            }
-        });
-        jMenu3.add(jDoItYourselfAttackPlanerItem);
-
-        jReTimeToolEvent.setBackground(new java.awt.Color(239, 235, 223));
-        jReTimeToolEvent.setText("Re-Time Werkzeug");
-        jReTimeToolEvent.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireToolsActionEvent(evt);
-            }
-        });
-        jMenu3.add(jReTimeToolEvent);
-
-        jSOSAnalyzerItem.setBackground(new java.awt.Color(239, 235, 223));
-        jSOSAnalyzerItem.setText("SOS Analyzer");
-        jSOSAnalyzerItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireToolsActionEvent(evt);
-            }
-        });
-        jMenu3.add(jSOSAnalyzerItem);
-
-        jMerchantDistributorItem.setBackground(new java.awt.Color(239, 235, 223));
-        jMerchantDistributorItem.setText("Rohstoffverteiler");
-        jMerchantDistributorItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireToolsActionEvent(evt);
-            }
-        });
-        jMenu3.add(jMerchantDistributorItem);
-
-        jMenuBar1.add(jMenu3);
-
-        jMenu2.setBackground(new java.awt.Color(225, 213, 190));
-        jMenu2.setMnemonic('n');
-        jMenu2.setText("Ansicht");
-
-        jShowAttackFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowAttackFrame.setText("Angriffe");
-        jShowAttackFrame.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireShowAttackFrameEvent(evt);
-            }
-        });
-        jMenu2.add(jShowAttackFrame);
-
-        jShowMarkerFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowMarkerFrame.setText("Markierungen");
-        jShowMarkerFrame.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireShowMarkerFrameEvent(evt);
-            }
-        });
-        jMenu2.add(jShowMarkerFrame);
-
-        jShowTroopsFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowTroopsFrame.setText("Truppenübersicht");
-        jShowTroopsFrame.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireShowTroopsFrameEvent(evt);
-            }
-        });
-        jMenu2.add(jShowTroopsFrame);
-
-        jShowRankFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowRankFrame.setText("Ranglisten");
-        jShowRankFrame.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireShowRangFrameEvent(evt);
-            }
-        });
-        jMenu2.add(jShowRankFrame);
-
-        jShowFormsFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowFormsFrame.setText("Formen");
-        jShowFormsFrame.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireShowFormsFrameEvent(evt);
-            }
-        });
-        jMenu2.add(jShowFormsFrame);
-
-        jShowChurchFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowChurchFrame.setText("Kirchen");
-        jShowChurchFrame.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireShowChurchFrameEvent(evt);
-            }
-        });
-        jMenu2.add(jShowChurchFrame);
-
-        jShowConquersFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowConquersFrame.setText("Eroberungen");
-        jShowConquersFrame.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireShowConquersFrameEvent(evt);
-            }
-        });
-        jMenu2.add(jShowConquersFrame);
-
-        jShowNotepadFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowNotepadFrame.setText("Notizblock");
-        jShowNotepadFrame.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireShowNotepadEvent(evt);
-            }
-        });
-        jMenu2.add(jShowNotepadFrame);
-
-        jShowTagFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowTagFrame.setText("Tags");
-        jShowTagFrame.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireShowTagFrameEvent(evt);
-            }
-        });
-        jMenu2.add(jShowTagFrame);
-
-        jShowStatsFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowStatsFrame.setText("Statistiken");
-        jShowStatsFrame.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireShowStatsFrameEvent(evt);
-            }
-        });
-        jMenu2.add(jShowStatsFrame);
-
-        jShowReportFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowReportFrame.setText("Berichtsdatenbank");
-        jShowReportFrame.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireShowReportFrameEvent(evt);
-            }
-        });
-        jMenu2.add(jShowReportFrame);
-
-        jMenuBar1.add(jMenu2);
-
-        jMenu4.setBackground(new java.awt.Color(225, 213, 190));
-        jMenu4.setText("?");
-
-        jHelpItem.setBackground(new java.awt.Color(239, 235, 223));
-        jHelpItem.setText("Hilfe");
-        jMenu4.add(jHelpItem);
-
-        jAboutItem.setBackground(new java.awt.Color(239, 235, 223));
-        jAboutItem.setText("Über...");
-        jAboutItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireShowAboutEvent(evt);
-            }
-        });
-        jMenu4.add(jAboutItem);
-
-        jDonateButton.setBackground(new java.awt.Color(239, 235, 223));
-        jDonateButton.setText("Spenden...");
-        jDonateButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireDoDonationEvent(evt);
-            }
-        });
-        jMenu4.add(jDonateButton);
-
-        jMenuBar1.add(jMenu4);
 
         jNavigationPanel.setBackground(new java.awt.Color(239, 235, 223));
         jNavigationPanel.setMinimumSize(new java.awt.Dimension(236, 95));
@@ -2548,24 +2219,6 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
     }
 
     /**
-     * Change active player village
-     */
-    /**
-     * Show settings dialog
-     */
-private void fireShowSettingsEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowSettingsEvent
-    DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
-}//GEN-LAST:event_fireShowSettingsEvent
-
-    /**
-     * Exit the application
-     */
-private void fireExitEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireExitEvent
-    // GlobalOptions.saveProperties();
-    fireDSWorkbenchClosingEvent(null);
-}//GEN-LAST:event_fireExitEvent
-
-    /**
      * Show the toolbar
      */
     /**
@@ -2594,56 +2247,6 @@ private void fireCenterCurrentPosInGameEvent(java.awt.event.MouseEvent evt) {//G
             UIHelper.parseIntFromField(jCenterY, (int) dCenterY));
 }//GEN-LAST:event_fireCenterCurrentPosInGameEvent
 
-    /**
-     * Do tool action
-     */
-private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireToolsActionEvent
-    if (evt.getSource() == jSearchItem) {
-        DSWorkbenchSearchFrame.getSingleton().setVisible(true);
-    } else if (evt.getSource() == jClockItem) {
-        ClockFrame.getSingleton().setVisible(true);
-    } else if (evt.getSource() == jTribeTribeAttackItem) {
-        TacticsPlanerWizard.show();
-    } else if (evt.getSource() == jUnitOverviewItem) {
-        UnitOrderBuilder.showUnitOrder(null, null);
-    } else if (evt.getSource() == jSelectionOverviewItem) {
-        DSWorkbenchSelectionFrame.getSingleton().setVisible(true);
-    } else if (evt.getSource() == jStartAStarItem) {
-        DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
-        DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
-    } else if (evt.getSource() == jDistanceItem) {
-        DSWorkbenchDistanceFrame.getSingleton().setVisible(true);
-    } else if (evt.getSource() == jDoItYourselfAttackPlanerItem) {
-        DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setVisible(true);
-    } else if (evt.getSource() == jReTimeToolEvent) {
-        DSWorkbenchReTimerFrame.getSingleton().setVisible(true);
-    } else if (evt.getSource() == jSOSAnalyzerItem) {
-        DSWorkbenchSOSRequestAnalyzer.getSingleton().setVisible(true);
-    } else if (evt.getSource() == jMerchantDistributorItem) {
-        ResourceDistributorWizard.show();
-    }
-}//GEN-LAST:event_fireToolsActionEvent
-
-private void fireShowAboutEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowAboutEvent
-    mAbout.setVisible(true);
-
-}//GEN-LAST:event_fireShowAboutEvent
-
-private void fireShowAttackFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowAttackFrameEvent
-    DSWorkbenchAttackFrame.getSingleton().setVisible(!DSWorkbenchAttackFrame.getSingleton().isVisible());
-    jShowAttackFrame.setSelected(DSWorkbenchAttackFrame.getSingleton().isVisible());
-}//GEN-LAST:event_fireShowAttackFrameEvent
-
-private void fireShowMarkerFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowMarkerFrameEvent
-    DSWorkbenchMarkerFrame.getSingleton().setVisible(!DSWorkbenchMarkerFrame.getSingleton().isVisible());
-    jShowMarkerFrame.setSelected(DSWorkbenchMarkerFrame.getSingleton().isVisible());
-}//GEN-LAST:event_fireShowMarkerFrameEvent
-
-private void fireShowTroopsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowTroopsFrameEvent
-    DSWorkbenchTroopsFrame.getSingleton().setVisible(!DSWorkbenchTroopsFrame.getSingleton().isVisible());
-    jShowTroopsFrame.setSelected(DSWorkbenchTroopsFrame.getSingleton().isVisible());
-}//GEN-LAST:event_fireShowTroopsFrameEvent
-
 private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_fireCurrentPlayerVillagePopupEvent
     if (jCurrentPlayerVillages.getSelectedIndex() < 0) {
         return;
@@ -2651,16 +2254,6 @@ private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent
     centerVillage((Village) jCurrentPlayerVillages.getSelectedItem());
     DSWorkbenchConquersFrame.getSingleton().repaint();
 }//GEN-LAST:event_fireCurrentPlayerVillagePopupEvent
-
-private void fireShowRangFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowRangFrameEvent
-    DSWorkbenchRankFrame.getSingleton().setVisible(!DSWorkbenchRankFrame.getSingleton().isVisible());
-    jShowRankFrame.setSelected(DSWorkbenchRankFrame.getSingleton().isVisible());
-}//GEN-LAST:event_fireShowRangFrameEvent
-
-private void fireShowFormsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowFormsFrameEvent
-    DSWorkbenchFormFrame.getSingleton().setVisible(!DSWorkbenchFormFrame.getSingleton().isVisible());
-    jShowFormsFrame.setSelected(DSWorkbenchFormFrame.getSingleton().isVisible());
-}//GEN-LAST:event_fireShowFormsFrameEvent
 
 private void fireShowMapPopupChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireShowMapPopupChangedEvent
     GlobalOptions.addProperty("show.map.popup", Boolean.toString(jShowMapPopup.isSelected()));
@@ -2716,9 +2309,6 @@ private void fireCreateMapShotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         }
     }
 }//GEN-LAST:event_fireCreateMapShotEvent
-
-private void fireShowImportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowImportDialogEvent
-}//GEN-LAST:event_fireShowImportDialogEvent
 
 private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireExportEvent
     if (evt.getSource() == jExportButton) {
@@ -2889,16 +2479,6 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
     jExportDialog.setVisible(false);
 }//GEN-LAST:event_fireExportEvent
 
-private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireOpenExportDialogEvent
-}//GEN-LAST:event_fireOpenExportDialogEvent
-
-private void fireShowChurchFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowChurchFrameEvent
-    if (jShowChurchFrame.isEnabled()) {
-        DSWorkbenchChurchFrame.getSingleton().setVisible(!DSWorkbenchChurchFrame.getSingleton().isVisible());
-        jShowChurchFrame.setSelected(DSWorkbenchChurchFrame.getSingleton().isVisible());
-    }
-}//GEN-LAST:event_fireShowChurchFrameEvent
-
 private void fireChangeROIEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeROIEvent
     if (evt.getSource() == jAddROIButton) {
         int x = UIHelper.parseIntFromField(jCenterX, (int) dCenterX);
@@ -2980,27 +2560,6 @@ private void fireDSWorkbenchClosingEvent(java.awt.event.WindowEvent evt) {//GEN-
     System.exit(0);
 }//GEN-LAST:event_fireDSWorkbenchClosingEvent
 
-private void fireShowConquersFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowConquersFrameEvent
-    if (jShowConquersFrame.isEnabled()) {
-        DSWorkbenchConquersFrame.getSingleton().setVisible(!DSWorkbenchConquersFrame.getSingleton().isVisible());
-        jShowConquersFrame.setSelected(DSWorkbenchConquersFrame.getSingleton().isVisible());
-    }
-}//GEN-LAST:event_fireShowConquersFrameEvent
-
-private void fireShowNotepadEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowNotepadEvent
-    if (jShowNotepadFrame.isEnabled()) {
-        DSWorkbenchNotepad.getSingleton().setVisible(!DSWorkbenchNotepad.getSingleton().isVisible());
-        jShowNotepadFrame.setSelected(DSWorkbenchNotepad.getSingleton().isVisible());
-    }
-}//GEN-LAST:event_fireShowNotepadEvent
-
-private void fireShowTagFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowTagFrameEvent
-    if (jShowTagFrame.isEnabled()) {
-        DSWorkbenchTagFrame.getSingleton().setVisible(!DSWorkbenchTagFrame.getSingleton().isVisible());
-        jShowTagFrame.setSelected(DSWorkbenchTagFrame.getSingleton().isVisible());
-    }
-}//GEN-LAST:event_fireShowTagFrameEvent
-
 private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireGraphicPackChangedEvent
     GlobalOptions.addProperty("default.skin", (String) jGraphicPacks.getSelectedItem());
     try {
@@ -3020,18 +2579,6 @@ private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
         MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
     }
 }//GEN-LAST:event_fireGraphicPackChangedEvent
-private void fireShowStatsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowStatsFrameEvent
-    if (jShowStatsFrame.isEnabled()) {
-        DSWorkbenchStatsFrame.getSingleton().setVisible(!DSWorkbenchStatsFrame.getSingleton().isVisible());
-        jShowStatsFrame.setSelected(DSWorkbenchStatsFrame.getSingleton().isVisible());
-    }
-}//GEN-LAST:event_fireShowStatsFrameEvent
-
-private void fireShowReportFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowReportFrameEvent
-
-    DSWorkbenchReportFrame.getSingleton().setVisible(!DSWorkbenchReportFrame.getSingleton().isVisible());
-    jShowReportFrame.setSelected(DSWorkbenchReportFrame.getSingleton().isVisible());
-}//GEN-LAST:event_fireShowReportFrameEvent
 
 private void fireHighlightTribeVillagesChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireHighlightTribeVillagesChangedEvent
     GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(jHighlightTribeVillages.isSelected()));
@@ -3045,10 +2592,6 @@ private void fireRadarValueChangedEvent(javax.swing.event.CaretEvent evt) {//GEN
     int minutes = UIHelper.parseIntFromField(jMinuteField);
     GlobalOptions.addProperty("radar.size", Integer.toString(hours * 60 + minutes));
 }//GEN-LAST:event_fireRadarValueChangedEvent
-
-private void fireDoDonationEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireDoDonationEvent
-    BrowserCommandSender.openPage("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4434173");
-}//GEN-LAST:event_fireDoDonationEvent
 
 private void fireCheckForVillagePositionEvent(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fireCheckForVillagePositionEvent
     List<Village> parsed = PluginManager.getSingleton().executeVillageParser(jCenterX.getText());
@@ -3458,29 +3001,24 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
 
     @Override
     public void fireVisibilityChangedEvent(JFrame pSource, boolean v) {
-        if (pSource == DSWorkbenchAttackFrame.getSingleton()) {
-            jShowAttackFrame.setSelected(DSWorkbenchAttackFrame.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchMarkerFrame.getSingleton()) {
-            jShowMarkerFrame.setSelected(DSWorkbenchMarkerFrame.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchTroopsFrame.getSingleton()) {
-            jShowTroopsFrame.setSelected(DSWorkbenchTroopsFrame.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchRankFrame.getSingleton()) {
-            jShowRankFrame.setSelected(DSWorkbenchRankFrame.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchFormFrame.getSingleton()) {
-            jShowFormsFrame.setSelected(DSWorkbenchFormFrame.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchChurchFrame.getSingleton()) {
-            jShowChurchFrame.setSelected(DSWorkbenchChurchFrame.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchConquersFrame.getSingleton()) {
-            jShowConquersFrame.setSelected(DSWorkbenchConquersFrame.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchNotepad.getSingleton()) {
-            jShowNotepadFrame.setSelected(DSWorkbenchNotepad.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchTagFrame.getSingleton()) {
-            jShowTagFrame.setSelected(DSWorkbenchTagFrame.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchStatsFrame.getSingleton()) {
-            jShowStatsFrame.setSelected(DSWorkbenchStatsFrame.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchReportFrame.getSingleton()) {
-            jShowReportFrame.setSelected(DSWorkbenchReportFrame.getSingleton().isVisible());
-        }
+        /*
+         * if (pSource == DSWorkbenchAttackFrame.getSingleton()) {
+         * jShowAttackFrame.setSelected(DSWorkbenchAttackFrame.getSingleton().isVisible()); } else if (pSource ==
+         * DSWorkbenchMarkerFrame.getSingleton()) { jShowMarkerFrame.setSelected(DSWorkbenchMarkerFrame.getSingleton().isVisible()); } else
+         * if (pSource == DSWorkbenchTroopsFrame.getSingleton()) {
+         * jShowTroopsFrame.setSelected(DSWorkbenchTroopsFrame.getSingleton().isVisible()); } else if (pSource ==
+         * DSWorkbenchRankFrame.getSingleton()) { jShowRankFrame.setSelected(DSWorkbenchRankFrame.getSingleton().isVisible()); } else if
+         * (pSource == DSWorkbenchFormFrame.getSingleton()) { jShowFormsFrame.setSelected(DSWorkbenchFormFrame.getSingleton().isVisible());
+         * } else if (pSource == DSWorkbenchChurchFrame.getSingleton()) {
+         * jShowChurchFrame.setSelected(DSWorkbenchChurchFrame.getSingleton().isVisible()); } else if (pSource ==
+         * DSWorkbenchConquersFrame.getSingleton()) { jShowConquersFrame.setSelected(DSWorkbenchConquersFrame.getSingleton().isVisible()); }
+         * else if (pSource == DSWorkbenchNotepad.getSingleton()) {
+         * jShowNotepadFrame.setSelected(DSWorkbenchNotepad.getSingleton().isVisible()); } else if (pSource ==
+         * DSWorkbenchTagFrame.getSingleton()) { jShowTagFrame.setSelected(DSWorkbenchTagFrame.getSingleton().isVisible()); } else if
+         * (pSource == DSWorkbenchStatsFrame.getSingleton()) {
+         * jShowStatsFrame.setSelected(DSWorkbenchStatsFrame.getSingleton().isVisible()); } else if (pSource ==
+         * DSWorkbenchReportFrame.getSingleton()) { jShowReportFrame.setSelected(DSWorkbenchReportFrame.getSingleton().isVisible()); }
+         */
     }
 
     public void fireGroupParserEvent(Hashtable<String, List<Village>> pParserResult) {
@@ -3550,7 +3088,6 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
-    private javax.swing.JMenuItem jAboutItem;
     private javax.swing.JButton jAddNewROIButton;
     private javax.swing.JButton jAddROIButton;
     private javax.swing.JDialog jAddROIDialog;
@@ -3562,14 +3099,10 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JButton jCenterIngameButton;
     private javax.swing.JTextField jCenterX;
     private javax.swing.JTextField jCenterY;
-    private javax.swing.JMenuItem jClockItem;
     private javax.swing.JLabel jCurrentPlayer;
     private javax.swing.JComboBox jCurrentPlayerVillages;
     private javax.swing.JLabel jCurrentToolLabel;
     private javax.swing.JPanel jCustomPanel;
-    private javax.swing.JMenuItem jDistanceItem;
-    private javax.swing.JMenuItem jDoItYourselfAttackPlanerItem;
-    private javax.swing.JMenuItem jDonateButton;
     private javax.swing.JButton jEnableClipboardWatchButton;
     private javax.swing.JButton jExportButton;
     private javax.swing.JCheckBox jExportChurches;
@@ -3577,7 +3110,6 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JCheckBox jExportForms;
     private javax.swing.JCheckBox jExportTags;
     private javax.swing.JComboBox jGraphicPacks;
-    private javax.swing.JMenuItem jHelpItem;
     private javax.swing.JCheckBox jHighlightTribeVillages;
     private javax.swing.JTextField jHourField;
     private javax.swing.JCheckBox jIncludeSupport;
@@ -3596,16 +3128,6 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JPanel jMapPanel;
     private javax.swing.JPanel jMapPanelHolder;
     private javax.swing.JTable jMarkerSetExportTable;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenu jMenu4;
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMerchantDistributorItem;
     private javax.swing.JPanel jMinimapPanel;
     private javax.swing.JTextField jMinuteField;
     private javax.swing.JButton jMoveE;
@@ -3627,40 +3149,20 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JComboBox jROIPosition;
     private javax.swing.JTextField jROIRegion;
     private javax.swing.JTextField jROITextField;
-    private javax.swing.JMenuItem jReTimeToolEvent;
     private javax.swing.JButton jRefreshButton;
     private javax.swing.JButton jRemoveROIButton;
     private javax.swing.JTable jReportSetExportTable;
-    private javax.swing.JMenuItem jSOSAnalyzerItem;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
-    private javax.swing.JMenuItem jSearchItem;
-    private javax.swing.JMenuItem jSelectionOverviewItem;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JScrollPane jSettingsScrollPane;
-    private javax.swing.JCheckBoxMenuItem jShowAttackFrame;
-    private javax.swing.JCheckBoxMenuItem jShowChurchFrame;
-    private javax.swing.JCheckBoxMenuItem jShowConquersFrame;
-    private javax.swing.JCheckBoxMenuItem jShowFormsFrame;
     private javax.swing.JCheckBox jShowMapPopup;
-    private javax.swing.JCheckBoxMenuItem jShowMarkerFrame;
     private javax.swing.JCheckBox jShowMouseOverInfo;
-    private javax.swing.JCheckBoxMenuItem jShowNotepadFrame;
-    private javax.swing.JCheckBoxMenuItem jShowRankFrame;
-    private javax.swing.JCheckBoxMenuItem jShowReportFrame;
     private javax.swing.JCheckBox jShowRuler;
-    private javax.swing.JCheckBoxMenuItem jShowStatsFrame;
-    private javax.swing.JCheckBoxMenuItem jShowTagFrame;
-    private javax.swing.JCheckBoxMenuItem jShowTroopsFrame;
-    private javax.swing.JMenuItem jStartAStarItem;
     private javax.swing.JPanel jStatusPanel;
-    private javax.swing.JMenuItem jTribeTribeAttackItem;
     private javax.swing.JTable jTroopSetExportTable;
-    private javax.swing.JMenuItem jUnitOverviewItem;
     private org.jdesktop.swingx.JXLabel jXLabel1;
     private org.jdesktop.swingx.JXTipOfTheDay jXTipOfTheDay1;
     private javax.swing.JButton jZoomInButton;

@@ -59,7 +59,8 @@ import org.netbeans.spi.wizard.*;
  */
 public class RetimerSourcePanel extends WizardPage {
 
-    private static final String GENERAL_INFO = "";
+    private static final String GENERAL_INFO = "In diesem Schritt kannst du eigene Dörfer angeben, die für das Retimen verwendet werden sollen.<br/>"
+            + "Empfohlen wird hier natürlich, Off-Dörfer einzufügen. Im folgenden Schritt kannst du die eingetragenen Dörfer jedoch noch filtern.";
     private static RetimerSourcePanel singleton = null;
     private VillageSelectionPanel villageSelectionPanel = null;
     private VillageOverviewMapPanel overviewPanel = null;

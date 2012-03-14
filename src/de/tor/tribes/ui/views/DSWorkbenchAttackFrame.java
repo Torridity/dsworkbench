@@ -405,7 +405,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         }));
-        transferTaskPane.getContentPane().add(factoryButton("/res/ui/re-time.png", "Markierten Befehl in das Werkzeug 'Retimer' einfügen", new MouseAdapter() {
+        transferTaskPane.getContentPane().add(factoryButton("/res/ui/re-time.png", "Markierten Befehl in das Werkzeug 'Retimer' einfügen. Im Anschluss daran muss im Retimer noch die vermutete Einheit gewählt werden.", new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {

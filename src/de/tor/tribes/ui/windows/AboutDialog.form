@@ -119,7 +119,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel6">
       <Properties>
-        <Property name="text" type="java.lang.String" value="&lt;html&gt;&amp;copy; Torridity (2008-2011)&lt;/html&gt;"/>
+        <Property name="text" type="java.lang.String" value="&lt;html&gt;&amp;copy; Torridity (2008-2012)&lt;/html&gt;"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="jDebugButton">

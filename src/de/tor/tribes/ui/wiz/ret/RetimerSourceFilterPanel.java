@@ -49,7 +49,9 @@ import org.netbeans.spi.wizard.*;
  */
 public class RetimerSourceFilterPanel extends WizardPage {
 
-    private static final String GENERAL_INFO = "";
+    private static final String GENERAL_INFO = "Hier kannst du vorher angegebene Retime-Dörfer filtern. So können z.B. Dörfer ignoriert werden,<br/>"
+            + "die bereits in Angriffsplänen verwendet oder die nicht über eine bestimmte Truppenstärke verfügen. Ignorierte Dörfer werden in der Tabelle<br/>"
+            + "entsprechend markiert.";
     private static RetimerSourceFilterPanel singleton = null;
     private TroopFilterDialog troopFilterDialog = null;
     private VillageOverviewMapPanel overviewPanel = null;

@@ -7,6 +7,7 @@ package de.tor.tribes.ui.models;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.util.TroopHelper;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,10 +20,10 @@ import javax.swing.table.AbstractTableModel;
 public class RETResultTableModel extends AbstractTableModel {
 
     private String[] columnNames = new String[]{
-        "Herkunft", "Ziel", "Abschickzeit", "Ankunftszeit", "Einheit"
+        "Herkunft", "Ziel", "Abschickzeit", "Ankunftszeit", "Einheit", "Kampfkraft"
     };
     private Class[] types = new Class[]{
-        Village.class, Village.class, Date.class, Date.class, UnitHolder.class
+        Village.class, Village.class, Date.class, Date.class, UnitHolder.class, Integer.class
     };
     private final List<Attack> elements = new LinkedList<Attack>();
 
@@ -87,8 +88,10 @@ public class RETResultTableModel extends AbstractTableModel {
                 return element.getSendTime();
             case 3:
                 return element.getArriveTime();
-            default:
+            case 4:
                 return element.getUnit();
+            default:
+                return TroopHelper.getAttackForce(element.getSource(), element.getUnit());
         }
     }
 

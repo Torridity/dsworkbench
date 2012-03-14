@@ -27,6 +27,8 @@ import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.PluginManager;
+import de.tor.tribes.util.troops.TroopsManager;
+import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.HeadlessException;
@@ -204,6 +206,7 @@ public class AttackSourcePanel extends WizardPage {
         jPanel3 = new javax.swing.JPanel();
         jSetFake = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jSetFake1 = new javax.swing.JButton();
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jLabel1 = new javax.swing.JLabel();
         jideSplitPane1 = new com.jidesoft.swing.JideSplitPane();
@@ -331,6 +334,21 @@ public class AttackSourcePanel extends WizardPage {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         jPanel3.add(jButton2, gridBagConstraints);
 
+        jSetFake1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/snob.png"))); // NOI18N
+        jSetFake1.setToolTipText("Für Dörfer in denen AGs vorhanden sind die langsamste Einheit auf AG setzen");
+        jSetFake1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireChangeToSnobEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        jPanel3.add(jSetFake1, gridBagConstraints);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
@@ -412,6 +430,23 @@ public class AttackSourcePanel extends WizardPage {
         updateOverview(false);
         repaint();
     }//GEN-LAST:event_fireChangeFakeForSelectionEvent
+
+    private void fireChangeToSnobEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeToSnobEvent
+        UnitHolder snob = DataHolder.getSingleton().getUnitByPlainName("snob");
+        int changeCount = 0;
+        for (TAPAttackSourceElement elem : getAllElements()) {
+            Village v = elem.getVillage();
+            VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN);
+            if (holder != null) {
+                if (holder.getAmountForUnit(snob) > 0) {
+                    elem.setUnit(snob);
+                    changeCount++;
+                }
+            }
+        }
+        repaint();
+        jStatusLabel.setText("Einheit in " + changeCount + " Dorf/Dörfern auf AG geändert");
+    }//GEN-LAST:event_fireChangeToSnobEvent
 
     private TAPSourceTableModel getModel() {
         return (TAPSourceTableModel) jVillageTable.getModel();
@@ -514,6 +549,7 @@ public class AttackSourcePanel extends WizardPage {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JButton jSetFake;
+    private javax.swing.JButton jSetFake1;
     private javax.swing.JLabel jStatusLabel;
     private javax.swing.JScrollPane jTableScrollPane;
     private javax.swing.JToggleButton jToggleButton1;

@@ -244,7 +244,7 @@ public class GlobalOptions {
         DSWorkbenchDoItYourselfAttackPlaner.getSingleton().storeProperties();
         DSWorkbenchMarkerFrame.getSingleton().storeProperties();
         // DSWorkbenchMerchantDistibutor.getSingleton().storeProperties();
-        DSWorkbenchReTimerFrame.getSingleton().storeProperties();
+        //DSWorkbenchReTimerFrame.getSingleton().storeProperties();
         DSWorkbenchSOSRequestAnalyzer.getSingleton().storeProperties();
         DSWorkbenchStatsFrame.getSingleton().storeProperties();
         DSWorkbenchTagFrame.getSingleton().storeProperties();

@@ -11,13 +11,10 @@
 package de.tor.tribes.ui.wiz.ret;
 
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.ui.wiz.tap.*;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.wiz.ret.types.RETSourceElement;
-import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
-import de.tor.tribes.ui.wiz.tap.types.TAPAttackTargetElement;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
@@ -48,7 +45,11 @@ import org.netbeans.spi.wizard.*;
 public class RetimerCalculationPanel extends WizardPage {
 
     private static Logger logger = Logger.getLogger("Retimer-Calculation");
-    private static final String GENERAL_INFO = "";
+    private static final String GENERAL_INFO = "In diesem Schritt können alle verfügbaren Retimes berechnet werden. Dabei wird DS Workbench versuchen,<br/>"
+            + "die angegebenen Herkunftsdörfer so zu timen, dass sie die angreifenden Dörfer erreichen sobald die Truppen aus diesen Dörfern zurückkehren.<br/>"
+            + "Da ein Angriff auch mal schiefgehen kann, berechnet DS Workbench für jedes Herkunfts- und Zieldorf verschiedene Kombinationen, die von der verwendeten<br/>"
+            + "Einheit und somit der Laufzeit abhängen. Am Ende kann natürlich nur ein Angriff tatsächlich durchgeführt werden. Die Entscheidung womit du retimen<br/>"
+            + "möchtest liegt allein bei dir.";
     private static RetimerCalculationPanel singleton = null;
     private List<Attack> retimes = null;
     private SimpleDateFormat dateFormat = null;
@@ -295,7 +296,7 @@ public class RetimerCalculationPanel extends WizardPage {
                             if (!element.isIgnored()) {
                                 notifyStatusUpdate(" - Teste Herkunftsdorf " + element.getVillage().getFullName());
                                 VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(element.getVillage(), TroopsManager.TROOP_TYPE.OWN);
-                                if (Constants.DEBUG) {
+                                if (holder == null && Constants.DEBUG) {
                                     holder = TroopHelper.getRandomOffVillageTroops(element.getVillage());
                                 }
                                 if (holder != null) {
@@ -329,7 +330,8 @@ public class RetimerCalculationPanel extends WizardPage {
         Collections.sort(units, UnitHolder.RUNTIME_COMPARATOR);
         for (int i = units.size() - 1; i >= 0; i--) {
             UnitHolder unit = units.get(i);
-            if (unit.isRetimeUnit()) {
+            Integer amount = amounts.get(unit);
+            if (unit.isRetimeUnit() && amount != null && amount > 0) {
                 notifyStatusUpdate(" - Teste Einheit '" + unit.getName() + "'");
                 long sendTime = returnTime - DSCalculator.calculateMoveTimeInMillis(source, target, unit.getSpeed());
                 if (sendTime > System.currentTimeMillis() + DateUtils.MILLIS_PER_MINUTE && sendTime > pAttack.getArriveTime().getTime() + DateUtils.MILLIS_PER_MINUTE) {

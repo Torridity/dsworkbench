@@ -28,6 +28,8 @@ import de.tor.tribes.ui.models.AttackTableModel;
 import de.tor.tribes.ui.renderer.*;
 import de.tor.tribes.ui.views.DSWorkbenchSelectionFrame;
 import de.tor.tribes.ui.windows.ClockFrame;
+import de.tor.tribes.ui.wiz.ret.RetimerDataPanel;
+import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.AttackIGMSender;
 import de.tor.tribes.util.AttackToPlainTextFormatter;
 import de.tor.tribes.util.BrowserCommandSender;
@@ -96,6 +98,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
  * @TODO DIFF: Integrated attack notification with clock tool
+ *
  * @author Torridity
  */
 public class AttackTableTab extends javax.swing.JPanel implements ListSelectionListener {
@@ -276,16 +279,16 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         if (selection.isEmpty()) {
             showInfo("Kein Befehl gewählt");
         } else {
+            if (selection.get(0).getSendTime().getTime() < System.currentTimeMillis()) {
+                showInfo("Der gewählte Angriff ist bereits abgelaufen");
+                return;
+            }
+
             String result = JOptionPane.showInputDialog(this, "Wieviele Sekunden vor dem Befehl soll der Alarm abgespielt werden?", 30);
             if (result != null) {
                 try {
                     int time = Integer.parseInt(result);
-                    String name = ClockFrame.getSingleton().addTimer(selection.get(0), time);
-                    if (name == null) {
-                        showError("Ungültiger Befehl");
-                    } else {
-                        showInfo("Neuer Timer '" + name + "' hinzugefügt");
-                    }
+                    ClockFrame.getSingleton().addTimer(selection.get(0), time);
                 } catch (Exception ex) {
                     showInfo("Ungültige Sekundenangabe");
                 }
@@ -1826,10 +1829,13 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
         }
         b.append("Ankunft: ").append(f.format(attack.getArriveTime())).append("\n");
-        DSWorkbenchReTimerFrame.getSingleton().setCustomAttack(b.toString());
-        showSuccess("Befehl in Retimer übertragen");
-        if (!DSWorkbenchReTimerFrame.getSingleton().isVisible()) {
-            DSWorkbenchReTimerFrame.getSingleton().setVisible(true);
+
+
+        if (RetimerDataPanel.getSingleton().readAttackFromString(b.toString())) {
+            showSuccess("Befehl in Retimer übertragen");
+            TacticsPlanerWizard.show();
+        } else {
+            showError("Kein gültiger Angriffsbefehl gefunden");
         }
     }
 

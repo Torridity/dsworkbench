@@ -558,7 +558,7 @@ public class RibbonConfigurator {
                 });
             }
         });
-        JCommandButton retimeToolButton = factoryButton("Re-Timer", "graphics/big/retime.png", "Öffnet den Re-Timer", "Der Re-Timer erlaubt es zu Einzelangriffen, die man einfach aus dem Spiel in ein entsprechendes Textfeld kopiert, mögliche re-time Angriffe zu berechnen, welche die angreifenden Truppen bei der Rückkehr in ihr Herkunftsdorf vernichten können. Voraussetzung sind korrekt importierte Truppeninformationen aus dem Spiel (siehe Hilfe) und ein gutes Timing.", true);
+     /*   JCommandButton retimeToolButton = factoryButton("Re-Timer", "graphics/big/retime.png", "Öffnet den Re-Timer", "Der Re-Timer erlaubt es zu Einzelangriffen, die man einfach aus dem Spiel in ein entsprechendes Textfeld kopiert, mögliche re-time Angriffe zu berechnen, welche die angreifenden Truppen bei der Rückkehr in ihr Herkunftsdorf vernichten können. Voraussetzung sind korrekt importierte Truppeninformationen aus dem Spiel (siehe Hilfe) und ein gutes Timing.", true);
         retimeToolButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -571,7 +571,7 @@ public class RibbonConfigurator {
                     }
                 });
             }
-        });
+        });*/
         JCommandButton resourceDistributorToolButton = factoryButton("Rohstoffverteiler", "graphics/big/resource_distrib.png", "Öffnet den Rohstoffverteiler", "Der Rohstoffverteiler erlaubt, basierend auf kopierten Informationen aus der Produktionsübersicht, die Rohstoffe in den eingefügten Dörfern auszugleiche oder den Rohstoffbestand in bestimmten Dörfern auf eine gewünschte Menge zu bringen. Er berechnet die dafür notwendigen Transporte, die im Anschluss direkt in den Browser übertragen und von dort abgeschickt werden können.", true);
         resourceDistributorToolButton.addActionListener(new ActionListener() {
 
@@ -644,7 +644,7 @@ public class RibbonConfigurator {
 
         defendToolsBand.addCommandButton(astarToolButton, RibbonElementPriority.MEDIUM);
         defendToolsBand.addCommandButton(sosAnalyzerToolButton, RibbonElementPriority.MEDIUM);
-        defendToolsBand.addCommandButton(retimeToolButton, RibbonElementPriority.MEDIUM);
+       // defendToolsBand.addCommandButton(retimeToolButton, RibbonElementPriority.MEDIUM);
 
         infoToolBand.addCommandButton(selectionToolButton, RibbonElementPriority.MEDIUM);
         infoToolBand.addCommandButton(searchToolButton, RibbonElementPriority.LOW);

@@ -43,6 +43,11 @@ public class TAPWelcomePanel extends WizardPage {
             + "D&ouml;rfern wieder auf einen bestimmten Stand zu bringen. Daf&uuml;r ist es notwendig, dass du deine Truppen aus dem Spiel "
             + "in DS Workbench importiert hast. W&auml;hrend der Auff&uuml;llung wird versucht, ausge&auml;hlte D&ouml;rfer mit freien Defensivtruppen "
             + "zu bef&uuml;llen, bis sie wieder einen bestimmten Truppenbestand aufweisen.</html>";
+    private final String RETIME_HELP = "Der Retimer wird dazu verwendet, die Truppen von gegnerischen Angriffen bei der Rückkehr in ihr Heimatdorf zu<br/>"
+            + "vernichten. Mit DS Workbench kannst du für einen oder mehrere Angriffe Retimes berechnen. Voraussetzung dafür ist, dass du deine Truppeninformationen<br/>"
+            + "aus dem Spiel importiert hast. DS Workbench berechnet dir für alle gewünschten, eigenen Dörfer alle möglichen Retimes. Am Ende musst du nur noch<br/>"
+            + "entscheiden, welche Retimes du wirklich abschicken möchtest. Falls du z.B. zur Abschickzeit eines Ramme-Retimes nicht Online sein kannst, so kannst<br/>"
+            + "du den Retime mit Axtkämpfern wählen, der zwar eine geringere Durschlagskraft, aber auch eine kürzere Laufzeit hat.";
     private static TAPWelcomePanel singleton = null;
     public static final String TYPE = "type";
     public final static Integer ATTACK_TYPE = 0;
@@ -177,6 +182,8 @@ public class TAPWelcomePanel extends WizardPage {
                 jTextPane1.setText(DEFENSE_HELP);
             } else if (evt.getSource() == jRefillButton) {
                 jTextPane1.setText(REFILL_HELP);
+            } else if (evt.getSource() == jRetimeButton) {
+                jTextPane1.setText(RETIME_HELP);
             }
         }
 
@@ -203,9 +210,9 @@ public class TAPWelcomePanel extends WizardPage {
         } else if (jRetimeButton.isSelected()) {
             type = RETIME_TYPE;
         }
-        
+
         TAPAttackInfoPanel.getSingleton().setVisible(type == ATTACK_TYPE);
-       
+
         map.put(TYPE, new Integer(type));
         return WizardPanelNavResult.PROCEED;
     }

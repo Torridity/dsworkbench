@@ -53,7 +53,10 @@ import org.netbeans.spi.wizard.*;
  */
 public class RetimerDataPanel extends WizardPage {
 
-    private static final String GENERAL_INFO = "";
+    private static final String GENERAL_INFO = "In diesem Schritt kannst du Angriffe einfügen, die du retimen möchtest.<br>"
+            + "Dies kann ein einzelner Angriffsbefehl sein oder du kannst den Angriff manuell eingeben.<br/>"
+            + "Die wohl wichtigte Einstellung ist die der erwarteten Einheit. Solltest du die Einheit nicht wissen, kannst<br/>"
+            + "du verschiedene Einheiten probieren und DS Workbench wird dich warnen, sofern die Einheit nicht plausibel erscheint.";
     private static RetimerDataPanel singleton = null;
 
     public static synchronized RetimerDataPanel getSingleton() {
@@ -504,103 +507,112 @@ public class RetimerDataPanel extends WizardPage {
     private void readPlainAttackFromClipboard() {
         try {
             String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
-            List<Village> villages = PluginManager.getSingleton().executeVillageParser(data);
-            if (villages == null || villages.isEmpty() || villages.size() < 2) {
-                jWarningLabel.setText("Kein gültiger Angriff gefunden");
-                jWarningLabel.setVisible(true);
-            } else {
-                Village source = villages.get(0);
-                Village target = villages.get(1);
-                if (data.indexOf(PluginManager.getSingleton().getVariableValue("sos.arrive.time")) > -1) {
-                    //change village order for SOS requests
-                    source = villages.get(1);
-                    target = villages.get(0);
-                }
-
-                jSourceCoord.setValue(new Point(source.getX(), source.getY()));
-                jTargetCoord.setValue(new Point(target.getX(), target.getY()));
-
-                Date arriveDate = null;
-                try {
-                    String text = data;
-                    String arrive = null;
-                    String arriveLine = null;
-                    if (text.indexOf(PluginManager.getSingleton().getVariableValue("attack.arrive.time")) > -1) {
-                        String searchString = PluginManager.getSingleton().getVariableValue("attack.arrive.time");
-                        arriveLine = text.substring(text.indexOf(PluginManager.getSingleton().getVariableValue("attack.arrive.time")) + searchString.length());
-                    } else {
-                        String searchString = PluginManager.getSingleton().getVariableValue("sos.arrive.time");
-                        arriveLine = text.substring(text.indexOf(PluginManager.getSingleton().getVariableValue("sos.arrive.time")) + searchString.length());
-                    }
-
-                    StringTokenizer tokenizer = new StringTokenizer(arriveLine, "\n");
-                    String date = tokenizer.nextToken();
-                    arrive = date.trim();
-
-                    SimpleDateFormat f = null;
-                    if (!ServerSettings.getSingleton().isMillisArrival()) {
-                        f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format"));
-                    } else {
-                        f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format.ms"));
-                    }
-                    arriveDate = f.parse(arrive);
-                    jArriveTime.setDate(arriveDate);
-                    if (arriveDate == null) {
-                        jWarningLabel.setText("Kann Ankunftzeit nicht lesen");
-                        jWarningLabel.setVisible(true);
-                        return;
-                    }
-                } catch (Exception ignored) {
-                    jWarningLabel.setText("Kein gültiger Angriff gefunden");
-                    jWarningLabel.setVisible(true);
-                    return;
-                }
-                //calc possible units
-                double dist = DSCalculator.calculateDistance(source, target);
-                String[] units = new String[]{"axe", "sword", "spy", "light", "heavy", "ram", "knight", "snob"};
-                List<UnitHolder> possibleUnits = new LinkedList<UnitHolder>();
-                for (String unit : units) {
-                    UnitHolder unitHolder = DataHolder.getSingleton().getUnitByPlainName(unit);
-                    if (!unitHolder.equals(UnknownUnit.getSingleton())) {
-                        long dur = (long) Math.floor(dist * unitHolder.getSpeed() * 60000.0);
-                        if (arriveDate.getTime() - dur <= System.currentTimeMillis()) {
-                            possibleUnits.add(unitHolder);
-                        }
-                    }
-                }
-
-                if (arriveDate.getTime() < System.currentTimeMillis()) {
-                    jWarningLabel.setText("Ankunft in der Vergangenheit. Bitte Zeit prüfen.");
-                    jWarningLabel.setVisible(true);
-                } else {
-                    if (possibleUnits.isEmpty()) {
-                        jWarningLabel.setText("Keine mögliche Einheit gefunden");
-                        jWarningLabel.setVisible(true);
-                    } else {
-                        String unitString = "";
-                        for (UnitHolder unit : possibleUnits) {
-                            unitString += unit.getName() + ", ";
-                        }
-                        jWarningLabel.setText("Mögliche Einheiten: " + unitString.substring(0, unitString.lastIndexOf(",")));
-                        jWarningLabel.setVisible(true);
-                    }
-                }
-
-                UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
-                UnitHolder axe = DataHolder.getSingleton().getUnitByPlainName("axe");
-                UnitHolder spy = DataHolder.getSingleton().getUnitByPlainName("spy");
-                if (possibleUnits.contains(ram)) {
-                    jUnitBox.setSelectedItem(ram);
-                } else if (possibleUnits.contains(axe)) {
-                    jUnitBox.setSelectedItem(axe);
-                } else {
-                    jUnitBox.setSelectedItem(spy);
-                }
-            }
+            readAttackFromString(data);
         } catch (HeadlessException he) {
         } catch (UnsupportedFlavorException usfe) {
         } catch (IOException ioe) {
         }
+    }
+
+    public boolean readAttackFromString(String pData) {
+        boolean result = true;
+        List<Village> villages = PluginManager.getSingleton().executeVillageParser(pData);
+        if (villages == null || villages.isEmpty() || villages.size() < 2) {
+            jWarningLabel.setText("Kein gültiger Angriff gefunden");
+            jWarningLabel.setVisible(true);
+        } else {
+            Village source = villages.get(0);
+            Village target = villages.get(1);
+            if (pData.indexOf(PluginManager.getSingleton().getVariableValue("sos.arrive.time")) > -1) {
+                //change village order for SOS requests
+                source = villages.get(1);
+                target = villages.get(0);
+            }
+
+            jSourceCoord.setValue(new Point(source.getX(), source.getY()));
+            jTargetCoord.setValue(new Point(target.getX(), target.getY()));
+
+            Date arriveDate;
+            try {
+                String text = pData;
+                String arrive;
+                String arriveLine;
+                if (text.indexOf(PluginManager.getSingleton().getVariableValue("attack.arrive.time")) > -1) {
+                    String searchString = PluginManager.getSingleton().getVariableValue("attack.arrive.time");
+                    arriveLine = text.substring(text.indexOf(PluginManager.getSingleton().getVariableValue("attack.arrive.time")) + searchString.length());
+                } else {
+                    String searchString = PluginManager.getSingleton().getVariableValue("sos.arrive.time");
+                    arriveLine = text.substring(text.indexOf(PluginManager.getSingleton().getVariableValue("sos.arrive.time")) + searchString.length());
+                }
+
+                StringTokenizer tokenizer = new StringTokenizer(arriveLine, "\n");
+                String date = tokenizer.nextToken();
+                arrive = date.trim();
+
+                SimpleDateFormat f;
+                if (!ServerSettings.getSingleton().isMillisArrival()) {
+                    f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format"));
+                } else {
+                    f = new SimpleDateFormat(PluginManager.getSingleton().getVariableValue("sos.date.format.ms"));
+                }
+                arriveDate = f.parse(arrive);
+                jArriveTime.setDate(arriveDate);
+                if (arriveDate == null) {
+                    jWarningLabel.setText("Kann Ankunftzeit nicht lesen");
+                    jWarningLabel.setVisible(true);
+                    return false;
+                }
+            } catch (Exception ignored) {
+                jWarningLabel.setText("Kein gültiger Angriff gefunden");
+                jWarningLabel.setVisible(true);
+                return false;
+            }
+            //calc possible units
+            double dist = DSCalculator.calculateDistance(source, target);
+            String[] units = new String[]{"axe", "sword", "spy", "light", "heavy", "ram", "knight", "snob"};
+            List<UnitHolder> possibleUnits = new LinkedList<UnitHolder>();
+            for (String unit : units) {
+                UnitHolder unitHolder = DataHolder.getSingleton().getUnitByPlainName(unit);
+                if (!unitHolder.equals(UnknownUnit.getSingleton())) {
+                    long dur = (long) Math.floor(dist * unitHolder.getSpeed() * 60000.0);
+                    if (arriveDate.getTime() - dur <= System.currentTimeMillis()) {
+                        possibleUnits.add(unitHolder);
+                    }
+                }
+            }
+
+            if (arriveDate.getTime() < System.currentTimeMillis()) {
+                jWarningLabel.setText("Ankunft in der Vergangenheit. Bitte Zeit prüfen.");
+                jWarningLabel.setVisible(true);
+                result = false;
+            } else {
+                if (possibleUnits.isEmpty()) {
+                    jWarningLabel.setText("Keine mögliche Einheit gefunden");
+                    jWarningLabel.setVisible(true);
+                    result = false;
+                } else {
+                    String unitString = "";
+                    for (UnitHolder unit : possibleUnits) {
+                        unitString += unit.getName() + ", ";
+                    }
+                    jWarningLabel.setText("Mögliche Einheiten: " + unitString.substring(0, unitString.lastIndexOf(",")));
+                    jWarningLabel.setVisible(true);
+                    result = true;
+                }
+            }
+
+            UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
+            UnitHolder axe = DataHolder.getSingleton().getUnitByPlainName("axe");
+            UnitHolder spy = DataHolder.getSingleton().getUnitByPlainName("spy");
+            if (possibleUnits.contains(ram)) {
+                jUnitBox.setSelectedItem(ram);
+            } else if (possibleUnits.contains(axe)) {
+                jUnitBox.setSelectedItem(axe);
+            } else {
+                jUnitBox.setSelectedItem(spy);
+            }
+        }
+        return result;
     }
 
     private RETAttackTableModel getModel() {

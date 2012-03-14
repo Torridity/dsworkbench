@@ -467,4 +467,25 @@ public class TroopHelper {
         holder.setTroops(units);
         return holder;
     }
+
+    public static int getAttackForce(Village pVillage, UnitHolder pSlowedUnit) {
+        VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.OWN);
+        if (holder == null) {
+            return 0;
+        }
+
+        Hashtable<UnitHolder, Integer> units = holder.getTroops();
+
+        Set<Entry<UnitHolder, Integer>> keys = units.entrySet();
+        int force = 0;
+        for (Entry<UnitHolder, Integer> key : keys) {
+            UnitHolder unit = key.getKey();
+            Integer value = key.getValue();
+            if (value > 0 && unit.getSpeed() <= pSlowedUnit.getSpeed()) {
+                force += unit.getAttack() * value;
+            }
+        }
+        return force;
+
+    }
 }

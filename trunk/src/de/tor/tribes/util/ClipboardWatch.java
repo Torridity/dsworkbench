@@ -20,7 +20,6 @@ import javax.sound.sampled.Clip;
 import org.apache.log4j.Logger;
 
 /**
- * @TODO DIFF Added notification alert
  *
  * @author Charon
  */
@@ -40,7 +39,6 @@ public class ClipboardWatch extends Thread {
     ClipboardWatch() {
         setName("ClipboardMonitor");
         setDaemon(true);
-        setName("ClipboardMonitor");
         setPriority(MIN_PRIORITY);
     }
     private Clip clip = null;
@@ -56,7 +54,6 @@ public class ClipboardWatch extends Thread {
 
             @Override
             public void run() {
-
                 if (clip != null) {//reset clip
                     clip.stop();
                     clip.setMicrosecondPosition(0);

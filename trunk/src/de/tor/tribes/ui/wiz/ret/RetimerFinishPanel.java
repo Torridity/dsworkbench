@@ -38,7 +38,9 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  */
 public class RetimerFinishPanel extends WizardPage {
 
-    private static final String GENERAL_INFO = "<html></html>";
+    private static final String GENERAL_INFO = "Die Berechnung ist nun abgeschlossen und in der Tabelle im unteren Bereich siehst du alle Retime-Angriffe<br/>"
+            + "die momentan möglich sind. Dabei sei nochmal erwähnt, dass jedes Herkunftsdorf mehrfach vorkommen kann. Beachte dies bei der Auswahl oder später<br/>"
+            + "beim Abschicken der Angriffe aus der Befehlsübersicht.";
     private static RetimerFinishPanel singleton = null;
     private VillageOverviewMapPanel overviewPanel = null;
 

@@ -67,7 +67,6 @@ import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
- * @TODO Diff: integrated runtime
  *
  * @author Torridity
  */

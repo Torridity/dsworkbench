@@ -75,7 +75,7 @@ public class AboutDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel6.setText("<html>&copy; Torridity (2008-2011)</html>");
+        jLabel6.setText("<html>&copy; Torridity (2008-2012)</html>");
 
         jDebugButton.setBackground(new java.awt.Color(255, 51, 51));
         jDebugButton.setForeground(new java.awt.Color(255, 255, 255));

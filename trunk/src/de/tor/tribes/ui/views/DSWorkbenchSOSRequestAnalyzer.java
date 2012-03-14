@@ -26,6 +26,8 @@ import de.tor.tribes.ui.models.SupportsModel;
 import de.tor.tribes.ui.renderer.*;
 import de.tor.tribes.ui.windows.VillageSupportFrame;
 import de.tor.tribes.ui.wiz.dep.DefenseAnalysePanel;
+import de.tor.tribes.ui.wiz.ret.RetimerDataPanel;
+import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.bb.SosListFormatter;
 import de.tor.tribes.util.generator.ui.SOSGenerator;
@@ -231,7 +233,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         transferPane.getContentPane().add(toSupport);
 
         JXButton toRetime = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/re-time.png")));
-        toRetime.setToolTipText("Überträgt den ersten Angriff der gewählten SOS-Anfrage in den ReTimer");
+        toRetime.setToolTipText("Überträgt den gewählten Angriff in den ReTimer. Anschließend muss dort noch die vermutete Einheit gewählt werden!");
         toRetime.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -380,7 +382,6 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     }
 
     private void copyDefRequests() {
-        //@TODO (Later?) Add simple copy for IGMs
         List<DefenseInformation> selection = getSelectedRows();
 
         if (selection.isEmpty()) {
@@ -485,9 +486,10 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         b.append("Ziel: ").append(attacks.get(0).getTarget().toString()).append("\n");
         b.append(PluginManager.getSingleton().getVariableValue("attack.arrive.time")).append(" ").
                 append(f.format(attacks.get(0).getFirstAttack())).append("\n");
-        DSWorkbenchReTimerFrame.getSingleton().setCustomAttack(b.toString());
-        if (!DSWorkbenchReTimerFrame.getSingleton().isVisible()) {
-            DSWorkbenchReTimerFrame.getSingleton().setVisible(true);
+        if (RetimerDataPanel.getSingleton().readAttackFromString(b.toString())) {
+            TacticsPlanerWizard.show();
+        } else {
+            showError("Fehler beim Übertragen in den Retimer");
         }
     }
 
@@ -501,13 +503,24 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     }
 
     private void copySelectionToClipboardAsBBCode() {
-        //@TODO Implement BB-Copy
-        Hashtable<Tribe, SOSRequest> currentRequests = new Hashtable<Tribe, SOSRequest>();
-
-        if (currentRequests == null || currentRequests.isEmpty()) {
+        Hashtable<Tribe, SOSRequest> selectedRequests = new Hashtable<Tribe, SOSRequest>();
+        List<DefenseInformation> selection = getSelectedRows();
+        if (selection.isEmpty()) {
             showInfo("Keine SOS Anfragen eingelesen");
             return;
         }
+
+        for (DefenseInformation info : selection) {
+            Tribe defender = info.getTarget().getTribe();
+            SOSRequest request = selectedRequests.get(defender);
+            if (request == null) {
+                request = new SOSRequest(defender);
+                selectedRequests.put(defender, request);
+            }
+            TargetInformation targetInfo = request.addTarget(info.getTarget());
+            targetInfo.merge(info.getTargetInformation());
+        }
+
         try {
             boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
 
@@ -520,9 +533,9 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
 
             List<SOSRequest> requests = new LinkedList<SOSRequest>();
 
-            Enumeration<Tribe> tribeKeys = currentRequests.keys();
+            Enumeration<Tribe> tribeKeys = selectedRequests.keys();
             while (tribeKeys.hasMoreElements()) {
-                requests.add(currentRequests.get(tribeKeys.nextElement()));
+                requests.add(selectedRequests.get(tribeKeys.nextElement()));
             }
             buffer.append(new SosListFormatter().formatElements(requests,
                     extended));

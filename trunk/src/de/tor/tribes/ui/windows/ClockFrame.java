@@ -158,17 +158,20 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
         storeTimers();
     }
 
-    public String addTimer(Attack pAttack, int pSecondsBefore) {
+    public void addTimer(Attack pAttack, int pSecondsBefore) {
         if (pAttack == null) {
-            return null;
+            return;
         }
         String name = pAttack.getSource() + " -> " + pAttack.getTarget();
 
-        TimerPanel panel = new TimerPanel(this, name, pAttack.getSendTime().getTime() - (DateUtils.MILLIS_PER_SECOND * pSecondsBefore), "LetsGo");
-        timers.add(panel);
-        jTimerContainer.add(panel);
-        storeTimers();
-        return name;
+        jTimerName.setText(name);
+        dateTimeField1.setDate(new Date(pAttack.getSendTime().getTime() - (DateUtils.MILLIS_PER_SECOND * pSecondsBefore)));
+        // TimerPanel panel = new TimerPanel(this, name, pAttack.getSendTime().getTime() - (DateUtils.MILLIS_PER_SECOND * pSecondsBefore), "LetsGo");
+        //  timers.add(panel);
+        ///   jTimerContainer.add(panel);
+        //    storeTimers();
+        //   return name;s
+        setVisible(true);
     }
 
     private void storeTimers() {
@@ -519,8 +522,8 @@ class TimerThread extends Thread {
     public void run() {
         while (true) {
             long currentTime = System.currentTimeMillis();
+            mParent.updateTime(FORMAT.format(new Date(currentTime)), (int) DateUtils.getFragmentInMilliseconds(new Date(), Calendar.SECOND));
             if (mParent.isVisible()) {
-                mParent.updateTime(FORMAT.format(new Date(currentTime)), (int) DateUtils.getFragmentInMilliseconds(new Date(), Calendar.SECOND));
                 mParent.repaint();
             } else {
                 try {
@@ -528,6 +531,7 @@ class TimerThread extends Thread {
                 } catch (InterruptedException ie) {
                 }
             }
+
             try {
                 Thread.sleep(50);
             } catch (InterruptedException ie) {

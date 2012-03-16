@@ -12,13 +12,14 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.FarmInformation;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.*;
-import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.ServerSettings;
-import de.tor.tribes.util.SystrayHelper;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.generator.ui.ReportGenerator;
 import de.tor.tribes.util.report.ReportManager;
+import java.awt.HeadlessException;
 import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.io.File;
@@ -84,6 +85,39 @@ public class FarmManager extends GenericManager<FarmInformation> {
             info.updateFromReport(pReport);
             SystrayHelper.showInfoMessage("Farminformationen für " + info.getVillage() + " aktualisiert");
         }
+    }
+
+    public int findFarmsInClipboard() {
+        int addCount = 0;
+        try {
+            String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
+            List<Village> villages = PluginManager.getSingleton().executeVillageParser(data);
+
+            List<Village> handled = new LinkedList<Village>();
+
+            for (Village farm : villages) {
+                if (farm != null && !handled.contains(farm) && farm.getTribe().equals(Barbarians.getSingleton())) {
+                    FarmInformation info = addFarm(farm);
+                    if (info.isJustCreated()) {
+                        FightReport r = ReportManager.getSingleton().findLastReportForSource(farm);
+                        if (r != null) {
+                            info.updateFromReport(r);
+                        } else {
+                            info.setInitialResources();
+                        }
+                        addCount++;
+                        handled.add(farm);
+                    }
+                }
+            }
+        } catch (HeadlessException he) {
+            logger.error("Failed to find farms in clipboard", he);
+        } catch (UnsupportedFlavorException ufe) {
+            logger.error("Failed to find farms in clipboard", ufe);
+        } catch (IOException ioe) {
+            logger.error("Failed to find farms in clipboard", ioe);
+        }
+        return addCount;
     }
 
     public int findFarmsInReports(boolean pAllowAloneTribes, boolean pAllowTribesInAllies, boolean pAllowTribesInOwnAlly) {

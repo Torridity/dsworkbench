@@ -102,7 +102,7 @@ public class AttackManager extends GenericManager<Attack> {
                     for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "attacks/attack")) {
                         Attack a = new Attack();
                         a.loadFromXml(e1);
-                        if (a != null) {
+                        if (a != null && a.getSource() != null && a.getTarget() != null) {
                             Village source = DataHolder.getSingleton().getVillages()[a.getSource().getX()][a.getSource().getY()];
                             Village target = DataHolder.getSingleton().getVillages()[a.getTarget().getX()][a.getTarget().getY()];
                             addAttack(source, target, a.getUnit(), a.getArriveTime(), a.isShowOnMap(), planKey, a.getType(), a.isTransferredToBrowser());

@@ -23,21 +23,21 @@ import org.jdom.Element;
  * @author Charon
  */
 public class ChurchManager extends GenericManager<Church> {
-
+    
     private static Logger logger = Logger.getLogger("ChurchManager");
     private static ChurchManager SINGLETON = null;
-
+    
     public static synchronized ChurchManager getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new ChurchManager();
         }
         return SINGLETON;
     }
-
+    
     ChurchManager() {
         super(false);
     }
-
+    
     @Override
     public void loadElements(String pFile) {
         if (pFile == null) {
@@ -73,7 +73,7 @@ public class ChurchManager extends GenericManager<Church> {
         }
         revalidate();
     }
-
+    
     @Override
     public boolean importData(File pFile, String pExtension) {
         if (pFile == null) {
@@ -104,14 +104,14 @@ public class ChurchManager extends GenericManager<Church> {
         revalidate(true);
         return result;
     }
-
+    
     @Override
     public String getExportData(List<String> pGroupsToExport) {
         logger.debug("Generating churches export data");
-
+        
         String result = "<churches>\n";
         ManageableType[] elements = getAllElements().toArray(new ManageableType[getAllElements().size()]);
-
+        
         for (ManageableType t : elements) {
             Church c = (Church) t;
             result += c.toXml() + "\n";
@@ -121,25 +121,26 @@ public class ChurchManager extends GenericManager<Church> {
         return result;
     }
 
-    /**Load markers from database (not implemented yet)
+    /**
+     * Load markers from database (not implemented yet)
      */
     public void loadChurchesFromDatabase(String pUrl) {
         logger.info("Not implemented yet");
     }
-
+    
     @Override
     public void saveElements(String pFile) {
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return;
         }
-
+        
         if (logger.isDebugEnabled()) {
             logger.debug("Writing churches to '" + pFile + "'");
         }
         try {
             StringBuilder b = new StringBuilder();
-
+            
             b.append("<churches>\n");
             for (ManageableType t : getAllElements()) {
                 Church c = (Church) t;
@@ -163,12 +164,13 @@ public class ChurchManager extends GenericManager<Church> {
         }
     }
 
-    /**Save markers to database (not implemented yet)
+    /**
+     * Save markers to database (not implemented yet)
      */
     public void saveChurchesToDatabase() {
         logger.info("Not implemented yet");
     }
-
+    
     public Church getChurch(Village v) {
         if (v == null) {
             return null;
@@ -181,26 +183,31 @@ public class ChurchManager extends GenericManager<Church> {
         }
         return null;
     }
-
+    
     public List<Village> getChurchVillages() {
         List<Village> villages = new LinkedList<Village>();
-
+        
         for (ManageableType t : getAllElements()) {
             Church c = (Church) t;
             villages.add(c.getVillage());
         }
         return villages;
     }
-
+    
     public void addChurch(Village pVillage, int pRange) {
         if (pVillage != null) {
-            Church c = new Church();
-            c.setVillage(pVillage);
-            c.setRange(pRange);
-            addManagedElement(c);
+            Church c = getChurch(pVillage);
+            if (c == null) {
+                c = new Church();
+                c.setVillage(pVillage);
+                c.setRange(pRange);
+                addManagedElement(c);
+            } else {
+                c.setRange(pRange);
+            }
         }
     }
-
+    
     public void removeChurch(Village pVillage) {
         if (pVillage != null) {
             Church toRemove = null;
@@ -211,13 +218,13 @@ public class ChurchManager extends GenericManager<Church> {
                     break;
                 }
             }
-
+            
             if (toRemove != null) {
                 removeElement(toRemove);
             }
         }
     }
-
+    
     public void removeChurches(Village[] pVillages) {
         if (pVillages != null) {
             invalidate();
@@ -233,11 +240,11 @@ public class ChurchManager extends GenericManager<Church> {
                             toRemove.add(c);
                         }
                     }
-
+                    
                     for (Church c : toRemove) {
                         removeElement(c);
                     }
-
+                    
                 }
             }
             revalidate(true);

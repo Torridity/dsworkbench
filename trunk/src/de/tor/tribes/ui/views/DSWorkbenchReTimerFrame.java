@@ -988,7 +988,6 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     private void fireComandDataChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireComandDataChangedEvent
         parsedAttack = new Attack();
         List<Village> villages = PluginManager.getSingleton().executeVillageParser(jCommandArea.getText());
-        System.out.println(villages);
         if (villages == null || villages.isEmpty() || villages.size() < 2) {
             parsedAttack = null;
         } else {

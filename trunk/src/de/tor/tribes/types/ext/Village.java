@@ -699,16 +699,4 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
              */
         }
     }
-
-    public static void main(String[] args) {
-        Village v = new Village();
-        v.setX((short) 0);
-        v.setY((short) 0);
-        Village v1 = new Village();
-        v1.setX((short) 0);
-        v1.setY((short) 0);
-        v.setOrderType(Village.ORDER_BY_COORDINATES);
-        System.out.println(v.compareTo(v1));
-
-    }
 }

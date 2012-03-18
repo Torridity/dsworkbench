@@ -17,8 +17,8 @@ import org.apache.commons.lang.time.DurationFormatUtils;
  */
 public class FarmTableModel extends AbstractTableModel {
 
-    private Class[] types = new Class[]{FarmInformation.FARM_STATUS.class, Boolean.class, Date.class, String.class, StorageStatus.class, String.class, FarmInformation.FARM_RESULT.class, Float.class};
-    private String[] colNames = new String[]{"Status", "Letztes Ergebnis", "Letzter Bericht", "Dorf", "Rohstoffe", "Ankunft", "Übertragen", "Erfolgsquote"};
+    private Class[] types = new Class[]{FarmInformation.FARM_STATUS.class, Boolean.class, Date.class, String.class, String.class, StorageStatus.class, String.class, FarmInformation.FARM_RESULT.class, Float.class};
+    private String[] colNames = new String[]{"Status", "Letztes Ergebnis", "Letzter Bericht", "Dorf", "Wall", "Rohstoffe", "Ankunft", "Übertragen", "Erfolgsquote"};
 
     public FarmTableModel() {
     }
@@ -61,15 +61,17 @@ public class FarmTableModel extends AbstractTableModel {
             case 3:
                 return elem.getVillage().getShortName();
             case 4:
-                return elem.getStorageStatus();
+                return Integer.toString(elem.getWallLevel());
             case 5:
+                return elem.getStorageStatus();
+            case 6:
                 long t = elem.getRuntimeInformation();
                 t = (t <= 0) ? 0 : t;
                 if (t == 0) {
                     return "Keine Truppen unterwegs";
                 }
                 return DurationFormatUtils.formatDuration(t, "HH:mm:ss", true);
-            case 6:
+            case 7:
                 return elem.getLastResult();
             default:
                 return elem.getCorrectionFactor();

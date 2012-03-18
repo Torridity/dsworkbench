@@ -22,7 +22,7 @@ public class SystrayHelper {
     public static void installSystrayIcon() {
         if (!installed && SystemTray.isSupported()) {
             SystemTray tray = SystemTray.getSystemTray();
-            Image image = Toolkit.getDefaultToolkit().getImage(SystrayHelper.class.getResource("/res/ui/axe.png"));
+            Image image = Toolkit.getDefaultToolkit().getImage(SystrayHelper.class.getResource("/res/ui/axe_systray.png"));
             trayIcon = new TrayIcon(image, "DS Workbench", null);
 
             trayIcon.setImageAutoSize(true);

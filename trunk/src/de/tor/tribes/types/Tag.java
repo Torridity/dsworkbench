@@ -234,13 +234,6 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        Color c = Color.BLUE;
-        String rgb = Integer.toHexString(c.getRGB());
-        rgb = rgb.substring(2, rgb.length());
-        System.out.println(rgb);
-    }
-
     /**Get the color of the associated TagMapMarker
      * @return Color the TagMapMarker's color
      */

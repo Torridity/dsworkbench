@@ -56,7 +56,7 @@ public class GroupListCellRenderer extends javax.swing.JPanel implements ListCel
 
         GroupSelectionList.ListItem item = (GroupSelectionList.ListItem) pValue;
         jLabel1.setText(item.getTag().toString());
-        if (item.isSpecial()) {
+        if (item.isNoTagEntry()) {
             if (item.getState() == GroupSelectionList.ListItem.RELATION_TYPE.DISABLED) {
                 jLabel2.setText("OHNE");
             } else {

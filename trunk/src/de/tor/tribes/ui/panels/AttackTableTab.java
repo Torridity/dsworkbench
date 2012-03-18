@@ -10,7 +10,6 @@
  */
 package de.tor.tribes.ui.panels;
 
-import de.tor.tribes.ui.views.DSWorkbenchReTimerFrame;
 import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
@@ -19,11 +18,7 @@ import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.ImageManager;
-import de.tor.tribes.ui.editors.DateSpinEditor;
-import de.tor.tribes.ui.editors.DrawNotDrawEditor;
-import de.tor.tribes.ui.editors.NoteIconCellEditor;
-import de.tor.tribes.ui.editors.SentNotSentEditor;
-import de.tor.tribes.ui.editors.UnitCellEditor;
+import de.tor.tribes.ui.editors.*;
 import de.tor.tribes.ui.models.AttackTableModel;
 import de.tor.tribes.ui.renderer.*;
 import de.tor.tribes.ui.views.DSWorkbenchSelectionFrame;
@@ -124,6 +119,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
         jxAttackTable.setHighlighters(new CompoundHighlighter(colu, HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B)));
         jxAttackTable.setColumnControlVisible(true);
+        jxAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
         jxAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jxAttackTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
         jxAttackTable.setDefaultRenderer(Integer.class, new NoteIconCellRenderer(NoteIconCellRenderer.ICON_TYPE.NOTE));

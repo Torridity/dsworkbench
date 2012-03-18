@@ -18,7 +18,7 @@ import org.apache.commons.collections.Predicate;
  * @author Torridity
  */
 public class TAPTargetTableModel extends AbstractTableModel {
-    
+
     private String[] columnNames = new String[]{
         "Spieler", "Dorf", "Fake", "Angriffe"
     };
@@ -26,25 +26,25 @@ public class TAPTargetTableModel extends AbstractTableModel {
         Tribe.class, Village.class, Boolean.class, Integer.class
     };
     private final List<TAPAttackTargetElement> elements = new LinkedList<TAPAttackTargetElement>();
-    
+
     public TAPTargetTableModel() {
         super();
     }
-    
+
     public void clear() {
         elements.clear();
         fireTableDataChanged();
     }
-    
+
     public void addRow(final Village pVillage, boolean pFake, int pAmount) {
         Object result = CollectionUtils.find(elements, new Predicate() {
-            
+
             @Override
             public boolean evaluate(Object o) {
                 return ((TAPAttackTargetElement) o).getVillage().equals(pVillage);
             }
         });
-        
+
         if (result == null) {
             elements.add(new TAPAttackTargetElement(pVillage, pFake, pAmount));
         } else {
@@ -54,43 +54,43 @@ public class TAPTargetTableModel extends AbstractTableModel {
         }
         fireTableDataChanged();
     }
-    
+
     public void addRow(final Village pVillage, boolean pFake) {
         addRow(pVillage, pFake, 1);
     }
-    
+
     public void increaseRowCount(final Village pVillage) {
         Object result = CollectionUtils.find(elements, new Predicate() {
-            
+
             @Override
             public boolean evaluate(Object o) {
                 return ((TAPAttackTargetElement) o).getVillage().equals(pVillage);
             }
         });
-        
+
         if (result != null) {
             TAPAttackTargetElement resultElem = (TAPAttackTargetElement) result;
             resultElem.addAttack();
             fireTableDataChanged();
         }
     }
-    
+
     public void decreaseRowCount(final Village pVillage) {
         Object result = CollectionUtils.find(elements, new Predicate() {
-            
+
             @Override
             public boolean evaluate(Object o) {
                 return ((TAPAttackTargetElement) o).getVillage().equals(pVillage);
             }
         });
-        
+
         if (result != null) {
             TAPAttackTargetElement resultElem = (TAPAttackTargetElement) result;
             resultElem.removeAttack();
             fireTableDataChanged();
         }
     }
-    
+
     public void removeTargets(List<Village> pToRemove) {
         for (TAPAttackTargetElement elem : elements.toArray(new TAPAttackTargetElement[elements.size()])) {
             if (pToRemove.contains(elem.getVillage())) {
@@ -99,7 +99,7 @@ public class TAPTargetTableModel extends AbstractTableModel {
         }
         fireTableDataChanged();
     }
-    
+
     @Override
     public int getRowCount() {
         if (elements == null) {
@@ -107,36 +107,44 @@ public class TAPTargetTableModel extends AbstractTableModel {
         }
         return elements.size();
     }
-    
+
     @Override
     public Class getColumnClass(int columnIndex) {
         return types[columnIndex];
     }
-    
+
     @Override
     public boolean isCellEditable(int row, int column) {
-        return false;
+        return column == 3;
     }
-    
+
     @Override
     public String getColumnName(int column) {
         return columnNames[column];
     }
-    
+
     public void removeRow(int row) {
-       // TAPAttackTargetElement elem = elements.get(row);
-       // if (!elem.removeAttack()) {
-            elements.remove(row);
-            fireTableDataChanged();
-       /* } else {
-            fireTableRowsUpdated(row, row);
-        }*/
+        elements.remove(row);
+        fireTableDataChanged();
     }
-    
+
     public TAPAttackTargetElement getRow(int row) {
         return elements.get(row);
     }
-    
+
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        if (elements == null || elements.size() - 1 < rowIndex) {
+            return;
+        }
+        TAPAttackTargetElement element = elements.get(rowIndex);
+
+        if (aValue instanceof Integer) {
+            element.setAttacks((Integer) aValue);
+        }
+        fireTableDataChanged();
+    }
+
     @Override
     public Object getValueAt(int row, int column) {
         if (elements == null || elements.size() - 1 < row) {
@@ -154,7 +162,7 @@ public class TAPTargetTableModel extends AbstractTableModel {
                 return element.getAttacks();
         }
     }
-    
+
     @Override
     public int getColumnCount() {
         return columnNames.length;

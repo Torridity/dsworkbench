@@ -232,7 +232,9 @@ public class DSWorkbenchUpdateDialog extends javax.swing.JDialog implements Upda
         if (pResult) {
             jProgressBar1.setForeground(Color.GREEN);
             jProgressBar1.setString("Update erfolgreich");
-            result = UPDATE_RESULT.SUCCESS;
+            if (pMessage == null) {
+                result = UPDATE_RESULT.SUCCESS;
+            }
         } else {
             jProgressBar1.setString(pMessage);
             jProgressBar1.setForeground(Color.YELLOW);

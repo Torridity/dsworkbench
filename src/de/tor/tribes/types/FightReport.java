@@ -1074,11 +1074,16 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     }
 
     public boolean isValid() {
-        /*
-         * System.out.println(getAttacker()); System.out.println(getSourceVillage()); System.out.println(getDefender());
-         * System.out.println(getTargetVillage()); System.out.println(getAttackers()); System.out.println(getDiedAttackers());
-         * System.out.println(getDefenders()); System.out.println(getDiedDefenders());
-         */
+
+//        System.out.println(getAttacker());
+//        System.out.println(getSourceVillage());
+//        System.out.println(getDefender());
+//        System.out.println(getTargetVillage());
+//        System.out.println(getAttackers());
+//        System.out.println(getDiedAttackers());
+//        System.out.println(getDefenders());
+//        System.out.println(getDiedDefenders());
+
         return (getAttacker() != null
                 && getSourceVillage() != null
                 && !getAttackers().isEmpty()

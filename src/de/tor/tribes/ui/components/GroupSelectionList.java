@@ -5,22 +5,22 @@
 package de.tor.tribes.ui.components;
 
 import de.tor.tribes.control.GenericManagerListener;
-import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.NoTag;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.renderer.GroupListCellRenderer;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.TagUtils;
 import de.tor.tribes.util.tag.TagManager;
+import java.awt.BorderLayout;
 import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,13 +28,15 @@ import java.util.regex.Pattern;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.swing.DefaultListModel;
-import javax.swing.DefaultListSelectionModel;
+import javax.swing.JFrame;
 import javax.swing.UIManager;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 
 /**
+ *
+ * @TODO check behavior if NoTag is selected in expert mode (must be deselected to use other items)
  *
  * @author Torridity
  */
@@ -67,6 +69,8 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
                     fireSetStateEvent(ListItem.RELATION_TYPE.NOT);
                 } else if (e.getKeyCode() == KeyEvent.VK_I) {
                     fireSetStateEvent(ListItem.RELATION_TYPE.DISABLED);
+                } else if (e.getKeyCode() == KeyEvent.VK_H) {
+                    JOptionPaneHelper.showInformationBox(GroupSelectionList.this, getRelationAsPlainText(), "Information");
                 }
             }
         });
@@ -104,7 +108,23 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
 
     private void fireSetStateEvent(ListItem.RELATION_TYPE pType) {
         ListItem item = getItemAt(getSelectedIndex());
-        item.setState(pType);
+        if (item.isNoTagEntry()) {
+            if (!pType.equals(ListItem.RELATION_TYPE.DISABLED)) {
+                for (int i = 1; i < getModel().getSize(); i++) {
+                    ListItem item1 = getItemAt(i);
+                    item1.resetState();
+                }
+            } else {
+                for (int i = 1; i < getModel().getSize(); i++) {
+                    ListItem item1 = getItemAt(i);
+                    item1.setState(ListItem.RELATION_TYPE.OR);
+                }
+                getItemAt(0).resetState();
+            }
+        } else {
+            item.setState(pType);
+            getItemAt(0).resetState();
+        }
         checkStateAndRepaint();
     }
 
@@ -126,7 +146,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
     private void fireClickedEvent(Point pMousePos) {
         int idx = locationToIndex(pMousePos);
         ListItem item = getItemAt(idx);
-        if (item.isSpecial()) {
+        if (item.isNoTagEntry()) {
             item.incrementState();
             for (int i = 1; i < getModel().getSize(); i++) {
                 ListItem item1 = getItemAt(i);
@@ -351,7 +371,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
                 relevantTags.add(item.getTag());
             }
         }
-       
+
         ScriptEngineManager factory = new ScriptEngineManager();
         ScriptEngine engine = factory.getEngineByName("JavaScript");
         String baseEquation = b.toString();
@@ -378,6 +398,55 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
         return result;
     }
 
+    public String getRelationAsPlainText() {
+        StringBuilder b = new StringBuilder();
+        if (isExpertSelection()) {
+            b.append("Alle Dörfer die ");
+
+            for (int i = 0; i < getElementCount(); i++) {
+                ListItem item = (ListItem) getElementAt(i);
+                switch (item.getState()) {
+                    case NOT:
+                        b.append("NICHT in Gruppe '").append(item.getTag()).append("' ");
+                        break;
+                    case AND:
+                        if (i == 0) {
+                            b.append("in Gruppe '").append(item.getTag()).append("' ");
+                        } else {
+                            b.append("UND in Gruppe '").append(item.getTag()).append("' ");
+                        }
+                        break;
+                    case OR:
+                        if (i == 0) {
+                            b.append("in Gruppe '").append(item.getTag()).append("' ");
+                        } else {
+                            b.append("ODER in Gruppe '").append(item.getTag()).append("' ");
+                        }
+                        break;
+                }
+            }
+            b.append("sind");
+        } else {
+            Object[] values = getSelectedValues();
+            if (values.length == 0) {
+                b.append("Keine Einträge gewählt");
+            } else {
+                List<Tag> selection = new LinkedList<Tag>();
+                for (Object v : values) {
+                    ListItem i = (ListItem) v;
+                    selection.add(i.getTag());
+                }
+                b.append("Alle Dörfer in ");
+                b.append((selection.size() == 1) ? "der Gruppe " : "den Gruppen ");
+                b.append("'").append(selection.get(0)).append("'");
+                for (int i = 1; i < selection.size(); i++) {
+                    b.append(" UND ").append("'").append(selection.get(i)).append("'");
+                }
+            }
+        }
+        return b.toString();
+    }
+
     private ListItem getItemAt(int pIndex) {
         return (ListItem) getModel().getElementAt(pIndex);
     }
@@ -399,13 +468,21 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
         } catch (Exception e) {
         }
 
-        new GroupListCellRenderer().view();
+        GroupSelectionList ren = new GroupSelectionList("");
+        ren.setExpertSelection(true);
+        JFrame f = new JFrame();
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.getContentPane().setLayout(new BorderLayout());
+        f.getContentPane().add(ren, BorderLayout.CENTER);
+        f.setVisible(true);
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         GlobalOptions.setSelectedServer("de43");
         DataHolder.getSingleton().loadData(false);
         ProfileManager.getSingleton().loadProfiles();
         GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
         GlobalOptions.loadUserData();
+
+
     }
 
     public static class ListItem {
@@ -452,7 +529,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
         }
 
         public void incrementState() {
-            if (isSpecial()) {
+            if (isNoTagEntry()) {
                 switch (state) {
                     case DISABLED:
                         state = RELATION_TYPE.AND;
@@ -474,7 +551,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
         }
 
         public void decrementState() {
-            if (isSpecial()) {
+            if (isNoTagEntry()) {
                 switch (state) {
                     case DISABLED:
                         state = RELATION_TYPE.AND;
@@ -503,7 +580,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
             return state;
         }
 
-        public boolean isSpecial() {
+        public boolean isNoTagEntry() {
             return tag.equals(NoTag.getSingleton());
         }
     }

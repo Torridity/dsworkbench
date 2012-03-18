@@ -27,7 +27,7 @@ public class AttackTableModel extends AbstractTableModel {
     private String sPlan = null;
     private Class[] types = new Class[]{Tribe.class, Ally.class, Village.class, Tribe.class, Ally.class, Village.class, UnitHolder.class, Integer.class, Date.class, Date.class, Long.class, Boolean.class, Boolean.class};
     private String[] colNames = new String[]{"Angreifer", "Stamm (Angreifer)", "Herkunft", "Verteidiger", "Stamm (Verteidiger)", "Ziel", "Einheit", "Typ", "Abschickzeit", "Ankunftzeit", "Verbleibend", "Einzeichnen", "Übertragen"};
-    private boolean[] editableColumns = new boolean[]{false, false, false, false, false, false, true, true, true, true, false, true, true};
+    private boolean[] editableColumns = new boolean[]{false, false, true, false, false, true, true, true, true, true, false, true, true};
 
     public AttackTableModel(String pPlan) {
         sPlan = pPlan;
@@ -149,6 +149,18 @@ public class AttackTableModel extends AbstractTableModel {
         try {
             Attack a = (Attack) AttackManager.getSingleton().getAllElements(sPlan).get(pRow);
             switch (pCol) {
+                case 2: {
+                    if (pValue != null) {
+                        a.setSource((Village) pValue);
+                    }
+                    break;
+                }
+                case 5: {
+                    if (pValue != null) {
+                        a.setTarget((Village) pValue);
+                    }
+                    break;
+                }
                 case 6: {
                     if (pValue == null) {
                         a.setUnit(null);

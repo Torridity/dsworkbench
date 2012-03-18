@@ -23,7 +23,7 @@ public class DoItYourselfAttackTableModel extends AbstractTableModel {
     private static Logger logger = Logger.getLogger("DoItYourselfAttackTable");
     protected static Class[] types = new Class[]{Integer.class, UnitHolder.class, Village.class, Village.class, Date.class, Date.class, Long.class};
     protected static String[] colNames = new String[]{"Angriffstyp", "Einheit", "Herkunft", "Ziel", "Abschickzeit", "Ankunftzeit", "Verbleibend"};
-    protected static boolean[] editableColumns = new boolean[]{true, true, false, false, true, true, false};
+    protected static boolean[] editableColumns = new boolean[]{true, true, true, true, true, true, false};
 
     public DoItYourselfAttackTableModel() {
     }
@@ -80,7 +80,6 @@ public class DoItYourselfAttackTableModel extends AbstractTableModel {
                 case 4: {
                     try {
                         long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-
                         return new Date(sendTime);
                     } catch (Exception e) {
                         return null;
@@ -121,6 +120,18 @@ public class DoItYourselfAttackTableModel extends AbstractTableModel {
                 }
                 case 1: {
                     a.setUnit((UnitHolder) pValue);
+                    break;
+                }
+                case 2: {
+                    if (pValue != null) {
+                        a.setSource((Village) pValue);
+                    }
+                    break;
+                }
+                case 3: {
+                    if (pValue != null) {
+                        a.setTarget((Village) pValue);
+                    }
                     break;
                 }
                 case 4: {

@@ -12,6 +12,8 @@ import de.tor.tribes.util.ServerSettings;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Charon
@@ -82,14 +84,5 @@ public class VillageParser implements GenericParserInterface<Village> {
             }
         }
         return villages;
-    }
-
-    public static void main(String[] args) throws Exception {
-        /*
-         * Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-         * System.out.println(VillageParser.parse((String) t.getTransferData(DataFlavor.stringFlavor)));
-         */
-        String text = "[village](422|324)[/village]";
-        System.out.println(text.matches(".{0,}\\({0,1}[0-9]{1,3}\\|[0-9]{1,3}\\){0,1}.{0,}"));
     }
 }

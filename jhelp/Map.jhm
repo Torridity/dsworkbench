@@ -274,9 +274,9 @@
 
 <mapID target="images.shortcuts.Alt3" url="images/shortcuts/Alt3.gif"/>
 
-<mapID target="images.shortcuts.Alt4" url="images/shortcuts/Alt4.gif"/>
-
 <mapID target="images.tools.draw_circle" url="images/tools/draw_circle.png"/>
+
+<mapID target="images.shortcuts.Alt4" url="images/shortcuts/Alt4.gif"/>
 
 <mapID target="images.shortcuts.Alt5" url="images/shortcuts/Alt5.gif"/>
 
@@ -331,6 +331,8 @@
 <mapID target="images.att_alert" url="images/att_alert.png"/>
 
 <mapID target="images.att_browser" url="images/att_browser.png"/>
+
+<mapID target="images.screens.note_marker" url="images/screens/note_marker.gif"/>
 
 <mapID target="images.shortcuts.Shift3" url="images/shortcuts/Shift3.gif"/>
 

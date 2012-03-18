@@ -399,18 +399,4 @@ public class TimeSpan implements Comparable<TimeSpan> {
 
         return result;
     }
-
-    public static void main(String[] args) throws Exception {
-        SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
-
-        TimeSpan t = new TimeSpan(new Date());
-        String tt = t.toPropertyString();
-        System.out.println(tt);
-        TimeSpan t2 = TimeSpan.fromPropertyString(tt);
-        String tt2 = t2.toPropertyString();
-        System.out.println(tt2);
-
-        //System.out.println(new TimeSpan(f.parse("29.10.2010 23:59:59")).intersectsWithNightBonus());
-
-    }
 }

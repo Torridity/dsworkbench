@@ -305,7 +305,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
         farmSourcePane.getContentPane().add(searchBarbs);
 
-        JXButton searchBarbsFromClipboard = new JXButton(new ImageIcon(DSWorkbenchFarmManager.class.getResource("/res/ui/search_barbs.png")));
+        JXButton searchBarbsFromClipboard = new JXButton(new ImageIcon(DSWorkbenchFarmManager.class.getResource("/res/ui/farms_from_clipboard.png")));
         searchBarbsFromClipboard.setToolTipText("Barbarendörfer in der Zwischenablage suchen");
         searchBarbsFromClipboard.addMouseListener(new MouseAdapter() {
 

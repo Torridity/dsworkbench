@@ -454,7 +454,6 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
         }
 
         jxReportTable.editingCanceled(new ChangeEvent(this));
-        System.out.println("DEL " + selectedReports);
         ReportManager.getSingleton().removeElements(getReportSet(), selectedReports);
         reportModel.fireTableDataChanged();
         showSuccess(selectedReports.size() + " Bericht(e) gelöscht");

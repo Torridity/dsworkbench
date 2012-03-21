@@ -27,6 +27,7 @@ public class FarmStatusCellRenderer extends DefaultTableRenderer {
     private ImageIcon conqueredIcon = null;
     private ImageIcon farmingIcon = null;
     private ImageIcon reportIcon = null;
+    private ImageIcon lockedIcon = null;
 
     public FarmStatusCellRenderer() {
         super();
@@ -37,6 +38,7 @@ public class FarmStatusCellRenderer extends DefaultTableRenderer {
             conqueredIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/snob_lock.png"));
             farmingIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/trade_in.png"));
             reportIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/report.png"));
+            lockedIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/lock.png"));
         } catch (Exception e) {
         }
     }
@@ -65,6 +67,9 @@ public class FarmStatusCellRenderer extends DefaultTableRenderer {
                     break;
                 case REPORT_EXPECTED:
                     label.setIcon(reportIcon);
+                    break;
+                case LOCKED:
+                    label.setIcon(lockedIcon);
                     break;
                 default:
                     label.setIcon(readyIcon);

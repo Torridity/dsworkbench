@@ -50,7 +50,8 @@ public class FarmInformation extends ManageableType {
         REPORT_EXPECTED,
         NOT_SPYED,
         TROOPS_FOUND,
-        CONQUERED
+        CONQUERED,
+        LOCKED
     }
 
     public enum SPY_LEVEL {
@@ -157,9 +158,8 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Revalidate the farm information (check owner, check returning/running
-     * troops) This method is called after initializing the farm manager and on
-     * user request
+     * Revalidate the farm information (check owner, check returning/running troops) This method is called after initializing the farm
+     * manager and on user request
      */
     public void revalidate() {
         checkOwner();
@@ -377,8 +377,15 @@ public class FarmInformation extends ManageableType {
     public void checkOwner() {
         try {
             Village v = getVillage();
-            if (v.getTribe().getId() != ownerId || ConquerManager.getSingleton().getConquer(v) != null) {
-                if (!v.getTribe().equals(Barbarians.getSingleton())) {
+            Conquer conquer = ConquerManager.getSingleton().getConquer(v);
+            if (v.getTribe().getId() != ownerId || conquer != null) {
+                if (conquer != null) {
+                    ownerId = conquer.getWinner().getId();
+                } else {
+                    ownerId = v.getTribe().getId();
+                }
+
+                if (ownerId != 0 && !v.getTribe().equals(Barbarians.getSingleton())) {
                     //village was really conquered
                     setStatus(FARM_STATUS.CONQUERED);
                 }
@@ -410,8 +417,8 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Get the correction factor depending on overall expected haul and overall
-     * actual haul. Correction is started beginning with the fifth attack
+     * Get the correction factor depending on overall expected haul and overall actual haul. Correction is started beginning with the fifth
+     * attack
      */
     public float getCorrectionFactor() {
         if (expectedHaul == 0) {
@@ -506,8 +513,7 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Read haul information from report, correct storage amounts and return
-     * difference to max haul
+     * Read haul information from report, correct storage amounts and return difference to max haul
      */
     private void updateHaulInformation(FightReport pReport) {
         if (pReport.getHaul() == null) {
@@ -556,12 +562,9 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Update this farm's correction factor by calculating the expected haul
-     * (estimated storage status) and the actual haul (sum of haul and remaining
-     * resources). This call will do nothing if no spy information is available
-     * or if no haul information is available. The correction factor delta is
-     * limited to +/- 10 percent to reduce the influence of A and B runs and for
-     * farms which are relatively new.
+     * Update this farm's correction factor by calculating the expected haul (estimated storage status) and the actual haul (sum of haul and
+     * remaining resources). This call will do nothing if no spy information is available or if no haul information is available. The
+     * correction factor delta is limited to +/- 10 percent to reduce the influence of A and B runs and for farms which are relatively new.
      */
     private void updateCorrectionFactor(FightReport pReport) {
         if (pReport.getHaul() != null && pReport.getSpyedResources() != null) {
@@ -611,8 +614,7 @@ public class FarmInformation extends ManageableType {
     /**
      * Farm this farm
      *
-     * @param The troops used for farming or 'null' if the needed amount of
-     * troops should be calculated
+     * @param The troops used for farming or 'null' if the needed amount of troops should be calculated
      */
     public FARM_RESULT farmFarm(DSWorkbenchFarmManager.FARM_CONFIGURATION pConfig) {
         StringBuilder info = new StringBuilder();
@@ -659,16 +661,17 @@ public class FarmInformation extends ManageableType {
                         if (pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.C)) {
                             //calculate needed units
 
-                            units = TroopHelper.getTroopsForCarriage(pConfig,
-                                    unitsAndVillages.get(selectedVillage),
-                                    this);
+                            units = TroopHelper.getTroopsForCarriage(pConfig, unitsAndVillages.get(selectedVillage), this);
                         } else {//use provided units for A/B-Scenario
                             units = new Hashtable<UnitHolder, Integer>();
                             Hashtable<UnitHolder, Integer> configTroops = DSWorkbenchFarmManager.getSingleton().getTroops(pConfig);
                             Enumeration<UnitHolder> unitKeys = configTroops.keys();
                             while (unitKeys.hasMoreElements()) {
                                 UnitHolder unitKey = unitKeys.nextElement();
-                                units.put(unitKey, configTroops.get(unitKey));
+                                int amount = configTroops.get(unitKey) - DSWorkbenchFarmManager.getSingleton().getBackupUnits(unitKey);
+                                if (amount > 0) {
+                                    units.put(unitKey, amount);
+                                }
                             }
                         }
                         if (units != null && !units.isEmpty()) {
@@ -786,6 +789,7 @@ public class FarmInformation extends ManageableType {
         switch (this.status) {
             case CONQUERED:
             case TROOPS_FOUND:
+            case LOCKED:
                 inactive = true;
                 break;
         }
@@ -897,6 +901,11 @@ public class FarmInformation extends ManageableType {
     public void activateFarm() {
         inactive = false;
         resetFarmStatus();
+    }
+
+    public void deactivateFarm() {
+        inactive = true;
+        setStatus(FARM_STATUS.LOCKED);
     }
 
     @Override

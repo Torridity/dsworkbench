@@ -48,7 +48,7 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.*;
 
 /**
- *
+ *@TODO add attacks from SOS request (Put into list to allow unit selection or take unit from renamed attack)
  * @author Torridity
  */
 public class RetimerDataPanel extends WizardPage {

@@ -36,8 +36,6 @@ import org.apache.log4j.Logger;
 
 /**
  *
- * @TODO check behavior if NoTag is selected in expert mode (must be deselected to use other items)
- *
  * @author Torridity
  */
 public class GroupSelectionList extends IconizedList implements GenericManagerListener {
@@ -402,25 +400,27 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
         StringBuilder b = new StringBuilder();
         if (isExpertSelection()) {
             b.append("Alle Dörfer die ");
-
+            boolean isFirst = true;
             for (int i = 0; i < getElementCount(); i++) {
-                ListItem item = (ListItem) getElementAt(i);
-                switch (item.getState()) {
+                ListItem current = (ListItem) getElementAt(i);
+                switch (current.getState()) {
                     case NOT:
-                        b.append("NICHT in Gruppe '").append(item.getTag()).append("' ");
+                        b.append("NICHT in Gruppe '").append(current.getTag()).append("' ");
                         break;
                     case AND:
-                        if (i == 0) {
-                            b.append("in Gruppe '").append(item.getTag()).append("' ");
+                        if (isFirst) {
+                            b.append("in Gruppe '").append(current.getTag()).append("' ");
+                            isFirst = false;
                         } else {
-                            b.append("UND in Gruppe '").append(item.getTag()).append("' ");
+                            b.append("UND in Gruppe '").append(current.getTag()).append("' ");
                         }
                         break;
                     case OR:
-                        if (i == 0) {
-                            b.append("in Gruppe '").append(item.getTag()).append("' ");
+                        if (isFirst) {
+                            isFirst = false;
+                            b.append("in Gruppe '").append(current.getTag()).append("' ");
                         } else {
-                            b.append("ODER in Gruppe '").append(item.getTag()).append("' ");
+                            b.append("ODER in Gruppe '").append(current.getTag()).append("' ");
                         }
                         break;
                 }
@@ -444,6 +444,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
                 }
             }
         }
+
         return b.toString();
     }
 
@@ -481,6 +482,10 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
         ProfileManager.getSingleton().loadProfiles();
         GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
         GlobalOptions.loadUserData();
+
+
+
+
 
 
     }

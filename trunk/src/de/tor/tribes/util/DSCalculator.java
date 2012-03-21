@@ -84,8 +84,8 @@ public class DSCalculator {
 
     public static String formatTimeInMinutes(double pTime) {
         double dur = pTime;
-        int hour = (int) Math.floor(dur / 60);
-        dur -= hour * 60;
+        int hour = (int) Math.floor(dur / 60.0);
+        dur -= hour * 60.0;
         int min = (int) Math.floor(dur);
         if (min == 60) {
             hour++;
@@ -95,6 +95,10 @@ public class DSCalculator {
         if (sec == 60) {
             min++;
             sec -= 60;
+            if (min == 60) {
+                hour++;
+                min -= 60;
+            }
         }
         String result = "";
         if (hour < 10) {

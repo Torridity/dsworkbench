@@ -40,6 +40,7 @@ import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPanelProvider;
 
 /**
+*@TODO Force restart after update!!!
  * @author Jejkal
  */
 public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataHolderListener {

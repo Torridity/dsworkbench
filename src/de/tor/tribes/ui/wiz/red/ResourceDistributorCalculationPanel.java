@@ -38,7 +38,7 @@ import org.netbeans.spi.wizard.WizardPage;
 import org.netbeans.spi.wizard.WizardPanelNavResult;
 
 /**
- *
+ *@TODO add ignore single resource!?
  * @author Torridity
  */
 public class ResourceDistributorCalculationPanel extends WizardPage {
@@ -92,6 +92,9 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         profile.addProperty("red.ignore.distance", jIgnoreTransportsByDistanceButton.isSelected());
         profile.addProperty("red.ignore.distance.amount", UIHelper.parseIntFromField(jMaxTransportDistance, 50));
         profile.addProperty("red.max.filling", jFillSlider.getValue());
+        profile.addProperty("red.first.order.position", resourceNameToResourceId(jResource1.getToolTipText()));
+        profile.addProperty("red.second.order.position", resourceNameToResourceId(jResource2.getToolTipText()));
+        profile.addProperty("red.third.order.position", resourceNameToResourceId(jResource3.getToolTipText()));
     }
 
     public void restoreProperties() {
@@ -121,6 +124,60 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         if (val != null) {
             jRemainIron.setText(val);
         }
+
+        int wood = 0;
+        int clay = 0;
+        int iron = 0;
+        val = profile.getProperty("red.first.order.position");
+        if (val != null) {
+            switch (Integer.parseInt(val)) {
+                case 0:
+                    wood = 600;
+                    break;
+                case 1:
+                    clay = 600;
+                    break;
+                default:
+                    iron = 600;
+                    break;
+            }
+        }
+        val = profile.getProperty("red.second.order.position");
+        if (val != null) {
+            switch (Integer.parseInt(val)) {
+                case 0:
+                    wood = 800;
+                    break;
+                case 1:
+                    clay = 800;
+                    break;
+                default:
+                    iron = 800;
+                    break;
+            }
+        }
+        val = profile.getProperty("red.third.order.position");
+        if (val != null) {
+            switch (Integer.parseInt(val)) {
+                case 0:
+                    wood = 1000;
+                    break;
+                case 1:
+                    clay = 1000;
+                    break;
+                default:
+                    iron = 1000;
+                    break;
+            }
+        }
+
+        if (wood == 0 && clay == 0 && iron == 0) {
+            wood = 600;
+            clay = 800;
+            iron = 1000;
+        }
+
+        setAdvisedTransportOrder(wood, clay, iron);
 
         jIgnoreTransportsButton.setSelected(Boolean.parseBoolean(profile.getProperty("red.ignore.small.transports")));
         val = profile.getProperty("red.ignore.amount");
@@ -169,6 +226,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jResource3 = new javax.swing.JLabel();
         jSwitch12Button = new javax.swing.JButton();
         jSwitch23Button = new javax.swing.JButton();
+        jSwitch23Button1 = new javax.swing.JButton();
         jFillSlider = new javax.swing.JSlider();
         jLabel13 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
@@ -365,6 +423,19 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
         jPanel4.add(jSwitch23Button, gridBagConstraints);
+
+        jSwitch23Button1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_empty.png"))); // NOI18N
+        jSwitch23Button1.setToolTipText("Verteilungsreihenfolge empfehlen");
+        jSwitch23Button1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAdviceOrderEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
+        jPanel4.add(jSwitch23Button1, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -863,6 +934,31 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jRemainIron.setText(Integer.toString(iron / elementCount));
     }//GEN-LAST:event_fireSetMinToMedianEvent
 
+    private void fireAdviceOrderEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAdviceOrderEvent
+        int wood = 0;
+        int clay = 0;
+        int iron = 0;
+
+        for (VillageMerchantInfo newInfo : ResourceDistributorSettingsPanel.getSingleton().getAllElements()) {
+            switch (newInfo.getDirection()) {
+                case INCOMING:
+                    break;
+                case OUTGOING:
+                    wood += newInfo.getWoodStock() / 1000;
+                    clay += newInfo.getClayStock() / 1000;
+                    iron += newInfo.getIronStock() / 1000;
+                    break;
+                case BOTH:
+                    wood += newInfo.getWoodStock() / 1000;
+                    clay += newInfo.getClayStock() / 1000;
+                    iron += newInfo.getIronStock() / 1000;
+                    break;
+            }
+        }
+
+        setAdvisedTransportOrder(wood, clay, iron);
+    }//GEN-LAST:event_fireAdviceOrderEvent
+
     private void setAdvisedTransportOrder(int pWood, int pClay, int pIron) {
         Integer[] sums = new Integer[]{pWood, pClay, pIron};
         Arrays.sort(sums);
@@ -954,7 +1050,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
             }
         }
 
-        setAdvisedTransportOrder(wood, clay, iron);
+        // setAdvisedTransportOrder(wood, clay, iron);
 
         jSenders.setText(Integer.toString(senders));
         jReceivers.setText(Integer.toString(receivers));
@@ -1221,6 +1317,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
     private javax.swing.JPanel jSummaryPanel;
     private javax.swing.JButton jSwitch12Button;
     private javax.swing.JButton jSwitch23Button;
+    private javax.swing.JButton jSwitch23Button1;
     private com.jidesoft.swing.LabeledTextField jTargetClay;
     private com.jidesoft.swing.LabeledTextField jTargetIron;
     private com.jidesoft.swing.LabeledTextField jTargetWood;

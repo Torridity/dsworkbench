@@ -150,6 +150,13 @@ public class OBSTReportHandler {
                 report.setAttackers(parseUnits(m.group(1).trim().split("\\s")));
                 if (m.find()) {
                     report.setDefenders(parseUnits(m.group(1).trim().split("\\s")));
+                } else {
+                    //no second "Amount:" ... lost everything
+                    Hashtable<UnitHolder, Integer> amounts = new Hashtable<UnitHolder, Integer>();
+                    for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                        amounts.put(unit, -1);
+                    }
+                    report.setDefenders(amounts);
                 }
             }
             //m = Pattern.compile("Verluste:\\s+([0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+)").matcher(data);
@@ -158,6 +165,13 @@ public class OBSTReportHandler {
                 report.setDiedAttackers(parseUnits(m.group(1).trim().split("\\s")));
                 if (m.find()) {
                     report.setDiedDefenders(parseUnits(m.group(1).trim().split("\\s")));
+                } else {
+                    //no second "Losses:" ... lost everything
+                    Hashtable<UnitHolder, Integer> amounts = new Hashtable<UnitHolder, Integer>();
+                    for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                        amounts.put(unit, -1);
+                    }
+                    report.setDiedDefenders(amounts);
                 }
             }
             unitPattern = RegExpHelper.getTroopsPattern(false, false);

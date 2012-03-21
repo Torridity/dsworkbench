@@ -42,7 +42,7 @@ public class TroopHelper {
         if (DSWorkbenchFarmManager.getSingleton().isUseRams(pConfig)) {
             if (pInfo.getWallLevel() > 0) {
                 UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
-                int rams = pTroops.getTroopsOfUnitInVillage(ram);
+                int rams = pTroops.getTroopsOfUnitInVillage(ram) - DSWorkbenchFarmManager.getSingleton().getBackupUnits(ram);
                 if (rams > 1) {
                     int needed = ramsNeeded[pInfo.getWallLevel()];
                     int using = Math.min(needed, rams);
@@ -51,10 +51,9 @@ public class TroopHelper {
             }
         }
 
-
         for (UnitHolder unit : allowed) {
-            int amount = pTroops.getTroopsOfUnitInVillage(unit);
-            if (amount > 0 && amount > DSWorkbenchFarmManager.getSingleton().getBackupUnits(unit)) {
+            int amount = pTroops.getTroopsOfUnitInVillage(unit) - DSWorkbenchFarmManager.getSingleton().getBackupUnits(unit);
+            if (amount > 0) {
                 //get current unit speed
                 double speed = unit.getSpeed();
                 Set<Entry<UnitHolder, Integer>> entries = units.entrySet();
@@ -81,7 +80,8 @@ public class TroopHelper {
                 //get needed amount of units to carry remaining resources
                 int neededAmountOfUnit = (int) Math.ceil((double) resources / unit.getCarry());
                 logger.debug(" - Needing " + neededAmountOfUnit + " units of type " + unit);
-                if (neededAmountOfUnit <= amount && (minUnitsMetOnce || neededAmountOfUnit > DSWorkbenchFarmManager.getSingleton().getMinUnits(pConfig, unit))) {
+                if (neededAmountOfUnit <= amount
+                        && (minUnitsMetOnce || neededAmountOfUnit > DSWorkbenchFarmManager.getSingleton().getMinUnits(pConfig, unit))) {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Adding " + neededAmountOfUnit + " units of type " + unit);
                     }
@@ -113,7 +113,7 @@ public class TroopHelper {
 
         UnitHolder spy = DataHolder.getSingleton().getUnitByPlainName("spy");
         Integer neededSpies = DSWorkbenchFarmManager.getSingleton().getMinUnits(pConfig, spy);
-        int availableSpies = pTroops.getTroopsOfUnitInVillage(spy);
+        int availableSpies = pTroops.getTroopsOfUnitInVillage(spy) - DSWorkbenchFarmManager.getSingleton().getBackupUnits(spy);
         if (neededSpies != null) {
             units.put(spy, (neededSpies > availableSpies) ? availableSpies : neededSpies);
         }

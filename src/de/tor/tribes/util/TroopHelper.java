@@ -141,8 +141,8 @@ public class TroopHelper {
 
     public static Hashtable<Village, VillageTroopsHolder> getOwnTroopsForAllVillages(Hashtable<UnitHolder, Integer> pMinAmounts) {
         Hashtable<Village, VillageTroopsHolder> result = new Hashtable<Village, VillageTroopsHolder>();
-        for (ManageableType t : TroopsManager.getSingleton().getAllElements(TroopsManager.OWN_GROUP)) {
-            VillageTroopsHolder holder = (VillageTroopsHolder) t;
+        for (Village v : GlobalOptions.getSelectedProfile().getTribe().getVillageList()) {
+            VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN);
             if (holder != null && hasMinTroopAmounts(holder, pMinAmounts)) {
                 result.put(holder.getVillage(), holder);
             }
@@ -173,8 +173,8 @@ public class TroopHelper {
     public static Hashtable<Village, VillageTroopsHolder> getOwnTroopsForAllVillagesByCapacity(FarmInformation pInfo) {
         Hashtable<Village, VillageTroopsHolder> result = new Hashtable<Village, VillageTroopsHolder>();
         int currentResources = pInfo.getResourcesInStorage(System.currentTimeMillis());
-        for (ManageableType t : TroopsManager.getSingleton().getAllElements(TroopsManager.OWN_GROUP)) {
-            VillageTroopsHolder holder = (VillageTroopsHolder) t;
+        for (Village v : GlobalOptions.getSelectedProfile().getTribe().getVillageList()) {
+            VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN);
             if (holder != null) {
                 if (getCapacity(holder.getTroops()) >= currentResources) {
                     //village is valid
@@ -187,8 +187,9 @@ public class TroopHelper {
 
     public static Hashtable<Village, VillageTroopsHolder> getOwnTroopsForAllVillagesByMinHaul(int pMinHaul) {
         Hashtable<Village, VillageTroopsHolder> result = new Hashtable<Village, VillageTroopsHolder>();
-        for (ManageableType t : TroopsManager.getSingleton().getAllElements(TroopsManager.OWN_GROUP)) {
-            VillageTroopsHolder holder = (VillageTroopsHolder) t;
+
+        for (Village v : GlobalOptions.getSelectedProfile().getTribe().getVillageList()) {
+            VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN);
             if (holder != null) {
                 if (getCapacity(holder.getTroops()) >= pMinHaul) {
                     //village is valid
@@ -216,24 +217,6 @@ public class TroopHelper {
             if (onTheWay != null) {//check for case that troops are from place
                 onTheWay.setAmountForUnit(unit, onTheWay.getAmountForUnit(unit) + pTroops.get(unit));
             }
-        }
-    }
-
-    public static void returnTroops(Village pVillage, Hashtable<UnitHolder, Integer> pTroops) {
-        VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.OWN);
-        VillageTroopsHolder inVillage = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.IN_VILLAGE);
-        VillageTroopsHolder onTheWay = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.ON_THE_WAY);
-
-        if (own == null || inVillage == null || onTheWay == null) {
-            return;
-        }
-
-        Enumeration<UnitHolder> keys = pTroops.keys();
-        while (keys.hasMoreElements()) {
-            UnitHolder unit = keys.nextElement();
-            own.setAmountForUnit(unit, own.getAmountForUnit(unit) + pTroops.get(unit));
-            inVillage.setAmountForUnit(unit, inVillage.getAmountForUnit(unit) + pTroops.get(unit));
-            onTheWay.setAmountForUnit(unit, onTheWay.getAmountForUnit(unit) - pTroops.get(unit));
         }
     }
 
@@ -487,5 +470,115 @@ public class TroopHelper {
         }
         return force;
 
+    }
+
+    public static int getNeededSupports(Village pVillage, Hashtable<UnitHolder, Integer> pTargetAmount, Hashtable<UnitHolder, Integer> pSplitAmount, boolean pAllowSimilar) {
+        boolean useArcher = !DataHolder.getSingleton().getUnitByPlainName("archer").equals(UnknownUnit.getSingleton());
+
+        double defGoal = 0;
+        double defCavGoal = 0;
+        double defArchGoal = 0;
+        //
+        UnitHolder current = DataHolder.getSingleton().getUnitByPlainName("spear");
+        Integer spearGoal = pTargetAmount.get(current);
+        defGoal += spearGoal * current.getDefense();
+        defGoal += spearGoal * current.getDefenseCavalry();
+        defArchGoal += (useArcher) ? spearGoal * current.getDefenseArcher() : 0;
+        //
+        current = DataHolder.getSingleton().getUnitByPlainName("sword");
+        Integer swordGoal = pTargetAmount.get(current);
+        defGoal += swordGoal * current.getDefense();
+        defCavGoal += swordGoal * current.getDefenseCavalry();
+        defArchGoal += (useArcher) ? swordGoal * current.getDefenseArcher() : 0;
+        //
+        Integer archerGoal = 0;
+        if (useArcher) {
+            current = DataHolder.getSingleton().getUnitByPlainName("archer");
+            archerGoal = pTargetAmount.get(current);
+            defGoal += archerGoal * current.getDefense();
+            defCavGoal += archerGoal * current.getDefenseCavalry();
+            defArchGoal += (useArcher) ? archerGoal * current.getDefenseArcher() : 0;
+        }
+        //
+        current = DataHolder.getSingleton().getUnitByPlainName("spy");
+        Integer spyGoal = pTargetAmount.get(current);
+        defGoal += spyGoal * current.getDefense();
+        defCavGoal += spyGoal * current.getDefenseCavalry();
+        defArchGoal += (useArcher) ? spyGoal * current.getDefenseArcher() : 0;
+        //
+        current = DataHolder.getSingleton().getUnitByPlainName("heavy");
+        Integer heavyGoal = pTargetAmount.get(DataHolder.getSingleton().getUnitByPlainName("heavy"));
+        defGoal += heavyGoal * current.getDefense();
+        defCavGoal += heavyGoal * current.getDefenseCavalry();
+        defArchGoal += (useArcher) ? heavyGoal * current.getDefenseArcher() : 0;
+        //
+        Integer spearSplit = pSplitAmount.get(DataHolder.getSingleton().getUnitByPlainName("spear"));
+        Integer swordSplit = pSplitAmount.get(DataHolder.getSingleton().getUnitByPlainName("sword"));
+        Integer archerSplit = 0;
+        if (useArcher) {
+            archerSplit = pSplitAmount.get(DataHolder.getSingleton().getUnitByPlainName("archer"));
+        }
+        Integer spySplit = pSplitAmount.get(DataHolder.getSingleton().getUnitByPlainName("spy"));
+        Integer heavySplit = pSplitAmount.get(DataHolder.getSingleton().getUnitByPlainName("heavy"));
+
+        VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.IN_VILLAGE);
+        Hashtable<UnitHolder, Integer> troops;
+        if (holder == null) {
+            troops = new Hashtable<UnitHolder, Integer>();
+            troops.put(DataHolder.getSingleton().getUnitByPlainName("spear"), 0);
+            troops.put(DataHolder.getSingleton().getUnitByPlainName("sword"), 0);
+            if (useArcher) {
+                troops.put(DataHolder.getSingleton().getUnitByPlainName("archer"), 0);
+            }
+            troops.put(DataHolder.getSingleton().getUnitByPlainName("spy"), 0);
+            troops.put(DataHolder.getSingleton().getUnitByPlainName("heavy"), 0);
+        } else {
+            troops = holder.getTroops();
+        }
+
+        if (pAllowSimilar) {
+
+            int def = 0;
+            int defCav = 0;
+            int defArch = 0;
+
+            Set<Entry<UnitHolder, Integer>> entries = troops.entrySet();
+
+            for (Entry<UnitHolder, Integer> entry : entries) {
+                def += entry.getKey().getDefense() * entry.getValue();
+                defCav += entry.getKey().getDefenseCavalry() * entry.getValue();
+                if (useArcher) {
+                    defArch += entry.getKey().getDefenseArcher() * entry.getValue();
+                }
+            }
+
+            int defDiff = (int) Math.rint(defGoal - def);
+            int defCavDiff = (int) Math.rint(defCavGoal - defCav);
+            int defArchDiff = (useArcher) ? (int) Math.rint(defArchGoal - defArch) : 0;
+
+
+            //@TODO finish similarity option
+            return 0;
+
+
+
+        } else {
+            int spearDiff = spearGoal - troops.get(DataHolder.getSingleton().getUnitByPlainName("spear"));
+            int swordDiff = swordGoal - troops.get(DataHolder.getSingleton().getUnitByPlainName("sword"));
+            int archerDiff = 0;
+            if (useArcher) {
+                archerDiff = archerGoal - troops.get(DataHolder.getSingleton().getUnitByPlainName("archer"));
+            }
+            int spyDiff = spyGoal - troops.get(DataHolder.getSingleton().getUnitByPlainName("spy"));
+            int heavyDiff = heavyGoal - troops.get(DataHolder.getSingleton().getUnitByPlainName("heavy"));
+
+            int spearSupports = (spearSplit == 0) ? 0 : (int) (Math.ceil((double) spearDiff / (double) spearSplit));
+            int swordSupports = (swordSplit == 0) ? 0 : (int) (Math.ceil((double) swordDiff / (double) swordSplit));
+            int archerSupports = (archerSplit == 0) ? 0 : (int) (Math.ceil((double) archerDiff / (double) archerSplit));
+            int spySupports = (spySplit == 0) ? 0 : (int) (Math.ceil((double) spyDiff / (double) spySplit));
+            int heavySupports = (heavySplit == 0) ? 0 : (int) (Math.ceil((double) heavyDiff / (double) heavySplit));
+
+            return Math.max(Math.max(Math.max(Math.max(spearSupports, swordSupports), archerSupports), spySupports), heavySupports);
+        }
     }
 }

@@ -46,7 +46,7 @@ import org.netbeans.spi.wizard.*;
  * @author Torridity
  */
 public class SupportRefillCalculationPanel extends WizardPage {
-
+    
     private static final String GENERAL_INFO = "In diesem Schritt kannst du mögliche Unterstützungen für die eingegebenen Einstellungen errechnen lassen. "
             + "Was du nun noch brauchst ist eine Ankunftzeit. Alle Unterstützungen werden so berechnet, dass sie genau zu diesem Zeitpunkt ankommen. "
             + "Als früheste Abschickzeit wird die aktuelle Zeit gewählt, mögliche Abschickzeiten liegen zwischen jetzt und der eingestellten Ankunftzeit. "
@@ -54,7 +54,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
     private static SupportRefillCalculationPanel singleton = null;
     private BruteForce calculator = null;
     private SimpleDateFormat dateFormat = null;
-
+    
     public static synchronized SupportRefillCalculationPanel getSingleton() {
         if (singleton == null) {
             singleton = new SupportRefillCalculationPanel();
@@ -76,25 +76,25 @@ public class SupportRefillCalculationPanel extends WizardPage {
         StyleConstants.setFontFamily(defaultStyle, "SansSerif");
         dateFormat = new SimpleDateFormat("HH:mm:ss");
     }
-
+    
     public static String getDescription() {
         return "Berechnung";
     }
-
+    
     public static String getStep() {
         return "id-ref-calculation";
     }
-
+    
     public void storeProperties() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
         profile.addProperty("ref.calculation.arrive", jArriveTime.getSelectedDate().getTime());
     }
-
+    
     public void restoreProperties() {
         calculator = null;
         UserProfile profile = GlobalOptions.getSelectedProfile();
         long date = System.currentTimeMillis();
-
+        
         try {
             date = Long.parseLong(profile.getProperty("ref.calculation.arrive"));
         } catch (Exception e) {
@@ -285,7 +285,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
             jLabel1.setText("Informationen einblenden");
         }
     }//GEN-LAST:event_fireHideInfoEvent
-
+    
     private void fireCalculateAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateAttacksEvent
         if (calculator == null) {//not used yet
             initializeCalculation();
@@ -303,7 +303,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
                 }
             }
         }
-
+        
         jCalculateButton.setText("Abbrechen");
         calculator.start();
         setBusy(true);
@@ -312,9 +312,9 @@ public class SupportRefillCalculationPanel extends WizardPage {
             Thread.sleep(20);
         } catch (Exception e) {
         }
-
+        
     }//GEN-LAST:event_fireCalculateAttacksEvent
-
+    
     protected TimeFrame getTimeFrame() {
         Date arrive = jArriveTime.getSelectedDate();
         TimeFrame f = new TimeFrame(new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()), arrive, arrive);
@@ -322,7 +322,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
         f.addStartTimeSpan(new TimeSpan(new IntRange(0, 24)));
         return f;
     }
-
+    
     private void initializeCalculation() {
         if (jArriveTime.getSelectedDate().getTime() < System.currentTimeMillis()) {
             notifyStatusUpdate("Die gewählte Ankunftzeit liegt in der Vergangenheit");
@@ -333,7 +333,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
         calculator = new BruteForce();
         Hashtable<UnitHolder, List<Village>> sources = new Hashtable<UnitHolder, List<Village>>();
         UnitHolder slowest = TroopHelper.getSlowestUnit(SupportRefillSettingsPanel.getSingleton().getSplit());
-
+        
         List<Village> sourceVillages = new LinkedList<Village>();
         for (REFSourceElement element : SupportRefillSourcePanel.getSingleton().getAllElements()) {
             for (int i = 0; i < element.getAvailableSupports(); i++) {
@@ -341,7 +341,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
             }
         }
         sources.put(slowest, sourceVillages);
-
+        
         List<Village> targets = new LinkedList<Village>();
         Hashtable<Village, Integer> maxSupports = new Hashtable<Village, Integer>();
         for (REFTargetElement element : SupportRefillSettingsPanel.getSingleton().getAllElements()) {
@@ -351,38 +351,38 @@ public class SupportRefillCalculationPanel extends WizardPage {
         calculator.initialize(sources, new Hashtable<UnitHolder, List<Village>>(), targets, new LinkedList<Village>(), maxSupports, f, false, null);
         jProgressBar1.setValue(0);
         calculator.setLogListener(new AbstractAttackAlgorithm.LogListener() {
-
+            
             @Override
             public void logMessage(String pMessage) {
                 notifyStatusUpdate(pMessage);
             }
-
+            
             @Override
             public void calculationFinished() {
                 notifyCalculationFinished();
             }
-
+            
             @Override
             public void updateProgress(double pPercent) {
                 jProgressBar1.setValue((int) Math.rint(pPercent));
             }
         });
     }
-
+    
     public void updateStatus() {
         int need = 0;
         for (REFTargetElement elem : SupportRefillSettingsPanel.getSingleton().getAllElements()) {
             need += elem.getNeededSupports();
         }
         jNeededSupports.setText(Integer.toString(need));
-
+        
         int available = 0;
         for (REFSourceElement elem : SupportRefillSourcePanel.getSingleton().getAllElements()) {
             need += elem.getAvailableSupports();
         }
         jAvailableSupports.setText(Integer.toString(available));
     }
-
+    
     public void notifyCalculationFinished() {
         setBusy(false);
         if (calculator.hasResults()) {
@@ -392,13 +392,13 @@ public class SupportRefillCalculationPanel extends WizardPage {
         }
         jCalculateButton.setText("Unterstützungen berechnen");
     }
-
+    
     public void notifyStatusUpdate(String pMessage) {
         try {
             StyledDocument doc = jTextPane1.getStyledDocument();
             doc.insertString(doc.getLength(), "(" + dateFormat.format(new Date(System.currentTimeMillis())) + ") " + pMessage + "\n", doc.getStyle("Info"));
             SwingUtilities.invokeLater(new Runnable() {
-
+                
                 public void run() {
                     scroll();
                 }
@@ -406,7 +406,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
         } catch (BadLocationException ble) {
         }
     }
-
+    
     private void scroll() {
         Point point = new Point(0, (int) (jTextPane1.getSize().getHeight()));
         JViewport vp = jScrollPane1.getViewport();
@@ -415,7 +415,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
         }
         vp.setViewPosition(point);
     }
-
+    
     public List<AbstractTroopMovement> getResults() {
         return calculator.getResults();
     }
@@ -446,23 +446,23 @@ public class SupportRefillCalculationPanel extends WizardPage {
             setProblem("Noch keine Berechnung durchgeführt");
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
-
+        
         if (calculator != null && calculator.isRunning()) {
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
         SupportRefillFinishPanel.getSingleton().update();
         return WizardPanelNavResult.PROCEED;
     }
-
+    
     @Override
     public WizardPanelNavResult allowBack(String string, Map map, Wizard wizard) {
         if (calculator != null && calculator.isRunning()) {
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
         return WizardPanelNavResult.PROCEED;
-
+        
     }
-
+    
     @Override
     public WizardPanelNavResult allowFinish(String string, Map map, Wizard wizard) {
         if (calculator != null && calculator.isRunning()) {

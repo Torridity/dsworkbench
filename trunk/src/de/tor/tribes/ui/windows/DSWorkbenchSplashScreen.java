@@ -40,16 +40,15 @@ import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPanelProvider;
 
 /**
-*@TODO Force restart after update!!!
  * @author Jejkal
  */
 public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataHolderListener {
-    
+
     private static Logger logger = Logger.getLogger("Launcher");
     private final DSWorkbenchSplashScreen self = this;
     private final SplashRepaintThread t;
     private static DSWorkbenchSplashScreen SINGLETON = null;
-    
+
     public static synchronized DSWorkbenchSplashScreen getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchSplashScreen();
@@ -67,7 +66,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         } else {
             jLabel1.setIcon(new ImageIcon("./graphics/splash.gif"));
         }
-        
+
         setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
         new Timer("StartupTimer", true).schedule(new HideSplashTask(), 1000);
         jProfileDialog.getContentPane().setBackground(Constants.DS_BACK_LIGHT);
@@ -164,7 +163,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             jProfileDialog.setVisible(false);
         }
     }//GEN-LAST:event_fireSelectAccountEvent
-    
+
     protected boolean hideSplash() {
         try {
             if (!new File(".").canWrite()) {
@@ -176,7 +175,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 JOptionPaneHelper.showErrorBox(self, "Fehler bei der Initialisierung.\nDas Serververzeichnis konnte nicht erstellt werden.", "Fehler");
                 return false;
             }
-            
+
             ProfileManager.getSingleton().loadProfiles();
             if (ProfileManager.getSingleton().getProfiles().length == 0) {
                 logger.debug("Starting first start wizard");
@@ -185,7 +184,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 if (!new File("./hfsw").exists()) {
                     logger.debug(" - Initializing first start wizard");
                     Map result = new HashMap<String, String>();
-                    
+
                     try {
                         WizardPanelProvider provider = new FirstStartWizard();
                         Wizard wizard = provider.createWizard();
@@ -225,7 +224,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                     GlobalOptions.saveProperties();
                 }
             }
-            
+
             jStatusOutput.setString("Prüfe auf Updates");
             DSWorkbenchUpdateDialog.UPDATE_RESULT updateResult;
             DSWorkbenchUpdateDialog updateDialog = new DSWorkbenchUpdateDialog(this, true);
@@ -243,7 +242,9 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                     break;
                 case SUCCESS:
                     jStatusOutput.setString("Update erfolgreich. Neustart notwendig!");
-                    break;
+                    JOptionPaneHelper.showInformationBox(this, "DS Workbench wurde erfolgreich aktualisiert.\n"
+                            + "Bitte starte DS Workbench nun neu.", "Neustart notwendig");
+                    return true;
                 case NOT_NEEDED:
                     jStatusOutput.setString("Kein Update notwendig");
                     break;
@@ -261,7 +262,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             JOptionPaneHelper.showErrorBox(self, "Fehler bei der Initialisierung.\nMöglicherweise ist deine DS Workbench Installation defekt.", "Fehler");
             return false;
         }
-        
+
         logger.debug("Starting profile selection");
         boolean settingsRestored = false;
         try {
@@ -287,7 +288,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 }
                 //sort server names
                 Collections.sort(servers, new Comparator<String>() {
-                    
+
                     @Override
                     public int compare(String o1, String o2) {
                         if (o1.length() < o2.length()) {
@@ -322,7 +323,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                         root.add(serverNode);
                     }
                 }
-                
+
                 jTree1.setModel(new DefaultTreeModel(root));
                 jTree1.setSelectionPath(new TreePath(path.toArray()));
                 jTree1.scrollPathToVisible(new TreePath(path.toArray()));
@@ -342,7 +343,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         } catch (Exception e) {
             logger.warn("Failed to open profile manager", e);
         }
-        
+
         if (!settingsRestored) {
             DSWorkbenchSettingsDialog.getSingleton().restoreProperties();
         }
@@ -350,7 +351,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         // <editor-fold defaultstate="collapsed" desc=" Check for data updates ">
         logger.debug("Checking for application updates");
         boolean checkForUpdates = Boolean.parseBoolean(GlobalOptions.getProperty("check.updates.on.startup"));
-        
+
         if (checkForUpdates && !GlobalOptions.isOfflineMode()) {
             String selectedServer = GlobalOptions.getProperty("default.server");
             String name = GlobalOptions.getProperty("account.name");
@@ -371,7 +372,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 }
             }
         }
-        
+
         try {
             if (!DataHolder.getSingleton().loadData(checkForUpdates)) {
                 throw new Exception("loadData() returned 'false'. See log for more details.");
@@ -384,12 +385,12 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         try {
             logger.debug("Checking for plugin updates");
             PluginManager.getSingleton().checkForUpdates();
-            
+
             logger.debug("Initializing application window");
             DSWorkbenchMainFrame.getSingleton().init();
             logger.info("Showing application window");
-            
-            
+
+
             DSWorkbenchMainFrame.getSingleton().setVisible(true);
             try {
                 ReportServer.getSingleton().start(GlobalOptions.getProperties().getInt("report.server.port", 8080));
@@ -400,7 +401,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             setVisible(false);
             GlobalOptions.removeDataHolderListener(this);
             boolean informOnUpdate = true;
-            
+
             try {
                 String val = GlobalOptions.getProperty("inform.on.updates");
                 if (val != null) {
@@ -412,7 +413,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             if (informOnUpdate) {
                 //check version
                 double version = DatabaseInterface.getCurrentVersion();
-                
+
                 if (version > 0 && version > Constants.VERSION) {
                     NotifierFrame.doNotification("Eine neue Version (" + version + ") von DS Workbench ist verfügbar.\n" + "Klicke auf das Update Icon um \'http://www.dsworkbench.de\' im Browser zu öffnen.", NotifierFrame.NOTIFY_UPDATE);
                 }
@@ -448,14 +449,14 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             }
         }
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            
+
             @Override
             public void uncaughtException(Thread t, Throwable e) {
                 logger.error("Uncaught exception in thread " + t, e);
             }
         });
         Appender a = null;
-        
+
         if (!Constants.DEBUG) {
             a = new org.apache.log4j.RollingFileAppender();
             ((org.apache.log4j.RollingFileAppender) a).setMaxFileSize("1MB");
@@ -484,7 +485,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                     break;
                 }
             }
-            
+
             Logger.getRootLogger().addAppender(a);
             Logger.getLogger("de.tor").addAppender(a);
             Logger.getLogger("dswb").addAppender(a);
@@ -492,11 +493,11 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         } catch (IOException ioe) {
             logger.error("Failed to initialize logging", ioe);
         }
-        
+
         try {
             GlobalOptions.initialize();
             String lnf = GlobalOptions.getProperty("look.and.feel");
-            
+
             if (SystemUtils.IS_OS_MAC || SystemUtils.IS_OS_MAC_OSX) {
                 //no nimbus for mac users
                 lnf = UIManager.getSystemLookAndFeelClassName();
@@ -510,9 +511,9 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         } catch (Exception e) {
             logger.error("Failed to setup LnF", e);
         }
-        
+
         SwingUtilities.invokeLater(new Runnable() {
-            
+
             @Override
             public void run() {
                 try {
@@ -537,11 +538,11 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     public void fireDataHolderEvent(String pText) {
         jStatusOutput.setString(pText);
     }
-    
+
     public void updateStatus() {
         jStatusOutput.repaint();
     }
-    
+
     @Override
     public void fireDataLoadedEvent(boolean pSuccess) {
         if (pSuccess) {
@@ -553,10 +554,10 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 }
 
 class HideSplashTask extends TimerTask {
-    
+
     public HideSplashTask() {
     }
-    
+
     public void run() {
         try {
             if (!DSWorkbenchSplashScreen.getSingleton().hideSplash()) {
@@ -570,14 +571,14 @@ class HideSplashTask extends TimerTask {
 }
 
 class SplashRepaintThread extends Thread {
-    
+
     private boolean running = true;
-    
+
     public SplashRepaintThread() {
         setName("SplashHideThread");
         setDaemon(true);
     }
-    
+
     public void run() {
         while (running) {
             DSWorkbenchSplashScreen.getSingleton().updateStatus();
@@ -587,7 +588,7 @@ class SplashRepaintThread extends Thread {
             }
         }
     }
-    
+
     public void stopRunning() {
         running = false;
     }

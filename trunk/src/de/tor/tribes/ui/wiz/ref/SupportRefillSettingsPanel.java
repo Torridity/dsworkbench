@@ -128,12 +128,19 @@ public class SupportRefillSettingsPanel extends WizardPage {
         UserProfile profile = GlobalOptions.getSelectedProfile();
         profile.addProperty("ref.filter.amount", TroopHelper.unitTableToProperty(targetAmountPanel.getAmounts()));
         profile.addProperty("ref.filter.split", TroopHelper.unitTableToProperty(splitAmountPanel.getAmounts()));
+        profile.addProperty("ref.allow.similar.amount", jAllowSimilarTroops.isSelected());
     }
 
     public void restoreProperties() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
         targetAmountPanel.setAmounts(TroopHelper.propertyToUnitTable(profile.getProperty("ref.filter.amount")));
         splitAmountPanel.setAmounts(TroopHelper.propertyToUnitTable(profile.getProperty("ref.filter.split")));
+        String val = profile.getProperty("ref.allow.similar.amount");
+        if (val == null) {
+            jAllowSimilarTroops.setSelected(true);
+        } else {
+            jAllowSimilarTroops.setSelected(Boolean.parseBoolean(val));
+        }
     }
 
     public Hashtable<UnitHolder, Integer> getSplit() {
@@ -154,6 +161,7 @@ public class SupportRefillSettingsPanel extends WizardPage {
         jDataPanel = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jTargetAmountsPanel = new javax.swing.JPanel();
+        jAllowSimilarTroops = new javax.swing.JCheckBox();
         jSplitSizePanel = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jVillageTablePanel = new javax.swing.JPanel();
@@ -182,6 +190,15 @@ public class SupportRefillSettingsPanel extends WizardPage {
 
         jTargetAmountsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Gewünschte Truppenstärke"));
         jTargetAmountsPanel.setLayout(new java.awt.BorderLayout());
+
+        jAllowSimilarTroops.setSelected(true);
+        jAllowSimilarTroops.setText("Gleichwertige Truppenstärke zulassen");
+        jAllowSimilarTroops.setToolTipText("<html>Ist diese Option aktiviert, so werden nicht zwingend die vorgegebenen Truppen aufgef&uuml;llt.<br/>Stattdessen wird versucht, unter Ber&uuml;cksichtigung der bereits \nstationierten Truppen,<br/>die vorgegebene St&auml;rke der Verteidigung zu erreichen.</html>");
+        jAllowSimilarTroops.setMaximumSize(new java.awt.Dimension(150, 23));
+        jAllowSimilarTroops.setMinimumSize(new java.awt.Dimension(150, 23));
+        jAllowSimilarTroops.setPreferredSize(new java.awt.Dimension(150, 23));
+        jTargetAmountsPanel.add(jAllowSimilarTroops, java.awt.BorderLayout.SOUTH);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -366,7 +383,7 @@ public class SupportRefillSettingsPanel extends WizardPage {
         int max = 0;
         for (int i = 0; i < getModel().getRowCount(); i++) {
             REFTargetElement elem = getModel().getRow(jVillageTable.convertRowIndexToModel(i));
-            elem.setNeededSupports(getNeededSupports(elem.getVillage(), target, split));
+            elem.setNeededSupports(TroopHelper.getNeededSupports(elem.getVillage(), target, split, jAllowSimilarTroops.isSelected()));
             max = Math.max(elem.getNeededSupports(), max);
         }
         getModel().fireTableDataChanged();
@@ -378,60 +395,6 @@ public class SupportRefillSettingsPanel extends WizardPage {
         overviewPanel.repaint();
         setProblem(null);
     }//GEN-LAST:event_fireCalculateNeededSupportsEvent
-
-    private int getNeededSupports(Village pVillage, Hashtable<UnitHolder, Integer> pTargetAmount, Hashtable<UnitHolder, Integer> pSplitAmount) {
-        boolean useArcher = !DataHolder.getSingleton().getUnitByPlainName("archer").equals(UnknownUnit.getSingleton());
-
-        Integer spearGoal = pTargetAmount.get(DataHolder.getSingleton().getUnitByPlainName("spear"));
-        Integer swordGoal = pTargetAmount.get(DataHolder.getSingleton().getUnitByPlainName("sword"));
-        Integer archerGoal = 0;
-        if (useArcher) {
-            archerGoal = pTargetAmount.get(DataHolder.getSingleton().getUnitByPlainName("archer"));
-        }
-        Integer spyGoal = pTargetAmount.get(DataHolder.getSingleton().getUnitByPlainName("spy"));
-        Integer heavyGoal = pTargetAmount.get(DataHolder.getSingleton().getUnitByPlainName("heavy"));
-
-        Integer spearSplit = pSplitAmount.get(DataHolder.getSingleton().getUnitByPlainName("spear"));
-        Integer swordSplit = pSplitAmount.get(DataHolder.getSingleton().getUnitByPlainName("sword"));
-        Integer archerSplit = 0;
-        if (useArcher) {
-            archerSplit = pSplitAmount.get(DataHolder.getSingleton().getUnitByPlainName("archer"));
-        }
-        Integer spySplit = pSplitAmount.get(DataHolder.getSingleton().getUnitByPlainName("spy"));
-        Integer heavySplit = pSplitAmount.get(DataHolder.getSingleton().getUnitByPlainName("heavy"));
-
-        VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.IN_VILLAGE);
-        Hashtable<UnitHolder, Integer> troops;
-        if (holder == null) {
-            troops = new Hashtable<UnitHolder, Integer>();
-            troops.put(DataHolder.getSingleton().getUnitByPlainName("spear"), 0);
-            troops.put(DataHolder.getSingleton().getUnitByPlainName("sword"), 0);
-            if (useArcher) {
-                troops.put(DataHolder.getSingleton().getUnitByPlainName("archer"), 0);
-            }
-            troops.put(DataHolder.getSingleton().getUnitByPlainName("spy"), 0);
-            troops.put(DataHolder.getSingleton().getUnitByPlainName("heavy"), 0);
-        } else {
-            troops = holder.getTroops();
-        }
-
-        int spearDiff = spearGoal - troops.get(DataHolder.getSingleton().getUnitByPlainName("spear"));
-        int swordDiff = swordGoal - troops.get(DataHolder.getSingleton().getUnitByPlainName("sword"));
-        int archerDiff = 0;
-        if (useArcher) {
-            archerDiff = archerGoal - troops.get(DataHolder.getSingleton().getUnitByPlainName("archer"));
-        }
-        int spyDiff = spyGoal - troops.get(DataHolder.getSingleton().getUnitByPlainName("spy"));
-        int heavyDiff = heavyGoal - troops.get(DataHolder.getSingleton().getUnitByPlainName("heavy"));
-
-        int spearSupports = (spearSplit == 0) ? 0 : (int) (Math.ceil((double) spearDiff / (double) spearSplit));
-        int swordSupports = (swordSplit == 0) ? 0 : (int) (Math.ceil((double) swordDiff / (double) swordSplit));
-        int archerSupports = (archerSplit == 0) ? 0 : (int) (Math.ceil((double) archerDiff / (double) archerSplit));
-        int spySupports = (spySplit == 0) ? 0 : (int) (Math.ceil((double) spyDiff / (double) spySplit));
-        int heavySupports = (heavySplit == 0) ? 0 : (int) (Math.ceil((double) heavyDiff / (double) heavySplit));
-
-        return Math.max(Math.max(Math.max(Math.max(spearSupports, swordSupports), archerSupports), spySupports), heavySupports);
-    }
 
     private REFSettingsTableModel getModel() {
         return (REFSettingsTableModel) jVillageTable.getModel();
@@ -465,6 +428,7 @@ public class SupportRefillSettingsPanel extends WizardPage {
         return result.toArray(new REFTargetElement[result.size()]);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox jAllowSimilarTroops;
     private javax.swing.JButton jButton1;
     private javax.swing.JPanel jDataPanel;
     private javax.swing.JScrollPane jInfoScrollPane;

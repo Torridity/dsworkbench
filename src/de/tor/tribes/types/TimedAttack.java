@@ -88,4 +88,9 @@ public class TimedAttack {
     public void setPossibleSnob(boolean possibleSnob) {
         this.possibleSnob = possibleSnob;
     }
+
+    @Override
+    public String toString() {
+        return getSource().getFullName();
+    }
 }

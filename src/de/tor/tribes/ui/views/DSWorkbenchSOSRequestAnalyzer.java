@@ -261,7 +261,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
             @Override
             public Object getValue(String key) {
                 if (key.equals(Action.SHORT_DESCRIPTION)) {
-                    return "Unterstützungsanfragen für die gewählten, unvollständigen Verteidigungen erstellen\n"
+                    return "Unterstützungsanfragen für die gewählten, unvollständigen Verteidigungen erstellen"
                             + " und in die Zwischenablage kopieren";
                 }
                 return super.getValue(key);
@@ -286,7 +286,16 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
             }
         });
         miscPane.getContentPane().add(reAnalyzeButton);
+        JXButton setSelectionSecured = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/reanalyze.png")));
+        setSelectionSecured.setToolTipText("Die gewählten Einträge manuell auf 'Sicher' setzen, z.B. weil man sie ignorieren möchte oder bereits genügend Unterstützungen laufen.");
+        setSelectionSecured.addMouseListener(new MouseAdapter() {
 
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                setSelectionSecured();
+            }
+        });
+        miscPane.getContentPane().add(setSelectionSecured);
         clickAccount = new ClickAccountPanel();
         profileQuickchangePanel = new ProfileQuickChangePanel();
         centerPanel.setupTaskPane(clickAccount, profileQuickchangePanel, viewPane, transferPane, miscPane);
@@ -869,6 +878,13 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
                     GlobalOptions.getProperties().getInt("max.sim.rounds", 500), GlobalOptions.getProperties().getInt("max.loss.ratio", 50), pReAnalyze);
             a.start();
         }
+    }
+
+    private void setSelectionSecured() {
+        for (DefenseInformation info : getSelectedRows()) {
+            info.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.SAVE);
+        }
+        repaint();
     }
 
     private void updateView() {

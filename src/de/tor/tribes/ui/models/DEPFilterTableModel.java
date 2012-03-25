@@ -36,29 +36,22 @@ public class DEPFilterTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    public void addRow(final Village pVillage, int pSupports, boolean pCheck) {
+    public void addRow(final SupportSourceElement pElement, boolean pCheck) {
 
         Object result = CollectionUtils.find(elements, new Predicate() {
 
             @Override
             public boolean evaluate(Object o) {
-                return ((SupportSourceElement) o).getVillage().equals(pVillage);
+                return ((SupportSourceElement) o).getVillage().equals(pElement.getVillage());
             }
         });
 
         if (result == null) {
-            elements.add(new SupportSourceElement(pVillage, pSupports));
-        } else {
-            SupportSourceElement resultElem = (SupportSourceElement) result;
-            resultElem.setSupports(resultElem.getSupports() + 1);
+            elements.add(pElement);
         }
         if (pCheck) {
             fireTableDataChanged();
         }
-    }
-
-    public void addRow(final Village pVillage, int pSupports) {
-        addRow(pVillage, pSupports, true);
     }
 
     @Override
@@ -114,4 +107,3 @@ public class DEPFilterTableModel extends AbstractTableModel {
         return columnNames.length;
     }
 }
-

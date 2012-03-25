@@ -72,7 +72,11 @@ public class MerchantDistributor extends Thread {
         return results;
     }
 
-    public List<List<MerchantSource>> calculate(List<VillageMerchantInfo> pInfos, List<de.tor.tribes.types.ext.Village> pIncomingOnly, List<de.tor.tribes.types.ext.Village> pOutgoingOnly, int[] pTargetRes, int[] pRemainRes) {
+    public List<List<MerchantSource>> calculate(List<VillageMerchantInfo> pInfos, 
+            List<de.tor.tribes.types.ext.Village> pIncomingOnly, 
+            List<de.tor.tribes.types.ext.Village> pOutgoingOnly, 
+            int[] pTargetRes, 
+            int[] pRemainRes) {
         int[] targetRes = pTargetRes;
         int[] minRemainRes = pRemainRes;
         ArrayList<MerchantSource> sources = new ArrayList<MerchantSource>();
@@ -86,6 +90,7 @@ public class MerchantDistributor extends Thread {
             }
             for (VillageMerchantInfo info : pInfos) {
                 int res = 0;
+                boolean skip = false;
                 switch (resOrder[i]) {
                     case 0:
                         res = info.getWoodStock();
@@ -96,9 +101,13 @@ public class MerchantDistributor extends Thread {
                     case 2:
                         res = info.getIronStock();
                         break;
+                    default:
+                        skip = true;
                 }
 
-
+                if (skip) {
+                    continue;
+                }
                 int targetValue = targetRes[i];
                 int maxAvailable = (int) (Math.round((double) (res - minRemainRes[i]) / 1000.0 + .5));
                 if (maxAvailable * 1000 > res) {
@@ -286,12 +295,11 @@ public class MerchantDistributor extends Thread {
             System.out.println("--------Round Done--------");
         }
         /*
-        Offs: Hier entlang! (434|876) K84  	7.28	10.251	92.154 36.371 154.905 	400000	235/235	5212/20476	am 21.06. um 16:21 Uhr
-        Offs: Hier entlang! (436|880) K84  	10.82	10.387	171.896 195.970 175.433 400000	235/235	6312/24000	am 21.06. um 06:50 Uhr
-        Rattennest (-1|33) (485|866) K84  	58.55	10.019	71.270 323.198 263.667 	400000	110/110	16981/24000
-        Rattennest (-31|45) (455|878) K84  	28.28	10.019	96.649 385.743 222.033 	400000	110/110	18441/24000
-        Rattennest (-32|15) (454|848) K84  	37.48	10.019	23.599 219.792 160.859 	400000	110/110	10091/24000
-        Rattennest (-33|44) (453|877) K84  	26.17	10.019	134.644 400.000 161.743 400000	110/110	17641/24000
+         * Offs: Hier entlang! (434|876) K84 7.28	10.251	92.154 36.371 154.905 400000	235/235	5212/20476	am 21.06. um 16:21 Uhr Offs: Hier
+         * entlang! (436|880) K84 10.82	10.387	171.896 195.970 175.433 400000	235/235	6312/24000	am 21.06. um 06:50 Uhr Rattennest (-1|33)
+         * (485|866) K84 58.55	10.019	71.270 323.198 263.667 400000	110/110	16981/24000 Rattennest (-31|45) (455|878) K84 28.28	10.019
+         * 96.649 385.743 222.033 400000	110/110	18441/24000 Rattennest (-32|15) (454|848) K84 37.48	10.019	23.599 219.792 160.859 400000
+         * 110/110	10091/24000 Rattennest (-33|44) (453|877) K84 26.17	10.019	134.644 400.000 161.743 400000	110/110	17641/24000
          */
 
     }

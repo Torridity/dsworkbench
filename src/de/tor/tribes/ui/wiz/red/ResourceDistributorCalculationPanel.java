@@ -38,7 +38,8 @@ import org.netbeans.spi.wizard.WizardPage;
 import org.netbeans.spi.wizard.WizardPanelNavResult;
 
 /**
- *@TODO add ignore single resource!?
+ * @TODO add ignore single resource!?
+ *
  * @author Torridity
  */
 public class ResourceDistributorCalculationPanel extends WizardPage {
@@ -95,6 +96,9 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         profile.addProperty("red.first.order.position", resourceNameToResourceId(jResource1.getToolTipText()));
         profile.addProperty("red.second.order.position", resourceNameToResourceId(jResource2.getToolTipText()));
         profile.addProperty("red.third.order.position", resourceNameToResourceId(jResource3.getToolTipText()));
+        profile.addProperty("red.use.resource1", jUseResource1.isSelected());
+        profile.addProperty("red.use.resource2", jUseResource1.isSelected());
+        profile.addProperty("red.use.resource3", jUseResource1.isSelected());
     }
 
     public void restoreProperties() {
@@ -198,6 +202,31 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
                 jFillSlider.setValue(90);
             }
         }
+
+        val = profile.getProperty("red.use.resource1");
+        if (val != null) {
+            jUseResource1.setSelected(Boolean.parseBoolean(val));
+        } else {
+            jUseResource1.setSelected(true);
+        }
+        val = profile.getProperty("red.use.resource2");
+        if (val != null) {
+            jUseResource2.setSelected(Boolean.parseBoolean(val));
+        } else {
+            jUseResource2.setSelected(true);
+        }
+        val = profile.getProperty("red.use.resource3");
+        if (val != null) {
+            jUseResource3.setSelected(Boolean.parseBoolean(val));
+        } else {
+            jUseResource3.setSelected(true);
+        }
+
+        if (!jUseResource1.isSelected() && !jUseResource2.isSelected() && !jUseResource3.isSelected()) {
+            jUseResource1.setSelected(true);
+            jUseResource2.setSelected(true);
+            jUseResource3.setSelected(true);
+        }
     }
 
     /**
@@ -227,6 +256,9 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jSwitch12Button = new javax.swing.JButton();
         jSwitch23Button = new javax.swing.JButton();
         jSwitch23Button1 = new javax.swing.JButton();
+        jUseResource1 = new javax.swing.JCheckBox();
+        jUseResource3 = new javax.swing.JCheckBox();
+        jUseResource2 = new javax.swing.JCheckBox();
         jFillSlider = new javax.swing.JSlider();
         jLabel13 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
@@ -270,6 +302,8 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jInfoTextPane.setText("<html>Du befindest dich im <b>Angriffsmodus</b>. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, die f&uuml;r Angriffe verwendet werden d&uuml;rfen. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:\n<ul>\n<li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus der Gruppen&uuml;bersicht</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus dem SOS-Analyzer</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Berichten</li>\n<li>Einf&uuml;gen aus der Auswahlübersicht</li>\n<li>Manuelle Eingabe</li>\n</ul>\n</html>\n");
         jInfoScrollPane.setViewportView(jInfoTextPane);
 
+        jExpertSettingsPanel.setMinimumSize(new java.awt.Dimension(600, 240));
+        jExpertSettingsPanel.setPreferredSize(new java.awt.Dimension(600, 240));
         jExpertSettingsPanel.setLayout(new java.awt.GridBagLayout());
 
         jIgnoreTransportsButton.setText("Transporte mit weniger als");
@@ -371,6 +405,8 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
         jPanel4.add(jResource1, gridBagConstraints);
 
@@ -384,6 +420,8 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
         jPanel4.add(jResource2, gridBagConstraints);
 
@@ -397,6 +435,8 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
         jPanel4.add(jResource3, gridBagConstraints);
 
@@ -436,6 +476,48 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
         jPanel4.add(jSwitch23Button1, gridBagConstraints);
+
+        jUseResource1.setSelected(true);
+        jUseResource1.setToolTipText("Transporte für diese Ressource berechnen");
+        jUseResource1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png"))); // NOI18N
+        jUseResource1.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_green.png"))); // NOI18N
+        jUseResource1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireUsageStateChangedEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        jPanel4.add(jUseResource1, gridBagConstraints);
+
+        jUseResource3.setSelected(true);
+        jUseResource3.setToolTipText("Transporte für diese Ressource berechnen");
+        jUseResource3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png"))); // NOI18N
+        jUseResource3.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_green.png"))); // NOI18N
+        jUseResource3.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireUsageStateChangedEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 1;
+        jPanel4.add(jUseResource3, gridBagConstraints);
+
+        jUseResource2.setSelected(true);
+        jUseResource2.setToolTipText("Transporte für diese Ressource berechnen");
+        jUseResource2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png"))); // NOI18N
+        jUseResource2.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_green.png"))); // NOI18N
+        jUseResource2.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireUsageStateChangedEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        jPanel4.add(jUseResource2, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -959,6 +1041,14 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         setAdvisedTransportOrder(wood, clay, iron);
     }//GEN-LAST:event_fireAdviceOrderEvent
 
+    private void fireUsageStateChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireUsageStateChangedEvent
+        if (!jUseResource1.isSelected() && !jUseResource2.isSelected() && !jUseResource3.isSelected()) {
+            setProblem("Es muss mindestens ein Rohstoff verwendet werden");
+        } else {
+            setProblem(null);
+        }
+    }//GEN-LAST:event_fireUsageStateChangedEvent
+
     private void setAdvisedTransportOrder(int pWood, int pClay, int pIron) {
         Integer[] sums = new Integer[]{pWood, pClay, pIron};
         Arrays.sort(sums);
@@ -1169,6 +1259,17 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         }
 
         calculator = new MerchantDistributor();
+
+        if (!jUseResource1.isSelected()) {
+            priorities[0] = -1;
+        }
+        if (!jUseResource2.isSelected()) {
+            priorities[1] = -1;
+        }
+        if (!jUseResource3.isSelected()) {
+            priorities[2] = -1;
+        }
+
         calculator.initialize(copy, incomingOnly, outgoingOnly, targetRes, remainRes, priorities);
         calculator.setMerchantDistributorListener(new MerchantDistributor.MerchantDistributorListener() {
 
@@ -1322,6 +1423,9 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
     private com.jidesoft.swing.LabeledTextField jTargetIron;
     private com.jidesoft.swing.LabeledTextField jTargetWood;
     private javax.swing.JToggleButton jToggleButton1;
+    private javax.swing.JCheckBox jUseResource1;
+    private javax.swing.JCheckBox jUseResource2;
+    private javax.swing.JCheckBox jUseResource3;
     private javax.swing.JLabel jWood;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane3;

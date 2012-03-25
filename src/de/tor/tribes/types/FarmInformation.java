@@ -22,6 +22,7 @@ import org.apache.commons.lang.math.IntRange;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.jdom.Element;
+import org.jfree.date.DateUtilities;
 
 /**
  *
@@ -349,6 +350,43 @@ public class FarmInformation extends ManageableType {
         }
     }
 
+    private void guessResourceBuildings(FightReport pReport) {
+
+        if (pReport == null || pReport.getHaul() == null) {
+            //no info
+            return;
+        }
+        //only use if last report is not too old....!! -> send time - 30min !?
+        //and if last attack returned empty
+        long send = pReport.getTimestamp() - DSCalculator.calculateMoveTimeInMillis(pReport.getSourceVillage(), pReport.getTargetVillage(), TroopHelper.getSlowestUnit(pReport.getAttackers()).getSpeed());
+
+        if (resourcesFoundInLastReport
+                || lastReport == -1
+                || lastReport < send - 200 * DateUtils.MILLIS_PER_MINUTE
+                || lastReport == pReport.getTimestamp()) {
+            //ignore this report 
+            System.out.println("Ignore (Too old) or equal (" + resourcesFoundInLastReport + ")");
+            return;
+        }
+        int wood = pReport.getHaul()[0];
+        int clay = pReport.getHaul()[1];
+        int iron = pReport.getHaul()[2];
+
+        System.out.println("EXP " + wood + "/" + clay + "/" + iron);
+
+        double dt = DSCalculator.calculateMoveTimeInMillis(pReport.getSourceVillage(), pReport.getTargetVillage(), TroopHelper.getSlowestUnit(pReport.getAttackers()).getSpeed()) / (double) DateUtils.MILLIS_PER_HOUR;
+        System.out.println("Delta: " + dt);
+        int woodBuildingLevel = (int) Math.ceil(Math.log(wood / (dt * 30 * ServerSettings.getSingleton().getSpeed())) / Math.log(RESOURCE_PRODUCTION_CONTANT) + 1);
+        int clayBuildingLevel = (int) Math.ceil(Math.log(clay / (dt * 30 * ServerSettings.getSingleton().getSpeed())) / Math.log(RESOURCE_PRODUCTION_CONTANT) + 1);
+        int ironBuildingLevel = (int) Math.ceil(Math.log(iron / (dt * 30 * ServerSettings.getSingleton().getSpeed())) / Math.log(RESOURCE_PRODUCTION_CONTANT) + 1);
+        System.out.println("Guess: " + woodBuildingLevel + "/" + clayBuildingLevel + "/" + ironBuildingLevel);
+        System.out.println("Have: " + getWoodLevel() + "/" + getClayLevel() + "/" + getIronLevel());
+        setWoodLevel(Math.max(getWoodLevel(), woodBuildingLevel));
+        setClayLevel(Math.max(getClayLevel(), clayBuildingLevel));
+        setIronLevel(Math.max(getIronLevel(), ironBuildingLevel));
+        System.out.println("--------------");
+    }
+
     private void guessStorage(FightReport pReport) {
         if (pReport == null || pReport.getHaul() == null) {
             return;
@@ -440,10 +478,14 @@ public class FarmInformation extends ManageableType {
             logger.debug("Changing farm status to due to total loss or found troops");
             setStatus(FARM_STATUS.TROOPS_FOUND);
         } else {
+
             //at first, update correction factor as spy information update might modifiy farm levels and expected resource calcuclation
             updateCorrectionFactor(pReport);
             //update spy information
             updateSpyInformation(pReport);
+            if (!isSpyed()) {
+                guessResourceBuildings(pReport);
+            }
             //update haul information (hauled resources sums, storage status if no spy information is available)
             updateHaulInformation(pReport);
 
@@ -819,7 +861,9 @@ public class FarmInformation extends ManageableType {
     }
 
     public void setWoodLevel(int woodLevel) {
-        this.woodLevel = woodLevel;
+        if (woodLevel >= 1 && woodLevel <= 30) {
+            this.woodLevel = woodLevel;
+        }
     }
 
     public int getClayLevel() {
@@ -827,7 +871,9 @@ public class FarmInformation extends ManageableType {
     }
 
     public void setClayLevel(int clayLevel) {
-        this.clayLevel = clayLevel;
+        if (clayLevel >= 1 && clayLevel <= 30) {
+            this.clayLevel = clayLevel;
+        }
     }
 
     public int getIronLevel() {
@@ -835,7 +881,9 @@ public class FarmInformation extends ManageableType {
     }
 
     public void setIronLevel(int ironLevel) {
-        this.ironLevel = ironLevel;
+        if (ironLevel >= 1 && ironLevel <= 30) {
+            this.ironLevel = ironLevel;
+        }
     }
 
     public int getStorageLevel() {
@@ -843,7 +891,9 @@ public class FarmInformation extends ManageableType {
     }
 
     public void setStorageLevel(int storageLevel) {
-        this.storageLevel = storageLevel;
+        if (storageLevel >= 1 && storageLevel <= 30) {
+            this.storageLevel = storageLevel;
+        }
     }
 
     public int getHideLevel() {
@@ -851,7 +901,9 @@ public class FarmInformation extends ManageableType {
     }
 
     public void setHideLevel(int hideLevel) {
-        this.hideLevel = hideLevel;
+        if (hideLevel >= 1 && hideLevel <= 10) {
+            this.hideLevel = hideLevel;
+        }
     }
 
     public void setWallLevel(int wallLevel) {

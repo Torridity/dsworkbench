@@ -183,7 +183,6 @@ public class OBSTReportHandler {
                 logger.info("No units on the way");
             }
 
-
             m = Pattern.compile("Beute:\\s+([\\.0-9]+)\\s([\\.0-9]+)\\s([\\.0-9]+)").matcher(data);
             if (m.find()) {
                 try {
@@ -379,7 +378,7 @@ public class OBSTReportHandler {
             logger.error("Report is invalid");
             return false;
         } catch (Exception e) {
-            logger.error("Failed to parse report", e);
+             logger.error("Failed to parse report", e);
             return false;
         }
     }

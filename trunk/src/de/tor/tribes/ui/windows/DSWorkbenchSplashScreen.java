@@ -166,6 +166,13 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
     protected boolean hideSplash() {
         try {
+            if (new File(".running").exists()) {
+                JOptionPaneHelper.showWarningBox(this, "Es scheint bereits eine Instanz von DS Workbench zu laufen.\n"
+                        + "Wird DS Workbench zweimal gestartet, kann es zu Problemen bei der Datenspeicherung kommen.\n"
+                        + "Sollte DS Workbench nicht laufen, lösche bitte manuell die Datei '.running' in deinem DS Workbench Verzeichnis.", "Warnung");
+                return false;
+            }
+
             if (!new File(".").canWrite()) {
                 JOptionPaneHelper.showErrorBox(self, "Fehler bei der Initialisierung.\nDas DS Workbench Verzeichnis ist für deinen Systembenutzer nicht beschreibbar.\nBitte installiere DS Workbench z.B. in dein Benutzerverzeichnis.", "Fehler");
                 return false;

@@ -121,6 +121,9 @@ public class DefenseFilterPanel extends WizardPage {
         jPanel1 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jToggleButton1 = new javax.swing.JToggleButton();
+        jPanel7 = new javax.swing.JPanel();
+        jIgnoreButton = new javax.swing.JButton();
+        jNotIgnoreButton = new javax.swing.JButton();
 
         jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
         jInfoScrollPane.setPreferredSize(new java.awt.Dimension(19, 180));
@@ -297,6 +300,39 @@ public class DefenseFilterPanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(jToggleButton1, gridBagConstraints);
 
+        jPanel7.setLayout(new java.awt.GridBagLayout());
+
+        jIgnoreButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png"))); // NOI18N
+        jIgnoreButton.setToolTipText("Gewählte Dörfer ignorieren");
+        jIgnoreButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireChangeIgnoreSelectionEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel7.add(jIgnoreButton, gridBagConstraints);
+
+        jNotIgnoreButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/checkbox_disabled.png"))); // NOI18N
+        jNotIgnoreButton.setToolTipText("Gewählte Dörfer nicht ignorieren");
+        jNotIgnoreButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireChangeIgnoreSelectionEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel7.add(jNotIgnoreButton, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jPanel7, gridBagConstraints);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
@@ -338,15 +374,34 @@ public class DefenseFilterPanel extends WizardPage {
         }
     }//GEN-LAST:event_fireViewChangeEvent
 
+    private void fireChangeIgnoreSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeIgnoreSelectionEvent
+        boolean ignore = (evt.getSource() == jIgnoreButton);
+        List<SupportSourceElement> selection = getSelection();
+        for (SupportSourceElement element : selection) {
+            element.setIgnored(ignore);
+        }
+        setup(DefenseSourcePanel.getSingleton().getAllElements().toArray(new SupportSourceElement[]{}));
+        repaint();
+    }//GEN-LAST:event_fireChangeIgnoreSelectionEvent
+
     private DEPFilterTableModel getModel() {
         return (DEPFilterTableModel) jVillageTable.getModel();
+    }
+
+    public List<SupportSourceElement> getSelection() {
+        List<SupportSourceElement> elements = new LinkedList<SupportSourceElement>();
+        DEPFilterTableModel model = getModel();
+        for (int i : jVillageTable.getSelectedRows()) {
+            elements.add(model.getRow(jVillageTable.convertRowIndexToModel(i)));
+        }
+        return elements;
     }
 
     protected void setup(SupportSourceElement[] elements) {
         getModel().clear();
         overviewPanel.reset();
         for (SupportSourceElement element : elements) {
-            getModel().addRow(element.getVillage(), element.getSupports(), false);
+            getModel().addRow(element, false);
             if (!element.isIgnored()) {
                 overviewPanel.addVillage(element.getVillage(), Color.yellow);
             } else {
@@ -456,6 +511,7 @@ public class DefenseFilterPanel extends WizardPage {
     private javax.swing.JButton jButton3;
     private javax.swing.JTextField jDistance;
     private javax.swing.JCheckBox jIgnoreAttackedTargets;
+    private javax.swing.JButton jIgnoreButton;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;
@@ -463,11 +519,13 @@ public class DefenseFilterPanel extends WizardPage {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JTextField jMinSplits;
+    private javax.swing.JButton jNotIgnoreButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JScrollPane jVillageScrollPane;
     private org.jdesktop.swingx.JXTable jVillageTable;

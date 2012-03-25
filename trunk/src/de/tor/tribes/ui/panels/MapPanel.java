@@ -1407,12 +1407,16 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     values.put("def_" + unit.getPlainName(), (double) inVillage.getTroopsOfUnitInVillage(unit));
                 }
             }
-            if (!DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
-                DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
-                DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
+            if (!GlobalOptions.isOfflineMode()) {
+                if (!DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
+                    DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+                    DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
+                }
+                DSWorkbenchSimulatorFrame.getSingleton().toFront();
+                DSWorkbenchSimulatorFrame.getSingleton().insertValuesExternally(values);
+            } else {
+                JOptionPaneHelper.showInformationBox(this, "A*Star ist im Offline-Modus leider nicht verfügbar.", "Information");
             }
-            DSWorkbenchSimulatorFrame.getSingleton().toFront();
-            DSWorkbenchSimulatorFrame.getSingleton().insertValuesExternally(values);
         } else if (evt.getSource() == jVillageInfoIngame) {
             //center village ingame
             if (actionMenuVillage != null) {

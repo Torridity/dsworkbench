@@ -43,7 +43,8 @@ public class TAPWelcomePanel extends WizardPage {
             + "D&ouml;rfern wieder auf einen bestimmten Stand zu bringen. Daf&uuml;r ist es notwendig, dass du deine Truppen aus dem Spiel "
             + "in DS Workbench importiert hast. W&auml;hrend der Auff&uuml;llung wird versucht, ausge&auml;hlte D&ouml;rfer mit freien Defensivtruppen "
             + "zu bef&uuml;llen, bis sie wieder einen bestimmten Truppenbestand aufweisen.</html>";
-    private final String RETIME_HELP = "Der Retimer wird dazu verwendet, die Truppen von gegnerischen Angriffen bei der Rückkehr in ihr Heimatdorf zu<br/>"
+    private final String RETIME_HELP = "<html><b>Willkommen beim DS Workbench Taktikplaner.</b><br/><br/>"
+            + "Der Retimer wird dazu verwendet, die Truppen von gegnerischen Angriffen bei der Rückkehr in ihr Heimatdorf zu<br/>"
             + "vernichten. Mit DS Workbench kannst du für einen oder mehrere Angriffe Retimes berechnen. Voraussetzung dafür ist, dass du deine Truppeninformationen<br/>"
             + "aus dem Spiel importiert hast. DS Workbench berechnet dir für alle gewünschten, eigenen Dörfer alle möglichen Retimes. Am Ende musst du nur noch<br/>"
             + "entscheiden, welche Retimes du wirklich abschicken möchtest. Falls du z.B. zur Abschickzeit eines Ramme-Retimes nicht Online sein kannst, so kannst<br/>"

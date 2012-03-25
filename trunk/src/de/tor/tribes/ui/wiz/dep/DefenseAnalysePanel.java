@@ -108,11 +108,13 @@ public class DefenseAnalysePanel extends WizardPage {
         DefenseToolModel model = getModel();
         model.clear();
         for (DefenseInformation defense : pDefenses) {
-            Village target = defense.getTarget();
-            overviewPanel.addVillage(target, Color.RED);
-            model.addRow(defense);
-            for (TimedAttack a : defense.getTargetInformation().getAttacks()) {
-                overviewPanel.addVillage(a.getSource(), Color.BLACK);
+            if (!defense.isSave()) {
+                Village target = defense.getTarget();
+                overviewPanel.addVillage(target, Color.RED);
+                model.addRow(defense);
+                for (TimedAttack a : defense.getTargetInformation().getAttacks()) {
+                    overviewPanel.addVillage(a.getSource(), Color.BLACK);
+                }
             }
         }
         getModel().fireTableDataChanged();
@@ -154,6 +156,7 @@ public class DefenseAnalysePanel extends WizardPage {
         jxAttacksTable = new org.jdesktop.swingx.JXTable();
         jButton1 = new javax.swing.JButton();
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
+        jXLabel1 = new org.jdesktop.swingx.JXLabel();
 
         jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
         jInfoScrollPane.setPreferredSize(new java.awt.Dimension(19, 180));
@@ -235,7 +238,7 @@ public class DefenseAnalysePanel extends WizardPage {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
@@ -268,6 +271,17 @@ public class DefenseAnalysePanel extends WizardPage {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
         jPanel1.add(capabilityInfoPanel1, gridBagConstraints);
+
+        jXLabel1.setForeground(new java.awt.Color(102, 102, 102));
+        jXLabel1.setText("Bitte beachte, dass bereits als \"Sicher\" gekennzeichnete Angriffsziele nicht übertragen werden. Möchtest du bestimmte Ziele ignorieren, so setze sie im SOS-Analyzer auf \"Sicher\". Dieser Status bleibt bestehen, solange keine neuen Angriffe für diese Ziele auftauchen und eingelesen werden.");
+        jXLabel1.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
+        jXLabel1.setLineWrap(true);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 5);
+        jPanel1.add(jXLabel1, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -352,6 +366,7 @@ public class DefenseAnalysePanel extends WizardPage {
     private javax.swing.JScrollPane jTableScrollPane;
     private javax.swing.JToggleButton jToggleButton1;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
+    private org.jdesktop.swingx.JXLabel jXLabel1;
     private org.jdesktop.swingx.JXTable jxAttacksTable;
     // End of variables declaration//GEN-END:variables
 

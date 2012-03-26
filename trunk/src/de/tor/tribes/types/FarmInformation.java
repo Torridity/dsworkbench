@@ -272,10 +272,10 @@ public class FarmInformation extends ManageableType {
      */
     private double getGeneratedResources(int pResourcesBefore, int pBuildingLevel, long pAtTimestamp) {
         int usedBuildingLevel = pBuildingLevel;
-        if (!spyed) {
-            //return pResourcesBefore;
-            usedBuildingLevel = 1;
+        /*
+         * if (!spyed) { //return pResourcesBefore; usedBuildingLevel = 1;
         }
+         */
 
         long timeSinceLastFarmInfo = pAtTimestamp - lastReport;
         if (lastReport < 0) {
@@ -351,7 +351,6 @@ public class FarmInformation extends ManageableType {
     }
 
     private void guessResourceBuildings(FightReport pReport) {
-
         if (pReport == null || pReport.getHaul() == null) {
             //no info
             return;
@@ -359,6 +358,7 @@ public class FarmInformation extends ManageableType {
         //only use if last report is not too old....!! -> send time - 30min !?
         //and if last attack returned empty
         long send = pReport.getTimestamp() - DSCalculator.calculateMoveTimeInMillis(pReport.getSourceVillage(), pReport.getTargetVillage(), TroopHelper.getSlowestUnit(pReport.getAttackers()).getSpeed());
+
 
         if (resourcesFoundInLastReport
                 || lastReport == -1
@@ -588,6 +588,8 @@ public class FarmInformation extends ManageableType {
             } else if (farmTroopsCapacity == hauledResourcesSum) {
                 //capacity is equal hauled resources (smaller actually cannot be)
                 woodInStorage = getWoodInStorage(pReport.getTimestamp()) - pReport.getHaul()[0];
+                System.out.println("W " + getWoodInStorage(pReport.getTimestamp()));
+                System.out.println("WH " + pReport.getHaul()[0]);
                 woodInStorage = (woodInStorage > 0) ? woodInStorage : 0;
                 clayInStorage = getClayInStorage(pReport.getTimestamp()) - pReport.getHaul()[1];
                 clayInStorage = (clayInStorage > 0) ? clayInStorage : 0;

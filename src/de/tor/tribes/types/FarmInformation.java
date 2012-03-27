@@ -273,8 +273,7 @@ public class FarmInformation extends ManageableType {
     private double getGeneratedResources(int pResourcesBefore, int pBuildingLevel, long pAtTimestamp) {
         int usedBuildingLevel = pBuildingLevel;
         /*
-         * if (!spyed) { //return pResourcesBefore; usedBuildingLevel = 1;
-        }
+         * if (!spyed) { //return pResourcesBefore; usedBuildingLevel = 1; }
          */
 
         long timeSinceLastFarmInfo = pAtTimestamp - lastReport;
@@ -368,13 +367,14 @@ public class FarmInformation extends ManageableType {
             System.out.println("Ignore (Too old) or equal (" + resourcesFoundInLastReport + ")");
             return;
         }
+
         int wood = pReport.getHaul()[0];
         int clay = pReport.getHaul()[1];
         int iron = pReport.getHaul()[2];
 
         System.out.println("EXP " + wood + "/" + clay + "/" + iron);
 
-        double dt = DSCalculator.calculateMoveTimeInMillis(pReport.getSourceVillage(), pReport.getTargetVillage(), TroopHelper.getSlowestUnit(pReport.getAttackers()).getSpeed()) / (double) DateUtils.MILLIS_PER_HOUR;
+        double dt = (pReport.getTimestamp() - lastReport) / (double) DateUtils.MILLIS_PER_HOUR;//DSCalculator.calculateMoveTimeInMillis(pReport.getSourceVillage(), pReport.getTargetVillage(), TroopHelper.getSlowestUnit(pReport.getAttackers()).getSpeed()) / (double) DateUtils.MILLIS_PER_HOUR;
         System.out.println("Delta: " + dt);
         int woodBuildingLevel = (int) Math.ceil(Math.log(wood / (dt * 30 * ServerSettings.getSingleton().getSpeed())) / Math.log(RESOURCE_PRODUCTION_CONTANT) + 1);
         int clayBuildingLevel = (int) Math.ceil(Math.log(clay / (dt * 30 * ServerSettings.getSingleton().getSpeed())) / Math.log(RESOURCE_PRODUCTION_CONTANT) + 1);

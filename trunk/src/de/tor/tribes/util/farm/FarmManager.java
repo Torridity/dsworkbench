@@ -283,7 +283,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
             invalidate();
             for (ManageableType t : el) {
                 FarmInformation info = (FarmInformation) t;
-                info.revalidate();
+                info.revalidate();               
                 addManagedElement(info);
                 infoMap.put(info.getVillage(), info);
             }

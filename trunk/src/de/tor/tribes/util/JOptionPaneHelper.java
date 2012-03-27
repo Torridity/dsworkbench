@@ -13,7 +13,7 @@ import javax.swing.UIManager;
  * @author Jejkal
  */
 public class JOptionPaneHelper {
-
+  
     public static void showInformationBox(Component pParent, String pMessage, String pTitle) {
         JOptionPane.showMessageDialog(pParent, pMessage, pTitle, JOptionPane.INFORMATION_MESSAGE);
     }

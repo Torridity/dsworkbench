@@ -5,6 +5,7 @@
 package de.tor.tribes.ui.views;
 
 import de.tor.tribes.control.GenericManagerListener;
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FarmInformation;
@@ -28,12 +29,14 @@ import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.*;
 import java.awt.event.*;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.NumberFormatter;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.math.IntRange;
 import org.apache.log4j.ConsoleAppender;
@@ -457,7 +460,66 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         });
 
         miscPane.getContentPane().add(resetLockedStatus);
+
+        JXButton showOverallStatus = new JXButton(new ImageIcon(DSWorkbenchFarmManager.class.getResource("/res/ui/chart.png")));
+
+        showOverallStatus.setToolTipText("Zeigt Informationen über alle eingetragenen Farmen");
+        showOverallStatus.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                showOverallStatus();
+            }
+        });
+
+        miscPane.getContentPane().add(showOverallStatus);
+
         centerPanel.setupTaskPane(clickAccount, farmSourcePane, farmPane, miscPane);
+    }
+
+    private void showOverallStatus() {
+        int farmCount = 0;
+        int attacks = 0;
+        int hauledWood = 0;
+        int hauledClay = 0;
+        int hauledIron = 0;
+
+        for (ManageableType type : FarmManager.getSingleton().getAllElements()) {
+            FarmInformation info = (FarmInformation) type;
+            attacks += info.getAttackCount();
+            hauledWood += info.getHauledWood();
+            hauledClay += info.getHauledClay();
+            hauledIron += info.getHauledIron();
+            farmCount++;
+        }
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+        int overall = hauledWood + hauledClay + hauledIron;
+        JOptionPane optionPane = new JOptionPane();
+        StringBuilder b = new StringBuilder();
+        b.append("<html>");
+        b.append(nf.format(farmCount));
+        b.append(" Farmen<br>");
+        b.append(nf.format(attacks));
+        b.append(" Angriffe<br>");
+        b.append(nf.format(hauledWood + hauledClay + hauledIron));
+        b.append(" gepl&uuml;nderte Rohstoffe (&#216; ").append(nf.format(overall / farmCount)).append(")<br>");
+        b.append("<ul>");
+        b.append("<li>");
+        b.append(nf.format(hauledWood));
+        b.append(" Holz (&#216; ").append(nf.format(hauledWood / farmCount)).append(")</li>");
+        b.append("<li>");
+        b.append(nf.format(hauledClay));
+        b.append(" Lehm (&#216; ").append(nf.format(hauledClay / farmCount)).append(")</li>");
+        b.append("<li>");
+        b.append(nf.format(hauledIron));
+        b.append(" Eisen (&#216; ").append(nf.format(hauledIron / farmCount)).append(")</li>");
+        b.append("</ul></html>");
+        optionPane.setMessage(b.toString());
+        optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
+        JDialog dialog = optionPane.createDialog(this, "Status");
+        dialog.setVisible(true);
     }
 
     /**

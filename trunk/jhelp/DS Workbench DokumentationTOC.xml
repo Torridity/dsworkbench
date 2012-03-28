@@ -9,6 +9,10 @@
 
     <tocitem text="Der BB-Code Editor " target="pages.bb_export" image="images.tictac_grey"/>
 
+    <tocitem text="Standardangriffe " target="pages.standardAttacks" image="images.tictac_grey"/>
+
+    <tocitem text="Ebeneneinstellungen " target="pages.layerSettings" image="images.tictac_grey"/>
+
     <tocitem text="Einstellungen " target="pages.settings" image="images.tictac_orange">
      <tocitem text="Login " target="pages.login_settings" image="images.tictac_grey"/>
 
@@ -103,8 +107,6 @@
   </tocitem>
   <tocitem text="Ansichten " image="images.tictac_orange">
    <tocitem text="Angriffe " target="pages.attack_view" image="images.tictac_orange">
-    <tocitem text="Standardangriffe " target="pages.standard_attacks" image="images.tictac_grey"/>
-
     <tocitem text="Userscript - Angriffsinformationen " target="pages.attack_info_script" image="images.tictac_grey"/>
 
     <tocitem text="Angriffe als IGMs versenden " target="pages.attacks_as_igm" image="images.tictac_grey"/>
@@ -116,7 +118,7 @@
 
    <tocitem text="Ranglisten " target="pages.ranking_view" image="images.tictac_grey"/>
 
-   <tocitem text="Formen " target="pages.form_view" image="images.tictac_grey"/>
+   <tocitem text="Zeichnungen " target="pages.form_view" image="images.tictac_grey"/>
 
    <tocitem text="Kirchen&#252;bersicht " target="pages.church_view" image="images.tictac_grey"/>
 

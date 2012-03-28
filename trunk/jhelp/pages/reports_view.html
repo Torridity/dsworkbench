@@ -23,27 +23,36 @@
         <td colspan="2">&nbsp;</td>
       </tr>
       <tr>
-        <td colspan="2"><img src="../images/screens/report_view.gif" width="345" height="200"></td>
+        <td colspan="2"><img src="../images/screens/report_view.gif" width="410" height="267"></td>
       </tr>
       <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
       <tr>
-        <td colspan="2"><p>Die Berichtsdatenbank dient der Verwaltung und Auswertung von Kampfberichten. Der Import von Berichten geschieht, wie in <em>DS Workbench</em> &uuml;blich, direkt aus dem Spiel per Copy&amp;Paste. Importierte Berichte werden automatisch und  in das  Berichtset &quot;default&quot; eingef&uuml;gt und k&ouml;nnen sp&auml;ter per STRG+C und STRG+V auf andere Berichtseits verteilt werden. In der Berichtstabelle tauchen  der Status/die Farbe des Berichts, Angreifer, Herkunft, Verteidiget und Ziel auf. Zus&auml;tzlich wird der Typ angezeigt, der einem in <em>DS Workbench</em> verf&uuml;gbaren Angriffstypen (Off, Fake, AG) entspricht. Die Spalte 'Sonstiges' dient der genaueren Bescheibung des Kampfberichtes. Darin wird angezeigt, ob der Wall oder ein Geb&auml;ude besch&auml;digt und ob die Zustimmung gesenkt wurde.
+        <td colspan="2"><p>Die Berichtsdatenbank dient der Verwaltung und Auswertung von Kampfberichten. Der Import von Berichten geschieht, wie in <em>DS Workbench</em> &uuml;blich, direkt aus dem Spiel per Copy&amp;Paste. Importierte Berichte werden automatisch und  in das  Berichtset &quot;default&quot; eingef&uuml;gt und k&ouml;nnen sp&auml;ter per STRG+C und STRG+V auf andere Berichtsets verteilt werden. Berichte die zu einer Farm geh&ouml;ren die im <a href="farmManager.html"><em>Farmmanager</em></a> auftaucht, werden automatisch in das Set Farmberichte einsortiert und beim Beenden von <em>DS Workbench</em> standardm&auml;&szlig;ig gel&ouml;scht. <br>
+          In der Berichtstabelle tauchen  der Status/die Farbe des Berichts, Angreifer, Herkunft, Verteidiger und Ziel auf. Zus&auml;tzlich wird der Typ angezeigt, der einem in <em>DS Workbench</em> verf&uuml;gbaren Angriffstypen (Off, Fake, AG) entspricht. Die Spalte 'Sonstiges' dient der genaueren Bescheibung des Kampfberichtes. Darin wird angezeigt, ob der Wall oder ein Geb&auml;ude besch&auml;digt und ob die Zustimmung gesenkt wurde.
           Den kompletten Bericht bekommt man angezeigt, wenn man mit der Maus &uuml;ber die Spalte 'Status'
 f&auml;hrt und den Mauszeiger dort 1-2 Sekunden nicht bewegt. Das Men&uuml; auf der rechten Seite bietet die folgenden Funktionen: <br>
           </p>
           <ul>
+            <li>Anzeigen</li>
+             <ul>
+              <li>&Ouml;ffnet gew&auml;hlte Berichte in einem separaten Dialog. (siehe unten &quot;Sonderfunktionen&quot;) </li>
+              </ul>
             <li>&Uuml;bertragen</li>
             <ul>
-              <li>Truppen in Trupen&uuml;bersicht einf&uuml;gen: Erlaubt es, die &uuml;berlebenden Truppen des Angreifers und/oder des Verteidigers der gew&auml;hlten Berichte in die <a href="troops_view.html"><em>Truppen&uuml;bersicht</em></a> zu &uuml;bertragen, sofern diese bekannt und nicht verborgen oder nicht ersp&auml;ht wurden.</li>
+              <li>Truppen in Truppen&uuml;bersicht einf&uuml;gen: Erlaubt es, die &uuml;berlebenden Truppen des Angreifers und/oder des Verteidigers der gew&auml;hlten Berichte in die <a href="troops_view.html"><em>Truppen&uuml;bersicht</em></a> zu &uuml;bertragen, sofern diese bekannt und nicht verborgen oder nicht ersp&auml;ht wurden.</li>
               <li>Bericht in A*Star  einf&uuml;gen: F&uuml;gt den gew&auml;hlten Bericht in <a href="astar.html"><em>A*Star</em></a> ein, etwa um zu pr&uuml;fen wieviele Angriffe notwendig sind um das angegriffene Dorf zu cleanen. Diese Information kann man im Anschluss daf&uuml;r verwenden, um direkt die entsprechende Anzahl Angriffe zu planen. (siehe <a href="astar.html"><em>Hilfe zu A*Star</em></a>) </li>
             </ul>
             <li>Sonstiges</li>
             <ul>
               <li>Berichte auswerten: Erlaubt es Statistiken &uuml;ber all Berichte zu erstellen (siehe unten &quot;Sonderfunktionen&quot;)</li>
-              </ul>
+              <li>Veraltete und doppelte Berichte im aktiven Berichtset l&ouml;schen</li>
+              <li>Regeln f&uuml;r die Einordnung von Berichten bearbeiten (siehe unten &quot;Sonderfunktionen&quot;)</li>
+              <li>Definierte Regeln auf alle Berichte im aktiven Berichtset anwenden  </li>
             </ul>
+            <p>&nbsp;            </p>
+          </ul>
           </td>
 	    <tr>
         <td colspan="2">&nbsp;</td>
@@ -73,8 +82,14 @@ f&auml;hrt und den Mauszeiger dort 1-2 Sekunden nicht bewegt. Das Men&uuml; auf 
 	  <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
+	   <tr>
+        <td colspan="2"><strong>Statistiken &uuml;ber Berichte erstellen </strong></td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
 	  <tr>
-        <td colspan="2"><img src="../images/screens/report_view_stats.gif" width="380" height="318"></td>
+        <td colspan="2"><img src="../images/screens/report_view_stats.gif" width="333" height="308"></td>
       </tr>
 	  <tr>
         <td colspan="2">&nbsp;</td>
@@ -82,7 +97,7 @@ f&auml;hrt und den Mauszeiger dort 1-2 Sekunden nicht bewegt. Das Men&uuml; auf 
 	  <tr>
         <td colspan="2"><em>DS Workbench</em> erlaubt es neben der Erfassung von Berichten aus, diese auszuwerten und Statistiken dazu zu erstllen. Hierf&uuml;r w&auml;hlt man zuerst die Berichtsets an, die man in die Statistiken mit aufnehmen m&ouml;chte. Anschlie&szlig;end klickt man auf &quot;Auswerten&quot; und erh&auml;lt eine Auswertung in BB-Codes im unteren Bereich. Diese kann man noch verfeinern, indem man ber&uuml;cksichtigte St&auml;mme w&auml;hlt und verschiedene Anzeigeoptionen aktiviert oder deaktiviert. Die BB-Codes kann man im Anschluss direkt in den entsprechenden Feldern markieren und per STRG+C in die Zwischenablage kopieren, um sie z.B. im Spiel einzuf&uuml;gen. </td>
       </tr>
-	  <tr>
+	   <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
 	   <tr valign="middle">
@@ -97,6 +112,46 @@ f&auml;hrt und den Mauszeiger dort 1-2 Sekunden nicht bewegt. Das Men&uuml; auf 
 		  </ul>
 		  Natürlich ist diese Absch&auml;tzung sehr ungenau, besonders wenn der Wall zum Zeitpunkt des Angriffs sehr niedrig war und abh&auml;ngig von der Art der angreifenden und gegnerischen Truppen. In vielen F&auml;llen sind die angenommenen Werte aber recht gute Sch&auml;tzungen. </td>
       </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2"><strong>Berichte &ouml;ffnen </strong></td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr> 
+	   <tr>
+        <td colspan="2"><img src="../images/screens/open_report.gif" width="275" height="265"></td>
+      </tr> 
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2">Wollt ihr euch einen oder mehrere Berichte aus der Berichtdatenbank ansehen, so k&ouml;nnt ihr daf&uuml;r die Funktion &quot;Bericht &ouml;ffnen&quot; verwenden. Damit werden alle gew&auml;hlten Berichte neben-, unter- und &uuml;bereinander ge&ouml;ffnet. Das klingt im ersten Moment kompliziert, ist es aber nicht. <br>
+          Nehmen wir an ihr habt 4 Berichte gew&auml;hlt und euer Bildschirm hat nur eine Breite, die 2 Berichte nebeneinander erlaubt. In diesem Fall werden die 2 Berichte in einer Reihe nebeneinander ge&ouml;ffnet, die anderen beiden Berichte werden eine Reihe weiter unten nebeneinander ge&ouml;ffnet. &Ouml;ffnet ihr mit derselben Bildschirmgr&ouml;&szlig;e 8 Berichte, so werden wieder 2x2 Berichte ge&ouml;ffnet und anschlie&szlig;end werden die n&auml;chsten 4 Berichte in einem 2x2 Raster &uuml;ber den ersten Berichten ge&ouml;ffnet. Dadurch ist es euch m&ouml;glich, mehrere Berichte einfach miteinander zu vergleichen.<br>
+          Um es euch zu erleichtern, die ganzen Berichte wieder zu schlie&szlig;en, bietet jedes Berichtfenster 3 Buttons in der oberen rechten Ecke. Der erste Button sorgt daf&uuml;r, dass <strong>alle ge&ouml;ffneten Berichte</strong> geschlossen werden. Der mittlere Button schlie&szlig;t <strong>alle Berichte in der Schicht</strong>, in welcher der Bericht ist in dem ihr den Button gedr&uuml;ckt habt. Bei unserem Beispiel von eben w&uuml;rde das bedeuten, dass die oberen 2x2 Berichte geschlossen werden.<br>
+          Der rechte Button schlie&szlig;t lediglich <strong>das Berichtfenster in dem er liegt</strong>. Nat&uuml;rlich k&ouml;nnt ihr Berichtsfenster auch selbst verschieben. Zieht das Fenster daf&uuml;r mit gedr&uuml;ckter, linker Maustaste &uuml;ber den grauen Balken an die Position, wo ihr es haben m&ouml;chtet. </td>
+      </tr> 
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr> 
+	   <tr>
+        <td colspan="2"><strong>Regeln f&uuml;r das Einordnen von Berichten definieren </strong></td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr> 
+	   <tr>
+        <td colspan="2"><img src="../images/screens/report_rules.gif" width="200" height="309"></td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2">Das Festlegen von Regeln erlaubt es, Berichte die bestimmte Kriterien erf&uuml;llen, in direkt besondere Berichtsets einzuordnen. Es gibt eine Vielzahl verschiedenen Kriterien, wie z.B. bestimmte Farben der Berichte, bestimmte angreifende Spieler oder St&auml;mme, Adelungen oder Berichte die &auml;lter als eine bestimmte Anzahl von Tagen sind. Eurer Phantasie sind (fast) keine Grenzen gesetzt und ihr k&ouml;nnt so jederzeit f&uuml;r Ordnung in eurer Berichtdatenbank sorgen. </td>
+      </tr>
+	 
     </table>
 	</td>
 </td>

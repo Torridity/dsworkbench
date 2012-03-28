@@ -46,8 +46,6 @@
 
 <mapID target="pages.map_settings_show_continents" url="pages/map_settings.html#show_continents"/>
 
-<mapID target="pages.standard_attacks" url="pages/standard_attacks.html"/>
-
 <mapID target="index" url="index.html"/>
 
 <mapID target="pages.network_settings" url="pages/network_settings.html"/>
@@ -58,6 +56,8 @@
 
 <mapID target="pages.attack_planer_target" url="pages/attack_planer_target.html"/>
 
+<mapID target="pages.standardAttacks" url="pages/standardAttacks.html"/>
+
 <mapID target="pages.player_server_settings" url="pages/player_server_settings.html"/>
 
 <mapID target="pages.attack_planer_source" url="pages/attack_planer_source.html"/>
@@ -67,6 +67,8 @@
 <mapID target="pages.map_tools_radar" url="pages/map_tools.html#radar"/>
 
 <mapID target="pages.mouse_gestures" url="pages/mouse_gestures.html"/>
+
+<mapID target="pages.layerSettings" url="pages/layerSettings.html"/>
 
 <mapID target="pages.export_import" url="pages/export_import.html"/>
 
@@ -274,9 +276,9 @@
 
 <mapID target="images.shortcuts.Alt3" url="images/shortcuts/Alt3.gif"/>
 
-<mapID target="images.tools.draw_circle" url="images/tools/draw_circle.png"/>
-
 <mapID target="images.shortcuts.Alt4" url="images/shortcuts/Alt4.gif"/>
+
+<mapID target="images.tools.draw_circle" url="images/tools/draw_circle.png"/>
 
 <mapID target="images.shortcuts.Alt5" url="images/shortcuts/Alt5.gif"/>
 
@@ -331,8 +333,6 @@
 <mapID target="images.att_alert" url="images/att_alert.png"/>
 
 <mapID target="images.att_browser" url="images/att_browser.png"/>
-
-<mapID target="images.screens.note_marker" url="images/screens/note_marker.gif"/>
 
 <mapID target="images.shortcuts.Shift3" url="images/shortcuts/Shift3.gif"/>
 

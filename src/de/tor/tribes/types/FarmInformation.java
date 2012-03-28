@@ -177,7 +177,7 @@ public class FarmInformation extends ManageableType {
         // Hashtable<UnitHolder, Integer> units = TroopHelper.unitTableFromSerializableFormat(farmTroop);
         //  double speed = TroopHelper.getTroopSpeed(units);
         long arriveTimeRelativeToNow = farmTroopArrive - System.currentTimeMillis();//farmTroopArrive - DSCalculator.calculateMoveTimeInMillis(getVillage(), DataHolder.getSingleton().getVillagesById().get(farmSourceId), speed) - lastRuntimeUpdate;
-        if (arriveTimeRelativeToNow < 0) {//farm was reached...return time until return
+        if (arriveTimeRelativeToNow <= 0) {//farm was reached...return time until return
             if (getStatus().equals(FARM_STATUS.FARMING)) {
                 setStatus(FARM_STATUS.REPORT_EXPECTED);
             }
@@ -358,13 +358,11 @@ public class FarmInformation extends ManageableType {
         //and if last attack returned empty
         long send = pReport.getTimestamp() - DSCalculator.calculateMoveTimeInMillis(pReport.getSourceVillage(), pReport.getTargetVillage(), TroopHelper.getSlowestUnit(pReport.getAttackers()).getSpeed());
 
-
         if (resourcesFoundInLastReport
                 || lastReport == -1
                 || lastReport < send - 200 * DateUtils.MILLIS_PER_MINUTE
                 || lastReport == pReport.getTimestamp()) {
             //ignore this report 
-            System.out.println("Ignore (Too old) or equal (" + resourcesFoundInLastReport + ")");
             return;
         }
 
@@ -372,19 +370,14 @@ public class FarmInformation extends ManageableType {
         int clay = pReport.getHaul()[1];
         int iron = pReport.getHaul()[2];
 
-        System.out.println("EXP " + wood + "/" + clay + "/" + iron);
 
         double dt = (pReport.getTimestamp() - lastReport) / (double) DateUtils.MILLIS_PER_HOUR;//DSCalculator.calculateMoveTimeInMillis(pReport.getSourceVillage(), pReport.getTargetVillage(), TroopHelper.getSlowestUnit(pReport.getAttackers()).getSpeed()) / (double) DateUtils.MILLIS_PER_HOUR;
-        System.out.println("Delta: " + dt);
-        int woodBuildingLevel = (int) Math.ceil(Math.log(wood / (dt * 30 * ServerSettings.getSingleton().getSpeed())) / Math.log(RESOURCE_PRODUCTION_CONTANT) + 1);
-        int clayBuildingLevel = (int) Math.ceil(Math.log(clay / (dt * 30 * ServerSettings.getSingleton().getSpeed())) / Math.log(RESOURCE_PRODUCTION_CONTANT) + 1);
-        int ironBuildingLevel = (int) Math.ceil(Math.log(iron / (dt * 30 * ServerSettings.getSingleton().getSpeed())) / Math.log(RESOURCE_PRODUCTION_CONTANT) + 1);
-        System.out.println("Guess: " + woodBuildingLevel + "/" + clayBuildingLevel + "/" + ironBuildingLevel);
-        System.out.println("Have: " + getWoodLevel() + "/" + getClayLevel() + "/" + getIronLevel());
+        int woodBuildingLevel = (int) Math.floor(Math.log(wood / (dt * 30 * ServerSettings.getSingleton().getSpeed())) / Math.log(RESOURCE_PRODUCTION_CONTANT) + 1);
+        int clayBuildingLevel = (int) Math.floor(Math.log(clay / (dt * 30 * ServerSettings.getSingleton().getSpeed())) / Math.log(RESOURCE_PRODUCTION_CONTANT) + 1);
+        int ironBuildingLevel = (int) Math.floor(Math.log(iron / (dt * 30 * ServerSettings.getSingleton().getSpeed())) / Math.log(RESOURCE_PRODUCTION_CONTANT) + 1);
         setWoodLevel(Math.max(getWoodLevel(), woodBuildingLevel));
         setClayLevel(Math.max(getClayLevel(), clayBuildingLevel));
         setIronLevel(Math.max(getIronLevel(), ironBuildingLevel));
-        System.out.println("--------------");
     }
 
     private void guessStorage(FightReport pReport) {
@@ -588,8 +581,6 @@ public class FarmInformation extends ManageableType {
             } else if (farmTroopsCapacity == hauledResourcesSum) {
                 //capacity is equal hauled resources (smaller actually cannot be)
                 woodInStorage = getWoodInStorage(pReport.getTimestamp()) - pReport.getHaul()[0];
-                System.out.println("W " + getWoodInStorage(pReport.getTimestamp()));
-                System.out.println("WH " + pReport.getHaul()[0]);
                 woodInStorage = (woodInStorage > 0) ? woodInStorage : 0;
                 clayInStorage = getClayInStorage(pReport.getTimestamp()) - pReport.getHaul()[1];
                 clayInStorage = (clayInStorage > 0) ? clayInStorage : 0;

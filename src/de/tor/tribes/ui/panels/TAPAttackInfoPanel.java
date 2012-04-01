@@ -91,6 +91,7 @@ public class TAPAttackInfoPanel extends javax.swing.JPanel {
         jAttacks.setBackground(new java.awt.Color(0, 153, 0));
         jAttacks.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jAttacks.setText("0");
+        jAttacks.setToolTipText("Angegebene Herkunftsdörfer für Angriffe");
         jAttacks.setOpaque(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
@@ -101,6 +102,7 @@ public class TAPAttackInfoPanel extends javax.swing.JPanel {
         jTargets.setBackground(new java.awt.Color(0, 153, 0));
         jTargets.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jTargets.setText("0");
+        jTargets.setToolTipText("Angegebene Zieldörfer für Angriffe");
         jTargets.setOpaque(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -113,6 +115,7 @@ public class TAPAttackInfoPanel extends javax.swing.JPanel {
         jAttackFakes.setBackground(new java.awt.Color(255, 255, 0));
         jAttackFakes.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jAttackFakes.setText("0");
+        jAttackFakes.setToolTipText("Angegebene Herkunftsdörfer für Fakes");
         jAttackFakes.setOpaque(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
@@ -123,6 +126,7 @@ public class TAPAttackInfoPanel extends javax.swing.JPanel {
         jIgnoredAttacks.setBackground(new java.awt.Color(255, 0, 0));
         jIgnoredAttacks.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jIgnoredAttacks.setText("0");
+        jIgnoredAttacks.setToolTipText("Ignorierte Herkunftsdörfer");
         jIgnoredAttacks.setOpaque(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
@@ -133,6 +137,7 @@ public class TAPAttackInfoPanel extends javax.swing.JPanel {
         jTargetFakes.setBackground(new java.awt.Color(255, 255, 0));
         jTargetFakes.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jTargetFakes.setText("0");
+        jTargetFakes.setToolTipText("Angegebene Zieldörfer für Fakes");
         jTargetFakes.setOpaque(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -145,6 +150,7 @@ public class TAPAttackInfoPanel extends javax.swing.JPanel {
         jTargetIgnored.setBackground(new java.awt.Color(255, 0, 0));
         jTargetIgnored.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jTargetIgnored.setText("0");
+        jTargetIgnored.setToolTipText("Ignorierte Zieldörfer");
         jTargetIgnored.setOpaque(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;

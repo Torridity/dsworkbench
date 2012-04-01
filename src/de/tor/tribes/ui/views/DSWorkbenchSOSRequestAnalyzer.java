@@ -286,7 +286,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
             }
         });
         miscPane.getContentPane().add(reAnalyzeButton);
-        JXButton setSelectionSecured = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/reanalyze.png")));
+        JXButton setSelectionSecured = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/ui/save.png")));
         setSelectionSecured.setToolTipText("Die gewählten Einträge manuell auf 'Sicher' setzen, z.B. weil man sie ignorieren möchte oder bereits genügend Unterstützungen laufen.");
         setSelectionSecured.addMouseListener(new MouseAdapter() {
 

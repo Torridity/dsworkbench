@@ -56,7 +56,7 @@ public class NodeCellRenderer extends DefaultTreeCellRenderer {
                 setIcon(tribe);
                 Tribe t = ((TribeNode) node).getUserObject();
                 int cnt = node.getChildCount();
-                setText(t.toString() + " [" + cnt + " " + ((cnt == 1) ? "Dorf/Tag]" : "Dörfer/Tags]"));
+                setText(t.toString() + " [" + cnt + " " + ((cnt == 1) ? "Dorf/Gruppe]" : "Dörfer/Gruppen]"));
             } else if (node instanceof VillageNode) {
                 setIcon(village);
                 Village v = ((VillageNode) node).getUserObject();

@@ -203,7 +203,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
     public void setExpertSelection(boolean expertSelection) {
         this.expertSelection = expertSelection;
         renderer.setExpertMode(expertSelection);
-        if (isExpertSelection()) {
+      /*  if (isExpertSelection()) {
             setToolTipText("<html>In dieser Liste k&ouml;nnen Gruppen beliebig kombiniert werden, "
                     + "um die darin enthaltenen D&ouml;rfer anzuzeigen.<br/>"
                     + "M&ouml;gliche Verkn&uuml;pfungen sind dabei:"
@@ -228,9 +228,9 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
                     + "<li>ENTF auf 'Keine Gruppe': Alle Gruppen ignorieren, 'Keine Gruppe' ausw&auml;hlen</li>"
                     + "</ul>"
                     + "</html>");
-        } else {
+        } else {*/
             setToolTipText("");
-        }
+        //}
         repaint();
     }
 

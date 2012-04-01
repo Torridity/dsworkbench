@@ -69,7 +69,7 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
         mSearchThread = new SearchThread("SearchThread", this);
         mSearchThread.start();
         mMarkerAddFrame = new MarkerAddFrame();
-        jCenterButton.setEnabled(GlobalOptions.isMinimal());
+        jCenterButton.setEnabled(!GlobalOptions.isMinimal());
 
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">

@@ -27,6 +27,7 @@ import de.tor.tribes.util.tag.TagManager;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -221,11 +222,11 @@ public class LinkTagsDialog extends javax.swing.JDialog {
 
             for (Tag t : lTags) {
                 //for (Tag t : pTags) {
-                equation = equation.replaceAll(Pattern.quote(t.getName()), "true");
+                equation = equation.replaceAll(Matcher.quoteReplacement(t.getName()), "true");
             }
 
             for (int i = 0; i < 99; i++) {
-                equation = equation.replaceAll(Pattern.quote("K" + ((i < 10) ? "0" : "") + i), "true");
+                equation = equation.replaceAll(("K" + ((i < 10) ? "0" : "") + i), "true");
             }
 
             equation = equation.replaceAll("UND", "&&");

@@ -24,6 +24,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -302,8 +303,8 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
                             UnitHolder unit = null;
                             boolean fake = false;
                             if (source != null) {
-                                unit = guessUnit(attackSplit[0].replaceAll(Pattern.quote(source.getName()), ""));
-                                fake = markedAsFake(attackSplit[0].replaceAll(Pattern.quote(source.getName()), ""));
+                                unit = guessUnit(attackSplit[0].replaceAll(Matcher.quoteReplacement(source.getName()), ""));
+                                fake = markedAsFake(attackSplit[0].replaceAll(Matcher.quoteReplacement(source.getName()), ""));
                             }
 
                             try {

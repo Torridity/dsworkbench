@@ -6,6 +6,7 @@ package de.tor.tribes.ui.renderer.map;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.Church;
 import de.tor.tribes.types.drawing.AbstractForm;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.Barbarians;
@@ -20,29 +21,16 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.ServerSettings;
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.MouseInfo;
-import java.awt.Paint;
-import java.awt.PaintContext;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Transparency;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.*;
+import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.io.IOException;
 import java.util.*;
+import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.JToolTip;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
@@ -477,7 +465,7 @@ public class MapRenderer {
             //both are 0 if map was not drawn yet
             return;
         }
-
+        int cursor = MapPanel.getSingleton().getCurrentCursor();
         Village mouseVillage = MapPanel.getSingleton().getVillageAtMousePos();
         //render temp form
         if (!FormConfigFrame.getSingleton().isInEditMode()) {
@@ -571,7 +559,7 @@ public class MapRenderer {
         }
 
         //add mouse village if radar tool is selected
-        if (mouseVillage != null && MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_RADAR) {
+        if (mouseVillage != null && cursor == ImageManager.CURSOR_RADAR) {
             //check if radar village == mouse village
             if (!mouseDown && !radarVillages.contains(mouseVillage)) {
                 radarVillages.add(mouseVillage);
@@ -612,7 +600,40 @@ public class MapRenderer {
             } catch (Exception e) {
             }
         }
-// </editor-fold>
+        // </editor-fold>
+
+        // <editor-fold defaultstate="collapsed" desc="Draw live church">
+        Church tmpChurch = new Church();
+        if (mouseVillage != null && mVillagePositions != null) {
+            tmpChurch.setVillage(mouseVillage);
+            if (cursor == ImageManager.CURSOR_CHURCH_1) {
+                tmpChurch.setRange(2);
+            } else if (cursor == ImageManager.CURSOR_CHURCH_2) {
+                tmpChurch.setRange(6);
+            } else if (cursor == ImageManager.CURSOR_CHURCH_3) {
+                tmpChurch.setRange(8);
+            } else {
+                tmpChurch = null;
+            }
+            if (tmpChurch != null) {
+                Rectangle r = mVillagePositions.get(mouseVillage);
+                if (r != null) {
+                    Composite cb = g2d.getComposite();
+                    Color cob = g2d.getColor();
+                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .3f));
+                    GeneralPath p = ChurchLayerRenderer.calculateChurchPath(tmpChurch, mouseVillage, r.width, r.height);
+                    g2d.setColor(Constants.DS_BACK_LIGHT);
+                    g2d.fill(p);
+                    g2d.setComposite(cb);
+                    g2d.setColor(Constants.DS_BACK);
+                    g2d.draw(p);
+                    g2d.setColor(cob);
+                }
+            }
+        }
+
+        // </editor-fold>
+
 
         //draw additional info
         if (!mouseDown && mouseVillage != null && Boolean.parseBoolean(GlobalOptions.getProperty("show.mouseover.info"))) {

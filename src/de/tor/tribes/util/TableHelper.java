@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
@@ -241,7 +242,7 @@ public class TableHelper {
         cnt = 0;
 
         for (Object o : sortedOjs) {
-            PatternPredicate patternPredicate0 = new PatternPredicate(Pattern.quote(o.toString()), modelIdx);
+            PatternPredicate patternPredicate0 = new PatternPredicate(Matcher.quoteReplacement(o.toString()), modelIdx);
             MattePainter mp = new MattePainter(getColorCode(v));
             PainterHighlighter h = new PainterHighlighter(patternPredicate0, mp);
             pHighlighters.add(h);

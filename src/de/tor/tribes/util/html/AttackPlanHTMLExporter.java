@@ -22,6 +22,8 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 
 /**
@@ -259,12 +261,12 @@ public class AttackPlanHTMLExporter {
             sourceVillageCoord = a.getSource().getCoordAsString();
 
             //replace values
-            b = b.replaceAll(SOURCE_PLAYER_NAME, sourceTribeName);
+            b = b.replaceAll(SOURCE_PLAYER_NAME, Matcher.quoteReplacement(sourceTribeName));
             b = b.replaceAll(SOURCE_PLAYER_LINK, sourceTribeLink);
-            b = b.replaceAll(SOURCE_ALLY_NAME, sourceAllyName);
-            b = b.replaceAll(SOURCE_ALLY_TAG, sourceAllyTag);
+            b = b.replaceAll(SOURCE_ALLY_NAME, Matcher.quoteReplacement(sourceAllyName));
+            b = b.replaceAll(SOURCE_ALLY_TAG, Matcher.quoteReplacement(sourceAllyTag));
             b = b.replaceAll(SOURCE_ALLY_LINK, sourceAllyLink);
-            b = b.replaceAll(SOURCE_VILLAGE_NAME, sourceVillageName);
+            b = b.replaceAll(SOURCE_VILLAGE_NAME, Matcher.quoteReplacement(sourceVillageName));
             b = b.replaceAll(SOURCE_VILLAGE_COORD, sourceVillageCoord);
             b = b.replaceAll(SOURCE_VILLAGE_LINK, sourceVillageLink);
 
@@ -310,12 +312,12 @@ public class AttackPlanHTMLExporter {
             targetVillageCoord = a.getTarget().getCoordAsString();
 
             //replace values
-            b = b.replaceAll(TARGET_PLAYER_NAME, targetTribeName);
+            b = b.replaceAll(TARGET_PLAYER_NAME, Matcher.quoteReplacement(targetTribeName));
             b = b.replaceAll(TARGET_PLAYER_LINK, targetTribeLink);
-            b = b.replaceAll(TARGET_ALLY_NAME, targetAllyName);
-            b = b.replaceAll(TARGET_ALLY_TAG, targetAllyTag);
+            b = b.replaceAll(TARGET_ALLY_NAME, Matcher.quoteReplacement(targetAllyName));
+            b = b.replaceAll(TARGET_ALLY_TAG, Matcher.quoteReplacement(targetAllyTag));
             b = b.replaceAll(TARGET_ALLY_LINK, targetAllyLink);
-            b = b.replaceAll(TARGET_VILLAGE_NAME, targetVillageName);
+            b = b.replaceAll(TARGET_VILLAGE_NAME, Matcher.quoteReplacement(targetVillageName));
             b = b.replaceAll(TARGET_VILLAGE_COORD, targetVillageCoord);
             b = b.replaceAll(TARGET_VILLAGE_LINK, targetVillageLink);
 
@@ -362,7 +364,7 @@ public class AttackPlanHTMLExporter {
             w.flush();
             w.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Failed writing HTML file", e);
         }
     }
 
@@ -371,7 +373,7 @@ public class AttackPlanHTMLExporter {
         //set creator
         Tribe user = GlobalOptions.getSelectedProfile().getTribe();
         if (user != null) {
-            result = result.replaceAll(CREATOR, user.toString());
+            result = result.replaceAll(CREATOR, Matcher.quoteReplacement(user.getName()));
         } else {
             result = result.replaceAll(CREATOR, "-");
         }
@@ -400,5 +402,10 @@ public class AttackPlanHTMLExporter {
         result = result.replaceAll(CREATION_DATE, f.format(new Date(System.currentTimeMillis())));
 
         return result;
+    }
+    
+    public static void main(String[] args) {
+        String test = "%P%";
+        System.out.println(test.replaceAll("%P%", Matcher.quoteReplacement("$test$")));
     }
 }

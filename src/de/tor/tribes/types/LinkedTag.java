@@ -14,6 +14,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -113,10 +114,10 @@ public class LinkedTag extends Tag {
         for (Village v : GlobalOptions.getSelectedProfile().getTribe().getVillageList()) {
             String equation = sEquation;
             for (Tag t : lTags) {
-                equation = equation.replaceAll(Pattern.quote(t.getName()), Boolean.toString(t.tagsVillage(v.getId())));
+                equation = equation.replaceAll(Matcher.quoteReplacement(t.getName()), Boolean.toString(t.tagsVillage(v.getId())));
             }
 
-            equation = equation.replaceAll(Pattern.quote("K" + ((v.getContinent() < 10) ? "0" : "") + v.getContinent()), "true");
+            equation = equation.replaceAll(("K" + ((v.getContinent() < 10) ? "0" : "") + v.getContinent()), "true");
             try {
                 engine.eval("var b = eval(\"" + equation + "\")");
                 Boolean b = (Boolean) engine.get("b");

@@ -45,6 +45,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
@@ -517,7 +518,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                 }
             }
             for (Integer col : relevantCols) {
-                PatternPredicate patternPredicate0 = new PatternPredicate((jFilterCaseSensitive.isSelected() ? "" : "(?i)") + Pattern.quote(jTextField1.getText()), col);
+                PatternPredicate patternPredicate0 = new PatternPredicate((jFilterCaseSensitive.isSelected() ? "" : "(?i)") + Matcher.quoteReplacement(jTextField1.getText()), col);
                 MattePainter mp = new MattePainter(new Color(0, 0, 0, 120));
                 highlighter = new PainterHighlighter(new HighlightPredicate.NotHighlightPredicate(patternPredicate0), mp);
                 jConquersTable.addHighlighter(highlighter);

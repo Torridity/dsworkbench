@@ -24,6 +24,7 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -203,34 +204,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
     public void setExpertSelection(boolean expertSelection) {
         this.expertSelection = expertSelection;
         renderer.setExpertMode(expertSelection);
-      /*  if (isExpertSelection()) {
-            setToolTipText("<html>In dieser Liste k&ouml;nnen Gruppen beliebig kombiniert werden, "
-                    + "um die darin enthaltenen D&ouml;rfer anzuzeigen.<br/>"
-                    + "M&ouml;gliche Verkn&uuml;pfungen sind dabei:"
-                    + "<ul>"
-                    + "<li>NICHT: D&ouml;rfer d&uuml;rfen nicht in dieser Gruppe sein.</li>"
-                    + "<li>ODER: D&ouml;rfer k&ouml;nnen in dieser oder einer anderen Gruppe sein.</li>"
-                    + "<li>UND: D&ouml;rfer m&uuml;ssen in dieser Gruppe und allen anderen mit UND gekennzeichneten Gruppen sein.</li>"
-                    + "<li>OHNE: Diese Gruppe wird nicht ber&uuml;cksichtigt.</li>"
-                    + "</ul>"
-                    + "Der erste Eintrag der Liste beinhaltet alle D&ouml;rfer die in keiner Gruppe enthalten sind. Ist dieser Eintrag gew&auml;hlt, "
-                    + "werden alle anderen Eintr&auml;ge deaktiviert.<br/>"
-                    + "Bei der Verkn&uuml;pfung gilt stets, dass UND-Verkn&uuml;pfungen immer zuerst aufgel&ouml;st werden, also Vorrang haben.<br/>"
-                    + "&Auml;nderung von Verkn&uuml;pfungen:"
-                    + "<ul>"
-                    + "<li>Doppelklick (links) oder Pfeil rechts: N&auml;chste Verkn&uuml;pfung</li>"
-                    + "<li>Pfeil rechts: Vorherige Verkn&uuml;pfung</li>"
-                    + "<li>O: ODER-Verkn&uuml;pfung</li>"
-                    + "<li>U: UND-Verkn&uuml;pfung</li>"
-                    + "<li>I: Ignorieren</li>"
-                    + "<li>N: NICHT-Verkn&uuml;pfung</li>"
-                    + "<li>Doppelklick (rechts) oder ENTF: Gruppe ignorieren</li>"
-                    + "<li>ENTF auf 'Keine Gruppe': Alle Gruppen ignorieren, 'Keine Gruppe' ausw&auml;hlen</li>"
-                    + "</ul>"
-                    + "</html>");
-        } else {*/
-            setToolTipText("");
-        //}
+        setToolTipText("");
         repaint();
     }
 
@@ -383,7 +357,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
             for (Village v : relevantVillages) {
                 String evaluationEquation = baseEquation;
                 for (Tag tag : relevantTags) {
-                    evaluationEquation = evaluationEquation.replaceFirst(Pattern.quote(tag.toString()), Boolean.toString(tag.tagsVillage(v.getId())));
+                    evaluationEquation = evaluationEquation.replaceFirst(Matcher.quoteReplacement(tag.toString()), Boolean.toString(tag.tagsVillage(v.getId())));
                 }
                 engine.eval("var b = eval(\"" + evaluationEquation + "\")");
                 if ((Boolean) engine.get("b")) {
@@ -482,12 +456,6 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
         ProfileManager.getSingleton().loadProfiles();
         GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
         GlobalOptions.loadUserData();
-
-
-
-
-
-
     }
 
     public static class ListItem {

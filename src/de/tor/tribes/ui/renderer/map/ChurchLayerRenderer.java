@@ -36,10 +36,6 @@ public class ChurchLayerRenderer extends AbstractDirectLayerRenderer {
         if (!pSettings.isLayerVisible()) {
             return;
         }
-        // settings.setRowsToRender(pVisibleVillages[0].length);
-
-        //Set new bounds
-        //setRenderedBounds((Rectangle2D.Double) pVirtualBounds.clone());
         renderRows(pSettings, pG2d);
     }
 
@@ -85,7 +81,7 @@ public class ChurchLayerRenderer extends AbstractDirectLayerRenderer {
         a.add(new Area(p));
     }
 
-    private GeneralPath calculateChurchPath(Church c, Village v, int pFieldWidth, int pFieldHeight) {
+    public static GeneralPath calculateChurchPath(Church c, Village v, int pFieldWidth, int pFieldHeight) {
         int vx = MapPanel.getSingleton().virtualPosToSceenPos(v.getX(), v.getY()).x;
         int vy = MapPanel.getSingleton().virtualPosToSceenPos(v.getX(), v.getY()).y;
         Rectangle g = new Rectangle(vx, vy, (int) Math.rint(pFieldWidth), (int) Math.rint(pFieldHeight));
@@ -122,7 +118,6 @@ public class ChurchLayerRenderer extends AbstractDirectLayerRenderer {
                 //no special point
                 int dx = (int) (pos.getX() - lastPos.getX());
                 int dy = (int) (pos.getY() - lastPos.getY());
-
                 if (quad == 1) {
                     p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + dy * g.getHeight());
                     p.lineTo(p.getCurrentPoint().getX() + dx * g.getWidth(), p.getCurrentPoint().getY());

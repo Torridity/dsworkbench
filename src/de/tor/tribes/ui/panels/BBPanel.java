@@ -26,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -557,7 +558,7 @@ public class BBPanel extends javax.swing.JPanel {
             }
             String trimmedFirst = first.substring(0, lastOpenInFirst) + first.substring(lastCloseInFirst + 1);
             String trimmedLast = last.substring(0, firstOpenInLast) + last.substring(firstCloseInLast + 1);
-            jTextPane1.setText(text.replaceAll(Pattern.quote(first), trimmedFirst).replaceAll(Pattern.quote(last), trimmedLast));
+            jTextPane1.setText(text.replaceAll(Matcher.quoteReplacement(first), trimmedFirst).replaceAll(Matcher.quoteReplacement(last), trimmedLast));
         } catch (Exception e) {
             //something strange happened
         }

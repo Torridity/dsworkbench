@@ -10,6 +10,7 @@
  */
 package de.tor.tribes.ui.components;
 
+import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Ally;
@@ -38,7 +39,7 @@ import org.jdesktop.swingx.JXList;
 /**
  * @author jejkal
  */
-public class VillageSelectionPanel extends javax.swing.JPanel {
+public class VillageSelectionPanel extends javax.swing.JPanel{
 
     public enum SELECTION_ELEMENT {
 
@@ -99,7 +100,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel {
         } else {
             allyList.setListData(AllyUtils.getAlliesByFilter("", Ally.CASE_INSENSITIVE_ORDER));
         }
-        
+
         if (!tribeList.isVisible()) {
             tribeList.setListData(new Tribe[]{GlobalOptions.getSelectedProfile().getTribe()});
         }

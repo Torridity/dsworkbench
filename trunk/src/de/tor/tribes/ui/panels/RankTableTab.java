@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
 import javax.swing.RowFilter;
@@ -410,7 +411,7 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
                 }
             }
             for (Integer col : relevantCols) {
-                PatternPredicate patternPredicate0 = new PatternPredicate((pCaseSensitive ? "" : "(?i)") + Pattern.quote(pValue), col);
+                PatternPredicate patternPredicate0 = new PatternPredicate((pCaseSensitive ? "" : "(?i)") + Matcher.quoteReplacement(pValue), col);
                 MattePainter mp = new MattePainter(new Color(0, 0, 0, 120));
                 highlighter = new PainterHighlighter(new HighlightPredicate.NotHighlightPredicate(patternPredicate0), mp);
                 jxRankTable.addHighlighter(highlighter);

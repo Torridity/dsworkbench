@@ -22,7 +22,6 @@ import org.apache.commons.lang.math.IntRange;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.jdom.Element;
-import org.jfree.date.DateUtilities;
 
 /**
  *

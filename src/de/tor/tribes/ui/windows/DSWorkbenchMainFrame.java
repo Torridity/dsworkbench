@@ -521,6 +521,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         // <editor-fold defaultstate="collapsed" desc=" Init A*Star HelpSystem ">
         if (!Constants.DEBUG) {
             GlobalOptions.getHelpBroker().enableHelpKey(DSWorkbenchSimulatorFrame.getSingleton().getRootPane(), "pages.astar", GlobalOptions.getHelpBroker().getHelpSet());
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "index", GlobalOptions.getHelpBroker().getHelpSet());
         }
         // </editor-fold>
 

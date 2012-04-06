@@ -179,6 +179,11 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jFarmFromBarbarianSelectionDialog.getContentPane().add(coordSpinner, gridBagConstraints);
+
+        // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "farmManager", GlobalOptions.getHelpBroker().getHelpSet());
+        }       // </editor-fold>
     }
 
     /*
@@ -483,6 +488,10 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         int hauledWood = 0;
         int hauledClay = 0;
         int hauledIron = 0;
+        int woodPerHour = 0;
+        int clayPerHour = 0;
+        int ironPerHour = 0;
+
 
         for (ManageableType type : FarmManager.getSingleton().getAllElements()) {
             FarmInformation info = (FarmInformation) type;
@@ -490,8 +499,12 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             hauledWood += info.getHauledWood();
             hauledClay += info.getHauledClay();
             hauledIron += info.getHauledIron();
+            woodPerHour += DSCalculator.calculateResourcesPerHour(info.getWoodLevel());
+            clayPerHour += DSCalculator.calculateResourcesPerHour(info.getClayLevel());
+            ironPerHour += DSCalculator.calculateResourcesPerHour(info.getIronLevel());
             farmCount++;
         }
+
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
@@ -501,8 +514,17 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         b.append("<html>");
         b.append(nf.format(farmCount));
         b.append(" Farmen<br>");
+        b.append("Resourcenproduktion pro Stunde (Summe)<br>");
+        b.append("<ul>");
+        b.append("<li>");
+        b.append("Holz: ").append(nf.format(woodPerHour)).append("</li>");
+        b.append("<li>");
+        b.append("Lehm: ").append(nf.format(clayPerHour)).append("</li>");
+        b.append("<li>");
+        b.append("Eisen: ").append(nf.format(ironPerHour)).append("</li>");
+        b.append("</ul>");
         b.append(nf.format(attacks));
-        b.append(" Angriffe<br>");
+        b.append(" durchgef&uuml;hrte Angriffe<br>");
         b.append(nf.format(hauledWood + hauledClay + hauledIron));
         b.append(" gepl&uuml;nderte Rohstoffe (&#216; ").append(nf.format(overall / attacks)).append(")<br>");
         b.append("<ul>");

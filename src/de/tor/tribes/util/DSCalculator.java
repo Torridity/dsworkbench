@@ -14,6 +14,10 @@ import java.util.List;
  */
 public class DSCalculator {
 
+    private static double RESOURCE_PRODUCTION_CONTANT = 1.163118;
+    private static double STORAGE_CAPACITY_CONTANT = 1.2294934;
+    private static double HIDE_CAPACITY_CONTANT = 1.3335;
+
     public static double calculateDistance(Village pSource, Village pTarget) {
         if ((pSource == null) || (pTarget == null)) {
             return 0;
@@ -117,5 +121,25 @@ public class DSCalculator {
             result += sec;
         }
         return result;
+    }
+
+    public static double calculateResourcesPerHour(int pBuildingLevel) {
+        return 30 * ServerSettings.getSingleton().getSpeed() * Math.pow(RESOURCE_PRODUCTION_CONTANT, (pBuildingLevel - 1));
+    }
+
+    public static int calculateEstimatedResourceBuildingLevel(double pResourcesDelta, double pTimeDelta) {
+        return (int) Math.ceil(Math.log(pResourcesDelta / (pTimeDelta * 30 * ServerSettings.getSingleton().getSpeed())) / Math.log(RESOURCE_PRODUCTION_CONTANT) + 1);
+    }
+
+    public static int calculateMaxResourcesInStorage(int pStorageLevel) {
+        return (int) Math.round(1000 * Math.pow(STORAGE_CAPACITY_CONTANT, (pStorageLevel - 1)));
+    }
+
+    public static int calculateEstimatedStorageLevel(double pResourcesInStorage) {
+        return (int) Math.ceil(Math.log(pResourcesInStorage / 1000.0) / Math.log(STORAGE_CAPACITY_CONTANT) + 1);
+    }
+
+    public static int calculateMaxHiddenResources(int pHideLevel) {
+        return (int) Math.round(150 * Math.pow(HIDE_CAPACITY_CONTANT, pHideLevel - 1));
     }
 }

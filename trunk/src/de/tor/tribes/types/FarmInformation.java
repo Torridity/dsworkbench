@@ -30,9 +30,6 @@ import org.jdom.Element;
 public class FarmInformation extends ManageableType {
 
     private static Logger logger = Logger.getLogger("FarmInformation");
-    private static double RESOURCE_PRODUCTION_CONTANT = 1.163118;
-    private static double STORAGE_CAPACITY_CONTANT = 1.2294934;
-    private static double HIDE_CAPACITY_CONTANT = 1.3335;
 
     public enum FARM_RESULT {
 
@@ -270,18 +267,13 @@ public class FarmInformation extends ManageableType {
      * Get the amount of resources of a type, generated since the last update
      */
     private double getGeneratedResources(int pResourcesBefore, int pBuildingLevel, long pAtTimestamp) {
-        int usedBuildingLevel = pBuildingLevel;
-        /*
-         * if (!spyed) { //return pResourcesBefore; usedBuildingLevel = 1; }
-         */
-
         long timeSinceLastFarmInfo = pAtTimestamp - lastReport;
         if (lastReport < 0) {
             //no report read yet...reset time difference
             timeSinceLastFarmInfo = 0;
         }
         double timeFactor = (double) timeSinceLastFarmInfo / (double) DateUtils.MILLIS_PER_HOUR;
-        double resourcesPerHour = 30 * ServerSettings.getSingleton().getSpeed() * Math.pow(RESOURCE_PRODUCTION_CONTANT, (usedBuildingLevel - 1));
+        double resourcesPerHour = DSCalculator.calculateResourcesPerHour(pBuildingLevel);
         double generatedResources = pResourcesBefore + resourcesPerHour * timeFactor;
         generatedResources *= (DSWorkbenchFarmManager.getSingleton().isConsiderSuccessRate()) ? getCorrectionFactor() : 1.0f;
         return Math.min(getStorageCapacity(), generatedResources);
@@ -333,7 +325,7 @@ public class FarmInformation extends ManageableType {
             int resourceInVillage2 = pReport2.getHaul()[i] + ((pReport2.getSpyedResources() != null) ? pReport2.getSpyedResources()[i] : 0);
             int dResource = resourceInVillage2 - resourceInVillage1;
 
-            int resourceBuildingLevel = (int) Math.ceil(Math.log(dResource / (dt * 30 * ServerSettings.getSingleton().getSpeed())) / Math.log(RESOURCE_PRODUCTION_CONTANT) + 1);
+            int resourceBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(dResource, dt);
             switch (i) {
                 case 0:
                     setWoodLevel(Math.max(getWoodLevel(), resourceBuildingLevel));
@@ -371,9 +363,9 @@ public class FarmInformation extends ManageableType {
 
 
         double dt = (pReport.getTimestamp() - lastReport) / (double) DateUtils.MILLIS_PER_HOUR;//DSCalculator.calculateMoveTimeInMillis(pReport.getSourceVillage(), pReport.getTargetVillage(), TroopHelper.getSlowestUnit(pReport.getAttackers()).getSpeed()) / (double) DateUtils.MILLIS_PER_HOUR;
-        int woodBuildingLevel = (int) Math.floor(Math.log(wood / (dt * 30 * ServerSettings.getSingleton().getSpeed())) / Math.log(RESOURCE_PRODUCTION_CONTANT) + 1);
-        int clayBuildingLevel = (int) Math.floor(Math.log(clay / (dt * 30 * ServerSettings.getSingleton().getSpeed())) / Math.log(RESOURCE_PRODUCTION_CONTANT) + 1);
-        int ironBuildingLevel = (int) Math.floor(Math.log(iron / (dt * 30 * ServerSettings.getSingleton().getSpeed())) / Math.log(RESOURCE_PRODUCTION_CONTANT) + 1);
+        int woodBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(wood, dt);
+        int clayBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(clay, dt);
+        int ironBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(iron, dt);
         setWoodLevel(Math.max(getWoodLevel(), woodBuildingLevel));
         setClayLevel(Math.max(getClayLevel(), clayBuildingLevel));
         setIronLevel(Math.max(getIronLevel(), ironBuildingLevel));
@@ -386,7 +378,7 @@ public class FarmInformation extends ManageableType {
         for (int i = 0; i < 3; i++) {
             //get resources in village at time of arrival
             double resourceInStorage = (double) pReport.getHaul()[i] + ((pReport.getSpyedResources() != null) ? pReport.getSpyedResources()[i] : 0);
-            int guessedStorageLeven = (int) Math.ceil(Math.log(resourceInStorage / 1000.0) / Math.log(STORAGE_CAPACITY_CONTANT) + 1);
+            int guessedStorageLeven = DSCalculator.calculateEstimatedStorageLevel(resourceInStorage);
             switch (i) {
                 case 0:
                     setStorageLevel(Math.max(getStorageLevel(), guessedStorageLeven));
@@ -637,10 +629,10 @@ public class FarmInformation extends ManageableType {
      * Get the storage capacity of this farm excluding hidden resources
      */
     public int getStorageCapacity() {
-        int storageCapacity = (int) Math.round(1000 * Math.pow(STORAGE_CAPACITY_CONTANT, (storageLevel - 1)));
+        int storageCapacity = DSCalculator.calculateMaxResourcesInStorage(storageLevel);
         int hiddenResources = 0;
         if (hideLevel > 0) {
-            hiddenResources = (int) Math.round(150 * Math.pow(HIDE_CAPACITY_CONTANT, hideLevel - 1));
+            hiddenResources = DSCalculator.calculateMaxHiddenResources(hideLevel);
         }
         return storageCapacity - hiddenResources;
     }

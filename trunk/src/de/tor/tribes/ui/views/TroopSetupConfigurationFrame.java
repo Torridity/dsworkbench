@@ -73,7 +73,7 @@ public class TroopSetupConfigurationFrame extends javax.swing.JDialog implements
         jAttackTypeTable.registerKeyboardAction(deleteListener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         capabilityInfoPanel1.addActionListener(deleteListener);
          if (!Constants.DEBUG) {
-            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.standard_attacks", GlobalOptions.getHelpBroker().getHelpSet());
+            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.standardAttacks", GlobalOptions.getHelpBroker().getHelpSet());
         } 
     }
 

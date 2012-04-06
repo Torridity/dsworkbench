@@ -71,7 +71,7 @@ public class GlobalOptions {
     private static Date lastArriveTime = null;
     private static HelpBroker mainHelpBroker = null;
     private static CSH.DisplayHelpFromSource csh = null;
-    private static final String mainHelpSetName = "DS Workbench Dokumentation.hs";
+    private static final String mainHelpSetName = "helpset.hs";
     private static boolean internalDataDamaged = false;
     private static UserProfile mSelectedProfile = null;
     public static boolean MINIMAL = false;
@@ -182,7 +182,6 @@ public class GlobalOptions {
             if (mainHelpBroker != null) {
                 logger.debug("Creating DisplayHelpFromSource");
                 csh = new CSH.DisplayHelpFromSource(mainHelpBroker);
-
             }
         }
         logger.debug("HelpSystem initialized");

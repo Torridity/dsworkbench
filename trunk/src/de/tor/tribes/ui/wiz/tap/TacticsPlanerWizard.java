@@ -6,7 +6,6 @@ package de.tor.tribes.ui.wiz.tap;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.panels.TAPAttackInfoPanel;
-import de.tor.tribes.ui.wiz.AttackWizardDisplayerImpl;
 import de.tor.tribes.ui.wiz.dep.DefenseFilterPanel;
 import de.tor.tribes.ui.wiz.dep.DefenseSourcePanel;
 import de.tor.tribes.ui.wiz.ref.SupportRefillCalculationPanel;
@@ -16,6 +15,7 @@ import de.tor.tribes.ui.wiz.ret.RetimerFinishPanel;
 import de.tor.tribes.ui.wiz.ret.RetimerCalculationPanel;
 import de.tor.tribes.ui.wiz.ret.RetimerDataPanel;
 import de.tor.tribes.ui.wiz.ret.RetimerSourcePanel;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ProfileManager;
 import java.awt.BorderLayout;
@@ -108,6 +108,11 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
         if (w != 0 && h != 0) {
             parent.setSize(w, h);
         }
+
+        // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(parent.getRootPane(), "pages.attack_planer", GlobalOptions.getHelpBroker().getHelpSet());
+        }       // </editor-fold>
 
         parent.setVisible(true);
     }

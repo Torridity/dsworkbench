@@ -5,6 +5,7 @@
 package de.tor.tribes.ui.wiz.red;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ProfileManager;
 import java.awt.BorderLayout;
@@ -101,13 +102,16 @@ public class ResourceDistributorWizard extends WizardPanelProvider {
         parent.pack();
         int w = GlobalOptions.getProperties().getInt("red.width", 0);
         int h = GlobalOptions.getProperties().getInt("red.height", 0);
-        if (w != 0 && h
-                != 0) {
+        if (w != 0 && h != 0) {
             parent.setSize(w, h);
         }
 
-        parent.setVisible(
-                true);
+        // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        if (!Constants.DEBUG) {
+            GlobalOptions.getHelpBroker().enableHelpKey(parent.getRootPane(), "pages.merchant_distributor", GlobalOptions.getHelpBroker().getHelpSet());
+        }       // </editor-fold>
+
+        parent.setVisible(true);
     }
 
     public static void main(String[] args) {

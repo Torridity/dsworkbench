@@ -34,9 +34,9 @@ public class TAPSourceFilterTableModel extends AbstractTableModel {
     }
 
     public void addRow(TAPAttackSourceElement pElement, boolean pCheck) {
-        if (!elements.contains(pElement)) {
+        //if (!elements.contains(pElement)) {
             elements.add(pElement);
-        }
+      //  }
         if (pCheck) {
             fireTableDataChanged();
         }

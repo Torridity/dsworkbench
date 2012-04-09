@@ -463,7 +463,7 @@ public class AttackCalculationPanel extends WizardPage {
         Hashtable<UnitHolder, List<Village>> sources = new Hashtable<UnitHolder, List<Village>>();
         Hashtable<UnitHolder, List<Village>> fakeSources = new Hashtable<UnitHolder, List<Village>>();
         for (TAPAttackSourceElement element : AttackSourceFilterPanel.getSingleton().getFilteredElements()) {
-            List<Village> sourcesForUnit = null;
+            List<Village> sourcesForUnit;
             if (element.isFake()) {
                 sourcesForUnit = fakeSources.get(element.getUnit());
                 if (sourcesForUnit == null) {
@@ -479,7 +479,6 @@ public class AttackCalculationPanel extends WizardPage {
             }
             sourcesForUnit.add(element.getVillage());
         }
-
         List<Village> targets = new LinkedList<Village>();
         List<Village> fakeTargets = new LinkedList<Village>();
         Hashtable<Village, Integer> maxAttacks = new Hashtable<Village, Integer>();

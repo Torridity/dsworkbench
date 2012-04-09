@@ -36,6 +36,8 @@ import java.util.Timer;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 import javax.swing.text.NumberFormatter;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.math.IntRange;
@@ -46,6 +48,7 @@ import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
+import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
  *
@@ -101,10 +104,18 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
             @Override
             public void run() {
-                //  updateInvisibleRuntimes();
+                //  dataChangedExternally();
                 jFarmTable.repaint();
             }
         }, Calendar.getInstance().getTime(), 1000);
+
+        /*
+         * jFarmTable.setRowFilter(new RowFilter<TableModel, Integer>() {
+         *
+         * @Override public boolean include(RowFilter.Entry<? extends TableModel, ? extends Integer> entry) { FarmInformation.FARM_STATUS
+         * stat = (FarmInformation.FARM_STATUS) entry.getValue(0); return !stat.equals(FarmInformation.FARM_STATUS.FARMING); }
+        });
+         */
 
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         KeyStroke farmA = KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, false);
@@ -773,6 +784,9 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                     + " - " + impossible + " Mal keine passenden Dörfer gefunden\n"
                     + " - " + farmInactive + " Farmen deaktiviert\n"
                     + " - " + alreadyFarming + " Mal Truppen bereits unterwegs oder Bericht erwartet");
+        }
+        if (opened != 0) {
+            ((FarmTableModel) jFarmTable.getModel()).fireTableDataChanged();
         }
     }
 

@@ -176,6 +176,7 @@ public class FarmInformation extends ManageableType {
         if (arriveTimeRelativeToNow <= 0) {//farm was reached...return time until return
             if (getStatus().equals(FARM_STATUS.FARMING)) {
                 setStatus(FARM_STATUS.REPORT_EXPECTED);
+             //   DSWorkbenchFarmManager.getSingleton().dataChangedExternally();
             }
             arriveTimeRelativeToNow = 0;
             farmTroopArrive = -1;

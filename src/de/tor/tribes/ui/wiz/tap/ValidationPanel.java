@@ -374,6 +374,7 @@ public class ValidationPanel extends WizardPage implements SettingsChangedListen
         while (sourceKeys.hasMoreElements()) {
             Village source = sourceKeys.nextElement();
             float possibilities = 100f * (float) validSources.get(source) / (float) targetElements.size();
+            possibilities = Math.min(possibilities, 100.0f);
             sourceOverviewPanel.addVillage(source, ColorGradientHelper.getGradientColor(possibilities, Color.RED, Color.YELLOW));
             model.addRow(source, possibilities / 100.0f);
         }

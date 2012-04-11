@@ -348,7 +348,6 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
         ScriptEngine engine = factory.getEngineByName("JavaScript");
         String baseEquation = b.toString();
 
-
         List<Village> result = new LinkedList<Village>();
         try {
             if (relevantVillages == null) {
@@ -357,13 +356,14 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
             for (Village v : relevantVillages) {
                 String evaluationEquation = baseEquation;
                 for (Tag tag : relevantTags) {
-                    evaluationEquation = evaluationEquation.replaceFirst(Matcher.quoteReplacement(tag.toString()), Boolean.toString(tag.tagsVillage(v.getId())));
+                    evaluationEquation = evaluationEquation.replaceFirst(Pattern.quote(tag.toString()), Boolean.toString(tag.tagsVillage(v.getId())));
                 }
                 engine.eval("var b = eval(\"" + evaluationEquation + "\")");
                 if ((Boolean) engine.get("b")) {
                     result.add(v);
                 }
             }
+            System.out.println("------------");
         } catch (Exception e) {
             //no result
         }
@@ -380,6 +380,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
                 switch (current.getState()) {
                     case NOT:
                         b.append("NICHT in Gruppe '").append(current.getTag()).append("' ");
+                        isFirst = false;
                         break;
                     case AND:
                         if (isFirst) {

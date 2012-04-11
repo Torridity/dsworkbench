@@ -81,16 +81,22 @@ public class CoordinateSpinner extends JSpinner {
                 public void propertyChange(PropertyChangeEvent evt) {
                     String text = ftf.getText();
                     int comma = text.indexOf('|');
-                    String digit;
-                    int number;
-                    if (model.getField() == CoordinateSpinnerModel.FIELD_X) {
-                        digit = text.substring(text.indexOf('(') + 1, comma).trim();
-                        number = text.indexOf(digit);
+                    int open = text.indexOf('(');
+                    int close = text.indexOf(')');
+                    if (comma < 0 || open < 0 || close < 0) {
+                        ftf.select(0, text.length());
                     } else {
-                        digit = text.substring(comma + 1, text.indexOf(')')).trim();
-                        number = text.lastIndexOf(digit);
+                        String digit;
+                        int number;
+                        if (model.getField() == CoordinateSpinnerModel.FIELD_X) {
+                            digit = text.substring(open + 1, comma).trim();
+                            number = text.indexOf(digit);
+                        } else {
+                            digit = text.substring(comma + 1, close).trim();
+                            number = text.lastIndexOf(digit);
+                        }
+                        ftf.select(number, number + digit.length());
                     }
-                    ftf.select(number, number + digit.length());
                 }
             });
 

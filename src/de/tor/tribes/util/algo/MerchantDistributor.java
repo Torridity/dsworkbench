@@ -72,17 +72,17 @@ public class MerchantDistributor extends Thread {
         return results;
     }
 
-    public List<List<MerchantSource>> calculate(List<VillageMerchantInfo> pInfos, 
-            List<de.tor.tribes.types.ext.Village> pIncomingOnly, 
-            List<de.tor.tribes.types.ext.Village> pOutgoingOnly, 
-            int[] pTargetRes, 
+    public List<List<MerchantSource>> calculate(List<VillageMerchantInfo> pInfos,
+            List<de.tor.tribes.types.ext.Village> pIncomingOnly,
+            List<de.tor.tribes.types.ext.Village> pOutgoingOnly,
+            int[] pTargetRes,
             int[] pRemainRes) {
-        int[] targetRes = pTargetRes;
+        int[] calcTargetRes = pTargetRes;
         int[] minRemainRes = pRemainRes;
         ArrayList<MerchantSource> sources = new ArrayList<MerchantSource>();
         ArrayList<MerchantDestination> destinations = new ArrayList<MerchantDestination>();
         List<List<MerchantSource>> results = new LinkedList<List<MerchantSource>>();
-        for (int i = 0; i < targetRes.length; i++) {
+        for (int i = 0; i < calcTargetRes.length; i++) {
             sources.clear();
             destinations.clear();
             if (listener != null) {
@@ -108,7 +108,7 @@ public class MerchantDistributor extends Thread {
                 if (skip) {
                     continue;
                 }
-                int targetValue = targetRes[i];
+                int targetValue = calcTargetRes[i];
                 int maxAvailable = (int) (Math.round((double) (res - minRemainRes[i]) / 1000.0 + .5));
                 if (maxAvailable * 1000 > res) {
                     //reduce availability if there would be a negative amount of resources
@@ -117,7 +117,7 @@ public class MerchantDistributor extends Thread {
                 int maxDelivery = info.getAvailableMerchants();
                 //try to add receiver
                 if (maxAvailable < 0 || res < targetValue) {
-                    if (targetRes[i] > info.getStashCapacity()) {
+                    if (calcTargetRes[i] > info.getStashCapacity()) {
                         targetValue = info.getStashCapacity();
                     }
 
@@ -155,7 +155,7 @@ public class MerchantDistributor extends Thread {
             if (sources.isEmpty() || destinations.isEmpty()) {
                 results.add(new LinkedList<MerchantSource>());
             } else {
-                new MerchantDistributor().calculateInternal(sources, destinations);
+                calculateInternal(sources, destinations);
                 List<MerchantSource> sourcesCopy = new LinkedList<MerchantSource>(sources);
                 results.add(sourcesCopy);
 

@@ -257,20 +257,10 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
 
         jUnitComboBox.setRenderer(new UnitListCellRenderer());
 
-
         //@TODO implement XX:YY:ZZ if needed...currently no server has this system
 
         jSourceVillage.setValue(new Point(500, 500));
         jTargetVillage.setValue(new Point(500, 500));
-        /*
-         * if (ServerSettings.getSingleton().getCoordType() != 2) { jSourceVillage.setFormatterFactory(new
-         * javax.swing.text.DefaultFormatterFactory(new DefaultFormatter())); jSourceVillage.setText("00:00:00");
-         * jTargetVillage.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new DefaultFormatter()));
-         * jTargetVillage.setText("00:00:00"); } else { try { jSourceVillage.setText("000|000"); jSourceVillage.setFormatterFactory(new
-         * javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("###|###"))); jTargetVillage.setText("000|000");
-         * jTargetVillage.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("###|###")));
-         * } catch (java.text.ParseException ex) { } }
-         */
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {

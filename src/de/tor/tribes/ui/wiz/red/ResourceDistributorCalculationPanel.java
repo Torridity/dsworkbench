@@ -1156,22 +1156,22 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
     private int getFillAmountByResourceId(int pResourceId) {
         switch (pResourceId) {
             case 0:
-                return UIHelper.parseIntFromField(jTargetWood, 400000);
+                return Math.max(UIHelper.parseIntFromField(jTargetWood, 400000), 400000);
             case 1:
-                return UIHelper.parseIntFromField(jTargetClay, 400000);
+                return Math.max(UIHelper.parseIntFromField(jTargetClay, 400000), 400000);
             default:
-                return UIHelper.parseIntFromField(jTargetIron, 400000);
+                return Math.max(UIHelper.parseIntFromField(jTargetIron, 400000), 400000);
         }
     }
 
     private int getRemainAmountByResourceId(int pResourceId) {
         switch (pResourceId) {
             case 0:
-                return UIHelper.parseIntFromField(jRemainWood, 400000);
+                return Math.max(UIHelper.parseIntFromField(jRemainWood, 400000), 400000);
             case 1:
-                return UIHelper.parseIntFromField(jRemainClay, 400000);
+                return Math.max(UIHelper.parseIntFromField(jRemainClay, 400000), 400000);
             default:
-                return UIHelper.parseIntFromField(jRemainIron, 400000);
+                return Math.max(UIHelper.parseIntFromField(jRemainIron, 400000), 400000);
         }
     }
 
@@ -1227,8 +1227,8 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         priorities[1] = resourceNameToResourceId(jResource2.getToolTipText());
         priorities[2] = resourceNameToResourceId(jResource3.getToolTipText());
 
-        int[] targetRes = null;
-        int[] remainRes = null;
+        int[] targetRes;
+        int[] remainRes;
         if (isFillDistribution()) {
             targetRes = new int[]{getFillAmountByResourceId(priorities[0]),
                 getFillAmountByResourceId(priorities[1]),

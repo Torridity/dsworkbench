@@ -23,7 +23,7 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  * @author Torridity
  */
 public class ResourceDistributorWelcomePanel extends WizardPage {
-
+    
     private final String EQUAL_DISTIBUTION_HELP = "<html><b>Willkommen beim DS Workbench Rohstoffverteiler.</b><br/><br/>"
             + "Du hast die Gleichverteilung von Rohstoffen gew&auml;hlt. Dabei wird versucht, die vorhandenen Rohstoffe zwischen den D&ouml;rfern "
             + "so zu verteilen, dass in allen D&ouml;rfer am Ende gleichviel Rohstoffe vorhanden sind, sofern dies die Ausbaustufen der Speicher zulassen. "
@@ -46,7 +46,7 @@ public class ResourceDistributorWelcomePanel extends WizardPage {
     public final static Integer BALANCE_DISTRIBUTION = 0;
     public final static Integer FILL_DISTRIBUTION = 1;
     public final static Integer LOAD_DISTRIBUTION = 2;
-
+    
     public static synchronized ResourceDistributorWelcomePanel getSingleton() {
         if (singleton == null) {
             singleton = new ResourceDistributorWelcomePanel();
@@ -64,11 +64,11 @@ public class ResourceDistributorWelcomePanel extends WizardPage {
         jLoadButton.setIcon(new ImageIcon("./graphics/big/load_transports.png"));
         jTextPane1.setText(EQUAL_DISTIBUTION_HELP);
     }
-
+    
     public static String getDescription() {
         return "Willkommen";
     }
-
+    
     public static String getStep() {
         return "id-welcome";
     }
@@ -159,7 +159,7 @@ public class ResourceDistributorWelcomePanel extends WizardPage {
                 jTextPane1.setText(LOAD_HELP);
             }
         }
-
+        
     }//GEN-LAST:event_fireMethodChangeEvent
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
@@ -179,23 +179,24 @@ public class ResourceDistributorWelcomePanel extends WizardPage {
                 return WizardPanelNavResult.REMAIN_ON_PAGE;
             }
         }
-
+        
         int type = BALANCE_DISTRIBUTION;
         if (jFillButton.isSelected()) {
             type = FILL_DISTRIBUTION;
         } else if (jLoadButton.isSelected()) {
             type = LOAD_DISTRIBUTION;
         }
+        ResourceDistributorDataReadPanel.getSingleton().setup(type);
         map.put(TYPE, new Integer(type));
         return WizardPanelNavResult.PROCEED;
     }
-
+    
     @Override
     public WizardPanelNavResult allowBack(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;
-
+        
     }
-
+    
     @Override
     public WizardPanelNavResult allowFinish(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;

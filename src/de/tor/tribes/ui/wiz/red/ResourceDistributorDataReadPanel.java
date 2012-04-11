@@ -76,7 +76,10 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jXCollapsiblePane1.add(jInfoScrollPane, BorderLayout.CENTER);
         jInfoTextPane.setText(GENERAL_INFO);
-        jButton1.setIcon(new ImageIcon("./graphics/big/find.png"));
+        jAddAsBothButton.setIcon(new ImageIcon(ResourceDistributorDataReadPanel.class.getResource("/res/48x48/merchant_both.png")));
+        jAddAsSenderButton.setIcon(new ImageIcon(ResourceDistributorDataReadPanel.class.getResource("/res/48x48/merchant_send.png")));
+        jAddAsReceiverButton.setIcon(new ImageIcon(ResourceDistributorDataReadPanel.class.getResource("/res/48x48/merchant_receive.png")));
+
         jDataTable.setModel(new REDSourceTableModel());
         jDataTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jDataTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
@@ -123,11 +126,14 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
         jLabel1 = new javax.swing.JLabel();
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jDataTable = new org.jdesktop.swingx.JXTable();
         jStatusLabel = new javax.swing.JLabel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jAddAsBothButton = new javax.swing.JButton();
+        jAddAsSenderButton = new javax.swing.JButton();
+        jAddAsReceiverButton = new javax.swing.JButton();
 
         jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
         jInfoScrollPane.setPreferredSize(new java.awt.Dimension(19, 180));
@@ -165,24 +171,6 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
         add(jXCollapsiblePane1, gridBagConstraints);
 
         jPanel1.setLayout(new java.awt.GridBagLayout());
-
-        jButton1.setToolTipText("Iin der Zwischenablage nach kopierter Produktionsübersicht suchen");
-        jButton1.setMaximumSize(new java.awt.Dimension(120, 60));
-        jButton1.setMinimumSize(new java.awt.Dimension(120, 60));
-        jButton1.setPreferredSize(new java.awt.Dimension(120, 60));
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireReadDataFromClipboardEvent(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jButton1, gridBagConstraints);
 
         jDataTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -228,6 +216,70 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(capabilityInfoPanel1, gridBagConstraints);
 
+        jPanel2.setLayout(new java.awt.GridBagLayout());
+
+        jAddAsBothButton.setToolTipText("In der Zwischenablage nach kopierter Produktionsübersicht suchen");
+        jAddAsBothButton.setMaximumSize(new java.awt.Dimension(120, 60));
+        jAddAsBothButton.setMinimumSize(new java.awt.Dimension(120, 60));
+        jAddAsBothButton.setPreferredSize(new java.awt.Dimension(120, 60));
+        jAddAsBothButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireReadDataFromClipboardEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jAddAsBothButton, gridBagConstraints);
+
+        jAddAsSenderButton.setToolTipText("In der Zwischenablage nach kopierter Produktionsübersicht suchen und Dörfer als Lieferanten eintragen");
+        jAddAsSenderButton.setMaximumSize(new java.awt.Dimension(120, 60));
+        jAddAsSenderButton.setMinimumSize(new java.awt.Dimension(120, 60));
+        jAddAsSenderButton.setPreferredSize(new java.awt.Dimension(120, 60));
+        jAddAsSenderButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireReadDataFromClipboardEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jAddAsSenderButton, gridBagConstraints);
+
+        jAddAsReceiverButton.setToolTipText("In der Zwischenablage nach kopierter Produktionsübersicht suchen und Dörfer als Empfänger eintragen");
+        jAddAsReceiverButton.setMaximumSize(new java.awt.Dimension(120, 60));
+        jAddAsReceiverButton.setMinimumSize(new java.awt.Dimension(120, 60));
+        jAddAsReceiverButton.setPreferredSize(new java.awt.Dimension(120, 60));
+        jAddAsReceiverButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireReadDataFromClipboardEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jAddAsReceiverButton, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jPanel2, gridBagConstraints);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -249,14 +301,25 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
     }//GEN-LAST:event_fireShowHideInfoEvent
 
     private void fireReadDataFromClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireReadDataFromClipboardEvent
-        readMerchantInfoFromClipboard();
+        if (evt.getSource() == jAddAsBothButton) {
+            readMerchantInfoFromClipboard(VillageMerchantInfo.Direction.BOTH);
+        } else if (evt.getSource() == jAddAsSenderButton) {
+            readMerchantInfoFromClipboard(VillageMerchantInfo.Direction.OUTGOING);
+        } else if (evt.getSource() == jAddAsReceiverButton) {
+            readMerchantInfoFromClipboard(VillageMerchantInfo.Direction.INCOMING);
+        }
     }//GEN-LAST:event_fireReadDataFromClipboardEvent
+
+    public void setup(int pType) {
+        jAddAsSenderButton.setVisible(pType == ResourceDistributorWelcomePanel.FILL_DISTRIBUTION);
+        jAddAsReceiverButton.setVisible(pType == ResourceDistributorWelcomePanel.FILL_DISTRIBUTION);
+    }
 
     public REDSourceTableModel getModel() {
         return (REDSourceTableModel) jDataTable.getModel();
     }
 
-    private void readMerchantInfoFromClipboard() {
+    private void readMerchantInfoFromClipboard(VillageMerchantInfo.Direction pDirection) {
         try {
             Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
             String data = (String) t.getTransferData(DataFlavor.stringFlavor);
@@ -267,7 +330,7 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
             }
 
             for (VillageMerchantInfo newInfo : infos) {
-                newInfo.setDirection(VillageMerchantInfo.Direction.BOTH);
+                newInfo.setDirection(pDirection);
                 getModel().addRow(newInfo.getVillage(),
                         newInfo.getStashCapacity(),
                         newInfo.getWoodStock(),
@@ -322,12 +385,15 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jAddAsBothButton;
+    private javax.swing.JButton jAddAsReceiverButton;
+    private javax.swing.JButton jAddAsSenderButton;
     private org.jdesktop.swingx.JXTable jDataTable;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel jStatusLabel;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;

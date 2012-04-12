@@ -33,6 +33,7 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
+import javax.naming.event.EventDirContext;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -113,8 +114,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
          * jFarmTable.setRowFilter(new RowFilter<TableModel, Integer>() {
          *
          * @Override public boolean include(RowFilter.Entry<? extends TableModel, ? extends Integer> entry) { FarmInformation.FARM_STATUS
-         * stat = (FarmInformation.FARM_STATUS) entry.getValue(0); return !stat.equals(FarmInformation.FARM_STATUS.FARMING); }
-        });
+         * stat = (FarmInformation.FARM_STATUS) entry.getValue(0); return !stat.equals(FarmInformation.FARM_STATUS.FARMING); } });
          */
 
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);

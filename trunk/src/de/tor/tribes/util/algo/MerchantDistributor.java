@@ -77,29 +77,29 @@ public class MerchantDistributor extends Thread {
             List<de.tor.tribes.types.ext.Village> pOutgoingOnly,
             int[] pTargetRes,
             int[] pRemainRes) {
-        int[] calcTargetRes = pTargetRes;
-        int[] minRemainRes = pRemainRes;
+        int[] targetValueForResource = pTargetRes;
+        int[] keepInStorage = pRemainRes;
         ArrayList<MerchantSource> sources = new ArrayList<MerchantSource>();
         ArrayList<MerchantDestination> destinations = new ArrayList<MerchantDestination>();
         List<List<MerchantSource>> results = new LinkedList<List<MerchantSource>>();
-        for (int i = 0; i < calcTargetRes.length; i++) {
+        for (int i = 0; i < targetValueForResource.length; i++) {
             sources.clear();
             destinations.clear();
             if (listener != null) {
                 listener.fireCalculatingResourceEvent(resOrder[i]);
             }
             for (VillageMerchantInfo info : pInfos) {
-                int res = 0;
+                int resourcesInStorage = 0;
                 boolean skip = false;
                 switch (resOrder[i]) {
                     case 0:
-                        res = info.getWoodStock();
+                        resourcesInStorage = info.getWoodStock();
                         break;
                     case 1:
-                        res = info.getClayStock();
+                        resourcesInStorage = info.getClayStock();
                         break;
                     case 2:
-                        res = info.getIronStock();
+                        resourcesInStorage = info.getIronStock();
                         break;
                     default:
                         skip = true;
@@ -108,44 +108,38 @@ public class MerchantDistributor extends Thread {
                 if (skip) {
                     continue;
                 }
-                int targetValue = calcTargetRes[i];
-                int maxAvailable = (int) (Math.round((double) (res - minRemainRes[i]) / 1000.0 + .5));
-                if (maxAvailable * 1000 > res) {
-                    //reduce availability if there would be a negative amount of resources
-                    maxAvailable--;
-                }
-                int maxDelivery = info.getAvailableMerchants();
+                int targetValue = targetValueForResource[i];
+                int usableResources = (int) (Math.round((double) (resourcesInStorage - keepInStorage[i]) / 1000.0 + .5));
+                //limit to resources in storage
+                usableResources = Math.min(usableResources, resourcesInStorage / 1000);
+                int availableTransports = info.getAvailableMerchants();
                 //try to add receiver
-                if (maxAvailable < 0 || res < targetValue) {
-                    if (calcTargetRes[i] > info.getStashCapacity()) {
-                        targetValue = info.getStashCapacity();
+                if (usableResources < 0 || resourcesInStorage < targetValue) {//village can not deliver, so it is receiver
+                    targetValue = Math.min(targetValueForResource[i], info.getStashCapacity());
+
+                    int neededResources = (int) (Math.round((double) (targetValue - resourcesInStorage) / 1000.0 + .5));
+                    neededResources = Math.max(neededResources, 0);
+                    if (resourcesInStorage + neededResources > info.getStashCapacity()) {//remove resources overlap
+                        neededResources -= (resourcesInStorage + neededResources - info.getStashCapacity());
                     }
 
-                    int need = (int) (Math.round((double) (targetValue - res) / 1000.0 + .5));
-                    if (need < 0) {
-                        need = 0;
-                    }
-                    if (res + need > info.getStashCapacity()) {
-                        need -= (res + need - info.getStashCapacity());
-                    }
-
-                    if (need > 0 && !pOutgoingOnly.contains(info.getVillage())) {
-                        //add to destination list
-                        MerchantDestination d = new MerchantDestination(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), need);
+                    if (neededResources > 0 && !pOutgoingOnly.contains(info.getVillage())) {
+                        //add to receiver (destination) list if village is not sender-only and if it needs resources
+                        MerchantDestination d = new MerchantDestination(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), neededResources);
                         destinations.add(d);
                     }
                 }
 
                 //try to add sender
-                if (maxAvailable > maxDelivery) {
-                    if (!pIncomingOnly.contains(info.getVillage()) && maxAvailable > 0) {
-                        MerchantSource s = new MerchantSource(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), maxDelivery);
+                if (usableResources > availableTransports) {
+                    if (!pIncomingOnly.contains(info.getVillage()) && usableResources > 0) {
+                        MerchantSource s = new MerchantSource(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), availableTransports);
                         sources.add(s);
                     }
                 } else {
                     //use max available
-                    if (!pIncomingOnly.contains(info.getVillage()) && maxAvailable > 0) {
-                        MerchantSource s = new MerchantSource(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), maxAvailable);
+                    if (!pIncomingOnly.contains(info.getVillage()) && usableResources > 0) {
+                        MerchantSource s = new MerchantSource(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), usableResources);
                         sources.add(s);
                     }
 

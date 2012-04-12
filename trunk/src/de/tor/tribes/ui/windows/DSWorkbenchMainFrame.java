@@ -654,7 +654,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             DSWorkbenchSelectionFrame.getSingleton().restoreProperties();
             DSWorkbenchNotepad.getSingleton().resetView();
             DSWorkbenchNotepad.getSingleton().restoreProperties();
-            
+
             if (!GlobalOptions.isOfflineMode() && DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
                 DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
             }

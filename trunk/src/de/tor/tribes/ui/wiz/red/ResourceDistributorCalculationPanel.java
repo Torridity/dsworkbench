@@ -1275,7 +1275,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
 
             @Override
             public void fireCalculatingResourceEvent(int pResourceId) {
-                String resourceName = "";
+                String resourceName;
                 switch (pResourceId) {
                     case 0:
                         resourceName = "Holz";

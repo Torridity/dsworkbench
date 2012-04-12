@@ -14,6 +14,7 @@ import com.jidesoft.swing.JideBoxLayout;
 import com.jidesoft.swing.JideSplitPane;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.TroopSplit;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
@@ -23,6 +24,7 @@ import de.tor.tribes.ui.panels.TAPAttackInfoPanel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.FakeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
+import de.tor.tribes.ui.windows.TroopSplitDialog;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
@@ -42,10 +44,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -59,7 +58,7 @@ import org.netbeans.spi.wizard.*;
  * @author Torridity
  */
 public class AttackSourcePanel extends WizardPage {
-
+    
     private static final String GENERAL_INFO = "<html>Du befindest dich in der Dorfauswahl. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, "
             + "mit denen du angreifen m&ouml;chtest. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:"
             + "<ul> <li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>"
@@ -68,7 +67,7 @@ public class AttackSourcePanel extends WizardPage {
     private static AttackSourcePanel singleton = null;
     private VillageSelectionPanel villageSelectionPanel = null;
     private VillageOverviewMapPanel overviewPanel = null;
-
+    
     public static synchronized AttackSourcePanel getSingleton() {
         if (singleton == null) {
             singleton = new AttackSourcePanel();
@@ -87,16 +86,16 @@ public class AttackSourcePanel extends WizardPage {
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jXCollapsiblePane1.add(jInfoScrollPane, BorderLayout.CENTER);
         villageSelectionPanel = new VillageSelectionPanel(new VillageSelectionPanel.VillageSelectionPanelListener() {
-
+            
             @Override
             public void fireVillageSelectionEvent(Village[] pSelection) {
                 addVillages(pSelection);
             }
         });
-
+        
         jVillageTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jVillageTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
-
+        
         villageSelectionPanel.enableSelectionElement(VillageSelectionPanel.SELECTION_ELEMENT.ALLY, false);
         villageSelectionPanel.enableSelectionElement(VillageSelectionPanel.SELECTION_ELEMENT.TRIBE, false);
         villageSelectionPanel.setUnitSelectionEnabled(true);
@@ -112,7 +111,7 @@ public class AttackSourcePanel extends WizardPage {
         jideSplitPane1.add(jDataPanel, JideBoxLayout.FLEXIBLE);
         jideSplitPane1.add(jVillageTablePanel, JideBoxLayout.VARY);
         jideSplitPane1.getDividerAt(0).addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -120,11 +119,11 @@ public class AttackSourcePanel extends WizardPage {
                 }
             }
         });
-
+        
         KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         ActionListener panelListener = new ActionListener() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand().equals("Paste")) {
@@ -137,9 +136,9 @@ public class AttackSourcePanel extends WizardPage {
         jVillageTable.registerKeyboardAction(panelListener, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jVillageTable.registerKeyboardAction(panelListener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         capabilityInfoPanel1.addActionListener(panelListener);
-
+        
         jVillageTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-
+            
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 int selectedRows = jVillageTable.getSelectedRowCount();
@@ -148,28 +147,28 @@ public class AttackSourcePanel extends WizardPage {
                 }
             }
         });
-
-
+        
+        
         jInfoTextPane.setText(GENERAL_INFO);
         overviewPanel = new VillageOverviewMapPanel();
         jPanel2.add(overviewPanel, BorderLayout.CENTER);
     }
-
+    
     public static String getDescription() {
         return "Herkunft";
     }
-
+    
     public static String getStep() {
         return "id-attack-source";
     }
-
+    
     public void storeProperties() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
         profile.addProperty("tap.source.expert", villageSelectionPanel.isExpertSelection());
         profile.addProperty("tap.source.unit", villageSelectionPanel.getSelectedUnit().getPlainName());
         profile.addProperty("tap.source.fake", villageSelectionPanel.isFake());
     }
-
+    
     public void restoreProperties() {
         getModel().clear();
         UserProfile profile = GlobalOptions.getSelectedProfile();
@@ -207,6 +206,7 @@ public class AttackSourcePanel extends WizardPage {
         jSetFake = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jSetFake1 = new javax.swing.JButton();
+        jSetFake2 = new javax.swing.JButton();
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jLabel1 = new javax.swing.JLabel();
         jideSplitPane1 = new com.jidesoft.swing.JideSplitPane();
@@ -349,6 +349,21 @@ public class AttackSourcePanel extends WizardPage {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         jPanel3.add(jSetFake1, gridBagConstraints);
 
+        jSetFake2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/def_fake.png"))); // NOI18N
+        jSetFake2.setToolTipText("Gewählte Dörfer duplizieren, indem sie nach Truppen gesplittet werden");
+        jSetFake2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireSplitSelectionEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        jPanel3.add(jSetFake2, gridBagConstraints);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
@@ -399,7 +414,7 @@ public class AttackSourcePanel extends WizardPage {
             jLabel1.setText("Informationen einblenden");
         }
     }//GEN-LAST:event_fireHideInfoEvent
-
+    
     private void fireViewStateChangeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireViewStateChangeEvent
         if (jToggleButton1.isSelected()) {
             overviewPanel.setOptimalSize();
@@ -409,16 +424,15 @@ public class AttackSourcePanel extends WizardPage {
             jTableScrollPane.setViewportView(jVillageTable);
             jPanel2.add(overviewPanel, BorderLayout.CENTER);
             SwingUtilities.invokeLater(new Runnable() {
-
+                
                 public void run() {
                     jPanel2.updateUI();
                 }
             });
         }
     }//GEN-LAST:event_fireViewStateChangeEvent
-
+    
     private void fireChangeFakeForSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeFakeForSelectionEvent
-
         boolean fake = evt.getSource() == jSetFake;
         int[] selection = jVillageTable.getSelectedRows();
         TAPSourceTableModel model = getModel();
@@ -430,7 +444,7 @@ public class AttackSourcePanel extends WizardPage {
         updateOverview(false);
         repaint();
     }//GEN-LAST:event_fireChangeFakeForSelectionEvent
-
+    
     private void fireChangeToSnobEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeToSnobEvent
         UnitHolder snob = DataHolder.getSingleton().getUnitByPlainName("snob");
         int changeCount = 0;
@@ -447,11 +461,46 @@ public class AttackSourcePanel extends WizardPage {
         repaint();
         jStatusLabel.setText("Einheit in " + changeCount + " Dorf/Dörfern auf AG geändert");
     }//GEN-LAST:event_fireChangeToSnobEvent
-
+    
+    private void fireSplitSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSplitSelectionEvent
+        int[] selection = jVillageTable.getSelectedRows();
+        TAPSourceTableModel model = getModel();
+        List<Village> villages = new LinkedList<Village>();
+        
+        Hashtable<Village, Integer> alreadyInList = new Hashtable<Village, Integer>();
+        
+        if (selection.length > 0) {
+            for (int i : selection) {
+                TAPAttackSourceElement element = model.getRow(jVillageTable.convertRowIndexToModel(i));
+                if (alreadyInList.get(element.getVillage()) == null) {
+                    alreadyInList.put(element.getVillage(), 1);
+                    villages.add(element.getVillage());
+                } else {
+                    alreadyInList.put(element.getVillage(), alreadyInList.get(element.getVillage()) + 1);
+                }
+            }
+        }
+        TroopSplitDialog dialog = new TroopSplitDialog(null, true);
+        dialog.setupAndShow(villages);
+        TroopSplit[] splits = dialog.getSplits();
+        List<Village> toAdd = new LinkedList<Village>();
+        
+        for (TroopSplit split : splits) {
+            for (int i = alreadyInList.get(split.getVillage()); i < split.getSplitCount(); i++) {
+                toAdd.add(split.getVillage());
+            }
+        }
+        
+        
+        addVillages(toAdd.toArray(new Village[toAdd.size()]));
+        
+        
+    }//GEN-LAST:event_fireSplitSelectionEvent
+    
     private TAPSourceTableModel getModel() {
         return (TAPSourceTableModel) jVillageTable.getModel();
     }
-
+    
     public void addVillages(Village[] pVillages) {
         TAPSourceTableModel model = getModel();
         for (Village v : pVillages) {
@@ -463,7 +512,7 @@ public class AttackSourcePanel extends WizardPage {
         jStatusLabel.setText(pVillages.length + " Dorf/Dörfer eingefügt");
         updateOverview(false);
     }
-
+    
     private void pasteFromClipboard() {
         String data = "";
         try {
@@ -477,7 +526,7 @@ public class AttackSourcePanel extends WizardPage {
         } catch (IOException ioe) {
         }
     }
-
+    
     private void deleteSelection() {
         int[] selection = jVillageTable.getSelectedRows();
         if (selection.length > 0) {
@@ -496,7 +545,7 @@ public class AttackSourcePanel extends WizardPage {
             }
         }
     }
-
+    
     private void updateOverview(boolean pReset) {
         if (pReset) {
             overviewPanel.reset();
@@ -504,7 +553,7 @@ public class AttackSourcePanel extends WizardPage {
         int offs = 0;
         int fakes = 0;
         int ignored = 0;
-
+        
         for (TAPAttackSourceElement element : getAllElements()) {
             overviewPanel.addVillage(new Point(element.getVillage().getX(), element.getVillage().getY()), (!element.isIgnored()) ? Color.yellow : Color.lightGray);
             offs++;
@@ -516,11 +565,11 @@ public class AttackSourcePanel extends WizardPage {
                 }
             }
         }
-
+        
         TAPAttackInfoPanel.getSingleton().updateSource(offs, fakes, ignored);
         overviewPanel.repaint();
     }
-
+    
     public Village[] getVillages() {
         List<Village> result = new LinkedList<Village>();
         TAPSourceTableModel model = getModel();
@@ -529,7 +578,7 @@ public class AttackSourcePanel extends WizardPage {
         }
         return result.toArray(new Village[result.size()]);
     }
-
+    
     public TAPAttackSourceElement[] getAllElements() {
         List<TAPAttackSourceElement> result = new LinkedList<TAPAttackSourceElement>();
         TAPSourceTableModel model = getModel();
@@ -550,6 +599,7 @@ public class AttackSourcePanel extends WizardPage {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JButton jSetFake;
     private javax.swing.JButton jSetFake1;
+    private javax.swing.JButton jSetFake2;
     private javax.swing.JLabel jStatusLabel;
     private javax.swing.JScrollPane jTableScrollPane;
     private javax.swing.JToggleButton jToggleButton1;
@@ -568,14 +618,14 @@ public class AttackSourcePanel extends WizardPage {
         AttackSourceFilterPanel.getSingleton().setup();
         return WizardPanelNavResult.PROCEED;
     }
-
+    
     @Override
     public WizardPanelNavResult allowBack(String string, Map map, Wizard wizard) {
         TAPAttackInfoPanel.getSingleton().setVisible(false);
         return WizardPanelNavResult.PROCEED;
-
+        
     }
-
+    
     @Override
     public WizardPanelNavResult allowFinish(String string, Map map, Wizard wizard) {
         return WizardPanelNavResult.PROCEED;

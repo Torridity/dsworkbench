@@ -166,13 +166,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
     protected boolean hideSplash() {
         try {
-            if (new File(".running").exists()) {
-                JOptionPaneHelper.showWarningBox(this, "Es scheint bereits eine Instanz von DS Workbench zu laufen.\n"
-                        + "Wird DS Workbench zweimal gestartet, kann es zu Problemen bei der Datenspeicherung kommen.\n"
-                        + "Sollte DS Workbench nicht laufen, lösche bitte manuell die Datei '.running' in deinem DS Workbench Verzeichnis.", "Warnung");
-                return false;
-            }
-
             if (!new File(".").canWrite()) {
                 JOptionPaneHelper.showErrorBox(self, "Fehler bei der Initialisierung.\nDas DS Workbench Verzeichnis ist für deinen Systembenutzer nicht beschreibbar.\nBitte installiere DS Workbench z.B. in dein Benutzerverzeichnis.", "Fehler");
                 return false;
@@ -433,6 +426,24 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         }
     }
 
+    public static class ExceptionHandler
+            implements Thread.UncaughtExceptionHandler {
+
+        public void handle(Throwable thrown) {
+            // for EDT exceptions
+            handleException(Thread.currentThread().getName(), thrown);
+        }
+
+        public void uncaughtException(Thread thread, Throwable thrown) {
+            // for other uncaught exceptions
+            handleException(thread.getName(), thrown);
+        }
+
+        protected void handleException(String tname, Throwable thrown) {
+            logger.warn("Unhandled exception in thread '" + tname + "'", thrown);
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -455,13 +466,12 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 }
             }
         }
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-
-            @Override
-            public void uncaughtException(Thread t, Throwable e) {
-                logger.error("Uncaught exception in thread " + t, e);
-            }
-        });
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
+        System.setProperty("sun.awt.exception.handler", ExceptionHandler.class.getName());
+        /*
+         * new Thread.UncaughtExceptionHandler() { @Override public void uncaughtException(Thread t, Throwable e) { logger.error("Uncaught
+         * exception in thread " + t, e); } });
+         */
         Appender a = null;
 
         if (!Constants.DEBUG) {

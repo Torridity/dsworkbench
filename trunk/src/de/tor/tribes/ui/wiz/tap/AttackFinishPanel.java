@@ -636,9 +636,12 @@ public class AttackFinishPanel extends WizardPage {
             }
 
             for (Attack a : result.getFinalizedAttacks()) {
+
                 if (!usedSources.contains(a.getSource())) {
                     usedSources.add(a.getSource());
                     overviewPanel.addVillage(new Point(a.getSource().getX(), a.getSource().getY()), Color.YELLOW);
+                } else {
+                    usedSources.add(a.getSource());
                 }
             }
             overviewPanel.addVillage(new Point(result.getTarget().getX(), result.getTarget().getY()),

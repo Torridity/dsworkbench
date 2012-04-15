@@ -197,13 +197,6 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         }       // </editor-fold>
     }
 
-    /*
-     * private void updateSelection() { updateVillagePanel(); }
-     */
-    public void dataChangedExternally() {
-        ((FarmTableModel) jFarmTable.getModel()).fireTableDataChanged();
-    }
-
     public IntRange getFarmRange(FARM_CONFIGURATION pConfig) {
         if (pConfig == null) {
             pConfig = FARM_CONFIGURATION.C;
@@ -785,9 +778,10 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                     + " - " + farmInactive + " Farmen deaktiviert\n"
                     + " - " + alreadyFarming + " Mal Truppen bereits unterwegs oder Bericht erwartet");
         }
-        if (opened != 0) {
-            ((FarmTableModel) jFarmTable.getModel()).fireTableDataChanged();
-        }
+      /*  if (opened != 0) {
+          //  ((FarmTableModel) jFarmTable.getModel()).fireTableDataChanged();
+            repaint();
+        }*/
     }
 
     private void resetStatus() {

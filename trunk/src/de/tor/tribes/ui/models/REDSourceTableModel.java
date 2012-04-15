@@ -18,7 +18,7 @@ import org.apache.commons.collections.Predicate;
  * @author Torridity
  */
 public class REDSourceTableModel extends AbstractTableModel {
-
+    
     private String[] columnNames = new String[]{
         "Dorf", "Rohstoffe", "Speicher", "Verfügbare Händler", "Bauernhof"
     };
@@ -26,18 +26,20 @@ public class REDSourceTableModel extends AbstractTableModel {
         Village.class, StorageStatus.class, Integer.class, String.class, String.class
     };
     private final List<VillageMerchantInfo> elements = new LinkedList<VillageMerchantInfo>();
-
-    public void addRow(final Village pVillage, int pStash, int pWood, int pClay, int pIron, int pAvailableMerchants, int pMerchants, int pAvailableFarm, int pOverallFarm) {
+    
+    public void addRow(final Village pVillage, int pStash, int pWood, int pClay, int pIron, int pAvailableMerchants, int pMerchants, int pAvailableFarm, int pOverallFarm, VillageMerchantInfo.Direction pDirection) {
         Object result = CollectionUtils.find(elements, new Predicate() {
-
+            
             @Override
             public boolean evaluate(Object o) {
                 return ((VillageMerchantInfo) o).getVillage().equals(pVillage);
             }
         });
-
+        
         if (result == null) {
-            elements.add(new VillageMerchantInfo(pVillage, pStash, pWood, pClay, pIron, pAvailableMerchants, pMerchants, pAvailableFarm, pOverallFarm));
+            VillageMerchantInfo vmi = new VillageMerchantInfo(pVillage, pStash, pWood, pClay, pIron, pAvailableMerchants, pMerchants, pAvailableFarm, pOverallFarm);
+            vmi.setDirection(pDirection);
+            elements.add(vmi);
         } else {
             VillageMerchantInfo resultElem = (VillageMerchantInfo) result;
             resultElem.setWoodStock(pWood);
@@ -48,10 +50,11 @@ public class REDSourceTableModel extends AbstractTableModel {
             resultElem.setOverallMerchants(pMerchants);
             resultElem.setAvailableFarm(pAvailableFarm);
             resultElem.setOverallFarm(pOverallFarm);
+            resultElem.setDirection(pDirection);
         }
         fireTableDataChanged();
     }
-
+    
     @Override
     public int getRowCount() {
         if (elements == null) {
@@ -59,31 +62,31 @@ public class REDSourceTableModel extends AbstractTableModel {
         }
         return elements.size();
     }
-
+    
     @Override
     public Class getColumnClass(int columnIndex) {
         return types[columnIndex];
     }
-
+    
     @Override
     public boolean isCellEditable(int row, int column) {
         return false;
     }
-
+    
     @Override
     public String getColumnName(int column) {
         return columnNames[column];
     }
-
+    
     public void removeRow(int row) {
         elements.remove(row);
         fireTableDataChanged();
     }
-
+    
     public VillageMerchantInfo getRow(int row) {
         return elements.get(row);
     }
-
+    
     @Override
     public Object getValueAt(int row, int column) {
         if (elements == null || elements.size() - 1 < row) {
@@ -104,7 +107,7 @@ public class REDSourceTableModel extends AbstractTableModel {
                 return element.getAvailableFarm() + "/" + element.getOverallFarm();
         }
     }
-
+    
     @Override
     public int getColumnCount() {
         return columnNames.length;

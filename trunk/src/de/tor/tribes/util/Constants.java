@@ -14,7 +14,7 @@ import java.util.Hashtable;
  */
 public class Constants {
 
-    public final static double VERSION = 3.2;
+    public final static double VERSION = 3.22;
     public final static String VERSION_ADDITION = "";
     public final static Color DS_BACK = new Color(225, 213, 190);
     public final static Color DS_BACK_LIGHT = new Color(239, 235, 223);

@@ -36,7 +36,7 @@ public class REDExtendedMerchantTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    public void addRow(final Village pVillage, int pStash, int pWood, int pClay, int pIron, int pAvailableMerchants, int pMerchants, int pAvailableFarm, int pOverallFarm, boolean pCheck) {
+    public void addRow(final Village pVillage, int pStash, int pWood, int pClay, int pIron, int pAvailableMerchants, int pMerchants, int pAvailableFarm, int pOverallFarm, VillageMerchantInfo.Direction pDirection, boolean pCheck) {
         Object result = CollectionUtils.find(elements, new Predicate() {
 
             @Override
@@ -46,7 +46,9 @@ public class REDExtendedMerchantTableModel extends AbstractTableModel {
         });
 
         if (result == null) {
-            elements.add(new VillageMerchantInfo(pVillage, pStash, pWood, pClay, pIron, pAvailableMerchants, pMerchants, pAvailableFarm, pOverallFarm));
+            VillageMerchantInfo vmi = new VillageMerchantInfo(pVillage, pStash, pWood, pClay, pIron, pAvailableMerchants, pMerchants, pAvailableFarm, pOverallFarm);
+            vmi.setDirection(pDirection);
+            elements.add(vmi);
         } else {
             VillageMerchantInfo resultElem = (VillageMerchantInfo) result;
             resultElem.setWoodStock(pWood);
@@ -57,14 +59,15 @@ public class REDExtendedMerchantTableModel extends AbstractTableModel {
             resultElem.setOverallMerchants(pMerchants);
             resultElem.setAvailableFarm(pAvailableFarm);
             resultElem.setOverallFarm(pOverallFarm);
+            resultElem.setDirection(pDirection);
         }
         if (pCheck) {
             fireTableDataChanged();
         }
     }
 
-    public void addRow(final Village pVillage, int pStash, int pWood, int pClay, int pIron, int pAvailableMerchants, int pMerchants, int pAvailableFarm, int pOverallFarm) {
-        addRow(pVillage, pStash, pWood, pClay, pIron, pAvailableMerchants, pMerchants, pAvailableFarm, pOverallFarm, true);
+    public void addRow(final Village pVillage, int pStash, int pWood, int pClay, int pIron, int pAvailableMerchants, int pMerchants, int pAvailableFarm, int pOverallFarm, VillageMerchantInfo.Direction pDirection) {
+        addRow(pVillage, pStash, pWood, pClay, pIron, pAvailableMerchants, pMerchants, pAvailableFarm, pOverallFarm, pDirection, true);
     }
 
     public void removeRow(VillageMerchantInfo pRemove) {

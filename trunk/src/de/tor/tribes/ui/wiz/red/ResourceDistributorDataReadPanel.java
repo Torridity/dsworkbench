@@ -339,7 +339,8 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
                         newInfo.getAvailableMerchants(),
                         newInfo.getOverallMerchants(),
                         newInfo.getAvailableFarm(),
-                        newInfo.getOverallFarm());
+                        newInfo.getOverallFarm(),
+                        newInfo.getDirection());
             }
 
             jStatusLabel.setText(infos.size() + " Einträge eingefügt/aktualisiert");

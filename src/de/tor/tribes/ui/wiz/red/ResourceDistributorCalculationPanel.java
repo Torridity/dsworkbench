@@ -1156,22 +1156,22 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
     private int getFillAmountByResourceId(int pResourceId) {
         switch (pResourceId) {
             case 0:
-                return Math.max(UIHelper.parseIntFromField(jTargetWood, 400000), 400000);
+                return Math.min(UIHelper.parseIntFromField(jTargetWood, 400000), 400000);
             case 1:
-                return Math.max(UIHelper.parseIntFromField(jTargetClay, 400000), 400000);
+                return Math.min(UIHelper.parseIntFromField(jTargetClay, 400000), 400000);
             default:
-                return Math.max(UIHelper.parseIntFromField(jTargetIron, 400000), 400000);
+                return Math.min(UIHelper.parseIntFromField(jTargetIron, 400000), 400000);
         }
     }
 
     private int getRemainAmountByResourceId(int pResourceId) {
         switch (pResourceId) {
             case 0:
-                return Math.max(UIHelper.parseIntFromField(jRemainWood, 400000), 400000);
+                return Math.min(UIHelper.parseIntFromField(jRemainWood, 400000), 400000);
             case 1:
-                return Math.max(UIHelper.parseIntFromField(jRemainClay, 400000), 400000);
+                return Math.min(UIHelper.parseIntFromField(jRemainClay, 400000), 400000);
             default:
-                return Math.max(UIHelper.parseIntFromField(jRemainIron, 400000), 400000);
+                return Math.min(UIHelper.parseIntFromField(jRemainIron, 400000), 400000);
         }
     }
 

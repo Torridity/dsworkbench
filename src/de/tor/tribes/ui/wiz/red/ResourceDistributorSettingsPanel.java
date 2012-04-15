@@ -668,7 +668,9 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
                     newInfo.getAvailableMerchants(),
                     newInfo.getOverallMerchants(),
                     newInfo.getAvailableFarm(),
-                    newInfo.getOverallFarm(), false);
+                    newInfo.getOverallFarm(),
+                    newInfo.getDirection(),
+                    false);
         }
         model.fireTableDataChanged();
         setProblem(null);

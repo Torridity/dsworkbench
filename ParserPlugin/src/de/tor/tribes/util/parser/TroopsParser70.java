@@ -320,7 +320,7 @@ public class TroopsParser70 implements SilentParserInterface {
         String line = pLine.replaceAll(ParserVariableManager.getSingleton().getProperty("troops.own"), "").
                 replaceAll(ParserVariableManager.getSingleton().getProperty("troops.commands"), "").
                 replaceAll(ParserVariableManager.getSingleton().getProperty("troops"), "").
-                replaceAll(Matcher.quoteReplacement("+"), "").trim();
+                replaceAll(Pattern.quote("+"), "").trim();
         debug("Getting units from line '" + line + "'");
         StringTokenizer t = new StringTokenizer(line, " \t");
         int uCount = DataHolder.getSingleton().getUnits().size();

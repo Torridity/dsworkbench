@@ -75,7 +75,7 @@ public class SupportParser implements SilentParserInterface {
 
                     if (supportTarget != null) {
                         //found new support
-                        Hashtable<UnitHolder, Integer> supportTroops = parseUnits(line.replaceAll(Matcher.quoteReplacement(supportTarget.toString()), "").trim());
+                        Hashtable<UnitHolder, Integer> supportTroops = parseUnits(line.replaceAll(Pattern.quote(supportTarget.toString()), "").trim());
 
                         if (supportTroops != null) {
                             holder.addOutgoingSupport(supportTarget, supportTroops);

@@ -34,7 +34,7 @@ public class ResourceDistributorWelcomePanel extends WizardPage {
             + "Du hast die Belieferung bestimmter D&ouml;rfer gew&auml;hlt. Dabei k&ouml;nnen die vorhandenen D&ouml;rfern in Lieferanten "
             + " und Empf&auml;nger unterteilt werden, um Rohstoffe gezielt zu verteilen. So k&ouml;nnen etwa Dorfgruppen mit voll ausgebauten "
             + "D&ouml;rfern als Liefernanten dienen, w&auml;hrend D&ouml;rfer im Aufbau nur Rohstoffe empfangen. "
-            + "Diese Berechnung eignet sich vorrangig f&uuml;r gro&szlig;e Accounts, wie viele Lieferanten vergleichsweise wenige Empf&auml;nger "
+            + "Diese Berechnung eignet sich vorrangig f&uuml;r gro&szlig;e Accounts, wo viele Lieferanten vergleichsweise wenige Empf&auml;nger "
             + "beliefern k&ouml;nnen. Bei kleinen Accounts, in denen nur wenige Liefernanten vorhanden sind, ist der Rohstoffbedarf oft gr&ouml;&szlig;er "
             + "als die vorhandenen Rohstoffe. Daher sollte hier eher die Gleichverteilung bevorzugt werden.</html>";
     private final String LOAD_HELP = "<html><b>Willkommen beim DS Workbench Rohstoffverteiler.</b><br/><br/>"

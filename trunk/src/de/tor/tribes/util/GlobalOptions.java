@@ -54,6 +54,7 @@ public class GlobalOptions {
 
     private static Logger logger = Logger.getLogger("GlobalSettings");
     private static boolean INITIALIZED = false;
+    private static boolean STARTED = false;
     /**
      * Active skin used by the MapPanel
      */
@@ -102,6 +103,14 @@ public class GlobalOptions {
         // UIManager.put("Button.background", Constants.DS_BACK_LIGHT);
     }
 
+    public static void setStarted(){
+        STARTED = true;
+    }
+    
+    public static boolean isStarted(){
+        return STARTED;
+    }
+    
     public static void setMinimalVersion(boolean pValue) {
         MINIMAL = pValue;
     }

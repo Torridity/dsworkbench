@@ -66,6 +66,7 @@ import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.dist.DistanceManager;
 import de.tor.tribes.util.dsreal.DSRealManager;
+import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.map.FormManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.note.NoteManager;
@@ -193,9 +194,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                 return "JPEG Image (*.jpeg)";
             }
         });
-        // <editor-fold defaultstate="collapsed" desc=" Register ShutdownHook ">
-
-        Runtime.getRuntime().addShutdownHook(new MainShutdownHook());
+        // <editor-fold defaultstate="collapsed" desc=" Schedule Backup">
         new Timer("BackupTimer", true).schedule(new BackupTask(), 60 * 10000, 60 * 10000);
         // </editor-fold>
 
@@ -626,8 +625,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             DSWorkbenchStatsFrame.getSingleton().restoreProperties();
             DSWorkbenchDoItYourselfAttackPlaner.getSingleton().resetView();
             DSWorkbenchDoItYourselfAttackPlaner.getSingleton().restoreProperties();
-            // DSWorkbenchReTimerFrame.getSingleton().resetView();
-            // DSWorkbenchReTimerFrame.getSingleton().restoreProperties();
             DSWorkbenchReportFrame.getSingleton().resetView();
             DSWorkbenchReportFrame.getSingleton().restoreProperties();
             DSWorkbenchSOSRequestAnalyzer.getSingleton().resetView();
@@ -672,7 +669,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                 showReminder();
             }
         } catch (Exception e) {
-            logger.error("Error while refreshing server settings", e);
+            throw new RuntimeException("Initialization failed", e);
         }
     }
 
@@ -708,6 +705,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
          */
         logger.info(" * Updating server settings");
         //setup everything
+
         serverSettingsChangedEvent();
 
         logger.info(" * Setting up maps");
@@ -3222,6 +3220,8 @@ class BackupTask extends TimerTask {
             exportString += NoteManager.getSingleton().getExportData(Arrays.asList(NoteManager.getSingleton().getGroups()));
             logger.debug(" - Backing up churches");
             exportString += ChurchManager.getSingleton().getExportData(null);
+            logger.debug(" - Backing up farms");
+            exportString += FarmManager.getSingleton().getExportData(null);
             exportString += "</export>";
             logger.debug("Writing backup data to disk");
             FileWriter w = new FileWriter(GlobalOptions.getSelectedProfile().getProfileDirectory() + "/backup.xml");

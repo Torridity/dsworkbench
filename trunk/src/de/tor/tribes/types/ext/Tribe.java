@@ -170,7 +170,6 @@ public class Tribe implements Comparable<Tribe>, Serializable {
         }
 
         return villageList.remove(pVillage);
-
     }
 
     public boolean ownsVillage(Village pVillage) {
@@ -310,7 +309,7 @@ public class Tribe implements Comparable<Tribe>, Serializable {
         }
         return DEFAULT;
     }
- 
+
     @Override
     public int compareTo(Tribe o) {
         return getName().compareTo(o.getName());

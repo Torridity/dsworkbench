@@ -78,24 +78,28 @@ public class CoordinateSpinner extends JSpinner {
             ftf.setColumns(4 + 2 * min.length());
             ftf.addPropertyChangeListener("value", new PropertyChangeListener() {
 
+                @Override
                 public void propertyChange(PropertyChangeEvent evt) {
-                    String text = ftf.getText();
-                    int comma = text.indexOf('|');
-                    int open = text.indexOf('(');
-                    int close = text.indexOf(')');
-                    if (comma < 0 || open < 0 || close < 0) {
-                        ftf.select(0, text.length());
-                    } else {
-                        String digit;
-                        int number;
-                        if (model.getField() == CoordinateSpinnerModel.FIELD_X) {
-                            digit = text.substring(open + 1, comma).trim();
-                            number = text.indexOf(digit);
+                    try {
+                        String text = ftf.getText();
+                        int comma = text.indexOf('|');
+                        int open = text.indexOf('(');
+                        int close = text.indexOf(')');
+                        if (comma < 0 || open < 0 || close < 0) {
+                            ftf.select(0, text.length());
                         } else {
-                            digit = text.substring(comma + 1, close).trim();
-                            number = text.lastIndexOf(digit);
+                            String digit;
+                            int number;
+                            if (model.getField() == CoordinateSpinnerModel.FIELD_X) {
+                                digit = text.substring(open + 1, comma).trim();
+                                number = text.indexOf(digit);
+                            } else {
+                                digit = text.substring(comma + 1, close).trim();
+                                number = text.lastIndexOf(digit);
+                            }
+                            ftf.select(number, number + digit.length());
                         }
-                        ftf.select(number, number + digit.length());
+                    } catch (StringIndexOutOfBoundsException aioobe) {
                     }
                 }
             });

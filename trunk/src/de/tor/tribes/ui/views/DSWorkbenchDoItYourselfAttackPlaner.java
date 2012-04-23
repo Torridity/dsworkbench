@@ -188,7 +188,6 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         }
 
         setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
-
         PropertyHelper.restoreTableProperties(jAttackTable, pConfig, getPropertyPrefix());
     }
 
@@ -978,8 +977,6 @@ class DoItYourselfCountdownThread extends Thread {
         setName("DoItYourselfCountdownUpdater");
         setPriority(MIN_PRIORITY);
         setDaemon(true);
-        setPriority(MIN_PRIORITY);
-        setName("ManualAttackPlanerCountdownUpdateThread");
     }
 
     @Override

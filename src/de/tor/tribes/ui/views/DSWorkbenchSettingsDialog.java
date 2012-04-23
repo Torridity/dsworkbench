@@ -4033,7 +4033,8 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
                     jProfileBox.setModel(model);
                     GlobalOptions.setSelectedProfile(DummyUserProfile.getSingleton());
                 }
-                if (DSWorkbenchMainFrame.getSingleton().isInitialized()) {
+                //if (DSWorkbenchMainFrame.getSingleton().isInitialized()) {
+                if(GlobalOptions.isStarted()){
                     DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
                 }
             } catch (Exception e) {

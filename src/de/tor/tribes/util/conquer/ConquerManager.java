@@ -439,8 +439,10 @@ class ConquerUpdateThread extends Thread {
                 try {
                     Thread.sleep(FIVE_MINUTES);
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
             } catch (Exception ignore) {
+                ignore.printStackTrace();
             }
         }
     }

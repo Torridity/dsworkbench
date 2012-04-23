@@ -13,7 +13,6 @@ import de.tor.tribes.types.FarmInformation;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.*;
 import de.tor.tribes.util.*;
-import de.tor.tribes.util.generator.ui.ReportGenerator;
 import de.tor.tribes.util.report.ReportManager;
 import java.awt.HeadlessException;
 import java.awt.Point;
@@ -22,11 +21,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Arrays;
+import java.io.*;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -283,7 +278,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
             invalidate();
             for (ManageableType t : el) {
                 FarmInformation info = (FarmInformation) t;
-                info.revalidate();               
+                info.revalidate();
                 addManagedElement(info);
                 infoMap.put(info.getVillage(), info);
             }
@@ -328,11 +323,79 @@ public class FarmManager extends GenericManager<FarmInformation> {
 
     @Override
     public String getExportData(List<String> pGroupsToExport) {
-        return null;
+        XStream x = new XStream();
+        x.alias("farmInfo", FarmInformation.class);
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        try {
+            x.toXML(getAllElements(), bout);
+            bout.flush();
+            bout.close();
+        } catch (IOException ioe) {
+            logger.error("Failed to write farm information", ioe);
+        } finally {
+            try {
+                if (bout != null) {
+                    bout.close();
+                }
+            } catch (IOException ignored) {
+            }
+        }
+        return bout.toString();
     }
 
     @Override
     public boolean importData(File pFile, String pExtension) {
-        return false;
+        StringBuilder b = new StringBuilder();
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(pFile));
+            String line = "";
+            boolean haveStart = false;
+            String end = "</java.util.Collections_-UnmodifiableRandomAccessList>";
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("<java.util.Collections")) {
+                    haveStart = true;
+                }
+
+                if (haveStart) {
+                    if (line.startsWith(end)) {
+                        b.append(line.substring(0, end.length()));
+                    } else {
+                        b.append(line);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            logger.error("Failed to farm data from file", e);
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+        XStream x = new XStream();
+        x.alias("farmInfo", FarmInformation.class);
+        lastUpdatedFarm = null;
+        initialize();
+        infoMap.clear();
+        try {
+            List<ManageableType> el = (List<ManageableType>) x.fromXML(b.toString());
+            invalidate();
+            for (ManageableType t : el) {
+                FarmInformation info = (FarmInformation) t;
+                info.revalidate();
+                addManagedElement(info);
+                infoMap.put(info.getVillage(), info);
+            }
+            logger.debug("Farm information successfully imported");
+        } catch (ConversionException ce) {
+            logger.error("Failed to deserialize farm information", ce);
+            return false;
+        } finally {
+            revalidate(true);
+        }
+        return true;
     }
 }

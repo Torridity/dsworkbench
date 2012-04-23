@@ -87,7 +87,7 @@ public class DataHolder {
     /**
      * Clear all data an re-initialize the structures
      */
-    public void initialize() {
+    private void initialize() {
         mVillages = null;
         mVillagesTable = null;
         mAllies = null;
@@ -224,7 +224,7 @@ public class DataHolder {
             String serverID = GlobalOptions.getSelectedServer();
             logger.info("Calling 'loadData()' for server " + serverID);
             try {
-                boolean recreateLocal = false;
+                boolean recreateLocal;
                 if (serverSupported()) {
                     if (pReload && !GlobalOptions.isOfflineMode()) {
                         fireDataHolderEvents("Download der aktuellen Weltdaten gestartet");

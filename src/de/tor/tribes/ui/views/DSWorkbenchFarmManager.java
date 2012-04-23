@@ -14,7 +14,6 @@ import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.ClickAccountPanel;
 import de.tor.tribes.ui.components.CoordinateSpinner;
-import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.models.FarmTableModel;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.panels.TroopSelectionPanel;
@@ -22,24 +21,28 @@ import de.tor.tribes.ui.renderer.*;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.windows.FarmInformationDetailsDialog;
 import de.tor.tribes.util.*;
+import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.generator.ui.ReportGenerator;
+import de.tor.tribes.util.map.FormManager;
+import de.tor.tribes.util.mark.MarkerManager;
+import de.tor.tribes.util.note.NoteManager;
 import de.tor.tribes.util.report.ReportManager;
+import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.FileWriter;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
-import javax.naming.event.EventDirContext;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-import javax.swing.text.NumberFormatter;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.math.IntRange;
 import org.apache.log4j.ConsoleAppender;
@@ -49,7 +52,6 @@ import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
-import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
  *
@@ -778,10 +780,9 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                     + " - " + farmInactive + " Farmen deaktiviert\n"
                     + " - " + alreadyFarming + " Mal Truppen bereits unterwegs oder Bericht erwartet");
         }
-      /*  if (opened != 0) {
-          //  ((FarmTableModel) jFarmTable.getModel()).fireTableDataChanged();
-            repaint();
-        }*/
+        /*
+         * if (opened != 0) { // ((FarmTableModel) jFarmTable.getModel()).fireTableDataChanged(); repaint(); }
+         */
     }
 
     private void resetStatus() {

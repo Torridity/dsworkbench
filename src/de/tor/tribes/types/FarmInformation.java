@@ -176,7 +176,7 @@ public class FarmInformation extends ManageableType {
         if (arriveTimeRelativeToNow <= 0) {//farm was reached...return time until return
             if (getStatus().equals(FARM_STATUS.FARMING)) {
                 setStatus(FARM_STATUS.REPORT_EXPECTED);
-             //   DSWorkbenchFarmManager.getSingleton().dataChangedExternally();
+                //   DSWorkbenchFarmManager.getSingleton().dataChangedExternally();
             }
             arriveTimeRelativeToNow = 0;
             farmTroopArrive = -1;
@@ -525,6 +525,12 @@ public class FarmInformation extends ManageableType {
             wallLevel = pReport.getWallLevel();
             spyLevel = SPY_LEVEL.BUILDINGS;
         }
+        
+        //set wall destruction (works also without spying)
+        if(pReport.getWallAfter() != -1){
+            wallLevel = pReport.getWallAfter();
+        }
+        
         switch (spyLevel) {
             case BUILDINGS:
                 logger.debug("Included building and resource spy information into farm information");
@@ -687,7 +693,6 @@ public class FarmInformation extends ManageableType {
                         Hashtable<UnitHolder, Integer> units;
                         if (pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.C)) {
                             //calculate needed units
-
                             units = TroopHelper.getTroopsForCarriage(pConfig, unitsAndVillages.get(selectedVillage), this);
                         } else {//use provided units for A/B-Scenario
                             units = new Hashtable<UnitHolder, Integer>();
@@ -695,8 +700,9 @@ public class FarmInformation extends ManageableType {
                             Enumeration<UnitHolder> unitKeys = configTroops.keys();
                             while (unitKeys.hasMoreElements()) {
                                 UnitHolder unitKey = unitKeys.nextElement();
-                                int amount = configTroops.get(unitKey) - DSWorkbenchFarmManager.getSingleton().getBackupUnits(unitKey);
-                                if (amount > 0) {
+                                VillageTroopsHolder holder = unitsAndVillages.get(selectedVillage);
+                                int amount = configTroops.get(unitKey);
+                                if (holder.getAmountForUnit(unitKey) - DSWorkbenchFarmManager.getSingleton().getBackupUnits(unitKey) >= amount) {
                                     units.put(unitKey, amount);
                                 }
                             }

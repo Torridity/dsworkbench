@@ -15,9 +15,7 @@ import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.ui.renderer.ProfileTreeNodeRenderer;
 import de.tor.tribes.ui.wiz.FirstStartWizard;
 import de.tor.tribes.util.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -68,12 +66,13 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         }
 
         setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
-        new Timer("StartupTimer", true).schedule(new HideSplashTask(), 1000);
+
         jProfileDialog.getContentPane().setBackground(Constants.DS_BACK_LIGHT);
         jProfileDialog.pack();
-        jProfileDialog.setLocationRelativeTo(this);
+        jProfileDialog.setLocationRelativeTo(DSWorkbenchSplashScreen.this);
         t = new SplashRepaintThread();
         t.start();
+        new Timer("StartupTimer", true).schedule(new HideSplashTask(), 1000);
     }
 
     /**
@@ -224,7 +223,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                     GlobalOptions.saveProperties();
                 }
             }
-
             jStatusOutput.setString("Prüfe auf Updates");
             DSWorkbenchUpdateDialog.UPDATE_RESULT updateResult;
             DSWorkbenchUpdateDialog updateDialog = new DSWorkbenchUpdateDialog(this, true);
@@ -373,10 +371,12 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             }
         }
 
+
         try {
             if (!DataHolder.getSingleton().loadData(checkForUpdates)) {
                 throw new Exception("loadData() returned 'false'. See log for more details.");
             }
+
         } catch (Exception e) {
             logger.error("Failed to load server data", e);
             return false;
@@ -389,7 +389,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             logger.debug("Initializing application window");
             DSWorkbenchMainFrame.getSingleton().init();
             logger.info("Showing application window");
-
 
             DSWorkbenchMainFrame.getSingleton().setVisible(true);
             try {
@@ -418,10 +417,13 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                     NotifierFrame.doNotification("Eine neue Version (" + version + ") von DS Workbench ist verfügbar.\n" + "Klicke auf das Update Icon um \'http://www.dsworkbench.de\' im Browser zu öffnen.", NotifierFrame.NOTIFY_UPDATE);
                 }
             }
+
             return true;
         } catch (Throwable th) {
             logger.fatal("Fatal error while running DS Workbench", th);
-            JOptionPaneHelper.showErrorBox(self, "Ein schwerwiegender Fehler ist aufgetreten.\nMöglicherweise ist deine DS Workbench Installation defekt. Bitte kontaktiere den Entwickler.", "Fehler");
+            FatalErrorDialog errorDialog = new FatalErrorDialog(self, true);
+            errorDialog.setLocationRelativeTo(self);
+            errorDialog.show(th);
             return false;
         }
     }
@@ -573,15 +575,19 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 class HideSplashTask extends TimerTask {
 
     public HideSplashTask() {
+        super();
     }
 
     public void run() {
         try {
             if (!DSWorkbenchSplashScreen.getSingleton().hideSplash()) {
                 System.exit(1);
+            } else {
+                //finally, add the shutdown hook to guarantee a proper termination
+                Runtime.getRuntime().addShutdownHook(new MainShutdownHook());
+                GlobalOptions.setStarted();
             }
         } catch (Throwable t) {
-            t.printStackTrace();
             System.exit(1);
         }
     }

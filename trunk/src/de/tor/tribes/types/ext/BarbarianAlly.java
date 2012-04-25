@@ -60,6 +60,11 @@ public class BarbarianAlly extends Ally {
         return "Barbaren";
     }
 
+    @Override
+    public void setVillages(int villages) {
+        //do nothing
+    }
+
     public String getToolTipText() {
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);

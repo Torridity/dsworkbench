@@ -625,6 +625,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jLabel5 = new javax.swing.JLabel();
         jBrowserPath = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
+        jXLabel3 = new org.jdesktop.swingx.JXLabel();
         jPanel8 = new javax.swing.JPanel();
         jDirectConnectOption = new javax.swing.JRadioButton();
         jProxyConnectOption = new javax.swing.JRadioButton();
@@ -2045,6 +2046,19 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel4.add(jButton1, gridBagConstraints);
+
+        jXLabel3.setForeground(new java.awt.Color(102, 102, 102));
+        jXLabel3.setText("Solltest du einen alternativen Browser verwenden wollen, achte unbedingt darauf, dass der Browser gestartet ist wenn du die Einstellungen testest. Ansonsten kann es dazu kommen, dass DS Workbench nicht mehr reagiert.");
+        jXLabel3.setToolTipText("");
+        jXLabel3.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jXLabel3.setLineWrap(true);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel4.add(jXLabel3, gridBagConstraints);
 
         jPanel8.setOpaque(false);
         jPanel8.setLayout(new java.awt.GridBagLayout());
@@ -4252,6 +4266,7 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
     private javax.swing.JComboBox jVillageSortTypeChooser;
     private org.jdesktop.swingx.JXLabel jXLabel1;
     private org.jdesktop.swingx.JXLabel jXLabel2;
+    private org.jdesktop.swingx.JXLabel jXLabel3;
     private com.jidesoft.swing.JideLabel jideLabel1;
     private javax.swing.ButtonGroup tagMarkerGroup;
     // End of variables declaration//GEN-END:variables

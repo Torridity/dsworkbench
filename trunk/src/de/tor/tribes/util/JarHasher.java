@@ -4,9 +4,7 @@
  */
 package de.tor.tribes.util;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
@@ -17,7 +15,7 @@ import java.util.jar.JarInputStream;
  */
 public class JarHasher {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         String jar = args[0];
         String output = args[1];
         try {

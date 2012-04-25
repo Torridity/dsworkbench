@@ -100,7 +100,6 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
             }
         };
         jDataTable.registerKeyboardAction(deleteListener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
         capabilityInfoPanel1.addActionListener(deleteListener);
     }
 
@@ -343,8 +342,16 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
                         newInfo.getDirection());
             }
 
-            jStatusLabel.setText(infos.size() + " Einträge eingefügt/aktualisiert");
-
+            switch (pDirection) {
+                case INCOMING:
+                    jStatusLabel.setText(infos.size() + " Empfänger eingefügt/aktualisiert");
+                    break;
+                case OUTGOING:
+                    jStatusLabel.setText(infos.size() + " Lieferanten eingefügt/aktualisiert");
+                    break;
+                default:
+                    jStatusLabel.setText(infos.size() + " Einträge eingefügt/aktualisiert");
+            }
             if (getModel().getRowCount() > 500) {
                 JOptionPaneHelper.showWarningBox(this, "Es wurden mehr als 500 Einträge eingefügt, die Berechnung der Transporte kann daher sehr lange dauern.\n"
                         + "Während die Berechnung läuft wird DS Workbench nicht reagieren.\n"

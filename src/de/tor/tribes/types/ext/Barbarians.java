@@ -55,6 +55,24 @@ public class Barbarians extends Tribe {
         return BarbarianAlly.getSingleton();
     }
 
+    @Override
+    public boolean removeVillage(Village pVillage) {
+        return true;
+    }
+
+    @Override
+    public void addVillage(Village v) {
+    }
+
+    @Override
+    public void addVillage(Village v, boolean pChecked) {
+    }
+
+    @Override
+    public boolean ownsVillage(Village pVillage) {
+        return pVillage != null && pVillage.getTribe().equals(Barbarians.getSingleton());
+    }
+
     public String getToolTipText() {
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);

@@ -15,6 +15,7 @@ import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.ui.renderer.ProfileTreeNodeRenderer;
 import de.tor.tribes.ui.wiz.FirstStartWizard;
 import de.tor.tribes.util.*;
+import de.tor.tribes.util.ThreadDeadlockDetector.DefaultDeadlockListener;
 import java.io.*;
 import java.util.Collections;
 import java.util.Comparator;
@@ -42,10 +43,15 @@ import org.netbeans.spi.wizard.WizardPanelProvider;
  */
 public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataHolderListener {
 
+    protected enum HIDE_RESULT {
+
+        SUCCESS, RESTART_NEEDED, ERROR
+    };
     private static Logger logger = Logger.getLogger("Launcher");
     private final DSWorkbenchSplashScreen self = this;
     private final SplashRepaintThread t;
     private static DSWorkbenchSplashScreen SINGLETON = null;
+    private ThreadDeadlockDetector deadlockDetector = null;
 
     public static synchronized DSWorkbenchSplashScreen getSingleton() {
         if (SINGLETON == null) {
@@ -66,7 +72,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         }
 
         setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
-
         jProfileDialog.getContentPane().setBackground(Constants.DS_BACK_LIGHT);
         jProfileDialog.pack();
         jProfileDialog.setLocationRelativeTo(DSWorkbenchSplashScreen.this);
@@ -163,16 +168,24 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         }
     }//GEN-LAST:event_fireSelectAccountEvent
 
-    protected boolean hideSplash() {
+    protected HIDE_RESULT hideSplash() {
         try {
             if (!new File(".").canWrite()) {
-                JOptionPaneHelper.showErrorBox(self, "Fehler bei der Initialisierung.\nDas DS Workbench Verzeichnis ist für deinen Systembenutzer nicht beschreibbar.\nBitte installiere DS Workbench z.B. in dein Benutzerverzeichnis.", "Fehler");
-                return false;
+                try {
+                    throw new IOException("Failed to access installation directory " + new File(".").getAbsolutePath());
+                } catch (Exception e) {
+                    showFatalError(e);
+                    return HIDE_RESULT.ERROR;
+                }
             }
             File f = new File("./servers");
             if (!f.exists() && !f.mkdir()) {
-                JOptionPaneHelper.showErrorBox(self, "Fehler bei der Initialisierung.\nDas Serververzeichnis konnte nicht erstellt werden.", "Fehler");
-                return false;
+                try {
+                    throw new IOException("Failed to create server directory at location " + new File(".").getAbsolutePath());
+                } catch (Exception e) {
+                    showFatalError(e);
+                    return HIDE_RESULT.ERROR;
+                }
             }
 
             ProfileManager.getSingleton().loadProfiles();
@@ -199,7 +212,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                         logger.warn(" - Wizard returned no result. Startup will fail.");
                         JOptionPaneHelper.showWarningBox(self, "Du musst die grundlegenden Einstellungen zumindest einmalig durchführen,\n"
                                 + "um DS Workbench verwenden zu können. Bitte starte DS Workbench neu.", "Abbruch");
-                        return false;
+                        return HIDE_RESULT.ERROR;
                     } else {
                         logger.debug("Wizard result: " + result);
                     }
@@ -242,7 +255,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                     jStatusOutput.setString("Update erfolgreich. Neustart notwendig!");
                     JOptionPaneHelper.showInformationBox(this, "DS Workbench wurde erfolgreich aktualisiert.\n"
                             + "Bitte starte DS Workbench nun neu.", "Neustart notwendig");
-                    return true;
+                    return HIDE_RESULT.RESTART_NEEDED;
                 case NOT_NEEDED:
                     jStatusOutput.setString("Kein Update notwendig");
                     break;
@@ -257,8 +270,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             GlobalOptions.addDataHolderListener(this);
         } catch (Exception e) {
             logger.error("Failed to initialize global options", e);
-            JOptionPaneHelper.showErrorBox(self, "Fehler bei der Initialisierung.\nMöglicherweise ist deine DS Workbench Installation defekt.", "Fehler");
-            return false;
+            showFatalError(e);
+            return HIDE_RESULT.ERROR;
         }
 
         logger.debug("Starting profile selection");
@@ -371,15 +384,14 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             }
         }
 
-
         try {
             if (!DataHolder.getSingleton().loadData(checkForUpdates)) {
                 throw new Exception("loadData() returned 'false'. See log for more details.");
             }
-
         } catch (Exception e) {
             logger.error("Failed to load server data", e);
-            return false;
+            showFatalError(e);
+            return HIDE_RESULT.ERROR;
         }
         // </editor-fold>
         try {
@@ -418,14 +430,18 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 }
             }
 
-            return true;
+            return HIDE_RESULT.SUCCESS;
         } catch (Throwable th) {
             logger.fatal("Fatal error while running DS Workbench", th);
-            FatalErrorDialog errorDialog = new FatalErrorDialog(self, true);
-            errorDialog.setLocationRelativeTo(self);
-            errorDialog.show(th);
-            return false;
+            showFatalError(th);
+            return HIDE_RESULT.ERROR;
         }
+    }
+
+    private void showFatalError(Throwable t) {
+        FatalErrorDialog errorDialog = new FatalErrorDialog(self, true);
+        errorDialog.setLocationRelativeTo(self);
+        errorDialog.show(t);
     }
 
     public static class ExceptionHandler
@@ -445,6 +461,21 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             logger.warn("Unhandled exception in thread '" + tname + "'", thrown);
         }
     }
+    private boolean SPECIAL_DEBUG_MODE = false;
+
+    public void initializeSuperSpecialDebugFeatures() {
+        if (SPECIAL_DEBUG_MODE) {
+            return;
+        }
+        SystrayHelper.showInfoMessage("Switching to debug mode");
+        deadlockDetector = new ThreadDeadlockDetector();
+        deadlockDetector.addListener(new DefaultDeadlockListener());
+        Logger.getRootLogger().setLevel(Level.DEBUG);
+        logger.debug("==========================");
+        logger.debug("==DEBUG MODE ESTABLISHED==");
+        logger.debug("==========================");
+        SPECIAL_DEBUG_MODE = true;
+    }
 
     /**
      * @param args the command line arguments
@@ -453,6 +484,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         Locale.setDefault(Locale.GERMAN);
         int mode = -1;
         int minimal = 0;
+        boolean ssd = false;
         if (args != null) {
             for (String arg : args) {
                 if (arg.equals("-d") || arg.equals("--debug")) {
@@ -465,15 +497,14 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                     SystrayHelper.showInfoMessage("Running in info mode");
                 } else if (arg.equals("-m")) {
                     minimal = 1;
+                } else if (arg.equals("-ssd")) {
+                    ssd = true;
                 }
             }
         }
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
         System.setProperty("sun.awt.exception.handler", ExceptionHandler.class.getName());
-        /*
-         * new Thread.UncaughtExceptionHandler() { @Override public void uncaughtException(Thread t, Throwable e) { logger.error("Uncaught
-         * exception in thread " + t, e); } });
-         */
+
         Appender a = null;
 
         if (!Constants.DEBUG) {
@@ -531,12 +562,17 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             logger.error("Failed to setup LnF", e);
         }
 
+        final boolean useSSD  = ssd;
+
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {
                 try {
                     DSWorkbenchSplashScreen.getSingleton().setLocationRelativeTo(null);
+                    if (useSSD) {
+                        DSWorkbenchSplashScreen.getSingleton().initializeSuperSpecialDebugFeatures();
+                    }
                     DSWorkbenchSplashScreen.getSingleton().setVisible(true);
                 } catch (Exception e) {
                     logger.error("Fatal application error", e);
@@ -580,12 +616,21 @@ class HideSplashTask extends TimerTask {
 
     public void run() {
         try {
-            if (!DSWorkbenchSplashScreen.getSingleton().hideSplash()) {
-                System.exit(1);
-            } else {
-                //finally, add the shutdown hook to guarantee a proper termination
-                Runtime.getRuntime().addShutdownHook(new MainShutdownHook());
-                GlobalOptions.setStarted();
+            switch (DSWorkbenchSplashScreen.getSingleton().hideSplash()) {
+                case ERROR: {
+                    System.exit(1);
+                    break;
+                }
+                case RESTART_NEEDED: {
+                    System.exit(0);
+                    break;
+                }
+                default: {
+                    //finally, add the shutdown hook to guarantee a proper termination
+                    Runtime.getRuntime().addShutdownHook(new MainShutdownHook());
+                    GlobalOptions.setStarted();
+                    break;
+                }
             }
         } catch (Throwable t) {
             System.exit(1);

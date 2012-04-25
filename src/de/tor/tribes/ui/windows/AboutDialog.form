@@ -45,7 +45,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="jLabel6" pref="226" max="32767" attributes="0"/>
+                      <Component id="jLabel6" pref="242" max="32767" attributes="0"/>
                       <EmptySpace min="-2" pref="67" max="-2" attributes="0"/>
                       <Component id="jDebugButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
@@ -124,13 +124,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="jDebugButton">
       <Properties>
-        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="33" green="33" red="ff" type="rgb"/>
-        </Property>
-        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="ff" green="ff" red="ff" type="rgb"/>
-        </Property>
-        <Property name="text" type="java.lang.String" value="Debug on"/>
+        <Property name="text" type="java.lang.String" value="Debug"/>
         <Property name="toolTipText" type="java.lang.String" value="Schaltet den Debug-Modus an (nur nach Aufforderung ben&#xf6;tigt)"/>
       </Properties>
       <Events>

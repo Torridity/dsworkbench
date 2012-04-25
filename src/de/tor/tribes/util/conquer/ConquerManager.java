@@ -58,7 +58,9 @@ public class ConquerManager extends GenericManager<Conquer> {
     }
 
     public void addConquer(Conquer c) {
-        addManagedElement(c);
+        if (c != null) {
+            addManagedElement(c);
+        }
     }
 
     public int getConquerCount() {
@@ -94,7 +96,7 @@ public class ConquerManager extends GenericManager<Conquer> {
                     try {
                         Conquer c = new Conquer();
                         c.loadFromXml(e);
-                        addManagedElement(c);
+                        addConquer(c);
                     } catch (Exception inner) {
                         //ignored, conquer invalid
                     }
@@ -263,7 +265,7 @@ public class ConquerManager extends GenericManager<Conquer> {
                     int newOwner = Integer.parseInt(data[2]);
                     int oldOwner = Integer.parseInt(data[3]);
                     boolean exists = false;
-                    for (ManageableType t : getAllElements()) {
+                    for (ManageableType t : getAllElements()) {//check if conquer exists
                         Conquer c = (Conquer) t;
                         if (c != null && c.getVillage() != null && c.getVillage().getId() == villageID) {
                             //already exists
@@ -274,6 +276,9 @@ public class ConquerManager extends GenericManager<Conquer> {
                             break;
                         }
                     }
+
+
+                    //continue with new conquers
                     if (!exists) {
                         Conquer c = new Conquer();
                         c.setVillage(DataHolder.getSingleton().getVillagesById().get(villageID));
@@ -282,6 +287,8 @@ public class ConquerManager extends GenericManager<Conquer> {
                         c.setLoser(DataHolder.getSingleton().getTribes().get(oldOwner));
                         addConquer(c);
                     }
+
+
                     Tribe loser = DataHolder.getSingleton().getTribes().get(oldOwner);
                     Tribe winner = DataHolder.getSingleton().getTribes().get(newOwner);
                     Village v = DataHolder.getSingleton().getVillagesById().get(villageID);
@@ -344,7 +351,7 @@ public class ConquerManager extends GenericManager<Conquer> {
         }
         for (ManageableType t : getAllElements().toArray(new ManageableType[getElementCount()])) {
             Conquer c = (Conquer) t;
-            if (c.getVillage().getId() == pVillage.getId()) {
+            if (c != null && c.getVillage().getId() == pVillage.getId()) {
                 return c;
             }
         }

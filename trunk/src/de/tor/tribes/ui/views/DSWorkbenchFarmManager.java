@@ -52,6 +52,7 @@ import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
+import org.jdesktop.swingx.sort.TableSortController;
 
 /**
  *
@@ -99,6 +100,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         jFarmTable.setDefaultRenderer(StorageStatus.class, new StorageCellRenderer());
         jFarmTable.setDefaultRenderer(Boolean.class, new ResourcesInStorageCellRenderer());
         jFarmTable.setColumnControlVisible(true);
+        jFarmTable.setSortsOnUpdates(false);
         FarmManager.getSingleton().addManagerListener(DSWorkbenchFarmManager.this);
         settingsPanel.setLayout(new BorderLayout());
         settingsPanel.add(jSettingsPanel, BorderLayout.CENTER);
@@ -107,17 +109,9 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
             @Override
             public void run() {
-                //  dataChangedExternally();
                 jFarmTable.repaint();
             }
         }, Calendar.getInstance().getTime(), 1000);
-
-        /*
-         * jFarmTable.setRowFilter(new RowFilter<TableModel, Integer>() {
-         *
-         * @Override public boolean include(RowFilter.Entry<? extends TableModel, ? extends Integer> entry) { FarmInformation.FARM_STATUS
-         * stat = (FarmInformation.FARM_STATUS) entry.getValue(0); return !stat.equals(FarmInformation.FARM_STATUS.FARMING); } });
-         */
 
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         KeyStroke farmA = KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, false);
@@ -141,34 +135,30 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             public void actionPerformed(ActionEvent e) {
                 farmA();
             }
-        }, "FarmA", farmA, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        }, "FarmA", farmA, JComponent.WHEN_IN_FOCUSED_WINDOW);
         jFarmTable.registerKeyboardAction(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 farmB();
             }
-        }, "FarmB", farmB, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        }, "FarmB", farmB, JComponent.WHEN_IN_FOCUSED_WINDOW);
         jFarmTable.registerKeyboardAction(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 farmC();
             }
-        }, "FarmC", farmC, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        }, "FarmC", farmC, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
         aTroops = new TroopSelectionPanel();
         aTroops.setupFarm(true);
-        //aTroops.hideSettings();
         bTroops = new TroopSelectionPanel();
         bTroops.setupFarm(true);
-        //bTroops.hideSettings();
         cTroops = new TroopSelectionPanel();
         cTroops.setupFarm(true);
-        // cTroops.hideSettings();
         rTroops = new TroopSelectionPanel();
         rTroops.setupFarm(true);
-        // rTroops.hideSettings();
         jATroopsPanel.add(aTroops, BorderLayout.CENTER);
         jBTroopsPanel.add(bTroops, BorderLayout.CENTER);
         jCTroopsPanel.add(cTroops, BorderLayout.CENTER);
@@ -211,7 +201,6 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             default:
                 return new IntRange(UIHelper.parseIntFromField(jMinFarmRuntimeC, 0), UIHelper.parseIntFromField(jMaxFarmRuntimeC, 60));
         }
-
     }
 
     public int getMinHaul(FARM_CONFIGURATION pConfig) {
@@ -226,7 +215,6 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             default:
                 return UIHelper.parseIntFromField(jMinHaulC, 1000);
         }
-
     }
 
     public boolean isConsiderSuccessRate() {
@@ -484,6 +472,19 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         });
 
         miscPane.getContentPane().add(showOverallStatus);
+
+        JXButton resortButton = new JXButton(new ImageIcon(DSWorkbenchFarmManager.class.getResource("/res/ui/replace2.png")));
+
+        resortButton.setToolTipText("Aktualisiert die Sortierung der Tabelle");
+        resortButton.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                ((TableSortController) jFarmTable.getRowSorter()).sort();
+            }
+        });
+
+        miscPane.getContentPane().add(resortButton);
 
         centerPanel.setupTaskPane(clickAccount, farmSourcePane, farmPane, miscPane);
     }
@@ -780,9 +781,6 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                     + " - " + farmInactive + " Farmen deaktiviert\n"
                     + " - " + alreadyFarming + " Mal Truppen bereits unterwegs oder Bericht erwartet");
         }
-        /*
-         * if (opened != 0) { // ((FarmTableModel) jFarmTable.getModel()).fireTableDataChanged(); repaint(); }
-         */
     }
 
     private void resetStatus() {
@@ -797,7 +795,6 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             farm.resetFarmStatus();
         }
         showInfo("Status zurückgesetzt. Es wird empfohlen, bei Gelegenheit die DS Workbench Truppeninformationen zu aktualisieren.");
-        getModel().fireTableDataChanged();
     }
 
     public void showInfo(String pMessage) {
@@ -1862,8 +1859,6 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
     @Override
     public void dataChangedEvent() {
-        FarmTableModel model = TableHelper.getTableModel(jFarmTable);
-        model.fireTableDataChanged();
     }
 
     @Override

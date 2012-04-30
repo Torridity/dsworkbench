@@ -394,6 +394,21 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         }));
+        
+         transferTaskPane.getContentPane().add(factoryButton("/res/ui/toTextFile.png", "Markierte Befehle auf mehrere Textdateien aufteilen.<br/>"
+                + "Es werden f&uuml;r jeden Spieler mehrere Textdateien erstellt, die eine einstellbare Anzahl an Angriffe in BB-Codes enthalten.<br/>"
+                 + "Diese k&ouml;nnen dann per Mail zugeschickt und weiterverarbeitet werden. Alternativ k&ouml;nnen die Textdateien f&uuml;r jeden Spieler<br/>"
+                 + "auch in eine ZIP-Datei gepackt werden, um sie einfacher zu versenden.", new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                AttackTableTab activeTab = getActiveTab();
+                if (activeTab != null) {
+                    activeTab.transferSelection(AttackTableTab.TRANSFER_TYPE.FILE_TEXT);
+                }
+            }
+        }));
+        
         transferTaskPane.getContentPane().add(factoryButton("/res/ui/atts_igm.png", "Markierte Befehle als IGM verschicken. (PA notwendig) "
                 + "Der/die Empf&auml;nger der IGMs sind die Besitzer der Herkunftsd&ouml;rfer der geplanten Befehle.", new MouseAdapter() {
 

@@ -38,7 +38,6 @@ import org.netbeans.spi.wizard.WizardPage;
 import org.netbeans.spi.wizard.WizardPanelNavResult;
 
 /**
- * @TODO add ignore single resource!?
  *
  * @author Torridity
  */

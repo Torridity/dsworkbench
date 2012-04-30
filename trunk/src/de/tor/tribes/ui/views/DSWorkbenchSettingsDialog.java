@@ -2057,6 +2057,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel4.add(jXLabel3, gridBagConstraints);
 
@@ -3063,87 +3065,96 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         if (!jOKButton.isEnabled()) {
             return;
         }
-
-        /**
-         * Validate player settings
-         */
-        UserProfile selectedProfile = null;
         try {
-            selectedProfile = (UserProfile) jProfileBox.getSelectedItem();
-        } catch (Exception e) {
-        }
-        if (selectedProfile != null) {
-            if (selectedProfile.getTribe().equals(InvalidTribe.getSingleton())) {
-                JOptionPaneHelper.showWarningBox(this, "Der Spieler des gewählten Profils existiert nicht mehr.\nBitte ein anderes Profil wählen. ", "Warnung");
+            /**
+             * Validate player settings
+             */
+            UserProfile selectedProfile = null;
+            try {
+                selectedProfile = (UserProfile) jProfileBox.getSelectedItem();
+            } catch (Exception e) {
+            }
+            if (selectedProfile != null) {
+                if (selectedProfile.getTribe() == null) {
+                    //probably data is not loaded yet as there was an error during initialization...just return
+                    setBlocking(false);
+                    setVisible(false);
+                    return;
+                }
+                if (selectedProfile.getTribe().equals(InvalidTribe.getSingleton())) {
+                    JOptionPaneHelper.showWarningBox(this, "Der Spieler des gewählten Profils existiert nicht mehr.\nBitte ein anderes Profil wählen. ", "Warnung");
+                    return;
+                }
+
+                logger.debug("Setting default profile for server '" + GlobalOptions.getSelectedServer() + "' to " + selectedProfile.getTribeName());
+                UserProfile formerProfile = GlobalOptions.getSelectedProfile();
+
+                if (formerProfile.getProfileId() != selectedProfile.getProfileId()) {
+                    logger.info("Writing user data for former profile");
+                    TacticsPlanerWizard.storeProperties();
+                    ResourceDistributorWizard.storeProperties();
+                    GlobalOptions.saveUserData();
+                    GlobalOptions.addProperty("selected.profile", Long.toString(selectedProfile.getProfileId()));
+                    formerProfile.updateProperties();
+                    formerProfile.storeProfileData();
+                    GlobalOptions.setSelectedProfile(selectedProfile);
+                    logger.info("Loading user data for selected profile");
+                    GlobalOptions.loadUserData();
+                } else {
+                    GlobalOptions.addProperty("selected.profile", Long.toString(selectedProfile.getProfileId()));
+                    GlobalOptions.setSelectedProfile(selectedProfile);
+                }
+            } else if (GlobalOptions.getSelectedProfile() == null || GlobalOptions.getSelectedProfile().equals(DummyUserProfile.getSingleton())) {
+                JOptionPaneHelper.showWarningBox(DSWorkbenchSettingsDialog.this, "Du musst ein Profil auswählen um fortzufahren", "Warnung");
                 return;
             }
 
-            logger.debug("Setting default profile for server '" + GlobalOptions.getSelectedServer() + "' to " + selectedProfile.getTribeName());
-            UserProfile formerProfile = GlobalOptions.getSelectedProfile();
-
-            if (formerProfile.getProfileId() != selectedProfile.getProfileId()) {
-                logger.info("Writing user data for former profile");
-                TacticsPlanerWizard.storeProperties();
-                ResourceDistributorWizard.storeProperties();
-                GlobalOptions.saveUserData();
-                GlobalOptions.addProperty("selected.profile", Long.toString(selectedProfile.getProfileId()));
-                formerProfile.updateProperties();
-                formerProfile.storeProfileData();
-                GlobalOptions.setSelectedProfile(selectedProfile);
-                logger.info("Loading user data for selected profile");
-                GlobalOptions.loadUserData();
-            } else {
-                GlobalOptions.addProperty("selected.profile", Long.toString(selectedProfile.getProfileId()));
-                GlobalOptions.setSelectedProfile(selectedProfile);
+            /**
+             * Update attack vector colors
+             */
+            DefaultTableModel model = ((DefaultTableModel) jAttackColorTable.getModel());
+            for (int i = 0; i < model.getRowCount(); i++) {
+                String unit = ((UnitHolder) model.getValueAt(i, 0)).getName();
+                Color color = (Color) model.getValueAt(i, 1);
+                String hexCol = Integer.toHexString(color.getRGB());
+                hexCol = "#" + hexCol.substring(2, hexCol.length());
+                GlobalOptions.addProperty(unit + ".color", hexCol);
             }
-        } else if (GlobalOptions.getSelectedProfile() == null || GlobalOptions.getSelectedProfile().equals(DummyUserProfile.getSingleton())) {
-            JOptionPaneHelper.showWarningBox(DSWorkbenchSettingsDialog.this, "Du musst ein Profil auswählen um fortzufahren", "Warnung");
-            return;
-        }
 
-        /**
-         * Update attack vector colors
-         */
-        DefaultTableModel model = ((DefaultTableModel) jAttackColorTable.getModel());
-        for (int i = 0; i < model.getRowCount(); i++) {
-            String unit = ((UnitHolder) model.getValueAt(i, 0)).getName();
-            Color color = (Color) model.getValueAt(i, 1);
-            String hexCol = Integer.toHexString(color.getRGB());
-            hexCol = "#" + hexCol.substring(2, hexCol.length());
-            GlobalOptions.addProperty(unit + ".color", hexCol);
+            /**
+             * Validate misc properties
+             */
+            int sortType = jVillageSortTypeChooser.getSelectedIndex();
+            Village.setOrderType(sortType);
+            GlobalOptions.addProperty("village.order", Integer.toString(sortType));
+            GlobalOptions.addProperty("notify.duration", Integer.toString(jNotifyDurationBox.getSelectedIndex()));
+            GlobalOptions.addProperty("inform.on.updates", Boolean.toString(jInformOnUpdates.isSelected()));
+            GlobalOptions.addProperty("show.popup.moral", Boolean.toString(jShowPopupMoral.isSelected()));
+            GlobalOptions.addProperty("show.popup.conquers", Boolean.toString(jShowPopupConquers.isSelected()));
+            GlobalOptions.addProperty("show.popup.ranks", Boolean.toString(jShowPopupRanks.isSelected()));
+            GlobalOptions.addProperty("show.popup.farm.space", Boolean.toString(jShowPopupFarmSpace.isSelected()));
+            GlobalOptions.addProperty("max.density.troops", jMaxTroopDensity.getText());
+            GlobalOptions.addProperty("max.farm.space", jMaxFarmSpace.getText());
+            GlobalOptions.addProperty("show.live.countdown", Boolean.toString(jShowLiveCountdown.isSelected()));
+            GlobalOptions.addProperty("extended.attack.vectors", Boolean.toString(jExtendedAttackLineDrawing.isSelected()));
+            GlobalOptions.addProperty("max.sim.rounds", jMaxSimRounds.getText());
+            GlobalOptions.addProperty("support.tolerance", jTolerance.getText());
+            GlobalOptions.addProperty("max.loss.ratio", jMaxLossRatio.getText());
+            GlobalOptions.addProperty("map.marker.transparency", Integer.toString(jMarkerTransparency.getValue()));
+            GlobalOptions.addProperty("obst.server", jObstServer.getText());
+            GlobalOptions.saveProperties();
+            if (!checkSettings()) {
+                logger.error("Failed to check server settings");
+                return;
+            }
+            setBlocking(false);
+            setVisible(false);
+            DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
+            MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
+            MinimapPanel.getSingleton().redraw();
+        } catch (Throwable t) {
+            logger.error("Failed to close settings dialog", t);
         }
-
-        /**
-         * Validate misc properties
-         */
-        int sortType = jVillageSortTypeChooser.getSelectedIndex();
-        Village.setOrderType(sortType);
-        GlobalOptions.addProperty("village.order", Integer.toString(sortType));
-        GlobalOptions.addProperty("notify.duration", Integer.toString(jNotifyDurationBox.getSelectedIndex()));
-        GlobalOptions.addProperty("inform.on.updates", Boolean.toString(jInformOnUpdates.isSelected()));
-        GlobalOptions.addProperty("show.popup.moral", Boolean.toString(jShowPopupMoral.isSelected()));
-        GlobalOptions.addProperty("show.popup.conquers", Boolean.toString(jShowPopupConquers.isSelected()));
-        GlobalOptions.addProperty("show.popup.ranks", Boolean.toString(jShowPopupRanks.isSelected()));
-        GlobalOptions.addProperty("show.popup.farm.space", Boolean.toString(jShowPopupFarmSpace.isSelected()));
-        GlobalOptions.addProperty("max.density.troops", jMaxTroopDensity.getText());
-        GlobalOptions.addProperty("max.farm.space", jMaxFarmSpace.getText());
-        GlobalOptions.addProperty("show.live.countdown", Boolean.toString(jShowLiveCountdown.isSelected()));
-        GlobalOptions.addProperty("extended.attack.vectors", Boolean.toString(jExtendedAttackLineDrawing.isSelected()));
-        GlobalOptions.addProperty("max.sim.rounds", jMaxSimRounds.getText());
-        GlobalOptions.addProperty("support.tolerance", jTolerance.getText());
-        GlobalOptions.addProperty("max.loss.ratio", jMaxLossRatio.getText());
-        GlobalOptions.addProperty("map.marker.transparency", Integer.toString(jMarkerTransparency.getValue()));
-        GlobalOptions.addProperty("obst.server", jObstServer.getText());
-
-        GlobalOptions.saveProperties();
-        if (!checkSettings()) {
-            return;
-        }
-        setBlocking(false);
-        setVisible(false);
-        DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
-        MinimapPanel.getSingleton().redraw();
     }//GEN-LAST:event_fireOkEvent
 
 private void fireCreateAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateAccountEvent
@@ -4048,7 +4059,7 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
                     GlobalOptions.setSelectedProfile(DummyUserProfile.getSingleton());
                 }
                 //if (DSWorkbenchMainFrame.getSingleton().isInitialized()) {
-                if(GlobalOptions.isStarted()){
+                if (GlobalOptions.isStarted()) {
                     DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
                 }
             } catch (Exception e) {

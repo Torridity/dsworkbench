@@ -363,7 +363,6 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
                     result.add(v);
                 }
             }
-            System.out.println("------------");
         } catch (Exception e) {
             //no result
         }

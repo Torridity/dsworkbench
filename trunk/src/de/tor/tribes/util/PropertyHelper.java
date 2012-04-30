@@ -23,7 +23,6 @@ public class PropertyHelper {
 
         for (TableColumn c : cols) {
             TableColumnExt col = (TableColumnExt) c;
-
             String title = col.getTitle();
             pConfig.setProperty(pPrefix + ".table.col." + title + ".width", col.getWidth());
             pConfig.setProperty(pPrefix + ".table.col." + title + ".visible", col.isVisible());
@@ -50,15 +49,12 @@ public class PropertyHelper {
 
     public static void restoreTableProperties(JXTable pTable, Configuration pConfig, String pPrefix) {
         //set col width
-        for (int i = 0; i < pTable.getColumnCount(); i++) {
-            TableColumnExt col = pTable.getColumnExt(i);
+        List<TableColumn> cols = ((TableColumnModelExt) pTable.getColumnModel()).getColumns(true);
+
+        for (TableColumn c : cols) {
+            TableColumnExt col = (TableColumnExt) c;
             String title = col.getTitle();
             col.setPreferredWidth(pConfig.getInteger(pPrefix + ".table.col." + title + ".width", col.getWidth()));
-        }
-        //set visibility
-        for (int i = 0; i < pTable.getColumnCount(); i++) {
-            TableColumnExt col = pTable.getColumnExt(i);
-            String title = col.getTitle();
             col.setVisible(pConfig.getBoolean(pPrefix + ".table.col." + title + ".visible", true));
         }
 

@@ -506,6 +506,17 @@ public class SupportRefillFinishPanel extends WizardPage {
         jPerfectTargets.setText(Integer.toString(perfectTargets));
         jOverallSupports.setText(Integer.toString(assignedSupports) + " von " + Integer.toString(maxSupports));
         jUsedSourceVillages.setText(Integer.toString(usedSources.size()) + " von " + SupportRefillSourcePanel.getSingleton().getAllElements().length);
+        focusSubmit();
+    }
+
+    private void focusSubmit() {
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                jButton1.requestFocusInWindow();
+            }
+        });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

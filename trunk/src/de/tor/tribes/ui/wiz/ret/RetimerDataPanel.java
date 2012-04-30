@@ -17,9 +17,7 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.*;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.models.RETAttackTableModel;
-import de.tor.tribes.ui.models.TAPSourceTableModel;
 import de.tor.tribes.ui.renderer.*;
-import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
 import de.tor.tribes.util.*;
 import java.awt.BorderLayout;
 import java.awt.HeadlessException;
@@ -46,7 +44,6 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.*;
 
 /**
- * @TODO add attacks from SOS request (Put into list to allow unit selection or take unit from renamed attack)
  *
  * @author Torridity
  */

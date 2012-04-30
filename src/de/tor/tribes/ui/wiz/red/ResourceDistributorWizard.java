@@ -59,6 +59,10 @@ public class ResourceDistributorWizard extends WizardPanelProvider {
         ResourceDistributorSettingsPanel.getSingleton().restoreProperties();
         ResourceDistributorCalculationPanel.getSingleton().restoreProperties();
         ResourceDistributorFinishPanel.getSingleton().restoreProperties();
+        if (parent != null) {
+            parent.dispose();
+            parent = null;
+        }
     }
 
     public static void show() {

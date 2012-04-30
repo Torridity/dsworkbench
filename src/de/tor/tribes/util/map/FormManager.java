@@ -87,9 +87,15 @@ public class FormManager extends GenericManager<AbstractForm> {
                 AbstractForm form = AbstractForm.fromXml(e);
                 if (form != null) {
                     if (form.getFormName() == null) {
-                        form.setFormName(pExtension);
+                        if (pExtension != null) {
+                            form.setFormName(pExtension);
+                        } else {
+                            form.setFormName("");
+                        }
                     } else {
-                        form.setFormName(form.getFormName() + "_" + pExtension);
+                        if (pExtension != null) {
+                            form.setFormName(form.getFormName() + "_" + pExtension);
+                        }
                     }
                     addManagedElement(form);
                 }

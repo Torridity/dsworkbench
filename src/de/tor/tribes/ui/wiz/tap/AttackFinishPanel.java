@@ -10,10 +10,12 @@
  */
 package de.tor.tribes.ui.wiz.tap;
 
-import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.control.GenericManagerListener;
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.StandardAttack;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
@@ -28,10 +30,12 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.algo.types.TimeFrame;
+import de.tor.tribes.util.attack.StandardAttackManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.*;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -94,11 +98,25 @@ public class AttackFinishPanel extends WizardPage {
         overviewPanel = new VillageOverviewMapPanel();
         jPanel5.add(overviewPanel, BorderLayout.CENTER);
         jXCollapsiblePane2.add(jSummaryPanel, BorderLayout.CENTER);
+        StandardAttackManager.getSingleton().addManagerListener(new GenericManagerListener() {
+
+            @Override
+            public void dataChangedEvent() {
+                updateStandardAttacks();
+            }
+
+            @Override
+            public void dataChangedEvent(String pGroup) {
+                dataChangedEvent();
+            }
+        });
     }
 
     public void storeProperties() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
         profile.addProperty("tap.finish.expert", jExpertView.isSelected());
+        profile.addProperty("tap.finish.std.off", (String) jStandardOff.getSelectedItem());
+        profile.addProperty("tap.finish.std.fake", (String) jStandardFake.getSelectedItem());
     }
 
     public void restoreProperties() {
@@ -107,6 +125,34 @@ public class AttackFinishPanel extends WizardPage {
         UserProfile profile = GlobalOptions.getSelectedProfile();
         jExpertView.setSelected(Boolean.parseBoolean(profile.getProperty("tap.finish.expert")));
         changeExpertView();
+        updateStandardAttacks();
+    }
+
+    private void updateStandardAttacks() {
+        UserProfile profile = GlobalOptions.getSelectedProfile();
+        DefaultComboBoxModel offModel = new DefaultComboBoxModel();
+        DefaultComboBoxModel fakeModel = new DefaultComboBoxModel();
+
+        for (ManageableType t : StandardAttackManager.getSingleton().getAllElements()) {
+            StandardAttack a = (StandardAttack) t;
+            offModel.addElement(a.getName());
+            fakeModel.addElement(a.getName());
+        }
+        jStandardOff.setModel(offModel);
+        jStandardFake.setModel(fakeModel);
+
+        String val = profile.getProperty("tap.finish.std.off");
+        if (val == null || StandardAttackManager.getSingleton().isAllowedName(val)) {//no value set or std attack not used
+            val = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.OFF_ICON).getName();
+        }
+        jStandardOff.setSelectedItem(val);
+
+
+        val = profile.getProperty("tap.finish.std.fake");
+        if (val == null || StandardAttackManager.getSingleton().isAllowedName(val)) {//no value set or std attack not used
+            val = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.FAKE_ICON).getName();
+        }
+        jStandardFake.setSelectedItem(val);
     }
 
     /**
@@ -142,6 +188,11 @@ public class AttackFinishPanel extends WizardPage {
         jSlider1 = new javax.swing.JSlider();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jXLabel1 = new org.jdesktop.swingx.JXLabel();
+        jXLabel2 = new org.jdesktop.swingx.JXLabel();
+        jStandardOff = new javax.swing.JComboBox();
+        jStandardFake = new javax.swing.JComboBox();
         jPanel4 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jToggleButton1 = new javax.swing.JToggleButton();
@@ -268,6 +319,8 @@ public class AttackFinishPanel extends WizardPage {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jLabel1, gridBagConstraints);
 
+        jPanel2.setMinimumSize(new java.awt.Dimension(650, 394));
+        jPanel2.setPreferredSize(new java.awt.Dimension(650, 613));
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Angegriffene Ziele"));
@@ -310,7 +363,6 @@ public class AttackFinishPanel extends WizardPage {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 20);
@@ -338,6 +390,7 @@ public class AttackFinishPanel extends WizardPage {
         jSlider1.setPaintLabels(true);
         jSlider1.setPaintTicks(true);
         jSlider1.setSnapToTicks(true);
+        jSlider1.setPreferredSize(new java.awt.Dimension(200, 60));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
@@ -358,7 +411,6 @@ public class AttackFinishPanel extends WizardPage {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 20);
@@ -377,11 +429,59 @@ public class AttackFinishPanel extends WizardPage {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 20);
         jPanel3.add(jButton4, gridBagConstraints);
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel1.setMinimumSize(new java.awt.Dimension(351, 60));
+        jPanel1.setPreferredSize(new java.awt.Dimension(361, 60));
+        jPanel1.setLayout(new java.awt.GridBagLayout());
+
+        jXLabel1.setText("Standardangriff für Offs:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jXLabel1, gridBagConstraints);
+
+        jXLabel2.setText("Standardangriff für Fakes:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jXLabel2, gridBagConstraints);
+
+        jStandardOff.setMinimumSize(new java.awt.Dimension(50, 18));
+        jStandardOff.setPreferredSize(new java.awt.Dimension(50, 18));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jStandardOff, gridBagConstraints);
+
+        jStandardFake.setMinimumSize(new java.awt.Dimension(50, 18));
+        jStandardFake.setPreferredSize(new java.awt.Dimension(50, 18));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jStandardFake, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 20);
+        jPanel3.add(jPanel1, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -591,7 +691,31 @@ public class AttackFinishPanel extends WizardPage {
             JOptionPaneHelper.showInformationBox(this, "Keine Angriffe gewählt", "Information");
             return;
         }
-        new AttackTransferDialog(TacticsPlanerWizard.getFrame(), true).setupAndShow(pToTransfer.toArray(new Attack[pToTransfer.size()]));
+
+        //modify attack types
+        String stdOff = (String) jStandardOff.getSelectedItem();
+        if (stdOff == null) {
+            stdOff = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.OFF_ICON).getName();
+        }
+
+        String stdFake = (String) jStandardFake.getSelectedItem();
+        if (stdFake == null) {
+            stdFake = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.FAKE_ICON).getName();
+        }
+
+        List<Attack> modifiedTransfer = new LinkedList<Attack>();
+        for (Attack a : pToTransfer) {
+            Attack newAttack = new Attack(a);
+
+            if (a.getType() == Attack.FAKE_TYPE) {
+                newAttack.setType(StandardAttackManager.getSingleton().getElementByName(stdFake).getIcon());
+            } else if (a.getType() == Attack.CLEAN_TYPE) {
+                newAttack.setType(StandardAttackManager.getSingleton().getElementByName(stdOff).getIcon());
+            }
+            modifiedTransfer.add(newAttack);
+        }
+
+        new AttackTransferDialog(TacticsPlanerWizard.getFrame(), true).setupAndShow(modifiedTransfer.toArray(new Attack[modifiedTransfer.size()]));
     }
 
     private TAPResultTableModel getModel() {
@@ -656,6 +780,7 @@ public class AttackFinishPanel extends WizardPage {
         jPerfectTargets.setText(Integer.toString(perfectOffs));
         jOverallAttacks.setText(Integer.toString(assignedAttacks) + " von " + Integer.toString(maxAttacks));
         jUsedSourceVillages.setText(Integer.toString(usedSources.size()) + " von " + AttackSourceFilterPanel.getSingleton().getFilteredElements().length);
+        focusSubmit();
     }
 
     private void updateAttackDetails() {
@@ -669,6 +794,16 @@ public class AttackFinishPanel extends WizardPage {
                 model.addRow(a);
             }
         }
+    }
+
+    private void focusSubmit() {
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                jButton1.requestFocusInWindow();
+            }
+        });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jAttackedTargets;
@@ -685,6 +820,7 @@ public class AttackFinishPanel extends WizardPage {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jOverallAttacks;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -693,6 +829,8 @@ public class AttackFinishPanel extends WizardPage {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSlider jSlider1;
+    private javax.swing.JComboBox jStandardFake;
+    private javax.swing.JComboBox jStandardOff;
     private javax.swing.JPanel jSummaryPanel;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JToggleButton jToggleButton2;
@@ -700,6 +838,8 @@ public class AttackFinishPanel extends WizardPage {
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane2;
     private org.jdesktop.swingx.JXTable jXDetailsTable;
+    private org.jdesktop.swingx.JXLabel jXLabel1;
+    private org.jdesktop.swingx.JXLabel jXLabel2;
     private org.jdesktop.swingx.JXTable jxResultsTable;
     // End of variables declaration//GEN-END:variables
 

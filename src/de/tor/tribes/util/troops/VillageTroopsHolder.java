@@ -137,14 +137,15 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
     }
 
     public double getOffValue() {
-        Enumeration<UnitHolder> units = troops.keys();
-        int result = 0;
-        while (units.hasMoreElements()) {
-            UnitHolder unit = units.nextElement();
-            result += unit.getAttack() * troops.get(unit);
-        }
+            Enumeration<UnitHolder> units = troops.keys();
+            int result = 0;
+            while (units.hasMoreElements()) {
+                UnitHolder unit = units.nextElement();
+                result += unit.getAttack() * troops.get(unit);
+            }
 
-        return result;
+            return result;
+       
     }
 
     public double getRealOffValue() {
@@ -166,47 +167,48 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
     }
 
     public double getDefValue() {
-        Enumeration<UnitHolder> units = troops.keys();
-        int result = 0;
-        while (units.hasMoreElements()) {
-            UnitHolder unit = units.nextElement();
-            result += unit.getDefense() * troops.get(unit);
-        }
+            Enumeration<UnitHolder> units = troops.keys();
 
-        return result;
+            int result = 0;
+            while (units.hasMoreElements()) {
+                UnitHolder unit = units.nextElement();
+                result += unit.getDefense() * troops.get(unit);
+            }
+
+            return result;
     }
 
     public double getDefArcherValue() {
-        Enumeration<UnitHolder> units = troops.keys();
-        int result = 0;
-        while (units.hasMoreElements()) {
-            UnitHolder unit = units.nextElement();
-            result += unit.getDefenseArcher() * troops.get(unit);
-        }
+            Enumeration<UnitHolder> units = troops.keys();
+            int result = 0;
+            while (units.hasMoreElements()) {
+                UnitHolder unit = units.nextElement();
+                result += unit.getDefenseArcher() * troops.get(unit);
+            }
 
-        return result;
+            return result;
     }
 
     public double getDefCavalryValue() {
-        Enumeration<UnitHolder> units = troops.keys();
-        int result = 0;
-        while (units.hasMoreElements()) {
-            UnitHolder unit = units.nextElement();
-            result += unit.getDefenseCavalry() * troops.get(unit);
-        }
+            Enumeration<UnitHolder> units = troops.keys();
+            int result = 0;
+            while (units.hasMoreElements()) {
+                UnitHolder unit = units.nextElement();
+                result += unit.getDefenseCavalry() * troops.get(unit);
+            }
 
-        return result;
+            return result;
     }
 
     public int getTroopPopCount() {
-        Enumeration<UnitHolder> units = troops.keys();
-        int result = 0;
-        while (units.hasMoreElements()) {
-            UnitHolder unit = units.nextElement();
-            result += unit.getPop() * troops.get(unit);
-        }
+            Enumeration<UnitHolder> units = troops.keys();
+            int result = 0;
+            while (units.hasMoreElements()) {
+                UnitHolder unit = units.nextElement();
+                result += unit.getPop() * troops.get(unit);
+            }
 
-        return result;
+            return result;
     }
 
     @Override

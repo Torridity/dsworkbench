@@ -157,6 +157,10 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
         RetimerSourcePanel.getSingleton().restoreProperties();
         RetimerCalculationPanel.getSingleton().restoreProperties();
         RetimerFinishPanel.getSingleton().restoreProperties();
+        if (parent != null) {
+            parent.dispose();
+            parent = null;
+        }
     }
 
     public static void main(String[] args) {

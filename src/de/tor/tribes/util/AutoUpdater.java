@@ -46,6 +46,8 @@ public class AutoUpdater {
 
     public static List<String> getUpdatedResources(UpdateListener pListener) throws IOException {
         Properties props = new Properties();
+        List<String> modified = new ArrayList<String>();
+
         //@TODO check + store core.jar version to recognize manual update!!!
         long coreVersion = GlobalOptions.getProperties().getLong("core.version", 0);
         if (coreVersion == 0) {
@@ -54,7 +56,9 @@ public class AutoUpdater {
             if (coreVersion != CORE_JAR.lastModified()) {
                 logger.info("Manual update detected. Removing updated resources");
                 FileUtils.deleteDirectory(UPDATES_DIR);
+                GlobalOptions.addProperty("core.version", Long.toString(CORE_JAR.lastModified()));
                 initialize();
+                return modified;
             }
         }
 
@@ -63,7 +67,6 @@ public class AutoUpdater {
         props.load(new GZIPInputStream(u.openConnection(webProxy).getInputStream()));
         HashMap<String, Long> existingEntries = new HashMap<String, Long>();
         JarInputStream jarin = null;
-        List<String> modified = new ArrayList<String>();
         int newFiles = 0;
         int changedFiles = 0;
 

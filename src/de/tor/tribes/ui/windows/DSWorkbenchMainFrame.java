@@ -2749,7 +2749,7 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
                     logger.debug("Using import extension '" + extension + "'");
                 } else {
                     logger.debug("Using no import extension");
-                    extension = "";
+                    extension = null;
                 }
 
                 if (target.exists()) {
@@ -2763,7 +2763,6 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
                 logger.error("Failed to import data", e);
                 JOptionPaneHelper.showErrorBox(this, "Import fehlgeschlagen.", "Import");
             }
-
         }
     }
 

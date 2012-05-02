@@ -87,7 +87,6 @@ public class FarmManager extends GenericManager<FarmInformation> {
         try {
             String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
             List<Village> villages = PluginManager.getSingleton().executeVillageParser(data);
-
             List<Village> handled = new LinkedList<Village>();
 
             for (Village farm : villages) {

@@ -36,6 +36,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.FileWriter;
+import java.net.URLDecoder;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
@@ -1859,6 +1860,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
     @Override
     public void dataChangedEvent() {
+        getModel().fireTableDataChanged();
     }
 
     @Override

@@ -45,7 +45,8 @@ public class ServerSettings {
             Document d = JaxenUtils.getDocument(new File(serverPath));
             logger.debug(" - reading map system");
             try {
-                setCoordType(Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/map_size")));
+                //setCoordType(Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/map_size")));
+                setCoordType(1000);
             } catch (Exception inner) {
                 setCoordType(1000);
             }
@@ -117,6 +118,7 @@ public class ServerSettings {
         } else {
             throw new IllegalArgumentException("Invalid map size (" + pMapSize + "). Falling back to 1000x1000.");
         }
+        
         switch (COORD) {
             case 1: {
                 mapSize = new Dimension(pMapSize, pMapSize);

@@ -277,7 +277,6 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
                 ListItem i = (ListItem) v;
                 selection.add(i.getTag());
             }
-
             for (Village village : relevantVillages) {
                 boolean use = false;
                 for (Tag t : selection) {

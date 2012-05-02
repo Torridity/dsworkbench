@@ -1,3 +1,4 @@
 en0;http://zz1.beta.tribalwars.net;3;0
 fr1;http://fr1.guerretribale.fr;1;0
 ch17;http://ch17.staemme.ch;1;2
+ch16;http://ch16.staemme.ch;1;2

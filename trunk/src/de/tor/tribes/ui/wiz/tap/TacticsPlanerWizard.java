@@ -172,9 +172,9 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
 
 
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de43");
+        GlobalOptions.setSelectedServer("de38");
         ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
+        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de38")[1]);
         DataHolder.getSingleton().loadData(false);
         GlobalOptions.loadUserData();
 

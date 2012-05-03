@@ -34,22 +34,19 @@ public class OBSTReportHandler {
     public static void main(String[] args) throws Exception {
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         Logger.getRootLogger().setLevel(Level.DEBUG);
-        System.out.println((int)Integer.parseInt("123.123".replaceAll("\\.", "")));
-        /*String data = "SpionageErspähte Rohstoffe:	2.352 2.651 1.184";
-        data = "report=Betreff%20Anahita%20(A%20new%20Beginning)%20greift%20Barbarendorf%20(489%7C356)%20K34%20an%20DS-OBST%20Status%20DS-OBST%20Berichteeinleser%20-%20Einstellungen%20Bitte%20eingeben%20URL:%20Gruppe:%20Taste%20Nick%20Passwort%20Speichern%20warte%20auf%20Befehl%20Gesendet%2002.05.12%2016:25:27%20Der%20Angreifer%20hat%20gewonnen%20Gl%C3%BCck%20(aus%20Sicht%20des%20Angreifers)%20-13.9%25%20Moral:%20100%25%20Angreifer:%20Anahita%20%0AHerkunft:%20A%20new%20Beginning%20(489%7C359)%20K34%20%0AAnzahl:%200%200%2070%201%200%200%200%200%200%20Verluste:%200%200%200%200%200%200%200%200%200%20Verteidiger:%20---%20%0AZiel:%20Barbarendorf%20(489%7C356)%20K34%20%0AAnzahl:%200%200%200%200%200%200%200%200%200%20Verluste:%200%200%200%200%200%200%200%200%200%20Spionage%20Ersp%C3%A4hte%20Rohstoffe:%2039%20.%20000%2034%2032%20Beute:%20258%20222%20220%20700/700%20%C2%BB%20Truppen%20in%20Simulator%20einf%C3%BCgen%20%C2%BB%20%C3%9Cberlebende%20Truppen%20in%20Simulator%20einf%C3%BCgen%20%C2%BB%20Dieses%20Dorf%20angreifen%20%C2%BB%20Mit%20gleichen%20Truppen%20noch%20einmal%20angreifen%20%C2%BB%20Mit%20allen%20Truppen%20noch%20einmal%20angreifen%20%C2%BB%20Diesen%20Bericht%20ver%C3%B6ffentlichen%20&user=Test&pass=098f6bcd4621d373cade4e832627b4f6&group=-1&world=83";
-        data = "report=Betreff%20misterpayne%20(Blub%2039)%20greift%20Barbarendorf%20(910%7C519)%20K59%20an%20DS-OBST%20Status%20DS-OBST%20Berichteeinleser%20-%20Einstellungen%20Bitte%20eingeben%20URL:%20Gruppe:%20Taste%20Nick%20Passwort%20Speichern%20warte%20auf%20Befehl%20Gesendet%2002.05.12%2018:21:50%20Der%20Angreifer%20hat%20gewonnen%20Gl%C3%BCck%20(aus%20Sicht%20des%20Angreifers)%2021.0%25%20Moral:%20100%25%20Angreifer:%20misterpayne%20%0AHerkunft:%20Blub%2039%20(913%7C516)%20K59%20%0AAnzahl:%200%200%200%200%201%20442%200%200%200%200%200%200%20Verluste:%200%200%200%200%200%200%200%200%200%200%200%200%20Glauben:%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%09%09%09%09%09Die%20Einheiten%20waren%20gl%C3%A4ubig.%0A%20%20%20%20%20%20%20%20%09%09%09%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Kampfkraft:%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20100%25%20Verteidiger:%20---%20%0AZiel:%20Barbarendorf%20(910%7C519)%20K59%20%0AAnzahl:%200%200%200%200%200%200%200%200%200%200%200%200%20Verluste:%200%200%200%200%200%200%200%200%200%200%200%200%20Spionage%20Ersp%C3%A4hte%20Rohstoffe:%20146%20.%20700%20170%20.%20630%20247%20.%20612%20Geb%C3%A4ude:%20Hauptgeb%C3%A4ude%20(Stufe%2015)%20Kaserne%20(Stufe%209)%20Schmiede%20(Stufe%204)%20Statue%20(Stufe%201)%20Marktplatz%20(Stufe%204)%20Holzf%C3%A4ller%20(Stufe%2019)%20Lehmgrube%20(Stufe%2020)%20Eisenmine%20(Stufe%2026)%20Bauernhof%20(Stufe%2015)%20Speicher%20(Stufe%2028)%20Versteck%20(Stufe%209)%20Beute:%209%20.%20182%2010%20.%20679%2015%20.%20499%2035%20.%20360/35%20.%20360%20%C2%BB%20Truppen%20in%20Simulator%20einf%C3%BCgen%20%C2%BB%20%C3%9Cberlebende%20Truppen%20in%20Simulator%20einf%C3%BCgen%20%C2%BB%20Dieses%20Dorf%20angreifen%20%C2%BB%20Mit%20gleichen%20Truppen%20noch%20einmal%20angreifen%20%C2%BB%20Mit%20allen%20Truppen%20noch%20einmal%20angreifen%20%C2%BB%20Diesen%20Bericht%20ver%C3%B6ffentlichen%20&user=bbb&pass=08f8e0260c64418510cefb2b06eee5cd&group=-1&world=57";
-         data = URLDecoder.decode(data, "UTF-8");
-        System.out.println(data);
-        
-       // data = "Beute: 12 . 000 13 . 000 14 . 000";
-        data = data.replaceAll(" \\. ", ".");
-        Matcher m = Pattern.compile("Ersp.{1,2}hte Rohstoffe:\\s+([0-9\\.]+)\\s+([0-9\\.]+)\\s+([0-9\\.]+)").matcher(data);
-       //m = Pattern.compile("Beute:\\s+([\\.0-9]+)\\s([\\.0-9]+)\\s([\\.0-9]+)").matcher(data);
-        if (m.find()) {
-            System.out.println(m.group(1));
-            System.out.println(m.group(2));
-            System.out.println(m.group(3));
-        }*/
+        System.out.println((int) Integer.parseInt("123.123".replaceAll("\\.", "")));
+        /*
+         * String data = "SpionageErspähte Rohstoffe:	2.352 2.651 1.184"; data =
+         * "report=Betreff%20Anahita%20(A%20new%20Beginning)%20greift%20Barbarendorf%20(489%7C356)%20K34%20an%20DS-OBST%20Status%20DS-OBST%20Berichteeinleser%20-%20Einstellungen%20Bitte%20eingeben%20URL:%20Gruppe:%20Taste%20Nick%20Passwort%20Speichern%20warte%20auf%20Befehl%20Gesendet%2002.05.12%2016:25:27%20Der%20Angreifer%20hat%20gewonnen%20Gl%C3%BCck%20(aus%20Sicht%20des%20Angreifers)%20-13.9%25%20Moral:%20100%25%20Angreifer:%20Anahita%20%0AHerkunft:%20A%20new%20Beginning%20(489%7C359)%20K34%20%0AAnzahl:%200%200%2070%201%200%200%200%200%200%20Verluste:%200%200%200%200%200%200%200%200%200%20Verteidiger:%20---%20%0AZiel:%20Barbarendorf%20(489%7C356)%20K34%20%0AAnzahl:%200%200%200%200%200%200%200%200%200%20Verluste:%200%200%200%200%200%200%200%200%200%20Spionage%20Ersp%C3%A4hte%20Rohstoffe:%2039%20.%20000%2034%2032%20Beute:%20258%20222%20220%20700/700%20%C2%BB%20Truppen%20in%20Simulator%20einf%C3%BCgen%20%C2%BB%20%C3%9Cberlebende%20Truppen%20in%20Simulator%20einf%C3%BCgen%20%C2%BB%20Dieses%20Dorf%20angreifen%20%C2%BB%20Mit%20gleichen%20Truppen%20noch%20einmal%20angreifen%20%C2%BB%20Mit%20allen%20Truppen%20noch%20einmal%20angreifen%20%C2%BB%20Diesen%20Bericht%20ver%C3%B6ffentlichen%20&user=Test&pass=098f6bcd4621d373cade4e832627b4f6&group=-1&world=83";
+         * data =
+         * "report=Betreff%20misterpayne%20(Blub%2039)%20greift%20Barbarendorf%20(910%7C519)%20K59%20an%20DS-OBST%20Status%20DS-OBST%20Berichteeinleser%20-%20Einstellungen%20Bitte%20eingeben%20URL:%20Gruppe:%20Taste%20Nick%20Passwort%20Speichern%20warte%20auf%20Befehl%20Gesendet%2002.05.12%2018:21:50%20Der%20Angreifer%20hat%20gewonnen%20Gl%C3%BCck%20(aus%20Sicht%20des%20Angreifers)%2021.0%25%20Moral:%20100%25%20Angreifer:%20misterpayne%20%0AHerkunft:%20Blub%2039%20(913%7C516)%20K59%20%0AAnzahl:%200%200%200%200%201%20442%200%200%200%200%200%200%20Verluste:%200%200%200%200%200%200%200%200%200%200%200%200%20Glauben:%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%09%09%09%09%09Die%20Einheiten%20waren%20gl%C3%A4ubig.%0A%20%20%20%20%20%20%20%20%09%09%09%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Kampfkraft:%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20100%25%20Verteidiger:%20---%20%0AZiel:%20Barbarendorf%20(910%7C519)%20K59%20%0AAnzahl:%200%200%200%200%200%200%200%200%200%200%200%200%20Verluste:%200%200%200%200%200%200%200%200%200%200%200%200%20Spionage%20Ersp%C3%A4hte%20Rohstoffe:%20146%20.%20700%20170%20.%20630%20247%20.%20612%20Geb%C3%A4ude:%20Hauptgeb%C3%A4ude%20(Stufe%2015)%20Kaserne%20(Stufe%209)%20Schmiede%20(Stufe%204)%20Statue%20(Stufe%201)%20Marktplatz%20(Stufe%204)%20Holzf%C3%A4ller%20(Stufe%2019)%20Lehmgrube%20(Stufe%2020)%20Eisenmine%20(Stufe%2026)%20Bauernhof%20(Stufe%2015)%20Speicher%20(Stufe%2028)%20Versteck%20(Stufe%209)%20Beute:%209%20.%20182%2010%20.%20679%2015%20.%20499%2035%20.%20360/35%20.%20360%20%C2%BB%20Truppen%20in%20Simulator%20einf%C3%BCgen%20%C2%BB%20%C3%9Cberlebende%20Truppen%20in%20Simulator%20einf%C3%BCgen%20%C2%BB%20Dieses%20Dorf%20angreifen%20%C2%BB%20Mit%20gleichen%20Truppen%20noch%20einmal%20angreifen%20%C2%BB%20Mit%20allen%20Truppen%20noch%20einmal%20angreifen%20%C2%BB%20Diesen%20Bericht%20ver%C3%B6ffentlichen%20&user=bbb&pass=08f8e0260c64418510cefb2b06eee5cd&group=-1&world=57";
+         * data = URLDecoder.decode(data, "UTF-8"); System.out.println(data);
+         *
+         * // data = "Beute: 12 . 000 13 . 000 14 . 000"; data = data.replaceAll(" \\. ", "."); Matcher m = Pattern.compile("Ersp.{1,2}hte
+         * Rohstoffe:\\s+([0-9\\.]+)\\s+([0-9\\.]+)\\s+([0-9\\.]+)").matcher(data); //m =
+         * Pattern.compile("Beute:\\s+([\\.0-9]+)\\s([\\.0-9]+)\\s([\\.0-9]+)").matcher(data); if (m.find()) {
+         * System.out.println(m.group(1)); System.out.println(m.group(2)); System.out.println(m.group(3)); }
+         */
         /*
          * String data = "KT-[1] Cithri (550|520) K55 eigene 0	0	375	20	7	0	0	0	0 Befehle\n" + "im Dorf 0	0	375	20	7	0	0	0	0 Truppen\n" +
          * "auswärts 0	0	0	0	0	0	0	0	0\n" + "unterwegs 0	0	0	0	70	0	0	0	0 Befehle\n" + "KT-[1] asdasd (550|520) K55 eigene 0	0	375	20	7	0	0
@@ -172,11 +169,14 @@ public class OBSTReportHandler {
                 logger.error("No target village found");
             }
 
-            String unitPattern = RegExpHelper.getTroopsPattern(true, true);
+            String unitPattern = RegExpHelper.getTroopsPattern(true, false);
             //m = Pattern.compile("Anzahl:\\s+([0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+)").matcher(data);
             m = Pattern.compile("Anzahl:" + unitPattern).matcher(data);
             if (m.find()) {
                 report.setAttackers(parseUnits(m.group(1).trim().split("\\s")));
+                //switch to defender pattern
+                unitPattern = RegExpHelper.getTroopsPattern(true, true);
+                m = Pattern.compile("Anzahl:" + unitPattern).matcher(data);
                 if (m.find()) {
                     report.setDefenders(parseUnits(m.group(1).trim().split("\\s")));
                 } else {
@@ -189,9 +189,14 @@ public class OBSTReportHandler {
                 }
             }
             //m = Pattern.compile("Verluste:\\s+([0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+)").matcher(data);
+            //back to offense pattern 
+            unitPattern = RegExpHelper.getTroopsPattern(true, false);
             m = Pattern.compile("Verluste:" + unitPattern).matcher(data);
             if (m.find()) {
                 report.setDiedAttackers(parseUnits(m.group(1).trim().split("\\s")));
+                //and again, defense pattern
+                unitPattern = RegExpHelper.getTroopsPattern(true, true);
+                m = Pattern.compile("Verluste:" + unitPattern).matcher(data);
                 if (m.find()) {
                     report.setDiedDefenders(parseUnits(m.group(1).trim().split("\\s")));
                 } else {

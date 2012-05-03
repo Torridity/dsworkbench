@@ -295,12 +295,21 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
             @Override
             public void mouseReleased(MouseEvent e) {
+
                 Tribe yourTribe = GlobalOptions.getSelectedProfile().getTribe();
                 Point center = DSCalculator.calculateCenterOfMass(Arrays.asList(yourTribe.getVillageList()));
                 coordSpinner.setValue(center);
                 jFarmFromBarbarianSelectionDialog.pack();
                 jFarmFromBarbarianSelectionDialog.setLocationRelativeTo(DSWorkbenchFarmManager.getSingleton());
                 jFarmFromBarbarianSelectionDialog.setVisible(true);
+
+                /*
+                 * try { String data =
+                 * "report=Betreff%20Groq%20(Groqs%20Grotte)%20greift%20Barbarendorf%20(725%7C325)%20K37%20an%20DS-OBST%20Status%20DS-OBST%20Berichteeinleser%20-%20Einstellungen%20Bitte%20eingeben%20URL:%20Gruppe:%20Taste%20Nick%20Passwort%20Speichern%20warte%20auf%20Befehl%20Gesendet%2003.05.12%2010:51:09%20Der%20Angreifer%20hat%20gewonnen%20Gl%C3%BCck%20(aus%20Sicht%20des%20Angreifers)%20-0.1%25%20Moral:%20100%25%20Angreifer:%20Groq%20%0AHerkunft:%20Groqs%20Grotte%20(722%7C329)%20K37%20%0AAnzahl:%2051%200%200%20300%201%200%200%200%200%200%200%200%20Verluste:%200%200%200%201%200%200%200%200%200%200%200%200%20Glauben:%20Die%20Einheiten%20waren%20gl%C3%A4ubig.%20Kampfkraft:%20100%25%20Verteidiger:%20---%20%0AZiel:%20Barbarendorf%20(725%7C325)%20K37%20%0AAnzahl:%200%200%200%200%200%200%200%200%200%200%200%200%200%20Verluste:%200%200%200%200%200%200%200%200%200%200%200%200%200%20Spionage%20Ersp%C3%A4hte%20Rohstoffe:%200%200%200%20Geb%C3%A4ude:%20Hauptgeb%C3%A4ude%20(Stufe%206)%20Kaserne%20(Stufe%203)%20Schmiede%20(Stufe%202)%20Versammlungsplatz%20(Stufe%201)%20Statue%20(Stufe%201)%20Marktplatz%20(Stufe%202)%20Holzf%C3%A4ller%20(Stufe%2010)%20Lehmgrube%20(Stufe%205)%20Eisenmine%20(Stufe%204)%20Bauernhof%20(Stufe%207)%20Speicher%20(Stufe%205)%20Versteck%20(Stufe%203)%20Wall%20(Stufe%202)%20Beute:%202%20.%20018%201%20.%20173%201%20.%20071%204%20.%20262/4%20.%20265%20%C2%BB%20Truppen%20in%20Simulator%20einf%C3%BCgen%20%C2%BB%20%C3%9Cberlebende%20Truppen%20in%20Simulator%20einf%C3%BCgen%20%C2%BB%20Dieses%20Dorf%20angreifen%20%C2%BB%20Mit%20gleichen%20Truppen%20noch%20einmal%20angreifen%20%C2%BB%20Mit%20allen%20Truppen%20noch%20einmal%20angreifen%20%C2%BB%20Diesen%20Bericht%20ver%C3%B6ffentlichen%20&user=gar&pass=393b7e38038f12c5fb4c92e81a1b5a01&group=-1&world=76";
+                 * data = URLDecoder.decode(data, "UTF-8"); System.out.println(data); OBSTReportHandler.handleReport(data); } catch
+                 * (Exception ex) { ex.printStackTrace(); }
+                 */
+
             }
         });
 

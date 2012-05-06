@@ -7,6 +7,7 @@ package de.tor.tribes.util;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FightReport;
+import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.report.ReportManager;
@@ -34,7 +35,19 @@ public class OBSTReportHandler {
     public static void main(String[] args) throws Exception {
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         Logger.getRootLogger().setLevel(Level.DEBUG);
-        System.out.println((int) Integer.parseInt("123.123".replaceAll("\\.", "")));
+        String data = "Anzahl: 0 0 0 0 1 442 0 0 0 0 0 0\nAnzahl: 0 0 0 0 0 0 0 0 0 0 0 0";
+        Matcher m = Pattern.compile("Anzahl:" + "(\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+)").matcher(data);
+        //m = Pattern.compile("Anzahl:" + "\\s+([\\.0-9]+\\s+[\\.0-9]+)").matcher(data);
+//        m = Pattern.compile("Beute:\\s+([\\.0-9]+)\\s([\\.0-9]+)\\s([\\.0-9]+)").matcher(data);
+
+        if (m.find()) {
+            System.out.println(m.groupCount());
+            System.out.println(m.group(1));
+            if (m.find()) {
+                System.out.println(m.group(1));
+            }
+        }
+
         /*
          * String data = "SpionageErspähte Rohstoffe:	2.352 2.651 1.184"; data =
          * "report=Betreff%20Anahita%20(A%20new%20Beginning)%20greift%20Barbarendorf%20(489%7C356)%20K34%20an%20DS-OBST%20Status%20DS-OBST%20Berichteeinleser%20-%20Einstellungen%20Bitte%20eingeben%20URL:%20Gruppe:%20Taste%20Nick%20Passwort%20Speichern%20warte%20auf%20Befehl%20Gesendet%2002.05.12%2016:25:27%20Der%20Angreifer%20hat%20gewonnen%20Gl%C3%BCck%20(aus%20Sicht%20des%20Angreifers)%20-13.9%25%20Moral:%20100%25%20Angreifer:%20Anahita%20%0AHerkunft:%20A%20new%20Beginning%20(489%7C359)%20K34%20%0AAnzahl:%200%200%2070%201%200%200%200%200%200%20Verluste:%200%200%200%200%200%200%200%200%200%20Verteidiger:%20---%20%0AZiel:%20Barbarendorf%20(489%7C356)%20K34%20%0AAnzahl:%200%200%200%200%200%200%200%200%200%20Verluste:%200%200%200%200%200%200%200%200%200%20Spionage%20Ersp%C3%A4hte%20Rohstoffe:%2039%20.%20000%2034%2032%20Beute:%20258%20222%20220%20700/700%20%C2%BB%20Truppen%20in%20Simulator%20einf%C3%BCgen%20%C2%BB%20%C3%9Cberlebende%20Truppen%20in%20Simulator%20einf%C3%BCgen%20%C2%BB%20Dieses%20Dorf%20angreifen%20%C2%BB%20Mit%20gleichen%20Truppen%20noch%20einmal%20angreifen%20%C2%BB%20Mit%20allen%20Truppen%20noch%20einmal%20angreifen%20%C2%BB%20Diesen%20Bericht%20ver%C3%B6ffentlichen%20&user=Test&pass=098f6bcd4621d373cade4e832627b4f6&group=-1&world=83";
@@ -169,14 +182,18 @@ public class OBSTReportHandler {
                 logger.error("No target village found");
             }
 
+            boolean haveMilitia = !DataHolder.getSingleton().getUnitByPlainName("militia").equals(UnknownUnit.getSingleton());
+
+
+
             String unitPattern = RegExpHelper.getTroopsPattern(true, false);
-            //m = Pattern.compile("Anzahl:\\s+([0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+)").matcher(data);
             m = Pattern.compile("Anzahl:" + unitPattern).matcher(data);
             if (m.find()) {
                 report.setAttackers(parseUnits(m.group(1).trim().split("\\s")));
-                //switch to defender pattern
-                unitPattern = RegExpHelper.getTroopsPattern(true, true);
-                m = Pattern.compile("Anzahl:" + unitPattern).matcher(data);
+                if (haveMilitia) {//switch to defender pattern
+                    unitPattern = RegExpHelper.getTroopsPattern(true, true);
+                    m = Pattern.compile("Anzahl:" + unitPattern).matcher(data);
+                }
                 if (m.find()) {
                     report.setDefenders(parseUnits(m.group(1).trim().split("\\s")));
                 } else {
@@ -188,15 +205,15 @@ public class OBSTReportHandler {
                     report.setDefenders(amounts);
                 }
             }
-            //m = Pattern.compile("Verluste:\\s+([0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+)").matcher(data);
             //back to offense pattern 
             unitPattern = RegExpHelper.getTroopsPattern(true, false);
             m = Pattern.compile("Verluste:" + unitPattern).matcher(data);
             if (m.find()) {
                 report.setDiedAttackers(parseUnits(m.group(1).trim().split("\\s")));
-                //and again, defense pattern
-                unitPattern = RegExpHelper.getTroopsPattern(true, true);
-                m = Pattern.compile("Verluste:" + unitPattern).matcher(data);
+                if (haveMilitia) {//and again, defense pattern
+                    unitPattern = RegExpHelper.getTroopsPattern(true, true);
+                    m = Pattern.compile("Verluste:" + unitPattern).matcher(data);
+                }
                 if (m.find()) {
                     report.setDiedDefenders(parseUnits(m.group(1).trim().split("\\s")));
                 } else {
@@ -275,11 +292,12 @@ public class OBSTReportHandler {
                 logger.info("No spy information found");
             }
 
-
+            boolean anyBuilding = false;
             m = Pattern.compile("Holzfäller\\s+\\(Stufe\\s+([0-9]+)\\)").matcher(data);
             if (m.find()) {
                 try {
                     report.setWoodLevel(Integer.parseInt(m.group(1)));
+                    anyBuilding = true;
                 } catch (Exception e) {
                     logger.error("Failed to parse wood level from " + m.group(1));
                 }
@@ -291,6 +309,7 @@ public class OBSTReportHandler {
             if (m.find()) {
                 try {
                     report.setClayLevel(Integer.parseInt(m.group(1)));
+                    anyBuilding = false;
                 } catch (Exception e) {
                     logger.error("Failed to parse clay level from " + m.group(1));
                 }
@@ -302,6 +321,7 @@ public class OBSTReportHandler {
             if (m.find()) {
                 try {
                     report.setIronLevel(Integer.parseInt(m.group(1)));
+                    anyBuilding = false;
                 } catch (Exception e) {
                     logger.error("Failed to parse iron level from " + m.group(1));
                 }
@@ -313,6 +333,7 @@ public class OBSTReportHandler {
             if (m.find()) {
                 try {
                     report.setStorageLevel(Integer.parseInt(m.group(1)));
+                    anyBuilding = false;
                 } catch (Exception e) {
                     logger.error("Failed to parse storage level from " + m.group(1));
                 }
@@ -324,6 +345,7 @@ public class OBSTReportHandler {
             if (m.find()) {
                 try {
                     report.setHideLevel(Integer.parseInt(m.group(1)));
+                    anyBuilding = false;
                 } catch (Exception e) {
                     logger.error("Failed to parse hide level from " + m.group(1));
                 }
@@ -337,9 +359,16 @@ public class OBSTReportHandler {
                     report.setWallLevel(Integer.parseInt(m.group(1)));
                 } catch (Exception e) {
                     logger.error("Failed to parse wall level from " + m.group(1));
+                    //@TODO might cause problems (ignore for the moment)
+                    if (anyBuilding) {
+                        report.setWallLevel(0);
+                    }
                 }
             } else {
                 logger.info("No wall level information found");
+                if (anyBuilding) {
+                    report.setWallLevel(0);
+                }
             }
 
             m = Pattern.compile("Kirche\\s+\\(Stufe\\s+([0-9]+)\\)").matcher(data);

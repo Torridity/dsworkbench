@@ -453,7 +453,7 @@ public class AttackTargetPanel extends WizardPage {
         if (selection.length > 0) {
             int modificationCount = 0;
             for (int i : selection) {
-                TAPAttackTargetElement elem = getModel().getRow(jVillageTable.convertRowIndexToView(i));
+                TAPAttackTargetElement elem = getModel().getRow(jVillageTable.convertRowIndexToModel(i));
                 if (increase) {
                     elem.addAttack();
                     modificationCount++;

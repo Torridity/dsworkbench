@@ -216,6 +216,8 @@ public class DataHolder {
 
     /**
      * Update the data, optionally by downloading
+     * @param pReload
+     * @return  
      */
     public boolean loadData(boolean pReload) {
         loading = true;

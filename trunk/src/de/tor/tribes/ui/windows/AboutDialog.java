@@ -8,9 +8,6 @@ package de.tor.tribes.ui.windows;
 import de.tor.tribes.util.Constants;
 import java.awt.Cursor;
 import de.tor.tribes.util.BrowserCommandSender;
-import java.awt.Color;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -26,11 +23,8 @@ public class AboutDialog extends javax.swing.JDialog {
         initComponents();
         jAppLabel.setText("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
         jLabel5.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        /*
-         * if (Logger.getRootLogger().getLevel().equals(Level.DEBUG)) { jDebugButton.setBackground(Color.GREEN);
-         * jDebugButton.setForeground(Color.BLACK); jDebugButton.setText("Debug off"); } else { jDebugButton.setBackground(Color.RED);
-         * jDebugButton.setText("Debug on"); }
-         */
+        buildSystemInfo();
+        setSize(430, 320);
     }
 
     /**
@@ -40,6 +34,7 @@ public class AboutDialog extends javax.swing.JDialog {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         jAppLabel = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -48,22 +43,55 @@ public class AboutDialog extends javax.swing.JDialog {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jDebugButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jEditorPane1 = new javax.swing.JEditorPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("About");
         setAlwaysOnTop(true);
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jAppLabel.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jAppLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jAppLabel.setText("DS-Workbench 0.92b");
+        jAppLabel.setMaximumSize(new java.awt.Dimension(250, 22));
+        jAppLabel.setMinimumSize(new java.awt.Dimension(250, 22));
+        jAppLabel.setPreferredSize(new java.awt.Dimension(250, 22));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jAppLabel, gridBagConstraints);
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel2.setText("<html><u><b>Web:</b></u></html>");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jLabel2, gridBagConstraints);
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel3.setText("<html><u><b>eMail:</b></u></html>");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jLabel3, gridBagConstraints);
 
         jLabel4.setText("support@dsworkbench.de");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jLabel4, gridBagConstraints);
 
         jLabel5.setForeground(new java.awt.Color(0, 51, 255));
         jLabel5.setText("http://www.dsworkbench.de");
@@ -72,8 +100,24 @@ public class AboutDialog extends javax.swing.JDialog {
                 fireOpenHomepageEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jLabel5, gridBagConstraints);
 
         jLabel6.setText("<html>&copy; Torridity (2008-2012)</html>");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jLabel6, gridBagConstraints);
 
         jDebugButton.setText("Debug");
         jDebugButton.setToolTipText("Schaltet den Debug-Modus an (nur nach Aufforderung benötigt)");
@@ -82,51 +126,30 @@ public class AboutDialog extends javax.swing.JDialog {
                 fireDebugOnEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jDebugButton, gridBagConstraints);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jAppLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(16, 16, 16)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
-                                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE))))
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
-                        .addGap(67, 67, 67)
-                        .addComponent(jDebugButton)
-                        .addGap(18, 18, 18))))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jAppLabel)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addGap(18, 18, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jDebugButton))
-                .addContainerGap())
-        );
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Systeminformationen"));
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(150, 100));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(150, 100));
+
+        jEditorPane1.setContentType("text/html");
+        jEditorPane1.setEditable(false);
+        jScrollPane1.setViewportView(jEditorPane1);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jScrollPane1, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -136,13 +159,6 @@ private void fireOpenHomepageEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 }//GEN-LAST:event_fireOpenHomepageEvent
 
 private void fireDebugOnEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDebugOnEvent
-
-    /*
-     * if (Logger.getRootLogger().getLevel().equals(Level.DEBUG)) { Logger.getRootLogger().setLevel(Level.ERROR);
-     * jDebugButton.setBackground(Color.GREEN); jDebugButton.setForeground(Color.BLACK); jDebugButton.setText("Debug off"); } else {
-     * Logger.getRootLogger().setLevel(Level.DEBUG); jDebugButton.setBackground(Color.RED); jDebugButton.setText("Debug on"); }
-     *
-     */
     if (!jDebugButton.isEnabled()) {
         return;
     }
@@ -151,21 +167,44 @@ private void fireDebugOnEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     DSWorkbenchSplashScreen.getSingleton().initializeSuperSpecialDebugFeatures();
     jDebugButton.setText("DEBUG MODE");
 }//GEN-LAST:event_fireDebugOnEvent
+
+    private void buildSystemInfo() {
+        StringBuilder b = new StringBuilder();
+        b.append("<html><u>Betriebssystem:</u>&nbsp;").append(System.getProperty("os.name")).append(" (").append(System.getProperty("os.version")).append(" / ").append(System.getProperty("os.arch")).append(")<br/>");
+        b.append("<u>Java:</u>&nbsp;").append(System.getProperty("java.vendor")).append(" ").append(System.getProperty("java.version")).append(" (").append(System.getProperty("java.home")).append(")<br/>");
+        b.append("<u>Arbeitsverzeichnis:</u>&nbsp;").append(System.getProperty("user.dir")).append("<br/>");
+        jEditorPane1.setText(b.toString());
+    }
+
     /**
      * @param args the command line arguments
      */
-    /*
-     * public static void main(String args[]) { java.awt.EventQueue.invokeLater(new Runnable() { @Override public void run() { AboutDialog
-     * dialog = new AboutDialog(new javax.swing.JFrame(), true); dialog.addWindowListener(new java.awt.event.WindowAdapter() { @Override
-     * public void windowClosing(java.awt.event.WindowEvent e) { System.exit(0); } }); dialog.setVisible(true); } }); }
-     */
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                AboutDialog dialog = new AboutDialog(new javax.swing.JFrame(), true);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
+            }
+        });
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jAppLabel;
     private javax.swing.JButton jDebugButton;
+    private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

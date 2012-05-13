@@ -552,17 +552,14 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 //no nimbus for mac users
                 lnf = UIManager.getSystemLookAndFeelClassName();
             }
-            if (lnf == null) {
-                //lnf = UIManager.getSystemLookAndFeelClassName();
-                UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-            } else {
+            if (lnf != null) {
                 UIManager.setLookAndFeel(lnf);
             }
         } catch (Exception e) {
             logger.error("Failed to setup LnF", e);
         }
 
-        final boolean useSSD  = ssd;
+        final boolean useSSD = ssd;
 
         SwingUtilities.invokeLater(new Runnable() {
 

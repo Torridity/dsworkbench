@@ -49,7 +49,7 @@ import org.apache.log4j.Logger;
  * @author Torridity
  */
 public class TroopFilterDialog extends javax.swing.JDialog {
-    
+
     private static Logger logger = Logger.getLogger("TroopFilter");
     private boolean doFilter = false;
     private Hashtable<String, List<TroopFilterElement>> filterSets = new Hashtable<String, List<TroopFilterElement>>();
@@ -60,41 +60,24 @@ public class TroopFilterDialog extends javax.swing.JDialog {
     public TroopFilterDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        
+
         ActionListener listener = new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 removeSelectedFilters();
             }
         };
         capabilityInfoPanel3.addActionListener(listener);
-        
+
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         jFilterList.registerKeyboardAction(listener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        
-        jList1.registerKeyboardAction(new ActionListener() {
-            
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                removeFilterSet();
-            }
-        }, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        
-        CollapseExpandTrigger trigger = new CollapseExpandTrigger();
-        trigger.addMouseListener(new MouseAdapter() {
-            
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                sourceInfoPanel.setCollapsed(!sourceInfoPanel.isCollapsed());
-            }
-        });
-               
+
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jXCollapsiblePane1.add(jSettingsPanel, BorderLayout.CENTER);
         reset();
     }
-    
+
     private void removeSelectedFilters() {
         Object[] selection = jFilterList.getSelectedValues();
         if (selection == null || selection.length == 0) {
@@ -125,6 +108,7 @@ public class TroopFilterDialog extends javax.swing.JDialog {
         jLabel1 = new javax.swing.JLabel();
         jExistingFilters = new javax.swing.JComboBox();
         jButton3 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
         jPanel8 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jNewFilterName = new javax.swing.JTextField();
@@ -146,13 +130,6 @@ public class TroopFilterDialog extends javax.swing.JDialog {
         jFilterList = new javax.swing.JList();
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jButton5 = new javax.swing.JButton();
-        sourceInfoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
-        jPanel5 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
         capabilityInfoPanel3 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
         jApplyFiltersButton = new javax.swing.JButton();
         jButton20 = new javax.swing.JButton();
@@ -173,11 +150,13 @@ public class TroopFilterDialog extends javax.swing.JDialog {
         jPanel6.add(jLabel1, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel6.add(jExistingFilters, gridBagConstraints);
 
+        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/export1.png"))); // NOI18N
         jButton3.setText("Laden");
         jButton3.setMaximumSize(new java.awt.Dimension(100, 23));
         jButton3.setMinimumSize(new java.awt.Dimension(100, 23));
@@ -188,11 +167,28 @@ public class TroopFilterDialog extends javax.swing.JDialog {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel6.add(jButton3, gridBagConstraints);
+
+        jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/red_x.png"))); // NOI18N
+        jButton6.setText("Löschen");
+        jButton6.setMaximumSize(new java.awt.Dimension(100, 23));
+        jButton6.setMinimumSize(new java.awt.Dimension(100, 23));
+        jButton6.setPreferredSize(new java.awt.Dimension(100, 23));
+        jButton6.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireRemoveFilterEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel6.add(jButton6, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -216,6 +212,7 @@ public class TroopFilterDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel8.add(jNewFilterName, gridBagConstraints);
 
+        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/import1.png"))); // NOI18N
         jButton4.setText("Speichern");
         jButton4.setMaximumSize(new java.awt.Dimension(100, 23));
         jButton4.setMinimumSize(new java.awt.Dimension(100, 23));
@@ -417,76 +414,6 @@ public class TroopFilterDialog extends javax.swing.JDialog {
 
         jPanel4.add(jPanel2, java.awt.BorderLayout.CENTER);
 
-        sourceInfoPanel.setAnimated(false);
-        sourceInfoPanel.setCollapsed(true);
-        sourceInfoPanel.setDirection(org.jdesktop.swingx.JXCollapsiblePane.Direction.LEFT);
-        sourceInfoPanel.setInheritAlpha(false);
-
-        jPanel5.setMinimumSize(new java.awt.Dimension(200, 360));
-        jPanel5.setPreferredSize(new java.awt.Dimension(200, 491));
-
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png"))); // NOI18N
-        jButton1.setToolTipText("Filtersatz speichern");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                fireSaveFilterSetEvent(evt);
-            }
-        });
-
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/refresh.png"))); // NOI18N
-        jButton2.setToolTipText("Filtersatz laden");
-        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                fireLoadFilterSetEvent(evt);
-            }
-        });
-
-        jTextField1.setMinimumSize(new java.awt.Dimension(59, 25));
-        jTextField1.setPreferredSize(new java.awt.Dimension(59, 25));
-
-        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Gespeicherte Filtersätze"));
-
-        jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jList1.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                jList1ValueChanged(evt);
-            }
-        });
-        jScrollPane1.setViewportView(jList1);
-
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                        .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 422, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton2)
-                    .addComponent(jButton1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-
-        sourceInfoPanel.add(jPanel5, java.awt.BorderLayout.CENTER);
-
-        jPanel4.add(sourceInfoPanel, java.awt.BorderLayout.EAST);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -561,7 +488,7 @@ public class TroopFilterDialog extends javax.swing.JDialog {
             jMinValue.setText("" + min);
             jMaxValue.setText("" + max);
         }
-        
+
         if (min < 0 && max < 0) {
             jMinValue.setBackground(Color.RED);
             jMaxValue.setBackground(Color.RED);
@@ -570,7 +497,7 @@ public class TroopFilterDialog extends javax.swing.JDialog {
             jMinValue.setBackground(Color.WHITE);
             jMaxValue.setBackground(Color.WHITE);
         }
-        
+
         for (int i = 0; i < filterModel.size(); i++) {
             TroopFilterElement listElem = (TroopFilterElement) filterModel.get(i);
             if (listElem.getUnit().equals(unit)) {
@@ -583,67 +510,19 @@ public class TroopFilterDialog extends javax.swing.JDialog {
         }
         //no elem update --> add new elem
         filterModel.addElement(new TroopFilterElement(unit, min, max));
-        
+
 }//GEN-LAST:event_fireAddTroopFilterEvent
-    
+
     private void fireApplyTroopFiltersEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireApplyTroopFiltersEvent
         if (evt.getSource() == jApplyFiltersButton) {
             doFilter = true;
         }
         setVisible(false);
 }//GEN-LAST:event_fireApplyTroopFiltersEvent
-    
-    private void jList1ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jList1ValueChanged
-        jTextField1.setText((String) jList1.getSelectedValue());
-    }//GEN-LAST:event_jList1ValueChanged
-    
-    private void fireSaveFilterSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSaveFilterSetEvent
-        String setName = jTextField1.getText();
-        DefaultListModel filterModel = (DefaultListModel) jFilterList.getModel();
-        
-        if (setName == null || setName.length() == 0) {
-            JOptionPaneHelper.showInformationBox(this, "Bitte einen Namen für das neue Filterset angeben", "Information");
-            return;
-        }
-        
-        if (filterModel.getSize() == 0) {
-            JOptionPaneHelper.showInformationBox(this, "Ein Filterset muss mindestens einen Eintrag enthalten", "Information");
-            return;
-        }
-        
-        if (filterSets.get(setName) != null) {
-            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Das Filterset '" + setName + "' existiert bereits.\nMöchtest du es überschreiben?", "Bestätigung", "Nein", "Ja") != JOptionPane.OK_OPTION) {
-                return;
-            }
-        }
-        
-        StringBuilder b = new StringBuilder();
-        b.append(setName).append(",");
-        List<TroopFilterElement> elements = new LinkedList<TroopFilterElement>();
-        for (int j = 0; j < filterModel.size(); j++) {
-            TroopFilterElement elem = (TroopFilterElement) filterModel.get(j);
-            elements.add(new TroopFilterElement(elem.getUnit(), elem.getMin(), elem.getMax()));
-        }
-        
-        filterSets.put(setName, elements);
-        updateFilterSetList();
-    }//GEN-LAST:event_fireSaveFilterSetEvent
-    
-    private void fireLoadFilterSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireLoadFilterSetEvent
-        String selection = (String) jList1.getSelectedValue();
-        if (selection != null) {
-            List<TroopFilterElement> elems = filterSets.get(selection);
-            DefaultListModel model = new DefaultListModel();
-            for (TroopFilterElement elem : elems) {
-                model.addElement(new TroopFilterElement(elem.getUnit(), elem.getMin(), elem.getMax()));
-            }
-            jFilterList.setModel(model);
-        }
-    }//GEN-LAST:event_fireLoadFilterSetEvent
-    
+
     private void fireLoadFilterSettingsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireLoadFilterSettingsEvent
         String selection = (String) jExistingFilters.getSelectedItem();
-        
+
         if (selection != null) {
             List<TroopFilterElement> elems = filterSets.get(selection);
             DefaultListModel model = new DefaultListModel();
@@ -653,27 +532,27 @@ public class TroopFilterDialog extends javax.swing.JDialog {
             jFilterList.setModel(model);
         }
     }//GEN-LAST:event_fireLoadFilterSettingsEvent
-    
+
     private void fireSaveFilterSettingsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSaveFilterSettingsEvent
         String setName = jNewFilterName.getText();
         DefaultListModel filterModel = (DefaultListModel) jFilterList.getModel();
-        
+
         if (setName == null || setName.length() == 0) {
             JOptionPaneHelper.showInformationBox(this, "Bitte einen Namen für das neue Filterset angeben", "Information");
             return;
         }
-        
+
         if (filterModel.getSize() == 0) {
             JOptionPaneHelper.showInformationBox(this, "Ein Filterset muss mindestens einen Eintrag enthalten", "Information");
             return;
         }
-        
+
         if (filterSets.get(setName) != null) {
             if (JOptionPaneHelper.showQuestionConfirmBox(this, "Das Filterset '" + setName + "' existiert bereits.\nMöchtest du es überschreiben?", "Bestätigung", "Nein", "Ja") != JOptionPane.OK_OPTION) {
                 return;
             }
         }
-        
+
         StringBuilder b = new StringBuilder();
         b.append(setName).append(",");
         List<TroopFilterElement> elements = new LinkedList<TroopFilterElement>();
@@ -681,36 +560,39 @@ public class TroopFilterDialog extends javax.swing.JDialog {
             TroopFilterElement elem = (TroopFilterElement) filterModel.get(j);
             elements.add(new TroopFilterElement(elem.getUnit(), elem.getMin(), elem.getMax()));
         }
-        
+
         filterSets.put(setName, elements);
         updateFilterSetList();
+        saveFilterSets();
     }//GEN-LAST:event_fireSaveFilterSettingsEvent
-    
+
     private void fireShowHideSettingsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowHideSettingsEvent
         jXCollapsiblePane1.setCollapsed(!jXCollapsiblePane1.isCollapsed());
     }//GEN-LAST:event_fireShowHideSettingsEvent
-    
+
+    private void fireRemoveFilterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveFilterEvent
+        removeFilterSet();
+    }//GEN-LAST:event_fireRemoveFilterEvent
+
     private void removeFilterSet() {
-        String setName = (String) jList1.getSelectedValue();
-        if (setName == null || filterSets.get(setName) == null) {
+        String filter = (String) jExistingFilters.getSelectedItem();
+        if (filter == null) {
             return;
         }
-        
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Möchtest du das Filterset '" + setName + "' wirklich löschen?", "Bestätigung", "Nein", "Ja") != JOptionPane.OK_OPTION) {
-            return;
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Filter '" + filter + "' wirklich löschen?", "Filter löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+            filterSets.remove(filter);
+            saveFilterSets();
+            updateFilterSetList();
         }
-        
-        filterSets.remove(setName);
-        updateFilterSetList();
     }
-    
+
     private void saveFilterSets() {
         String profileDir = GlobalOptions.getSelectedProfile().getProfileDirectory();
         File filterFile = new File(profileDir + "/filters.sav");
-        
+
         StringBuilder b = new StringBuilder();
         Enumeration<String> setKeys = filterSets.keys();
-        
+
         while (setKeys.hasMoreElements()) {
             String key = setKeys.nextElement();
             b.append(key).append(",");
@@ -724,7 +606,7 @@ public class TroopFilterDialog extends javax.swing.JDialog {
             }
             b.append("\n");
         }
-        
+
         FileWriter w = null;
         try {
             w = new FileWriter(filterFile);
@@ -739,7 +621,7 @@ public class TroopFilterDialog extends javax.swing.JDialog {
             }
         }
     }
-    
+
     private void loadFilterSets() {
         filterSets.clear();
         String profileDir = GlobalOptions.getSelectedProfile().getProfileDirectory();
@@ -747,9 +629,9 @@ public class TroopFilterDialog extends javax.swing.JDialog {
         if (!filterFile.exists()) {
             return;
         }
-        
+
         BufferedReader r = null;
-        
+
         try {
             r = new BufferedReader(new FileReader(filterFile));
             String line = "";
@@ -772,32 +654,25 @@ public class TroopFilterDialog extends javax.swing.JDialog {
             } catch (Exception ignored) {
             }
         }
-        
+
         updateFilterSetList();
     }
-    
+
     private void updateFilterSetList() {
-        /*
-         * DefaultListModel model = new DefaultListModel();
-         *
-         * Enumeration<String> keys = filterSets.keys(); while (keys.hasMoreElements()) { model.addElement(keys.nextElement()); }
-         *
-         * jList1.setModel(model);
-         */
         DefaultComboBoxModel model = new DefaultComboBoxModel();
-        
+
         Enumeration<String> keys = filterSets.keys();
         while (keys.hasMoreElements()) {
             model.addElement(keys.nextElement());
         }
-        
+
         jExistingFilters.setModel(model);
     }
-    
+
     public void reset() {
         jFilterList.setModel(new DefaultListModel());
     }
-    
+
     public boolean showDialog() {
         jFilterUnitBox.setModel(new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{})));
         jFilterUnitBox.setRenderer(new UnitListCellRenderer());
@@ -811,18 +686,17 @@ public class TroopFilterDialog extends javax.swing.JDialog {
         }
         return doFilter;
     }
-    
+
     public void show(List<Village> pVillageToFilter) {
         if (showDialog()) {
             filter(pVillageToFilter);
         }
-        saveFilterSets();
     }
-    
+
     public void filter(List<Village> pVillageToFilter) {
         //update list if filter is enabled
         DefaultListModel filterModel = (DefaultListModel) jFilterList.getModel();
-        
+
         for (Village v : pVillageToFilter.toArray(new Village[pVillageToFilter.size()])) {
             boolean villageAllowed = false;
             //go through all rows in attack table and get source village
@@ -848,16 +722,16 @@ public class TroopFilterDialog extends javax.swing.JDialog {
             }
         }
     }
-    
+
     public boolean canFilter() {
         return doFilter && !((DefaultListModel) jFilterList.getModel()).isEmpty();
     }
-    
+
     public Village[] getIgnoredVillages(Village[] pVillageToFilter) {
         List<Village> ignored = new LinkedList<Village>();
         //update list if filter is enabled
         DefaultListModel filterModel = (DefaultListModel) jFilterList.getModel();
-        
+
         for (Village v : pVillageToFilter) {
             boolean villageAllowed = false;
             //go through all rows in attack table and get source village
@@ -894,13 +768,13 @@ public class TroopFilterDialog extends javax.swing.JDialog {
         ProfileManager.getSingleton().loadProfiles();
         GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
         DataHolder.getSingleton().loadData(false);
-        
+
         final TroopFilterDialog dialog = new TroopFilterDialog(null, false);
         dialog.reset();
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        
+
         java.awt.EventQueue.invokeLater(new Runnable() {
-            
+
             public void run() {
                 dialog.show(new LinkedList<Village>());
             }
@@ -909,13 +783,12 @@ public class TroopFilterDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel3;
     private javax.swing.JButton jApplyFiltersButton;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton17;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton20;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JComboBox jExistingFilters;
     private javax.swing.JList jFilterList;
     private javax.swing.JComboBox jFilterUnitBox;
@@ -924,7 +797,6 @@ public class TroopFilterDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
-    private javax.swing.JList jList1;
     private javax.swing.JTextField jMaxValue;
     private javax.swing.JTextField jMinValue;
     private javax.swing.JTextField jNewFilterName;
@@ -932,16 +804,12 @@ public class TroopFilterDialog extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane14;
     private javax.swing.JPanel jSettingsPanel;
     private javax.swing.JCheckBox jStrictFilter;
-    private javax.swing.JTextField jTextField1;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
-    private org.jdesktop.swingx.JXCollapsiblePane sourceInfoPanel;
     // End of variables declaration//GEN-END:variables
 }

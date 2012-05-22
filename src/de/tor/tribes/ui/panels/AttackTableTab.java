@@ -689,7 +689,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jPanel4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel4.setLayout(new java.awt.GridBagLayout());
 
-        jLabel8.setText("Neue Ankunftzeit");
+        jLabel8.setText("Neue Zeit");
         jLabel8.setToolTipText("");
         jLabel8.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -728,9 +728,9 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
         jLabel1.setText("Angleichung");
         jLabel1.setEnabled(false);
-        jLabel1.setMaximumSize(new java.awt.Dimension(34, 20));
-        jLabel1.setMinimumSize(new java.awt.Dimension(34, 20));
-        jLabel1.setPreferredSize(new java.awt.Dimension(34, 20));
+        jLabel1.setMaximumSize(new java.awt.Dimension(80, 20));
+        jLabel1.setMinimumSize(new java.awt.Dimension(80, 20));
+        jLabel1.setPreferredSize(new java.awt.Dimension(80, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;

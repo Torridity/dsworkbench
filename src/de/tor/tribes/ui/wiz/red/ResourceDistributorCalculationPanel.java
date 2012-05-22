@@ -1444,6 +1444,8 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         if (!transportsAlreadyTransferred) {
             ResourceDistributorFinishPanel.getSingleton().setup();
             transportsAlreadyTransferred = true;
+        } else {
+            ResourceDistributorFinishPanel.getSingleton().focusSubmit();
         }
         return WizardPanelNavResult.PROCEED;
     }

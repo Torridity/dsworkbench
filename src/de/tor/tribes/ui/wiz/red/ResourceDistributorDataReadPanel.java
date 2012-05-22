@@ -17,30 +17,23 @@ import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.StorageCellRenderer;
 import de.tor.tribes.ui.renderer.TradeDirectionCellRenderer;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.PluginManager;
-import de.tor.tribes.util.SlashComparator;
+import de.tor.tribes.util.*;
 import java.awt.BorderLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.jdesktop.swingx.renderer.StringValue;
-import org.jdesktop.swingx.sort.StringValueProvider;
 import org.jdesktop.swingx.sort.TableSortController;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
@@ -88,9 +81,12 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
         jDataTable.setDefaultRenderer(StorageStatus.class, new StorageCellRenderer());
 
         TableSortController sorter = (TableSortController) jDataTable.getRowSorter();
+        ResourceComparator resourceComparator = new ResourceComparator();
+        sorter.setComparator(1, resourceComparator);
         SlashComparator splitComparator = new SlashComparator();
         sorter.setComparator(3, splitComparator);
         sorter.setComparator(4, splitComparator);
+
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         ActionListener deleteListener = new ActionListener() {
 
@@ -129,10 +125,13 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
         jDataTable = new org.jdesktop.swingx.JXTable();
         jStatusLabel = new javax.swing.JLabel();
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
-        jPanel2 = new javax.swing.JPanel();
+        jButtonPanel = new javax.swing.JPanel();
         jAddAsBothButton = new javax.swing.JButton();
         jAddAsSenderButton = new javax.swing.JButton();
         jAddAsReceiverButton = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox();
 
         jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
         jInfoScrollPane.setPreferredSize(new java.awt.Dimension(19, 180));
@@ -186,7 +185,7 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
@@ -210,12 +209,12 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
         capabilityInfoPanel1.setSearchable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(capabilityInfoPanel1, gridBagConstraints);
 
-        jPanel2.setLayout(new java.awt.GridBagLayout());
+        jButtonPanel.setLayout(new java.awt.GridBagLayout());
 
         jAddAsBothButton.setToolTipText("In der Zwischenablage nach kopierter Produktionsübersicht suchen");
         jAddAsBothButton.setMaximumSize(new java.awt.Dimension(120, 60));
@@ -233,7 +232,7 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(jAddAsBothButton, gridBagConstraints);
+        jButtonPanel.add(jAddAsBothButton, gridBagConstraints);
 
         jAddAsSenderButton.setToolTipText("In der Zwischenablage nach kopierter Produktionsübersicht suchen und Dörfer als Lieferanten eintragen");
         jAddAsSenderButton.setMaximumSize(new java.awt.Dimension(120, 60));
@@ -251,7 +250,7 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(jAddAsSenderButton, gridBagConstraints);
+        jButtonPanel.add(jAddAsSenderButton, gridBagConstraints);
 
         jAddAsReceiverButton.setToolTipText("In der Zwischenablage nach kopierter Produktionsübersicht suchen und Dörfer als Empfänger eintragen");
         jAddAsReceiverButton.setMaximumSize(new java.awt.Dimension(120, 60));
@@ -269,7 +268,7 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(jAddAsReceiverButton, gridBagConstraints);
+        jButtonPanel.add(jAddAsReceiverButton, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -277,7 +276,36 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jPanel2, gridBagConstraints);
+        jPanel1.add(jButtonPanel, gridBagConstraints);
+
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
+        jLabel2.setText("Rohstoffspalte sortieren nach");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jLabel2, gridBagConstraints);
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "allen Rohstoffen", "Holz", "Lehm", "Eisen" }));
+        jComboBox1.setMinimumSize(new java.awt.Dimension(150, 20));
+        jComboBox1.setPreferredSize(new java.awt.Dimension(150, 20));
+        jComboBox1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireChangeSortTypeEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jComboBox1, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jPanel3, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -308,6 +336,29 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
             readMerchantInfoFromClipboard(VillageMerchantInfo.Direction.INCOMING);
         }
     }//GEN-LAST:event_fireReadDataFromClipboardEvent
+
+    private void fireChangeSortTypeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeSortTypeEvent
+        TableSortController sorter = (TableSortController) jDataTable.getRowSorter();
+        ResourceComparator resourceComparator = null;
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            switch (jComboBox1.getSelectedIndex()) {
+                case 1:
+                    resourceComparator = new ResourceComparator(ResourceComparator.COMPARE_RESOURCE.WOOD);
+                    break;
+                case 2:
+                    resourceComparator = new ResourceComparator(ResourceComparator.COMPARE_RESOURCE.CLAY);
+                    break;
+                case 3:
+                    resourceComparator = new ResourceComparator(ResourceComparator.COMPARE_RESOURCE.IRON);
+                    break;
+                default:
+                    resourceComparator = new ResourceComparator();
+                    break;
+            }
+        }
+
+        sorter.setComparator(1, resourceComparator);
+    }//GEN-LAST:event_fireChangeSortTypeEvent
 
     public void setup(int pType) {
         jAddAsSenderButton.setVisible(pType == ResourceDistributorWelcomePanel.FILL_DISTRIBUTION);
@@ -396,12 +447,15 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
     private javax.swing.JButton jAddAsBothButton;
     private javax.swing.JButton jAddAsReceiverButton;
     private javax.swing.JButton jAddAsSenderButton;
+    private javax.swing.JPanel jButtonPanel;
+    private javax.swing.JComboBox jComboBox1;
     private org.jdesktop.swingx.JXTable jDataTable;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel jStatusLabel;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
@@ -416,7 +470,7 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
 
         ResourceDistributorSettingsPanel.getSingleton().setup();
         ResourceDistributorCalculationPanel.getSingleton().setup(!ResourceDistributorWelcomePanel.BALANCE_DISTRIBUTION.equals(map.get(ResourceDistributorWelcomePanel.TYPE)));
-
+        
         return WizardPanelNavResult.PROCEED;
     }
 

@@ -16,6 +16,7 @@ import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import org.apache.commons.lang.math.IntRange;
@@ -226,7 +227,7 @@ public class FarmInformation extends ManageableType {
      * Get the wood amount in storage at a specific timestamp
      */
     public int getWoodInStorage(long pTimestamp) {
-        return (int) (Math.rint(getGeneratedResources(woodInStorage, woodLevel, pTimestamp)));
+        return (int) (Math.round(getGeneratedResources(woodInStorage, woodLevel, pTimestamp)));
     }
 
     /**
@@ -240,7 +241,7 @@ public class FarmInformation extends ManageableType {
      * Get the clay amount in storage at a specific timestamp
      */
     public int getClayInStorage(long pTimestamp) {
-        return (int) (Math.rint(getGeneratedResources(clayInStorage, clayLevel, pTimestamp)));
+        return (int) (Math.round(getGeneratedResources(clayInStorage, clayLevel, pTimestamp)));
     }
 
     /**
@@ -254,7 +255,7 @@ public class FarmInformation extends ManageableType {
      * Get the iron amount in storage at a specific timestamp
      */
     public int getIronInStorage(long pTimestamp) {
-        return (int) (Math.rint(getGeneratedResources(ironInStorage, ironLevel, pTimestamp)));
+        return (int) (Math.round(getGeneratedResources(ironInStorage, ironLevel, pTimestamp)));
     }
 
     /**
@@ -525,12 +526,12 @@ public class FarmInformation extends ManageableType {
             wallLevel = pReport.getWallLevel();
             spyLevel = SPY_LEVEL.BUILDINGS;
         }
-        
+
         //set wall destruction (works also without spying)
-        if(pReport.getWallAfter() != -1){
+        if (pReport.getWallAfter() != -1) {
             wallLevel = pReport.getWallAfter();
         }
-        
+
         switch (spyLevel) {
             case BUILDINGS:
                 logger.debug("Included building and resource spy information into farm information");
@@ -641,7 +642,8 @@ public class FarmInformation extends ManageableType {
         if (hideLevel > 0) {
             hiddenResources = DSCalculator.calculateMaxHiddenResources(hideLevel);
         }
-        return storageCapacity - hiddenResources;
+        //limit capacity to 0
+        return Math.max(0, storageCapacity - hiddenResources);
     }
 
     /**
@@ -745,6 +747,7 @@ public class FarmInformation extends ManageableType {
                         int noTroops = 0;
                         int distCheckFailed = 0;
                         int minHaulCheckFailed = 0;
+                        double minDist = 0;
                         int minHaul = DSWorkbenchFarmManager.getSingleton().getMinHaul(pConfig);
                         //search feasible village
                         for (Village v : villages) {
@@ -771,6 +774,13 @@ public class FarmInformation extends ManageableType {
                                     }
                                 } else {
                                     distCheckFailed++;
+                                    if (dist > 0) {
+                                        if (minDist == 0) {
+                                            minDist = dist;
+                                        } else {
+                                            minDist = Math.min(dist, minDist);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -780,7 +790,8 @@ public class FarmInformation extends ManageableType {
                             lastResult = FARM_RESULT.IMPOSSIBLE;
                             info.append("In der abschließenden Prüfung wurden alle Dörfer entfernt.\nDie Gründe waren die Folgenden:\n- ").
                                     append(noTroops).append(" Dorf/Dörfer hatten nicht ausreichend Truppen für die erwarteten Rohstoffe\n- ").
-                                    append(distCheckFailed).append(" Dorf/Dörfer lagen außerhalb des eingestellten Farmradius\n- ").
+                                    append(distCheckFailed).append(" Dorf/Dörfer lagen außerhalb des eingestellten Farmradius (Min. Laufzeit: ").
+                                    append((int) Math.rint(minDist)).append(" Minuten)\n- ").
                                     append(minHaulCheckFailed).append(" Dorf/Dörfer würden nicht genügend Rohstoffe vorfinden, um die minimale Beute zu erzielen");
                         } else {
                             //send troops and update

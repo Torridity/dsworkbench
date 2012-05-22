@@ -665,9 +665,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jLabel16 = new javax.swing.JLabel();
         jMaxTroopDensity = new javax.swing.JTextField();
         jButton8 = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        jLnFBox = new javax.swing.JComboBox();
-        jButton2 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jHalfSizeMainMenu = new javax.swing.JCheckBox();
         jLabel8 = new javax.swing.JLabel();
@@ -2589,46 +2586,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel6.add(jButton8, gridBagConstraints);
 
-        jLabel1.setText("Look&Feel");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel6.add(jLabel1, gridBagConstraints);
-
-        jLnFBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Nimbus", "Standard" }));
-        jLnFBox.setMinimumSize(new java.awt.Dimension(64, 20));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 50;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel6.add(jLnFBox, gridBagConstraints);
-
-        jButton2.setBackground(new java.awt.Color(239, 235, 223));
-        jButton2.setText("Auswählen");
-        jButton2.setToolTipText("<html>W&auml;hlt das eingestellte Look&amp;Feel.<br/> \nEine &Auml;nderung wird erst bei einem Neustart von DS Workbench wirksam.</html>");
-        jButton2.setMaximumSize(new java.awt.Dimension(90, 23));
-        jButton2.setMinimumSize(new java.awt.Dimension(90, 23));
-        jButton2.setPreferredSize(new java.awt.Dimension(90, 23));
-        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                fireChangeLookAndFeelEvent(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel6.add(jButton2, gridBagConstraints);
-
         jLabel2.setText("Hauptmenü in halber Größe anzeigen");
         jLabel2.setMaximumSize(new java.awt.Dimension(34, 18));
         jLabel2.setMinimumSize(new java.awt.Dimension(34, 18));
@@ -2814,7 +2771,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+                .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -3741,16 +3698,6 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     updateProfileList();
 }//GEN-LAST:event_fireProfileActionEvent
 
-private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeLookAndFeelEvent
-    if (jLnFBox.getSelectedIndex() == 0) {
-        GlobalOptions.addProperty("look.and.feel", "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-    } else {
-        GlobalOptions.addProperty("look.and.feel", UIManager.getSystemLookAndFeelClassName());
-    }
-
-    JOptionPaneHelper.showInformationBox(DSWorkbenchSettingsDialog.this, "Für die Änderung des Look&Feel ist ein Neustart von DS Workbench erforderlich.", "Neustart erforderlich");
-}//GEN-LAST:event_fireChangeLookAndFeelEvent
-
     private void fireShowHalfSizeMainMenuEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowHalfSizeMainMenuEvent
         GlobalOptions.addProperty("half.ribbon.size", Boolean.toString(jHalfSizeMainMenu.isSelected()));
         JOptionPaneHelper.showInformationBox(DSWorkbenchSettingsDialog.this, "Für die Größenänderung des Hauptmenüs ist ein Neustart von DS Workbench erforderlich.", "Neustart erforderlich");
@@ -4114,7 +4061,6 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton12;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
@@ -4150,7 +4096,6 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
     private javax.swing.JTextField jHeaderPath;
     private com.jidesoft.swing.LabeledTextField jHeavyAmount;
     private javax.swing.JCheckBox jInformOnUpdates;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -4186,7 +4131,6 @@ private void fireChangeLookAndFeelEvent(java.awt.event.MouseEvent evt) {//GEN-FI
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JComboBox jLnFBox;
     private javax.swing.JPanel jLoginPanel;
     private javax.swing.JPanel jMapSettings;
     private javax.swing.JCheckBox jMarkOwnVillagesOnMinimapBox;

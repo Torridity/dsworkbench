@@ -474,6 +474,12 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         logger.debug("==========================");
         logger.debug("==DEBUG MODE ESTABLISHED==");
         logger.debug("==========================");
+
+        logger.debug("---------System Information---------");
+        logger.debug("Operating System: " + System.getProperty("os.name") + " (" + System.getProperty("os.version") + "/" + System.getProperty("os.arch") + ")");
+        logger.debug("Java: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version") + " (" + System.getProperty("java.home") + ")");
+        logger.debug("Working Dir: " + System.getProperty("user.dir"));
+        logger.debug("------------------------------------");
         SPECIAL_DEBUG_MODE = true;
     }
 
@@ -546,15 +552,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
         try {
             GlobalOptions.initialize();
-            String lnf = GlobalOptions.getProperty("look.and.feel");
-
-            if (SystemUtils.IS_OS_MAC || SystemUtils.IS_OS_MAC_OSX) {
-                //no nimbus for mac users
-                lnf = UIManager.getSystemLookAndFeelClassName();
-            }
-            if (lnf != null) {
-                UIManager.setLookAndFeel(lnf);
-            }
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             logger.error("Failed to setup LnF", e);
         }

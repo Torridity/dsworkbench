@@ -18,10 +18,10 @@ import javax.swing.table.AbstractTableModel;
 public class REDFinalTransportsTableModel extends AbstractTableModel {
 
     private String[] columnNames = new String[]{
-        "Herkunft", "Ziel", "Holz", "Lehm", "Eisen", "Übertragen"
+        "Herkunft", "Ziel", "Holz", "Lehm", "Eisen", "Händler", "Übertragen"
     };
     Class[] types = new Class[]{
-        Village.class, Village.class, Integer.class, Integer.class, Integer.class, Boolean.class
+        Village.class, Village.class, Integer.class, Integer.class, Integer.class, Integer.class, Boolean.class
     };
     private final List<ExtendedTransport> elements = new LinkedList<ExtendedTransport>();
 
@@ -98,6 +98,8 @@ public class REDFinalTransportsTableModel extends AbstractTableModel {
                 return element.getClay();
             case 4:
                 return element.getIron();
+            case 5:
+                return element.getMerchants();
             default:
                 return element.isTransferredToBrowser();
         }

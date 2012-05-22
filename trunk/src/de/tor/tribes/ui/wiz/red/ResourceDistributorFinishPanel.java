@@ -56,6 +56,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.NumberFormatter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
+import org.jdesktop.swingx.sort.TableSortController;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
 import org.netbeans.spi.wizard.WizardPanelNavResult;
@@ -719,7 +720,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         return result;
     }
 
-    private void focusSubmit() {
+    protected void focusSubmit() {
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override

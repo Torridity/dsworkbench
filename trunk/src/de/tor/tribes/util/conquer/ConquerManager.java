@@ -8,6 +8,7 @@ import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
+import de.tor.tribes.types.Church;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.Conquer;
@@ -17,6 +18,7 @@ import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import de.tor.tribes.util.xml.JaxenUtils;
@@ -26,7 +28,6 @@ import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -280,48 +281,53 @@ public class ConquerManager extends GenericManager<Conquer> {
 
                     //continue with new conquers
                     if (!exists) {
+                        Tribe loser = DataHolder.getSingleton().getTribes().get(oldOwner);
+                        Tribe winner = DataHolder.getSingleton().getTribes().get(newOwner);
+                        Village v = DataHolder.getSingleton().getVillagesById().get(villageID);
+
                         Conquer c = new Conquer();
                         c.setVillage(DataHolder.getSingleton().getVillagesById().get(villageID));
                         c.setTimestamp(timestamp);
                         c.setWinner(DataHolder.getSingleton().getTribes().get(newOwner));
                         c.setLoser(DataHolder.getSingleton().getTribes().get(oldOwner));
                         addConquer(c);
-                    }
 
-
-                    Tribe loser = DataHolder.getSingleton().getTribes().get(oldOwner);
-                    Tribe winner = DataHolder.getSingleton().getTribes().get(newOwner);
-                    Village v = DataHolder.getSingleton().getVillagesById().get(villageID);
-
-                    try {
-                        //remove troop information for conquered village
-                        VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
-                        if (holder != null) {
-                            //check if troop holder state lays is before conquer
-                            if (holder.getState().getTime() < timestamp) {
-                                //clear troops information for this village due to troop informations are outdated
-                                holder.clear();
-                                holder.setState(new Date(timestamp));
+                        try {
+                            //remove troop information for conquered village
+                            VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
+                            if (holder != null) {
+                                //check if troop holder state lays is before conquer
+                                if (holder.getState().getTime() < timestamp) {
+                                    //clear troops information for this village due to troop informations are outdated
+                                    holder.clear();
+                                    holder.setState(new Date(timestamp));
+                                }
                             }
+                        } catch (Exception ignored) {
                         }
-                    } catch (Exception ignored) {
-                    }
 
-                    if (winner != null && v != null && v.getTribeID() != winner.getId()) {
-                        //conquer not yet in world data
-                        if (loser != null && loser.removeVillage(v)) {
-                            Ally loserAlly = loser.getAlly();
-                            if (loserAlly != null) {
-                                loserAlly.setVillages(loserAlly.getVillages() - 1);
-                            }
+                        try {
+                            //removing church
+                            ChurchManager.getSingleton().removeChurch(v);
+                        } catch (Exception ignored) {
                         }
-                        if (winner != null && !winner.ownsVillage(v)) {
-                            winner.addVillage(v, true);
-                            v.setTribe(winner);
-                            v.setTribeID(winner.getId());
-                            Ally winnerAlly = winner.getAlly();
-                            if (winnerAlly != null) {
-                                winnerAlly.setVillages(winnerAlly.getVillages() - 1);
+
+                        if (winner != null && v != null && v.getTribeID() != winner.getId()) {
+                            //conquer not yet in world data
+                            if (loser != null && loser.removeVillage(v)) {
+                                Ally loserAlly = loser.getAlly();
+                                if (loserAlly != null) {
+                                    loserAlly.setVillages(loserAlly.getVillages() - 1);
+                                }
+                            }
+                            if (winner != null && !winner.ownsVillage(v)) {
+                                winner.addVillage(v, true);
+                                v.setTribe(winner);
+                                v.setTribeID(winner.getId());
+                                Ally winnerAlly = winner.getAlly();
+                                if (winnerAlly != null) {
+                                    winnerAlly.setVillages(winnerAlly.getVillages() - 1);
+                                }
                             }
                         }
                     }

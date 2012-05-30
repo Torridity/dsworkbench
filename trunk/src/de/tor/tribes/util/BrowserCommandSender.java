@@ -9,14 +9,13 @@ import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.StandardAttack;
+import de.tor.tribes.types.Transport;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor.Transport;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import java.awt.Desktop;
 import java.net.URI;
 import java.util.Hashtable;
-import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 
 /**

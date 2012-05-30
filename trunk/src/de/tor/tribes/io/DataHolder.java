@@ -731,7 +731,6 @@ public class DataHolder {
                 logger.info("Downloading new data version from " + downloadURL);
                 //clear all data structures
                 //initialize();
-
                 // <editor-fold defaultstate="collapsed" desc=" Load villages ">
 
                 fireDataHolderEvents("Lade Dörferliste");

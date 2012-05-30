@@ -11,26 +11,21 @@
 package de.tor.tribes.ui.wiz.red;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.Resource;
 import de.tor.tribes.types.UserProfile;
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.types.VillageMerchantInfo;
-import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor.Resource;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.UIHelper;
-import de.tor.tribes.util.algo.types.MerchantDestination;
 import de.tor.tribes.util.algo.MerchantDistributor;
+import de.tor.tribes.util.algo.types.MerchantDestination;
 import de.tor.tribes.util.algo.types.MerchantSource;
 import de.tor.tribes.util.algo.types.Order;
 import java.awt.BorderLayout;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
 import org.netbeans.spi.wizard.Wizard;
@@ -98,6 +93,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         profile.addProperty("red.use.resource1", jUseResource1.isSelected());
         profile.addProperty("red.use.resource2", jUseResource1.isSelected());
         profile.addProperty("red.use.resource3", jUseResource1.isSelected());
+        profile.addProperty("red.limit.merchant.amount", jLimitMerchantAmount.isSelected());
     }
 
     public void restoreProperties() {
@@ -220,7 +216,13 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         } else {
             jUseResource3.setSelected(true);
         }
-
+        val = profile.getProperty("red.limit.merchant.amount");
+        if (val != null) {
+            jLimitMerchantAmount.setSelected(Boolean.parseBoolean(val));
+        } else {
+            jLimitMerchantAmount.setSelected(true);
+        }
+        
         if (!jUseResource1.isSelected() && !jUseResource2.isSelected() && !jUseResource3.isSelected()) {
             jUseResource1.setSelected(true);
             jUseResource2.setSelected(true);
@@ -260,6 +262,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jUseResource2 = new javax.swing.JCheckBox();
         jFillSlider = new javax.swing.JSlider();
         jLabel13 = new javax.swing.JLabel();
+        jLimitMerchantAmount = new javax.swing.JCheckBox();
         jLabel1 = new javax.swing.JLabel();
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jPanel1 = new javax.swing.JPanel();
@@ -555,6 +558,22 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         jExpertSettingsPanel.add(jLabel13, gridBagConstraints);
+
+        jLimitMerchantAmount.setSelected(true);
+        jLimitMerchantAmount.setText("Händlerzahl pro Rohstoff beschränken");
+        jLimitMerchantAmount.setToolTipText("<html>Schränkt die Anzahl der Händler pro Rohstoff gleichmäßig ein.<br/>\nWerden alle 3 Rohstoffe gehandelt, wird jeder Rohstoff mit 33% der Händler verschickt.<br/>\nHandelt man nur 2 Rohstoffe, werden für jeden Rohstoff 50% der Händler verwendet.<br/>\nIst diese Option deaktiviert, werden die Händler nach der Reihenfolge des Handels verwendet.</html>");
+        jLimitMerchantAmount.setMaximumSize(new java.awt.Dimension(200, 25));
+        jLimitMerchantAmount.setMinimumSize(new java.awt.Dimension(200, 25));
+        jLimitMerchantAmount.setOpaque(false);
+        jLimitMerchantAmount.setPreferredSize(new java.awt.Dimension(200, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 2, 5);
+        jExpertSettingsPanel.add(jLimitMerchantAmount, gridBagConstraints);
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -1269,7 +1288,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
             priorities[2] = -1;
         }
 
-        calculator.initialize(copy, incomingOnly, outgoingOnly, targetRes, remainRes, priorities);
+        calculator.initialize(copy, incomingOnly, outgoingOnly, targetRes, remainRes, priorities, jLimitMerchantAmount.isSelected());
         calculator.setMerchantDistributorListener(new MerchantDistributor.MerchantDistributorListener() {
 
             @Override
@@ -1398,6 +1417,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JCheckBox jLimitMerchantAmount;
     private javax.swing.JTextField jMaxTransportDistance;
     private javax.swing.JLabel jMerchants;
     private javax.swing.JTextField jMinTransportAmount;

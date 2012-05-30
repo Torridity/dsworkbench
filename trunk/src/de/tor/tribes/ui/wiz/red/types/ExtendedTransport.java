@@ -4,20 +4,21 @@
  */
 package de.tor.tribes.ui.wiz.red.types;
 
+import de.tor.tribes.types.Resource;
+import de.tor.tribes.types.Transport;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor;
 import java.util.List;
 
 /**
  *
  * @author Torridity
  */
-public class ExtendedTransport extends DSWorkbenchMerchantDistibutor.Transport {
+public class ExtendedTransport extends Transport {
 
     private Village source = null;
     private boolean transferredToBrowser = false;
 
-    public ExtendedTransport(Village pSource, List<DSWorkbenchMerchantDistibutor.Resource> pResources, Village pTarget) {
+    public ExtendedTransport(Village pSource, List<Resource> pResources, Village pTarget) {
         super(pTarget, pResources);
         source = pSource;
     }
@@ -40,7 +41,7 @@ public class ExtendedTransport extends DSWorkbenchMerchantDistibutor.Transport {
 
     public int getMerchants() {
         int result = 0;
-        for (DSWorkbenchMerchantDistibutor.Resource r : getSingleTransports()) {
+        for (Resource r : getSingleTransports()) {
             result += r.getAmount() / 1000;
         }
         return result;

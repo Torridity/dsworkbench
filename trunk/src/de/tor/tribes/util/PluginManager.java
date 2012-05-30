@@ -253,19 +253,30 @@ public class PluginManager {
      */
     public void checkForUpdates() throws Exception {
         //try to get properties
-        URLConnection connection = new URL("http://www.dsworkbench.de/downloads/plugins/plugin_v4.version").openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
-        Properties props = new Properties();
-        props.load(connection.getInputStream());
+        URLConnection connection = null;
+        Properties props = null;
+        try {
+            connection = new URL("http://www.dsworkbench.de/downloads/plugins/plugin_v4.version").openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
+            props = new Properties();
+            props.load(connection.getInputStream());
+        } catch (Exception e) {
+            logger.error("Failed to open connection for plugin updates", e);
+        }
+
         if (!INITIALIZED) {
             //properties not yet loaded, set versions from server
             mPluginVersions = new Properties();
+            if (props == null) {
+                throw new Exception("Failed to access server, unable to load initial plugin version");
+            }
         }
-
-        //perform updates
-        downloadVersionUpdates(props);
-        //initialized
-        INITIALIZED = true;
-        initializeClassloader();
+        if (props != null) {
+            //perform updates
+            downloadVersionUpdates(props);
+            //initialized
+            INITIALIZED = true;
+            initializeClassloader();
+        }
     }
 
     /**

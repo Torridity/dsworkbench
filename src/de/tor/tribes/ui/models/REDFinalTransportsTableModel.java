@@ -4,8 +4,8 @@
  */
 package de.tor.tribes.ui.models;
 
+import de.tor.tribes.types.Resource;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor;
 import de.tor.tribes.ui.wiz.red.types.ExtendedTransport;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,7 +30,7 @@ public class REDFinalTransportsTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    public boolean addRow(final Village pSource, Village pTarget, List<DSWorkbenchMerchantDistibutor.Resource> pResources, boolean pSubmitted) {
+    public boolean addRow(final Village pSource, Village pTarget, List<Resource> pResources, boolean pSubmitted) {
         ExtendedTransport t = new ExtendedTransport(pSource, pResources, pTarget);
         t.setTransferredToBrowser(pSubmitted);
         if (t.hasGoods()) {
@@ -40,7 +40,7 @@ public class REDFinalTransportsTableModel extends AbstractTableModel {
         return false;
     }
 
-    public boolean addRow(final Village pSource, Village pTarget, List<DSWorkbenchMerchantDistibutor.Resource> pResources) {
+    public boolean addRow(final Village pSource, Village pTarget, List<Resource> pResources) {
         ExtendedTransport t = new ExtendedTransport(pSource, pResources, pTarget);
         if (t.hasGoods()) {
             elements.add(t);

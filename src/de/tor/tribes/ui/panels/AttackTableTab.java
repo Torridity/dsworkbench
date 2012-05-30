@@ -1650,8 +1650,10 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         chooser.setSelectedFile(new File(dir + "/" + selectedPlan + ".html"));
         int ret = chooser.showSaveDialog(this);
         if (ret == JFileChooser.APPROVE_OPTION) {
+
+            File f = null;
             try {
-                File f = chooser.getSelectedFile();
+                f = chooser.getSelectedFile();
                 String file = f.getCanonicalPath();
                 if (!file.endsWith(".html")) {
                     file += ".html";
@@ -1674,8 +1676,11 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                     BrowserCommandSender.openPage(target.toURI().toURL().toString());
                 }
             } catch (Exception e) {
-                logger.error("Failed to write attacks to HTML", e);
-                //JOptionPaneHelper.showErrorBox(this, "Fehler beim Speichern.", "Fehler");
+                if (f != null) {
+                    logger.error("Failed to write attacks to HTML file " + f.getPath(), e);
+                } else {
+                    logger.error("Failed to write attacks to HTML file <INVALID>", e);
+                }
                 showError("Fehler beim Speichern der HTML Datei");
             }
         }

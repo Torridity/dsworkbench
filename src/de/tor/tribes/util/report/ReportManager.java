@@ -5,6 +5,7 @@
 package de.tor.tribes.util.report;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.StreamException;
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.FarmInformation;
@@ -367,7 +368,7 @@ public class ReportManager extends GenericManager<FightReport> {
             }
             r.close();
             logger.debug("Report rules successfully read");
-        } catch (IOException ioe) {
+        } catch (Exception ioe) {
             logger.error("Failed to read report rules", ioe);
         } finally {
             revalidate();

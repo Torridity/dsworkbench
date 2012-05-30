@@ -27,6 +27,7 @@ public class MerchantDistributor extends Thread {
     private int[] targetRes = null;
     private int[] remainRes = null;
     private int[] resOrder = new int[]{0, 1, 2};
+    private boolean limitMerchants = true;
     private List<List<MerchantSource>> results = null;
     private MerchantDistributorListener listener = null;
     private boolean running = false;
@@ -37,13 +38,14 @@ public class MerchantDistributor extends Thread {
         setPriority(MIN_PRIORITY);
     }
 
-    public void initialize(List<VillageMerchantInfo> pInfos, List<de.tor.tribes.types.ext.Village> pIncomingOnly, List<de.tor.tribes.types.ext.Village> pOutgoingOnly, int[] pTargetRes, int[] pRemainRes, int[] pResOrder) {
+    public void initialize(List<VillageMerchantInfo> pInfos, List<de.tor.tribes.types.ext.Village> pIncomingOnly, List<de.tor.tribes.types.ext.Village> pOutgoingOnly, int[] pTargetRes, int[] pRemainRes, int[] pResOrder, boolean pLimitMerchants) {
         infos = pInfos;
         incomingOnly = pIncomingOnly;
         outgoingOnly = pOutgoingOnly;
         targetRes = pTargetRes;
         remainRes = pRemainRes;
         resOrder = pResOrder;
+        limitMerchants = pLimitMerchants;
     }
 
     public void setMerchantDistributorListener(MerchantDistributorListener pListener) {
@@ -52,7 +54,7 @@ public class MerchantDistributor extends Thread {
 
     public void run() {
         running = true;
-        results = calculate(infos, incomingOnly, outgoingOnly, targetRes, remainRes);
+        results = calculate(infos, incomingOnly, outgoingOnly, targetRes, remainRes, limitMerchants);
         running = false;
     }
 
@@ -61,7 +63,7 @@ public class MerchantDistributor extends Thread {
     }
 
     public List<List<MerchantSource>> calculate(List<VillageMerchantInfo> pInfos, int[] pTargetRes, int[] pRemainRes) {
-        return calculate(pInfos, new LinkedList<de.tor.tribes.types.ext.Village>(), new LinkedList<de.tor.tribes.types.ext.Village>(), pTargetRes, pRemainRes);
+        return calculate(pInfos, new LinkedList<de.tor.tribes.types.ext.Village>(), new LinkedList<de.tor.tribes.types.ext.Village>(), pTargetRes, pRemainRes, limitMerchants);
     }
 
     public boolean hasResult() {
@@ -76,12 +78,25 @@ public class MerchantDistributor extends Thread {
             List<de.tor.tribes.types.ext.Village> pIncomingOnly,
             List<de.tor.tribes.types.ext.Village> pOutgoingOnly,
             int[] pTargetRes,
-            int[] pRemainRes) {
+            int[] pRemainRes,
+            boolean pLimitMerchants) {
         int[] targetValueForResource = pTargetRes;
         int[] keepInStorage = pRemainRes;
         ArrayList<MerchantSource> sources = new ArrayList<MerchantSource>();
         ArrayList<MerchantDestination> destinations = new ArrayList<MerchantDestination>();
         List<List<MerchantSource>> results = new LinkedList<List<MerchantSource>>();
+
+        int usedResources = 0;
+        double merchantLimit = 1.0 / 3.0;
+        if (pLimitMerchants) {
+            for (int i = 0; i < resOrder.length; i++) {
+                if (resOrder[i] >= 0 && resOrder[i] <= 2) {
+                    usedResources++;
+                }
+            }
+            merchantLimit = 1.0 / (double) usedResources;
+        }
+
         for (int i = 0; i < targetValueForResource.length; i++) {
             sources.clear();
             destinations.clear();
@@ -112,7 +127,7 @@ public class MerchantDistributor extends Thread {
                 int usableResources = (int) (Math.round((double) (resourcesInStorage - keepInStorage[i]) / 1000.0 + .5));
                 //limit to resources in storage
                 usableResources = Math.min(usableResources, resourcesInStorage / 1000);
-                int availableTransports = info.getAvailableMerchants();
+                int availableTransports = (int) Math.rint(merchantLimit * (double) info.getAvailableMerchants());
                 //try to add receiver
                 if (usableResources < 0 || resourcesInStorage < targetValue) {//village can not deliver, so it is receiver
                     targetValue = Math.min(targetValueForResource[i], info.getStashCapacity());

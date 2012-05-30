@@ -4,9 +4,8 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor.Resource;
-import de.tor.tribes.ui.views.DSWorkbenchMerchantDistibutor.Transport;
-import de.tor.tribes.util.Constants;
+import de.tor.tribes.types.Resource;
+import de.tor.tribes.types.Transport;
 import java.awt.Component;
 import java.text.NumberFormat;
 import java.util.LinkedList;
@@ -23,7 +22,6 @@ import org.jdesktop.swingx.renderer.DefaultTableRenderer;
  */
 public class TransportCellRenderer extends DefaultTableRenderer {
 
-    private DefaultTableCellRenderer renderer = null;
     private NumberFormat nf;
     private List<String> iconsUrls = null;
 
@@ -32,7 +30,6 @@ public class TransportCellRenderer extends DefaultTableRenderer {
         nf = NumberFormat.getInstance();
         nf.setMaximumFractionDigits(0);
         nf.setMinimumFractionDigits(0);
-        renderer = new DefaultTableCellRenderer();
         try {
             iconsUrls = new LinkedList<String>();
             iconsUrls.add(this.getClass().getResource("/res/ui/holz.png").toString());

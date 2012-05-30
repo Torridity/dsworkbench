@@ -177,13 +177,11 @@ public class FarmInformation extends ManageableType {
         if (arriveTimeRelativeToNow <= 0) {//farm was reached...return time until return
             if (getStatus().equals(FARM_STATUS.FARMING)) {
                 setStatus(FARM_STATUS.REPORT_EXPECTED);
-                //   DSWorkbenchFarmManager.getSingleton().dataChangedExternally();
             }
             arriveTimeRelativeToNow = 0;
             farmTroopArrive = -1;
             farmSourceId = -1;
             farmTroop = null;
-            //  DSWorkbenchFarmManager.getSingleton().dataChangedExternally();
         }
         return arriveTimeRelativeToNow;
     }
@@ -664,7 +662,9 @@ public class FarmInformation extends ManageableType {
                 info.append("Keine Truppeninformationen aus dem Spiel nach DS Workbench importiert.\n"
                         + "Wechsel in die Truppenübersicht im Spiel, kopiere die Seite per STRG+A und kopiere sie\n"
                         + "per STRG+C in die Zwischenablage, von wo DS Workbench sie dann automatisch einlesen wird.\n");
-            } else {//troops are imported
+            } else {
+                //////////////troops are imported///////////////
+                /////////////////start farming//////////////////
                 Hashtable<Village, VillageTroopsHolder> unitsAndVillages;
                 boolean pFarmByMinHaul = false;
                 if (pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.C)) {//get villages for farm type C, depending on current resources
@@ -678,6 +678,8 @@ public class FarmInformation extends ManageableType {
                     unitsAndVillages = TroopHelper.getOwnTroopsForAllVillages(DSWorkbenchFarmManager.getSingleton().getTroops(pConfig));
                 }
 
+                
+                //have possible villages...or not                
                 if (unitsAndVillages.isEmpty()) {
                     //no farm villages available
                     lastResult = FARM_RESULT.IMPOSSIBLE;
@@ -716,6 +718,7 @@ public class FarmInformation extends ManageableType {
                         }
                     }
 
+                    //have village with valid amounts
                     if (villages.isEmpty()) {
                         info.append("Es wurden alle Dörfer aufgrund der Tragekapazität ihrer Truppen, ihrer Entfernung zum Ziel oder der erwarteten Ressourcen gelöscht.\n"
                                 + "Möglicherweise könnte ein erneuter Truppenimport aus dem Spiel, eine Vergrößerung des Farmradius oder eine Verkleinerung der minimalen Anzahl an Einheiten\n"

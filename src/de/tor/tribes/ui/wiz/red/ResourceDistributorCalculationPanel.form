@@ -419,6 +419,28 @@
             </Constraint>
           </Constraints>
         </Component>
+        <Component class="javax.swing.JCheckBox" name="jLimitMerchantAmount">
+          <Properties>
+            <Property name="selected" type="boolean" value="true"/>
+            <Property name="text" type="java.lang.String" value="H&#xe4;ndlerzahl pro Rohstoff beschr&#xe4;nken"/>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Schr&#xe4;nkt die Anzahl der H&#xe4;ndler pro Rohstoff gleichm&#xe4;&#xdf;ig ein.&lt;br/&gt;&#xa;Werden alle 3 Rohstoffe gehandelt, wird jeder Rohstoff mit 33% der H&#xe4;ndler verschickt.&lt;br/&gt;&#xa;Handelt man nur 2 Rohstoffe, werden f&#xfc;r jeden Rohstoff 50% der H&#xe4;ndler verwendet.&lt;br/&gt;&#xa;Ist diese Option deaktiviert, werden die H&#xe4;ndler nach der Reihenfolge des Handels verwendet.&lt;/html&gt;"/>
+            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[200, 25]"/>
+            </Property>
+            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[200, 25]"/>
+            </Property>
+            <Property name="opaque" type="boolean" value="false"/>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[200, 25]"/>
+            </Property>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+              <GridBagConstraints gridX="0" gridY="0" gridWidth="4" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="5" insetsLeft="5" insetsBottom="2" insetsRight="5" anchor="10" weightX="0.0" weightY="1.0"/>
+            </Constraint>
+          </Constraints>
+        </Component>
       </SubComponents>
     </Container>
   </NonVisualComponents>

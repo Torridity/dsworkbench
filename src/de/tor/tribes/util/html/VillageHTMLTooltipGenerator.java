@@ -221,9 +221,10 @@ public class VillageHTMLTooltipGenerator {
         b.append("<td colspan='2' width=\"300\">\n");
         b.append("<table width='100%' style=\"font-size:8px;border: 0px black; padding: 0px;\">\n");
         
-        VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage);
-        if (holder != null) {
-            float farmSpace = holder.getFarmSpace() * 100.f;
+        VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.OWN);   
+                
+        if (own != null) {
+            float farmSpace = own.getFarmSpace() * 100.f;
             URL red = VillageHTMLTooltipGenerator.class.getResource("/res/balken_pech.png");
             URL green = VillageHTMLTooltipGenerator.class.getResource("/res/balken_glueck.png");
             if (farmSpace == 100) {

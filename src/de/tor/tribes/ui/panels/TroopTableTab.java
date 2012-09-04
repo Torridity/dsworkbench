@@ -25,6 +25,7 @@ import de.tor.tribes.ui.renderer.PercentCellRenderer;
 import de.tor.tribes.ui.renderer.TroopAmountListCellRenderer;
 import de.tor.tribes.ui.renderer.TroopTableHeaderRenderer;
 import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
+import de.tor.tribes.ui.windows.TroopDetailsDialog;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.ImageUtils;
@@ -86,7 +87,8 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
     private static boolean KEY_LISTENER_ADDED = false;
     private PainterHighlighter highlighter = null;
     private ActionListener actionListener = null;
-    private SupportDetailsDialog mDetailsDialog = null;
+    private SupportDetailsDialog mSupportDetailsDialog = null;
+    private TroopDetailsDialog mTroopDetailsDialog = null;
 
     static {
         jxTroopTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
@@ -109,7 +111,9 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         jxTroopTable.addHighlighter(new PainterHighlighter(HighlightPredicate.EDITABLE, new ImagePainter(back, HorizontalAlignment.RIGHT, VerticalAlignment.TOP)));
     }
 
-    /** Creates new form TroopTableTab
+    /**
+     * Creates new form TroopTableTab
+     *
      * @param pTroopSet
      * @param pActionListener
      */
@@ -118,7 +122,8 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         sTroopSet = pTroopSet;
         initComponents();
         jScrollPane1.setViewportView(jxTroopTable);
-        mDetailsDialog = new SupportDetailsDialog(DSWorkbenchTroopsFrame.getSingleton(), true);
+        mSupportDetailsDialog = new SupportDetailsDialog(DSWorkbenchTroopsFrame.getSingleton(), true);
+        mTroopDetailsDialog = new TroopDetailsDialog(DSWorkbenchTroopsFrame.getSingleton(), true);
         if (!KEY_LISTENER_ADDED) {
             KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
             KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
@@ -135,7 +140,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
             KEY_LISTENER_ADDED = true;
         }
         jxTroopTable.getSelectionModel().addListSelectionListener(TroopTableTab.this);
-        jTroopAmountList.setCellRenderer(new TroopAmountListCellRenderer());
+        //   jTroopAmountList.setCellRenderer(new TroopAmountListCellRenderer());
     }
 
     @Override
@@ -157,42 +162,31 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
 
     @Override
     public void updateSelectionInfo() {
-        List<VillageTroopsHolder> selection = getSelectedTroopHolders();
-        HashMap<UnitHolder, Integer> amounts = new HashMap<UnitHolder, Integer>();
-        //initialize map
-        for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-            amounts.put(u, 0);
-        }
-        //fill map
-        for (VillageTroopsHolder holder : selection) {
-            for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-                amounts.put(u, amounts.get(u) + holder.getTroopsOfUnitInVillage(u));
-            }
-        }
-        //fill list
-        DefaultListModel model = new DefaultListModel();
-        NumberFormat nf = NumberFormat.getInstance();
-        nf.setMinimumFractionDigits(0);
-        nf.setMaximumFractionDigits(0);
-        for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-            model.addElement(nf.format(amounts.get(u)) + " " + u.getPlainName());
-        }
-
-        jTroopAmountList.setModel(model);
-        jTroopAmountList.repaint();
+        /*
+         * List<VillageTroopsHolder> selection = getSelectedTroopHolders(); HashMap<UnitHolder, Integer> amounts = new HashMap<UnitHolder,
+         * Integer>(); //initialize map for (UnitHolder u : DataHolder.getSingleton().getUnits()) { amounts.put(u, 0); } //fill map for
+         * (VillageTroopsHolder holder : selection) { for (UnitHolder u : DataHolder.getSingleton().getUnits()) { amounts.put(u,
+         * amounts.get(u) + holder.getTroopsOfUnitInVillage(u)); } } //fill list DefaultListModel model = new DefaultListModel();
+         * NumberFormat nf = NumberFormat.getInstance(); nf.setMinimumFractionDigits(0); nf.setMaximumFractionDigits(0); for (UnitHolder u :
+         * DataHolder.getSingleton().getUnits()) { model.addElement(nf.format(amounts.get(u)) + " " + u.getPlainName()); }
+         *
+         * jTroopAmountList.setModel(model); jTroopAmountList.repaint();
+         */
     }
 
-    public void showSupportDetails() {
-        if (getTroopSet() == null || !getTroopSet().equals(TroopsManager.SUPPORT_GROUP)) {
-            showInfo("Diese Funktion ist nur für Unterstützungen verfügbar");
-            return;
-        }
+    public void showSelectionDetails() {
         List<Village> selection = getSelectedVillages();
         if (selection.isEmpty()) {
             showInfo("Keine Dörfer ausgewählt");
             return;
         }
-        mDetailsDialog.setupAndShow(selection);
+        if (getTroopSet() == null || !getTroopSet().equals(TroopsManager.SUPPORT_GROUP)) {
+            TroopDetailsDialog details = new TroopDetailsDialog(DSWorkbenchTroopsFrame.getSingleton(), false);
+            details.setupAndShow(getSelectedTroopHolders());
+        } else {
+            SupportDetailsDialog details = new SupportDetailsDialog(DSWorkbenchTroopsFrame.getSingleton(), false);
+            details.setupAndShow(selection);
+        }
     }
 
     public void showSuccess(String pMessage) {
@@ -279,28 +273,20 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         }
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this
+     * method is always regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTroopAmountList = new javax.swing.JList();
+        jScrollPane1 = new javax.swing.JScrollPane();
         infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
         jXLabel1 = new org.jdesktop.swingx.JXLabel();
-
-        setBackground(new java.awt.Color(255, 255, 255));
-        setOpaque(false);
-        setLayout(new java.awt.BorderLayout());
-
-        jScrollPane1.setForeground(new java.awt.Color(240, 240, 240));
-        add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         jPanel1.setMinimumSize(new java.awt.Dimension(120, 130));
         jPanel1.setPreferredSize(new java.awt.Dimension(120, 130));
@@ -314,7 +300,12 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
 
         jPanel1.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
-        add(jPanel1, java.awt.BorderLayout.WEST);
+        setBackground(new java.awt.Color(255, 255, 255));
+        setOpaque(false);
+        setLayout(new java.awt.BorderLayout());
+
+        jScrollPane1.setForeground(new java.awt.Color(240, 240, 240));
+        add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         infoPanel.setCollapsed(true);
         infoPanel.setInheritAlpha(false);

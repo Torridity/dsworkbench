@@ -379,7 +379,8 @@ public class AttackFinishPanel extends WizardPage {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 20);
         jPanel3.add(jButton2, gridBagConstraints);
@@ -390,11 +391,13 @@ public class AttackFinishPanel extends WizardPage {
         jSlider1.setPaintLabels(true);
         jSlider1.setPaintTicks(true);
         jSlider1.setSnapToTicks(true);
+        jSlider1.setMinimumSize(new java.awt.Dimension(200, 60));
         jSlider1.setPreferredSize(new java.awt.Dimension(200, 60));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 20);
         jPanel3.add(jSlider1, gridBagConstraints);
 
@@ -444,7 +447,6 @@ public class AttackFinishPanel extends WizardPage {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jXLabel1, gridBagConstraints);
 
@@ -453,7 +455,6 @@ public class AttackFinishPanel extends WizardPage {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jXLabel2, gridBagConstraints);
 
@@ -480,6 +481,7 @@ public class AttackFinishPanel extends WizardPage {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 20);
         jPanel3.add(jPanel1, gridBagConstraints);
 
@@ -760,13 +762,10 @@ public class AttackFinishPanel extends WizardPage {
             }
 
             for (Attack a : result.getFinalizedAttacks()) {
-
                 if (!usedSources.contains(a.getSource())) {
-                    usedSources.add(a.getSource());
                     overviewPanel.addVillage(new Point(a.getSource().getX(), a.getSource().getY()), Color.YELLOW);
-                } else {
-                    usedSources.add(a.getSource());
                 }
+                usedSources.add(a.getSource());
             }
             overviewPanel.addVillage(new Point(result.getTarget().getX(), result.getTarget().getY()),
                     ColorGradientHelper.getGradientColor(100.0f * (float) result.getFinalizedAttacks().length / (float) result.getMaxOffs(), Color.RED, Color.BLACK));
@@ -774,7 +773,8 @@ public class AttackFinishPanel extends WizardPage {
         }
 
         jxResultsTable.setModel(model);
-        jxResultsTable.setDefaultRenderer(Float.class, new PercentCellRenderer());
+        jxResultsTable.setDefaultRenderer(String.class, new PercentCellRenderer(true));
+
         updateAttackDetails();
         jAttackedTargets.setText(Integer.toString(attackedTargets) + " von " + results.size());
         jPerfectTargets.setText(Integer.toString(perfectOffs));

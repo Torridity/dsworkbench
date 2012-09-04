@@ -432,8 +432,6 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         java.awt.GridBagConstraints gridBagConstraints;
 
         buttonGroup1 = new javax.swing.ButtonGroup();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTimeFrameList = new javax.swing.JList();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         minSendTimeField = new de.tor.tribes.ui.components.DateTimeField();
@@ -454,24 +452,13 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTimeFrameList = new javax.swing.JList();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setLayout(new java.awt.GridBagLayout());
-
-        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Verwendete Zeitrahmen"));
-        jScrollPane1.setMinimumSize(new java.awt.Dimension(262, 60));
-
-        jTimeFrameList.setToolTipText("<html>Liste der verwendeten Zeitrahmen<br/>\nUm Zeitrahmen zu entfernen, markieren einen oder mehrere Zeitrahmen und drücke <i>Entf</i>\n</html>");
-        jScrollPane1.setViewportView(jTimeFrameList);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        add(jScrollPane1, gridBagConstraints);
 
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
@@ -616,10 +603,10 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(18, 18, 18)
-                        .addComponent(dateTimeField, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE))
+                        .addComponent(dateTimeField, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(23, 23, 23)
-                        .addComponent(jSendTimeFrame, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)))
+                        .addComponent(jSendTimeFrame, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -631,9 +618,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
                     .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(dateTimeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(dateTimeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(37, 37, 37)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -683,10 +668,10 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE))
-                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 525, Short.MAX_VALUE))
+                        .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE))
+                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -708,6 +693,60 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         add(jPanel1, gridBagConstraints);
+
+        jPanel5.setLayout(new java.awt.GridBagLayout());
+
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Verwendete Zeitrahmen"));
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(262, 60));
+
+        jTimeFrameList.setToolTipText("<html>Liste der verwendeten Zeitrahmen<br/>\nUm Zeitrahmen zu entfernen, markieren einen oder mehrere Zeitrahmen und drücke <i>Entf</i>\n</html>");
+        jScrollPane1.setViewportView(jTimeFrameList);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel5.add(jScrollPane1, gridBagConstraints);
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/red_x.png"))); // NOI18N
+        jButton1.setToolTipText("Die gewählten Zeitrahmen löschen");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireDeleteTimeFramesEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(15, 5, 5, 5);
+        jPanel5.add(jButton1, gridBagConstraints);
+
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/refresh.png"))); // NOI18N
+        jButton2.setToolTipText("Alle Zeitrahmen löschen");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireResetTimeFramesEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(15, 5, 5, 5);
+        jPanel5.add(jButton2, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        add(jPanel5, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireValidityStateChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireValidityStateChangedEvent
@@ -725,11 +764,22 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         }
         updatePreview();
     }//GEN-LAST:event_fireValidityStateChangedEvent
+
+    private void fireDeleteTimeFramesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDeleteTimeFramesEvent
+        deleteSelectedTimeSpan();
+    }//GEN-LAST:event_fireDeleteTimeFramesEvent
+
+    private void fireResetTimeFramesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireResetTimeFramesEvent
+        reset();
+    }//GEN-LAST:event_fireResetTimeFramesEvent
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private de.tor.tribes.ui.components.DateTimeField dateTimeField;
     private javax.swing.JRadioButton jAlwaysButton;
     private javax.swing.JLabel jArriveInPastLabel;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JRadioButton jDayButton;
     private javax.swing.JRadioButton jExactTimeButton;
     private javax.swing.JLabel jLabel2;
@@ -743,6 +793,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private com.visutools.nav.bislider.BiSlider jSendTimeFrame;
     private javax.swing.JSeparator jSeparator1;

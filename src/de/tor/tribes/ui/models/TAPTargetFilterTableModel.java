@@ -75,6 +75,15 @@ public class TAPTargetFilterTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
+    public void removeIgnoredRows() {
+        for (TAPAttackTargetElement element : elements.toArray(new TAPAttackTargetElement[getRowCount()])) {
+            if (element.isIgnored()) {
+                elements.remove(element);
+            }
+        }
+        fireTableDataChanged();
+    }
+
     public TAPAttackTargetElement getRow(int row) {
         return elements.get(row);
     }

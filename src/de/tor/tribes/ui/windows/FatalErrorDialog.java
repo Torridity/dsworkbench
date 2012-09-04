@@ -50,7 +50,7 @@ public class FatalErrorDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(jXLabel1, gridBagConstraints);
 
-        jXLabel2.setText("Ein schwerwiegender Fehler ist aufgetreten, wodurch DS Workbench nicht gestartet werden kann. Bitte kontaktiere den Entwickler über 'support@dsworkbench.de' und füge die untenstehende Fehlermeldung in die Mail ein."); // NOI18N
+        jXLabel2.setText("Ein schwerwiegender Fehler ist aufgetreten, wodurch DS Workbench nicht gestartet werden kann. Sollte ein Neustart keine Abhilfe verschaffen, kontaktiere bitte den Entwickler über 'support@dsworkbench.de' und füge die untenstehende Fehlermeldung in die Mail ein."); // NOI18N
         jXLabel2.setLineWrap(true);
         jXLabel2.setMaximumSize(new java.awt.Dimension(300, 100));
         jXLabel2.setMinimumSize(new java.awt.Dimension(300, 100));

@@ -730,7 +730,9 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                             int ye = (int) Math.floor(selectionRect.getYPosEnd());
 
                             //notify selection listener (see DSWorkbenchSelectionFrame)
-                            DSWorkbenchSelectionFrame.getSingleton().fireSelectionFinishedEvent(new Point(xs, ys), new Point(xe, ye));
+                            if (!shiftDown) {
+                                DSWorkbenchSelectionFrame.getSingleton().fireSelectionFinishedEvent(new Point(xs, ys), new Point(xe, ye));
+                            }
                             List<Village> villages = DataHolder.getSingleton().getVillagesInRegion(new Point(xs, ys), new Point(xe, ye));
                             for (Village v : villages) {
                                 if (!markedVillages.contains(v)) {

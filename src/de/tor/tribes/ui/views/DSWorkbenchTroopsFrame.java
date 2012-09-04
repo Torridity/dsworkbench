@@ -297,25 +297,24 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         }
         JXTaskPane miscPane = new JXTaskPane();
         miscPane.setTitle("Sonstiges");
-
-        JXButton supportDetailsButton = new JXButton(new ImageIcon(DSWorkbenchTroopsFrame.class.getResource("/res/ui/information.png")));
-        supportDetailsButton.setToolTipText("Zeigt Details zu den gewählten Unterstützungen an");
-        supportDetailsButton.addMouseListener(new MouseAdapter() {
+        JXButton selectionDetailsButton = new JXButton(new ImageIcon(DSWorkbenchTroopsFrame.class.getResource("/res/ui/information.png")));
+        selectionDetailsButton.setToolTipText("Zeigt Details zu den gewählten Dörfern an");
+        selectionDetailsButton.addMouseListener(new MouseAdapter() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
                 TroopTableTab tab = (TroopTableTab) getActiveTab();
                 if (tab != null) {
-                    tab.showSupportDetails();
+                    tab.showSelectionDetails();
                 }
             }
         });
-        supportDetailsButton.setSize(transferVillageList.getSize());
-        supportDetailsButton.setMinimumSize(transferVillageList.getMinimumSize());
-        supportDetailsButton.setMaximumSize(transferVillageList.getMaximumSize());
-        supportDetailsButton.setPreferredSize(transferVillageList.getPreferredSize());
+        selectionDetailsButton.setSize(transferVillageList.getSize());
+        selectionDetailsButton.setMinimumSize(transferVillageList.getMinimumSize());
+        selectionDetailsButton.setMaximumSize(transferVillageList.getMaximumSize());
+        selectionDetailsButton.setPreferredSize(transferVillageList.getPreferredSize());
 
-        miscPane.getContentPane().add(supportDetailsButton);
+        miscPane.getContentPane().add(selectionDetailsButton);
 
         centerPanel.setupTaskPane(editTaskPane, transferTaskPane, miscPane);
     }

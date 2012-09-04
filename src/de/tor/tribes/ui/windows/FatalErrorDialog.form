@@ -38,7 +38,7 @@
     </Component>
     <Component class="org.jdesktop.swingx.JXLabel" name="jXLabel2">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Ein schwerwiegender Fehler ist aufgetreten, wodurch DS Workbench nicht gestartet werden kann. Bitte kontaktiere den Entwickler &#xfc;ber &apos;support@dsworkbench.de&apos; und f&#xfc;ge die untenstehende Fehlermeldung in die Mail ein." noResource="true"/>
+        <Property name="text" type="java.lang.String" value="Ein schwerwiegender Fehler ist aufgetreten, wodurch DS Workbench nicht gestartet werden kann. Sollte ein Neustart keine Abhilfe verschaffen, kontaktiere bitte den Entwickler &#xfc;ber &apos;support@dsworkbench.de&apos; und f&#xfc;ge die untenstehende Fehlermeldung in die Mail ein." noResource="true"/>
         <Property name="lineWrap" type="boolean" value="true"/>
         <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[300, 100]"/>

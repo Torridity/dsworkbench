@@ -91,6 +91,10 @@ public class FarmInformation extends ManageableType {
     private transient String lastSendInformation = null;
     private transient DSWorkbenchFarmManager.FARM_CONFIGURATION usedConfig = null;
 
+    public FarmInformation() {
+        //needed for proper XStream integration
+    }
+
     /**
      * Default constructor
      */
@@ -678,7 +682,7 @@ public class FarmInformation extends ManageableType {
                     unitsAndVillages = TroopHelper.getOwnTroopsForAllVillages(DSWorkbenchFarmManager.getSingleton().getTroops(pConfig));
                 }
 
-                
+
                 //have possible villages...or not                
                 if (unitsAndVillages.isEmpty()) {
                     //no farm villages available

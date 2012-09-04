@@ -21,7 +21,7 @@ public class TAPResultTableModel extends AbstractTableModel {
         "Spieler", "Ziel", "Zugewiesene Angriffe"
     };
     private Class[] types = new Class[]{
-        Village.class, UnitHolder.class, Float.class
+        Village.class, UnitHolder.class, String.class
     };
     private final List<AbstractTroopMovement> elements = new LinkedList<AbstractTroopMovement>();
 
@@ -83,7 +83,7 @@ public class TAPResultTableModel extends AbstractTableModel {
             case 1:
                 return element.getTarget();
             default:
-                return (float) element.getFinalizedAttacks().length / (float) element.getMaxOffs();
+                return element.getFinalizedAttacks().length + "/" + element.getMaxOffs();
         }
     }
 

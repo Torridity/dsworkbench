@@ -194,6 +194,7 @@ public class AttackSourceFilterPanel extends WizardPage {
         jPanel4 = new javax.swing.JPanel();
         jIgnoreButton = new javax.swing.JButton();
         jNotIgnoreButton = new javax.swing.JButton();
+        jNotIgnoreButton1 = new javax.swing.JButton();
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jLabel1 = new javax.swing.JLabel();
         jideSplitPane1 = new com.jidesoft.swing.JideSplitPane();
@@ -447,7 +448,9 @@ public class AttackSourceFilterPanel extends WizardPage {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
         jPanel4.add(jIgnoreButton, gridBagConstraints);
 
         jNotIgnoreButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/checkbox_disabled.png"))); // NOI18N
@@ -460,8 +463,25 @@ public class AttackSourceFilterPanel extends WizardPage {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
         jPanel4.add(jNotIgnoreButton, gridBagConstraints);
+
+        jNotIgnoreButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/remove.gif"))); // NOI18N
+        jNotIgnoreButton1.setToolTipText("Gefilterte Einträge löschen");
+        jNotIgnoreButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireRemoveFilteredEntriesEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
+        jPanel4.add(jNotIgnoreButton1, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -567,6 +587,13 @@ public class AttackSourceFilterPanel extends WizardPage {
         jMinFarmSpace.setEnabled(jUseFarmFilter.isSelected());
         jMinFarmSpaceBonus.setEnabled(jUseFarmFilter.isSelected());
     }//GEN-LAST:event_fireEnableDisableFarmFilterEvent
+
+    private void fireRemoveFilteredEntriesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveFilteredEntriesEvent
+
+        TAPSourceFilterTableModel model = getModel();
+        model.removeIgnoredRows();
+        updateVillageOverview();
+    }//GEN-LAST:event_fireRemoveFilteredEntriesEvent
 
     private void updateFilters() {
         List<TAPAttackSourceElement> elements = getAllElements();
@@ -766,6 +793,7 @@ public class AttackSourceFilterPanel extends WizardPage {
     private org.jdesktop.swingx.JXTextField jMinFarmSpace;
     private org.jdesktop.swingx.JXTextField jMinFarmSpaceBonus;
     private javax.swing.JButton jNotIgnoreButton;
+    private javax.swing.JButton jNotIgnoreButton1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

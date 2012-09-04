@@ -1034,6 +1034,8 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         } catch (Exception e) {
             showBarbarian = true;
         }
+        treeData.clear();
+        System.out.println(pVillages.size());
         for (Village v : pVillages.toArray(new Village[]{})) {
             if ((v != null && v.getTribe() == Barbarians.getSingleton()) && !showBarbarian) {
                 //dont select barbarians if they are not visible

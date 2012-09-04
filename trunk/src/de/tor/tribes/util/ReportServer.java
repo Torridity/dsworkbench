@@ -122,7 +122,9 @@ public class ReportServer {
                 }
 
                 response.setStatusCode(HttpStatus.SC_OK);
-                EntityTemplate body = null;
+                EntityTemplate body;
+                
+
                 if (OBSTReportHandler.handleReport(data)) {
                     body = new EntityTemplate(new ContentProducer() {
 

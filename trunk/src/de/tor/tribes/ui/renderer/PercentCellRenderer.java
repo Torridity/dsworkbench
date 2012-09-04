@@ -22,12 +22,18 @@ public class PercentCellRenderer extends DefaultTableRenderer {
 
     private DefaultTableCellRenderer renderer = null;
     private NumberFormat format = NumberFormat.getInstance();
+    private boolean fromString = false;
 
-    public PercentCellRenderer() {
+    public PercentCellRenderer(boolean pFromString) {
         super();
         renderer = new DefaultTableCellRenderer();
         format.setMinimumFractionDigits(2);
         format.setMaximumFractionDigits(2);
+        fromString = pFromString;
+    }
+
+    public PercentCellRenderer() {
+        this(false);
     }
 
     public PercentCellRenderer(NumberFormat pCustomFormat) {
@@ -39,20 +45,23 @@ public class PercentCellRenderer extends DefaultTableRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         ColoredProgressBar p = new ColoredProgressBar(0, 100);
-
-        Float val = (Float) value * 100;
-
-
-        /*
-         * if (row % 2 == 0) { color = Constants.DS_ROW_A; } else { color = Constants.DS_ROW_B; }
-         */
         p.setBackground(c.getBackground());
-        p.setForeground(ColorGradientHelper.getGradientColor(val, Color.RED, c.getBackground()));
-        /*
-         * if (isSelected) { p.setBackground(table.getSelectionBackground()); }
-         */
         p.setStringPainted(true);
-        p.setValue(Math.round(val));
+        if (!fromString) {
+            Float val = (Float) value * 100;
+            p.setForeground(ColorGradientHelper.getGradientColor(val, Color.RED, c.getBackground()));
+            p.setValue(Math.round(val));
+        } else {
+            String val = (String) value;
+            String[] values = val.split("/");
+            int first = Integer.parseInt(values[0]);
+            int second = Integer.parseInt(values[1]);
+            float perc = (float) first / (float) second * 100;
+            p.setForeground(ColorGradientHelper.getGradientColor(perc, Color.RED, c.getBackground()));
+            p.setValue(Math.round(perc));
+            p.setString(val);
+            
+        }
 
         return p;
     }

@@ -357,7 +357,7 @@ public class ConquerManager extends GenericManager<Conquer> {
         }
         for (ManageableType t : getAllElements().toArray(new ManageableType[getElementCount()])) {
             Conquer c = (Conquer) t;
-            if (c != null && c.getVillage().getId() == pVillage.getId()) {
+            if (c != null && pVillage != null && c.getVillage() != null && c.getVillage().getId() == pVillage.getId()) {
                 return c;
             }
         }

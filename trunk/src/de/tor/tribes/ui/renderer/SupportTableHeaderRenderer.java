@@ -1,0 +1,124 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.tor.tribes.ui.renderer;
+
+import de.tor.tribes.ui.models.SupportTableModel;
+import de.tor.tribes.ui.models.TroopsTableModel;
+import de.tor.tribes.util.ImageUtils;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.RowSorter;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.plaf.UIResource;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
+
+/**
+ *
+ * @author Jejkal
+ */
+public class SupportTableHeaderRenderer extends DefaultTableCellRenderer implements UIResource {
+
+    private boolean horizontalTextPositionSet;
+
+    public SupportTableHeaderRenderer() {
+        setHorizontalAlignment(JLabel.CENTER);
+    }
+
+    public void setHorizontalTextPosition(int textPosition) {
+        horizontalTextPositionSet = true;
+        super.setHorizontalTextPosition(textPosition);
+    }
+
+    public Component getTableCellRendererComponent(JTable table,
+            Object value, boolean isSelected, boolean hasFocus,
+            int row, int column) {
+        Icon sortIcon = null;
+        boolean isPaintingForPrint = false;
+
+        if (table != null) {
+            JTableHeader header = table.getTableHeader();
+            if (header != null) {
+                Color fgColor = null;
+                Color bgColor = null;
+                if (hasFocus) {
+                    fgColor = UIManager.getColor("TableHeader.focusCellForeground");
+                    bgColor = UIManager.getColor("TableHeader.focusCellBackground");
+                }
+                if (fgColor == null) {
+                    fgColor = header.getForeground();
+                }
+                if (bgColor == null) {
+                    bgColor = header.getBackground();
+                }
+                setForeground(fgColor);
+                setFont(header.getFont());
+                isPaintingForPrint = header.isPaintingForPrint();
+            }
+
+            if (!isPaintingForPrint && table.getRowSorter() != null) {
+                if (!horizontalTextPositionSet) {
+                    // There is a row sorter, and the developer hasn't
+                    // set a text position, change to leading.
+                    setHorizontalTextPosition(JLabel.LEADING);
+                }
+                java.util.List<? extends RowSorter.SortKey> sortKeys = table.getRowSorter().getSortKeys();
+                if (sortKeys.size() > 0
+                        && sortKeys.get(0).getColumn() == table.convertColumnIndexToModel(column)) {
+                    switch (sortKeys.get(0).getSortOrder()) {
+                        case ASCENDING:
+                            sortIcon = UIManager.getIcon("Table.ascendingSortIcon");
+                            break;
+                        case DESCENDING:
+                            sortIcon = UIManager.getIcon("Table.descendingSortIcon");
+                            break;
+                        case UNSORTED:
+                            sortIcon = UIManager.getIcon("Table.naturalSortIcon");
+                            break;
+                    }
+                }
+            }
+        }
+
+        SupportTableModel model = (SupportTableModel) table.getModel();
+
+        ImageIcon icon = model.getColumnIcon((String) value);
+        BufferedImage i = ImageUtils.createCompatibleBufferedImage(18, 18, BufferedImage.BITMASK);
+        Graphics2D g2d = i.createGraphics();
+        // setIcon(sortIcon);
+        if (icon != null) {
+            icon.paintIcon(this, g2d, 0, 0);
+            setText("");
+            if (sortIcon != null) {
+                g2d.setColor(getBackground());
+                g2d.fillRect(18 - sortIcon.getIconWidth() - 2, 18 - sortIcon.getIconHeight() - 2, sortIcon.getIconWidth() + 2, sortIcon.getIconHeight() + 2);
+                sortIcon.paintIcon(this, g2d, 18 - sortIcon.getIconWidth() - 1, 18 - sortIcon.getIconHeight() - 1);
+            }
+            setIcon(new ImageIcon(i));
+        } else {
+            setIcon(sortIcon);
+            setText(value == null ? "" : value.toString());
+        }
+
+
+        Border border = null;
+        if (hasFocus) {
+            border = UIManager.getBorder("TableHeader.focusCellBorder");
+        }
+        if (border == null) {
+            border = UIManager.getBorder("TableHeader.cellBorder");
+        }
+        setBorder(border);
+
+        return this;
+    }
+}

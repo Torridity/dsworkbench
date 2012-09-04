@@ -34,9 +34,7 @@ public class TAPSourceFilterTableModel extends AbstractTableModel {
     }
 
     public void addRow(TAPAttackSourceElement pElement, boolean pCheck) {
-        //if (!elements.contains(pElement)) {
-            elements.add(pElement);
-      //  }
+        elements.add(pElement);
         if (pCheck) {
             fireTableDataChanged();
         }
@@ -71,6 +69,15 @@ public class TAPSourceFilterTableModel extends AbstractTableModel {
 
     public void removeRow(int row) {
         elements.remove(row);
+        fireTableDataChanged();
+    }
+
+    public void removeIgnoredRows() {
+        for (TAPAttackSourceElement element : elements.toArray(new TAPAttackSourceElement[getRowCount()])) {
+            if (element.isIgnored()) {
+                elements.remove(element);
+            }
+        }
         fireTableDataChanged();
     }
 

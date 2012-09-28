@@ -11,6 +11,7 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.windows.NotifierFrame;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.SilentParserInterface;
@@ -22,7 +23,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 
@@ -49,6 +49,7 @@ public class ReportParser implements SilentParserInterface {
             return true;
         } catch (Exception e) {
             //no valid report data found
+            e.printStackTrace();
         }
         return false;
     }
@@ -73,6 +74,7 @@ public class ReportParser implements SilentParserInterface {
         FightReport result = new FightReport();
         while (t.hasMoreTokens()) {
             String line = t.nextToken().trim();
+            debug("Line: " + line);
             if (line.startsWith("Gesendet")) {
                 debug("Found send line");
                 line = line.replaceAll("Gesendet", "").trim();
@@ -490,17 +492,14 @@ public class ReportParser implements SilentParserInterface {
 
 
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) -  %m%n")));
-        GlobalOptions.setSelectedServer("de77");
-        //ProfileManager.getSingleton().loadProfiles(); //
-        // GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de77")[0]);
+        GlobalOptions.setSelectedServer("de85");
+        ProfileManager.getSingleton().loadProfiles();
+        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de85")[0]);
         DataHolder.getSingleton().loadData(false); // GlobalOptions.loadUserData(); 
         Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-        new ReportParser().parse(data);
-
-
-
-
+        System.out.println(new VillageParser().parse("OMIX-A0001 (280|661) K62"));
+        System.out.println(new ReportParser().parse(data));
         //System.out.println(Integer.parseInt("4.344".replaceAll("\\.", "")));
     }
 }

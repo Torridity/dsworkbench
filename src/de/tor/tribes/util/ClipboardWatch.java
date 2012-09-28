@@ -51,7 +51,6 @@ public class ClipboardWatch extends Thread {
 
         Timer t = new Timer("ClipboardNotification", true);
         t.schedule(new TimerTask() {
-
             @Override
             public void run() {
                 if (clip != null) {//reset clip

@@ -123,47 +123,48 @@ public class ReportServer {
 
                 response.setStatusCode(HttpStatus.SC_OK);
                 EntityTemplate body;
-                
+
 
                 if (OBSTReportHandler.handleReport(data)) {
                     body = new EntityTemplate(new ContentProducer() {
-
                         public void writeTo(final OutputStream outstream) throws IOException {
                             OutputStreamWriter writer = new OutputStreamWriter(outstream, "UTF-8");
-                            writer.write("\n<response>\n");
-                            writer.write("\t<message>The report has been parsed successfully.</message>\n");
-                            writer.write("\t<data><reportid>0</reportid></data>\n");
-                            writer.write("</response>");
+                            writer.write("obstCallback(\"<response>"
+                                    + "<message>The report has been parsed successfully.</message>"
+                                    + "<reportid>0</reportid></data>"
+                                    + "<data><error>0</error></data>"
+                                    + "</response>"
+                                    + "\");");
                             writer.flush();
                         }
                     });
 
                 } else {
                     body = new EntityTemplate(new ContentProducer() {
-
                         public void writeTo(final OutputStream outstream) throws IOException {
                             OutputStreamWriter writer = new OutputStreamWriter(outstream, "UTF-8");
-                            writer.write("\n<response>\n");
-                            writer.write("\t<message>The report could not be parsed.</message>\n");
-                            writer.write("\t<data><error>2</error></data>\n");
-                            writer.write("</response>");
+                            writer.write("obstCallback(\"<response>"
+                                    + "<message>The report could not be parsed.</message>"
+                                    + "<data><error>2</error></data>"
+                                    + "</response>"
+                                    + "\");");
                             writer.flush();
                         }
                     });
                 }
-                body.setContentType("text/xml; charset=UTF-8");
+                body.setContentType("text/json; charset=UTF-8");
                 response.setEntity(body);
             } else {
                 response.setStatusCode(HttpStatus.SC_NOT_FOUND);
                 EntityTemplate body = new EntityTemplate(new ContentProducer() {
-
                     @Override
                     public void writeTo(final OutputStream outstream) throws IOException {
                         OutputStreamWriter writer = new OutputStreamWriter(outstream, "UTF-8");
-                        writer.write("\n<response>\n");
-                        writer.write("\t<message>Wrong target URL.</message>\n");
-                        writer.write("\t<data><error>1</error></data>\n");
-                        writer.write("</response>");
+                        writer.write("obstCallback(\"<response>"
+                                + "<message>Invalid target URL</message>"
+                                + "<data><error>3</error></data>"
+                                + "</response>"
+                                + "\");");
                         writer.flush();
                     }
                 });

@@ -37,11 +37,16 @@ import javax.swing.PopupFactory;
 import org.apache.log4j.Logger;
 
 /**
- * Map Renderer which supports "dirty layers" defining which layer has to be redrawn.<BR/> Layer order with z-ID:<BR/> 0: Marker Layer ->
- * redraw after marker changes (triggered by MarkerManager) 1: Village Layer: Redraw on global events (e.g. init or resize) or after changes
- * on scaling or skin 2: Misc. Basic Map Decoration: e.g. Sector or continent drawing on demand (triggered by SettingsDialog) 3: Attack
- * Vector Layer: Redraw after attack changes (triggered by AttackManager) 4: Misc. Extended Map Decoration: e.g. troop qualification or
- * active village marker 5: Live Layer: Redraw in every drawing cycle e.g. Drag line, tool popup(?), (troop movement?) 6-16: Free assignable
+ * Map Renderer which supports "dirty layers" defining which layer has to be
+ * redrawn.<BR/> Layer order with z-ID:<BR/> 0: Marker Layer -> redraw after
+ * marker changes (triggered by MarkerManager) 1: Village Layer: Redraw on
+ * global events (e.g. init or resize) or after changes on scaling or skin 2:
+ * Misc. Basic Map Decoration: e.g. Sector or continent drawing on demand
+ * (triggered by SettingsDialog) 3: Attack Vector Layer: Redraw after attack
+ * changes (triggered by AttackManager) 4: Misc. Extended Map Decoration: e.g.
+ * troop qualification or active village marker 5: Live Layer: Redraw in every
+ * drawing cycle e.g. Drag line, tool popup(?), (troop movement?) 6-16: Free
+ * assignable
  *
  * @author Charon
  */
@@ -75,11 +80,6 @@ public class MapRenderer {
     private Popup mInfoPopup = null;
     private Village mPopupVillage = null;
     private BufferedImage mBackBuffer = null;
-    //private BufferedImage mFrontBuffer = null;
-    private long lRenderedLast = 0;
-    private long lCurrentSleepTime = 50;
-    private int iCurrentFPS = 0;
-    private float alpha = 0.0f;
     private Hashtable<Ally, Integer> mAllyCount = new Hashtable<Ally, Integer>();
     private Hashtable<Tribe, Integer> mTribeCount = new Hashtable<Tribe, Integer>();
     private Hashtable<Village, AnimatedVillageInfoRenderer> mAnimators = new Hashtable<Village, AnimatedVillageInfoRenderer>();
@@ -96,13 +96,7 @@ public class MapRenderer {
      * RenderSettings used within the last rendering cycle
      */
     private RenderSettings mRenderSettings = null;
-    /*
-     * private Canvas mCanvas = null; BufferStrategy strategy;
-     */
 
-    /*
-     * public MapRenderer(Canvas pCanvas) { mCanvas = pCanvas;
-     */
     public MapRenderer() {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
         mDrawOrder = new LinkedList<Integer>();
@@ -328,7 +322,6 @@ public class MapRenderer {
                 MapPanel.getSingleton().updateComplete(mVillagePositions, mBackBuffer);
             }
         } catch (Throwable t) {
-            lRenderedLast = 0;
             logger.error("Redrawing map failed", t);
         }
     }

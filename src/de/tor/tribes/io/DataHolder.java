@@ -184,7 +184,7 @@ public class DataHolder {
                     return false;
                 } else {
                     //download settings.xml
-                    logger.debug("Server settings do not exist");
+                    logger.debug("Server settings do not exist at " + getDataDirectory());
                     ServerManager.loadServerList();
                     String sURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
                     new File(DataHolder.getSingleton().getDataDirectory()).mkdirs();

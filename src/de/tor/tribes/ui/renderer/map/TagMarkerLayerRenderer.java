@@ -136,7 +136,7 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
 
     private BufferedImage renderMarkerRows(RenderSettings pSettings) {
         //create new buffer for rendering
-        BufferedImage newRows = ImageUtils.createCompatibleBufferedImage(pSettings.getVillagesInX()* pSettings.getFieldWidth(), Math.abs(pSettings.getRowsToRender()) * pSettings.getFieldHeight(), BufferedImage.BITMASK);
+        BufferedImage newRows = ImageUtils.createCompatibleBufferedImage(pSettings.getVillagesInX() * pSettings.getFieldWidth(), Math.abs(pSettings.getRowsToRender()) * pSettings.getFieldHeight(), BufferedImage.BITMASK);
         //calculate first row that will be rendered
         int firstRow = (pSettings.getRowsToRender() > 0) ? 0 : pSettings.getVillagesInY() - Math.abs(pSettings.getRowsToRender());
         Graphics2D g2d = newRows.createGraphics();
@@ -189,9 +189,9 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
         if (v != null && v.isVisibleOnMap()) {
             int tagsize = (int) Math.rint((double) 18 / zoom);
             if (tagsize > pFieldHeight || tagsize > pFieldWidth) {
-                return;
+                tagsize = Math.min(pFieldHeight, pFieldWidth);
             }
-
+            
             //render village tags
             List<Tag> villageTags = TagManager.getSingleton().getTags(v);
             if (villageTags != null && !villageTags.isEmpty()) {
@@ -248,7 +248,7 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
             //render conquers
             int conquerSize = (int) Math.rint((double) 16 / zoom);
             if (conquerSize > pFieldHeight || conquerSize > pFieldWidth) {
-                return;
+                conquerSize = Math.min(pFieldWidth, pFieldHeight);
             }
 
             Conquer c = ConquerManager.getSingleton().getConquer(v);

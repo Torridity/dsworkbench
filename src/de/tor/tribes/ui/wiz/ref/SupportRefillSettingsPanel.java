@@ -14,7 +14,8 @@ import com.jidesoft.swing.JideBoxLayout;
 import com.jidesoft.swing.JideSplitPane;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.UnknownUnit;
+import de.tor.tribes.php.UnitTableInterface;
+import de.tor.tribes.types.DefenseInformation;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
@@ -22,21 +23,34 @@ import de.tor.tribes.ui.models.REFSettingsTableModel;
 import de.tor.tribes.ui.panels.TroopSelectionPanel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.util.ColorGradientHelper;
+import de.tor.tribes.ui.views.DSWorkbenchSOSRequestAnalyzer;
+import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.wiz.ref.types.REFTargetElement;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.TroopHelper;
-import de.tor.tribes.util.troops.TroopsManager;
-import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.HeadlessException;
 import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -47,7 +61,7 @@ import org.netbeans.spi.wizard.*;
  *
  * @author Torridity
  */
-public class SupportRefillSettingsPanel extends WizardPage {
+public class SupportRefillSettingsPanel extends WizardPage implements ActionListener {
 
     private static final String GENERAL_INFO = "In diesem Schritt kannst du bestimmen, wieviele Truppen in alles Zieldörfer sein sollen und wie groß eine "
             + "einzelne Unterstützung ist. DS Workbench wird versuchen, die Zielmenge durch alle bekannten Truppeninformationen im möglichst vielen Dörfern zu erreichen. "
@@ -75,6 +89,11 @@ public class SupportRefillSettingsPanel extends WizardPage {
         jXCollapsiblePane1.add(jInfoScrollPane, BorderLayout.CENTER);
         jVillageTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jVillageTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
+
+        KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
+        jVillageTable.registerKeyboardAction(SupportRefillSettingsPanel.this, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        capabilityInfoPanel1.addActionListener(SupportRefillSettingsPanel.this);
+        
         jideSplitPane1.setOrientation(JideSplitPane.VERTICAL_SPLIT);
         jideSplitPane1.setProportionalLayout(true);
         jideSplitPane1.setDividerSize(5);
@@ -85,7 +104,6 @@ public class SupportRefillSettingsPanel extends WizardPage {
         jideSplitPane1.add(jDataPanel, JideBoxLayout.FLEXIBLE);
         jideSplitPane1.add(jVillageTablePanel, JideBoxLayout.VARY);
         jideSplitPane1.getDividerAt(0).addMouseListener(new MouseAdapter() {
-
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -95,7 +113,6 @@ public class SupportRefillSettingsPanel extends WizardPage {
         });
 
         jVillageTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 int selectedRows = jVillageTable.getSelectedRowCount();
@@ -114,6 +131,94 @@ public class SupportRefillSettingsPanel extends WizardPage {
         jInfoTextPane.setText(GENERAL_INFO);
         overviewPanel = new VillageOverviewMapPanel();
         jPanel2.add(overviewPanel, BorderLayout.CENTER);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getActionCommand().equals("BBCopy")) {
+            copyDefRequests();
+        }
+    }
+
+    private void copyDefRequests() {
+        REFTargetElement[] selection = getSelectedElements();
+
+        if (selection.length == 0) {
+            jStatusLabel.setText("Keine Einträge gewählt");
+            return;
+        }
+        boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
+
+        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+        StringBuilder b = new StringBuilder();
+        b.append("Ich benötige die aufgelisteten oder vergleichbare Unterstützungen in den folgenden Dörfern:\n\n");
+
+        Hashtable<UnitHolder, Integer> split = splitAmountPanel.getAmounts();
+
+        for (REFTargetElement defense : selection) {
+            Village target = defense.getVillage();
+            int needed = defense.getNeededSupports();
+            Hashtable<UnitHolder, Integer> need = new Hashtable<UnitHolder, Integer>();
+            Set<Map.Entry<UnitHolder, Integer>> entries = split.entrySet();
+            for (Map.Entry<UnitHolder, Integer> entry : entries) {
+                need.put(entry.getKey(), needed * entry.getValue());
+            }
+
+            if (extended) {
+                b.append("[table]\n");
+                b.append("[**]").append(target.toBBCode()).append("[|]");
+                b.append("[img]").append(UnitTableInterface.createDefenderUnitTableLink(need)).append("[/img][/**]\n");
+                b.append("[/table]\n");
+            } else {
+                b.append(buildSimpleRequestTable(target, need, defense));
+            }
+        }
+        try {
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b.toString()), null);
+            jStatusLabel.setText("Unterstützungsanfragen in die Zwischenablage kopiert");
+        } catch (HeadlessException hex) {
+            jStatusLabel.setText("Fehler beim Kopieren in die Zwischenablage");
+        }
+    }
+
+    private String buildSimpleRequestTable(Village pTarget, Hashtable<UnitHolder, Integer> pNeed, REFTargetElement pDefense) {
+        StringBuilder b = new StringBuilder();
+        b.append("[table]\n");
+        b.append("[**]").append(pTarget.toBBCode());
+        int colCount = 0;
+
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            Integer value = pNeed.get(unit);
+            if (value != null && value > 0) {
+                b.append("[|]").append("[unit]").append(unit.getPlainName()).append("[/unit]");
+                colCount++;
+            }
+        }
+        b.append("[/**]\n");
+
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+        b.append("[*]");
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            Integer value = pNeed.get(unit);
+            if (value != null && value > 0) {
+                b.append("[|]").append(nf.format(value));
+            }
+        }
+
+        for (int i = 0; i < colCount; i++) {
+            b.append("[|]");
+        }
+        b.append("\n");
+
+        for (int i = 0; i < colCount; i++) {
+            b.append("[|]");
+        }
+        b.append("\n");
+        b.append("[/table]\n");
+
+        return b.toString();
     }
 
     public static String getDescription() {
@@ -148,8 +253,9 @@ public class SupportRefillSettingsPanel extends WizardPage {
     }
 
     /**
-     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this
-     * method is always regenerated by the Form Editor.
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -170,6 +276,7 @@ public class SupportRefillSettingsPanel extends WizardPage {
         jPanel2 = new javax.swing.JPanel();
         jToggleButton1 = new javax.swing.JToggleButton();
         jStatusLabel = new javax.swing.JLabel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jLabel1 = new javax.swing.JLabel();
         jideSplitPane1 = new com.jidesoft.swing.JideSplitPane();
@@ -177,7 +284,7 @@ public class SupportRefillSettingsPanel extends WizardPage {
         jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
         jInfoScrollPane.setPreferredSize(new java.awt.Dimension(19, 180));
 
-        jInfoTextPane.setContentType("text/html");
+        jInfoTextPane.setContentType("text/html"); // NOI18N
         jInfoTextPane.setEditable(false);
         jInfoTextPane.setText("<html>Du befindest dich im <b>Angriffsmodus</b>. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, die f&uuml;r Angriffe verwendet werden d&uuml;rfen. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:\n<ul>\n<li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus der Gruppen&uuml;bersicht</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus dem SOS-Analyzer</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Berichten</li>\n<li>Einf&uuml;gen aus der Auswahlübersicht</li>\n<li>Manuelle Eingabe</li>\n</ul>\n</html>\n");
         jInfoScrollPane.setViewportView(jInfoTextPane);
@@ -306,6 +413,16 @@ public class SupportRefillSettingsPanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jVillageTablePanel.add(jStatusLabel, gridBagConstraints);
 
+        capabilityInfoPanel1.setCopyable(false);
+        capabilityInfoPanel1.setDeletable(false);
+        capabilityInfoPanel1.setPastable(false);
+        capabilityInfoPanel1.setSearchable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jVillageTablePanel.add(capabilityInfoPanel1, gridBagConstraints);
+
         setLayout(new java.awt.GridBagLayout());
 
         jXCollapsiblePane1.setCollapsed(true);
@@ -359,7 +476,6 @@ public class SupportRefillSettingsPanel extends WizardPage {
             jTableScrollPane.setViewportView(jVillageTable);
             jPanel2.add(overviewPanel, BorderLayout.CENTER);
             SwingUtilities.invokeLater(new Runnable() {
-
                 public void run() {
                     jPanel2.updateUI();
                 }
@@ -427,7 +543,18 @@ public class SupportRefillSettingsPanel extends WizardPage {
         }
         return result.toArray(new REFTargetElement[result.size()]);
     }
+
+    public REFTargetElement[] getSelectedElements() {
+        List<REFTargetElement> result = new LinkedList<REFTargetElement>();
+        REFSettingsTableModel model = getModel();
+
+        for (int i : jVillageTable.getSelectedRows()) {
+            result.add(model.getRow(jVillageTable.convertRowIndexToModel(i)));
+        }
+        return result.toArray(new REFTargetElement[result.size()]);
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private javax.swing.JCheckBox jAllowSimilarTroops;
     private javax.swing.JButton jButton1;
     private javax.swing.JPanel jDataPanel;

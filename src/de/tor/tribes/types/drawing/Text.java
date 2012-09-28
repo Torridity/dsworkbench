@@ -114,6 +114,10 @@ public class Text extends AbstractForm {
 
     @Override
     public java.awt.Rectangle getBounds() {
+        if (mBounds == null) {
+            //return some default value to avoid NPE in model
+            return new java.awt.Rectangle(0, 0, 0, 0);
+        }
         return mBounds;
     }
 

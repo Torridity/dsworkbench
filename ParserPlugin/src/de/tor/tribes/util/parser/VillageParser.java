@@ -58,6 +58,7 @@ public class VillageParser implements GenericParserInterface<Village> {
                 StringTokenizer t = new StringTokenizer(lines.nextToken(), " []\t");
                 Village lastLineVillage = null;
                 while (t.hasMoreTokens()) {
+                    
                     try {
                         String token = t.nextToken();
                         if (token.matches("\\(*[0-9]{1,3}\\|[0-9]{1,3}\\)*")) {

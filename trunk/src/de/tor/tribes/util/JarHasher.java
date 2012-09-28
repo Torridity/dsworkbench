@@ -16,8 +16,19 @@ import java.util.jar.JarInputStream;
 public class JarHasher {
 
     public static void main(String[] args) throws Exception {
-        String jar = args[0];
-        String output = args[1];
+        String jar;
+        String output;
+        try {
+            jar = args[0];
+            output = args[1];
+        } catch (Exception e) {
+            jar = "D:/GRID/src/DSWorkbench/store/core.jar";
+            if (new File(jar).exists()) {
+                throw new Exception("Input file " + jar + " does not exist");
+            }
+            output = "D:/GRID/src/DSWorkbench/hash.props";
+        }
+
         try {
             Properties props = new Properties();
             JarInputStream jarin2 = new JarInputStream(new FileInputStream(jar));

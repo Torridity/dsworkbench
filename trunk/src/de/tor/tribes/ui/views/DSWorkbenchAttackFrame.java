@@ -409,17 +409,17 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         }));
         
-        transferTaskPane.getContentPane().add(factoryButton("/res/ui/atts_igm.png", "Markierte Befehle als IGM verschicken. (PA notwendig) "
-                + "Der/die Empf&auml;nger der IGMs sind die Besitzer der Herkunftsd&ouml;rfer der geplanten Befehle.", new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                AttackTableTab activeTab = getActiveTab();
-                if (activeTab != null) {
-                    activeTab.transferSelection(AttackTableTab.TRANSFER_TYPE.BROWSER_IGM);
-                }
-            }
-        }));
+//       transferTaskPane.getContentPane().add(factoryButton("/res/ui/atts_igm.png", "Markierte Befehle als IGM verschicken. (PA notwendig) "
+//                + "Der/die Empf&auml;nger der IGMs sind die Besitzer der Herkunftsd&ouml;rfer der geplanten Befehle.", new MouseAdapter() {
+//
+//            @Override
+//            public void mouseReleased(MouseEvent e) {
+//                AttackTableTab activeTab = getActiveTab();
+//                if (activeTab != null) {
+//                    activeTab.transferSelection(AttackTableTab.TRANSFER_TYPE.BROWSER_IGM);
+//                }
+//            }
+//        }));
         transferTaskPane.getContentPane().add(factoryButton("/res/ui/re-time.png", "Markierten Befehl in das Werkzeug 'Retimer' einfügen. Im Anschluss daran muss im Retimer noch die vermutete Einheit gewählt werden.", new MouseAdapter() {
 
             @Override

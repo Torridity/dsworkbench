@@ -31,9 +31,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Appender;
-import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.netbeans.api.wizard.WizardDisplayer;
 import org.netbeans.spi.wizard.Wizard;
@@ -512,7 +510,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
         System.setProperty("sun.awt.exception.handler", ExceptionHandler.class.getName());
 
-        Appender a = null;
+        Appender a;
 
         if (!Constants.DEBUG) {
             a = new org.apache.log4j.RollingFileAppender();
@@ -559,6 +557,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         }
 
         final boolean useSSD = ssd;
+
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override

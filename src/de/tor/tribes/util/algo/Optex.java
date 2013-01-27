@@ -246,16 +246,4 @@ public class Optex<S extends Source, D extends Destination> {
         return this.costs[source_index].get(d);
     }
 
-    public static void main(String[] args) throws Exception {
-
-        URL url = new URL("file://H:/Peggle Nights from PopCap Games/Sãolicense.txt");
-        System.out.println(url.getAuthority());
-        URI u = new URI(url.getProtocol(), url.getAuthority(), url.getPath(), null, null);
-        System.out.println(u);
-        
-        File f = new File(u.toASCIIString());
-        System.out.println(f);
-        System.out.println(new File(u.toString()));
-
-    }
 }

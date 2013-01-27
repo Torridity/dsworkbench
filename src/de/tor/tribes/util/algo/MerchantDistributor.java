@@ -87,7 +87,7 @@ public class MerchantDistributor extends Thread {
         List<List<MerchantSource>> results = new LinkedList<List<MerchantSource>>();
 
         int usedResources = 0;
-        double merchantLimit = 1.0 / 3.0;
+        double merchantLimit = 1.0;// /3.0;
         if (pLimitMerchants) {
             for (int i = 0; i < resOrder.length; i++) {
                 if (resOrder[i] >= 0 && resOrder[i] <= 2) {
@@ -127,7 +127,13 @@ public class MerchantDistributor extends Thread {
                 int usableResources = (int) (Math.round((double) (resourcesInStorage - keepInStorage[i]) / 1000.0 + .5));
                 //limit to resources in storage
                 usableResources = Math.min(usableResources, resourcesInStorage / 1000);
-                int availableTransports = (int) Math.rint(merchantLimit * (double) info.getAvailableMerchants());
+
+
+                //get available merchants and limit them to the available amount
+                int availableTransports = Math.min(info.getAvailableMerchants(), (int) Math.rint(merchantLimit * (double) info.getOverallMerchants()));
+
+
+
                 //try to add receiver
                 if (usableResources < 0 || resourcesInStorage < targetValue) {//village can not deliver, so it is receiver
                     targetValue = Math.min(targetValueForResource[i], info.getStashCapacity());
@@ -172,7 +178,6 @@ public class MerchantDistributor extends Thread {
                 for (MerchantSource source : sources) {
                     for (Order o : source.getOrders()) {
                         int usedMerchants = o.getAmount();
-
                         MerchantDestination d = (MerchantDestination) o.getDestination();
                         //System.out.println(source + " " + o);
                         for (VillageMerchantInfo info : pInfos) {

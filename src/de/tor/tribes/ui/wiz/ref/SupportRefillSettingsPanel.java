@@ -30,6 +30,8 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.TroopHelper;
+import de.tor.tribes.util.troops.TroopsManager;
+import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.HeadlessException;
@@ -93,7 +95,7 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
         KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
         jVillageTable.registerKeyboardAction(SupportRefillSettingsPanel.this, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         capabilityInfoPanel1.addActionListener(SupportRefillSettingsPanel.this);
-        
+
         jideSplitPane1.setOrientation(JideSplitPane.VERTICAL_SPLIT);
         jideSplitPane1.setProportionalLayout(true);
         jideSplitPane1.setDividerSize(5);
@@ -270,6 +272,7 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
         jAllowSimilarTroops = new javax.swing.JCheckBox();
         jSplitSizePanel = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         jVillageTablePanel = new javax.swing.JPanel();
         jTableScrollPane = new javax.swing.JScrollPane();
         jVillageTable = new org.jdesktop.swingx.JXTable();
@@ -324,7 +327,7 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
         gridBagConstraints.weighty = 1.0;
         jPanel1.add(jSplitSizePanel, gridBagConstraints);
 
-        jButton1.setText("Notwendige Unterstützungen berechnen");
+        jButton1.setText("<html>Notwendige Unterstützungen<br/>berechnen</html>");
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 fireCalculateNeededSupportsEvent(evt);
@@ -333,9 +336,21 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jButton1, gridBagConstraints);
+
+        jButton2.setText("<html>Notwendige Truppen als<br/>BB-Code exportieren</html>");
+        jButton2.setToolTipText("Exportiert die Differenz zur gewünschten Truppenstärke für alle Dörfer in die Zwischenablage");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireCalculateAndExportRequiredTroopsEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jButton2, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -512,6 +527,34 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
         setProblem(null);
     }//GEN-LAST:event_fireCalculateNeededSupportsEvent
 
+    private void fireCalculateAndExportRequiredTroopsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateAndExportRequiredTroopsEvent
+        Hashtable<UnitHolder, Integer> target = targetAmountPanel.getAmounts();
+        if (TroopHelper.getPopulation(target) == 0) {
+            jStatusLabel.setText("Keine gewünschte Truppenstärke angegeben");
+            return;
+        }
+        StringBuilder b = new StringBuilder();
+        b.append("Ich benötige die aufgelisteten oder vergleichbare Unterstützungen in den folgenden Dörfern:\n\n");
+
+        for (int i = 0; i < getModel().getRowCount(); i++) {
+            REFTargetElement elem = getModel().getRow(jVillageTable.convertRowIndexToModel(i));
+            Village v = elem.getVillage();
+            Hashtable<UnitHolder, Integer> requiredTroops = TroopHelper.getRequiredTroops(v, target);
+            b.append("[table]\n");
+            b.append("[**]").append(v.toBBCode()).append("[|]");
+            b.append("[img]").append(UnitTableInterface.createDefenderUnitTableLink(requiredTroops)).append("[/img][/**]\n");
+            b.append("[/table]\n");
+        }
+
+        try {
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b.toString()), null);
+            jStatusLabel.setText("Unterstützungsanfragen in die Zwischenablage kopiert");
+        } catch (HeadlessException hex) {
+            jStatusLabel.setText("Fehler beim Kopieren in die Zwischenablage");
+        }
+
+    }//GEN-LAST:event_fireCalculateAndExportRequiredTroopsEvent
+
     private REFSettingsTableModel getModel() {
         return (REFSettingsTableModel) jVillageTable.getModel();
     }
@@ -557,6 +600,7 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private javax.swing.JCheckBox jAllowSimilarTroops;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JPanel jDataPanel;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;

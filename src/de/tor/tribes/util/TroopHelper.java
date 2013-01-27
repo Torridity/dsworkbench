@@ -4,7 +4,6 @@
  */
 package de.tor.tribes.util;
 
-import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FarmInformation;
@@ -594,5 +593,19 @@ public class TroopHelper {
 
             return Math.max(Math.max(Math.max(Math.max(spearSupports, swordSupports), archerSupports), spySupports), heavySupports);
         }
+    }
+
+    public static Hashtable<UnitHolder, Integer> getRequiredTroops(Village pVillage, Hashtable<UnitHolder, Integer> pTargetAmounts) {
+        VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.IN_VILLAGE);
+        Hashtable<UnitHolder, Integer> result = new Hashtable<UnitHolder, Integer>();
+        Set<Entry<UnitHolder, Integer>> entries = pTargetAmounts.entrySet();
+        for (Entry<UnitHolder, Integer> entry : entries) {
+            UnitHolder targetUnit = entry.getKey();
+            Integer targetAmount = entry.getValue();
+            int amountInVillage = holder.getAmountForUnit(targetUnit);
+            int required = targetAmount - amountInVillage;
+            result.put(targetUnit, (required > 0) ? required : 0);
+        }
+        return result;
     }
 }

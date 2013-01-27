@@ -4,8 +4,6 @@
  */
 package de.tor.tribes.php;
 
-import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
-import de.tor.tribes.util.GlobalOptions;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -13,9 +11,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.SocketAddress;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import org.apache.log4j.Logger;
@@ -34,18 +30,22 @@ public class ScreenUploadInterface {
     public final static int ID_WRONG_TYPE = -34;
     public final static int ID_SERVICE_NOT_AVAILABLE = -66;
 
+    public static void main(String[] args) {
+        System.out.println("Result: " + ScreenUploadInterface.upload("C:/Users/Torridity/AppData/Local/DSWorkbench/tmp.png"));
+    }
+
     public static String upload(String pLocalFile) {
         String result = null;
         try {
 
             URL url = new URL("http://dsworkbench.de/upload_interface.php");
             //URLConnection con = url.openConnection(webProxy);
-            URLConnection con = url.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
+            URLConnection con = url.openConnection();//DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
             con.setDoInput(true);
             con.setDoOutput(true);
             con.setDefaultUseCaches(false);
 
-            String owner = GlobalOptions.getProperty("account.name");
+            String owner = "Torridity";//GlobalOptions.getProperty("account.name");
             if (owner == null) {
                 return "Benutzername konnte nicht bestimmt werden. Bitte überprüfe deine Logineinstellungen.";
             }
@@ -69,10 +69,16 @@ public class ScreenUploadInterface {
 
             String command = "--" + separator + "\r\n" + "Content-Disposition: form-data; name=\"user\";\r\n\r\n" + owner + "\r\n";
             command += "--" + separator + "\r\n" + "Content-Disposition: form-data; name=\"type\";\r\n\r\n" + extension + "\r\n";
-            command += "--" + separator + "\r\n" + "Content-Disposition: form-data; name=\"userfile\"; filename=\"" + theFile.getName() + "\"\r\n" + "Content-Type: image/jpg\r\n" + "\r\n";
+            command += "--" + separator + "\r\n" + "Content-Disposition: form-data; name=\"userfile\"; filename=\"" + theFile.getName()
+                    + "\"\r\n" + "Content-Type: image/jpg\r\n" + "\r\n";
+           // con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Length", String.valueOf(command.length()));
             con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + separator);
             DataOutputStream printout = new DataOutputStream(con.getOutputStream());
+
+            System.out.println(command);
             printout.writeBytes(command);
+
             printout.flush();
             con.getOutputStream().write(theData);
             con.getOutputStream().flush();
@@ -136,6 +142,7 @@ public class ScreenUploadInterface {
             rd.close();
         } catch (Exception e) {
             logger.error("Internal error in PSU module", e);
+            e.printStackTrace();
         }
         return result;
     }

@@ -13,6 +13,7 @@ public class DatabaseServerEntry implements Comparable<DatabaseServerEntry> {
     public final static byte NO_NIGHT_BONUS = 0;
     public final static byte NIGHT_BONUS_0to7 = 1;
     public final static byte NIGHT_BONUS_0to8 = 2;
+    public final static byte NIGHT_BONUS_1to7 = 3;
     private String serverID = null;
     private String serverURL = null;
     private double acceptanceRiseSpeed = 1.0;
@@ -37,14 +38,14 @@ public class DatabaseServerEntry implements Comparable<DatabaseServerEntry> {
     }
 
     /**
-     *@DEPRECATED
+     * @DEPRECATED
      */
     public int getDataVersion() {
         return dataVersion;
     }
 
     /**
-     *@DEPRECATED
+     * @DEPRECATED
      */
     public void setDataVersion(int dataVersion) {
         this.dataVersion = dataVersion;

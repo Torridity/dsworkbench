@@ -195,6 +195,14 @@ public class TimeSpan implements Comparable<TimeSpan> {
             case DatabaseServerEntry.NO_NIGHT_BONUS: {
                 return false;
             }
+            case DatabaseServerEntry.NIGHT_BONUS_1to7: {
+                nightBonusRange = new IntRange(1, 7);
+                if (thisRange.getMinimumInteger() == 7) {
+                    return false;
+                } else {
+                    return thisRange.overlapsRange(nightBonusRange);
+                }
+            }
             case DatabaseServerEntry.NIGHT_BONUS_0to7: {
                 nightBonusRange = new IntRange(0, 7);
                 if (thisRange.getMinimumInteger() == 7) {

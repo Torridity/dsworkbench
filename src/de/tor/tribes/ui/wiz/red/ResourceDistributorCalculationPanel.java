@@ -26,8 +26,10 @@ import de.tor.tribes.util.algo.types.Order;
 import java.awt.BorderLayout;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.Map.Entry;
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
+import org.apache.log4j.Logger;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
 import org.netbeans.spi.wizard.WizardPanelNavResult;
@@ -45,6 +47,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
     private static ResourceDistributorCalculationPanel singleton = null;
     private MerchantDistributor calculator = null;
     private boolean transportsAlreadyTransferred = false;
+    private static Logger logger = Logger.getLogger("ResourceDistributorCalculationPanel");
 
     public static synchronized ResourceDistributorCalculationPanel getSingleton() {
         if (singleton == null) {
@@ -222,7 +225,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         } else {
             jLimitMerchantAmount.setSelected(true);
         }
-        
+
         if (!jUseResource1.isSelected() && !jUseResource2.isSelected() && !jUseResource3.isSelected()) {
             jUseResource1.setSelected(true);
             jUseResource2.setSelected(true);
@@ -1328,16 +1331,20 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
     }
 
     protected Hashtable<Village, Hashtable<Village, List<Resource>>> getTransports() {
+        logger.debug("Getting transports");
+
         Hashtable<Village, Hashtable<Village, List<Resource>>> transports = new Hashtable<Village, Hashtable<Village, List<Resource>>>();
         if (!calculator.getResults().isEmpty()) {
             int minAmount = 1;
             if (jIgnoreTransportsButton.isSelected()) {
                 minAmount = UIHelper.parseIntFromField(jMinTransportAmount, 10000);
+                logger.debug(" - MinAmount: " + minAmount);
             }
 
             int maxDistance = Integer.MAX_VALUE;
             if (jIgnoreTransportsByDistanceButton.isSelected()) {
                 maxDistance = UIHelper.parseIntFromField(jMaxTransportDistance, 50);
+                logger.debug(" - MaxDistance: " + maxDistance);
             }
 
             int[] priorities = new int[3];
@@ -1358,6 +1365,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
                         current = Resource.Type.IRON;
                         break;
                 }
+
                 List<MerchantSource> resultForResource = calculator.getResults().get(i);
 
                 for (MerchantSource source : resultForResource) {
@@ -1378,15 +1386,56 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
                                 transportsFromSourceToDest = new LinkedList<Resource>();
                                 transportsForSource.put(targetVillage, transportsFromSourceToDest);
                             }
-                            int amount = order.getAmount();
-                            int merchants = amount;
-                            if (merchants * 1000 >= minAmount) {
-                                Resource res = new Resource(merchants * 1000, current);
-                                transportsFromSourceToDest.add(res);
+                            Resource res = new Resource(order.getAmount() * 1000, current);
+                            transportsFromSourceToDest.add(res);
+                        } else {
+                            if (logger.isDebugEnabled()) {
+                                logger.debug("Ignoring Transport " + sourceVillage + " -> " + targetVillage + " due to distance");
                             }
                         }
                     }
                 }
+            }
+
+            Set<Entry<Village, Hashtable<Village, List<Resource>>>> entries = transports.entrySet();
+
+            List<Village> destinationsToRemove = new LinkedList<Village>();
+            for (Entry<Village, Hashtable<Village, List<Resource>>> entry : entries) {
+                Village transportDestination = entry.getKey();
+                Hashtable<Village, List<Resource>> destinationTransports = entry.getValue();
+                Set<Entry<Village, List<Resource>>> transportEntries = destinationTransports.entrySet();
+                List<Village> toRemove = new LinkedList<Village>();
+                for (Entry<Village, List<Resource>> transportEntry : transportEntries) {
+                    Village sourceKey = transportEntry.getKey();
+                    List<Resource> sourceTransports = transportEntry.getValue();
+                    int amount = 0;
+                    for (Resource res : sourceTransports) {
+                        amount += res.getAmount();
+                    }
+                    if (amount < minAmount) {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Ignoring transport " + sourceKey + " -> " + transportDestination + " due to resource amount (" + amount + "<" + minAmount + ")");
+                        }
+                        toRemove.add(sourceKey);
+                    }
+                }
+
+                logger.debug("Removing " + toRemove.size() + " transports for destination " + transportDestination);
+                for (Village rem : toRemove) {
+                    destinationTransports.remove(rem);
+                }
+
+                if (transportEntries.isEmpty()) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Removing destination " + transportDestination + " due to empty transport list");
+                    }
+                    destinationsToRemove.add(transportDestination);
+                }
+            }
+
+            logger.debug("Removing " + destinationsToRemove.size() + " destinations");
+            for (Village source : destinationsToRemove) {
+                transports.remove(source);
             }
         }
         return transports;

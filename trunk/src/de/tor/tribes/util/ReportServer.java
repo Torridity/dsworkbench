@@ -68,7 +68,7 @@ public class ReportServer {
     public void start(int pPort) throws IOException {
         if (serverThread == null) {
             serverThread = new RequestListenerThread(pPort, "/");
-            serverThread.setDaemon(true);
+            serverThread.setDaemon(false);
             serverThread.start();
         } else {
             logger.info("Server is already running");
@@ -93,18 +93,21 @@ public class ReportServer {
                 final HttpRequest request,
                 final HttpResponse response,
                 final HttpContext context) throws HttpException, IOException {
-
             String method = request.getRequestLine().getMethod().toUpperCase(Locale.ENGLISH);
             if (!method.equals("GET") && !method.equals("HEAD") && !method.equals("POST")) {
                 throw new MethodNotSupportedException(method + " method not supported");
             }
             String target = request.getRequestLine().getUri();
+            
             StringBuilder b = new StringBuilder();
             if (request instanceof HttpEntityEnclosingRequest) {
                 HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
                 byte[] entityContent = EntityUtils.toByteArray(entity);
                 logger.debug("Incoming entity content (bytes): " + entityContent.length);
                 b.append(new String(entityContent));
+            }else{
+                //from GET request...no modification necessary
+                b.append(request);
             }
 
             logger.debug("Accessing target " + target);
@@ -123,7 +126,6 @@ public class ReportServer {
 
                 response.setStatusCode(HttpStatus.SC_OK);
                 EntityTemplate body;
-
 
                 if (OBSTReportHandler.handleReport(data)) {
                     body = new EntityTemplate(new ContentProducer() {
@@ -222,7 +224,6 @@ public class ReportServer {
                     DefaultHttpServerConnection conn = new DefaultHttpServerConnection();
                     logger.debug("Incoming connection from " + socket.getInetAddress());
                     conn.bind(socket, this.params);
-
                     // Start worker thread
                     Thread t = new WorkerThread(this.httpService, conn);
                     t.setDaemon(true);
@@ -270,5 +271,10 @@ public class ReportServer {
                 }
             }
         }
+    }
+    
+    
+    public static void main(String[] args) throws Exception{
+        ReportServer.getSingleton().start(80);
     }
 }

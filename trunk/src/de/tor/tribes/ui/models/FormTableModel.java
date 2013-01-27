@@ -125,7 +125,7 @@ public class FormTableModel extends AbstractTableModel {
             } else {
                 v = (Integer) o;
             }
-            if (v <= 0) {
+            if (v < 0) {
                 throw new NumberFormatException();
             }
         } catch (ClassCastException cce) {

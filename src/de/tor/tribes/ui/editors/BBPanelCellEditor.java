@@ -12,16 +12,21 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.EventObject;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellEditor;
 
@@ -36,7 +41,6 @@ public class BBPanelCellEditor extends AbstractCellEditor implements TableCellEd
 
     public BBPanelCellEditor(JTextField pF) {
         editor = new BBPanel(new BBChangeListener() {
-
             @Override
             public void fireBBChangedEvent() {
             }
@@ -82,9 +86,8 @@ public class BBPanelCellEditor extends AbstractCellEditor implements TableCellEd
         dlg.getContentPane().add(editor, BorderLayout.CENTER);
         JPanel p = new JPanel();
         p.setLayout(new BorderLayout());
-        final JButton ok = new JButton("Übernehmen");
+        final JButton ok = new JButton("Speichern (STRG+S)");
         ok.addMouseListener(new MouseAdapter() {
-
             @Override
             public void mouseReleased(MouseEvent e) {
                 dlg.setVisible(false);
@@ -92,11 +95,22 @@ public class BBPanelCellEditor extends AbstractCellEditor implements TableCellEd
             }
         });
         p.add(ok, BorderLayout.CENTER);
+        
+        //register save shortcut
+        KeyStroke save = KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK, false);
+        ok.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dlg.setVisible(false);
+                fireEditingStopped();
+            }
+        }, "Save", save, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
         dlg.getContentPane().add(p, BorderLayout.SOUTH);
         dlg.pack();
 
         SwingUtilities.invokeLater(new Runnable() {
-
+            @Override
             public void run() {
                 dlg.setVisible(true);
             }

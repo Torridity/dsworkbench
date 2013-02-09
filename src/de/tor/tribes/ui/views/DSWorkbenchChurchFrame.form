@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
@@ -72,6 +72,7 @@
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -118,7 +119,6 @@
     </Component>
     <Component class="de.tor.tribes.ui.components.CapabilityInfoPanel" name="capabilityInfoPanel1">
       <Properties>
-        <Property name="bbSupport" type="boolean" value="false"/>
         <Property name="copyable" type="boolean" value="false"/>
         <Property name="pastable" type="boolean" value="false"/>
         <Property name="searchable" type="boolean" value="false"/>

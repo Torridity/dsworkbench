@@ -15,6 +15,7 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import java.awt.Desktop;
 import java.net.URI;
+import java.util.Date;
 import java.util.Hashtable;
 import org.apache.log4j.Logger;
 
@@ -31,7 +32,7 @@ public class BrowserCommandSender {
     public static boolean sendAttack(Attack pAttack, UserProfile pProfile) {
         boolean result = false;
         if (pAttack != null) {
-            result = sendTroops(pAttack.getSource(), pAttack.getTarget(), pAttack.getType(), pProfile);
+            result = sendTroops(pAttack.getSource(), pAttack.getTarget(), pAttack.getSendTime(), pAttack.getType(), pProfile);
             pAttack.setTransferredToBrowser(result);
         }
         return result;
@@ -41,7 +42,7 @@ public class BrowserCommandSender {
         return sendAttack(pAttack, null);
     }
 
-    private static boolean sendTroops(Village pSource, Village pTarget, int pTypeIcon, UserProfile pProfile) {
+    private static boolean sendTroops(Village pSource, Village pTarget, Date pSendTime, int pTypeIcon, UserProfile pProfile) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             logger.debug("Transfer troops to browser for village '" + pSource + "' to '" + pTarget + "' with type '" + pTypeIcon + "'");
@@ -66,7 +67,12 @@ public class BrowserCommandSender {
                 }
                 url += "&" + unit.getPlainName() + "=" + amount;
             }
-            url += "&ts=" + System.currentTimeMillis();
+            if (pSendTime != null) {
+                url += "&ts=" + pSendTime.getTime();
+            } else {
+                url += "&ts=" + System.currentTimeMillis();
+            }
+
             String browser = GlobalOptions.getProperty("default.browser");
             if (browser == null || browser.length() < 1) {
                 Desktop.getDesktop().browse(new URI(url));

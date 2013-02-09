@@ -94,10 +94,14 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
         // </editor-fold>
     }
 
-    private void removeTimer(TimerPanel pPanel) {
+    private void removeTimer(TimerPanel pPanel, boolean pSave) {
         jTimerContainer.remove(pPanel);
         timers.remove(pPanel);
         storeTimers();
+    }
+
+    private void removeTimer(TimerPanel pPanel) {
+        removeTimer(pPanel, true);
     }
 
     protected void updateTime(String time, int millis) {
@@ -167,12 +171,11 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
 
         jTimerName.setText(name);
         dateTimeField1.setDate(new Date(pAttack.getSendTime().getTime() - (DateUtils.MILLIS_PER_SECOND * pSecondsBefore)));
-        // TimerPanel panel = new TimerPanel(this, name, pAttack.getSendTime().getTime() - (DateUtils.MILLIS_PER_SECOND * pSecondsBefore), "LetsGo");
-        //  timers.add(panel);
-        ///   jTimerContainer.add(panel);
-        //    storeTimers();
-        //   return name;s
-        setVisible(true);
+        if (jComboBox1.getSelectedItem() == null) {
+            jComboBox1.setSelectedIndex(0);
+        }
+
+        addTimer();
     }
 
     private void storeTimers() {
@@ -284,6 +287,8 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
         jTimerName = new org.jdesktop.swingx.JXTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTimerContainer = new javax.swing.JPanel();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         jSpinner1.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MILLISECOND));
 
@@ -307,6 +312,7 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         getContentPane().add(jLabel1, gridBagConstraints);
@@ -317,6 +323,7 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
@@ -430,6 +437,7 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         getContentPane().add(jPanel2, gridBagConstraints);
@@ -444,10 +452,37 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jScrollPane1, gridBagConstraints);
+
+        jButton2.setText("Alle Löschen");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireRemoveAllTimersEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        getContentPane().add(jButton2, gridBagConstraints);
+
+        jButton3.setText("Auswahl löschen");
+        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireRemoveSelectedTimersEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        getContentPane().add(jButton3, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -472,6 +507,26 @@ private void fireTestSoundEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
         addTimer();
     }//GEN-LAST:event_fireCreateTimer
 
+    private void fireRemoveAllTimersEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveAllTimersEvent
+        for (TimerPanel p : timers.toArray(new TimerPanel[]{})) {
+            removeTimer(p, false);
+        }
+        storeTimers();
+        JOptionPaneHelper.showInformationBox(this, "Timer entfernt", "Alle Timer wurden entfernt.");
+    }//GEN-LAST:event_fireRemoveAllTimersEvent
+
+    private void fireRemoveSelectedTimersEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveSelectedTimersEvent
+        int removed = 0;
+        for (TimerPanel p : timers.toArray(new TimerPanel[]{})) {
+            if (p.isSelected()) {
+                removeTimer(p, false);
+                removed++;
+            }
+        }
+        storeTimers();
+        JOptionPaneHelper.showInformationBox(this, "Timer entfernt", removed + " Timer wurden entfernt.");
+    }//GEN-LAST:event_fireRemoveSelectedTimersEvent
+
     /**
      * @param args the command line arguments
      */
@@ -489,6 +544,8 @@ private void fireTestSoundEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
     private de.tor.tribes.ui.components.DateTimeField dateTimeField1;
     private javax.swing.JToggleButton jActivateTimerButton;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;

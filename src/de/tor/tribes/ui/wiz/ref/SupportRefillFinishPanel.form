@@ -19,8 +19,8 @@
       <SubComponents>
         <Component class="javax.swing.JTextPane" name="jInfoTextPane">
           <Properties>
-            <Property name="contentType" type="java.lang.String" value="text/html"/>
             <Property name="editable" type="boolean" value="false"/>
+            <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
             <Property name="text" type="java.lang.String" value="&lt;html&gt;Du befindest dich im &lt;b&gt;Angriffsmodus&lt;/b&gt;. Hier kannst du die Herkunftsd&amp;ouml;rfer ausw&amp;auml;hlen, die f&amp;uuml;r Angriffe verwendet werden d&amp;uuml;rfen. Hierf&amp;uuml;r hast die folgenden M&amp;ouml;glichkeiten:&#xa;&lt;ul&gt;&#xa;&lt;li&gt;Einf&amp;uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V&lt;/li&gt;&#xa;&lt;li&gt;Einf&amp;uuml;gen der Herkunftsd&amp;ouml;rfer aus der Gruppen&amp;uuml;bersicht&lt;/li&gt;&#xa;&lt;li&gt;Einf&amp;uuml;gen der Herkunftsd&amp;ouml;rfer aus dem SOS-Analyzer&lt;/li&gt;&#xa;&lt;li&gt;Einf&amp;uuml;gen der Herkunftsd&amp;ouml;rfer aus Berichten&lt;/li&gt;&#xa;&lt;li&gt;Einf&amp;uuml;gen aus der Auswahl&#xfc;bersicht&lt;/li&gt;&#xa;&lt;li&gt;Manuelle Eingabe&lt;/li&gt;&#xa;&lt;/ul&gt;&#xa;&lt;/html&gt;&#xa;"/>
           </Properties>
         </Component>

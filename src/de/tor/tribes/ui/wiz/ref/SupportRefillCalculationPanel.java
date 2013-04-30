@@ -399,6 +399,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
             doc.insertString(doc.getLength(), "(" + dateFormat.format(new Date(System.currentTimeMillis())) + ") " + pMessage + "\n", doc.getStyle("Info"));
             SwingUtilities.invokeLater(new Runnable() {
                 
+                @Override
                 public void run() {
                     scroll();
                 }
@@ -410,7 +411,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
     private void scroll() {
         Point point = new Point(0, (int) (jTextPane1.getSize().getHeight()));
         JViewport vp = jScrollPane1.getViewport();
-        if ((vp == null) || (point == null)) {
+        if (vp == null) {
             return;
         }
         vp.setViewPosition(point);

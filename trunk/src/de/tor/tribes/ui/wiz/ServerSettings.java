@@ -266,8 +266,8 @@ private void fireTribeChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:ev
 
     private void downloadDataFile(URL pSource, String pLocalName) throws Exception {
         URLConnection ucon = pSource.openConnection(ProxyHelper.getProxyFromProperties(currentSettings));
-        ucon.setConnectTimeout(10000);
-        ucon.setReadTimeout(20000);
+      //  ucon.setConnectTimeout(10000);
+      //  ucon.setReadTimeout(20000);
         FileOutputStream tempWriter = new FileOutputStream(pLocalName);
         InputStream isr = ucon.getInputStream();
         int bytes = 0;

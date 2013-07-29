@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <NonVisualComponents>
@@ -335,7 +335,7 @@
       <SubComponents>
         <Component class="javax.swing.JTextPane" name="jTextPane1">
           <Properties>
-            <Property name="contentType" type="java.lang.String" value="text/html"/>
+            <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
             <Property name="editable" type="boolean" value="false"/>
             <Property name="text" type="java.lang.String" value="&lt;html&gt;Die Netzwerkeinstellungen sind notwendig, falls du nicht direkt mit dem Internet verbunden bist. Dies ist oftmals in Firmennetzwerken oder Wohnheimen der Fall. Als Privatperson in einem Heimnetzwerk sollte man in der Regel direkt mit dem Internet verbunden sein. Klicke auf den Button &lt;b&gt;Testen&lt;/b&gt;, um deine Einstellungen zu &#xfc;berpr&#xfc;fen und fortfahren zu k&#xf6;nnen.&lt;/html&gt;"/>
           </Properties>

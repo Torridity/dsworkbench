@@ -3841,7 +3841,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         logger.debug("Checking general connectivity");
         try {
             URLConnection c = new URL("http://www.dsworkbench.de").openConnection(getWebProxy());
-            c.setConnectTimeout(10000);
+         //   c.setConnectTimeout(10000);
             String header = c.getHeaderField(0);
             if (header != null) {
                 logger.debug("Connection established");

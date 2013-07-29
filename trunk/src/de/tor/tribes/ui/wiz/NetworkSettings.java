@@ -10,11 +10,7 @@
  */
 package de.tor.tribes.ui.wiz;
 
-import java.net.Authenticator;
-import java.net.InetSocketAddress;
-import java.net.PasswordAuthentication;
 import java.net.Proxy;
-import java.net.SocketAddress;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -337,7 +333,7 @@ private void jRefeshNetworkButtonfireUpdateProxySettingsEvent(java.awt.event.Mou
         boolean result = false;
         try {
             URLConnection c = new URL("http://www.dsworkbench.de").openConnection(webProxy);
-            c.setConnectTimeout(10000);
+            //c.setConnectTimeout(10000);
             String header = c.getHeaderField(0);
             if (header != null) {
                 wizCtrl.setProblem(null);

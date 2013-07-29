@@ -329,8 +329,8 @@ public class PluginManager {
     private boolean downloadPlugin(String pPluginName, String pVersion) {
         try {
             URLConnection con = new URL("http://www.dsworkbench.de/downloads/plugins/" + pPluginName + pVersion + ".jar").openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
-            con.setConnectTimeout(10000);
-            con.setReadTimeout(20000);
+          //  con.setConnectTimeout(10000);
+         //   con.setReadTimeout(20000);
 
             InputStream isr = con.getInputStream();
             FileOutputStream tempWriter = new FileOutputStream("./plugins/" + pPluginName + ".jar");

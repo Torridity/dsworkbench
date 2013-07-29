@@ -1141,8 +1141,8 @@ public class DataHolder {
      */
     private void downloadDataFile(URL pSource, String pLocalName) throws Exception {
         URLConnection ucon = pSource.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
-        ucon.setConnectTimeout(10000);
-        ucon.setReadTimeout(20000);
+       // ucon.setConnectTimeout(10000);
+       // ucon.setReadTimeout(20000);
         FileOutputStream tempWriter = new FileOutputStream(pLocalName);
         InputStream isr = ucon.getInputStream();
         int bytes = 0;

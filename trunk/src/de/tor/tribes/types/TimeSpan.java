@@ -7,7 +7,6 @@ package de.tor.tribes.types;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.test.AnyTribe;
 import de.tor.tribes.db.DatabaseServerEntry;
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.util.GlobalOptions;
 import java.text.SimpleDateFormat;
@@ -184,7 +183,7 @@ public class TimeSpan implements Comparable<TimeSpan> {
 
     public boolean intersectsWithNightBonus() {
         int nightBonus = ServerManager.getNightBonusRange(GlobalOptions.getSelectedServer());
-        IntRange nightBonusRange = null;
+        IntRange nightBonusRange;
         IntRange thisRange = getSpan();
         if (thisRange == null) {
             Calendar cal = Calendar.getInstance();

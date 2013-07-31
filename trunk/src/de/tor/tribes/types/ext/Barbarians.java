@@ -22,6 +22,7 @@ public class Barbarians extends Tribe {
         return SINGLETON;
     }
 
+    @Override
     public int getId() {
         return 0;
     }

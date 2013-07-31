@@ -277,9 +277,12 @@ public class FarmManager extends GenericManager<FarmInformation> {
             invalidate();
             for (ManageableType t : el) {
                 FarmInformation info = (FarmInformation) t;
-                info.revalidate();
-                addManagedElement(info);
-                infoMap.put(info.getVillage(), info);
+                if (info.getVillage() != null) {
+                    //just add valid information
+                    info.revalidate();
+                    addManagedElement(info);
+                    infoMap.put(info.getVillage(), info);
+                }
             }
             r.close();
             logger.debug("Farm information successfully read");

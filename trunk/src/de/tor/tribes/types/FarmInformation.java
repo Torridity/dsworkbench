@@ -160,8 +160,9 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Revalidate the farm information (check owner, check returning/running troops) This method is called after initializing the farm
-     * manager and on user request
+     * Revalidate the farm information (check owner, check returning/running
+     * troops) This method is called after initializing the farm manager and on
+     * user request
      */
     public void revalidate() {
         checkOwner();
@@ -286,7 +287,6 @@ public class FarmInformation extends ManageableType {
     public void guessBuildings() {
         List<FightReport> reports = ReportManager.getSingleton().findAllReportsForTarget(getVillage());
         Collections.sort(reports, new Comparator<FightReport>() {
-
             @Override
             public int compare(FightReport o1, FightReport o2) {
                 return Long.valueOf(o1.getTimestamp()).compareTo(Long.valueOf(o2.getTimestamp()));
@@ -382,16 +382,16 @@ public class FarmInformation extends ManageableType {
         for (int i = 0; i < 3; i++) {
             //get resources in village at time of arrival
             double resourceInStorage = (double) pReport.getHaul()[i] + ((pReport.getSpyedResources() != null) ? pReport.getSpyedResources()[i] : 0);
-            int guessedStorageLeven = DSCalculator.calculateEstimatedStorageLevel(resourceInStorage);
+            int guessedStorageLevel = DSCalculator.calculateEstimatedStorageLevel(resourceInStorage);
             switch (i) {
                 case 0:
-                    setStorageLevel(Math.max(getStorageLevel(), guessedStorageLeven));
+                    setStorageLevel(Math.max(getStorageLevel(), guessedStorageLevel));
                     break;
                 case 1:
-                    setStorageLevel(Math.max(getStorageLevel(), guessedStorageLeven));
+                    setStorageLevel(Math.max(getStorageLevel(), guessedStorageLevel));
                     break;
                 case 2:
-                    setStorageLevel(Math.max(getStorageLevel(), guessedStorageLeven));
+                    setStorageLevel(Math.max(getStorageLevel(), guessedStorageLevel));
                     break;
             }
         }
@@ -403,6 +403,9 @@ public class FarmInformation extends ManageableType {
     public void checkOwner() {
         try {
             Village v = getVillage();
+            if (v == null) {
+                return;
+            }
             Conquer conquer = ConquerManager.getSingleton().getConquer(v);
             if (v.getTribe().getId() != ownerId || conquer != null) {
                 if (conquer != null) {
@@ -443,8 +446,8 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Get the correction factor depending on overall expected haul and overall actual haul. Correction is started beginning with the fifth
-     * attack
+     * Get the correction factor depending on overall expected haul and overall
+     * actual haul. Correction is started beginning with the fifth attack
      */
     public float getCorrectionFactor() {
         if (expectedHaul == 0) {
@@ -549,7 +552,8 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Read haul information from report, correct storage amounts and return difference to max haul
+     * Read haul information from report, correct storage amounts and return
+     * difference to max haul
      */
     private void updateHaulInformation(FightReport pReport) {
         if (pReport.getHaul() == null) {
@@ -598,9 +602,12 @@ public class FarmInformation extends ManageableType {
     }
 
     /**
-     * Update this farm's correction factor by calculating the expected haul (estimated storage status) and the actual haul (sum of haul and
-     * remaining resources). This call will do nothing if no spy information is available or if no haul information is available. The
-     * correction factor delta is limited to +/- 10 percent to reduce the influence of A and B runs and for farms which are relatively new.
+     * Update this farm's correction factor by calculating the expected haul
+     * (estimated storage status) and the actual haul (sum of haul and remaining
+     * resources). This call will do nothing if no spy information is available
+     * or if no haul information is available. The correction factor delta is
+     * limited to +/- 10 percent to reduce the influence of A and B runs and for
+     * farms which are relatively new.
      */
     private void updateCorrectionFactor(FightReport pReport) {
         if (pReport.getHaul() != null && pReport.getSpyedResources() != null) {
@@ -651,7 +658,8 @@ public class FarmInformation extends ManageableType {
     /**
      * Farm this farm
      *
-     * @param The troops used for farming or 'null' if the needed amount of troops should be calculated
+     * @param The troops used for farming or 'null' if the needed amount of
+     * troops should be calculated
      */
     public FARM_RESULT farmFarm(DSWorkbenchFarmManager.FARM_CONFIGURATION pConfig) {
         StringBuilder info = new StringBuilder();
@@ -733,7 +741,6 @@ public class FarmInformation extends ManageableType {
                         //there are villages which can carry all ressources or we use scenario A/B
                         if (!pFarmByMinHaul) {//sort valid villages by speed if we are not in the case that we are using farm type C without sufficient troops
                             Collections.sort(villages, new Comparator<Village>() {
-
                                 @Override
                                 public int compare(Village o1, Village o2) {
                                     //get speed of defined troops (A and B) or by troops for carriage (C)...

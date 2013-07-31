@@ -139,6 +139,10 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
             entry.setTribeID(Integer.parseInt(tokenizer.nextToken()));
             entry.setTempPoints(tokenizer.nextToken());
             entry.setTempType(tokenizer.nextToken());
+            if (entry.getPoints() < 21) {
+                //invalid village (event stuff?)
+                return null;
+            }
             return entry;
         } catch (Exception e) { //village invalid 
         }
@@ -236,7 +240,7 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
         }
         return contAsString;
     }
-   
+
     public void setName(String name) {
         this.name = name;
         stringRepresentation = null;

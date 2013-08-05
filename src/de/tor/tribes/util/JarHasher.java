@@ -22,8 +22,8 @@ public class JarHasher {
             jar = args[0];
             output = args[1];
         } catch (Exception e) {
-            jar = "D:/GRID/src/DSWorkbench/store/core.jar";
-            if (new File(jar).exists()) {
+            jar = "D:\\GRID\\src\\DSWorkbench\\store\\core.jar";
+            if (!new File(jar).exists()) {
                 throw new Exception("Input file " + jar + " does not exist");
             }
             output = "D:/GRID/src/DSWorkbench/hash.props";

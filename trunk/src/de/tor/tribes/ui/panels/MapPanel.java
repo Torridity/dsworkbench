@@ -29,6 +29,7 @@ import de.tor.tribes.ui.windows.VillageSupportFrame;
 import de.tor.tribes.ui.windows.VillageTagFrame;
 import de.tor.tribes.ui.dnd.VillageTransferable;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
+import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.windows.*;
 import de.tor.tribes.ui.wiz.tap.AttackSourcePanel;
 import de.tor.tribes.ui.wiz.tap.AttackTargetPanel;
@@ -1412,7 +1413,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             if (!GlobalOptions.isOfflineMode()) {
                 if (!DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
                     DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
-                    DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
+                    DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(DSWorkbenchSettingsDialog.getSingleton().getWebProxy(),GlobalOptions.getSelectedServer());
                 }
                 DSWorkbenchSimulatorFrame.getSingleton().toFront();
                 DSWorkbenchSimulatorFrame.getSingleton().insertValuesExternally(values);

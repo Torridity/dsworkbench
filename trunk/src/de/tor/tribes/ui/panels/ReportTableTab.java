@@ -27,6 +27,7 @@ import de.tor.tribes.ui.renderer.TribeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.ui.views.DSWorkbenchReportFrame;
+import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.windows.ReportShowDialog;
 import de.tor.tribes.ui.wiz.tap.AttackTargetPanel;
 import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
@@ -51,7 +52,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
@@ -513,7 +513,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
         if (!GlobalOptions.isOfflineMode()) {
             if (!DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
                 DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
-                DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
+                DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(DSWorkbenchSettingsDialog.getSingleton().getWebProxy(),GlobalOptions.getSelectedServer());
             }
             Point coord = new Point(report.getTargetVillage().getX(), report.getTargetVillage().getY());
             DSWorkbenchSimulatorFrame.getSingleton().insertValuesExternally(coord, values, this);

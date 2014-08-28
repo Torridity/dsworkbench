@@ -8,7 +8,6 @@ package de.tor.tribes.ui.windows;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.panels.MinimapPanel;
 import de.tor.tribes.ui.views.DSWorkbenchDoItYourselfAttackPlaner;
-import de.tor.tribes.ui.views.DSWorkbenchReTimerFrame;
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.views.DSWorkbenchDistanceFrame;
 import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
@@ -653,7 +652,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             DSWorkbenchNotepad.getSingleton().restoreProperties();
 
             if (!GlobalOptions.isOfflineMode() && DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
-                DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
+                DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(DSWorkbenchSettingsDialog.getSingleton().getWebProxy(), GlobalOptions.getSelectedServer());
             }
             ConquerManager.getSingleton().revalidate(true);
             //relevant for first start

@@ -16,6 +16,13 @@ import java.util.jar.JarInputStream;
 public class JarHasher {
 
     public static void main(String[] args) throws Exception {
+//      Properties props1 = new Properties();
+//      URL u = new URL("http://www.dsworkbench.de/downloads/Update/hash.props.gz");
+//      long s = System.currentTimeMillis();
+//      props1.load(new GZIPInputStream(u.openConnection().getInputStream()));
+//      System.out.println((System.currentTimeMillis() - s));
+//        
+    
         String jar;
         String output;
         try {

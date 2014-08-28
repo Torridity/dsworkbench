@@ -535,7 +535,7 @@ public class RibbonConfigurator {
                     public void run() {
                         if (!GlobalOptions.isOfflineMode()) {
                             DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
-                            DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
+                            DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(DSWorkbenchSettingsDialog.getSingleton().getWebProxy(), GlobalOptions.getSelectedServer());
                             DSWorkbenchSimulatorFrame.getSingleton().requestFocus();
                         } else {
                             JOptionPaneHelper.showInformationBox(DSWorkbenchMainFrame.getSingleton(), "A*Star ist im Offline-Modus leider nicht verfügbar.", "Information");

@@ -1052,20 +1052,6 @@ public class RibbonConfigurator {
                 GlobalOptions.getHelpBroker().setDisplayed(true);
             }
         });
-        JCommandButton communityButton = factoryButton("Community", "/res/128x128/forum.png", "Das DS Workbench Forum", "Das DS Workbench Forum bietet einen sehr guten Anlaufpunkt für Fragen und Probleme die mit DS Workbench zusammenhängen. Hier ist jederzeit jemand anzutreffen, der anderen Benutzern gern mit Rat und Tat zur Seite steht.", true);
-        communityButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                BrowserCommandSender.openPage("http://www.dsworkbench.de/forum/index.php");
-            }
-        });
-        JCommandButton ideaButton = factoryButton("Ideen", "/res/128x128/idea.png", "Du hast eine neue Idee?", "Falls dir an DS Workbench etwas fehlt, von dem du denkst, dass auch andere davon profitieren könnten, schreibe deine Idee einfach im entsprechenden Bereich des DS Workbench Forums nieder und man kann gern darüber diskutieren.", true);
-        ideaButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                BrowserCommandSender.openPage("http://www.dsworkbench.de/forum/forumdisplay.php?fid=5");
-            }
-        });
         JCommandButton facebookButton = factoryButton("Facebook", "/res/128x128/facebook.png", "DS Workbench @ Facebook", "Wie viele andere Personen und Produkte verfügt DS Workbench über eine eigene Facebook Seite. Wenn dir DS Workbench gefällt hast du so die Möglichkeit, jederzeit über neue Entwicklungen auf dem Laufenden zu sein.", true);
         facebookButton.addActionListener(new ActionListener() {
 
@@ -1088,16 +1074,12 @@ public class RibbonConfigurator {
             }
         });
         miscBand.addCommandButton(helpButton, RibbonElementPriority.TOP);
-        miscBand.addCommandButton(communityButton, RibbonElementPriority.TOP);
-        miscBand.addCommandButton(ideaButton, RibbonElementPriority.TOP);
         miscBand.addCommandButton(facebookButton, RibbonElementPriority.TOP);
         miscBand.addCommandButton(donateButton, RibbonElementPriority.TOP);
         miscBand.addCommandButton(aboutButton, RibbonElementPriority.TOP);
 
         miscBand.setResizePolicies((List) Arrays.asList(
-                new CoreRibbonResizePolicies.None(miscBand.getControlPanel()) // new CoreRibbonResizePolicies.Mirror(miscBand.getControlPanel()),
-                //new CoreRibbonResizePolicies.Mid2Low(miscToolsBand.getControlPanel()),
-                // new IconRibbonBandResizePolicy(miscBand.getControlPanel())
+                new CoreRibbonResizePolicies.None(miscBand.getControlPanel()) 
                 ));
         RibbonTask task1 = new RibbonTask("Sonstiges", miscBand);
         frame.getRibbon().addTask(task1);

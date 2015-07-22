@@ -18,6 +18,7 @@ import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
@@ -200,11 +201,7 @@ public class ConquerManager extends GenericManager<Conquer> {
     private void updateAcceptance() {
         invalidate();
         logger.debug("Filtering conquers");
-        double risePerHour = 1.0;
-        try {
-            risePerHour = ServerManager.getServerAcceptanceRiseSpeed(GlobalOptions.getSelectedServer());
-        } catch (Exception e) {
-        }
+        double risePerHour = ServerSettings.getSingleton().getSpeed();
         logger.debug(" - using " + risePerHour + " as acceptance increment value");
         List<Conquer> toRemove = new LinkedList<Conquer>();
         for (ManageableType t : getAllElements().toArray(new ManageableType[]{})) {

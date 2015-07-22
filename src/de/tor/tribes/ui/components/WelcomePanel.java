@@ -228,9 +228,9 @@ public class WelcomePanel extends JXPanel {
         if (evt.getSource() == jxHelpLabel) {
             GlobalOptions.getHelpBroker().setDisplayed(true);
         } else if (evt.getSource() == jxCommunityLabel) {
-            BrowserCommandSender.openPage("http://www.dsworkbench.de/forum/index.php");
+            BrowserCommandSender.openPage("https://forum.die-staemme.de/showthread.php?80831-DS-Workbench");
         } else if (evt.getSource() == jxIdeaLabel) {
-            BrowserCommandSender.openPage("http://www.dsworkbench.de/forum/forumdisplay.php?fid=5");
+            BrowserCommandSender.openPage("https://forum.die-staemme.de/showthread.php?80831-DS-Workbench");
         } else if (evt.getSource() == jxFacebookLabel) {
             BrowserCommandSender.openPage("http://www.facebook.com/pages/DS-Workbench/182068775185568");
         } else if (evt.getSource() == jxCloseLabel) {

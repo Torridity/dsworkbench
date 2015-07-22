@@ -11,7 +11,6 @@
 package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.drawing.AbstractForm;
 import de.tor.tribes.types.AllyStatResult;
@@ -62,10 +61,6 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.DefaultListModel;
-import javax.swing.JDialog;
-import javax.swing.UIManager;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -759,28 +754,6 @@ public class BBCodeEditor extends javax.swing.JDialog {
         }
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) throws Exception {
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
-        }
-        GlobalOptions.setSelectedServer("de43");
-        ServerManager.loadServerList();
-        DataHolder.getSingleton().loadData(false);
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                BBCodeEditor ed = new BBCodeEditor();
-                ed.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                ed.setVisible(true);
-            }
-        });
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.panels.BBPanel bBPanel2;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;

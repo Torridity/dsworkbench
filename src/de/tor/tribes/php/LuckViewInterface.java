@@ -4,10 +4,6 @@
  */
 package de.tor.tribes.php;
 
-import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.io.UnitHolder;
-import java.util.Hashtable;
-
 /**
  *
  * @author Torridity
@@ -16,7 +12,7 @@ public class LuckViewInterface {
 
     public static String createLuckIndicator(double pValue) {
         StringBuilder b = new StringBuilder();
-        b.append("http://www.dsworkbench.de/tools/luckView.php?luck=").append(Double.toString(pValue));
+        b.append("http://141.52.215.70/misc/tools/luckView.php?luck=").append(Double.toString(pValue));
         return b.toString();
     }
 

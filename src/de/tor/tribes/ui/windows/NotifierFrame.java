@@ -130,7 +130,7 @@ public class NotifierFrame extends javax.swing.JDialog {
                     } else if (ACTION_REGION != null && ACTION_REGION.contains(e.getPoint())) {
                         switch (notifyType) {
                             case 0: {
-                                BrowserCommandSender.openPage("http://www.dsworkbench.de");
+                                BrowserCommandSender.openPage("https://forum.die-staemme.de/showthread.php?80831-DS-Workbench");
                                 break;
                             }
                             case 4: {

@@ -27,7 +27,6 @@ import de.tor.tribes.ui.views.DSWorkbenchTagFrame;
 import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.php.ScreenUploadInterface;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.UserProfile;
@@ -79,7 +78,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.FileWriter;
@@ -114,867 +112,818 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         DSWorkbenchFrameListener,
         MapShotListener {
 
-    private static Logger logger = Logger.getLogger("MainApp");
-    private double dCenterX = 500.0;
-    private double dCenterY = 500.0;
-    private double dZoomFactor = 1.0;
-    //  private TribeTribeAttackFrame mTribeTribeAttackFrame = null;
-    private AboutDialog mAbout = null;
-    private static DSWorkbenchMainFrame SINGLETON = null;
-    private boolean initialized = false;
-    private boolean putOnline = false;
-    private MouseGestures mMouseGestures = new MouseGestures();
-    private boolean bWatchClipboard = true;
-    private final JFileChooser chooser = new JFileChooser();
-    private NotificationHideThread mNotificationHideThread = null;
-    private boolean glasspaneVisible = true;
+  private static Logger logger = Logger.getLogger("MainApp");
+  private double dCenterX = 500.0;
+  private double dCenterY = 500.0;
+  private double dZoomFactor = 1.0;
+  //  private TribeTribeAttackFrame mTribeTribeAttackFrame = null;
+  private AboutDialog mAbout = null;
+  private static DSWorkbenchMainFrame SINGLETON = null;
+  private boolean initialized = false;
+  private boolean putOnline = false;
+  private MouseGestures mMouseGestures = new MouseGestures();
+  private boolean bWatchClipboard = true;
+  private final JFileChooser chooser = new JFileChooser();
+  private NotificationHideThread mNotificationHideThread = null;
+  private boolean glasspaneVisible = true;
 
-    public static synchronized DSWorkbenchMainFrame getSingleton() {
-        if (SINGLETON == null) {
-            SINGLETON = new DSWorkbenchMainFrame();
-        }
-        return SINGLETON;
+  public static synchronized DSWorkbenchMainFrame getSingleton() {
+    if (SINGLETON == null) {
+      SINGLETON = new DSWorkbenchMainFrame();
+    }
+    return SINGLETON;
+  }
+
+  /**
+   * Creates new form MapFrame
+   */
+  DSWorkbenchMainFrame() {
+    initComponents();
+    setAlwaysOnTop(false);
+    if (!GlobalOptions.isMinimal()) {
+      setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
+    } else {
+      setTitle("DS Workbench Mini " + Constants.VERSION + Constants.VERSION_ADDITION);
     }
 
-    /**
-     * Creates new form MapFrame
-     */
-    DSWorkbenchMainFrame() {
-        initComponents();
-        setAlwaysOnTop(false);
-        if (!GlobalOptions.isMinimal()) {
-            setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
-        } else {
-            setTitle("DS Workbench Mini " + Constants.VERSION + Constants.VERSION_ADDITION);
+    jExportDialog.pack();
+    jAddROIDialog.pack();
+
+    JOutlookBar outlookBar = new JOutlookBar();
+    outlookBar.addBar("Navigation", jNavigationPanel);
+    outlookBar.addBar("Information", jInformationPanel);
+    outlookBar.addBar("Karte", jMapPanel);
+    outlookBar.addBar("ROI", jROIPanel);
+    outlookBar.setVisibleBar(1);
+    jSettingsScrollPane.setViewportView(outlookBar);
+
+    mAbout = new AboutDialog(this, true);
+    mAbout.pack();
+    chooser.setDialogTitle("Speichern unter...");
+    chooser.addChoosableFileFilter(new javax.swing.filechooser.FileFilter() {
+
+      @Override
+      public boolean accept(File f) {
+        if ((f != null) && (f.isDirectory() || f.getName().endsWith(".png"))) {
+          return true;
         }
+        return false;
+      }
 
-        jExportDialog.pack();
-        jAddROIDialog.pack();
+      @Override
+      public String getDescription() {
+        return "PNG Image (*.png)";
+      }
+    });
 
-        JOutlookBar outlookBar = new JOutlookBar();
-        outlookBar.addBar("Navigation", jNavigationPanel);
-        outlookBar.addBar("Information", jInformationPanel);
-        outlookBar.addBar("Karte", jMapPanel);
-        outlookBar.addBar("ROI", jROIPanel);
-        outlookBar.setVisibleBar(1);
-        jSettingsScrollPane.setViewportView(outlookBar);
+    chooser.addChoosableFileFilter(new javax.swing.filechooser.FileFilter() {
 
-        mAbout = new AboutDialog(this, true);
-        mAbout.pack();
-        chooser.setDialogTitle("Speichern unter...");
-        chooser.addChoosableFileFilter(new javax.swing.filechooser.FileFilter() {
+      @Override
+      public boolean accept(File f) {
+        if ((f != null) && (f.isDirectory() || f.getName().endsWith(".jpeg"))) {
+          return true;
+        }
+        return false;
+      }
 
-            @Override
-            public boolean accept(File f) {
-                if ((f != null) && (f.isDirectory() || f.getName().endsWith(".png"))) {
-                    return true;
-                }
-                return false;
-            }
-
-            @Override
-            public String getDescription() {
-                return "PNG Image (*.png)";
-            }
-        });
-
-        chooser.addChoosableFileFilter(new javax.swing.filechooser.FileFilter() {
-
-            @Override
-            public boolean accept(File f) {
-                if ((f != null) && (f.isDirectory() || f.getName().endsWith(".jpeg"))) {
-                    return true;
-                }
-                return false;
-            }
-
-            @Override
-            public String getDescription() {
-                return "JPEG Image (*.jpeg)";
-            }
-        });
-        // <editor-fold defaultstate="collapsed" desc=" Schedule Backup">
-        new Timer("BackupTimer", true).schedule(new BackupTask(), 60 * 10000, 60 * 10000);
+      @Override
+      public String getDescription() {
+        return "JPEG Image (*.jpeg)";
+      }
+    });
+    // <editor-fold defaultstate="collapsed" desc=" Schedule Backup">
+    new Timer("BackupTimer", true).schedule(new BackupTask(), 60 * 10000, 60 * 10000);
         // </editor-fold>
 
+    //give focus to map panel if mouse enters map
+    jMapPanelHolder.addMouseListener(new MouseAdapter() {
 
-        //give focus to map panel if mouse enters map
-        jMapPanelHolder.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseEntered(MouseEvent e) {
+        jMapPanelHolder.requestFocusInWindow();
+      }
+    });
 
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                jMapPanelHolder.requestFocusInWindow();
+    getContentPane().setBackground(Constants.DS_BACK);
+    pack();
+    capabilityInfoPanel1.addActionListener(MapPanel.getSingleton());
+
+    // <editor-fold defaultstate="collapsed" desc=" Add global KeyListener ">
+    Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
+
+      @Override
+      public void eventDispatched(AWTEvent event) {
+        if (((KeyEvent) event).getID() == KeyEvent.KEY_PRESSED) {
+          KeyEvent e = (KeyEvent) event;
+          if (DSWorkbenchMainFrame.getSingleton().isActive()) {
+            //move shortcuts
+            if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+              scroll(0.0, 2.0);
+            } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+              scroll(0.0, -2.0);
+            } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+              scroll(-2.0, 0.0);
+            } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+              scroll(2.0, 0.0);
+            } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown()) {
+              //shot minimap tool shortcut
+              MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_AXE);
+            } else if ((e.getKeyCode() == KeyEvent.VK_2) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown()) {
+              //attack axe tool shortcut
+              MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_RAM);
+            } else if ((e.getKeyCode() == KeyEvent.VK_3) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown()) {
+              //attack ram tool shortcut
+              MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SNOB);
+            } else if ((e.getKeyCode() == KeyEvent.VK_4) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown()) {
+              //attack snob tool shortcut
+              MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SPY);
+            } else if ((e.getKeyCode() == KeyEvent.VK_5) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown()) {
+              //attack sword tool shortcut
+              MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_LIGHT);
+            } else if ((e.getKeyCode() == KeyEvent.VK_6) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown()) {
+              //attack light tool shortcut
+              MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_HEAVY);
+            } else if ((e.getKeyCode() == KeyEvent.VK_7) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown()) {
+              //attack heavy tool shortcut
+              MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SWORD);
+            } else if ((e.getKeyCode() == KeyEvent.VK_S) && e.isControlDown() && !e.isAltDown()) {
+              //search frame shortcut
+              DSWorkbenchSearchFrame.getSingleton().setVisible(!DSWorkbenchSearchFrame.getSingleton().isVisible());
             }
-        });
+          }
 
-        getContentPane().setBackground(Constants.DS_BACK);
-        pack();
-        capabilityInfoPanel1.addActionListener(MapPanel.getSingleton());
-
-
-        // <editor-fold defaultstate="collapsed" desc=" Add global KeyListener ">
-        Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
-
-            @Override
-            public void eventDispatched(AWTEvent event) {
-                if (((KeyEvent) event).getID() == KeyEvent.KEY_PRESSED) {
-                    KeyEvent e = (KeyEvent) event;
-                    if (DSWorkbenchMainFrame.getSingleton().isActive()) {
-                        //move shortcuts
-                        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                            scroll(0.0, 2.0);
-                        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
-                            scroll(0.0, -2.0);
-                        } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                            scroll(-2.0, 0.0);
-                        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                            scroll(2.0, 0.0);
-                        } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown()) {
-                            //shot minimap tool shortcut
-                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_AXE);
-                        } else if ((e.getKeyCode() == KeyEvent.VK_2) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown()) {
-                            //attack axe tool shortcut
-                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_RAM);
-                        } else if ((e.getKeyCode() == KeyEvent.VK_3) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown()) {
-                            //attack ram tool shortcut
-                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SNOB);
-                        } else if ((e.getKeyCode() == KeyEvent.VK_4) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown()) {
-                            //attack snob tool shortcut
-                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SPY);
-                        } else if ((e.getKeyCode() == KeyEvent.VK_5) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown()) {
-                            //attack sword tool shortcut
-                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_LIGHT);
-                        } else if ((e.getKeyCode() == KeyEvent.VK_6) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown()) {
-                            //attack light tool shortcut
-                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_HEAVY);
-                        } else if ((e.getKeyCode() == KeyEvent.VK_7) && e.isShiftDown() && !e.isControlDown() && !e.isAltDown()) {
-                            //attack heavy tool shortcut
-                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SWORD);
-                        } else if ((e.getKeyCode() == KeyEvent.VK_S) && e.isControlDown() && !e.isAltDown()) {
-                            //search frame shortcut
-                            DSWorkbenchSearchFrame.getSingleton().setVisible(!DSWorkbenchSearchFrame.getSingleton().isVisible());
-                        }
-                    }
-
-                    //misc shortcuts
-                    if ((e.getKeyCode() == KeyEvent.VK_0) && e.isAltDown()) {
-                        //no tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DEFAULT);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        //measure tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MEASURE);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_2) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        //mark tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MARK);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_3) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        //tag tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_TAG);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_4) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        //attack ingame tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SUPPORT);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_5) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        //attack ingame tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SELECTION);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_6) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        //attack ingame tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_RADAR);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_7) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        //attack ingame tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_INGAME);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_8) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        //res ingame tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SEND_RES_INGAME);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown()) {
-                        //move minimap tool shortcut
-                        MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MOVE);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_2) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown()) {
-                        //zoom minimap tool shortcut
-                        MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ZOOM);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_3) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown()) {
-                        //shot minimap tool shortcut
-                        MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SHOT);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_T) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown()) {
-                        //search time shortcut
-                        ClockFrame.getSingleton().setVisible(!ClockFrame.getSingleton().isVisible());
-                    } else if ((e.getKeyCode() == KeyEvent.VK_S) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        planMapshot();
-                    } else if (e.getKeyCode() == KeyEvent.VK_F2) {
-                        DSWorkbenchAttackFrame.getSingleton().setVisible(!DSWorkbenchAttackFrame.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F3) {
-                        DSWorkbenchMarkerFrame.getSingleton().setVisible(!DSWorkbenchMarkerFrame.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F4) {
-                        DSWorkbenchTroopsFrame.getSingleton().setVisible(!DSWorkbenchTroopsFrame.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F5) {
-                        DSWorkbenchRankFrame.getSingleton().setVisible(!DSWorkbenchRankFrame.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F6) {
-                        DSWorkbenchFormFrame.getSingleton().setVisible(!DSWorkbenchFormFrame.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F7) {
-                        if (ServerSettings.getSingleton().isChurch()) {
-                            DSWorkbenchChurchFrame.getSingleton().setVisible(!DSWorkbenchChurchFrame.getSingleton().isVisible());
-                        }
-                    } else if (e.getKeyCode() == KeyEvent.VK_F8) {
-                        DSWorkbenchConquersFrame.getSingleton().setVisible(!DSWorkbenchConquersFrame.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F9) {
-                        DSWorkbenchNotepad.getSingleton().setVisible(!DSWorkbenchNotepad.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F10) {
-                        DSWorkbenchTagFrame.getSingleton().setVisible(!DSWorkbenchTagFrame.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F11) {
-                        DSWorkbenchStatsFrame.getSingleton().setVisible(!DSWorkbenchStatsFrame.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F12) {
-                        DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
-                        //ROI 1
-                        centerROI(0);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_2) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
-                        //ROI 2
-                        centerROI(1);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_3) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
-                        //ROI 3
-                        centerROI(2);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_4) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
-                        //ROI 4
-                        centerROI(3);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_5) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
-                        //ROI 5
-                        centerROI(4);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_6) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
-                        //ROI 6
-                        centerROI(5);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_7) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
-                        //ROI 7
-                        centerROI(6);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_8) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
-                        //ROI 8
-                        centerROI(7);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_9) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
-                        //ROI 9
-                        centerROI(8);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_0) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
-                        //ROI 10
-                        centerROI(9);
-                    } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                        jMapPanelHolder.requestFocusInWindow();
-                        MapPanel.getSingleton().setSpaceDown(true);
-                    } else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-                        jMapPanelHolder.requestFocusInWindow();
-                        MapPanel.getSingleton().setShiftDown(true);
-                    }
-                } else if (((KeyEvent) event).getID() == KeyEvent.KEY_RELEASED) {
-                    KeyEvent e = (KeyEvent) event;
-                    if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                        MapPanel.getSingleton().setSpaceDown(false);
-                    } else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-                        MapPanel.getSingleton().setShiftDown(false);
-                    }
-                }
+          //misc shortcuts
+          if ((e.getKeyCode() == KeyEvent.VK_0) && e.isAltDown()) {
+            //no tool shortcut
+            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DEFAULT);
+          } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
+            //measure tool shortcut
+            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MEASURE);
+          } else if ((e.getKeyCode() == KeyEvent.VK_2) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
+            //mark tool shortcut
+            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MARK);
+          } else if ((e.getKeyCode() == KeyEvent.VK_3) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
+            //tag tool shortcut
+            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_TAG);
+          } else if ((e.getKeyCode() == KeyEvent.VK_4) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
+            //attack ingame tool shortcut
+            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SUPPORT);
+          } else if ((e.getKeyCode() == KeyEvent.VK_5) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
+            //attack ingame tool shortcut
+            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SELECTION);
+          } else if ((e.getKeyCode() == KeyEvent.VK_6) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
+            //attack ingame tool shortcut
+            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_RADAR);
+          } else if ((e.getKeyCode() == KeyEvent.VK_7) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
+            //attack ingame tool shortcut
+            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_INGAME);
+          } else if ((e.getKeyCode() == KeyEvent.VK_8) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
+            //res ingame tool shortcut
+            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SEND_RES_INGAME);
+          } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown()) {
+            //move minimap tool shortcut
+            MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MOVE);
+          } else if ((e.getKeyCode() == KeyEvent.VK_2) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown()) {
+            //zoom minimap tool shortcut
+            MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ZOOM);
+          } else if ((e.getKeyCode() == KeyEvent.VK_3) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown()) {
+            //shot minimap tool shortcut
+            MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SHOT);
+          } else if ((e.getKeyCode() == KeyEvent.VK_T) && e.isControlDown() && !e.isShiftDown() && !e.isAltDown()) {
+            //search time shortcut
+            ClockFrame.getSingleton().setVisible(!ClockFrame.getSingleton().isVisible());
+          } else if ((e.getKeyCode() == KeyEvent.VK_S) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
+            planMapshot();
+          } else if (e.getKeyCode() == KeyEvent.VK_F2) {
+            DSWorkbenchAttackFrame.getSingleton().setVisible(!DSWorkbenchAttackFrame.getSingleton().isVisible());
+          } else if (e.getKeyCode() == KeyEvent.VK_F3) {
+            DSWorkbenchMarkerFrame.getSingleton().setVisible(!DSWorkbenchMarkerFrame.getSingleton().isVisible());
+          } else if (e.getKeyCode() == KeyEvent.VK_F4) {
+            DSWorkbenchTroopsFrame.getSingleton().setVisible(!DSWorkbenchTroopsFrame.getSingleton().isVisible());
+          } else if (e.getKeyCode() == KeyEvent.VK_F5) {
+            DSWorkbenchRankFrame.getSingleton().setVisible(!DSWorkbenchRankFrame.getSingleton().isVisible());
+          } else if (e.getKeyCode() == KeyEvent.VK_F6) {
+            DSWorkbenchFormFrame.getSingleton().setVisible(!DSWorkbenchFormFrame.getSingleton().isVisible());
+          } else if (e.getKeyCode() == KeyEvent.VK_F7) {
+            if (ServerSettings.getSingleton().isChurch()) {
+              DSWorkbenchChurchFrame.getSingleton().setVisible(!DSWorkbenchChurchFrame.getSingleton().isVisible());
             }
-        }, AWTEvent.KEY_EVENT_MASK);
+          } else if (e.getKeyCode() == KeyEvent.VK_F8) {
+            DSWorkbenchConquersFrame.getSingleton().setVisible(!DSWorkbenchConquersFrame.getSingleton().isVisible());
+          } else if (e.getKeyCode() == KeyEvent.VK_F9) {
+            DSWorkbenchNotepad.getSingleton().setVisible(!DSWorkbenchNotepad.getSingleton().isVisible());
+          } else if (e.getKeyCode() == KeyEvent.VK_F10) {
+            DSWorkbenchTagFrame.getSingleton().setVisible(!DSWorkbenchTagFrame.getSingleton().isVisible());
+          } else if (e.getKeyCode() == KeyEvent.VK_F11) {
+            DSWorkbenchStatsFrame.getSingleton().setVisible(!DSWorkbenchStatsFrame.getSingleton().isVisible());
+          } else if (e.getKeyCode() == KeyEvent.VK_F12) {
+            DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
+          } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
+            //ROI 1
+            centerROI(0);
+          } else if ((e.getKeyCode() == KeyEvent.VK_2) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
+            //ROI 2
+            centerROI(1);
+          } else if ((e.getKeyCode() == KeyEvent.VK_3) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
+            //ROI 3
+            centerROI(2);
+          } else if ((e.getKeyCode() == KeyEvent.VK_4) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
+            //ROI 4
+            centerROI(3);
+          } else if ((e.getKeyCode() == KeyEvent.VK_5) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
+            //ROI 5
+            centerROI(4);
+          } else if ((e.getKeyCode() == KeyEvent.VK_6) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
+            //ROI 6
+            centerROI(5);
+          } else if ((e.getKeyCode() == KeyEvent.VK_7) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
+            //ROI 7
+            centerROI(6);
+          } else if ((e.getKeyCode() == KeyEvent.VK_8) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
+            //ROI 8
+            centerROI(7);
+          } else if ((e.getKeyCode() == KeyEvent.VK_9) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
+            //ROI 9
+            centerROI(8);
+          } else if ((e.getKeyCode() == KeyEvent.VK_0) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
+            //ROI 10
+            centerROI(9);
+          } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            jMapPanelHolder.requestFocusInWindow();
+            MapPanel.getSingleton().setSpaceDown(true);
+          } else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+            jMapPanelHolder.requestFocusInWindow();
+            MapPanel.getSingleton().setShiftDown(true);
+          }
+        } else if (((KeyEvent) event).getID() == KeyEvent.KEY_RELEASED) {
+          KeyEvent e = (KeyEvent) event;
+          if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            MapPanel.getSingleton().setSpaceDown(false);
+          } else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+            MapPanel.getSingleton().setShiftDown(false);
+          }
+        }
+      }
+    }, AWTEvent.KEY_EVENT_MASK);
         // </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc=" Load UI Icons ">
-        try {
-            jOnlineLabel.setIcon(new ImageIcon("./graphics/icons/online.png"));
-            jEnableClipboardWatchButton.setIcon(new ImageIcon("./graphics/icons/watch_clipboard.png"));
-            jCenterIngameButton.setIcon(new ImageIcon(DSWorkbenchMainFrame.class.getResource("/res/ui/center_ingame.png")));
-            jRefreshButton.setIcon(new ImageIcon("./graphics/icons/refresh.png"));
-            jCenterCoordinateIngame.setIcon(new ImageIcon("./graphics/icons/center.png"));
-        } catch (Exception e) {
-            logger.error("Failed to load status icon(s)", e);
-        }
+    // <editor-fold defaultstate="collapsed" desc=" Load UI Icons ">
+    try {
+      jOnlineLabel.setIcon(new ImageIcon("./graphics/icons/online.png"));
+      jEnableClipboardWatchButton.setIcon(new ImageIcon("./graphics/icons/watch_clipboard.png"));
+      jCenterIngameButton.setIcon(new ImageIcon(DSWorkbenchMainFrame.class.getResource("/res/ui/center_ingame.png")));
+      jRefreshButton.setIcon(new ImageIcon("./graphics/icons/refresh.png"));
+      jCenterCoordinateIngame.setIcon(new ImageIcon("./graphics/icons/center.png"));
+    } catch (Exception e) {
+      logger.error("Failed to load status icon(s)", e);
+    }
 // </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc=" Check for desktop support ">
-        if (!Desktop.isDesktopSupported()) {
-            jCenterIngameButton.setEnabled(false);
-            jCenterCoordinateIngame.setEnabled(false);
-        }
+    // <editor-fold defaultstate="collapsed" desc=" Check for desktop support ">
+    if (!Desktop.isDesktopSupported()) {
+      jCenterIngameButton.setEnabled(false);
+      jCenterCoordinateIngame.setEnabled(false);
+    }
 // </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc=" Restore last map position ">
-        try {
-            String x = GlobalOptions.getSelectedProfile().getProperty("last.x");
-            String y = GlobalOptions.getSelectedProfile().getProperty("last.y");
-            dCenterX = Double.parseDouble(x);
-            dCenterY = Double.parseDouble(y);
-            jCenterX.setText(x);
-            jCenterY.setText(y);
-        } catch (Exception e) {
-            if (ServerSettings.getSingleton().getCoordType() != 2) {
-                dCenterX = 250.0;
-                dCenterY = 250.0;
-                int[] hier = DSCalculator.xyToHierarchical(250, 250);
-                jCenterX.setText(Integer.toString(hier[0]));
-                jCenterY.setText(Integer.toString(hier[1]));
-            } else {
-                dCenterX = 500.0;
-                dCenterY = 500.0;
-                jCenterX.setText("500");
-                jCenterY.setText("500");
-            }
-        }
+    // <editor-fold defaultstate="collapsed" desc=" Restore last map position ">
+    try {
+      String x = GlobalOptions.getSelectedProfile().getProperty("last.x");
+      String y = GlobalOptions.getSelectedProfile().getProperty("last.y");
+      dCenterX = Double.parseDouble(x);
+      dCenterY = Double.parseDouble(y);
+      jCenterX.setText(x);
+      jCenterY.setText(y);
+    } catch (Exception e) {
+      if (ServerSettings.getSingleton().getCoordType() != 2) {
+        dCenterX = 250.0;
+        dCenterY = 250.0;
+        int[] hier = DSCalculator.xyToHierarchical(250, 250);
+        jCenterX.setText(Integer.toString(hier[0]));
+        jCenterY.setText(Integer.toString(hier[1]));
+      } else {
+        dCenterX = 500.0;
+        dCenterY = 500.0;
+        jCenterX.setText("500");
+        jCenterY.setText("500");
+      }
+    }
 
 // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc=" Restore other settings ">
+    try {
+      String val = GlobalOptions.getProperty("show.map.popup");
+      if (val == null) {
+        jShowMapPopup.setSelected(true);
+        GlobalOptions.addProperty("show.map.popup", Boolean.toString(true));
+      } else {
+        jShowMapPopup.setSelected(Boolean.parseBoolean(val));
+      }
+    } catch (Exception e) {
+      jShowMapPopup.setSelected(true);
+      GlobalOptions.addProperty("show.map.popup", Boolean.toString(true));
 
-        // <editor-fold defaultstate="collapsed" desc=" Restore other settings ">
-        try {
-            String val = GlobalOptions.getProperty("show.map.popup");
-            if (val == null) {
-                jShowMapPopup.setSelected(true);
-                GlobalOptions.addProperty("show.map.popup", Boolean.toString(true));
-            } else {
-                jShowMapPopup.setSelected(Boolean.parseBoolean(val));
-            }
-        } catch (Exception e) {
-            jShowMapPopup.setSelected(true);
-            GlobalOptions.addProperty("show.map.popup", Boolean.toString(true));
+    }
+    try {
+      String val = GlobalOptions.getProperty("show.mouseover.info");
+      if (val == null) {
+        jShowMouseOverInfo.setSelected(false);
+        GlobalOptions.addProperty("show.mouseover.info", Boolean.toString(jShowMouseOverInfo.isSelected()));
+      } else {
+        jShowMouseOverInfo.setSelected(Boolean.parseBoolean(val));
+      }
+    } catch (Exception e) {
+      jShowMouseOverInfo.setSelected(false);
+      GlobalOptions.addProperty("show.mouseover.info", Boolean.toString(jShowMouseOverInfo.isSelected()));
+    }
 
-        }
-        try {
-            String val = GlobalOptions.getProperty("show.mouseover.info");
-            if (val == null) {
-                jShowMouseOverInfo.setSelected(false);
-                GlobalOptions.addProperty("show.mouseover.info", Boolean.toString(jShowMouseOverInfo.isSelected()));
-            } else {
-                jShowMouseOverInfo.setSelected(Boolean.parseBoolean(val));
-            }
-        } catch (Exception e) {
-            jShowMouseOverInfo.setSelected(false);
-            GlobalOptions.addProperty("show.mouseover.info", Boolean.toString(jShowMouseOverInfo.isSelected()));
-        }
+    try {
+      String val = GlobalOptions.getProperty("include.support");
+      if (val == null) {
+        jIncludeSupport.setSelected(false);
+        GlobalOptions.addProperty("include.support", Boolean.toString(jIncludeSupport.isSelected()));
+      } else {
+        jIncludeSupport.setSelected(Boolean.parseBoolean(val));
+      }
+    } catch (Exception e) {
+      jIncludeSupport.setSelected(true);
+      GlobalOptions.addProperty("include.support", Boolean.toString(jIncludeSupport.isSelected()));
+    }
 
-        try {
-            String val = GlobalOptions.getProperty("include.support");
-            if (val == null) {
-                jIncludeSupport.setSelected(false);
-                GlobalOptions.addProperty("include.support", Boolean.toString(jIncludeSupport.isSelected()));
-            } else {
-                jIncludeSupport.setSelected(Boolean.parseBoolean(val));
-            }
-        } catch (Exception e) {
-            jIncludeSupport.setSelected(true);
-            GlobalOptions.addProperty("include.support", Boolean.toString(jIncludeSupport.isSelected()));
-        }
+    try {
+      String val = GlobalOptions.getProperty("highlight.tribes.villages");
+      if (val == null) {
+        jHighlightTribeVillages.setSelected(false);
+        GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(jHighlightTribeVillages.isSelected()));
+      } else {
+        jHighlightTribeVillages.setSelected(Boolean.parseBoolean(val));
+      }
+    } catch (Exception e) {
+      jHighlightTribeVillages.setSelected(false);
+      GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(jHighlightTribeVillages.isSelected()));
+    }
+    try {
+      String val = GlobalOptions.getProperty("show.ruler");
+      if (val == null) {
+        jShowRuler.setSelected(true);
+        GlobalOptions.addProperty("show.ruler", Boolean.toString(true));
+      } else {
+        jShowRuler.setSelected(Boolean.parseBoolean(val));
+      }
+    } catch (Exception e) {
+      jShowRuler.setSelected(true);
+      GlobalOptions.addProperty("show.ruler", Boolean.toString(true));
+    }
 
-        try {
-            String val = GlobalOptions.getProperty("highlight.tribes.villages");
-            if (val == null) {
-                jHighlightTribeVillages.setSelected(false);
-                GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(jHighlightTribeVillages.isSelected()));
-            } else {
-                jHighlightTribeVillages.setSelected(Boolean.parseBoolean(val));
-            }
-        } catch (Exception e) {
-            jHighlightTribeVillages.setSelected(false);
-            GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(jHighlightTribeVillages.isSelected()));
-        }
-        try {
-            String val = GlobalOptions.getProperty("show.ruler");
-            if (val == null) {
-                jShowRuler.setSelected(true);
-                GlobalOptions.addProperty("show.ruler", Boolean.toString(true));
-            } else {
-                jShowRuler.setSelected(Boolean.parseBoolean(val));
-            }
-        } catch (Exception e) {
-            jShowRuler.setSelected(true);
-            GlobalOptions.addProperty("show.ruler", Boolean.toString(true));
-        }
+    try {
+      String val = GlobalOptions.getProperty("radar.size");
+      int hour = 1;
+      int min = 0;
+      if (val != null) {
+        int r = Integer.parseInt(val);
+        hour = r / 60;
+        min = r - hour * 60;
+      } else {
+        throw new Exception();
+      }
+      jHourField.setText(Integer.toString(hour));
+      jMinuteField.setText(Integer.toString(min));
+    } catch (Exception e) {
+      jHourField.setText("1");
+      jMinuteField.setText("0");
+      GlobalOptions.addProperty("radar.size", "60");
+    }
 
-        try {
-            String val = GlobalOptions.getProperty("radar.size");
-            int hour = 1;
-            int min = 0;
-            if (val != null) {
-                int r = Integer.parseInt(val);
-                hour = r / 60;
-                min = r - hour * 60;
-            } else {
-                throw new Exception();
-            }
-            jHourField.setText(Integer.toString(hour));
-            jMinuteField.setText(Integer.toString(min));
-        } catch (Exception e) {
-            jHourField.setText("1");
-            jMinuteField.setText("0");
-            GlobalOptions.addProperty("radar.size", "60");
-        }
-
-        // </editor-fold>
-
-        // <editor-fold defaultstate="collapsed" desc="Skin Setup">
-        DefaultComboBoxModel gpModel = new DefaultComboBoxModel(GlobalOptions.getAvailableSkins());
-        jGraphicPacks.setModel(gpModel);
-        String skin = GlobalOptions.getProperty("default.skin");
-        if (skin != null) {
-            if (gpModel.getIndexOf(skin) != -1) {
-                jGraphicPacks.setSelectedItem(skin);
-            } else {
-                jGraphicPacks.setSelectedItem("default");
-            }
-        } else {
-            jGraphicPacks.setSelectedItem("default");
-        }
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Skin Setup">
+    DefaultComboBoxModel gpModel = new DefaultComboBoxModel(GlobalOptions.getAvailableSkins());
+    jGraphicPacks.setModel(gpModel);
+    String skin = GlobalOptions.getProperty("default.skin");
+    if (skin != null) {
+      if (gpModel.getIndexOf(skin) != -1) {
+        jGraphicPacks.setSelectedItem(skin);
+      } else {
+        jGraphicPacks.setSelectedItem("default");
+      }
+    } else {
+      jGraphicPacks.setSelectedItem("default");
+    }
         //</editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc=" Init A*Star HelpSystem ">
-        if (!Constants.DEBUG) {
-            GlobalOptions.getHelpBroker().enableHelpKey(DSWorkbenchSimulatorFrame.getSingleton().getRootPane(), "pages.astar", GlobalOptions.getHelpBroker().getHelpSet());
-            GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "index", GlobalOptions.getHelpBroker().getHelpSet());
-        }
+    // <editor-fold defaultstate="collapsed" desc=" Init A*Star HelpSystem ">
+    if (!Constants.DEBUG) {
+      GlobalOptions.getHelpBroker().enableHelpKey(DSWorkbenchSimulatorFrame.getSingleton().getRootPane(), "pages.astar", GlobalOptions.getHelpBroker().getHelpSet());
+      GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "index", GlobalOptions.getHelpBroker().getHelpSet());
+    }
         // </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc="Init mouse gesture listener">
-        mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
-        mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
-        mMouseGestures.start();
+    // <editor-fold defaultstate="collapsed" desc="Init mouse gesture listener">
+    mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
+    mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
+    mMouseGestures.start();
 // </editor-fold>
 
-        mNotificationHideThread = new NotificationHideThread();
-        mNotificationHideThread.start();
-        SystrayHelper.installSystrayIcon();
-        //update online state
-        onlineStateChanged();
-        restoreProperties();
-    }
+    mNotificationHideThread = new NotificationHideThread();
+    mNotificationHideThread.start();
+    SystrayHelper.installSystrayIcon();
+    //update online state
+    onlineStateChanged();
+    restoreProperties();
+  }
 
-    public void storeProperties() {
-        if (!GlobalOptions.isMinimal()) {
-            GlobalOptions.addProperty("main.size.width", Integer.toString(getWidth()));
-            GlobalOptions.addProperty("main.size.height", Integer.toString(getHeight()));
+  public void storeProperties() {
+    if (!GlobalOptions.isMinimal()) {
+      GlobalOptions.addProperty("main.size.width", Integer.toString(getWidth()));
+      GlobalOptions.addProperty("main.size.height", Integer.toString(getHeight()));
+    }
+  }
+
+  public final void restoreProperties() {
+    if (!GlobalOptions.isMinimal()) {
+      try {
+        int width = Integer.parseInt(GlobalOptions.getProperty("main.size.width"));
+        int height = Integer.parseInt(GlobalOptions.getProperty("main.size.height"));
+        int maxHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 50;
+        int maxWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() - 50;
+        if (height > maxHeight) {
+          height = maxHeight;
         }
-    }
-
-    public final void restoreProperties() {
-        if (!GlobalOptions.isMinimal()) {
-            try {
-                int width = Integer.parseInt(GlobalOptions.getProperty("main.size.width"));
-                int height = Integer.parseInt(GlobalOptions.getProperty("main.size.height"));
-                int maxHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 50;
-                int maxWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() - 50;
-                if (height > maxHeight) {
-                    height = maxHeight;
-                }
-                if (width > maxWidth) {
-                    width = maxWidth;
-                }
-
-                setSize(width, height);
-            } catch (Exception e) {
-            }
+        if (width > maxWidth) {
+          width = maxWidth;
         }
+
+        setSize(width, height);
+      } catch (Exception e) {
+      }
     }
+  }
 
-    public String[] getCurrentPosition() {
-        return new String[]{jCenterX.getText(), jCenterY.getText()};
-    }
+  public String[] getCurrentPosition() {
+    return new String[]{jCenterX.getText(), jCenterY.getText()};
+  }
 
-    /**
-     * Update on server change
-     */
-    public void serverSettingsChangedEvent() {
-        try {
-            logger.info("Updating server settings");
-            // <editor-fold defaultstate="collapsed" desc="Reset user profile specific contents">
+  /**
+   * Update on server change
+   */
+  public void serverSettingsChangedEvent() {
+    try {
+      logger.info("Updating server settings");
+      // <editor-fold defaultstate="collapsed" desc="Reset user profile specific contents">
 
-            UserProfile profile = GlobalOptions.getSelectedProfile();
-            String playerID = profile.toString();
-            logger.info(" - using playerID " + playerID);
-            profile.restoreProperties();
-            jCurrentPlayer.setText(playerID);
-            try {
-                DefaultComboBoxModel model = new DefaultComboBoxModel();
-                Tribe t = DataHolder.getSingleton().getTribeByName(profile.getTribeName());
-                Village[] villages = t.getVillageList();
-                Arrays.sort(villages, Village.CASE_INSENSITIVE_ORDER);
-                for (Village v : villages) {
-                    model.addElement(v);
-                }
-                jCurrentPlayerVillages.setModel(model);
-            } catch (Exception e) {
-                jCurrentPlayerVillages.setModel(new DefaultComboBoxModel(new Object[]{"-keine Dörfer-"}));
-            }
+      UserProfile profile = GlobalOptions.getSelectedProfile();
+      String playerID = profile.toString();
+      logger.info(" - using playerID " + playerID);
+      profile.restoreProperties();
+      jCurrentPlayer.setText(playerID);
+      try {
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        Tribe t = DataHolder.getSingleton().getTribeByName(profile.getTribeName());
+        Village[] villages = t.getVillageList();
+        Arrays.sort(villages, Village.CASE_INSENSITIVE_ORDER);
+        for (Village v : villages) {
+          model.addElement(v);
+        }
+        jCurrentPlayerVillages.setModel(model);
+      } catch (Exception e) {
+        jCurrentPlayerVillages.setModel(new DefaultComboBoxModel(new Object[]{"-keine Dörfer-"}));
+      }
 // </editor-fold>
-            //update maps
-            MapPanel.getSingleton().resetServerDependendSettings();
-            MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
-            MapPanel.getSingleton().getAttackAddFrame().buildUnitBox();
-            //setup views
-            DSWorkbenchMarkerFrame.getSingleton().resetView();
-            DSWorkbenchMarkerFrame.getSingleton().restoreProperties();
-            DSWorkbenchChurchFrame.getSingleton().resetView();
-            DSWorkbenchChurchFrame.getSingleton().restoreProperties();
-            DSWorkbenchAttackFrame.getSingleton().resetView();
-            DSWorkbenchAttackFrame.getSingleton().restoreProperties();
-            DSWorkbenchAttackFrame.getSingleton().updateCountdownSettings();
-            TacticsPlanerWizard.restoreProperties();
-            ResourceDistributorWizard.restoreProperties();
-            DSWorkbenchTagFrame.getSingleton().resetView();
-            DSWorkbenchTagFrame.getSingleton().restoreProperties();
-            DSWorkbenchConquersFrame.getSingleton().resetView();
-            DSWorkbenchConquersFrame.getSingleton().restoreProperties();
-            //update troops table and troops view
-            TroopSetupConfigurationFrame.getSingleton().setup();
-            DSWorkbenchTroopsFrame.getSingleton().resetView();
-            DSWorkbenchTroopsFrame.getSingleton().restoreProperties();
-            DistanceManager.getSingleton().clear();
-            StatManager.getSingleton().setup();
-            DSWorkbenchDistanceFrame.getSingleton().resetView();
-            DSWorkbenchDistanceFrame.getSingleton().restoreProperties();
-            DSWorkbenchStatsFrame.getSingleton().resetView();
-            DSWorkbenchStatsFrame.getSingleton().restoreProperties();
-            DSWorkbenchDoItYourselfAttackPlaner.getSingleton().resetView();
-            DSWorkbenchDoItYourselfAttackPlaner.getSingleton().restoreProperties();
-            DSWorkbenchReportFrame.getSingleton().resetView();
-            DSWorkbenchReportFrame.getSingleton().restoreProperties();
-            DSWorkbenchSOSRequestAnalyzer.getSingleton().resetView();
-            DSWorkbenchSOSRequestAnalyzer.getSingleton().restoreProperties();
-            DSWorkbenchFarmManager.getSingleton().resetView();
-            DSWorkbenchFarmManager.getSingleton().restoreProperties();
-            BBCodeEditor.getSingleton().reset();
-            //update attack planner
-            DSWorkbenchSettingsDialog.getSingleton().setupAttackColorTable();
-            DSWorkbenchRankFrame.getSingleton().resetView();
-            DSWorkbenchRankFrame.getSingleton().restoreProperties();
+      //update maps
+      MapPanel.getSingleton().resetServerDependendSettings();
+      MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
+      MapPanel.getSingleton().getAttackAddFrame().buildUnitBox();
+      //setup views
+      DSWorkbenchMarkerFrame.getSingleton().resetView();
+      DSWorkbenchMarkerFrame.getSingleton().restoreProperties();
+      DSWorkbenchChurchFrame.getSingleton().resetView();
+      DSWorkbenchChurchFrame.getSingleton().restoreProperties();
+      DSWorkbenchAttackFrame.getSingleton().resetView();
+      DSWorkbenchAttackFrame.getSingleton().restoreProperties();
+      DSWorkbenchAttackFrame.getSingleton().updateCountdownSettings();
+      TacticsPlanerWizard.restoreProperties();
+      ResourceDistributorWizard.restoreProperties();
+      DSWorkbenchTagFrame.getSingleton().resetView();
+      DSWorkbenchTagFrame.getSingleton().restoreProperties();
+      DSWorkbenchConquersFrame.getSingleton().resetView();
+      DSWorkbenchConquersFrame.getSingleton().restoreProperties();
+      //update troops table and troops view
+      TroopSetupConfigurationFrame.getSingleton().setup();
+      DSWorkbenchTroopsFrame.getSingleton().resetView();
+      DSWorkbenchTroopsFrame.getSingleton().restoreProperties();
+      DistanceManager.getSingleton().clear();
+      StatManager.getSingleton().setup();
+      DSWorkbenchDistanceFrame.getSingleton().resetView();
+      DSWorkbenchDistanceFrame.getSingleton().restoreProperties();
+      DSWorkbenchStatsFrame.getSingleton().resetView();
+      DSWorkbenchStatsFrame.getSingleton().restoreProperties();
+      DSWorkbenchDoItYourselfAttackPlaner.getSingleton().resetView();
+      DSWorkbenchDoItYourselfAttackPlaner.getSingleton().restoreProperties();
+      DSWorkbenchReportFrame.getSingleton().resetView();
+      DSWorkbenchReportFrame.getSingleton().restoreProperties();
+      DSWorkbenchSOSRequestAnalyzer.getSingleton().resetView();
+      DSWorkbenchSOSRequestAnalyzer.getSingleton().restoreProperties();
+      DSWorkbenchFarmManager.getSingleton().resetView();
+      DSWorkbenchFarmManager.getSingleton().restoreProperties();
+      BBCodeEditor.getSingleton().reset();
+      //update attack planner
+      DSWorkbenchSettingsDialog.getSingleton().setupAttackColorTable();
+      DSWorkbenchRankFrame.getSingleton().resetView();
+      DSWorkbenchRankFrame.getSingleton().restoreProperties();
 
-            if (ServerSettings.getSingleton().getCoordType() != 2) {
-                jLabel1.setText("K");
-                jLabel2.setText("S");
-            } else {
-                jLabel1.setText("X");
-                jLabel2.setText("Y");
-                DSRealManager.getSingleton().checkFilesystem();
-            }
+      if (ServerSettings.getSingleton().getCoordType() != 2) {
+        jLabel1.setText("K");
+        jLabel2.setText("S");
+      } else {
+        jLabel1.setText("X");
+        jLabel2.setText("Y");
+        DSRealManager.getSingleton().checkFilesystem();
+      }
 
-            jROIBox.setModel(new DefaultComboBoxModel(ROIManager.getSingleton().getROIs()));
-            DSWorkbenchSelectionFrame.getSingleton().resetView();
-            DSWorkbenchSelectionFrame.getSingleton().restoreProperties();
-            DSWorkbenchNotepad.getSingleton().resetView();
-            DSWorkbenchNotepad.getSingleton().restoreProperties();
+      jROIBox.setModel(new DefaultComboBoxModel(ROIManager.getSingleton().getROIs()));
+      DSWorkbenchSelectionFrame.getSingleton().resetView();
+      DSWorkbenchSelectionFrame.getSingleton().restoreProperties();
+      DSWorkbenchNotepad.getSingleton().resetView();
+      DSWorkbenchNotepad.getSingleton().restoreProperties();
 
-            if (!GlobalOptions.isOfflineMode() && DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
-                DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(DSWorkbenchSettingsDialog.getSingleton().getWebProxy(), GlobalOptions.getSelectedServer());
-            }
-            ConquerManager.getSingleton().revalidate(true);
-            //relevant for first start
-            LayerOrderConfigurationFrame.getSingleton();
-            MinimapPanel.getSingleton().redraw(true);
-            DSWorkbenchFormFrame.getSingleton().resetView();
-            DSWorkbenchFormFrame.getSingleton().restoreProperties();
-            FormConfigFrame.getSingleton();
-            DSWorkbenchSearchFrame.getSingleton();
+      if (!GlobalOptions.isOfflineMode() && DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
+        DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(DSWorkbenchSettingsDialog.getSingleton().getWebProxy(), GlobalOptions.getSelectedServer());
+      }
+      ConquerManager.getSingleton().revalidate(true);
+      //relevant for first start
+      LayerOrderConfigurationFrame.getSingleton();
+      MinimapPanel.getSingleton().redraw(true);
+      DSWorkbenchFormFrame.getSingleton().resetView();
+      DSWorkbenchFormFrame.getSingleton().restoreProperties();
+      FormConfigFrame.getSingleton();
+      DSWorkbenchSearchFrame.getSingleton();
 
-            logger.info("Server settings updated");
-            if (isVisible() && !DSWorkbenchSettingsDialog.getSingleton().isVisible()) {
-                showReminder();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Initialization failed", e);
-        }
+      logger.info("Server settings updated");
+      if (isVisible() && !DSWorkbenchSettingsDialog.getSingleton().isVisible()) {
+        showReminder();
+      }
+    } catch (Exception e) {
+      throw new RuntimeException("Initialization failed", e);
     }
+  }
 
-    /**
-     * Update UI depending on online state
-     */
-    public final void onlineStateChanged() {
-        jOnlineLabel.setEnabled(!GlobalOptions.isOfflineMode());
-        if (GlobalOptions.isOfflineMode()) {
-            jOnlineLabel.setToolTipText("Offline");
-        } else {
-            jOnlineLabel.setToolTipText("Online");
-        }
+  /**
+   * Update UI depending on online state
+   */
+  public final void onlineStateChanged() {
+    jOnlineLabel.setEnabled(!GlobalOptions.isOfflineMode());
+    if (GlobalOptions.isOfflineMode()) {
+      jOnlineLabel.setToolTipText("Offline");
+    } else {
+      jOnlineLabel.setToolTipText("Online");
     }
+  }
 
-    /**
-     * Get current zoom factor
-     *
-     * @return
-     */
-    public synchronized double getZoomFactor() {
-        return dZoomFactor;
-    }
+  /**
+   * Get current zoom factor
+   *
+   * @return
+   */
+  public synchronized double getZoomFactor() {
+    return dZoomFactor;
+  }
 
-    /**
-     * Called at startup
-     */
-    protected void init() {
-        logger.info("Starting initialization");
-        /*
-         * logger.info(" * Setting up attack planner"); //setup frames mTribeTribeAttackFrame = new TribeTribeAttackFrame();
-         * mTribeTribeAttackFrame.pack();
-         */
-        logger.info(" * Updating server settings");
-        //setup everything
-
-        serverSettingsChangedEvent();
-
-        logger.info(" * Setting up maps");
-        setupMaps();
-
-        logger.info(" * Setting up views");
-        setupFrames();
-        fireToolChangedEvent(ImageManager.CURSOR_DEFAULT);
-        logger.info("Initialization finished");
-        initialized = true;
-    }
-
-    public boolean isInitialized() {
-        return initialized;
-    }
-
+  /**
+   * Called at startup
+   */
+  protected void init() {
+    logger.info("Starting initialization");
     /*
-     * public TribeTribeAttackFrame getAttackPlaner() { return mTribeTribeAttackFrame; }
+     * logger.info(" * Setting up attack planner"); //setup frames mTribeTribeAttackFrame = new TribeTribeAttackFrame();
+     * mTribeTribeAttackFrame.pack();
      */
-    /**
-     * Setup of all frames
-     */
-    private void setupFrames() {
-        DSWorkbenchAttackFrame.getSingleton().addFrameListener(this);
-        DSWorkbenchMarkerFrame.getSingleton().addFrameListener(this);
-        DSWorkbenchChurchFrame.getSingleton().addFrameListener(this);
-        DSWorkbenchConquersFrame.getSingleton().addFrameListener(this);
-        DSWorkbenchNotepad.getSingleton().addFrameListener(this);
-        DSWorkbenchTagFrame.getSingleton().addFrameListener(this);
-        //  TroopsManagerTableModel.getSingleton().setup();
-        DSWorkbenchTroopsFrame.getSingleton().addFrameListener(this);
-        DSWorkbenchRankFrame.getSingleton().addFrameListener(this);
-        DSWorkbenchFormFrame.getSingleton().addFrameListener(this);
-        DSWorkbenchStatsFrame.getSingleton().addFrameListener(this);
-        DSWorkbenchReportFrame.getSingleton().addFrameListener(this);
-    }
+    logger.info(" * Updating server settings");
+    //setup everything
 
-    /**
-     * Setup main map and mini map
-     */
-    private void setupMaps() {
-        try {
-            dZoomFactor = Double.parseDouble(GlobalOptions.getSelectedProfile().getProperty("zoom"));
-            checkZoomRange();
-        } catch (Exception e) {
-            dZoomFactor = 1.0;
+    serverSettingsChangedEvent();
+
+    logger.info(" * Setting up maps");
+    setupMaps();
+
+    logger.info(" * Setting up views");
+    setupFrames();
+    fireToolChangedEvent(ImageManager.CURSOR_DEFAULT);
+    logger.info("Initialization finished");
+    initialized = true;
+  }
+
+  public boolean isInitialized() {
+    return initialized;
+  }
+
+  /*
+   * public TribeTribeAttackFrame getAttackPlaner() { return mTribeTribeAttackFrame; }
+   */
+  /**
+   * Setup of all frames
+   */
+  private void setupFrames() {
+    DSWorkbenchAttackFrame.getSingleton().addFrameListener(this);
+    DSWorkbenchMarkerFrame.getSingleton().addFrameListener(this);
+    DSWorkbenchChurchFrame.getSingleton().addFrameListener(this);
+    DSWorkbenchConquersFrame.getSingleton().addFrameListener(this);
+    DSWorkbenchNotepad.getSingleton().addFrameListener(this);
+    DSWorkbenchTagFrame.getSingleton().addFrameListener(this);
+    //  TroopsManagerTableModel.getSingleton().setup();
+    DSWorkbenchTroopsFrame.getSingleton().addFrameListener(this);
+    DSWorkbenchRankFrame.getSingleton().addFrameListener(this);
+    DSWorkbenchFormFrame.getSingleton().addFrameListener(this);
+    DSWorkbenchStatsFrame.getSingleton().addFrameListener(this);
+    DSWorkbenchReportFrame.getSingleton().addFrameListener(this);
+  }
+
+  /**
+   * Setup main map and mini map
+   */
+  private void setupMaps() {
+    try {
+      dZoomFactor = Double.parseDouble(GlobalOptions.getSelectedProfile().getProperty("zoom"));
+      checkZoomRange();
+    } catch (Exception e) {
+      dZoomFactor = 1.0;
+    }
+    //build the map panel
+    logger.info("Adding MapListener");
+    MapPanel.getSingleton().addMapPanelListener(this);
+    MapPanel.getSingleton().addToolChangeListener(this);
+    MinimapPanel.getSingleton().addToolChangeListener(this);
+    logger.info("Adding MapPanel");
+    jMapPanelHolder.add(MapPanel.getSingleton(), BorderLayout.CENTER);
+    //build the minimap
+    logger.info("Adding MinimapPanel");
+    jMinimapPanel.add(MinimapPanel.getSingleton());
+  }
+
+  public void setZoom(double pZoom) {
+    dZoomFactor = pZoom;
+    checkZoomRange();
+  }
+
+  /*
+   * public void setupAndShow() { DockController controller = new DockController(); controller.setRootWindow(this); SplitDockStation
+   * splitDockStation = new SplitDockStation();
+   *
+   * controller.add(splitDockStation); add(splitDockStation); MyDockable miniMap = new MyDockable("Minimap", jMinimapPanel); MyDockable
+   * map = new MyDockable("Hauptkarte", jMapPanelHolder); splitDockStation.drop(map); splitDockStation.drop(miniMap, new
+   * SplitDockProperty(1, 0, 1, 0.5)); MyDockable settings = new MyDockable("Einstellungen", jSettingsScrollPane);
+   * settings.installActions(controller); splitDockStation.drop(settings, new SplitDockProperty(1, 0.5, 1, 0.5)); ScreenDockStation
+   * screenDockStation = new ScreenDockStation(controller.getRootWindowProvider()); DefaultScreenDockWindowFactory fac = new
+   * DefaultScreenDockWindowFactory(); fac.setKind(DefaultScreenDockWindowFactory.Kind.FRAME); screenDockStation.setWindowFactory(fac);
+   * controller.add(screenDockStation); setVisible(true); screenDockStation.setShowing(true); }
+   */
+
+  /*
+   * public static class MyDockable extends DefaultDockable {
+   *
+   * public MyDockable(String title, JComponent pPanel) { setTitleText(title); add(pPanel); }
+   *
+   * public void installActions(DockController pController) { DefaultDockActionSource source = new DefaultDockActionSource(new
+   * CloseAction(pController)); setActionOffers(source); } }
+   */
+  @Override
+  public void setVisible(boolean v) {
+    logger.info("Setting MainWindow visible");
+    if (GlobalOptions.isMinimal()) {
+      getContentPane().remove(jPanel4);
+      getContentPane().add(infoPanel, BorderLayout.SOUTH);
+      setSize(530, 200);
+      setPreferredSize(new Dimension(530, 200));
+      setMinimumSize(new Dimension(530, 200));
+      setMaximumSize(new Dimension(1900, 200));
+    }
+    super.setVisible(v);
+    final boolean vis = v;
+    SwingUtilities.invokeLater(new Runnable() {
+
+      @Override
+      public void run() {
+        setupRibbon();
+
+        if (vis) {
+          //only if set to visible
+          MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
+
+          double w = (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getCurrentFieldWidth(dZoomFactor);
+          double h = (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getCurrentFieldHeight(dZoomFactor);
+
+          MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
+          //start ClipboardWatch
+          ClipboardWatch.getSingleton();
+          //draw map the first time
+          fireRefreshMapEvent(null);
+          showReminder();
+          if (!GlobalOptions.isMinimal() && !Boolean.parseBoolean(GlobalOptions.getProperty("no.welcome"))) {
+            setGlassPane(new WelcomePanel());
+            getGlassPane().setVisible(true);
+          } else {
+            glasspaneVisible = false;
+          }
         }
-        //build the map panel
-        logger.info("Adding MapListener");
-        MapPanel.getSingleton().addMapPanelListener(this);
-        MapPanel.getSingleton().addToolChangeListener(this);
-        MinimapPanel.getSingleton().addToolChangeListener(this);
-        logger.info("Adding MapPanel");
-        jMapPanelHolder.add(MapPanel.getSingleton(), BorderLayout.CENTER);
-        //build the minimap
-        logger.info("Adding MinimapPanel");
-        jMinimapPanel.add(MinimapPanel.getSingleton());
+      }
+    });
+
+    File runningIndicator = new File(".running");
+
+    if (runningIndicator.exists()) {
+      showRestoreOption();
+    } else {
+      try {
+        FileUtils.touch(new File(".running"));
+      } catch (IOException ioe) {
+        logger.error("Failed to touch file '.running'", ioe);
+      }
+    }
+  }
+
+  private void showRestoreOption() {
+    File backupFile = new File(GlobalOptions.getSelectedProfile().getProfileDirectory() + "/backup.xml");
+    String lastBackup = null;
+    if (backupFile.exists()) {
+      lastBackup = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(new Date(backupFile.lastModified()));
     }
 
-    public void setZoom(double pZoom) {
-        dZoomFactor = pZoom;
-        checkZoomRange();
-    }
-
-    /*
-     * public void setupAndShow() { DockController controller = new DockController(); controller.setRootWindow(this); SplitDockStation
-     * splitDockStation = new SplitDockStation();
-     *
-     * controller.add(splitDockStation); add(splitDockStation); MyDockable miniMap = new MyDockable("Minimap", jMinimapPanel); MyDockable
-     * map = new MyDockable("Hauptkarte", jMapPanelHolder); splitDockStation.drop(map); splitDockStation.drop(miniMap, new
-     * SplitDockProperty(1, 0, 1, 0.5)); MyDockable settings = new MyDockable("Einstellungen", jSettingsScrollPane);
-     * settings.installActions(controller); splitDockStation.drop(settings, new SplitDockProperty(1, 0.5, 1, 0.5)); ScreenDockStation
-     * screenDockStation = new ScreenDockStation(controller.getRootWindowProvider()); DefaultScreenDockWindowFactory fac = new
-     * DefaultScreenDockWindowFactory(); fac.setKind(DefaultScreenDockWindowFactory.Kind.FRAME); screenDockStation.setWindowFactory(fac);
-     * controller.add(screenDockStation); setVisible(true); screenDockStation.setShowing(true); }
-     */
-
-    /*
-     * public static class MyDockable extends DefaultDockable {
-     *
-     * public MyDockable(String title, JComponent pPanel) { setTitleText(title); add(pPanel); }
-     *
-     * public void installActions(DockController pController) { DefaultDockActionSource source = new DefaultDockActionSource(new
-     * CloseAction(pController)); setActionOffers(source); } }
-     */
-    @Override
-    public void setVisible(boolean v) {
-        logger.info("Setting MainWindow visible");
-        if (GlobalOptions.isMinimal()) {
-            getContentPane().remove(jPanel4);
-            getContentPane().add(infoPanel, BorderLayout.SOUTH);
-            setSize(530, 200);
-            setPreferredSize(new Dimension(530, 200));
-            setMinimumSize(new Dimension(530, 200));
-            setMaximumSize(new Dimension(1900, 200));
-        }
-        super.setVisible(v);
-        final boolean vis = v;
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                setupRibbon();
-
-                if (vis) {
-                    //only if set to visible
-                    MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
-
-                    double w = (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getCurrentFieldWidth(dZoomFactor);
-                    double h = (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getCurrentFieldHeight(dZoomFactor);
-
-                    MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
-                    //start ClipboardWatch
-                    ClipboardWatch.getSingleton();
-                    //draw map the first time
-                    fireRefreshMapEvent(null);
-                    showReminder();
-                    if (!GlobalOptions.isMinimal() && !Boolean.parseBoolean(GlobalOptions.getProperty("no.welcome"))) {
-                        setGlassPane(new WelcomePanel());
-                        getGlassPane().setVisible(true);
-                    } else {
-                        showTotD();
-                        glasspaneVisible = false;
-                    }
-                }
-            }
-        });
-
-        File runningIndicator = new File(".running");
-
-        if (runningIndicator.exists()) {
-            showRestoreOption();
+    if (lastBackup != null) {
+      if (JOptionPaneHelper.showQuestionConfirmBox(this, "Offenbar wurde DS Workbench nicht korrekt beendet, daher kann es möglicherweise zu Datenverlust gekommen sein.\n"
+              + "Für das aktuelle Profil existiert ein Backup (Erstellt: " + lastBackup + "). Möchtest du dieses wiederherstellen?", "Absturz?", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+        showInfo("Wiederherstellung läuft, bitte warten...");
+        if (performImport(backupFile, "backup").equals("Import beendet.\n")) {
+          showSuccess("Wiederherstellung abgeschlossen.");
+          JOptionPaneHelper.showInformationBox(this, "Das Backup wurde erfolgreich eingespielt. Wiederhergestellte Pläne und Sets tragen die Erweiterung '_backup'.", "Backup wiederhergestellt");
         } else {
-            try {
-                FileUtils.touch(new File(".running"));
-            } catch (IOException ioe) {
-                logger.error("Failed to touch file '.running'", ioe);
-            }
+          showInfo("Wiederherstellung abgeschlossen.");
+          JOptionPaneHelper.showInformationBox(this, "Bei der Wiederherstellung des Backups gab es Probleme. Möglicherweise sind einige Daten verloren."
+                  + " Wiederhergestellte Pläne und Sets tragen die Erweiterung '_backup'.", "Backup wiederhergestellt");
         }
+      }
+    } else {
+      logger.debug("There is no backup. Restoring skipped.");
     }
+  }
 
-    private void showRestoreOption() {
-        File backupFile = new File(GlobalOptions.getSelectedProfile().getProfileDirectory() + "/backup.xml");
-        String lastBackup = null;
-        if (backupFile.exists()) {
-            lastBackup = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(new Date(backupFile.lastModified()));
-        }
+  public boolean isGlasspaneVisible() {
+    return glasspaneVisible;
+  }
 
-        if (lastBackup != null) {
-            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Offenbar wurde DS Workbench nicht korrekt beendet, daher kann es möglicherweise zu Datenverlust gekommen sein.\n"
-                    + "Für das aktuelle Profil existiert ein Backup (Erstellt: " + lastBackup + "). Möchtest du dieses wiederherstellen?", "Absturz?", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-                showInfo("Wiederherstellung läuft, bitte warten...");
-                if (performImport(backupFile, "backup").equals("Import beendet.\n")) {
-                    showSuccess("Wiederherstellung abgeschlossen.");
-                    JOptionPaneHelper.showInformationBox(this, "Das Backup wurde erfolgreich eingespielt. Wiederhergestellte Pläne und Sets tragen die Erweiterung '_backup'.", "Backup wiederhergestellt");
-                } else {
-                    showInfo("Wiederherstellung abgeschlossen.");
-                    JOptionPaneHelper.showInformationBox(this, "Bei der Wiederherstellung des Backups gab es Probleme. Möglicherweise sind einige Daten verloren."
-                            + " Wiederhergestellte Pläne und Sets tragen die Erweiterung '_backup'.", "Backup wiederhergestellt");
-                }
-            }
-        } else {
-            logger.debug("There is no backup. Restoring skipped.");
-        }
+  public void hideWelcomePage() {
+    glasspaneVisible = false;
+    getGlassPane().setVisible(false);
+  }
+
+  public void showAboutDialog() {
+    mAbout.setVisible(true);
+  }
+
+  private void setupRibbon() {
+    RibbonConfigurator.addGeneralToolsTask(this);
+    if (!GlobalOptions.isMinimal()) {
+      RibbonConfigurator.addMapToolsTask(this);
     }
+    RibbonConfigurator.addViewTask(this);
+    RibbonConfigurator.addMiscTask(this);
+    RibbonConfigurator.addAppIcons(this);
 
-    public boolean isGlasspaneVisible() {
-        return glasspaneVisible;
+    try {
+      String vis = GlobalOptions.getProperty("ribbon.minimized");
+      if (vis != null && Boolean.parseBoolean(vis)) {
+        getRibbon().setMinimized(true);
+      }
+    } catch (Exception e) {
     }
+  }
 
-    public void hideWelcomePage() {
-        glasspaneVisible = false;
-        getGlassPane().setVisible(false);
-        showTotD();
+  private void showReminder() {
+    if (!GlobalOptions.isMinimal()) {
+      showInfo("Weltdaten aktuell? Truppen importiert? Gruppen importiert?");
     }
+  }
 
-    public void showAboutDialog() {
-        mAbout.setVisible(true);
-    }
+   public void showInfo(String pMessage) {
+    mNotificationHideThread.interrupt();
+    infoPanel.setCollapsed(false);
+    jXLabel1.setBackgroundPainter(new MattePainter(Color.YELLOW));
+    jXLabel1.setIcon(new ImageIcon("./graphics/icons/warning.png"));
+    jXLabel1.setForeground(Color.BLACK);
+    jXLabel1.setText(pMessage);
+  }
 
-    private void setupRibbon() {
-        RibbonConfigurator.addGeneralToolsTask(this);
-        if (!GlobalOptions.isMinimal()) {
-            RibbonConfigurator.addMapToolsTask(this);
-        }
-        RibbonConfigurator.addViewTask(this);
-        RibbonConfigurator.addMiscTask(this);
-        RibbonConfigurator.addAppIcons(this);
+  public void showSuccess(String pMessage) {
+    mNotificationHideThread.interrupt();
+    infoPanel.setCollapsed(false);
+    jXLabel1.setBackgroundPainter(new MattePainter(Color.GREEN));
+    jXLabel1.setIcon(new ImageIcon(DSWorkbenchMainFrame.class.getResource("/res/checkbox.png")));
+    jXLabel1.setForeground(Color.BLACK);
+    jXLabel1.setText(pMessage);
+  }
 
-        try {
-            String vis = GlobalOptions.getProperty("ribbon.minimized");
-            if (vis != null && Boolean.parseBoolean(vis)) {
-                getRibbon().setMinimized(true);
-            }
-        } catch (Exception e) {
-        }
-    }
-
-    private void showReminder() {
-        if (!GlobalOptions.isMinimal()) {
-            showInfo("Weltdaten aktuell? Truppen importiert? Gruppen importiert?");
-        }
-    }
-
-    private void showTotD() {
-        if (true) {
-            //@TODO enable TOTD if necessary
-            return;
-        }
-        try {
-            URLConnection connection = new URL("http://www.dsworkbench.de/downloads/totd/totd.properties").openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
-            Properties props = new Properties();
-            props.load(connection.getInputStream());
-            TipOfTheDayModel model = TipLoader.load(props);
-            if (props.getProperty("enabled").equals("0")) {
-                logger.info("Tip of the day is disabled");
-                return;
-            }
-            jXTipOfTheDay1.setModel(model);
-            jXTipOfTheDay1.setCurrentTip(1);
-        } catch (IOException ioe) {
-            logger.error("Failed to read tip of the day file", ioe);
-            return;
-        } catch (Exception e) {
-            logger.error("Failed to read tip of the day file", e);
-            return;
-        }
-
-        JXTipOfTheDay.ShowOnStartupChoice noshow = new JXTipOfTheDay.ShowOnStartupChoice() {
-
-            @Override
-            public boolean isShowingOnStartup() {
-                String showTip = GlobalOptions.getProperty("show.tip");
-                if (showTip == null) {
-                    return true;
-                } else {
-                    return Boolean.parseBoolean(GlobalOptions.getProperty("show.tip"));
-                }
-            }
-
-            @Override
-            public void setShowingOnStartup(boolean showOnStartup) {
-                GlobalOptions.addProperty("show.tip", Boolean.toString(showOnStartup));
-            }
-        };
-        jXTipOfTheDay1.getUI().createDialog(this, noshow).setVisible(noshow.isShowingOnStartup());
-    }
-
-    public void showInfo(String pMessage) {
-        mNotificationHideThread.interrupt();
-        infoPanel.setCollapsed(false);
-        jXLabel1.setBackgroundPainter(new MattePainter(Color.YELLOW));
-        jXLabel1.setIcon(new ImageIcon("./graphics/icons/warning.png"));
-        jXLabel1.setForeground(Color.BLACK);
-        jXLabel1.setText(pMessage);
-    }
-
-    public void showSuccess(String pMessage) {
-        mNotificationHideThread.interrupt();
-        infoPanel.setCollapsed(false);
-        jXLabel1.setBackgroundPainter(new MattePainter(Color.GREEN));
-        jXLabel1.setIcon(new ImageIcon(DSWorkbenchMainFrame.class.getResource("/res/checkbox.png")));
-        jXLabel1.setForeground(Color.BLACK);
-        jXLabel1.setText(pMessage);
-    }
-
-    /**
-     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this
-     * method is always regenerated by the Form Editor.
-     */
+  /**
+   * This method is called from within the constructor to initialize the form.
+   * WARNING: Do NOT modify this code. The content of this method is always
+   * regenerated by the Form Editor.
+   */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
@@ -2076,1011 +2025,979 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         getContentPane().add(jPanel4, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * Update map position
-     */
+  /**
+   * Update map position
+   */
 private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRefreshMapEvent
-    double cx = UIHelper.parseIntFromField(jCenterX, (int) dCenterX);
-    double cy = UIHelper.parseIntFromField(jCenterY, (int) dCenterY);
-    if (ServerSettings.getSingleton().getCoordType() != 2) {
-        int[] hier = DSCalculator.hierarchicalToXy((int) cx, (int) cy, 12);
-        if (hier != null) {
-            dCenterX = hier[0];
-            dCenterY = hier[1];
-        }
-    } else {
-        dCenterX = cx;
-        dCenterY = cy;
+  double cx = UIHelper.parseIntFromField(jCenterX, (int) dCenterX);
+  double cy = UIHelper.parseIntFromField(jCenterY, (int) dCenterY);
+  if (ServerSettings.getSingleton().getCoordType() != 2) {
+    int[] hier = DSCalculator.hierarchicalToXy((int) cx, (int) cy, 12);
+    if (hier != null) {
+      dCenterX = hier[0];
+      dCenterY = hier[1];
     }
-    double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
-    double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-    MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
-    MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY, true);
-}//GEN-LAST:event_fireRefreshMapEvent
-
-    /**
-     * Update map movement
-     */
-private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMoveMapEvent
-    double cx = UIHelper.parseIntFromField(jCenterX, (int) dCenterX);
-    double cy = UIHelper.parseIntFromField(jCenterY, (int) dCenterY);
-
-    if (ServerSettings.getSingleton().getCoordType() != 2) {
-        int[] hier = DSCalculator.hierarchicalToXy((int) cx, (int) cy, 12);
-        if (hier != null) {
-            cx = hier[0];
-            cy = hier[1];
-        }
-    }
-
-    if (evt.getSource() == jMoveN) {
-        cy -= (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-    } else if (evt.getSource() == jMoveNE) {
-        cx += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
-        cy -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-    } else if (evt.getSource() == jMoveE) {
-        cx += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-    } else if (evt.getSource() == jMoveSE) {
-        cx += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
-        cy += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-    } else if (evt.getSource() == jMoveS) {
-        cy += (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-    } else if (evt.getSource() == jMoveSW) {
-        cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
-        cy += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-    } else if (evt.getSource() == jMoveW) {
-        cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-    } else if (evt.getSource() == jMoveNW) {
-        cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
-        cy -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-    }
-
-    if (ServerSettings.getSingleton().getCoordType() != 2) {
-        int[] hier = DSCalculator.xyToHierarchical((int) cx, (int) cy);
-        if (hier != null) {
-            cx = hier[0];
-            cy = hier[1];
-        }
-    }
-
-    jCenterX.setText(Integer.toString((int) Math.floor(cx)));
-    jCenterY.setText(Integer.toString((int) Math.floor(cy)));
+  } else {
     dCenterX = cx;
     dCenterY = cy;
-    MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
-    double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
-    double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-    MinimapPanel.getSingleton().setSelection((int) Math.floor(cx), (int) Math.floor(cy), (int) Math.rint(w), (int) Math.rint(h));
+  }
+  double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+  double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+  MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
+  MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY, true);
+}//GEN-LAST:event_fireRefreshMapEvent
+
+  /**
+   * Update map movement
+   */
+private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMoveMapEvent
+  double cx = UIHelper.parseIntFromField(jCenterX, (int) dCenterX);
+  double cy = UIHelper.parseIntFromField(jCenterY, (int) dCenterY);
+
+  if (ServerSettings.getSingleton().getCoordType() != 2) {
+    int[] hier = DSCalculator.hierarchicalToXy((int) cx, (int) cy, 12);
+    if (hier != null) {
+      cx = hier[0];
+      cy = hier[1];
+    }
+  }
+
+  if (evt.getSource() == jMoveN) {
+    cy -= (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+  } else if (evt.getSource() == jMoveNE) {
+    cx += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+    cy -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+  } else if (evt.getSource() == jMoveE) {
+    cx += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+  } else if (evt.getSource() == jMoveSE) {
+    cx += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+    cy += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+  } else if (evt.getSource() == jMoveS) {
+    cy += (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+  } else if (evt.getSource() == jMoveSW) {
+    cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+    cy += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+  } else if (evt.getSource() == jMoveW) {
+    cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+  } else if (evt.getSource() == jMoveNW) {
+    cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+    cy -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+  }
+
+  if (ServerSettings.getSingleton().getCoordType() != 2) {
+    int[] hier = DSCalculator.xyToHierarchical((int) cx, (int) cy);
+    if (hier != null) {
+      cx = hier[0];
+      cy = hier[1];
+    }
+  }
+
+  jCenterX.setText(Integer.toString((int) Math.floor(cx)));
+  jCenterY.setText(Integer.toString((int) Math.floor(cy)));
+  dCenterX = cx;
+  dCenterY = cy;
+  MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
+  double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+  double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+  MinimapPanel.getSingleton().setSelection((int) Math.floor(cx), (int) Math.floor(cy), (int) Math.rint(w), (int) Math.rint(h));
 }//GEN-LAST:event_fireMoveMapEvent
 
-    /**
-     * React on resize events
-     */
+  /**
+   * React on resize events
+   */
 private void fireFrameResizedEvent(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_fireFrameResizedEvent
-    try {
-        MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
-    } catch (Exception e) {
-        logger.error("Failed to resize map for (" + dCenterX + ", " + dCenterY + ")", e);
-    }
+  try {
+    MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
+  } catch (Exception e) {
+    logger.error("Failed to resize map for (" + dCenterX + ", " + dCenterY + ")", e);
+  }
 }//GEN-LAST:event_fireFrameResizedEvent
 
-    /**
-     * Zoom main map
-     */
+  /**
+   * Zoom main map
+   */
 private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireZoomEvent
-    if (evt.getSource() == jZoomInButton) {
-        zoomIn();
-    } else {
-        zoomOut();
-    }
+  if (evt.getSource() == jZoomInButton) {
+    zoomIn();
+  } else {
+    zoomOut();
+  }
 }//GEN-LAST:event_fireZoomEvent
 
-    public synchronized void zoomIn() {
-        dZoomFactor += 1.0 / 10.0;
-        checkZoomRange();
+  public synchronized void zoomIn() {
+    dZoomFactor += 1.0 / 10.0;
+    checkZoomRange();
 
-        dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
-        double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
-        double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-        int xPos = UIHelper.parseIntFromField(jCenterX, (int) dCenterX);
-        int yPos = UIHelper.parseIntFromField(jCenterY, (int) dCenterY);
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-            int[] hier = DSCalculator.hierarchicalToXy(xPos, yPos, 12);
-            if (hier != null) {
-                xPos = hier[0];
-                yPos = hier[1];
-            }
-        }
-        MinimapPanel.getSingleton().setSelection(xPos, yPos, (int) Math.rint(w), (int) Math.rint(h));
-        MapPanel.getSingleton().updateMapPosition(xPos, yPos, true);
+    dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
+    double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+    double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+    int xPos = UIHelper.parseIntFromField(jCenterX, (int) dCenterX);
+    int yPos = UIHelper.parseIntFromField(jCenterY, (int) dCenterY);
+    if (ServerSettings.getSingleton().getCoordType() != 2) {
+      int[] hier = DSCalculator.hierarchicalToXy(xPos, yPos, 12);
+      if (hier != null) {
+        xPos = hier[0];
+        yPos = hier[1];
+      }
+    }
+    MinimapPanel.getSingleton().setSelection(xPos, yPos, (int) Math.rint(w), (int) Math.rint(h));
+    MapPanel.getSingleton().updateMapPosition(xPos, yPos, true);
+  }
+
+  public synchronized void zoomOut() {
+    dZoomFactor -= 1.0 / 10.0;
+    checkZoomRange();
+
+    dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
+    double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+    double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+    int xPos = UIHelper.parseIntFromField(jCenterX, (int) dCenterX);
+    int yPos = UIHelper.parseIntFromField(jCenterY, (int) dCenterY);
+
+    if (ServerSettings.getSingleton().getCoordType() != 2) {
+      int[] hier = DSCalculator.hierarchicalToXy(xPos, yPos, 12);
+      if (hier != null) {
+        xPos = hier[0];
+        yPos = hier[1];
+      }
     }
 
-    public synchronized void zoomOut() {
-        dZoomFactor -= 1.0 / 10.0;
-        checkZoomRange();
+    MinimapPanel.getSingleton().setSelection(xPos, yPos, (int) Math.rint(w), (int) Math.rint(h));
+    MapPanel.getSingleton().updateMapPosition(xPos, yPos, true);
+  }
 
-        dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
-        double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
-        double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-        int xPos = UIHelper.parseIntFromField(jCenterX, (int) dCenterX);
-        int yPos = UIHelper.parseIntFromField(jCenterY, (int) dCenterY);
-
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-            int[] hier = DSCalculator.hierarchicalToXy(xPos, yPos, 12);
-            if (hier != null) {
-                xPos = hier[0];
-                yPos = hier[1];
-            }
-        }
-
-        MinimapPanel.getSingleton().setSelection(xPos, yPos, (int) Math.rint(w), (int) Math.rint(h));
-        MapPanel.getSingleton().updateMapPosition(xPos, yPos, true);
-    }
-
-    /**
-     * Show the toolbar
-     */
-    /**
-     * Center village Ingame
-     */
+  /**
+   * Show the toolbar
+   */
+  /**
+   * Center village Ingame
+   */
 private void fireCenterVillageIngameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterVillageIngameEvent
-    if (!jCenterIngameButton.isEnabled()) {
-        return;
-    }
+  if (!jCenterIngameButton.isEnabled()) {
+    return;
+  }
 
-    Village v = (Village) jCurrentPlayerVillages.getSelectedItem();
-    if (v != null) {
-        BrowserCommandSender.centerVillage(v);
-    }
+  Village v = (Village) jCurrentPlayerVillages.getSelectedItem();
+  if (v != null) {
+    BrowserCommandSender.centerVillage(v);
+  }
 }//GEN-LAST:event_fireCenterVillageIngameEvent
 
-    /**
-     * Center pos Ingame
-     */
+  /**
+   * Center pos Ingame
+   */
 private void fireCenterCurrentPosInGameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterCurrentPosInGameEvent
-    if (!jCenterCoordinateIngame.isEnabled()) {
-        return;
-    }
-    BrowserCommandSender.centerCoordinate(
-            UIHelper.parseIntFromField(jCenterX, (int) dCenterX),
-            UIHelper.parseIntFromField(jCenterY, (int) dCenterY));
+  if (!jCenterCoordinateIngame.isEnabled()) {
+    return;
+  }
+  BrowserCommandSender.centerCoordinate(
+          UIHelper.parseIntFromField(jCenterX, (int) dCenterX),
+          UIHelper.parseIntFromField(jCenterY, (int) dCenterY));
 }//GEN-LAST:event_fireCenterCurrentPosInGameEvent
 
 private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_fireCurrentPlayerVillagePopupEvent
-    if (jCurrentPlayerVillages.getSelectedIndex() < 0) {
-        return;
-    }
-    centerVillage((Village) jCurrentPlayerVillages.getSelectedItem());
-    DSWorkbenchConquersFrame.getSingleton().repaint();
+  if (jCurrentPlayerVillages.getSelectedIndex() < 0) {
+    return;
+  }
+  centerVillage((Village) jCurrentPlayerVillages.getSelectedItem());
+  DSWorkbenchConquersFrame.getSingleton().repaint();
 }//GEN-LAST:event_fireCurrentPlayerVillagePopupEvent
 
 private void fireShowMapPopupChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireShowMapPopupChangedEvent
-    GlobalOptions.addProperty("show.map.popup", Boolean.toString(jShowMapPopup.isSelected()));
+  GlobalOptions.addProperty("show.map.popup", Boolean.toString(jShowMapPopup.isSelected()));
 }//GEN-LAST:event_fireShowMapPopupChangedEvent
 
 private void fireCreateMapShotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateMapShotEvent
-    Component parent = this;
+  Component parent = this;
+  putOnline = false;
+  String dir = GlobalOptions.getProperty("screen.dir");
+  if (dir == null) {
+    dir = ".";
+  }
 
-    int result = JOptionPaneHelper.showQuestionConfirmBox(parent, "Willst du die Karte online stellen oder auf deinem Rechner speichern?", "Speichern", "Nur speichern", "Online stellen");
+  String type = null;
+  chooser.setSelectedFile(new File(dir));
+  int ret = chooser.showSaveDialog(parent);
+  if (ret == JFileChooser.APPROVE_OPTION) {
+    try {
+      File f = chooser.getSelectedFile();
+      javax.swing.filechooser.FileFilter filter = chooser.getFileFilter();
+      if (filter.getDescription().indexOf("jpeg") > 0) {
+        type = "jpeg";
+      } else if (filter.getDescription().indexOf("png") > 0) {
+        type = "png";
+      } else {
+        type = "png";
+      }
+      String file = f.getCanonicalPath();
+      if (!file.endsWith(type)) {
+        file += "." + type;
+      }
+      File target = new File(file);
+      if (target.exists()) {
+        //ask if overwrite
 
-    if (result == JOptionPane.YES_OPTION) {
-        putOnline = true;
-        MapPanel.getSingleton().planMapShot("png", new File("tmp.png"), this);
-    } else if (result == JOptionPane.NO_OPTION) {
-        putOnline = false;
-        String dir = GlobalOptions.getProperty("screen.dir");
-        if (dir == null) {
-            dir = ".";
+        if (JOptionPaneHelper.showQuestionConfirmBox(parent, "Existierende Datei überschreiben?", "Überschreiben", "Nein", "Ja") != JOptionPane.YES_OPTION) {
+          return;
         }
+      }
+      MapPanel.getSingleton().planMapShot(type, target, this);
 
-        String type = null;
-        chooser.setSelectedFile(new File(dir));
-        int ret = chooser.showSaveDialog(parent);
-        if (ret == JFileChooser.APPROVE_OPTION) {
-            try {
-                File f = chooser.getSelectedFile();
-                javax.swing.filechooser.FileFilter filter = chooser.getFileFilter();
-                if (filter.getDescription().indexOf("jpeg") > 0) {
-                    type = "jpeg";
-                } else if (filter.getDescription().indexOf("png") > 0) {
-                    type = "png";
-                } else {
-                    type = "png";
-                }
-                String file = f.getCanonicalPath();
-                if (!file.endsWith(type)) {
-                    file += "." + type;
-                }
-                File target = new File(file);
-                if (target.exists()) {
-                    //ask if overwrite
-
-                    if (JOptionPaneHelper.showQuestionConfirmBox(parent, "Existierende Datei überschreiben?", "Überschreiben", "Nein", "Ja") != JOptionPane.YES_OPTION) {
-                        return;
-                    }
-                }
-                MapPanel.getSingleton().planMapShot(type, target, this);
-
-                GlobalOptions.addProperty("screen.dir", target.getPath());
-            } catch (Exception e) {
-                logger.error("Failed to write map shot", e);
-            }
-        }
+      GlobalOptions.addProperty("screen.dir", target.getPath());
+    } catch (Exception e) {
+      logger.error("Failed to write map shot", e);
     }
+  }
+
 }//GEN-LAST:event_fireCreateMapShotEvent
 
 private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireExportEvent
-    if (evt.getSource() == jExportButton) {
-        //do export
-        logger.debug("Building export data");
+  if (evt.getSource() == jExportButton) {
+    //do export
+    logger.debug("Building export data");
 
-        List<String> plansToExport = new LinkedList<String>();
-        for (int i = 0; i < jAttackExportTable.getRowCount(); i++) {
-            String plan = (String) jAttackExportTable.getValueAt(i, 0);
-            Boolean export = (Boolean) jAttackExportTable.getValueAt(i, 1);
-            if (export) {
-                logger.debug("Selecting attack plan '" + plan + "' to export list");
-                plansToExport.add(plan);
-            }
-
-        }
-
-        List<String> setsToExport = new LinkedList<String>();
-        for (int i = 0; i < jMarkerSetExportTable.getRowCount(); i++) {
-            String set = (String) jMarkerSetExportTable.getValueAt(i, 0);
-            Boolean export = (Boolean) jMarkerSetExportTable.getValueAt(i, 1);
-            if (export) {
-                logger.debug("Selecting marker set '" + set + "' to export list");
-                setsToExport.add(set);
-            }
-
-        }
-        List<String> reportsToExport = new LinkedList<String>();
-        for (int i = 0; i < jReportSetExportTable.getRowCount(); i++) {
-            String set = (String) jReportSetExportTable.getValueAt(i, 0);
-            Boolean export = (Boolean) jReportSetExportTable.getValueAt(i, 1);
-            if (export) {
-                logger.debug("Selecting report set '" + set + "' to export list");
-                reportsToExport.add(set);
-            }
-        }
-
-        List<String> troopSetsToExport = new LinkedList<String>();
-        for (int i = 0; i < jTroopSetExportTable.getRowCount(); i++) {
-            String set = (String) jTroopSetExportTable.getValueAt(i, 0);
-            Boolean export = (Boolean) jTroopSetExportTable.getValueAt(i, 1);
-            if (export) {
-                logger.debug("Selecting troop set '" + set + "' to export list");
-                troopSetsToExport.add(set);
-            }
-        }
-        List<String> noteSetsToExport = new LinkedList<String>();
-        for (int i = 0; i < jNoteSetExportTable.getRowCount(); i++) {
-            String set = (String) jNoteSetExportTable.getValueAt(i, 0);
-            Boolean export = (Boolean) jNoteSetExportTable.getValueAt(i, 1);
-            if (export) {
-                logger.debug("Selecting note set '" + set + "' to export list");
-                noteSetsToExport.add(set);
-            }
-        }
-        boolean needExport = false;
-        needExport = !plansToExport.isEmpty();
-        needExport |= !setsToExport.isEmpty();
-        needExport |= !reportsToExport.isEmpty();
-        needExport |= jExportTags.isSelected();
-        needExport |= !troopSetsToExport.isEmpty();
-        needExport |= jExportForms.isSelected();
-        needExport |= !noteSetsToExport.isEmpty();
-        needExport |= jExportChurches.isSelected();
-
-        if (!needExport) {
-            JOptionPaneHelper.showWarningBox(jExportDialog, "Keine Daten für den Export gewählt", "Export");
-            return;
-
-        }
-        String dir = GlobalOptions.getProperty("screen.dir");
-        if (dir == null) {
-            dir = ".";
-        }
-
-        JFileChooser chooser = null;
-        try {
-            chooser = new JFileChooser(dir);
-        } catch (Exception e) {
-            JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
-            return;
-        }
-        chooser.setDialogTitle("Datei auswählen");
-        chooser.setSelectedFile(new File("export.xml"));
-        chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
-
-            @Override
-            public boolean accept(File f) {
-                if ((f != null) && (f.isDirectory() || f.getName().endsWith(".xml"))) {
-                    return true;
-                }
-
-                return false;
-            }
-
-            @Override
-            public String getDescription() {
-                return "*.xml";
-            }
-        });
-        int ret = chooser.showSaveDialog(jExportDialog);
-        if (ret == JFileChooser.APPROVE_OPTION) {
-            try {
-                File f = chooser.getSelectedFile();
-                String file = f.getCanonicalPath();
-                if (!file.endsWith(".xml")) {
-                    file += ".xml";
-                }
-
-                File target = new File(file);
-                if (target.exists()) {
-                    if (JOptionPaneHelper.showQuestionConfirmBox(jExportDialog, "Bestehende Datei überschreiben?", "Export", "Nein", "Ja") == JOptionPane.NO_OPTION) {
-                        return;
-                    }
-                }
-
-                String exportString = "<export>\n";
-                if (!plansToExport.isEmpty()) {
-                    exportString += AttackManager.getSingleton().getExportData(plansToExport);
-                }
-                if (!setsToExport.isEmpty()) {
-                    exportString += MarkerManager.getSingleton().getExportData(setsToExport);
-                }
-                if (!reportsToExport.isEmpty()) {
-                    exportString += ReportManager.getSingleton().getExportData(reportsToExport);
-                }
-                if (jExportTags.isSelected()) {
-                    exportString += TagManager.getSingleton().getExportData(null);
-                }
-
-                if (!troopSetsToExport.isEmpty()) {
-                    exportString += TroopsManager.getSingleton().getExportData(troopSetsToExport);
-                }
-
-                if (jExportForms.isSelected()) {
-                    exportString += FormManager.getSingleton().getExportData(null);
-                }
-
-                if (!noteSetsToExport.isEmpty()) {
-                    exportString += NoteManager.getSingleton().getExportData(noteSetsToExport);
-                }
-
-                if (jExportChurches.isSelected()) {
-                    exportString += ChurchManager.getSingleton().getExportData(null);
-                }
-
-                exportString += "</export>";
-                logger.debug("Writing data to disk");
-                FileWriter w = new FileWriter(target);
-                w.write(exportString);
-                logger.debug("Finalizing writer");
-                w.flush();
-                w.close();
-                logger.debug("Export finished successfully");
-                JOptionPaneHelper.showInformationBox(jExportDialog, "Export erfolgreich beendet.", "Export");
-            } catch (Exception e) {
-                logger.error("Failed to export data", e);
-                JOptionPaneHelper.showErrorBox(this, "Export fehlgeschlagen.", "Export");
-            }
-
-        } else {
-            //cancel pressed
-            return;
-        }
+    List<String> plansToExport = new LinkedList<String>();
+    for (int i = 0; i < jAttackExportTable.getRowCount(); i++) {
+      String plan = (String) jAttackExportTable.getValueAt(i, 0);
+      Boolean export = (Boolean) jAttackExportTable.getValueAt(i, 1);
+      if (export) {
+        logger.debug("Selecting attack plan '" + plan + "' to export list");
+        plansToExport.add(plan);
+      }
 
     }
-    jExportDialog.setAlwaysOnTop(false);
-    jExportDialog.setVisible(false);
+
+    List<String> setsToExport = new LinkedList<String>();
+    for (int i = 0; i < jMarkerSetExportTable.getRowCount(); i++) {
+      String set = (String) jMarkerSetExportTable.getValueAt(i, 0);
+      Boolean export = (Boolean) jMarkerSetExportTable.getValueAt(i, 1);
+      if (export) {
+        logger.debug("Selecting marker set '" + set + "' to export list");
+        setsToExport.add(set);
+      }
+
+    }
+    List<String> reportsToExport = new LinkedList<String>();
+    for (int i = 0; i < jReportSetExportTable.getRowCount(); i++) {
+      String set = (String) jReportSetExportTable.getValueAt(i, 0);
+      Boolean export = (Boolean) jReportSetExportTable.getValueAt(i, 1);
+      if (export) {
+        logger.debug("Selecting report set '" + set + "' to export list");
+        reportsToExport.add(set);
+      }
+    }
+
+    List<String> troopSetsToExport = new LinkedList<String>();
+    for (int i = 0; i < jTroopSetExportTable.getRowCount(); i++) {
+      String set = (String) jTroopSetExportTable.getValueAt(i, 0);
+      Boolean export = (Boolean) jTroopSetExportTable.getValueAt(i, 1);
+      if (export) {
+        logger.debug("Selecting troop set '" + set + "' to export list");
+        troopSetsToExport.add(set);
+      }
+    }
+    List<String> noteSetsToExport = new LinkedList<String>();
+    for (int i = 0; i < jNoteSetExportTable.getRowCount(); i++) {
+      String set = (String) jNoteSetExportTable.getValueAt(i, 0);
+      Boolean export = (Boolean) jNoteSetExportTable.getValueAt(i, 1);
+      if (export) {
+        logger.debug("Selecting note set '" + set + "' to export list");
+        noteSetsToExport.add(set);
+      }
+    }
+    boolean needExport = false;
+    needExport = !plansToExport.isEmpty();
+    needExport |= !setsToExport.isEmpty();
+    needExport |= !reportsToExport.isEmpty();
+    needExport |= jExportTags.isSelected();
+    needExport |= !troopSetsToExport.isEmpty();
+    needExport |= jExportForms.isSelected();
+    needExport |= !noteSetsToExport.isEmpty();
+    needExport |= jExportChurches.isSelected();
+
+    if (!needExport) {
+      JOptionPaneHelper.showWarningBox(jExportDialog, "Keine Daten für den Export gewählt", "Export");
+      return;
+
+    }
+    String dir = GlobalOptions.getProperty("screen.dir");
+    if (dir == null) {
+      dir = ".";
+    }
+
+    JFileChooser chooser = null;
+    try {
+      chooser = new JFileChooser(dir);
+    } catch (Exception e) {
+      JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+      return;
+    }
+    chooser.setDialogTitle("Datei auswählen");
+    chooser.setSelectedFile(new File("export.xml"));
+    chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+
+      @Override
+      public boolean accept(File f) {
+        if ((f != null) && (f.isDirectory() || f.getName().endsWith(".xml"))) {
+          return true;
+        }
+
+        return false;
+      }
+
+      @Override
+      public String getDescription() {
+        return "*.xml";
+      }
+    });
+    int ret = chooser.showSaveDialog(jExportDialog);
+    if (ret == JFileChooser.APPROVE_OPTION) {
+      try {
+        File f = chooser.getSelectedFile();
+        String file = f.getCanonicalPath();
+        if (!file.endsWith(".xml")) {
+          file += ".xml";
+        }
+
+        File target = new File(file);
+        if (target.exists()) {
+          if (JOptionPaneHelper.showQuestionConfirmBox(jExportDialog, "Bestehende Datei überschreiben?", "Export", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+            return;
+          }
+        }
+
+        String exportString = "<export>\n";
+        if (!plansToExport.isEmpty()) {
+          exportString += AttackManager.getSingleton().getExportData(plansToExport);
+        }
+        if (!setsToExport.isEmpty()) {
+          exportString += MarkerManager.getSingleton().getExportData(setsToExport);
+        }
+        if (!reportsToExport.isEmpty()) {
+          exportString += ReportManager.getSingleton().getExportData(reportsToExport);
+        }
+        if (jExportTags.isSelected()) {
+          exportString += TagManager.getSingleton().getExportData(null);
+        }
+
+        if (!troopSetsToExport.isEmpty()) {
+          exportString += TroopsManager.getSingleton().getExportData(troopSetsToExport);
+        }
+
+        if (jExportForms.isSelected()) {
+          exportString += FormManager.getSingleton().getExportData(null);
+        }
+
+        if (!noteSetsToExport.isEmpty()) {
+          exportString += NoteManager.getSingleton().getExportData(noteSetsToExport);
+        }
+
+        if (jExportChurches.isSelected()) {
+          exportString += ChurchManager.getSingleton().getExportData(null);
+        }
+
+        exportString += "</export>";
+        logger.debug("Writing data to disk");
+        FileWriter w = new FileWriter(target);
+        w.write(exportString);
+        logger.debug("Finalizing writer");
+        w.flush();
+        w.close();
+        logger.debug("Export finished successfully");
+        JOptionPaneHelper.showInformationBox(jExportDialog, "Export erfolgreich beendet.", "Export");
+      } catch (Exception e) {
+        logger.error("Failed to export data", e);
+        JOptionPaneHelper.showErrorBox(this, "Export fehlgeschlagen.", "Export");
+      }
+
+    } else {
+      //cancel pressed
+      return;
+    }
+
+  }
+  jExportDialog.setAlwaysOnTop(false);
+  jExportDialog.setVisible(false);
 }//GEN-LAST:event_fireExportEvent
 
 private void fireChangeROIEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeROIEvent
-    if (evt.getSource() == jAddROIButton) {
-        int x = UIHelper.parseIntFromField(jCenterX, (int) dCenterX);
-        int y = UIHelper.parseIntFromField(jCenterY, (int) dCenterY);
-        jROIRegion.setText("(" + x + "|" + y + ")");
-        jROIPosition.setSelectedIndex(jROIPosition.getItemCount() - 1);
-        jAddROIDialog.setLocationRelativeTo(this);
-        jAddROIDialog.setVisible(true);
-    } else {
-        try {
-            String item = (String) jROIBox.getSelectedItem();
-            logger.debug("Removing ROI '" + item + "'");
-            ROIManager.getSingleton().removeROI(item);
-            jROIBox.removeItem(item);
-        } catch (Exception e) {
-        }
+  if (evt.getSource() == jAddROIButton) {
+    int x = UIHelper.parseIntFromField(jCenterX, (int) dCenterX);
+    int y = UIHelper.parseIntFromField(jCenterY, (int) dCenterY);
+    jROIRegion.setText("(" + x + "|" + y + ")");
+    jROIPosition.setSelectedIndex(jROIPosition.getItemCount() - 1);
+    jAddROIDialog.setLocationRelativeTo(this);
+    jAddROIDialog.setVisible(true);
+  } else {
+    try {
+      String item = (String) jROIBox.getSelectedItem();
+      logger.debug("Removing ROI '" + item + "'");
+      ROIManager.getSingleton().removeROI(item);
+      jROIBox.removeItem(item);
+    } catch (Exception e) {
     }
+  }
 }//GEN-LAST:event_fireChangeROIEvent
 
 private void fireAddROIDoneEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddROIDoneEvent
 
-    if (evt.getSource() == jAddNewROIButton) {
-        try {
-            int x = UIHelper.parseIntFromField(jCenterX, (int) dCenterX);
-            int y = UIHelper.parseIntFromField(jCenterY, (int) dCenterY);
-            String value = jROITextField.getText() + " (" + x + "|" + y + ")";
-            int pos = Integer.MAX_VALUE;
-            try {
-                pos = Integer.parseInt((String) jROIPosition.getSelectedItem());
-                pos -= 1;
-            } catch (Exception ee) {
-                //end pos selected
-                pos = Integer.MAX_VALUE;
-            }
+  if (evt.getSource() == jAddNewROIButton) {
+    try {
+      int x = UIHelper.parseIntFromField(jCenterX, (int) dCenterX);
+      int y = UIHelper.parseIntFromField(jCenterY, (int) dCenterY);
+      String value = jROITextField.getText() + " (" + x + "|" + y + ")";
+      int pos = Integer.MAX_VALUE;
+      try {
+        pos = Integer.parseInt((String) jROIPosition.getSelectedItem());
+        pos -= 1;
+      } catch (Exception ee) {
+        //end pos selected
+        pos = Integer.MAX_VALUE;
+      }
 
-            if (ROIManager.getSingleton().containsROI(value)) {
-                JOptionPaneHelper.showWarningBox(this, "ROI '" + value + "' existiert bereits.", "ROI vorhanden");
-                return;
+      if (ROIManager.getSingleton().containsROI(value)) {
+        JOptionPaneHelper.showWarningBox(this, "ROI '" + value + "' existiert bereits.", "ROI vorhanden");
+        return;
 
-            }
+      }
 
-            ROIManager.getSingleton().addROI(pos, value);
-            jROIBox.setModel(new DefaultComboBoxModel(ROIManager.getSingleton().getROIs()));
-        } catch (Exception e) {
-            logger.error("Failed to add ROI", e);
-        }
-
+      ROIManager.getSingleton().addROI(pos, value);
+      jROIBox.setModel(new DefaultComboBoxModel(ROIManager.getSingleton().getROIs()));
+    } catch (Exception e) {
+      logger.error("Failed to add ROI", e);
     }
-    jAddROIDialog.setVisible(false);
+
+  }
+  jAddROIDialog.setVisible(false);
 
 }//GEN-LAST:event_fireAddROIDoneEvent
 
 private void fireROISelectedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireROISelectedEvent
-    if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
-        try {
-            String item = (String) jROIBox.getSelectedItem();
-            item = item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")"));
-            String[] pos = item.trim().split("\\|");
-            jCenterX.setText(pos[0]);
-            jCenterY.setText(pos[1]);
-            fireRefreshMapEvent(null);
-        } catch (Exception e) {
-        }
+  if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
+    try {
+      String item = (String) jROIBox.getSelectedItem();
+      item = item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")"));
+      String[] pos = item.trim().split("\\|");
+      jCenterX.setText(pos[0]);
+      jCenterY.setText(pos[1]);
+      fireRefreshMapEvent(null);
+    } catch (Exception e) {
     }
+  }
 }//GEN-LAST:event_fireROISelectedEvent
 
 private void fireDSWorkbenchClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireDSWorkbenchClosingEvent
-    logger.debug("Shutting down DSWorkbench");
-    try {
-        GlobalOptions.addProperty("ribbon.minimized", Boolean.toString(getRibbon().isMinimized()));
-        GlobalOptions.getSelectedProfile().updateProperties();
-        TacticsPlanerWizard.storeProperties();
-        ResourceDistributorWizard.storeProperties();
-        GlobalOptions.getSelectedProfile().storeProfileData();
-    } catch (Exception e) {
-        logger.error("Failed to store profile settings on shutdown");
-    }
-    dispose();
-    System.exit(0);
+  logger.debug("Shutting down DSWorkbench");
+  try {
+    GlobalOptions.addProperty("ribbon.minimized", Boolean.toString(getRibbon().isMinimized()));
+    GlobalOptions.getSelectedProfile().updateProperties();
+    TacticsPlanerWizard.storeProperties();
+    ResourceDistributorWizard.storeProperties();
+    GlobalOptions.getSelectedProfile().storeProfileData();
+  } catch (Exception e) {
+    logger.error("Failed to store profile settings on shutdown");
+  }
+  dispose();
+  System.exit(0);
 }//GEN-LAST:event_fireDSWorkbenchClosingEvent
 
 private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireGraphicPackChangedEvent
-    GlobalOptions.addProperty("default.skin", (String) jGraphicPacks.getSelectedItem());
+  GlobalOptions.addProperty("default.skin", (String) jGraphicPacks.getSelectedItem());
+  try {
+    GlobalOptions.loadSkin();
+  } catch (Exception e) {
+    logger.error("Failed to load skin '" + jGraphicPacks.getSelectedItem() + "'", e);
+    JOptionPaneHelper.showErrorBox(this, "Fehler beim laden des Grafikpaketes.", "Fehler");
+    //load default
+    GlobalOptions.addProperty("default.skin", "default");
     try {
-        GlobalOptions.loadSkin();
-    } catch (Exception e) {
-        logger.error("Failed to load skin '" + jGraphicPacks.getSelectedItem() + "'", e);
-        JOptionPaneHelper.showErrorBox(this, "Fehler beim laden des Grafikpaketes.", "Fehler");
-        //load default
-        GlobalOptions.addProperty("default.skin", "default");
-        try {
-            GlobalOptions.loadSkin();
-        } catch (Exception ie) {
-            logger.error("Failed to load default skin", ie);
-        }
+      GlobalOptions.loadSkin();
+    } catch (Exception ie) {
+      logger.error("Failed to load default skin", ie);
     }
-    if (isInitialized()) {
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
-    }
+  }
+  if (isInitialized()) {
+    MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
+  }
 }//GEN-LAST:event_fireGraphicPackChangedEvent
 
 private void fireHighlightTribeVillagesChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireHighlightTribeVillagesChangedEvent
-    GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(jHighlightTribeVillages.isSelected()));
+  GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(jHighlightTribeVillages.isSelected()));
 }//GEN-LAST:event_fireHighlightTribeVillagesChangedEvent
 private void fireShowRulerChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireShowRulerChangedEvent
-    GlobalOptions.addProperty("show.ruler", Boolean.toString(jShowRuler.isSelected()));
+  GlobalOptions.addProperty("show.ruler", Boolean.toString(jShowRuler.isSelected()));
 }//GEN-LAST:event_fireShowRulerChangedEvent
 
 private void fireRadarValueChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireRadarValueChangedEvent
-    int hours = UIHelper.parseIntFromField(jHourField, 1);
-    int minutes = UIHelper.parseIntFromField(jMinuteField);
-    GlobalOptions.addProperty("radar.size", Integer.toString(hours * 60 + minutes));
+  int hours = UIHelper.parseIntFromField(jHourField, 1);
+  int minutes = UIHelper.parseIntFromField(jMinuteField);
+  GlobalOptions.addProperty("radar.size", Integer.toString(hours * 60 + minutes));
 }//GEN-LAST:event_fireRadarValueChangedEvent
 
 private void fireCheckForVillagePositionEvent(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fireCheckForVillagePositionEvent
-    List<Village> parsed = PluginManager.getSingleton().executeVillageParser(jCenterX.getText());
-    if (!parsed.isEmpty()) {
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-            int[] hier = DSCalculator.xyToHierarchical((int) parsed.get(0).getX(), (int) parsed.get(0).getY());
-            if (hier != null) {
-                jCenterY.setText(Integer.toString(hier[1]));
-                jCenterX.setText(Integer.toString(hier[0]));
-            }
-        } else {
-            jCenterY.setText(Short.toString(parsed.get(0).getY()));
-            jCenterX.setText(Short.toString(parsed.get(0).getX()));
-        }
+  List<Village> parsed = PluginManager.getSingleton().executeVillageParser(jCenterX.getText());
+  if (!parsed.isEmpty()) {
+    if (ServerSettings.getSingleton().getCoordType() != 2) {
+      int[] hier = DSCalculator.xyToHierarchical((int) parsed.get(0).getX(), (int) parsed.get(0).getY());
+      if (hier != null) {
+        jCenterY.setText(Integer.toString(hier[1]));
+        jCenterX.setText(Integer.toString(hier[0]));
+      }
+    } else {
+      jCenterY.setText(Short.toString(parsed.get(0).getY()));
+      jCenterX.setText(Short.toString(parsed.get(0).getX()));
     }
+  }
 }//GEN-LAST:event_fireCheckForVillagePositionEvent
 
 private void fireShowMouseOverInfoEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireShowMouseOverInfoEvent
-    GlobalOptions.addProperty("show.mouseover.info", Boolean.toString(jShowMouseOverInfo.isSelected()));
+  GlobalOptions.addProperty("show.mouseover.info", Boolean.toString(jShowMouseOverInfo.isSelected()));
 }//GEN-LAST:event_fireShowMouseOverInfoEvent
 
 private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeClipboardWatchEvent
-    if (bWatchClipboard) {
-        jEnableClipboardWatchButton.setIcon(new ImageIcon("./graphics/icons/not_watch_clipboard.png"));
-        bWatchClipboard = false;
-    } else {
-        jEnableClipboardWatchButton.setIcon(new ImageIcon("./graphics/icons/watch_clipboard.png"));
-        bWatchClipboard = true;
-    }
+  if (bWatchClipboard) {
+    jEnableClipboardWatchButton.setIcon(new ImageIcon("./graphics/icons/not_watch_clipboard.png"));
+    bWatchClipboard = false;
+  } else {
+    jEnableClipboardWatchButton.setIcon(new ImageIcon("./graphics/icons/watch_clipboard.png"));
+    bWatchClipboard = true;
+  }
 }//GEN-LAST:event_fireChangeClipboardWatchEvent
 
     private void fireHideNotificationEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideNotificationEvent
-        mNotificationHideThread.interrupt();
-        infoPanel.setCollapsed(true);
+      mNotificationHideThread.interrupt();
+      infoPanel.setCollapsed(true);
     }//GEN-LAST:event_fireHideNotificationEvent
 
     private void fireShowHideSupportsEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireShowHideSupportsEvent
-        GlobalOptions.addProperty("include.support", Boolean.toString(jIncludeSupport.isSelected()));
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TROOP_LAYER);
+      GlobalOptions.addProperty("include.support", Boolean.toString(jIncludeSupport.isSelected()));
+      MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TROOP_LAYER);
     }//GEN-LAST:event_fireShowHideSupportsEvent
 
-    public void doExit() {
-        fireDSWorkbenchClosingEvent(null);
+  public void doExit() {
+    fireDSWorkbenchClosingEvent(null);
+  }
+
+  public void doExport() {
+    //build attack table
+    DefaultTableModel model = (DefaultTableModel) jAttackExportTable.getModel();
+    int rows = model.getRowCount();
+    for (int i = 0; i < rows; i++) {
+      model.removeRow(0);
+    }
+    Iterator<String> plans = AttackManager.getSingleton().getGroupIterator();
+    while (plans.hasNext()) {
+      String next = plans.next();
+      model.addRow(new Object[]{next, Boolean.FALSE});
     }
 
-    public void doExport() {
-        //build attack table
-        DefaultTableModel model = (DefaultTableModel) jAttackExportTable.getModel();
-        int rows = model.getRowCount();
-        for (int i = 0; i < rows; i++) {
-            model.removeRow(0);
-        }
-        Iterator<String> plans = AttackManager.getSingleton().getGroupIterator();
-        while (plans.hasNext()) {
-            String next = plans.next();
-            model.addRow(new Object[]{next, Boolean.FALSE});
-        }
-
-        //build marker set table
-        String[] sets = MarkerManager.getSingleton().getGroups();
-        model = (DefaultTableModel) jMarkerSetExportTable.getModel();
-        rows = model.getRowCount();
-        for (int i = 0; i < rows; i++) {
-            model.removeRow(0);
-        }
-
-        for (String set : sets) {
-            model.addRow(new Object[]{set, Boolean.FALSE});
-        }
-
-        //build report set table
-        String[] reportSets = ReportManager.getSingleton().getGroups();
-
-        model = (DefaultTableModel) jReportSetExportTable.getModel();
-        rows = model.getRowCount();
-        for (int i = 0; i < rows; i++) {
-            model.removeRow(0);
-        }
-
-        for (String set : reportSets) {
-            model.addRow(new Object[]{set, Boolean.FALSE});
-        }
-
-        //build troop table 
-        String[] troopSets = TroopsManager.getSingleton().getGroups();
-
-        model = (DefaultTableModel) jTroopSetExportTable.getModel();
-        rows = model.getRowCount();
-        for (int i = 0; i < rows; i++) {
-            model.removeRow(0);
-        }
-
-        for (String set : troopSets) {
-            model.addRow(new Object[]{set, Boolean.FALSE});
-        }
-        //build note table 
-        String[] noteSets = NoteManager.getSingleton().getGroups();
-
-        model = (DefaultTableModel) jNoteSetExportTable.getModel();
-        rows = model.getRowCount();
-        for (int i = 0; i < rows; i++) {
-            model.removeRow(0);
-        }
-
-        for (String set : noteSets) {
-            model.addRow(new Object[]{set, Boolean.FALSE});
-        }
-        jExportDialog.setAlwaysOnTop(true);
-        jExportDialog.setVisible(true);
+    //build marker set table
+    String[] sets = MarkerManager.getSingleton().getGroups();
+    model = (DefaultTableModel) jMarkerSetExportTable.getModel();
+    rows = model.getRowCount();
+    for (int i = 0; i < rows; i++) {
+      model.removeRow(0);
     }
 
-    public void doImport() {
-        String dir = GlobalOptions.getProperty("screen.dir");
-        if (dir == null) {
-            dir = ".";
+    for (String set : sets) {
+      model.addRow(new Object[]{set, Boolean.FALSE});
+    }
+
+    //build report set table
+    String[] reportSets = ReportManager.getSingleton().getGroups();
+
+    model = (DefaultTableModel) jReportSetExportTable.getModel();
+    rows = model.getRowCount();
+    for (int i = 0; i < rows; i++) {
+      model.removeRow(0);
+    }
+
+    for (String set : reportSets) {
+      model.addRow(new Object[]{set, Boolean.FALSE});
+    }
+
+    //build troop table 
+    String[] troopSets = TroopsManager.getSingleton().getGroups();
+
+    model = (DefaultTableModel) jTroopSetExportTable.getModel();
+    rows = model.getRowCount();
+    for (int i = 0; i < rows; i++) {
+      model.removeRow(0);
+    }
+
+    for (String set : troopSets) {
+      model.addRow(new Object[]{set, Boolean.FALSE});
+    }
+    //build note table 
+    String[] noteSets = NoteManager.getSingleton().getGroups();
+
+    model = (DefaultTableModel) jNoteSetExportTable.getModel();
+    rows = model.getRowCount();
+    for (int i = 0; i < rows; i++) {
+      model.removeRow(0);
+    }
+
+    for (String set : noteSets) {
+      model.addRow(new Object[]{set, Boolean.FALSE});
+    }
+    jExportDialog.setAlwaysOnTop(true);
+    jExportDialog.setVisible(true);
+  }
+
+  public void doImport() {
+    String dir = GlobalOptions.getProperty("screen.dir");
+    if (dir == null) {
+      dir = ".";
+    }
+    JFileChooser chooser = null;
+    try {
+      chooser = new JFileChooser(dir);
+    } catch (Exception e) {
+      JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+      return;
+    }
+    chooser.setDialogTitle("Datei auswählen");
+
+    chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+
+      @Override
+      public boolean accept(File f) {
+        if ((f != null) && (f.isDirectory() || f.getName().endsWith(".xml"))) {
+          return true;
         }
-        JFileChooser chooser = null;
-        try {
-            chooser = new JFileChooser(dir);
-        } catch (Exception e) {
-            JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+
+        return false;
+      }
+
+      @Override
+      public String getDescription() {
+        return "*.xml";
+      }
+    });
+    int ret = chooser.showOpenDialog(this);
+    if (ret == JFileChooser.APPROVE_OPTION) {
+      try {
+        File f = chooser.getSelectedFile();
+        String file = f.getCanonicalPath();
+        if (!file.endsWith(".xml")) {
+          file += ".xml";
+        }
+
+        File target = new File(file);
+
+        String extension = JOptionPane.showInputDialog(this, "Welche Kennzeichnung sollen importierte Pläne und Tags erhalten?\n" + "Lass das Eingabefeld leer oder drücke 'Abbrechen', um sie unverändert zu importieren.", "Kennzeichnung festlegen", JOptionPane.INFORMATION_MESSAGE);
+        if (extension != null && extension.length() > 0) {
+          logger.debug("Using import extension '" + extension + "'");
+        } else {
+          logger.debug("Using no import extension");
+          extension = null;
+        }
+
+        if (target.exists()) {
+          //do import
+          String message = performImport(target, extension);
+          JOptionPaneHelper.showInformationBox(this, message, "Import");
+        }
+
+        GlobalOptions.addProperty("screen.dir", target.getParent());
+      } catch (Exception e) {
+        logger.error("Failed to import data", e);
+        JOptionPaneHelper.showErrorBox(this, "Import fehlgeschlagen.", "Import");
+      }
+    }
+  }
+
+  private String performImport(File pSource, String pExtension) {
+    boolean attackImported = AttackManager.getSingleton().importData(pSource, pExtension);
+    boolean markersImported = MarkerManager.getSingleton().importData(pSource, pExtension);
+    boolean reportsImported = ReportManager.getSingleton().importData(pSource, pExtension);
+    boolean tagImported = TagManager.getSingleton().importData(pSource, pExtension);
+    boolean troopsImported = TroopsManager.getSingleton().importData(pSource, null);
+    boolean formsImported = FormManager.getSingleton().importData(pSource, pExtension);
+    boolean notesImported = NoteManager.getSingleton().importData(pSource, pExtension);
+
+    String message = "Import beendet.\n";
+    if (!attackImported) {
+      message += "  * Fehler beim Import der Angriffe\n";
+    }
+
+    if (!markersImported) {
+      message += "  * Fehler beim Import der Markierungen\n";
+    }
+    if (!reportsImported) {
+      message += "  * Fehler beim Import der Berichte\n";
+    }
+    if (!tagImported) {
+      message += "  * Fehler beim Import der Tags\n";
+    }
+
+    if (!troopsImported) {
+      message += "  * Fehler beim Import der Truppen\n";
+    }
+
+    if (!formsImported) {
+      message += "  * Fehler beim Import der Formen\n";
+    }
+    if (!notesImported) {
+      message += "  * Fehler beim Import der Notizen\n";
+    }
+    return message;
+  }
+
+  public void planMapshot() {
+    Component parent = this;
+
+    putOnline = false;
+    String dir = GlobalOptions.getProperty("screen.dir");
+    if (dir == null) {
+      dir = ".";
+    }
+
+    String type = null;
+    chooser.setSelectedFile(new File(dir));
+    int ret = chooser.showSaveDialog(parent);
+    if (ret == JFileChooser.APPROVE_OPTION) {
+      try {
+        File f = chooser.getSelectedFile();
+        javax.swing.filechooser.FileFilter filter = chooser.getFileFilter();
+        if (filter.getDescription().indexOf("jpeg") > 0) {
+          type = "jpeg";
+        } else if (filter.getDescription().indexOf("png") > 0) {
+          type = "png";
+        } else {
+          type = "png";
+        }
+        String file = f.getCanonicalPath();
+        if (!file.endsWith(type)) {
+          file += "." + type;
+        }
+        File target = new File(file);
+        if (target.exists()) {
+          //ask if overwrite
+
+          if (JOptionPaneHelper.showQuestionConfirmBox(parent, "Existierende Datei überschreiben?", "Überschreiben", "Nein", "Ja") != JOptionPane.YES_OPTION) {
             return;
+          }
         }
-        chooser.setDialogTitle("Datei auswählen");
+        MapPanel.getSingleton().planMapShot(type, target, this);
 
-        chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+        GlobalOptions.addProperty("screen.dir", target.getPath());
+      } catch (Exception e) {
+        logger.error("Failed to write map shot", e);
+      }
+    }
+  }
 
-            @Override
-            public boolean accept(File f) {
-                if ((f != null) && (f.isDirectory() || f.getName().endsWith(".xml"))) {
-                    return true;
-                }
+  public boolean isWatchClipboard() {
+    return bWatchClipboard;
+  }
 
-                return false;
-            }
+  /*
+   * private void propagateLayerOrder() { DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
+   *
+   * List<Integer> layerOrder = new LinkedList<Integer>(); for (int i = 0; i < model.size(); i++) { String value = (String) model.get(i);
+   * layerOrder.add(Constants.LAYERS.get(value)); } MapPanel.getSingleton().getMapRenderer().setDrawOrder(layerOrder);
+   * MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS); }
+   */
+  private void centerROI(int pId) {
+    try {
+      String item = (String) jROIBox.getItemAt(pId);
+      item = item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")"));
+      String[] pos = item.trim().split("\\|");
+      jCenterX.setText(pos[0]);
+      jCenterY.setText(pos[1]);
+      fireRefreshMapEvent(null);
+    } catch (Exception e) {
+    }
+  }
 
-            @Override
-            public String getDescription() {
-                return "*.xml";
-            }
-        });
-        int ret = chooser.showOpenDialog(this);
-        if (ret == JFileChooser.APPROVE_OPTION) {
-            try {
-                File f = chooser.getSelectedFile();
-                String file = f.getCanonicalPath();
-                if (!file.endsWith(".xml")) {
-                    file += ".xml";
-                }
+  /**
+   * Check if zoom factor is valid and correct if needed
+   */
+  private void checkZoomRange() {
+    if (dZoomFactor <= 0.4) {
+      dZoomFactor = 0.4;
+      jZoomOutButton.setEnabled(false);
+    } else if (dZoomFactor >= 3) {
+      dZoomFactor = 3;
+      jZoomInButton.setEnabled(false);
+    } else {
+      jZoomInButton.setEnabled(true);
+      jZoomOutButton.setEnabled(true);
+    }
+  }
 
-                File target = new File(file);
-
-                String extension = JOptionPane.showInputDialog(this, "Welche Kennzeichnung sollen importierte Pläne und Tags erhalten?\n" + "Lass das Eingabefeld leer oder drücke 'Abbrechen', um sie unverändert zu importieren.", "Kennzeichnung festlegen", JOptionPane.INFORMATION_MESSAGE);
-                if (extension != null && extension.length() > 0) {
-                    logger.debug("Using import extension '" + extension + "'");
-                } else {
-                    logger.debug("Using no import extension");
-                    extension = null;
-                }
-
-                if (target.exists()) {
-                    //do import
-                    String message = performImport(target, extension);
-                    JOptionPaneHelper.showInformationBox(this, message, "Import");
-                }
-
-                GlobalOptions.addProperty("screen.dir", target.getParent());
-            } catch (Exception e) {
-                logger.error("Failed to import data", e);
-                JOptionPaneHelper.showErrorBox(this, "Import fehlgeschlagen.", "Import");
-            }
-        }
+  /**
+   * Scroll the map
+   */
+  public void scroll(double pXDir, double pYDir) {
+    dCenterX += pXDir;
+    dCenterY += pYDir;
+    if (ServerSettings.getSingleton().getCoordType() != 2) {
+      int[] hier = DSCalculator.xyToHierarchical((int) dCenterX, (int) dCenterY);
+      if (hier != null) {
+        jCenterX.setText(Integer.toString(hier[0]));
+        jCenterY.setText(Integer.toString(hier[1]));
+      }
+    } else {
+      jCenterX.setText(Integer.toString((int) Math.floor(dCenterX)));
+      jCenterY.setText(Integer.toString((int) Math.floor(dCenterY)));
     }
 
-    private String performImport(File pSource, String pExtension) {
-        boolean attackImported = AttackManager.getSingleton().importData(pSource, pExtension);
-        boolean markersImported = MarkerManager.getSingleton().importData(pSource, pExtension);
-        boolean reportsImported = ReportManager.getSingleton().importData(pSource, pExtension);
-        boolean tagImported = TagManager.getSingleton().importData(pSource, pExtension);
-        boolean troopsImported = TroopsManager.getSingleton().importData(pSource, null);
-        boolean formsImported = FormManager.getSingleton().importData(pSource, pExtension);
-        boolean notesImported = NoteManager.getSingleton().importData(pSource, pExtension);
+    double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+    double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
+    MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
+    MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
+  }
 
-        String message = "Import beendet.\n";
-        if (!attackImported) {
-            message += "  * Fehler beim Import der Angriffe\n";
-        }
-
-        if (!markersImported) {
-            message += "  * Fehler beim Import der Markierungen\n";
-        }
-        if (!reportsImported) {
-            message += "  * Fehler beim Import der Berichte\n";
-        }
-        if (!tagImported) {
-            message += "  * Fehler beim Import der Tags\n";
-        }
-
-        if (!troopsImported) {
-            message += "  * Fehler beim Import der Truppen\n";
-        }
-
-        if (!formsImported) {
-            message += "  * Fehler beim Import der Formen\n";
-        }
-        if (!notesImported) {
-            message += "  * Fehler beim Import der Notizen\n";
-        }
-        return message;
+  /**
+   * Center a village
+   */
+  public void centerVillage(Village pVillage) {
+    if (pVillage == null) {
+      return;
     }
 
-    public void planMapshot() {
-        Component parent = this;
-        int result = JOptionPaneHelper.showQuestionConfirmBox(parent, "Willst du die Karte online stellen oder auf deinem Rechner speichern?", "Speichern", "Nur speichern", "Online stellen");
+    if (ServerSettings.getSingleton().getCoordType() != 2) {
+      int[] hier = DSCalculator.xyToHierarchical((int) pVillage.getX(), (int) pVillage.getY());
+      if (hier != null) {
+        jCenterX.setText(Integer.toString(hier[0]));
+        jCenterY.setText(Integer.toString(hier[1]));
+      }
 
-        if (result == JOptionPane.YES_OPTION) {
-            putOnline = true;
-            MapPanel.getSingleton().planMapShot("png", new File("tmp.png"), this);
-        } else if (result == JOptionPane.NO_OPTION) {
-            putOnline = false;
-            String dir = GlobalOptions.getProperty("screen.dir");
-            if (dir == null) {
-                dir = ".";
-            }
-
-            String type = null;
-            chooser.setSelectedFile(new File(dir));
-            int ret = chooser.showSaveDialog(parent);
-            if (ret == JFileChooser.APPROVE_OPTION) {
-                try {
-                    File f = chooser.getSelectedFile();
-                    javax.swing.filechooser.FileFilter filter = chooser.getFileFilter();
-                    if (filter.getDescription().indexOf("jpeg") > 0) {
-                        type = "jpeg";
-                    } else if (filter.getDescription().indexOf("png") > 0) {
-                        type = "png";
-                    } else {
-                        type = "png";
-                    }
-                    String file = f.getCanonicalPath();
-                    if (!file.endsWith(type)) {
-                        file += "." + type;
-                    }
-                    File target = new File(file);
-                    if (target.exists()) {
-                        //ask if overwrite
-
-                        if (JOptionPaneHelper.showQuestionConfirmBox(parent, "Existierende Datei überschreiben?", "Überschreiben", "Nein", "Ja") != JOptionPane.YES_OPTION) {
-                            return;
-                        }
-                    }
-                    MapPanel.getSingleton().planMapShot(type, target, this);
-
-                    GlobalOptions.addProperty("screen.dir", target.getPath());
-                } catch (Exception e) {
-                    logger.error("Failed to write map shot", e);
-                }
-            }
-        }
+    } else {
+      jCenterX.setText(Integer.toString(pVillage.getX()));
+      jCenterY.setText(Integer.toString(pVillage.getY()));
     }
 
-    public boolean isWatchClipboard() {
-        return bWatchClipboard;
+    fireRefreshMapEvent(null);
+  }
+
+  public void centerPosition(int xPos, int yPos) {
+    if (ServerSettings.getSingleton().getCoordType() != 2) {
+      int[] hier = DSCalculator.xyToHierarchical(xPos, yPos);
+      if (hier != null) {
+        jCenterX.setText(Integer.toString(hier[0]));
+        jCenterY.setText(Integer.toString(hier[1]));
+      }
+
+    } else {
+      jCenterX.setText(Integer.toString(xPos));
+      jCenterY.setText(Integer.toString(yPos));
     }
 
-    /*
-     * private void propagateLayerOrder() { DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
-     *
-     * List<Integer> layerOrder = new LinkedList<Integer>(); for (int i = 0; i < model.size(); i++) { String value = (String) model.get(i);
-     * layerOrder.add(Constants.LAYERS.get(value)); } MapPanel.getSingleton().getMapRenderer().setDrawOrder(layerOrder);
-     * MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS); }
-     */
-    private void centerROI(int pId) {
-        try {
-            String item = (String) jROIBox.getItemAt(pId);
-            item = item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")"));
-            String[] pos = item.trim().split("\\|");
-            jCenterX.setText(pos[0]);
-            jCenterY.setText(pos[1]);
-            fireRefreshMapEvent(null);
-        } catch (Exception e) {
-        }
-    }
+    fireRefreshMapEvent(null);
+  }
 
-    /**
-     * Check if zoom factor is valid and correct if needed
-     */
-    private void checkZoomRange() {
-        if (dZoomFactor <= 0.4) {
-            dZoomFactor = 0.4;
-            jZoomOutButton.setEnabled(false);
-        } else if (dZoomFactor >= 3) {
-            dZoomFactor = 3;
-            jZoomInButton.setEnabled(false);
+  /**
+   * Get active user village
+   */
+  public Village getCurrentUserVillage() {
+    try {
+      if (jCurrentPlayerVillages.getSelectedIndex() < 0) {
+        if (jCurrentPlayerVillages.getItemCount() > 0) {
+          jCurrentPlayerVillages.setSelectedIndex(0);
         } else {
-            jZoomInButton.setEnabled(true);
-            jZoomOutButton.setEnabled(true);
-        }
-    }
-
-    /**
-     * Scroll the map
-     */
-    public void scroll(double pXDir, double pYDir) {
-        dCenterX += pXDir;
-        dCenterY += pYDir;
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-            int[] hier = DSCalculator.xyToHierarchical((int) dCenterX, (int) dCenterY);
-            if (hier != null) {
-                jCenterX.setText(Integer.toString(hier[0]));
-                jCenterY.setText(Integer.toString(hier[1]));
-            }
-        } else {
-            jCenterX.setText(Integer.toString((int) Math.floor(dCenterX)));
-            jCenterY.setText(Integer.toString((int) Math.floor(dCenterY)));
+          //don't try to get village, list is still empty
+          return null;
         }
 
-        double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
-        double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-        MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
-        MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
+      }
+      return (Village) jCurrentPlayerVillages.getSelectedItem();
+    } catch (ClassCastException cce) {
+      //if no player was selected yet
+      return null;
+    } catch (Exception e) {
+      logger.warn("Could not get current user village.", e);
+      return null;
     }
 
-    /**
-     * Center a village
-     */
-    public void centerVillage(Village pVillage) {
-        if (pVillage == null) {
-            return;
-        }
+  }
 
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-            int[] hier = DSCalculator.xyToHierarchical((int) pVillage.getX(), (int) pVillage.getY());
-            if (hier != null) {
-                jCenterX.setText(Integer.toString(hier[0]));
-                jCenterY.setText(Integer.toString(hier[1]));
-            }
+  public void setCurrentUserVillage(Village pVillage) {
+    jCurrentPlayerVillages.setSelectedItem(pVillage);
+  }
 
-        } else {
-            jCenterX.setText(Integer.toString(pVillage.getX()));
-            jCenterY.setText(Integer.toString(pVillage.getY()));
-        }
-
-        fireRefreshMapEvent(null);
-    }
-
-    public void centerPosition(int xPos, int yPos) {
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-            int[] hier = DSCalculator.xyToHierarchical(xPos, yPos);
-            if (hier != null) {
-                jCenterX.setText(Integer.toString(hier[0]));
-                jCenterY.setText(Integer.toString(hier[1]));
-            }
-
-        } else {
-            jCenterX.setText(Integer.toString(xPos));
-            jCenterY.setText(Integer.toString(yPos));
-        }
-
-        fireRefreshMapEvent(null);
-    }
-
-    /**
-     * Get active user village
-     */
-    public Village getCurrentUserVillage() {
-        try {
-            if (jCurrentPlayerVillages.getSelectedIndex() < 0) {
-                if (jCurrentPlayerVillages.getItemCount() > 0) {
-                    jCurrentPlayerVillages.setSelectedIndex(0);
-                } else {
-                    //don't try to get village, list is still empty
-                    return null;
-                }
-
-            }
-            return (Village) jCurrentPlayerVillages.getSelectedItem();
-        } catch (ClassCastException cce) {
-            //if no player was selected yet
-            return null;
-        } catch (Exception e) {
-            logger.warn("Could not get current user village.", e);
-            return null;
-        }
-
-    }
-
-    public void setCurrentUserVillage(Village pVillage) {
-        jCurrentPlayerVillages.setSelectedItem(pVillage);
-    }
-
-    protected void hideNotification() {
-        infoPanel.setCollapsed(true);
-    }
+  protected void hideNotification() {
+    infoPanel.setCollapsed(true);
+  }
 
 // <editor-fold defaultstate="collapsed" desc=" Listener EventHandlers ">
-    @Override
-    public void fireToolChangedEvent(int pTool) {
-        jCurrentToolLabel.setIcon(ImageManager.getCursorImage(pTool));
-    }
+  @Override
+  public void fireToolChangedEvent(int pTool) {
+    jCurrentToolLabel.setIcon(ImageManager.getCursorImage(pTool));
+  }
 
-    @Override
-    public void fireScrollEvent(double pX, double pY) {
-        scroll(pX, pY);
-    }
+  @Override
+  public void fireScrollEvent(double pX, double pY) {
+    scroll(pX, pY);
+  }
 
-    @Override
-    public void fireVisibilityChangedEvent(JFrame pSource, boolean v) {
-        /*
-         * if (pSource == DSWorkbenchAttackFrame.getSingleton()) {
-         * jShowAttackFrame.setSelected(DSWorkbenchAttackFrame.getSingleton().isVisible()); } else if (pSource ==
-         * DSWorkbenchMarkerFrame.getSingleton()) { jShowMarkerFrame.setSelected(DSWorkbenchMarkerFrame.getSingleton().isVisible()); } else
-         * if (pSource == DSWorkbenchTroopsFrame.getSingleton()) {
-         * jShowTroopsFrame.setSelected(DSWorkbenchTroopsFrame.getSingleton().isVisible()); } else if (pSource ==
-         * DSWorkbenchRankFrame.getSingleton()) { jShowRankFrame.setSelected(DSWorkbenchRankFrame.getSingleton().isVisible()); } else if
-         * (pSource == DSWorkbenchFormFrame.getSingleton()) { jShowFormsFrame.setSelected(DSWorkbenchFormFrame.getSingleton().isVisible());
-         * } else if (pSource == DSWorkbenchChurchFrame.getSingleton()) {
-         * jShowChurchFrame.setSelected(DSWorkbenchChurchFrame.getSingleton().isVisible()); } else if (pSource ==
-         * DSWorkbenchConquersFrame.getSingleton()) { jShowConquersFrame.setSelected(DSWorkbenchConquersFrame.getSingleton().isVisible()); }
-         * else if (pSource == DSWorkbenchNotepad.getSingleton()) {
-         * jShowNotepadFrame.setSelected(DSWorkbenchNotepad.getSingleton().isVisible()); } else if (pSource ==
-         * DSWorkbenchTagFrame.getSingleton()) { jShowTagFrame.setSelected(DSWorkbenchTagFrame.getSingleton().isVisible()); } else if
-         * (pSource == DSWorkbenchStatsFrame.getSingleton()) {
-         * jShowStatsFrame.setSelected(DSWorkbenchStatsFrame.getSingleton().isVisible()); } else if (pSource ==
-         * DSWorkbenchReportFrame.getSingleton()) { jShowReportFrame.setSelected(DSWorkbenchReportFrame.getSingleton().isVisible()); }
-         */
-    }
+  @Override
+  public void fireVisibilityChangedEvent(JFrame pSource, boolean v) {
+    /*
+     * if (pSource == DSWorkbenchAttackFrame.getSingleton()) {
+     * jShowAttackFrame.setSelected(DSWorkbenchAttackFrame.getSingleton().isVisible()); } else if (pSource ==
+     * DSWorkbenchMarkerFrame.getSingleton()) { jShowMarkerFrame.setSelected(DSWorkbenchMarkerFrame.getSingleton().isVisible()); } else
+     * if (pSource == DSWorkbenchTroopsFrame.getSingleton()) {
+     * jShowTroopsFrame.setSelected(DSWorkbenchTroopsFrame.getSingleton().isVisible()); } else if (pSource ==
+     * DSWorkbenchRankFrame.getSingleton()) { jShowRankFrame.setSelected(DSWorkbenchRankFrame.getSingleton().isVisible()); } else if
+     * (pSource == DSWorkbenchFormFrame.getSingleton()) { jShowFormsFrame.setSelected(DSWorkbenchFormFrame.getSingleton().isVisible());
+     * } else if (pSource == DSWorkbenchChurchFrame.getSingleton()) {
+     * jShowChurchFrame.setSelected(DSWorkbenchChurchFrame.getSingleton().isVisible()); } else if (pSource ==
+     * DSWorkbenchConquersFrame.getSingleton()) { jShowConquersFrame.setSelected(DSWorkbenchConquersFrame.getSingleton().isVisible()); }
+     * else if (pSource == DSWorkbenchNotepad.getSingleton()) {
+     * jShowNotepadFrame.setSelected(DSWorkbenchNotepad.getSingleton().isVisible()); } else if (pSource ==
+     * DSWorkbenchTagFrame.getSingleton()) { jShowTagFrame.setSelected(DSWorkbenchTagFrame.getSingleton().isVisible()); } else if
+     * (pSource == DSWorkbenchStatsFrame.getSingleton()) {
+     * jShowStatsFrame.setSelected(DSWorkbenchStatsFrame.getSingleton().isVisible()); } else if (pSource ==
+     * DSWorkbenchReportFrame.getSingleton()) { jShowReportFrame.setSelected(DSWorkbenchReportFrame.getSingleton().isVisible()); }
+     */
+  }
 
-    public void fireGroupParserEvent(Hashtable<String, List<Village>> pParserResult) {
-        TagManager.getSingleton().invalidate();
-        String[] groups = pParserResult.keySet().toArray(new String[]{});
-        //NotifierFrame.doNotification("DS Workbench hat " + groups.length + ((groups.length == 1) ? " Dorfgruppe " : " Dorfgruppen ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);
-        showSuccess("DS Workbench hat " + groups.length + ((groups.length == 1) ? " Dorfgruppe " : " Dorfgruppen ") + "in der Zwischenablage gefunden.");
-        //remove all tags
-        for (String group : groups) {
-            List<Village> villagesForGroup = pParserResult.get(group);
-            if (villagesForGroup != null) {
-                for (Village v : villagesForGroup) {
-                    TagManager.getSingleton().removeTags(v);
-                }
-            }
+  public void fireGroupParserEvent(Hashtable<String, List<Village>> pParserResult) {
+    TagManager.getSingleton().invalidate();
+    String[] groups = pParserResult.keySet().toArray(new String[]{});
+    //NotifierFrame.doNotification("DS Workbench hat " + groups.length + ((groups.length == 1) ? " Dorfgruppe " : " Dorfgruppen ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);
+    showSuccess("DS Workbench hat " + groups.length + ((groups.length == 1) ? " Dorfgruppe " : " Dorfgruppen ") + "in der Zwischenablage gefunden.");
+    //remove all tags
+    for (String group : groups) {
+      List<Village> villagesForGroup = pParserResult.get(group);
+      if (villagesForGroup != null) {
+        for (Village v : villagesForGroup) {
+          TagManager.getSingleton().removeTags(v);
         }
+      }
+    }
 
-        for (String group : groups) {
-            //add new groups
-            TagManager.getSingleton().addTagFast(group);
-            //get (added) group
-            Tag t = TagManager.getSingleton().getTagByName(group);
-            //add villages to group
-            List<Village> villagesForGroup = pParserResult.get(group);
-            if (villagesForGroup != null) {
-                //set new tags
-                for (Village v : villagesForGroup) {
-                    t.tagVillage(v.getId());
-                }
-            }
+    for (String group : groups) {
+      //add new groups
+      TagManager.getSingleton().addTagFast(group);
+      //get (added) group
+      Tag t = TagManager.getSingleton().getTagByName(group);
+      //add villages to group
+      List<Village> villagesForGroup = pParserResult.get(group);
+      if (villagesForGroup != null) {
+        //set new tags
+        for (Village v : villagesForGroup) {
+          t.tagVillage(v.getId());
         }
-        TagManager.getSingleton().revalidate(true);
+      }
     }
+    TagManager.getSingleton().revalidate(true);
+  }
 
-    @Override
-    public void fireMapShotDoneEvent() {
-        Component parent = this;
-        if (!putOnline) {
-            JOptionPaneHelper.showInformationBox(parent, "Kartengrafik erfolgreich gespeichert.", "Information");
-        } else {
-            String result = ScreenUploadInterface.upload("tmp.png");
-            if (result != null) {
-                if (result.indexOf("view.php") > 0) {
-                    try {
-                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
-                        JOptionPaneHelper.showInformationBox(parent, "Kartengrafik erfolgreich Online gestellt.\n" + "Der Zugriffslink (" + result + ")\n" + "wurde in die Zwischenablage kopiert.", "Information");
-                        BrowserCommandSender.openPage(result);
-                    } catch (Exception e) {
-                        JOptionPaneHelper.showWarningBox(parent, "Fehler beim Kopieren des Links in die Zwischenablage.\n" + "Der Zugriffslink lautet: " + result, "Link nicht kopiert werden");
-                    }
+  @Override
+  public void fireMapShotDoneEvent() {
+    Component parent = this;
+    JOptionPaneHelper.showInformationBox(parent, "Kartengrafik erfolgreich gespeichert.", "Information");
+    putOnline = false;
+  }
 
-                } else {
-                    JOptionPaneHelper.showErrorBox(parent, "Kartengrafik konnte nicht Online gestellt werden.\n" + "Fehler: " + result, "Fehler");
-                }
-
-            }
-        }
-        putOnline = false;
-    }
-
-    @Override
-    public void fireMapShotFailedEvent() {
-        JOptionPaneHelper.showErrorBox(this, "Fehler beim Speichern der Kartengrafik.", "Fehler");
-    }
+  @Override
+  public void fireMapShotFailedEvent() {
+    JOptionPaneHelper.showErrorBox(this, "Fehler beim Speichern der Kartengrafik.", "Fehler");
+  }
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Generated Variables">
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -3171,65 +3088,65 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
 
 class NotificationHideThread extends Thread {
 
-    public NotificationHideThread() {
-        setName("NotificationHideThread");
-        setPriority(MIN_PRIORITY);
-        setDaemon(true);
-    }
+  public NotificationHideThread() {
+    setName("NotificationHideThread");
+    setPriority(MIN_PRIORITY);
+    setDaemon(true);
+  }
 
-    public void run() {
-        boolean interrupted = false;
-        while (true) {
-            if (!interrupted) {
-                DSWorkbenchMainFrame.getSingleton().hideNotification();
-            }
-            try {
-                Thread.sleep(10000);
-                interrupted = false;
-            } catch (InterruptedException e) {
-                interrupted = true;
-            }
-        }
+  public void run() {
+    boolean interrupted = false;
+    while (true) {
+      if (!interrupted) {
+        DSWorkbenchMainFrame.getSingleton().hideNotification();
+      }
+      try {
+        Thread.sleep(10000);
+        interrupted = false;
+      } catch (InterruptedException e) {
+        interrupted = true;
+      }
     }
+  }
 }
 
 class BackupTask extends TimerTask {
 
-    private static Logger logger = Logger.getLogger("BackupTask");
+  private static Logger logger = Logger.getLogger("BackupTask");
 
-    @Override
-    public void run() {
-        try {
-            logger.debug("Starting backup");
-            String exportString = "<export>\n";
-            logger.debug(" - Backing up attacks");
-            exportString += AttackManager.getSingleton().getExportData(Arrays.asList(AttackManager.getSingleton().getGroups()));
-            logger.debug(" - Backing up markers");
-            exportString += MarkerManager.getSingleton().getExportData(Arrays.asList(MarkerManager.getSingleton().getGroups()));
-            logger.debug(" - Backing up reports");
-            exportString += ReportManager.getSingleton().getExportData(Arrays.asList(ReportManager.getSingleton().getGroups()));
-            logger.debug(" - Backing up tags");
-            exportString += TagManager.getSingleton().getExportData(null);
-            logger.debug(" - Backing up troops");
-            exportString += TroopsManager.getSingleton().getExportData(Arrays.asList(TroopsManager.getSingleton().getGroups()));
-            logger.debug(" - Backing up forms");
-            exportString += FormManager.getSingleton().getExportData(null);
-            logger.debug(" - Backing up notes");
-            exportString += NoteManager.getSingleton().getExportData(Arrays.asList(NoteManager.getSingleton().getGroups()));
-            logger.debug(" - Backing up churches");
-            exportString += ChurchManager.getSingleton().getExportData(null);
-            logger.debug(" - Backing up farms");
-            exportString += FarmManager.getSingleton().getExportData(null);
-            exportString += "</export>";
-            logger.debug("Writing backup data to disk");
-            FileWriter w = new FileWriter(GlobalOptions.getSelectedProfile().getProfileDirectory() + "/backup.xml");
-            w.write(exportString);
-            w.flush();
-            w.close();
-            logger.debug("Backup finished successfully");
-        } catch (Exception e) {
-            logger.error("Failed to create backup", e);
-        }
-
+  @Override
+  public void run() {
+    try {
+      logger.debug("Starting backup");
+      String exportString = "<export>\n";
+      logger.debug(" - Backing up attacks");
+      exportString += AttackManager.getSingleton().getExportData(Arrays.asList(AttackManager.getSingleton().getGroups()));
+      logger.debug(" - Backing up markers");
+      exportString += MarkerManager.getSingleton().getExportData(Arrays.asList(MarkerManager.getSingleton().getGroups()));
+      logger.debug(" - Backing up reports");
+      exportString += ReportManager.getSingleton().getExportData(Arrays.asList(ReportManager.getSingleton().getGroups()));
+      logger.debug(" - Backing up tags");
+      exportString += TagManager.getSingleton().getExportData(null);
+      logger.debug(" - Backing up troops");
+      exportString += TroopsManager.getSingleton().getExportData(Arrays.asList(TroopsManager.getSingleton().getGroups()));
+      logger.debug(" - Backing up forms");
+      exportString += FormManager.getSingleton().getExportData(null);
+      logger.debug(" - Backing up notes");
+      exportString += NoteManager.getSingleton().getExportData(Arrays.asList(NoteManager.getSingleton().getGroups()));
+      logger.debug(" - Backing up churches");
+      exportString += ChurchManager.getSingleton().getExportData(null);
+      logger.debug(" - Backing up farms");
+      exportString += FarmManager.getSingleton().getExportData(null);
+      exportString += "</export>";
+      logger.debug("Writing backup data to disk");
+      FileWriter w = new FileWriter(GlobalOptions.getSelectedProfile().getProfileDirectory() + "/backup.xml");
+      w.write(exportString);
+      w.flush();
+      w.close();
+      logger.debug("Backup finished successfully");
+    } catch (Exception e) {
+      logger.error("Failed to create backup", e);
     }
+
+  }
 }

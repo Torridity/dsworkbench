@@ -332,7 +332,7 @@ private void jRefeshNetworkButtonfireUpdateProxySettingsEvent(java.awt.event.Mou
     private boolean checkConnectivity(Proxy webProxy) {
         boolean result = false;
         try {
-            URLConnection c = new URL("http://www.dsworkbench.de").openConnection(webProxy);
+            URLConnection c = new URL("http://www.google.com").openConnection(webProxy);
             //c.setConnectTimeout(10000);
             String header = c.getHeaderField(0);
             if (header != null) {

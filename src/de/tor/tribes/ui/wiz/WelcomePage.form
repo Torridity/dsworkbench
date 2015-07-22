@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <Properties>
@@ -41,9 +41,9 @@
       <SubComponents>
         <Component class="javax.swing.JTextPane" name="jTextPane1">
           <Properties>
-            <Property name="contentType" type="java.lang.String" value="text/html"/>
             <Property name="editable" type="boolean" value="false"/>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt;Du hast DS Workbench zum ersten Mal gestartet.&lt;br/&gt;&#xa;Um DS Workbench verwenden zu k&#xf6;nnen, m&#xfc;ssen einmalig einige Einstellungen durchgef&#xfc;hrt werden. DS Workbench wird dich nun durch diese ersten Schritte geleiten und dich dabei unterst&#xfc;tzen. Solltest du an einer Stelle nicht weiterkommen, frage einfach im DS Workbench Forum nach, welches du unter &lt;b&gt;http://www.dsworkbench.de/forum&lt;/b&gt; erreichst.&lt;/html&gt;"/>
+            <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;Du hast DS Workbench zum ersten Mal gestartet.&lt;br/&gt;&#xa;Um DS Workbench verwenden zu k&#xf6;nnen, m&#xfc;ssen einmalig einige Einstellungen durchgef&#xfc;hrt werden. DS Workbench wird dich nun durch diese ersten Schritte geleiten und dich dabei unterst&#xfc;tzen. Solltest du an einer Stelle nicht weiterkommen, frage einfach hier nach: https://forum.die-staemme.de/showthread.php?80831-DS-Workbench&lt;/html&gt;"/>
           </Properties>
         </Component>
       </SubComponents>

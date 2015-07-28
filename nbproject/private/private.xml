@@ -17,28 +17,6 @@
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group name="Libraries">
-            <file>file:/D:/GRID/src/DSWorkbench_git/src/de/tor/tribes/util/ServerSettings.java</file>
-            <file>file:/D:/GRID/src/DSWorkbench_git/src/de/tor/tribes/io/DataHolder.java</file>
-            <file>file:/D:/GRID/src/DSWorkbench_git/src/de/tor/tribes/ui/views/DSWorkbenchDoItYourselfAttackPlaner.java</file>
-            <file>file:/D:/GRID/src/DSWorkbench_git/src/de/tor/tribes/ui/views/DSWorkbenchSettingsDialog.java</file>
-            <file>file:/D:/GRID/src/DSWorkbench_git/src/de/tor/tribes/ui/wiz/FirstStartWizard.java</file>
-            <file>file:/D:/GRID/src/DSWorkbench_git/src/de/tor/tribes/ui/views/DSWorkbenchSelectionFrame.java</file>
-            <file>file:/D:/GRID/src/DSWorkbench_git/src/de/tor/tribes/ui/views/DSWorkbenchReTimerFrame.java</file>
-            <file>file:/D:/GRID/src/DSWorkbench_git/src/de/tor/tribes/util/Constants.java</file>
-            <file>file:/D:/GRID/src/DSWorkbench_git/src/de/tor/tribes/ui/views/DSWorkbenchChurchFrame.java</file>
-            <file>file:/D:/GRID/src/DSWorkbench_git/src/de/tor/tribes/ui/panels/AttackTableTab.java</file>
-            <file>file:/D:/GRID/src/DSWorkbench_git/src/de/tor/tribes/ui/windows/AboutDialog.java</file>
-            <file>file:/D:/GRID/src/DSWorkbench_git/src/de/tor/tribes/ui/windows/DSWorkbenchSplashScreen.java</file>
-            <file>file:/D:/GRID/src/DSWorkbench_git/src/de/tor/tribes/ui/panels/MarkerTableTab.java</file>
-            <file>file:/D:/GRID/src/DSWorkbench_git/src/de/tor/tribes/ui/panels/TroopTableTab.java</file>
-            <file>file:/D:/GRID/src/DSWorkbench_git/src/de/tor/tribes/io/ServerManager.java</file>
-            <file>file:/D:/GRID/src/DSWorkbench_git/src/de/tor/tribes/ui/panels/NoteTableTab.java</file>
-            <file>file:/D:/GRID/src/DSWorkbench_git/src/de/tor/tribes/ui/views/DSWorkbenchTagFrame.java</file>
-            <file>file:/D:/GRID/src/DSWorkbench_git/src/de/tor/tribes/util/PluginManager.java</file>
-            <file>file:/D:/GRID/src/DSWorkbench_git/src/de/tor/tribes/ui/views/DSWorkbenchFormFrame.java</file>
-            <file>file:/D:/GRID/src/DSWorkbench_git/src/de/tor/tribes/ui/ImageManager.java</file>
-            <file>file:/D:/GRID/src/DSWorkbench_git/src/de/tor/tribes/ui/views/DSWorkbenchSOSRequestAnalyzer.java</file>
-        </group>
+        <group name="Libraries"/>
     </open-files>
 </project-private>

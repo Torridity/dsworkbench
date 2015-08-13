@@ -12,7 +12,7 @@ public class LuckViewInterface {
 
     public static String createLuckIndicator(double pValue) {
         StringBuilder b = new StringBuilder();
-        b.append("http://141.52.215.70/misc/tools/luckView.php?luck=").append(Double.toString(pValue));
+        b.append("http://torridity.de/dsworkbench/luckView.php?luck=").append(Double.toString(pValue));
         return b.toString();
     }
 

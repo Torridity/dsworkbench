@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<config>
+
+<speed>1.6</speed>
+<unit_speed>0.625</unit_speed>
+<moral>2</moral>
+<build>
+  <destroy>1</destroy>
+</build>
+<misc>
+<kill_ranking>2</kill_ranking>
+<tutorial>4</tutorial>
+<trade_cancel_time>300</trade_cancel_time>
+</misc>
+<commands>
+<millis_arrival>1</millis_arrival>
+<command_cancel_time>600</command_cancel_time>
+</commands>
+<newbie>
+  <days>5</days>
+  <ratio_days>60</ratio_days>
+  <ratio>20</ratio>
+  <removeNewbieVillages>1</removeNewbieVillages>
+</newbie>
+<game>
+  <base_config>6</base_config>
+  <buildtime_formula>1</buildtime_formula>
+  <knight>1</knight>
+  <knight_new_items>0</knight_new_items>
+  <archer>1</archer>
+  <tech>2</tech>
+  <spy>10</spy>
+  <farm_limit>0</farm_limit>
+  <church>1</church>
+  <watchtower>0</watchtower>
+  <fake_limit>1</fake_limit>
+  <barbarian_rise>0.003</barbarian_rise>
+  <barbarian_shrink>0</barbarian_shrink>
+  <barbarian_max_points>1500</barbarian_max_points>
+  <hauls>1</hauls>
+  <hauls_base>1000</hauls_base>
+  <hauls_max>100000</hauls_max>
+  <base_production>30</base_production>
+  <event>0</event>
+  <compete_event></compete_event>
+</game>
+<buildings>
+  <custom_main>-1</custom_main>
+  <custom_farm>-1</custom_farm>
+  <custom_storage>-1</custom_storage>
+  <custom_place>-1</custom_place>
+  <custom_barracks>-1</custom_barracks>
+  <custom_church>-1</custom_church>
+  <custom_church_f>-1</custom_church_f>
+  <custom_smith>-1</custom_smith>
+  <custom_wood>-1</custom_wood>
+  <custom_stone>-1</custom_stone>
+  <custom_iron>-1</custom_iron>
+  <custom_market>-1</custom_market>
+  <custom_stable>-1</custom_stable>
+  <custom_wall>-1</custom_wall>
+  <custom_garage>-1</custom_garage>
+  <custom_hide>-1</custom_hide>
+  <custom_snob>-1</custom_snob>
+  <custom_statue>-1</custom_statue>
+</buildings>
+<snob>
+  <gold>1</gold>
+  <cheap_rebuild>0</cheap_rebuild>
+  <simple>1</simple>
+  <rise>2</rise>
+  <max_dist>70</max_dist>
+  <factor>1</factor>
+  <coin_wood>28000</coin_wood>
+  <coin_stone>30000</coin_stone>
+  <coin_iron>25000</coin_iron>
+  <no_barb_conquer>0</no_barb_conquer>
+</snob>
+<ally>
+  <no_harm>0</no_harm>
+  <no_other_support>0</no_other_support>
+  <allytime_support>0</allytime_support>
+  <no_leave>0</no_leave>
+  <limit>30</limit>
+  <fixed_allies>0</fixed_allies>
+  <points_member_count>30</points_member_count>
+  <wars_member_requirement>5</wars_member_requirement>
+  <wars_points_requirement>15000</wars_points_requirement>
+  <wars_autoaccept_days>7</wars_autoaccept_days>
+</ally>
+<coord>
+  <map_size>800</map_size>
+  <func>4</func>
+  <empty_villages>5</empty_villages>
+  <bonus_villages>0</bonus_villages>
+  <bonus_new>0</bonus_new>
+  <inner>8566</inner>
+  <select_start>1</select_start>
+  <village_move_wait>336</village_move_wait>
+  <noble_restart>1</noble_restart>
+  <legacy_scenery>0</legacy_scenery>
+  <start_villages>1</start_villages>
+</coord>
+<sitter>
+<allow>1</allow>
+</sitter>
+<sleep>
+  <active>0</active>
+  <delay>60</delay>
+  <min>6</min>
+  <max>10</max>
+  <min_awake>12</min_awake>
+  <max_awake>36</max_awake>
+  <warn_time>10</warn_time>
+</sleep>
+<night>
+  <active>1</active>
+  <start_hour>0</start_hour>
+  <end_hour>8</end_hour>
+  <def_factor>2</def_factor>
+</night>
+<win>
+  <check>3</check>
+</win>
+
+</config>

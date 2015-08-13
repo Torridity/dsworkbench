@@ -326,7 +326,7 @@ public class ImageManager {
         URL noteUrl = NOTE_URLS[pNoteId];
         String name = new File(noteUrl.getFile()).getName();
         try {
-            return new URL("http://141.52.215.70/misc/tools/icons/" + name);
+            return new URL("http://torridity.de/dsworkbench/icons/" + name);
         } catch (Exception e) {
             logger.error("Failed to create URL on server for note icon '" + name + "'");
             return noteUrl;

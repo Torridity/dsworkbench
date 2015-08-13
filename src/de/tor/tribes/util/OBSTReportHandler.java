@@ -29,21 +29,21 @@ public class OBSTReportHandler {
 
   private static Logger logger = Logger.getLogger("OBSTReportParser");
 
-  public static void main(String[] args) throws Exception {
-    Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-    Logger.getRootLogger().setLevel(Level.DEBUG);
-    String data = "Anzahl: 0 0 0 0 1 442 0 0 0 0 0 0\nAnzahl: 0 0 0 0 0 0 0 0 0 0 0 0";
-    Matcher m = Pattern.compile("Anzahl:" + "(\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+)").matcher(data);
-    //m = Pattern.compile("Anzahl:" + "\\s+([\\.0-9]+\\s+[\\.0-9]+)").matcher(data);
-//        m = Pattern.compile("Beute:\\s+([\\.0-9]+)\\s([\\.0-9]+)\\s([\\.0-9]+)").matcher(data);
-
-    if (m.find()) {
-      System.out.println(m.groupCount());
-      System.out.println(m.group(1));
-      if (m.find()) {
-        System.out.println(m.group(1));
-      }
-    }
+//  public static void main(String[] args) throws Exception {
+//    Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
+//    Logger.getRootLogger().setLevel(Level.DEBUG);
+//    String data = "Anzahl: 0 0 0 0 1 442 0 0 0 0 0 0\nAnzahl: 0 0 0 0 0 0 0 0 0 0 0 0";
+//    Matcher m = Pattern.compile("Anzahl:" + "(\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+)").matcher(data);
+//    //m = Pattern.compile("Anzahl:" + "\\s+([\\.0-9]+\\s+[\\.0-9]+)").matcher(data);
+////        m = Pattern.compile("Beute:\\s+([\\.0-9]+)\\s([\\.0-9]+)\\s([\\.0-9]+)").matcher(data);
+//
+//    if (m.find()) {
+//      System.out.println(m.groupCount());
+//      System.out.println(m.group(1));
+//      if (m.find()) {
+//        System.out.println(m.group(1));
+//      }
+//    }
 
     /*
      * String data = "SpionageErspähte Rohstoffe:	2.352 2.651 1.184"; data =
@@ -84,7 +84,7 @@ public class OBSTReportHandler {
      * Pattern.compile("Beute:\\s+([\\.0-9]+)\\s([\\.0-9]+)\\s([\\.0-9]+)").matcher(data); if (m.find()) { if (m.groupCount() == 3) {
      * //all System.out.println(m.group(1) + ", " + m.group(2) + ", " + m.group(3)); } }
      */
-  }
+//  }
 
   public static boolean handleReport(String pData) {
     try {

@@ -189,27 +189,27 @@ public class AttackPlanHTMLExporter {
 
             // <editor-fold defaultstate="collapsed" desc="Replace Unit Icons">
             UnitHolder unit = a.getUnit();
-            b = b.replaceAll(UNIT, "<img src=\"http://141.52.215.70/misc/tools/export/" + unit.getPlainName() + ".png\">");
+            b = b.replaceAll(UNIT, "<img src=\"http://torridity.de/dsworkbench/export/" + unit.getPlainName() + ".png\">");
 
             switch (a.getType()) {
                 case Attack.CLEAN_TYPE: {
-                    b = b.replaceAll(TYPE, "<img src=\"http://141.52.215.70/misc/tools/export/att.png\">");
+                    b = b.replaceAll(TYPE, "<img src=\"http://torridity.de/dsworkbench/export/att.png\">");
                     break;
                 }
                 case Attack.SNOB_TYPE: {
-                    b = b.replaceAll(TYPE, "<img src=\"http://141.52.215.70/misc/tools/export/snob.png\">");
+                    b = b.replaceAll(TYPE, "<img src=\"http://torridity.de/dsworkbench/export/snob.png\">");
                     break;
                 }
                 case Attack.FAKE_TYPE: {
-                    b = b.replaceAll(TYPE, "<img src=\"http://141.52.215.70/misc/tools/export/fake.png\">");
+                    b = b.replaceAll(TYPE, "<img src=\"http://torridity.de/dsworkbench/export/fake.png\">");
                     break;
                 }
                 case Attack.FAKE_DEFF_TYPE: {
-                    b = b.replaceAll(TYPE, "<img src=\"http://141.52.215.70/misc/tools/export/def_fake.png\">");
+                    b = b.replaceAll(TYPE, "<img src=\"http://torridity.de/dsworkbench/export/def_fake.png\">");
                     break;
                 }
                 case Attack.SUPPORT_TYPE: {
-                    b = b.replaceAll(TYPE, "<img src=\"http://141.52.215.70/misc/tools/export/ally.png\">");
+                    b = b.replaceAll(TYPE, "<img src=\"http://torridity.de/dsworkbench/export/ally.png\">");
                     break;
                 }
                 default: {

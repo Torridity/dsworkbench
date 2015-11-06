@@ -1,0 +1,1157 @@
+Signature-Version: 1.0
+SHA1-Digest-Manifest: YPBaFJUeERJSk0geYuS+Kg1VICo=
+Created-By: 1.3.1 (Sun Microsystems Inc.)
+
+Name: javax/help/BackAction$TimeListener.class
+SHA1-Digest: idjxV0vNE2FLV7T2sxwV1h7zjxc=
+
+Name: javax/help/plaf/gtk/images/SearchMed.gif
+SHA1-Digest: p7279Bolh6ye9bDrl0clXO/kqmg=
+
+Name: com/sun/java/help/search/NonnegativeIntegerGenerator.class
+SHA1-Digest: DcJ4m8k4cYd1IXU5uqZanUx5epA=
+
+Name: com/sun/java/help/search/SearchEnvironment.class
+SHA1-Digest: YBZqXDYTGK7D2YYXHSiqz2c5EnA=
+
+Name: com/sun/java/help/search/NextDocGeneratorHeap.class
+SHA1-Digest: ScX05PMEwZIPSubO6Ne8SemZ+0s=
+
+Name: com/sun/java/help/impl/ParserEvent.class
+SHA1-Digest: 59gYngjLXUcdcttPZXiB+KLIPUA=
+
+Name: com/sun/java/help/search/LiteMorph_en.class
+SHA1-Digest: LyfiToUoZ+mHu4ETOv3iTmzpEVM=
+
+Name: javax/help/plaf/HelpNavigatorUI.class
+SHA1-Digest: zRRMGOZj1vpdLFKuk5mxjvXiQNU=
+
+Name: com/sun/java/help/impl/ViewAwareComponent.class
+SHA1-Digest: DSY+vm4V/pwj+CrQuVl9SSSSQ/E=
+
+Name: javax/help/FavoritesNode.class
+SHA1-Digest: AwQh5iiITHbPBp/TjtnFIBHPxQw=
+
+Name: javax/help/plaf/basic/images/Print.gif
+SHA1-Digest: 1w8lHYIj06N6SSIeFENifDL8p6E=
+
+Name: javax/help/JHelpIndexNavigator.class
+SHA1-Digest: EpbB0KdxutkqV4l5gg/IFpSHI3A=
+
+Name: com/sun/java/help/search/DocumentLists.class
+SHA1-Digest: Ej7Kiit7sVFbejfwC2LVCGPWAhk=
+
+Name: javax/help/plaf/basic/BasicGlossaryNavigatorUI.class
+SHA1-Digest: IQPNhA29cd5A3awWT8dSgFLsS6s=
+
+Name: com/sun/java/help/search/BtreeDictCompactor.class
+SHA1-Digest: hIG1AfENyIT638IKtm5hFhcZpRs=
+
+Name: javax/help/event/HelpSetEvent.class
+SHA1-Digest: qDxft0BN2ncTaMVDfrCv2O/DgEA=
+
+Name: javax/help/plaf/basic/images/OnItemCursor.gif
+SHA1-Digest: 423zKlKWMBMIepL19RFs5+9oft4=
+
+Name: com/sun/java/help/impl/CustomKit$CustomDocument.class
+SHA1-Digest: OeUtM6GWL9Z1kkPZLY9Q2A2zofI=
+
+Name: javax/help/tagext/SearchTOCItemTag.class
+SHA1-Digest: w0BDPHcakZODbNEvMP5bTZaIdtM=
+
+Name: com/sun/java/help/impl/TagProperties$EmptyEnumerator.class
+SHA1-Digest: 1pRNSIv3PwL9HkWqWbMKWHx8x+s=
+
+Name: com/sun/java/help/search/DefaultSearchEngine.class
+SHA1-Digest: lQk6OsVe5dNaAsqEUcs2YMt1YpM=
+
+Name: javax/help/event/TextHelpModelEvent.class
+SHA1-Digest: klvBhI2SUypuXkcxurS+PlLXpe4=
+
+Name: com/sun/java/help/search/IntegerArray.class
+SHA1-Digest: 4R3DuAfrVC6+WRYfgvEt0vvUQMg=
+
+Name: javax/help/event/HelpSetListener.class
+SHA1-Digest: tPOIGBGTkyF7WYGq8by3n3l9vXM=
+
+Name: javax/help/TOCItem.class
+SHA1-Digest: SGBaMNodjBKOgWiMgcAi2dqnfb4=
+
+Name: javax/help/plaf/gtk/images/Reload.png
+SHA1-Digest: 8s892Fuuu6tcLQ7ci9r2pmlMgCM=
+
+Name: javax/help/event/HelpHistoryModelEvent.class
+SHA1-Digest: R7HwHWt1BvECbgilwq6PnAvpgR0=
+
+Name: com/sun/java/help/impl/CustomKit$CustomFactory.class
+SHA1-Digest: rigmAZLSso4w/I5ERHTBFKKbGWM=
+
+Name: javax/help/tagext/NavigatorsTEI.class
+SHA1-Digest: 5Gevh/+YklJyRYr9xSrzf707bwI=
+
+Name: com/sun/java/help/impl/JHelpPrintHandler$JHPrintable.class
+SHA1-Digest: 3BljAz9YdbD5CFHXELIRcdvyiv0=
+
+Name: com/sun/java/help/search/ConceptLocation.class
+SHA1-Digest: MVCeELiVDp3vGuZF97QAIDogQjs=
+
+Name: javax/help/plaf/basic/images/OnItemCursor.properties
+SHA1-Digest: QyBQMFSKanbA+5jBRhPe3NbQzmQ=
+
+Name: com/sun/java/help/search/QueryEngine.class
+SHA1-Digest: cpKTNhWMIbpRiNFnNKJiGkg0RAg=
+
+Name: com/sun/java/help/impl/CustomKit$CustomDocument$CustomReader.cla
+ ss
+SHA1-Digest: 81KD3+mhex/+5LbtS+m6y0fTaPI=
+
+Name: javax/help/plaf/basic/images/Back.gif
+SHA1-Digest: Lf8QLWZA8IU3hnkXgaPqKkkUXIo=
+
+Name: javax/help/plaf/basic/BasicIndexNavigatorUI$NavSwingWorker.class
+SHA1-Digest: vxZj4YLdnrhSDVhsGQttJpVWBtU=
+
+Name: com/sun/java/help/search/StreamDecompressor.class
+SHA1-Digest: laVYoIGh+SDIDA1wTVacPrrbcrE=
+
+Name: javax/help/resources/Constants_zh.class
+SHA1-Digest: zMotI8ypsfIv96qT8oRhvUe4rds=
+
+Name: com/sun/java/help/search/HitStoreNode.class
+SHA1-Digest: WtDr25l6xwGFO5/u8HOdZzTl6ek=
+
+Name: javax/help/DefaultHelpHistoryModel.class
+SHA1-Digest: 3srvvo+RJ0qOWHsMoYqCQKKj5Dg=
+
+Name: javax/help/SearchTOCItem$1.class
+SHA1-Digest: /N3jtzzpYZ0onX+vhUbq2qPoBJM=
+
+Name: com/sun/java/help/impl/JHelpPrintHandler$PageSetupThread.class
+SHA1-Digest: zqTBfSWPoQt5i/ZNzHPH/47SeTM=
+
+Name: javax/help/plaf/gtk/images/SearchMedLow.gif
+SHA1-Digest: lOXulWNgAlvfxsZBJ+zMuHVpKKA=
+
+Name: javax/help/Merge.class
+SHA1-Digest: 77LdTsavjfn6LZhttrIZIbt/7n0=
+
+Name: com/sun/java/help/search/Compressor.class
+SHA1-Digest: bn+rdwXf/HibXj4oLsoo3DpXHcY=
+
+Name: javax/help/plaf/basic/images/GlossaryNav.gif
+SHA1-Digest: pG9eLbVuKwR1NreNhWwYLuXczQI=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$MetaA
+ ction.class
+SHA1-Digest: sx5P7yADNfNtF2a5DX2GgaiTwIw=
+
+Name: com/sun/java/help/search/FullBtreeDict$1.class
+SHA1-Digest: htyKcplykcY4BUe2rcBbZm8F9TQ=
+
+Name: javax/help/PrintSetupAction.class
+SHA1-Digest: TgtgzeB8j6g4Orx3GdmoL6f3QPw=
+
+Name: com/sun/java/help/search/GeneratorHeap.class
+SHA1-Digest: SgM7fZkZat2MW8WzKDQOAHEg5XA=
+
+Name: javax/help/plaf/basic/images/DnDCursor.properties
+SHA1-Digest: bTaRGXg+Sk4mPu30vRWaL1iNtUU=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback.class
+SHA1-Digest: sl0rlUgOYxL3CrkfxEljVJaRWXc=
+
+Name: com/sun/java/help/impl/JHelpPrintHandler1_2.class
+SHA1-Digest: HEo7mwFWKLGm3MJK6O63MamSozk=
+
+Name: javax/help/plaf/basic/BasicFavoritesNavigatorUI$RemoveAction.cla
+ ss
+SHA1-Digest: K8+pRgVPTlRlNOqhh3qO7jb/5S8=
+
+Name: javax/help/resources/Constants_ja.class
+SHA1-Digest: yLKZJPd7lPguxyMArtTMt2Xl5+I=
+
+Name: com/sun/java/help/search/FullBtreeDict.class
+SHA1-Digest: UQuhD90VpZGhqiQGwPhbqlP+7pw=
+
+Name: javax/help/CSH$DisplayHelpFromSource.class
+SHA1-Digest: MVWz6V+lY2psOO6ifD0v9IZeWnk=
+
+Name: javax/help/FlatMap.class
+SHA1-Digest: EMBOtt8qcdRILUvEZcVNI3th2vQ=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$LinkA
+ ction.class
+SHA1-Digest: u+21mz5eHWuo4Ku0UhWLxCScY0E=
+
+Name: javax/help/JHelpFavoritesNavigator.class
+SHA1-Digest: DiVYRTwHYJXnPp5g+M/ckobnye4=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$HeadA
+ ction.class
+SHA1-Digest: C+cThdyGCcwqEd96LRbipH0wO9Q=
+
+Name: javax/help/plaf/basic/BasicSearchNavigatorUI.class
+SHA1-Digest: de3uvghiLH0WaYxsbjqSRNyJfeY=
+
+Name: javax/help/BackAction.class
+SHA1-Digest: XtI7MJkLSj0lMiYgMSQ9UxdXLCA=
+
+Name: javax/help/HelpUtilities.class
+SHA1-Digest: 5EuuIzUlo0D6m20ORir/uugKImM=
+
+Name: javax/help/Popup.class
+SHA1-Digest: qjMZwXXX1/FOh5eBCwugQo0GXUI=
+
+Name: javax/help/plaf/gtk/images/Back.png
+SHA1-Digest: M8VPRilpeeKnuvDEFH6DfQJD0e8=
+
+Name: com/sun/java/help/search/ConceptData.class
+SHA1-Digest: TdExlHs+cSNJ0LWTgWFpYzY37m0=
+
+Name: javax/help/JHelpTOCNavigator.class
+SHA1-Digest: ALnUW7xZYhxUXz+IWbA1cRYoLVQ=
+
+Name: com/sun/java/help/search/BtreeDict$2.class
+SHA1-Digest: 3z6jXLoe2eoV1VjHMCFXTd1uVwo=
+
+Name: javax/help/Merge$DefaultMergeFactory.class
+SHA1-Digest: X+RYE8sJ4cFL9T5CxfVW2Y4Fb+U=
+
+Name: javax/help/tagext/NavigatorsTag.class
+SHA1-Digest: 2IJl1jNl75QExN2aGDgb3UApWNk=
+
+Name: javax/help/plaf/basic/BasicSearchNavigatorUI$SearchItemsFound.cl
+ ass
+SHA1-Digest: UlXnNOZ1+SAA/+kXm00jsT18m2Q=
+
+Name: javax/help/FavoritesView$FavoritesParser.class
+SHA1-Digest: nRc8xfUzeFotspexhK0621hWFZ0=
+
+Name: javax/help/plaf/basic/BasicSearchNavigatorUI$2.class
+SHA1-Digest: n5cT2NcnVgGPbKfvmSfmvFofnDg=
+
+Name: javax/help/SwingHelpUtilities$4.class
+SHA1-Digest: Vi7RYI494k5HYeqCJSlCanBCNVs=
+
+Name: javax/help/plaf/basic/BasicTOCNavigatorUI.class
+SHA1-Digest: BgX11enH/2+lfnKH050eadm8+TE=
+
+Name: javax/help/HelpModel.class
+SHA1-Digest: bekQCzQaEhJgL1igntjlq+B3Fng=
+
+Name: javax/help/plaf/gtk/GTKCursorFactory.class
+SHA1-Digest: ZGzat+eAxbyfLtI/VD+0imKz7oA=
+
+Name: javax/help/Popup$PopupComponentAdapter.class
+SHA1-Digest: Gk8vhbP3XnD2Zj5XpaA9YfQjeaY=
+
+Name: com/sun/java/help/impl/ParserListener.class
+SHA1-Digest: QmFd2EnZ0Px8oJdeMc/bE6PA2MU=
+
+Name: javax/help/HelpSet.class
+SHA1-Digest: lkoGFdenU2GmF+iIZJbu77uoHjU=
+
+Name: javax/help/plaf/basic/images/Favorites.gif
+SHA1-Digest: Kj6bEaLI1GHFBGRkguHUiSOFh/A=
+
+Name: javax/help/plaf/basic/BasicCursorFactory.class
+SHA1-Digest: v1cFrzwsEOepkNlDLTP5+kk/gjo=
+
+Name: javax/help/TextHelpModel$Highlight.class
+SHA1-Digest: FMelMNK6IA1td3bQO0zy/PLuXNk=
+
+Name: javax/help/ReloadAction.class
+SHA1-Digest: tLR8mQTMAihxoctYlrce0VQUqRU=
+
+Name: javax/help/AppendMerge.class
+SHA1-Digest: BWum7oYF8k5s+MXpX/xCbANNoqw=
+
+Name: com/sun/java/help/search/Indexer.class
+SHA1-Digest: KfQ8C0kV+tc/h16apTBSU0H8rTs=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$Isind
+ exAction.class
+SHA1-Digest: Mv8XbXFPGeoJup0B87j+q3R0Pms=
+
+Name: javax/help/TOCView$TOCParser.class
+SHA1-Digest: RdAQCWWolQsNm/HXMXuiB3yaZjw=
+
+Name: javax/help/plaf/gtk/images/SearchHigh.gif
+SHA1-Digest: 7iVp/ouLDE6/NRx2uTZGhpJlRA0=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$Style
+ Action.class
+SHA1-Digest: bMiKTEnMEfS8aIze31Thx6Qaef8=
+
+Name: com/sun/java/help/search/FullBtreeDict$Entry.class
+SHA1-Digest: ha5VWfnTt7PtqbP22VYctWfXjWw=
+
+Name: com/sun/java/help/impl/JHelpPrintHandler$EmptyPrintable.class
+SHA1-Digest: CtSpQKNA8t9cYW6ExoKqTghQ4oM=
+
+Name: javax/help/SearchHit.class
+SHA1-Digest: BMGTT1hdfbkVplb8cYRaDzsTJXg=
+
+Name: javax/help/plaf/gtk/images/Print.png
+SHA1-Digest: zhA0bv0Baqrq2EDpGNqQ2igsjnU=
+
+Name: com/sun/java/help/search/RAFFileFactoryOn12$1.class
+SHA1-Digest: icFQDUkZ+Uw+Eo2m7NuhfvHCJHQ=
+
+Name: com/sun/java/help/search/Rule.class
+SHA1-Digest: +Jt5I13VzMor635DjcqqFEsZhAM=
+
+Name: javax/help/HelpHistoryModel.class
+SHA1-Digest: 9Lbhw/B1wH77ZkZ1wv/F37BMtt4=
+
+Name: javax/help/SearchTOCItem.class
+SHA1-Digest: LttiJ3mvbEjikoAkcaf+nH7uUIw=
+
+Name: javax/help/plaf/basic/BasicFavoritesNavigatorUI$CopyAction.class
+SHA1-Digest: yAaGOeODAW4EawFzf8MbcFpQTpU=
+
+Name: javax/help/search/MergingSearchEngine$MergingSearchQuery.class
+SHA1-Digest: 2VBnyNJWsSi7aYhHj5L/3RFJf9I=
+
+Name: javax/help/HelpSet$DefaultHelpSetFactory.class
+SHA1-Digest: gy/VpUKSi/SsOSuL2hPTzX2V1HY=
+
+Name: com/sun/java/help/search/Search.class
+SHA1-Digest: xXp5430CUjBPwl0Lwdpn54yziKU=
+
+Name: javax/help/JHelpSearchNavigator.class
+SHA1-Digest: cWVzHG7fSEovpF6+aH196odEJQU=
+
+Name: javax/help/search/SearchItem.class
+SHA1-Digest: 3oDnje+Nl4sHtS9/2o/YmPn/9dY=
+
+Name: javax/help/InvalidNavigatorViewException.class
+SHA1-Digest: m4r6snTIuQVGodcqJ9CvUKgQ1tw=
+
+Name: com/sun/java/help/impl/JHSecondaryViewer$1.class
+SHA1-Digest: i3hnbJCgT5oyQtMyMm0gc0ikbWM=
+
+Name: javax/help/tagext/ValidateTag.class
+SHA1-Digest: cqBR95RmnrV/SRaUh7wvLbMeOVg=
+
+Name: javax/help/UniteAppendMerge.class
+SHA1-Digest: wVWnHYsN5FnzLyoDf2FFglwchcY=
+
+Name: com/sun/java/help/search/BlockManagerParameters.class
+SHA1-Digest: 0m+6jxrcOiuz1VaB2N/zKi4IQdc=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$Parag
+ raphAction.class
+SHA1-Digest: CrfjGahqVrrxuhgolsssFz5YZm4=
+
+Name: com/sun/java/help/impl/JHelpPrintHandler$PageTransform.class
+SHA1-Digest: 8RvpvAIQliQ4cX6vTXdDCwwcnBU=
+
+Name: javax/help/plaf/basic/BasicSearchNavigatorUI$1.class
+SHA1-Digest: Ai9VmI+MDMhGlLpn3RIxd4csBTg=
+
+Name: com/sun/java/help/search/Utilities.class
+SHA1-Digest: 5taeepk65rD3bN969PBDCCx+7WI=
+
+Name: javax/help/SwingHelpUtilities$3.class
+SHA1-Digest: JCm/u3VV/PzyO+xUWAIji8Xvhlg=
+
+Name: javax/help/HelpSetException.class
+SHA1-Digest: odG9OD73c73yNS5ncGRzQqie+aU=
+
+Name: javax/help/WindowPresentation$2.class
+SHA1-Digest: 7Q8LREwI5GchTEnRlokBqyGpNeY=
+
+Name: javax/help/plaf/basic/images/SearchLow.gif
+SHA1-Digest: WMfZJgpQFOB7BoXFPYprNaWZFVg=
+
+Name: com/sun/java/help/search/QueryHit.class
+SHA1-Digest: JDKr0hSo9XqpoFAl525bbtI6qAQ=
+
+Name: javax/help/Popup$PopupMouseWheelListener.class
+SHA1-Digest: qiXfuMGvz1hCnskELlMcz8G/7NQ=
+
+Name: com/sun/java/help/search/RAFFile.class
+SHA1-Digest: 04j/BeWPF0jRLFWOKwOHZqPryt8=
+
+Name: com/sun/java/help/search/RoleFiller.class
+SHA1-Digest: j8sO5FFvlJMTM4bFc6M8Mq/VDdQ=
+
+Name: javax/help/Presentation.class
+SHA1-Digest: irgEUgyE0LKNj2qAd7cXwz3+UHc=
+
+Name: com/sun/java/help/search/BtreeDictCompactor$1.class
+SHA1-Digest: 0Ih7o8ShFc+kH/+mv94szw6D918=
+
+Name: com/sun/java/help/search/FullBtreeDict$FullDictBlock.class
+SHA1-Digest: AxfakVnGtTPkSzmAohydNKBjCxg=
+
+Name: javax/help/UnsupportedOperationException.class
+SHA1-Digest: nZI7DFc4ldDDS5mpz2cmGIg1tZk=
+
+Name: javax/help/plaf/basic/BasicTOCCellRenderer.class
+SHA1-Digest: F6rp2UQ24+bdHvK3VtJI6BQAhlo=
+
+Name: javax/help/TryMap.class
+SHA1-Digest: ygKyvh9YMxEL80tbY7OGff1I/W8=
+
+Name: javax/help/plaf/basic/BasicContentViewerUI$ScrollToPosition.clas
+ s
+SHA1-Digest: VGqyIbrMMr6wXjIK/3F2QL1l9EU=
+
+Name: com/sun/java/help/search/DBPartParameters.class
+SHA1-Digest: RUzmwjO+0onz4AeFft1dXrVzvis=
+
+Name: com/sun/java/help/search/BtreeDict.class
+SHA1-Digest: 4Nn7aCyPyaDH0gFIDjlEoSdwF54=
+
+Name: com/sun/java/help/impl/DocPConst.class
+SHA1-Digest: VmGcmweOg1zedqlYieCz2Bt+stc=
+
+Name: javax/help/HelpSetFactory$HelpAction.class
+SHA1-Digest: HjIQLdJZvilbqh8n/W96KHAvUaY=
+
+Name: javax/help/Popup$1.class
+SHA1-Digest: 1ysgCyNtC7ipd1qGINygpFsqviQ=
+
+Name: javax/help/search/SearchEvent.class
+SHA1-Digest: n/vxcm1q1pvGUTgi++QUPGbCCjM=
+
+Name: javax/help/TOCView.class
+SHA1-Digest: oVkmWM9YbteCS1xVQPXr1sejPn8=
+
+Name: javax/help/plaf/basic/BasicContentViewerUI$JHEditorPane.class
+SHA1-Digest: GB3baXMPURqSpxTIyE91djzFwmo=
+
+Name: javax/help/plaf/gtk/images/SearchLow.gif
+SHA1-Digest: tDXzaeHsWKjPkpWshKB6cNpI+WI=
+
+Name: javax/help/CSH.class
+SHA1-Digest: 6awDbuL8dN6UM36jT8iM8fJIJBk=
+
+Name: com/sun/java/help/search/BtreeDict$DictBlock.class
+SHA1-Digest: JqcWhizEbLRy7IxbtpMnEtSNNWo=
+
+Name: com/sun/java/help/search/MemoryRAFFile.class
+SHA1-Digest: mDO4UZBDSekYKZ7tITgY90+UIso=
+
+Name: javax/help/TreeItem.class
+SHA1-Digest: Io6u4mOXq3heWGUq5gF/zRiFVLA=
+
+Name: com/sun/java/help/search/Query.class
+SHA1-Digest: 6pLfWgkt/gH2h9dqKHXQQnAr/cs=
+
+Name: com/sun/java/help/impl/MyBufferedReader.class
+SHA1-Digest: n9SmzOnbo+Izk3F4WCmi3PpKS7s=
+
+Name: javax/help/CSH$Manager.class
+SHA1-Digest: XW8a/nB9RK3+yfH8UKPFHPXkK20=
+
+Name: com/sun/java/help/search/HitStore.class
+SHA1-Digest: tG0v+CzlrB7nxyUofuM9eZGnYdg=
+
+Name: com/sun/java/help/search/NextDocGenerator.class
+SHA1-Digest: PVvZCBvbd0sCDFRU9gwB8BnwO8w=
+
+Name: javax/help/SwingHelpUtilities.class
+SHA1-Digest: zteK0qIKHbUzbefDtlHQhAOVuyw=
+
+Name: javax/help/search/MergingSearchEngine.class
+SHA1-Digest: kskelDWHxyMz4McKPVa6Zofm8H4=
+
+Name: javax/help/WindowPresentation$1.class
+SHA1-Digest: PPpA0/7bykMgXULmyc1QR34c5dI=
+
+Name: javax/help/resources/Constants_he.class
+SHA1-Digest: 8QZRRjp3YpZc6POr4ijtxqPSK6o=
+
+Name: javax/help/HomeAction.class
+SHA1-Digest: PgZcXITS4MkKuaLGMcz8zKWoOZI=
+
+Name: javax/help/plaf/basic/images/IndexNav.gif
+SHA1-Digest: 1zW+DT+Bv06irEwRf5fyIWL8EEA=
+
+Name: javax/help/plaf/basic/BasicFavoritesNavigatorUI$PopupListener.cl
+ ass
+SHA1-Digest: cGfOsIuhhkk5RRL7fjMre754yRw=
+
+Name: javax/help/HelpUtilities$LocalePair.class
+SHA1-Digest: Eub6ateL2EU6ybr/TTLPbz+zgQ8=
+
+Name: javax/help/WindowPresentation$WindowPropertyChangeListener.class
+SHA1-Digest: aG6rt0pVQH0urOpQjVbe/cwQrjk=
+
+Name: javax/help/CSH$DisplayHelpFromFocus.class
+SHA1-Digest: ooSNTOfA7KLHJcrllpZw2p945CE=
+
+Name: javax/help/resources/Constants_ar.class
+SHA1-Digest: G3os/tnunKLopdo5bVUZzEMY+ao=
+
+Name: com/sun/java/help/search/DocumentCompressor.class
+SHA1-Digest: T7MvkclHlxKmhNpPJ79srushrgI=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$PreAc
+ tion.class
+SHA1-Digest: wIjEbz5faYAK3YvL8Vntejw3H3Q=
+
+Name: javax/help/IndexView.class
+SHA1-Digest: Rwau3MqCJvOVo4Mq9m7U5H9vx0Q=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$Title
+ Action.class
+SHA1-Digest: JuZy5fLTEvpGAjTMIOoojtq0o20=
+
+Name: javax/help/ServletHelpBroker.class
+SHA1-Digest: /OahfMc4HO+ZbULLo/hRIQb72Ek=
+
+Name: javax/help/plaf/basic/images/DnDCursor.gif
+SHA1-Digest: PbpxG48yljjs6YlQGIE3bvOjkkw=
+
+Name: javax/help/search/SearchListener.class
+SHA1-Digest: ar2LtWsQWiovpwjjcxePvPsCuOg=
+
+Name: javax/help/CSH$DisplayHelpAfterTracking.class
+SHA1-Digest: wBX/W3jAj/DDCCnk5cBTcIBupsc=
+
+Name: javax/help/IndexItem.class
+SHA1-Digest: B06JwwvyACAKrI91GD2Op71+5BQ=
+
+Name: javax/help/NavigatorView.class
+SHA1-Digest: PSD9SKWiWiPZYc8vcv4IvBwxeck=
+
+Name: com/sun/java/help/search/ConceptGroupGenerator.class
+SHA1-Digest: fFqh7nrVf49KKsrXgJfpHLhvAHw=
+
+Name: com/sun/java/help/search/DocumentLists$MicroIndex.class
+SHA1-Digest: 6M9CGPouxVNNc0mrR1T7Syr5ZJE=
+
+Name: com/sun/java/help/impl/CustomKit$CustomDocument$CustomReader$Obj
+ ectAction1.class
+SHA1-Digest: BX76TFALNTazqRWs+KAHQnDp10w=
+
+Name: javax/help/plaf/basic/BasicFavoritesNavigatorUI$FavoritesTree.cl
+ ass
+SHA1-Digest: xOaM32y4jhJ5KEIAQAlMwH2JMEk=
+
+Name: javax/help/plaf/basic/BasicHelpUI.class
+SHA1-Digest: piWSVudAMyrSfRuNfpIPrd3/t/0=
+
+Name: javax/help/plaf/basic/images/PrintSetup.gif
+SHA1-Digest: fvyp9gv/zzy/H3WVH5e/1A+t2E0=
+
+Name: com/sun/java/help/search/CompressorIterator.class
+SHA1-Digest: PAn3lCWFLdSzVeSls6Bp5aSt6mo=
+
+Name: javax/help/plaf/gtk/images/IndexNav.gif
+SHA1-Digest: cV52jSBMeyOALNXZzvAVhU4Y0OI=
+
+Name: javax/help/ForwardAction$TimeListener.class
+SHA1-Digest: 3PA9i17y08hA+oZZSZ7uoTI5V2k=
+
+Name: javax/help/plaf/basic/BasicFavoritesCellRenderer.class
+SHA1-Digest: Y1kPRf+LuZOLmlIqeHSHRhC11ig=
+
+Name: javax/help/resources/Constants_es.class
+SHA1-Digest: kZPHjdZV8LeyhDAivfc5jtZDM8A=
+
+Name: javax/help/plaf/gtk/images/FavoritesNav.png
+SHA1-Digest: T9yGsUIjYAYxSacVs+UeI+zdR3E=
+
+Name: javax/help/plaf/gtk/images/SearchMedHigh.gif
+SHA1-Digest: ZYseR4dUHvtA1UpZKsY6EZazH8g=
+
+Name: javax/help/IndexView$DefaultIndexFactory.class
+SHA1-Digest: zt1n4LfI45o8elO1CH2AfEiG03w=
+
+Name: javax/help/search/IndexBuilder.class
+SHA1-Digest: e80AD/IP0tNLIuWdBpSE787IkjE=
+
+Name: javax/help/DefaultHelpModel$DefaultHighlight.class
+SHA1-Digest: Y+0HKZFhhw1RRprhVdJ2piQfCQI=
+
+Name: javax/help/resources/Constants.class
+SHA1-Digest: ZgKhgTGSBt62D+TtLoypW2jrgy8=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$FormA
+ ction.class
+SHA1-Digest: ibaTJZAZrQ7OxlcsVWwJaASQsOk=
+
+Name: javax/help/TryMap$TryEnumeration.class
+SHA1-Digest: i8HvoVQHEsx9s9FPXh0/qO3p3dM=
+
+Name: com/sun/java/help/search/BlockManager.class
+SHA1-Digest: jijGNEAQhcrAk+6zOia8FHrWK8w=
+
+Name: com/sun/java/help/search/Schema.class
+SHA1-Digest: IXxzfbFkYL2wJqV3pmgF2oih9ic=
+
+Name: com/sun/java/help/search/ByteArrayDecompressor.class
+SHA1-Digest: sFRe/X/IrCs4wr6iTpYRUdDSP7E=
+
+Name: com/sun/java/help/search/EntryProcessor.class
+SHA1-Digest: dmRPywHsRQImWrDNlwNchm3xioM=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$MapAc
+ tion.class
+SHA1-Digest: ZQygXOqLbaqx0tMy77dy1hv4O1g=
+
+Name: com/sun/java/help/search/BitBuffer.class
+SHA1-Digest: csX+aT6KFrvFKTMCvOZET4Ier8o=
+
+Name: javax/help/JHelpGlossaryNavigator.class
+SHA1-Digest: VwfkSmXBByfUgB0PKjM1gI+GjnM=
+
+Name: javax/help/plaf/basic/images/SearchHigh.gif
+SHA1-Digest: rij9zrp20TwPYjyrZGtEXvp2fVE=
+
+Name: com/sun/java/help/search/TemporaryRAFFile.class
+SHA1-Digest: mtSiN8yw6Wb+mKS1DHw3VVeUGQE=
+
+Name: javax/help/plaf/basic/BasicFavoritesNavigatorUI$PasteAction.clas
+ s
+SHA1-Digest: 4vj99RejVDTKypaufbvWKe2XiAI=
+
+Name: javax/help/search/ConfigFile.class
+SHA1-Digest: WZvaDL1coL/e6q20HR5vVR2t/y4=
+
+Name: javax/help/search/SearchQuery.class
+SHA1-Digest: LcyBokrHfXYCoOpBirhBULIrY3c=
+
+Name: javax/help/JHelpNavigator$AccessibleJHelpNavigator.class
+SHA1-Digest: vgcdPKYGbXgmrs7s74CqjJ1Y7Is=
+
+Name: com/sun/java/help/impl/LangElement.class
+SHA1-Digest: ShFvZ78HieXf8ZRsdKMQr8MslvM=
+
+Name: javax/help/event/EventListenerList.class
+SHA1-Digest: UqtuupMgt9w4Q0xgNeE9HrJKWDg=
+
+Name: javax/help/JHelpContentViewer.class
+SHA1-Digest: y43d1yoOHF9MIV31mzWG2qX29iU=
+
+Name: com/sun/java/help/impl/CustomKit.class
+SHA1-Digest: SvL6jzIQcX2IkZp39dGy4K6h3AY=
+
+Name: javax/help/plaf/basic/images/SearchMedLow.gif
+SHA1-Digest: 6LfWWHcDpaUSYsGBC5ozR9A/6LM=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$TagAc
+ tion.class
+SHA1-Digest: hvdZgu5yh7k7Sw6Fxq0u7U8gOjY=
+
+Name: javax/help/MainWindow.class
+SHA1-Digest: cRbqNHgwMabR4tDMDS5ohWEf22k=
+
+Name: com/sun/java/help/search/ConceptLocation$PositionSorter.class
+SHA1-Digest: mtHhKnTpGo64zScUf9HqeDTgnek=
+
+Name: javax/help/plaf/gtk/images/Forward.png
+SHA1-Digest: xmM4XWmpfPFt/fzwpNaKWalu/l0=
+
+Name: javax/help/HelpSet$HelpSetParser.class
+SHA1-Digest: Ji6JPtY3zSxLmni5ImLfhnpeLHs=
+
+Name: javax/help/plaf/gtk/images/OnItemCursor.properties
+SHA1-Digest: ciISTfLcYMa9ffr7ME1AouDcyME=
+
+Name: javax/help/AbstractHelpAction.class
+SHA1-Digest: s3AIkFGpEZDQa0v8WLDdBI385aw=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$FormT
+ agAction.class
+SHA1-Digest: aP6FXgDXNeIjM09YNR1URQ3Mdac=
+
+Name: javax/help/plaf/basic/BasicContentViewerUI$PageLoader.class
+SHA1-Digest: lCpDulBHmUw97tp8P9juwuePYmg=
+
+Name: javax/help/plaf/basic/images/Reload.gif
+SHA1-Digest: xUCwqM/E6YXnOK3LmQ5J8OvvlKU=
+
+Name: javax/help/search/IndexerKit.class
+SHA1-Digest: XRVKDUrYcxD9tku0/xUIy9dTNwg=
+
+Name: javax/help/FavoritesAction.class
+SHA1-Digest: J5JNvxoz1OiYZq6yKM23cYvq9c4=
+
+Name: javax/help/plaf/basic/BasicFavoritesNavigatorUI$CutAction.class
+SHA1-Digest: jG92iYArImoM/ETgMBFZ+Ykqr5U=
+
+Name: javax/help/plaf/gtk/images/DnDCursor.properties
+SHA1-Digest: M8O6ub/RAqvISNvT0dFlBbeHlcM=
+
+Name: javax/help/InvalidHelpSetContextException.class
+SHA1-Digest: yPR5eyUHjJVmvL2oTizXOI07RL8=
+
+Name: javax/help/BackAction$HistoryActionListener.class
+SHA1-Digest: WD/LXCXEjqKr9DaKvfmp3ZeBqVc=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$Chara
+ cterAction.class
+SHA1-Digest: rNDANqm/TSFZrWxr+Owx9GHIObA=
+
+Name: javax/help/plaf/basic/BasicNativeContentViewerUI.class
+SHA1-Digest: VOaTmL6dcS7AfeIkaNxqX3EbyLo=
+
+Name: com/sun/java/help/search/BtreeDictParameters.class
+SHA1-Digest: CNDLCaovyh50+xjpGHQHJYihMdE=
+
+Name: com/sun/java/help/impl/CustomKit$MouseHandler.class
+SHA1-Digest: rKH32gZG4gzV1ELqebqVcSlSUlc=
+
+Name: javax/help/tagext/TOCItemTEI.class
+SHA1-Digest: gB5SHIjGtp5KRNNOPn5MMiZfX24=
+
+Name: com/sun/java/help/search/BtreeDict$1.class
+SHA1-Digest: SlHO8jQSRWwJm6v+u7H0Z12Jq+g=
+
+Name: javax/help/plaf/basic/BasicFavoritesNavigatorUI$AddAction.class
+SHA1-Digest: 5cOuSQUMFdjTucdaWi8N/J5nlLo=
+
+Name: javax/help/FavoritesView.class
+SHA1-Digest: /mlVXSLuwCc/7um5X6Z54uz+yf0=
+
+Name: javax/help/HelpAction.class
+SHA1-Digest: j/ZyM7ahsi4ZdZS23z/QUZ0ZHO8=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$1.class
+SHA1-Digest: 1TiHeGGY+cHnM9HySNfxivZTwi8=
+
+Name: javax/help/HelpSetFactory.class
+SHA1-Digest: o/W+hhVw2Mz2a/5zXLEjWOvkl24=
+
+Name: com/sun/java/help/impl/DocumentParser.class
+SHA1-Digest: 55/HS4xI2CBld3u+4h6csSFuzcM=
+
+Name: javax/help/FavoritesItem.class
+SHA1-Digest: Wzy0kU4zkMPEvteLHVye/pp9jfk=
+
+Name: javax/help/plaf/basic/BasicFavoritesNavigatorUI.class
+SHA1-Digest: Ml5sGDKdo/yA7DmDfgCVHz9YY1s=
+
+Name: com/sun/java/help/impl/TagProperties.class
+SHA1-Digest: QESQIYJC6d7MrEB2DhERbxcdWVA=
+
+Name: javax/help/ForwardAction$HistoryActionListener.class
+SHA1-Digest: f/+l/sCgU37G1H8d/3H/q5fsdI0=
+
+Name: javax/help/BadIDException.class
+SHA1-Digest: 9K7G+VlWHJbUPCksVPwhDotAoVE=
+
+Name: com/sun/java/help/search/BlockProcessor.class
+SHA1-Digest: 2NSY6mrS1Oi54EVqpUAASYURKPg=
+
+Name: javax/help/plaf/basic/BasicSearchCellRenderer$ValueJLabel.class
+SHA1-Digest: HoXPPF6CbHrQ5g59LJvplGdvh7A=
+
+Name: javax/help/plaf/basic/images/SearchMedHigh.gif
+SHA1-Digest: XL0NUvRMojAY+FyIBSmFSknH9Ng=
+
+Name: javax/help/plaf/basic/images/SearchMed.gif
+SHA1-Digest: G3NUE9TmuM3VOMp7oaTismP6xFc=
+
+Name: javax/help/event/HelpModelListener.class
+SHA1-Digest: Svy3JsfygqXY73VGXlW4x2QrZsQ=
+
+Name: javax/help/plaf/basic/BasicFavoritesNavigatorUI$FolderAction.cla
+ ss
+SHA1-Digest: IqDP7Pql/XQVV299LRbWCt3B++s=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$Speci
+ alAction.class
+SHA1-Digest: G6T1K6UV4RC8ytuqgn9RB3piO5Y=
+
+Name: com/sun/java/help/impl/Parser.class
+SHA1-Digest: DG08yS1QOOIZ+nG54G4Xqi6JIHU=
+
+Name: javax/help/DefaultHelpBroker.class
+SHA1-Digest: 4+NKxI2+4Zj/rHbSKyUY22UWRno=
+
+Name: javax/help/plaf/gtk/images/OnItemCursor.gif
+SHA1-Digest: YgpWV0X+e8YDRCyyKKNWIcLIyY8=
+
+Name: javax/help/JHelp$AccessibleJHelp.class
+SHA1-Digest: 6rS4KE68Es9KiTNNPPc/ribg4hY=
+
+Name: javax/help/plaf/basic/BasicIndexCellRenderer.class
+SHA1-Digest: 0MbZzKusAr7AuAAygw9JyAd+Kxo=
+
+Name: javax/help/plaf/basic/images/FavoritesNav.gif
+SHA1-Digest: jUs4akWPGv/Q3bKrsdcaIofji5I=
+
+Name: javax/help/plaf/HelpUI.class
+SHA1-Digest: xxVi29NeGfnfYYKZM2bBK6ahb6w=
+
+Name: com/sun/java/help/impl/SwingWorker$ThreadVar.class
+SHA1-Digest: GMyz8g2RF36ytjVmXNulx8wUrSM=
+
+Name: javax/help/MergeHelpUtilities.class
+SHA1-Digest: abCtNT/T/i9v1yRtZmfezXvvkQY=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$BaseA
+ ction.class
+SHA1-Digest: m/i5a2sTtnyZZXo/9wNZk1O9XLs=
+
+Name: javax/help/plaf/basic/images/TOCNav.gif
+SHA1-Digest: dJEpA8rYviCl9greRIqFHhoImhM=
+
+Name: javax/help/FavoritesView$DefaultFavoritesFactory.class
+SHA1-Digest: zCS2NcYE3cabYF/LKEwrWzZJpgA=
+
+Name: javax/help/SwingHelpUtilities$6.class
+SHA1-Digest: 53y+JlnH1dXPfDLeGzy3z4sk5Y4=
+
+Name: javax/help/plaf/basic/BasicSearchNavigatorUI$SearchActionListene
+ r.class
+SHA1-Digest: CRIIygwZV1DkXTrKJvzH54RGwdA=
+
+Name: javax/help/tagext/TOCItemTag.class
+SHA1-Digest: Vi2RFsGx1NhWxyvESbgY5kmMmWc=
+
+Name: com/sun/java/help/search/ConceptLocation$ConceptSorter.class
+SHA1-Digest: FVwhubSk02PaMDioNNymNfxg8kc=
+
+Name: javax/help/plaf/gtk/images/PrintSetup.png
+SHA1-Digest: o6r6qsj4eQd5v0LmyBliyjx9vyg=
+
+Name: javax/help/HelpBroker.class
+SHA1-Digest: MCYx0NCnHzFo9eHjD0N+XnBHfsw=
+
+Name: javax/help/plaf/HelpContentViewerUI.class
+SHA1-Digest: yj3IOIdkV7FAiM24Wl5770/HPTs=
+
+Name: javax/help/JHelpNavigator.class
+SHA1-Digest: QxJHrYP4ihf6naOlIm/Sk7bGdu0=
+
+Name: javax/help/SwingHelpUtilities$2.class
+SHA1-Digest: jv9W0CpWQykoMQ2YfwSR0U+8+as=
+
+Name: javax/help/FlatMap$FlatEnumeration.class
+SHA1-Digest: GA571cimixetiZeDtgjFSyre0JI=
+
+Name: com/sun/java/help/search/Block.class
+SHA1-Digest: WcChvrQrxJGV3DLCPfpknUXlS7s=
+
+Name: javax/help/WindowPresentation.class
+SHA1-Digest: Zfu+kTNGLh61c5AD4sG9r3kDpb8=
+
+Name: javax/help/plaf/basic/BasicSearchCellRenderer$1.class
+SHA1-Digest: 74apdUNMTS8asj9QJu9nfIT7Hak=
+
+Name: javax/help/event/HelpModelEvent.class
+SHA1-Digest: Bz/ffm4K5hi+ri2vCec0pMWxvbc=
+
+Name: com/sun/java/help/impl/HeaderParser.class
+SHA1-Digest: lL18SNs38Ifq0iZ+l0g0gp1ZeLI=
+
+Name: com/sun/java/help/impl/JHSecondaryViewerBeanInfo.class
+SHA1-Digest: pVeQCPs7yJ6XQDV+yxfZJE7LhYw=
+
+Name: javax/help/FlatMap$FlatMapResourceBundle.class
+SHA1-Digest: U5MqJlGd+NBBZp+YMs3VyOGnWFw=
+
+Name: javax/help/resources/Constants_cs.class
+SHA1-Digest: cbtWP1rAf4ib9LGlxpYBOGd2qKo=
+
+Name: javax/help/SearchView.class
+SHA1-Digest: KH5OhfD6FMgdC9j0VfYs6zGtJLw=
+
+Name: com/sun/java/help/search/Decompressor.class
+SHA1-Digest: o61iScplz2f1cszRSLeM1DO2Dp8=
+
+Name: com/sun/java/help/search/BtreeDictCompactor$InternalBlockState.c
+ lass
+SHA1-Digest: KLbD/CrA/T6Fjuav6z9ZZUJcooc=
+
+Name: javax/help/JHelp.class
+SHA1-Digest: ZhVcaW+o5sGCI0JYanIs8jyyqJc=
+
+Name: javax/help/plaf/basic/BasicIndexNavigatorUI.class
+SHA1-Digest: LN1yAg76PjVO2UYetnz9MF4xlPA=
+
+Name: javax/help/NoMerge.class
+SHA1-Digest: SC3+dxqexX/N3DYB6LoGQCkR0xw=
+
+Name: javax/help/CSH$1.class
+SHA1-Digest: fRdAXyE61bSrmXPnDSRqdLifEHo=
+
+Name: com/sun/java/help/search/RAFFileFactory.class
+SHA1-Digest: BwqrYb7wiZ0WoVmrvLFSf8rK0BE=
+
+Name: javax/help/TreeItemFactory.class
+SHA1-Digest: Il7wdWMFHPGiWSblYGjIt/MmbO0=
+
+Name: com/sun/java/help/search/ConceptList.class
+SHA1-Digest: oAFCZNNQD7hAJAtF/R1L0o4Tgcc=
+
+Name: javax/help/resources/Constants_ru.class
+SHA1-Digest: R0Dfq0ZieU26inwa0wMQlXegSl8=
+
+Name: javax/help/TOCView$DefaultTOCFactory.class
+SHA1-Digest: 8jfCku+pItfOSD4zHHnnaP8dDwc=
+
+Name: javax/help/resources/Constants_pl.class
+SHA1-Digest: PN7L+F39gAbufcaH0S9D/rrljbI=
+
+Name: com/sun/java/help/impl/JHSecondaryViewer.class
+SHA1-Digest: KcjrL5HUNTNSega7i2gqziXjdHw=
+
+Name: com/sun/java/help/impl/Tag.class
+SHA1-Digest: ew2L+bfnz8mo7ov+0Oofk+TuzFM=
+
+Name: com/sun/java/help/impl/Parser$ParserMulticaster.class
+SHA1-Digest: w8hJLRd85TrqDkq5qXIBLgdW+Cw=
+
+Name: com/sun/java/help/search/ConceptLocation$1.class
+SHA1-Digest: P+58IHQ0ZE8iC2rpHajHat7AXgs=
+
+Name: javax/help/
+SHA1-Digest: 7DZAhJ3vBGcevifnkW81uOtWG0s=
+
+Name: javax/help/plaf/gtk/images/DnDCursor.gif
+SHA1-Digest: el1YsWDlpF9NkqJSnhzl0iaNvwE=
+
+Name: javax/help/SwingHelpUtilities$5.class
+SHA1-Digest: zuNXTp1eqGXv5C8XlREW/WFs0e0=
+
+Name: com/sun/java/help/impl/SwingWorker$2.class
+SHA1-Digest: f6Qkazq5w29y8W2e+fjjQEnKysk=
+
+Name: com/sun/java/help/search/BlockManager$BlockDescriptor.class
+SHA1-Digest: yTUAunCyJmWqmRThSGlrXgmRGpU=
+
+Name: javax/help/plaf/basic/images/Home.gif
+SHA1-Digest: yMjjBIA0v8O2nQlQd/Cj4iM0ISo=
+
+Name: javax/help/plaf/basic/BasicHelpUI$1.class
+SHA1-Digest: Qw/jiHWXdmtritZeeJAW0xZqAbk=
+
+Name: javax/help/plaf/gtk/images/Favorites.png
+SHA1-Digest: fdG7eE+g8RU2HrOHhaQ2Yb97R4g=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$AreaA
+ ction.class
+SHA1-Digest: W/o/bz1Tv1P83I6mkynmQ+WrRJI=
+
+Name: javax/help/Popup$PopupWindowAdapter.class
+SHA1-Digest: 3e2MUovLdL17EtEPpppSLbFbazk=
+
+Name: javax/help/tagext/IndexItemTEI.class
+SHA1-Digest: fvJeLOtnMHjpjbF6/ZN7SAX6ExM=
+
+Name: javax/help/SwingHelpUtilities$1.class
+SHA1-Digest: YWS2ti8VFhNZBQXLrvLrVF2anRE=
+
+Name: com/sun/java/help/search/BtreeDictCompactor$CompactorDictBlock.c
+ lass
+SHA1-Digest: +LRY0hizpOwcHZt4GCZjIcLX5QA=
+
+Name: javax/help/ForwardAction.class
+SHA1-Digest: SM1FLDTMkoVypZMD/8QKuT8pKgk=
+
+Name: com/sun/java/help/search/DefaultIndexerKit.class
+SHA1-Digest: M4/KhZ8ERrRAp5TH/fWJ3BBklzs=
+
+Name: javax/help/GlossaryView.class
+SHA1-Digest: rzAhRnnk86yBVKuE4Wteso8FqyM=
+
+Name: javax/help/SecondaryWindow.class
+SHA1-Digest: fTOlWa+1cyCFauxNFY5kTgAKXnw=
+
+Name: javax/help/Map$ID.class
+SHA1-Digest: jiiPJempDyRGSwD9jzez1kDu9Io=
+
+Name: javax/help/HelpSet$Presentation.class
+SHA1-Digest: 9G3mOhIFFERKVzOBig+nDhLaW2Q=
+
+Name: javax/help/plaf/basic/images/SearchNav.gif
+SHA1-Digest: VlNU7EZy9hCTJ6E1O32mMvA/BRU=
+
+Name: javax/help/plaf/basic/images/HistoryNav.gif
+SHA1-Digest: ojt2nuXFxg18QO+MGNAax1rnELU=
+
+Name: javax/help/plaf/basic/BasicContentViewerUI.class
+SHA1-Digest: buwmvg+dMlSu2v8dhfMYLXdspRg=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$Hidde
+ nAction.class
+SHA1-Digest: Q8MipMr9GTwgDD+I7/Iz85/Co6c=
+
+Name: com/sun/java/help/search/QueryEngine$SearchIds.class
+SHA1-Digest: 4EjJieqAoqMKUCuymjZlczjXr6o=
+
+Name: javax/help/SeparatorAction.class
+SHA1-Digest: 9/yAmNrnKJOkz5QGKCOk8DPvGxM=
+
+Name: javax/help/plaf/basic/images/Forward.gif
+SHA1-Digest: LltMmG6HT6FJzN1xp1md4OlvZ4I=
+
+Name: com/sun/java/help/impl/JHelpPrintHandler$JHPageable.class
+SHA1-Digest: 7Wfpri8aAQPxjqgimsmftPWvrew=
+
+Name: com/sun/java/help/impl/XmlReader.class
+SHA1-Digest: RI5G6CgFRMNy45cICbKK0RFqjLc=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$Ancho
+ rAction.class
+SHA1-Digest: biWTJgccVqLwFQoJzxh4wGKkgV8=
+
+Name: com/sun/java/help/search/PlainTextIndexerKit.class
+SHA1-Digest: l5gvmruEkgBiGzgW8iPcCcgAJf8=
+
+Name: javax/help/Popup$PopupMouseAdapter.class
+SHA1-Digest: xYUs0W0vOAYsUh4pmJ75smTz/Ss=
+
+Name: com/sun/java/help/search/LiteMorph.class
+SHA1-Digest: SHrLAD3OiYvNYon0GS+6sykS598=
+
+Name: javax/help/plaf/basic/BasicTOCNavigatorUI$NavSwingWorker.class
+SHA1-Digest: 2XMDHLMk5ClKwAuu3jL038fzl/4=
+
+Name: javax/help/plaf/gtk/images/HistoryNav.gif
+SHA1-Digest: naSUCg2s/W7bp921S6ErTHQb19U=
+
+Name: com/sun/java/help/impl/JHelpPrintHandler$JHEditorPane.class
+SHA1-Digest: 6fJKQo3z4H/PPzDDLkK9jNLNZcA=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$LangE
+ lement.class
+SHA1-Digest: rs4PZobvCicy4DehE1rpkDwY1tk=
+
+Name: javax/help/plaf/gtk/images/Home.png
+SHA1-Digest: zdwWrodJwETWcv0w6l3XZHC0xoo=
+
+Name: com/sun/java/help/search/ConceptLocation$ConceptLocationSorter.c
+ lass
+SHA1-Digest: fyBnG9cFfVsG8nnj4o7JtaZCz5k=
+
+Name: com/sun/java/help/search/HTMLIndexerKit.class
+SHA1-Digest: 9OCZ2Oo3fCL9SXwO9XYH2XWjGzw=
+
+Name: javax/help/PrintAction.class
+SHA1-Digest: kDdj6+HQ54FDDC5Vnl09LzmFOfE=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$Block
+ Action.class
+SHA1-Digest: eO+54/6OqhdtwaSclscppwCkfUc=
+
+Name: com/sun/java/help/search/DefaultIndexBuilder.class
+SHA1-Digest: 30G3d8iKlIwrMqHFliPfwqPLCa8=
+
+Name: com/sun/java/help/search/ChangedCharSetException.class
+SHA1-Digest: 0t2wVZghJVHXVXqxjPdAZ/LY9HU=
+
+Name: com/sun/java/help/impl/SwingWorker$1.class
+SHA1-Digest: isSursJe0TarN76dXHtEdaF0nnA=
+
+Name: javax/help/tagext/IndexItemTag.class
+SHA1-Digest: LNLLGcvzXO/pjanl7ey8zFzDk/0=
+
+Name: javax/help/plaf/gtk/images/GlossaryNav.gif
+SHA1-Digest: kV8kKT09oWnx+PnN9PNxYnnYJqE=
+
+Name: com/sun/java/help/impl/ScanBuffer.class
+SHA1-Digest: T5zUmQdhjsawTANmPHfsEzYj1KU=
+
+Name: javax/help/IndexView$IndexParser.class
+SHA1-Digest: u0gCL4JjNEb5n1yAACFv/Uh/F6Q=
+
+Name: com/sun/java/help/search/Location.class
+SHA1-Digest: qV9nYJQSDis7AXZMgJ3JGwM4V4s=
+
+Name: com/sun/java/help/impl/JHelpPrintHandler$JHFrame.class
+SHA1-Digest: fR90diA8BZR0IodCfTlgzFeP98s=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$Conve
+ rtAction.class
+SHA1-Digest: 29FP2wOPmAehxllPnUTtXAS695M=
+
+Name: javax/help/plaf/gtk/images/SearchNav.gif
+SHA1-Digest: W0MBldrsgHBU7GM11i8PFBNQdeA=
+
+Name: javax/help/SortMerge.class
+SHA1-Digest: s4me0naTosg3QdAi2Ued5wi++o4=
+
+Name: com/sun/java/help/impl/JHelpPrintHandler$PrintThread.class
+SHA1-Digest: Pa0rf69ISCReqWe5misOECsiS3U=
+
+Name: javax/help/resources/Constants_fr.class
+SHA1-Digest: wC2d43NVHnBwPgTIthTG0q5pR0E=
+
+Name: com/sun/java/help/search/RAFFileFactoryOn12.class
+SHA1-Digest: ma9JYTZq/Karo7OG41fn48npEeg=
+
+Name: javax/help/plaf/basic/BasicSearchCellRenderer.class
+SHA1-Digest: pN99c4xP7Qe1B5gUV5m73dlZHao=
+
+Name: com/sun/java/help/search/DefaultSearchQuery.class
+SHA1-Digest: cEu0yN/jNzMVJ4zmQKIom8mP/Ow=
+
+Name: javax/help/plaf/basic/BasicHelpUI$HelpButton.class
+SHA1-Digest: xvuD1hxlJWysQDpRv3W0ceHnakU=
+
+Name: javax/help/search/SearchEngine.class
+SHA1-Digest: 9PcbJ0ijX7EQhdbv+o3/lsR8/Uo=
+
+Name: javax/help/event/HelpHistoryModelListener.class
+SHA1-Digest: PKaIeCBHUhctg7F2Kldh6WGoQWI=
+
+Name: javax/help/plaf/basic/BasicSearchCellRenderer$ValueJLabel$Access
+ ibleValueJLabel.class
+SHA1-Digest: qarm/Q4G+1IPpIw4G675Ioy0Nxw=
+
+Name: com/sun/java/help/search/BlockManager$1.class
+SHA1-Digest: Nc/ZVPDi9Bo1hKxEiwi2A7ixt40=
+
+Name: com/sun/java/help/search/Entry.class
+SHA1-Digest: 5t9z9WNNGUWMXz5QFFCliaqoBw8=
+
+Name: javax/help/plaf/basic/BasicContentViewerUI$PageLoader$Callback.c
+ lass
+SHA1-Digest: XHYICRgRznzz6xK0o35IC6Din3I=
+
+Name: javax/help/resources/Constants_de.class
+SHA1-Digest: GytELSP7QAbcEQbtRc7gvUGoyDE=
+
+Name: javax/help/DefaultHelpModel.class
+SHA1-Digest: HaH4G4x21Aa8n/nH/2Q5lXrA23A=
+
+Name: javax/help/JHelpContentViewer$AccessibleJHelpContentViewer.class
+SHA1-Digest: z8A7sqnUEM08RcqJWkQgjo11FTA=
+
+Name: javax/help/resources/Constants_sk.class
+SHA1-Digest: JQCaXltiQjqXynQ/NZ3Jrh9n9B0=
+
+Name: javax/help/tagext/SearchTOCItemTEI.class
+SHA1-Digest: yR+X1NrwxNow/BpXmy4u8N+cOYU=
+
+Name: com/sun/java/help/impl/JHelpPrintHandler.class
+SHA1-Digest: kO7eyzHn8lTRZix6ky5em7kaIHw=
+
+Name: javax/help/event/TextHelpModelListener.class
+SHA1-Digest: fim8DFxD+IvTp/9a62hTPDOVlWI=
+
+Name: com/sun/java/help/impl/SwingWorker.class
+SHA1-Digest: OckeVbpT5++V7KDIdzHfa0e6G74=
+
+Name: javax/help/plaf/gtk/images/TOCNav.gif
+SHA1-Digest: KVRKetnmU6sMfLzXLukUCSeCCgk=
+
+Name: javax/help/Map.class
+SHA1-Digest: OZwBRB87ImyBcWyfjyuQXdQZqsw=
+
+Name: javax/help/Popup$PopupKeyAdapter.class
+SHA1-Digest: kCYAnW+AScinNDqyD2hSgFQF0Ys=
+
+Name: javax/help/TextHelpModel.class
+SHA1-Digest: mNL7yfxdpg1corLVJtk8dxgVKDA=
+
+Name: com/sun/java/help/search/HTMLIndexerKit$HTMLParserCallback$Objec
+ tAction.class
+SHA1-Digest: yXFd4v7qvp5lvrexg1apXh77G9M=
+
+Name: com/sun/java/help/search/BlockFactory.class
+SHA1-Digest: 48Exiq5gnX9nkJHgeXSQGHU9ndc=
+
+Name: com/sun/java/help/impl/CustomKit$ObjectView1.class
+SHA1-Digest: pQsBoEIh9mRGdDcC8GG529dCPV8=
+

@@ -1,2 +1,5 @@
 /build/
 /dist/
+/target/
+/core/target/
+/ParserPlugin/target/

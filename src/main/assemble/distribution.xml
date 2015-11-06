@@ -1,0 +1,64 @@
+<assembly>
+    <id>dsworkbench</id>
+    <!-- which format do you prefer?
+    Possible values are: zip, tar.gz, tar.bz2, jar, dir, war
+    See also: http://maven.apache.org/plugins/maven-assembly-plugin/
+    -->
+    <formats>
+        <format>dir</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <!-- Insert all jars the project depends on. -->
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>lib</outputDirectory>
+        </dependencySet>
+    </dependencySets>
+    <!-- Define filter to copy into assembly. -->
+    <fileSets>
+        <fileSet>
+            <directory>core/target/bin</directory>
+            <outputDirectory>bin</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>resources/graphics</directory>
+            <outputDirectory>graphics</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>resources/templates</directory>
+            <outputDirectory>templates</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>core/target/</directory>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet> 
+        <fileSet>
+            <directory>ParserPlugin/target/</directory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <outputDirectory>lib</outputDirectory>
+        </fileSet>
+    </fileSets>
+    <files>
+        <file>
+            <source>resources/log4j.xml</source>
+            <outputDirectory></outputDirectory>
+        </file>
+        <file>
+            <source>resources/world.dat.gz</source>
+            <outputDirectory></outputDirectory>
+        </file>
+        <file>
+            <source>resources/servers.txt</source>
+            <outputDirectory></outputDirectory>
+        </file>
+        <file>
+            <source>LICENSE</source>
+            <outputDirectory></outputDirectory>
+        </file>
+    </files>
+</assembly>

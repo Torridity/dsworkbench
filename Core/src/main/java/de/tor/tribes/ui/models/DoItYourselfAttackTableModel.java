@@ -23,7 +23,6 @@ import de.tor.tribes.util.attack.AttackManager;
 import java.util.Date;
 import java.util.logging.Logger;
 import javax.swing.table.AbstractTableModel;
-import org.apache.commons.lang.time.DurationFormatUtils;
 
 /**
  *

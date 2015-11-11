@@ -17,7 +17,6 @@ package de.tor.tribes.util.troops;
 
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
-import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.xml.JaxenUtils;

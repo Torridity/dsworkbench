@@ -17,7 +17,6 @@ package de.tor.tribes.ui.editors;
 
 import de.tor.tribes.ui.components.DateTimeField;
 import java.awt.Component;
-import java.util.Calendar;
 import java.util.Date;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JSpinner;

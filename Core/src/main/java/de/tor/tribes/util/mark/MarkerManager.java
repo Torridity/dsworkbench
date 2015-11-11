@@ -24,7 +24,6 @@ import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.panels.MinimapPanel;
-import de.tor.tribes.ui.views.DSWorkbenchMarkerFrame;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Color;
 import java.io.File;

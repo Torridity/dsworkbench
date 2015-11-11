@@ -20,7 +20,6 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.text.SimpleDateFormat;

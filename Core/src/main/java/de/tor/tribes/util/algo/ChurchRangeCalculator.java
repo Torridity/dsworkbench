@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.util.algo;
 
-import java.awt.Polygon;
 import java.awt.geom.Point2D;
 import java.util.LinkedList;
 import java.util.List;

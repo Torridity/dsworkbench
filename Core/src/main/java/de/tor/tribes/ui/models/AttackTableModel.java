@@ -27,7 +27,6 @@ import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.attack.AttackManager;
 import java.util.Date;
 import javax.swing.table.AbstractTableModel;
-import org.apache.commons.lang.time.DurationFormatUtils;
 
 /**
  *

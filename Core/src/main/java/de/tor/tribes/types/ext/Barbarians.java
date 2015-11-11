@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.types.ext;
 
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import java.text.NumberFormat;
 
 /**

@@ -21,7 +21,6 @@ import de.tor.tribes.ui.models.SupportTableModel;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.SupportDirectionRenderer;
 import de.tor.tribes.ui.renderer.SupportTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.TroopTableHeaderRenderer;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import java.util.List;

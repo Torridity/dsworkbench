@@ -18,7 +18,6 @@ package de.tor.tribes.ui.wiz.dep;
 import java.util.Map;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
-import org.netbeans.spi.wizard.WizardPanel;
 import org.netbeans.spi.wizard.WizardPanelNavResult;
 
 /**

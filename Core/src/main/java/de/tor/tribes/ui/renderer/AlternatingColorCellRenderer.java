@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.util.Constants;
 import java.awt.Component;
 import javax.swing.JLabel;
 import javax.swing.JTable;

@@ -16,8 +16,6 @@
 package de.tor.tribes.ui.wiz;
 
 import de.tor.tribes.ui.panels.TAPAttackInfoPanel;
-import java.awt.Color;
-import javax.swing.JPanel;
 import org.netbeans.api.wizard.displayer.WizardDisplayerImpl;
 
 /**

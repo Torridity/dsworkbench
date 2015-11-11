@@ -15,10 +15,8 @@
  */
 package de.tor.tribes.ui.models;
 
-import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.wiz.ret.types.RETSourceElement;
-import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;

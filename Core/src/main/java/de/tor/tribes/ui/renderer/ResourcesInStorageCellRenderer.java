@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.types.FarmInformation;
 import java.awt.Component;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;

@@ -92,23 +92,17 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import org.apache.commons.io.FileUtils;
-import org.jdesktop.swingx.JXTipOfTheDay;
 import org.jdesktop.swingx.painter.MattePainter;
-import org.jdesktop.swingx.tips.TipLoader;
-import org.jdesktop.swingx.tips.TipOfTheDayModel;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 /**

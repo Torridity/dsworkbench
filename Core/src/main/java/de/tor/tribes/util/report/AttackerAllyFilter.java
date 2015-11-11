@@ -19,10 +19,8 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.NoAlly;
-import de.tor.tribes.types.ext.Tribe;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang.time.DateUtils;
 
 /**
  *

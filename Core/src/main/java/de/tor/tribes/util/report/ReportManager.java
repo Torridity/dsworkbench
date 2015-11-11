@@ -16,7 +16,6 @@
 package de.tor.tribes.util.report;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.StreamException;
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.FightReport;

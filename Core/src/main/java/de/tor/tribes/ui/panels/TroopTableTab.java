@@ -15,8 +15,6 @@
  */
 package de.tor.tribes.ui.panels;
 
-import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
@@ -27,7 +25,6 @@ import de.tor.tribes.ui.models.TroopsTableModel;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.PercentCellRenderer;
-import de.tor.tribes.ui.renderer.TroopAmountListCellRenderer;
 import de.tor.tribes.ui.renderer.TroopTableHeaderRenderer;
 import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
 import de.tor.tribes.ui.windows.TroopDetailsDialog;
@@ -47,16 +44,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import javax.swing.AbstractAction;
-import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;

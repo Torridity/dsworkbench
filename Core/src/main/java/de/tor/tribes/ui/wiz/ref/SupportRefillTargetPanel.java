@@ -26,7 +26,6 @@ import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.PluginManager;
-import de.tor.tribes.util.UIHelper;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.HeadlessException;

@@ -16,7 +16,6 @@
 package de.tor.tribes.ui.models;
 
 import de.tor.tribes.types.Defense;
-import de.tor.tribes.types.DefenseInformation;
 import de.tor.tribes.types.ext.Village;
 import java.util.ArrayList;
 import java.util.Date;

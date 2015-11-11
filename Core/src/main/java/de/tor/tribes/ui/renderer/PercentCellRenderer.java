@@ -17,7 +17,6 @@ package de.tor.tribes.ui.renderer;
 
 import de.tor.tribes.ui.components.ColoredProgressBar;
 import de.tor.tribes.ui.util.ColorGradientHelper;
-import de.tor.tribes.util.Constants;
 import java.awt.Color;
 import java.awt.Component;
 import java.text.NumberFormat;

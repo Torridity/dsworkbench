@@ -16,7 +16,6 @@
 package de.tor.tribes.types.ext;
 
 import de.tor.tribes.types.Marker;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.mark.MarkerManager;

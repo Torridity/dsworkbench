@@ -19,7 +19,6 @@ import de.tor.tribes.types.StorageStatus;
 import de.tor.tribes.ui.components.FillingLabel;
 import java.awt.Color;
 import java.awt.Component;
-import java.text.NumberFormat;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;

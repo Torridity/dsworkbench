@@ -17,7 +17,6 @@ package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.types.FarmInformation;
 import de.tor.tribes.ui.views.DSWorkbenchFarmManager;
-import de.tor.tribes.util.UIHelper;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 

@@ -15,10 +15,8 @@
  */
 package de.tor.tribes.types.drawing;
 
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.Skin;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;

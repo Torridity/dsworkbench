@@ -19,7 +19,6 @@ import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
-import de.tor.tribes.types.Church;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.Conquer;

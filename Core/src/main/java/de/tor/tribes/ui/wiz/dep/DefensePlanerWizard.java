@@ -22,7 +22,6 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.generator.ui.SOSGenerator;
-import de.tor.tribes.util.sos.SOSManager;
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;

@@ -29,7 +29,6 @@ import java.net.URLEncoder;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import org.jdom.Document;
 
 /**
  *

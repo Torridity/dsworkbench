@@ -15,8 +15,6 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.util.Constants;
-import java.awt.Color;
 import java.awt.Component;
 import java.util.LinkedList;
 import java.util.List;

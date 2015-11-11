@@ -26,7 +26,6 @@ import de.tor.tribes.types.test.DummyVillage;
 import de.tor.tribes.types.Note;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
-import de.tor.tribes.ui.panels.BBPanel;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.panels.NoteTableTab;

@@ -16,8 +16,6 @@
 package de.tor.tribes.types.ext;
 
 import java.text.NumberFormat;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  *

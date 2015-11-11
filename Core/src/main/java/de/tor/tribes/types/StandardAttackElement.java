@@ -22,7 +22,6 @@ import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Hashtable;
 import org.apache.log4j.Logger;
 import org.jdom.Element;
 

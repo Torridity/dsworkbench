@@ -20,8 +20,6 @@ import de.tor.tribes.ui.wiz.ref.types.REFTargetElement;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 
 /**
  *

@@ -23,9 +23,7 @@ import de.tor.tribes.util.CoordinateFormatter;
 import java.awt.Point;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.ParseException;
 import javax.swing.*;
-import javax.swing.event.*;
 import javax.swing.text.*;
 
 /**

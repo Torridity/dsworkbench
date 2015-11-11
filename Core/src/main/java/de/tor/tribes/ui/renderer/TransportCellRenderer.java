@@ -24,7 +24,6 @@ import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
 /**

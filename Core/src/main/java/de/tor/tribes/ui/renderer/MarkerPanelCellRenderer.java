@@ -16,7 +16,6 @@
 package de.tor.tribes.ui.renderer;
 
 import de.tor.tribes.ui.MarkerCell;
-import de.tor.tribes.util.Constants;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JLabel;

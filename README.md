@@ -53,4 +53,4 @@ user@localhost:/home/user/DSWorkbench$
 
 ## License
 
-KIT Data Manager is licensed under the Apache License, Version 2.0.
+DS Workbench is licensed under the Apache License, Version 2.0.

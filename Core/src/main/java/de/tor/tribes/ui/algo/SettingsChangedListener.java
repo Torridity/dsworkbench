@@ -15,8 +15,6 @@
  */
 package de.tor.tribes.ui.algo;
 
-import de.tor.tribes.util.algo.types.TimeFrame;
-
 /**
  *
  * @author Torridity

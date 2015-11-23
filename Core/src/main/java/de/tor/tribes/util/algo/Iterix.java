@@ -26,7 +26,6 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import java.awt.Color;
 import java.io.FileWriter;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;

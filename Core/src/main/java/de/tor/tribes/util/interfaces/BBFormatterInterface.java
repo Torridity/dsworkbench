@@ -15,9 +15,6 @@
  */
 package de.tor.tribes.util.interfaces;
 
-import java.util.HashMap;
-import java.util.List;
-
 /**
  *
  * @author Torridity

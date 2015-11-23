@@ -16,12 +16,10 @@
 package de.tor.tribes.util.algo;
 
 import de.tor.tribes.util.algo.types.TimeFrame;
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.DSCalculator;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -29,10 +27,8 @@ import java.util.List;
 import de.tor.tribes.types.Fake;
 import de.tor.tribes.types.Off;
 import de.tor.tribes.util.ServerSettings;
-import java.io.FileWriter;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import org.apache.log4j.Logger;
 
 /**

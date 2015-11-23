@@ -17,14 +17,12 @@ package de.tor.tribes.ui.wiz.ref;
 
 import com.jidesoft.swing.JideBoxLayout;
 import com.jidesoft.swing.JideSplitPane;
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.components.VillageSelectionPanel;
 import de.tor.tribes.ui.models.REFSourceTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.wiz.ref.types.REFSourceElement;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;

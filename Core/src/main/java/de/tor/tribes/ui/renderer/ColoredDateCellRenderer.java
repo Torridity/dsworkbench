@@ -15,8 +15,6 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import com.jidesoft.swing.StyledLabel;
-import com.jidesoft.swing.StyledLabelBuilder;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.ServerSettings;
 import java.awt.Color;

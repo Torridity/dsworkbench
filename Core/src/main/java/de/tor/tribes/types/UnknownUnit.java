@@ -16,7 +16,6 @@
 package de.tor.tribes.types;
 
 import de.tor.tribes.io.UnitHolder;
-import org.jdom.Element;
 
 /**
  *

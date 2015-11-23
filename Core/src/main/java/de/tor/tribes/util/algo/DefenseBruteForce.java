@@ -16,14 +16,12 @@
 package de.tor.tribes.util.algo;
 
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.Defense;
 import de.tor.tribes.types.DefenseInformation;
 import de.tor.tribes.types.ext.Village;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
 

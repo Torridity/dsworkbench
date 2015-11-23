@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.ui.decorator;
 
-import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.troops.TroopsManager;

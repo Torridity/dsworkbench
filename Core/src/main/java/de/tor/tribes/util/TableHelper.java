@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import org.jdesktop.swingx.JXTable;

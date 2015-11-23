@@ -20,8 +20,6 @@ import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.types.VillageMerchantInfo;
 import java.io.*;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -34,7 +32,7 @@ public class PluginManager {
   private static Logger logger = Logger.getLogger("PluginManager");
   private static PluginManager SINGLETON = null;
   private final File PLUGIN_DIR = new File("./plugins");
-  private URLClassLoader mClassloader = null;
+  private ClassLoader mClassloader = null;
   private Object mVariableManager = null;
 
   public static synchronized PluginManager getSingleton() {
@@ -49,7 +47,7 @@ public class PluginManager {
   }
 
   private void initializeClassloader() {
-    List<URL> urls = new LinkedList<URL>();
+   /* List<URL> urls = new LinkedList<URL>();
     int urlCount = 0;
     int fileCount = PLUGIN_DIR.listFiles().length;
     for (File f : PLUGIN_DIR.listFiles()) {
@@ -59,15 +57,15 @@ public class PluginManager {
       } catch (Exception e) {
         logger.error("Failed to create URL for file '" + f.getPath() + "'");
       }
-    }
+    }*/
 
     //create the new classloader
-    mClassloader = new URLClassLoader(urls.toArray(new URL[]{}), ClassLoader.getSystemClassLoader());
-    if (urlCount == fileCount) {
+    mClassloader = ClassLoader.getSystemClassLoader();//new URLClassLoader(urls.toArray(new URL[]{}), ClassLoader.getSystemClassLoader());
+   /* if (urlCount == fileCount) {
       logger.info("Created classloader for " + urlCount + " plugins");
     } else {
       logger.warn("Created classloader for " + urlCount + "/" + fileCount + " plugins");
-    }
+    }*/
   }
 
   /**

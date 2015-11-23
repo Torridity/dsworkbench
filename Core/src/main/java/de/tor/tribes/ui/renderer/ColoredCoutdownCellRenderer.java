@@ -15,14 +15,9 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import com.jidesoft.swing.StyledLabel;
-import com.jidesoft.swing.StyledLabelBuilder;
 import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.ServerSettings;
 import java.awt.Color;
 import java.awt.Component;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import org.apache.commons.lang.time.DurationFormatUtils;

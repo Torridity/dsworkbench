@@ -27,7 +27,6 @@ import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.text.NumberFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import org.apache.commons.lang.math.IntRange;

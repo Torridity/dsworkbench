@@ -26,7 +26,6 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Off;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.util.DSCalculator;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedList;

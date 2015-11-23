@@ -17,7 +17,6 @@ package de.tor.tribes.util.farm;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
-import com.thoughtworks.xstream.io.StreamException;
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;

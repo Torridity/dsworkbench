@@ -27,8 +27,6 @@ import java.util.List;
 import org.jdom.Element;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.GlobalOptions;
-import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  * @author Torridity

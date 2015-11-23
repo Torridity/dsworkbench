@@ -15,12 +15,9 @@
  */
 package de.tor.tribes.util;
 
-import java.io.ByteArrayInputStream;
 import java.net.Socket;
 import java.net.URL;
 import org.apache.http.*;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.DefaultHttpClientConnection;
@@ -29,8 +26,6 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.params.SyncBasicHttpParams;
 import org.apache.http.protocol.*;
-import org.apache.http.util.EntityUtils;
-import sun.security.pkcs11.P11Util;
 
 /**
  *

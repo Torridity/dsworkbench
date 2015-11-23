@@ -16,10 +16,7 @@
 package de.tor.tribes.ui.renderer;
 
 import de.tor.tribes.types.FarmInformation;
-import de.tor.tribes.ui.ImageManager;
 import java.awt.Component;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;

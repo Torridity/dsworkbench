@@ -21,8 +21,6 @@ import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.test.DummyUnit;
 import de.tor.tribes.types.test.DummyVillage;
 import de.tor.tribes.ui.components.CollapseExpandTrigger;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.attack.AttackManager;
 import java.awt.BorderLayout;
 import java.awt.Color;

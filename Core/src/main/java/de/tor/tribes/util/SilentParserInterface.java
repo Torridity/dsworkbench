@@ -15,8 +15,6 @@
  */
 package de.tor.tribes.util;
 
-import java.util.List;
-
 /**
  *
  * @author Torridity

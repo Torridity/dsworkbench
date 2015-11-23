@@ -21,7 +21,6 @@ import de.tor.tribes.types.StorageStatus;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.VillageMerchantInfo;
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.GroupSelectionList;
 import de.tor.tribes.ui.models.REDExtendedMerchantTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;

@@ -17,7 +17,6 @@ package de.tor.tribes.ui.models;
 
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackTargetElement;
 import java.util.LinkedList;
 import java.util.List;

@@ -22,7 +22,6 @@ import de.tor.tribes.ui.windows.ClockFrame;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.panels.MinimapPanel;
 import de.tor.tribes.ui.views.DSWorkbenchDoItYourselfAttackPlaner;
-import de.tor.tribes.ui.views.DSWorkbenchReTimerFrame;
 import de.tor.tribes.ui.views.DSWorkbenchDistanceFrame;
 import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;

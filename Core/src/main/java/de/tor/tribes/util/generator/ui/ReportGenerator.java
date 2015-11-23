@@ -31,7 +31,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 
 /**

@@ -18,7 +18,6 @@ package de.tor.tribes.types;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.tag.TagManager;
 import java.util.LinkedList;

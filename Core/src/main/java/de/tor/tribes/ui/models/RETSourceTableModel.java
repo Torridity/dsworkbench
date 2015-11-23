@@ -15,11 +15,8 @@
  */
 package de.tor.tribes.ui.models;
 
-import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.wiz.ret.types.RETSourceElement;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;

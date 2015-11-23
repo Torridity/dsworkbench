@@ -19,7 +19,6 @@ import de.tor.tribes.types.NoTag;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.tag.TagManager;
-import de.tor.tribes.util.tag.TagManagerListener;
 import java.util.List;
 
 /**

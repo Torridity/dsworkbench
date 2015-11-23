@@ -17,7 +17,6 @@ package de.tor.tribes.util;
 
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.types.ext.Tribe;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import java.net.InetSocketAddress;
 import java.net.Proxy;

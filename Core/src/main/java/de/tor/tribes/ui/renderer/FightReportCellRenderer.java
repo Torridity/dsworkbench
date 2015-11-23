@@ -16,8 +16,6 @@
 package de.tor.tribes.ui.renderer;
 
 import de.tor.tribes.types.FightReport;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.html.FightReportHTMLToolTipGenerator;
 import java.awt.Component;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;

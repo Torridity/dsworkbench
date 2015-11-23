@@ -16,7 +16,6 @@
 package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.ui.panels.MapPanel;
-import com.jidesoft.plaf.basic.BasicJideTabbedPaneUI.PropertyChangeHandler;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.dnd.VillageTransferable;
@@ -38,15 +37,9 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;

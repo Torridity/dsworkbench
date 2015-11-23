@@ -44,7 +44,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import javax.help.CSH;
 import javax.help.HelpBroker;
 import javax.help.HelpSet;

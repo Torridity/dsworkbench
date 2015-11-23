@@ -22,13 +22,9 @@ import de.tor.tribes.types.ext.InvalidTribe;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.lang.StringUtils;
 
 /**
  *

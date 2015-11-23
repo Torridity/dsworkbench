@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.ui.components;
 
-import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Ally;

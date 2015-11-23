@@ -16,8 +16,6 @@
 package de.tor.tribes.ui.editors;
 
 import java.awt.Component;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import javax.swing.AbstractCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;

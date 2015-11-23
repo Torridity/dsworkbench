@@ -27,7 +27,6 @@ import de.tor.tribes.ui.windows.TroopFilterDialog;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.models.TAPSourceFilterTableModel;
 import de.tor.tribes.ui.panels.TAPAttackInfoPanel;
-import de.tor.tribes.ui.wiz.dep.DefenseCalculationSettingsPanel;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;

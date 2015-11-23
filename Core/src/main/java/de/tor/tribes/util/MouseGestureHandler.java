@@ -19,7 +19,6 @@ import com.smardec.mousegestures.MouseGesturesListener;
 import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.ui.views.DSWorkbenchConquersFrame;
 import de.tor.tribes.ui.views.DSWorkbenchFormFrame;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.views.DSWorkbenchMarkerFrame;
 import de.tor.tribes.ui.views.DSWorkbenchNotepad;
 import de.tor.tribes.ui.views.DSWorkbenchRankFrame;

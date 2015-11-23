@@ -16,7 +16,6 @@
 package de.tor.tribes.ui.renderer;
 
 import de.tor.tribes.ui.models.SupportTableModel;
-import de.tor.tribes.ui.models.TroopsTableModel;
 import de.tor.tribes.util.ImageUtils;
 import java.awt.Color;
 import java.awt.Component;

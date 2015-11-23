@@ -19,7 +19,6 @@ import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.report.ReportManager;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.table.AbstractTableModel;
 import org.apache.log4j.Logger;

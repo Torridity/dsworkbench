@@ -64,7 +64,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
-import javax.swing.text.NumberFormatter;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.ConsoleAppender;

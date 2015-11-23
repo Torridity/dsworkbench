@@ -31,8 +31,7 @@ public class JarHasher {
 //      long s = System.currentTimeMillis();
 //      props1.load(new GZIPInputStream(u.openConnection().getInputStream()));
 //      System.out.println((System.currentTimeMillis() - s));
-//        
-    
+
         String jar;
         String output;
         try {

@@ -104,12 +104,6 @@
     <Component class="javax.swing.JProgressBar" name="jStatusOutput">
       <Properties>
         <Property name="indeterminate" type="boolean" value="true"/>
-        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[10, 20]"/>
-        </Property>
-        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[146, 20]"/>
-        </Property>
         <Property name="string" type="java.lang.String" value="Lade Einstellungen..."/>
         <Property name="stringPainted" type="boolean" value="true"/>
       </Properties>

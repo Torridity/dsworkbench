@@ -6,6 +6,7 @@
     -->
     <formats>
         <format>dir</format>
+        <format>zip</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     <!-- Insert all jars the project depends on. -->
@@ -16,10 +17,6 @@
     </dependencySets>
     <!-- Define filter to copy into assembly. -->
     <fileSets>
-        <fileSet>
-            <directory>core/target/bin</directory>
-            <outputDirectory>bin</outputDirectory>
-        </fileSet>
         <fileSet>
             <directory>resources/graphics</directory>
             <outputDirectory>graphics</outputDirectory>
@@ -54,6 +51,18 @@
         </file>
         <file>
             <source>resources/servers.txt</source>
+            <outputDirectory></outputDirectory>
+        </file>
+        <file>
+            <source>resources/Scripts/show.tmpl</source>
+            <outputDirectory>scripts</outputDirectory>
+        </file>
+        <file>
+            <source>resources/Scripts/DSWorkbench</source>
+            <outputDirectory></outputDirectory>
+        </file>
+        <file>
+            <source>resources/Scripts/DSWorkbench.bat</source>
             <outputDirectory></outputDirectory>
         </file>
         <file>

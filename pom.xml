@@ -5,14 +5,14 @@
     <artifactId>DSWorkbench</artifactId>
     <name>DSWorkbench</name>
     <packaging>pom</packaging>
-    <version>3.4</version>
+    <version>3.42</version>
 
     <description>Parent project for DS Workbench. The project contains two modules: core and plugins which are put together during the assembly process.
         Furthermore, all dependencies are managed by this parent project.</description>
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <release.version>3.4</release.version>
+        <release.version>3.42</release.version>
     </properties>
         
     <repositories>

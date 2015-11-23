@@ -24,6 +24,7 @@ import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.ui.renderer.ProfileTreeNodeRenderer;
 import de.tor.tribes.ui.wiz.FirstStartWizard;
 import de.tor.tribes.util.*;
+import de.tor.tribes.util.GithubVersionCheck.UpdateInfo;
 import de.tor.tribes.util.ThreadDeadlockDetector.DefaultDeadlockListener;
 import java.io.*;
 import java.util.Collections;
@@ -361,14 +362,22 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             logger.info("Showing application window");
 
             DSWorkbenchMainFrame.getSingleton().setVisible(true);
-//This does not work currently due to the missing HTTPS support of the internal server implementation.
-//First steps are made, but getting and parsing the data from HTTPs stream was never finished.
-//see de.tor.tribes.util.ReportServer for details
-//      try {
-//        ReportServer.getSingleton().start(GlobalOptions.getProperties().getInt("report.server.port", 8080));
-//      } catch (IOException ioe) {
-//        logger.error("Failed to start report server", ioe);
-//      }
+
+            //check for version updates
+            logger.info("Checking for DS Workbench update.");
+            UpdateInfo info = GithubVersionCheck.getUpdateInformation();
+            switch (info.getStatus()) {
+                case UPDATE_AVAILABLE:
+                    NotifierFrame.doNotification("Eine neue DS Workbench Version ist verfügbar. Klick den grünen Punkt oben links, um auf die Download Seite zu gelangen. ", NotifierFrame.NOTIFY_UPDATE);
+                default:
+                    logger.info("No update available or update check failed.");
+            }
+
+            try {
+                ReportServer.getSingleton().start(GlobalOptions.getProperties().getInt("report.server.port", 8080));
+            } catch (IOException ioe) {
+                logger.error("Failed to start report server", ioe);
+            }
             t.stopRunning();
             setVisible(false);
             GlobalOptions.removeDataHolderListener(this);

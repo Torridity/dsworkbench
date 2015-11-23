@@ -4,19 +4,18 @@
     <parent>
         <groupId>de.tor.dswb</groupId>
         <artifactId>DSWorkbench</artifactId>
-        <version>3.4</version>
+        <version>3.42</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.tor.dswb</groupId>
     <artifactId>Core</artifactId>
     <name>Core</name>
     <packaging>jar</packaging>
-    <version>3.4</version>
+    <version>3.42</version>
 
     <description></description>
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
 </project>

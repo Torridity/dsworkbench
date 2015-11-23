@@ -34,10 +34,10 @@
         </fileSet> 
         <fileSet>
             <directory>ParserPlugin/target/</directory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>
-            <outputDirectory>lib</outputDirectory>
         </fileSet>
     </fileSets>
     <files>

@@ -18,7 +18,7 @@ data directly from/to the game.
 * Please do not republish the tool with another name. If you anyhow do, please refer to the original
 tool 'DS Workbench'.
 
-The final *official* release (DS Workbench 3.4) will be available at **TBD**
+All *official* releases you can find [here](https://github.com/Torridity/dsworkbench/releases).
 
 ## How to build
 

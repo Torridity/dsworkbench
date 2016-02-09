@@ -1,7 +1,24 @@
-/build/
-/dist/
-/target/
-/core/target/
-/ParserPlugin/target/
-/Core/target/
-/release/
+# Maven
+target/
+
+# Eclipse
+bin/
+.settings/
+.project
+.classpath
+
+# IntelliJ
+out/
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+.nb-gradle/

@@ -7,24 +7,25 @@
     <packaging>pom</packaging>
     <version>3.42</version>
 
-    <description>Parent project for DS Workbench. The project contains two modules: core and plugins which are put together during the assembly process.
-        Furthermore, all dependencies are managed by this parent project.</description>
-    
+    <description>
+        Parent project for DS Workbench. The project contains two modules: core and plugins which are put together during the assembly process.
+        Furthermore, all dependencies are managed by this parent project.
+    </description>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <release.version>3.42</release.version>
     </properties>
-        
+
     <repositories>
-    <repository>
+        <repository>
             <id>localRepository</id>
             <url>file://${basedir}/lib/</url>
-        </repository> 
+        </repository>
         <repository>
             <id>central</id>
             <url>https://repo1.maven.org/maven2</url>
         </repository>
-       
     </repositories>
 
     <dependencies>
@@ -52,7 +53,7 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.0.1</version>
-        </dependency> 
+        </dependency>
         <dependency>
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
@@ -214,7 +215,7 @@
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
-                </configuration> 
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -287,14 +288,13 @@
             </plugin>
         </plugins>
     </build>
-  
+
     <scm>
         <developerConnection>https://github.com/Torridity/dsworkbench.git</developerConnection>
     </scm>
-    
+
     <modules>
         <module>Core</module>
         <module>ParserPlugin</module>
     </modules>
-  
 </project>

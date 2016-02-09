@@ -3,12 +3,12 @@
    
     <parent>
         <groupId>de.tor.dswb</groupId>
-        <artifactId>DSWorkbench</artifactId>
+        <artifactId>dsworkbench</artifactId>
         <version>3.42</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.tor.dswb</groupId>
-    <artifactId>Core</artifactId>
+    <artifactId>core</artifactId>
     <name>Core</name>
     <packaging>jar</packaging>
     <version>3.42</version>

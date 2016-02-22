@@ -874,7 +874,7 @@ public class DataHolder {
       while ((line = r.readLine()) != null) {
         line = line.replaceAll(",,", ", ,");
         Village v = Village.parseFromPlainData(line);
-        if (v != null && v.getX() > 0 && v.getX() < mVillages.length && v.getY() > 0 && v.getY() < mVillages[0].length) {
+        if (v != null && v.getX() >= 0 && v.getX() < mVillages.length && v.getY() >= 0 && v.getY() < mVillages[0].length) {
           mVillages[v.getX()][v.getY()] = v;
         }
       }

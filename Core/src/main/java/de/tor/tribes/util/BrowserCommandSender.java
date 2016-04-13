@@ -91,9 +91,21 @@ public class BrowserCommandSender {
                 Process p = Runtime.getRuntime().exec(new String[]{browser, url});
                 p.waitFor();
             }
-
+            int sleep = 150;
+            String prop = GlobalOptions.getProperty("command.sleep.time");
             try {
-                Thread.sleep(100);
+                if (prop != null) {
+                    sleep = Integer.parseInt(GlobalOptions.getProperty("command.sleep.time"));
+                    if (sleep < 100) {
+                        logger.warn("command.sleep.time must not be smaller than 100. Setting value to minimum.");
+                        sleep = 100;
+                    }
+                }
+            } catch (Exception e) {
+                logger.error("Property command.sleep.time is no int value (" + prop + ")");
+            }
+            try {
+                Thread.sleep(sleep);
             } catch (Exception ignored) {
             }
         } catch (Throwable t) {

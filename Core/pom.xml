@@ -3,7 +3,7 @@
     <parent>
         <groupId>de.tor.dswb</groupId>
         <artifactId>dsworkbench</artifactId>
-        <version>3.42</version>
+        <version>3.43</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -11,7 +11,7 @@
     <artifactId>core</artifactId>
     <name>Core</name>
     <packaging>jar</packaging>
-    <version>3.42</version>
+    <version>3.43</version>
 
     <description></description>
 

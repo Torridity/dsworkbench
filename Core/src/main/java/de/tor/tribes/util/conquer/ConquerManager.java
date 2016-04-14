@@ -211,7 +211,7 @@ public class ConquerManager extends GenericManager<Conquer> {
     private void updateAcceptance() {
         invalidate();
         logger.debug("Filtering conquers");
-        double risePerHour = ServerSettings.getSingleton().getSpeed();
+        double risePerHour = ServerSettings.getSingleton().getSpeed() * ServerSettings.getSingleton().getRiseSpeed();
         logger.debug(" - using " + risePerHour + " as acceptance increment value");
         List<Conquer> toRemove = new LinkedList<Conquer>();
         for (ManageableType t : getAllElements().toArray(new ManageableType[]{})) {
@@ -284,7 +284,6 @@ public class ConquerManager extends GenericManager<Conquer> {
                             break;
                         }
                     }
-
 
                     //continue with new conquers
                     if (!exists) {

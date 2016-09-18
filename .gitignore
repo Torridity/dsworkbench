@@ -22,3 +22,6 @@ dist/
 nbdist/
 nbactions.xml
 .nb-gradle/
+
+# General
+release/

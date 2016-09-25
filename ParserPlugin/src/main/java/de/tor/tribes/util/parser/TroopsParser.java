@@ -26,7 +26,11 @@ import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.StringTokenizer;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Charon
@@ -50,6 +54,12 @@ public class TroopsParser implements SilentParserInterface {
         Hashtable<UnitHolder, Integer> troopsOutside = new Hashtable<UnitHolder, Integer>();
         Hashtable<UnitHolder, Integer> troopsOnTheWay = new Hashtable<UnitHolder, Integer>();
         TroopsManager.getSingleton().invalidate();
+        // used to update group on the fly, if not "all" selected
+        String groupName = null;
+        // groups could be multiple lines, detection is easiest for first line (starts with "Gruppen:")
+        boolean groupLines = false;
+        // store visited villages, so we can add em to selected group
+        List<Village> villages = new LinkedList<Village>();
         while (lineTok.hasMoreElements()) {
             //parse single line for village
             String line = lineTok.nextToken();
@@ -98,10 +108,31 @@ public class TroopsParser implements SilentParserInterface {
                     if (current != null) {
                         v = current;
                         villageLines = 4;
+                        // we are not searching for further group names
+                        groupLines = false;
+                        // add village to list of villages in selected group
+                    	if(groupName != null)villages.add(v);                    	
+                    } else {
+                        // Check if current line is first group line. In case it is, store selected group
+                        if(line.trim().startsWith(ParserVariableManager.getSingleton().getProperty("overview.groups")))
+                        	groupLines = true;                    
+                        // Check if current line contains active group. In case it does, store group name and stop searching
+                        if(groupLines && line.matches(".*>.*?<.*")){
+                        	groupLines = false;
+                        	groupName = StringUtils.substringBetween(line, ">", "<"); // = line.replaceAll(".*>|<.*",""); if we stop using Apache Commons        	
+                        }                    	
                     }
                 } catch (Exception e) {
                     v = null;
                     villageLines = 0;
+                    // Check if current line is first group line. In case it is, store selected group
+                    if(line.trim().startsWith(ParserVariableManager.getSingleton().getProperty("overview.groups")))
+                    	groupLines = true;                    
+                    // Check if current line contains active group. In case it does, store group name and stop searching
+                    if(groupLines && line.matches(".*>.*?<.*")){
+                    	groupLines = false;
+                    	groupName = StringUtils.substringBetween(line, ">", "<"); // = line.replaceAll(".*>|<.*",""); if we stop using Apache Commons        	
+                    }
                 }
             }
             //add troops information
@@ -150,6 +181,14 @@ public class TroopsParser implements SilentParserInterface {
                 NotifierFrame.doNotification("DS Workbench hat Truppeninformationen zu " + foundTroops + ((foundTroops == 1) ? " Dorf " : " Dörfern ") + " in die Truppenübersicht eingetragen.", NotifierFrame.NOTIFY_INFO);
             }
         }
+        
+        //update selected group, if any
+        if(groupName != null && !groupName.equals(ParserVariableManager.getSingleton().getProperty("groups.all"))){
+        	Hashtable<String, List<Village>> groupTable = new Hashtable<String, List<Village>>();
+        	groupTable.put(groupName, villages);
+        	DSWorkbenchMainFrame.getSingleton().fireGroupParserEvent(groupTable);
+        }
+        
         TroopsManager.getSingleton().revalidate(retValue);
         return retValue;
     }

@@ -68,6 +68,8 @@ public class ParserVariableManager {
         DEFAULT.put("de.sos.date.format", "dd.MM.yy HH:mm:ss");
         DEFAULT.put("de.sos.date.format.ms", "dd.MM.yy HH:mm:ss:SSS");
         DEFAULT.put("de.sos.troops.in.village", "Anwesende Truppen");
+        DEFAULT.put("de.overview.groups", "Gruppen:");
+        DEFAULT.put("de.groups.all", "alle");
     }
 
     public String getProperty(String pProperty) {

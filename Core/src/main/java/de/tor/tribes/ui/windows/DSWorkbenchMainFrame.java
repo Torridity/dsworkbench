@@ -2964,29 +2964,47 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     String[] groups = pParserResult.keySet().toArray(new String[]{});
     //NotifierFrame.doNotification("DS Workbench hat " + groups.length + ((groups.length == 1) ? " Dorfgruppe " : " Dorfgruppen ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);
     showSuccess("DS Workbench hat " + groups.length + ((groups.length == 1) ? " Dorfgruppe " : " Dorfgruppen ") + "in der Zwischenablage gefunden.");
-    //remove all tags
-    for (String group : groups) {
-      List<Village> villagesForGroup = pParserResult.get(group);
-      if (villagesForGroup != null) {
-        for (Village v : villagesForGroup) {
-          TagManager.getSingleton().removeTags(v);
-        }
-      }
-    }
-
-    for (String group : groups) {
-      //add new groups
-      TagManager.getSingleton().addTagFast(group);
-      //get (added) group
-      Tag t = TagManager.getSingleton().getTagByName(group);
-      //add villages to group
-      List<Village> villagesForGroup = pParserResult.get(group);
-      if (villagesForGroup != null) {
-        //set new tags
-        for (Village v : villagesForGroup) {
-          t.tagVillage(v.getId());
-        }
-      }
+    if(groups.length!=1){ // Data from group import (all groups for given villages)
+	    //remove all tags
+	    for (String group : groups) {
+	      List<Village> villagesForGroup = pParserResult.get(group);
+	      if (villagesForGroup != null) {
+	        for (Village v : villagesForGroup) {
+	          TagManager.getSingleton().removeTags(v);
+	        }
+	      }
+	    }
+	
+	    for (String group : groups) {
+	      //add new groups
+	      TagManager.getSingleton().addTagFast(group);
+	      //get (added) group
+	      Tag t = TagManager.getSingleton().getTagByName(group);
+	      //add villages to group
+	      List<Village> villagesForGroup = pParserResult.get(group);
+	      if (villagesForGroup != null) {
+	        //set new tags
+	        for (Village v : villagesForGroup) {
+	          t.tagVillage(v.getId());
+	        }
+	      }
+	    }
+    } else { // data from troops import (all villages for given group) 
+    	for (String group : groups) {
+	      //add new groups
+	      TagManager.getSingleton().addTagFast(group);
+	      //get (added) group
+	      Tag t = TagManager.getSingleton().getTagByName(group);
+	      t.clearTaggedVillages();
+	      //add villages to group
+	      List<Village> villagesForGroup = pParserResult.get(group);
+	      if (villagesForGroup != null) {
+	        //set new tags
+	        for (Village v : villagesForGroup) {
+	          t.tagVillage(v.getId());
+	        }
+	      }
+	    }    	
     }
     TagManager.getSingleton().revalidate(true);
   }

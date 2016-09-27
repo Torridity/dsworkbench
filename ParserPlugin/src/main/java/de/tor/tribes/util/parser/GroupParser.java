@@ -57,9 +57,9 @@ public class GroupParser implements SilentParserInterface {
         try {
             JSONObject sectorObject = new JSONObject(pData);
             JSONObject data = (JSONObject) sectorObject.get("id");
-            Iterator keys = data.keys();
+            Iterator<String> keys = data.keys();
             while (keys.hasNext()) {
-                String villageId = (String) keys.next();
+                String villageId = keys.next();
                 String groupName = (String) data.get(villageId);
 
                 List<Village> groups = mappings.get(groupName);
@@ -83,7 +83,7 @@ public class GroupParser implements SilentParserInterface {
     }
 
     public boolean parse(String pGroupsString) {
-
+    	
         if (parseVillageRenamerData(pGroupsString)) {
             return true;
         }

@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -137,6 +139,12 @@ public class TroopsParser70 implements SilentParserInterface {
             lineList.add(line);
         }
 
+        // used to update group on the fly, if not "all" selected
+        String groupName = null;
+        // groups could be multiple lines, detection is easiest for first line (starts with "Gruppen:")
+        boolean groupLines = false;
+        // store visited villages, so we can add em to selected group
+        List<Village> villages = new LinkedList<Village>();
 
         int foundTroops = 0;
         TroopsManager.getSingleton().invalidate();
@@ -151,9 +159,22 @@ public class TroopsParser70 implements SilentParserInterface {
             if (v != null) {
                 if (processEntry(v, currentLine, lineList)) {
                     foundTroops++;
+                    // add village to list of villages in selected group
+                    if(groupName != null)villages.add(v);
+                	groupLines = false; //should already be false. set to false again, to avoid searching for group name in garbage if user copied nonsense
                 }
             } else {
-                debug("Dropping line '" + currentLine + "'");
+                // Check if current line is first group line. In case it is, store selected group
+                if(currentLine.trim().startsWith(ParserVariableManager.getSingleton().getProperty("overview.groups")))
+                	groupLines = true;
+                // Check if current line contains active group. In case it does, store group name and stop searching
+                if(groupLines && currentLine.matches(".*>.*?<.*")){
+                	groupLines = false;
+                	groupName = StringUtils.substringBetween(currentLine, ">", "<"); // = line.replaceAll(".*>|<.*",""); if we stop using Apache Commons   
+                	debug("Found selected group in line '" + currentLine + "'");
+                	debug("Selected group '"+groupName+"'");
+                } else
+                	debug("Dropping line '" + currentLine + "'");
             }
         }
         boolean retValue = (foundTroops != 0);
@@ -165,6 +186,14 @@ public class TroopsParser70 implements SilentParserInterface {
             }
         }
         TroopsManager.getSingleton().revalidate(retValue);
+
+        //update selected group, if any
+        if(groupName != null && !groupName.equals(ParserVariableManager.getSingleton().getProperty("groups.all"))){
+        	Hashtable<String, List<Village>> groupTable = new Hashtable<String, List<Village>>();
+        	groupTable.put(groupName, villages);
+        	DSWorkbenchMainFrame.getSingleton().fireGroupParserEvent(groupTable);
+        }
+        
         return retValue;
     }
 
@@ -361,7 +390,7 @@ public class TroopsParser70 implements SilentParserInterface {
     }
 
     public static void main(String[] args) {
-
+    	
         Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         try {
 

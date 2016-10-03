@@ -15,13 +15,14 @@
  */
 package de.tor.tribes.ui.components;
 
+
 /**
  *
  * @author Torridity
  */
 public class ClickAccountPanel extends javax.swing.JPanel {
 
-    private int clickAccount = 0;
+    private static volatile int clickAccount = 0;
 
     /** Creates new form ClickAccountPanel */
     public ClickAccountPanel() {
@@ -59,7 +60,9 @@ public class ClickAccountPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireUpdateClickAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUpdateClickAccountEvent
-        clickAccount++;
+    	synchronized(ClickAccountPanel.class){
+        	clickAccount++;
+    	}
         updateClickAccount();
     }//GEN-LAST:event_fireUpdateClickAccountEvent
 
@@ -69,17 +72,22 @@ public class ClickAccountPanel extends javax.swing.JPanel {
     }
 
     public boolean useClick() {
+    	boolean ret;
+    	synchronized(ClickAccountPanel.class){
         if (clickAccount != 0) {
             clickAccount--;
-            updateClickAccount();
-            return true;
+            ret = true;
         } else {
-            return false;
-        }
+            ret = false;
+        }}
+        updateClickAccount();
+        return ret;
     }
 
     public void giveClickBack() {
-        clickAccount++;
+    	synchronized(ClickAccountPanel.class){
+        	clickAccount++;
+    	}
         updateClickAccount();
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables

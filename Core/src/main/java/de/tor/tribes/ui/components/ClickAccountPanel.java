@@ -15,18 +15,34 @@
  */
 package de.tor.tribes.ui.components;
 
+import java.util.Observable;
+import java.util.Observer;
+
+import de.tor.tribes.util.GenericObservable;
 
 /**
  *
  * @author Torridity
+ * @author Patrick
  */
 public class ClickAccountPanel extends javax.swing.JPanel {
 
     private static volatile int clickAccount = 0;
+    
+    private static GenericObservable clickAccountObservable = new GenericObservable();
+    
+    public static void setClickAccount(int value){
+    	synchronized(ClickAccountPanel.class){
+    		if(clickAccount != value)clickAccountObservable.setChanged();
+        	clickAccount++;
+    	}
+    	clickAccountObservable.notifyObservers();
+    }
 
     /** Creates new form ClickAccountPanel */
     public ClickAccountPanel() {
         initComponents();
+        clickAccountObservable.addObserver((Observable o, Object arg)->updateClickAccount());
     }
 
     /** This method is called from within the constructor to
@@ -61,9 +77,8 @@ public class ClickAccountPanel extends javax.swing.JPanel {
 
     private void fireUpdateClickAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUpdateClickAccountEvent
     	synchronized(ClickAccountPanel.class){
-        	clickAccount++;
+        	setClickAccount(clickAccount+1);
     	}
-        updateClickAccount();
     }//GEN-LAST:event_fireUpdateClickAccountEvent
 
     private void updateClickAccount() {
@@ -72,23 +87,19 @@ public class ClickAccountPanel extends javax.swing.JPanel {
     }
 
     public boolean useClick() {
-    	boolean ret;
     	synchronized(ClickAccountPanel.class){
         if (clickAccount != 0) {
-            clickAccount--;
-            ret = true;
+            setClickAccount(clickAccount-1);
+            return true;
         } else {
-            ret = false;
+            return false;
         }}
-        updateClickAccount();
-        return ret;
     }
 
     public void giveClickBack() {
     	synchronized(ClickAccountPanel.class){
-        	clickAccount++;
+        	setClickAccount(clickAccount+1);
     	}
-        updateClickAccount();
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jClickAccountLabel;

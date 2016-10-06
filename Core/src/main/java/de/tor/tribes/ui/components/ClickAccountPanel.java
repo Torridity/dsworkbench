@@ -34,7 +34,7 @@ public class ClickAccountPanel extends javax.swing.JPanel {
     public static void setClickAccount(int value){
     	synchronized(ClickAccountPanel.class){
     		if(clickAccount != value)clickAccountObservable.setChanged();
-        	clickAccount++;
+        	clickAccount = value;
     	}
     	clickAccountObservable.notifyObservers();
     }

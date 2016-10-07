@@ -590,11 +590,12 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         jExpertSettingsPanel.add(jLimitMerchantAmount, gridBagConstraints);
 
         jAllowOverflow.setText("Überfüllung zulassen. Speicher");
-        jAllowOverflow.setToolTipText("<html>Hebt das Limit der Speichergröße auf.<br/> Ist diese Option aktiviert, so werden die Speichergrößen nicht<br/> berücksichtigt. Wird ein Speicher überfüllt, so verfallen die gesendeten Rohstoffe.<br/> Wird diese Option aktiviert, sollte darauf geachtet werden Rohstoffe schnell genug zu verarbeiten.</html>");
+        jAllowOverflow.setToolTipText("<html>Hebt das Limit der Speichergröße auf.<br/>  Ist diese Option aktiviert, so werden Rohstoffsendungen bis zur x-fachen Speichergröße an die<br/> Dörfer zugeteilt (oder bis zum Max. Rohstoffe (Empfänger) Limit), je nachdem was kleiner ist. <br/>  Wird ein Speicher beim Beliefern überfüllt, so verfallen die gesendeten Rohstoffe. Ist diese <br/>  Option aktiviert, sollte daher unbedingt darauf geachtet werden empfangene Rohstoffe schnell<br/>  genug zu verarbeiten.<br/> Ist diese Option deaktiviert, so werden Lieferungen anhand des Speichers begrenzt (bis zum Max.<br/> Speicherfüllstand [%] oben). </html>");
         jAllowOverflow.setMaximumSize(new java.awt.Dimension(200, 25));
         jAllowOverflow.setMinimumSize(new java.awt.Dimension(200, 25));
         jAllowOverflow.setOpaque(false);

@@ -69,5 +69,11 @@
             <source>LICENSE</source>
             <outputDirectory></outputDirectory>
         </file>
+        <file>
+        	<source>resources/Scripts/Launcher.bat</source>
+        	<outputDirectory></outputDirectory></file>
+        <file>
+        	<source>resources/Scripts/hidecmd.vbs</source>
+        	<outputDirectory></outputDirectory></file>
     </files>
 </assembly>

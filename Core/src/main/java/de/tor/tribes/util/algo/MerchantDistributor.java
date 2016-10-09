@@ -97,6 +97,7 @@ public class MerchantDistributor extends Thread {
         ArrayList<MerchantDestination> destinations = new ArrayList<MerchantDestination>();
         List<List<MerchantSource>> results = new LinkedList<List<MerchantSource>>();
 
+
         int usedResources = 0;
         double merchantLimit = 1.0;// /3.0;
         if (pLimitMerchants) {

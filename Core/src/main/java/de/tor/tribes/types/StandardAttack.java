@@ -178,7 +178,7 @@ public class StandardAttack extends ManageableType {
 
     public int getAmountForUnit(UnitHolder pUnit, Village pVillage) {
         StandardAttackElement element = getElementForUnit(pUnit);
-        return (element == null) ? 0 : getElementForUnit(pUnit).getTroopsAmount(pVillage);
+        return (element == null) ? 0 : element.getTroopsAmount(pVillage);
     }
 
     public int getFixedAmountForUnit(UnitHolder pUnit) {

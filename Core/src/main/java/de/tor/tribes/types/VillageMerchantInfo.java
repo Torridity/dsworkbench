@@ -118,8 +118,13 @@ public class VillageMerchantInfo implements Cloneable {
         return stashCapacity;
     }
 
-    public void adaptStashCapacity(int pPercent) {
-        setStashCapacity((int) Math.rint(getStashCapacity() * ((pPercent > 100) ? 100 : pPercent) / 100.0));
+    public void adaptStashCapacity(int pPercent){
+    	adaptStashCapacity(pPercent, false);
+    }
+    
+    public void adaptStashCapacity(int pPercent, boolean allowOverflow) {
+    	// allowing overflow might be useful, if (e.g. by some AccountManager) resources are used faster than received
+        setStashCapacity((int) Math.rint(getStashCapacity() * ((pPercent > 100 && !allowOverflow) ? 100 : pPercent) / 100.0));
     }
 
     /**

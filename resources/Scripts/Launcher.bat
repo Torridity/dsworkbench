@@ -1,0 +1,1 @@
+wscript "hidecmd.vbs" "DSWorkbench.bat"

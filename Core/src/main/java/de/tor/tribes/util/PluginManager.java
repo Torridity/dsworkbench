@@ -100,14 +100,15 @@ public class PluginManager {
     return new LinkedList<VillageMerchantInfo>();
   }
 
-  public List<Marker> executeDiplomacyParser(String pData) {
+  public boolean executeDiplomacyParser(String pData) {
     try {
       Object parser = loadParser("de.tor.tribes.util.parser.DiplomacyParser");
-      return ((GenericParserInterface<Marker>) parser).parse(pData);
+      return ((SilentParserInterface) parser).parse(pData);
     } catch (Exception e) {
       logger.error("Failed to execute diplomacy parser", e);
     }
-    return new LinkedList<Marker>();
+    logger.info("Diplomacy parser returned no result");
+    return false;
   }
 
   public boolean executeSupportParser(String pData) {

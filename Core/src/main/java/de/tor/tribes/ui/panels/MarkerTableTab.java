@@ -327,9 +327,11 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
             case CUT_TO_INTERNAL_CLIPBOARD:
                 cutToClipboard();
                 break;
+                /*
             case FROM_EXTERNAL_CLIPBOARD:
                 pasteFromExternalClipboard();
                 break;
+                */
             case CLIPBOARD_BB:
                 copyBBToExternalClipboardEvent();
                 break;
@@ -371,10 +373,16 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
         }
     }
 
+    /*
+     * Changed DiplomacyParser from GenericParserInterface to SilentParserInterface, causing errors in this method.
+     * This kind of stuff ist done via ClipboardWatch, PluginManager, DiplomacyParser, MarkerManager now (importing nap/enemy/bnd marker)
+     * Perhaps this whole class is not needed anymore, but i'll leave it in case i'm wrong. 
+     * 
     private void pasteFromExternalClipboard() {
         try {
             String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
             List<Marker> markers = PluginManager.getSingleton().executeDiplomacyParser(data);
+            
             if (markers.isEmpty()) {
                 //do internal paste
                 copyFromInternalClipboard();
@@ -395,6 +403,7 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
         markerModel.fireTableDataChanged();
         MarkerManager.getSingleton().revalidate(getMarkerSet(), true);
     }
+    */
 
     private void copyFromInternalClipboard() {
         try {

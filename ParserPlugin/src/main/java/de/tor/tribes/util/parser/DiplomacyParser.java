@@ -20,6 +20,9 @@ import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GenericParserInterface;
+import de.tor.tribes.util.SilentParserInterface;
+import de.tor.tribes.util.mark.MarkerManager;
+
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
@@ -30,50 +33,16 @@ import java.util.StringTokenizer;
 
 /**
  *
+ * @author Patrick
  * @author Torridity
  */
-public class DiplomacyParser implements GenericParserInterface<Marker> {
+public class DiplomacyParser implements SilentParserInterface {
 
-    /**de29
-    Verbündete
-    ~DPG~
-    SAWÜ6
-    OMS
-    Nicht-Angriffs-Pakt (NAP)
-    SAW
-    Feinde
-    +AR+
-    DKGD
-    A-T-A
-    -WZ-
-     *BC*
-    Knight
-    ~LoW~
-    N.O.D.
-    ~DN~
-    nod-J
-    nod-OB
-    Clan
-    -WP-
-    [M]
-    STK
-    ANSI
-    PUNCH!
-    MW
-    bzsz
-     */
-    /**en0
-    Verbündete
-    ~B~B~ 	terminate
-    Nicht-Angriffs-Pakt (NAP)
-    K54 	terminate
-    Enemies
-    
-     */
     private final boolean DEBUG = false;
 
-    public List<Marker> parse(String pData) {
-
+    public boolean parse(String pData) {
+    	// TODO: Sprachabhängige Version von "Verbündete", "Nicht-Angriffs-Pakt (NAP)", "Feinde" aus ParserVariableManager.getSingleton().getProperty() laden
+    	
         StringTokenizer lineTok = new StringTokenizer(pData, "\n\r");
         List<Marker> markers = new ArrayList<Marker>();
         boolean allies = false;
@@ -122,7 +91,12 @@ public class DiplomacyParser implements GenericParserInterface<Marker> {
             }
         }
 
-        return markers;
+        if(markers.isEmpty())return false;
+        
+		for(Marker mark : markers) MarkerManager.getSingleton().addManagedElement(mark);
+		
+		return true;
+        
     }
 
     private Marker getMarkerFromLine(String pLine, Color pMarkerColor) {

@@ -71,8 +71,11 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryFooter;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryPrimary;
 import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
+import org.pushingpixels.flamingo.api.ribbon.resize.BaseRibbonBandResizePolicy;
 import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
 import org.pushingpixels.flamingo.api.ribbon.resize.IconRibbonBandResizePolicy;
+import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
+import org.pushingpixels.flamingo.internal.ui.ribbon.AbstractBandControlPanel;
 
 /**
  * @author Torridity
@@ -426,11 +429,11 @@ public class RibbonConfigurator {
 
         infoViewBand.setResizePolicies((List) Arrays.asList(
                 new CoreRibbonResizePolicies.Mirror(infoViewBand.getControlPanel()),
-                new CoreRibbonResizePolicies.Mid2Low(infoViewBand.getControlPanel()),
+                // new CoreRibbonResizePolicies.Mid2Low(infoViewBand.getControlPanel()),
                 new IconRibbonBandResizePolicy(infoViewBand.getControlPanel())));
         attackViewBand.setResizePolicies((List) Arrays.asList(
                 new CoreRibbonResizePolicies.Mirror(attackViewBand.getControlPanel()),
-                new CoreRibbonResizePolicies.Mid2Low(attackViewBand.getControlPanel()),
+                // new CoreRibbonResizePolicies.Mid2Low(attackViewBand.getControlPanel()),
                 new IconRibbonBandResizePolicy(attackViewBand.getControlPanel())));
         ingameInfoViewBand.setResizePolicies((List) Arrays.asList(
                 new CoreRibbonResizePolicies.None(ingameInfoViewBand.getControlPanel()),
@@ -1089,7 +1092,8 @@ public class RibbonConfigurator {
         miscBand.addCommandButton(aboutButton, RibbonElementPriority.TOP);
 
         miscBand.setResizePolicies((List) Arrays.asList(
-                new CoreRibbonResizePolicies.None(miscBand.getControlPanel()) 
+                new CoreRibbonResizePolicies.None(miscBand.getControlPanel()),
+                new IconRibbonBandResizePolicy(miscBand.getControlPanel())
                 ));
         RibbonTask task1 = new RibbonTask("Sonstiges", miscBand);
         frame.getRibbon().addTask(task1);

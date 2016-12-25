@@ -48,7 +48,7 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
         return STANDARD_TEMPLATE;
     }
 
-    public static enum FORM_TYPE {
+    public enum FORM_TYPE {
 
         LINE, ARROW, RECTANGLE, CIRCLE, TEXT, FREEFORM
     }

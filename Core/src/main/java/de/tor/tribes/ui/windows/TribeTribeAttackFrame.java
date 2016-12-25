@@ -147,7 +147,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
         SettingsChangedListener,
         GenericManagerListener, ListSelectionListener {
 
-    public static enum TRANSFER_TYPE {
+    public enum TRANSFER_TYPE {
 
         COPY_SOURCE_TO_INTERNAL_CLIPBOARD, CUT_SOURCE_TO_INTERNAL_CLIPBOARD, PASTE_SOURCE_FROM_INTERNAL_CLIPBOARD, DELETE_SOURCE,
         COPY_TARGET_TO_INTERNAL_CLIPBOARD, CUT_TARGET_TO_INTERNAL_CLIPBOARD, PASTE_TARGET_FROM_INTERNAL_CLIPBOARD, DELETE_TARGET,

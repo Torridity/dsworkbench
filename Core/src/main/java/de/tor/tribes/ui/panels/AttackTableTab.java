@@ -96,7 +96,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
     private static Logger logger = Logger.getLogger("AttackTableTab");
 
-    public static enum TRANSFER_TYPE {
+    public enum TRANSFER_TYPE {
 
         CLIPBOARD_PLAIN, CLIPBOARD_BB, FILE_HTML, FILE_TEXT, FILE_GM, BROWSER_IGM, DSWB_RETIME, SELECTION_TOOL, BROWSER_LINK, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD
     }

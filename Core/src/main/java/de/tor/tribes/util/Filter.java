@@ -19,7 +19,7 @@ package de.tor.tribes.util;
  *
  * @author Torridity
  */
-public abstract interface Filter<C> {
+public interface Filter<C> {
 
-    public boolean isValid(C c);
+    boolean isValid(C c);
 }

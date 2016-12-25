@@ -21,6 +21,6 @@ package de.tor.tribes.util.interfaces;
  */
 public interface MapShotListener {
 
-    public void fireMapShotDoneEvent();
-    public void fireMapShotFailedEvent();
+    void fireMapShotDoneEvent();
+    void fireMapShotFailedEvent();
 }

@@ -21,20 +21,20 @@ package de.tor.tribes.util.interfaces;
  */
 public interface BBFormatterInterface {
 
-    public final static String LIST_START = "%LIST_START%";
-    public final static String LIST_END = "%LIST_END%";
-    public final static String ELEMENT_ID = "%ELEMENT_ID%";
-    public final static String ELEMENT_COUNT = "%ELEMENT_COUNT%";
+    String LIST_START = "%LIST_START%";
+    String LIST_END = "%LIST_END%";
+    String ELEMENT_ID = "%ELEMENT_ID%";
+    String ELEMENT_COUNT = "%ELEMENT_COUNT%";
 
-    public String getPropertyKey();
+    String getPropertyKey();
 
-    public void storeProperty();
+    void storeProperty();
 
-    public String getStandardTemplate();
+    String getStandardTemplate();
 
-    public String getTemplate();
+    String getTemplate();
 
-    public String[] getTemplateVariables();
+    String[] getTemplateVariables();
 
-    public void setCustomTemplate(String pTemplate);
+    void setCustomTemplate(String pTemplate);
 }

@@ -23,5 +23,5 @@ import javax.swing.JFrame;
  */
 public interface DSWorkbenchFrameListener {
 
-    public void fireVisibilityChangedEvent(JFrame pFrame, boolean v);
+    void fireVisibilityChangedEvent(JFrame pFrame, boolean v);
 }

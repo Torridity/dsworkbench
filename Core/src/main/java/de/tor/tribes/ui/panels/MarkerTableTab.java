@@ -79,7 +79,7 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
 
     private static Logger logger = Logger.getLogger("MarkerTableTab");
 
-    public static enum TRANSFER_TYPE {
+    public enum TRANSFER_TYPE {
 
         CLIPBOARD_PLAIN, CLIPBOARD_BB, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_EXTERNAL_CLIPBOARD
     }

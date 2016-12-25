@@ -21,5 +21,5 @@ package de.tor.tribes.ui;
  */
 public interface MapPanelListener {
 
-    public void fireScrollEvent(double pX, double pY);
+    void fireScrollEvent(double pX, double pY);
 }

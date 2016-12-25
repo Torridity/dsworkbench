@@ -98,7 +98,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         }
     }
 
-    public static enum TRANSFER_TYPE {
+    public enum TRANSFER_TYPE {
 
         CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD, BB_TO_CLIPBOARD
     }

@@ -514,9 +514,9 @@ private void fireSearchFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) 
 
 interface SearchListener {
     
-    public void fireTribesFoundEvent(Tribe[] t);
+    void fireTribesFoundEvent(Tribe[] t);
     
-    public void fireAlliesFoundEvent(Ally[] a);
+    void fireAlliesFoundEvent(Ally[] a);
 }
 
 class SearchThread extends Thread {

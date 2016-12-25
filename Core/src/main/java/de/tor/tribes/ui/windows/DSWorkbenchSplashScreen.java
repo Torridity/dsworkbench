@@ -54,7 +54,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     protected enum HIDE_RESULT {
 
         SUCCESS, RESTART_NEEDED, ERROR
-    };
+    }
+
     private static Logger logger = Logger.getLogger("Launcher");
     private final DSWorkbenchSplashScreen self = this;
     private final SplashRepaintThread t;

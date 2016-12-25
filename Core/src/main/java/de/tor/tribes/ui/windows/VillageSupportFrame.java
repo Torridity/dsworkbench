@@ -70,7 +70,7 @@ import org.jdesktop.swingx.painter.MattePainter;
  */
 public class VillageSupportFrame extends javax.swing.JFrame implements ActionListener {
 
-    public static enum TRANSFER_TYPE {
+    public enum TRANSFER_TYPE {
 
         CLIPBOARD_BB, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD
     }

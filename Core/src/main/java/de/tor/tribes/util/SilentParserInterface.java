@@ -22,5 +22,5 @@ package de.tor.tribes.util;
 public interface SilentParserInterface {
 
    
-    public boolean parse(String pData);
+    boolean parse(String pData);
 }

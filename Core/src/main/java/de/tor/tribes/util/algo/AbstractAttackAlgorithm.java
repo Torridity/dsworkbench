@@ -209,12 +209,12 @@ public abstract class AbstractAttackAlgorithm extends Thread {
         return running;
     }
     
-    public static interface LogListener {
+    public interface LogListener {
         
-        public void logMessage(String pMessage);
+        void logMessage(String pMessage);
         
-        public void updateProgress(double pPercent);
+        void updateProgress(double pPercent);
         
-        public void calculationFinished();
+        void calculationFinished();
     }
 }

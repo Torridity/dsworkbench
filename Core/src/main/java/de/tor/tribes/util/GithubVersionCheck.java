@@ -72,7 +72,7 @@ public final class GithubVersionCheck {
 
         UPDATE_AVAILABLE,
         NO_UPDATE_AVAILABLE,
-        CHECK_FAILED;
+        CHECK_FAILED
 
     }
 

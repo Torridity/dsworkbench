@@ -51,7 +51,7 @@ public interface Source {
      * @param d
      * @param amount
      */
-    public void addOrder(Destination d, int amount);
+    void addOrder(Destination d, int amount);
 
     /**
      * Decreases the amount of ordered wares to destination d.
@@ -59,14 +59,14 @@ public interface Source {
      * @param d
      * @param amount
      */
-    public void removeOrder(Destination d, int amount);
+    void removeOrder(Destination d, int amount);
 
     /**
      * Removes a whole order.
      *
      * @param o
      */
-    public void removeOrder(Order o);
+    void removeOrder(Order o);
 
     /**
      * Returns the amount of wares, which are not yet ordered (and therefore
@@ -74,25 +74,25 @@ public interface Source {
      *
      * @return
      */
-    public int waresAvailable();
+    int waresAvailable();
 
-    public int waresAvailable(Destination d);
+    int waresAvailable(Destination d);
 
     /**
      * Returns the amount of ordered wares.
      *
      * @return
      */
-    public int getOrdered();
+    int getOrdered();
 
     /**
      * Returns the internal list of orders.
      *
      * @return
      */
-    public List<Order> getOrders();
+    List<Order> getOrders();
 
-    public int removeEmptyOrders();
+    int removeEmptyOrders();
 
-    public boolean mappingExists(Destination d);
+    boolean mappingExists(Destination d);
 }

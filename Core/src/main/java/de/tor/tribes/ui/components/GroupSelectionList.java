@@ -474,7 +474,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
             OR(0), AND(1), NOT(2), DISABLED(3);
             private int value = 0;
 
-            private RELATION_TYPE(int pValue) {
+            RELATION_TYPE(int pValue) {
                 value = pValue;
             }
 

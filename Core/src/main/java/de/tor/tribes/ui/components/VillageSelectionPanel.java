@@ -307,9 +307,9 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
         pList.setVisible(pShow);
     }
 
-    public static interface VillageSelectionPanelListener {
+    public interface VillageSelectionPanelListener {
 
-        public void fireVillageSelectionEvent(Village[] pSelection);
+        void fireVillageSelectionEvent(Village[] pSelection);
     }
 
     /**

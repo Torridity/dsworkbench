@@ -43,7 +43,7 @@ public class VillageUtils {
     public enum RELATION {
 
         AND, OR
-    };
+    }
 
     public static Village[] getVillages(Tribe pTribe) {
         return getVillages(new Tribe[0]);

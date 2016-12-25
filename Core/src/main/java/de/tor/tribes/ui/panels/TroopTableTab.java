@@ -76,7 +76,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
 
     private static Logger logger = Logger.getLogger("TroopTableTab");
 
-    public static enum TRANSFER_TYPE {
+    public enum TRANSFER_TYPE {
 
         CLIPBOARD_PLAIN, CLIPBOARD_BB, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD
     }

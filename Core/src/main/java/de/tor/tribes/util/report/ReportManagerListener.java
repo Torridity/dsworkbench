@@ -21,5 +21,5 @@ package de.tor.tribes.util.report;
  */
 public interface ReportManagerListener {
 
-    public void fireReportsChangedEvent(String pPlan);
+    void fireReportsChangedEvent(String pPlan);
 }

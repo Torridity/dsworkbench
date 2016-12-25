@@ -20,5 +20,5 @@ package de.tor.tribes.util.mark;
  * @author Torridity
  */
 public interface MarkerManagerListener {
-    public void fireMarkersChangedEvent();
+    void fireMarkersChangedEvent();
 }

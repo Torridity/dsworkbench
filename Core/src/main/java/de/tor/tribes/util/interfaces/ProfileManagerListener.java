@@ -21,6 +21,6 @@ package de.tor.tribes.util.interfaces;
  */
 public interface ProfileManagerListener {
     
-    public void fireProfilesLoadedEvent();
+    void fireProfilesLoadedEvent();
     
 }

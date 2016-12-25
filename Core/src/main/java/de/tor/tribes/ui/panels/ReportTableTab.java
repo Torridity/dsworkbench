@@ -105,7 +105,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
     }
     private static Logger logger = Logger.getLogger("ReportTableTab");
 
-    public static enum TRANSFER_TYPE {
+    public enum TRANSFER_TYPE {
 
         CLIPBOARD_BB, ASTAR, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD
     }

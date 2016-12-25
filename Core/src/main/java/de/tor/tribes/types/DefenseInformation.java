@@ -37,7 +37,8 @@ public class DefenseInformation {
     public enum DEFENSE_STATUS {
 
         UNKNOWN, DANGEROUS, FINE, SAVE
-    };
+    }
+
     private Village target = null;
     private TargetInformation targetInfo = null;
     private List<Defense> defenses = new LinkedList<>();

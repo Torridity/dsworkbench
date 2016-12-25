@@ -330,10 +330,10 @@ public class MerchantDistributor extends Thread {
 
     }
 
-    public static interface MerchantDistributorListener {
+    public interface MerchantDistributorListener {
 
-        public void fireCalculatingResourceEvent(int pResourceId);
+        void fireCalculatingResourceEvent(int pResourceId);
 
-        public void fireCalculationFinishedEvent();
+        void fireCalculationFinishedEvent();
     }
 }

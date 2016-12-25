@@ -91,7 +91,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         // </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Network Setup">
-        boolean useProxy = Boolean.parseBoolean(GlobalOptions.getProperty("proxySet"));;
+        boolean useProxy = Boolean.parseBoolean(GlobalOptions.getProperty("proxySet"));
 
         jDirectConnectOption.setSelected(!useProxy);
         jProxyConnectOption.setSelected(useProxy);

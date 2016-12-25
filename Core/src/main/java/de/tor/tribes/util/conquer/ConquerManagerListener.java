@@ -21,5 +21,5 @@ package de.tor.tribes.util.conquer;
  */
 public interface ConquerManagerListener {
 
-    public void fireConquersChangedEvent();
+    void fireConquersChangedEvent();
 }

@@ -24,6 +24,6 @@ import de.tor.tribes.util.Filter;
  */
 public interface ConquerFilterInterface extends Filter<Conquer>{
 
-    public void setup(Object pFilterComponent);
+    void setup(Object pFilterComponent);
 
 }

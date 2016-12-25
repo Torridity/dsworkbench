@@ -68,11 +68,11 @@ public class DefenseAnalyzer extends Thread {
         setDaemon(true);
     }
 
-    public static interface DefenseAnalyzerListener {
+    public interface DefenseAnalyzerListener {
 
-        public void fireProceedEvent(double pStatus);
+        void fireProceedEvent(double pStatus);
 
-        public void fireFinishedEvent();
+        void fireFinishedEvent();
     }
 
     private Hashtable<UnitHolder, AbstractUnitElement> dswbUnitsToSimulatorUnits(Hashtable<de.tor.tribes.io.UnitHolder, Integer> pInput) {

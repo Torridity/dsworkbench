@@ -49,7 +49,7 @@ public class Conquer extends ManageableType {
   }
 
   /**
-   * @param villageID the villageID to set
+   * @param pVillage the village to set
    */
   public void setVillage(Village pVillage) {
     this.village = pVillage;

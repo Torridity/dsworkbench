@@ -44,9 +44,6 @@ import java.util.List;
             return resourceTransports;
         }
 
-        /**
-         * @param amount the amount to set
-         */
         public void setSingleTransports(List<Resource> pTransports) {
             resourceTransports = new LinkedList<>();
             resourceTransports.add(new Resource(0, Resource.Type.WOOD));

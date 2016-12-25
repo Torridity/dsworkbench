@@ -164,16 +164,10 @@ public class TargetInformation {
         return false;
     }
 
-    /**
-     * @param attacks the attacks to set
-     */
     public boolean addAttack(final Village pSource, final Date pArrive) {
         return addAttack(pSource, pArrive, null);
     }
 
-    /**
-     * @param attacks the attacks to set
-     */
     public boolean addAttack(final Village pSource, final Date pArrive, UnitHolder pUnit) {
         return addAttack(pSource, pArrive, false, false);
     }

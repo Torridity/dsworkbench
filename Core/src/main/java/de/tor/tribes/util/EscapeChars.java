@@ -50,6 +50,7 @@ import java.util.regex.Matcher;
  * for translation
  * </ul>
  */
+@SuppressWarnings("JavadocReference")
 public final class EscapeChars {
 
     /**

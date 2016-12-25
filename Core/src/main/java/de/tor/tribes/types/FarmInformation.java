@@ -22,17 +22,20 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchFarmManager;
-import de.tor.tribes.util.*;
+import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.util.*;
-import java.util.Map.Entry;
 import org.apache.commons.lang.math.IntRange;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.jdom.Element;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  *
@@ -668,7 +671,7 @@ public class FarmInformation extends ManageableType {
     /**
      * Farm this farm
      *
-     * @param The troops used for farming or 'null' if the needed amount of
+     * @param pConfig The troops used for farming or 'null' if the needed amount of
      * troops should be calculated
      */
     public FARM_RESULT farmFarm(DSWorkbenchFarmManager.FARM_CONFIGURATION pConfig) {

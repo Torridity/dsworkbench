@@ -19,10 +19,11 @@ import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.awt.Component;
-import java.util.List;
 import org.jdesktop.swingx.decorator.ComponentAdapter;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
+
+import java.awt.*;
+import java.util.List;
 
 /**
  *
@@ -42,7 +43,6 @@ public class GroupPredicate implements HighlightPredicate {
      *  A column index of -1 is interpreted
      * as "all". 
      * 
-     * @param pattern the Pattern to test the cell value against
      * @param testColumn the column index in model coordinates
      *   of the cell which contains the value to test against the pattern 
      */
@@ -56,8 +56,7 @@ public class GroupPredicate implements HighlightPredicate {
      * as "all". 
      * 
      * 
-     * @param pattern the Pattern to test the cell value against
-     * @param testColumn the column index in model coordinates 
+     * @param testColumn the column index in model coordinates
      *   of the cell which contains the value
      *   to test against the pattern 
      * @param decorateColumn the column index in model coordinates
@@ -81,8 +80,6 @@ public class GroupPredicate implements HighlightPredicate {
      * Test the value. This is called only if the 
      * pre-check returned true, because accessing the 
      * value might be potentially costly
-     * @param adapter
-     * @return
      */
     private boolean test(ComponentAdapter adapter) {
         // single test column
@@ -99,11 +96,6 @@ public class GroupPredicate implements HighlightPredicate {
         return false;
     }
 
-    /**
-     * @param adapter
-     * @param testColumn
-     * @return
-     */
     private boolean testColumn(ComponentAdapter adapter, int testColumn) {
         if (!adapter.isTestable(testColumn)) {
             return false;

@@ -15,26 +15,27 @@
  */
 package de.tor.tribes.types;
 
-import de.tor.tribes.types.ext.Tribe;
-import de.tor.tribes.types.ext.Barbarians;
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.php.LuckViewInterface;
 import de.tor.tribes.php.UnitTableInterface;
+import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.InvalidTribe;
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.xml.JaxenUtils;
 import de.tor.tribes.util.xml.XMLHelper;
+import org.jdom.Document;
+import org.jdom.Element;
+
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import org.jdom.Document;
-import org.jdom.Element;
 
 /**
  *
@@ -864,7 +865,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     }
 
     /**
-     * @param defendersOutside the defendersOutside to set
+     * @param defendersOnTheWay the defendersOnTheWay to set
      */
     public void setDefendersOnTheWay(Hashtable<UnitHolder, Integer> defendersOnTheWay) {
         this.defendersOnTheWay = defendersOnTheWay;

@@ -18,9 +18,13 @@ package de.tor.tribes.util;
 /*Source: http://www.koders.com/java/fid1182C9330FDC66A60312A33932E82F09B5C4CA9F.aspx?s=graph
   @author OpenJGraph
  */
-import java.awt.*;
-import java.awt.geom.*;
 import org.apache.log4j.Logger;
+
+import java.awt.*;
+import java.awt.geom.FlatteningPathIterator;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
+import java.awt.geom.PathIterator;
 
 /**
  * The Intersection class provides methods for determining
@@ -117,7 +121,7 @@ public class Intersection {
      * used by salvo.jesus.graph.VisualEdge wherein the edge of a line
      * will intersect only one segment of the VisualVertex's GeneralPath.
      *
-     * @param   line1   First line
+     * @param   line   First line
      * @param   path    GeneralPath representing line segments
      * @return  The Point object where the line and the GeneralPath object intersect.
      * This method returns null if they do not intersect.

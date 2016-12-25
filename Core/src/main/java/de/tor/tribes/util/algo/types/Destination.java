@@ -23,7 +23,7 @@ package de.tor.tribes.util.algo.types;
  * about the Orders, since Orders are managed by the Sources (see stp.Source).
  *
  * @author Robert Nitsch <dev@robertnitsch.de>
- * @see stp.Source
+ * @see Source
  */
 public interface Destination {
 

@@ -15,27 +15,27 @@
  */
 package de.tor.tribes.ui.panels;
 
-import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import com.jidesoft.swing.JideTabbedPane;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.test.DummyUnit;
 import de.tor.tribes.types.test.DummyVillage;
 import de.tor.tribes.ui.components.CollapseExpandTrigger;
+import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.util.attack.AttackManager;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.Date;
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.plaf.UIResource;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.plaf.UIResource;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.Date;
 
 /**
  *
@@ -147,16 +147,16 @@ public class GenericTestPanel extends javax.swing.JPanel {
     }
 
     /**
-     * @param childPanel the childPanel to set
+     * @param childComponent the childComponent to set
      */
-    public void setChildComponent(JComponent centerComponent) {
-        this.centerComponent = centerComponent;
+    public void setChildComponent(JComponent childComponent) {
+        this.centerComponent = childComponent;
         centerPanel.removeAll();
         if (menuEnabled) {
             centerPanel.add(menuCollapsePanel, java.awt.BorderLayout.EAST);
         }
-        if (centerComponent != null) {
-            centerPanel.add(centerComponent, BorderLayout.CENTER);
+        if (childComponent != null) {
+            centerPanel.add(childComponent, BorderLayout.CENTER);
         }
     }
 

@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.ui.panels;
 
-import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
@@ -26,6 +25,7 @@ import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.editors.*;
 import de.tor.tribes.ui.models.AttackTableModel;
 import de.tor.tribes.ui.renderer.*;
+import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.ui.views.DSWorkbenchSelectionFrame;
 import de.tor.tribes.ui.windows.AttacksToTextExportDialog;
 import de.tor.tribes.ui.windows.ClockFrame;
@@ -37,10 +37,20 @@ import de.tor.tribes.util.attack.StandardAttackManager;
 import de.tor.tribes.util.bb.AttackListFormatter;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
 import de.tor.tribes.util.js.AttackScriptWriter;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.HeadlessException;
-import java.awt.Toolkit;
+import org.apache.log4j.Logger;
+import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.decorator.*;
+import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
+import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
+import org.jdesktop.swingx.painter.ImagePainter;
+import org.jdesktop.swingx.painter.MattePainter;
+import org.jdesktop.swingx.table.TableColumnExt;
+
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -53,40 +63,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.regex.Matcher;
-import javax.swing.AbstractAction;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.RowFilter;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.RowSorterEvent;
-import javax.swing.event.RowSorterListener;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-import org.apache.log4j.Logger;
-import org.jdesktop.swingx.JXTable;
-import org.jdesktop.swingx.decorator.CompoundHighlighter;
-import org.jdesktop.swingx.decorator.HighlightPredicate;
-import org.jdesktop.swingx.decorator.Highlighter;
-import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.jdesktop.swingx.decorator.PainterHighlighter;
-import org.jdesktop.swingx.decorator.PatternPredicate;
-import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
-import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
-import org.jdesktop.swingx.painter.ImagePainter;
-import org.jdesktop.swingx.painter.MattePainter;
-import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
  *
@@ -151,7 +130,6 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     /**
      * Creates new form AttackTablePanel
      *
-     * @param pParent
      * @param pAttackPlan
      * @param pActionListener
      */

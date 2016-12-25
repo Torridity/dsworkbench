@@ -16,20 +16,14 @@
 package de.tor.tribes.util.algo.types;
 
 import de.tor.tribes.types.DefenseTimeSpan;
-import de.tor.tribes.types.test.AnyTribe;
 import de.tor.tribes.types.TimeSpan;
 import de.tor.tribes.types.ext.Tribe;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-
+import de.tor.tribes.types.test.AnyTribe;
 import org.apache.commons.lang.math.LongRange;
 import org.apache.commons.lang.time.DateUtils;
+
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  *
@@ -114,7 +108,7 @@ public class TimeFrame {
    * AttackFitter
    *
    * @param pRuntime Runtime to check
-   * @param pTribe Tribe for which the runtime is valid
+   * @param pVillage Village for which the runtime is valid
    * @return boolean TRUE=Runtime might be fitted if not all send times are
    * already used
    */
@@ -144,7 +138,7 @@ public class TimeFrame {
    * provided runtime
    *
    * @param pRuntime Runtime to fit into
-   * @param pTribe Tribe for which the arrive date should be valid
+   * @param pVillage Village for which the arrive date should be valid
    * @param pUsedSendTimes Already used send times (possible times are checked
    * in steps of 10 seconds). This argument may be 'null'. Then send times are
    * not checked.

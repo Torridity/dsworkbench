@@ -20,12 +20,15 @@ package de.tor.tribes.ui.components;
   @author Torridity
  */
 // Import the GUI classes
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 // Import the Java classes
-import java.util.*;
 
 /**
  * A JOutlookBar provides a component that is similar to a JTabbedPane, but instead of maintaining
@@ -68,7 +71,7 @@ public class JOutlookBar extends JPanel implements ActionListener {
      * Adds the specified component to the JOutlookBar and sets the bar's name
      * 
      * @param  name      The name of the outlook bar
-     * @param  componenet   The component to add to the bar
+     * @param  component   The component to add to the bar
      */
     public void addBar(String name, JComponent component) {
         BarInfo barInfo = new BarInfo(name, component);
@@ -82,7 +85,7 @@ public class JOutlookBar extends JPanel implements ActionListener {
      * 
      * @param  name      The name of the outlook bar
      * @param  icon      An icon to display in the outlook bar
-     * @param  componenet   The component to add to the bar
+     * @param  component   The component to add to the bar
      */
     public void addBar(String name, Icon icon, JComponent component) {
         BarInfo barInfo = new BarInfo(name, icon, component);
@@ -294,7 +297,7 @@ public class JOutlookBar extends JPanel implements ActionListener {
         /**
          * Sets the name of the bar
          * 
-         * @param  The name of the bar
+         * @param  name The name of the bar
          */
         public void setName(String name) {
             this.name = name;

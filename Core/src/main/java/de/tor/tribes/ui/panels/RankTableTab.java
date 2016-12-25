@@ -25,23 +25,6 @@ import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.dsreal.DSRealManager;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.regex.Matcher;
-import javax.swing.AbstractAction;
-import javax.swing.RowFilter;
-import javax.swing.RowSorter;
-import javax.swing.RowSorter.SortKey;
-import javax.swing.SortOrder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
@@ -50,6 +33,21 @@ import org.jdesktop.swingx.decorator.PainterHighlighter;
 import org.jdesktop.swingx.decorator.PatternPredicate;
 import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
+
+import javax.swing.*;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Matcher;
 
 /**
  *
@@ -232,10 +230,8 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
         }
     }
 
-    /** Creates new form AttackTablePanel
-     * @param pParent
-     * @param pAttackPlan
-     * @param pActionListener
+    /**
+     * Creates new form AttackTablePanel
      */
     public RankTableTab(RANK_TYPE pType, final ActionListener pActionListener) {
         eType = pType;

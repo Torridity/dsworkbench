@@ -18,8 +18,8 @@ package de.tor.tribes.util;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.WorldDecorationHolder;
-import de.tor.tribes.types.test.DummyUserProfile;
 import de.tor.tribes.types.UserProfile;
+import de.tor.tribes.types.test.DummyUserProfile;
 import de.tor.tribes.ui.views.*;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.StandardAttackManager;
@@ -35,21 +35,18 @@ import de.tor.tribes.util.sos.SOSManager;
 import de.tor.tribes.util.stat.StatManager;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.log4j.Logger;
+
 import javax.help.CSH;
 import javax.help.HelpBroker;
 import javax.help.HelpSet;
 import javax.help.HelpSetException;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.log4j.Logger;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.net.URL;
+import java.util.*;
 
 /**
  * Global settings used by almost all components. e.g. WorldData or UI specific objects
@@ -87,7 +84,6 @@ public class GlobalOptions {
     /**
      * Init all managed objects
      *
-     * @param pDownloadData TRUE=download the WorldData from the tribes server
      * @throws Exception If an Error occurs while initializing the objects
      */
     public static void initialize() throws Exception {

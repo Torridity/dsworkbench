@@ -35,8 +35,8 @@ import java.util.List;
  * methods (think about it).
  *
  * @author Robert Nitsch <dev@robertnitsch.de>
- * @see stp.Order
- * @see stp.Destination
+ * @see Order
+ * @see Destination
  */
 public interface Source {
 
@@ -47,24 +47,16 @@ public interface Source {
      * In fact, you dont have to follow this recommendation, but implementation
      * will be far easier, if you do. (See stp.Source documentation also
      * for a more detailed explanation.)
-     *
-     * @param d
-     * @param amount
      */
     void addOrder(Destination d, int amount);
 
     /**
      * Decreases the amount of ordered wares to destination d.
-     *
-     * @param d
-     * @param amount
      */
     void removeOrder(Destination d, int amount);
 
     /**
      * Removes a whole order.
-     *
-     * @param o
      */
     void removeOrder(Order o);
 

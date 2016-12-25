@@ -16,29 +16,34 @@
 package de.tor.tribes.ui.views;
 
 import de.tor.tribes.control.GenericManagerListener;
-import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.Conquer;
-import de.tor.tribes.types.test.DummyVillage;
+import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.panels.GenericTestPanel;
+import de.tor.tribes.types.test.DummyVillage;
 import de.tor.tribes.ui.models.ConquerTableModel;
+import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.util.BrowserCommandSender;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.ImageUtils;
-import de.tor.tribes.util.PropertyHelper;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.conquer.ConquerManager;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.TexturePaint;
+import org.apache.commons.configuration.Configuration;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Logger;
+import org.jdesktop.swingx.JXButton;
+import org.jdesktop.swingx.JXTaskPane;
+import org.jdesktop.swingx.decorator.*;
+import org.jdesktop.swingx.painter.MattePainter;
+import org.jdesktop.swingx.table.TableColumnExt;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -52,24 +57,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
-import org.jdesktop.swingx.JXButton;
-import org.jdesktop.swingx.JXTaskPane;
-import org.jdesktop.swingx.decorator.ColorHighlighter;
-import org.jdesktop.swingx.decorator.ComponentAdapter;
-import org.jdesktop.swingx.decorator.HighlightPredicate;
-import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.jdesktop.swingx.decorator.PainterHighlighter;
-import org.jdesktop.swingx.decorator.PatternPredicate;
-import org.jdesktop.swingx.painter.MattePainter;
-import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
  * @author Charon
@@ -758,7 +745,6 @@ class ColumnEqualsPredicate implements HighlightPredicate {
      * Instantiates a Predicate with the given Pattern and testColumn index (in model coordinates) highlighting all columns. A column index
      * of -1 is interpreted as "all".
      *
-     * @param pattern the Pattern to test the cell value against
      * @param testColumn the column index in model coordinates of the cell which contains the value to test against the pattern
      */
     public ColumnEqualsPredicate(int... testColumn) {

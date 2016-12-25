@@ -157,9 +157,7 @@ public class GlobalOptions {
     public static String[] getAvailableSkins() {
         List<String> skins = new LinkedList<>();
         skins.add(Skin.MINIMAP_SKIN_ID);
-        for (String s : new File("graphics/skins").list()) {
-            skins.add(s);
-        }
+        Collections.addAll(skins, new File("graphics/skins").list());
         Collections.sort(skins);
         return skins.toArray(new String[]{});
     }

@@ -23,11 +23,8 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -94,9 +91,7 @@ public class SupportCalculator {
                 logger.error("Current tribe is 'null'");
                 return movements;
             }
-            for (Village v : own.getVillageList()) {
-                villages.add(v);
-            }
+            Collections.addAll(villages, own.getVillageList());
         } else {
             for (Tag t : pTags) {
                 for (Integer id : t.getVillageIDs()) {

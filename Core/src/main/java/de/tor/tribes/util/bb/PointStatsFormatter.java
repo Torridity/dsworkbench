@@ -120,9 +120,7 @@ public class PointStatsFormatter extends BasicFormatter<Stats> {
     @Override
     public String[] getTemplateVariables() {
         List<String> vars = new LinkedList<>();
-        for (String var : VARIABLES) {
-            vars.add(var);
-        }
+        Collections.addAll(vars, VARIABLES);
         vars.add(TRIBE);
         vars.add(POINTS_BEFORE);
         vars.add(POINTS_AFTER);

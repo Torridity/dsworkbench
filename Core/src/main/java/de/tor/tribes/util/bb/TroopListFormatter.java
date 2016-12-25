@@ -17,6 +17,7 @@ package de.tor.tribes.util.bb;
 
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.text.NumberFormat;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
@@ -75,12 +76,8 @@ public class TroopListFormatter extends BasicFormatter<VillageTroopsHolder> {
     @Override
     public String[] getTemplateVariables() {
         List<String> vars = new LinkedList<>();
-        for (String var : VARIABLES) {
-            vars.add(var);
-        }
-        for (String var : new VillageTroopsHolder().getBBVariables()) {
-            vars.add(var);
-        }
+        Collections.addAll(vars, VARIABLES);
+        Collections.addAll(vars, new VillageTroopsHolder().getBBVariables());
         return vars.toArray(new String[vars.size()]);
     }
 }

@@ -16,6 +16,8 @@
 package de.tor.tribes.util.bb;
 
 import de.tor.tribes.types.OverallStatResult;
+
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
@@ -51,9 +53,7 @@ public class OverallReportStatsFormatter extends BasicFormatter<OverallStatResul
     @Override
     public String[] getTemplateVariables() {
         List<String> vars = new LinkedList<>();
-        for (String var : new OverallStatResult().getBBVariables()) {
-            vars.add(var);
-        }
+        Collections.addAll(vars, new OverallStatResult().getBBVariables());
         return vars.toArray(new String[vars.size()]);
     }
 }

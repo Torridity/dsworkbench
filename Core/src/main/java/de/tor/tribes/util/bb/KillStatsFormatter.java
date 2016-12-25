@@ -115,12 +115,8 @@ public class KillStatsFormatter extends BasicFormatter<Stats> {
     @Override
     public String[] getTemplateVariables() {
         List<String> vars = new LinkedList<>();
-        for (String var : VARIABLES) {
-            vars.add(var);
-        }
-        for (String var : STAT_SPECIFIC_VARIABLES) {
-            vars.add(var);
-        }
+        Collections.addAll(vars, VARIABLES);
+        Collections.addAll(vars, STAT_SPECIFIC_VARIABLES);
         return vars.toArray(new String[vars.size()]);
     }
 }

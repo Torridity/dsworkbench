@@ -17,6 +17,7 @@ package de.tor.tribes.util.bb;
 
 import de.tor.tribes.types.Note;
 import java.text.NumberFormat;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
@@ -66,12 +67,8 @@ public class NoteListFormatter extends BasicFormatter<Note> {
     @Override
     public String[] getTemplateVariables() {
         List<String> vars = new LinkedList<>();
-        for (String var : VARIABLES) {
-            vars.add(var);
-        }
-        for (String var : new Note().getBBVariables()) {
-            vars.add(var);
-        }
+        Collections.addAll(vars, VARIABLES);
+        Collections.addAll(vars, new Note().getBBVariables());
         return vars.toArray(new String[vars.size()]);
     }
 }

@@ -976,8 +976,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     }//GEN-LAST:event_fireAlwaysOnTopEvent
 
     private void fireDoCreateStatsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDoCreateStatsEvent
-        Object[] selection = jReportSetsForStatsList.getSelectedValues();
-        if (selection == null || selection.length == 0) {
+        List selection = jReportSetsForStatsList.getSelectedValuesList();
+        if (selection == null || selection.isEmpty()) {
             JOptionPaneHelper.showInformationBox(jCreateStatsFrame, "Kein Berichtset ausgewählt", "Information");
             return;
         }
@@ -1041,8 +1041,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 }//GEN-LAST:event_fireEnterEvent
 
     private void fireRebuildStatsEvent() {
-        Object[] selection = jList1.getSelectedValues();
-        if (selection == null || selection.length == 0) {
+        List selection = jList1.getSelectedValuesList();
+        if (selection == null || selection.isEmpty()) {
             jOverallStatsArea.setText("<html>Kein Stamm ausgewählt</html>");
             jAllyStatsArea.setText("<html>Kein Stamm ausgewählt</html>");
             jTribeStatsArea.setText("<html>Kein Stamm ausgewählt</html>");
@@ -1074,7 +1074,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         overallResult.setStartDate(lastStats.getStartDate());
         overallResult.setEndDate(lastStats.getEndDate());
         overallResult.setReportCount(lastStats.getReportCount());
-        overallResult.setAttackerAllies(selection.length);
+        overallResult.setAttackerAllies(selection.size());
         overallResult.setDefenders(overallDefTribes);
         overallResult.setDefenderAllies(overallDefAllies);
 

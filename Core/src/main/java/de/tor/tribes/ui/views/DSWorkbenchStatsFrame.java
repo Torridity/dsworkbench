@@ -16,13 +16,13 @@
 package de.tor.tribes.ui.views;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.ext.Ally;
-import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.TribeStatsElement;
 import de.tor.tribes.types.TribeStatsElement.Stats;
+import de.tor.tribes.types.ext.Ally;
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.panels.GenericTestPanel;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.util.BBCodeFormatter;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
@@ -32,29 +32,6 @@ import de.tor.tribes.util.bb.KillStatsFormatter;
 import de.tor.tribes.util.bb.PointStatsFormatter;
 import de.tor.tribes.util.bb.WinnerLoserStatsFormatter;
 import de.tor.tribes.util.stat.StatManager;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.HeadlessException;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.ConsoleAppender;
@@ -76,6 +53,17 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.*;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
 
 /**
  * @author Torridity
@@ -130,7 +118,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
             
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                Object[] allySelection = jAllyList.getSelectedValues();
+                List allySelection = jAllyList.getSelectedValuesList();
                 jTribeList.clearSelection();
                 List<Tribe> tribes = new LinkedList<>();
                 for (Object o : allySelection) {
@@ -141,7 +129,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
                         }
                     }
                     Collections.sort(tribes);
-                    DefaultListModel model = new DefaultListModel();
+                    DefaultListModel<Tribe> model = new DefaultListModel<>();
                     for (Tribe t : tribes) {
                         model.addElement(t);
                     }
@@ -888,7 +876,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
 
     private void fireUpdateChartEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireUpdateChartEvent
         if (!jStatCreatePanel.isVisible()) {
-            Object[] tribeSelection = jTribeList.getSelectedValues();
+            List tribeSelection = jTribeList.getSelectedValuesList();
             if (tribeSelection == null) {
                 jChartPanel.removeAll();
                 SwingUtilities.invokeLater(new Runnable() {
@@ -914,8 +902,8 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
     
     private void fireViewChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireViewChangedEvent
         if ((evt == null || evt.getStateChange() == ItemEvent.SELECTED) && (theChartPanel != null && theChartPanel.isVisible())) {
-            Object[] tribeSelection = jTribeList.getSelectedValues();
-            if (tribeSelection == null || tribeSelection.length == 0) {
+            List tribeSelection = jTribeList.getSelectedValuesList();
+            if (tribeSelection == null || tribeSelection.isEmpty()) {
                 jChartPanel.removeAll();
                 SwingUtilities.invokeLater(new Runnable() {
                     
@@ -943,10 +931,10 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         long end = jEndDate.getSelectedDate().getTime();
         List<Tribe> usedTribes = new LinkedList<>();
         //use selected
-        Object[] tribes = jTribeList.getSelectedValues();
-        if (tribes == null || tribes.length == 0) {
-            Object[] allies = jAllyList.getSelectedValues();
-            if (allies == null || allies.length == 0) {
+        List tribes = jTribeList.getSelectedValuesList();
+        if (tribes == null || tribes.isEmpty()) {
+            List allies = jAllyList.getSelectedValuesList();
+            if (allies == null || allies.isEmpty()) {
                 //nothing selected
                 JOptionPaneHelper.showInformationBox(DSWorkbenchStatsFrame.this, "Keine Stämme/Spieler ausgewählt.", "Information");
                 return;
@@ -957,10 +945,10 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
                     Tribe[] tribesForAlly = StatManager.getSingleton().getMonitoredTribes((Ally) a);
                     lTribes.addAll(Arrays.asList(tribesForAlly));
                 }
-                tribes = lTribes.toArray();
+                tribes = lTribes;
             }
         }
-        if (tribes == null || tribes.length == 0) {
+        if (tribes.isEmpty()) {
             JOptionPaneHelper.showInformationBox(DSWorkbenchStatsFrame.this, "Die gewählten Stämme enthalten keine überwachten Spieler", "Information");
             return;
         }
@@ -1183,13 +1171,13 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
     
     private void removeMonitoredElements() {
         //remove tribe element(s)
-        Object[] tribesToRemove = jTribeList.getSelectedValues();
-        if (tribesToRemove == null || tribesToRemove.length == 0) {
+        List tribesToRemove = jTribeList.getSelectedValuesList();
+        if (tribesToRemove == null || tribesToRemove.isEmpty()) {
             JOptionPaneHelper.showInformationBox(this, "Kein Spieler ausgewählt", "Fehler");
             return;
         }
-        String message = "";
-        if (tribesToRemove.length == 1) {
+        String message;
+        if (tribesToRemove.isEmpty()) {
             message = "Erfasste Daten für markierten Spieler löschen?";
         } else {
             message = "Erfasste Daten für markierte Spieler löschen?";
@@ -1267,7 +1255,7 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
     private javax.swing.JPanel jStatCreatePanel;
     private org.jdesktop.swingx.JXPanel jStatsPanel;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JList jTribeList;
+    private javax.swing.JList<Tribe> jTribeList;
     private javax.swing.JCheckBox jUseTop10Box;
     private javax.swing.JComboBox jViewSelectionBox;
     private javax.swing.JButton jWeeklyStats;

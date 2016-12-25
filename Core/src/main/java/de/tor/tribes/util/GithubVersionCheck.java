@@ -19,12 +19,13 @@ import de.tor.tribes.php.json.JSONArray;
 import de.tor.tribes.php.json.JSONException;
 import de.tor.tribes.php.json.JSONObject;
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
+import org.apache.log4j.Logger;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -91,7 +92,7 @@ public final class GithubVersionCheck {
      * @return The update information object including the status and download
      * URL, if available.
      */
-    public static final UpdateInfo getUpdateInformation() {
+    public static UpdateInfo getUpdateInformation() {
         try {
             URLConnection u = new URL(API_URL).openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
             InputStream in = u.getInputStream();

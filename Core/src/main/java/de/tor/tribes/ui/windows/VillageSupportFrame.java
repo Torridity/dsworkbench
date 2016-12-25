@@ -26,44 +26,27 @@ import de.tor.tribes.ui.UnitOrderBuilder;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.SupportCalculator;
+import de.tor.tribes.util.*;
+import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.bb.AttackListFormatter;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
-import javax.swing.DefaultListModel;
-import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
-import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.ServerSettings;
-import de.tor.tribes.util.attack.AttackManager;
-import de.tor.tribes.util.bb.AttackListFormatter;
-import java.awt.Color;
-import java.awt.HeadlessException;
+import org.jdesktop.swingx.decorator.HighlighterFactory;
+import org.jdesktop.swingx.painter.MattePainter;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.util.Iterator;
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
-import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.jdesktop.swingx.painter.MattePainter;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
 
 /**
  * @author Charon
@@ -594,7 +577,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
         Date arrive = dateTimeField.getSelectedDate();
         Integer minUnitCnt = (Integer) jMinUnitCountSpinner.getValue();
         List<Tag> allowedTags = new LinkedList<>();
-        for (Object o : jTagsList.getSelectedValues()) {
+        for (Object o : jTagsList.getSelectedValuesList()) {
             allowedTags.add((Tag) o);
         }
 

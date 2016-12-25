@@ -25,51 +25,16 @@ import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.TroopFilterElement;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.types.test.DummyProfile;
-import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.panels.GenericTestPanel;
+import de.tor.tribes.ui.renderer.*;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.windows.TroopFilterDialog;
-import de.tor.tribes.ui.renderer.DateCellRenderer;
-import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.UnitCellRenderer;
-import de.tor.tribes.ui.renderer.UnitListCellRenderer;
-import de.tor.tribes.util.BBCodeFormatter;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.PluginManager;
-import de.tor.tribes.util.PropertyHelper;
-import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.bb.AttackListFormatter;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.HeadlessException;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
@@ -77,6 +42,18 @@ import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
 
 /**
  * @author Torridity
@@ -1086,8 +1063,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 }
             }
             
-            Object[] tags = jTagList.getSelectedValues();
-            if (tags == null || tags.length == 0) {
+            List tags = jTagList.getSelectedValuesList();
+            if (tags == null || tags.isEmpty()) {
                 JOptionPaneHelper.showInformationBox(DSWorkbenchReTimerFrame.this, "Keine Dorfgruppe ausgewählt", "Information");
                 return;
             }
@@ -1264,8 +1241,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
 }//GEN-LAST:event_fireApplyTroopFiltersEvent
     
     private void fireRemoveTroopFilterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveTroopFilterEvent
-        Object[] selection = jFilterList.getSelectedValues();
-        if (selection == null || selection.length == 0) {
+        List selection = jFilterList.getSelectedValuesList();
+        if (selection == null || selection.isEmpty()) {
             return;
         }
         List<TroopFilterElement> toRemove = new LinkedList<>();

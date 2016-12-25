@@ -18,55 +18,15 @@ package de.tor.tribes.ui.panels;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Note;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.editors.BBPanelCellEditor;
 import de.tor.tribes.ui.editors.NoteIconCellEditor;
 import de.tor.tribes.ui.models.NoteTableModel;
-import de.tor.tribes.ui.renderer.DateCellRenderer;
-import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.BBCellRenderer;
-import de.tor.tribes.ui.renderer.NoteIconCellRenderer;
-import de.tor.tribes.ui.renderer.VisibilityCellRenderer;
-import de.tor.tribes.util.BrowserCommandSender;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.ImageUtils;
-import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.PluginManager;
+import de.tor.tribes.ui.renderer.*;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.bb.NoteListFormatter;
 import de.tor.tribes.util.bb.VillageListFormatter;
 import de.tor.tribes.util.note.NoteManager;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.HeadlessException;
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.geom.GeneralPath;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import javax.swing.AbstractAction;
-import javax.swing.DefaultListModel;
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.RowFilter;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
@@ -78,6 +38,27 @@ import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
 import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.geom.GeneralPath;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
+import java.util.regex.Matcher;
 
 /**
  *
@@ -179,7 +160,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
                     showInfo(selectionCount + ((selectionCount == 1) ? " Notiz gewählt" : " Notizen gewählt"));
                 }
             } else {
-                selectionCount = jxVillageList.getSelectedValues().length;
+                selectionCount = jxVillageList.getSelectedValuesList().size();
                 if (selectionCount != 0) {
                     showInfo(selectionCount + ((selectionCount == 1) ? " Dorf gewählt" : " Dörfer gewählt"));
                 }
@@ -538,8 +519,8 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
     }
 
     public void copyVillagesAsBBCodes() {
-        Object[] selection = jxVillageList.getSelectedValues();
-        if (selection == null || selection.length == 0) {
+        List selection = jxVillageList.getSelectedValuesList();
+        if (selection == null || selection.isEmpty()) {
             showInfo("Keine Dörfer gewählt");
             return;
         }
@@ -611,9 +592,9 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
     }
 
     public void deleteVillagesFromNotes() {
-        Object[] selection = jxVillageList.getSelectedValues();
+        List selection = jxVillageList.getSelectedValuesList();
 
-        if (selection == null || selection.length == 0) {
+        if (selection == null || selection.isEmpty()) {
             showInfo("Keine Dörfer gewählt");
             return;
         }
@@ -625,7 +606,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
             return;
         }
 
-        String message = ((selection.length == 1) ? "Dorf aus " : selection.length + " Dörfer aus ") + ((notes.size() == 1) ? "der gewählten Notiz" : "den gewählten Notizen") + " löschen?";
+        String message = ((selection.size() == 1) ? "Dorf aus " : selection.size() + " Dörfer aus ") + ((notes.size() == 1) ? "der gewählten Notiz" : "den gewählten Notizen") + " löschen?";
         if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             for (Object o : selection) {
                 Village v = (Village) o;
@@ -634,7 +615,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
                 }
             }
 
-            showSuccess(((selection.length == 1) ? "Dorf " : selection.length + " Dörfer ") + "gelöscht");
+            showSuccess(((selection.size() == 1) ? "Dorf " : selection.size() + " Dörfer ") + "gelöscht");
             noteModel.fireTableDataChanged();
         }
     }

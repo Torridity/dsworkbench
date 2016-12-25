@@ -15,9 +15,6 @@
  */
 package de.tor.tribes.ui.windows;
 
-import de.tor.tribes.ui.panels.DSWorkbenchAttackInfoPanel;
-import de.tor.tribes.ui.panels.MapPanel;
-import de.tor.tribes.ui.panels.GenericTestPanel;
 import com.jidesoft.swing.JideTabbedPane;
 import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.control.GenericManagerListener;
@@ -36,18 +33,11 @@ import de.tor.tribes.ui.dnd.VillageTransferable;
 import de.tor.tribes.ui.editors.FakeCellEditor;
 import de.tor.tribes.ui.editors.NoteIconCellEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
+import de.tor.tribes.ui.panels.DSWorkbenchAttackInfoPanel;
+import de.tor.tribes.ui.panels.GenericTestPanel;
+import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.renderer.*;
-import de.tor.tribes.util.AllyUtils;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.MouseGestureHandler;
-import de.tor.tribes.util.PluginManager;
-import de.tor.tribes.util.ProfileManager;
-import de.tor.tribes.util.TableHelper;
-import de.tor.tribes.util.UIHelper;
-import de.tor.tribes.util.VillageUtils;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.algo.AbstractAttackAlgorithm;
 import de.tor.tribes.util.algo.AlgorithmListener;
 import de.tor.tribes.util.algo.BruteForce;
@@ -55,71 +45,36 @@ import de.tor.tribes.util.algo.Iterix;
 import de.tor.tribes.util.algo.types.TimeFrame;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.bb.AttackListFormatter;
-import java.awt.Component;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
-import org.apache.log4j.Logger;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
-import java.awt.Color;
-import java.util.StringTokenizer;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.awt.BorderLayout;
-import java.awt.HeadlessException;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
-import java.awt.dnd.DragSourceDragEvent;
-import java.awt.dnd.DragSourceDropEvent;
-import java.awt.dnd.DragSourceEvent;
-import java.awt.dnd.DragSourceListener;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetEvent;
-import java.awt.dnd.DropTargetListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import javax.swing.event.ListSelectionListener;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import javax.swing.table.DefaultTableCellRenderer;
 import org.apache.commons.lang.math.LongRange;
 import org.apache.log4j.ConsoleAppender;
-import org.jdesktop.swingx.JXButton;
-import org.jdesktop.swingx.JXCollapsiblePane;
-import org.jdesktop.swingx.JXLabel;
-import org.jdesktop.swingx.JXTable;
-import org.jdesktop.swingx.JXTaskPane;
+import org.apache.log4j.Logger;
+import org.jdesktop.swingx.*;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 import org.jdesktop.swingx.table.TableColumnExt;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.*;
+import java.awt.event.*;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
 
 /**
  * @author Torridity
@@ -2577,8 +2532,8 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
             }
             fireAddSourcesEvent(villages);
         } else if (evt.getSource() == jSelectedSources) {
-            Object[] selection = jSourceVillageList.getSelectedValues();
-            if (selection == null || selection.length == 0) {
+            List selection = jSourceVillageList.getSelectedValuesList();
+            if (selection == null || selection.isEmpty()) {
                 showInfo("Keine Dörfer gewählt");
                 return;
             }
@@ -2593,8 +2548,8 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
             }
             fireAddTargetsEvent(villages);
         } else if (evt.getSource() == jSelectedTargets) {
-            Object[] selection = jTargetVillageList.getSelectedValues();
-            if (selection == null || selection.length == 0) {
+            List selection = jTargetVillageList.getSelectedValuesList();
+            if (selection == null || selection.isEmpty()) {
                 showInfo("Keine Dörfer gewählt");
                 return;
             }
@@ -3530,7 +3485,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
      * Get source villages filtered by selected groups
      */
     private List<Village> getGroupFilteredSourceVillages() {
-        Object[] values = jVillageGroupList.getSelectedValues();
+        List values = jVillageGroupList.getSelectedValuesList();
 
         List<Tag> tags = new LinkedList<>();
         for (Object o : values) {
@@ -3577,10 +3532,10 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
      * Filter source list by selected continents
      */
     private void fireFilterSourceContinentEvent() {
-        Object[] conts = jSourceContinentList.getSelectedValues();
+        List continents = jSourceContinentList.getSelectedValuesList();
         //build list of allowed continents
         List<Integer> allowedContinents = new LinkedList<>();
-        for (Object cont : conts) {
+        for (Object cont : continents) {
             int contId = Integer.parseInt(((String) cont).replaceAll("K", ""));
             allowedContinents.add(contId);
         }
@@ -3599,16 +3554,16 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
      * Filter target lists by selected continents
      */
     private void fireFilterTargetByContinentEvent() {
-        Object[] conts = jTargetContinentList.getSelectedValues();
+        List continents = jTargetContinentList.getSelectedValuesList();
         //build list of allowed continents
         List<Integer> allowedContinents = new LinkedList<>();
-        for (Object cont : conts) {
+        for (Object cont : continents) {
             int contId = Integer.parseInt(((String) cont).replaceAll("K", ""));
             allowedContinents.add(contId);
         }
 
         List<Tribe> tribes = new ArrayList<>();
-        for (Object tribe : jTargetTribeList.getSelectedValues()) {
+        for (Object tribe : jTargetTribeList.getSelectedValuesList()) {
             tribes.add((Tribe) tribe);
         }
 
@@ -3616,7 +3571,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
                 allowedContinents.toArray(new Integer[allowedContinents.size()]),
                 Village.CASE_INSENSITIVE_ORDER);
 
-        DefaultListModel villageModel = new DefaultListModel();
+        DefaultListModel<Village> villageModel = new DefaultListModel<>();
         for (Village v : filtered) {
             villageModel.addElement(v);
         }
@@ -4007,7 +3962,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     private javax.swing.JPanel jTargetPanel;
     private javax.swing.JFrame jTargetResultDetailsFrame;
     private javax.swing.JList jTargetTribeList;
-    private javax.swing.JList jTargetVillageList;
+    private javax.swing.JList<Village> jTargetVillageList;
     private javax.swing.JProgressBar jTargetsBar;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JComboBox jTroopsList;

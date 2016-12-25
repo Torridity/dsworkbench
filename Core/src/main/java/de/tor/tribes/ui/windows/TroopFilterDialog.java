@@ -79,8 +79,8 @@ public class TroopFilterDialog extends javax.swing.JDialog {
     }
 
     private void removeSelectedFilters() {
-        Object[] selection = jFilterList.getSelectedValues();
-        if (selection == null || selection.length == 0) {
+        List selection = jFilterList.getSelectedValuesList();
+        if (selection == null || selection.isEmpty()) {
             return;
         }
         List<TroopFilterElement> toRemove = new LinkedList<>();

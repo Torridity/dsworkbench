@@ -131,11 +131,12 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
     }
 
     private void deleteSelectedTimeSpan() {
-        if (jTimeFrameList.getSelectedValues() == null || jTimeFrameList.getSelectedValues().length == 0) {
+        List selectedValuesList = jTimeFrameList.getSelectedValuesList();
+        if (selectedValuesList == null || selectedValuesList.isEmpty()) {
             return;
         }
         List<Object> selection = new LinkedList<>();
-        for (Object o : jTimeFrameList.getSelectedValues()) {
+        for (Object o : jTimeFrameList.getSelectedValuesList()) {
             if (!(o instanceof TimeSpanDivider)) {
                 selection.add(o);
             }

@@ -50,9 +50,9 @@ public class DSCalculator {
 
     public static long calculateMoveTimeInMillis(Village pSource, Village pTarget, double pMinPerField) {
         if (ServerSettings.getSingleton().isMillisArrival()) {
-            return Math.round(calculateDistance(pSource, pTarget) * pMinPerField * 60000l);
+            return Math.round(calculateDistance(pSource, pTarget) * pMinPerField * 60000L);
         } else {
-            return Math.round(calculateDistance(pSource, pTarget) * pMinPerField * 60l) * 1000l;
+            return Math.round(calculateDistance(pSource, pTarget) * pMinPerField * 60L) * 1000L;
         }
     }
 

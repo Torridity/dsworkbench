@@ -16,61 +16,30 @@
 package de.tor.tribes.ui.panels;
 
 import de.tor.tribes.control.GenericManagerListener;
-import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
-import de.tor.tribes.ui.views.DSWorkbenchNotepad;
-import de.tor.tribes.ui.views.DSWorkbenchFormFrame;
-import de.tor.tribes.ui.views.DSWorkbenchSelectionFrame;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.ext.Ally;
-import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.Church;
 import de.tor.tribes.types.FightReport;
+import de.tor.tribes.types.ext.Ally;
+import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.MapPanelListener;
 import de.tor.tribes.ui.dnd.VillageTransferable;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
-import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
+import de.tor.tribes.ui.views.*;
 import de.tor.tribes.ui.windows.*;
 import de.tor.tribes.ui.wiz.tap.AttackSourcePanel;
 import de.tor.tribes.ui.wiz.tap.AttackTargetPanel;
 import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
-import de.tor.tribes.util.BrowserCommandSender;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.interfaces.ToolChangeListener;
-import java.awt.Desktop;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragSourceDragEvent;
-import java.awt.dnd.DragSourceDropEvent;
-import java.awt.dnd.DragSourceEvent;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.geom.Rectangle2D;
-import java.util.LinkedList;
-import java.util.List;
-import org.apache.log4j.Logger;
-import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.interfaces.MapShotListener;
-import de.tor.tribes.util.ScreenshotSaver;
-import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.bb.VillageListFormatter;
 import de.tor.tribes.util.church.ChurchManager;
+import de.tor.tribes.util.interfaces.MapShotListener;
+import de.tor.tribes.util.interfaces.ToolChangeListener;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.note.NoteManager;
 import de.tor.tribes.util.report.ReportManager;
@@ -78,41 +47,24 @@ import de.tor.tribes.util.stat.StatManager;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Paint;
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.Toolkit;
+import org.apache.log4j.Logger;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
-import java.awt.dnd.DragSourceListener;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.awt.dnd.*;
+import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
+import java.util.*;
+import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 
 /**
  * @author Charon
@@ -1532,13 +1484,13 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
                 int outcodes = mapBounds.outcode(mousePos);
                 if ((outcodes & Rectangle2D.OUT_LEFT) != 0) {
-                    xDir += -1;
+                    xDir -= 1;
                 } else if ((outcodes & Rectangle2D.OUT_RIGHT) != 0) {
                     xDir += 1;
                 }
 
                 if ((outcodes & Rectangle2D.OUT_TOP) != 0) {
-                    yDir += -1;
+                    yDir -= 1;
                 } else if ((outcodes & Rectangle2D.OUT_BOTTOM) != 0) {
                     yDir += 1;
                 }

@@ -129,7 +129,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
         if (ServerSettings.getSingleton().isMillisArrival()) {
             this.arriveTime = arriveTime;
         } else {
-            this.arriveTime = new Date((long) Math.floor((double) arriveTime.getTime() / 1000.0) * 1000l);
+            this.arriveTime = new Date((long) Math.floor((double) arriveTime.getTime() / 1000.0) * 1000L);
         }
     }
 

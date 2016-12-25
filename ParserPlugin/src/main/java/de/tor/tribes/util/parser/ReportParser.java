@@ -98,7 +98,7 @@ public class ReportParser implements SilentParserInterface {
                     debug("  Sent: " + f.format(new Date(result.getTimestamp())));
                     haveTime = true;
                 } catch (Exception e) {
-                    result.setTimestamp(0l);
+                    result.setTimestamp(0L);
                     debug(" Failed to parse sent");
                 }
             } else if (line.contains("hat gewonnen")) {
@@ -436,7 +436,7 @@ public class ReportParser implements SilentParserInterface {
                         result.setTimestamp(d.getTime());
                         haveTime = true;
                     } catch (Exception e) {
-                        result.setTimestamp(0l);
+                        result.setTimestamp(0L);
                     }
                 }
 

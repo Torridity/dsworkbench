@@ -19,19 +19,18 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Church;
 import de.tor.tribes.types.drawing.AbstractForm;
-import de.tor.tribes.types.ext.Ally;
-import de.tor.tribes.types.ext.Barbarians;
-import de.tor.tribes.types.ext.NoAlly;
-import de.tor.tribes.types.ext.Tribe;
-import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.windows.FormConfigFrame;
+import de.tor.tribes.types.ext.*;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.panels.MapPanel;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.windows.FormConfigFrame;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.ServerSettings;
+import org.apache.log4j.Logger;
+
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
@@ -40,10 +39,6 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.util.*;
 import java.util.List;
-import javax.swing.JToolTip;
-import javax.swing.Popup;
-import javax.swing.PopupFactory;
-import org.apache.log4j.Logger;
 
 /**
  * Map Renderer which supports "dirty layers" defining which layer has to be
@@ -933,7 +928,7 @@ class RoundGradientContext implements PaintContext {
                 }
 
                 int base = (j * w + i) * 4;
-                data[base + 0] = (int) (color1.getRed() + ratio * (color2.getRed() - color1.getRed()));
+                data[base]     = (int) (color1.getRed() + ratio * (color2.getRed() - color1.getRed()));
                 data[base + 1] = (int) (color1.getGreen() + ratio * (color2.getGreen() - color1.getGreen()));
                 data[base + 2] = (int) (color1.getBlue() + ratio * (color2.getBlue() - color1.getBlue()));
                 data[base + 3] = (int) (color1.getAlpha() + ratio * (color2.getAlpha() - color1.getAlpha()));

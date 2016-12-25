@@ -138,7 +138,7 @@ public class VillageHTMLTooltipGenerator {
         Conquer c = ConquerManager.getSingleton().getConquer(pVillage);
         if (c != null) {
             SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-            b.append(buildInfoRow("Erobert am:", f.format(c.getTimestamp() * 1000l), false));
+            b.append(buildInfoRow("Erobert am:", f.format(c.getTimestamp() * 1000L), false));
             b.append(buildInfoRow("Zustimmung:", c.getCurrentAcceptance(), false));
         }
         

@@ -27,8 +27,8 @@ import org.apache.commons.lang.StringUtils;
 public class TroopListFormatter extends BasicFormatter<VillageTroopsHolder> {
 
     private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    private final String TEMPLATE_PROPERTY = "troops.list.bbexport.template";
-    private final String STANDARD_TEMPLATE = "[b]Truppenübersicht[/b]\n"
+    private static final String TEMPLATE_PROPERTY = "troops.list.bbexport.template";
+    private static final String STANDARD_TEMPLATE = "[b]Truppenübersicht[/b]\n"
             + "[table]\n"
             + "[**]Dorf[||]%SPEAR_ICON%[||]%SWORD_ICON%[||]%AXE_ICON%[||]%ARCHER_ICON%[||]%SPY_ICON%[||]%LIGHT_ICON%[||]%MARCHER_ICON%[||]%HEAVY_ICON%[||]%RAM_ICON%[||]%CATA_ICON%[||]%KNIGHT_ICON%[||]%SNOB_ICON%[/**]\n"
             + LIST_START

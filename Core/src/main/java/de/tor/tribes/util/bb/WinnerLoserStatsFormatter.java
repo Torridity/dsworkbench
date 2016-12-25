@@ -28,20 +28,20 @@ import org.apache.commons.lang.StringUtils;
  */
 public class WinnerLoserStatsFormatter extends BasicFormatter<Stats> {
 
-    private final String WINNER_BY_POINTS = "%WINNER_BY_POINTS%";
-    private final String WINNER_BY_EXPANSION = "%WINNER_BY_EXPANSION%";
-    private final String WINNER_BY_CONQUERS = "%WINNER_BY_CONQUERS%";
-    private final String WINNER_BY_DEFENSE = "%WINNER_BY_DEFENSE%";
-    private final String WINNER_BY_OFFENSE = "%WINNER_BY_OFFENSE%";
-    private final String WINNER_BY_KILLS_PER_POINT = "%WINNER_BY_KILLS_PER_POINT%";
-    private final String LOSER_BY_POINTS = "%LOSER_BY_POINTS%";
-    private final String LOSER_BY_EXPANSION = "%LOSER_BY_EXPANSION%";
-    private final String LOSER_BY_CONQUERS = "%LOSER_BY_CONQUERS%";
-    private final String LOSER_BY_OFFENSE = "%LOSER_BY_OFFENSE%";
-    private final String LOSER_BY_DEFENSE = "%LOSER_BY_DEFENSE%";
+    private static final String WINNER_BY_POINTS = "%WINNER_BY_POINTS%";
+    private static final String WINNER_BY_EXPANSION = "%WINNER_BY_EXPANSION%";
+    private static final String WINNER_BY_CONQUERS = "%WINNER_BY_CONQUERS%";
+    private static final String WINNER_BY_DEFENSE = "%WINNER_BY_DEFENSE%";
+    private static final String WINNER_BY_OFFENSE = "%WINNER_BY_OFFENSE%";
+    private static final String WINNER_BY_KILLS_PER_POINT = "%WINNER_BY_KILLS_PER_POINT%";
+    private static final String LOSER_BY_POINTS = "%LOSER_BY_POINTS%";
+    private static final String LOSER_BY_EXPANSION = "%LOSER_BY_EXPANSION%";
+    private static final String LOSER_BY_CONQUERS = "%LOSER_BY_CONQUERS%";
+    private static final String LOSER_BY_OFFENSE = "%LOSER_BY_OFFENSE%";
+    private static final String LOSER_BY_DEFENSE = "%LOSER_BY_DEFENSE%";
     private final String[] STAT_SPECIFIC_VARIABLES = new String[]{WINNER_BY_POINTS, WINNER_BY_EXPANSION, WINNER_BY_CONQUERS, WINNER_BY_OFFENSE, WINNER_BY_DEFENSE, WINNER_BY_KILLS_PER_POINT, LOSER_BY_POINTS, LOSER_BY_EXPANSION, LOSER_BY_CONQUERS, LOSER_BY_OFFENSE, LOSER_BY_DEFENSE};
     private final String[] VARIABLES = new String[]{};
-    private final String STANDARD_TEMPLATE = "[b]Gewinner und Verlierer[/b]\n\n"
+    private static final String STANDARD_TEMPLATE = "[b]Gewinner und Verlierer[/b]\n\n"
             + "[table]\n[**]Titel[||]Spieler[/**]\n"
             + "[*][u][b]Gewinner[/b][/u][|][/*]\n"
             + "[*][b]Punktesammler[/b][|]%WINNER_BY_POINTS%[/*]\n"
@@ -58,7 +58,7 @@ public class WinnerLoserStatsFormatter extends BasicFormatter<Stats> {
             + "[*][b]Friedensaktivist[/b][|]%LOSER_BY_OFFENSE%[/*]\n"
             + "[*][b]Liebling des Feindes[/b][|]%LOSER_BY_DEFENSE%[/*]\n"
             + "[/table]";
-    private final String TEMPLATE_PROPERTY = "winner.loser.stats.bbexport.template";
+    private static final String TEMPLATE_PROPERTY = "winner.loser.stats.bbexport.template";
 
     @Override
     public String formatElements(List<Stats> pElements, boolean pExtended) {

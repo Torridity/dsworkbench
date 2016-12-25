@@ -42,8 +42,8 @@ import java.util.zip.GZIPInputStream;
 public class DataHolder {
 
   private static Logger logger = Logger.getLogger("DataManager");
-  private final int ID_OFF = 0;
-  private final int ID_DEF = 1;
+  private static final int ID_OFF = 0;
+  private static final int ID_DEF = 1;
   private Village[][] mVillages = null;
   private Hashtable<Integer, Village> mVillagesTable = null;
   private Hashtable<Integer, Ally> mAllies = null;

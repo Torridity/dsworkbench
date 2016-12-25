@@ -31,7 +31,7 @@ public class SosListFormatter extends BasicFormatter<SOSRequest> {
 
     private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
     private final String STANDARD_TEMPLATE = new SOSRequest().getStandardTemplate();
-    private final String TEMPLATE_PROPERTY = "sos.list.bbexport.template";
+    private static final String TEMPLATE_PROPERTY = "sos.list.bbexport.template";
 
     @Override
     public String getPropertyKey() {

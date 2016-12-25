@@ -37,7 +37,7 @@ import java.util.StringTokenizer;
  */
 public class DiplomacyParser implements SilentParserInterface {
 
-    private final boolean DEBUG = false;
+    private static final boolean DEBUG = false;
 
     public boolean parse(String pData) {
     	// TODO: Sprachabhängige Version von "Verbündete", "Nicht-Angriffs-Pakt (NAP)", "Feinde" aus ParserVariableManager.getSingleton().getProperty() laden

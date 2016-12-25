@@ -29,7 +29,7 @@ public class ReportListFormatter extends BasicFormatter<FightReport> {
 
     private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
     private final String STANDARD_TEMPLATE = new FightReport().getStandardTemplate();
-    private final String TEMPLATE_PROPERTY = "report.list.bbexport.template";
+    private static final String TEMPLATE_PROPERTY = "report.list.bbexport.template";
 
     @Override
     public String getPropertyKey() {

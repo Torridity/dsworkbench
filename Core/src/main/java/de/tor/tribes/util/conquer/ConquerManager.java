@@ -442,7 +442,7 @@ public class ConquerManager extends GenericManager<Conquer> {
 
 class ConquerUpdateThread extends Thread {
 
-    private final long FIVE_MINUTES = 1000 * 60 * 5;
+    private static final long FIVE_MINUTES = 1000 * 60 * 5;
 
     public ConquerUpdateThread() {
         setName("ConquerUpdateThread");

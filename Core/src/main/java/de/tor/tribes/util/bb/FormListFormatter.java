@@ -31,7 +31,7 @@ public class FormListFormatter extends BasicFormatter<AbstractForm> {
     private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
     private final String STANDARD_TEMPLATE = "[b]Zeichnungen[/b]\nAnzahl der Zeichnungen: %ELEMENT_COUNT%\n"
             + "%LIST_START%\n" + new Circle().getStandardTemplate() + "\n%LIST_END%";
-    private final String TEMPLATE_PROPERTY = "form.list.bbexport.template";
+    private static final String TEMPLATE_PROPERTY = "form.list.bbexport.template";
 
     @Override
     public String formatElements(List<AbstractForm> pElements, boolean pExtended) {

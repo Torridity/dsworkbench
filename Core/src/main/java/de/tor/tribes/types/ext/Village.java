@@ -369,16 +369,15 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
             //   return ALPHA_NUM_COMPARATOR.compare(toString(), o.toString());
         } else {
             try {
-                Village v = o;
 
-                if (x < v.getX()) {
+                if (x < o.getX()) {
                     return -1;
-                } else if (x > v.getX()) {
+                } else if (x > o.getX()) {
                     return 1;
                 } else {
-                    if (y < v.getY()) {
+                    if (y < o.getY()) {
                         return -1;
-                    } else if (y > v.getY()) {
+                    } else if (y > o.getY()) {
                         return 1;
                     } else {
                         return 0;

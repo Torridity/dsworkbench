@@ -46,11 +46,9 @@ public class MarkerCell extends javax.swing.JPanel implements Comparable<MarkerC
             return null;
         } else {
             if (pMarker.getMarkerType() == Marker.TRIBE_MARKER_TYPE) {
-                MarkerCell c = new MarkerCell(DataHolder.getSingleton().getTribes().get(pMarker.getMarkerID()));
-                return c;
+                return new MarkerCell(DataHolder.getSingleton().getTribes().get(pMarker.getMarkerID()));
             } else if (pMarker.getMarkerType() == Marker.ALLY_MARKER_TYPE) {
-                MarkerCell c = new MarkerCell(DataHolder.getSingleton().getAllies().get(pMarker.getMarkerID()));
-                return c;
+                return new MarkerCell(DataHolder.getSingleton().getAllies().get(pMarker.getMarkerID()));
             }
         }
         return null;
@@ -139,12 +137,11 @@ public class MarkerCell extends javax.swing.JPanel implements Comparable<MarkerC
     @Override
     public int compareTo(MarkerCell o) {
         try {
-            MarkerCell c = o;
             String v1 = "";
-            if (c.getType() == Marker.ALLY_MARKER_TYPE) {
-                v1 = c.getAlly().getName();
+            if (o.getType() == Marker.ALLY_MARKER_TYPE) {
+                v1 = o.getAlly().getName();
             } else {
-                v1 = c.getTribe().getName();
+                v1 = o.getTribe().getName();
             }
             String v2 = "";
             if (type == Marker.ALLY_MARKER_TYPE) {

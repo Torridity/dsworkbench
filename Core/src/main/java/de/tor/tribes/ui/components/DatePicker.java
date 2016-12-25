@@ -153,19 +153,19 @@ public class DatePicker extends JPanel {
         i = 10;
         int k = 60;
         for (CrossedLabel[] aDaysInMonth : daysInMonth) {
-            for (int i1 = 0; i1 < aDaysInMonth.length; i1++) {
-                aDaysInMonth[i1].setBackground(gray);
-                aDaysInMonth[i1].setFont(smallFont);
-                aDaysInMonth[i1].setHorizontalAlignment(SwingConstants.RIGHT);
-                aDaysInMonth[i1].setText("");
-                aDaysInMonth[i1].setFocusable(false);
-                aDaysInMonth[i1].addMouseListener(new MouseAdapter() {
+            for (CrossedLabel anADaysInMonth : aDaysInMonth) {
+                anADaysInMonth.setBackground(gray);
+                anADaysInMonth.setFont(smallFont);
+                anADaysInMonth.setHorizontalAlignment(SwingConstants.RIGHT);
+                anADaysInMonth.setText("");
+                anADaysInMonth.setFocusable(false);
+                anADaysInMonth.addMouseListener(new MouseAdapter() {
 
                     public void mouseClicked(MouseEvent mouseevent) {
                         onDayClicked(mouseevent);
                     }
                 });
-                add(aDaysInMonth[i1], new AbsoluteConstraints(i, k, 21, 21));
+                add(anADaysInMonth, new AbsoluteConstraints(i, k, 21, 21));
                 i += 20;
             }
 

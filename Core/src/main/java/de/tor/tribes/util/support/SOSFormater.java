@@ -76,19 +76,18 @@ public class SOSFormater {
         int snobCount = 0;
         for (TimedAttack attack1 : attacks) {
             try {
-                TimedAttack attack = attack1;
-                if (attack.isPossibleFake()) {
+                if (attack1.isPossibleFake()) {
                     fakeCount++;
-                } else if (attack.isPossibleSnob()) {
+                } else if (attack1.isPossibleSnob()) {
                     snobCount++;
                 }
                 if (pDetailed) {
-                    if (attack.isPossibleFake()) {
-                        buffer.append(attack.getSource().toBBCode()).append(" (").append(attack.getSource().getTribe().toBBCode()).append(") ").append(dateFormat.format(new Date(attack.getlArriveTime()))).append(" [b](Fake)[/b]").append("\n");
-                    } else if (attack.isPossibleSnob()) {
-                        buffer.append(attack.getSource().toBBCode()).append(" (").append(attack.getSource().getTribe().toBBCode()).append(") ").append(dateFormat.format(new Date(attack.getlArriveTime()))).append(" [b](AG)[/b]").append("\n");
+                    if (attack1.isPossibleFake()) {
+                        buffer.append(attack1.getSource().toBBCode()).append(" (").append(attack1.getSource().getTribe().toBBCode()).append(") ").append(dateFormat.format(new Date(attack1.getlArriveTime()))).append(" [b](Fake)[/b]").append("\n");
+                    } else if (attack1.isPossibleSnob()) {
+                        buffer.append(attack1.getSource().toBBCode()).append(" (").append(attack1.getSource().getTribe().toBBCode()).append(") ").append(dateFormat.format(new Date(attack1.getlArriveTime()))).append(" [b](AG)[/b]").append("\n");
                     } else {
-                        buffer.append(attack.getSource().toBBCode()).append(" (").append(attack.getSource().getTribe().toBBCode()).append(") ").append(dateFormat.format(new Date(attack.getlArriveTime()))).append("\n");
+                        buffer.append(attack1.getSource().toBBCode()).append(" (").append(attack1.getSource().getTribe().toBBCode()).append(") ").append(dateFormat.format(new Date(attack1.getlArriveTime()))).append("\n");
                     }
                 }
             } catch (Exception ignored) {

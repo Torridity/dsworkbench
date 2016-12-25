@@ -641,15 +641,14 @@ public class RetimerDataPanel extends WizardPage {
 
             Date arriveDate;
             try {
-                String text = pData;
                 String arrive;
                 String arriveLine;
-                if (text.contains(PluginManager.getSingleton().getVariableValue("attack.arrive.time"))) {
+                if (pData.contains(PluginManager.getSingleton().getVariableValue("attack.arrive.time"))) {
                     String searchString = PluginManager.getSingleton().getVariableValue("attack.arrive.time");
-                    arriveLine = text.substring(text.indexOf(PluginManager.getSingleton().getVariableValue("attack.arrive.time")) + searchString.length());
+                    arriveLine = pData.substring(pData.indexOf(PluginManager.getSingleton().getVariableValue("attack.arrive.time")) + searchString.length());
                 } else {
                     String searchString = PluginManager.getSingleton().getVariableValue("sos.arrive.time");
-                    arriveLine = text.substring(text.indexOf(PluginManager.getSingleton().getVariableValue("sos.arrive.time")) + searchString.length());
+                    arriveLine = pData.substring(pData.indexOf(PluginManager.getSingleton().getVariableValue("sos.arrive.time")) + searchString.length());
                 }
 
                 StringTokenizer tokenizer = new StringTokenizer(arriveLine, "\n");

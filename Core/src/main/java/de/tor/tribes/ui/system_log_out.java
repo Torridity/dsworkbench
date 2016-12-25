@@ -350,7 +350,7 @@ g.setTransform(defaultTransform_);
 	 */
     @Override
 	public int getIconHeight() {
-		return width;
+		return height;
 	}
 
 	/*
@@ -360,7 +360,7 @@ g.setTransform(defaultTransform_);
 	 */
     @Override
 	public int getIconWidth() {
-		return height;
+		return width;
 	}
 
 	/*

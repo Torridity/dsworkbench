@@ -219,8 +219,7 @@ public class SupportCalculator {
 
         @Override
         public String toString() {
-            String ret = "Von " + source + " am " + new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS").format(sendTime) + " mit " + unit;
-            return ret;
+            return "Von " + source + " am " + new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS").format(sendTime) + " mit " + unit;
         }
     }
 }

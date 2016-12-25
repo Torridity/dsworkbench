@@ -162,8 +162,7 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
                 cnt++;
                 Village v = pSettings.getVisibleVillage(x, y);
                 int row = y - firstRow;
-                int col = x;
-                renderMarkerField(v, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), g2d);
+                renderMarkerField(v, row, x, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), g2d);
             }
         }
         g2d.dispose();
@@ -186,10 +185,9 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
                 cnt++;
                 //iterate from first row for 'pRows' times
                 Village v = pSettings.getVisibleVillage(x, y);
-                int row = y;
                 int col = x - firstCol;
 
-                renderMarkerField(v, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), g2d);
+                renderMarkerField(v, y, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), g2d);
             }
         }
         g2d.dispose();

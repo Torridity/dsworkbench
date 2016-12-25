@@ -377,7 +377,7 @@ public class SOSGenerator extends javax.swing.JFrame {
     }
 
     private int getRandomValueInRange(int min, int max) {
-        return Math.max(min, (int) Math.random() * max);
+        return Math.max(min, (int) (Math.random() * max));
     }
 
     /**

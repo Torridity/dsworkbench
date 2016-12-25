@@ -478,8 +478,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
 
         try {
             String formatted = new TagListFormatter().formatElements(selection, extended);
-            String b = formatted;
-            StringTokenizer t = new StringTokenizer(b, "[");
+            StringTokenizer t = new StringTokenizer(formatted, "[");
             int cnt = t.countTokens();
             if (cnt > 1000) {
                 if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Gruppen benötigen mehr als 1000 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {

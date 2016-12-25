@@ -16,10 +16,11 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.util.interfaces.UpdateListener;
-import java.io.*;
+import org.apache.log4j.Logger;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -48,7 +49,7 @@ public class AutoUpdater {
     }
   }
 
-  public static List<String> getUpdatedResources(UpdateListener pListener) throws IOException {
+  public static List<String> getUpdatedResources(UpdateListener pListener) {
     //no updates available
     return new ArrayList<>();
   }

@@ -253,7 +253,6 @@ public class TargetInformation {
         if (pInfo != null) {
             theOtherAttacks = pInfo.getAttacks();
         }
-        this.iWallLevel = iWallLevel;
         Hashtable<UnitHolder, Integer> theOtherTroopInfo = pInfo.getTroops();
         Enumeration<UnitHolder> units = theOtherTroopInfo.keys();
         while (units.hasMoreElements()) {

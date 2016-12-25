@@ -147,9 +147,8 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
                 cnt++;
                 //iterate from first row for 'pRows' times
                 Village v = pSettings.getVisibleVillage(x, y);
-                int row = y;
                 int col = x - firstCol;
-                renderField(v, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), dx, dy, pSettings.getZoom(), includeSupport, g2d);
+                renderField(v, y, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), dx, dy, pSettings.getZoom(), includeSupport, g2d);
             }
         }
         g2d.dispose();
@@ -181,13 +180,12 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
                 cnt++;
                 Village v = pSettings.getVisibleVillage(x, y);
                 int row = y - firstRow;
-                int col = x;
                 if (v != null && currentMouseVillage != null && v.equals(currentMouseVillage)) {
                     lastVillageToDraw = v;
                     lastVillageRow = row;
-                    lastVillageCol = col;
+                    lastVillageCol = x;
                 } else {
-                    renderField(v, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), dx, dy, pSettings.getZoom(), includeSupport, g2d);
+                    renderField(v, row, x, pSettings.getFieldWidth(), pSettings.getFieldHeight(), dx, dy, pSettings.getZoom(), includeSupport, g2d);
                 }
             }
         }

@@ -24,19 +24,15 @@ import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.GenericParserInterface;
 import de.tor.tribes.util.ServerSettings;
-import java.awt.Toolkit;
+import org.apache.log4j.Logger;
+
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.regex.Pattern;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -283,7 +279,7 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
                             print("Failed to get Wall " + e.getMessage());
                         }
                     } else {
-                        print("Invalid wall entry '" + wallSplit + "'");
+                        print("Invalid wall entry '" + Arrays.toString(wallSplit) + "'");
                     }
                 } else if (usedLine.contains("Verteidiger:")) {
                     print("Get units from line '" + usedLine + "'");

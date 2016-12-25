@@ -15,18 +15,6 @@
  */
 package de.tor.tribes.util.parser;
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Village;
@@ -35,6 +23,17 @@ import de.tor.tribes.ui.windows.NotifierFrame;
 import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 /**
  * @author Charon
@@ -196,7 +195,6 @@ public class TroopsParser70 implements SilentParserInterface {
     }
 
     private boolean processEntry(Village pVillage, String pCurrentLine, List<String> pLineStack) {
-        String ownTroopsLine = pCurrentLine;
         String inVillageLine = null;
         String outsideLine = null;
         String onTheWayLine = null;
@@ -206,7 +204,7 @@ public class TroopsParser70 implements SilentParserInterface {
             onTheWayLine = pLineStack.remove(0);
             debug("Processing village " + pVillage);
 
-            int[] ownUnits = handleLine(ownTroopsLine, ParserVariableManager.getSingleton().getProperty("troops.own"));
+            int[] ownUnits = handleLine(pCurrentLine, ParserVariableManager.getSingleton().getProperty("troops.own"));
             if (ownUnits == null) {
                 throw new Exception("OwnTroops line is invalid");
             }

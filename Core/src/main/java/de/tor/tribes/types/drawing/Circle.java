@@ -17,21 +17,15 @@ package de.tor.tribes.types.drawing;
 
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.panels.MapPanel;
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Stroke;
-import java.awt.geom.Ellipse2D;
-import java.net.URLDecoder;
-import org.jdom.Element;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.bb.VillageListFormatter;
-import java.awt.Font;
+import org.jdom.Element;
+
+import java.awt.*;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.net.URLDecoder;
 import java.util.List;
 
 /**
@@ -298,8 +292,8 @@ public class Circle extends AbstractForm {
     @Override
     public void setYPos(double yPos) {
         super.setYPos(yPos);
-        if (xPosEnd == -1) {
-            this.xPosEnd = yPos;
+        if (yPosEnd == -1) {
+            this.yPosEnd = yPos;
         }
     }
 

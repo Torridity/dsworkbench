@@ -876,9 +876,8 @@ public class JSONObject {
                 ? klass.getMethods() : klass.getDeclaredMethods();
         for (Method method1 : methods) {
             try {
-                Method method = method1;
-                if (Modifier.isPublic(method.getModifiers())) {
-                    String name = method.getName();
+                if (Modifier.isPublic(method1.getModifiers())) {
+                    String name = method1.getName();
                     String key = "";
                     if (name.startsWith("get")) {
                         if (name.equals("getClass")
@@ -892,7 +891,7 @@ public class JSONObject {
                     }
                     if (key.length() > 0
                             && Character.isUpperCase(key.charAt(0))
-                            && method.getParameterTypes().length == 0) {
+                            && method1.getParameterTypes().length == 0) {
                         if (key.length() == 1) {
                             key = key.toLowerCase();
                         } else if (!Character.isUpperCase(key.charAt(1))) {
@@ -900,7 +899,7 @@ public class JSONObject {
                                     + key.substring(1);
                         }
 
-                        Object result = method.invoke(bean, (Object[]) null);
+                        Object result = method1.invoke(bean, (Object[]) null);
 
                         map.put(key, wrap(result));
                     }
@@ -1356,7 +1355,7 @@ public class JSONObject {
      * @throws JSONException If the value is or contains an invalid number.
      */
     static String valueToString(Object value) throws JSONException {
-        if (value == null || value.equals(null)) {
+        if (value == null) {
             return "null";
         }
         if (value instanceof JSONString) {
@@ -1366,7 +1365,7 @@ public class JSONObject {
             } catch (Exception e) {
                 throw new JSONException(e);
             }
-            if (o instanceof String) {
+            if (o != null) {
                 return (String) o;
             }
             throw new JSONException("Bad value from toJSONString: " + o);
@@ -1406,13 +1405,13 @@ public class JSONObject {
      */
     static String valueToString(Object value, int indentFactor, int indent)
             throws JSONException {
-        if (value == null || value.equals(null)) {
+        if (value == null) {
             return "null";
         }
         try {
             if (value instanceof JSONString) {
                 Object o = ((JSONString) value).toJSONString();
-                if (o instanceof String) {
+                if (o != null) {
                     return (String) o;
                 }
             }

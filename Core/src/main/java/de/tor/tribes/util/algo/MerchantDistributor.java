@@ -91,8 +91,6 @@ public class MerchantDistributor extends Thread {
             int[] pTargetRes,
             int[] pRemainRes,
             boolean pLimitMerchants) {
-        int[] targetValueForResource = pTargetRes;
-        int[] keepInStorage = pRemainRes;
         ArrayList<MerchantSource> sources = new ArrayList<>();
         ArrayList<MerchantDestination> destinations = new ArrayList<>();
         List<List<MerchantSource>> results = new LinkedList<>();
@@ -109,7 +107,7 @@ public class MerchantDistributor extends Thread {
             merchantLimit = 1.0 / (double) usedResources;
         }
 
-        for (int i = 0; i < targetValueForResource.length; i++) {
+        for (int i = 0; i < pTargetRes.length; i++) {
             sources.clear();
             destinations.clear();
             if (listener != null) {
@@ -135,8 +133,8 @@ public class MerchantDistributor extends Thread {
                 if (skip) {
                     continue;
                 }
-                int targetValue = targetValueForResource[i];
-                int usableResources = (int) (Math.round((double) (resourcesInStorage - keepInStorage[i]) / 1000.0 + .5));
+                int targetValue = pTargetRes[i];
+                int usableResources = (int) (Math.round((double) (resourcesInStorage - pRemainRes[i]) / 1000.0 + .5));
                 //limit to resources in storage
                 usableResources = Math.min(usableResources, resourcesInStorage / 1000);
 
@@ -148,7 +146,7 @@ public class MerchantDistributor extends Thread {
 
                 //try to add receiver
                 if (usableResources < 0 || resourcesInStorage < targetValue) {//village can not deliver, so it is receiver
-                    targetValue = Math.min(targetValueForResource[i], info.getStashCapacity());
+                    targetValue = Math.min(pTargetRes[i], info.getStashCapacity());
 
                     int neededResources = (int) (Math.round((double) (targetValue - resourcesInStorage) / 1000.0 + .5));
                     neededResources = Math.max(neededResources, 0);

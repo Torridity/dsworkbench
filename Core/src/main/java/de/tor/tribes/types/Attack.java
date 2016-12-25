@@ -415,9 +415,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
         }
         placeURL += source.getId() + "&screen=place&mode=command&target=" + target.getId();
 
-        String placeLink = "[url=\"" + placeURL + "\"]Versammlungsplatz[/url]";
-        String placeVal = placeLink;
         String placeURLVal = placeURL;
-        return new String[]{typeVal, attackerVal, sourceVal, unitVal, defenderVal, targetVal, sendVal, arrivetVal, placeVal, placeURLVal};
+        return new String[]{typeVal, attackerVal, sourceVal, unitVal, defenderVal, targetVal, sendVal, arrivetVal, "[url=\"" + placeURL + "\"]Versammlungsplatz[/url]", placeURLVal};
     }
 }

@@ -41,8 +41,7 @@ public class RenderSettings {
     }
 
     public final void refreshZoom() {
-        double currentZoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-        this.zoom = currentZoom;
+        this.zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
         this.fieldWidth = GlobalOptions.getSkin().getCurrentFieldWidth(zoom);
         this.fieldHeight = GlobalOptions.getSkin().getCurrentFieldHeight(zoom);
     }

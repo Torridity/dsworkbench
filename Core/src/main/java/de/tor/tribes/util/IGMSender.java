@@ -74,9 +74,8 @@ public class IGMSender {
             String text = URLEncoder.encode(pSubject, "UTF-8");
             String name = URLEncoder.encode(pReceiver, "UTF-8");
             String why = URLEncoder.encode(pMessage, "UTF-8");
-            String apiKey = pApiKey;
             String serverURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
-            String get = serverURL + "/send_mail.php?from_id=3457919&api_key=" + apiKey;
+            String get = serverURL + "/send_mail.php?from_id=3457919&api_key=" + pApiKey;
             get += "&to=" + name + "&subject=" + why + "&message=" + text;
             URL u = new URL(get);
             Proxy p = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("proxy.fzk.de", 8000));

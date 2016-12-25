@@ -307,10 +307,9 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 cnt++;
                 Village v = pSettings.getVisibleVillage(x, y);
                 int row = y - firstRow;
-                int col = x;
-                int globalCol = colToGlobalPosition(pSettings, col);
+                int globalCol = colToGlobalPosition(pSettings, x);
                 int globalRow = rowToGlobalPosition(pSettings, y);
-                renderVillageField(v, row, col, globalRow, globalCol, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, showBarbarian, markedOnly, g2d);
+                renderVillageField(v, row, x, globalRow, globalCol, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, showBarbarian, markedOnly, g2d);
             }
         }
         g2d.dispose();
@@ -344,8 +343,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 cnt++;
                 Village v = pSettings.getVisibleVillage(x, y);
                 int row = y - firstRow;
-                int col = x;
-                renderMarkerField(v, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, g2d);
+                renderMarkerField(v, row, x, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, g2d);
             }
         }
         g2d.dispose();
@@ -383,11 +381,10 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 cnt++;
                 //iterate from first row for 'pRows' times
                 Village v = pSettings.getVisibleVillage(x, y);
-                int row = y;
                 int col = x - firstCol;
                 int globalCol = colToGlobalPosition(pSettings, x);
-                int globalRow = rowToGlobalPosition(pSettings, row);
-                renderVillageField(v, row, col, globalRow, globalCol, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, showBarbarian, markedOnly, g2d);
+                int globalRow = rowToGlobalPosition(pSettings, y);
+                renderVillageField(v, y, col, globalRow, globalCol, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, showBarbarian, markedOnly, g2d);
             }
         }
         g2d.dispose();
@@ -422,9 +419,8 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 cnt++;
                 //iterate from first row for 'pRows' times
                 Village v = pSettings.getVisibleVillage(x, y);
-                int row = y;
                 int col = x - firstCol;
-                renderMarkerField(v, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, g2d);
+                renderMarkerField(v, y, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, g2d);
             }
         }
         g2d.dispose();

@@ -31,7 +31,6 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Transparency;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * @author Charon
@@ -137,7 +136,7 @@ public class Skin {
         return BASE_PATH + "/" + sSkinID + "/preview.png";
     }
 
-    public static void showPreview(String pSkinID, Point pPos) throws Exception {
+    public static void showPreview(String pSkinID, Point pPos) {
         try {
             SkinPreviewFrame f = new SkinPreviewFrame(new Skin(pSkinID));
             f.setLocation(pPos);
@@ -151,7 +150,7 @@ public class Skin {
         return sSkinID;
     }
 
-    private void loadMinimapSkin() throws Exception {
+    private void loadMinimapSkin() {
         sSkinID = MINIMAP_SKIN_ID;
         iFieldWidth = 10;
         iFieldHeight = 10;

@@ -52,9 +52,8 @@ public class AllyUtils {
             Collections.sort(allies, pComparator);
         }
         allies.add(0, NoAlly.getSingleton());
-        Ally[] result = allies.toArray(new Ally[allies.size()]);
         //result = (Ally[]) ArrayUtils.add(result, 0, NoAlly.getSingleton());
-        return result;
+        return allies.toArray(new Ally[allies.size()]);
     }
 
     public static Ally[] filterAllies(Ally[] pAllies, String pFilter, Comparator<Ally> pComparator) {

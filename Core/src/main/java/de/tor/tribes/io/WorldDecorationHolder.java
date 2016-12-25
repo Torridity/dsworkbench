@@ -17,22 +17,17 @@ package de.tor.tribes.io;
 
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
-import java.awt.Transparency;
+import org.apache.log4j.Logger;
+
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -71,7 +66,7 @@ public class WorldDecorationHolder {
   public static int ID_FORREST16 = 31;
   private static boolean valid = false;
 
-  public static void initialize() throws FileNotFoundException, Exception {
+  public static void initialize() throws Exception {
     try {
       loadWorld();
     } catch (Exception e) {
@@ -84,7 +79,7 @@ public class WorldDecorationHolder {
     return valid;
   }
 
-  private static void loadWorld() throws FileNotFoundException, Exception {
+  private static void loadWorld() throws Exception {
     try {
       GZIPInputStream fin = new GZIPInputStream(new FileInputStream("world.dat.gz"));
       ByteBuffer bb = ByteBuffer.allocate(1000000);
@@ -102,7 +97,7 @@ public class WorldDecorationHolder {
     loadTextures();
   }
 
-  public static void loadTextures() throws Exception {
+  public static void loadTextures() {
     mTextures = new LinkedList<>();
     cache.clear();
     try {

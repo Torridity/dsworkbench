@@ -687,9 +687,8 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
 
         Hashtable<UnitHolder, Integer> forceTable = new Hashtable<>();
         for (int i = 0; i < jSupportTable.getRowCount(); i++) {
-            int row = i;//jSupportTable.convertRowIndexToModel(i);
-            Village v = (Village) jSupportTable.getValueAt(row, 0);
-            UnitHolder u = (UnitHolder) jSupportTable.getValueAt(row, 1);
+            Village v = (Village) jSupportTable.getValueAt(i, 0);
+            UnitHolder u = (UnitHolder) jSupportTable.getValueAt(i, 1);
             VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN);
             boolean useUnits = false;
             for (UnitHolder unit : units) {

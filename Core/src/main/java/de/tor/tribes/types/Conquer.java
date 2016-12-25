@@ -37,8 +37,7 @@ public class Conquer extends ManageableType {
       long time = timestamp;
     long diff = System.currentTimeMillis() / 1000 - time;
     double risePerHour = ServerSettings.getSingleton().getSpeed() *  ServerSettings.getSingleton().getRiseSpeed();
-    int rise = 25 + (int) Math.rint((diff / (60 * 60)) * risePerHour);
-    return rise;
+    return 25 + (int) Math.rint((diff / (60 * 60)) * risePerHour);
   }
 
   /**

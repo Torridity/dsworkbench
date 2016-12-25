@@ -20,7 +20,6 @@ import de.tor.tribes.util.algo.types.Destination;
 import de.tor.tribes.util.algo.types.Order;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Iterator;
 
 /*
  * Its constructor takes sources, destinations and costs (an array of Hashtables).

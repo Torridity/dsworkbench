@@ -397,10 +397,9 @@ public class StatManager {
     }
 
     public boolean deleteDirectory(File directory) {
-        File fileToDelete = directory;
         boolean result = false;
-        if (fileToDelete.exists()) {
-            File directoryFiles[] = fileToDelete.listFiles();
+        if (directory.exists()) {
+            File directoryFiles[] = directory.listFiles();
             for (File directoryFile : directoryFiles) {
                 if (directoryFile.isFile()) {
                     directoryFile.delete();
@@ -408,7 +407,7 @@ public class StatManager {
                     deleteDirectory(directoryFile);
                 }
             }
-            fileToDelete.delete();
+            directory.delete();
             result = true;
         }
 

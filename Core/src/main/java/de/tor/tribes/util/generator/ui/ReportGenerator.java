@@ -27,11 +27,12 @@ import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.UIHelper;
 import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.report.ReportManager;
+import org.apache.log4j.Logger;
+
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -592,7 +593,7 @@ public class ReportGenerator extends javax.swing.JFrame {
     }
 
     private int getRandomValueInRange(int min, int max) {
-        return Math.max(min, (int) Math.random() * max);
+        return Math.max(min, (int) (Math.random() * max));
     }
 
     private boolean hasHaul() {
@@ -600,18 +601,17 @@ public class ReportGenerator extends javax.swing.JFrame {
     }
 
     private int[] getSpyInfo() {
-        int[] result = new int[]{
-            UIHelper.parseIntFromField(jWoodLevel),
-            UIHelper.parseIntFromField(jClayLevel),
-            UIHelper.parseIntFromField(jIronLevel),
-            UIHelper.parseIntFromField(jStorageLevel),
-            UIHelper.parseIntFromField(jHideLevel)};
 
         /*
          * if (ArrayUtils.contains(result, 0)) {//all buildings or nothing
          * return null; }
          */
-        return result;
+        return new int[]{
+            UIHelper.parseIntFromField(jWoodLevel),
+            UIHelper.parseIntFromField(jClayLevel),
+            UIHelper.parseIntFromField(jIronLevel),
+            UIHelper.parseIntFromField(jStorageLevel),
+            UIHelper.parseIntFromField(jHideLevel)};
     }
 
     /**

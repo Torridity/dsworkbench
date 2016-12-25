@@ -296,8 +296,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         int row = jDistanceTable.getSelectedRow();
         if (row >= 0) {
             try {
-                Village v = (Village) jDistanceTable.getModel().getValueAt(jDistanceTable.convertRowIndexToModel(row), 0);
-                return v;
+                return (Village) jDistanceTable.getModel().getValueAt(jDistanceTable.convertRowIndexToModel(row), 0);
             } catch (Exception ignored) {
             }
         }

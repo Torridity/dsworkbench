@@ -96,15 +96,14 @@ public class SOSRequest extends ManageableType implements BBSupport {
         List<Attack> thisAttacks = new ArrayList<>();
         for (TimedAttack att1 : atts) {
             try {
-                TimedAttack attack = att1;
                 Attack a = new Attack();
-                a.setSource(attack.getSource());
+                a.setSource(att1.getSource());
                 a.setTarget(pTarget);
-                a.setArriveTime(new Date(attack.getlArriveTime()));
-                if (attack.isPossibleFake()) {
+                a.setArriveTime(new Date(att1.getlArriveTime()));
+                if (att1.isPossibleFake()) {
                     fakeCount++;
                     a.setType(Attack.FAKE_TYPE);
-                } else if (attack.isPossibleSnob()) {
+                } else if (att1.isPossibleSnob()) {
                     snobCount++;
                     a.setType(Attack.SNOB_TYPE);
                     a.setUnit(DataHolder.getSingleton().getUnitByPlainName("snob"));
@@ -121,20 +120,19 @@ public class SOSRequest extends ManageableType implements BBSupport {
 
         for (TimedAttack att : atts) {
             try {
-                TimedAttack attack = att;
-                sourceVal += attack.getSource().toBBCode() + "\n";
-                if (attack.isPossibleFake()) {
-                    sourceDateTypeVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + " [b](Fake)[/b]" + "\n";
-                    sourceDateVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
-                    sourceTypeVal += attack.getSource().toBBCode() + " [b](Fake)[/b]" + "\n";
-                } else if (attack.isPossibleSnob()) {
-                    sourceDateTypeVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + " [b](AG)[/b]" + "\n";
-                    sourceDateVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
-                    sourceTypeVal += attack.getSource().toBBCode() + " [b](AG)[/b]" + "\n";
+                sourceVal += att.getSource().toBBCode() + "\n";
+                if (att.isPossibleFake()) {
+                    sourceDateTypeVal += att.getSource().toBBCode() + " " + dateFormat.format(new Date(att.getlArriveTime())) + " [b](Fake)[/b]" + "\n";
+                    sourceDateVal += att.getSource().toBBCode() + " " + dateFormat.format(new Date(att.getlArriveTime())) + "\n";
+                    sourceTypeVal += att.getSource().toBBCode() + " [b](Fake)[/b]" + "\n";
+                } else if (att.isPossibleSnob()) {
+                    sourceDateTypeVal += att.getSource().toBBCode() + " " + dateFormat.format(new Date(att.getlArriveTime())) + " [b](AG)[/b]" + "\n";
+                    sourceDateVal += att.getSource().toBBCode() + " " + dateFormat.format(new Date(att.getlArriveTime())) + "\n";
+                    sourceTypeVal += att.getSource().toBBCode() + " [b](AG)[/b]" + "\n";
                 } else {
-                    sourceDateTypeVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
-                    sourceDateVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
-                    sourceTypeVal += attack.getSource().toBBCode() + "\n";
+                    sourceDateTypeVal += att.getSource().toBBCode() + " " + dateFormat.format(new Date(att.getlArriveTime())) + "\n";
+                    sourceDateVal += att.getSource().toBBCode() + " " + dateFormat.format(new Date(att.getlArriveTime())) + "\n";
+                    sourceTypeVal += att.getSource().toBBCode() + "\n";
                 }
             } catch (Exception ignored) {
             }
@@ -291,12 +289,11 @@ public class SOSRequest extends ManageableType implements BBSupport {
 
     public String toBBCode(Village pTarget, boolean pDetailed) {
         StringBuilder buffer = new StringBuilder();
-        Village target = pTarget;
-        TargetInformation targetInfo = getTargetInformation(target);
+        TargetInformation targetInfo = getTargetInformation(pTarget);
         if (targetInfo == null) {
             return "";
         }
-        buffer.append(SOSFormater.format(target, targetInfo, pDetailed));
+        buffer.append(SOSFormater.format(pTarget, targetInfo, pDetailed));
         return buffer.toString();
     }
 

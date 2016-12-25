@@ -21,7 +21,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
+import javax.swing.*;
+
 import org.jdesktop.swingx.JXLabel;
 
 /**
@@ -59,7 +60,7 @@ public class CollapseExpandTrigger extends JXLabel {
         f.getContentPane().setLayout(new BorderLayout());
         f.add(new CollapseExpandTrigger(), BorderLayout.CENTER);
         f.setSize(100, 100);
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f.setVisible(true);
     }
 }

@@ -43,6 +43,7 @@ import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.SupportVillageTroopsHolder;
 import java.util.List;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
@@ -63,11 +64,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.UIManager;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -821,7 +817,7 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
       TroopsManager.getSingleton().addManagedElement(TroopsManager.SUPPORT_GROUP, supp);
     }
     DSWorkbenchTroopsFrame.getSingleton().resetView();
-    DSWorkbenchTroopsFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    DSWorkbenchTroopsFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     DSWorkbenchTroopsFrame.getSingleton().setVisible(true);
 
   }

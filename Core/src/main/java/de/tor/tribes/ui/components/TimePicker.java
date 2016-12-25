@@ -28,11 +28,7 @@ import java.awt.event.MouseListener;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.plaf.basic.BasicArrowButton;
 import org.apache.commons.lang.time.DateUtils;
 import org.netbeans.lib.awtextra.AbsoluteConstraints;
@@ -139,7 +135,7 @@ public class TimePicker extends javax.swing.JPanel {
             }
 
             label.setBorder(javax.swing.BorderFactory.createLineBorder(Constants.DS_BACK));
-            label.setHorizontalAlignment(0);
+            label.setHorizontalAlignment(SwingConstants.CENTER);
             label.setOpaque(true);
             label.setBackground(Constants.DS_BACK_LIGHT);
             label.setFont(smallFont);
@@ -215,7 +211,7 @@ public class TimePicker extends javax.swing.JPanel {
                 label.setText(":" + Integer.toString(num));
             }
             label.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-            label.setHorizontalAlignment(0);
+            label.setHorizontalAlignment(SwingConstants.CENTER);
             label.setOpaque(true);
             label.setBackground(Color.WHITE);
             label.setFont(smallFont);

@@ -34,8 +34,8 @@ import java.awt.Point;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JFrame;
+import javax.swing.*;
+
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 
@@ -333,7 +333,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
         GlobalOptions.loadUserData();
         
         JFrame f = new JFrame();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f.setSize(300, 300);
         TroopSelectionPanel panel = new TroopSelectionPanel();
         panel.setupDefense(false);

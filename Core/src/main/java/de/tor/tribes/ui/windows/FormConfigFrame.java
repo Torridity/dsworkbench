@@ -29,8 +29,8 @@ import de.tor.tribes.util.map.FormManager;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JFrame;
-import javax.swing.UIManager;
+import javax.swing.*;
+
 import net.java.dev.colorchooser.ColorChooser;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
@@ -975,7 +975,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
         }
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         FormConfigFrame.getSingleton().setSize(800, 600);
-        FormConfigFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        FormConfigFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         FormConfigFrame.getSingleton().setupAndShowInEditMode(new Circle());
 
 

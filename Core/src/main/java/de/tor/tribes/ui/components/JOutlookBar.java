@@ -231,7 +231,7 @@ public class JOutlookBar extends JPanel implements ActionListener {
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setLocation(d.width / 2 - 400, d.height / 2 - 300);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
     /**

@@ -41,8 +41,7 @@ import java.util.List;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JFrame;
+import javax.swing.*;
 import javax.swing.JSpinner.DateEditor;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
@@ -545,7 +544,7 @@ private void fireTestSoundEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 ClockFrame cf = new ClockFrame();
-                cf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                cf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 cf.setVisible(true);
             }
         });

@@ -27,9 +27,8 @@ import java.awt.event.WindowListener;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
+import javax.swing.*;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 
@@ -331,7 +330,7 @@ public class SettingsPanel extends javax.swing.JPanel {
         } catch (Exception ignored) {
         }
         JFrame f = new JFrame();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         final SettingsPanel sp = new SettingsPanel(null);
         f.add(sp);
         f.addWindowListener(new WindowListener() {

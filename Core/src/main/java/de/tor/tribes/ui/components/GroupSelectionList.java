@@ -38,9 +38,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.swing.DefaultListModel;
-import javax.swing.JFrame;
-import javax.swing.UIManager;
+import javax.swing.*;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
@@ -455,7 +454,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
         GroupSelectionList ren = new GroupSelectionList("");
         ren.setExpertSelection(true);
         JFrame f = new JFrame();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f.getContentPane().setLayout(new BorderLayout());
         f.getContentPane().add(ren, BorderLayout.CENTER);
         f.setVisible(true);

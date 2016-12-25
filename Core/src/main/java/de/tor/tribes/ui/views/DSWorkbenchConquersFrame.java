@@ -52,12 +52,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.AbstractAction;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.RowFilter;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
@@ -671,7 +666,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         } catch (Exception e) {
             e.printStackTrace();
         }
-        DSWorkbenchConquersFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        DSWorkbenchConquersFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         for (int i = 0; i < 50; i++) {
             Conquer c = new Conquer();
             c.setTimestamp((int) System.currentTimeMillis());

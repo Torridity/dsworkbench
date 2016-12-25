@@ -24,8 +24,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.UIManager;
+import javax.swing.*;
+
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXLabel;
@@ -258,7 +258,7 @@ public class WelcomePanel extends JXPanel {
         } catch (Exception ignored) {
         }
         JFrame f = new JFrame();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f.getContentPane().setLayout(new BorderLayout());
         f.getContentPane().add(new WelcomePanel(), BorderLayout.CENTER);
         f.setSize(500, 500);

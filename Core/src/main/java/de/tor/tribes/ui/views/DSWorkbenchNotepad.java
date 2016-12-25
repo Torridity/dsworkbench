@@ -35,8 +35,8 @@ import de.tor.tribes.util.note.NoteManager;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.util.List;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
+import javax.swing.*;
+
 import org.apache.log4j.Logger;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
@@ -52,10 +52,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
-import javax.swing.AbstractAction;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.apache.commons.configuration.Configuration;
@@ -757,7 +753,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
                     NoteManager.getSingleton().addManagedElement("asd2", n3);
                 }
                 DSWorkbenchNotepad.getSingleton().resetView();
-                DSWorkbenchNotepad.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                DSWorkbenchNotepad.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 DSWorkbenchNotepad.getSingleton().setVisible(true);
             }
         });

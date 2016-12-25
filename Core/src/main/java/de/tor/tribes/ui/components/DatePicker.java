@@ -124,7 +124,7 @@ public class DatePicker extends JPanel {
         });
         add(backButton, new AbsoluteConstraints(10, 10, 20, 20));
         //    monthAndYear.setFont(largeFont);
-        monthAndYear.setHorizontalAlignment(0);
+        monthAndYear.setHorizontalAlignment(SwingConstants.CENTER);
         monthAndYear.setText(formatDateText(selectedDate.getTime()));
         add(monthAndYear, new AbsoluteConstraints(30, 10, 100, 20));
         forwardButton.setFont(smallFont);
@@ -156,7 +156,7 @@ public class DatePicker extends JPanel {
             for (int i1 = 0; i1 < aDaysInMonth.length; i1++) {
                 aDaysInMonth[i1].setBackground(gray);
                 aDaysInMonth[i1].setFont(smallFont);
-                aDaysInMonth[i1].setHorizontalAlignment(4);
+                aDaysInMonth[i1].setHorizontalAlignment(SwingConstants.RIGHT);
                 aDaysInMonth[i1].setText("");
                 aDaysInMonth[i1].setFocusable(false);
                 aDaysInMonth[i1].addMouseListener(new MouseAdapter() {

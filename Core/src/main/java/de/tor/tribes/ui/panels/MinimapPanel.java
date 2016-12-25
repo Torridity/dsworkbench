@@ -58,9 +58,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
@@ -983,7 +981,7 @@ private void fireScreenshotControlClosingEvent(java.awt.event.WindowEvent evt) {
         JFrame f = new JFrame();
         f.getContentPane().add(MinimapPanel.getSingleton());
         f.pack();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f.setVisible(true);
 
     }

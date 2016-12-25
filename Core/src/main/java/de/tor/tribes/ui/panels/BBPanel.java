@@ -701,7 +701,7 @@ public class BBPanel extends javax.swing.JPanel {
 
     public static void main(String[] args) {
         JFrame f = new JFrame();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f.setSize(400, 300);
         f.add(new BBPanel(null));
         f.setVisible(true);

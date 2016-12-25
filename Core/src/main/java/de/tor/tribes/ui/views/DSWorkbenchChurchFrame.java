@@ -52,12 +52,7 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.apache.commons.configuration.Configuration;
@@ -490,7 +485,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             ChurchManager.getSingleton().addChurch(new DummyVillage((short) i, (short) i), 2);
         }
 
-        DSWorkbenchChurchFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        DSWorkbenchChurchFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         DSWorkbenchChurchFrame.getSingleton().setVisible(true);
 
     }

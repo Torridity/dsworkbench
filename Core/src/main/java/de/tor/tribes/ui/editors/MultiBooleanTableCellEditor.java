@@ -17,7 +17,7 @@ package de.tor.tribes.ui.editors;
 
 import de.tor.tribes.util.Constants;
 import java.awt.Color;
-import javax.swing.JFrame;
+import javax.swing.*;
 
 /**
  *
@@ -86,7 +86,7 @@ public class MultiBooleanTableCellEditor extends javax.swing.JPanel {
         value |= VALUE4;
         
         JFrame f = new JFrame();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         MultiBooleanTableCellEditor ed = new MultiBooleanTableCellEditor();
         ed.setSelection(value);
         f.add(ed);

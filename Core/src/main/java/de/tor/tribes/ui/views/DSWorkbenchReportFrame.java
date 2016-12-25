@@ -1249,7 +1249,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
         DSWorkbenchReportFrame.getSingleton().setSize(800, 600);
         DSWorkbenchReportFrame.getSingleton().resetView();
-        DSWorkbenchReportFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        DSWorkbenchReportFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         DSWorkbenchReportFrame.getSingleton().setVisible(true);
 

@@ -42,11 +42,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.apache.commons.configuration.Configuration;
@@ -469,7 +465,7 @@ private void fireCreateMarkerSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
             MarkerManager.getSingleton().addManagedElement("asd2", a3);
         }
         DSWorkbenchMarkerFrame.getSingleton().resetView();
-        DSWorkbenchMarkerFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        DSWorkbenchMarkerFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         DSWorkbenchMarkerFrame.getSingleton().setVisible(true);
 
     }

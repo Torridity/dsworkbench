@@ -93,7 +93,7 @@ public class AAPTest {
         stpdrawer.setSize(500, 500);
         drawer.add(stpdrawer);
 
-        drawer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        drawer.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         drawer.setSize(500, 500);
         drawer.setVisible(true);
     }

@@ -137,7 +137,7 @@ public final class DateField extends JPanel {
         }
         JFrame f = new JFrame();
         f.add(new DateField(Calendar.getInstance().getTime()));
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f.pack();
         f.setVisible(true);
     }

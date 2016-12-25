@@ -1142,7 +1142,7 @@ public class DataHolder {
    * @TODO Blocking added again due to obvious deadlock....keep an eye on it!
    */
   public synchronized Village[][] getVillages() {
-    if (isLoading()) {
+      if (loading) {
       //block getting villages while loading to avoid nullpointer exceptions
       try {
         Thread.sleep(50);
@@ -1284,7 +1284,7 @@ public class DataHolder {
    * Get villages as a hashtable ordered by IDs
    */
   public synchronized Hashtable<Integer, Village> getVillagesById() {
-    if (isLoading()) {
+      if (loading) {
       //block getting villages while loading to avoid nullpointer exceptions
       try {
         Thread.sleep(50);

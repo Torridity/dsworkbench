@@ -179,7 +179,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
             showInfo("Keine Dörfer ausgewählt");
             return;
         }
-        if (getTroopSet() == null || !getTroopSet().equals(TroopsManager.SUPPORT_GROUP)) {
+        if (sTroopSet == null || !sTroopSet.equals(TroopsManager.SUPPORT_GROUP)) {
             TroopDetailsDialog details = new TroopDetailsDialog(DSWorkbenchTroopsFrame.getSingleton(), false);
             details.setupAndShow(getSelectedTroopHolders());
         } else {
@@ -231,7 +231,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         }
         if (!pFilterRows) {
             jxTroopTable.setRowFilter(null);
-            GroupPredicate groupPredicate = new GroupPredicate(groups, 0, pRelation, getTroopSet());
+            GroupPredicate groupPredicate = new GroupPredicate(groups, 0, pRelation, sTroopSet);
             MattePainter mp = new MattePainter(new Color(0, 0, 0, 120));
             highlighter = new PainterHighlighter(new HighlightPredicate.NotHighlightPredicate(groupPredicate), mp);
             jxTroopTable.addHighlighter(highlighter);
@@ -359,7 +359,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
                 buffer.append("[u]Truppenübersicht[/u]\n\n");
             }
 
-            buffer.append("Herkunft der Daten: '").append(getTroopSet()).append("'\n\n");
+            buffer.append("Herkunft der Daten: '").append(sTroopSet).append("'\n\n");
 
             buffer.append(new TroopListFormatter().formatElements(troops, extended));
 
@@ -437,14 +437,14 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
 
         if (pAsk) {
             String message = ((selectedVillages.size() == 1) ? "Truppeninformation " : (selectedVillages.size() + " Truppeninformationen ")) + "sind zum Löschen gewählt.\nAus welcher Kategorie sollen die Daten gelöscht werden?";
-            int result = JOptionPaneHelper.showQuestionThreeChoicesBox(this, message, "Truppeninformationen löschen", "Nur '" + getTroopSet() + "'", "Keine", "Alle");
+            int result = JOptionPaneHelper.showQuestionThreeChoicesBox(this, message, "Truppeninformationen löschen", "Nur '" + sTroopSet + "'", "Keine", "Alle");
             if (result == JOptionPane.NO_OPTION) {
                 //remove only from current view
                 TroopsManager.getSingleton().invalidate();
                 for (VillageTroopsHolder holder : selectedVillages) {
-                    TroopsManager.getSingleton().removeElement(getTroopSet(), holder);
+                    TroopsManager.getSingleton().removeElement(sTroopSet, holder);
                 }
-                TroopsManager.getSingleton().revalidate(getTroopSet(), true);
+                TroopsManager.getSingleton().revalidate(sTroopSet, true);
                 return true;
             } else if (result == JOptionPane.CANCEL_OPTION) {
                 //remove all entries
@@ -478,7 +478,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
             return selectedHolders;
         }
         for (Integer selectedRow : selectedRows) {
-            VillageTroopsHolder t = (VillageTroopsHolder) TroopsManager.getSingleton().getAllElements(getTroopSet()).get(jxTroopTable.convertRowIndexToModel(selectedRow));
+            VillageTroopsHolder t = (VillageTroopsHolder) TroopsManager.getSingleton().getAllElements(sTroopSet).get(jxTroopTable.convertRowIndexToModel(selectedRow));
             if (t != null) {
                 selectedHolders.add(t);
             }

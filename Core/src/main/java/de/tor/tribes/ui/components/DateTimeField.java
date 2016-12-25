@@ -205,7 +205,7 @@ public class DateTimeField extends javax.swing.JPanel {
             result.set(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH));
             result.set(Calendar.MONTH, c.get(Calendar.MONTH));
             result.set(Calendar.YEAR, c.get(Calendar.YEAR));
-            if (isTimeEnabled()) {
+            if (timeEnabled) {
                 Date time = timeFormat.parse(jTimeField.getText());
                 c.setTime(time);
                 result.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY));
@@ -219,7 +219,7 @@ public class DateTimeField extends javax.swing.JPanel {
                 result.set(Calendar.MILLISECOND, 0);
             }
 
-            if (!isDateEnabled()) {
+            if (!dateEnabled) {
                 result.set(Calendar.DAY_OF_MONTH, 0);
                 result.set(Calendar.MONTH, 0);
                 result.set(Calendar.YEAR, 0);

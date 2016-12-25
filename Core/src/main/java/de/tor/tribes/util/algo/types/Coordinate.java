@@ -49,7 +49,7 @@ public class Coordinate implements Comparable<Coordinate> {
 
     @Override
     public int compareTo(Coordinate o) {
-        if (getX() == o.getX() && getY() == o.getY()) {
+        if (x == o.getX() && y == o.getY()) {
             return 0;
         }
         return 1;

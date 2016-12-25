@@ -158,8 +158,8 @@ public class TimerPanel extends javax.swing.JPanel {
     public boolean fromXml(Element e) {
         try {
             setName(e.getChild("name").getValue());
-            setExpires(Long.parseLong(e.getChild("expires").getValue()));
-            setSound(e.getChild("alert").getValue());
+            expires = Long.parseLong(e.getChild("expires").getValue());
+            sound = e.getChild("alert").getValue();
         } catch (Exception ex) {
             ex.printStackTrace();
             return false;

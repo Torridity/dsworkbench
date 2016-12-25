@@ -460,7 +460,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
         }
 
         jxReportTable.editingCanceled(new ChangeEvent(this));
-        ReportManager.getSingleton().removeElements(getReportSet(), selectedReports);
+        ReportManager.getSingleton().removeElements(sReportSet, selectedReports);
         reportModel.fireTableDataChanged();
         showSuccess(selectedReports.size() + " Bericht(e) gelöscht");
         return true;
@@ -593,7 +593,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
             for (String line : lines) {
                 FightReport r = FightReport.fromInternalRepresentation(line);
                 if (r != null) {
-                    ReportManager.getSingleton().addManagedElement(getReportSet(), r);
+                    ReportManager.getSingleton().addManagedElement(sReportSet, r);
                     cnt++;
                 }
             }
@@ -613,7 +613,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
             return selectedReports;
         }
         for (Integer selectedRow : selectedRows) {
-            FightReport r = (FightReport) ReportManager.getSingleton().getAllElements(getReportSet()).get(jxReportTable.convertRowIndexToModel(selectedRow));
+            FightReport r = (FightReport) ReportManager.getSingleton().getAllElements(sReportSet).get(jxReportTable.convertRowIndexToModel(selectedRow));
             if (r != null) {
                 selectedReports.add(r);
             }

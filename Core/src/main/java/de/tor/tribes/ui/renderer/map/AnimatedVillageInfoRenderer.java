@@ -61,7 +61,7 @@ public class AnimatedVillageInfoRenderer {
     }
 
     public void update(Village pCurrentVillage, Rectangle pCurrentLocation, Graphics2D g2d) {
-        if (pCurrentLocation == null || isFinished()) {
+        if (pCurrentLocation == null || bFinished) {
             bFinished = true;
             return;
         }

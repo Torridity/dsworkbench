@@ -44,21 +44,21 @@ public class AllyStatResult implements BBSupport {
         String valAllyName = (ally != null) ? ally.getName() : "unbekannt";
         String valAllyTag = (ally != null) ? ally.getTag() : "unbekannt";
         String valAttackers = nf.format(getAttackers());
-        String valAttacks = nf.format(getAttacks());
-        String valOffs = nf.format(getOffs());
-        String valSnobs = nf.format(getSnobs());
-        String valFakes = nf.format(getFakes());
-        String valEnoblements = nf.format(getEnoblements());
-        String valKills = nf.format(getKills());
-        String valKillsFarm = nf.format(getKillsAsFarm());
-        String valLosses = nf.format(getLosses());
-        String valLossesFarm = nf.format(getLossesAsFarm());
-        String valWallDestruction = nf.format(getWallDestruction());
-        String valBuildingDestruction = nf.format(getBuildingDestruction());
+        String valAttacks = nf.format(attacks);
+        String valOffs = nf.format(offs);
+        String valSnobs = nf.format(snobs);
+        String valFakes = nf.format(fakes);
+        String valEnoblements = nf.format(enoblements);
+        String valKills = nf.format(kills);
+        String valKillsFarm = nf.format(killsAsFarm);
+        String valLosses = nf.format(losses);
+        String valLossesFarm = nf.format(lossesAsFarm);
+        String valWallDestruction = nf.format(wallDestruction);
+        String valBuildingDestruction = nf.format(buildingDestruction);
         nf.setMinimumFractionDigits(2);
         nf.setMaximumFractionDigits(2);
-        String valKillsPercent = (getOverallKills() == 0) ? "0.0 %" : nf.format(100 * getKills() / (double) getOverallKills()) + " %";
-        String valLossesPercent = (getOverallLosses() == 0) ? "0.0 %" : nf.format(100 * getLosses() / (double) getOverallLosses()) + " %";
+        String valKillsPercent = (overallKills == 0) ? "0.0 %" : nf.format(100 * kills / (double) overallKills) + " %";
+        String valLossesPercent = (overallLosses == 0) ? "0.0 %" : nf.format(100 * losses / (double) overallLosses) + " %";
 
         return new String[]{valAllyName, valAllyTag, valAttackers, valAttacks, valOffs, valSnobs, valFakes, valEnoblements, valKills, valKillsFarm,
                     valKillsPercent, valLosses, valLossesFarm, valLossesPercent, valWallDestruction, valBuildingDestruction};
@@ -109,7 +109,7 @@ public class AllyStatResult implements BBSupport {
     }
 
     public void addTribeStatResult(TribeStatResult pStat) {
-        getTribeStats().add(pStat);
+        tribeStats.add(pStat);
         attacks += pStat.getOffs() + pStat.getFakes() + pStat.getSnobs();
         offs += pStat.getOffs();
         snobs += pStat.getSnobs();

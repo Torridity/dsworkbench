@@ -66,13 +66,13 @@ public class Arrow extends AbstractForm {
         }
         String startXVal = Integer.toString((int) Math.rint(getXPos()));
         String startYVal = Integer.toString((int) Math.rint(getYPos()));
-        String endXVal = Integer.toString((int) Math.rint(getXPosEnd()));
-        String endYVal = Integer.toString((int) Math.rint(getYPosEnd()));
-        String widthVal = Integer.toString((int) Math.rint(getXPosEnd() - getXPos()));
-        String heightVal = Integer.toString((int) Math.rint(getYPosEnd() - getYPos()));
+        String endXVal = Integer.toString((int) Math.rint(xPosEnd));
+        String endYVal = Integer.toString((int) Math.rint(yPosEnd));
+        String widthVal = Integer.toString((int) Math.rint(xPosEnd - getXPos()));
+        String heightVal = Integer.toString((int) Math.rint(yPosEnd - getYPos()));
         String colorVal = "";
-        if (getDrawColor() != null) {
-            colorVal = "#" + Integer.toHexString(getDrawColor().getRGB() & 0x00ffffff);
+        if (drawColor != null) {
+            colorVal = "#" + Integer.toHexString(drawColor.getRGB() & 0x00ffffff);
         } else {
             colorVal = "#" + Integer.toHexString(Color.BLACK.getRGB() & 0x00ffffff);
         }
@@ -100,19 +100,19 @@ public class Arrow extends AbstractForm {
             setTextColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
             setTextAlpha(Float.parseFloat(elem.getAttributeValue("a")));
             elem = e.getChild("drawColor");
-            setDrawColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
-            setDrawAlpha(Float.parseFloat(elem.getAttributeValue("a")));
+            this.drawColor = new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b")));
+            this.drawAlpha = Float.parseFloat(elem.getAttributeValue("a"));
             elem = e.getChild("stroke");
-            setStrokeWidth(Float.parseFloat(elem.getAttributeValue("width")));
+            this.strokeWidth = Float.parseFloat(elem.getAttributeValue("width"));
             elem = e.getChild("end");
-            setXPosEnd(Double.parseDouble(elem.getAttributeValue("x")));
-            setYPosEnd(Double.parseDouble(elem.getAttributeValue("y")));
+            this.xPosEnd = Double.parseDouble(elem.getAttributeValue("x"));
+            this.yPosEnd = Double.parseDouble(elem.getAttributeValue("y"));
             elem = e.getChild("filled");
-            setFilled(Boolean.parseBoolean(elem.getTextTrim()));
+            this.filled = Boolean.parseBoolean(elem.getTextTrim());
             elem = e.getChild("textSize");
             setTextSize(Integer.parseInt(elem.getTextTrim()));
             elem = e.getChild("drawName");
-            setDrawName(Boolean.parseBoolean(elem.getTextTrim()));
+            this.drawName = Boolean.parseBoolean(elem.getTextTrim());
         } catch (Exception ignored) {
         }
     }
@@ -120,11 +120,11 @@ public class Arrow extends AbstractForm {
     @Override
     protected String getFormXml() {
         StringBuilder b = new StringBuilder();
-        b.append("<end x=\"").append(getXPosEnd()).append("\" y=\"").append(getYPosEnd()).append("\"/>\n");
-        b.append("<filled>").append(isFilled()).append("</filled>\n");
-        b.append("<drawColor r=\"").append(getDrawColor().getRed()).append("\" g=\"").append(getDrawColor().getGreen()).append("\" b=\"").append(getDrawColor().getBlue()).append("\" a=\"").append(getDrawAlpha()).append("\"/>\n");
-        b.append("<stroke width=\"").append(getStrokeWidth()).append("\"/>\n");
-        b.append("<drawName>").append(isDrawName()).append("</drawName>\n");
+        b.append("<end x=\"").append(xPosEnd).append("\" y=\"").append(yPosEnd).append("\"/>\n");
+        b.append("<filled>").append(filled).append("</filled>\n");
+        b.append("<drawColor r=\"").append(drawColor.getRed()).append("\" g=\"").append(drawColor.getGreen()).append("\" b=\"").append(drawColor.getBlue()).append("\" a=\"").append(drawAlpha).append("\"/>\n");
+        b.append("<stroke width=\"").append(strokeWidth).append("\"/>\n");
+        b.append("<drawName>").append(drawName).append("</drawName>\n");
         return b.toString();
     }
 
@@ -136,7 +136,7 @@ public class Arrow extends AbstractForm {
     @Override
     public java.awt.Rectangle getBounds() {
         Point2D.Double s = new Point2D.Double(getXPos(), getYPos());
-        Point2D.Double e = new Point2D.Double(getXPosEnd(), getYPosEnd());
+        Point2D.Double e = new Point2D.Double(xPosEnd, yPosEnd);
         int x = (int) Math.round((s.x < e.x) ? s.x : e.x);
         int y = (int) Math.round((s.y < e.y) ? s.y : e.y);
         int w = (int) Math.round(Math.abs(s.x - e.x));
@@ -147,7 +147,7 @@ public class Arrow extends AbstractForm {
     @Override
     public void renderForm(Graphics2D g2d) {
         Point2D.Double s = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPos(), getYPos());
-        Point2D.Double e = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPosEnd(), getYPosEnd());
+        Point2D.Double e = MapPanel.getSingleton().virtualPosToSceenPosDouble(xPosEnd, yPosEnd);
         if (xPosEnd == -1 && yPosEnd == -1) {
             e = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPos(), getYPos());
         }
@@ -163,11 +163,11 @@ public class Arrow extends AbstractForm {
         Composite coBefore = g2d.getComposite();
         Font fBefore = g2d.getFont();
         Color cBefore = g2d.getColor();
-        checkShowMode(g2d, getDrawColor());
+        checkShowMode(g2d, drawColor);
         //start draw
         g2d.setFont(fBefore.deriveFont((float) getTextSize()));
         g2d.setStroke(getStroke());
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getDrawAlpha()));
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, drawAlpha));
 
         double h = Math.abs(s.y - e.y);
         double c = s.distance(e);
@@ -211,7 +211,7 @@ public class Arrow extends AbstractForm {
         trans = AffineTransform.getTranslateInstance(s.x, s.y);
         path.transform(trans);
 
-        if (isFilled()) {
+        if (filled) {
             g2d.fill(path);
         } else {
             g2d.draw(path);
@@ -234,8 +234,8 @@ public class Arrow extends AbstractForm {
         //start draw
         g2d.setFont(fBefore.deriveFont((float) getTextSize()));
         g2d.setStroke(getStroke());
-        g2d.setColor(getDrawColor());
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getDrawAlpha()));
+        g2d.setColor(drawColor);
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, drawAlpha));
         path = new GeneralPath();
         path.moveTo(getXPos(), getYPos() - 10);
         path.lineTo(getXPos() + 80, getYPos() - 10);
@@ -246,13 +246,13 @@ public class Arrow extends AbstractForm {
         path.lineTo(getXPos() + 0, getYPos() + 10);
         path.closePath();
 
-        if (isFilled()) {
+        if (filled) {
             g2d.fill(path);
         } else {
             g2d.draw(path);
         }
 
-        if (isDrawName()) {
+        if (drawName) {
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
             g2d.setColor(getTextColor());
             g2d.drawString(getFormName(), (int) s.x, (int) s.y);
@@ -267,7 +267,7 @@ public class Arrow extends AbstractForm {
     @Override
     public List<Village> getContainedVillages() {
         Point2D.Double s = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPos(), getYPos());
-        Point2D.Double e = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPosEnd(), getYPosEnd());
+        Point2D.Double e = MapPanel.getSingleton().virtualPosToSceenPosDouble(xPosEnd, yPosEnd);
         if (xPosEnd == -1 && yPosEnd == -1) {
             e = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPos(), getYPos());
         }
@@ -323,7 +323,7 @@ public class Arrow extends AbstractForm {
     }
 
     private void drawDecoration(Point2D.Double s, Point2D.Double e, Graphics2D g2d) {
-        if (isDrawName()) {
+        if (drawName) {
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
             g2d.setColor(getTextColor());
             g2d.drawString(getFormName(), (int) s.x, (int) s.y);
@@ -331,7 +331,7 @@ public class Arrow extends AbstractForm {
     }
 
     public BasicStroke getStroke() {
-        float w = (float) (getStrokeWidth() / DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+        float w = (float) (strokeWidth / DSWorkbenchMainFrame.getSingleton().getZoomFactor());
         return new BasicStroke(w);
     }
 

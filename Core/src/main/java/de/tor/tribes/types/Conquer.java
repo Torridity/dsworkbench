@@ -34,7 +34,7 @@ public class Conquer extends ManageableType {
   private Tribe winner = null;
 
   public int getCurrentAcceptance() {
-    long time = getTimestamp();
+      long time = timestamp;
     long diff = System.currentTimeMillis() / 1000 - time;
     double risePerHour = ServerSettings.getSingleton().getSpeed() *  ServerSettings.getSingleton().getRiseSpeed();
     int rise = 25 + (int) Math.rint((diff / (60 * 60)) * risePerHour);
@@ -117,10 +117,10 @@ public class Conquer extends ManageableType {
     try {
       StringBuilder b = new StringBuilder();
       b.append("<conquer>\n");
-      b.append("<villageID>").append(getVillage().getId()).append("</villageID>\n");
-      b.append("<timestamp>").append(getTimestamp()).append("</timestamp>\n");
-      b.append("<winner>").append(getWinner().getId()).append("</winner>\n");
-      b.append("<loser>").append(getLoser().getId()).append("</loser>\n");
+        b.append("<villageID>").append(village.getId()).append("</villageID>\n");
+        b.append("<timestamp>").append(timestamp).append("</timestamp>\n");
+        b.append("<winner>").append(winner.getId()).append("</winner>\n");
+        b.append("<loser>").append(loser.getId()).append("</loser>\n");
       b.append("</conquer>");
       return b.toString();
     } catch (Throwable t) {
@@ -135,9 +135,9 @@ public class Conquer extends ManageableType {
     int timestamp = Integer.parseInt(pElement.getChild("timestamp").getText());
     int winner = Integer.parseInt(pElement.getChild("winner").getText());
     int loser = Integer.parseInt(pElement.getChild("loser").getText());
-    setVillage(DataHolder.getSingleton().getVillagesById().get(villageId));
-    setTimestamp(timestamp);
-    setLoser(DataHolder.getSingleton().getTribes().get(loser));
-    setWinner(DataHolder.getSingleton().getTribes().get(winner));
+    this.village = DataHolder.getSingleton().getVillagesById().get(villageId);
+    this.timestamp = (long) timestamp;
+    this.loser = DataHolder.getSingleton().getTribes().get(loser);
+    this.winner = DataHolder.getSingleton().getTribes().get(winner);
   }
 }

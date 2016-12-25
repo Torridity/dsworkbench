@@ -319,7 +319,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
     public void updateSortHighlighter() {
         if (useSortColoring) {
-            TableHelper.applyTableColoring(jxAttackTable, getAttackPlan(), highlighters);
+            TableHelper.applyTableColoring(jxAttackTable, sAttackPlan, highlighters);
         }
     }
 
@@ -1351,7 +1351,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     }
 
     public void cleanup() {
-        List<ManageableType> elements = AttackManager.getSingleton().getAllElements(getAttackPlan());
+        List<ManageableType> elements = AttackManager.getSingleton().getAllElements(sAttackPlan);
         List<Attack> toRemove = new LinkedList<>();
         for (ManageableType t : elements) {
             Attack a = (Attack) t;
@@ -1371,7 +1371,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
         logger.debug("Cleaning up " + toRemove.size() + " attacks");
 
-        AttackManager.getSingleton().removeElements(getAttackPlan(), toRemove);
+        AttackManager.getSingleton().removeElements(sAttackPlan, toRemove);
         attackModel.fireTableDataChanged();
         showSuccess(toRemove.size() + " Befehl(e) entfernt");
     }
@@ -1387,7 +1387,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         }
 
         jxAttackTable.editingCanceled(new ChangeEvent(this));
-        AttackManager.getSingleton().removeElements(getAttackPlan(), selectedAttacks);
+        AttackManager.getSingleton().removeElements(sAttackPlan, selectedAttacks);
         attackModel.fireTableDataChanged();
         showSuccess(selectedAttacks.size() + " Befehl(e) gelöscht");
         return true;
@@ -1607,7 +1607,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         if (dir == null) {
             dir = ".";
         }
-        String selectedPlan = getAttackPlan();
+        String selectedPlan = sAttackPlan;
         JFileChooser chooser = null;
         try {
             chooser = new JFileChooser(dir);
@@ -1798,7 +1798,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             for (String line : lines) {
                 Attack a = Attack.fromInternalRepresentation(line);
                 if (a != null) {
-                    AttackManager.getSingleton().addManagedElement(getAttackPlan(), a);
+                    AttackManager.getSingleton().addManagedElement(sAttackPlan, a);
                     cnt++;
                 }
             }
@@ -1816,7 +1816,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             return;
         }
 
-        jSubject.setText("Deine Befehle (Plan: " + getAttackPlan() + ")");
+        jSubject.setText("Deine Befehle (Plan: " + sAttackPlan + ")");
         jSendAttacksIGMDialog.pack();
         jSendAttacksIGMDialog.setLocationRelativeTo(this);
         jSendAttacksIGMDialog.setVisible(true);
@@ -1856,7 +1856,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             return selectedAttacks;
         }
         for (Integer selectedRow : selectedRows) {
-            Attack a = (Attack) AttackManager.getSingleton().getAllElements(getAttackPlan()).get(jxAttackTable.convertRowIndexToModel(selectedRow));
+            Attack a = (Attack) AttackManager.getSingleton().getAllElements(sAttackPlan).get(jxAttackTable.convertRowIndexToModel(selectedRow));
             if (a != null) {
                 selectedAttacks.add(a);
             }

@@ -48,9 +48,9 @@ public class DistanceMapping implements Comparable<DistanceMapping> {
 
     @Override
     public int compareTo(DistanceMapping o) {
-        if (getDistance() < o.getDistance()) {
+        if (distance < o.getDistance()) {
             return -1;
-        } else if (getDistance() > o.getDistance()) {
+        } else if (distance > o.getDistance()) {
             return 1;
         }
         return 0;

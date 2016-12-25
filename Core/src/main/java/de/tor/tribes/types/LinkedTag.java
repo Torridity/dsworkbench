@@ -62,7 +62,7 @@ public class LinkedTag extends Tag {
                 setTagIcon(-1);
             }
             String equation = URLDecoder.decode(pElement.getChild("equation").getTextTrim(), "UTF-8");
-            setEquation(equation);
+            sEquation = equation;
         } catch (Exception ignored) {
         }
     }
@@ -80,7 +80,7 @@ public class LinkedTag extends Tag {
             b.append("<icon>").append(getTagIcon()).append("</icon>\n");
             b.append("<villages/>\n");
             b.append("<equation>\n");
-            b.append(URLEncoder.encode(getEquation(), "UTF-8")).append("\n");
+            b.append(URLEncoder.encode(sEquation, "UTF-8")).append("\n");
             b.append("</equation>\n");
             b.append("</tag>\n");
             return b.toString();

@@ -2488,7 +2488,7 @@ private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
       logger.error("Failed to load default skin", ie);
     }
   }
-  if (isInitialized()) {
+    if (initialized) {
     MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
   }
 }//GEN-LAST:event_fireGraphicPackChangedEvent

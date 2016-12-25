@@ -270,7 +270,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         shiftDown = pValue;
 
         if (!shiftDown) {
-            int cursor = getCurrentCursor();
+            int cursor = iCurrentCursor;
             boolean villagesHandled = false;
             if (cursor == ImageManager.CURSOR_TAG) {
                 //tag selected villages
@@ -1705,7 +1705,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     }
 
     public boolean requiresAlphaBlending() {
-        return (mouseDown && getCurrentCursor() == ImageManager.CURSOR_DEFAULT);
+        return (mouseDown && iCurrentCursor == ImageManager.CURSOR_DEFAULT);
     }
 
     public void planMapShot(String pType, File pLocation, MapShotListener pListener) {
@@ -1729,7 +1729,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
     @Override
     public void dragGestureRecognized(DragGestureEvent dge) {
-        if (getCurrentCursor() != ImageManager.CURSOR_DEFAULT) {
+        if (iCurrentCursor != ImageManager.CURSOR_DEFAULT) {
             return;
         }
 
@@ -1767,7 +1767,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
     @Override
     public void dragDropEnd(DragSourceDropEvent dsde) {
-        setCurrentCursor(getCurrentCursor());
+        setCurrentCursor(iCurrentCursor);
     }
 
     @Override
@@ -1800,7 +1800,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
         Transferable t = dtde.getTransferable();
         List<Village> v;
-        setCurrentCursor(getCurrentCursor());
+        setCurrentCursor(iCurrentCursor);
         try {
             v = (List<Village>) t.getTransferData(VillageTransferable.villageDataFlavor);
             Village target = getVillageAtMousePos();

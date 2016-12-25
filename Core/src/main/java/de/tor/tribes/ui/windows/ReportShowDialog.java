@@ -200,7 +200,7 @@ public class ReportShowDialog extends javax.swing.JDialog {
             return;
         }
         if (parentTab != null) {
-            parentTab.closeReportLayer(getLayer());
+            parentTab.closeReportLayer(layer);
         } else {
             dispose();
         }

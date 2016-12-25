@@ -61,20 +61,20 @@ public class Line extends AbstractForm {
             setTextColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
             setTextAlpha(Float.parseFloat(elem.getAttributeValue("a")));
             elem = e.getChild("drawColor");
-            setDrawColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
-            setDrawAlpha(Float.parseFloat(elem.getAttributeValue("a")));
+            this.drawColor = new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b")));
+            this.drawAlpha = Float.parseFloat(elem.getAttributeValue("a"));
             elem = e.getChild("stroke");
-            setStrokeWidth(Float.parseFloat(elem.getAttributeValue("width")));
+            this.strokeWidth = Float.parseFloat(elem.getAttributeValue("width"));
             elem = e.getChild("arrow");
-            setStartArrow(Boolean.parseBoolean(elem.getAttributeValue("start")));
-            setEndArrow(Boolean.parseBoolean(elem.getAttributeValue("end")));
+            this.startArrow = Boolean.parseBoolean(elem.getAttributeValue("start"));
+            this.endArrow = Boolean.parseBoolean(elem.getAttributeValue("end"));
             elem = e.getChild("end");
-            setXPosEnd(Double.parseDouble(elem.getAttributeValue("x")));
-            setYPosEnd(Double.parseDouble(elem.getAttributeValue("y")));
+            this.xPosEnd = Double.parseDouble(elem.getAttributeValue("x"));
+            this.yPosEnd = Double.parseDouble(elem.getAttributeValue("y"));
             elem = e.getChild("textSize");
             setTextSize(Integer.parseInt(elem.getTextTrim()));
             elem = e.getChild("drawName");
-            setDrawName(Boolean.parseBoolean(elem.getTextTrim()));
+            this.drawName = Boolean.parseBoolean(elem.getTextTrim());
         } catch (Exception ignored) {
         }
     }
@@ -92,13 +92,13 @@ public class Line extends AbstractForm {
         }
         String startXVal = Integer.toString((int) Math.rint(getXPos()));
         String startYVal = Integer.toString((int) Math.rint(getYPos()));
-        String endXVal = Integer.toString((int) Math.rint(getXPosEnd()));
-        String endYVal = Integer.toString((int) Math.rint(getYPosEnd()));
-        String widthVal = Integer.toString((int) Math.rint(getXPosEnd() - getXPos()));
-        String heightVal = Integer.toString((int) Math.rint(getYPosEnd() - getYPos()));
+        String endXVal = Integer.toString((int) Math.rint(xPosEnd));
+        String endYVal = Integer.toString((int) Math.rint(yPosEnd));
+        String widthVal = Integer.toString((int) Math.rint(xPosEnd - getXPos()));
+        String heightVal = Integer.toString((int) Math.rint(yPosEnd - getYPos()));
         String colorVal = "";
-        if (getDrawColor() != null) {
-            colorVal = "#" + Integer.toHexString(getDrawColor().getRGB() & 0x00ffffff);
+        if (drawColor != null) {
+            colorVal = "#" + Integer.toHexString(drawColor.getRGB() & 0x00ffffff);
         } else {
             colorVal = "#" + Integer.toHexString(Color.BLACK.getRGB() & 0x00ffffff);
         }
@@ -117,7 +117,7 @@ public class Line extends AbstractForm {
     @Override
     public void renderForm(Graphics2D g2d) {
         Point2D.Double s = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPos(), getYPos());
-        Point2D.Double e = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPosEnd(), getYPosEnd());
+        Point2D.Double e = MapPanel.getSingleton().virtualPosToSceenPosDouble(xPosEnd, yPosEnd);
         java.awt.Rectangle mapBounds = MapPanel.getSingleton().getBounds();
 
         setVisibleOnMap(mapBounds.intersectsLine(new Line2D.Double(s, e)));
@@ -130,11 +130,11 @@ public class Line extends AbstractForm {
         Composite coBefore = g2d.getComposite();
         Font fBefore = g2d.getFont();
         Color cBefore = g2d.getColor();
-        checkShowMode(g2d, getDrawColor());
+        checkShowMode(g2d, drawColor);
         //start draw
         g2d.setFont(fBefore.deriveFont((float) getTextSize()));
         g2d.setStroke(getStroke());
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getDrawAlpha()));
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, drawAlpha));
         g2d.drawLine((int) Math.rint(s.getX()), (int) Math.rint(s.getY()), (int) Math.rint(e.getX()), (int) Math.rint(e.getY()));
         drawDecoration(s, e, g2d);
         //reset properties
@@ -146,7 +146,7 @@ public class Line extends AbstractForm {
 
     public void renderPreview(Graphics2D g2d) {
         Point2D.Double s = new Point2D.Double(getXPos(), getYPos());
-        Point2D.Double e = new Point2D.Double(getXPosEnd(), getYPosEnd());
+        Point2D.Double e = new Point2D.Double(xPosEnd, yPosEnd);
         //store properties
         Stroke before = g2d.getStroke();
         Composite coBefore = g2d.getComposite();
@@ -155,20 +155,20 @@ public class Line extends AbstractForm {
         //start draw
         g2d.setFont(fBefore.deriveFont((float) getTextSize()));
         g2d.setStroke(getStroke());
-        g2d.setColor(getDrawColor());
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getDrawAlpha()));
+        g2d.setColor(drawColor);
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, drawAlpha));
         g2d.drawLine((int) Math.rint(s.getX()), (int) Math.rint(s.getY()), (int) Math.rint(e.getX()), (int) Math.rint(e.getY()));
         double zoom = 1.0;
         double h = Math.sqrt(3) / 2 * 20 / zoom;
 
-        if (isStartArrow()) {
+        if (startArrow) {
             Point2D.Double p1 = new Point2D.Double(s.x, s.y - h / 2);
             Point2D.Double p2 = new Point2D.Double(s.x, s.y + h / 2);
             Point2D.Double p3 = new Point2D.Double(s.x - h, s.y);
             Polygon poly = new Polygon(new int[]{(int) Math.rint(p1.x), (int) Math.rint(p2.x), (int) Math.rint(p3.x)}, new int[]{(int) Math.rint(p1.y), (int) Math.rint(p2.y), (int) Math.rint(p3.y)}, 3);
             g2d.fillPolygon(poly);
         }
-        if (isEndArrow()) {
+        if (endArrow) {
             Point2D.Double p1 = new Point2D.Double(e.x, e.y - h / 2);
             Point2D.Double p2 = new Point2D.Double(e.x, e.y + h / 2);
             Point2D.Double p3 = new Point2D.Double(e.x + h, e.y);
@@ -176,7 +176,7 @@ public class Line extends AbstractForm {
             g2d.fillPolygon(poly);
         }
 
-        if (isDrawName()) {
+        if (drawName) {
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
             g2d.setColor(getTextColor());
             g2d.drawString(getFormName(), (int) s.x, (int) s.y);
@@ -191,7 +191,7 @@ public class Line extends AbstractForm {
     @Override
     public List<Village> getContainedVillages() {
         Point2D.Double s = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPos(), getYPos());
-        Point2D.Double e = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPosEnd(), getYPosEnd());
+        Point2D.Double e = MapPanel.getSingleton().virtualPosToSceenPosDouble(xPosEnd, yPosEnd);
 
         List<Village> result = MapPanel.getSingleton().getVillagesOnLine(new Line2D.Double((int) Math.rint(s.getX()), (int) Math.rint(s.getY()), (int) Math.rint(e.getX()), (int) Math.rint(e.getY())));
         if (result == null) {
@@ -203,7 +203,7 @@ public class Line extends AbstractForm {
     @Override
     public java.awt.Rectangle getBounds() {
         Point2D.Double s = new Point2D.Double(getXPos(), getYPos());
-        Point2D.Double e = new Point2D.Double(getXPosEnd(), getYPosEnd());
+        Point2D.Double e = new Point2D.Double(xPosEnd, yPosEnd);
         int x = (int) Math.round((s.x < e.x) ? s.x : e.x);
         int y = (int) Math.round((s.y < e.y) ? s.y : e.y);
         int w = (int) Math.round(Math.abs(s.x - e.x));
@@ -218,7 +218,7 @@ public class Line extends AbstractForm {
         double h = Math.sqrt(3) / 2 * 20 / zoom;
         AffineTransform tb = g2d.getTransform();
 
-        if (isStartArrow()) {
+        if (startArrow) {
             Point2D.Double p1 = new Point2D.Double(s.x, s.y - h / 2);
             Point2D.Double p2 = new Point2D.Double(s.x, s.y + h / 2);
             Point2D.Double p3 = new Point2D.Double(s.x - h, s.y);
@@ -227,7 +227,7 @@ public class Line extends AbstractForm {
             Polygon poly = new Polygon(new int[]{(int) Math.rint(p1.x), (int) Math.rint(p2.x), (int) Math.rint(p3.x)}, new int[]{(int) Math.rint(p1.y), (int) Math.rint(p2.y), (int) Math.rint(p3.y)}, 3);
             g2d.fillPolygon(poly);
         }
-        if (isEndArrow()) {
+        if (endArrow) {
             Point2D.Double p1 = new Point2D.Double(e.x, e.y - h / 2);
             Point2D.Double p2 = new Point2D.Double(e.x, e.y + h / 2);
             Point2D.Double p3 = new Point2D.Double(e.x + h, e.y);
@@ -237,7 +237,7 @@ public class Line extends AbstractForm {
             g2d.fillPolygon(poly);
         }
         g2d.setTransform(tb);
-        if (isDrawName()) {
+        if (drawName) {
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
             g2d.setColor(getTextColor());
             g2d.drawString(getFormName(), (int) s.x, (int) s.y);
@@ -246,11 +246,11 @@ public class Line extends AbstractForm {
 
     @Override
     protected String getFormXml() {
-        String xml = "<end x=\"" + getXPosEnd() + "\" y=\"" + getYPosEnd() + "\"/>\n";
-        xml += "<drawColor r=\"" + getDrawColor().getRed() + "\" g=\"" + getDrawColor().getGreen() + "\" b=\"" + getDrawColor().getBlue() + "\" a=\"" + getDrawAlpha() + "\"/>\n";
-        xml += "<stroke width=\"" + getStrokeWidth() + "\"/>\n";
-        xml += "<arrow start=\"" + isStartArrow() + "\" end=\"" + isEndArrow() + "\"/>\n";
-        xml += "<drawName>" + isDrawName() + "</drawName>\n";
+        String xml = "<end x=\"" + xPosEnd + "\" y=\"" + yPosEnd + "\"/>\n";
+        xml += "<drawColor r=\"" + drawColor.getRed() + "\" g=\"" + drawColor.getGreen() + "\" b=\"" + drawColor.getBlue() + "\" a=\"" + drawAlpha + "\"/>\n";
+        xml += "<stroke width=\"" + strokeWidth + "\"/>\n";
+        xml += "<arrow start=\"" + startArrow + "\" end=\"" + endArrow + "\"/>\n";
+        xml += "<drawName>" + drawName + "</drawName>\n";
         return xml;
     }
 
@@ -291,7 +291,7 @@ public class Line extends AbstractForm {
      * @return the stroke
      */
     public BasicStroke getStroke() {
-        float w = (float) (getStrokeWidth() / DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+        float w = (float) (strokeWidth / DSWorkbenchMainFrame.getSingleton().getZoomFactor());
         return new BasicStroke(w);
     }
 
@@ -299,7 +299,7 @@ public class Line extends AbstractForm {
     public void setXPos(double xPos) {
         super.setXPos(xPos);
         if (xPosEnd == -1) {
-            setXPosEnd(xPos);
+            this.xPosEnd = xPos;
         }
     }
 
@@ -307,7 +307,7 @@ public class Line extends AbstractForm {
     public void setYPos(double yPos) {
         super.setYPos(yPos);
         if (xPosEnd == -1) {
-            setXPosEnd(yPos);
+            this.xPosEnd = yPos;
         }
     }
 

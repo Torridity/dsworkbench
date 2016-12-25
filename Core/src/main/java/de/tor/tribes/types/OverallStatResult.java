@@ -43,21 +43,21 @@ public class OverallStatResult implements BBSupport {
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMaximumFractionDigits(0);
         nf.setMinimumFractionDigits(0);
-        String valStartDate = df.format(getStartDate());
-        String valEndData = df.format(getEndDate());
-        String valReportCount = nf.format(getReportCount());
-        String valAttackTribes = nf.format(getAttackers());
-        String valAttackAllies = nf.format(getAttackerAllies());
-        String valDefendTribes = nf.format(getDefenders());
-        String valDefendAllies = nf.format(getDefenderAllies());
-        String valKills = nf.format(getKills());
-        String valKillsAsFarm = nf.format(getKillsAsFarm());
-        String valLosses = nf.format(getLosses());
-        String valLossesAsFarm = nf.format(getLossesAsFarm());
-        String valLossesPerAttacker = nf.format(getLosses() / getAttackers());
-        String valLossesPerDefender = nf.format(getKills() / getDefenders());
-        String valWallDestruction = nf.format(getWallDestruction());
-        String valBuildingDestruction = nf.format(getBuildingDestruction());
+        String valStartDate = df.format(startDate);
+        String valEndData = df.format(endDate);
+        String valReportCount = nf.format(reportCount);
+        String valAttackTribes = nf.format(attackers);
+        String valAttackAllies = nf.format(attackerAllies);
+        String valDefendTribes = nf.format(defenders);
+        String valDefendAllies = nf.format(defenderAllies);
+        String valKills = nf.format(kills);
+        String valKillsAsFarm = nf.format(killsAsFarm);
+        String valLosses = nf.format(losses);
+        String valLossesAsFarm = nf.format(lossesAsFarm);
+        String valLossesPerAttacker = nf.format(losses / attackers);
+        String valLossesPerDefender = nf.format(kills / defenders);
+        String valWallDestruction = nf.format(wallDestruction);
+        String valBuildingDestruction = nf.format(buildingDestruction);
         return new String[]{valStartDate, valEndData, valReportCount, valAttackTribes, valAttackAllies, valDefendTribes, valDefendAllies, valKills, valKillsAsFarm, valLosses, valLossesAsFarm,
                     valLossesPerAttacker, valLossesPerDefender, valWallDestruction, valBuildingDestruction};
     }

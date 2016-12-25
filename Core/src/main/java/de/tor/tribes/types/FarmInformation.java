@@ -193,7 +193,7 @@ public class FarmInformation extends ManageableType {
         //  double speed = TroopHelper.getTroopSpeed(units);
         long arriveTimeRelativeToNow = farmTroopArrive - System.currentTimeMillis();//farmTroopArrive - DSCalculator.calculateMoveTimeInMillis(getVillage(), DataHolder.getSingleton().getVillagesById().get(farmSourceId), speed) - lastRuntimeUpdate;
         if (arriveTimeRelativeToNow <= 0) {//farm was reached...return time until return
-            if (getStatus().equals(FARM_STATUS.FARMING)) {
+            if (status.equals(FARM_STATUS.FARMING)) {
                 setStatus(FARM_STATUS.REPORT_EXPECTED);
             }
             arriveTimeRelativeToNow = 0;
@@ -345,13 +345,13 @@ public class FarmInformation extends ManageableType {
             int resourceBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(dResource, dt);
             switch (i) {
                 case 0:
-                    setWoodLevel(Math.max(getWoodLevel(), resourceBuildingLevel));
+                    setWoodLevel(Math.max(woodLevel, resourceBuildingLevel));
                     break;
                 case 1:
-                    setClayLevel(Math.max(getClayLevel(), resourceBuildingLevel));
+                    setClayLevel(Math.max(clayLevel, resourceBuildingLevel));
                     break;
                 case 2:
-                    setIronLevel(Math.max(getIronLevel(), resourceBuildingLevel));
+                    setIronLevel(Math.max(ironLevel, resourceBuildingLevel));
                     break;
             }
         }
@@ -383,9 +383,9 @@ public class FarmInformation extends ManageableType {
         int woodBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(wood, dt);
         int clayBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(clay, dt);
         int ironBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(iron, dt);
-        setWoodLevel(Math.max(getWoodLevel(), woodBuildingLevel));
-        setClayLevel(Math.max(getClayLevel(), clayBuildingLevel));
-        setIronLevel(Math.max(getIronLevel(), ironBuildingLevel));
+        setWoodLevel(Math.max(woodLevel, woodBuildingLevel));
+        setClayLevel(Math.max(clayLevel, clayBuildingLevel));
+        setIronLevel(Math.max(ironLevel, ironBuildingLevel));
     }
 
     private void guessStorage(FightReport pReport) {
@@ -398,13 +398,13 @@ public class FarmInformation extends ManageableType {
             int guessedStorageLevel = DSCalculator.calculateEstimatedStorageLevel(resourceInStorage);
             switch (i) {
                 case 0:
-                    setStorageLevel(Math.max(getStorageLevel(), guessedStorageLevel));
+                    setStorageLevel(Math.max(storageLevel, guessedStorageLevel));
                     break;
                 case 1:
-                    setStorageLevel(Math.max(getStorageLevel(), guessedStorageLevel));
+                    setStorageLevel(Math.max(storageLevel, guessedStorageLevel));
                     break;
                 case 2:
-                    setStorageLevel(Math.max(getStorageLevel(), guessedStorageLevel));
+                    setStorageLevel(Math.max(storageLevel, guessedStorageLevel));
                     break;
             }
         }
@@ -446,7 +446,7 @@ public class FarmInformation extends ManageableType {
         farmTroopArrive = -1;
         lastResult = FARM_RESULT.UNKNOWN;
         lastSendInformation = null;
-        if (!isInactive()) {
+        if (!inactive) {
             if (spyed) {
                 setStatus(FARM_STATUS.READY);
             } else {
@@ -487,7 +487,7 @@ public class FarmInformation extends ManageableType {
             updateCorrectionFactor(pReport);
             //update spy information
             updateSpyInformation(pReport);
-            if (!isSpyed()) {
+            if (!spyed) {
                 guessResourceBuildings(pReport);
             }
             //update haul information (hauled resources sums, storage status if no spy information is available)

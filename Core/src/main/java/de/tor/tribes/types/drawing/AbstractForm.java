@@ -150,10 +150,10 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
         try {
             StringBuilder b = new StringBuilder();
             b.append("<form type=\"").append(getTypeAsString(getFormType())).append("\">\n");
-            b.append("<name><![CDATA[").append(URLEncoder.encode(getFormName(), "UTF-8")).append("]]></name>\n");
+            b.append("<name><![CDATA[").append(URLEncoder.encode(formName, "UTF-8")).append("]]></name>\n");
             b.append("<pos x=\"").append(getXPos()).append("\" y=\"").append(getYPos()).append("\"/>\n");// rot=\"" + getRotation() + "\"/>\n");
-            b.append("<textColor r=\"").append(getTextColor().getRed()).append("\" g=\"").append(getTextColor().getGreen()).append("\" b=\"").append(getTextColor().getBlue()).append("\" a=\"").append(getTextAlpha()).append("\"/>\n");
-            b.append("<textSize>").append(getTextSize()).append("</textSize>\n");
+            b.append("<textColor r=\"").append(textColor.getRed()).append("\" g=\"").append(textColor.getGreen()).append("\" b=\"").append(textColor.getBlue()).append("\" a=\"").append(textAlpha).append("\"/>\n");
+            b.append("<textSize>").append(textSize).append("</textSize>\n");
             b.append(getFormXml());
             b.append("</form>\n");
             return b.toString();
@@ -184,7 +184,7 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
     }
 
     public void checkShowMode(Graphics2D g2d, Color pColor) {
-        if (isShowMode()) {
+        if (showMode) {
             if (t == -1) {
                 t = System.currentTimeMillis();
             }
@@ -196,7 +196,7 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
                 g2d.setColor(pColor);
             }
             if (showCount == 5) {
-                setShowMode(false);
+                this.showMode = false;
                 t = -1;
                 showCount = 0;
             }
@@ -311,7 +311,7 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
 
     @Override
     public String toString() {
-        return getFormName() + " (" + getTypeAsString(getFormType()) + ")";
+        return formName + " (" + getTypeAsString(getFormType()) + ")";
     }
 
     /**

@@ -39,8 +39,8 @@ public abstract class AbstractTroopMovement {
   private List<Attack> finalizedAttacks = null;
 
   public AbstractTroopMovement(Village pTarget, int pMinOffs, int pMaxOffs) {
-    setTarget(pTarget);
-    mOffs = new Hashtable<>();
+      mTarget = pTarget;
+      mOffs = new Hashtable<>();
     iMinOffs = pMinOffs;
     iMaxOffs = pMaxOffs;
   }

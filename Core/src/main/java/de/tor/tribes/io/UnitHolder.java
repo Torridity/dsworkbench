@@ -47,48 +47,48 @@ public class UnitHolder implements Serializable {
 
     public UnitHolder(Element pElement) throws Exception {
         try {
-            setPlainName(pElement.getName());
+            this.plainName = pElement.getName();
             if (pElement.getName().equals("spear")) {
-                setName("Speerträger");
+                this.name = "Speerträger";
             } else if (pElement.getName().equals("sword")) {
-                setName("Schwertkämpfer");
+                this.name = "Schwertkämpfer";
             } else if (pElement.getName().equals("axe")) {
-                setName("Axtkämpfer");
+                this.name = "Axtkämpfer";
             } else if (pElement.getName().equals("archer")) {
-                setName("Bogenschütze");
+                this.name = "Bogenschütze";
             } else if (pElement.getName().equals("spy")) {
-                setName("Späher");
+                this.name = "Späher";
             } else if (pElement.getName().equals("light")) {
-                setName("Leichte Kavallerie");
+                this.name = "Leichte Kavallerie";
             } else if (pElement.getName().equals("marcher")) {
-                setName("Berittener Bogenschütze");
+                this.name = "Berittener Bogenschütze";
             } else if (pElement.getName().equals("heavy")) {
-                setName("Schwere Kavallerie");
+                this.name = "Schwere Kavallerie";
             } else if (pElement.getName().equals("ram")) {
-                setName("Ramme");
+                this.name = "Ramme";
             } else if (pElement.getName().equals("catapult")) {
-                setName("Katapult");
+                this.name = "Katapult";
             } else if (pElement.getName().equals("knight")) {
-                setName("Paladin");
+                this.name = "Paladin";
             } else if (pElement.getName().equals("snob")) {
-                setName("Adelsgeschlecht");
+                this.name = "Adelsgeschlecht";
             } else if (pElement.getName().equals("militia")) {
-                setName("Miliz");
+                this.name = "Miliz";
             } else {
-                setName("Unbekannt (" + pElement.getName() + ")");
+                this.name = "Unbekannt (" + pElement.getName() + ")";
             }
 
-            setWood(Double.parseDouble(pElement.getChild("wood").getText()));
-            setStone(Double.parseDouble(pElement.getChild("stone").getText()));
-            setIron(Double.parseDouble(pElement.getChild("iron").getText()));
-            setPop(Double.parseDouble(pElement.getChild("pop").getText()));
-            setSpeed(Double.parseDouble(pElement.getChild("speed").getText()));
-            setAttack(Double.parseDouble(pElement.getChild("attack").getText()));
-            setDefense(Double.parseDouble(pElement.getChild("defense").getText()));
-            setDefenseCavalry(Double.parseDouble(pElement.getChild("defense_cavalry").getText()));
-            setDefenseArcher(Double.parseDouble(pElement.getChild("defense_archer").getText()));
-            setCarry(Double.parseDouble(pElement.getChild("carry").getText()));
-            setBuildTime(Double.parseDouble(pElement.getChild("build_time").getText()));
+            this.wood = Double.parseDouble(pElement.getChild("wood").getText());
+            this.stone = Double.parseDouble(pElement.getChild("stone").getText());
+            this.iron = Double.parseDouble(pElement.getChild("iron").getText());
+            this.pop = Double.parseDouble(pElement.getChild("pop").getText());
+            this.speed = Double.parseDouble(pElement.getChild("speed").getText());
+            this.attack = Double.parseDouble(pElement.getChild("attack").getText());
+            this.defense = Double.parseDouble(pElement.getChild("defense").getText());
+            this.defenseCavalry = Double.parseDouble(pElement.getChild("defense_cavalry").getText());
+            this.defenseArcher = Double.parseDouble(pElement.getChild("defense_archer").getText());
+            this.carry = Double.parseDouble(pElement.getChild("carry").getText());
+            this.buildTime = Double.parseDouble(pElement.getChild("build_time").getText());
         } catch (Exception e) {
             throw new Exception("Fehler beim laden von Einheit '" + pElement.getName() + "'", e);
         }
@@ -191,7 +191,7 @@ public class UnitHolder implements Serializable {
     }
 
     public boolean isFarmUnit() {
-        return getCarry() > 0 || (getPlainName() != null && getPlainName().equals("spy"));
+        return carry > 0 || (getPlainName() != null && getPlainName().equals("spy"));
     }
 
     public boolean isInfantry() {

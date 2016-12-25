@@ -247,7 +247,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
     }
 
     public boolean isVillageValid(Village pVillage) {
-        if (isExpertSelection() && getItemAt(0).getState() != ListItem.RELATION_TYPE.DISABLED) {
+        if (expertSelection && getItemAt(0).getState() != ListItem.RELATION_TYPE.DISABLED) {
             //NoTag selected
             if (TagManager.getSingleton().getTags(pVillage).isEmpty()) {
                 return true;
@@ -276,7 +276,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
         }
 
 
-        if (!isExpertSelection()) {
+        if (!expertSelection) {
             Object[] values = getSelectedValues();
             if (values.length == 0) {
                 return result;
@@ -379,7 +379,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
 
     public String getRelationAsPlainText() {
         StringBuilder b = new StringBuilder();
-        if (isExpertSelection()) {
+        if (expertSelection) {
             b.append("Alle Dörfer die ");
             boolean isFirst = true;
             for (int i = 0; i < getElementCount(); i++) {

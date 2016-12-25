@@ -58,6 +58,6 @@ public class StorageStatus implements Comparable<StorageStatus> {
 
     @Override
     public int compareTo(StorageStatus o) {
-        return new Double(getWoodStatus() * capacity + getClayStatus() * capacity + getIronStatus() * capacity).compareTo(o.getWoodStatus() * o.getCapacity() + o.getClayStatus() * o.getCapacity() + o.getIronStatus() * o.getCapacity());
+        return new Double(woodStatus * capacity + clayStatus * capacity + ironStatus * capacity).compareTo(o.getWoodStatus() * o.getCapacity() + o.getClayStatus() * o.getCapacity() + o.getIronStatus() * o.getCapacity());
     }
 }

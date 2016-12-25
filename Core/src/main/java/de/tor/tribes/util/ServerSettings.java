@@ -53,7 +53,7 @@ public class ServerSettings {
     public boolean loadSettings(String pServerID) {
         try {
             logger.debug("Loading server settings");
-            setServerID(pServerID);
+            SERVER_ID = pServerID;
             String serverPath = Constants.SERVER_DIR + "/" + SERVER_ID + "/settings.xml";
             logger.debug("Parse server settings from '" + serverPath + "'");
             Document d = JaxenUtils.getDocument(new File(serverPath));
@@ -65,65 +65,65 @@ public class ServerSettings {
             }
             logger.debug(" - reading bonus type");
             try {
-                setNewBonus(Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/bonus_new")));
+                BONUS_NEW = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/bonus_new"));
             } catch (Exception inner) {
-                setNewBonus(0);
+                BONUS_NEW = 0;
             }
             logger.debug(" - reading snob distance");
             try {
-                setSnobRange(Integer.parseInt(JaxenUtils.getNodeValue(d, "//snob/max_dist")));
+                SNOB_RANGE = Integer.parseInt(JaxenUtils.getNodeValue(d, "//snob/max_dist"));
             } catch (Exception inner) {
-                setSnobRange(70);
+                SNOB_RANGE = 70;
             }
             logger.debug(" - reading church setting");
             try {
-                setChurch(Integer.parseInt(JaxenUtils.getNodeValue(d, "//game/church")) == 1);
+                church = Integer.parseInt(JaxenUtils.getNodeValue(d, "//game/church")) == 1;
             } catch (Exception inner) {
-                setChurch(false);
+                church = false;
             }
             logger.debug(" - reading millis setting");
             try {
-                setMillisArrival(Integer.parseInt(JaxenUtils.getNodeValue(d, "//misc/millis_arrival")) == 1);
+                millisArrival = Integer.parseInt(JaxenUtils.getNodeValue(d, "//misc/millis_arrival")) == 1;
             } catch (Exception inner) {
                 try {//new settings is under "commands"
-                    setMillisArrival(Integer.parseInt(JaxenUtils.getNodeValue(d, "//commands/millis_arrival")) == 1);
+                    millisArrival = Integer.parseInt(JaxenUtils.getNodeValue(d, "//commands/millis_arrival")) == 1;
                 } catch (Exception inner2) {
                     //empty or invalid value...use no millis
-                    setMillisArrival(false);
+                    millisArrival = false;
                 }
             }
 
             logger.debug(" - reading server speed");
             try {
-                setSpeed(Double.parseDouble(JaxenUtils.getNodeValue(d, "//speed")));
+                this.speed = Double.parseDouble(JaxenUtils.getNodeValue(d, "//speed"));
             } catch (Exception inner) {
-                setSpeed(1.0);
+                this.speed = 1.0;
             }
 
             logger.debug(" - reading rise speed");
             try {
-                setRiseSpeed(Double.parseDouble(JaxenUtils.getNodeValue(d, "//snob/rise")));
+                this.speed = Double.parseDouble(JaxenUtils.getNodeValue(d, "//snob/rise"));
             } catch (Exception inner) {
-                setRiseSpeed(1.0);
+                this.speed = 1.0;
             }
 
             logger.debug(" - reading night bonus");
             try {
-                setNightBonusActive(Integer.parseInt(JaxenUtils.getNodeValue(d, "//night/active")) == 1);
+                this.nightBonusActive = Integer.parseInt(JaxenUtils.getNodeValue(d, "//night/active")) == 1;
             } catch (Exception inner) {
-                setNightBonusActive(true);
+                this.nightBonusActive = true;
             }
             logger.debug(" - reading night bonus start hour");
             try {
-                setNightBonusStartHour(Integer.parseInt(JaxenUtils.getNodeValue(d, "//night/start_hour")));
+                this.nightBonusStartHour = Integer.parseInt(JaxenUtils.getNodeValue(d, "//night/start_hour"));
             } catch (Exception inner) {
-                setNightBonusStartHour(0);
+                this.nightBonusStartHour = 0;
             }
             logger.debug(" - reading night bonus end hour");
             try {
-                setNightBonusStartHour(Integer.parseInt(JaxenUtils.getNodeValue(d, "//night/end_hour")));
+                this.nightBonusStartHour = Integer.parseInt(JaxenUtils.getNodeValue(d, "//night/end_hour"));
             } catch (Exception inner) {
-                setNightBonusEndHour(8);
+                this.nightBonusEndHour = 8;
             }
 
         } catch (Exception e) {

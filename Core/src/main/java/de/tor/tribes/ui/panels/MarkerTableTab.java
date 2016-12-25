@@ -413,7 +413,7 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
             for (String line : lines) {
                 Marker a = Marker.fromInternalRepresentation(line);
                 if (a != null) {
-                    MarkerManager.getSingleton().addManagedElement(getMarkerSet(), a);
+                    MarkerManager.getSingleton().addManagedElement(sMarkerSet, a);
                     cnt++;
                 }
             }
@@ -487,7 +487,7 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
             }
         }
         jxMarkerTable.editingCanceled(new ChangeEvent(this));
-        MarkerManager.getSingleton().removeElements(getMarkerSet(), selectedMarkers);
+        MarkerManager.getSingleton().removeElements(sMarkerSet, selectedMarkers);
         markerModel.fireTableDataChanged();
         showSuccess(selectedMarkers.size() + " Markierung(en) gelöscht");
         return true;
@@ -504,7 +504,7 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
             return selectedMarkers;
         }
         for (Integer selectedRow : selectedRows) {
-            Marker a = (Marker) MarkerManager.getSingleton().getAllElements(getMarkerSet()).get(jxMarkerTable.convertRowIndexToModel(selectedRow));
+            Marker a = (Marker) MarkerManager.getSingleton().getAllElements(sMarkerSet).get(jxMarkerTable.convertRowIndexToModel(selectedRow));
             if (a != null) {
                 selectedMarkers.add(a);
             }

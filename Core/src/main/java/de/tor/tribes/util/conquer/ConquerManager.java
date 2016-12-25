@@ -99,10 +99,10 @@ public class ConquerManager extends GenericManager<Conquer> {
             try {
                 Document d = JaxenUtils.getDocument(conquerFile);
                 String lastup = JaxenUtils.getNodeValue(d, "//conquers/lastUpdate");
-                setLastUpdate(Long.parseLong(lastup));
-                if (getLastUpdate() == -1) {
+                this.lastUpdate = Long.parseLong(lastup);
+                if (lastUpdate == -1) {
                     //set update correct on error
-                    setLastUpdate(0);
+                    this.lastUpdate = (long) 0;
                 }
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//conquers/conquer")) {
                     try {
@@ -179,7 +179,7 @@ public class ConquerManager extends GenericManager<Conquer> {
 
             StringBuilder b = new StringBuilder();
             b.append("<conquers>\n");
-            b.append("<lastUpdate>").append(getLastUpdate()).append("</lastUpdate>\n");
+            b.append("<lastUpdate>").append(lastUpdate).append("</lastUpdate>\n");
             for (ManageableType t : getAllElements()) {
                 Conquer c = (Conquer) t;
                 if (c != null) {

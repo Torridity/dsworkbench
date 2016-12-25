@@ -102,7 +102,7 @@ public class Enoblement extends AbstractTroopMovement {
             }
         }
         type = Attack.SNOB_TYPE;
-        for (Village snobSource : getSnobSources()) {
+        for (Village snobSource : snobSources) {
             Attack a = new Attack();
             a.setTarget(target);
             a.setSource(snobSource);

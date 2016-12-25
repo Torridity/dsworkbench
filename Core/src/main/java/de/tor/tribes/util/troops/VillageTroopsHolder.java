@@ -42,8 +42,8 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
 
     @Override
     public void loadFromXml(Element e) {
-        setVillage(DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(e.getChild("id").getText())));
-        setState(new Date(Long.parseLong(e.getChild("state").getText())));
+        this.village = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(e.getChild("id").getText()));
+        this.state = new Date(Long.parseLong(e.getChild("state").getText()));
 
         Element troopsElement = (Element) JaxenUtils.getNodes(e, "troops").get(0);
 
@@ -68,16 +68,16 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
         for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
             troops.put(u, 0);
         }
-        setVillage(pVillage);
-        setState(pState);
+        this.village = pVillage;
+        this.state = pState;
     }
 
     @Override
     public String toXml() {
         StringBuilder builder = new StringBuilder();
         builder.append("<troopInfo>\n");
-        builder.append("<id>").append(getVillage().getId()).append("</id>\n");
-        builder.append("<state>").append(getState().getTime()).append("</state>\n");
+        builder.append("<id>").append(village.getId()).append("</id>\n");
+        builder.append("<state>").append(state.getTime()).append("</state>\n");
         builder.append("<troops ");
 
         List<UnitHolder> units = DataHolder.getSingleton().getUnits();
@@ -223,7 +223,7 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
     @Override
     public String toString() {
         String result = "";
-        result += "Village: " + getVillage() + "\n";
+        result += "Village: " + village + "\n";
         Enumeration<UnitHolder> keys = troops.keys();
         result += "Truppen\n";
         while (keys.hasMoreElements()) {
@@ -260,10 +260,10 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
 
     @Override
     public String[] getReplacements(boolean pExtended) {
-        Village v = getVillage();
+        Village v = village;
         String villageVal = "-";
         if (v != null) {
-            villageVal = getVillage().toBBCode();
+            villageVal = village.toBBCode();
         }
         String spearIcon = "[unit]spear[/unit]";
         String spearVal = getValueForUnit("spear");

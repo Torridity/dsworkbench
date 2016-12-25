@@ -523,7 +523,7 @@ class VillageUsageElement {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof TAPAttackSourceElement && ((TAPAttackSourceElement) obj).getVillage().equals(getVillage());
+        return obj instanceof TAPAttackSourceElement && ((TAPAttackSourceElement) obj).getVillage().equals(village);
     }
 
     public Village getVillage() {

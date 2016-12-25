@@ -147,10 +147,10 @@ public class MarkerCell extends javax.swing.JPanel implements Comparable<MarkerC
                 v1 = c.getTribe().getName();
             }
             String v2 = "";
-            if (getType() == Marker.ALLY_MARKER_TYPE) {
-                v2 = getAlly().getName();
+            if (type == Marker.ALLY_MARKER_TYPE) {
+                v2 = mAlly.getName();
             } else {
-                v2 = getTribe().getName();
+                v2 = mTribe.getName();
             }
             return String.CASE_INSENSITIVE_ORDER.compare(v1, v2);
         } catch (Exception e) {

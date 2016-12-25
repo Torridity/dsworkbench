@@ -33,17 +33,17 @@ public class REFResultElement {
     private Date arriveTime = null;
 
     public REFResultElement(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime) {
-        setSource(pSource);
-        setTarget(pTarget);
-        setUnit(pUnit);
-        setArriveTime(pArriveTime);
+        this.source = pSource;
+        this.target = pTarget;
+        this.unit = pUnit;
+        this.arriveTime = pArriveTime;
     }
 
     public Attack asAttack() {
         Attack a = new Attack();
-        a.setSource(getSource());
-        a.setTarget(getTarget());
-        a.setUnit(getUnit());
+        a.setSource(source);
+        a.setTarget(target);
+        a.setUnit(unit);
         a.setArriveTime(arriveTime);
         a.setType(Attack.SUPPORT_TYPE);
         return a;
@@ -82,6 +82,6 @@ public class REFResultElement {
     }
 
     public Date getSendTime() {
-        return new Date(getArriveTime().getTime() - DSCalculator.calculateMoveTimeInMillis(source, target, unit.getSpeed()));
+        return new Date(arriveTime.getTime() - DSCalculator.calculateMoveTimeInMillis(source, target, unit.getSpeed()));
     }
 }

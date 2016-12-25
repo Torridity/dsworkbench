@@ -535,8 +535,8 @@ public class TribeStatsElement {
 
         public Double getExpansion() {
             double perc = 0;
-            if (getPointStart() > 0) {
-                perc = (double) 100 * (double) getPointDiff() / (double) getPointStart();
+            if (pointStart > 0) {
+                perc = (double) 100 * (double) getPointDiff() / (double) pointStart;
             }
             return perc;
         }

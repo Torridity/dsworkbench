@@ -50,7 +50,7 @@ public class Order {
     }
 
     public String toString() {
-        String res = "(" + getAmount() + ") -> " + destination;
+        String res = "(" + amount + ") -> " + destination;
         return res;
     }
 }

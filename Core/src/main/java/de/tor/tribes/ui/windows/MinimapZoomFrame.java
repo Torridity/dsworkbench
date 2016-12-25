@@ -40,7 +40,7 @@ public class MinimapZoomFrame extends javax.swing.JFrame {
      */
     public MinimapZoomFrame(BufferedImage pMap) {
         initComponents();
-        setMinimap(pMap);
+        mMap = pMap;
         mDrawThread = new DrawThread(this);
         mDrawThread.start();
         try {

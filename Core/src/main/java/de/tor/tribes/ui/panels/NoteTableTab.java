@@ -192,7 +192,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
     }
 
     private void updateVillageList() {
-        if (noteModel.getNoteSet().equals(getNoteSet())) {
+        if (noteModel.getNoteSet().equals(sNoteSet)) {
             DefaultListModel model = new DefaultListModel();
             List<Note> notes = getSelectedNotes();
             List<Village> villages = new LinkedList<>();
@@ -495,7 +495,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
             for (String line : lines) {
                 Note n = Note.fromInternalRepresentation(line);
                 if (n != null) {
-                    NoteManager.getSingleton().addManagedElement(getNoteSet(), n);
+                    NoteManager.getSingleton().addManagedElement(sNoteSet, n);
                     cnt++;
                 }
             }
@@ -600,7 +600,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
             }
         }
         jxNoteTable.editingCanceled(new ChangeEvent(this));
-        NoteManager.getSingleton().removeElements(getNoteSet(), selectedNotes);
+        NoteManager.getSingleton().removeElements(sNoteSet, selectedNotes);
         noteModel.fireTableDataChanged();
         showSuccess(selectedNotes.size() + " Notiz(en) gelöscht");
         return true;
@@ -646,7 +646,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
             return selectedNotes;
         }
         for (Integer selectedRow : selectedRows) {
-            Note a = (Note) NoteManager.getSingleton().getAllElements(getNoteSet()).get(jxNoteTable.convertRowIndexToModel(selectedRow));
+            Note a = (Note) NoteManager.getSingleton().getAllElements(sNoteSet).get(jxNoteTable.convertRowIndexToModel(selectedRow));
             if (a != null) {
                 selectedNotes.add(a);
             }

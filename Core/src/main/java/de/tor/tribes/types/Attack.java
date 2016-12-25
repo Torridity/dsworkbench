@@ -67,12 +67,12 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
 
     public Attack(Attack pAttack) {
         this();
-        setSource(pAttack.getSource());
-        setTarget(pAttack.getTarget());
-        setUnit(pAttack.getUnit());
+        this.source = pAttack.getSource();
+        this.target = pAttack.getTarget();
+        this.unit = pAttack.getUnit();
         setArriveTime(pAttack.getArriveTime());
-        setType(pAttack.getType());
-        setTransferredToBrowser(pAttack.isTransferredToBrowser());
+        this.type = pAttack.getType();
+        this.transferredToBrowser = pAttack.isTransferredToBrowser();
     }
 
     public boolean isSourceVillage(Village pVillage) {
@@ -115,7 +115,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
     }
 
     private boolean canUseSnob() {
-        return getSource() == null || getTarget() == null || DSCalculator.calculateDistance(getSource(), getTarget()) < ServerSettings.getSingleton().getSnobRange();
+        return source == null || target == null || DSCalculator.calculateDistance(source, target) < ServerSettings.getSingleton().getSnobRange();
     }
 
     public Date getArriveTime() {
@@ -138,18 +138,18 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
             return;
         }
 
-        long runtime = DSCalculator.calculateMoveTimeInMillis(getSource(), getTarget(), getUnit().getSpeed());
+        long runtime = DSCalculator.calculateMoveTimeInMillis(source, target, getUnit().getSpeed());
         setArriveTime(new Date(pSendTime.getTime() + runtime));
     }
 
     public Date getSendTime() {
-        long runtime = DSCalculator.calculateMoveTimeInMillis(getSource(), getTarget(), getUnit().getSpeed());
-        return new Date(getArriveTime().getTime() - runtime);
+        long runtime = DSCalculator.calculateMoveTimeInMillis(source, target, getUnit().getSpeed());
+        return new Date(arriveTime.getTime() - runtime);
     }
 
     public Date getReturnTime() {
-        long runtime = DSCalculator.calculateMoveTimeInMillis(getSource(), getTarget(), getUnit().getSpeed());
-        return new Date((getArriveTime().getTime() + runtime) / 1000 * 1000);
+        long runtime = DSCalculator.calculateMoveTimeInMillis(source, target, getUnit().getSpeed());
+        return new Date((arriveTime.getTime() + runtime) / 1000 * 1000);
     }
 
     public boolean isShowOnMap() {
@@ -164,14 +164,14 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
     public String toXml() {
         StringBuilder b = new StringBuilder();
         b.append("<attack>\n");
-        b.append("<source>").append(getSource().getId()).append("</source>\n");
-        b.append("<target>").append(getTarget().getId()).append("</target>\n");
-        b.append("<arrive>").append(getArriveTime().getTime()).append("</arrive>\n");
+        b.append("<source>").append(source.getId()).append("</source>\n");
+        b.append("<target>").append(target.getId()).append("</target>\n");
+        b.append("<arrive>").append(arriveTime.getTime()).append("</arrive>\n");
         b.append("<unit>").append(getUnit().getPlainName()).append("</unit>\n");
         b.append("<extensions>\n");
-        b.append("\t<showOnMap>").append(isShowOnMap()).append("</showOnMap>\n");
-        b.append("\t<type>").append(getType()).append("</type>\n");
-        b.append("\t<transferredToBrowser>").append(isTransferredToBrowser()).append("</transferredToBrowser>\n");
+        b.append("\t<showOnMap>").append(showOnMap).append("</showOnMap>\n");
+        b.append("\t<type>").append(type).append("</type>\n");
+        b.append("\t<transferredToBrowser>").append(transferredToBrowser).append("</transferredToBrowser>\n");
         b.append("</extensions>\n");
         b.append("</attack>");
         return b.toString();
@@ -198,10 +198,10 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
     public JSONObject toJSON(String pOwner, String pPlanID) throws Exception {
         JSONObject a = new JSONObject();
         a.put("owner", URLEncoder.encode(pOwner, "UTF-8"));
-        a.put("source", getSource().getId());
-        a.put("target", getTarget().getId());
-        a.put("arrive", getArriveTime().getTime());
-        a.put("type", getType());
+        a.put("source", source.getId());
+        a.put("target", target.getId());
+        a.put("arrive", arriveTime.getTime());
+        a.put("type", type);
         a.put("unit", getUnit().getPlainName());
         a.put("plan", URLEncoder.encode(pPlanID, "UTF-8"));
         return a;
@@ -210,10 +210,10 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
     @Override
     public String toString() {
         SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
-        String result = getSource() + "\n";
-        result += getTarget() + "\n";
+        String result = source + "\n";
+        result += target + "\n";
         result += getUnit() + "\n";
-        result += f.format(getArriveTime());
+        result += f.format(arriveTime);
         return result;
     }
 
@@ -256,9 +256,9 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
 
     @Override
     public int compareTo(Attack a) {
-        if (getSource().getId() == a.getSource().getId()
-                && getTarget().getId() == a.getTarget().getId()
-                && getArriveTime().getTime() == a.getArriveTime().getTime()) {
+        if (source.getId() == a.getSource().getId()
+                && target.getId() == a.getTarget().getId()
+                && arriveTime.getTime() == a.getArriveTime().getTime()) {
             return 0;
         }
         return -1;
@@ -266,22 +266,22 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
 
     @Override
     public void loadFromXml(Element pElement) {
-        setSource(DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(pElement.getChild("source").getText())));
-        setTarget(DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(pElement.getChild("target").getText())));
+        this.source = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(pElement.getChild("source").getText()));
+        this.target = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(pElement.getChild("target").getText()));
         setArriveTime(new Date(Long.parseLong(pElement.getChild("arrive").getText())));
-        setUnit(DataHolder.getSingleton().getUnitByPlainName(pElement.getChild("unit").getText()));
-        setShowOnMap(Boolean.parseBoolean(JaxenUtils.getNodeValue(pElement, "extensions/showOnMap")));
+        this.unit = DataHolder.getSingleton().getUnitByPlainName(pElement.getChild("unit").getText());
+        this.showOnMap = Boolean.parseBoolean(JaxenUtils.getNodeValue(pElement, "extensions/showOnMap"));
         try {
-            setType(Integer.parseInt(JaxenUtils.getNodeValue(pElement, "extensions/type")));
+            this.type = Integer.parseInt(JaxenUtils.getNodeValue(pElement, "extensions/type"));
         } catch (Exception e) {
             //no type set
-            setType(NO_TYPE);
+            this.type = NO_TYPE;
         }
         try {
-            setTransferredToBrowser(Boolean.parseBoolean(JaxenUtils.getNodeValue(pElement, "extensions/transferredToBrowser")));
+            this.transferredToBrowser = Boolean.parseBoolean(JaxenUtils.getNodeValue(pElement, "extensions/transferredToBrowser"));
         } catch (Exception e) {
             //not transferred yet
-            setTransferredToBrowser(false);
+            this.transferredToBrowser = false;
         }
     }
 
@@ -314,8 +314,8 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
         String sendVal = null;
         String arrivetVal = null;
 
-        Date aTime = getArriveTime();
-        Date sTime = new Date(aTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(getSource(), getTarget(), getUnit().getSpeed()) * 1000));
+        Date aTime = arriveTime;
+        Date sTime = new Date(aTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(source, target, getUnit().getSpeed()) * 1000));
         if (pExtended) {
             if (ServerSettings.getSingleton().isMillisArrival()) {
                 sendVal = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size]'").format(sTime);
@@ -334,7 +334,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
             }
         }
         String typeVal = "";
-        switch (getType()) {
+        switch (type) {
             case Attack.CLEAN_TYPE: {
                 typeVal = "Angriff (Clean-Off)";
                 break;
@@ -357,12 +357,12 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
         }
 
         String attackerVal = "";
-        if (getSource().getTribe() != Barbarians.getSingleton()) {
-            attackerVal = getSource().getTribe().toBBCode();
+        if (source.getTribe() != Barbarians.getSingleton()) {
+            attackerVal = source.getTribe().toBBCode();
         } else {
             attackerVal = "Barbaren";
         }
-        String sourceVal = getSource().toBBCode();
+        String sourceVal = source.toBBCode();
         String unitVal = "";
         if (pExtended) {
             unitVal = "[unit]" + getUnit().getPlainName() + "[/unit]";
@@ -370,13 +370,13 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
             unitVal = getUnit().getName();
         }
         String defenderVal = "";
-        if (getTarget().getTribe() != Barbarians.getSingleton()) {
-            defenderVal = getTarget().getTribe().toBBCode();
+        if (target.getTribe() != Barbarians.getSingleton()) {
+            defenderVal = target.getTribe().toBBCode();
         } else {
             defenderVal = "Barbaren";
         }
 
-        String targetVal = getTarget().toBBCode();
+        String targetVal = target.toBBCode();
 
         //replace place var
         String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer()) + "/";
@@ -385,7 +385,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
         List<UserProfile> serverProfiles = Arrays.asList(ProfileManager.getSingleton().getProfiles(GlobalOptions.getSelectedServer()));
 
         //get attacker and look for UserProfile for this attacker
-        final Tribe attacker = getSource().getTribe();
+        final Tribe attacker = source.getTribe();
         UserProfile profileForAttacker = (UserProfile) CollectionUtils.find(serverProfiles, new Predicate() {
             @Override
             public boolean evaluate(Object o) {
@@ -413,7 +413,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
         if (uvID >= 0) {
             placeURL = baseURL + "game.php?t=" + uvID + "&village=";
         }
-        placeURL += getSource().getId() + "&screen=place&mode=command&target=" + getTarget().getId();
+        placeURL += source.getId() + "&screen=place&mode=command&target=" + target.getId();
 
         String placeLink = "[url=\"" + placeURL + "\"]Versammlungsplatz[/url]";
         String placeVal = placeLink;

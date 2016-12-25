@@ -215,7 +215,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
 
     public SOSRequest(Tribe pDefender) {
         this();
-        setDefender(pDefender);
+        mDefender = pDefender;
     }
 
     public final void setDefender(Tribe pDefender) {
@@ -301,7 +301,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
     }
 
     public void merge(SOSRequest pOther) {
-        if (getDefender() == null || pOther == null || pOther.getDefender() == null || getDefender().getId() != pOther.getDefender().getId()) {
+        if (mDefender == null || pOther == null || pOther.getDefender() == null || mDefender.getId() != pOther.getDefender().getId()) {
             throw new IllegalArgumentException("Cannot merge with unequal defender");
         }
 
@@ -325,7 +325,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
 
     @Override
     public String toString() {
-        String result = "Verteidiger: " + getDefender() + "\n";
+        String result = "Verteidiger: " + mDefender + "\n";
         Enumeration<Village> targets = getTargets();
 
         while (targets.hasMoreElements()) {
@@ -357,7 +357,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
     public String toXml() {
         try {
             StringBuilder b = new StringBuilder();
-            b.append("<").append(getElementIdentifier()).append(" defender=\"").append(getDefender().getId()).append("\">\n");
+            b.append("<").append(getElementIdentifier()).append(" defender=\"").append(mDefender.getId()).append("\">\n");
             b.append("<targetInformations>\n");
             Enumeration<Village> targetKeys = getTargets();
             while (targetKeys.hasMoreElements()) {
@@ -398,7 +398,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
     @Override
     public void loadFromXml(Element e) {
         int defenderId = Integer.parseInt(e.getAttributeValue("defender"));
-        setDefender(DataHolder.getSingleton().getTribes().get(defenderId));
+        mDefender = DataHolder.getSingleton().getTribes().get(defenderId);
         for (Element targetInfo : (List<Element>) JaxenUtils.getNodes(e, "targetInformations/targetInformation")) {
             int targetId = Integer.parseInt(targetInfo.getAttributeValue("target"));
             Village target = DataHolder.getSingleton().getVillagesById().get(targetId);

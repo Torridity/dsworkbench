@@ -175,9 +175,9 @@ public class SupportCalculator {
         private Date sendTime = null;
 
         public SupportMovement(Village pSource, UnitHolder pUnit, Date pStartDate) {
-            setSource(pSource);
-            setUnit(pUnit);
-            setSendTime(pStartDate);
+            this.source = pSource;
+            this.unit = pUnit;
+            this.sendTime = pStartDate;
         }
 
         /**

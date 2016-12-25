@@ -86,11 +86,11 @@ public class Ally implements Comparable<Ally>, Serializable {
         b.append(",");
         b.append(getMembers());
         b.append(",");
-        b.append(getVillages());
+        b.append(villages);
         b.append(",");
         b.append(getPoints());
         b.append(",");
-        b.append(getAll_points());
+        b.append(all_points);
         b.append(",");
         b.append(getRank());
         return b.toString();
@@ -199,7 +199,7 @@ public class Ally implements Comparable<Ally>, Serializable {
         b.append(" <b>Member (Dörfer):</b> ");
         b.append(nf.format(getMembers()));
         b.append(" (");
-        b.append(nf.format(getVillages()));
+        b.append(nf.format(villages));
         b.append(")</html>");
         return b.toString();
     }

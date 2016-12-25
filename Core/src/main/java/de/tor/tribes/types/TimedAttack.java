@@ -102,6 +102,6 @@ public class TimedAttack {
 
     @Override
     public String toString() {
-        return getSource().getFullName();
+        return mSource.getFullName();
     }
 }

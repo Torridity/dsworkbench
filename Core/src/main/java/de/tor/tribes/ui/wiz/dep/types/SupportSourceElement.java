@@ -34,7 +34,7 @@ public class SupportSourceElement {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof SupportSourceElement && ((SupportSourceElement) obj).getVillage().equals(getVillage());
+        return obj instanceof SupportSourceElement && ((SupportSourceElement) obj).getVillage().equals(village);
     }
 
     public Village getVillage() {

@@ -33,7 +33,7 @@ public class OverallReportStatsFormatter extends BasicFormatter<OverallStatResul
     public String formatElements(List<OverallStatResult> pElements, boolean pExtended) {
         OverallStatResult res = pElements.get(0);
         String[] replacements = res.getReplacements(pExtended);
-        String template = getStandardTemplate();
+        String template = STANDARD_TEMPLATE;
         template = StringUtils.replaceEach(template, res.getBBVariables(), replacements);
         return template;
     }

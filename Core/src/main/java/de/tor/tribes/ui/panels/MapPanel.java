@@ -920,8 +920,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     }
                     case ImageManager.CURSOR_DRAW_TEXT: {
                         Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
-                        ((de.tor.tribes.types.drawing.Text) FormConfigFrame.getSingleton().getCurrentForm()).setXPos(pos.x);
-                        ((de.tor.tribes.types.drawing.Text) FormConfigFrame.getSingleton().getCurrentForm()).setYPos(pos.y);
+                        FormConfigFrame.getSingleton().getCurrentForm().setXPos(pos.x);
+                        FormConfigFrame.getSingleton().getCurrentForm().setYPos(pos.y);
                         break;
                     }
                     case ImageManager.CURSOR_DRAW_FREEFORM: {

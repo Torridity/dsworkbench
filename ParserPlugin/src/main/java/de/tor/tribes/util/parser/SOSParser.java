@@ -446,7 +446,7 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
     public static void main(String[] args) throws Exception {
 
         try {
-            Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+            Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
             String data = (String) t.getTransferData(DataFlavor.stringFlavor);
             new SOSParser().parse(data);
         } catch (Exception e) {

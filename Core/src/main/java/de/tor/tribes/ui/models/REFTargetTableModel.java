@@ -46,7 +46,7 @@ public class REFTargetTableModel extends AbstractTableModel {
 
             @Override
             public boolean evaluate(Object o) {
-                return ((Village) o).equals(pVillage);
+                return o.equals(pVillage);
             }
         });
 

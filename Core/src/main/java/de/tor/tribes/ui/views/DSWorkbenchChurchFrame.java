@@ -307,7 +307,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         int row = jChurchTable.getSelectedRow();
         if (row >= 0) {
             try {
-                Village v = (Village) ((ChurchTableModel) jChurchTable.getModel()).getValueAt(jChurchTable.convertRowIndexToModel(row), 1);
+                Village v = (Village) jChurchTable.getModel().getValueAt(jChurchTable.convertRowIndexToModel(row), 1);
                 return v;
             } catch (Exception e) {
             }
@@ -377,7 +377,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             for (int i = rows.length - 1; i >= 0; i--) {
                 int row = jChurchTable.convertRowIndexToModel(rows[i]);
                 int col = jChurchTable.convertColumnIndexToModel(1);
-                Village v = ((Village) ((ChurchTableModel) jChurchTable.getModel()).getValueAt(row, col));
+                Village v = ((Village) jChurchTable.getModel().getValueAt(row, col));
                 toRemove.add(v);
             }
             jChurchTable.revalidate();
@@ -413,11 +413,11 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
                 int villageCol = jChurchTable.convertColumnIndexToModel(1);
                 int rangeCol = jChurchTable.convertColumnIndexToModel(2);
                 buffer.append("[*]").
-                        append(((Tribe) ((ChurchTableModel) jChurchTable.getModel()).getValueAt(row, tribeCol)).toBBCode()).
+                        append(((Tribe) jChurchTable.getModel().getValueAt(row, tribeCol)).toBBCode()).
                         append("[|]").
-                        append(((Village) ((ChurchTableModel) jChurchTable.getModel()).getValueAt(row, villageCol)).toBBCode()).
+                        append(((Village) jChurchTable.getModel().getValueAt(row, villageCol)).toBBCode()).
                         append("[|]").
-                        append(((Integer) ((ChurchTableModel) jChurchTable.getModel()).getValueAt(row, rangeCol)));
+                        append(jChurchTable.getModel().getValueAt(row, rangeCol));
             }
 
             buffer.append("[/table]");

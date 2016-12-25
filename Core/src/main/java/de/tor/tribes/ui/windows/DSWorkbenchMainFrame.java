@@ -217,7 +217,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
       @Override
       public void eventDispatched(AWTEvent event) {
-        if (((KeyEvent) event).getID() == KeyEvent.KEY_PRESSED) {
+        if (event.getID() == KeyEvent.KEY_PRESSED) {
           KeyEvent e = (KeyEvent) event;
           if (DSWorkbenchMainFrame.getSingleton().isActive()) {
             //move shortcuts
@@ -359,7 +359,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             jMapPanelHolder.requestFocusInWindow();
             MapPanel.getSingleton().setShiftDown(true);
           }
-        } else if (((KeyEvent) event).getID() == KeyEvent.KEY_RELEASED) {
+        } else if (event.getID() == KeyEvent.KEY_RELEASED) {
           KeyEvent e = (KeyEvent) event;
           if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             MapPanel.getSingleton().setSpaceDown(false);

@@ -36,17 +36,15 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.algo.types.TimeFrame;
 import de.tor.tribes.util.attack.StandardAttackManager;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Point;
-import java.util.*;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
-import javax.swing.SwingUtilities;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
 import org.netbeans.spi.wizard.WizardPanelNavResult;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.*;
+import java.util.List;
 
 /**
  *
@@ -120,8 +118,8 @@ public class AttackFinishPanel extends WizardPage {
     public void storeProperties() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
         profile.addProperty("tap.finish.expert", jExpertView.isSelected());
-        profile.addProperty("tap.finish.std.off", (String) jStandardOff.getSelectedItem());
-        profile.addProperty("tap.finish.std.fake", (String) jStandardFake.getSelectedItem());
+        profile.addProperty("tap.finish.std.off", jStandardOff.getSelectedItem());
+        profile.addProperty("tap.finish.std.fake", jStandardFake.getSelectedItem());
     }
 
     public void restoreProperties() {

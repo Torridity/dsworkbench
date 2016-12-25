@@ -267,7 +267,7 @@ public class GroupParser implements SilentParserInterface {
                         /*villageLines = 4;*/
 //  }
     public static void main(String[] args) throws Exception {
-        Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         //String data = "(09) Sunset Beach (459|468) K44  	2	Fertig; Off	» bearbeiten";
         String data = (String) t.getTransferData(DataFlavor.stringFlavor);
 

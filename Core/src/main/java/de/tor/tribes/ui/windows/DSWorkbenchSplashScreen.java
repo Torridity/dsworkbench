@@ -236,7 +236,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                     GlobalOptions.addProperty("account.name", (String) result.get("account.name"));
                     GlobalOptions.addProperty("account.password", (String) result.get("account.password"));
                     GlobalOptions.addProperty("default.server", (String) result.get("server"));
-                    GlobalOptions.addProperty("player." + (String) result.get("server"), (String) result.get("tribe"));
+                    GlobalOptions.addProperty("player." + result.get("server"), (String) result.get("tribe"));
                     logger.debug("Creating initial profile");
                     UserProfile p = UserProfile.create(GlobalOptions.getProperty("default.server"), GlobalOptions.getProperty("player." + GlobalOptions.getProperty("default.server")));
                     GlobalOptions.setSelectedProfile(p);

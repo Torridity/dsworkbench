@@ -48,7 +48,7 @@ public class VillageTransferable implements Transferable {
     /** Return the data formats or "flavors" we know how to transfer */
     @Override
     public DataFlavor[] getTransferDataFlavors() {
-        return (DataFlavor[]) supportedFlavors.clone();
+        return supportedFlavors.clone();
     }
 
     /** Check whether we support a given flavor */

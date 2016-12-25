@@ -531,7 +531,7 @@ public class ReportParser implements SilentParserInterface {
         ProfileManager.getSingleton().loadProfiles();
         GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de85")[0]);
         DataHolder.getSingleton().loadData(false); // GlobalOptions.loadUserData(); 
-        Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         String data = (String) t.getTransferData(DataFlavor.stringFlavor);
         System.out.println(new VillageParser().parse("OMIX-A0001 (280|661) K62"));
         System.out.println(new ReportParser().parse(data));

@@ -56,7 +56,7 @@ public class system_log_out implements
         Stroke stroke = null;
          
         float origAlpha = 1.0f;
-        Composite origComposite = ((Graphics2D)g).getComposite();
+        Composite origComposite = g.getComposite();
         if (origComposite instanceof AlphaComposite) {
             AlphaComposite origAlphaComposite = 
                 (AlphaComposite)origComposite;

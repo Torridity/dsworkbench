@@ -389,7 +389,7 @@ public class TroopsParser70 implements SilentParserInterface {
 
     public static void main(String[] args) {
     	
-        Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         try {
 
             /*

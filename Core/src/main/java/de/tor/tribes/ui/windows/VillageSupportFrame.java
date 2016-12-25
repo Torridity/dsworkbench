@@ -270,7 +270,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
         DefaultListModel model = new DefaultListModel();
         model.addElement(NoTag.getSingleton());
         for (ManageableType e : TagManager.getSingleton().getAllElements()) {
-            model.addElement((Tag) e);
+            model.addElement(e);
         }
         jTagsList.setModel(model);
         //select all

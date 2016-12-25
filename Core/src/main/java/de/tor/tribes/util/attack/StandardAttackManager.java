@@ -201,7 +201,7 @@ public class StandardAttackManager extends GenericManager<StandardAttack> {
             w.write("<stdAttacks>\n");
 
             for (ManageableType element : getAllElements()) {
-                w.write(((StandardAttack) element).toXml());
+                w.write(element.toXml());
             }
             w.write("</stdAttacks>\n");
             w.flush();

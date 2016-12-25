@@ -428,7 +428,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         DefaultListModel tagModel = new DefaultListModel();
         tagModel.addElement(NoTag.getSingleton());
         for (ManageableType e : TagManager.getSingleton().getAllElements()) {
-            tagModel.addElement((Tag) e);
+            tagModel.addElement(e);
         }
         jTagList.setModel(tagModel);
         jRelationBox.setSelected(true);

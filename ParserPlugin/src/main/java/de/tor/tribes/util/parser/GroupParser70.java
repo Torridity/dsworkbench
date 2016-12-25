@@ -21,7 +21,9 @@ import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.SilentParserInterface;
-import java.awt.Toolkit;
+import org.apache.log4j.Logger;
+
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.util.Hashtable;
@@ -30,7 +32,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -230,7 +231,7 @@ public class GroupParser70 implements SilentParserInterface {
                         /*villageLines = 4;*/
 //  }
     public static void main( String[] args ) throws Exception {
-	Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+	Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
 	//String data = "(09) Sunset Beach (459|468) K44  	2	Fertig; Off	» bearbeiten";
 	String data = (String) t.getTransferData(DataFlavor.stringFlavor);
 

@@ -17,16 +17,11 @@ package de.tor.tribes.types.drawing;
 
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.util.GlobalOptions;
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-import java.awt.Point;
+import org.jdom.Element;
+
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.net.URLDecoder;
-import org.jdom.Element;
 
 /**
  *
@@ -109,8 +104,8 @@ public class Text extends AbstractForm {
         //draw
         g2d.setFont(fBefore.deriveFont((float) getTextSize()));
         Rectangle2D rect = g2d.getFontMetrics().getStringBounds(getFormName(), g2d);
-        int x = (int) Math.rint((double) bounds.getWidth() / 2 - (double) rect.getWidth() / 2);
-        int y = (int) Math.rint((double) bounds.getHeight() / 2 + (double) rect.getHeight() / 2);
+        int x = (int) Math.rint(bounds.getWidth() / 2 - rect.getWidth() / 2);
+        int y = (int) Math.rint(bounds.getHeight() / 2 + rect.getHeight() / 2);
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
         g2d.setColor(getTextColor());
         g2d.drawString(getFormName(), x, y);

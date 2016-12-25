@@ -530,7 +530,7 @@ public class TribeStatsElement {
             }
             double pDiff = getPointDiff();
             pDiff = (pDiff == 0) ? 1 : pDiff;
-            return (double) bashOffDiff / (double) pDiff;
+            return (double) bashOffDiff / pDiff;
         }
 
         public Double getExpansion() {

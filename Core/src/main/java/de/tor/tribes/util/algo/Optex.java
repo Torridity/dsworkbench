@@ -178,8 +178,8 @@ public class Optex<S extends Source, D extends Destination> {
 
                 /* calculate shortest and second shortest costs */
                 double _costs = 999999.0;
-                Double lowest_cost = (Double) 99999.0;
-                Double lowest_cost2 = (Double) 999999.0;
+                Double lowest_cost = 99999.0;
+                Double lowest_cost2 = 999999.0;
                 Destination lowest_cost_d = _destinations.get(0);
                 for (Destination _dest : _destinations) {
                     _costs = this._getCosts(_source, _dest);

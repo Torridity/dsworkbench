@@ -2212,7 +2212,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     List<Village> victimVillagesFaked = new LinkedList<Village>();
     Hashtable<Village, Integer> maxAttacksTable = new Hashtable<Village, Integer>();
     for (int i = 0; i < victimModel.getRowCount(); i++) {
-        if ((Boolean) victimModel.getValueAt(i, 2) == Boolean.TRUE) {
+        if (victimModel.getValueAt(i, 2) == Boolean.TRUE) {
             victimVillagesFaked.add((Village) victimModel.getValueAt(i, 1));
         } else {
             victimVillages.add((Village) victimModel.getValueAt(i, 1));
@@ -2449,7 +2449,7 @@ private void showAttackInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     List<Village> victimVillagesFaked = new LinkedList<Village>();
     for (int i = 0; i
             < victimModel.getRowCount(); i++) {
-        if ((Boolean) victimModel.getValueAt(i, 2) == Boolean.TRUE) {
+        if (victimModel.getValueAt(i, 2) == Boolean.TRUE) {
             victimVillagesFaked.add((Village) victimModel.getValueAt(i, 1));
         } else {
             victimVillages.add((Village) victimModel.getValueAt(i, 1));
@@ -3683,7 +3683,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         HashMap<Village, String> attackMappings = new HashMap<Village, String>();
         //get targets and attack count
         for (int i = 0; i < jVictimTable.getRowCount(); i++) {
-            attackMappings.put((Village) jVictimTable.getValueAt(i, 1), "0/" + (Integer) jVictimTable.getValueAt(i, 3));
+            attackMappings.put((Village) jVictimTable.getValueAt(i, 1), "0/" + jVictimTable.getValueAt(i, 3));
         }
         logger.debug("Calculating attack amount per village");
         for (Attack a : attackList) {

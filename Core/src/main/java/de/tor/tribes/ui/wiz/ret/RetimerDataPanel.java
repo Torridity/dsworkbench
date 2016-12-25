@@ -568,7 +568,7 @@ public class RetimerDataPanel extends WizardPage {
         }
         TimedAttackListEntry selection = (TimedAttackListEntry) element;
         ((DefaultComboBoxModel) jAttackBox.getModel()).removeElement(selection);
-        if (((DefaultComboBoxModel) jAttackBox.getModel()).getSize() == 0) {
+        if (jAttackBox.getModel().getSize() == 0) {
             DefaultComboBoxModel model = new DefaultComboBoxModel(new Object[]{"Keine"});
             jAttackBox.setModel(model);
         }

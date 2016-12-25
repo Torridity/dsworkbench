@@ -306,7 +306,7 @@ public class NonPAPlaceParser implements SilentParserInterface {
 
     public static void main(String[] args) {
 
-        Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         try {
             /*String s = " 003 | Spitfire (471|482) K44\n" +
             "eigene	2500	1500	0	1964	500	0	0	1396	0	0	0	0	Befehle\n" +

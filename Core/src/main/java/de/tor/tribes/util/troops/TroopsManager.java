@@ -20,16 +20,18 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.xml.JaxenUtils;
-import java.awt.Image;
+import org.apache.log4j.Logger;
+import org.jdom.Document;
+import org.jdom.Element;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.*;
-import javax.imageio.ImageIO;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
+import java.util.List;
 
 /**
  * @author Charon
@@ -423,9 +425,7 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
 
         File troopsFile = new File(pFile);
         if (troopsFile.exists()) {
-            if (logger.isDebugEnabled()) {
-                logger.info("Loading troops from '" + pFile + "'");
-            }
+            logger.info("Loading troops from '" + pFile + "'");
             try {
                 Document d = JaxenUtils.getDocument(troopsFile);
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//troopGroups/troopGroup")) {

@@ -20,13 +20,14 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.drawing.AbstractForm;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.util.xml.JaxenUtils;
+import org.apache.log4j.Logger;
+import org.jdom.Document;
+import org.jdom.Element;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
 
 /**
  *
@@ -58,9 +59,7 @@ public class FormManager extends GenericManager<AbstractForm> {
         initialize();
         File formFile = new File(pFile);
         if (formFile.exists()) {
-            if (logger.isDebugEnabled()) {
-                logger.info("Loading forms from '" + pFile + "'");
-            }
+            logger.info("Loading forms from '" + pFile + "'");
             try {
                 Document d = JaxenUtils.getDocument(formFile);
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//forms/form")) {

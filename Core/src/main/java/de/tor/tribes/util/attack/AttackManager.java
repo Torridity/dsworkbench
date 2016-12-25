@@ -94,9 +94,7 @@ public class AttackManager extends GenericManager<Attack> {
         initialize();
         File attackFile = new File(pFile);
         if (attackFile.exists()) {
-            if (logger.isDebugEnabled()) {
-                logger.info("Loading troop movements from '" + pFile + "'");
-            }
+            logger.info("Loading troop movements from '" + pFile + "'");
 
             try {
                 Document d = JaxenUtils.getDocument(attackFile);

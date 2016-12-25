@@ -122,7 +122,6 @@ public class ChurchRangeCalculator {
         if (pCurrentStart.x == pInitStart.x && pCurrentStart.y == pInitStart.y) {
             //arrived at start
             pVillages.remove(pVillages.size() - 1);
-            return;
         } else {
             //next recursion
             calculateSurroundingVillageRecursive(pCenter, pRadius, pInitStart, pCurrentStart, pVillages, pQuadrant);

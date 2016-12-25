@@ -32,21 +32,20 @@ import de.tor.tribes.ui.wiz.red.types.ExtendedTransport;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
-import java.awt.BorderLayout;
-import java.awt.event.*;
-import java.io.*;
-import java.text.NumberFormat;
-import java.util.*;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
 import org.netbeans.spi.wizard.WizardPanelNavResult;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.List;
 
 /**
  *

@@ -1296,12 +1296,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
                     c.setTimeInMillis(arrive);
                     int hours = c.get(Calendar.HOUR_OF_DAY);
-                    if (hours >= 0 && hours < 8 && jNotRandomToNightBonus.isSelected()) {
-                        //only invalid if in night bonus and this is not allowed
-                        valid = false;
-                    } else {
-                        valid = true;
-                    }
+                    valid = !(hours >= 0 && hours < 8 && jNotRandomToNightBonus.isSelected());
                 }
                 attack.setArriveTime(c.getTime());
             }
@@ -1648,10 +1643,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
             @Override
             public boolean accept(File f) {
-                if ((f != null) && (f.isDirectory() || f.getName().endsWith(".html"))) {
-                    return true;
-                }
-                return false;
+                return (f != null) && (f.isDirectory() || f.getName().endsWith(".html"));
             }
 
             @Override

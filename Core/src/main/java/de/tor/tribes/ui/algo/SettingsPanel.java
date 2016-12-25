@@ -149,11 +149,7 @@ public class SettingsPanel extends javax.swing.JPanel {
                 message = "Unerwarteter Fehler bei der Validierung der Einstellungen. Bitte wenden dich an den Support.";
             }
             if (message.indexOf("Nachtbonus") > -1 || message.indexOf("Vergangenheit") > -1) {
-                if (JOptionPaneHelper.showQuestionConfirmBox(this, message + "\nMöchtest du fortfahren?", "Warnung", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-                    result = true;
-                } else {
-                    result = false;
-                }
+                result = JOptionPaneHelper.showQuestionConfirmBox(this, message + "\nMöchtest du fortfahren?", "Warnung", "Nein", "Ja") == JOptionPane.YES_OPTION;
             } else {
                 JOptionPaneHelper.showWarningBox(this, message, "Fehler");
                 result = false;

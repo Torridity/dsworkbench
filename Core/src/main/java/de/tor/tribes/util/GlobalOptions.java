@@ -436,7 +436,6 @@ public class GlobalOptions {
         }
         if (SELECTED_SERVER != null) {
             if (SELECTED_SERVER.equals(pServer)) {
-                return;
             } else {
                 logger.info("Setting selected server to " + pServer);
                 SELECTED_SERVER = pServer;

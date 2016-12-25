@@ -64,7 +64,6 @@ public class TagUtils {
                 if (tagged != null && tagged.getTribe() != null && tagged.getTribe().equals(pTribe)) {
                     if (!result.contains(tag)) {//add tag and continue with next
                         result.add(tag);
-                        continue;
                     }
                 }
             }

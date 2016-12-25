@@ -168,10 +168,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
       @Override
       public boolean accept(File f) {
-        if ((f != null) && (f.isDirectory() || f.getName().endsWith(".png"))) {
-          return true;
-        }
-        return false;
+          return (f != null) && (f.isDirectory() || f.getName().endsWith(".png"));
       }
 
       @Override
@@ -184,10 +181,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
       @Override
       public boolean accept(File f) {
-        if ((f != null) && (f.isDirectory() || f.getName().endsWith(".jpeg"))) {
-          return true;
-        }
-        return false;
+          return (f != null) && (f.isDirectory() || f.getName().endsWith(".jpeg"));
       }
 
       @Override
@@ -2342,11 +2336,8 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
 
       @Override
       public boolean accept(File f) {
-        if ((f != null) && (f.isDirectory() || f.getName().endsWith(".xml"))) {
-          return true;
-        }
+          return (f != null) && (f.isDirectory() || f.getName().endsWith(".xml"));
 
-        return false;
       }
 
       @Override
@@ -2666,11 +2657,8 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
 
       @Override
       public boolean accept(File f) {
-        if ((f != null) && (f.isDirectory() || f.getName().endsWith(".xml"))) {
-          return true;
-        }
+          return (f != null) && (f.isDirectory() || f.getName().endsWith(".xml"));
 
-        return false;
       }
 
       @Override

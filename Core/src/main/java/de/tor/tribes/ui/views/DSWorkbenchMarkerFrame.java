@@ -147,10 +147,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
                     return false;
                 }
 
-                if (MarkerManager.getSingleton().groupExists(tabText)) {
-                    return false;
-                }
-                return true;
+                return !MarkerManager.getSingleton().groupExists(tabText);
             }
 
             @Override
@@ -424,7 +421,6 @@ private void fireCreateMarkerSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     }
     if (unusedId == 1000) {
         JOptionPaneHelper.showErrorBox(DSWorkbenchMarkerFrame.this, "Du hast mehr als 1000 Markierungssets. Bitte lösche zuerst ein paar bevor du Neue erstellst.", "Fehler");
-        return;
     }
 }//GEN-LAST:event_fireCreateMarkerSetEvent
 

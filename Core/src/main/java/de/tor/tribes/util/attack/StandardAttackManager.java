@@ -131,16 +131,13 @@ public class StandardAttackManager extends GenericManager<StandardAttack> {
     }
 
     public boolean isAllowedName(String pName) {
-        if (pName == null
+        return !(pName == null
                 || pName.equals(StandardAttackManager.NO_TYPE_NAME)
                 || pName.equals(StandardAttackManager.OFF_TYPE_NAME)
                 || pName.equals(StandardAttackManager.FAKE_TYPE_NAME)
                 || pName.equals(StandardAttackManager.SNOB_TYPE_NAME)
                 || pName.equals(StandardAttackManager.SUPPORT_TYPE_NAME)
-                || pName.equals(StandardAttackManager.FAKE_SUPPORT_TYPE_NAME)) {
-            return false;
-        }
-        return true;
+                || pName.equals(StandardAttackManager.FAKE_SUPPORT_TYPE_NAME));
     }
 
     public boolean isAllowedIcon(int pIcon) {

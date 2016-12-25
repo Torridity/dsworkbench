@@ -52,10 +52,7 @@ public class DEPSourceTableModel extends AbstractTableModel {
 
             @Override
             public boolean evaluate(Object o) {
-                if (((SupportSourceElement) o).getVillage().equals(pVillage)) {
-                    return true;
-                }
-                return false;
+                return ((SupportSourceElement) o).getVillage().equals(pVillage);
             }
         });
         if (existing == null) {

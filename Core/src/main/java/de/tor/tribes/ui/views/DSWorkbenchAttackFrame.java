@@ -210,10 +210,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                     return false;
                 }
 
-                if (AttackManager.getSingleton().groupExists(tabText)) {
-                    return false;
-                }
-                return true;
+                return !AttackManager.getSingleton().groupExists(tabText);
             }
 
             @Override
@@ -744,7 +741,6 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     }
     if (unusedId == 1000) {
         JOptionPaneHelper.showErrorBox(DSWorkbenchAttackFrame.this, "Du hast mehr als 1000 Befehlspläne. Bitte lösche zuerst ein paar bevor du Neue erstellst.", "Fehler");
-        return;
     }
 }//GEN-LAST:event_fireCreateAttackPlanEvent
 

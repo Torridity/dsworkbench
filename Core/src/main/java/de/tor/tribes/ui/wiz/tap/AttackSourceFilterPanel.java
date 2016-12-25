@@ -143,7 +143,7 @@ public class AttackSourceFilterPanel extends WizardPage {
         getModel().clear();
         UserProfile profile = GlobalOptions.getSelectedProfile();
         String value = profile.getProperty("tap.filter.own.only");
-        jPlayerVillagesOnly.setSelected((value == null) ? true : Boolean.parseBoolean(value));
+        jPlayerVillagesOnly.setSelected((value == null) || Boolean.parseBoolean(value));
         UIHelper.setText(jMinFarmSpace, profile.getProperty("tap.filter.min.farm"), null);
         if (jMinFarmSpace.getText().equals("0")) {
             jMinFarmSpace.setText("");
@@ -157,7 +157,7 @@ public class AttackSourceFilterPanel extends WizardPage {
         if (value == null) {
             value = Boolean.TRUE.toString();
         }
-        jUseFarmFilter.setSelected((value == null) ? true : Boolean.parseBoolean(value));
+        jUseFarmFilter.setSelected((value == null) || Boolean.parseBoolean(value));
         fireEnableDisableFarmFilterEvent(null);
 
         updateVillageOverview();

@@ -95,7 +95,7 @@ public class DefenseFilterPanel extends WizardPage {
         UIHelper.setText(jMinSplits, profile.getProperty("dep.filter.min.splits"), "1");
         UIHelper.setText(jDistance, profile.getProperty("dep.filter.min.dist"), "32");
         String value = profile.getProperty("dep.filter.ignore.targets");
-        jIgnoreAttackedTargets.setSelected((value == null) ? true : Boolean.parseBoolean(value));
+        jIgnoreAttackedTargets.setSelected((value == null) || Boolean.parseBoolean(value));
     }
 
     /**

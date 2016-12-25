@@ -82,11 +82,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
 
         if (mapPos != null && mLayer != null && !isFullRenderRequired()) {
             Point newMapPos = new Point((int) Math.floor(pSettings.getMapBounds().getX()), (int) Math.floor(pSettings.getMapBounds().getY()));
-            if (mapPos.distance(newMapPos) != 0) {
-                moved = true;
-            } else {
-                moved = false;
-            }
+            moved = mapPos.distance(newMapPos) != 0;
         } else {
             moved = true;
         }

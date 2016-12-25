@@ -291,11 +291,7 @@ class TroopAnimator {
 
     public void update(int row, int col, int pFieldWidth, int pFieldHeight, int pDx, int pDy, Graphics2D g2d) {
         Village villageAtMousePos = MapPanel.getSingleton().getVillageAtMousePos();
-        if (villageAtMousePos != null && villageAtMousePos.equals(v)) {
-            pRise = true;
-        } else {
-            pRise = false;
-        }
+        pRise = villageAtMousePos != null && villageAtMousePos.equals(v);
         if (pRise) {
             if (iDiameter + 10 < 61) {
                 iDiameter += 10;

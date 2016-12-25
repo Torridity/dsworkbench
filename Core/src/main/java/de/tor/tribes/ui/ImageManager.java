@@ -290,7 +290,6 @@ public class ImageManager {
         if (Toolkit.getDefaultToolkit().getMaximumCursorColors() < 16) {
             logger.warn("Insufficient color depth for custom cursors on current platform. Setting sytem-cursor mode.");
             cursorSupported = false;
-            return;
         }
     }
 

@@ -15,30 +15,27 @@
  */
 package de.tor.tribes.types;
 
-import de.tor.tribes.types.ext.Barbarians;
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.php.json.JSONObject;
+import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.ImageManager;
-import de.tor.tribes.util.BBSupport;
-import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.xml.JaxenUtils;
-import java.io.Serializable;
-import java.util.Date;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.jdom.Element;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.ProfileManager;
-import de.tor.tribes.util.ServerSettings;
+
+import java.io.Serializable;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 
 /**
  *
@@ -121,10 +118,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
         if (getSource() == null || getTarget() == null) {
             return true;
         }
-        if (DSCalculator.calculateDistance(getSource(), getTarget()) < ServerSettings.getSingleton().getSnobRange()) {
-            return true;
-        }
-        return false;
+        return DSCalculator.calculateDistance(getSource(), getTarget()) < ServerSettings.getSingleton().getSnobRange();
     }
 
     public Date getArriveTime() {

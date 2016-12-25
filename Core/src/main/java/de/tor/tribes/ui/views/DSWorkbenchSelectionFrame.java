@@ -599,10 +599,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
 
             @Override
             public boolean accept(File f) {
-                if ((f != null) && (f.isDirectory() || f.getName().endsWith(".html"))) {
-                    return true;
-                }
-                return false;
+                return (f != null) && (f.isDirectory() || f.getName().endsWith(".html"));
             }
 
             @Override

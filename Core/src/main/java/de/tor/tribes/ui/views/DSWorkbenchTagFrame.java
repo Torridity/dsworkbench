@@ -242,7 +242,6 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
                 }
                 if (unusedId == 1000) {
                     JOptionPaneHelper.showErrorBox(DSWorkbenchTagFrame.this, "Du hast mehr als 1000 Gruppen. Bitte lösche zuerst ein paar bevor du Neue erstellst.", "Fehler");
-                    return;
                 }
             }
         });

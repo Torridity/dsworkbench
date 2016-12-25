@@ -601,7 +601,6 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
         List<SupportCalculator.SupportMovement> movements = SupportCalculator.calculateSupport(mCurrentVillage, arrive, defOnly, allowedTags, minUnitCnt);
         if ((movements == null) || (movements.size() == 0)) {
             JOptionPaneHelper.showWarningBox(this, "Mit den eingestellten Parametern ist keine Unterstützung möglich.", "Warnung");
-            return;
         } else {
             buildResults(movements);
             jTargetVillage.setText(mCurrentVillage.toString());

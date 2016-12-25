@@ -706,10 +706,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
 
                 @Override
                 public boolean isCellEditable(int row, int col) {
-                    if (col == 0) {
-                        return false;
-                    }
-                    return true;
+                    return col != 0;
                 }
             };
             String[] plans = AttackManager.getSingleton().getGroups();

@@ -173,11 +173,8 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
                 if (tabText.trim().length() == 0) {
                     return false;
                 }
-                
-                if (NoteManager.getSingleton().groupExists(tabText)) {
-                    return false;
-                }
-                return true;
+
+                return !NoteManager.getSingleton().groupExists(tabText);
             }
             
             @Override
@@ -649,7 +646,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         }
         if (unusedId == 1000) {
             JOptionPaneHelper.showErrorBox(DSWorkbenchNotepad.this, "Du hast mehr als 1000 Notizsets. Bitte lösche zuerst ein paar bevor du Neue erstellst.", "Fehler");
-            return;
         }
 }//GEN-LAST:event_fireCreateNoteSetEvent
     

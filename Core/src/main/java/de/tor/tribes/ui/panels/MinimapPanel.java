@@ -932,10 +932,7 @@ private void fireSaveScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 
         @Override
         public boolean accept(File f) {
-            if ((f != null) && (f.isDirectory() || f.getName().endsWith(type))) {
-                return true;
-            }
-            return false;
+            return (f != null) && (f.isDirectory() || f.getName().endsWith(type));
         }
 
         @Override

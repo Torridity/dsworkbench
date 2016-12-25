@@ -485,9 +485,7 @@ public class TimeFrame {
     //TimeFrame frame = new TimeFrame(start1, arrive1, start2, arrive2);
 
 
-    if (true) {
-      return;
-    }
+    return;
 
 
 
@@ -514,30 +512,30 @@ public class TimeFrame {
      * DateUtils.setMilliseconds(end, 0);
      */
 
-    TimeFrame frame = new TimeFrame(f.parse("28.12.2010 13:00:00"),
-            f.parse("29.12.2010 15:00:00"),
-            f.parse("29.12.2010 15:00:00"),
-            f.parse("30.12.2010 15:30:00"));
-    frame.addStartTimeSpan(new TimeSpan(new IntRange(10, 11)));
+    // TimeFrame frame = new TimeFrame(f.parse("28.12.2010 13:00:00"),
+    //        f.parse("29.12.2010 15:00:00"),
+    //        f.parse("29.12.2010 15:00:00"),
+    //        f.parse("30.12.2010 15:30:00"));
+    //frame.addStartTimeSpan(new TimeSpan(new IntRange(10, 11)));
     //frame.addStartTimeSpan(new TimeSpan(f.parse("29.12.2010 00:00:00"), new IntRange(11, 12)));
 
     // frame.addStartTimeSpan(new TimeSpan(f.parse("30.12.2010 13:41:14")));
-    System.out.println("Start: " + f.format(frame.startNotBefore) + " - " + f.format(frame.startNotAfter));
-    System.out.println("End: " + f.format(frame.arriveNotBefore) + " - " + f.format(frame.arriveNotAfter));
-    List<LongRange> spans = frame.startTimespansToRanges(null);
-    System.out.println("Start:");
-    for (LongRange range : spans) {
-      System.out.println(f.format(new Date(range.getMinimumLong())) + " - " + f.format(new Date(range.getMaximumLong())));
-    }
-    System.out.println("Arrive:");
-    spans = frame.arriveTimespansToRanges(null);
+    // System.out.println("Start: " + f.format(frame.startNotBefore) + " - " + f.format(frame.startNotAfter));
+    // System.out.println("End: " + f.format(frame.arriveNotBefore) + " - " + f.format(frame.arriveNotAfter));
+    // List<LongRange> spans = frame.startTimespansToRanges(null);
+    // System.out.println("Start:");
+    // for (LongRange range : spans) {
+    //   System.out.println(f.format(new Date(range.getMinimumLong())) + " - " + f.format(new Date(range.getMaximumLong())));
+    // }
+    // System.out.println("Arrive:");
+    // spans = frame.arriveTimespansToRanges(null);
 
-    for (LongRange range : spans) {
-      System.out.println(f.format(new Date(range.getMinimumLong())) + " - " + f.format(new Date(range.getMaximumLong())));
-    }
-    long pRuntime = DateUtils.MILLIS_PER_DAY;
-    System.out.println("Possible: " + frame.isMovementPossible(pRuntime, null));
-    List<Long> sendDates = new LinkedList<Long>();
+    // for (LongRange range : spans) {
+    //   System.out.println(f.format(new Date(range.getMinimumLong())) + " - " + f.format(new Date(range.getMaximumLong())));
+    // }
+    // long pRuntime = DateUtils.MILLIS_PER_DAY;
+    // System.out.println("Possible: " + frame.isMovementPossible(pRuntime, null));
+    // List<Long> sendDates = new LinkedList<Long>();
     /*
      * for (int i = 0; i < 10; i++) {
      *
@@ -549,14 +547,14 @@ public class TimeFrame {
   }
 
   public boolean isValid() {
-    return sendTimeSpans != null && arriveTimeSpans != null && !sendTimeSpans.isEmpty() && !arriveTimeSpans.isEmpty();
+    return !(sendTimeSpans == null || arriveTimeSpans == null || sendTimeSpans.isEmpty() || arriveTimeSpans.isEmpty());
   }
 
   public String toString() {
     StringBuilder builder = new StringBuilder(200);
     SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
-    builder.append("Start: " + f.format(new Date(getStartRange().getMinimumLong())) + "-" + f.format(new Date(getStartRange().getMaximumLong()))).append("\n");
-    builder.append("Arrive: " + f.format(new Date(getArriveRange().getMinimumLong())) + "-" + f.format(new Date(getArriveRange().getMaximumLong()))).append("\n");
+    builder.append("Start: ").append(f.format(new Date(getStartRange().getMinimumLong()))).append("-").append(f.format(new Date(getStartRange().getMaximumLong()))).append("\n");
+    builder.append("Arrive: ").append(f.format(new Date(getArriveRange().getMinimumLong()))).append("-").append(f.format(new Date(getArriveRange().getMaximumLong()))).append("\n");
     builder.append("SendSpans: ").append(sendTimeSpans).append("\n");
     builder.append("ArriveSpans: ").append(arriveTimeSpans).append("\n");
     return builder.toString().trim();

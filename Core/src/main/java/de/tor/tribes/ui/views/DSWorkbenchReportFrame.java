@@ -235,10 +235,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                     return false;
                 }
 
-                if (ReportManager.getSingleton().groupExists(tabText)) {
-                    return false;
-                }
-                return true;
+                return !ReportManager.getSingleton().groupExists(tabText);
             }
 
             @Override
@@ -1062,7 +1059,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         }
         if (unusedId == 1000) {
             JOptionPaneHelper.showErrorBox(DSWorkbenchReportFrame.this, "Du hast mehr als 1000 Berichtsets. Bitte lösche zuerst ein paar bevor du Neue erstellst.", "Fehler");
-            return;
         }
 }//GEN-LAST:event_fireCreateAttackPlanEvent
 

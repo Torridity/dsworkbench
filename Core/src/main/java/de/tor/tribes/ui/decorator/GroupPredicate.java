@@ -74,10 +74,7 @@ public class GroupPredicate implements HighlightPredicate {
 
     @Override
     public boolean isHighlighted(Component renderer, ComponentAdapter adapter) {
-        if (isHighlightCandidate(adapter)) {
-            return test(adapter);
-        }
-        return false;
+        return isHighlightCandidate(adapter) && test(adapter);
     }
 
     /**

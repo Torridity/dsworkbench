@@ -143,11 +143,8 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
 
             @Override
             public boolean isValid(int tabIndex, String tabText) {
-                if (tabText.trim().length() == 0) {
-                    return false;
-                }
+                return tabText.trim().length() != 0 && !MarkerManager.getSingleton().groupExists(tabText);
 
-                return !MarkerManager.getSingleton().groupExists(tabText);
             }
 
             @Override

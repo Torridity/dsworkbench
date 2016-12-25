@@ -191,23 +191,20 @@ public class TimeSpan implements Comparable<TimeSpan> {
   }
 
   public boolean intersectsWithNightBonus() {
-    if (!ServerSettings.getSingleton().isNightBonusActive()) {
-      return false;
-    }
+      if (!ServerSettings.getSingleton().isNightBonusActive()) {
+          return false;
+      }
 
-    IntRange nightBonusRange = new IntRange(ServerSettings.getSingleton().getNightBonusStartHour(), ServerSettings.getSingleton().getNightBonusEndHour());
-    IntRange thisRange = getSpan();
-    if (thisRange == null) {
-      Calendar cal = Calendar.getInstance();
-      cal.setTime(getDate());
-      thisRange = new IntRange(cal.get(Calendar.HOUR_OF_DAY));
-    }
+      IntRange nightBonusRange = new IntRange(ServerSettings.getSingleton().getNightBonusStartHour(), ServerSettings.getSingleton().getNightBonusEndHour());
+      IntRange thisRange = getSpan();
+      if (thisRange == null) {
+          Calendar cal = Calendar.getInstance();
+          cal.setTime(getDate());
+          thisRange = new IntRange(cal.get(Calendar.HOUR_OF_DAY));
+      }
 
-    if (thisRange.getMinimumInteger() == nightBonusRange.getMaximumInteger()) {
-      return false;
-    }
+      return thisRange.getMinimumInteger() != nightBonusRange.getMaximumInteger() && thisRange.overlapsRange(nightBonusRange);
 
-    return thisRange.overlapsRange(nightBonusRange);
   }
 
   public Date getAtDate() {

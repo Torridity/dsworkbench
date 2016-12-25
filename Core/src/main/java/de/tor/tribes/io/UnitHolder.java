@@ -15,9 +15,10 @@
  */
 package de.tor.tribes.io;
 
+import org.jdom.Element;
+
 import java.io.Serializable;
 import java.util.Comparator;
-import org.jdom.Element;
 
 /**
  *
@@ -195,18 +196,12 @@ public class UnitHolder implements Serializable {
 
     public boolean isInfantry() {
         String plain = getPlainName();
-        if (plain == null) {
-            return false;
-        }
-        return plain.equals("spear") || plain.equals("sword") || plain.equals("archer") || plain.equals("axe");
+        return plain != null && (plain.equals("spear") || plain.equals("sword") || plain.equals("archer") || plain.equals("axe"));
     }
 
     public boolean isCavalry() {
         String plain = getPlainName();
-        if (plain == null) {
-            return false;
-        }
-        return plain.equals("spy") || plain.equals("light") || plain.equals("marcher") || plain.equals("heavy");
+        return plain != null && (plain.equals("spy") || plain.equals("light") || plain.equals("marcher") || plain.equals("heavy"));
     }
 
     public boolean isOther() {
@@ -215,18 +210,12 @@ public class UnitHolder implements Serializable {
 
     public boolean isDefense() {
         String plain = getPlainName();
-        if (plain == null) {
-            return false;
-        }
-        return plain.equals("spear") || plain.equals("sword") || plain.equals("archer") || plain.equals("spy") || plain.equals("heavy") || plain.equals("catapult");
+        return plain != null && (plain.equals("spear") || plain.equals("sword") || plain.equals("archer") || plain.equals("spy") || plain.equals("heavy") || plain.equals("catapult"));
     }
 
     public boolean isOffense() {
         String plain = getPlainName();
-        if (plain == null) {
-            return false;
-        }
-        return plain.equals("axe") || plain.equals("spy") || plain.equals("light") || plain.equals("marcher") || plain.equals("ram") || plain.equals("catapult");
+        return plain != null && (plain.equals("axe") || plain.equals("spy") || plain.equals("light") || plain.equals("marcher") || plain.equals("ram") || plain.equals("catapult"));
     }
 
     public boolean isSpecial() {
@@ -235,26 +224,17 @@ public class UnitHolder implements Serializable {
 
     public boolean isSpy() {
         String plain = getPlainName();
-        if (plain == null) {
-            return false;
-        }
-        return plain.equals("spy");
+        return plain != null && plain.equals("spy");
     }
 
     public boolean isSnob() {
         String plain = getPlainName();
-        if (plain == null) {
-            return false;
-        }
-        return plain.equals("snob");
+        return plain != null && plain.equals("snob");
     }
 
     public boolean isRetimeUnit() {
         String plain = getPlainName();
-        if (plain == null) {
-            return false;
-        }
-        return !plain.equals("spy") && !plain.equals("snob") && !plain.equals("militia");
+        return plain != null && !plain.equals("spy") && !plain.equals("snob") && !plain.equals("militia");
     }
 
     public double getBuildTime() {

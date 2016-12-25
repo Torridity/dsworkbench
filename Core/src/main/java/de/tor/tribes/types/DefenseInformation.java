@@ -101,10 +101,7 @@ public class DefenseInformation {
     }
 
     public boolean isSave() {
-        if (isDefenseAvailable()) {
-            return getNeededSupports() == getSupports().length;
-        }
-        return false;
+        return isDefenseAvailable() && getNeededSupports() == getSupports().length;
     }
 
     public void setAnalyzed(boolean analyzed) {

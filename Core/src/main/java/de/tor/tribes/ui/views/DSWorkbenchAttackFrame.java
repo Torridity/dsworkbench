@@ -206,11 +206,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
             @Override
             public boolean isValid(int tabIndex, String tabText) {
-                if (tabText.trim().length() == 0) {
-                    return false;
-                }
+                return tabText.trim().length() != 0 && !AttackManager.getSingleton().groupExists(tabText);
 
-                return !AttackManager.getSingleton().groupExists(tabText);
             }
 
             @Override

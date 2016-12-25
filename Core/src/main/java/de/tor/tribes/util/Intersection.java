@@ -15,8 +15,8 @@
  */
 package de.tor.tribes.util;
 
-/**Source: http://www.koders.com/java/fid1182C9330FDC66A60312A33932E82F09B5C4CA9F.aspx?s=graph
- * @author OpenJGraph
+/*Source: http://www.koders.com/java/fid1182C9330FDC66A60312A33932E82F09B5C4CA9F.aspx?s=graph
+  @author OpenJGraph
  */
 import java.awt.*;
 import java.awt.geom.*;

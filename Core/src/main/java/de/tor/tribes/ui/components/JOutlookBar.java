@@ -15,9 +15,9 @@
  */
 package de.tor.tribes.ui.components;
 
-/**
- *
- * @author Torridity
+/*
+
+  @author Torridity
  */
 // Import the GUI classes
 import java.awt.*;

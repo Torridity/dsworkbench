@@ -252,14 +252,14 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
      */
     public abstract FORM_TYPE getFormType();
 
-    /**
-     * @return the rotation
+    /*
+      @return the rotation
      */
     /*  public double getRotation() {
     return rotation;
     }*/
-    /**
-     * @param rotation the rotation to set
+    /*
+      @param rotation the rotation to set
      */
     /*  public void setRotation(double rotation) {
     this.rotation = rotation;

@@ -2141,8 +2141,8 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
     MapPanel.getSingleton().updateMapPosition(xPos, yPos, true);
   }
 
-  /**
-   * Show the toolbar
+  /*
+    Show the toolbar
    */
   /**
    * Center village Ingame

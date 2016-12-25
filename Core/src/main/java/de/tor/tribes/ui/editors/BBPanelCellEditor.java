@@ -60,10 +60,7 @@ public class BBPanelCellEditor extends AbstractCellEditor implements TableCellEd
 
     @Override
     public boolean isCellEditable(EventObject anEvent) {
-        if (anEvent instanceof MouseEvent) {
-            return ((MouseEvent) anEvent).getClickCount() >= 2;
-        }
-        return true;
+        return !(anEvent instanceof MouseEvent) || ((MouseEvent) anEvent).getClickCount() >= 2;
     }
 
     @Override

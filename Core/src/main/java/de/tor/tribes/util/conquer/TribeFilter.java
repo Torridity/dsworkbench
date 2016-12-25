@@ -43,10 +43,7 @@ public class TribeFilter implements ConquerFilterInterface {
             return true;
         }
         Tribe t = DataHolder.getSingleton().getTribes().get(pConquer.getWinner());
-        if (t == null) {
-            return false;
-        }
+        return t != null && validTribes.contains(t);
 
-        return validTribes.contains(t);
     }
 }

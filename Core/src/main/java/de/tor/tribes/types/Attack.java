@@ -115,10 +115,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
     }
 
     private boolean canUseSnob() {
-        if (getSource() == null || getTarget() == null) {
-            return true;
-        }
-        return DSCalculator.calculateDistance(getSource(), getTarget()) < ServerSettings.getSingleton().getSnobRange();
+        return getSource() == null || getTarget() == null || DSCalculator.calculateDistance(getSource(), getTarget()) < ServerSettings.getSingleton().getSnobRange();
     }
 
     public Date getArriveTime() {

@@ -1522,8 +1522,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
     @Override
     public void paintComponent(Graphics g) {
-        /**
-         * Draw buffer into panel
+        /*
+          Draw buffer into panel
          */
         try {
             //calculate move direction if mouse is dragged outside the map

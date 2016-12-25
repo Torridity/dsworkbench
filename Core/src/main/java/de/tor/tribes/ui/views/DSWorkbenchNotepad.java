@@ -170,11 +170,8 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             
             @Override
             public boolean isValid(int tabIndex, String tabText) {
-                if (tabText.trim().length() == 0) {
-                    return false;
-                }
+                return tabText.trim().length() != 0 && !NoteManager.getSingleton().groupExists(tabText);
 
-                return !NoteManager.getSingleton().groupExists(tabText);
             }
             
             @Override

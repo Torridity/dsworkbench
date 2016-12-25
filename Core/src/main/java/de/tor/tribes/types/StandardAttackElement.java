@@ -90,10 +90,7 @@ public class StandardAttackElement {
     }
 
     public boolean affectsUnit(UnitHolder pUnit) {
-        if (pUnit == null || unit == null) {
-            return false;
-        }
-        return unit.getPlainName().equals(pUnit.getPlainName());
+        return !(pUnit == null || unit == null) && unit.getPlainName().equals(pUnit.getPlainName());
     }
 
     public UnitHolder getUnit() {

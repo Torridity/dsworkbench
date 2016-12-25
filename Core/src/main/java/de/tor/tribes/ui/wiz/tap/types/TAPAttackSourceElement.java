@@ -41,10 +41,7 @@ public class TAPAttackSourceElement {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof TAPAttackSourceElement) {
-            return ((TAPAttackSourceElement) obj).getVillage().equals(getVillage());
-        }
-        return false;
+        return obj instanceof TAPAttackSourceElement && ((TAPAttackSourceElement) obj).getVillage().equals(getVillage());
     }
 
     public Village getVillage() {

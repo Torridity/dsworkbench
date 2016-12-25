@@ -278,15 +278,15 @@ public class SOSGenerator extends javax.swing.JFrame {
             }
         }
 
-        /**
-         * [b]Dorf:[/b] [coord]112|87[/coord] [b]Wallstufe:[/b] 20 [b]Verteidiger:[/b] 23011 22928 0 266 0 814 0 0 0
-         *
-         * bäääng! [coord]282|306[/coord] --> Ankunftszeit: 11.10.11 14:37:57 [player]MrBlue76[/player]
-         *
-         * [b]Dorf:[/b] [coord]114|84[/coord] [b]Wallstufe:[/b] 20 [b]Verteidiger:[/b] 9079 9080 0 100 0 300 0 0 0
-         *
-         * bäääng! [coord]318|272[/coord] --> Ankunftszeit: 11.10.11 14:42:49 [player]MrBlue76[/player] bäääng! [coord]211|345[/coord] -->
-         * Ankunftszeit: 11.10.11 16:45:37 [player]MrBlue76[/player]
+        /*
+          [b]Dorf:[/b] [coord]112|87[/coord] [b]Wallstufe:[/b] 20 [b]Verteidiger:[/b] 23011 22928 0 266 0 814 0 0 0
+
+          bäääng! [coord]282|306[/coord] --> Ankunftszeit: 11.10.11 14:37:57 [player]MrBlue76[/player]
+
+          [b]Dorf:[/b] [coord]114|84[/coord] [b]Wallstufe:[/b] 20 [b]Verteidiger:[/b] 9079 9080 0 100 0 300 0 0 0
+
+          bäääng! [coord]318|272[/coord] --> Ankunftszeit: 11.10.11 14:42:49 [player]MrBlue76[/player] bäääng! [coord]211|345[/coord] -->
+          Ankunftszeit: 11.10.11 16:45:37 [player]MrBlue76[/player]
          */
         Enumeration<Village> targets = sos.getTargets();
         StringBuilder b = new StringBuilder();

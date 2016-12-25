@@ -2613,8 +2613,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             return;
         }
         try {
-            /**
-             * Validate player settings
+            /*
+              Validate player settings
              */
             UserProfile selectedProfile = null;
             try {
@@ -2656,8 +2656,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 return;
             }
 
-            /**
-             * Update attack vector colors
+            /*
+              Update attack vector colors
              */
             DefaultTableModel model = ((DefaultTableModel) jAttackColorTable.getModel());
             for (int i = 0; i < model.getRowCount(); i++) {
@@ -2668,8 +2668,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 GlobalOptions.addProperty(unit + ".color", hexCol);
             }
 
-            /**
-             * Validate misc properties
+            /*
+              Validate misc properties
              */
             int sortType = jVillageSortTypeChooser.getSelectedIndex();
             Village.setOrderType(sortType);

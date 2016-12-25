@@ -44,10 +44,7 @@ public class TAPAttackTargetElement {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof TAPAttackTargetElement) {
-            return ((TAPAttackTargetElement) obj).getVillage().equals(getVillage());
-        }
-        return false;
+        return obj instanceof TAPAttackTargetElement && ((TAPAttackTargetElement) obj).getVillage().equals(getVillage());
     }
 
     public Village getVillage() {

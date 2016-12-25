@@ -17,7 +17,6 @@ package de.tor.tribes.util.parser;
 
 import de.tor.tribes.util.GlobalOptions;
 import java.io.FileInputStream;
-import java.lang.reflect.Method;
 import java.util.Properties;
 
 /**

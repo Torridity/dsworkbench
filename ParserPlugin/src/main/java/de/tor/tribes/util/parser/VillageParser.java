@@ -23,8 +23,6 @@ import de.tor.tribes.util.ServerSettings;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Charon

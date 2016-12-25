@@ -27,11 +27,8 @@ import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.StringTokenizer;
 
 /**

@@ -17,7 +17,6 @@ package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.util.GlobalOptions;
 import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.types.UserProfile;

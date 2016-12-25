@@ -17,8 +17,6 @@ package de.tor.tribes.ui.panels;
 
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.ext.Ally;
-import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.*;

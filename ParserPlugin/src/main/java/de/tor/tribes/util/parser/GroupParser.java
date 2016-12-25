@@ -17,15 +17,13 @@ package de.tor.tribes.util.parser;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.php.json.JSONObject;
-import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.SilentParserInterface;
-import de.tor.tribes.util.tag.TagManager;
+
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;

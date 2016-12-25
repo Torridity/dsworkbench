@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.ui.editors;
 
-import de.tor.tribes.types.StandardAttackElement;
 import java.awt.Component;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;

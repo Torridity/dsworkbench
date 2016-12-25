@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.util;
 
-import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.types.VillageMerchantInfo;

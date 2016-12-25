@@ -97,7 +97,7 @@ public class TimeField extends JPanel {
 
     private void onButtonClick(ActionEvent actionevent) {
         if (actionevent.getSource() == timeDropdownButton) {
-            if ("".equals(timeText.getText())) {
+            if (timeText.getText() != null && timeText.getText().isEmpty()) {
                 dp = new TimePicker(Calendar.getInstance().getTime());
             } else {
                 dp = new TimePicker(stringToTime(timeText.getText()));

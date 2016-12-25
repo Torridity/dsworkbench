@@ -785,7 +785,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
             Integer cnt = forceTable.get(u);
             if ((cnt != null) && (cnt > 0)) {
                 buffer.append(nf.format(cnt));
-                buffer.append(" " + u.getName() + "\n");
+                buffer.append(" ").append(u.getName()).append("\n");
             }
         }
         JOptionPaneHelper.showInformationBox(jResultFrame, buffer.toString(), "Maximale Kampfkraft");

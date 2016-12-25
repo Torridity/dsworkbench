@@ -2635,7 +2635,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     }//GEN-LAST:event_fireTransferResultsEvent
 
     private void fireNewResultTargetPlanChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireNewResultTargetPlanChangedEvent
-        boolean enableExisting = !(jNewPlanName.getText() != null && !jNewPlanName.getText().equals(""));
+        boolean enableExisting = !(jNewPlanName.getText() != null && !jNewPlanName.getText().isEmpty());
         jExistingPlanBox.setEnabled(enableExisting);
         jLabel14.setEnabled(enableExisting);
     }//GEN-LAST:event_fireNewResultTargetPlanChangedEvent

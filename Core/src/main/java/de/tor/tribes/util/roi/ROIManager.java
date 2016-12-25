@@ -102,7 +102,7 @@ public class ROIManager {
 
             for (String r : rois) {
                 String text = URLEncoder.encode(r, "UTF-8");
-                b.append("<roi>" + text + "</roi>\n");
+                b.append("<roi>").append(text).append("</roi>\n");
             }
             b.append("</rois>");
             FileWriter w = new FileWriter(pFile);

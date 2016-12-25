@@ -1205,7 +1205,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                         if (troops != null) {
                             result.append(" -> ").append(v).append(" ");
                             for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-                                result.append(troops.get(u) + " ");
+                                result.append(troops.get(u)).append(" ");
                             }
                         }
                         result.append("\n");

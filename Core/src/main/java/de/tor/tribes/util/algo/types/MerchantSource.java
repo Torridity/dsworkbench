@@ -29,7 +29,7 @@ public class MerchantSource extends Village implements Source, Comparable<Mercha
      */
     protected int wares;
     protected int ordered;
-    protected ArrayList<Order> orders = new ArrayList<Order>();
+    protected ArrayList<Order> orders = new ArrayList<>();
 
     public MerchantSource(Coordinate c, int wares) {
         this.c = c;
@@ -60,9 +60,7 @@ public class MerchantSource extends Village implements Source, Comparable<Mercha
             return;
         }
 
-        Iterator<Order> i = this.orders.iterator();
-        while (i.hasNext()) {
-            Order o = i.next();
+        for (Order o : this.orders) {
             if (o.getDestination() == d) {
                 o.setAmount(o.getAmount() + amount);
                 this.ordered += amount;
@@ -78,9 +76,7 @@ public class MerchantSource extends Village implements Source, Comparable<Mercha
 
     @Override
     public void removeOrder(Destination d, int amount) {
-        Iterator<Order> i = this.orders.iterator();
-        while (i.hasNext()) {
-            Order o = i.next();
+        for (Order o : this.orders) {
             if (o.getDestination() == d) {
                 o.setAmount(o.getAmount() - amount);
                 this.ordered -= amount;
@@ -116,9 +112,7 @@ public class MerchantSource extends Village implements Source, Comparable<Mercha
 
     @Override
     public int waresAvailable(Destination d) {
-        Iterator<Order> i = this.orders.iterator();
-        while (i.hasNext()) {
-            Order o = i.next();
+        for (Order o : this.orders) {
             if (o.getDestination().equals(d)) {
                 return 0;
             }

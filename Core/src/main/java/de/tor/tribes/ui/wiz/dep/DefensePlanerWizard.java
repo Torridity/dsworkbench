@@ -89,7 +89,7 @@ public class DefensePlanerWizard extends WizardPanelProvider {
         int maxAttackCount = 50;
         int maxFakeCount = 0;
 
-        List<SOSRequest> result = new LinkedList<SOSRequest>();
+        List<SOSRequest> result = new LinkedList<>();
         Village[] villages = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
         Village[] attackerVillages = DataHolder.getSingleton().getTribeByName("Alexander25").getVillageList();
 

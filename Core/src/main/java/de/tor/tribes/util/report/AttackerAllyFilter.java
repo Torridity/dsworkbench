@@ -36,7 +36,7 @@ public class AttackerAllyFilter implements ReportRuleInterface {
 
         try {
             String[] allySplit = ((String) pFilterComponent).split(";");
-            allies = new LinkedList<String>();
+            allies = new LinkedList<>();
             if (allySplit == null || allySplit.length == 0) {
                 throw new ReportRuleConfigurationException("Kein Stammestag gefunden");
             }

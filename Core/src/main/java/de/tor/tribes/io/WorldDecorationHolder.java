@@ -43,7 +43,7 @@ public class WorldDecorationHolder {
   private static Logger logger = Logger.getLogger("WorldDecorationManager");
   private static byte[] decoration = new byte[1000000];
   private static List<BufferedImage> mTextures = null;
-  private static HashMap<Integer, HashMap<Double, BufferedImage>> cache = new HashMap<Integer, HashMap<Double, BufferedImage>>();
+  private static HashMap<Integer, HashMap<Double, BufferedImage>> cache = new HashMap<>();
   public static int ID_GRAS1 = 0;
   public static int ID_GRAS2 = 1;
   public static int ID_GRAS3 = 2;
@@ -103,7 +103,7 @@ public class WorldDecorationHolder {
   }
 
   public static void loadTextures() throws Exception {
-    mTextures = new LinkedList<BufferedImage>();
+    mTextures = new LinkedList<>();
     cache.clear();
     try {
       String skinId = GlobalOptions.getSkin().getSkinID();
@@ -167,7 +167,7 @@ public class WorldDecorationHolder {
     try {
       HashMap<Double, BufferedImage> imageCache = cache.get(decoId);
       if (imageCache == null) {
-        imageCache = new HashMap<Double, BufferedImage>();
+        imageCache = new HashMap<>();
         cache.put(decoId, imageCache);
       }
 
@@ -199,7 +199,7 @@ public class WorldDecorationHolder {
     HashMap<Double, BufferedImage> cacheForId = cache.get(decoId);
 
     if (cacheForId == null) {
-      cacheForId = new HashMap<Double, BufferedImage>();
+      cacheForId = new HashMap<>();
       cache.put(decoId, cacheForId);
 
     }

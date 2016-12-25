@@ -536,7 +536,7 @@ public class RetimerSourceFilterPanel extends WizardPage {
 
     private void filterByAttackPlans(List<RETSourceElement> pAllElements) {
         Object[] selection = jAttackPlanList.getSelectedValues();
-        List<String> groups = new ArrayList<String>();
+        List<String> groups = new ArrayList<>();
         for (Object o : selection) {
             groups.add((String) o);
         }
@@ -634,7 +634,7 @@ public class RetimerSourceFilterPanel extends WizardPage {
     }
 
     public RETSourceElement[] getFilteredElements() {
-        List<RETSourceElement> filtered = new LinkedList<RETSourceElement>();
+        List<RETSourceElement> filtered = new LinkedList<>();
         RETSourceFilterTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             RETSourceElement elem = model.getRow(i);
@@ -646,7 +646,7 @@ public class RetimerSourceFilterPanel extends WizardPage {
     }
 
     public List<RETSourceElement> getSelection() {
-        List<RETSourceElement> elements = new LinkedList<RETSourceElement>();
+        List<RETSourceElement> elements = new LinkedList<>();
         RETSourceFilterTableModel model = getModel();
         for (int i : jVillageTable.getSelectedRows()) {
             elements.add(model.getRow(jVillageTable.convertRowIndexToModel(i)));
@@ -655,7 +655,7 @@ public class RetimerSourceFilterPanel extends WizardPage {
     }
 
     public List<RETSourceElement> getAllElements() {
-        List<RETSourceElement> elements = new LinkedList<RETSourceElement>();
+        List<RETSourceElement> elements = new LinkedList<>();
         RETSourceFilterTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             elements.add(model.getRow(i));

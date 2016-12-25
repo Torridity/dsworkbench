@@ -106,8 +106,8 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
     private static final int ID_MINIMAP = 0;
     private static final int ID_ALLY_CHART = 1;
     private static final int ID_TRIBE_CHART = 2;
-    private Hashtable<Integer, Rectangle> minimapButtons = new Hashtable<Integer, Rectangle>();
-    private Hashtable<Integer, BufferedImage> minimapIcons = new Hashtable<Integer, BufferedImage>();
+    private Hashtable<Integer, Rectangle> minimapButtons = new Hashtable<>();
+    private Hashtable<Integer, BufferedImage> minimapIcons = new Hashtable<>();
     private int iCurrentView = ID_MINIMAP;
     private BufferedImage mChartImage;
     private int lastHash = 0;
@@ -125,8 +125,8 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
     MinimapPanel() {
         initComponents();
         setSize(300, 300);
-        mMinimapListeners = new LinkedList<MinimapListener>();
-        mToolChangeListeners = new LinkedList<ToolChangeListener>();
+        mMinimapListeners = new LinkedList<>();
+        mToolChangeListeners = new LinkedList<>();
         setCursor(ImageManager.getCursor(iCurrentCursor));
         mScreenshotPanel = new ScreenshotPanel();
         minimapButtons.put(ID_MINIMAP, new Rectangle(2, 2, 26, 26));
@@ -574,7 +574,7 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
     }
 
     private void renderChartInfo() {
-        Hashtable<Object, Marker> marks = new Hashtable<Object, Marker>();
+        Hashtable<Object, Marker> marks = new Hashtable<>();
         DefaultPieDataset dataset = buildDataset(marks);
 
         JFreeChart chart = ChartFactory.createPieChart(
@@ -662,7 +662,7 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
             while (keys.hasMoreElements()) {
                 Ally a = keys.nextElement();
                 Integer v = allyCount.get(a);
-                Double perc = new Double((double) v / (double) overallVillages * 100);
+                Double perc = (double) v / (double) overallVillages * 100;
 
                 if (perc > 5.0) {
                     dataset.setValue(a.getTag(), perc);
@@ -698,7 +698,7 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
 
                 Integer v = tribeCount.get(t);
 
-                Double perc = new Double((double) v / (double) overallVillages * 100);
+                Double perc = (double) v / (double) overallVillages * 100;
                 if (perc > 5.0) {
                     dataset.setValue(t.getName(), perc);
                     Marker m = MarkerManager.getSingleton().getMarker(t);

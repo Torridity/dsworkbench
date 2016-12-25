@@ -2231,7 +2231,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
     //do export
     logger.debug("Building export data");
 
-    List<String> plansToExport = new LinkedList<String>();
+    List<String> plansToExport = new LinkedList<>();
     for (int i = 0; i < jAttackExportTable.getRowCount(); i++) {
       String plan = (String) jAttackExportTable.getValueAt(i, 0);
       Boolean export = (Boolean) jAttackExportTable.getValueAt(i, 1);
@@ -2242,7 +2242,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
 
     }
 
-    List<String> setsToExport = new LinkedList<String>();
+    List<String> setsToExport = new LinkedList<>();
     for (int i = 0; i < jMarkerSetExportTable.getRowCount(); i++) {
       String set = (String) jMarkerSetExportTable.getValueAt(i, 0);
       Boolean export = (Boolean) jMarkerSetExportTable.getValueAt(i, 1);
@@ -2252,7 +2252,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
       }
 
     }
-    List<String> reportsToExport = new LinkedList<String>();
+    List<String> reportsToExport = new LinkedList<>();
     for (int i = 0; i < jReportSetExportTable.getRowCount(); i++) {
       String set = (String) jReportSetExportTable.getValueAt(i, 0);
       Boolean export = (Boolean) jReportSetExportTable.getValueAt(i, 1);
@@ -2262,7 +2262,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
       }
     }
 
-    List<String> troopSetsToExport = new LinkedList<String>();
+    List<String> troopSetsToExport = new LinkedList<>();
     for (int i = 0; i < jTroopSetExportTable.getRowCount(); i++) {
       String set = (String) jTroopSetExportTable.getValueAt(i, 0);
       Boolean export = (Boolean) jTroopSetExportTable.getValueAt(i, 1);
@@ -2271,7 +2271,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
         troopSetsToExport.add(set);
       }
     }
-    List<String> noteSetsToExport = new LinkedList<String>();
+    List<String> noteSetsToExport = new LinkedList<>();
     for (int i = 0; i < jNoteSetExportTable.getRowCount(); i++) {
       String set = (String) jNoteSetExportTable.getValueAt(i, 0);
       Boolean export = (Boolean) jNoteSetExportTable.getValueAt(i, 1);

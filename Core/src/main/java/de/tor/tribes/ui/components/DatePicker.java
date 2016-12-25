@@ -139,33 +139,33 @@ public class DatePicker extends JPanel {
         });
         add(forwardButton, new AbsoluteConstraints(130, 10, 20, 20));
         int i = 10;
-        for (int j = 0; j < dayHeadings.length; j++) {
-            dayHeadings[j].setBackground(gray);
-            dayHeadings[j].setEditable(false);
-            dayHeadings[j].setFont(smallFont);
-            dayHeadings[j].setHorizontalAlignment(0);
-            dayHeadings[j].setBorder(BorderFactory.createEmptyBorder());
-            dayHeadings[j].setFocusable(false);
-            add(dayHeadings[j], new AbsoluteConstraints(i, 40, 21, 21));
+        for (JTextField dayHeading : dayHeadings) {
+            dayHeading.setBackground(gray);
+            dayHeading.setEditable(false);
+            dayHeading.setFont(smallFont);
+            dayHeading.setHorizontalAlignment(0);
+            dayHeading.setBorder(BorderFactory.createEmptyBorder());
+            dayHeading.setFocusable(false);
+            add(dayHeading, new AbsoluteConstraints(i, 40, 21, 21));
             i += 20;
         }
 
         i = 10;
         int k = 60;
-        for (int l = 0; l < daysInMonth.length; l++) {
-            for (int i1 = 0; i1 < daysInMonth[l].length; i1++) {
-                daysInMonth[l][i1].setBackground(gray);
-                daysInMonth[l][i1].setFont(smallFont);
-                daysInMonth[l][i1].setHorizontalAlignment(4);
-                daysInMonth[l][i1].setText("");
-                daysInMonth[l][i1].setFocusable(false);
-                daysInMonth[l][i1].addMouseListener(new MouseAdapter() {
+        for (CrossedLabel[] aDaysInMonth : daysInMonth) {
+            for (int i1 = 0; i1 < aDaysInMonth.length; i1++) {
+                aDaysInMonth[i1].setBackground(gray);
+                aDaysInMonth[i1].setFont(smallFont);
+                aDaysInMonth[i1].setHorizontalAlignment(4);
+                aDaysInMonth[i1].setText("");
+                aDaysInMonth[i1].setFocusable(false);
+                aDaysInMonth[i1].addMouseListener(new MouseAdapter() {
 
                     public void mouseClicked(MouseEvent mouseevent) {
                         onDayClicked(mouseevent);
                     }
                 });
-                add(daysInMonth[l][i1], new AbsoluteConstraints(i, k, 21, 21));
+                add(aDaysInMonth[i1], new AbsoluteConstraints(i, k, 21, 21));
                 i += 20;
             }
 
@@ -295,10 +295,10 @@ public class DatePicker extends JPanel {
         int dayToSelect = Math.min(daysInCurrentMonth, selectedDate.get(GregorianCalendar.DAY_OF_MONTH));
 
         //reset all boxes
-        for (int i1 = 0; i1 < daysInMonth.length; i1++) {
+        for (CrossedLabel[] aDaysInMonth : daysInMonth) {
             for (int i2 = 0; i2 < daysInMonth[0].length; i2++) {
-                daysInMonth[i1][i2].setText("");
-                daysInMonth[i1][i2].setBackground(Color.WHITE);
+                aDaysInMonth[i2].setText("");
+                aDaysInMonth[i2].setBackground(Color.WHITE);
             }
         }
 

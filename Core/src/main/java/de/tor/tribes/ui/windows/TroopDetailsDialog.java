@@ -41,7 +41,7 @@ public class TroopDetailsDialog extends javax.swing.JDialog {
     }
 
     public void setupAndShow(List<VillageTroopsHolder> pInfo) {
-        HashMap<UnitHolder, Integer> amounts = new HashMap<UnitHolder, Integer>(); //initialize map 
+        HashMap<UnitHolder, Integer> amounts = new HashMap<>(); //initialize map
         for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
             amounts.put(u, 0);
         } //fill map 
@@ -133,13 +133,7 @@ public class TroopDetailsDialog extends javax.swing.JDialog {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TroopDetailsDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TroopDetailsDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TroopDetailsDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | javax.swing.UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
             java.util.logging.Logger.getLogger(TroopDetailsDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>

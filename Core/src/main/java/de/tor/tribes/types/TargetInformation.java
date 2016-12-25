@@ -50,8 +50,8 @@ public class TargetInformation {
     
     public TargetInformation(Village pTarget) {
         target = pTarget;
-        troops = new Hashtable<UnitHolder, Integer>();
-        timedAttacks = new Hashtable<Village, List<TimedAttack>>();
+        troops = new Hashtable<>();
+        timedAttacks = new Hashtable<>();
     }
     
     private void updateAttackInfo() {
@@ -95,7 +95,7 @@ public class TargetInformation {
      */
     public List<TimedAttack> getAttacks() {
         Enumeration<Village> sourceKeys = timedAttacks.keys();
-        List<TimedAttack> result = new LinkedList<TimedAttack>();
+        List<TimedAttack> result = new LinkedList<>();
         while (sourceKeys.hasMoreElements()) {
             Village source = sourceKeys.nextElement();
             List<TimedAttack> attacksFromSource = timedAttacks.get(source);
@@ -127,7 +127,7 @@ public class TargetInformation {
         if (atts != null) {
             return atts;
         } else {
-            return new LinkedList<TimedAttack>();
+            return new LinkedList<>();
         }
     }
     
@@ -138,7 +138,7 @@ public class TargetInformation {
     public boolean addAttack(final Village pSource, final Date pArrive, UnitHolder pUnit, boolean fake, boolean snob) {
         List<TimedAttack> attacksFromSource = timedAttacks.get(pSource);
         if (attacksFromSource == null) {
-            attacksFromSource = new LinkedList<TimedAttack>();
+            attacksFromSource = new LinkedList<>();
             timedAttacks.put(pSource, attacksFromSource);
         }
         

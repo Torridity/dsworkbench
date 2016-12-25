@@ -36,7 +36,7 @@ public class DEPFilterTableModel extends AbstractTableModel {
     private Class[] types = new Class[]{
         Tribe.class, Village.class, Boolean.class
     };
-    private final List<SupportSourceElement> elements = new LinkedList<SupportSourceElement>();
+    private final List<SupportSourceElement> elements = new LinkedList<>();
 
     public DEPFilterTableModel() {
         super();

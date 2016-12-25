@@ -69,7 +69,7 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
 
     public List<SOSRequest> parse(String pData) {
         print("Start parsing SOS request");
-        List<SOSRequest> requests = new LinkedList<SOSRequest>();
+        List<SOSRequest> requests = new LinkedList<>();
         try {
             Hashtable<Tribe, SOSRequest> parsedData = parseRequests(pData);
             if (parsedData.isEmpty()) {
@@ -89,7 +89,7 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
 
     private Hashtable<Tribe, SOSRequest> parseRequests(String pData) {
         String[] lines = pData.split("\n");
-        Hashtable<Tribe, SOSRequest> requests = new Hashtable<Tribe, SOSRequest>();
+        Hashtable<Tribe, SOSRequest> requests = new Hashtable<>();
         SOSRequest currentRequest = null;
         boolean waitForTarget = false;
         boolean waitForTroops = false;
@@ -105,7 +105,7 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
         }
 
         for (String line : lines) {
-            if (line.indexOf(ParserVariableManager.getSingleton().getProperty("sos.defender")) > -1) {
+            if (line.contains(ParserVariableManager.getSingleton().getProperty("sos.defender"))) {
                 //start new support request
                 if (currentRequest != null && currentRequest.getDefender() != null) {
                     requests.put(currentRequest.getDefender(), currentRequest);
@@ -113,7 +113,7 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
 
                 currentRequest = new SOSRequest();
                 //  System.out.println("Create new reuqest");
-            } else if (line.indexOf(ParserVariableManager.getSingleton().getProperty("sos.name")) > -1) {
+            } else if (line.contains(ParserVariableManager.getSingleton().getProperty("sos.name"))) {
                 //defender name
                 String defender = line.replaceAll(ParserVariableManager.getSingleton().getProperty("sos.name"), "").replaceAll("\\[player\\]", "").replaceAll("\\[\\/player\\]", "").trim();
                 // System.out.println("Defender: " + defender);
@@ -124,18 +124,18 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
                     currentRequest.setDefender(defTribe);
                     requests.put(defTribe, currentRequest);
                 }
-            } else if (line.indexOf(ParserVariableManager.getSingleton().getProperty("sos.destination")) > -1) {
+            } else if (line.contains(ParserVariableManager.getSingleton().getProperty("sos.destination"))) {
                 //new target village
                 waitForTarget = true;
                 //  System.out.println("Wait for target");
-            } else if (line.indexOf(ParserVariableManager.getSingleton().getProperty("sos.source")) > -1) {
+            } else if (line.contains(ParserVariableManager.getSingleton().getProperty("sos.source"))) {
                 List<Village> sourceVillage = new VillageParser().parse(line);
                 if (sourceVillage.size() > 0) {
                     //set target
                     source = sourceVillage.get(0);
                     //System.out.println("source: " + source);
                 }
-            } else if (line.indexOf(ParserVariableManager.getSingleton().getProperty("sos.arrive.time")) > -1) {
+            } else if (line.contains(ParserVariableManager.getSingleton().getProperty("sos.arrive.time"))) {
                 //arrive time
                 try {
                     String arrive = line.replaceAll(ParserVariableManager.getSingleton().getProperty("sos.arrive.time"), "").trim();
@@ -148,13 +148,13 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
                 } catch (Exception e) {
                     //  System.out.println("NO ARRIVE!!");
                 }
-            } else if (line.indexOf(ParserVariableManager.getSingleton().getProperty("sos.wall.level")) > -1) {
+            } else if (line.contains(ParserVariableManager.getSingleton().getProperty("sos.wall.level"))) {
                 try {
                     int wallLevel = Integer.parseInt(line.replaceAll(ParserVariableManager.getSingleton().getProperty("sos.wall.level"), "").trim());
                     currentRequest.getTargetInformation(target).setWallLevel(wallLevel);
                 } catch (Exception e) {
                 }
-            } else if (line.indexOf(ParserVariableManager.getSingleton().getProperty("sos.troops.in.village")) > -1) {
+            } else if (line.contains(ParserVariableManager.getSingleton().getProperty("sos.troops.in.village"))) {
                 // System.out.println("WAIT FOR TROOPS");
                 waitForTroops = true;
             } else {
@@ -224,7 +224,7 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
      */
     private Hashtable<Tribe, SOSRequest> parseRequestsShort(String pData) {
         String[] lines = pData.split("\n");
-        Hashtable<Tribe, SOSRequest> requests = new Hashtable<Tribe, SOSRequest>();
+        Hashtable<Tribe, SOSRequest> requests = new Hashtable<>();
         Village destination = null;
         SOSRequest request = null;
         SimpleDateFormat dateFormat = null;
@@ -427,7 +427,7 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
     }
 
     public static Hashtable<Tribe, SOSRequest> attacksToSOSRequests(List<Attack> pAttacks) {
-        Hashtable<Tribe, SOSRequest> requests = new Hashtable<Tribe, SOSRequest>();
+        Hashtable<Tribe, SOSRequest> requests = new Hashtable<>();
 
         for (Attack attack : pAttacks) {
             Tribe defender = attack.getTarget().getTribe();

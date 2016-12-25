@@ -55,8 +55,8 @@ public class InternalEnoblementFilter implements ConquerFilterInterface {
         boolean internal = false;
 
         if ((winnerAlly.getId() == loserAlly.getId()) ||
-                (loserAlly.getName().toLowerCase().indexOf(winnerAlly.getName().toLowerCase()) > -1 ||
-                winnerAlly.getName().toLowerCase().indexOf(loserAlly.getName().toLowerCase()) > -1)) {
+                (loserAlly.getName().toLowerCase().contains(winnerAlly.getName().toLowerCase()) ||
+                        winnerAlly.getName().toLowerCase().contains(loserAlly.getName().toLowerCase()))) {
             internal = true;
         }
         if (!internal) {

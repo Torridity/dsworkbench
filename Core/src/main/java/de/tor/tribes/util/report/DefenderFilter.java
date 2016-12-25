@@ -38,7 +38,7 @@ public class DefenderFilter implements ReportRuleInterface {
             if (tribeSplit == null || tribeSplit.length == 0) {
                 throw new ReportRuleConfigurationException("Kein Spielername gefunden");
             }
-            tribes = new LinkedList<String>();
+            tribes = new LinkedList<>();
             for (String split : tribeSplit) {
                 if (split != null) {
                     Tribe t = DataHolder.getSingleton().getTribeByName(split.trim());

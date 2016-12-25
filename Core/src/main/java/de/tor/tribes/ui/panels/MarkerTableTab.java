@@ -232,7 +232,7 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
         }
         if (!pFilterRows) {
             jxMarkerTable.setRowFilter(null);
-            final List<Integer> relevantCols = new LinkedList<Integer>();
+            final List<Integer> relevantCols = new LinkedList<>();
             List<TableColumn> cols = jxMarkerTable.getColumns(true);
             for (int i = 0; i < jxMarkerTable.getColumnCount(); i++) {
                 TableColumnExt col = jxMarkerTable.getColumnExt(i);
@@ -251,7 +251,7 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
 
                 @Override
                 public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
-                    final List<Integer> relevantCols = new LinkedList<Integer>();
+                    final List<Integer> relevantCols = new LinkedList<>();
                     List<TableColumn> cols = jxMarkerTable.getColumns(true);
                     for (int i = 0; i < jxMarkerTable.getColumnCount(); i++) {
                         TableColumnExt col = jxMarkerTable.getColumnExt(i);
@@ -262,11 +262,11 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
 
                     for (Integer col : relevantCols) {
                         if (pCaseSensitive) {
-                            if (entry.getStringValue(col).indexOf(pValue) > -1) {
+                            if (entry.getStringValue(col).contains(pValue)) {
                                 return true;
                             }
                         } else {
-                            if (entry.getStringValue(col).toLowerCase().indexOf(pValue.toLowerCase()) > -1) {
+                            if (entry.getStringValue(col).toLowerCase().contains(pValue.toLowerCase())) {
                                 return true;
                             }
                         }
@@ -498,7 +498,7 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
     }
 
     private List<Marker> getSelectedMarkers() {
-        final List<Marker> selectedMarkers = new LinkedList<Marker>();
+        final List<Marker> selectedMarkers = new LinkedList<>();
         int[] selectedRows = jxMarkerTable.getSelectedRows();
         if (selectedRows != null && selectedRows.length < 1) {
             return selectedMarkers;

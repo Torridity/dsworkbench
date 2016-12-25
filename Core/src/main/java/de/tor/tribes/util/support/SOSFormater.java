@@ -37,7 +37,7 @@ import java.util.List;
 public class SOSFormater {
 
     public static String format(Village pTarget, TargetInformation pTargetInformation, boolean pDetailed) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         String serverURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
         //main quote
         buffer.append("[quote]");
@@ -74,9 +74,9 @@ public class SOSFormater {
         //add details for all attacks
         int fakeCount = 0;
         int snobCount = 0;
-        for (int i = 0; i < attacks.size(); i++) {
+        for (TimedAttack attack1 : attacks) {
             try {
-                TimedAttack attack = attacks.get(i);
+                TimedAttack attack = attack1;
                 if (attack.isPossibleFake()) {
                     fakeCount++;
                 } else if (attack.isPossibleSnob()) {
@@ -107,7 +107,7 @@ public class SOSFormater {
     }
 
     private static String buildUnitInfo(TargetInformation pTargetInfo) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
@@ -134,7 +134,7 @@ public class SOSFormater {
     }
 
     private static String buildWallInfo(TargetInformation pTargetInfo) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         double perc = pTargetInfo.getWallLevel() / 20.0;
         int filledFields = (int) Math.rint(perc * 15.0);
         buffer.append("[color=#00FF00]");

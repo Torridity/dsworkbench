@@ -223,7 +223,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
     }
 
     private void resetModel() {
-        HashMap<Tag, ListItem.RELATION_TYPE> storedState = new HashMap<Tag, ListItem.RELATION_TYPE>();
+        HashMap<Tag, ListItem.RELATION_TYPE> storedState = new HashMap<>();
         for (int i = 0; i < getModel().getSize(); i++) {
             ListItem item = getItemAt(i);
             storedState.put(item.getTag(), item.getState());
@@ -262,7 +262,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
     }
 
     public List<Village> getValidVillages() {
-        List<Village> result = new LinkedList<Village>();
+        List<Village> result = new LinkedList<>();
         if (relevantVillages == null) {
             relevantVillages = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
         }
@@ -282,7 +282,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
             if (values.length == 0) {
                 return result;
             }
-            List<Tag> selection = new LinkedList<Tag>();
+            List<Tag> selection = new LinkedList<>();
             for (Object v : values) {
                 ListItem i = (ListItem) v;
                 selection.add(i.getTag());
@@ -318,7 +318,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
     private List<Village> getVillagesByEquation() {
         StringBuilder b = new StringBuilder();
         boolean isFirst = true;
-        List<Tag> relevantTags = new LinkedList<Tag>();
+        List<Tag> relevantTags = new LinkedList<>();
         for (int i = 1; i < getModel().getSize(); i++) {
             ListItem item = getItemAt(i);
             boolean ignore = false;
@@ -357,7 +357,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
         ScriptEngine engine = factory.getEngineByName("JavaScript");
         String baseEquation = b.toString();
 
-        List<Village> result = new LinkedList<Village>();
+        List<Village> result = new LinkedList<>();
         try {
             if (relevantVillages == null) {
                 relevantVillages = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
@@ -414,7 +414,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
             if (values.length == 0) {
                 b.append("Keine Einträge gewählt");
             } else {
-                List<Tag> selection = new LinkedList<Tag>();
+                List<Tag> selection = new LinkedList<>();
                 for (Object v : values) {
                     ListItem i = (ListItem) v;
                     selection.add(i.getTag());

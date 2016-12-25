@@ -33,7 +33,7 @@ public class VillageTransferable implements Transferable {
     private List<Village> villages = null;
 
     public VillageTransferable(Village pVillage) {
-        villages = new LinkedList<Village>();
+        villages = new LinkedList<>();
         villages.add(pVillage);
     }
 

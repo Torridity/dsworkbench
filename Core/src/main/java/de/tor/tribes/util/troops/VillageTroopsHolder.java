@@ -37,7 +37,7 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
     private final static String STANDARD_TEMPLATE = "[table]\n"
             + "[**]%SPEAR_ICON%[||]%SWORD_ICON%[||]%AXE_ICON%[||]%ARCHER_ICON%[||]%SPY_ICON%[||]%LIGHT_ICON%[||]%MARCHER_ICON%[||]%HEAVY_ICON%[||]%RAM_ICON%[||]%CATA_ICON%[||]%SNOB_ICON%[/**]\n";
     private Village village = null;
-    private Hashtable<UnitHolder, Integer> troops = new Hashtable<UnitHolder, Integer>();
+    private Hashtable<UnitHolder, Integer> troops = new Hashtable<>();
     private Date state = null;
 
     @Override
@@ -47,7 +47,7 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
 
         Element troopsElement = (Element) JaxenUtils.getNodes(e, "troops").get(0);
 
-        Hashtable<UnitHolder, Integer> hTroops = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> hTroops = new Hashtable<>();
 
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             try {
@@ -64,7 +64,7 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
     }
 
     public VillageTroopsHolder(Village pVillage, Date pState) {
-        troops = new Hashtable<UnitHolder, Integer>();
+        troops = new Hashtable<>();
         for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
             troops.put(u, 0);
         }

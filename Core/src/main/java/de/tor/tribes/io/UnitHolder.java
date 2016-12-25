@@ -281,7 +281,7 @@ public class UnitHolder implements Serializable {
 
         @Override
         public int compare(UnitHolder s1, UnitHolder s2) {
-            return new Double(s1.getSpeed()).compareTo(new Double(s2.getSpeed()));
+            return new Double(s1.getSpeed()).compareTo(s2.getSpeed());
         }
     }
 }

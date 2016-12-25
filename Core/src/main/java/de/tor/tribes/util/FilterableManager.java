@@ -24,14 +24,14 @@ import java.util.List;
 public abstract class FilterableManager<C, I extends Filter> {
 
     /**Cache for filtered elements*/
-    private List<C> filteredList = new LinkedList<C>();
+    private List<C> filteredList = new LinkedList<>();
     /**List of filters*/
-    private List<I> filters = new LinkedList<I>();
+    private List<I> filters = new LinkedList<>();
 
     /**Default constructor*/
     public FilterableManager() {
-        filteredList = new LinkedList<C>();
-        filters = new LinkedList<I>();
+        filteredList = new LinkedList<>();
+        filters = new LinkedList<>();
     }
 
     /**Get the amount of elements after filtering
@@ -53,7 +53,7 @@ public abstract class FilterableManager<C, I extends Filter> {
      * @param pFilters List of filters to apply
      */
     public void setFilters(List<I> pFilters) {
-        filters = new LinkedList<I>(pFilters);
+        filters = new LinkedList<>(pFilters);
         updateFilters();
     }
 
@@ -62,7 +62,7 @@ public abstract class FilterableManager<C, I extends Filter> {
 
     /**Clear the list of filtered elements*/
     public void clearFilteredList() {
-        filteredList = new LinkedList<C>();
+        filteredList = new LinkedList<>();
     }
 
     /**Get the list of filtered elements*/
@@ -73,7 +73,7 @@ public abstract class FilterableManager<C, I extends Filter> {
     /**Update by re-filtering all elements*/
     public void updateFilters() {
         C[] aElements = getUnfilteredElements();
-        List<C> filtered = new LinkedList<C>();
+        List<C> filtered = new LinkedList<>();
         for (C c : aElements) {
             if (filters == null || filters.isEmpty()) {
                 //no filters defined
@@ -94,6 +94,6 @@ public abstract class FilterableManager<C, I extends Filter> {
                 }
             }
         }
-        filteredList = new LinkedList<C>(filtered);
+        filteredList = new LinkedList<>(filtered);
     }
 }

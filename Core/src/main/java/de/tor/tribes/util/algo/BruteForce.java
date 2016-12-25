@@ -55,7 +55,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
         List<Village> allFakeTargets = Arrays.asList(pFakeTargets.toArray(new Village[pFakeTargets.size()]));
 
         Enumeration<UnitHolder> unitKeys = pSources.keys();
-        Hashtable<Village, Hashtable<UnitHolder, List<Village>>> attacks = new Hashtable<Village, Hashtable<UnitHolder, List<Village>>>();
+        Hashtable<Village, Hashtable<UnitHolder, List<Village>>> attacks = new Hashtable<>();
         logger.debug("Assigning offs");
         logText("Starte zufällige Berechnung");
 
@@ -84,7 +84,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
                     logInfo(" - Teste " + pTargets.size() + " mögliche Ziele");
                     for (Village v : pTargets.toArray(new Village[pTargets.size()])) {
                         if (isAborted()) {
-                            return new LinkedList<AbstractTroopMovement>();
+                            return new LinkedList<>();
                         }
                         int maxAttacksPerVillage = pMaxAttacksTable.get(v);
                         double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
@@ -103,8 +103,8 @@ public class BruteForce extends AbstractAttackAlgorithm {
                             Hashtable<UnitHolder, List<Village>> attacksForVillage = attacks.get(v);
                             if (attacksForVillage == null) {
                                 //create new table of attacks
-                                attacksForVillage = new Hashtable<UnitHolder, List<Village>>();
-                                List<Village> sourceList = new LinkedList<Village>();
+                                attacksForVillage = new Hashtable<>();
+                                List<Village> sourceList = new LinkedList<>();
                                 logInfo("   * Neue Truppenbewegung: " + source + " -> " + v);
                                 sourceList.add(source);
                                 attacksForVillage.put(unit, sourceList);
@@ -130,7 +130,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                             attsPerUnit.add(source);
                                         }
                                     } else {
-                                        attsPerUnit = new LinkedList<Village>();
+                                        attsPerUnit = new LinkedList<>();
                                         //only add source if it does not attack current target yet
                                         added = true;
                                         logInfo("   * Neue Truppenbewegung: " + source + " -> " + v);
@@ -198,7 +198,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
         logText(" Starte Berechnung für Fakes.");
         // <editor-fold defaultstate="collapsed" desc=" Assign fakes">
         unitKeys = pFakes.keys();
-        Hashtable<Village, Hashtable<UnitHolder, List<Village>>> fakes = new Hashtable<Village, Hashtable<UnitHolder, List<Village>>>();
+        Hashtable<Village, Hashtable<UnitHolder, List<Village>>> fakes = new Hashtable<>();
 
 
         while (unitKeys.hasMoreElements()) {
@@ -221,7 +221,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
                     logInfo(" - Teste " + pTargets.size() + " mögliche Ziele");
                     for (Village v : pTargets.toArray(new Village[pTargets.size()])) {
                         if (isAborted()) {
-                            return new LinkedList<AbstractTroopMovement>();
+                            return new LinkedList<>();
                         }
                         int maxAttacksPerVillage = pMaxAttacksTable.get(v);
                         double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
@@ -241,14 +241,14 @@ public class BruteForce extends AbstractAttackAlgorithm {
                             Hashtable<UnitHolder, List<Village>> fakesForVillage = fakes.get(v);
                             if (attacksForVillage == null){
                             	//create empty table of attacks (will stay empty, but is used for maxAttacks calculation)
-                                attacksForVillage = new Hashtable<UnitHolder, List<Village>>();
-                                List<Village> sourceList = new LinkedList<Village>();
+                                attacksForVillage = new Hashtable<>();
+                                List<Village> sourceList = new LinkedList<>();
                                 attacksForVillage.put(unit, sourceList);
                             }
                             if (fakesForVillage == null) {
                                 //create new table of fakes 
-                                fakesForVillage = new Hashtable<UnitHolder, List<Village>>();
-                                List<Village> sourceList = new LinkedList<Village>();
+                                fakesForVillage = new Hashtable<>();
+                                List<Village> sourceList = new LinkedList<>();
                                 logInfo("   * Neue Truppenbewegung: " + source + " -> " + v);
                                 sourceList.add(source);
                                 fakesForVillage.put(unit, sourceList);
@@ -281,7 +281,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                             fakesPerUnit.add(source);
                                         }
                                     } else {
-                                        fakesPerUnit = new LinkedList<Village>();
+                                        fakesPerUnit = new LinkedList<>();
                                         //only add source if it does not attack current target yet
                                         added = true;
                                         logInfo("   * Neue Truppenbewegung: " + source + " -> " + v);
@@ -329,7 +329,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
 
         logText(" - Erstelle Ergebnisliste");
         //convert to result list
-        List<AbstractTroopMovement> movements = new LinkedList<AbstractTroopMovement>();
+        List<AbstractTroopMovement> movements = new LinkedList<>();
         logger.debug(" - adding offs");
 
         logText(String.format(" %d Offs berechnet", attacks.size()));

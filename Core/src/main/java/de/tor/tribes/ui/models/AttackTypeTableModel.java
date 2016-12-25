@@ -30,8 +30,8 @@ import javax.swing.table.AbstractTableModel;
  */
 public class AttackTypeTableModel extends AbstractTableModel {
 
-    private List<String> columnNames = new LinkedList<String>();
-    private List<Class> columnTypes = new LinkedList<Class>();
+    private List<String> columnNames = new LinkedList<>();
+    private List<Class> columnTypes = new LinkedList<>();
 
     public AttackTypeTableModel() {
         columnNames.add("Name");

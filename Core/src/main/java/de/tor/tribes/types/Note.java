@@ -46,7 +46,7 @@ public class Note extends ManageableType implements BBSupport {
     private int mapMarker = 0;
 
     public Note() {
-        villageIds = new LinkedList<Integer>();
+        villageIds = new LinkedList<>();
         setTimestamp(System.currentTimeMillis());
         sNoteText = "";
     }
@@ -91,11 +91,7 @@ public class Note extends ManageableType implements BBSupport {
             } else {
                 //no villages
             }
-        } catch (NumberFormatException nfe) {
-            m = null;
-        } catch (IllegalArgumentException iae) {
-            m = null;
-        } catch (UnsupportedEncodingException usee) {
+        } catch (UnsupportedEncodingException | IllegalArgumentException nfe) {
             m = null;
         }
         return m;
@@ -286,7 +282,7 @@ public class Note extends ManageableType implements BBSupport {
         String lastChangeVal = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(new Date(getTimestamp()));
         String villageVal = "";
 
-        List<Village> villages = new LinkedList<Village>();
+        List<Village> villages = new LinkedList<>();
         for (Integer id : villageIds) {
             Village v = DataHolder.getSingleton().getVillagesById().get(id);
             if (v != null) {

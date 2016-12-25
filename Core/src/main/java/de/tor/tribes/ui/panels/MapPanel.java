@@ -214,15 +214,15 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     MapPanel() {
         initComponents();
         logger.info("Creating MapPanel");
-        mMapPanelListeners = new LinkedList<MapPanelListener>();
-        mToolChangeListeners = new LinkedList<ToolChangeListener>();
+        mMapPanelListeners = new LinkedList<>();
+        mToolChangeListeners = new LinkedList<>();
         mMarkerAddFrame = new MarkerAddFrame();
         setCursor(ImageManager.getCursor(iCurrentCursor));
         setOpaque(true);
         setIgnoreRepaint(true);
         attackAddFrame = new AttackAddFrame();
         mVirtualBounds = new Rectangle2D.Double(0.0, 0.0, 0.0, 0.0);
-        markedVillages = new LinkedList<Village>();
+        markedVillages = new LinkedList<>();
         KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
         this.registerKeyboardAction(this, "Copy", copy, JComponent.WHEN_IN_FOCUSED_WINDOW);
         KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
@@ -1392,7 +1392,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         } else if (evt.getSource() == jCurrentToAStarAsAttacker || evt.getSource() == jCurrentToAStarAsDefender) {
             VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(actionMenuVillage, TroopsManager.TROOP_TYPE.OWN);
 
-            Hashtable<String, Double> values = new Hashtable<String, Double>();
+            Hashtable<String, Double> values = new Hashtable<>();
             if (evt.getSource() == jCurrentToAStarAsAttacker && own == null) {
                 JOptionPaneHelper.showInformationBox(this, "Keine Truppeninformationen (Eigene) vorhanden", "Information");
                 return;
@@ -1661,10 +1661,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             Point mouse = MouseInfo.getPointerInfo().getLocation();
             mouse.x -= getLocationOnScreen().x;
             mouse.y -= getLocationOnScreen().y;
-            Iterator<Village> villages = mVillagePositions.keySet().iterator();
 
-            while (villages.hasNext()) {
-                Village current = villages.next();
+            for (Village current : mVillagePositions.keySet()) {
                 if (current != null && mVillagePositions.get(current).contains(mouse.x, mouse.y)) {
                     if (current.isVisibleOnMap()) {
                         return current;
@@ -1685,10 +1683,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         }
 
         try {
-            Iterator<Village> villages = mVillagePositions.keySet().iterator();
 
-            while (villages.hasNext()) {
-                Village current = villages.next();
+            for (Village current : mVillagePositions.keySet()) {
                 if (mVillagePositions.get(current).contains(pPos)) {
                     return current;
                 }
@@ -1705,11 +1701,9 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             return null;
         }
         try {
-            List<Village> result = new ArrayList<Village>();
-            Iterator<Village> villages = mVillagePositions.keySet().iterator();
+            List<Village> result = new ArrayList<>();
 
-            while (villages.hasNext()) {
-                Village currentVillage = villages.next();
+            for (Village currentVillage : mVillagePositions.keySet()) {
                 Rectangle current = mVillagePositions.get(currentVillage);
                 if (pShape.intersects(current)) {
                     result.add(currentVillage);
@@ -1727,11 +1721,9 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             return null;
         }
         try {
-            List<Village> result = new ArrayList<Village>();
-            Iterator<Village> villages = mVillagePositions.keySet().iterator();
+            List<Village> result = new ArrayList<>();
 
-            while (villages.hasNext()) {
-                Village currentVillage = villages.next();
+            for (Village currentVillage : mVillagePositions.keySet()) {
                 Rectangle current = mVillagePositions.get(currentVillage);
                 if (current.intersectsLine(pShape)) {
                     result.add(currentVillage);

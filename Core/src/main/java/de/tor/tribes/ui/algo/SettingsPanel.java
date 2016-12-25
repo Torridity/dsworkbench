@@ -108,7 +108,7 @@ public class SettingsPanel extends javax.swing.JPanel {
             }
             String[] spans = spanProp.split(";");
 
-            List<TimeSpan> spanList = new LinkedList<TimeSpan>();
+            List<TimeSpan> spanList = new LinkedList<>();
             for (String span : spans) {
                 try {
                     TimeSpan s = TimeSpan.fromPropertyString(span);
@@ -148,7 +148,7 @@ public class SettingsPanel extends javax.swing.JPanel {
                 logger.error("Unexpected exception while validating", re);
                 message = "Unerwarteter Fehler bei der Validierung der Einstellungen. Bitte wenden dich an den Support.";
             }
-            if (message.indexOf("Nachtbonus") > -1 || message.indexOf("Vergangenheit") > -1) {
+            if (message.contains("Nachtbonus") || message.contains("Vergangenheit")) {
                 result = JOptionPaneHelper.showQuestionConfirmBox(this, message + "\nMöchtest du fortfahren?", "Warnung", "Nein", "Ja") == JOptionPane.YES_OPTION;
             } else {
                 JOptionPaneHelper.showWarningBox(this, message, "Fehler");

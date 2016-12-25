@@ -164,7 +164,7 @@ public abstract class AbstractAttackAlgorithm extends Thread {
     }
     
     public static List<DistanceMapping> buildSourceTargetsMapping(Village pSource, List<Village> pTargets, boolean pIsSnob) {
-        List<DistanceMapping> mappings = new LinkedList<DistanceMapping>();
+        List<DistanceMapping> mappings = new LinkedList<>();
         
         for (Village target : pTargets) {
             DistanceMapping mapping = new DistanceMapping(pSource, target);
@@ -190,7 +190,7 @@ public abstract class AbstractAttackAlgorithm extends Thread {
         } catch (Exception e) {
             //an error occured
             logger.error("An error occured during calculation", e);
-            results = new LinkedList<AbstractTroopMovement>();
+            results = new LinkedList<>();
         }
         running = false;
         if (listener != null) {

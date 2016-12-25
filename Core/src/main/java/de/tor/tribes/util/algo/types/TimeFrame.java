@@ -51,8 +51,8 @@ public class TimeFrame {
     startNotAfter = pStartNotAfter.getTime();
     arriveNotBefore = pArriveNotBefore.getTime();
     arriveNotAfter = pArriveNotAfter.getTime();
-    sendTimeSpans = new LinkedList<TimeSpan>();
-    arriveTimeSpans = new LinkedList<TimeSpan>();
+    sendTimeSpans = new LinkedList<>();
+    arriveTimeSpans = new LinkedList<>();
     if (pSendTimeSpans != null) {
       Collections.copy(sendTimeSpans, pSendTimeSpans);
     }
@@ -207,7 +207,7 @@ public class TimeFrame {
   }
 
   public List<LongRange> startTimespansToRanges(Tribe pTribe) {
-    List<LongRange> ranges = new LinkedList<LongRange>();
+    List<LongRange> ranges = new LinkedList<>();
     Date startDate = DateUtils.truncate(new Date(startNotBefore), Calendar.DAY_OF_MONTH);
 
     for (TimeSpan span : sendTimeSpans) {
@@ -272,14 +272,14 @@ public class TimeFrame {
     Collections.sort(ranges, new Comparator<LongRange>() {
       @Override
       public int compare(LongRange o1, LongRange o2) {
-        return Long.valueOf(o1.getMinimumLong()).compareTo(Long.valueOf(o2.getMinimumLong()));
+        return Long.valueOf(o1.getMinimumLong()).compareTo(o2.getMinimumLong());
       }
     });
     return ranges;
   }
 
   public HashMap<LongRange, TimeSpan> startTimespansToRangesMap(Tribe pTribe) {
-    HashMap<LongRange, TimeSpan> rangesMap = new HashMap<LongRange, TimeSpan>();
+    HashMap<LongRange, TimeSpan> rangesMap = new HashMap<>();
     Date startDate = DateUtils.truncate(new Date(startNotBefore), Calendar.DAY_OF_MONTH);
 
     for (TimeSpan span : sendTimeSpans) {
@@ -345,7 +345,7 @@ public class TimeFrame {
   }
 
   public List<LongRange> arriveTimespansToRanges(de.tor.tribes.types.ext.Village pVillage) {
-    List<LongRange> ranges = new LinkedList<LongRange>();
+    List<LongRange> ranges = new LinkedList<>();
     Date arriveDate = DateUtils.truncate(new Date(arriveNotBefore), Calendar.DAY_OF_MONTH);
 
     for (TimeSpan span : arriveTimeSpans) {
@@ -404,14 +404,14 @@ public class TimeFrame {
     Collections.sort(ranges, new Comparator<LongRange>() {
       @Override
       public int compare(LongRange o1, LongRange o2) {
-        return Long.valueOf(o1.getMinimumLong()).compareTo(Long.valueOf(o2.getMinimumLong()));
+        return Long.valueOf(o1.getMinimumLong()).compareTo(o2.getMinimumLong());
       }
     });
     return ranges;
   }
 
   public HashMap<LongRange, TimeSpan> arriveTimespansToRangesMap(de.tor.tribes.types.ext.Village pVillage) {
-    HashMap<LongRange, TimeSpan> rangesMap = new HashMap<LongRange, TimeSpan>();
+    HashMap<LongRange, TimeSpan> rangesMap = new HashMap<>();
     Date arriveDate = DateUtils.truncate(new Date(arriveNotBefore), Calendar.DAY_OF_MONTH);
 
     for (TimeSpan span : arriveTimeSpans) {

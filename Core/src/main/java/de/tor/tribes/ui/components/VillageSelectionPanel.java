@@ -151,7 +151,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
                         return new Tribe[]{GlobalOptions.getSelectedProfile().getTribe()};
                     }
 
-                    List<Tribe> res = new LinkedList<Tribe>();
+                    List<Tribe> res = new LinkedList<>();
                     for (Object o : getSelection()) {
                         Ally a = (Ally) o;
                         res.addAll(Arrays.asList(a.getTribes()));
@@ -168,9 +168,9 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
 
                 @Override
                 public GroupSelectionList.ListItem[] filter() {
-                    List<Tag> usedTags = new LinkedList<Tag>();
-                    List<Village> villages = new LinkedList<Village>();
-                    List<GroupSelectionList.ListItem> items = new LinkedList<GroupSelectionList.ListItem>();
+                    List<Tag> usedTags = new LinkedList<>();
+                    List<Village> villages = new LinkedList<>();
+                    List<GroupSelectionList.ListItem> items = new LinkedList<>();
                     for (Object o : getSelection()) {
                         Tribe t = (Tribe) o;
                         Collections.addAll(villages, t.getVillageList());
@@ -191,7 +191,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
 
                 @Override
                 public ContinentVillageSelection[] filter() {
-                    HashMap<Integer, ContinentVillageSelection> map = new HashMap<Integer, ContinentVillageSelection>();
+                    HashMap<Integer, ContinentVillageSelection> map = new HashMap<>();
                     for (Village v : ((GroupSelectionList) getInputList()).getValidVillages()) {
                         int cont = v.getContinent();
                         ContinentVillageSelection s = map.get(cont);
@@ -225,7 +225,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
 
                 @Override
                 public Village[] filter() {
-                    List<Village> res = new LinkedList<Village>();
+                    List<Village> res = new LinkedList<>();
                     for (Object o : getSelection()) {
                         ContinentVillageSelection c = (ContinentVillageSelection) o;
                         Collections.addAll(res, c.getVillages());
@@ -514,7 +514,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireTransferVillageSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferVillageSelectionEvent
-        List<Village> result = new LinkedList<Village>();
+        List<Village> result = new LinkedList<>();
         Object[] selection = villageList.getSelectedValues();
         if (selection == null || selection.length == 0) {
             //transfer all
@@ -555,9 +555,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
         String clipboard;
 		try {
 			clipboard = (String) t.getTransferData(DataFlavor.stringFlavor);
-		} catch (UnsupportedFlavorException e) {
-			return;
-		} catch (IOException e) {
+		} catch (UnsupportedFlavorException | IOException e) {
 			return;
 		}
         List<Village> villages = PluginManager.getSingleton().executeVillageParser(clipboard);
@@ -677,7 +675,7 @@ abstract class FilterPipeline<C, D> implements ListSelectionListener {
     }
 
     public Object[] getSelection() {
-        List<C> result = new LinkedList<C>();
+        List<C> result = new LinkedList<>();
         if (inputList.isVisible() || inputList.getSelectedValues().length > 0) {
             for (Object o : inputList.getSelectedValues()) {
                 result.add((C) o);
@@ -721,7 +719,7 @@ class ContinentVillageSelection {
     public ContinentVillageSelection(int pContinent) {
         continent = pContinent;
         continentString = "K" + ((continent < 10) ? "0" + continent : continent);
-        villages = new LinkedList<Village>();
+        villages = new LinkedList<>();
     }
 
     public void addVillage(Village pVillage) {

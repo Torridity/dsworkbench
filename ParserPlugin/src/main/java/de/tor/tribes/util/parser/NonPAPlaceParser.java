@@ -40,10 +40,10 @@ public class NonPAPlaceParser implements SilentParserInterface {
         StringTokenizer lineTok = new StringTokenizer(pTroopsString, "\n\r");
         //boolean haveVillage = false;
         Village v = null;
-        Hashtable<UnitHolder, Integer> ownTroops = new Hashtable<UnitHolder, Integer>();
-        Hashtable<UnitHolder, Integer> troopsInVillage = new Hashtable<UnitHolder, Integer>();
-        Hashtable<Village, Hashtable<UnitHolder, Integer>> supportsToThis = new Hashtable<Village, Hashtable<UnitHolder, Integer>>();
-        Hashtable<Village, Hashtable<UnitHolder, Integer>> supportsFromThis = new Hashtable<Village, Hashtable<UnitHolder, Integer>>();
+        Hashtable<UnitHolder, Integer> ownTroops = new Hashtable<>();
+        Hashtable<UnitHolder, Integer> troopsInVillage = new Hashtable<>();
+        Hashtable<Village, Hashtable<UnitHolder, Integer>> supportsToThis = new Hashtable<>();
+        Hashtable<Village, Hashtable<UnitHolder, Integer>> supportsFromThis = new Hashtable<>();
         while (lineTok.hasMoreElements()) {
             String currentLine = lineTok.nextToken();
             //walk through all lines
@@ -85,7 +85,7 @@ public class NonPAPlaceParser implements SilentParserInterface {
                             if (supportingVillage != null) {
                                 int[] support = parseUnits(currentLine);
                                 cnt = 0;
-                                Hashtable<UnitHolder, Integer> supportTroops = new Hashtable<UnitHolder, Integer>();
+                                Hashtable<UnitHolder, Integer> supportTroops = new Hashtable<>();
                                 for (int i : support) {
                                     //all units in village
                                     supportTroops.put(DataHolder.getSingleton().getUnits().get(cnt), i);
@@ -110,7 +110,7 @@ public class NonPAPlaceParser implements SilentParserInterface {
                         if (supportedVillage != null) {
                             int[] outside = parseUnits(currentLine);
                             int cnt = 0;
-                            Hashtable<UnitHolder, Integer> supportTroops = new Hashtable<UnitHolder, Integer>();
+                            Hashtable<UnitHolder, Integer> supportTroops = new Hashtable<>();
                             for (int i : outside) {
                                 //all units in village
                                 supportTroops.put(DataHolder.getSingleton().getUnits().get(cnt), i);

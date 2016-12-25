@@ -55,9 +55,9 @@ public class TroopSplitDialog extends javax.swing.JDialog {
 
     private static Logger logger = Logger.getLogger("TroopSplitDialog");
     private boolean isInitialized = false;
-    private Hashtable<UnitHolder, Integer> mSplitAmounts = new Hashtable<UnitHolder, Integer>();
-    private List<TroopSplit> mSplits = new LinkedList<TroopSplit>();
-    private Hashtable<String, Hashtable<UnitHolder, Integer>> splitSets = new Hashtable<String, Hashtable<UnitHolder, Integer>>();
+    private Hashtable<UnitHolder, Integer> mSplitAmounts = new Hashtable<>();
+    private List<TroopSplit> mSplits = new LinkedList<>();
+    private Hashtable<String, Hashtable<UnitHolder, Integer>> splitSets = new Hashtable<>();
 
     /**
      * Creates new form TroopSplitDialog
@@ -554,7 +554,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
 
     private void removeSplitEnty() {
         Object[] selection = jTroopsPerSplitList.getSelectedValues();
-        List<UnitHolder> units = new LinkedList<UnitHolder>();
+        List<UnitHolder> units = new LinkedList<>();
         for (Object o : selection) {
             String unit = ((String) o).split(" ")[1].trim();
             UnitHolder u = DataHolder.getSingleton().getUnitByPlainName(unit);

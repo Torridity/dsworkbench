@@ -38,7 +38,7 @@ public class SupportCalculator {
     private static Logger logger = Logger.getLogger("SupportCalculator");
 
     public static List<SupportMovement> calculateSupport(Village pVillage, Date pArrive, boolean pRealDefOnly, List<Tag> pTags, int pMinNumber) {
-        Hashtable<UnitHolder, Integer> unitTable = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> unitTable = new Hashtable<>();
         if (logger.isDebugEnabled()) {
             logger.debug("Try to find support for village " + pVillage + " at arrival time " + new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(pArrive));
             if (pTags == null || pTags.isEmpty()) {
@@ -54,16 +54,22 @@ public class SupportCalculator {
             logger.debug("Using only def units");
             //use only "real" def units
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                if (unit.getPlainName().equals("spear")) {
-                    unitTable.put(unit, cnt);
-                } else if (unit.getPlainName().equals("sword")) {
-                    unitTable.put(unit, cnt);
-                } else if (unit.getPlainName().equals("archer")) {
-                    unitTable.put(unit, cnt);
-                } else if (unit.getPlainName().equals("heavy")) {
-                    unitTable.put(unit, cnt);
-                } else if (unit.getPlainName().equals("knight")) {
-                    unitTable.put(unit, cnt);
+                switch (unit.getPlainName()) {
+                    case "spear":
+                        unitTable.put(unit, cnt);
+                        break;
+                    case "sword":
+                        unitTable.put(unit, cnt);
+                        break;
+                    case "archer":
+                        unitTable.put(unit, cnt);
+                        break;
+                    case "heavy":
+                        unitTable.put(unit, cnt);
+                        break;
+                    case "knight":
+                        unitTable.put(unit, cnt);
+                        break;
                 }
                 cnt++;
             }
@@ -78,10 +84,10 @@ public class SupportCalculator {
             }
         }
 
-        List<SupportMovement> movements = new LinkedList<SupportMovement>();
+        List<SupportMovement> movements = new LinkedList<>();
 
         //get tagged villages
-        List<Village> villages = new LinkedList<Village>();
+        List<Village> villages = new LinkedList<>();
         if (pTags == null || pTags.isEmpty()) {
             Tribe own = GlobalOptions.getSelectedProfile().getTribe();
             if (own == null) {

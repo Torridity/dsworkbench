@@ -263,7 +263,7 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
         jxRankTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jxRankTable.setColumnControlVisible(true);
         jxRankTable.setModel(theModel);
-        List<SortKey> keys = new LinkedList<SortKey>();
+        List<SortKey> keys = new LinkedList<>();
         keys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
         jxRankTable.getRowSorter().setSortKeys(keys);
         jxRankTable.setDefaultRenderer(Integer.class, new NumberFormatCellRenderer());
@@ -406,7 +406,7 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
         }
         if (!pFilterRows) {
             jxRankTable.setRowFilter(null);
-            final List<Integer> relevantCols = new LinkedList<Integer>();
+            final List<Integer> relevantCols = new LinkedList<>();
             List<TableColumn> cols = jxRankTable.getColumns(true);
             for (int i = 0; i < jxRankTable.getColumnCount(); i++) {
                 TableColumnExt col = jxRankTable.getColumnExt(i);
@@ -425,7 +425,7 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
 
                 @Override
                 public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
-                    final List<Integer> relevantCols = new LinkedList<Integer>();
+                    final List<Integer> relevantCols = new LinkedList<>();
                     List<TableColumn> cols = jxRankTable.getColumns(true);
                     for (int i = 0; i < jxRankTable.getColumnCount(); i++) {
                         TableColumnExt col = jxRankTable.getColumnExt(i);
@@ -436,11 +436,11 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
 
                     for (Integer col : relevantCols) {
                         if (pCaseSensitive) {
-                            if (entry.getStringValue(col).indexOf(pValue) > -1) {
+                            if (entry.getStringValue(col).contains(pValue)) {
                                 return true;
                             }
                         } else {
-                            if (entry.getStringValue(col).toLowerCase().indexOf(pValue.toLowerCase()) > -1) {
+                            if (entry.getStringValue(col).toLowerCase().contains(pValue.toLowerCase())) {
                                 return true;
                             }
                         }

@@ -133,8 +133,6 @@ public class Marker extends ManageableType implements BBSupport {
             m.setMarkerType(Integer.parseInt(split[1]));
             m.setMarkerColor(new Color(Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4])));
             m.setShownOnMap(Boolean.parseBoolean(split[5]));
-        } catch (NumberFormatException nfe) {
-            m = null;
         } catch (IllegalArgumentException iae) {
             m = null;
         }

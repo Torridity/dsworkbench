@@ -841,11 +841,8 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 }
             }
             showSuccess(cnt + ((cnt == 1) ? " Angriff eingefügt" : " Angriffe eingefügt"));
-        } catch (UnsupportedFlavorException ufe) {
+        } catch (UnsupportedFlavorException | IOException ufe) {
             logger.error("Failed to copy attacks from internal clipboard", ufe);
-            showError("Fehler beim Einfügen der Angriffe");
-        } catch (IOException ioe) {
-            logger.error("Failed to copy attacks from internal clipboard", ioe);
             showError("Fehler beim Einfügen der Angriffe");
         }
         ((DoItYourselfAttackTableModel) jAttackTable.getModel()).fireTableDataChanged();
@@ -902,7 +899,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
     }
 
     private List<Attack> getSelectedAttacks() {
-        final List<Attack> selectedAttacks = new LinkedList<Attack>();
+        final List<Attack> selectedAttacks = new LinkedList<>();
         int[] selectedRows = jAttackTable.getSelectedRows();
         if (selectedRows != null && selectedRows.length < 1) {
             return selectedAttacks;

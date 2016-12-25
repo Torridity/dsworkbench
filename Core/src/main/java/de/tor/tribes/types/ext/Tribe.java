@@ -48,7 +48,7 @@ public class Tribe implements Comparable<Tribe>, Serializable {
     private int rankDef = 0;
 
     public Tribe() {
-        villageList = new LinkedList<Village>();
+        villageList = new LinkedList<>();
     }
     //$id, $name, $ally, $villages, $points, $rank
 
@@ -159,7 +159,7 @@ public class Tribe implements Comparable<Tribe>, Serializable {
 
     public void addVillage(Village v, boolean pChecked) {
         if (villageList == null) {
-            villageList = new LinkedList<Village>();
+            villageList = new LinkedList<>();
         }
         if (!pChecked || !villageList.contains(v)) {
             villageList.add(v);
@@ -172,7 +172,7 @@ public class Tribe implements Comparable<Tribe>, Serializable {
 
     public boolean removeVillage(Village pVillage) {
         if (villageList == null) {
-            villageList = new LinkedList<Village>();
+            villageList = new LinkedList<>();
         }
 
         return villageList.remove(pVillage);
@@ -180,7 +180,7 @@ public class Tribe implements Comparable<Tribe>, Serializable {
 
     public boolean ownsVillage(Village pVillage) {
         if (villageList == null) {
-            villageList = new LinkedList<Village>();
+            villageList = new LinkedList<>();
         }
 
         return villageList.contains(pVillage);
@@ -188,7 +188,7 @@ public class Tribe implements Comparable<Tribe>, Serializable {
 
     public Village[] getVillageList() {
         if (villageList == null) {
-            villageList = new LinkedList<Village>();
+            villageList = new LinkedList<>();
         }
         return villageList.toArray(new Village[villageList.size()]);
     }

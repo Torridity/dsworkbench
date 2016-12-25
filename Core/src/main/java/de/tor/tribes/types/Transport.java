@@ -48,7 +48,7 @@ import java.util.List;
          * @param amount the amount to set
          */
         public void setSingleTransports(List<Resource> pTransports) {
-            resourceTransports = new LinkedList<Resource>();
+            resourceTransports = new LinkedList<>();
             resourceTransports.add(new Resource(0, Resource.Type.WOOD));
             resourceTransports.add(new Resource(0, Resource.Type.CLAY));
             resourceTransports.add(new Resource(0, Resource.Type.IRON));

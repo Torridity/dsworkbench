@@ -102,7 +102,7 @@ public class TimeFrameVisualizer extends javax.swing.JPanel {
         } catch (Exception e) {
         }
 
-        popupInfo = new HashMap<String, Object>();
+        popupInfo = new HashMap<>();
         addMouseMotionListener(new MouseMotionListener() {
 
             @Override

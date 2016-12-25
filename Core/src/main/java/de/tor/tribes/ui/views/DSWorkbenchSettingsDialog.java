@@ -242,7 +242,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
     }
 
     public Hashtable<UnitHolder, Integer> getDefense() {
-        Hashtable<UnitHolder, Integer> result = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> result = new Hashtable<>();
         Set<Entry<String, Integer>> entries = getDefenseInternal().entrySet();
         for (Entry<String, Integer> e : entries) {
             UnitHolder unit = DataHolder.getSingleton().getUnitByPlainName(e.getKey());
@@ -254,7 +254,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
     }
 
     private Hashtable<String, Integer> getDefenseInternal() {
-        Hashtable<String, Integer> result = new Hashtable<String, Integer>();
+        Hashtable<String, Integer> result = new Hashtable<>();
         result.put("spear", UIHelper.parseIntFromField(jDefSpear, 500));
         result.put("sword", UIHelper.parseIntFromField(jDefSword, 500));
         result.put("archer", UIHelper.parseIntFromField(jDefArcher, 500));
@@ -272,7 +272,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
     }
 
     public Hashtable<UnitHolder, Integer> getOffense() {
-        Hashtable<UnitHolder, Integer> result = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> result = new Hashtable<>();
         Set<Entry<String, Integer>> entries = getOffenseInternal().entrySet();
         for (Entry<String, Integer> e : entries) {
             UnitHolder unit = DataHolder.getSingleton().getUnitByPlainName(e.getKey());
@@ -284,7 +284,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
     }
 
     private Hashtable<String, Integer> getOffenseInternal() {
-        Hashtable<String, Integer> result = new Hashtable<String, Integer>();
+        Hashtable<String, Integer> result = new Hashtable<>();
         result.put("axe", UIHelper.parseIntFromField(jOffAxe, 7000));
         result.put("light", UIHelper.parseIntFromField(jOffLight, 3000));
         result.put("marcher", UIHelper.parseIntFromField(jOffMarcher, 500));

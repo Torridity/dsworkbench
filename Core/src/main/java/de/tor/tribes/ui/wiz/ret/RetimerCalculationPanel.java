@@ -79,7 +79,7 @@ public class RetimerCalculationPanel extends WizardPage {
         StyleConstants.setItalic(defaultStyle, true);
         StyleConstants.setFontFamily(defaultStyle, "SansSerif");
         dateFormat = new SimpleDateFormat("HH:mm:ss");
-        retimes = new LinkedList<Attack>();
+        retimes = new LinkedList<>();
     }
 
     public static String getDescription() {
@@ -332,7 +332,7 @@ public class RetimerCalculationPanel extends WizardPage {
     }
 
     private List<Attack> getRetimesForVillage(Attack pAttack, VillageTroopsHolder pHolder) {
-        List<Attack> results = new LinkedList<Attack>();
+        List<Attack> results = new LinkedList<>();
         Village target = pAttack.getSource();
         Village source = pHolder.getVillage();
         long returnTime = pAttack.getReturnTime().getTime();

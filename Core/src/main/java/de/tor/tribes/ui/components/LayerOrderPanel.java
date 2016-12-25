@@ -54,15 +54,15 @@ public class LayerOrderPanel extends javax.swing.JPanel {
 
     int activeLayer = -1;
     int focusLayer = -1;
-    private List<Layer> layers = new ArrayList<Layer>();
-    private HashMap<String, BufferedImage> iconMap = new HashMap<String, BufferedImage>();
+    private List<Layer> layers = new ArrayList<>();
+    private HashMap<String, BufferedImage> iconMap = new HashMap<>();
     private LayerOrderTooltipListener tooltipListener = null;
 
     /** Creates new form LayerOrderPanel */
     public LayerOrderPanel(LayerOrderTooltipListener pListener) {
         initComponents();
         tooltipListener = pListener;
-        Vector<String> v = new Vector<String>(Constants.LAYERS.size());
+        Vector<String> v = new Vector<>(Constants.LAYERS.size());
         for (int i = 0; i < Constants.LAYERS.size(); i++) {
             v.add("");
         }
@@ -232,17 +232,21 @@ public class LayerOrderPanel extends javax.swing.JPanel {
         Ellipse2D markerEllipse = null;
         for (Layer l : layers) {
             g2d.setColor(Color.LIGHT_GRAY);
-            if (l.getName().equals("Dörfer")) {
-                gotVillages = true;
-                markerLayer = false;
-                villageLayer = true;
-            } else if (l.getName().equals("Markierungen")) {
-                gotMarkers = true;
-                markerLayer = true;
-                villageLayer = false;
-            } else {
-                markerLayer = false;
-                villageLayer = false;
+            switch (l.getName()) {
+                case "Dörfer":
+                    gotVillages = true;
+                    markerLayer = false;
+                    villageLayer = true;
+                    break;
+                case "Markierungen":
+                    gotMarkers = true;
+                    markerLayer = true;
+                    villageLayer = false;
+                    break;
+                default:
+                    markerLayer = false;
+                    villageLayer = false;
+                    break;
             }
 
             //check if this layer is visible or if it is the marker/village layer
@@ -346,7 +350,7 @@ public class LayerOrderPanel extends javax.swing.JPanel {
     }
 
     private void propagateLayerOrder() {
-        List<Integer> layerOrder = new ArrayList<Integer>();
+        List<Integer> layerOrder = new ArrayList<>();
         for (Layer l : layers) {
             layerOrder.add(Constants.LAYERS.get(l.getName()));
         }

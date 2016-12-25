@@ -516,7 +516,7 @@ public class ReportGenerator extends javax.swing.JFrame {
     }
 
     private Hashtable<UnitHolder, Integer> getAttackingTroops(Village pVillage) {
-        Hashtable<String, Integer> units = new Hashtable<String, Integer>();
+        Hashtable<String, Integer> units = new Hashtable<>();
         if (jFarming.isSelected()) {
             FarmInformation info = FarmManager.getSingleton().getFarmInformation(pVillage);
             if (info == null || info.getFarmTroop() == null) {
@@ -552,7 +552,7 @@ public class ReportGenerator extends javax.swing.JFrame {
     }
 
     public Hashtable<UnitHolder, Integer> getReducedTroopAmount(Hashtable<UnitHolder, Integer> pUnits, double pPercent) {
-        Hashtable<UnitHolder, Integer> units = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> units = new Hashtable<>();
         Set<Entry<UnitHolder, Integer>> entries = pUnits.entrySet();
         for (Entry<UnitHolder, Integer> entry : entries) {
             int val = entry.getValue();
@@ -567,7 +567,7 @@ public class ReportGenerator extends javax.swing.JFrame {
     }
 
     private Hashtable<UnitHolder, Integer> getDefendingTroops() {
-        Hashtable<String, Integer> units = new Hashtable<String, Integer>();
+        Hashtable<String, Integer> units = new Hashtable<>();
         if (jSomeDef.isSelected()) {
             units.put("spear", getRandomValueInRange(1000, 2000));
             units.put("sword", getRandomValueInRange(1000, 2000));
@@ -634,13 +634,7 @@ public class ReportGenerator extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ReportGenerator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ReportGenerator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ReportGenerator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | javax.swing.UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
             java.util.logging.Logger.getLogger(ReportGenerator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>

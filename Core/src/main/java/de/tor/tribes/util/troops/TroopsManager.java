@@ -47,9 +47,9 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
     public static final String SUPPORT_GROUP = "Unterstützung";
     private static Logger logger = Logger.getLogger("TroopsManager");
     private static TroopsManager SINGLETON = null;
-    private HashMap<String, HashMap<Village, VillageTroopsHolder>> managedElementGroups = new HashMap<String, HashMap<Village, VillageTroopsHolder>>();
+    private HashMap<String, HashMap<Village, VillageTroopsHolder>> managedElementGroups = new HashMap<>();
     //  private Hashtable<Village, VillageTroopsHolder> mTroops = null;
-    private List<Image> mTroopMarkImages = new LinkedList<Image>();
+    private List<Image> mTroopMarkImages = new LinkedList<>();
 
     public static synchronized TroopsManager getSingleton() {
         if (SINGLETON == null) {
@@ -82,7 +82,7 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
 
     @Override
     public List<ManageableType> removeGroup(String pGroup) {
-        return new LinkedList<ManageableType>();
+        return new LinkedList<>();
     }
 
     @Override
@@ -116,7 +116,7 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
 
     @Override
     public List<ManageableType> getAllElements(final List<String> pGroups) {
-        List<ManageableType> elements = new LinkedList<ManageableType>();
+        List<ManageableType> elements = new LinkedList<>();
         for (String group : pGroups) {
             for (ManageableType t : getAllElements(group)) {
                 elements.add(t);
@@ -134,11 +134,11 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
     public List<ManageableType> getAllElements(String pGroup) {
         HashMap<Village, VillageTroopsHolder> set = managedElementGroups.get(pGroup);
         if (set == null) {
-            return new LinkedList<ManageableType>();
+            return new LinkedList<>();
         }
         Collection<VillageTroopsHolder> values = set.values();
         if (values == null) {
-            return new LinkedList<ManageableType>();
+            return new LinkedList<>();
         }
         return Collections.unmodifiableList(Arrays.asList(set.values().toArray(new ManageableType[set.size()])));
     }
@@ -302,7 +302,7 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
         if (inVillage == null) {
             return null;
         }
-        List<Double> l = new LinkedList<Double>();
+        List<Double> l = new LinkedList<>();
         double off = inVillage.getOffValue();
         double def = inVillage.getDefValue();
         double defCav = inVillage.getDefCavalryValue();
@@ -333,7 +333,7 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
         }
 
         Iterator<Village> keys = managedElementGroups.get(getGroupForType(pType)).keySet().iterator();
-        List<Village> valid = new LinkedList<Village>();
+        List<Village> valid = new LinkedList<>();
         while (keys.hasNext()) {
             Village key = keys.next();
             boolean isValid = pANDConnection;
@@ -368,7 +368,7 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
         }
 
         Iterator<Village> keys = managedElementGroups.get(getGroupForType(pType)).keySet().iterator();
-        List<Village> valid = new LinkedList<Village>();
+        List<Village> valid = new LinkedList<>();
         while (keys.hasNext()) {
             Village key = keys.next();
             boolean isValid = pANDConnection;
@@ -400,7 +400,7 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
     @Override
     public final void initialize() {
         if (managedElementGroups == null) {
-            managedElementGroups = new HashMap<String, HashMap<Village, VillageTroopsHolder>>();
+            managedElementGroups = new HashMap<>();
         } else {
             managedElementGroups.clear();
         }

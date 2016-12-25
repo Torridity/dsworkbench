@@ -36,7 +36,7 @@ public class DEPSourceTableModel extends AbstractTableModel {
     private Class[] types = new Class[]{
         Tribe.class, Village.class, Integer.class
     };
-    private final List<SupportSourceElement> elements = new LinkedList<SupportSourceElement>();
+    private final List<SupportSourceElement> elements = new LinkedList<>();
 
     public DEPSourceTableModel() {
         super();

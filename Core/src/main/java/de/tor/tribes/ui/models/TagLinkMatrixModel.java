@@ -42,7 +42,7 @@ public class TagLinkMatrixModel extends AbstractTableModel {
     }
 
     private void initModel() {
-        List<Integer> continents = new LinkedList<Integer>();
+        List<Integer> continents = new LinkedList<>();
         for (Village v : GlobalOptions.getSelectedProfile().getTribe().getVillageList()) {
             if (!continents.contains(v.getContinent())) {
                 continents.add(v.getContinent());
@@ -50,7 +50,7 @@ public class TagLinkMatrixModel extends AbstractTableModel {
         }
         Collections.sort(continents);
 
-        List<String> sColumns = new LinkedList<String>();
+        List<String> sColumns = new LinkedList<>();
         sColumns.add("");
         sColumns.add("Alle");
         for (Integer iCont : continents) {
@@ -60,7 +60,7 @@ public class TagLinkMatrixModel extends AbstractTableModel {
 
         columnNames = sColumns.toArray(new String[]{});
         //show only non LinkedTags
-        List<Tag> usableTags = new LinkedList<Tag>();
+        List<Tag> usableTags = new LinkedList<>();
         for (ManageableType e : TagManager.getSingleton().getAllElements()) {
             if (!(e instanceof LinkedTag)) {
                 usableTags.add((Tag) e);
@@ -142,13 +142,13 @@ public class TagLinkMatrixModel extends AbstractTableModel {
         StringBuilder group3 = new StringBuilder();
         StringBuilder group4 = new StringBuilder();
 
-        for (int i = 0; i < values.length; i++) {
+        for (Object[] value : values) {
             //handle tags (rows)
-            Tag t = (Tag) values[i][0];
+            Tag t = (Tag) value[0];
 
             for (int j = 1; j < columnNames.length; j++) {
                 String relation = "";
-                if (MultiBooleanTableCellEditor.isOptionSet((Integer) values[i][j], MultiBooleanTableCellEditor.VALUE1)) {
+                if (MultiBooleanTableCellEditor.isOptionSet((Integer) value[j], MultiBooleanTableCellEditor.VALUE1)) {
                     if (group1.length() > 0) {
                         group1.append(" UND ");
                     }
@@ -160,7 +160,7 @@ public class TagLinkMatrixModel extends AbstractTableModel {
                     group1.append(relation);
                 }
                 relation = "";
-                if (MultiBooleanTableCellEditor.isOptionSet((Integer) values[i][j], MultiBooleanTableCellEditor.VALUE2)) {
+                if (MultiBooleanTableCellEditor.isOptionSet((Integer) value[j], MultiBooleanTableCellEditor.VALUE2)) {
                     if (group2.length() > 0) {
                         group2.append(" UND ");
                     }
@@ -172,7 +172,7 @@ public class TagLinkMatrixModel extends AbstractTableModel {
                     group2.append(relation);
                 }
                 relation = "";
-                if (MultiBooleanTableCellEditor.isOptionSet((Integer) values[i][j], MultiBooleanTableCellEditor.VALUE3)) {
+                if (MultiBooleanTableCellEditor.isOptionSet((Integer) value[j], MultiBooleanTableCellEditor.VALUE3)) {
                     if (group3.length() > 0) {
                         group3.append(" UND ");
                     }
@@ -184,7 +184,7 @@ public class TagLinkMatrixModel extends AbstractTableModel {
                     group3.append(relation);
                 }
                 relation = "";
-                if (MultiBooleanTableCellEditor.isOptionSet((Integer) values[i][j], MultiBooleanTableCellEditor.VALUE4)) {
+                if (MultiBooleanTableCellEditor.isOptionSet((Integer) value[j], MultiBooleanTableCellEditor.VALUE4)) {
                     if (group4.length() > 0) {
                         group4.append(" UND ");
                     }
@@ -229,13 +229,13 @@ public class TagLinkMatrixModel extends AbstractTableModel {
         StringBuilder group3 = new StringBuilder();
         StringBuilder group4 = new StringBuilder();
 
-        for (int i = 0; i < values.length; i++) {
+        for (Object[] value : values) {
             //handle tags (rows)
-            Tag t = (Tag) values[i][0];
+            Tag t = (Tag) value[0];
 
             for (int j = 1; j < columnNames.length; j++) {
                 String relation = "";
-                if (MultiBooleanTableCellEditor.isOptionSet((Integer) values[i][j], MultiBooleanTableCellEditor.VALUE1)) {
+                if (MultiBooleanTableCellEditor.isOptionSet((Integer) value[j], MultiBooleanTableCellEditor.VALUE1)) {
                     if (group1.length() > 0) {
                         group1.append(" und ");
                     }
@@ -247,7 +247,7 @@ public class TagLinkMatrixModel extends AbstractTableModel {
                     group1.append(relation);
                 }
                 relation = "";
-                if (MultiBooleanTableCellEditor.isOptionSet((Integer) values[i][j], MultiBooleanTableCellEditor.VALUE2)) {
+                if (MultiBooleanTableCellEditor.isOptionSet((Integer) value[j], MultiBooleanTableCellEditor.VALUE2)) {
                     if (group2.length() > 0) {
                         group2.append(" und ");
                     }
@@ -259,7 +259,7 @@ public class TagLinkMatrixModel extends AbstractTableModel {
                     group2.append(relation);
                 }
                 relation = "";
-                if (MultiBooleanTableCellEditor.isOptionSet((Integer) values[i][j], MultiBooleanTableCellEditor.VALUE3)) {
+                if (MultiBooleanTableCellEditor.isOptionSet((Integer) value[j], MultiBooleanTableCellEditor.VALUE3)) {
                     if (group3.length() > 0) {
                         group3.append(" und ");
                     }
@@ -271,7 +271,7 @@ public class TagLinkMatrixModel extends AbstractTableModel {
                     group3.append(relation);
                 }
                 relation = "";
-                if (MultiBooleanTableCellEditor.isOptionSet((Integer) values[i][j], MultiBooleanTableCellEditor.VALUE4)) {
+                if (MultiBooleanTableCellEditor.isOptionSet((Integer) value[j], MultiBooleanTableCellEditor.VALUE4)) {
                     if (group4.length() > 0) {
                         group4.append(" und ");
                     }

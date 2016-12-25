@@ -42,7 +42,7 @@ public class Constants {
     public final static boolean DEBUG = false;
 
     static {
-        LAYERS = new Hashtable<String, Integer>();
+        LAYERS = new Hashtable<>();
         LAYERS.put("Markierungen", 0);
         LAYERS.put("Dörfer", 1);
         LAYERS.put("Dorfsymbole", 2);

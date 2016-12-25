@@ -173,7 +173,7 @@ public class FormManager extends GenericManager<AbstractForm> {
     }
 
     public List<AbstractForm> getVisibleForms() {
-        List<AbstractForm> visible = new LinkedList<AbstractForm>();
+        List<AbstractForm> visible = new LinkedList<>();
         for (ManageableType t : getAllElements()) {
             AbstractForm f = (AbstractForm) t;
             if (f.isVisibleOnMap()) {

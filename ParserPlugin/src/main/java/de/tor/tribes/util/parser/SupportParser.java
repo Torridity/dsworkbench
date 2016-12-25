@@ -51,7 +51,7 @@ public class SupportParser implements SilentParserInterface {
         StringTokenizer lineTok = new StringTokenizer(pTroopsString, "\n\r");
         Village supportSender = null;
         int supportCount = 0;
-        List<Village> touchedVillages = new LinkedList<Village>();
+        List<Village> touchedVillages = new LinkedList<>();
         TroopsManager.getSingleton().invalidate();
         while (lineTok.hasMoreElements()) {
             //parse single line for village
@@ -127,7 +127,7 @@ public class SupportParser implements SilentParserInterface {
             //get unit count (decrease due  to militia which cannot support
             uCount -= 1;
         }
-        Hashtable<UnitHolder, Integer> units = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> units = new Hashtable<>();
         int cnt = 0;
         while (t.hasMoreTokens()) {
             String next = t.nextToken();

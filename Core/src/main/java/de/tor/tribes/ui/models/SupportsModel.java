@@ -34,7 +34,7 @@ public class SupportsModel extends AbstractTableModel {
     private String[] colNames = new String[]{"Herkunft", "Ziel", "Früheste Abschickzeit", "Späteste Abschickzeit", "Countdown", "Übertragen"};
 
     public SupportsModel() {
-        entries = new ArrayList<Defense>();
+        entries = new ArrayList<>();
     }
 
     public void clear() {

@@ -105,7 +105,7 @@ public class OverallStatResult implements BBSupport {
     private Date endDate = null;
 
     public OverallStatResult() {
-        allyStats = new LinkedList<AllyStatResult>();
+        allyStats = new LinkedList<>();
     }
 
     public void addAllyStatsResult(AllyStatResult pStat) {

@@ -139,7 +139,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         centerPanel.setChildComponent(jSelectionTreePanel);
         buildMenu();
         capabilityInfoPanel1.addActionListener(this);
-        treeData = new LinkedList<Village>();
+        treeData = new LinkedList<>();
         jSelectionTree.setCellRenderer(new NodeCellRenderer());
 
         KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
@@ -255,11 +255,11 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         if (treeMode) {
             //tree view
             //add all villages
-            Hashtable<Ally, AllyNode> allyNodes = new Hashtable<Ally, AllyNode>();
-            Hashtable<Tribe, TribeNode> tribeNodes = new Hashtable<Tribe, TribeNode>();
-            Hashtable<Tribe, Hashtable<Tag, TagNode>> tagNodes = new Hashtable<Tribe, Hashtable<Tag, TagNode>>();
+            Hashtable<Ally, AllyNode> allyNodes = new Hashtable<>();
+            Hashtable<Tribe, TribeNode> tribeNodes = new Hashtable<>();
+            Hashtable<Tribe, Hashtable<Tag, TagNode>> tagNodes = new Hashtable<>();
 
-            List<Village> used = new LinkedList<Village>();
+            List<Village> used = new LinkedList<>();
 
             for (Village v : treeData) {
                 Tribe t = v.getTribe();
@@ -291,7 +291,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
 
                     Hashtable<Tag, TagNode> nodes = tagNodes.get(t);
                     if (nodes == null) {
-                        nodes = new Hashtable<Tag, TagNode>();
+                        nodes = new Hashtable<>();
                         tagNodes.put(t, nodes);
                     }
                     TagNode tagNode = nodes.get(tag);
@@ -901,7 +901,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
 
     public List<Village> getSelectedElements() {
         TreePath[] paths = jSelectionTree.getSelectionModel().getSelectionPaths();
-        List<Village> result = new LinkedList<Village>();
+        List<Village> result = new LinkedList<>();
         if (paths == null) {
             return result;
         }
@@ -961,7 +961,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                 }
             } else if (o != null && o.equals(mRoot)) {
                 //remove all
-                result = new LinkedList<Village>(treeData);
+                result = new LinkedList<>(treeData);
                 //nothing more than everything can be removed
                 return result;
             } else {
@@ -987,7 +987,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception e) {
         }
-        List<Village> selection = new LinkedList<Village>();
+        List<Village> selection = new LinkedList<>();
         for (int i = 0; i < 100; i++) {
             selection.add(DataHolder.getSingleton().getRandomVillage());
         }

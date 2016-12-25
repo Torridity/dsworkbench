@@ -92,7 +92,7 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
     }
     public static final Comparator<Village> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
     public static final Comparator<Village> ALLY_TRIBE_VILLAGE_COMPARATOR = new AllyTribeVillageComparator();
-    public static final Comparator<String> ALPHA_NUM_COMPARATOR = new IntuitiveStringComparator<String>();
+    public static final Comparator<String> ALPHA_NUM_COMPARATOR = new IntuitiveStringComparator<>();
     public final static int ORDER_ALPHABETICALLY = 0;
     public final static int ORDER_BY_COORDINATES = 1;
     private static int orderType = ORDER_ALPHABETICALLY;
@@ -136,7 +136,7 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
             entry.setId(Integer.parseInt(tokenizer.nextToken()));
             String n = URLDecoder.decode(tokenizer.nextToken(), "UTF-8");
             //replace HTML characters 
-            if (n.indexOf("&") > -1) {
+            if (n.contains("&")) {
                 n = n.replaceAll("&gt;", ">").replaceAll("&lt;", "<").replaceAll("&quot;",
                         "\"").replaceAll("&amp;", "&").replaceAll("&tilde;", "~");
             }

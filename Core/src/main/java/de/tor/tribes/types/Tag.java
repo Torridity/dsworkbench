@@ -52,7 +52,7 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
             + "Dörfer: %VILLAGE_COUNT%\n"
             + "[quote]%VILLAGE_LIST%[/quote]";
     private String sName = null;
-    private List<Integer> mVillageIDs = new LinkedList<Integer>();
+    private List<Integer> mVillageIDs = new LinkedList<>();
     //-1 means no icon
     private TagMapMarker mapMarker = null;
     private boolean showOnMap = true;
@@ -65,7 +65,7 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
     @Override
     public String[] getReplacements(boolean pExtended) {
         String nameVal = getName();
-        List<Village> villages = new LinkedList<Village>();
+        List<Village> villages = new LinkedList<>();
         for (Integer id : getVillageIDs()) {
             Village v = DataHolder.getSingleton().getVillagesById().get(id);
             if (v != null) {
@@ -328,7 +328,7 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
 
         @Override
         public int compare(Tag s1, Tag s2) {
-            return new Integer(s2.getName().length()).compareTo(new Integer(s1.getName().length()));
+            return new Integer(s2.getName().length()).compareTo(s1.getName().length());
         }
     }
 

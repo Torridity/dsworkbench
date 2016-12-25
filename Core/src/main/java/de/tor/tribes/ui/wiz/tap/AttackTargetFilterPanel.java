@@ -438,7 +438,7 @@ public class AttackTargetFilterPanel extends WizardPage {
                 element.setIgnored(false);
             }
         } else {
-            List<String> groups = new ArrayList<String>();
+            List<String> groups = new ArrayList<>();
             for (Object o : selection) {
                 groups.add((String) o);
             }
@@ -524,7 +524,7 @@ public class AttackTargetFilterPanel extends WizardPage {
     }
 
     public TAPAttackTargetElement[] getFilteredElements() {
-        List<TAPAttackTargetElement> filtered = new LinkedList<TAPAttackTargetElement>();
+        List<TAPAttackTargetElement> filtered = new LinkedList<>();
         TAPTargetFilterTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             TAPAttackTargetElement elem = model.getRow(i);
@@ -536,7 +536,7 @@ public class AttackTargetFilterPanel extends WizardPage {
     }
 
     public List<TAPAttackTargetElement> getSelection() {
-        List<TAPAttackTargetElement> elements = new LinkedList<TAPAttackTargetElement>();
+        List<TAPAttackTargetElement> elements = new LinkedList<>();
         TAPTargetFilterTableModel model = getModel();
         for (int i : jVillageTable.getSelectedRows()) {
             elements.add(model.getRow(jVillageTable.convertRowIndexToModel(i)));
@@ -545,7 +545,7 @@ public class AttackTargetFilterPanel extends WizardPage {
     }
 
     public List<TAPAttackTargetElement> getAllElements() {
-        List<TAPAttackTargetElement> elements = new LinkedList<TAPAttackTargetElement>();
+        List<TAPAttackTargetElement> elements = new LinkedList<>();
         TAPTargetFilterTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             elements.add(model.getRow(i));

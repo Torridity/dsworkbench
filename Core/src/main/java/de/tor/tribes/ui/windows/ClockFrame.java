@@ -65,7 +65,7 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
     private TimerThread tThread = null;
     private static ClockFrame SINGLETON = null;
     private ColoredProgressBar cp = null;
-    private final List<TimerPanel> timers = new ArrayList<TimerPanel>();
+    private final List<TimerPanel> timers = new ArrayList<>();
 
     public static synchronized ClockFrame getSingleton() {
         if (SINGLETON == null) {

@@ -192,7 +192,7 @@ public class ResourceDistributorWelcomePanel extends WizardPage {
             type = LOAD_DISTRIBUTION;
         }
         ResourceDistributorDataReadPanel.getSingleton().setup(type);
-        map.put(TYPE, new Integer(type));
+        map.put(TYPE, type);
         return WizardPanelNavResult.PROCEED;
     }
     

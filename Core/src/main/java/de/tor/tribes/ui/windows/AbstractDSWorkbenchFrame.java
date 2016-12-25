@@ -86,7 +86,7 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
     private DragSource dragSource;
 
     public AbstractDSWorkbenchFrame() {
-        mFrameListeners = new LinkedList<DSWorkbenchFrameListener>();
+        mFrameListeners = new LinkedList<>();
         // getContentPane().setBackground(Constants.DS_BACK);
         dragSource = DragSource.getDefaultDragSource();
         dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY_OR_MOVE, this);

@@ -152,7 +152,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         if (jTimeFrameList.getSelectedValues() == null || jTimeFrameList.getSelectedValues().length == 0) {
             return;
         }
-        List<Object> selection = new LinkedList<Object>();
+        List<Object> selection = new LinkedList<>();
         for (Object o : jTimeFrameList.getSelectedValues()) {
             if (!(o instanceof TimeSpanDivider)) {
                 selection.add(o);
@@ -168,7 +168,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
     }
 
     public List<TimeSpan> getTimeSpans() {
-        List<TimeSpan> timeSpans = new LinkedList<TimeSpan>();
+        List<TimeSpan> timeSpans = new LinkedList<>();
 
         //add time frames
         DefaultListModel model = (DefaultListModel) jTimeFrameList.getModel();
@@ -352,7 +352,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
             ((DefaultListModel) jTimeFrameList.getModel()).add(jTimeFrameList.getModel().getSize(), s);
         }
 
-        List<TimeSpan> spans = new LinkedList<TimeSpan>();
+        List<TimeSpan> spans = new LinkedList<>();
         for (int i = 0; i < model.getSize(); i++) {
             spans.add((TimeSpan) model.getElementAt(i));
         }
@@ -403,7 +403,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
                 ((DefaultListModel) jTimeFrameList.getModel()).add(jTimeFrameList.getModel().getSize(), s);
             }
 
-            List<TimeSpan> spans = new LinkedList<TimeSpan>();
+            List<TimeSpan> spans = new LinkedList<>();
             for (int i = 0; i < model.getSize(); i++) {
                 spans.add((TimeSpan) model.getElementAt(i));
             }
@@ -865,10 +865,8 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
                     throw new UnsupportedFlavorException(DataFlavor.stringFlavor);
                 }
                 addTimeSpan(s);
-            } catch (UnsupportedFlavorException usfe) {
+            } catch (UnsupportedFlavorException | IOException usfe) {
                 //invalid data
-            } catch (IOException ioe) {
-                //failed to get data
             }
         }
     }

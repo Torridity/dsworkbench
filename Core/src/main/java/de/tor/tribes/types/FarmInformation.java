@@ -299,7 +299,7 @@ public class FarmInformation extends ManageableType {
         Collections.sort(reports, new Comparator<FightReport>() {
             @Override
             public int compare(FightReport o1, FightReport o2) {
-                return Long.valueOf(o1.getTimestamp()).compareTo(Long.valueOf(o2.getTimestamp()));
+                return Long.valueOf(o1.getTimestamp()).compareTo(o2.getTimestamp());
             }
         });
 
@@ -711,9 +711,9 @@ public class FarmInformation extends ManageableType {
                 } else {
                     info.append(unitsAndVillages.size()).append(" Dorf/Dörfer mit freien Truppen gefunden.\n");
                     //villages with enough troops found
-                    final HashMap<Village, Hashtable<UnitHolder, Integer>> carriageMap = new HashMap<Village, Hashtable<UnitHolder, Integer>>();
+                    final HashMap<Village, Hashtable<UnitHolder, Integer>> carriageMap = new HashMap<>();
                     Enumeration<Village> villageKeys = unitsAndVillages.keys();
-                    List<Village> villages = new LinkedList<Village>();
+                    List<Village> villages = new LinkedList<>();
                     while (villageKeys.hasMoreElements()) {
                         Village selectedVillage = villageKeys.nextElement();
                         Hashtable<UnitHolder, Integer> units;
@@ -721,7 +721,7 @@ public class FarmInformation extends ManageableType {
                             //calculate needed units
                             units = TroopHelper.getTroopsForCarriage(pConfig, unitsAndVillages.get(selectedVillage), this);
                         } else {//use provided units for A/B-Scenario
-                            units = new Hashtable<UnitHolder, Integer>();
+                            units = new Hashtable<>();
                             Hashtable<UnitHolder, Integer> configTroops = DSWorkbenchFarmManager.getSingleton().getTroops(pConfig);
                             Enumeration<UnitHolder> unitKeys = configTroops.keys();
                             while (unitKeys.hasMoreElements()) {
@@ -759,7 +759,7 @@ public class FarmInformation extends ManageableType {
                                     double speed2 = TroopHelper.getTroopSpeed(carriageMap.get(o2));
 
                                     return new Double(DSCalculator.calculateMoveTimeInMinutes(o1, getVillage(), speed1)).compareTo(
-                                            new Double(DSCalculator.calculateMoveTimeInMinutes(o2, getVillage(), speed2)));
+                                            DSCalculator.calculateMoveTimeInMinutes(o2, getVillage(), speed2));
                                 }
                             });
                         }

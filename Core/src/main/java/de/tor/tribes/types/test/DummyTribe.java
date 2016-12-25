@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class DummyTribe extends Tribe {
 
-    private List<Village> v = new LinkedList<Village>();
+    private List<Village> v = new LinkedList<>();
 
     public DummyTribe() {
         super();

@@ -51,7 +51,7 @@ public class GroupParser implements SilentParserInterface {
      */
 
     private boolean parseVillageRenamerData(String pData) {
-        Hashtable<String, List<Village>> mappings = new Hashtable<String, List<Village>>();
+        Hashtable<String, List<Village>> mappings = new Hashtable<>();
         try {
             JSONObject sectorObject = new JSONObject(pData);
             JSONObject data = (JSONObject) sectorObject.get("id");
@@ -62,7 +62,7 @@ public class GroupParser implements SilentParserInterface {
 
                 List<Village> groups = mappings.get(groupName);
                 if (groups == null) {
-                    groups = new LinkedList<Village>();
+                    groups = new LinkedList<>();
                     mappings.put(groupName, groups);
                 }
                 Village v = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(villageId));
@@ -89,7 +89,7 @@ public class GroupParser implements SilentParserInterface {
 
         StringTokenizer lineTok = new StringTokenizer(pGroupsString, "\n\r");
 
-        Hashtable<String, List<Village>> groups = new Hashtable<String, List<Village>>();
+        Hashtable<String, List<Village>> groups = new Hashtable<>();
         while (lineTok.hasMoreElements()) {
             //parse single line for village
             String line = lineTok.nextToken();
@@ -146,7 +146,7 @@ public class GroupParser implements SilentParserInterface {
                                     String group = groupsTokenizer.nextToken().trim();
                                     List<Village> groupVillages = groups.get(group);
                                     if (groupVillages == null) {
-                                        groupVillages = new LinkedList<Village>();
+                                        groupVillages = new LinkedList<>();
                                         groups.put(group, groupVillages);
                                     }
                                     groupVillages.add(v);
@@ -175,7 +175,7 @@ public class GroupParser implements SilentParserInterface {
         String groupRegEx = "[(.*);\\s]*(.*)\\s(»[\\s]*bearbeiten)";
         Pattern regExPattern = Pattern.compile(villageRegEx + "(.*)" + groupCountRegEx + "\\s" + groupRegEx);
         StringTokenizer lines = new StringTokenizer(pGroups, "\n");
-        Hashtable<String, List<Village>> groupMap = new Hashtable<String, List<Village>>();
+        Hashtable<String, List<Village>> groupMap = new Hashtable<>();
         while (lines.hasMoreTokens()) {
             String newLine = lines.nextToken().trim();
             Matcher matcher = regExPattern.matcher(newLine);
@@ -201,7 +201,7 @@ public class GroupParser implements SilentParserInterface {
                     for (String group : singleGroups) {
                         List<Village> villagesInGroup = groupMap.get(group);
                         if (villagesInGroup == null) {
-                            villagesInGroup = new LinkedList<Village>();
+                            villagesInGroup = new LinkedList<>();
                             groupMap.put(group, villagesInGroup);
                         }
                         villagesInGroup.add(groupedVillage);

@@ -218,7 +218,7 @@ public class LinkTagsDialog extends javax.swing.JDialog {
 
             String equation = ((TagLinkMatrixModel) jXTable1.getModel()).getEquation();
             List<ManageableType> elements = TagManager.getSingleton().getAllElements();
-            List<Tag> lTags = new LinkedList<Tag>();
+            List<Tag> lTags = new LinkedList<>();
             for (ManageableType e : elements) {
                 lTags.add((Tag) e);
             }

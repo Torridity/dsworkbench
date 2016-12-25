@@ -140,7 +140,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
             public void valueChanged(ListSelectionEvent e) {
                 Object[] allySelection = jAllyList.getSelectedValues();
                 jTribeList.clearSelection();
-                List<Tribe> tribes = new LinkedList<Tribe>();
+                List<Tribe> tribes = new LinkedList<>();
                 for (Object o : allySelection) {
                     Tribe[] tribesForAlly = StatManager.getSingleton().getMonitoredTribes((Ally) o);
                     for (Tribe t : tribesForAlly) {
@@ -908,7 +908,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
                 
                 return;
             }
-            List<TribeStatsElement> elems = new LinkedList<TribeStatsElement>();
+            List<TribeStatsElement> elems = new LinkedList<>();
             
             for (Object o : tribeSelection) {
                 TribeStatsElement elem = StatManager.getSingleton().getStatsForTribe((Tribe) o);
@@ -934,7 +934,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
                 
                 return;
             }
-            List<TribeStatsElement> elems = new LinkedList<TribeStatsElement>();
+            List<TribeStatsElement> elems = new LinkedList<>();
             
             for (Object o : tribeSelection) {
                 TribeStatsElement elem = StatManager.getSingleton().getStatsForTribe((Tribe) o);
@@ -949,7 +949,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
     private void fireGenerateStatsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireGenerateStatsEvent
         long start = jStartDate.getSelectedDate().getTime();
         long end = jEndDate.getSelectedDate().getTime();
-        List<Tribe> usedTribes = new LinkedList<Tribe>();
+        List<Tribe> usedTribes = new LinkedList<>();
         //use selected
         Object[] tribes = jTribeList.getSelectedValues();
         if (tribes == null || tribes.length == 0) {
@@ -960,7 +960,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
                 return;
             } else {
                 //allies selected ... add monitored members to tribe list
-                List<Object> lTribes = new LinkedList<Object>();
+                List<Object> lTribes = new LinkedList<>();
                 for (Object a : allies) {
                     Tribe[] tribesForAlly = StatManager.getSingleton().getMonitoredTribes((Ally) a);
                     lTribes.addAll(Arrays.asList(tribesForAlly));
@@ -976,7 +976,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
             usedTribes.add((Tribe) o);
         }
         
-        List<Stats> stats = new LinkedList<Stats>();
+        List<Stats> stats = new LinkedList<>();
         for (Tribe t : usedTribes) {
             TribeStatsElement elem = StatManager.getSingleton().getStatsForTribe(t);
             Stats elemStat = elem.generateStats(start, end);

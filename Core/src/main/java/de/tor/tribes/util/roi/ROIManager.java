@@ -44,7 +44,7 @@ public class ROIManager {
     }
 
     ROIManager() {
-        rois = new LinkedList<String>();
+        rois = new LinkedList<>();
     }
 
     /**Load ROIs for server from file
@@ -97,7 +97,7 @@ public class ROIManager {
         }
         try {
 
-            StringBuffer b = new StringBuffer();
+            StringBuilder b = new StringBuilder();
             b.append("<rois>\n");
 
             for (String r : rois) {

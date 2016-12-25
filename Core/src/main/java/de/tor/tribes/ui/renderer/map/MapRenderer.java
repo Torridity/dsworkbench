@@ -89,9 +89,9 @@ public class MapRenderer {
     private Popup mInfoPopup = null;
     private Village mPopupVillage = null;
     private BufferedImage mBackBuffer = null;
-    private Hashtable<Ally, Integer> mAllyCount = new Hashtable<Ally, Integer>();
-    private Hashtable<Tribe, Integer> mTribeCount = new Hashtable<Tribe, Integer>();
-    private Hashtable<Village, AnimatedVillageInfoRenderer> mAnimators = new Hashtable<Village, AnimatedVillageInfoRenderer>();
+    private Hashtable<Ally, Integer> mAllyCount = new Hashtable<>();
+    private Hashtable<Tribe, Integer> mTribeCount = new Hashtable<>();
+    private Hashtable<Village, AnimatedVillageInfoRenderer> mAnimators = new Hashtable<>();
     //rendering layers
     private MapLayerRenderer mMapLayer = new MapLayerRenderer();
     private TroopDensityLayerRenderer mTroopDensityLayer = new TroopDensityLayerRenderer();
@@ -108,8 +108,8 @@ public class MapRenderer {
 
     public MapRenderer() {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
-        mDrawOrder = new LinkedList<Integer>();
-        Vector<String> layerVector = new Vector<String>(Constants.LAYER_COUNT);
+        mDrawOrder = new LinkedList<>();
+        Vector<String> layerVector = new Vector<>(Constants.LAYER_COUNT);
         for (int i = 0; i < Constants.LAYER_COUNT; i++) {
             layerVector.add("");
         }
@@ -131,7 +131,7 @@ public class MapRenderer {
      * @param pDrawOrder
      */
     public void setDrawOrder(List<Integer> pDrawOrder) {
-        mDrawOrder = new LinkedList<Integer>(pDrawOrder);
+        mDrawOrder = new LinkedList<>(pDrawOrder);
     }
 
     /**
@@ -239,7 +239,7 @@ public class MapRenderer {
                 mRenderSettings.calculateSettings(MapPanel.getSingleton().getVirtualBounds());
 
                 boolean markOnTop = false;
-                if (mDrawOrder.indexOf(new Integer(0)) > mDrawOrder.indexOf(new Integer(1))) {
+                if (mDrawOrder.indexOf(0) > mDrawOrder.indexOf(1)) {
                     markOnTop = true;
                 }
                 boolean gotMap = false;
@@ -361,7 +361,7 @@ public class MapRenderer {
     private void calculateVisibleVillages() {
         dCenterX = MapPanel.getSingleton().getCurrentPosition().x;
         dCenterY = MapPanel.getSingleton().getCurrentPosition().y;
-        mVillagePositions = new HashMap<Village, Rectangle>();
+        mVillagePositions = new HashMap<>();
         mAllyCount.clear();
         mTribeCount.clear();
         if (DataHolder.getSingleton().isLoading()) {
@@ -554,7 +554,7 @@ public class MapRenderer {
 // </editor-fold>
         // <editor-fold defaultstate="collapsed" desc=" Draw radar information ">
         Village radarVillage = MapPanel.getSingleton().getRadarVillage();
-        List<Village> radarVillages = new LinkedList<Village>();
+        List<Village> radarVillages = new LinkedList<>();
         //add radar village
         if (radarVillage != null) {
             radarVillages.add(radarVillage);
@@ -675,8 +675,8 @@ public class MapRenderer {
         }
         if (GlobalOptions.getProperties().getBoolean("show.ruler", true)) {
             //ruler drawing
-            HashMap<Color, Rectangle> vertRulerParts = new HashMap<Color, Rectangle>();
-            HashMap<Color, Rectangle> horRulerParts = new HashMap<Color, Rectangle>();
+            HashMap<Color, Rectangle> vertRulerParts = new HashMap<>();
+            HashMap<Color, Rectangle> horRulerParts = new HashMap<>();
             double xVillage = Math.floor(viewStartPoint.x);
             double yVillage = Math.floor(viewStartPoint.y);
             double rulerStart = -1 * dCurrentFieldWidth * (viewStartPoint.x - xVillage);

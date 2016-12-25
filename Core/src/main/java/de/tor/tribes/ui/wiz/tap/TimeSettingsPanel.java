@@ -121,7 +121,7 @@ public class TimeSettingsPanel extends WizardPage implements SettingsChangedList
             }
             String[] spans = spanProp.split(";");
 
-            List<TimeSpan> spanList = new LinkedList<TimeSpan>();
+            List<TimeSpan> spanList = new LinkedList<>();
             for (String span : spans) {
                 try {
                     TimeSpan s = TimeSpan.fromPropertyString(span);

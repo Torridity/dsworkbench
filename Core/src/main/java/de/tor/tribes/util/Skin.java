@@ -98,7 +98,7 @@ public class Skin {
     private static String BASE_PATH = "graphics/skins";
     private HashMap<Integer, BufferedImage> mTextures = null;
     private String sSkinID = null;
-    private HashMap<Integer, HashMap<Double, BufferedImage>> cache = new HashMap<Integer, HashMap<Double, BufferedImage>>();
+    private HashMap<Integer, HashMap<Double, BufferedImage>> cache = new HashMap<>();
 
     public Skin() throws Exception {
         loadSkin("default");
@@ -155,7 +155,7 @@ public class Skin {
         sSkinID = MINIMAP_SKIN_ID;
         iFieldWidth = 10;
         iFieldHeight = 10;
-        mTextures = new HashMap<Integer, BufferedImage>();
+        mTextures = new HashMap<>();
         cache.clear();
         for (int i = 0; i < 25; i++) {
             //BufferedImage image = new BufferedImage(iFieldWidth, iFieldHeight, BufferedImage.TYPE_INT_ARGB);
@@ -178,7 +178,7 @@ public class Skin {
 
         sSkinID = pSkinID;
         String path = BASE_PATH + "/" + pSkinID;
-        mTextures = new HashMap<Integer, BufferedImage>();
+        mTextures = new HashMap<>();
         cache.clear();
         try {
             mTextures.put(ID_DEFAULT_UNDERGROUND, ImageUtils.loadImage(new File(path + "/" + DEFAULT_UNDERGROUND)));
@@ -213,9 +213,7 @@ public class Skin {
                 throw new Exception("#Texturen < " + TEXTURE_COUNT);
             }
 
-            Iterator<Integer> imageIDs = mTextures.keySet().iterator();
-            while (imageIDs.hasNext()) {
-                Integer id = imageIDs.next();
+            for (Integer id : mTextures.keySet()) {
                 Image current = mTextures.get(id);
                 if ((current.getWidth(null) != iFieldWidth) || (current.getHeight(null) != iFieldHeight)) {
                     throw new Exception("Textur " + id + " hat nicht die erwartete Größe " + iFieldWidth + "x" + iFieldHeight);
@@ -236,7 +234,7 @@ public class Skin {
         try {
             HashMap<Double, BufferedImage> imageCache = cache.get(pID);
             if (imageCache == null) {
-                imageCache = new HashMap<Double, BufferedImage>();
+                imageCache = new HashMap<>();
                 cache.put(pID, imageCache);
             }
 
@@ -263,7 +261,7 @@ public class Skin {
         try {
             HashMap<Double, BufferedImage> imageCache = cache.get(pID);
             if (imageCache == null) {
-                imageCache = new HashMap<Double, BufferedImage>();
+                imageCache = new HashMap<>();
                 cache.put(pID, imageCache);
             }
 

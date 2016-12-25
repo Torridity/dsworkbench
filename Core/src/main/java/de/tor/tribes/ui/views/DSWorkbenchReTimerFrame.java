@@ -376,7 +376,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         if (!ask || JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du " + ((selectedRows.length == 1) ? "den gewählten Eintrag " : "die gewählten Einträge ") + "wirklich löschen?", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             DefaultTableModel model = (DefaultTableModel) jResultTable.getModel();
             int numRows = selectedRows.length;
-            for (int i = 0; i < numRows; i++) {
+            for (int selectedRow : selectedRows) {
                 model.removeRow(jResultTable.convertRowIndexToModel(jResultTable.getSelectedRow()));
             }
             showSuccess("Einträge gelöscht");
@@ -384,7 +384,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     }
     
     private List<Attack> getSelectedAttacks() {
-        List<Attack> attacks = new LinkedList<Attack>();
+        List<Attack> attacks = new LinkedList<>();
         int[] selectedRows = jResultTable.getSelectedRows();
         if (selectedRows == null || selectedRows.length < 1) {
             showInfo("Keine Einträge ausgewählt");
@@ -995,7 +995,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         } else {
             Village source = villages.get(0);
             Village target = villages.get(1);
-            if (jCommandArea.getText().indexOf(PluginManager.getSingleton().getVariableValue("sos.arrive.time")) > -1) {
+            if (jCommandArea.getText().contains(PluginManager.getSingleton().getVariableValue("sos.arrive.time"))) {
                 //change village order for SOS requests
                 source = villages.get(1);
                 target = villages.get(0);
@@ -1008,7 +1008,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 String text = jCommandArea.getText();
                 String arrive = null;
                 String arriveLine = null;
-                if (text.indexOf(PluginManager.getSingleton().getVariableValue("attack.arrive.time")) > -1) {
+                if (text.contains(PluginManager.getSingleton().getVariableValue("attack.arrive.time"))) {
                     String searchString = PluginManager.getSingleton().getVariableValue("attack.arrive.time");
                     arriveLine = text.substring(text.indexOf(PluginManager.getSingleton().getVariableValue("attack.arrive.time")) + searchString.length());
                 } else {
@@ -1072,7 +1072,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         if (evt.getSource() == jDoCalculateButton) {
             DefaultTableModel model = (DefaultTableModel) jAttackPlanTable.getModel();
             
-            List<String> selectedPlans = new LinkedList<String>();
+            List<String> selectedPlans = new LinkedList<>();
             for (int i = 0; i < jAttackPlanTable.getRowCount(); i++) {
                 int row = jAttackPlanTable.convertRowIndexToModel(i);
                 if ((Boolean) model.getValueAt(row, 1)) {
@@ -1080,7 +1080,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 }
             }
             
-            List<Village> ignore = new LinkedList<Village>();
+            List<Village> ignore = new LinkedList<>();
             //process all plans
             for (String plan : selectedPlans) {
                 logger.debug("Checking plan '" + plan + "'");
@@ -1100,7 +1100,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 return;
             }
             
-            List<Village> candidates = new LinkedList<Village>();
+            List<Village> candidates = new LinkedList<>();
             for (Object o : tags) {
                 Tag t = (Tag) o;
                 List<Integer> ids = t.getVillageIDs();
@@ -1135,7 +1135,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             
             Village target = parsedAttack.getSource();
             UnitHolder unit = (UnitHolder) jUnitBox.getSelectedItem();
-            Hashtable<Village, Date> timings = new Hashtable<Village, Date>();
+            Hashtable<Village, Date> timings = new Hashtable<>();
             
             for (Village candidate : candidates) {
                 double dist = DSCalculator.calculateDistance(candidate, target);
@@ -1247,7 +1247,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     private void fireApplyTroopFiltersEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireApplyTroopFiltersEvent
         if (evt.getSource() == jApplyFiltersButton) {
             DefaultListModel filterModel = (DefaultListModel) jFilterList.getModel();
-            List<Integer> rowsToRemove = new LinkedList<Integer>();
+            List<Integer> rowsToRemove = new LinkedList<>();
             int removeCount = 0;
             for (int i = 0; i < jResultTable.getRowCount(); i++) {
                 //go through all rows in attack table and get source village
@@ -1276,7 +1276,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         if (selection == null || selection.length == 0) {
             return;
         }
-        List<TroopFilterElement> toRemove = new LinkedList<TroopFilterElement>();
+        List<TroopFilterElement> toRemove = new LinkedList<>();
         for (Object elem : selection) {
             toRemove.add((TroopFilterElement) elem);
         }
@@ -1300,7 +1300,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         
         TroopFilterDialog filterDialog = new TroopFilterDialog(this, true);
         
-        List<Village> sources = new LinkedList<Village>();
+        List<Village> sources = new LinkedList<>();
         for (int i = 0; i < jResultTable.getRowCount(); i++) {
             //go through all rows in attack table and get source village
             sources.add((Village) jResultTable.getValueAt(i, 0));

@@ -52,7 +52,7 @@ public class NotifierFrame extends javax.swing.JDialog {
     private boolean disposed = false;
     private boolean maxed = false;
     private int notifyType = NOTIFY_DEFAULT;
-    private final static Stack<NotifierFrame> INSTANCES = new Stack<NotifierFrame>();
+    private final static Stack<NotifierFrame> INSTANCES = new Stack<>();
 
     public static void doNotification(String pMessage, int pType) {
         final String message = pMessage;

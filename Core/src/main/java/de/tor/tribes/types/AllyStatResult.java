@@ -105,7 +105,7 @@ public class AllyStatResult implements BBSupport {
     private int buildingDestruction = 0;
 
     public AllyStatResult() {
-        tribeStats = new LinkedList<TribeStatResult>();
+        tribeStats = new LinkedList<>();
     }
 
     public void addTribeStatResult(TribeStatResult pStat) {

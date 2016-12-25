@@ -666,7 +666,7 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
   private void addTroopsManuallyEvent() {
     Hashtable<Integer, Tribe> tribes = DataHolder.getSingleton().getTribes();
     Enumeration<Integer> keys = tribes.keys();
-    List<Tribe> tribesList = new LinkedList<Tribe>();
+    List<Tribe> tribesList = new LinkedList<>();
     while (keys.hasMoreElements()) {
       tribesList.add(tribes.get(keys.nextElement()));
     }
@@ -696,7 +696,7 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
   private void updateFilter() {
     TabInterface tab = getActiveTab();
     if (tab != null) {
-      final List<Tag> selection = new LinkedList<Tag>();
+      final List<Tag> selection = new LinkedList<>();
       for (Object o : jXGroupsList.getSelectedValues()) {
         selection.add((Tag) o);
       }
@@ -711,7 +711,7 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     if (tab != null && tab.getTroopSet().equals(TroopsManager.SUPPORT_GROUP)) {
       return tab.getSelectedVillages();
     }
-    return new LinkedList<Village>();
+    return new LinkedList<>();
   }
 
   @Override
@@ -772,7 +772,7 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
     TagManager.getSingleton().addTag("Test1");
     TagManager.getSingleton().addTag("Test2");
-    List<Village> used = new LinkedList<Village>();
+    List<Village> used = new LinkedList<>();
     TroopsManager.getSingleton().initialize();
     for (int i = 0; i < 1000; i++) {
       Village v = DataHolder.getSingleton().getRandomVillage();
@@ -784,7 +784,7 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
           TagManager.getSingleton().getTagByName("Test2").tagVillage(v.getId());
         }
         VillageTroopsHolder h = new VillageTroopsHolder(v, new Date());
-        Hashtable<UnitHolder, Integer> troops = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> troops = new Hashtable<>();
         for (UnitHolder ho : DataHolder.getSingleton().getUnits()) {
           troops.put(ho, 1000);
         }
@@ -799,7 +799,7 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
       SupportVillageTroopsHolder supp = new SupportVillageTroopsHolder(v, new Date());
       for (int j = 0; j < 10; j++) {
         Village vsource = DataHolder.getSingleton().getRandomVillage();
-        Hashtable<UnitHolder, Integer> troops = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> troops = new Hashtable<>();
         for (UnitHolder ho : DataHolder.getSingleton().getUnits()) {
           troops.put(ho, 50);
         }
@@ -812,7 +812,7 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
       SupportVillageTroopsHolder supp = new SupportVillageTroopsHolder(v, new Date());
       for (int j = 0; j < 10; j++) {
         Village vsource = DataHolder.getSingleton().getRandomVillage();
-        Hashtable<UnitHolder, Integer> troops = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> troops = new Hashtable<>();
         for (UnitHolder ho : DataHolder.getSingleton().getUnits()) {
           troops.put(ho, 50);
         }

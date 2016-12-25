@@ -34,7 +34,7 @@ public class REDFinalDistributionTableModel extends AbstractTableModel {
     Class[] types = new Class[]{
         Village.class, StorageStatus.class, VillageMerchantInfo.Direction.class
     };
-    private final List<VillageMerchantInfo> elements = new LinkedList<VillageMerchantInfo>();
+    private final List<VillageMerchantInfo> elements = new LinkedList<>();
 
     public void clear() {
         elements.clear();

@@ -148,7 +148,7 @@ public class ReportParser implements SilentParserInterface {
                     result.setMoral(moral);
                 } catch (Exception e) {
                 }
-            } else if (line.startsWith("Angreifer") || line.indexOf("Angreifer") > -1) {
+            } else if (line.startsWith("Angreifer") || line.contains("Angreifer")) {
                 attackerPart = true;
                 line = line.replaceAll("Angreifer:", "").trim();
                 debug("Found attacker in normal mode: " + line);
@@ -210,7 +210,7 @@ public class ReportParser implements SilentParserInterface {
                 line = line.replaceAll("Verteidiger:", "").trim();
                 debug("Found defender line: '" + line + "'");
                 result.setDefender(DataHolder.getSingleton().getTribeByName(line));
-            } else if (line.indexOf("Erspähte Rohstoffe:") > -1) {
+            } else if (line.contains("Erspähte Rohstoffe:")) {
                 debug("Found spyed resources");
                 String resources = line.substring(line.lastIndexOf(":") + 1).trim();
                 String[] spyedResources = resources.split(" ");
@@ -498,7 +498,7 @@ public class ReportParser implements SilentParserInterface {
 
     private static Hashtable<UnitHolder, Integer> parseUnits(String[] pUnits) {
         int cnt = 0;
-        Hashtable<UnitHolder, Integer> units = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> units = new Hashtable<>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (cnt < pUnits.length) {
                 units.put(unit, Integer.parseInt(pUnits[cnt]));

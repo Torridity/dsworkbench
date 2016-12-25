@@ -195,7 +195,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
         if (noteModel.getNoteSet().equals(getNoteSet())) {
             DefaultListModel model = new DefaultListModel();
             List<Note> notes = getSelectedNotes();
-            List<Village> villages = new LinkedList<Village>();
+            List<Village> villages = new LinkedList<>();
             for (Note n : notes) {
                 for (int id : n.getVillageIds()) {
                     Village v = DataHolder.getSingleton().getVillagesById().get(id);
@@ -276,11 +276,11 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
             jxNoteTable.removeHighlighter(highlighter);
         }
 
-        final List<String> columns = new LinkedList<String>();
+        final List<String> columns = new LinkedList<>();
         columns.add("Notiz");
         if (!pFilterRows) {
             jxNoteTable.setRowFilter(null);
-            final List<Integer> relevantCols = new LinkedList<Integer>();
+            final List<Integer> relevantCols = new LinkedList<>();
             List<TableColumn> cols = jxNoteTable.getColumns(true);
             for (int i = 0; i < jxNoteTable.getColumnCount(); i++) {
                 TableColumnExt col = jxNoteTable.getColumnExt(i);
@@ -298,7 +298,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
             jxNoteTable.setRowFilter(new RowFilter<TableModel, Integer>() {
                 @Override
                 public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
-                    final List<Integer> relevantCols = new LinkedList<Integer>();
+                    final List<Integer> relevantCols = new LinkedList<>();
                     List<TableColumn> cols = jxNoteTable.getColumns(true);
                     for (int i = 0; i < jxNoteTable.getColumnCount(); i++) {
                         TableColumnExt col = jxNoteTable.getColumnExt(i);
@@ -309,11 +309,11 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
 
                     for (Integer col : relevantCols) {
                         if (pCaseSensitive) {
-                            if (entry.getStringValue(col).indexOf(pValue) > -1) {
+                            if (entry.getStringValue(col).contains(pValue)) {
                                 return true;
                             }
                         } else {
-                            if (entry.getStringValue(col).toLowerCase().indexOf(pValue.toLowerCase()) > -1) {
+                            if (entry.getStringValue(col).toLowerCase().contains(pValue.toLowerCase())) {
                                 return true;
                             }
                         }
@@ -526,11 +526,8 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
                     changed = true;
                 }
             }
-        } catch (UnsupportedFlavorException ufe) {
+        } catch (UnsupportedFlavorException | IOException ufe) {
             logger.error("Failed to copy notes from internal clipboard", ufe);
-            showError("Fehler beim Einfügen der Notizen");
-        } catch (IOException ioe) {
-            logger.error("Failed to copy notes from internal clipboard", ioe);
             showError("Fehler beim Einfügen der Notizen");
         }
         if (changed) {
@@ -548,7 +545,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
         }
 
         try {
-            List<Village> villages = new LinkedList<Village>();
+            List<Village> villages = new LinkedList<>();
             for (Object o : selection) {
                 villages.add((Village) o);
             }
@@ -643,7 +640,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
     }
 
     private List<Note> getSelectedNotes() {
-        final List<Note> selectedNotes = new LinkedList<Note>();
+        final List<Note> selectedNotes = new LinkedList<>();
         int[] selectedRows = jxNoteTable.getSelectedRows();
         if (selectedRows != null && selectedRows.length < 1) {
             return selectedNotes;

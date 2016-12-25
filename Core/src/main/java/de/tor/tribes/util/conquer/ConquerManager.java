@@ -213,7 +213,7 @@ public class ConquerManager extends GenericManager<Conquer> {
         logger.debug("Filtering conquers");
         double risePerHour = ServerSettings.getSingleton().getSpeed() * ServerSettings.getSingleton().getRiseSpeed();
         logger.debug(" - using " + risePerHour + " as acceptance increment value");
-        List<Conquer> toRemove = new LinkedList<Conquer>();
+        List<Conquer> toRemove = new LinkedList<>();
         for (ManageableType t : getAllElements().toArray(new ManageableType[]{})) {
             Conquer c = (Conquer) t;
             Village v = c.getVillage();
@@ -263,7 +263,7 @@ public class ConquerManager extends GenericManager<Conquer> {
             r = new BufferedReader(new InputStreamReader(uc.getInputStream()));
             String line;
             while ((line = r.readLine()) != null) {
-                if (line.indexOf("ONLY_ONE_DAY_AGO") != -1) {
+                if (line.contains("ONLY_ONE_DAY_AGO")) {
                     logger.warn("Update still more than 24h ago. Diff to server clock > 1h ?");
                 } else {
                     String[] data = line.split(",");
@@ -405,7 +405,7 @@ public class ConquerManager extends GenericManager<Conquer> {
                         if (loserAlly != null && winnerAlly != null) {
                             String lAllyName = loserAlly.getName().toLowerCase();
                             String wAllyName = winnerAlly.getName().toLowerCase();
-                            if (lAllyName.indexOf(wAllyName) > -1 || wAllyName.indexOf(lAllyName) > -1) {
+                            if (lAllyName.contains(wAllyName) || wAllyName.contains(lAllyName)) {
                                 friendly++;
                             }
                         }

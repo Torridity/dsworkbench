@@ -113,7 +113,7 @@ public class LinkedTag extends Tag {
     public void updateVillageList() {
         clearTaggedVillages();
         List<ManageableType> elements = TagManager.getSingleton().getAllElements();
-        List<Tag> lTags = new ArrayList<Tag>();
+        List<Tag> lTags = new ArrayList<>();
         for (ManageableType t : elements) {
             lTags.add((Tag) t);
         }
@@ -131,7 +131,7 @@ public class LinkedTag extends Tag {
             try {
                 engine.eval("var b = eval(\"" + equation + "\")");
                 Boolean b = (Boolean) engine.get("b");
-                if (b.booleanValue()) {
+                if (b) {
                     tagVillage(v.getId());
                 }
             } catch (Exception e) {

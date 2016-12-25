@@ -45,7 +45,7 @@ import org.apache.log4j.Logger;
  */
 public class TroopSelectionPanel extends javax.swing.JPanel implements GenericManagerListener {
     
-    private Hashtable<String, Point> unitCoordinates = new Hashtable<String, Point>();
+    private Hashtable<String, Point> unitCoordinates = new Hashtable<>();
     private LabeledTextField[][] unitFields = new LabeledTextField[20][20];
     
     @Override
@@ -130,7 +130,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
     }
     
     public final void setupDefense(boolean pTypeSeparation) {
-        List<UnitHolder> units = new LinkedList<UnitHolder>();
+        List<UnitHolder> units = new LinkedList<>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (unit.isDefense()) {
                 units.add(unit);
@@ -140,7 +140,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
     }
     
     public final void setupOffense(boolean pTypeSeparation) {
-        List<UnitHolder> units = new LinkedList<UnitHolder>();
+        List<UnitHolder> units = new LinkedList<>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (unit.isOffense()) {
                 units.add(unit);
@@ -150,7 +150,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
     }
     
     public final void setupFarm(boolean pTypeSeparation) {
-        List<UnitHolder> units = new LinkedList<UnitHolder>();
+        List<UnitHolder> units = new LinkedList<>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (unit.isFarmUnit()) {
                 units.add(unit);
@@ -160,7 +160,7 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
     }
     
     public Hashtable<UnitHolder, Integer> getAmounts() {
-        Hashtable<UnitHolder, Integer> values = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> values = new Hashtable<>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             values.put(unit, getAmountForUnit(unit));
         }

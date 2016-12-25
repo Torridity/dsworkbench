@@ -82,7 +82,7 @@ public class GlobalOptions {
     private static boolean internalDataDamaged = false;
     private static UserProfile mSelectedProfile = null;
     public static boolean MINIMAL = false;
-    private static List<DataHolderListener> dataHolderListeners = new ArrayList<DataHolderListener>();
+    private static List<DataHolderListener> dataHolderListeners = new ArrayList<>();
 
     /**
      * Init all managed objects
@@ -159,7 +159,7 @@ public class GlobalOptions {
      * Get the list of available skins
      */
     public static String[] getAvailableSkins() {
-        List<String> skins = new LinkedList<String>();
+        List<String> skins = new LinkedList<>();
         skins.add(Skin.MINIMAP_SKIN_ID);
         for (String s : new File("graphics/skins").list()) {
             skins.add(s);

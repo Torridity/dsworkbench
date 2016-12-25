@@ -66,7 +66,7 @@ public class AllyReportStatsFormatter extends BasicFormatter<AllyStatResult> {
 
     @Override
     public String[] getTemplateVariables() {
-        List<String> vars = new LinkedList<String>();
+        List<String> vars = new LinkedList<>();
         vars.addAll(Arrays.asList(VARIABLES));
         vars.addAll(Arrays.asList(new AllyStatResult().getBBVariables()));
         return vars.toArray(new String[vars.size()]);

@@ -37,7 +37,7 @@ public class Enoblement extends AbstractTroopMovement {
 
     public Enoblement(Village pTarget, int pCleanOffs, int pMaxOffs) {
         super(pTarget, pCleanOffs, pMaxOffs);
-        snobSources = new LinkedList<Village>();
+        snobSources = new LinkedList<>();
     }
 
     public int getNumberOfCleanOffs() {
@@ -70,7 +70,7 @@ public class Enoblement extends AbstractTroopMovement {
 
     @Override
     public List<Attack> getAttacks(TimeFrame pTimeFrame, List<Long> pUsedSendTimes) {
-        List<Attack> result = new LinkedList<Attack>();
+        List<Attack> result = new LinkedList<>();
         Enumeration<UnitHolder> unitKeys = getOffs().keys();
         Village target = getTarget();
         int type = Attack.CLEAN_TYPE;

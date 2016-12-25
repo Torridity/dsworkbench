@@ -50,7 +50,7 @@ public class OverallReportStatsFormatter extends BasicFormatter<OverallStatResul
 
     @Override
     public String[] getTemplateVariables() {
-        List<String> vars = new LinkedList<String>();
+        List<String> vars = new LinkedList<>();
         for (String var : new OverallStatResult().getBBVariables()) {
             vars.add(var);
         }

@@ -623,7 +623,7 @@ public class AttackSourceFilterPanel extends WizardPage {
 
     private void filterByAttackPlans(List<TAPAttackSourceElement> pAllElements) {
         Object[] selection = jAttackPlanList.getSelectedValues();
-        List<String> groups = new ArrayList<String>();
+        List<String> groups = new ArrayList<>();
         for (Object o : selection) {
             groups.add((String) o);
         }
@@ -754,7 +754,7 @@ public class AttackSourceFilterPanel extends WizardPage {
     }
 
     public TAPAttackSourceElement[] getFilteredElements() {
-        List<TAPAttackSourceElement> filtered = new LinkedList<TAPAttackSourceElement>();
+        List<TAPAttackSourceElement> filtered = new LinkedList<>();
         TAPSourceFilterTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             TAPAttackSourceElement elem = model.getRow(i);
@@ -766,7 +766,7 @@ public class AttackSourceFilterPanel extends WizardPage {
     }
 
     public List<TAPAttackSourceElement> getSelection() {
-        List<TAPAttackSourceElement> elements = new LinkedList<TAPAttackSourceElement>();
+        List<TAPAttackSourceElement> elements = new LinkedList<>();
         TAPSourceFilterTableModel model = getModel();
         for (int i : jVillageTable.getSelectedRows()) {
             elements.add(model.getRow(jVillageTable.convertRowIndexToModel(i)));
@@ -775,7 +775,7 @@ public class AttackSourceFilterPanel extends WizardPage {
     }
 
     public List<TAPAttackSourceElement> getAllElements() {
-        List<TAPAttackSourceElement> elements = new LinkedList<TAPAttackSourceElement>();
+        List<TAPAttackSourceElement> elements = new LinkedList<>();
         TAPSourceFilterTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             elements.add(model.getRow(i));

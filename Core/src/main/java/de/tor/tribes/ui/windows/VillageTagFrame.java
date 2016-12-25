@@ -65,7 +65,7 @@ public class VillageTagFrame extends javax.swing.JFrame implements GenericManage
     }
 
     public boolean updateUserTags() {
-        List<Tag> lTags = new LinkedList<Tag>();
+        List<Tag> lTags = new LinkedList<>();
 
         for (ManageableType e : TagManager.getSingleton().getAllElements()) {
             if (!(e instanceof LinkedTag)) {
@@ -121,7 +121,7 @@ public class VillageTagFrame extends javax.swing.JFrame implements GenericManage
 
         jVillageList.setModel(new DefaultComboBoxModel(list));
         jVillageList.setSelectedItem(pVillage.get(0));
-        List<Tag> allTags = new LinkedList<Tag>();
+        List<Tag> allTags = new LinkedList<>();
         for (Village v : pVillage) {
             List<Tag> tags = TagManager.getSingleton().getTags(v);
             for (Tag t : tags) {

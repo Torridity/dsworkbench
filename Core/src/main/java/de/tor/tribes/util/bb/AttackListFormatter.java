@@ -81,7 +81,7 @@ public class AttackListFormatter extends BasicFormatter<Attack> {
 
     @Override
     public String[] getTemplateVariables() {
-        List<String> vars = new LinkedList<String>();
+        List<String> vars = new LinkedList<>();
         for (String var : VARIABLES) {
             vars.add(var);
         }

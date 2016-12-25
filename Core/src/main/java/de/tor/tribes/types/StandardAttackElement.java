@@ -179,7 +179,7 @@ public class StandardAttackElement {
                 String v = dynamicAmount.replaceAll(ALL_TROOPS + " - ", "").trim();
                 int substract = Integer.parseInt(v);
                 return Math.max(availableAmount - substract, 0);
-            } else if (dynamicAmount.indexOf("%") > -1) {
+            } else if (dynamicAmount.contains("%")) {
                 String v = dynamicAmount.replaceAll("%", "").trim();
                 double perc = (double) Integer.parseInt(v);
                 perc /= 100;

@@ -522,13 +522,13 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         if (highlighter != null) {
             jConquersTable.removeHighlighter(highlighter);
         }
-        final List<String> columns = new LinkedList<String>();
+        final List<String> columns = new LinkedList<>();
         for (Object o : jXColumnList.getSelectedValues()) {
             columns.add((String) o);
         }
         if (!jFilterRows.isSelected()) {
             jConquersTable.setRowFilter(null);
-            final List<Integer> relevantCols = new LinkedList<Integer>();
+            final List<Integer> relevantCols = new LinkedList<>();
             List<TableColumn> cols = jConquersTable.getColumns(true);
             for (int i = 0; i < jConquersTable.getColumnCount(); i++) {
                 TableColumnExt col = jConquersTable.getColumnExt(i);
@@ -547,7 +547,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
                 @Override
                 public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
-                    final List<Integer> relevantCols = new LinkedList<Integer>();
+                    final List<Integer> relevantCols = new LinkedList<>();
                     List<TableColumn> cols = jConquersTable.getColumns(true);
                     for (int i = 0; i < jConquersTable.getColumnCount(); i++) {
                         TableColumnExt col = jConquersTable.getColumnExt(i);
@@ -558,11 +558,11 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
                     for (Integer col : relevantCols) {
                         if (jFilterCaseSensitive.isSelected()) {
-                            if (entry.getStringValue(col).indexOf(jTextField1.getText()) > -1) {
+                            if (entry.getStringValue(col).contains(jTextField1.getText())) {
                                 return true;
                             }
                         } else {
-                            if (entry.getStringValue(col).toLowerCase().indexOf(jTextField1.getText().toLowerCase()) > -1) {
+                            if (entry.getStringValue(col).toLowerCase().contains(jTextField1.getText().toLowerCase())) {
                                 return true;
                             }
                         }
@@ -644,7 +644,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
     }
 
     private List<Conquer> getSelectedConquers() {
-        final List<Conquer> elements = new LinkedList<Conquer>();
+        final List<Conquer> elements = new LinkedList<>();
         int[] selectedRows = jConquersTable.getSelectedRows();
         if (selectedRows != null && selectedRows.length < 1) {
             return elements;
@@ -795,10 +795,10 @@ class ColumnEqualsPredicate implements HighlightPredicate {
     private boolean test(ComponentAdapter adapter) {
         // test all
         Object value = null;
-        for (int column = 0; column < testColumn.length; column++) {
+        for (int aTestColumn : testColumn) {
             if (value == null) {
-                value = adapter.getValue(testColumn[column]);
-            } else if (!value.equals(adapter.getValue(testColumn[column]))) {
+                value = adapter.getValue(aTestColumn);
+            } else if (!value.equals(adapter.getValue(aTestColumn))) {
                 return false;
             }
         }

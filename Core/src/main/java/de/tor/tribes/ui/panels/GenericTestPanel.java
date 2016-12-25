@@ -90,8 +90,8 @@ public class GenericTestPanel extends javax.swing.JPanel {
 
     public void setupTaskPane(JComponent... pTaskPane) {
         taskContainer = new JXTaskPaneContainer();
-        for (int i = 0; i < pTaskPane.length; i++) {
-            taskContainer.add(pTaskPane[i]);
+        for (JComponent aPTaskPane : pTaskPane) {
+            taskContainer.add(aPTaskPane);
         }
         menuPanel.remove(jXTaskPaneContainer1);
         JScrollPane s = new JScrollPane(taskContainer);

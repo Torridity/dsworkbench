@@ -40,7 +40,7 @@ public class DefenseInformation {
     };
     private Village target = null;
     private TargetInformation targetInfo = null;
-    private List<Defense> defenses = new LinkedList<Defense>();
+    private List<Defense> defenses = new LinkedList<>();
     private DEFENSE_STATUS status = DEFENSE_STATUS.UNKNOWN;
     private double lossRatio = 0.0;
     private int neededSupports = 0;

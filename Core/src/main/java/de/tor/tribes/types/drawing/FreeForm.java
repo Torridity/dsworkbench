@@ -86,7 +86,7 @@ public class FreeForm extends AbstractForm {
 
     public FreeForm() {
         super();
-        points = new LinkedList<Point2D.Double>();
+        points = new LinkedList<>();
     }
 
     @Override

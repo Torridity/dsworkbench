@@ -38,7 +38,7 @@ import org.jdesktop.swingx.painter.MattePainter;
  */
 public class WelcomePanel extends JXPanel {
 
-    private Hashtable<JXLabel, String> welcomeTooltipMap = new Hashtable<JXLabel, String>();
+    private Hashtable<JXLabel, String> welcomeTooltipMap = new Hashtable<>();
     private BufferedImage back = null;
 
     /** Creates new form WelcomePanel */

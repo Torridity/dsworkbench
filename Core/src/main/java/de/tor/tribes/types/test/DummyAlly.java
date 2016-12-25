@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class DummyAlly extends Ally {
     
-    List<Tribe> t = new LinkedList<Tribe>();
+    List<Tribe> t = new LinkedList<>();
     
     public DummyAlly() {
         t.add(new DummyTribe());

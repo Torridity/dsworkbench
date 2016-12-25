@@ -369,7 +369,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         List<Tag> selection = getSelectedTags();
         DefaultListModel model = new DefaultListModel();
 
-        List<Village> villages = new LinkedList<Village>();
+        List<Village> villages = new LinkedList<>();
         for (Tag t : selection) {
             for (Integer id : t.getVillageIDs()) {
                 Village v = DataHolder.getSingleton().getVillagesById().get(id);
@@ -432,7 +432,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
             return;
         }
         try {
-            List<Village> villages = new LinkedList<Village>();
+            List<Village> villages = new LinkedList<>();
             for (Object o : villageSelection) {
                 villages.add((Village) o);
             }
@@ -527,7 +527,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
             return;
         }
 
-        List<Integer> villageIds = new LinkedList<Integer>();
+        List<Integer> villageIds = new LinkedList<>();
         for (Tag t : selection) {
             for (Integer id : t.getVillageIDs()) {
                 if (!villageIds.contains(id)) {
@@ -678,7 +678,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
 }//GEN-LAST:event_jXLabel1fireHideInfoEvent
 
     private List<Tag> getSelectedTags() {
-        final List<Tag> elements = new LinkedList<Tag>();
+        final List<Tag> elements = new LinkedList<>();
         int[] selectedRows = jTagsTable.getSelectedRows();
         if (selectedRows == null || selectedRows.length < 1) {
             return elements;

@@ -142,12 +142,12 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     private int wallLevel = -1;
 
     public FightReport() {
-        attackers = new Hashtable<UnitHolder, Integer>();
-        diedAttackers = new Hashtable<UnitHolder, Integer>();
-        defenders = new Hashtable<UnitHolder, Integer>();
-        diedDefenders = new Hashtable<UnitHolder, Integer>();
-        defendersOutside = new Hashtable<Village, Hashtable<UnitHolder, Integer>>();
-        defendersOnTheWay = new Hashtable<UnitHolder, Integer>();
+        attackers = new Hashtable<>();
+        diedAttackers = new Hashtable<>();
+        defenders = new Hashtable<>();
+        diedDefenders = new Hashtable<>();
+        defendersOutside = new Hashtable<>();
+        defendersOnTheWay = new Hashtable<>();
     }
 
     public static String toInternalRepresentation(FightReport pReport) {
@@ -231,12 +231,12 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             } catch (Exception e) {
             }
 
-            attackers = new Hashtable<UnitHolder, Integer>();
-            diedAttackers = new Hashtable<UnitHolder, Integer>();
-            defenders = new Hashtable<UnitHolder, Integer>();
-            diedDefenders = new Hashtable<UnitHolder, Integer>();
-            defendersOnTheWay = new Hashtable<UnitHolder, Integer>();
-            defendersOutside = new Hashtable<Village, Hashtable<UnitHolder, Integer>>();
+            attackers = new Hashtable<>();
+            diedAttackers = new Hashtable<>();
+            defenders = new Hashtable<>();
+            diedDefenders = new Hashtable<>();
+            defendersOnTheWay = new Hashtable<>();
+            defendersOutside = new Hashtable<>();
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
                 String unitName = unit.getPlainName();
                 attackers.put(unit, aAmount.getAttribute(unitName).getIntValue());
@@ -254,7 +254,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                         if (v != null) {
                             Hashtable<UnitHolder, Integer> unitsInvillage = defendersOutside.get(v);
                             if (unitsInvillage == null) {
-                                unitsInvillage = new Hashtable<UnitHolder, Integer>();
+                                unitsInvillage = new Hashtable<>();
                                 defendersOutside.put(v, unitsInvillage);
                             }
                             unitsInvillage.put(unit, amount);
@@ -587,7 +587,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     public Hashtable<UnitHolder, Integer> getSurvivingAttackers() {
         Hashtable<UnitHolder, Integer> result = null;
         if (!areAttackersHidden() && getAttackers() != null && getDiedAttackers() != null) {
-            result = new Hashtable<UnitHolder, Integer>();
+            result = new Hashtable<>();
             Hashtable<UnitHolder, Integer> att = getAttackers();
             Hashtable<UnitHolder, Integer> diedAtt = getDiedAttackers();
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
@@ -723,7 +723,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     public Hashtable<UnitHolder, Integer> getSurvivingDefenders() {
         Hashtable<UnitHolder, Integer> result = null;
         if (!wasLostEverything() && getDefenders() != null && getDiedDefenders() != null) {
-            result = new Hashtable<UnitHolder, Integer>();
+            result = new Hashtable<>();
             Hashtable<UnitHolder, Integer> def = getDefenders();
             Hashtable<UnitHolder, Integer> diedDef = getDiedDefenders();
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {

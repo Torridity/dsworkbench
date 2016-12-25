@@ -112,8 +112,8 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             }
             ImageUtils.setupGraphics(g2d);
 
-            renderedSpriteBounds = new HashMap<Integer, Rectangle>();
-            renderedMarkerBounds = new HashMap<Integer, Rectangle>();
+            renderedSpriteBounds = new HashMap<>();
+            renderedMarkerBounds = new HashMap<>();
 
             if (isMarkOnTop()) {
                 img = renderVillageRows(pSettings);
@@ -145,8 +145,8 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 //everything was rendered, skip col rendering
                 setFullRenderRequired(false);
             } else {
-                renderedSpriteBounds = new HashMap<Integer, Rectangle>();
-                renderedMarkerBounds = new HashMap<Integer, Rectangle>();
+                renderedSpriteBounds = new HashMap<>();
+                renderedMarkerBounds = new HashMap<>();
                 if (isMarkOnTop()) {
                     img = renderVillageColumns(pSettings);
                 } else {

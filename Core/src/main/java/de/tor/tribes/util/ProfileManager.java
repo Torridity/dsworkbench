@@ -49,8 +49,8 @@ public class ProfileManager {
     }
 
     ProfileManager() {
-        mProfiles = new LinkedList<UserProfile>();
-        mListeners = new LinkedList<ProfileManagerListener>();
+        mProfiles = new LinkedList<>();
+        mListeners = new LinkedList<>();
     }
 
     public void addProfileManagerListener(ProfileManagerListener pListener) {
@@ -80,7 +80,7 @@ public class ProfileManager {
     }
 
     public UserProfile[] getProfiles(String pServer) {
-        List<UserProfile> profilesForServer = new LinkedList<UserProfile>();
+        List<UserProfile> profilesForServer = new LinkedList<>();
         for (UserProfile profile : mProfiles.toArray(new UserProfile[]{})) {
             if (profile.getServerId().equals(pServer)) {
                 profilesForServer.add(profile);
@@ -103,7 +103,7 @@ public class ProfileManager {
     }
 
     public void loadProfiles() {
-        mProfiles = new LinkedList<UserProfile>();
+        mProfiles = new LinkedList<>();
         File serversDir = new File("./servers/");
         for (File f : serversDir.listFiles()) {
             if (f.isDirectory()) {

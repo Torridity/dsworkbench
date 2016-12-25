@@ -242,7 +242,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         }
 
         Enumeration<UnitHolder> keys = troops.keys();
-        List<UnitHolder> allowed = new LinkedList<UnitHolder>();
+        List<UnitHolder> allowed = new LinkedList<>();
         while (keys.hasMoreElements()) {
             UnitHolder unit = keys.nextElement();
             Integer amount = troops.get(unit);
@@ -570,7 +570,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         }
 
         FarmManager.getSingleton().invalidate();
-        List<FarmInformation> toDelete = new LinkedList<FarmInformation>();
+        List<FarmInformation> toDelete = new LinkedList<>();
         for (int row : rows) {
             toDelete.add((FarmInformation) FarmManager.getSingleton().getAllElements().get(jFarmTable.convertRowIndexToModel(row)));
         }
@@ -1651,13 +1651,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DSWorkbenchFarmManager.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DSWorkbenchFarmManager.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DSWorkbenchFarmManager.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
             java.util.logging.Logger.getLogger(DSWorkbenchFarmManager.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
@@ -1671,7 +1665,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
         for (Village v : GlobalOptions.getSelectedProfile().getTribe().getVillageList()) {
             VillageTroopsHolder h = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN, true);
-            Hashtable<UnitHolder, Integer> troops = new Hashtable<UnitHolder, Integer>();
+            Hashtable<UnitHolder, Integer> troops = new Hashtable<>();
             troops.put(DataHolder.getSingleton().getUnitByPlainName("axe"), 2000);
             troops.put(DataHolder.getSingleton().getUnitByPlainName("light"), 2000);
             troops.put(DataHolder.getSingleton().getUnitByPlainName("spy"), 100);

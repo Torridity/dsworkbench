@@ -170,7 +170,7 @@ public class AttackScriptWriter {
     }
 
     public static String char2Unicode(char c) {
-        StringBuffer sb = new StringBuffer(Integer.toHexString(c));
+        StringBuilder sb = new StringBuilder(Integer.toHexString(c));
         int len = sb.length();
         switch (len) {
             case 0:

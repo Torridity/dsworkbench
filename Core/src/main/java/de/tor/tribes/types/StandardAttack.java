@@ -56,7 +56,7 @@ public class StandardAttack extends ManageableType {
     public StandardAttack(String pName, int pIcon) {
         setName(pName);
         setIcon(pIcon);
-        elements = new ArrayList<StandardAttackElement>();
+        elements = new ArrayList<>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             elements.add(new StandardAttackElement(unit, 0));
         }

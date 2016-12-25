@@ -471,7 +471,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             return;
         }
         String set = tab.getReportSet();
-        List<FightReport> old = new LinkedList<FightReport>();
+        List<FightReport> old = new LinkedList<>();
         int currentIndex = 0;
         for (ManageableType elem : ReportManager.getSingleton().getAllElements(set)) {
             FightReport r = (FightReport) elem;
@@ -1012,7 +1012,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             return;
         }
 
-        List<String> reportSets = new LinkedList<String>();
+        List<String> reportSets = new LinkedList<>();
         for (Object o : selection) {
             reportSets.add((String) o);
         }
@@ -1087,7 +1087,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
         StringBuilder allyBuffer = new StringBuilder();
         StringBuilder tribeBuffer = new StringBuilder();
-        Hashtable<Ally, AllyStatResult> allyResults = new Hashtable<Ally, AllyStatResult>();
+        Hashtable<Ally, AllyStatResult> allyResults = new Hashtable<>();
         OverallStatResult overallResult = new OverallStatResult();
         for (Object o : selection) {
             Ally a = (Ally) o;
@@ -1134,7 +1134,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             logger.error("Failed to render overall BB representation", e);
         }
         try {
-            List<AllyStatResult> list = new LinkedList<AllyStatResult>();
+            List<AllyStatResult> list = new LinkedList<>();
             Enumeration<Ally> allyKeys = allyResults.keys();
             while (allyKeys.hasMoreElements()) {
                 Ally a = allyKeys.nextElement();
@@ -1149,7 +1149,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         }
 
         try {
-            List<TribeStatResult> list = new LinkedList<TribeStatResult>();
+            List<TribeStatResult> list = new LinkedList<>();
             Enumeration<Ally> allyKeys = allyResults.keys();
             while (allyKeys.hasMoreElements()) {
                 AllyStatResult allyStat = allyResults.get(allyKeys.nextElement());
@@ -1201,7 +1201,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private void updateFilter() {
         ReportTableTab tab = getActiveTab();
         if (tab != null) {
-            final List<String> selection = new LinkedList<String>();
+            final List<String> selection = new LinkedList<>();
             for (Object o : jXColumnList.getSelectedValues()) {
                 selection.add((String) o);
             }

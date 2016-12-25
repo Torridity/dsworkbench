@@ -648,8 +648,8 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
                 return;
             }
 
-            List<Village> sources = new LinkedList<Village>();
-            List<Village> selection = new LinkedList<Village>();
+            List<Village> sources = new LinkedList<>();
+            List<Village> selection = new LinkedList<>();
             for (int i : selectedRows) {
                 //go through selected rows in attack table and get source village
                 sources.add((Village) jSourcesTable.getValueAt(i, 0));
@@ -754,7 +754,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
             DefaultTableModel model = (DefaultTableModel) jSourcesTable.getModel();
             UnitHolder snob = DataHolder.getSingleton().getUnitByPlainName("snob");
             jSourcesTable.invalidate();
-            Hashtable<Village, Integer> assignedTroops = new Hashtable<Village, Integer>();
+            Hashtable<Village, Integer> assignedTroops = new Hashtable<>();
             for (int row = 0; row < model.getRowCount(); row++) {
                 Village v = (Village) model.getValueAt(row, jSourcesTable.convertColumnIndexToModel(0));
                 VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.IN_VILLAGE);
@@ -858,9 +858,9 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
                 showInfo("Keine Herkunftsdörfer eingetragen");
                 return;
             }
-            List<Village> sourceVillages = new LinkedList<Village>();
-            Hashtable<Village, UnitHolder> attTable = new Hashtable<Village, UnitHolder>();
-            Hashtable<Village, UnitHolder> fakeTable = new Hashtable<Village, UnitHolder>();
+            List<Village> sourceVillages = new LinkedList<>();
+            Hashtable<Village, UnitHolder> attTable = new Hashtable<>();
+            Hashtable<Village, UnitHolder> fakeTable = new Hashtable<>();
             for (int i = 0; i < sources; i++) {
                 Village sourceVillage = (Village) model.getValueAt(i, jSourcesTable.convertColumnIndexToModel(0));
                 if (!sourceVillages.contains(sourceVillage)) {
@@ -2205,9 +2205,9 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         return;
     }
     //reading values
-    List<Village> victimVillages = new LinkedList<Village>();
-    List<Village> victimVillagesFaked = new LinkedList<Village>();
-    Hashtable<Village, Integer> maxAttacksTable = new Hashtable<Village, Integer>();
+    List<Village> victimVillages = new LinkedList<>();
+    List<Village> victimVillagesFaked = new LinkedList<>();
+    Hashtable<Village, Integer> maxAttacksTable = new Hashtable<>();
     for (int i = 0; i < victimModel.getRowCount(); i++) {
         if (victimModel.getValueAt(i, 2) == Boolean.TRUE) {
             victimVillagesFaked.add((Village) victimModel.getValueAt(i, 1));
@@ -2219,8 +2219,8 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 //build source-unit map
     int snobSources = 0;
     // <editor-fold defaultstate="collapsed" desc=" Build attacks and fakes">
-    Hashtable<UnitHolder, List<Village>> sources = new Hashtable<UnitHolder, List<Village>>();
-    Hashtable<UnitHolder, List<Village>> fakes = new Hashtable<UnitHolder, List<Village>>();
+    Hashtable<UnitHolder, List<Village>> sources = new Hashtable<>();
+    Hashtable<UnitHolder, List<Village>> fakes = new Hashtable<>();
     for (int i = 0; i < attackModel.getRowCount(); i++) {
         Village vSource = (Village) attackModel.getValueAt(i, 0);
         UnitHolder uSource = (UnitHolder) attackModel.getValueAt(i, 1);
@@ -2235,7 +2235,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 }
             }
             if (sourcesForUnit == null) {
-                sourcesForUnit = new LinkedList<Village>();
+                sourcesForUnit = new LinkedList<>();
                 sourcesForUnit.add(vSource);
                 sources.put(uSource, sourcesForUnit);
             } else {
@@ -2244,7 +2244,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         } else {
             List<Village> fakesForUnit = fakes.get(uSource);
             if (fakesForUnit == null) {
-                fakesForUnit = new LinkedList<Village>();
+                fakesForUnit = new LinkedList<>();
                 fakesForUnit.add(vSource);
                 fakes.put(uSource, fakesForUnit);
             } else {
@@ -2367,14 +2367,14 @@ private void fireSynchWithAttackPlansEvent(java.awt.event.MouseEvent evt) {//GEN
     }
 
     DefaultTableModel model = (DefaultTableModel) jAttackPlanTable.getModel();
-    List<String> selectedPlans = new LinkedList<String>();
+    List<String> selectedPlans = new LinkedList<>();
     for (int i = 0; i < jAttackPlanTable.getRowCount(); i++) {
         int row = jAttackPlanTable.convertRowIndexToModel(i);
         if ((Boolean) model.getValueAt(row, jAttackPlanTable.convertColumnIndexToModel(1))) {
             selectedPlans.add((String) model.getValueAt(row, jAttackPlanTable.convertColumnIndexToModel(0)));
         }
     }
-    List<Integer> toRemove = new LinkedList<Integer>();
+    List<Integer> toRemove = new LinkedList<>();
     //process all plans
     for (String plan : selectedPlans) {
         logger.debug("Checking plan '" + plan + "'");
@@ -2442,8 +2442,8 @@ private void fireReOpenLogPanelEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 
 private void showAttackInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_showAttackInfoEvent
     DefaultTableModel victimModel = (DefaultTableModel) jVictimTable.getModel();
-    List<Village> victimVillages = new LinkedList<Village>();
-    List<Village> victimVillagesFaked = new LinkedList<Village>();
+    List<Village> victimVillages = new LinkedList<>();
+    List<Village> victimVillagesFaked = new LinkedList<>();
     for (int i = 0; i
             < victimModel.getRowCount(); i++) {
         if (victimModel.getValueAt(i, 2) == Boolean.TRUE) {
@@ -2453,8 +2453,8 @@ private void showAttackInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
         }
     }
     DefaultTableModel attackModel = (DefaultTableModel) jSourcesTable.getModel();
-    Hashtable<UnitHolder, List<Village>> sources = new Hashtable<UnitHolder, List<Village>>();
-    Hashtable<UnitHolder, List<Village>> fakes = new Hashtable<UnitHolder, List<Village>>();
+    Hashtable<UnitHolder, List<Village>> sources = new Hashtable<>();
+    Hashtable<UnitHolder, List<Village>> fakes = new Hashtable<>();
     for (int i = 0; i
             < attackModel.getRowCount(); i++) {
         Village vSource = (Village) attackModel.getValueAt(i, 0);
@@ -2463,7 +2463,7 @@ private void showAttackInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
         if (!fake) {
             List<Village> sourcesForUnit = sources.get(uSource);
             if (sourcesForUnit == null) {
-                sourcesForUnit = new LinkedList<Village>();
+                sourcesForUnit = new LinkedList<>();
                 sourcesForUnit.add(vSource);
                 sources.put(uSource, sourcesForUnit);
             } else {
@@ -2472,7 +2472,7 @@ private void showAttackInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
         } else {
             List<Village> fakesForUnit = fakes.get(uSource);
             if (fakesForUnit == null) {
-                fakesForUnit = new LinkedList<Village>();
+                fakesForUnit = new LinkedList<>();
                 fakesForUnit.add(vSource);
                 fakes.put(uSource, fakesForUnit);
             } else {
@@ -2583,7 +2583,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     }//GEN-LAST:event_fireEnableWarningEvent
 
     private void fireAddVillagesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddVillagesEvent
-        List<Village> villages = new ArrayList<Village>();
+        List<Village> villages = new ArrayList<>();
         if (evt.getSource() == jAllSources) {
             DefaultListModel model = (DefaultListModel) jSourceVillageList.getModel();
             for (int i = 0; i < model.getSize(); i++) {
@@ -2773,11 +2773,8 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
             }
 
             showSuccess(cnt + ((cnt == 1) ? " Eintrag eingefügt" : " Einträge eingefügt"));
-        } catch (UnsupportedFlavorException ufe) {
+        } catch (UnsupportedFlavorException | IOException ufe) {
             logger.error("Failed to copy data from internal clipboard", ufe);
-            showError("Fehler beim Einfügen aus der Zwischenablage");
-        } catch (IOException ioe) {
-            logger.error("Failed to copy data from internal clipboard", ioe);
             showError("Fehler beim Einfügen aus der Zwischenablage");
         } catch (NumberFormatException nfe) {
             //invalid paste, try village parser       
@@ -2827,11 +2824,8 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
                 }
             }
             showSuccess(cnt + ((cnt == 1) ? " Eintrag eingefügt" : " Einträge eingefügt"));
-        } catch (UnsupportedFlavorException ufe) {
+        } catch (UnsupportedFlavorException | IOException ufe) {
             logger.error("Failed to copy data from internal clipboard", ufe);
-            showError("Fehler beim Einfügen aus der Zwischenablage");
-        } catch (IOException ioe) {
-            logger.error("Failed to copy data from internal clipboard", ioe);
             showError("Fehler beim Einfügen aus der Zwischenablage");
         } catch (NumberFormatException nfe) {
             //invalid paste, try village parser       
@@ -2933,13 +2927,13 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     }
 
     private List<Attack> getSelectedResults() {
-        List<Attack> attacks = new LinkedList<Attack>();
+        List<Attack> attacks = new LinkedList<>();
         int[] rows = jResultsTable.getSelectedRows();
         if (rows == null || rows.length == 0) {
             return attacks;
         }
 
-        List<Village> notFullTargets = new LinkedList<Village>();
+        List<Village> notFullTargets = new LinkedList<>();
         if (jFullTargetsOnly.isSelected()) {
             logger.debug("Getting targets that does not have the requested amount of attacks");
             for (int i = 0; i < jTargetDetailsTable.getRowCount(); i++) {
@@ -2974,9 +2968,9 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     }
 
     private List<Attack> getAllResults() {
-        List<Attack> attacks = new LinkedList<Attack>();
+        List<Attack> attacks = new LinkedList<>();
 
-        List<Village> notFullTargets = new LinkedList<Village>();
+        List<Village> notFullTargets = new LinkedList<>();
         if (jFullTargetsOnly.isSelected()) {
             logger.debug("Getting targets that does not have the requested amount of attacks");
             for (int i = 0; i < jTargetDetailsTable.getRowCount(); i++) {
@@ -3022,7 +3016,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     }
 
     private void addSourceVillages(List<Village> pSourceVillages, UnitHolder pUnit, boolean pAsFake) {
-        List<Village> villagesWithSmallTroopCount = new LinkedList<Village>();
+        List<Village> villagesWithSmallTroopCount = new LinkedList<>();
         if (jEnableWarnBox.isSelected()) {
             for (Village pSource : pSourceVillages) {
                 VillageTroopsHolder troopsForVillage = TroopsManager.getSingleton().getTroopsForVillage(pSource, TroopsManager.TROOP_TYPE.OWN);
@@ -3102,7 +3096,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         }
         jVictimTable.invalidate();
         int size = jTargetVillageList.getModel().getSize();
-        List<Village> validTargets = new LinkedList<Village>();
+        List<Village> validTargets = new LinkedList<>();
         for (int i = 0; i < size; i++) {
             Village victimVillage = (Village) jTargetVillageList.getModel().getElementAt(i);
             int idx = jAllTargetsComboBox.getSelectedIndex();
@@ -3144,7 +3138,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         builder.append("<html><nobr><b>Herkunft: </b>");
         int sources = jSourcesTable.getRowCount();
         int fakes = 0;
-        List<Village> sourceVillages = new LinkedList<Village>();
+        List<Village> sourceVillages = new LinkedList<>();
         for (int i = 0; i < sources; i++) {
             Village sourceVillage = (Village) jSourcesTable.getValueAt(i, 0);
             if (sourceVillage != null && !sourceVillages.contains(sourceVillage)) {
@@ -3343,7 +3337,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
                 Component c = new DateCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 JLabel l = (JLabel) c;
                 Boolean impossible = (Boolean) table.getModel().getValueAt(row, 6);
-                if (impossible.booleanValue()) {
+                if (impossible) {
                     l.setText("<html><nobr><font color='#FF0000'>" + l.getText() + "</font></nobr></html>");
                 }
                 return c;
@@ -3357,7 +3351,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         jResultsTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jResultsTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jResultsTable.setRowHeight(24);
-        List<Long> startTimes = new LinkedList<Long>();
+        List<Long> startTimes = new LinkedList<>();
         int impossibleAttacks = 0;
 
         for (Attack a : pAttacks) {
@@ -3444,19 +3438,17 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
                 return types[columnIndex];
             }
         };
-        List<Village> notFullTargets = new LinkedList<Village>();
-        Iterator<Village> keys = attackMappings.keySet().iterator();
-        while (keys.hasNext()) {
-            Village key = keys.next();
+        List<Village> notFullTargets = new LinkedList<>();
+        for (Village key : attackMappings.keySet()) {
             Tribe t = key.getTribe();
             //int notAssignedAmount = attackMappings.get(key);
             String attackCount = attackMappings.get(key);
             String[] split = attackCount.split("/");
             int notAssignedAmount = Integer.parseInt(split[1]) - Integer.parseInt(split[0]);
             if (t != Barbarians.getSingleton()) {
-                tableModel.addRow(new Object[]{t, key, attackCount});
+                tableModel.addRow(new Object[] {t, key, attackCount});
             } else {
-                tableModel.addRow(new Object[]{"Barbaren", key, attackCount});
+                tableModel.addRow(new Object[] {"Barbaren", key, attackCount});
             }
             if (notAssignedAmount > 0) {
                 notFullTargets.add(key);
@@ -3554,7 +3546,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     private List<Village> getGroupFilteredSourceVillages() {
         Object[] values = jVillageGroupList.getSelectedValues();
 
-        List<Tag> tags = new LinkedList<Tag>();
+        List<Tag> tags = new LinkedList<>();
         for (Object o : values) {
             tags.add((Tag) o);
         }
@@ -3601,7 +3593,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     private void fireFilterSourceContinentEvent() {
         Object[] conts = jSourceContinentList.getSelectedValues();
         //build list of allowed continents
-        List<Integer> allowedContinents = new LinkedList<Integer>();
+        List<Integer> allowedContinents = new LinkedList<>();
         for (Object cont : conts) {
             int contId = Integer.parseInt(((String) cont).replaceAll("K", ""));
             allowedContinents.add(contId);
@@ -3623,13 +3615,13 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     private void fireFilterTargetByContinentEvent() {
         Object[] conts = jTargetContinentList.getSelectedValues();
         //build list of allowed continents
-        List<Integer> allowedContinents = new LinkedList<Integer>();
+        List<Integer> allowedContinents = new LinkedList<>();
         for (Object cont : conts) {
             int contId = Integer.parseInt(((String) cont).replaceAll("K", ""));
             allowedContinents.add(contId);
         }
 
-        List<Tribe> tribes = new ArrayList<Tribe>();
+        List<Tribe> tribes = new ArrayList<>();
         for (Object tribe : jTargetTribeList.getSelectedValues()) {
             tribes.add((Tribe) tribe);
         }
@@ -3656,8 +3648,8 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
                 jCalculateButton.setEnabled(true);
             }
         });
-        List<Attack> attackList = new LinkedList<Attack>();
-        List<Village> targets = new LinkedList<Village>();
+        List<Attack> attackList = new LinkedList<>();
+        List<Village> targets = new LinkedList<>();
         logger.debug("Transferring calculated attacks and its targets to separate lists");
         int fullOffs = 0;
         int cnt = 0;
@@ -3677,7 +3669,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         }
 
         logger.debug("Adding input targets to map");
-        HashMap<Village, String> attackMappings = new HashMap<Village, String>();
+        HashMap<Village, String> attackMappings = new HashMap<>();
         //get targets and attack count
         for (int i = 0; i < jVictimTable.getRowCount(); i++) {
             attackMappings.put((Village) jVictimTable.getValueAt(i, 1), "0/" + jVictimTable.getValueAt(i, 3));
@@ -3702,7 +3694,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         jAttacksBar.setValue(calculatedAttacks);
         jAttacksBar.setString(calculatedAttacks + " / " + jSourcesTable.getRowCount());
         //get not assigned offs
-        List<Village> notAssigned = new LinkedList<Village>();
+        List<Village> notAssigned = new LinkedList<>();
         for (int i = 0; i < jSourcesTable.getRowCount(); i++) {
             Village source = (Village) jSourcesTable.getValueAt(i, 0);
             //if (!notAssigned.contains(source)) {
@@ -3732,7 +3724,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     public void dataChangedEvent(String pGroup) {
         List<ManageableType> elements = TagManager.getSingleton().getAllElements();
 
-        List<Tag> tags = new ArrayList<Tag>();
+        List<Tag> tags = new ArrayList<>();
         for (ManageableType e : elements) {
             Tag t = (Tag) e;
             tags.add(t);
@@ -3790,7 +3782,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     @Override
     public void drop(DropTargetDropEvent dtde) {
         Transferable t = dtde.getTransferable();
-        List<Village> villages = new LinkedList<Village>();
+        List<Village> villages = new LinkedList<>();
         if (dtde.getDropTargetContext().getComponent() == jSourcesTable || dtde.getDropTargetContext().getComponent() == jVictimTable) {
             if (dtde.isDataFlavorSupported(VillageTransferable.villageDataFlavor)) {
                 //village dnd

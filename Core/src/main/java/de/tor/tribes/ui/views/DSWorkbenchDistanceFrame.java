@@ -355,7 +355,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
     }
 
     private void deleteSelectedColumns() {
-        List<TableColumn> colsToRemove = new LinkedList<TableColumn>();
+        List<TableColumn> colsToRemove = new LinkedList<>();
         int[] selection = jDistanceTable.getSelectedColumns();
         int[] realCols = new int[selection.length];
         for (int i = 0; i < selection.length; i++) {

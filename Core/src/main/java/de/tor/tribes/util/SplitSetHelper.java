@@ -48,7 +48,7 @@ public class SplitSetHelper {
             while ((line = r.readLine()) != null) {
                 String[] split = line.split(",");
                 String name = split[0];
-                Hashtable<UnitHolder, Integer> elements = new Hashtable<UnitHolder, Integer>();
+                Hashtable<UnitHolder, Integer> elements = new Hashtable<>();
                 for (int i = 1; i < split.length; i++) {
                     String[] elemSplit = split[i].split("/");
                     elements.put(DataHolder.getSingleton().getUnitByPlainName(elemSplit[0]), Integer.parseInt(elemSplit[1]));

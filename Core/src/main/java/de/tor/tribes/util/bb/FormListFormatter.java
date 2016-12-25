@@ -38,7 +38,7 @@ public class FormListFormatter extends BasicFormatter<AbstractForm> {
         StringBuilder b = new StringBuilder();
         int cnt = 1;
 
-        List<AbstractForm> allowedElements = new LinkedList<AbstractForm>();
+        List<AbstractForm> allowedElements = new LinkedList<>();
         if (pElements != null) {
             for (AbstractForm f : pElements.toArray(new AbstractForm[pElements.size()])) {
                 if (f.allowsBBExport()) {
@@ -78,7 +78,7 @@ public class FormListFormatter extends BasicFormatter<AbstractForm> {
 
     @Override
     public String[] getTemplateVariables() {
-        List<String> vars = new LinkedList<String>();
+        List<String> vars = new LinkedList<>();
         for (String var : VARIABLES) {
             vars.add(var);
         }

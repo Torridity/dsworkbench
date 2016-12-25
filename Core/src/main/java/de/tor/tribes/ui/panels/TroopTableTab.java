@@ -472,7 +472,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
     }
 
     private List<VillageTroopsHolder> getSelectedTroopHolders() {
-        final List<VillageTroopsHolder> selectedHolders = new LinkedList<VillageTroopsHolder>();
+        final List<VillageTroopsHolder> selectedHolders = new LinkedList<>();
         int[] selectedRows = jxTroopTable.getSelectedRows();
         if (selectedRows != null && selectedRows.length < 1) {
             return selectedHolders;
@@ -489,7 +489,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
     public List<Village> getSelectedVillages() {
         List<VillageTroopsHolder> holders = getSelectedTroopHolders();
 
-        List<Village> villages = new LinkedList<Village>();
+        List<Village> villages = new LinkedList<>();
         for (VillageTroopsHolder holder : holders) {
             villages.add(holder.getVillage());
         }

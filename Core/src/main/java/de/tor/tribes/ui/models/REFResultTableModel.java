@@ -35,7 +35,7 @@ public class REFResultTableModel extends AbstractTableModel {
     Class[] types = new Class[]{
         Village.class, Village.class, UnitHolder.class, Date.class, Date.class
     };
-    private final List<REFResultElement> elements = new LinkedList<REFResultElement>();
+    private final List<REFResultElement> elements = new LinkedList<>();
 
     public void clear() {
         elements.clear();

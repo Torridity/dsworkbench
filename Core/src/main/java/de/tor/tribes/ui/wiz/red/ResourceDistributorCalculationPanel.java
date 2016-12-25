@@ -1171,12 +1171,13 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
     }
 
     private int resourceNameToResourceId(String resource) {
-        if (resource.equals("Holz")) {
-            return 0;
-        } else if (resource.equals("Lehm")) {
-            return 1;
-        } else {
-            return 2;
+        switch (resource) {
+            case "Holz":
+                return 0;
+            case "Lehm":
+                return 1;
+            default:
+                return 2;
         }
     }
 
@@ -1298,8 +1299,8 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
             }
         }
 
-        ArrayList<Village> incomingOnly = new ArrayList<Village>();
-        ArrayList<Village> outgoingOnly = new ArrayList<Village>();
+        ArrayList<Village> incomingOnly = new ArrayList<>();
+        ArrayList<Village> outgoingOnly = new ArrayList<>();
         int dualDirectionVillages = 0;
         VillageMerchantInfo[] allElements = ResourceDistributorSettingsPanel.getSingleton().getAllElements();
         int woodSum = 0;
@@ -1348,18 +1349,19 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         int maxFilling = jFillSlider.getValue();
 
         
-        List<VillageMerchantInfo> copy = new LinkedList<VillageMerchantInfo>();
-        for (int i = 0; i < allElements.length; i++) {
-        	VillageMerchantInfo info = allElements[i].clone();
-        	if(jAllowOverflow.isSelected())
-        		try{
-        			double fillFactor = Double.parseDouble(jFillFactor.getText());
-        			info.adaptStashCapacity((int)(fillFactor*100), true);
-        		}catch(NumberFormatException nfex){
-        			info.adaptStashCapacity(maxFilling);
-        		}
-        	else
-        		info.adaptStashCapacity(maxFilling);
+        List<VillageMerchantInfo> copy = new LinkedList<>();
+        for (VillageMerchantInfo allElement : allElements) {
+            VillageMerchantInfo info = allElement.clone();
+            if (jAllowOverflow.isSelected()) {
+                try {
+                    double fillFactor = Double.parseDouble(jFillFactor.getText());
+                    info.adaptStashCapacity((int) (fillFactor * 100), true);
+                } catch (NumberFormatException nfex) {
+                    info.adaptStashCapacity(maxFilling);
+                }
+            } else {
+                info.adaptStashCapacity(maxFilling);
+            }
             copy.add(info);
         }
 
@@ -1417,7 +1419,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
     protected Hashtable<Village, Hashtable<Village, List<Resource>>> getTransports() {
         logger.debug("Getting transports");
 
-        Hashtable<Village, Hashtable<Village, List<Resource>>> transports = new Hashtable<Village, Hashtable<Village, List<Resource>>>();
+        Hashtable<Village, Hashtable<Village, List<Resource>>> transports = new Hashtable<>();
         if (!calculator.getResults().isEmpty()) {
             int minAmount = 1;
             if (jIgnoreTransportsButton.isSelected()) {
@@ -1457,7 +1459,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
                     Hashtable<Village, List<Resource>> transportsForSource = transports.get(sourceVillage);
 
                     if (transportsForSource == null) {
-                        transportsForSource = new Hashtable<Village, List<Resource>>();
+                        transportsForSource = new Hashtable<>();
                         transports.put(sourceVillage, transportsForSource);
                     }
 
@@ -1467,7 +1469,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
                         if (DSCalculator.calculateDistance(sourceVillage, targetVillage) <= maxDistance) {
                             List<Resource> transportsFromSourceToDest = transportsForSource.get(targetVillage);
                             if (transportsFromSourceToDest == null) {
-                                transportsFromSourceToDest = new LinkedList<Resource>();
+                                transportsFromSourceToDest = new LinkedList<>();
                                 transportsForSource.put(targetVillage, transportsFromSourceToDest);
                             }
                             Resource res = new Resource(order.getAmount() * 1000, current);
@@ -1483,12 +1485,12 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
 
             Set<Entry<Village, Hashtable<Village, List<Resource>>>> entries = transports.entrySet();
 
-            List<Village> destinationsToRemove = new LinkedList<Village>();
+            List<Village> destinationsToRemove = new LinkedList<>();
             for (Entry<Village, Hashtable<Village, List<Resource>>> entry : entries) {
                 Village transportDestination = entry.getKey();
                 Hashtable<Village, List<Resource>> destinationTransports = entry.getValue();
                 Set<Entry<Village, List<Resource>>> transportEntries = destinationTransports.entrySet();
-                List<Village> toRemove = new LinkedList<Village>();
+                List<Village> toRemove = new LinkedList<>();
                 for (Entry<Village, List<Resource>> transportEntry : transportEntries) {
                     Village sourceKey = transportEntry.getKey();
                     List<Resource> sourceTransports = transportEntry.getValue();

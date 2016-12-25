@@ -93,10 +93,10 @@ public class SOSRequest extends ManageableType implements BBSupport {
         String sourceDateTypeVal = "";
         String attackList = "";
         String sourceTypeVal = "";
-        List<Attack> thisAttacks = new ArrayList<Attack>();
-        for (int i = 0; i < atts.size(); i++) {
+        List<Attack> thisAttacks = new ArrayList<>();
+        for (TimedAttack att1 : atts) {
             try {
-                TimedAttack attack = atts.get(i);
+                TimedAttack attack = att1;
                 Attack a = new Attack();
                 a.setSource(attack.getSource());
                 a.setTarget(pTarget);
@@ -119,9 +119,9 @@ public class SOSRequest extends ManageableType implements BBSupport {
 
         attackList = new AttackListFormatter().formatElements(thisAttacks, pExtended);
 
-        for (int i = 0; i < atts.size(); i++) {
+        for (TimedAttack att : atts) {
             try {
-                TimedAttack attack = atts.get(i);
+                TimedAttack attack = att;
                 sourceVal += attack.getSource().toBBCode() + "\n";
                 if (attack.isPossibleFake()) {
                     sourceDateTypeVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + " [b](Fake)[/b]" + "\n";
@@ -209,8 +209,8 @@ public class SOSRequest extends ManageableType implements BBSupport {
     }
 
     public SOSRequest() {
-        targetInformations = new Hashtable<Village, TargetInformation>();
-        defenseInformations = new Hashtable<Village, DefenseInformation>();
+        targetInformations = new Hashtable<>();
+        defenseInformations = new Hashtable<>();
     }
 
     public SOSRequest(Tribe pDefender) {

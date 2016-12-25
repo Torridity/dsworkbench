@@ -306,7 +306,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     }
 
     public boolean sendDataToDefensePlaner() {
-        List<DefenseInformation> infos = new LinkedList<DefenseInformation>();
+        List<DefenseInformation> infos = new LinkedList<>();
         if (getModel().getRowCount() == 0) {
             return false;
         } else {
@@ -413,7 +413,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
                 int needed = defense.getNeededSupports();
                 int available = defense.getSupports().length;
                 Hashtable<UnitHolder, Integer> split = DSWorkbenchSettingsDialog.getSingleton().getDefense();
-                Hashtable<UnitHolder, Integer> need = new Hashtable<UnitHolder, Integer>();
+                Hashtable<UnitHolder, Integer> need = new Hashtable<>();
                 Set<Entry<UnitHolder, Integer>> entries = split.entrySet();
                 for (Entry<UnitHolder, Integer> entry : entries) {
                     need.put(entry.getKey(), (needed - available) * entry.getValue());
@@ -516,7 +516,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     }
 
     private void copySelectionToClipboardAsBBCode() {
-        Hashtable<Tribe, SOSRequest> selectedRequests = new Hashtable<Tribe, SOSRequest>();
+        Hashtable<Tribe, SOSRequest> selectedRequests = new Hashtable<>();
         List<DefenseInformation> selection = getSelectedRows();
         if (selection.isEmpty()) {
             showInfo("Keine SOS Anfragen eingelesen");
@@ -544,7 +544,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
                 buffer.append("[u]SOS Anfragen[/u]\n\n");
             }
 
-            List<SOSRequest> requests = new LinkedList<SOSRequest>();
+            List<SOSRequest> requests = new LinkedList<>();
 
             Enumeration<Tribe> tribeKeys = selectedRequests.keys();
             while (tribeKeys.hasMoreElements()) {
@@ -595,7 +595,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
 
             DefenseToolModel model = TableHelper.getTableModel(jAttacksTable);
             int numRows = selectedRows.length;
-            List<DefenseInformation> toRemove = new LinkedList<DefenseInformation>();
+            List<DefenseInformation> toRemove = new LinkedList<>();
             for (int row : selectedRows) {
                 toRemove.add(model.getRows()[jAttacksTable.convertRowIndexToModel(row)]);
             }
@@ -619,7 +619,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     }
 
     private List<DefenseInformation> getSelectedRows() {
-        List<DefenseInformation> infos = new LinkedList<DefenseInformation>();
+        List<DefenseInformation> infos = new LinkedList<>();
         if (getModel().getRowCount() == 0) {
             showInfo("Keine SOS Anfragen vorhanden");
         } else {
@@ -842,11 +842,7 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             }
             updateView();
             analyzeData();
-        } catch (HeadlessException he) {
-            showInfo("Fehler beim Lesen aus der Zwischenablage");
-        } catch (UnsupportedFlavorException usfe) {
-            showInfo("Fehler beim Lesen aus der Zwischenablage");
-        } catch (IOException ioe) {
+        } catch (HeadlessException | IOException | UnsupportedFlavorException he) {
             showInfo("Fehler beim Lesen aus der Zwischenablage");
         }
     }

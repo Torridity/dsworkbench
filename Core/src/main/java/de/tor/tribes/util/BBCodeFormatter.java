@@ -34,7 +34,7 @@ public class BBCodeFormatter {
 
     public static String toHtml(String pBBText) {
         //replace standard HTML items
-        Map<String, String> bbMap = new HashMap<String, String>();
+        Map<String, String> bbMap = new HashMap<>();
         bbMap.put("(\r\n|\r|\n|\n\r)", "<br/>");
         bbMap.put("\\[b\\](.+?)\\[/b\\]", "<strong>$1</strong>");
         //bbMap.put(Pattern.compile("\\[table\\](.+?)"), "<table border='0' cellspacing='1' cellpadding='4' class='vis' style='border:#999966 1px solid'> $1");
@@ -93,7 +93,7 @@ public class BBCodeFormatter {
                 //replace special items by links
                 while (m.find()) {
                     String newValue = null;
-                    if (key.indexOf("tribe") > -1 || key.indexOf("player") > -1) {
+                    if (key.contains("tribe") || key.contains("player")) {
                         String tribe = html.substring(m.start(), m.end()).replaceAll(entry.getKey().toString(), "$1");
                         Tribe t = null;
                         try {
@@ -108,7 +108,7 @@ public class BBCodeFormatter {
                         } else {
                             newValue = "<a href='#' class='ds_link'>Ung&uuml;ltiger Spieler</a>";
                         }
-                    } else if (key.indexOf("ally") > -1) {
+                    } else if (key.contains("ally")) {
                         String ally = html.substring(m.start(), m.end()).replaceAll(entry.getKey().toString(), "$1");
                         Ally a = null;
                         try {
@@ -120,7 +120,7 @@ public class BBCodeFormatter {
                         } else {
                             newValue = "<a href='##' class='ds_link'>Ung&uuml;ltiger Stamm</a>";
                         }
-                    } else if (key.indexOf("coord") > -1 || key.indexOf("village") > -1) {
+                    } else if (key.contains("coord") || key.contains("village")) {
                         String coord = html.substring(m.start(), m.end()).replaceAll(key, "$1");
                         Village v = null;
                         try {

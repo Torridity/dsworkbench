@@ -51,7 +51,7 @@ public class ChurchLayerRenderer extends AbstractDirectLayerRenderer {
 
     private void renderRows(RenderSettings pSettings, Graphics2D pG2D) {
         //iterate through entire rows
-        HashMap<Tribe, Area> churchAreas = new HashMap<Tribe, Area>();
+        HashMap<Tribe, Area> churchAreas = new HashMap<>();
         List<Village> churchVillages = ChurchManager.getSingleton().getChurchVillages();
 
         for (Village v : churchVillages) {

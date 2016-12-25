@@ -196,7 +196,7 @@ public class ChurchManager extends GenericManager<Church> {
     }
     
     public List<Village> getChurchVillages() {
-        List<Village> villages = new LinkedList<Village>();
+        List<Village> villages = new LinkedList<>();
         
         for (ManageableType t : getAllElements()) {
             Church c = (Church) t;
@@ -242,7 +242,7 @@ public class ChurchManager extends GenericManager<Church> {
             for (Village v : pVillages) {
                 if (v != null) {
                     //village is valid
-                    List<Church> toRemove = new ArrayList<Church>();
+                    List<Church> toRemove = new ArrayList<>();
                     for (ManageableType t : getAllElements()) {
                         Church c = (Church) t;
                         //iterate through all churches

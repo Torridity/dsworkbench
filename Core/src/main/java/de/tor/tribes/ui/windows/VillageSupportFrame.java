@@ -517,7 +517,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
             }
         });
 
-        jMinUnitCountSpinner.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(0), Integer.valueOf(0), null, Integer.valueOf(1)));
+        jMinUnitCountSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         jMinUnitCountSpinner.setToolTipText("<html>Minimale Anzahl der Einheiten von einem Typ aus einem Dorf, die als Unterst&uuml;tzung ber&uuml;cksichtigt werden.<br/>Es wird empfohlen, diesen Wert auf 0 zu lassen, um die maximal m&ouml;glichen Unterst&uuml;tzungen zu erzielen.</html> ");
         jMinUnitCountSpinner.setEditor(new javax.swing.JSpinner.NumberEditor(jMinUnitCountSpinner, ""));
         jMinUnitCountSpinner.setMinimumSize(new java.awt.Dimension(31, 25));
@@ -593,7 +593,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
         boolean defOnly = jDefOnlyBox.isSelected();
         Date arrive = dateTimeField.getSelectedDate();
         Integer minUnitCnt = (Integer) jMinUnitCountSpinner.getValue();
-        List<Tag> allowedTags = new LinkedList<Tag>();
+        List<Tag> allowedTags = new LinkedList<>();
         for (Object o : jTagsList.getSelectedValues()) {
             allowedTags.add((Tag) o);
         }
@@ -702,17 +702,17 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
             }
         });
 
-        Hashtable<UnitHolder, Integer> forceTable = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> forceTable = new Hashtable<>();
         for (int i = 0; i < jSupportTable.getRowCount(); i++) {
             int row = i;//jSupportTable.convertRowIndexToModel(i);
             Village v = (Village) jSupportTable.getValueAt(row, 0);
             UnitHolder u = (UnitHolder) jSupportTable.getValueAt(row, 1);
             VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN);
             boolean useUnits = false;
-            for (int j = 0; j < units.length; j++) {
+            for (UnitHolder unit : units) {
                 if (!useUnits) {
                     //if no unit is used yet
-                    if (units[j].equals(u)) {
+                    if (unit.equals(u)) {
                         //use all following units
                         useUnits = true;
                     }
@@ -720,25 +720,25 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
 
                 if (useUnits) {
                     if (jDefOnlyBox.isSelected()) {
-                        if (units[j].getPlainName().equals("spear") || units[j].getPlainName().equals("sword") || units[j].getPlainName().equals("archer") || units[j].getPlainName().equals("heavy")) {
+                        if (unit.getPlainName().equals("spear") || unit.getPlainName().equals("sword") || unit.getPlainName().equals("archer") || unit.getPlainName().equals("heavy")) {
 
                             if (troops != null) {
-                                int cnt = troops.getTroopsOfUnitInVillage(units[j]);
-                                if (forceTable.get(units[j]) != null) {
-                                    forceTable.put(units[j], forceTable.get(units[j]) + cnt);
+                                int cnt = troops.getTroopsOfUnitInVillage(unit);
+                                if (forceTable.get(unit) != null) {
+                                    forceTable.put(unit, forceTable.get(unit) + cnt);
                                 } else {
-                                    forceTable.put(units[j], cnt);
+                                    forceTable.put(unit, cnt);
                                 }
                             }
                         }
                     } else {
-                        if (!units[j].getPlainName().equals("spy") && !units[j].getPlainName().equals("ram") && !units[j].getPlainName().equals("snob")) {
+                        if (!unit.getPlainName().equals("spy") && !unit.getPlainName().equals("ram") && !unit.getPlainName().equals("snob")) {
                             if (troops != null) {
-                                int cnt = troops.getTroopsOfUnitInVillage(units[j]);
-                                if (forceTable.get(units[j]) != null) {
-                                    forceTable.put(units[j], forceTable.get(units[j]) + cnt);
+                                int cnt = troops.getTroopsOfUnitInVillage(unit);
+                                if (forceTable.get(unit) != null) {
+                                    forceTable.put(unit, forceTable.get(unit) + cnt);
                                 } else {
-                                    forceTable.put(units[j], cnt);
+                                    forceTable.put(unit, cnt);
                                 }
                             }
                         }
@@ -748,35 +748,35 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
         }
 
         //add units of current village
-        for (int j = 0; j < units.length; j++) {
+        for (UnitHolder unit : units) {
             if (jDefOnlyBox.isSelected()) {
-                if (units[j].getPlainName().equals("spear") || units[j].getPlainName().equals("sword") || units[j].getPlainName().equals("archer") || units[j].getPlainName().equals("heavy")) {
+                if (unit.getPlainName().equals("spear") || unit.getPlainName().equals("sword") || unit.getPlainName().equals("archer") || unit.getPlainName().equals("heavy")) {
                     VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(mCurrentVillage);
                     if (troops != null) {
-                        int cnt = troops.getTroopsOfUnitInVillage(units[j]);
-                        if (forceTable.get(units[j]) != null) {
-                            forceTable.put(units[j], forceTable.get(units[j]) + cnt);
+                        int cnt = troops.getTroopsOfUnitInVillage(unit);
+                        if (forceTable.get(unit) != null) {
+                            forceTable.put(unit, forceTable.get(unit) + cnt);
                         } else {
-                            forceTable.put(units[j], cnt);
+                            forceTable.put(unit, cnt);
                         }
                     }
                 }
             } else {
-                if (!units[j].getPlainName().equals("spy") && !units[j].getPlainName().equals("ram") && !units[j].getPlainName().equals("snob")) {
+                if (!unit.getPlainName().equals("spy") && !unit.getPlainName().equals("ram") && !unit.getPlainName().equals("snob")) {
                     VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(mCurrentVillage);
                     if (troops != null) {
-                        int cnt = troops.getTroopsOfUnitInVillage(units[j]);
-                        if (forceTable.get(units[j]) != null) {
-                            forceTable.put(units[j], forceTable.get(units[j]) + cnt);
+                        int cnt = troops.getTroopsOfUnitInVillage(unit);
+                        if (forceTable.get(unit) != null) {
+                            forceTable.put(unit, forceTable.get(unit) + cnt);
                         } else {
-                            forceTable.put(units[j], cnt);
+                            forceTable.put(unit, cnt);
                         }
                     }
                 }
             }
         }
 
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("Die maximale Kampfkraft beträgt:\n");
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMaximumFractionDigits(0);
@@ -792,7 +792,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
     }
 
     private List<Attack> getSelectedSupports() {
-        final List<Attack> selectedSupports = new LinkedList<Attack>();
+        final List<Attack> selectedSupports = new LinkedList<>();
         int[] selectedRows = jSupportTable.getSelectedRows();
         if (selectedRows != null && selectedRows.length < 1) {
             return selectedSupports;

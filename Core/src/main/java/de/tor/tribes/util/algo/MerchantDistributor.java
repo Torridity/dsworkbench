@@ -93,16 +93,16 @@ public class MerchantDistributor extends Thread {
             boolean pLimitMerchants) {
         int[] targetValueForResource = pTargetRes;
         int[] keepInStorage = pRemainRes;
-        ArrayList<MerchantSource> sources = new ArrayList<MerchantSource>();
-        ArrayList<MerchantDestination> destinations = new ArrayList<MerchantDestination>();
-        List<List<MerchantSource>> results = new LinkedList<List<MerchantSource>>();
+        ArrayList<MerchantSource> sources = new ArrayList<>();
+        ArrayList<MerchantDestination> destinations = new ArrayList<>();
+        List<List<MerchantSource>> results = new LinkedList<>();
 
 
         int usedResources = 0;
         double merchantLimit = 1.0;// /3.0;
         if (pLimitMerchants) {
-            for (int i = 0; i < resOrder.length; i++) {
-                if (resOrder[i] >= 0 && resOrder[i] <= 2) {
+            for (int aResOrder : resOrder) {
+                if (aResOrder >= 0 && aResOrder <= 2) {
                     usedResources++;
                 }
             }
@@ -183,7 +183,7 @@ public class MerchantDistributor extends Thread {
                 results.add(new LinkedList<MerchantSource>());
             } else {
                 calculateInternal(sources, destinations);
-                List<MerchantSource> sourcesCopy = new LinkedList<MerchantSource>(sources);
+                List<MerchantSource> sourcesCopy = new LinkedList<>(sources);
                 results.add(sourcesCopy);
 
                 // <editor-fold defaultstate="collapsed" desc=" Result building">
@@ -235,7 +235,7 @@ public class MerchantDistributor extends Thread {
 
     private void calculateInternal(ArrayList<MerchantSource> pSources, ArrayList<MerchantDestination> pDestinations) {
         Hashtable<Destination, Double>[] costs = calculateCosts(pSources, pDestinations);
-        Optex<MerchantSource, MerchantDestination> algo = new Optex<MerchantSource, MerchantDestination>(pSources, pDestinations, costs);
+        Optex<MerchantSource, MerchantDestination> algo = new Optex<>(pSources, pDestinations, costs);
         try {
             algo.run();
         } catch (Exception e) {
@@ -248,13 +248,13 @@ public class MerchantDistributor extends Thread {
             ArrayList<MerchantDestination> pDestinations) {
         Hashtable<Destination, Double> costs[] = new Hashtable[pSources.size()];
         for (int i = 0; i < pSources.size(); i++) {
-            costs[i] = new Hashtable<Destination, Double>();
-            for (int j = 0; j < pDestinations.size(); j++) {
-                double cost = pSources.get(i).distanceTo(pDestinations.get(j));
+            costs[i] = new Hashtable<>();
+            for (MerchantDestination pDestination : pDestinations) {
+                double cost = pSources.get(i).distanceTo(pDestination);
                 if (cost == 0) {// || cost > 19) {
                     cost = 99999.0;
                 }
-                costs[i].put(pDestinations.get(j), cost);
+                costs[i].put(pDestination, cost);
             }
         }
         return costs;
@@ -280,7 +280,7 @@ public class MerchantDistributor extends Thread {
 
         for (int i = 0; i < targetRes.length; i++) {
             System.out.println("--------Round " + i + "--------");
-            ArrayList<MerchantSource> sources = new ArrayList<MerchantSource>();
+            ArrayList<MerchantSource> sources = new ArrayList<>();
             //double d = (double) targetRes[i] / (double) resSum;
             int s1MaxMerchantsNeed = s1Res[i] - minRemainRes[i];
             if (s1MaxMerchantsNeed <= 0) {
@@ -315,7 +315,7 @@ public class MerchantDistributor extends Thread {
 
             //CHECK!!!! Needs MUST be larger 0!
             MerchantDestination dest = new MerchantDestination(d1Coord, targetRes[i] - d1Res[i]);
-            ArrayList<MerchantDestination> destinations = new ArrayList<MerchantDestination>();
+            ArrayList<MerchantDestination> destinations = new ArrayList<>();
             destinations.add(dest);
             new MerchantDistributor().calculateInternal(sources, destinations);
             System.out.println("--------Round Done--------");

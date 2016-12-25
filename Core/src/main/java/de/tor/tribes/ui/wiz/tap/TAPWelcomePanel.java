@@ -219,7 +219,7 @@ public class TAPWelcomePanel extends WizardPage {
 
         TAPAttackInfoPanel.getSingleton().setVisible(type == ATTACK_TYPE);
 
-        map.put(TYPE, new Integer(type));
+        map.put(TYPE, type);
         return WizardPanelNavResult.PROCEED;
     }
 

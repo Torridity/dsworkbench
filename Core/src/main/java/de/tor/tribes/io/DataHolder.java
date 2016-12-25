@@ -68,7 +68,7 @@ public class DataHolder {
   }
 
   DataHolder() {
-    mListeners = new LinkedList<DataHolderListener>();
+    mListeners = new LinkedList<>();
     initialize();
   }
 
@@ -84,14 +84,14 @@ public class DataHolder {
     removeTempData();
 
     mVillages = new Village[1000][1000];
-    mVillagesTable = new Hashtable<Integer, Village>();
-    mAllies = new Hashtable<Integer, Ally>();
-    mTribes = new Hashtable<Integer, Tribe>();
-    mTribesByName = new Hashtable<String, Tribe>();
-    mAlliesByName = new Hashtable<String, Ally>();
-    mAlliesByTagName = new Hashtable<String, Ally>();
-    mUnitsByName = new Hashtable<String, UnitHolder>();
-    mUnits = new LinkedList<UnitHolder>();
+    mVillagesTable = new Hashtable<>();
+    mAllies = new Hashtable<>();
+    mTribes = new Hashtable<>();
+    mTribesByName = new Hashtable<>();
+    mAlliesByName = new Hashtable<>();
+    mAlliesByTagName = new Hashtable<>();
+    mUnitsByName = new Hashtable<>();
+    mUnits = new LinkedList<>();
     DATA_VALID = false;
   }
 
@@ -583,7 +583,7 @@ public class DataHolder {
       String dataDir = Constants.SERVER_DIR + "/" + pServer;
       BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(dataDir + "/tribe.txt.gz"))));
       if (pTribes == null) {
-        pTribes = new Hashtable<Integer, Tribe>();
+        pTribes = new Hashtable<>();
       }
       String line;
 
@@ -611,7 +611,7 @@ public class DataHolder {
       String dataDir = Constants.SERVER_DIR + "/" + GlobalOptions.getSelectedServer();
       BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(dataDir + "/ally.txt.gz"))));
       if (pAllies == null) {
-        pAllies = new Hashtable<Integer, Ally>();
+        pAllies = new Hashtable<>();
       }
       String line;
 
@@ -980,9 +980,9 @@ public class DataHolder {
    * Merge all data into the village data structure to ease searching
    */
   private void mergeData() {
-    for (int i = 0; i < mVillages.length; i++) {
+    for (Village[] mVillage : mVillages) {
       for (int j = 0; j < mVillages[0].length; j++) {
-        Village current = mVillages[i][j];
+        Village current = mVillage[j];
         if (current != null) {
           //set tribe of village
           Tribe t = mTribes.get(current.getTribeID());
@@ -1008,7 +1008,7 @@ public class DataHolder {
 
     logger.debug("Removing empty allies");
     Enumeration<Integer> allyKeys = mAllies.keys();
-    List<Ally> toRemove = new LinkedList<Ally>();
+    List<Ally> toRemove = new LinkedList<>();
     while (allyKeys.hasMoreElements()) {
       Ally a = mAllies.get(allyKeys.nextElement());
       if (a.getTribes() == null || a.getTribes().length == 0) {
@@ -1254,7 +1254,7 @@ public class DataHolder {
   }
 
   public List<Village> getVillagesInRegion(Point pStart, Point pEnd) {
-    List<Village> marked = new ArrayList<Village>();
+    List<Village> marked = new ArrayList<>();
     try {
       int xStart = (pStart.x < pEnd.x) ? pStart.x : pEnd.x;
       int xEnd = (pEnd.x > pStart.x) ? pEnd.x : pStart.x;

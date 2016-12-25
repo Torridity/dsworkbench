@@ -97,7 +97,7 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
             performCopy(pSettings, g2d);
         }
         ImageUtils.setupGraphics(g2d);
-        renderedSpriteBounds = new HashMap<Tag, Rectangle>();
+        renderedSpriteBounds = new HashMap<>();
 
         //Set new bounds
         BufferedImage img = renderMarkerRows(pSettings);
@@ -110,7 +110,7 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
             //everything was rendered, skip col rendering
             setFullRenderRequired(false);
         } else {
-            renderedSpriteBounds = new HashMap<Tag, Rectangle>();
+            renderedSpriteBounds = new HashMap<>();
 
             img = renderMarkerColumns(pSettings);
             trans = AffineTransform.getTranslateInstance(0, 0);

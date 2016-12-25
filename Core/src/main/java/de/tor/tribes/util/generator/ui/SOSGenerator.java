@@ -312,18 +312,25 @@ public class SOSGenerator extends javax.swing.JFrame {
                         b.append("Fake, ");
                     } else {
                         if (a.getUnit() != null) {
-                            if (a.getUnit().getPlainName().equals("axe")) {
-                                b.append("Axt, ");
-                            } else if (a.getUnit().getPlainName().equals("light")) {
-                                b.append("LKAV, ");
-                            } else if (a.getUnit().getPlainName().equals("snob")) {
-                                b.append("AG, ");
-                            } else if (a.getUnit().getPlainName().equals("heavy")) {
-                                b.append("SKAV, ");
-                            } else if (a.getUnit().getPlainName().equals("sword")) {
-                                b.append("Schwert, ");
-                            } else if (a.getUnit().getPlainName().equals("catapult")) {
-                                b.append("Kata, ");
+                            switch (a.getUnit().getPlainName()) {
+                                case "axe":
+                                    b.append("Axt, ");
+                                    break;
+                                case "light":
+                                    b.append("LKAV, ");
+                                    break;
+                                case "snob":
+                                    b.append("AG, ");
+                                    break;
+                                case "heavy":
+                                    b.append("SKAV, ");
+                                    break;
+                                case "sword":
+                                    b.append("Schwert, ");
+                                    break;
+                                case "catapult":
+                                    b.append("Kata, ");
+                                    break;
                             }
                         }
                     }
@@ -340,7 +347,7 @@ public class SOSGenerator extends javax.swing.JFrame {
     }
 
     private Hashtable<UnitHolder, Integer> getDefendingTroops() {
-        Hashtable<String, Integer> units = new Hashtable<String, Integer>();
+        Hashtable<String, Integer> units = new Hashtable<>();
         if (jMedDef.isSelected()) {
             units.put("spear", getRandomValueInRange(1000, 2000));
             units.put("sword", getRandomValueInRange(1000, 2000));
@@ -392,13 +399,7 @@ public class SOSGenerator extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SOSGenerator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SOSGenerator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SOSGenerator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | javax.swing.UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
             java.util.logging.Logger.getLogger(SOSGenerator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>

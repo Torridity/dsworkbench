@@ -191,8 +191,8 @@ public class JOutlookBar extends JPanel implements ActionListener {
      */
     public void actionPerformed(ActionEvent e) {
         int currentBar = 0;
-        for (Iterator i = this.bars.keySet().iterator(); i.hasNext();) {
-            String barName = (String) i.next();
+        for (Object o : this.bars.keySet()) {
+            String barName = (String) o;
             BarInfo barInfo = (BarInfo) this.bars.get(barName);
             if (barInfo.getButton() == e.getSource()) {
                 // Found the selected button

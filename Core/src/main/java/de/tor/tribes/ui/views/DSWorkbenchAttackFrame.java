@@ -750,7 +750,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private void updateFilter() {
         AttackTableTab tab = getActiveTab();
         if (tab != null) {
-            final List<String> selection = new LinkedList<String>();
+            final List<String> selection = new LinkedList<>();
             for (Object o : jXColumnList.getSelectedValues()) {
                 selection.add((String) o);
             }

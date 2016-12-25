@@ -342,7 +342,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
                 showInfo("Keine Zeichnung gewählt");
                 return;
             }
-            List<Village> villages = new ArrayList<Village>();
+            List<Village> villages = new ArrayList<>();
             for (AbstractForm f : selection) {
                 for (Village v : f.getContainedVillages()) {
                     if (!villages.contains(v)) {
@@ -579,7 +579,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
 }//GEN-LAST:event_fireHideInfoEvent
     
     private List<AbstractForm> getSelectedForms() {
-        final List<AbstractForm> selectedForms = new LinkedList<AbstractForm>();
+        final List<AbstractForm> selectedForms = new LinkedList<>();
         int[] selectedRows = jFormsTable.getSelectedRows();
         if (selectedRows != null && selectedRows.length < 1) {
             return selectedForms;

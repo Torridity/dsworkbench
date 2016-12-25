@@ -35,7 +35,7 @@ public class RETAttackTableModel extends AbstractTableModel {
     private Class[] types = new Class[]{
         Village.class, Village.class, Date.class, UnitHolder.class
     };
-    private final List<Attack> elements = new LinkedList<Attack>();
+    private final List<Attack> elements = new LinkedList<>();
 
     public RETAttackTableModel() {
         super();

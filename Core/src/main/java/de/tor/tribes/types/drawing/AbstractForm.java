@@ -19,13 +19,13 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.BBSupport;
-import java.awt.Color;
-import java.awt.Graphics2D;
+import org.apache.log4j.Logger;
+import org.jdom.Element;
+
+import java.awt.*;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.jdom.Element;
 
 /**
  *
@@ -73,56 +73,58 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
      */
     public static AbstractForm fromXml(Element e) {
         String formType = e.getAttributeValue("type");
-        if (formType.equals("line")) {
-            logger.debug("Loading 'line'");
-            Line l = new Line();
-            l.loadFromXml(e);
-            return l;
-        } else if (formType.equals("arrow")) {
-            logger.debug("Loading 'arrow'");
-            Arrow a = new Arrow();
-            a.loadFromXml(e);
-            return a;
-        } else if (formType.equals("rectangle")) {
-            logger.debug("Loading 'rectangle'");
-            Rectangle r = new Rectangle();
-            r.loadFromXml(e);
-            return r;
-        } else if (formType.equals("circle")) {
-            logger.debug("Loading 'circle'");
-            Circle c = new Circle();
-            c.loadFromXml(e);
-            return c;
-        } else if (formType.equals("text")) {
-            logger.debug("Loading 'text'");
-            Text t = new Text();
-            t.loadFromXml(e);
-            return t;
-        } else if (formType.equals("freeform")) {
-            logger.debug("Loading 'freeform'");
-            FreeForm f = new FreeForm();
-            f.loadFromXml(e);
-            return f;
-        } else {
-            return null;
+        switch (formType) {
+            case "line":
+                logger.debug("Loading 'line'");
+                Line l = new Line();
+                l.loadFromXml(e);
+                return l;
+            case "arrow":
+                logger.debug("Loading 'arrow'");
+                Arrow a = new Arrow();
+                a.loadFromXml(e);
+                return a;
+            case "rectangle":
+                logger.debug("Loading 'rectangle'");
+                Rectangle r = new Rectangle();
+                r.loadFromXml(e);
+                return r;
+            case "circle":
+                logger.debug("Loading 'circle'");
+                Circle c = new Circle();
+                c.loadFromXml(e);
+                return c;
+            case "text":
+                logger.debug("Loading 'text'");
+                Text t = new Text();
+                t.loadFromXml(e);
+                return t;
+            case "freeform":
+                logger.debug("Loading 'freeform'");
+                FreeForm f = new FreeForm();
+                f.loadFromXml(e);
+                return f;
+            default:
+                return null;
         }
     }
 
     public FORM_TYPE getTypeForString(String formType) {
-        if (formType.equals("line")) {
-            return FORM_TYPE.LINE;
-        } else if (formType.equals("arrow")) {
-            return FORM_TYPE.ARROW;
-        } else if (formType.equals("rectangle")) {
-            return FORM_TYPE.RECTANGLE;
-        } else if (formType.equals("circle")) {
-            return FORM_TYPE.CIRCLE;
-        } else if (formType.equals("text")) {
-            return FORM_TYPE.TEXT;
-        } else if (formType.equals("freeform")) {
-            return FORM_TYPE.FREEFORM;
-        } else {
-            return null;
+        switch (formType) {
+            case "line":
+                return FORM_TYPE.LINE;
+            case "arrow":
+                return FORM_TYPE.ARROW;
+            case "rectangle":
+                return FORM_TYPE.RECTANGLE;
+            case "circle":
+                return FORM_TYPE.CIRCLE;
+            case "text":
+                return FORM_TYPE.TEXT;
+            case "freeform":
+                return FORM_TYPE.FREEFORM;
+            default:
+                return null;
         }
     }
 
@@ -166,7 +168,7 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
 
     public List<Village> getContainedVillages() {
         java.awt.Rectangle bounds = getBounds();
-        List<Village> v = new ArrayList<Village>();
+        List<Village> v = new ArrayList<>();
         for (int x = bounds.x; x < bounds.x + bounds.width; x++) {
             for (int y = bounds.y; y < bounds.y + bounds.height; y++) {
                 try {

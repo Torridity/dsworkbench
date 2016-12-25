@@ -532,7 +532,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
 
         VillageMerchantInfo[] infos = ResourceDistributorSettingsPanel.getSingleton().getAllElements();
 
-        Hashtable<Village, VillageMerchantInfo> infoTable = new Hashtable<Village, VillageMerchantInfo>();
+        Hashtable<Village, VillageMerchantInfo> infoTable = new Hashtable<>();
 
         for (VillageMerchantInfo info : infos) {
             infoTable.put(info.getVillage(), info);
@@ -606,7 +606,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
     private void deleteSelection() {
         int[] selection = jTransportsTable.getSelectedRows();
         if (selection.length > 0) {
-            List<Integer> rows = new LinkedList<Integer>();
+            List<Integer> rows = new LinkedList<>();
             for (int i : selection) {
                 rows.add(jTransportsTable.convertRowIndexToModel(i));
             }
@@ -688,7 +688,6 @@ public class ResourceDistributorFinishPanel extends WizardPage {
                 model.fireTableDataChanged();
                 result = true;
                 focusSubmit();
-            } catch (IOException ioe) {
             } catch (Exception e) {
             } finally {
                 if (r != null) {

@@ -551,19 +551,19 @@ class SearchThread extends Thread {
         while (running) {
             if (!searchDone) {
                 if (sSearchTerm.length() >= 1) {
-                    List<Tribe> tribeList = new LinkedList<Tribe>();
-                    List<Ally> allyList = new LinkedList<Ally>();
+                    List<Tribe> tribeList = new LinkedList<>();
+                    List<Ally> allyList = new LinkedList<>();
                     Enumeration<Integer> tribes = DataHolder.getSingleton().getTribes().keys();
                     while (tribes.hasMoreElements()) {
                         Tribe t = DataHolder.getSingleton().getTribes().get(tribes.nextElement());
-                        if (t.getName().toLowerCase().indexOf(sSearchTerm.toLowerCase()) > -1) {
+                        if (t.getName().toLowerCase().contains(sSearchTerm.toLowerCase())) {
                             if (!tribeList.contains(t)) {
                                 tribeList.add(t);
                             }
                         }
                         Ally a = t.getAlly();
                         if (a != null) {
-                            if ((a.getName().toLowerCase().indexOf(sSearchTerm.toLowerCase()) > -1) || (a.getTag().toLowerCase().indexOf(sSearchTerm.toLowerCase())) > -1) {
+                            if ((a.getName().toLowerCase().contains(sSearchTerm.toLowerCase())) || (a.getTag().toLowerCase().indexOf(sSearchTerm.toLowerCase())) > -1) {
                                 if (!allyList.contains(a)) {
                                     allyList.add(a);
                                 }

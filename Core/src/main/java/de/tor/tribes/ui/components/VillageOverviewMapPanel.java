@@ -45,7 +45,7 @@ import org.apache.log4j.Logger;
 public class VillageOverviewMapPanel extends javax.swing.JPanel {
 
     private Color[][] colors = new Color[1000][1000];
-    private Hashtable<Shape, Color> additionalShapes = new Hashtable<Shape, Color>();
+    private Hashtable<Shape, Color> additionalShapes = new Hashtable<>();
     private int upperLeftContinent = -1;
     private int continentsInXAndY = -1;
     private int minCol = -1;

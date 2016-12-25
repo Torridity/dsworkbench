@@ -43,7 +43,7 @@ public class DiplomacyParser implements SilentParserInterface {
     	// TODO: Sprachabhängige Version von "Verbündete", "Nicht-Angriffs-Pakt (NAP)", "Feinde" aus ParserVariableManager.getSingleton().getProperty() laden
     	
         StringTokenizer lineTok = new StringTokenizer(pData, "\n\r");
-        List<Marker> markers = new ArrayList<Marker>();
+        List<Marker> markers = new ArrayList<>();
         boolean allies = false;
         boolean naps = false;
         boolean enemies = false;
@@ -52,17 +52,17 @@ public class DiplomacyParser implements SilentParserInterface {
             String line = lineTok.nextToken();
             debug("Try line " + line);
 
-            if (line.trim().indexOf("Verbündete") > -1) {
+            if (line.trim().contains("Verbündete")) {
                 debug("Got allies");
                 allies = true;
                 naps = false;
                 enemies = false;
-            } else if (line.trim().indexOf("Nicht-Angriffs-Pakt (NAP)") > -1) {
+            } else if (line.trim().contains("Nicht-Angriffs-Pakt (NAP)")) {
                 debug("Got naps");
                 naps = true;
                 allies = false;
                 enemies = false;
-            } else if (line.trim().indexOf("Feinde") > -1) {
+            } else if (line.trim().contains("Feinde")) {
                 debug("Got enemies");
                 enemies = true;
                 naps = false;

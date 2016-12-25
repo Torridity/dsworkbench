@@ -36,18 +36,26 @@ public class Off extends AbstractTroopMovement {
 
     @Override
     public List<Attack> getAttacks(TimeFrame pTimeFrame, List<Long> pUsedSendTimes) {
-        List<Attack> result = new LinkedList<Attack>();
+        List<Attack> result = new LinkedList<>();
         Enumeration<UnitHolder> unitKeys = getOffs().keys();
         Village target = getTarget();
         int type = Attack.NO_TYPE;
         while (unitKeys.hasMoreElements()) {
             UnitHolder unit = unitKeys.nextElement();
-            if (unit.getPlainName().equals("snob")) {
-                type = Attack.SNOB_TYPE;
-            } else if (unit.getPlainName().equals("ram") || (unit.getPlainName().equals("catapult"))) {
-                type = Attack.CLEAN_TYPE;
-            } else if (unit.getPlainName().equals("spear") || (unit.getPlainName().equals("sword")) || (unit.getPlainName().equals("archer")) || (unit.getPlainName().equals("heavy"))) {
-                type = Attack.SUPPORT_TYPE;
+            switch (unit.getPlainName()) {
+                case "snob":
+                    type = Attack.SNOB_TYPE;
+                    break;
+                case "ram":
+                case "catapult":
+                    type = Attack.CLEAN_TYPE;
+                    break;
+                case "spear":
+                case "sword":
+                case "archer":
+                case "heavy":
+                    type = Attack.SUPPORT_TYPE;
+                    break;
             }
 
             List<Village> sources = getOffs().get(unit);

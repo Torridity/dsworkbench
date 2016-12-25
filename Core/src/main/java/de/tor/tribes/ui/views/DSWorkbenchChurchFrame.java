@@ -372,7 +372,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         String message = ((rows.length == 1) ? "Kirchendorf " : (rows.length + " Kirchendörfer ")) + "wirklich löschen?";
         if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             //get markers to remove
-            List<Village> toRemove = new LinkedList<Village>();
+            List<Village> toRemove = new LinkedList<>();
             jChurchTable.invalidate();
             for (int i = rows.length - 1; i >= 0; i--) {
                 int row = jChurchTable.convertRowIndexToModel(rows[i]);
@@ -407,8 +407,8 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             buffer.append("[**]Spieler[||]Dorf[||]Radius[/**]\n");
 
 
-            for (int i = 0; i < rows.length; i++) {
-                int row = jChurchTable.convertRowIndexToModel(rows[i]);
+            for (int row1 : rows) {
+                int row = jChurchTable.convertRowIndexToModel(row1);
                 int tribeCol = jChurchTable.convertColumnIndexToModel(0);
                 int villageCol = jChurchTable.convertColumnIndexToModel(1);
                 int rangeCol = jChurchTable.convertColumnIndexToModel(2);

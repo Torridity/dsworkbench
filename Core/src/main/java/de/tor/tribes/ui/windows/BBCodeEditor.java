@@ -73,19 +73,19 @@ import javax.swing.DefaultListModel;
  */
 public class BBCodeEditor extends javax.swing.JDialog {
 
-    private final List<Attack> sampleAttacks = new LinkedList<Attack>();
-    private final List<Village> sampleVillages = new LinkedList<Village>();
-    private List<FightReport> sampleReports = new LinkedList<FightReport>();
-    private List<SOSRequest> sampleRequests = new LinkedList<SOSRequest>();
-    private List<Tag> sampleTags = new LinkedList<Tag>();
-    private List<Note> sampleNotes = new LinkedList<Note>();
-    private List<Stats> sampleStats = new LinkedList<Stats>();
-    private List<VillageTroopsHolder> sampleTroops = new LinkedList<VillageTroopsHolder>();
-    private List<AbstractForm> sampleForms = new LinkedList<AbstractForm>();
-    private List<OverallStatResult> sampleOverallResult = new LinkedList<OverallStatResult>();
-    private List<AllyStatResult> sampleAllyResult = new LinkedList<AllyStatResult>();
-    private List<TribeStatResult> sampleTribeResult = new LinkedList<TribeStatResult>();
-    private List<Marker> sampleMarker = new LinkedList<Marker>();
+    private final List<Attack> sampleAttacks = new LinkedList<>();
+    private final List<Village> sampleVillages = new LinkedList<>();
+    private List<FightReport> sampleReports = new LinkedList<>();
+    private List<SOSRequest> sampleRequests = new LinkedList<>();
+    private List<Tag> sampleTags = new LinkedList<>();
+    private List<Note> sampleNotes = new LinkedList<>();
+    private List<Stats> sampleStats = new LinkedList<>();
+    private List<VillageTroopsHolder> sampleTroops = new LinkedList<>();
+    private List<AbstractForm> sampleForms = new LinkedList<>();
+    private List<OverallStatResult> sampleOverallResult = new LinkedList<>();
+    private List<AllyStatResult> sampleAllyResult = new LinkedList<>();
+    private List<TribeStatResult> sampleTribeResult = new LinkedList<>();
+    private List<Marker> sampleMarker = new LinkedList<>();
     private BasicFormatter element = null;
     private BasicFormatter<Attack> attackFormatter = new AttackListFormatter();
     private BasicFormatter<Village> villageFormatter = new VillageListFormatter();
@@ -271,7 +271,7 @@ public class BBCodeEditor extends javax.swing.JDialog {
         t3.tagVillage(sampleVillage5.getId());
         //sample troops
         VillageTroopsHolder h = new VillageTroopsHolder(sampleVillage1, new Date());
-        Hashtable<UnitHolder, Integer> troops = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> troops = new Hashtable<>();
         troops.put(DataHolder.getSingleton().getUnitByPlainName("axe"), 6600);
         troops.put(DataHolder.getSingleton().getUnitByPlainName("light"), 2200);
         troops.put(DataHolder.getSingleton().getUnitByPlainName("ram"), 300);

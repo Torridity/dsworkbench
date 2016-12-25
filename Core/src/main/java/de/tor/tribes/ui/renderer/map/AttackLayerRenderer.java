@@ -57,7 +57,7 @@ public class AttackLayerRenderer extends AbstractDirectLayerRenderer {
     }
 
     private void renderAttacks(Point2D.Double viewStartPoint, RenderSettings pSettings, Graphics2D pG2D) {
-        HashMap<String, Color> attackColors = new HashMap<String, Color>();
+        HashMap<String, Color> attackColors = new HashMap<>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             Color unitColor = Color.decode(GlobalOptions.getProperties().getString(unit.getName() + ".color", "#ff0000"));
             attackColors.put(unit.getName(), unitColor);

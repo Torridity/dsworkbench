@@ -93,7 +93,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
         }
         Village v = DataHolder.getSingleton().getVillages()[point.x][point.y];
         if (v != null) {
-            List<Village> villages = new ArrayList<Village>();
+            List<Village> villages = new ArrayList<>();
             for (int i = 0; i < pAttacks; i++) {
                 villages.add(v);
             }
@@ -175,7 +175,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
 
             KEY_LISTENER_ADDED = true;
         }
-        showDialogs = new Hashtable<Integer, List<ReportShowDialog>>();
+        showDialogs = new Hashtable<>();
         jxReportTable.getSelectionModel().addListSelectionListener(ReportTableTab.this);
     }
 
@@ -238,7 +238,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
             dialog.setupAndShow(report);
             List<ReportShowDialog> dialogsInLayer = showDialogs.get(layer);
             if (dialogsInLayer == null) {
-                dialogsInLayer = new LinkedList<ReportShowDialog>();
+                dialogsInLayer = new LinkedList<>();
                 showDialogs.put(layer, dialogsInLayer);
             }
             dialogsInLayer.add(dialog);
@@ -304,7 +304,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
         }
         if (!pFilterRows) {
             jxReportTable.setRowFilter(null);
-            final List<Integer> relevantCols = new LinkedList<Integer>();
+            final List<Integer> relevantCols = new LinkedList<>();
             List<TableColumn> cols = jxReportTable.getColumns(true);
             for (int i = 0; i < jxReportTable.getColumnCount(); i++) {
                 TableColumnExt col = jxReportTable.getColumnExt(i);
@@ -323,7 +323,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
 
                 @Override
                 public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
-                    final List<Integer> relevantCols = new LinkedList<Integer>();
+                    final List<Integer> relevantCols = new LinkedList<>();
                     List<TableColumn> cols = jxReportTable.getColumns(true);
                     for (int i = 0; i < jxReportTable.getColumnCount(); i++) {
                         TableColumnExt col = jxReportTable.getColumnExt(i);
@@ -334,11 +334,11 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
 
                     for (Integer col : relevantCols) {
                         if (pCaseSensitive) {
-                            if (entry.getStringValue(col).indexOf(pValue) > -1) {
+                            if (entry.getStringValue(col).contains(pValue)) {
                                 return true;
                             }
                         } else {
-                            if (entry.getStringValue(col).toLowerCase().indexOf(pValue.toLowerCase()) > -1) {
+                            if (entry.getStringValue(col).toLowerCase().contains(pValue.toLowerCase())) {
                                 return true;
                             }
                         }
@@ -498,7 +498,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
         }
 
         FightReport report = selection.get(0);
-        Hashtable<String, Double> values = new Hashtable<String, Double>();
+        Hashtable<String, Double> values = new Hashtable<>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (!report.areAttackersHidden()) {
                 values.put("att_" + unit.getPlainName(), (double) report.getAttackers().get(unit));
@@ -598,11 +598,8 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
                 }
             }
             showSuccess(cnt + ((cnt == 1) ? " Bericht eingefügt" : " Berichte eingefügt"));
-        } catch (UnsupportedFlavorException ufe) {
+        } catch (UnsupportedFlavorException | IOException ufe) {
             logger.error("Failed to copy reports from internal clipboard", ufe);
-            showError("Fehler beim Einfügen der Berichte");
-        } catch (IOException ioe) {
-            logger.error("Failed to copy reports from internal clipboard", ioe);
             showError("Fehler beim Einfügen der Berichte");
         }
         reportModel.fireTableDataChanged();
@@ -610,7 +607,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
     }
 
     private List<FightReport> getSelectedReports() {
-        final List<FightReport> selectedReports = new LinkedList<FightReport>();
+        final List<FightReport> selectedReports = new LinkedList<>();
         int[] selectedRows = jxReportTable.getSelectedRows();
         if (selectedRows != null && selectedRows.length < 1) {
             return selectedReports;

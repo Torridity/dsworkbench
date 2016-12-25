@@ -106,7 +106,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private static boolean KEY_LISTENER_ADDED = false;
     private static PainterHighlighter highlighter = null;
     private ActionListener actionListener = null;
-    private static List<Highlighter> highlighters = new ArrayList<Highlighter>();
+    private static List<Highlighter> highlighters = new ArrayList<>();
     private static boolean useSortColoring = false;
 
     static {
@@ -351,7 +351,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         }
         if (!pFilterRows) {
             jxAttackTable.setRowFilter(null);
-            final List<Integer> relevantCols = new LinkedList<Integer>();
+            final List<Integer> relevantCols = new LinkedList<>();
             List<TableColumn> cols = jxAttackTable.getColumns(true);
             for (int i = 0; i < jxAttackTable.getColumnCount(); i++) {
                 TableColumnExt col = jxAttackTable.getColumnExt(i);
@@ -369,7 +369,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             jxAttackTable.setRowFilter(new RowFilter<TableModel, Integer>() {
                 @Override
                 public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
-                    final List<Integer> relevantCols = new LinkedList<Integer>();
+                    final List<Integer> relevantCols = new LinkedList<>();
                     List<TableColumn> cols = jxAttackTable.getColumns(true);
                     for (int i = 0; i < jxAttackTable.getColumnCount(); i++) {
                         TableColumnExt col = jxAttackTable.getColumnExt(i);
@@ -380,11 +380,11 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
                     for (Integer col : relevantCols) {
                         if (pCaseSensitive) {
-                            if (entry.getStringValue(col).indexOf(pValue) > -1) {
+                            if (entry.getStringValue(col).contains(pValue)) {
                                 return true;
                             }
                         } else {
-                            if (entry.getStringValue(col).toLowerCase().indexOf(pValue.toLowerCase()) > -1) {
+                            if (entry.getStringValue(col).toLowerCase().contains(pValue.toLowerCase())) {
                                 return true;
                             }
                         }
@@ -1374,7 +1374,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
     public void cleanup() {
         List<ManageableType> elements = AttackManager.getSingleton().getAllElements(getAttackPlan());
-        List<Attack> toRemove = new LinkedList<Attack>();
+        List<Attack> toRemove = new LinkedList<>();
         for (ManageableType t : elements) {
             Attack a = (Attack) t;
             long sendTime = a.getArriveTime().getTime() - ((long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
@@ -1478,7 +1478,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             showInfo("Keine Befehle gewählt");
             return;
         }
-        List<Village> villages = new ArrayList<Village>();
+        List<Village> villages = new ArrayList<>();
         int result = JOptionPaneHelper.showQuestionThreeChoicesBox(this, "Herkunft oder Zieldörfer übertragen?", "Übertragen", "Herkunft", "Ziele", "Abbrechen");
         if (result == JOptionPane.YES_OPTION) {
             //target   
@@ -1825,11 +1825,8 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 }
             }
             showSuccess(cnt + ((cnt == 1) ? " Befehl eingefügt" : " Befehle eingefügt"));
-        } catch (UnsupportedFlavorException ufe) {
+        } catch (UnsupportedFlavorException | IOException ufe) {
             logger.error("Failed to copy attacks from internal clipboard", ufe);
-            showError("Fehler beim Einfügen der Befehle");
-        } catch (IOException ioe) {
-            logger.error("Failed to copy attacks from internal clipboard", ioe);
             showError("Fehler beim Einfügen der Befehle");
         }
         attackModel.fireTableDataChanged();
@@ -1875,7 +1872,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     }
 
     private List<Attack> getSelectedAttacks() {
-        final List<Attack> selectedAttacks = new LinkedList<Attack>();
+        final List<Attack> selectedAttacks = new LinkedList<>();
         int[] selectedRows = jxAttackTable.getSelectedRows();
         if (selectedRows != null && selectedRows.length < 1) {
             return selectedAttacks;

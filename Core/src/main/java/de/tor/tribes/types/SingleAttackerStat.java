@@ -51,12 +51,12 @@ public class SingleAttackerStat {
 
     public SingleAttackerStat(Tribe pTribe) {
         attacker = pTribe;
-        usedVillages = new LinkedList<Village>();
-        sentUnits = new Hashtable<UnitHolder, Integer>();
-        killedUnits = new Hashtable<UnitHolder, Integer>();
-        lostUnits = new Hashtable<UnitHolder, Integer>();
-        destroyedBuildingLevels = new Hashtable<String, Integer>();
-        silentKills = new Hashtable<UnitHolder, Integer>();
+        usedVillages = new LinkedList<>();
+        sentUnits = new Hashtable<>();
+        killedUnits = new Hashtable<>();
+        lostUnits = new Hashtable<>();
+        destroyedBuildingLevels = new Hashtable<>();
+        silentKills = new Hashtable<>();
     }
 
     public static SingleAttackerStat createRandomElement(Tribe pTribe) {

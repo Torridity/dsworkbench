@@ -64,7 +64,7 @@ public class ChurchRangeCalculator {
 
     //public static GeneralPath getChurchRange(Village pVillage, int pRadius) {
     public static List<Point2D.Double> getChurchRange(int pX, int pY, int pRadius) {
-        List<Point2D.Double> villagePos = new LinkedList<Point2D.Double>();
+        List<Point2D.Double> villagePos = new LinkedList<>();
         //Set InitialStartVillage (x, y-r)
         //search around village, turning right if one village is in range
         //x+1 -> x+1,y+1 -> y+1 -> x-1, y+1 -> x-1 -> x-1, y-1 -> y-1 -> x+1,y-1

@@ -528,7 +528,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         }
 
         setSize(width, height);
-      } catch (Exception e) {
+      } catch (Exception ignored) {
       }
     }
   }
@@ -866,7 +866,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
       if (vis != null && Boolean.parseBoolean(vis)) {
         getRibbon().setMinimized(true);
       }
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
   }
 
@@ -2406,7 +2406,7 @@ private void fireChangeROIEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
       logger.debug("Removing ROI '" + item + "'");
       ROIManager.getSingleton().removeROI(item);
       jROIBox.removeItem(item);
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
   }
 }//GEN-LAST:event_fireChangeROIEvent
@@ -2453,7 +2453,7 @@ private void fireROISelectedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:eve
       jCenterX.setText(pos[0]);
       jCenterY.setText(pos[1]);
       fireRefreshMapEvent(null);
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
   }
 }//GEN-LAST:event_fireROISelectedEvent
@@ -2776,7 +2776,7 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
       jCenterX.setText(pos[0]);
       jCenterY.setText(pos[1]);
       fireRefreshMapEvent(null);
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
   }
 

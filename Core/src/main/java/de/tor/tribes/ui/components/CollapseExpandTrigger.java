@@ -35,7 +35,7 @@ public class CollapseExpandTrigger extends JXLabel {
     public CollapseExpandTrigger() {
         try {
             back = ImageIO.read(CollapseExpandTrigger.class.getResource("/res/ui/knob.png"));
-        } catch (IOException ioe) {
+        } catch (IOException ignored) {
         }
 
     }

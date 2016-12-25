@@ -54,7 +54,7 @@ public class FakeCellRenderer extends DefaultTableRenderer {
             boolean v = (Boolean) value;
             label.setIcon(((v) ? fakeIcon : noFakeIcon));
             label.setHorizontalAlignment(SwingConstants.CENTER);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return label;
     }

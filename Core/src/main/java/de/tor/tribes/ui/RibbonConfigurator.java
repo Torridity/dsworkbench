@@ -1097,12 +1097,12 @@ public class RibbonConfigurator {
             if (new File(pIconPath).exists()) {
                 try {
                     rt.setMainImage(ImageIO.read(new File(pIconPath)));
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             } else {
                 try {
                     rt.setMainImage(ImageIO.read(RibbonConfigurator.class.getResource(pIconPath)));
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
             button.setActionRichTooltip(rt);

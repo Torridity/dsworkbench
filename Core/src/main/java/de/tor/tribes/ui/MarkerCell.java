@@ -37,7 +37,7 @@ public class MarkerCell extends javax.swing.JPanel implements Comparable<MarkerC
         try {
             PLAYER_ICON = new javax.swing.ImageIcon(MarkerCell.class.getResource("/res/face.png"));
             ALLY_ICON = new javax.swing.ImageIcon(MarkerCell.class.getResource("/res/ally.png"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 

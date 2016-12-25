@@ -599,7 +599,7 @@ public class MapRenderer {
                 }
                 g2d.setClip(null);
 
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         // </editor-fold>

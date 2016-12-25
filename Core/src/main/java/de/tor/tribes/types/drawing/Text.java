@@ -44,7 +44,7 @@ public class Text extends AbstractForm {
             setTextAlpha(Float.parseFloat(elem.getAttributeValue("a")));
             elem = e.getChild("textSize");
             setTextSize(Integer.parseInt(elem.getTextTrim()));
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
     }
 

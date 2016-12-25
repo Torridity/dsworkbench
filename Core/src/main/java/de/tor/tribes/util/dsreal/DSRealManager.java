@@ -189,7 +189,7 @@ public class DSRealManager {
             try {
                 //sleep due to connection limit of ds real (5 conns per second)
                 Thread.sleep(500);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
 

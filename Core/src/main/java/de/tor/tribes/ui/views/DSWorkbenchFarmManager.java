@@ -1799,19 +1799,19 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
         try {
             jAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
             jConsiderSucessRateA.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".use.success.rate"));
             jConsiderSucessRateB.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".use.success.rate"));
             jConsiderSucessRateC.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".use.success.rate"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
             jNotAllowPartlyFarming.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".disallow.partly.farming"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         setAlwaysOnTop(jAlwaysOnTop.isSelected());

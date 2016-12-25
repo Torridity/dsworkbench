@@ -416,7 +416,7 @@ public class SupportRefillSourcePanel extends WizardPage {
             if (!villages.isEmpty()) {
                 addVillages(villages.toArray(new Village[villages.size()]));
             }
-        } catch (HeadlessException | IOException | UnsupportedFlavorException he) {
+        } catch (HeadlessException | IOException | UnsupportedFlavorException ignored) {
         }
     }
 
@@ -444,7 +444,7 @@ public class SupportRefillSourcePanel extends WizardPage {
 
         try {
             supportTolerance = GlobalOptions.getProperties().getInt("support.tolerance", 10);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         for (REFSourceElement element : getAllElements()) {
             element.updateAvailableSupports(SupportRefillSettingsPanel.getSingleton().getSplit(), supportTolerance);

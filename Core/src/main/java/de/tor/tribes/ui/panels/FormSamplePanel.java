@@ -64,7 +64,7 @@ public class FormSamplePanel extends javax.swing.JPanel {
         initComponents();
         try {
             sampleTexture = ImageIO.read(new File("graphics/skins/default/v6.png"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 

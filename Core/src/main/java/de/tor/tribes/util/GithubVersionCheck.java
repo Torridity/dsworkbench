@@ -110,7 +110,7 @@ public final class GithubVersionCheck {
                 if (sum % 500 == 0) {
                     try {
                         Thread.sleep(50);
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
                 }
             }

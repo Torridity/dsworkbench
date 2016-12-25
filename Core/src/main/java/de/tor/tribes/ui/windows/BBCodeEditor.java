@@ -755,7 +755,7 @@ public class BBCodeEditor extends javax.swing.JDialog {
         }
         try {
             jTextPane1.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + BBCodeFormatter.toHtml(result) + "</body></html>");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 

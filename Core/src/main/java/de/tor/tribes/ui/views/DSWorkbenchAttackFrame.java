@@ -269,11 +269,11 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
         try {
             jAttackTabPane.setSelectedIndex(pConfig.getInteger(getPropertyPrefix() + ".tab.selection", 0));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         try {
             jAttackFrameAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         setAlwaysOnTop(jAttackFrameAlwaysOnTop.isSelected());
@@ -850,7 +850,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             public void run() {
                 try {
                     ((AttackTableTab) jAttackTabPane.getSelectedComponent()).updateCountdown();
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         });
@@ -867,7 +867,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             public void run() {
                 try {
                     ((AttackTableTab) jAttackTabPane.getSelectedComponent()).updateTime();
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         });
@@ -890,7 +890,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         //  DSWorkbenchAttackFrame.getSingleton().setSize(800, 600);
@@ -1007,9 +1007,9 @@ class ColorUpdateThread extends Thread {
                 DSWorkbenchAttackFrame.getSingleton().updateTime();
                 try {
                     Thread.sleep(10000);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
-            } catch (Throwable t) {
+            } catch (Throwable ignored) {
             }
         }
     }
@@ -1041,7 +1041,7 @@ class CountdownThread extends Thread {
                     // yield();
                     sleep(1000);
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }

@@ -252,7 +252,7 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
         }
         try {
             Thread.sleep(2500);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
@@ -266,7 +266,7 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
                 ac.stop();
                 ac = null;
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -597,13 +597,13 @@ class TimerThread extends Thread {
             } else {
                 try {
                     Thread.sleep(100);
-                } catch (InterruptedException ie) {
+                } catch (InterruptedException ignored) {
                 }
             }
 
             try {
                 Thread.sleep(50);
-            } catch (InterruptedException ie) {
+            } catch (InterruptedException ignored) {
             }
         }
     }

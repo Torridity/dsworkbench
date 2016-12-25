@@ -359,7 +359,7 @@ public class TimePicker extends javax.swing.JPanel {
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         JDialog f = new JDialog();
         f.getContentPane().add(new TimePicker(Calendar.getInstance().getTime()));

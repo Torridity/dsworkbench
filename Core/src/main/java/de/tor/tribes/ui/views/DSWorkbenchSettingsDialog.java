@@ -2619,7 +2619,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             UserProfile selectedProfile = null;
             try {
                 selectedProfile = (UserProfile) jProfileBox.getSelectedItem();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             if (selectedProfile != null) {
                 if (selectedProfile.getTribe() == null) {
@@ -3143,7 +3143,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         } else {
             try {
                 profileId = Long.parseLong(GlobalOptions.getProperty("player." + GlobalOptions.getProperty("default.server")));
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         jProfileBox.setModel(model);
@@ -3210,7 +3210,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                 return;
             }
             vp.setViewPosition(point);
-        } catch (Throwable t) {
+        } catch (Throwable ignored) {
         }
     }
 
@@ -3231,7 +3231,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                     long profileId = -1;
                     try {
                         profileId = Long.parseLong(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()));
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
                     if (profileId != -1) {
                         for (UserProfile profile : profiles) {

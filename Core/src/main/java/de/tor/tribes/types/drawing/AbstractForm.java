@@ -176,7 +176,7 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
                     if (vi != null) {
                         v.add(vi);
                     }
-                } catch (ArrayIndexOutOfBoundsException e) {
+                } catch (ArrayIndexOutOfBoundsException ignored) {
                 }
             }
         }

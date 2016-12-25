@@ -271,7 +271,7 @@ public class NonPAPlaceParser implements SilentParserInterface {
                         return DataHolder.getSingleton().getVillages()[Integer.parseInt(split[0])][Integer.parseInt(split[1])];
                     }
 
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         }

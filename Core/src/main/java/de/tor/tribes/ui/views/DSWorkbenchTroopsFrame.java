@@ -212,11 +212,11 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
     centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
     try {
       jTroopsTabPane.setSelectedIndex(pConfig.getInteger(getPropertyPrefix() + ".tab.selection", 0));
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
     try {
       jTroopsInformationAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
 
     setAlwaysOnTop(jTroopsInformationAlwaysOnTop.isSelected());
@@ -764,7 +764,7 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     try {
       //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
       UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
     GlobalOptions.setSelectedServer("de43");
     DataHolder.getSingleton().loadData(false);

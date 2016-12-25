@@ -128,7 +128,7 @@ public class TimeSettingsPanel extends WizardPage implements SettingsChangedList
                     if (s != null) {
                         spanList.add(s);
                     }
-                } catch (Exception invalid) {
+                } catch (Exception ignored) {
                 }
             }
 

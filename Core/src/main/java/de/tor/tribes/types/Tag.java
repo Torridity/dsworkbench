@@ -127,7 +127,7 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
             for (Element e : (List<Element>) JaxenUtils.getNodes(pElement, "villages/village")) {
                 tagVillage(Integer.parseInt(e.getValue()));
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 

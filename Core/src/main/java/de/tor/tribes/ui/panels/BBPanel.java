@@ -524,7 +524,7 @@ public class BBPanel extends javax.swing.JPanel {
         } else if (evt.getSource() == jTableButton) {
             try {
                 jTextPane1.getDocument().insertString(jTextPane1.getCaretPosition(), "[table]\n[**]head1[||]head2[/**]\n[*]test1[|]test2\n[/table]", null);
-            } catch (BadLocationException ble) {
+            } catch (BadLocationException ignored) {
             }
             /**
             

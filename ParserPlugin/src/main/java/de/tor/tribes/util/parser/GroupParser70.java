@@ -92,7 +92,7 @@ public class GroupParser70 implements SilentParserInterface {
 			    String[] split = coord.trim().split("[(\\|)]");
 			    v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[0])][Integer.parseInt(split[1])];
 			}
-		    } catch ( Exception e ) {
+		    } catch ( Exception ignored) {
 		    }
 		    if ( v != null ) {
 			//valid line found

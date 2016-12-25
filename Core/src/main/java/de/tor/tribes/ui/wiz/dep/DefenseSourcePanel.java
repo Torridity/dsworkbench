@@ -399,7 +399,7 @@ public class DefenseSourcePanel extends WizardPage {
         int supportTolerance = 10;
         try {
             supportTolerance = GlobalOptions.getProperties().getInt("support.tolerance", 10);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         split.update(DSWorkbenchSettingsDialog.getSingleton().getDefense(), supportTolerance);
@@ -430,7 +430,7 @@ public class DefenseSourcePanel extends WizardPage {
             if (!villages.isEmpty()) {
                 addVillages(villages.toArray(new Village[villages.size()]));
             }
-        } catch (HeadlessException | IOException | UnsupportedFlavorException he) {
+        } catch (HeadlessException | IOException | UnsupportedFlavorException ignored) {
         }
     }
 

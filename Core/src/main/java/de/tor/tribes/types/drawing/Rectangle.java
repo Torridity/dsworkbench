@@ -73,7 +73,7 @@ public class Rectangle extends AbstractForm {
             setTextSize(Integer.parseInt(elem.getTextTrim()));
             elem = e.getChild("drawName");
             setDrawName(Boolean.parseBoolean(elem.getTextTrim()));
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
     }
 

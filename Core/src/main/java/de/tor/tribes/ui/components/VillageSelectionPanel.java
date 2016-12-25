@@ -250,7 +250,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
             } else {
                 ((GridBagLayout) getLayout()).getConstraints(jVillageScrollPane).gridheight -= 1;
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -262,7 +262,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
             } else {
                 ((GridBagLayout) getLayout()).getConstraints(jVillageScrollPane).gridheight -= 1;
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -275,7 +275,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
             } else {
                 ((GridBagLayout) getLayout()).getConstraints(jVillageScrollPane).gridheight -= 1;
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -617,7 +617,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             //UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         GlobalOptions.setSelectedServer("de43");

@@ -136,7 +136,7 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
             minimapIcons.put(ID_MINIMAP, ImageIO.read(new File("./graphics/icons/minimap.png")));
             minimapIcons.put(ID_ALLY_CHART, ImageIO.read(new File("./graphics/icons/ally_chart.png")));
             minimapIcons.put(ID_TRIBE_CHART, ImageIO.read(new File("./graphics/icons/tribe_chart.png")));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         jPanel1.add(mScreenshotPanel);
         int mapWidth = (int) ServerSettings.getSingleton().getMapDimension().getWidth();
@@ -721,7 +721,7 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
 
         try {
             MinimapRepaintThread.getSingleton().update();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -1063,7 +1063,7 @@ class MinimapRepaintThread extends Thread {
                 MinimapPanel.getSingleton().updateComplete(mBuffer);
                 try {
                     Thread.sleep(100);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             } catch (Exception oe) {
                 if (mBuffer == null) {

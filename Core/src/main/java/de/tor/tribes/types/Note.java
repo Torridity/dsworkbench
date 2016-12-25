@@ -84,7 +84,7 @@ public class Note extends ManageableType implements BBSupport {
                             if (v != null) {
                                 m.addVillage(v);
                             }
-                        } catch (NumberFormatException nfe1) {
+                        } catch (NumberFormatException ignored) {
                         }
                     }
                 }

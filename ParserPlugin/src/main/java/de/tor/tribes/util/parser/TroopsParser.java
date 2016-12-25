@@ -222,7 +222,7 @@ public class TroopsParser implements SilentParserInterface {
                         String[] split = coord.trim().split("[(\\|)]");
                         return DataHolder.getSingleton().getVillages()[Integer.parseInt(split[0])][Integer.parseInt(split[1])];
                     }
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         }

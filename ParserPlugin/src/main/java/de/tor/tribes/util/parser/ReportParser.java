@@ -146,7 +146,7 @@ public class ReportParser implements SilentParserInterface {
                     double moral = Double.parseDouble(line);
                     debug(" Set moral to " + moral);
                     result.setMoral(moral);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             } else if (line.startsWith("Angreifer") || line.contains("Angreifer")) {
                 attackerPart = true;
@@ -377,7 +377,7 @@ public class ReportParser implements SilentParserInterface {
                     result.setAimedBuilding(target);
                     result.setBuildingBefore(buildingBefore);
                     result.setBuildingAfter(buildingAfter);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             } else if (line.startsWith("Veränderung der Zustimmung") || line.startsWith("Zustimmung:")) {
                 line = line.replaceAll("Veränderung der Zustimmung", "").trim().replaceAll("Zustimmung gesunken von", "").replaceAll("auf", "");

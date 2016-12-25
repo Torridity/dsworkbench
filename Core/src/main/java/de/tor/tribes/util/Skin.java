@@ -109,13 +109,13 @@ public class Skin {
             loadSkin(pSkinPath);
             try {
                 WorldDecorationHolder.loadTextures();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         } else {
             loadMinimapSkin();
             try {
                 WorldDecorationHolder.loadTextures();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }
@@ -123,7 +123,7 @@ public class Skin {
     public boolean isMinimapSkin() {
         try {
             return (sSkinID.equals(MINIMAP_SKIN_ID));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return false;
     }

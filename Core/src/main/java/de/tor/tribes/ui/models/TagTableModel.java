@@ -107,7 +107,7 @@ public class TagTableModel extends AbstractTableModel {
                     t.setShowOnMap((Boolean) value);
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         //repaint map
         TagManager.getSingleton().revalidate(completeUpdateNeeded);

@@ -113,7 +113,7 @@ public class LayerOrderPanel extends javax.swing.JPanel {
             iconMap.put("Markierungen", ImageIO.read(new File("graphics/icons/mark.png")));
             iconMap.put("Truppendichte", ImageIO.read(new File("graphics/icons/village_troops.png")));
             iconMap.put("Kirchenradien", ImageIO.read(new File("graphics/icons/church_layer.png")));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         addMouseListener(new MouseListener() {

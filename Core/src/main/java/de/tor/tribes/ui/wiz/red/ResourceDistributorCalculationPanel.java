@@ -1412,7 +1412,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jProgressBar1.setString("Berechne...");
         try {//let thread start
             Thread.sleep(20);
-        } catch (InterruptedException ie) {
+        } catch (InterruptedException ignored) {
         }
     }
 

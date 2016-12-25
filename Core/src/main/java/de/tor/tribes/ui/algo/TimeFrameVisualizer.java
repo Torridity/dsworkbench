@@ -99,7 +99,7 @@ public class TimeFrameVisualizer extends javax.swing.JPanel {
             g2d.setColor(Color.BLACK);
             g2d.drawLine(0, 2, 2, 0);
             g2d.dispose();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         popupInfo = new HashMap<>();

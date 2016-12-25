@@ -88,7 +88,7 @@ public class LayerOrderConfigurationFrame extends javax.swing.JFrame implements 
         URL warnURL = null;
         try {
             warnURL = new File("./graphics/icons/warning.png").toURI().toURL();
-        } catch (MalformedURLException mue) {
+        } catch (MalformedURLException ignored) {
         }
         tooltips.put("Markierungen", "<html><font font size='-1'><b>Markierungen</b><br/>Diese Ebene enthält Farbmarkierungen von Spielern und St&auml;mmen."
                 + " Sie ist immer sichtbar, kann jedoch entweder unterhalb oder oberhalb der Dorfebene gezeichnet werden, wodurch Markierungen"

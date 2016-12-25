@@ -53,7 +53,7 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
         super();
         try {
             mConquerWarning = ImageIO.read(new File("./graphics/icons/warning.png"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 

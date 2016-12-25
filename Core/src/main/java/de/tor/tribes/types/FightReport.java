@@ -222,13 +222,13 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
             try {
                 dDefendersOnTheWay = defenderElement.getChild("ontheway");
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
 
             Element dDefendersOutside = null;
             try {
                 dDefendersOutside = defenderElement.getChild("outside");
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
 
             attackers = new Hashtable<>();
@@ -288,7 +288,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 setAcceptanceBefore((byte) 100);
                 setAcceptanceAfter((byte) 100);
             }
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -419,7 +419,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                     setWallLevel(Integer.parseInt(buildings.getAttributeValue("wall")));
                 }
             }
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
     }
 

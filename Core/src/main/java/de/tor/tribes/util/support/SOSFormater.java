@@ -91,7 +91,7 @@ public class SOSFormater {
                         buffer.append(attack.getSource().toBBCode() + " (" + attack.getSource().getTribe().toBBCode() + ") " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n");
                     }
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             //buffer.append("[size=12]\n");
         }

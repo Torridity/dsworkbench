@@ -164,7 +164,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
 
         try {
             jChurchFrameAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         setAlwaysOnTop(jChurchFrameAlwaysOnTop.isSelected());
@@ -309,7 +309,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             try {
                 Village v = (Village) jChurchTable.getModel().getValueAt(jChurchTable.convertRowIndexToModel(row), 1);
                 return v;
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         return null;
@@ -483,7 +483,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         DSWorkbenchChurchFrame.getSingleton().resetView();
         for (int i = 0; i < 50; i++) {

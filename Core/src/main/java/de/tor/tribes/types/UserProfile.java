@@ -121,7 +121,7 @@ public class UserProfile {
                 if (fin != null) {
                     fin.close();
                 }
-            } catch (IOException e) {
+            } catch (IOException ignored) {
             }
         }
 
@@ -172,7 +172,7 @@ public class UserProfile {
                     fout.close();
                     fout = null;
                 }
-            } catch (IOException ex) {
+            } catch (IOException ignored) {
             }
         }
         return true;
@@ -234,7 +234,7 @@ public class UserProfile {
                 logger.info("Failed to delete profile. Added 'deleted' marker for next startup");
                 FileUtils.touch(new File(getProfileDirectory() + File.separator + "deleted"));
                 success = true;
-            } catch (IOException ioe2) {
+            } catch (IOException ignored) {
             }
         }
         ProfileManager.getSingleton().loadProfiles();

@@ -172,7 +172,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
 
         try {
             jAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         setAlwaysOnTop(jAlwaysOnTop.isSelected());
@@ -306,7 +306,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
             try {
                 Village v = (Village) jDistanceTable.getModel().getValueAt(jDistanceTable.convertRowIndexToModel(row), 0);
                 return v;
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         return null;
@@ -550,7 +550,7 @@ private void fireDistanceFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
 

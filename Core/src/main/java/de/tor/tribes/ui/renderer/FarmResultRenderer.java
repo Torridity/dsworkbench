@@ -43,7 +43,7 @@ public class FarmResultRenderer extends DefaultTableRenderer {
             failedIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/bullet_ball_red.png"));
             disabledIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/bullet_ball_grey.png"));
             unknownIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/bullet_ball_empty.png"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 

@@ -99,7 +99,7 @@ public class DefenseAnalyzer extends Thread {
         running = true;
         try {
             UnitManager.getSingleton().setUnits("./servers/" + GlobalOptions.getSelectedServer() + "/units.xml");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         updateStatus();
         running = false;

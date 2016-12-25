@@ -66,7 +66,7 @@ public class DefenderFilter implements ReportRuleInterface {
                     return true;
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return false;
     }

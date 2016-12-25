@@ -199,7 +199,7 @@ private void fireSelectServerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
   String selection = null;
   try {
     selection = (String) jServerBox.getSelectedItem();
-  } catch (ClassCastException cce) {
+  } catch (ClassCastException ignored) {
   }
   if (selection == null || "-Bitte wählen-".equals(selection)) {
     wizCtrl.setProblem("Bitte einen Server auswählen");
@@ -251,7 +251,7 @@ private void fireTribeChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:ev
   Tribe tribe = null;
   try {
     tribe = (Tribe) jTribeBox.getSelectedItem();
-  } catch (ClassCastException cce) {
+  } catch (ClassCastException ignored) {
   }
   if (tribe == null) {
     wizCtrl.setProblem("Bitte einen Spielernamen wählen");
@@ -280,7 +280,7 @@ private void fireTribeChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:ev
       if (sum % 500 == 0) {
         try {
           Thread.sleep(50);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
       }
     }
@@ -289,11 +289,11 @@ private void fireTribeChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:ev
     tempWriter.flush();
     try {
       isr.close();
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
     try {
       tempWriter.close();
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
   }
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -92,7 +92,7 @@ public class NodeCellRenderer extends DefaultTreeCellRenderer {
                 }
             } else {
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return this;
     }

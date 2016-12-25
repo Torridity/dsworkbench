@@ -82,7 +82,7 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
             while (keys.hasMoreElements()) {
                 requests.add(parsedData.get(keys.nextElement()));
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return requests;
     }
@@ -152,7 +152,7 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
                 try {
                     int wallLevel = Integer.parseInt(line.replaceAll(ParserVariableManager.getSingleton().getProperty("sos.wall.level"), "").trim());
                     currentRequest.getTargetInformation(target).setWallLevel(wallLevel);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             } else if (line.contains(ParserVariableManager.getSingleton().getProperty("sos.troops.in.village"))) {
                 // System.out.println("WAIT FOR TROOPS");

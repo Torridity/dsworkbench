@@ -85,7 +85,7 @@ public class ScreenshotSaver extends Thread {
             }
             try {
                 Thread.sleep(1000);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }

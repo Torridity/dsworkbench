@@ -184,7 +184,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
 
         try {
             jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
@@ -1009,7 +1009,7 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         // createSampleRequests();
         new SOSGenerator().setVisible(true);
@@ -1051,9 +1051,9 @@ class SupportColorUpdateThread extends Thread {
                 DSWorkbenchSOSRequestAnalyzer.getSingleton().updateTime();
                 try {
                     Thread.sleep(10000);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
-            } catch (Throwable t) {
+            } catch (Throwable ignored) {
             }
         }
     }
@@ -1085,7 +1085,7 @@ class SupportCountdownThread extends Thread {
                     // yield();
                     sleep(1000);
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }

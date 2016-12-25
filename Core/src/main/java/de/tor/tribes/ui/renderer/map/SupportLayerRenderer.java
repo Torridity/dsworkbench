@@ -141,7 +141,7 @@ public class SupportLayerRenderer extends AbstractDirectLayerRenderer {
                                         if (inter == null) {
                                             throw new Exception();
                                         }
-                                    } catch (Exception e4) {
+                                    } catch (Exception ignored) {
                                     }
                                 }
                             }
@@ -192,7 +192,7 @@ public class SupportLayerRenderer extends AbstractDirectLayerRenderer {
                                         if (inter == null) {
                                             throw new Exception();
                                         }
-                                    } catch (Exception e4) {
+                                    } catch (Exception ignored) {
                                     }
                                 }
                             }

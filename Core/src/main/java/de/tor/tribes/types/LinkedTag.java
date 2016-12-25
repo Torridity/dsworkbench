@@ -63,7 +63,7 @@ public class LinkedTag extends Tag {
             }
             String equation = URLDecoder.decode(pElement.getChild("equation").getTextTrim(), "UTF-8");
             setEquation(equation);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 

@@ -181,7 +181,7 @@ public class JOutlookBar extends JPanel implements ActionListener {
             try {
                 //try to refit size if parent is a scrollpane's viewport (used for fast options in DSWorkbenchMainFrame)
                 getParent().validate();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }

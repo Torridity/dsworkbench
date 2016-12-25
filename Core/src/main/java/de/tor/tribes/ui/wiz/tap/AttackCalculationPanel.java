@@ -108,7 +108,7 @@ public class AttackCalculationPanel extends WizardPage {
         int type = 0;
         try {
             type = Integer.parseInt(value);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         if (type == 0) {
             jBruteForce.setSelected(true);
@@ -449,7 +449,7 @@ public class AttackCalculationPanel extends WizardPage {
         //wait until calculation is running
         try {
             Thread.sleep(20);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
     }//GEN-LAST:event_fireCalculateAttacksEvent
@@ -569,7 +569,7 @@ public class AttackCalculationPanel extends WizardPage {
                     scroll();
                 }
             });
-        } catch (BadLocationException ble) {
+        } catch (BadLocationException ignored) {
         }
     }
 

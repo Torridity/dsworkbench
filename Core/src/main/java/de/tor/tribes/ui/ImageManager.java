@@ -371,7 +371,7 @@ public class ImageManager {
             i.getGraphics().setColor(Color.BLACK);
             i.getGraphics().drawString(Integer.toString(pVillageCount), 5, 12);
             return Toolkit.getDefaultToolkit().createCustomCursor(i, new Point(0, 0), "Village");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
     }

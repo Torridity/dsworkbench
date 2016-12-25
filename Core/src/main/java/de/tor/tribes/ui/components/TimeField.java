@@ -144,7 +144,7 @@ public class TimeField extends JPanel {
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         JFrame f = new JFrame();
         f.add(new TimeField(Calendar.getInstance().getTime()));

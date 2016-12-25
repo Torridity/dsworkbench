@@ -60,7 +60,7 @@ public class AlgorithmLogPanel extends javax.swing.JPanel {
         try {
             jTextPane1.setText("");
             aborted = false;
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -73,7 +73,7 @@ public class AlgorithmLogPanel extends javax.swing.JPanel {
             StyledDocument doc = jTextPane1.getStyledDocument();
             doc.insertString(doc.getLength(), "(" + dateFormat.format(new Date(System.currentTimeMillis())) + ") " + pText + "\n", doc.getStyle("Default"));
             scroll();
-        } catch (Throwable e) {
+        } catch (Throwable ignored) {
         }
     }
 
@@ -82,7 +82,7 @@ public class AlgorithmLogPanel extends javax.swing.JPanel {
             StyledDocument doc = jTextPane1.getStyledDocument();
             doc.insertString(doc.getLength(), "(" + dateFormat.format(new Date(System.currentTimeMillis())) + ") " + pText + "\n", doc.getStyle("Info"));
             scroll();
-        } catch (Throwable e) {
+        } catch (Throwable ignored) {
         }
     }
 
@@ -91,7 +91,7 @@ public class AlgorithmLogPanel extends javax.swing.JPanel {
             StyledDocument doc = jTextPane1.getStyledDocument();
             doc.insertString(doc.getLength(), "(" + dateFormat.format(new Date(System.currentTimeMillis())) + ") " + pText + "\n", doc.getStyle("Error"));
             scroll();
-        } catch (Throwable e) {
+        } catch (Throwable ignored) {
         }
     }
 
@@ -103,7 +103,7 @@ public class AlgorithmLogPanel extends javax.swing.JPanel {
                 return;
             }
             vp.setViewPosition(point);
-        } catch (Throwable t) {
+        } catch (Throwable ignored) {
         }
     }
 
@@ -111,7 +111,7 @@ public class AlgorithmLogPanel extends javax.swing.JPanel {
         try {
             jStatusProgress.setMaximum(pMaxStatus);
             jStatusProgress.setValue(pMaxStatus - pCurrentStatus);
-        } catch (Throwable t) {
+        } catch (Throwable ignored) {
         }
     }
 

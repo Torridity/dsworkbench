@@ -115,7 +115,7 @@ public class SettingsPanel extends javax.swing.JPanel {
                     if (s != null) {
                         spanList.add(s);
                     }
-                } catch (Exception invalid) {
+                } catch (Exception ignored) {
                 }
             }
 
@@ -328,7 +328,7 @@ public class SettingsPanel extends javax.swing.JPanel {
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         JFrame f = new JFrame();
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

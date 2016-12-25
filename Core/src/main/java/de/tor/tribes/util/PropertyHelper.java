@@ -68,7 +68,7 @@ public class PropertyHelper {
       String title = col.getTitle();
       try {
         col.setPreferredWidth(pConfig.getInteger(pPrefix + ".table.col." + title + ".width", col.getWidth()));
-      } catch (ConversionException ce) {
+      } catch (ConversionException ignored) {
       }
       try {
         col.setVisible(pConfig.getBoolean(pPrefix + ".table.col." + title + ".visible", true));
@@ -81,7 +81,7 @@ public class PropertyHelper {
     int iSortOrder = 0;
     try {
       iSortOrder = pConfig.getInteger(pPrefix + ".table.sort.order", 0);
-    } catch (ConversionException ce) {
+    } catch (ConversionException ignored) {
     }
 
     switch (iSortOrder) {
@@ -98,7 +98,7 @@ public class PropertyHelper {
     Boolean scroll = false;
     try {
       scroll = pConfig.getBoolean(pPrefix + ".table.horizontal.scroll", false);
-    } catch (ConversionException ce) {
+    } catch (ConversionException ignored) {
     }
 
     pTable.setHorizontalScrollEnabled(scroll);
@@ -106,12 +106,12 @@ public class PropertyHelper {
     Integer orderCol = 0;
     try {
       orderCol = pConfig.getInteger(pPrefix + ".table.sort.col", 0);
-    } catch (ConversionException ce) {
+    } catch (ConversionException ignored) {
     }
 
     try {
       pTable.setSortOrder(orderCol.intValue(), sortOrder);
-    } catch (IndexOutOfBoundsException e) {
+    } catch (IndexOutOfBoundsException ignored) {
     }
   }
 }

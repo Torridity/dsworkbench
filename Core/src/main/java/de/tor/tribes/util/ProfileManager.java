@@ -142,7 +142,7 @@ public class ProfileManager {
                                 if (profileDir.list().length == 0) {
                                     try {
                                         FileUtils.deleteDirectory(profileDir);
-                                    } catch (IOException ioe) {
+                                    } catch (IOException ignored) {
                                     }
                                 }
                             }
@@ -185,7 +185,7 @@ public class ProfileManager {
                         if (fin != null) {
                             try {
                                 fin.close();
-                            } catch (IOException ioe) {
+                            } catch (IOException ignored) {
                             }
                         }
                     }

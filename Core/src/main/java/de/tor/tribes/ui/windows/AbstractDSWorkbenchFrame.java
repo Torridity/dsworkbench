@@ -230,7 +230,7 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
         try {
             v = (List<Village>) t.getTransferData(VillageTransferable.villageDataFlavor);
             fireVillagesDraggedEvent(v, dtde.getLocation());
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
     }
 

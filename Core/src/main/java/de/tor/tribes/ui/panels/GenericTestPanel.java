@@ -170,7 +170,7 @@ public class GenericTestPanel extends javax.swing.JPanel {
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         AttackManager.getSingleton().addGroup("test1");
         AttackManager.getSingleton().addGroup("asd2");

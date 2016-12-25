@@ -688,7 +688,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
                 model.fireTableDataChanged();
                 result = true;
                 focusSubmit();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             } finally {
                 if (r != null) {
                     try {

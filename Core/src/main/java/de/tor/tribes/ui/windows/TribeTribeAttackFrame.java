@@ -2319,7 +2319,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 jCalculateButton.setEnabled(false);
                 mLogFrame.setVisible(true);
                 mLogFrame.toFront();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     });
@@ -3789,13 +3789,13 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
                 dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
                 try {
                     villages = (List<Village>) t.getTransferData(VillageTransferable.villageDataFlavor);
-                } catch (Exception ex) {
+                } catch (Exception ignored) {
                 }
             } else if (dtde.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 //string dnd
                 try {
                     villages = PluginManager.getSingleton().executeVillageParser((String) t.getTransferData(DataFlavor.stringFlavor));
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             } else {
                 dtde.rejectDrop();
@@ -3909,7 +3909,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
 
                     // SubstanceLookAndFeel.setSkin(SubstanceLookAndFeel.getAllSkins().get("Twilight").getClassName());
                     //  UIManager.put(SubstanceLookAndFeel.FOCUS_KIND, FocusKind.NONE);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
                 Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
 
@@ -4096,7 +4096,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
                 mBar.setString("Mögliche Angriffe aktualisiert");
                 try {
                     Thread.sleep(100);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
                 // jideTabbedPane1.setSelectedIndex(0);
                 jDialog.setVisible(false);

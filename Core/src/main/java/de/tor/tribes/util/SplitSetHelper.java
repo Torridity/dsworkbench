@@ -100,7 +100,7 @@ public class SplitSetHelper {
         } finally {
             try {
                 w.close();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }

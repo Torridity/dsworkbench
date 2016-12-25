@@ -397,7 +397,7 @@ public class RetimerCalculationPanel extends WizardPage {
                     scroll();
                 }
             });
-        } catch (BadLocationException ble) {
+        } catch (BadLocationException ignored) {
         }
     }
 

@@ -153,7 +153,7 @@ public class ConquerManager extends GenericManager<Conquer> {
             updateAcceptance();
             try {
                 MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         } else {
             lastUpdate = 0;
@@ -347,7 +347,7 @@ public class ConquerManager extends GenericManager<Conquer> {
                 if (r != null) {
                     r.close();
                 }
-            } catch (Exception inner) {
+            } catch (Exception ignored) {
             }
         }
         if (!error) {

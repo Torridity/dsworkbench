@@ -583,7 +583,7 @@ public class RetimerDataPanel extends WizardPage {
         try {
             String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
             readAttackFromString(data);
-        } catch (HeadlessException | IOException | UnsupportedFlavorException he) {
+        } catch (HeadlessException | IOException | UnsupportedFlavorException ignored) {
         }
     }
 
@@ -617,7 +617,7 @@ public class RetimerDataPanel extends WizardPage {
                 }
             }
             jAttackBox.setModel(model);
-        } catch (HeadlessException | IOException | UnsupportedFlavorException he) {
+        } catch (HeadlessException | IOException | UnsupportedFlavorException ignored) {
         }
     }
 

@@ -163,7 +163,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         UserProfile profile = null;
         try {
             profile = (UserProfile) ((DefaultMutableTreeNode) path[2]).getUserObject();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         if (profile == null) {
             JOptionPaneHelper.showWarningBox(jProfileDialog, "Bitte eine Profil auswählen.", "Bitte wählen");
@@ -298,7 +298,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 long selectedProfile = -1;
                 try {
                     selectedProfile = Long.parseLong(GlobalOptions.getProperty("selected.profile"));
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
                 path.add(root);
                 for (String server : servers) {
@@ -605,7 +605,7 @@ class SplashRepaintThread extends Thread {
             DSWorkbenchSplashScreen.getSingleton().updateStatus();
             try {
                 Thread.sleep(50);
-            } catch (InterruptedException ie) {
+            } catch (InterruptedException ignored) {
             }
         }
     }

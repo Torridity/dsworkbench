@@ -51,7 +51,7 @@ public class NoteIconListCellRenderer extends DefaultListCellRenderer {
                 BufferedImage symbol = (type.equals(ICON_TYPE.NOTE)) ? ImageManager.getNoteSymbol((Integer) value) : ImageManager.getNoteIcon((Integer) value);
                 label.setIcon(new ImageIcon(symbol.getScaledInstance(18, 18, BufferedImage.SCALE_FAST)));
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return c;
     }

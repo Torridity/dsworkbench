@@ -101,7 +101,7 @@ public class BBCodeFormatter {
                             if (t.equals(InvalidTribe.getSingleton())) {
                                 t = null;
                             }
-                        } catch (Exception e) {
+                        } catch (Exception ignored) {
                         }
                         if (t != null) {
                             newValue = "<a href='#" + tribe + "' class='ds_link'>" + tribe + "</a>";
@@ -113,7 +113,7 @@ public class BBCodeFormatter {
                         Ally a = null;
                         try {
                             a = DataHolder.getSingleton().getAllyByTagName(ally);
-                        } catch (Exception e) {
+                        } catch (Exception ignored) {
                         }
                         if (a != null) {
                             newValue = "<a href='##" + ally + "' class='ds_link'>" + ally + "</a>";
@@ -125,7 +125,7 @@ public class BBCodeFormatter {
                         Village v = null;
                         try {
                             v = PluginManager.getSingleton().executeVillageParser(coord).get(0);
-                        } catch (Exception e) {
+                        } catch (Exception ignored) {
                         }
 
                         if (v != null) {

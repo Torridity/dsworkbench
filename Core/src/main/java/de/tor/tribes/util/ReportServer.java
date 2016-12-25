@@ -217,7 +217,7 @@ public class ReportServer {
         public void close() {
             try {
                 this.serversocket.close();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
 

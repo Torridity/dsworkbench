@@ -457,7 +457,7 @@ private void fireSearchFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) 
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         DSWorkbenchSearchFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         DSWorkbenchSearchFrame.getSingleton().setVisible(true);
@@ -493,7 +493,7 @@ private void fireSearchFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) 
             String result = t.length + " Spieler gefunden";
             ((DefaultComboBoxModel) jTribesList.getModel()).insertElementAt(result, 0);
             jTribesList.setSelectedIndex(0);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
     
@@ -507,7 +507,7 @@ private void fireSearchFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) 
             
             ((DefaultComboBoxModel) jAllyList.getModel()).insertElementAt(result, 0);
             jAllyList.setSelectedIndex(0);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 }
@@ -585,7 +585,7 @@ class SearchThread extends Thread {
             }
             try {
                 Thread.sleep(100);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignored) {
             }
         }
     }

@@ -200,7 +200,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         
         try {
             jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         
         setAlwaysOnTop(jAlwaysOnTopBox.isSelected());

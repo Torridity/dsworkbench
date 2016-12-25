@@ -80,7 +80,7 @@ public class FreeForm extends AbstractForm {
             }
             elem = e.getChild("drawName");
             setDrawName(Boolean.parseBoolean(elem.getTextTrim()));
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
     }
 

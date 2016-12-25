@@ -617,7 +617,7 @@ public class TroopFilterDialog extends javax.swing.JDialog {
         } finally {
             try {
                 w.close();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }

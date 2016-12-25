@@ -113,7 +113,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
                     a.setUnit(UnknownUnit.getSingleton());
                 }
                 thisAttacks.add(a);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
 
@@ -136,7 +136,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
                     sourceDateVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
                     sourceTypeVal += attack.getSource().toBBCode() + "\n";
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
 

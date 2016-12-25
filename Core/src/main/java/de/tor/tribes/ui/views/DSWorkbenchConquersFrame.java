@@ -176,7 +176,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
         try {
             jConquersFrameAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         setAlwaysOnTop(jConquersFrameAlwaysOnTop.isSelected());

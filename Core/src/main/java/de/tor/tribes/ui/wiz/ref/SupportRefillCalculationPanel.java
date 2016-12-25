@@ -102,7 +102,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
         
         try {
             date = Long.parseLong(profile.getProperty("ref.calculation.arrive"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         jArriveTime.setDate(new Date(date));
     }
@@ -315,7 +315,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
         //wait until calculation is running
         try {
             Thread.sleep(20);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         
     }//GEN-LAST:event_fireCalculateAttacksEvent
@@ -409,7 +409,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
                     scroll();
                 }
             });
-        } catch (BadLocationException ble) {
+        } catch (BadLocationException ignored) {
         }
     }
     

@@ -449,7 +449,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             // UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         GroupSelectionList ren = new GroupSelectionList("");

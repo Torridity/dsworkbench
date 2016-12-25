@@ -194,7 +194,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         
         try {
             jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         
         setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
@@ -1159,7 +1159,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                         if (sendTime > System.currentTimeMillis() + 60000) {
                             timings.put(candidate, new Date(sendTime));
                         }
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
                 }
             }
@@ -1423,7 +1423,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         
         DSWorkbenchReTimerFrame.getSingleton().resetView();

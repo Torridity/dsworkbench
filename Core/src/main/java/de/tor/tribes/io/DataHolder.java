@@ -1057,7 +1057,7 @@ public class DataHolder {
       if (sum % 500 == 0) {
         try {
           Thread.sleep(50);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
       }
     }
@@ -1066,11 +1066,11 @@ public class DataHolder {
     tempWriter.flush();
     try {
       isr.close();
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
     try {
       tempWriter.close();
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
   }
 
@@ -1146,7 +1146,7 @@ public class DataHolder {
       //block getting villages while loading to avoid nullpointer exceptions
       try {
         Thread.sleep(50);
-      } catch (InterruptedException ie) {
+      } catch (InterruptedException ignored) {
       }
     }
     return mVillages;
@@ -1288,7 +1288,7 @@ public class DataHolder {
       //block getting villages while loading to avoid nullpointer exceptions
       try {
         Thread.sleep(50);
-      } catch (InterruptedException ie) {
+      } catch (InterruptedException ignored) {
       }
     }
     return mVillagesTable;

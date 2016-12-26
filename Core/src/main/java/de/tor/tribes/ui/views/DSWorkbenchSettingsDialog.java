@@ -18,45 +18,38 @@ package de.tor.tribes.ui.views;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.ServerManager;
-import de.tor.tribes.types.ext.Tribe;
-
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.text.SimpleDateFormat;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JViewport;
-import javax.swing.table.DefaultTableModel;
-import org.apache.log4j.Logger;
-import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.UnknownUnit;
-import de.tor.tribes.types.test.DummyUserProfile;
-import de.tor.tribes.types.ext.InvalidTribe;
 import de.tor.tribes.types.UserProfile;
-import de.tor.tribes.ui.editors.ColorChooserCellEditor;
+import de.tor.tribes.types.ext.InvalidTribe;
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
+import de.tor.tribes.types.test.DummyUserProfile;
+import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.panels.MinimapPanel;
+import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.wiz.red.ResourceDistributorWizard;
 import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Logger;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.io.File;
 import java.net.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.UIManager;
-import org.apache.log4j.ConsoleAppender;
 
 /**
  * @author Torridity
@@ -3203,15 +3196,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     public void fireDataHolderEvent(String pMessage) {
         SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");
         jStatusArea.insert("(" + f.format(new Date(System.currentTimeMillis())) + ") " + pMessage + "\n", jStatusArea.getText().length());
-        try {
-            Point point = new Point(0, (int) (jStatusArea.getSize().getHeight()));
-            JViewport vp = jScrollPane1.getViewport();
-            if ((vp == null) || (point == null)) {
-                return;
-            }
-            vp.setViewPosition(point);
-        } catch (Throwable ignored) {
-        }
+        UIHelper.applyCorrectViewPosition(jStatusArea, jScrollPane1);
     }
 
     @Override

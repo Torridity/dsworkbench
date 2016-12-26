@@ -16,8 +16,9 @@
 package de.tor.tribes.util;
 
 import com.jidesoft.swing.LabeledTextField;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  *
@@ -82,6 +83,18 @@ public class UIHelper {
             } else {
                 jField.setText("");
             }
+        }
+    }
+
+    public static void applyCorrectViewPosition(JComponent targetComponent, JScrollPane scrollPane) {
+        try {
+            Point point = new Point(0, (int) (targetComponent.getSize().getHeight()));
+            JViewport vp = scrollPane.getViewport();
+            if (vp == null) {
+                return;
+            }
+            vp.setViewPosition(point);
+        } catch (Throwable ignored) {
         }
     }
 }

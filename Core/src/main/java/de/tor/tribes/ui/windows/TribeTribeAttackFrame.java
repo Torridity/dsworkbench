@@ -2608,17 +2608,12 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
             Boolean fake = (Boolean) jSourcesTable.getValueAt(row, 2);
             b.append(v.getId()).append(";").append(unit.getPlainName()).append(";").append(fake).append("\n");
         }
-        try {
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b.toString()), null);
-            showSuccess(rows.length + ((rows.length == 1) ? " Eintrag kopiert" : " Einträge kopiert"));
-        } catch (HeadlessException hex) {
-            showError("Fehler beim Kopieren der Einträge");
-            return;
-        }
 
-        if (pType.equals(TRANSFER_TYPE.CUT_SOURCE_TO_INTERNAL_CLIPBOARD)) {
-            deleteAction(jSourcesTable);
-            showSuccess(rows.length + ((rows.length == 1) ? " Eintrag ausgeschnitten" : " Einträge ausgeschnitten"));
+        if(copyToClipboard(b.toString(), rows)) {
+            if (pType.equals(TRANSFER_TYPE.CUT_SOURCE_TO_INTERNAL_CLIPBOARD)) {
+                deleteAction(jSourcesTable);
+                showSuccess(rows.length + ((rows.length == 1) ? " Eintrag ausgeschnitten" : " Einträge ausgeschnitten"));
+            }
         }
     }
 
@@ -2646,9 +2641,24 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
             return;
         }
 
-        if (pType.equals(TRANSFER_TYPE.CUT_TARGET_TO_INTERNAL_CLIPBOARD)) {
-            deleteAction(jVictimTable);
-            showSuccess(rows.length + ((rows.length == 1) ? " Eintrag ausgeschnitten" : " Einträge ausgeschnitten"));
+        if (copyToClipboard(b.toString(), rows)) {
+            if (pType.equals(TRANSFER_TYPE.CUT_SOURCE_TO_INTERNAL_CLIPBOARD)) {
+                deleteAction(jVictimTable);
+                showSuccess(rows.length + ((rows.length == 1) ? " Eintrag ausgeschnitten" : " Einträge ausgeschnitten"));
+            }
+        }
+    }
+
+    private boolean copyToClipboard(String s, int[] rows) {
+        try {
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(s), null);
+            showSuccess(rows.length + ((rows.length == 1) ? " Eintrag kopiert" : " Einträge kopiert"));
+
+            return true;
+        } catch (HeadlessException hex) {
+            showError("Fehler beim Kopieren der Einträge");
+
+            return false;
         }
     }
 
